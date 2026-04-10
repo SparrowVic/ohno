@@ -1,0 +1,140 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--app-bg);
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  transition: all 0.15s;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--surface-hover);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.topbar__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+}
+
+.topbar__title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.topbar__badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  margin-left: -8px;
+
+  &--easy {
+    color: var(--easy);
+    background: var(--easy-bg);
+  }
+
+  &--medium {
+    color: var(--medium);
+    background: var(--medium-bg);
+  }
+
+  &--hard {
+    color: var(--hard);
+    background: var(--hard-bg);
+  }
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border);
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  &:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-secondary);
+  }
+}
+
+.detail__content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.viz-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 100vh;
+  color: var(--text-secondary);
+  font-size: 14px;
+}

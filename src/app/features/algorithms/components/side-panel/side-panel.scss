@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  flex-shrink: 0;
+  border-left: 0.5px solid var(--border);
+  background: var(--surface);
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.side-tabs {
+  display: flex;
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+.side-tab {
+  flex: 1;
+  padding: 10px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+
+  &--active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+}
+
+.side-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}

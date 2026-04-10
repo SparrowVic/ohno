@@ -1,0 +1,28 @@
+<div class="side-panel">
+  <div class="side-tabs">
+    @for (tab of tabs; track tab.id) {
+      <button
+        type="button"
+        class="side-tab"
+        [class.side-tab--active]="activeTab() === tab.id"
+        (click)="selectTab(tab.id)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <div class="side-content">
+    @switch (activeTab()) {
+      @case ('code') {
+        <app-code-panel [lines]="codeLines()" [activeLineNumber]="activeLineNumber()" />
+      }
+      @case ('info') {
+        <app-info-panel [algorithm]="algorithm()" />
+      }
+      @case ('log') {
+        <app-log-panel [entries]="logEntries()" />
+      }
+    }
+  </div>
+</div>

@@ -15,6 +15,8 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(n²)',
       space: 'O(1)',
     },
+    stable: true,
+    inPlace: true,
   },
   {
     id: 'selection-sort',
@@ -30,6 +32,8 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(n²)',
       space: 'O(1)',
     },
+    stable: false,
+    inPlace: true,
   },
   {
     id: 'insertion-sort',
@@ -45,6 +49,8 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(n²)',
       space: 'O(1)',
     },
+    stable: true,
+    inPlace: true,
   },
   {
     id: 'merge-sort',
@@ -60,6 +66,8 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(n log n)',
       space: 'O(n)',
     },
+    stable: true,
+    inPlace: false,
   },
   {
     id: 'quick-sort',
@@ -75,6 +83,8 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(n²)',
       space: 'O(log n)',
     },
+    stable: false,
+    inPlace: true,
   },
   {
     id: 'heap-sort',
@@ -90,6 +100,8 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(n log n)',
       space: 'O(1)',
     },
+    stable: false,
+    inPlace: true,
   },
   {
     id: 'radix-sort',
@@ -105,5 +117,7 @@ export const SORTING_ALGORITHMS: readonly AlgorithmItem[] = [
       timeWorst: 'O(nk)',
       space: 'O(n + k)',
     },
+    stable: true,
+    inPlace: false,
   },
 ];

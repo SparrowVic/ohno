@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.code-view {
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.code-line {
+  display: flex;
+  padding: 0 8px;
+  border-radius: 3px;
+
+  &--highlight {
+    background: var(--line-highlight);
+  }
+}
+
+.line-num {
+  color: var(--text-tertiary);
+  min-width: 24px;
+  user-select: none;
+  opacity: 0.5;
+}
+
+.line-code {
+  color: var(--text-secondary);
+  white-space: pre;
+}
+
+.kw {
+  color: #c792ea;
+}
+.fn {
+  color: #82aaff;
+}
+.str {
+  color: #c3e88d;
+}
+.num {
+  color: #f78c6c;
+}
+.cm {
+  color: var(--text-tertiary);
+}
+.op {
+  color: #89ddff;
+}

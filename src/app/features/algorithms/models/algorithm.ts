@@ -20,4 +20,6 @@ export interface AlgorithmItem {
   readonly subcategory: string;
   readonly tags: readonly string[];
   readonly complexity: ComplexityInfo;
+  readonly stable?: boolean;
+  readonly inPlace?: boolean;
 }

@@ -1,4 +1,4 @@
-<article class="card">
+<a class="card" [routerLink]="['/algorithms', algorithm().id]">
   <div class="card__top">
     <span class="card__name">{{ algorithm().name }}</span>
     <span class="badge badge--{{ algorithm().difficulty }}">
@@ -15,4 +15,4 @@
       <span class="tag">{{ tag }}</span>
     }
   </div>
-</article>
+</a>

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
 import { NavigationService } from '../../../core/services/navigation-service';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
@@ -24,6 +24,7 @@ const PILLS: readonly PillOption[] = [
   imports: [AlgorithmCard],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlgorithmsPage {
   private readonly registry = inject(AlgorithmRegistry);

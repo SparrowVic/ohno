@@ -4,6 +4,13 @@ import { Shell } from './core/layout/shell/shell';
 
 export const routes: Routes = [
   {
+    path: 'algorithms/:id',
+    loadComponent: () =>
+      import('./features/algorithms/algorithm-detail/algorithm-detail').then(
+        (m) => m.AlgorithmDetail,
+      ),
+  },
+  {
     path: '',
     component: Shell,
     children: [
@@ -25,5 +32,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'algorithms' },
+  { path: '**', redirectTo: '' },
 ];

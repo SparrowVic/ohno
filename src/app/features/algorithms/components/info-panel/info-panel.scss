@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.info {
+  padding: 16px;
+}
+
+.info__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.info__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.info__card {
+  padding: 10px;
+  border-radius: var(--radius-md);
+  background: var(--app-bg);
+  border: 0.5px solid var(--border);
+}
+
+.info__label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info__value {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.info__desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-top: 12px;
+}

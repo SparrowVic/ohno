@@ -1,0 +1,12 @@
+<section class="info">
+  <h2 class="info__title">Complexity</h2>
+  <div class="info__grid">
+    @for (card of cards(); track card.label) {
+      <div class="info__card">
+        <div class="info__label">{{ card.label }}</div>
+        <div class="info__value">{{ card.value }}</div>
+      </div>
+    }
+  </div>
+  <p class="info__desc">{{ algorithm().description }}</p>
+</section>

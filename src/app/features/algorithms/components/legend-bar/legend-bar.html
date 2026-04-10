@@ -1,0 +1,12 @@
+<div class="legend">
+  @for (item of items(); track item.label) {
+    <div class="legend__item">
+      <span
+        class="legend__dot"
+        [style.background]="item.color"
+        [style.opacity]="item.opacity ?? 1"
+      ></span>
+      {{ item.label }}
+    </div>
+  }
+</div>

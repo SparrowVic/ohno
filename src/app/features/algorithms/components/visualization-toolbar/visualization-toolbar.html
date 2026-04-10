@@ -1,0 +1,64 @@
+<div class="toolbar">
+  <div class="toolbar__left">
+    <button type="button" class="ctrl-btn" aria-label="Reset" (click)="resetClick.emit()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 3h10M3 8h10M3 13h10" />
+      </svg>
+    </button>
+    <button type="button" class="ctrl-btn" aria-label="Step back" (click)="stepBackClick.emit()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 13V3M4 3l3 3" />
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="ctrl-btn ctrl-btn--play"
+      [attr.aria-label]="isPlaying() ? 'Pause' : 'Play'"
+      (click)="playToggle.emit()"
+    >
+      @if (isPlaying()) {
+        <svg viewBox="0 0 16 16" fill="currentColor">
+          <rect x="4" y="3" width="3" height="10" rx="0.5" />
+          <rect x="9" y="3" width="3" height="10" rx="0.5" />
+        </svg>
+      } @else {
+        <svg viewBox="0 0 16 16" fill="currentColor">
+          <path d="M5 3l8 5-8 5V3z" />
+        </svg>
+      }
+    </button>
+    <button
+      type="button"
+      class="ctrl-btn"
+      aria-label="Step forward"
+      (click)="stepForwardClick.emit()"
+    >
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 13V3M12 3L9 6" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="toolbar__center">
+    <span class="speed-label">Speed</span>
+    <input
+      type="range"
+      class="speed-slider"
+      min="1"
+      max="10"
+      [value]="speed()"
+      (input)="onSpeedInput($event)"
+    />
+    <span class="speed-value">{{ speed() }}x</span>
+    <span class="step-counter">Step {{ currentStep() }} / {{ totalSteps() }}</span>
+  </div>
+
+  <div class="toolbar__right">
+    <select class="size-select" [value]="size()" (change)="onSizeChange($event)">
+      @for (option of sizeOptions; track option) {
+        <option [value]="option">{{ option }} elements</option>
+      }
+    </select>
+    <button type="button" class="generate-btn" (click)="randomizeClick.emit()">Randomize</button>
+  </div>
+</div>

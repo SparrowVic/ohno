@@ -1,0 +1,67 @@
+@if (algorithm(); as algo) {
+  <div class="detail">
+    <nav class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="back-btn" (click)="back()">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 2L4 7l5 5" />
+          </svg>
+          Back
+        </button>
+        <div class="topbar__divider"></div>
+        <span class="topbar__title">{{ algo.name }}</span>
+        <span class="topbar__badge topbar__badge--{{ algo.difficulty }}">
+          {{ algo.difficulty | titlecase }}
+        </span>
+      </div>
+      <div class="topbar__right">
+        <button type="button" class="icon-btn" aria-label="Add">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M7 2v10M2 7h10" />
+          </svg>
+        </button>
+        <button type="button" class="icon-btn" aria-label="Layout">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="4" height="4" rx="1" />
+            <rect x="8" y="2" width="4" height="4" rx="1" />
+            <rect x="2" y="8" width="4" height="4" rx="1" />
+            <rect x="8" y="8" width="4" height="4" rx="1" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <div class="detail__content">
+      <div class="viz-panel">
+        <app-visualization-toolbar
+          [isPlaying]="isPlaying()"
+          [speed]="speed()"
+          [currentStep]="currentStep()"
+          [totalSteps]="totalSteps()"
+          [size]="size()"
+          (resetClick)="onReset()"
+          (stepBackClick)="onStepBack()"
+          (playToggle)="onPlayToggle()"
+          (stepForwardClick)="onStepForward()"
+          (speedChange)="onSpeedChange($event)"
+          (sizeChange)="onSizeChange($event)"
+          (randomizeClick)="onRandomize()"
+        />
+        <app-visualization-canvas />
+        <app-legend-bar [items]="legendItems" />
+      </div>
+
+      <app-side-panel
+        [algorithm]="algo"
+        [codeLines]="codeLines"
+        [activeLineNumber]="activeLineNumber()"
+        [logEntries]="logEntries()"
+      />
+    </div>
+  </div>
+} @else {
+  <div class="not-found">
+    <p>Algorithm not found.</p>
+    <button type="button" class="back-btn" (click)="back()">Back to algorithms</button>
+  </div>
+}

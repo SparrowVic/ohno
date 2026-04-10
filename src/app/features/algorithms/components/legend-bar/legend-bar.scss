@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  border-top: 0.5px solid var(--border);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 12px;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
