@@ -1,5 +1,27 @@
 <section class="page">
   <header class="page__header">
-    <h1 class="page__title">Algorithms</h1>
+    <h1 class="page__title">{{ title() }}</h1>
+    <div class="filter-pills">
+      @for (pill of pills; track pill.value) {
+        <button
+          type="button"
+          class="pill"
+          [class.pill--active]="activeDifficulty() === pill.value"
+          (click)="selectDifficulty(pill.value)"
+        >
+          {{ pill.label }}
+        </button>
+      }
+    </div>
   </header>
+
+  @if (filteredItems().length > 0) {
+    <div class="cards-grid">
+      @for (algorithm of filteredItems(); track algorithm.id) {
+        <app-algorithm-card [algorithm]="algorithm" />
+      }
+    </div>
+  } @else {
+    <div class="page__empty">No algorithms match the current filters.</div>
+  }
 </section>

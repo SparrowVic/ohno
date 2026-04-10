@@ -6,6 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 20px;
 }
 
@@ -13,4 +14,43 @@
   font-size: 18px;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+.filter-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.pill {
+  padding: 4px 12px;
+  font-size: 11px;
+  border-radius: 20px;
+  border: 0.5px solid var(--border);
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all 0.15s;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+
+  &--active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.page__empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
 }

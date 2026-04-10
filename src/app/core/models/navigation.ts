@@ -6,10 +6,17 @@ export interface NavTab {
   readonly path: string;
 }
 
+export interface SidebarFilter {
+  readonly category: string;
+  readonly subcategory?: string;
+}
+
 export interface SidebarItem {
   readonly id: string;
   readonly label: string;
   readonly count: number;
+  readonly sectionTitle: string;
+  readonly filter: SidebarFilter;
 }
 
 export interface SidebarGroup {
