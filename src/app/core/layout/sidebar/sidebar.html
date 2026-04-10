@@ -1,0 +1,18 @@
+<aside class="sidebar">
+  @for (group of groups(); track group.id) {
+    <div class="sidebar__section">
+      <div class="sidebar__label">{{ group.label }}</div>
+      @for (item of group.items; track item.id) {
+        <button
+          type="button"
+          class="sidebar__item"
+          [class.sidebar__item--active]="isActive(group.id, item.id)"
+          (click)="selectItem(group.id, item.id)"
+        >
+          <span class="sidebar__item-label">{{ item.label }}</span>
+          <span class="sidebar__count">{{ item.count }}</span>
+        </button>
+      }
+    </div>
+  }
+</aside>

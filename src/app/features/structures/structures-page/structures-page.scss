@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.page__title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+}

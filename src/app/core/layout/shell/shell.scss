@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--app-bg);
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell__navbar {
+  flex-shrink: 0;
+}
+
+.shell__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.shell__sidebar {
+  flex-shrink: 0;
+}
+
+.shell__main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  background: var(--app-bg);
+  overflow: auto;
+}
