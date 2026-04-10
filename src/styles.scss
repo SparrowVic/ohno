@@ -1,1 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --app-bg: #0f1117;
+  --surface: #1a1c25;
+  --surface-hover: #22242f;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --text-primary: #e8e9ed;
+  --text-secondary: #8b8d97;
+  --text-tertiary: #5a5c66;
+  --accent: #7c6ef0;
+  --accent-dim: rgba(124, 110, 240, 0.12);
+  --accent-glow: rgba(124, 110, 240, 0.25);
+  --accent-teal: #2dd4bf;
+  --accent-teal-dim: rgba(45, 212, 191, 0.12);
+  --easy: #3ecf8e;
+  --easy-bg: rgba(62, 207, 142, 0.1);
+  --medium: #f0b429;
+  --medium-bg: rgba(240, 180, 41, 0.1);
+  --hard: #e24b4a;
+  --hard-bg: rgba(226, 75, 74, 0.1);
+  --code-bg: #141620;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
