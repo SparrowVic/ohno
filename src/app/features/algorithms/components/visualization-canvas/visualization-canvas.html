@@ -1,3 +1,22 @@
-<div #canvas class="canvas">
-  <span class="canvas__placeholder">Visualization area</span>
+<div class="canvas">
+  @switch (variant()) {
+    @case ('bar') {
+      <app-bar-chart-visualization [array]="array()" [step]="step()" />
+    }
+    @case ('block') {
+      <app-block-swap-visualization [array]="array()" [step]="step()" />
+    }
+    @case ('gradient') {
+      <app-color-gradient-visualization [array]="array()" [step]="step()" />
+    }
+    @case ('dot') {
+      <app-dot-plot-visualization [array]="array()" [step]="step()" />
+    }
+    @case ('radial') {
+      <app-radial-visualization [array]="array()" [step]="step()" />
+    }
+    @case ('sound') {
+      <app-sound-bars-visualization [array]="array()" [step]="step()" [muted]="muted()" />
+    }
+  }
 </div>

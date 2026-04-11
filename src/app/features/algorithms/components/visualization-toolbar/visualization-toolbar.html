@@ -5,7 +5,13 @@
         <path d="M3 3h10M3 8h10M3 13h10" />
       </svg>
     </button>
-    <button type="button" class="ctrl-btn" aria-label="Step back" (click)="stepBackClick.emit()">
+    <button
+      type="button"
+      class="ctrl-btn"
+      aria-label="Step back"
+      [disabled]="!canStepBack()"
+      (click)="stepBackClick.emit()"
+    >
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M4 13V3M4 3l3 3" />
       </svg>
@@ -31,6 +37,7 @@
       type="button"
       class="ctrl-btn"
       aria-label="Step forward"
+      [disabled]="!canStepForward()"
       (click)="stepForwardClick.emit()"
     >
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -54,6 +61,32 @@
   </div>
 
   <div class="toolbar__right">
+    @if (variant() === 'sound') {
+      <button
+        type="button"
+        class="ctrl-btn"
+        [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
+        [attr.title]="muted() ? 'Unmute audio' : 'Mute audio'"
+        (click)="muteToggle.emit()"
+      >
+        @if (muted()) {
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M2 6h3l4-3v10l-4-3H2V6z" />
+            <path d="M13 5l-4 4M9 5l4 4" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M2 6h3l4-3v10l-4-3H2V6z" />
+            <path d="M12 6a3 3 0 010 4" />
+          </svg>
+        }
+      </button>
+    }
+    <select class="size-select" [value]="variant()" (change)="onVariantChange($event)">
+      @for (option of variantOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
     <select class="size-select" [value]="size()" (change)="onSizeChange($event)">
       @for (option of sizeOptions; track option) {
         <option [value]="option">{{ option }} elements</option>

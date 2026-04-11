@@ -65,6 +65,12 @@
       border-color: #6b5dd4;
     }
   }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+  }
 }
 
 .speed-label {

@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, LogEntry } from '../../models/detail';
@@ -19,6 +29,11 @@ const SIDE_TABS: readonly SideTab[] = [
   { id: 'log', label: 'Log' },
 ];
 
+const LS_KEY = 'ohno:side-panel-width';
+const DEFAULT_WIDTH = 340;
+const MIN_WIDTH = 260;
+const MAX_WIDTH = 480;
+
 @Component({
   selector: 'app-side-panel',
   imports: [CodePanel, InfoPanel, LogPanel],
@@ -26,7 +41,7 @@ const SIDE_TABS: readonly SideTab[] = [
   styleUrl: './side-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidePanel {
+export class SidePanel implements OnInit, OnDestroy {
   readonly algorithm = input.required<AlgorithmItem>();
   readonly codeLines = input.required<readonly CodeLine[]>();
   readonly activeLineNumber = input<number | null>(null);
@@ -37,7 +52,60 @@ export class SidePanel {
   private readonly activeTabState = signal<SideTabId>('code');
   readonly activeTab = this.activeTabState.asReadonly();
 
+  private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly doc = inject(DOCUMENT);
+
+  private dragging = false;
+  private dragStartX = 0;
+  private dragStartWidth = 0;
+  private readonly boundMove = (e: MouseEvent) => this.onMouseMove(e);
+  private readonly boundUp = () => this.onMouseUp();
+
+  ngOnInit(): void {
+    const saved = this.doc.defaultView?.localStorage.getItem(LS_KEY);
+    const w = saved ? Number(saved) : DEFAULT_WIDTH;
+    this.applyWidth(Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, w)));
+  }
+
+  ngOnDestroy(): void {
+    this.doc.removeEventListener('mousemove', this.boundMove);
+    this.doc.removeEventListener('mouseup', this.boundUp);
+  }
+
   selectTab(id: SideTabId): void {
     this.activeTabState.set(id);
+  }
+
+  onHandleMousedown(event: MouseEvent): void {
+    event.preventDefault();
+    this.dragging = true;
+    this.dragStartX = event.clientX;
+    this.dragStartWidth = this.hostEl.getBoundingClientRect().width;
+    this.doc.body.style.userSelect = 'none';
+    this.doc.body.style.cursor = 'col-resize';
+    this.doc.addEventListener('mousemove', this.boundMove);
+    this.doc.addEventListener('mouseup', this.boundUp);
+  }
+
+  private onMouseMove(event: MouseEvent): void {
+    if (!this.dragging) return;
+    const delta = this.dragStartX - event.clientX;
+    const w = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, this.dragStartWidth + delta));
+    this.applyWidth(w);
+  }
+
+  private onMouseUp(): void {
+    if (!this.dragging) return;
+    this.dragging = false;
+    this.doc.body.style.userSelect = '';
+    this.doc.body.style.cursor = '';
+    this.doc.removeEventListener('mousemove', this.boundMove);
+    this.doc.removeEventListener('mouseup', this.boundUp);
+    const w = Math.round(this.hostEl.getBoundingClientRect().width);
+    this.doc.defaultView?.localStorage.setItem(LS_KEY, String(w));
+  }
+
+  private applyWidth(w: number): void {
+    this.hostEl.style.width = `${w}px`;
   }
 }

@@ -7,14 +7,7 @@
 .canvas {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 0;
   padding: 32px;
   overflow: hidden;
-}
-
-.canvas__placeholder {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  letter-spacing: 0.3px;
 }

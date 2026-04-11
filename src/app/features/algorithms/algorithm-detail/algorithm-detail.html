@@ -39,6 +39,8 @@
           [currentStep]="currentStep()"
           [totalSteps]="totalSteps()"
           [size]="size()"
+          [variant]="variant()"
+          [muted]="muted()"
           (resetClick)="onReset()"
           (stepBackClick)="onStepBack()"
           (playToggle)="onPlayToggle()"
@@ -46,9 +48,16 @@
           (speedChange)="onSpeedChange($event)"
           (sizeChange)="onSizeChange($event)"
           (randomizeClick)="onRandomize()"
+          (variantChange)="onVariantChange($event)"
+          (muteToggle)="onMuteToggle()"
         />
-        <app-visualization-canvas />
-        <app-legend-bar [items]="legendItems" />
+        <app-visualization-canvas
+          [variant]="variant()"
+          [array]="array()"
+          [step]="step()"
+          [muted]="muted()"
+        />
+        <app-legend-bar [items]="legendItems()" />
       </div>
 
       <app-side-panel
