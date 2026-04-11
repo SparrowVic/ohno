@@ -15,6 +15,15 @@
     @case ('radial') {
       <app-radial-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
+    @case ('radix') {
+      <app-radix-bucket-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
+    @case ('radix-strip') {
+      <app-radix-strip-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
+    @case ('radix-matrix') {
+      <app-radix-matrix-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
     @case ('sound') {
       <app-sound-bars-visualization
         [array]="array()"

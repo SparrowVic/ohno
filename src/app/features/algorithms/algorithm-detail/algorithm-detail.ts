@@ -3,18 +3,23 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
+import { radixSortGenerator } from '../algorithms/radix-sort';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import { RADIX_SORT_CODE } from '../data/radix-sort-code';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { SortStep } from '../models/sort-step';
+import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
@@ -46,7 +51,72 @@ const SOUND_LEGEND: readonly LegendItem[] = [
   { label: 'Audio on compare/swap', color: 'var(--text-secondary)', opacity: 0.6 },
 ];
 
-const MAX_VALUE = 99;
+const RADIX_LEGEND: readonly LegendItem[] = [
+  { label: 'Input stream', color: '#7c6ef0', opacity: 0.55 },
+  { label: 'Active digit', color: '#38bdf8' },
+  { label: 'Bucket lane', color: '#f59e0b' },
+  { label: 'Gathered output', color: '#34d399' },
+];
+
+const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'bar', label: 'Bar Chart' },
+  { value: 'block', label: 'Block Swap' },
+  { value: 'gradient', label: 'Color Gradient' },
+  { value: 'dot', label: 'Dot Plot' },
+  { value: 'radial', label: 'Radial Circle' },
+  { value: 'sound', label: 'Sound Bars' },
+];
+
+const RADIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'radix', label: 'Bucket Flow' },
+  { value: 'radix-strip', label: 'Digit Strip' },
+  { value: 'radix-matrix', label: 'Digit Matrix' },
+];
+
+const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
+const RADIX_SIZE_OPTIONS: readonly number[] = [12, 18, 24];
+
+interface RandomRange {
+  readonly min: number;
+  readonly max: number;
+}
+
+interface AlgorithmViewConfig {
+  readonly codeLines: readonly CodeLine[];
+  readonly variantOptions: readonly VisualizationOption[];
+  readonly defaultVariant: VisualizationVariant;
+  readonly sizeOptions: readonly number[];
+  readonly defaultSize: number;
+  readonly randomRange: RandomRange;
+  readonly generator: (array: readonly number[]) => Generator<SortStep>;
+  readonly legendItems: (variant: VisualizationVariant) => readonly LegendItem[];
+}
+
+const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
+  codeLines: BUBBLE_SORT_CODE,
+  variantOptions: BUBBLE_VARIANT_OPTIONS,
+  defaultVariant: 'bar',
+  sizeOptions: BUBBLE_SIZE_OPTIONS,
+  defaultSize: 16,
+  randomRange: { min: 1, max: 99 },
+  generator: bubbleSortGenerator,
+  legendItems: (variant) => {
+    if (variant === 'block') return BLOCK_LEGEND;
+    if (variant === 'sound') return SOUND_LEGEND;
+    return BAR_LEGEND;
+  },
+};
+
+const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
+  codeLines: RADIX_SORT_CODE,
+  variantOptions: RADIX_VARIANT_OPTIONS,
+  defaultVariant: 'radix',
+  sizeOptions: RADIX_SIZE_OPTIONS,
+  defaultSize: 18,
+  randomRange: { min: 10, max: 999 },
+  generator: radixSortGenerator,
+  legendItems: () => RADIX_LEGEND,
+};
 
 @Component({
   selector: 'app-algorithm-detail',
@@ -78,10 +148,18 @@ export class AlgorithmDetail {
     return id ? this.registry.getById(id) : undefined;
   });
 
+  readonly config = computed<AlgorithmViewConfig>(() => {
+    const algorithm = this.algorithm();
+    if (algorithm?.id === 'radix-sort') {
+      return RADIX_VIEW_CONFIG;
+    }
+    return BUBBLE_VIEW_CONFIG;
+  });
+
   private readonly sizeSig = signal(16);
   private readonly variantSig = signal<VisualizationVariant>('bar');
   private readonly mutedSig = signal(true);
-  private readonly arraySig = signal<readonly number[]>(this.generateArray(16));
+  private readonly arraySig = signal<readonly number[]>(this.generateArray(16, { min: 1, max: 99 }));
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private lastLoggedStep = -1;
@@ -96,6 +174,8 @@ export class AlgorithmDetail {
   readonly speed = this.engine.speed;
   readonly step = this.currentSnapshot.asReadonly();
   readonly logEntries = this.logEntriesSig.asReadonly();
+  readonly sizeOptions = computed(() => this.config().sizeOptions);
+  readonly variantOptions = computed(() => this.config().variantOptions);
 
   readonly activeLineNumber = computed<number | null>(() => {
     const snap = this.currentSnapshot();
@@ -103,16 +183,23 @@ export class AlgorithmDetail {
   });
 
   readonly legendItems = computed<readonly LegendItem[]>(() => {
-    const v = this.variantSig();
-    if (v === 'block') return BLOCK_LEGEND;
-    if (v === 'sound') return SOUND_LEGEND;
-    return BAR_LEGEND;
+    return this.config().legendItems(this.variantSig());
   });
 
-  readonly codeLines: readonly CodeLine[] = BUBBLE_SORT_CODE;
+  readonly codeLines = computed(() => this.config().codeLines);
 
   constructor() {
-    this.loadEngine(this.arraySig());
+    effect(() => {
+      const config = this.config();
+      untracked(() => {
+        this.sizeSig.set(config.defaultSize);
+        this.variantSig.set(config.defaultVariant);
+        this.mutedSig.set(true);
+        const next = this.generateArray(config.defaultSize, config.randomRange);
+        this.arraySig.set(next);
+        this.loadEngine(next, config.generator);
+      });
+    });
   }
 
   back(): void {
@@ -147,18 +234,20 @@ export class AlgorithmDetail {
 
   onSizeChange(value: number): void {
     this.sizeSig.set(value);
-    const next = this.generateArray(value);
+    const next = this.generateArray(value, this.config().randomRange);
     this.arraySig.set(next);
-    this.loadEngine(next);
+    this.loadEngine(next, this.config().generator);
   }
 
   onRandomize(): void {
-    const next = this.generateArray(this.sizeSig());
+    const next = this.generateArray(this.sizeSig(), this.config().randomRange);
     this.arraySig.set(next);
-    this.loadEngine(next);
+    this.loadEngine(next, this.config().generator);
   }
 
   onVariantChange(value: VisualizationVariant): void {
+    const allowed = this.config().variantOptions.some((option) => option.value === value);
+    if (!allowed) return;
     if (value === this.variantSig()) return;
     this.variantSig.set(value);
     this.logEntriesSig.set([]);
@@ -170,11 +259,14 @@ export class AlgorithmDetail {
     this.mutedSig.update((m) => !m);
   }
 
-  private loadEngine(array: readonly number[]): void {
+  private loadEngine(
+    array: readonly number[],
+    generator: (values: readonly number[]) => Generator<SortStep>,
+  ): void {
     this.logEntriesSig.set([]);
     this.lastLoggedStep = -1;
     this.currentSnapshot.set(null);
-    this.engine.load(bubbleSortGenerator(array), (step, index) => {
+    this.engine.load(generator(array), (step, index) => {
       this.currentSnapshot.set(step);
       this.appendLog(step, index);
     });
@@ -192,10 +284,11 @@ export class AlgorithmDetail {
     this.logEntriesSig.set([...entries, next]);
   }
 
-  private generateArray(size: number): readonly number[] {
+  private generateArray(size: number, range: RandomRange): readonly number[] {
     const arr: number[] = [];
     for (let i = 0; i < size; i++) {
-      arr.push(Math.floor(Math.random() * MAX_VALUE) + 1);
+      const span = range.max - range.min + 1;
+      arr.push(Math.floor(Math.random() * span) + range.min);
     }
     return arr;
   }

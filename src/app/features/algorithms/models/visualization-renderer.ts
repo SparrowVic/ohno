@@ -6,4 +6,13 @@ export interface VisualizationRenderer {
   destroy(): void;
 }
 
-export type VisualizationVariant = 'bar' | 'block' | 'gradient' | 'dot' | 'radial' | 'sound';
+export type VisualizationVariant =
+  | 'bar'
+  | 'block'
+  | 'gradient'
+  | 'dot'
+  | 'radial'
+  | 'sound'
+  | 'radix'
+  | 'radix-strip'
+  | 'radix-matrix';

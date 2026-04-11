@@ -82,13 +82,15 @@
         }
       </button>
     }
-    <select class="size-select" [value]="variant()" (change)="onVariantChange($event)">
-      @for (option of variantOptions; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
+    @if (hasVariantChoice()) {
+      <select class="size-select" [value]="variant()" (change)="onVariantChange($event)">
+        @for (option of variantOptions(); track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    }
     <select class="size-select" [value]="size()" (change)="onSizeChange($event)">
-      @for (option of sizeOptions; track option) {
+      @for (option of sizeOptions(); track option) {
         <option [value]="option">{{ option }} elements</option>
       }
     </select>

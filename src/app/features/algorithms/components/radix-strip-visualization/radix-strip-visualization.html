@@ -1,0 +1,94 @@
+<div
+  class="strip"
+  [style.--radix-swap-ms]="motion().swapMs + 'ms'"
+  [style.--radix-compare-ms]="motion().compareMs + 'ms'"
+>
+  <div class="strip__header">
+    <div class="strip__meta">
+      <span class="strip__chip strip__chip--accent">{{ phase() }}</span>
+      <span class="strip__chip">{{ passLabel() }}</span>
+      <span class="strip__summary">{{ summary() }}</span>
+    </div>
+
+    <div class="strip__digits">
+      @for (badge of digitBadges(); track badge.label) {
+        <span class="strip__digit" [class.strip__digit--active]="badge.active">
+          {{ badge.label }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <section class="lane">
+    <div class="lane__title">Scanner Lane</div>
+    <div class="lane__track">
+      @for (card of scannerCards(); track card.id) {
+        <div
+          class="card"
+          [class.card--active]="card.active"
+          [class.card--ghost]="card.ghost"
+          [class.card--settled]="card.settled"
+        >
+          <span class="card__value">{{ card.value }}</span>
+          <div class="card__digits">
+            @for (digit of card.digits; track $index) {
+              <span class="card__digit" [class.card__digit--active]="digit.active">
+                {{ digit.value }}
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="buckets">
+    @for (bucket of buckets(); track bucket.bucket) {
+      <div
+        class="bucket"
+        [class.bucket--active]="bucket.active"
+        [style.--bucket-color]="bucket.color"
+      >
+        <div class="bucket__head">
+          <span>Bucket {{ bucket.bucket }}</span>
+          <span>{{ bucket.items.length }}</span>
+        </div>
+        <div class="bucket__stack">
+          @for (card of bucket.items; track card.id) {
+            <div class="bucket-card" [class.bucket-card--active]="card.active">
+              <div class="bucket-card__digits">
+                @for (digit of card.digits; track $index) {
+                  <span
+                    class="bucket-card__digit"
+                    [class.bucket-card__digit--active]="digit.active"
+                  >
+                    {{ digit.value }}
+                  </span>
+                }
+              </div>
+              <span class="bucket-card__value">{{ card.value }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </section>
+
+  <section class="lane lane--output">
+    <div class="lane__title">Output Conveyor</div>
+    <div class="lane__track lane__track--output">
+      @for (card of outputCards(); track card.id) {
+        <div class="card card--output" [class.card--active]="card.active">
+          <span class="card__value">{{ card.value }}</span>
+          <div class="card__digits">
+            @for (digit of card.digits; track $index) {
+              <span class="card__digit" [class.card__digit--active]="digit.active">
+                {{ digit.value }}
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

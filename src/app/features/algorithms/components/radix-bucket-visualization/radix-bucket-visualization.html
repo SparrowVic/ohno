@@ -1,0 +1,19 @@
+<div class="stage">
+  <div class="hud">
+    <div class="hud__cluster">
+      <div class="hud__chip hud__chip--accent">{{ phaseLabel() }}</div>
+      <div class="hud__chip">{{ passLabel() }}</div>
+      <div class="hud__summary">{{ activeSummary() }}</div>
+    </div>
+
+    <div class="hud__digits">
+      @for (badge of digitBadges(); track badge.label) {
+        <span class="hud__digit" [class.hud__digit--active]="badge.active">
+          {{ badge.label }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <div #container class="canvas"></div>
+</div>

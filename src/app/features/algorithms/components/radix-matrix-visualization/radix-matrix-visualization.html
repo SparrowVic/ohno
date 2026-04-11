@@ -1,0 +1,93 @@
+<div
+  class="matrix"
+  [style.--radix-swap-ms]="motion().swapMs + 'ms'"
+  [style.--radix-compare-ms]="motion().compareMs + 'ms'"
+>
+  <div class="matrix__header">
+    <div class="matrix__meta">
+      <span class="matrix__chip matrix__chip--accent">{{ phase() }}</span>
+      <span class="matrix__chip">{{ passLabel() }}</span>
+      <span class="matrix__summary">{{ summary() }}</span>
+    </div>
+
+    <div class="matrix__digits">
+      @for (badge of digitBadges(); track badge.label) {
+        <span class="matrix__digit" [class.matrix__digit--active]="badge.active">
+          {{ badge.label }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="matrix__body">
+    <section class="grid-panel">
+      <div class="grid-panel__head">
+        <span>Value</span>
+        <span>Digit Matrix</span>
+        <span>Bucket</span>
+        <span>Order</span>
+      </div>
+
+      <div class="grid-panel__rows">
+        @for (row of rows(); track row.id) {
+          <div class="grid-row" [class.grid-row--active]="row.active">
+            <div class="grid-row__value">{{ row.value }}</div>
+            <div
+              class="grid-row__digits"
+              [style.grid-template-columns]="digitGridColumns()"
+            >
+              @for (digit of row.digits; track $index) {
+                <span class="grid-row__digit" [class.grid-row__digit--active]="digit.active">
+                  {{ digit.value }}
+                </span>
+              }
+            </div>
+            <div class="grid-row__bucket" [class.grid-row__bucket--filled]="row.bucket !== null">
+              @if (row.bucket !== null) {
+                {{ row.bucket }}
+              } @else {
+                <span>&#183;</span>
+              }
+            </div>
+            <div class="grid-row__order" [class.grid-row__order--filled]="row.order !== null">
+              @if (row.order !== null) {
+                #{{ row.order + 1 }}
+              } @else {
+                <span>&#183;</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <aside class="rail">
+      @for (bucket of buckets(); track bucket.bucket) {
+        <div
+          class="rail__bucket"
+          [class.rail__bucket--active]="bucket.active"
+          [style.--bucket-color]="bucket.color"
+        >
+          <div class="rail__head">
+            <span>Bucket {{ bucket.bucket }}</span>
+            <span>{{ bucket.count }}</span>
+          </div>
+          <div class="rail__values">
+            @for (value of bucket.values; track $index) {
+              <span class="rail__pill">{{ value }}</span>
+            }
+          </div>
+        </div>
+      }
+    </aside>
+  </div>
+
+  <section class="ordered">
+    <div class="ordered__title">Stable Output</div>
+    <div class="ordered__track">
+      @for (value of orderedValues(); track $index) {
+        <span class="ordered__pill">{{ value }}</span>
+      }
+    </div>
+  </section>
+</div>

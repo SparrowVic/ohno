@@ -39,7 +39,9 @@
           [currentStep]="currentStep()"
           [totalSteps]="totalSteps()"
           [size]="size()"
+          [sizeOptions]="sizeOptions()"
           [variant]="variant()"
+          [variantOptions]="variantOptions()"
           [muted]="muted()"
           (resetClick)="onReset()"
           (stepBackClick)="onStepBack()"
@@ -63,7 +65,7 @@
 
       <app-side-panel
         [algorithm]="algo"
-        [codeLines]="codeLines"
+        [codeLines]="codeLines()"
         [activeLineNumber]="activeLineNumber()"
         [logEntries]="logEntries()"
       />
