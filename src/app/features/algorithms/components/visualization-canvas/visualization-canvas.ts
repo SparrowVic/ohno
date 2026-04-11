@@ -27,5 +27,6 @@ export class VisualizationCanvas {
   readonly variant = input.required<VisualizationVariant>();
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
+  readonly speed = input<number>(5);
   readonly muted = input<boolean>(true);
 }

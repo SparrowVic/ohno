@@ -14,6 +14,13 @@ import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import {
+  MotionProfile,
+  createMotionProfile,
+  findNewSorted,
+  pulseSvgElement,
+  samePair,
+} from '../../utils/visualization-motion';
 
 interface Cell {
   id: string;
@@ -37,7 +44,6 @@ const CELL_GAP = 6;
 const MIN_OPACITY = 0.15;
 const MAX_OPACITY = 1;
 const HIDE_LABEL_THRESHOLD = 32;
-const SWAP_DURATION = 200;
 const SWAP_CURVE_OFFSET = 24;
 
 @Component({
@@ -52,6 +58,7 @@ export class ColorGradientVisualization
 {
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
+  readonly speed = input<number>(5);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
@@ -125,10 +132,12 @@ export class ColorGradientVisualization
   }
 
   render(step: SortStep): void {
+    const previousStep = this.lastStep;
     if (this.cells.length !== step.array.length) {
       this.snapRebuild(step.array);
       this.lastStep = step;
       this.applyStates(step);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
@@ -142,6 +151,7 @@ export class ColorGradientVisualization
 
     this.lastStep = step;
     this.applyStates(step);
+    this.animateStepEffects(previousStep, step);
   }
 
   destroy(): void {
@@ -278,6 +288,7 @@ export class ColorGradientVisualization
   }
 
   private animateCellTo(cell: Cell, fromPos: number, toPos: number, direction: number): void {
+    const motion = this.motion();
     const from = this.layoutFor(fromPos);
     const to = this.layoutFor(toPos);
     cell.group.setAttribute('transform', `translate(${from.x}, ${from.y})`);
@@ -285,13 +296,14 @@ export class ColorGradientVisualization
     const dy = to.y - from.y;
     const distance = Math.hypot(dx, dy) || 1;
     const controlX =
-      (from.x + to.x) / 2 + (-dy / distance) * SWAP_CURVE_OFFSET * direction;
-    const controlY = (from.y + to.y) / 2 + (dx / distance) * SWAP_CURVE_OFFSET * direction;
+      (from.x + to.x) / 2 + (-dy / distance) * Math.max(SWAP_CURVE_OFFSET, motion.swapLiftPx) * direction;
+    const controlY =
+      (from.y + to.y) / 2 + (dx / distance) * Math.max(SWAP_CURVE_OFFSET, motion.swapLiftPx) * direction;
     const state = { t: 0 };
     const target = cell.group;
     animate(state, {
       t: 1,
-      duration: SWAP_DURATION,
+      duration: motion.swapMs,
       ease: 'inOutQuad',
       onUpdate: () => {
         const x = this.quadraticPoint(from.x, controlX, to.x, state.t);
@@ -321,20 +333,113 @@ export class ColorGradientVisualization
         case 'comparing':
           cell.rect.setAttribute('stroke', 'var(--compare-color)');
           cell.rect.setAttribute('stroke-opacity', '1');
+          cell.text.setAttribute('fill', 'var(--compare-color)');
           break;
         case 'swapping':
           cell.rect.setAttribute('stroke', 'var(--swap-color)');
           cell.rect.setAttribute('stroke-opacity', '1');
+          cell.text.setAttribute('fill', 'var(--swap-color)');
           break;
         case 'sorted':
           cell.rect.setAttribute('stroke', 'var(--sorted-color)');
           cell.rect.setAttribute('stroke-opacity', '1');
+          cell.text.setAttribute('fill', 'var(--sorted-color)');
           break;
         default:
           cell.rect.setAttribute('stroke', 'var(--border)');
           cell.rect.setAttribute('stroke-opacity', '1');
+          cell.text.setAttribute('fill', 'var(--text-primary)');
       }
     }
+  }
+
+  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    const motion = this.motion();
+    if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
+      this.animateCompare(step.comparing, motion);
+    }
+
+    const freshSorted = findNewSorted(previousStep?.sorted, step.sorted);
+    if (freshSorted.length > 0) {
+      this.animateSorted(freshSorted, motion);
+    }
+
+    if ((previousStep?.sorted.length ?? 0) < step.array.length && step.sorted.length === step.array.length) {
+      this.animateCompletion(motion);
+    }
+  }
+
+  private animateCompare(pair: readonly [number, number], motion: MotionProfile): void {
+    for (const position of pair) {
+      const cell = this.findCell(position);
+      if (!cell) continue;
+      pulseSvgElement(cell.rect, {
+        duration: motion.compareMs,
+        scale: 1.06,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 14px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(cell.text, {
+        duration: motion.compareMs,
+        scale: 1.08,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    }
+  }
+
+  private animateSorted(indices: readonly number[], motion: MotionProfile): void {
+    indices.forEach((position, index) => {
+      const cell = this.findCell(position);
+      if (!cell) return;
+      const delay = index * motion.completeStepMs;
+      pulseSvgElement(cell.rect, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.04,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 16px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(cell.text, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.06,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private animateCompletion(motion: MotionProfile): void {
+    const ordered = [...this.cells].sort((left, right) => left.position - right.position);
+    ordered.forEach((cell, index) => {
+      pulseSvgElement(cell.rect, {
+        duration: motion.settleMs,
+        delay: index * motion.completeStepMs,
+        scale: 1.05,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 18px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private findCell(position: number): Cell | undefined {
+    return this.cells.find((cell) => cell.position === position);
   }
 
   private valuesByPosition(): number[] {
@@ -348,5 +453,9 @@ export class ColorGradientVisualization
   private quadraticPoint(start: number, control: number, end: number, t: number): number {
     const mt = 1 - t;
     return mt * mt * start + 2 * mt * t * control + t * t * end;
+  }
+
+  private motion(): MotionProfile {
+    return createMotionProfile(this.speed());
   }
 }

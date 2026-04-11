@@ -14,6 +14,13 @@ import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import {
+  MotionProfile,
+  createMotionProfile,
+  findNewSorted,
+  pulseSvgElement,
+  samePair,
+} from '../../utils/visualization-motion';
 
 interface Dot {
   id: string;
@@ -24,7 +31,6 @@ interface Dot {
 
 type DotState = 'default' | 'comparing' | 'swapping' | 'sorted';
 
-const SWAP_DURATION = 200;
 const DOT_RADIUS_LARGE = 6;
 const DOT_RADIUS_SMALL = 4;
 const SMALL_THRESHOLD = 32;
@@ -42,6 +48,7 @@ const GRID_STEPS = 5;
 export class DotPlotVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
+  readonly speed = input<number>(5);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
@@ -117,10 +124,12 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
   }
 
   render(step: SortStep): void {
+    const previousStep = this.lastStep;
     if (this.dots.length !== step.array.length) {
       this.snapRebuild(step.array);
       this.lastStep = step;
       this.applyStates(step);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
@@ -134,6 +143,7 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
 
     this.lastStep = step;
     this.applyStates(step);
+    this.animateStepEffects(previousStep, step);
   }
 
   destroy(): void {
@@ -155,14 +165,14 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
     const dotB = this.dots.find((d) => d.position === b);
     if (!dotA || !dotB) return false;
 
-    const expected = [...this.dots.map((d) => d.value)];
+    const expected = this.valuesByPosition();
     [expected[a], expected[b]] = [expected[b], expected[a]];
     if (!expected.every((v, i) => v === step.array[i])) return false;
 
     dotA.position = b;
     dotB.position = a;
-    this.animateDotCx(dotA, a, b);
-    this.animateDotCx(dotB, b, a);
+    this.animateDotTo(dotA, a, b, -1);
+    this.animateDotTo(dotB, b, a, 1);
     return true;
   }
 
@@ -269,23 +279,33 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
     }
   }
 
-  private animateDotCx(dot: Dot, fromPos: number, toPos: number): void {
+  private animateDotTo(
+    dot: Dot,
+    fromPos: number,
+    toPos: number,
+    direction: number,
+  ): void {
+    const motion = this.motion();
     const fromX = this.xScale(fromPos);
     const toX = this.xScale(toPos);
     const cy = this.yScale(dot.value);
     dot.circle.setAttribute('cx', String(fromX));
     dot.circle.setAttribute('cy', String(cy));
-    const state = { x: fromX };
+    const state = { x: fromX, t: 0 };
     const target = dot.circle;
     animate(state, {
       x: toX,
-      duration: SWAP_DURATION,
+      t: 1,
+      duration: motion.swapMs,
       ease: 'inOutQuad',
       onUpdate: () => {
         target.setAttribute('cx', String(state.x));
+        const lift = Math.sin(Math.PI * state.t) * motion.swapLiftPx * direction;
+        target.setAttribute('cy', String(cy - lift));
       },
       onComplete: () => {
         target.setAttribute('cx', String(toX));
+        target.setAttribute('cy', String(cy));
       },
     });
   }
@@ -325,5 +345,86 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
           dot.circle.setAttribute('stroke', 'var(--accent)');
       }
     }
+  }
+
+  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    const motion = this.motion();
+    if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
+      this.animateCompare(step.comparing, motion);
+    }
+
+    const freshSorted = findNewSorted(previousStep?.sorted, step.sorted);
+    if (freshSorted.length > 0) {
+      this.animateSorted(freshSorted, motion);
+    }
+
+    if ((previousStep?.sorted.length ?? 0) < step.array.length && step.sorted.length === step.array.length) {
+      this.animateCompletion(motion);
+    }
+  }
+
+  private animateCompare(pair: readonly [number, number], motion: MotionProfile): void {
+    for (const position of pair) {
+      const dot = this.findDot(position);
+      if (!dot) continue;
+      pulseSvgElement(dot.circle, {
+        duration: motion.compareMs,
+        scale: 1.22,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 12px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    }
+  }
+
+  private animateSorted(indices: readonly number[], motion: MotionProfile): void {
+    indices.forEach((position, index) => {
+      const dot = this.findDot(position);
+      if (!dot) return;
+      pulseSvgElement(dot.circle, {
+        duration: motion.settleMs,
+        delay: index * motion.completeStepMs,
+        scale: 1.18,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 14px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private animateCompletion(motion: MotionProfile): void {
+    const ordered = [...this.dots].sort((left, right) => left.position - right.position);
+    ordered.forEach((dot, index) => {
+      pulseSvgElement(dot.circle, {
+        duration: motion.settleMs,
+        delay: index * motion.completeStepMs,
+        scale: 1.2,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 16px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private findDot(position: number): Dot | undefined {
+    return this.dots.find((dot) => dot.position === position);
+  }
+
+  private valuesByPosition(): number[] {
+    const values = new Array<number>(this.dots.length);
+    for (const dot of this.dots) {
+      values[dot.position] = dot.value;
+    }
+    return values;
+  }
+
+  private motion(): MotionProfile {
+    return createMotionProfile(this.speed());
   }
 }

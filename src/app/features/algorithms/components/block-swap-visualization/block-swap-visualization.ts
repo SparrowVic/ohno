@@ -14,6 +14,13 @@ import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import {
+  MotionProfile,
+  createMotionProfile,
+  findNewSorted,
+  pulseSvgElement,
+  samePair,
+} from '../../utils/visualization-motion';
 
 interface Block {
   id: string;
@@ -43,9 +50,7 @@ type BlockState = 'default' | 'comparing' | 'swapping' | 'sorted';
 const BLOCK_SIZE = 48;
 const BLOCK_GAP = 8;
 const BLOCK_STEP = BLOCK_SIZE + BLOCK_GAP;
-const SWAP_DURATION = 300;
 const ARC_HEIGHT = 56;
-const BOUNDARY_DURATION = 260;
 
 @Component({
   selector: 'app-block-swap-visualization',
@@ -57,6 +62,7 @@ const BOUNDARY_DURATION = 260;
 export class BlockSwapVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
+  readonly speed = input<number>(5);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
@@ -140,11 +146,13 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
   }
 
   render(step: SortStep): void {
+    const previousStep = this.lastStep;
     if (this.blocks.length !== step.array.length) {
       this.snapRebuild(step.array);
       this.lastStep = step;
       this.applyStates(step);
       this.updateBoundary(step.boundary, false);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
@@ -159,6 +167,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
     this.lastStep = step;
     this.applyStates(step);
     this.updateBoundary(step.boundary, true);
+    this.animateStepEffects(previousStep, step);
   }
 
   destroy(): void {
@@ -284,6 +293,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
   }
 
   private animateArc(block: Block, fromPos: number, toPos: number, direction: number): void {
+    const motion = this.motion();
     const from = this.layoutFor(fromPos);
     const to = this.layoutFor(toPos);
     block.group.setAttribute('transform', `translate(${from.x}, ${from.y})`);
@@ -291,7 +301,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
     const dx = to.x - from.x;
     const dy = to.y - from.y;
     const distance = Math.hypot(dx, dy) || 1;
-    const controlOffset = Math.min(ARC_HEIGHT, Math.max(24, distance * 0.3));
+    const controlOffset = Math.min(ARC_HEIGHT, Math.max(24, distance * 0.3, motion.swapLiftPx));
     const controlX = (from.x + to.x) / 2 + (-dy / distance) * controlOffset * direction;
     const controlY = (from.y + to.y) / 2 + (dx / distance) * controlOffset * direction;
 
@@ -299,7 +309,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
     const target = block.group;
     animate(state, {
       t: 1,
-      duration: SWAP_DURATION,
+      duration: motion.swapMs,
       ease: 'inOutQuad',
       onUpdate: () => {
         const x = this.quadraticPoint(from.x, controlX, to.x, state.t);
@@ -404,6 +414,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
     if (!this.boundaryLine) return;
     const clamped = Math.max(0, Math.min(this.blocks.length, target));
     const targetGeometry = this.boundaryGeometry(clamped);
+    const motion = this.motion();
 
     if (!shouldAnimate) {
       this.boundaryLine.setAttribute('x1', String(targetGeometry.x));
@@ -428,7 +439,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
       y1: targetGeometry.y1,
       y2: targetGeometry.y2,
       opacity: targetGeometry.visible ? 0.8 : 0,
-      duration: BOUNDARY_DURATION,
+      duration: motion.settleMs,
       ease: 'outQuad',
       onUpdate: () => {
         line.setAttribute('x1', String(state.x));
@@ -446,5 +457,99 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
       },
     });
     this.currentBoundary = clamped;
+  }
+
+  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    const motion = this.motion();
+    if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
+      this.animateCompare(step.comparing, motion);
+    }
+
+    const freshSorted = findNewSorted(previousStep?.sorted, step.sorted);
+    if (freshSorted.length > 0) {
+      this.animateSorted(freshSorted, motion);
+    }
+
+    if ((previousStep?.sorted.length ?? 0) < step.array.length && step.sorted.length === step.array.length) {
+      this.animateCompletion(motion);
+    }
+  }
+
+  private animateCompare(pair: readonly [number, number], motion: MotionProfile): void {
+    for (const position of pair) {
+      const block = this.findBlock(position);
+      if (!block) continue;
+      pulseSvgElement(block.rect, {
+        duration: motion.compareMs,
+        scale: 1.08,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 16px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(block.text, {
+        duration: motion.compareMs,
+        scale: 1.12,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    }
+  }
+
+  private animateSorted(indices: readonly number[], motion: MotionProfile): void {
+    indices.forEach((position, index) => {
+      const block = this.findBlock(position);
+      if (!block) return;
+      const delay = index * motion.completeStepMs;
+      pulseSvgElement(block.rect, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.06,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 18px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(block.text, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.08,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private animateCompletion(motion: MotionProfile): void {
+    const ordered = [...this.blocks].sort((left, right) => left.position - right.position);
+    ordered.forEach((block, index) => {
+      const delay = index * motion.completeStepMs;
+      pulseSvgElement(block.rect, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.08,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 20px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private findBlock(position: number): Block | undefined {
+    return this.blocks.find((block) => block.position === position);
+  }
+
+  private motion(): MotionProfile {
+    return createMotionProfile(this.speed());
   }
 }

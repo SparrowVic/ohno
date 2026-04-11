@@ -14,6 +14,13 @@ import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import {
+  MotionProfile,
+  createMotionProfile,
+  findNewSorted,
+  pulseSvgElement,
+  samePair,
+} from '../../utils/visualization-motion';
 
 interface RadialNode {
   id: string;
@@ -28,7 +35,6 @@ type NodeState = 'default' | 'comparing' | 'swapping' | 'sorted';
 
 const MIN_NODE_R = 4;
 const MAX_NODE_R = 16;
-const SWAP_DURATION = 300;
 const HIDE_LABEL_THRESHOLD = 32;
 const LINE_OPACITY = 0.1;
 
@@ -42,6 +48,7 @@ const LINE_OPACITY = 0.1;
 export class RadialVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
+  readonly speed = input<number>(5);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
@@ -129,10 +136,12 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
   }
 
   render(step: SortStep): void {
+    const previousStep = this.lastStep;
     if (this.nodes.length !== step.array.length) {
       this.snapRebuild(step.array);
       this.lastStep = step;
       this.applyStates(step);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
@@ -146,6 +155,7 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
 
     this.lastStep = step;
     this.applyStates(step);
+    this.animateStepEffects(previousStep, step);
   }
 
   destroy(): void {
@@ -169,7 +179,7 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
     const nodeB = this.nodes.find((n) => n.position === b);
     if (!nodeA || !nodeB) return false;
 
-    const expected = [...this.nodes.map((n) => n.value)];
+    const expected = this.valuesByPosition();
     [expected[a], expected[b]] = [expected[b], expected[a]];
     if (!expected.every((v, i) => v === step.array[i])) return false;
 
@@ -296,23 +306,26 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
   }
 
   private animateNodeAngle(node: RadialNode, fromAngle: number, toAngle: number): void {
+    const motion = this.motion();
     const cx = this.cx;
     const cy = this.cy;
     const ringRadius = this.ringRadius;
     const r = this.nodeRadius(node.value);
     const show = this.showLabels();
-    const state = { a: fromAngle };
+    const state = { a: fromAngle, t: 0 };
     const circle = node.circle;
     const line = node.line;
     const text = node.text;
 
     animate(state, {
       a: toAngle,
-      duration: SWAP_DURATION,
+      t: 1,
+      duration: motion.swapMs,
       ease: 'inOutQuad',
       onUpdate: () => {
-        const x = cx + Math.cos(state.a) * ringRadius;
-        const y = cy + Math.sin(state.a) * ringRadius;
+        const radius = ringRadius + Math.sin(Math.PI * state.t) * motion.swapLiftPx;
+        const x = cx + Math.cos(state.a) * radius;
+        const y = cy + Math.sin(state.a) * radius;
         circle.setAttribute('cx', String(x));
         circle.setAttribute('cy', String(y));
         line.setAttribute('x2', String(x));
@@ -358,6 +371,8 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
           node.circle.setAttribute('fill-opacity', '1');
           node.circle.setAttribute('stroke', 'var(--compare-color)');
           node.circle.setAttribute('stroke-opacity', '1');
+          node.line.setAttribute('stroke', 'var(--compare-color)');
+          node.line.setAttribute('stroke-opacity', '0.5');
           node.text.setAttribute('fill', 'var(--compare-color)');
           break;
         case 'swapping':
@@ -365,6 +380,8 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
           node.circle.setAttribute('fill-opacity', '1');
           node.circle.setAttribute('stroke', 'var(--swap-color)');
           node.circle.setAttribute('stroke-opacity', '1');
+          node.line.setAttribute('stroke', 'var(--swap-color)');
+          node.line.setAttribute('stroke-opacity', '0.65');
           node.text.setAttribute('fill', 'var(--swap-color)');
           break;
         case 'sorted':
@@ -372,6 +389,8 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
           node.circle.setAttribute('fill-opacity', '1');
           node.circle.setAttribute('stroke', 'var(--sorted-color)');
           node.circle.setAttribute('stroke-opacity', '1');
+          node.line.setAttribute('stroke', 'var(--sorted-color)');
+          node.line.setAttribute('stroke-opacity', '0.45');
           node.text.setAttribute('fill', 'var(--sorted-color)');
           break;
         default:
@@ -379,8 +398,123 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
           node.circle.setAttribute('fill-opacity', '0.6');
           node.circle.setAttribute('stroke', 'var(--accent)');
           node.circle.setAttribute('stroke-opacity', '0.9');
+          node.line.setAttribute('stroke', 'var(--text-primary)');
+          node.line.setAttribute('stroke-opacity', String(LINE_OPACITY));
           node.text.setAttribute('fill', 'var(--text-secondary)');
       }
     }
+  }
+
+  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    const motion = this.motion();
+    if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
+      this.animateCompare(step.comparing, motion);
+    }
+
+    const freshSorted = findNewSorted(previousStep?.sorted, step.sorted);
+    if (freshSorted.length > 0) {
+      this.animateSorted(freshSorted, motion);
+    }
+
+    if ((previousStep?.sorted.length ?? 0) < step.array.length && step.sorted.length === step.array.length) {
+      this.animateCompletion(motion);
+    }
+  }
+
+  private animateCompare(pair: readonly [number, number], motion: MotionProfile): void {
+    for (const position of pair) {
+      const node = this.findNode(position);
+      if (!node) continue;
+      pulseSvgElement(node.circle, {
+        duration: motion.compareMs,
+        scale: 1.18,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 14px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(node.text, {
+        duration: motion.compareMs,
+        scale: 1.1,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    }
+  }
+
+  private animateSorted(indices: readonly number[], motion: MotionProfile): void {
+    indices.forEach((position, index) => {
+      const node = this.findNode(position);
+      if (!node) return;
+      const delay = index * motion.completeStepMs;
+      pulseSvgElement(node.circle, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.14,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 16px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(node.text, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.08,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private animateCompletion(motion: MotionProfile): void {
+    const ordered = [...this.nodes].sort((left, right) => left.position - right.position);
+    ordered.forEach((node, index) => {
+      const delay = index * motion.completeStepMs;
+      pulseSvgElement(node.circle, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.16,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 18px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+    if (this.ringEl) {
+      pulseSvgElement(this.ringEl, {
+        duration: motion.settleMs * 1.2,
+        scale: 1.02,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 18px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    }
+  }
+
+  private findNode(position: number): RadialNode | undefined {
+    return this.nodes.find((node) => node.position === position);
+  }
+
+  private valuesByPosition(): number[] {
+    const values = new Array<number>(this.nodes.length);
+    for (const node of this.nodes) {
+      values[node.position] = node.value;
+    }
+    return values;
+  }
+
+  private motion(): MotionProfile {
+    return createMotionProfile(this.speed());
   }
 }

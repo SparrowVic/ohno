@@ -14,6 +14,13 @@ import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import {
+  MotionProfile,
+  createMotionProfile,
+  findNewSorted,
+  pulseSvgElement,
+  samePair,
+} from '../../utils/visualization-motion';
 
 interface Bar {
   id: string;
@@ -28,15 +35,11 @@ type BarState = 'default' | 'comparing' | 'swapping' | 'sorted';
 
 const BAR_GAP = 4;
 const TOP_PADDING = 24;
-const SWAP_DURATION = 200;
 
 const FREQ_MIN = 200;
 const FREQ_MAX = 800;
-const COMPARE_DURATION_S = 0.05;
-const SWAP_DURATION_S = 0.08;
 const AUDIO_GAIN = 0.05;
 const COMPLETE_GAIN = 0.06;
-const COMPLETE_STEP_S = 0.03;
 
 @Component({
   selector: 'app-sound-bars-visualization',
@@ -48,6 +51,7 @@ const COMPLETE_STEP_S = 0.03;
 export class SoundBarsVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
+  readonly speed = input<number>(5);
   readonly muted = input<boolean>(true);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
@@ -64,8 +68,6 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
 
   private audioCtx: AudioContext | null = null;
   private freqScale: d3.ScaleLinear<number, number> = d3.scaleLinear();
-  private completePlayed = false;
-  private prevSortedLength = 0;
 
   constructor() {
     effect(() => {
@@ -121,17 +123,16 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
       .range([FREQ_MIN, FREQ_MAX])
       .clamp(true);
     this.layoutAll();
-    this.completePlayed = false;
-    this.prevSortedLength = 0;
     this.lastStep = null;
   }
 
   render(step: SortStep): void {
+    const previousStep = this.lastStep;
     if (this.bars.length !== step.array.length) {
       this.snapRebuild(step.array);
       this.lastStep = step;
       this.applyStates(step);
-      this.checkComplete(step);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
@@ -140,23 +141,21 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
     if (!needsSync) {
       this.lastStep = step;
       this.applyStates(step);
-      if (step.comparing) this.playCompare(step.comparing[0], step.comparing[1], step.array);
-      this.checkComplete(step);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
     if (step.swapping && this.tryAnimatedSwap(step)) {
       this.lastStep = step;
       this.applyStates(step);
-      this.playSwap(step.swapping[0], step.swapping[1], step.array);
-      this.checkComplete(step);
+      this.animateStepEffects(previousStep, step);
       return;
     }
 
     this.snapRebuild(step.array);
     this.lastStep = step;
     this.applyStates(step);
-    this.checkComplete(step);
+    this.animateStepEffects(previousStep, step);
   }
 
   destroy(): void {
@@ -178,7 +177,7 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
     const barB = this.bars.find((bar) => bar.position === b);
     if (!barA || !barB) return false;
 
-    const expectedArray = [...this.bars.map((bar) => bar.value)];
+    const expectedArray = this.valuesByPosition();
     [expectedArray[a], expectedArray[b]] = [expectedArray[b], expectedArray[a]];
     if (!expectedArray.every((v, i) => v === step.array[i])) return false;
 
@@ -274,17 +273,22 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
   }
 
   private animateBarTo(bar: Bar, fromPos: number, toPos: number): void {
+    const motion = this.motion();
     const fromX = this.xFor(fromPos);
     const toX = this.xFor(toPos);
+    const distance = Math.abs(toX - fromX);
+    const lift = Math.min(motion.swapLiftPx, Math.max(12, distance * 0.18));
     bar.group.setAttribute('transform', `translate(${fromX}, 0)`);
-    const state = { x: fromX };
+    const state = { x: fromX, y: 0 };
     const target = bar.group;
     animate(state, {
       x: toX,
-      duration: SWAP_DURATION,
+      y: 1,
+      duration: motion.swapMs,
       ease: 'inOutQuad',
       onUpdate: () => {
-        target.setAttribute('transform', `translate(${state.x}, 0)`);
+        const y = -Math.sin(Math.PI * state.y) * lift;
+        target.setAttribute('transform', `translate(${state.x}, ${y})`);
       },
       onComplete: () => {
         target.setAttribute('transform', `translate(${toX}, 0)`);
@@ -309,34 +313,119 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
         case 'comparing':
           bar.rect.setAttribute('fill', 'var(--compare-color)');
           bar.rect.setAttribute('fill-opacity', '1');
+          bar.text.setAttribute('fill', 'var(--compare-color)');
           break;
         case 'swapping':
           bar.rect.setAttribute('fill', 'var(--swap-color)');
           bar.rect.setAttribute('fill-opacity', '1');
+          bar.text.setAttribute('fill', 'var(--swap-color)');
           break;
         case 'sorted':
           bar.rect.setAttribute('fill', 'var(--sorted-color)');
           bar.rect.setAttribute('fill-opacity', '0.85');
+          bar.text.setAttribute('fill', 'var(--sorted-color)');
           break;
         default:
           bar.rect.setAttribute('fill', 'var(--accent)');
           bar.rect.setAttribute('fill-opacity', '0.5');
+          bar.text.setAttribute('fill', 'var(--text-tertiary)');
       }
     }
   }
 
-  private checkComplete(step: SortStep): void {
-    if (step.sorted.length < this.prevSortedLength) {
-      this.completePlayed = false;
+  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    const motion = this.motion();
+    if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
+      this.animateCompare(step.comparing, motion);
+      this.playCompare(step.comparing[0], step.comparing[1], step.array, motion);
     }
-    this.prevSortedLength = step.sorted.length;
-    if (step.sorted.length === step.array.length && !this.completePlayed) {
-      this.completePlayed = true;
-      this.playComplete(step.array);
+
+    if (step.swapping && !samePair(previousStep?.swapping ?? null, step.swapping)) {
+      this.playSwap(step.swapping[0], step.swapping[1], step.array, motion);
+    }
+
+    const freshSorted = findNewSorted(previousStep?.sorted, step.sorted);
+    if (freshSorted.length > 0) {
+      this.animateSorted(freshSorted, motion);
+    }
+
+    if ((previousStep?.sorted.length ?? 0) < step.array.length && step.sorted.length === step.array.length) {
+      this.animateCompletion(motion);
+      this.playComplete(step.array, motion);
     }
   }
 
-  // --- Audio ---
+  private animateCompare(pair: readonly [number, number], motion: MotionProfile): void {
+    for (const position of pair) {
+      const bar = this.findBar(position);
+      if (!bar) continue;
+      pulseSvgElement(bar.rect, {
+        duration: motion.compareMs,
+        scale: 1.05,
+        origin: 'center bottom',
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 14px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(bar.text, {
+        duration: motion.compareMs,
+        scale: 1.08,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--compare-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    }
+  }
+
+  private animateSorted(indices: readonly number[], motion: MotionProfile): void {
+    indices.forEach((position, index) => {
+      const bar = this.findBar(position);
+      if (!bar) return;
+      const delay = index * motion.completeStepMs;
+      pulseSvgElement(bar.rect, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.03,
+        origin: 'center bottom',
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 16px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+      pulseSvgElement(bar.text, {
+        duration: motion.settleMs,
+        delay,
+        scale: 1.06,
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 10px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
+
+  private animateCompletion(motion: MotionProfile): void {
+    const ordered = [...this.bars].sort((left, right) => left.position - right.position);
+    ordered.forEach((bar, index) => {
+      pulseSvgElement(bar.rect, {
+        duration: motion.settleMs,
+        delay: index * motion.completeStepMs,
+        scale: 1.04,
+        origin: 'center bottom',
+        filter: [
+          'drop-shadow(0 0 0 transparent)',
+          'drop-shadow(0 0 18px var(--sorted-color))',
+          'drop-shadow(0 0 0 transparent)',
+        ],
+      });
+    });
+  }
 
   private initAudio(): void {
     if (!this.audioCtx) {
@@ -394,34 +483,62 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
     osc.stop(t0 + duration + 0.01);
   }
 
-  private playCompare(posA: number, posB: number, array: readonly number[]): void {
+  private playCompare(
+    posA: number,
+    posB: number,
+    array: readonly number[],
+    motion: MotionProfile,
+  ): void {
     if (this.muted()) return;
     this.initAudio();
-    this.scheduleTone(this.freqScale(array[posA]), COMPARE_DURATION_S, 0);
-    this.scheduleTone(this.freqScale(array[posB]), COMPARE_DURATION_S, 0);
+    const duration = motion.compareMs / 1000;
+    this.scheduleTone(this.freqScale(array[posA]), duration, 0);
+    this.scheduleTone(this.freqScale(array[posB]), duration, 0);
   }
 
-  private playSwap(posA: number, posB: number, array: readonly number[]): void {
+  private playSwap(
+    posA: number,
+    posB: number,
+    array: readonly number[],
+    motion: MotionProfile,
+  ): void {
     if (this.muted()) return;
     this.initAudio();
     this.scheduleSweep(
       this.freqScale(array[posA]),
       this.freqScale(array[posB]),
-      SWAP_DURATION_S,
+      motion.swapMs / 1000,
       0,
     );
   }
 
-  private playComplete(array: readonly number[]): void {
+  private playComplete(array: readonly number[], motion: MotionProfile): void {
     if (this.muted()) return;
     this.initAudio();
+    const duration = motion.completeStepMs / 1000;
     array.forEach((v, idx) => {
       this.scheduleTone(
         this.freqScale(v),
-        COMPLETE_STEP_S,
-        idx * COMPLETE_STEP_S,
+        duration,
+        idx * duration,
         COMPLETE_GAIN,
       );
     });
+  }
+
+  private findBar(position: number): Bar | undefined {
+    return this.bars.find((bar) => bar.position === position);
+  }
+
+  private valuesByPosition(): number[] {
+    const values = new Array<number>(this.bars.length);
+    for (const bar of this.bars) {
+      values[bar.position] = bar.value;
+    }
+    return values;
+  }
+
+  private motion(): MotionProfile {
+    return createMotionProfile(this.speed());
   }
 }

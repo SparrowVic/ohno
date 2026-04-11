@@ -1,6 +1,7 @@
 import { Injectable, Signal, computed, signal } from '@angular/core';
 
 import { SortStep } from '../models/sort-step';
+import { computePlaybackDelay } from '../utils/visualization-motion';
 
 export type EngineState = 'idle' | 'running' | 'paused' | 'complete';
 
@@ -141,7 +142,6 @@ export class VisualizationEngine {
   }
 
   private computeDelay(speed: number): number {
-    const clamped = Math.max(1, Math.min(10, speed));
-    return 500 - ((clamped - 1) / 9) * 480;
+    return computePlaybackDelay(speed);
   }
 }
