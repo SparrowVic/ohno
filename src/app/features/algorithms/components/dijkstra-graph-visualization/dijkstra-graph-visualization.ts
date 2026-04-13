@@ -43,6 +43,9 @@ export class DijkstraGraphVisualization {
   readonly showEdgeWeights = computed(() => this.graphState()?.showEdgeWeights ?? true);
   readonly detailLabel = computed(() => this.graphState()?.detailLabel ?? 'Path');
   readonly sourceCardLabel = computed(() => {
+    if (this.detailLabel().startsWith('Euler')) {
+      return 'Start';
+    }
     switch (this.detailLabel()) {
       case 'MST tree':
         return 'Start';
@@ -149,6 +152,7 @@ export class DijkstraGraphVisualization {
         if (this.detailLabel() === 'Component sweep') return 'Component partition';
         if (this.detailLabel() === 'Partition check') return 'Two-color validation';
         if (this.detailLabel() === 'MST tree') return 'Minimum spanning tree';
+        if (this.detailLabel().startsWith('Euler')) return 'Edge-by-edge trail';
         if (this.detailLabel() === 'Critical links') return 'Low-link analysis';
         if (this.detailLabel() === 'Tarjan SCC map') return 'Low-link SCC sweep';
         if (this.detailLabel() === 'Finish stack') return 'Finish-order sweep';
@@ -175,6 +179,9 @@ export class DijkstraGraphVisualization {
         }
         if (this.detailLabel() === 'MST tree') {
           return 'Teal edges belong to the growing minimum spanning tree. Candidate costs compete to connect the next node.';
+        }
+        if (this.detailLabel().startsWith('Euler')) {
+          return 'Purple edges extend the live walk, teal edges are already locked into the final trail, and odd endpoints mark a path instead of a circuit.';
         }
         if (this.detailLabel() === 'Critical links') {
           return 'Red nodes or edges are articulation points and bridges whose removal disconnects the graph.';

@@ -40,6 +40,81 @@ export function createHopcroftKarpScenario(size: number): HopcroftKarpScenario {
   return size >= 10 ? createLargeMatchingScenario() : createCompactMatchingScenario();
 }
 
+export function createEdmondsKarpScenario(size: number): DinicScenario {
+  return size >= 10 ? createLargeEdmondsKarpScenario() : createCompactEdmondsKarpScenario();
+}
+
+function createCompactEdmondsKarpScenario(): DinicScenario {
+  const nodes: readonly LayeredNetworkNode[] = [
+    { id: 's', label: 'S', x: 110, y: 280, lane: 'source' },
+    { id: 'a', label: 'A', x: 250, y: 150, lane: 'inner' },
+    { id: 'b', label: 'B', x: 250, y: 408, lane: 'inner' },
+    { id: 'c', label: 'C', x: 438, y: 132, lane: 'inner' },
+    { id: 'd', label: 'D', x: 438, y: 282, lane: 'inner' },
+    { id: 'e', label: 'E', x: 438, y: 432, lane: 'inner' },
+    { id: 'f', label: 'F', x: 670, y: 224, lane: 'inner' },
+    { id: 't', label: 'T', x: 840, y: 280, lane: 'sink' },
+  ];
+
+  return {
+    kind: 'dinic',
+    sourceId: 's',
+    sinkId: 't',
+    nodes,
+    edges: [
+      edge('s', 'a', 5),
+      edge('s', 'b', 4),
+      edge('a', 'c', 3),
+      edge('a', 'd', 2),
+      edge('b', 'd', 3),
+      edge('b', 'e', 2),
+      edge('c', 'f', 2),
+      edge('d', 'f', 2),
+      edge('d', 't', 1),
+      edge('e', 't', 2),
+      edge('f', 't', 4),
+    ],
+  };
+}
+
+function createLargeEdmondsKarpScenario(): DinicScenario {
+  const nodes: readonly LayeredNetworkNode[] = [
+    { id: 's', label: 'S', x: 96, y: 280, lane: 'source' },
+    { id: 'a', label: 'A', x: 220, y: 116, lane: 'inner' },
+    { id: 'b', label: 'B', x: 220, y: 280, lane: 'inner' },
+    { id: 'c', label: 'C', x: 220, y: 444, lane: 'inner' },
+    { id: 'd', label: 'D', x: 430, y: 108, lane: 'inner' },
+    { id: 'e', label: 'E', x: 430, y: 256, lane: 'inner' },
+    { id: 'f', label: 'F', x: 430, y: 426, lane: 'inner' },
+    { id: 'g', label: 'G', x: 668, y: 164, lane: 'inner' },
+    { id: 'h', label: 'H', x: 668, y: 372, lane: 'inner' },
+    { id: 't', label: 'T', x: 896, y: 280, lane: 'sink' },
+  ];
+
+  return {
+    kind: 'dinic',
+    sourceId: 's',
+    sinkId: 't',
+    nodes,
+    edges: [
+      edge('s', 'a', 6),
+      edge('s', 'b', 5),
+      edge('s', 'c', 4),
+      edge('a', 'd', 4),
+      edge('a', 'e', 2),
+      edge('b', 'e', 3),
+      edge('b', 'f', 2),
+      edge('c', 'f', 4),
+      edge('d', 'g', 3),
+      edge('e', 'g', 2),
+      edge('e', 'h', 3),
+      edge('f', 'h', 4),
+      edge('g', 't', 4),
+      edge('h', 't', 5),
+    ],
+  };
+}
+
 function createCompactDinicScenario(): DinicScenario {
   const nodes: readonly LayeredNetworkNode[] = [
     { id: 's', label: 'S', x: 110, y: 280, lane: 'source' },

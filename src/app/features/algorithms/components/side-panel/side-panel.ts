@@ -11,6 +11,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
 
 import { GraphStepState } from '../../models/graph';
@@ -21,6 +22,7 @@ import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, LogEntry } from '../../models/detail';
 import { SearchTraceState } from '../../models/search';
 import { CodePanel } from '../code-panel/code-panel';
+import { DpTracePanel } from '../dp-trace-panel/dp-trace-panel';
 import { DsuTracePanel } from '../dsu-trace-panel/dsu-trace-panel';
 import { GraphTracePanel } from '../graph-trace-panel/graph-trace-panel';
 import { GridTracePanel } from '../grid-trace-panel/grid-trace-panel';
@@ -54,6 +56,7 @@ const MAX_WIDTH = 680;
   selector: 'app-side-panel',
   imports: [
     CodePanel,
+    DpTracePanel,
     DsuTracePanel,
     GraphTracePanel,
     GridTracePanel,
@@ -73,6 +76,7 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly activeLineNumber = input<number | null>(null);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
+  readonly dpState = input<DpTraceState | null>(null);
   readonly dsuState = input<DsuTraceState | null>(null);
   readonly gridState = input<GridTraceState | null>(null);
   readonly matrixState = input<MatrixTraceState | null>(null);
@@ -84,7 +88,7 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusHint = input<string | null>(null);
 
   readonly tabs = computed<readonly SideTab[]>(() =>
-    this.traceState() || this.dsuState() || this.gridState() || this.matrixState() || this.networkState() || this.searchState()
+    this.traceState() || this.dpState() || this.dsuState() || this.gridState() || this.matrixState() || this.networkState() || this.searchState()
       ? [TRACE_TAB, ...BASE_SIDE_TABS]
       : BASE_SIDE_TABS,
   );
@@ -105,6 +109,7 @@ export class SidePanel implements OnInit, OnDestroy {
     effect(() => {
       const hasTrace =
         this.traceState() !== null ||
+        this.dpState() !== null ||
         this.dsuState() !== null ||
         this.gridState() !== null ||
         this.matrixState() !== null ||

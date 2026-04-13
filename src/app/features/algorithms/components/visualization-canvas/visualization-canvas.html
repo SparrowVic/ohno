@@ -56,5 +56,15 @@
     @case ('search') {
       <app-search-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
+    @case ('dp') {
+      <app-dp-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="dpPresetOptions()"
+        [presetId]="dpPresetId()"
+        (presetChange)="dpPresetChange.emit($event)"
+      />
+    }
   }
 </div>

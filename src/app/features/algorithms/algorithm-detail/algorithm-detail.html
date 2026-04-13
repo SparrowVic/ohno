@@ -64,7 +64,10 @@
             [speed]="speed()"
             [muted]="muted()"
             [graphFocusTargetId]="graphFocusTargetId()"
+            [dpPresetOptions]="dpPresetOptions()"
+            [dpPresetId]="dpPresetId()"
             (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
+            (dpPresetChange)="onDpPresetChange($event)"
           />
           <app-legend-bar [items]="legendItems()" />
         </div>
@@ -75,6 +78,7 @@
           [activeLineNumber]="activeLineNumber()"
           [logEntries]="logEntries()"
           [traceState]="graphTrace()"
+          [dpState]="dpTrace()"
           [dsuState]="dsuTrace()"
           [gridState]="gridTrace()"
           [matrixState]="matrixTrace()"

@@ -512,6 +512,77 @@ export function generateSccGraph(size: number): WeightedGraphData {
   };
 }
 
+export function generateEulerGraph(size: number): WeightedGraphData {
+  const layout = GRAPH_LAYOUTS[size] ?? GRAPH_LAYOUTS[8];
+  const nodes = buildLayoutNodes(layout, size);
+  const edgePairs: Record<number, readonly [number, number][]> = {
+    6: [
+      [0, 1],
+      [1, 2],
+      [2, 0],
+      [2, 3],
+      [3, 4],
+      [4, 2],
+      [4, 5],
+      [5, 0],
+    ],
+    8: [
+      [0, 1],
+      [1, 2],
+      [2, 0],
+      [2, 3],
+      [3, 4],
+      [4, 2],
+      [4, 5],
+      [5, 6],
+      [6, 4],
+      [6, 7],
+      [7, 0],
+      [0, 6],
+    ],
+    10: [
+      [0, 1],
+      [1, 2],
+      [2, 0],
+      [2, 3],
+      [3, 4],
+      [4, 2],
+      [4, 5],
+      [5, 6],
+      [6, 4],
+      [6, 7],
+      [7, 8],
+      [8, 6],
+      [8, 9],
+      [9, 0],
+    ],
+  };
+
+  const edges = (edgePairs[size] ?? edgePairs[8]).map(([fromIndex, toIndex]) => ({
+    id: edgeId(nodes[fromIndex].id, nodes[toIndex].id),
+    from: nodes[fromIndex].id,
+    to: nodes[toIndex].id,
+    weight: 1,
+  }));
+
+  const degreeByNode = new Map<string, number>(nodes.map((node) => [node.id, 0]));
+  for (const edge of edges) {
+    degreeByNode.set(edge.from, (degreeByNode.get(edge.from) ?? 0) + 1);
+    degreeByNode.set(edge.to, (degreeByNode.get(edge.to) ?? 0) + 1);
+  }
+
+  const startId =
+    nodes.find((node) => ((degreeByNode.get(node.id) ?? 0) & 1) === 1)?.id ??
+    nodes[0]?.id ??
+    '';
+
+  return {
+    nodes,
+    edges,
+    sourceId: startId,
+  };
+}
+
 function buildLayoutNodes(layout: GraphLayout, size: number): WeightedGraphNode[] {
   const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   return layout.positions.slice(0, size).map(([x, y], index) => ({

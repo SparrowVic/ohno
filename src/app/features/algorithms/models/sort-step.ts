@@ -1,3 +1,4 @@
+import { DpTraceState } from './dp';
 import { DsuTraceState } from './dsu';
 import { GraphStepState } from './graph';
 import { GridTraceState } from './grid';
@@ -50,6 +51,7 @@ export interface SortStep {
   readonly activeItemId?: string | null;
   readonly activeBucket?: number | null;
   readonly graph?: GraphStepState | null;
+  readonly dp?: DpTraceState | null;
   readonly dsu?: DsuTraceState | null;
   readonly grid?: GridTraceState | null;
   readonly matrix?: MatrixTraceState | null;

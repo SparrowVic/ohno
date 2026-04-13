@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { DpPresetOption } from '../../models/dp';
 import { WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationVariant } from '../../models/visualization-renderer';
@@ -7,6 +8,7 @@ import { BarChartVisualization } from '../bar-chart-visualization/bar-chart-visu
 import { BlockSwapVisualization } from '../block-swap-visualization/block-swap-visualization';
 import { ColorGradientVisualization } from '../color-gradient-visualization/color-gradient-visualization';
 import { DijkstraGraphVisualization } from '../dijkstra-graph-visualization/dijkstra-graph-visualization';
+import { DpVisualization } from '../dp-visualization/dp-visualization';
 import { DsuVisualization } from '../dsu-visualization/dsu-visualization';
 import { MatrixVisualization } from '../matrix-visualization/matrix-visualization';
 import { NetworkVisualization } from '../network-visualization/network-visualization';
@@ -26,6 +28,7 @@ import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-v
     BlockSwapVisualization,
     ColorGradientVisualization,
     DijkstraGraphVisualization,
+    DpVisualization,
     DsuVisualization,
     MatrixVisualization,
     NetworkVisualization,
@@ -50,5 +53,8 @@ export class VisualizationCanvas {
   readonly speed = input<number>(5);
   readonly muted = input<boolean>(true);
   readonly graphFocusTargetId = input<string | null>(null);
+  readonly dpPresetOptions = input<readonly DpPresetOption[]>([]);
+  readonly dpPresetId = input<string | null>(null);
   readonly graphFocusTargetChange = output<string | null>();
+  readonly dpPresetChange = output<string>();
 }

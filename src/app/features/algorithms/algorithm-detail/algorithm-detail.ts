@@ -21,30 +21,53 @@ import { binarySearchGenerator } from '../algorithms/binary-search';
 import { binarySearchVariantsGenerator } from '../algorithms/binary-search-variants';
 import { bipartiteCheckGenerator } from '../algorithms/bipartite-check';
 import { bridgesArticulationPointsGenerator } from '../algorithms/bridges-articulation-points';
+import { burstBalloonsGenerator } from '../algorithms/burst-balloons';
 import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
+import { climbingStairsGenerator } from '../algorithms/climbing-stairs';
+import { coinChangeGenerator } from '../algorithms/coin-change';
 import { connectedComponentsGenerator } from '../algorithms/connected-components';
 import { countingSortGenerator } from '../algorithms/counting-sort';
 import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
+import { dpConvexHullTrickGenerator } from '../algorithms/dp-convex-hull-trick';
+import { dpOnTreesGenerator } from '../algorithms/dp-on-trees';
+import { dpWithBitmaskGenerator } from '../algorithms/dp-with-bitmask';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
 import { dinicMaxFlowGenerator } from '../algorithms/dinic-max-flow';
+import { divideConquerDpOptimizationGenerator } from '../algorithms/divide-conquer-dp-optimization';
+import { edmondsKarpGenerator } from '../algorithms/edmonds-karp';
 import { dfsGenerator } from '../algorithms/dfs';
+import { editDistanceGenerator } from '../algorithms/edit-distance';
+import { eulerPathCircuitGenerator } from '../algorithms/euler-path-circuit';
+import { fibonacciDpGenerator } from '../algorithms/fibonacci-dp';
 import { floydWarshallGenerator } from '../algorithms/floyd-warshall';
 import { floodFillGenerator } from '../algorithms/flood-fill';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
+import { knapsack01Generator } from '../algorithms/knapsack-01';
+import { knuthDpOptimizationGenerator } from '../algorithms/knuth-dp-optimization';
 import { kruskalsMstGenerator } from '../algorithms/kruskals-mst';
 import { linearSearchGenerator } from '../algorithms/linear-search';
+import { longestCommonSubsequenceGenerator } from '../algorithms/longest-common-subsequence';
+import { longestIncreasingSubsequenceGenerator } from '../algorithms/longest-increasing-subsequence';
+import { longestPalindromicSubsequenceGenerator } from '../algorithms/longest-palindromic-subsequence';
+import { matrixChainMultiplicationGenerator } from '../algorithms/matrix-chain-multiplication';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
 import { primsMstGenerator } from '../algorithms/prims-mst';
+import { profileDpGenerator } from '../algorithms/profile-dp';
+import { regexMatchingDpGenerator } from '../algorithms/regex-matching-dp';
 import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
+import { sosDpGenerator } from '../algorithms/sos-dp';
+import { subsetSumGenerator } from '../algorithms/subset-sum';
 import { tarjanSccGenerator } from '../algorithms/tarjan-scc';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
+import { travelingSalesmanDpGenerator } from '../algorithms/traveling-salesman-dp';
 import { unionFindGenerator } from '../algorithms/union-find';
+import { wildcardMatchingGenerator } from '../algorithms/wildcard-matching';
 import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
 import { hungarianAlgorithmGenerator } from '../algorithms/hungarian-algorithm';
 import { kosarajuSccGenerator } from '../algorithms/kosaraju-scc';
@@ -55,30 +78,54 @@ import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
 import { BINARY_SEARCH_VARIANTS_CODE } from '../data/binary-search-variants-code';
 import { BIPARTITE_CHECK_CODE } from '../data/bipartite-check-code';
 import { BRIDGES_ARTICULATION_POINTS_CODE } from '../data/bridges-articulation-points-code';
+import { BURST_BALLOONS_CODE } from '../data/burst-balloons-code';
 import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import { CLIMBING_STAIRS_CODE } from '../data/climbing-stairs-code';
+import { COIN_CHANGE_CODE } from '../data/coin-change-code';
 import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
 import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { DINIC_MAX_FLOW_CODE } from '../data/dinic-max-flow-code';
+import { DP_CONVEX_HULL_TRICK_CODE } from '../data/dp-convex-hull-trick-code';
+import { DP_ON_TREES_CODE } from '../data/dp-on-trees-code';
+import { DP_WITH_BITMASK_CODE } from '../data/dp-with-bitmask-code';
+import { DIVIDE_CONQUER_DP_OPTIMIZATION_CODE } from '../data/divide-conquer-dp-optimization-code';
+import { EDMONDS_KARP_CODE } from '../data/edmonds-karp-code';
+import { EDIT_DISTANCE_CODE } from '../data/edit-distance-code';
+import { EULER_PATH_CIRCUIT_CODE } from '../data/euler-path-circuit-code';
+import { FIBONACCI_DP_CODE } from '../data/fibonacci-dp-code';
 import { FLOYD_WARSHALL_CODE } from '../data/floyd-warshall-code';
 import { FLOOD_FILL_CODE } from '../data/flood-fill-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
+import { KNAPSACK_01_CODE } from '../data/knapsack-01-code';
+import { KNUTH_DP_OPTIMIZATION_CODE } from '../data/knuth-dp-optimization-code';
 import { KRUSKALS_MST_CODE } from '../data/kruskals-mst-code';
 import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
+import { LONGEST_COMMON_SUBSEQUENCE_CODE } from '../data/longest-common-subsequence-code';
+import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-subsequence-code';
+import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
+import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
+import { PROFILE_DP_CODE } from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
+import { REGEX_MATCHING_DP_CODE } from '../data/regex-matching-dp-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
+import { SOS_DP_CODE } from '../data/sos-dp-code';
+import { SUBSET_SUM_CODE } from '../data/subset-sum-code';
 import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
+import { TRAVELING_SALESMAN_DP_CODE } from '../data/traveling-salesman-dp-code';
 import { UNION_FIND_CODE } from '../data/union-find-code';
+import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
+import { DpPresetOption, DpTraceState } from '../models/dp';
 import { DsuTraceState } from '../models/dsu';
 import { GraphStepState, WeightedGraphData } from '../models/graph';
 import { GridTraceState } from '../models/grid';
@@ -95,6 +142,71 @@ import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
 import {
+  BITMASK_DP_PRESETS,
+  BURST_BALLOONS_PRESETS,
+  CLIMBING_STAIRS_PRESETS,
+  CHT_PRESETS,
+  COIN_CHANGE_PRESETS,
+  DIVIDE_CONQUER_PRESETS,
+  EDIT_DISTANCE_PRESETS,
+  FIBONACCI_PRESETS,
+  KNAPSACK_PRESETS,
+  KNUTH_PRESETS,
+  LCS_PRESETS,
+  LIS_PRESETS,
+  LPS_PRESETS,
+  MATRIX_CHAIN_PRESETS,
+  PROFILE_PRESETS,
+  REGEX_PRESETS,
+  SOS_PRESETS,
+  TREE_DP_PRESETS,
+  SUBSET_SUM_PRESETS,
+  TSP_PRESETS,
+  WILDCARD_PRESETS,
+  BitmaskDpScenario,
+  BurstBalloonsScenario,
+  ChtDpScenario,
+  ClimbingStairsScenario,
+  CoinChangeScenario,
+  createBitmaskDpScenario,
+  createEditDistanceScenario,
+  createBurstBalloonsScenario,
+  createChtDpScenario,
+  createClimbingStairsScenario,
+  createCoinChangeScenario,
+  createDivideConquerDpScenario,
+  createFibonacciScenario,
+  createKnapsackScenario,
+  createKnuthDpScenario,
+  createLcsScenario,
+  createLisScenario,
+  createLpsScenario,
+  createMatrixChainScenario,
+  createProfileDpScenario,
+  createRegexMatchingScenario,
+  createSosDpScenario,
+  createTreeDpScenario,
+  createSubsetSumScenario,
+  createTravelingSalesmanScenario,
+  createWildcardMatchingScenario,
+  DivideConquerDpScenario,
+  EditDistanceScenario,
+  FibonacciScenario,
+  KnapsackScenario,
+  KnuthDpScenario,
+  LcsScenario,
+  LisScenario,
+  LpsScenario,
+  MatrixChainScenario,
+  ProfileDpScenario,
+  RegexMatchingScenario,
+  SosDpScenario,
+  SubsetSumScenario,
+  TreeDpScenario,
+  TravelingSalesmanScenario,
+  WildcardMatchingScenario,
+} from '../utils/dp-scenarios';
+import {
   createKruskalScenario,
   createUnionFindScenario,
   KruskalScenario,
@@ -108,6 +220,7 @@ import {
   generateCycleDetectionGraph,
   generateDagGraph,
   generateDijkstraGraph,
+  generateEulerGraph,
   generateSccGraph,
   generateTraversalGraph,
 } from '../utils/dijkstra-graph';
@@ -120,6 +233,7 @@ import {
   HungarianScenario,
 } from '../utils/matrix-scenarios';
 import {
+  createEdmondsKarpScenario,
   createDinicScenario,
   createHopcroftKarpScenario,
   DinicScenario,
@@ -258,6 +372,14 @@ const KOSARAJU_SCC_LEGEND: readonly LegendItem[] = [
   { label: 'Assigned component', color: '#34d399' },
 ];
 
+const EULER_LEGEND: readonly LegendItem[] = [
+  { label: 'Unused edge', color: 'rgba(255,255,255,0.22)' },
+  { label: 'Current traversal edge', color: '#7c6ef0' },
+  { label: 'Committed trail edge', color: '#3ecf8e' },
+  { label: 'Odd start / end node', color: '#38bdf8' },
+  { label: 'Sealed trail node', color: '#ffde59' },
+];
+
 const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: 'Candidate window', color: '#7c6ef0' },
   { label: 'Probe', color: '#f0b429' },
@@ -301,6 +423,14 @@ const DINIC_LEGEND: readonly LegendItem[] = [
   { label: 'Saturated edge', color: 'var(--text-secondary)', opacity: 0.6 },
 ];
 
+const EDMONDS_KARP_LEGEND: readonly LegendItem[] = [
+  { label: 'Residual candidate edge', color: 'rgba(255,255,255,0.2)' },
+  { label: 'BFS frontier', color: '#7c6ef0' },
+  { label: 'Current inspect edge', color: '#f0b429' },
+  { label: 'Augmenting path', color: '#5eead4' },
+  { label: 'Positive flow / saturated edge', color: '#3ecf8e' },
+];
+
 const FLOYD_WARSHALL_LEGEND: readonly LegendItem[] = [
   { label: 'Pivot row / column', color: '#38bdf8' },
   { label: 'Active compare cell', color: '#f0b429' },
@@ -315,6 +445,172 @@ const HUNGARIAN_LEGEND: readonly LegendItem[] = [
   { label: 'Covered line set', color: '#38bdf8' },
   { label: 'Chosen assignment', color: '#3ecf8e' },
   { label: 'Adjusted by matrix shift', color: '#5eead4' },
+];
+
+const KNAPSACK_LEGEND: readonly LegendItem[] = [
+  { label: 'Base case', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active DP cell', color: '#f0b429' },
+  { label: 'Candidate predecessor', color: '#7c6ef0' },
+  { label: 'Committed best value', color: '#3ecf8e' },
+  { label: 'Backtrack path', color: '#ffde59' },
+];
+
+const LCS_LEGEND: readonly LegendItem[] = [
+  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active compare cell', color: '#f0b429' },
+  { label: 'Character match', color: '#38bdf8' },
+  { label: 'Chosen carry / best value', color: '#3ecf8e' },
+  { label: 'Recovered subsequence path', color: '#ffde59' },
+];
+
+const EDIT_DISTANCE_LEGEND: readonly LegendItem[] = [
+  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active transition', color: '#f0b429' },
+  { label: 'Free carry / char match', color: '#38bdf8' },
+  { label: 'Stored cheapest edit count', color: '#3ecf8e' },
+  { label: 'Recovered edit script', color: '#ffde59' },
+];
+
+const MATRIX_CHAIN_LEGEND: readonly LegendItem[] = [
+  { label: 'Diagonal base interval', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active interval', color: '#f0b429' },
+  { label: 'Candidate subproblem', color: '#7c6ef0' },
+  { label: 'Committed best split', color: '#3ecf8e' },
+  { label: 'Optimal split trace', color: '#ffde59' },
+];
+
+const COIN_CHANGE_LEGEND: readonly LegendItem[] = [
+  { label: 'Base amount / reachable zero', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active amount check', color: '#f0b429' },
+  { label: 'Candidate predecessor', color: '#7c6ef0' },
+  { label: 'Committed min-coin answer', color: '#3ecf8e' },
+  { label: 'Recovered coin path', color: '#ffde59' },
+];
+
+const SUBSET_SUM_LEGEND: readonly LegendItem[] = [
+  { label: 'Base case', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active sum check', color: '#f0b429' },
+  { label: 'Candidate predecessor', color: '#7c6ef0' },
+  { label: 'Reachable boolean state', color: '#3ecf8e' },
+  { label: 'Recovered witness subset', color: '#ffde59' },
+];
+
+const LPS_LEGEND: readonly LegendItem[] = [
+  { label: 'Diagonal single-char base', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active interval', color: '#f0b429' },
+  { label: 'Mirrored character pair', color: '#38bdf8' },
+  { label: 'Committed interval answer', color: '#3ecf8e' },
+  { label: 'Recovered palindrome trace', color: '#ffde59' },
+];
+
+const BURST_BALLOONS_LEGEND: readonly LegendItem[] = [
+  { label: 'Active interval', color: '#f0b429' },
+  { label: 'Candidate subinterval', color: '#7c6ef0' },
+  { label: 'Saved last-burst split', color: '#38bdf8' },
+  { label: 'Committed max-coin score', color: '#3ecf8e' },
+  { label: 'Recovered burst order', color: '#ffde59' },
+];
+
+const WILDCARD_LEGEND: readonly LegendItem[] = [
+  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active transition', color: '#f0b429' },
+  { label: 'Direct char / ? match', color: '#38bdf8' },
+  { label: 'Reachable wildcard state', color: '#3ecf8e' },
+  { label: 'Recovered match route', color: '#ffde59' },
+];
+
+const LIS_LEGEND: readonly LegendItem[] = [
+  { label: 'Input strip / base value', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active end index', color: '#f0b429' },
+  { label: 'Candidate predecessor', color: '#7c6ef0' },
+  { label: 'Committed LIS length', color: '#3ecf8e' },
+  { label: 'Recovered subsequence', color: '#ffde59' },
+];
+
+const CLIMBING_STAIRS_LEGEND: readonly LegendItem[] = [
+  { label: 'Base landing', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active stair', color: '#f0b429' },
+  { label: 'Previous two landings', color: '#7c6ef0' },
+  { label: 'Committed ways count', color: '#3ecf8e' },
+];
+
+const FIBONACCI_LEGEND: readonly LegendItem[] = [
+  { label: 'Base term', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active term', color: '#f0b429' },
+  { label: 'Previous cache terms', color: '#7c6ef0' },
+  { label: 'Committed Fibonacci value', color: '#3ecf8e' },
+];
+
+const REGEX_LEGEND: readonly LegendItem[] = [
+  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active regex state', color: '#f0b429' },
+  { label: 'Dot / literal match', color: '#38bdf8' },
+  { label: 'Reachable regex state', color: '#3ecf8e' },
+  { label: 'Recovered derivation route', color: '#ffde59' },
+];
+
+const TSP_LEGEND: readonly LegendItem[] = [
+  { label: 'Start subset', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active subset expansion', color: '#f0b429' },
+  { label: 'Candidate predecessor state', color: '#7c6ef0' },
+  { label: 'Committed subset route', color: '#3ecf8e' },
+  { label: 'Recovered optimal tour', color: '#ffde59' },
+];
+
+const SOS_LEGEND: readonly LegendItem[] = [
+  { label: 'Base subset row', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active SOS state', color: '#f0b429' },
+  { label: 'Candidate source states', color: '#7c6ef0' },
+  { label: 'Committed aggregated value', color: '#3ecf8e' },
+  { label: 'Recovered contributing submasks', color: '#ffde59' },
+];
+
+const PROFILE_LEGEND: readonly LegendItem[] = [
+  { label: 'Empty frontier base', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active profile state', color: '#f0b429' },
+  { label: 'Candidate predecessor profile', color: '#7c6ef0' },
+  { label: 'Committed tiling count', color: '#3ecf8e' },
+  { label: 'Recovered frontier route', color: '#ffde59' },
+];
+
+const TREE_DP_LEGEND: readonly LegendItem[] = [
+  { label: 'Node weight base', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active parent node', color: '#f0b429' },
+  { label: 'Child subtree being merged', color: '#7c6ef0' },
+  { label: 'Committed subtree DP', color: '#3ecf8e' },
+  { label: 'Recovered independent set', color: '#ffde59' },
+];
+
+const BITMASK_DP_LEGEND: readonly LegendItem[] = [
+  { label: 'Empty-mask base', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active subset state', color: '#f0b429' },
+  { label: 'Candidate predecessor mask', color: '#7c6ef0' },
+  { label: 'Committed subset cost', color: '#3ecf8e' },
+  { label: 'Recovered assignment path', color: '#ffde59' },
+];
+
+const CHT_LEGEND: readonly LegendItem[] = [
+  { label: 'Base point', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active query point', color: '#f0b429' },
+  { label: 'Candidate predecessor line', color: '#7c6ef0' },
+  { label: 'Committed query answer', color: '#3ecf8e' },
+  { label: 'Recovered transition chain', color: '#ffde59' },
+];
+
+const DIVIDE_CONQUER_LEGEND: readonly LegendItem[] = [
+  { label: 'Base DP state', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active midpoint cell', color: '#f0b429' },
+  { label: 'Candidate split source', color: '#7c6ef0' },
+  { label: 'Committed midpoint answer', color: '#3ecf8e' },
+  { label: 'Recovered partition cuts', color: '#ffde59' },
+];
+
+const KNUTH_LEGEND: readonly LegendItem[] = [
+  { label: 'Diagonal base interval', color: 'rgba(255,255,255,0.34)' },
+  { label: 'Active interval', color: '#f0b429' },
+  { label: 'Candidate subinterval', color: '#7c6ef0' },
+  { label: 'Committed split window answer', color: '#3ecf8e' },
+  { label: 'Recovered merge tree', color: '#ffde59' },
 ];
 
 const UNION_FIND_LEGEND: readonly LegendItem[] = [
@@ -365,6 +661,10 @@ const MATRIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'matrix', label: 'Matrix Lab' },
 ];
 
+const DP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dp', label: 'DP Lab' },
+];
+
 const UNION_FIND_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dsu', label: 'Set Forest' },
 ];
@@ -379,6 +679,10 @@ const HOPCROFT_KARP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const DINIC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'network', label: 'Residual Layers' },
+];
+
+const EDMONDS_KARP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'network', label: 'Augmenting Route' },
 ];
 
 const DIJKSTRA_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -427,6 +731,10 @@ const TARJAN_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const KOSARAJU_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Two-Pass SCC' },
+];
+
+const EULER_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Edge Trail' },
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
@@ -485,6 +793,14 @@ interface MatrixAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmVi
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface DpAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'dp';
+  readonly presetOptions: readonly DpPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 interface DsuAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
   readonly kind: 'dsu';
   readonly createScenario: (size: number) => TScenario;
@@ -503,6 +819,7 @@ type AlgorithmViewConfig =
   | SearchAlgorithmViewConfig
   | GridAlgorithmViewConfig<any>
   | MatrixAlgorithmViewConfig<any>
+  | DpAlgorithmViewConfig<any>
   | DsuAlgorithmViewConfig<any>
   | NetworkAlgorithmViewConfig<any>;
 
@@ -675,6 +992,36 @@ function createMatrixViewConfig<TScenario>(args: {
     legendItems: () => args.legendItems,
     sizeUnit: args.sizeUnit ?? 'rows / cols',
     randomizeLabel: args.randomizeLabel ?? 'New matrix',
+  };
+}
+
+function createDpViewConfig<TScenario>(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly legendItems: readonly LegendItem[];
+  readonly presetOptions: readonly DpPresetOption[];
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+  readonly randomizeLabel?: string;
+  readonly sizeUnit?: string;
+}): DpAlgorithmViewConfig<TScenario> {
+  const sizeOptions = args.sizeOptions ?? [4, 6, 8];
+  const defaultPresetId = args.presetOptions[0]?.id ?? 'default';
+  return {
+    kind: 'dp',
+    codeLines: args.codeLines,
+    variantOptions: DP_VARIANT_OPTIONS,
+    defaultVariant: 'dp',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 4,
+    presetOptions: args.presetOptions,
+    defaultPresetId,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => args.legendItems,
+    sizeUnit: args.sizeUnit ?? 'states',
+    randomizeLabel: args.randomizeLabel ?? 'New preset case',
   };
 }
 
@@ -945,6 +1292,20 @@ const KOSARAJU_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New graph',
 };
 
+const EULER_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: EULER_PATH_CIRCUIT_CODE,
+  variantOptions: EULER_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateEulerGraph,
+  generator: eulerPathCircuitGenerator,
+  legendItems: () => EULER_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New trail graph',
+};
+
 const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
   codeLines: FLOOD_FILL_CODE,
   createScenario: (size) => createFloodFillScenario(size),
@@ -983,6 +1344,258 @@ const HUNGARIAN_VIEW_CONFIG = createMatrixViewConfig<HungarianScenario>({
   sizeOptions: [4, 5],
   defaultSize: 4,
   randomizeLabel: 'New assignment grid',
+});
+
+const KNAPSACK_VIEW_CONFIG = createDpViewConfig<KnapsackScenario>({
+  codeLines: KNAPSACK_01_CODE,
+  createScenario: (size, presetId) => createKnapsackScenario(size, presetId),
+  generator: knapsack01Generator,
+  legendItems: KNAPSACK_LEGEND,
+  presetOptions: KNAPSACK_PRESETS,
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  sizeUnit: 'items',
+  randomizeLabel: 'New backpack case',
+});
+
+const LCS_VIEW_CONFIG = createDpViewConfig<LcsScenario>({
+  codeLines: LONGEST_COMMON_SUBSEQUENCE_CODE,
+  createScenario: (size, presetId) => createLcsScenario(size, presetId),
+  generator: longestCommonSubsequenceGenerator,
+  legendItems: LCS_LEGEND,
+  presetOptions: LCS_PRESETS,
+  sizeOptions: [5, 6, 7],
+  defaultSize: 6,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New string pair',
+});
+
+const EDIT_DISTANCE_VIEW_CONFIG = createDpViewConfig<EditDistanceScenario>({
+  codeLines: EDIT_DISTANCE_CODE,
+  createScenario: (size, presetId) => createEditDistanceScenario(size, presetId),
+  generator: editDistanceGenerator,
+  legendItems: EDIT_DISTANCE_LEGEND,
+  presetOptions: EDIT_DISTANCE_PRESETS,
+  sizeOptions: [5, 6, 7],
+  defaultSize: 6,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New word pair',
+});
+
+const MATRIX_CHAIN_VIEW_CONFIG = createDpViewConfig<MatrixChainScenario>({
+  codeLines: MATRIX_CHAIN_MULTIPLICATION_CODE,
+  createScenario: (size, presetId) => createMatrixChainScenario(size, presetId),
+  generator: matrixChainMultiplicationGenerator,
+  legendItems: MATRIX_CHAIN_LEGEND,
+  presetOptions: MATRIX_CHAIN_PRESETS,
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  sizeUnit: 'matrices',
+  randomizeLabel: 'New matrix chain',
+});
+
+const COIN_CHANGE_VIEW_CONFIG = createDpViewConfig<CoinChangeScenario>({
+  codeLines: COIN_CHANGE_CODE,
+  createScenario: (size, presetId) => createCoinChangeScenario(size, presetId),
+  generator: coinChangeGenerator,
+  legendItems: COIN_CHANGE_LEGEND,
+  presetOptions: COIN_CHANGE_PRESETS,
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  sizeUnit: 'coins',
+  randomizeLabel: 'New change case',
+});
+
+const SUBSET_SUM_VIEW_CONFIG = createDpViewConfig<SubsetSumScenario>({
+  codeLines: SUBSET_SUM_CODE,
+  createScenario: (size, presetId) => createSubsetSumScenario(size, presetId),
+  generator: subsetSumGenerator,
+  legendItems: SUBSET_SUM_LEGEND,
+  presetOptions: SUBSET_SUM_PRESETS,
+  sizeOptions: [5, 6],
+  defaultSize: 5,
+  sizeUnit: 'numbers',
+  randomizeLabel: 'New target sum',
+});
+
+const LPS_VIEW_CONFIG = createDpViewConfig<LpsScenario>({
+  codeLines: LONGEST_PALINDROMIC_SUBSEQUENCE_CODE,
+  createScenario: (size, presetId) => createLpsScenario(size, presetId),
+  generator: longestPalindromicSubsequenceGenerator,
+  legendItems: LPS_LEGEND,
+  presetOptions: LPS_PRESETS,
+  sizeOptions: [5, 7, 9],
+  defaultSize: 7,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New palindrome case',
+});
+
+const BURST_BALLOONS_VIEW_CONFIG = createDpViewConfig<BurstBalloonsScenario>({
+  codeLines: BURST_BALLOONS_CODE,
+  createScenario: (size, presetId) => createBurstBalloonsScenario(size, presetId),
+  generator: burstBalloonsGenerator,
+  legendItems: BURST_BALLOONS_LEGEND,
+  presetOptions: BURST_BALLOONS_PRESETS,
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  sizeUnit: 'balloons',
+  randomizeLabel: 'New burst board',
+});
+
+const WILDCARD_VIEW_CONFIG = createDpViewConfig<WildcardMatchingScenario>({
+  codeLines: WILDCARD_MATCHING_CODE,
+  createScenario: (size, presetId) => createWildcardMatchingScenario(size, presetId),
+  generator: wildcardMatchingGenerator,
+  legendItems: WILDCARD_LEGEND,
+  presetOptions: WILDCARD_PRESETS,
+  sizeOptions: [5, 6, 7],
+  defaultSize: 6,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New wildcard pair',
+});
+
+const LIS_VIEW_CONFIG = createDpViewConfig<LisScenario>({
+  codeLines: LONGEST_INCREASING_SUBSEQUENCE_CODE,
+  createScenario: (size, presetId) => createLisScenario(size, presetId),
+  generator: longestIncreasingSubsequenceGenerator,
+  legendItems: LIS_LEGEND,
+  presetOptions: LIS_PRESETS,
+  sizeOptions: [6, 8],
+  defaultSize: 6,
+  sizeUnit: 'values',
+  randomizeLabel: 'New LIS strip',
+});
+
+const CLIMBING_STAIRS_VIEW_CONFIG = createDpViewConfig<ClimbingStairsScenario>({
+  codeLines: CLIMBING_STAIRS_CODE,
+  createScenario: (size, presetId) => createClimbingStairsScenario(size, presetId),
+  generator: climbingStairsGenerator,
+  legendItems: CLIMBING_STAIRS_LEGEND,
+  presetOptions: CLIMBING_STAIRS_PRESETS,
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'stairs',
+  randomizeLabel: 'New staircase',
+});
+
+const FIBONACCI_VIEW_CONFIG = createDpViewConfig<FibonacciScenario>({
+  codeLines: FIBONACCI_DP_CODE,
+  createScenario: (size, presetId) => createFibonacciScenario(size, presetId),
+  generator: fibonacciDpGenerator,
+  legendItems: FIBONACCI_LEGEND,
+  presetOptions: FIBONACCI_PRESETS,
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'terms',
+  randomizeLabel: 'New Fibonacci run',
+});
+
+const REGEX_VIEW_CONFIG = createDpViewConfig<RegexMatchingScenario>({
+  codeLines: REGEX_MATCHING_DP_CODE,
+  createScenario: (size, presetId) => createRegexMatchingScenario(size, presetId),
+  generator: regexMatchingDpGenerator,
+  legendItems: REGEX_LEGEND,
+  presetOptions: REGEX_PRESETS,
+  sizeOptions: [5, 6, 7],
+  defaultSize: 6,
+  sizeUnit: 'text chars',
+  randomizeLabel: 'New regex pair',
+});
+
+const TSP_VIEW_CONFIG = createDpViewConfig<TravelingSalesmanScenario>({
+  codeLines: TRAVELING_SALESMAN_DP_CODE,
+  createScenario: (size, presetId) => createTravelingSalesmanScenario(size, presetId),
+  generator: travelingSalesmanDpGenerator,
+  legendItems: TSP_LEGEND,
+  presetOptions: TSP_PRESETS,
+  sizeOptions: [4, 5],
+  defaultSize: 4,
+  sizeUnit: 'cities',
+  randomizeLabel: 'New city loop',
+});
+
+const SOS_VIEW_CONFIG = createDpViewConfig<SosDpScenario>({
+  codeLines: SOS_DP_CODE,
+  createScenario: (size, presetId) => createSosDpScenario(size, presetId),
+  generator: sosDpGenerator,
+  legendItems: SOS_LEGEND,
+  presetOptions: SOS_PRESETS,
+  sizeOptions: [3, 4],
+  defaultSize: 3,
+  sizeUnit: 'bits',
+  randomizeLabel: 'New subset family',
+});
+
+const PROFILE_VIEW_CONFIG = createDpViewConfig<ProfileDpScenario>({
+  codeLines: PROFILE_DP_CODE,
+  createScenario: (size, presetId) => createProfileDpScenario(size, presetId),
+  generator: profileDpGenerator,
+  legendItems: PROFILE_LEGEND,
+  presetOptions: PROFILE_PRESETS,
+  sizeOptions: [5, 6, 7],
+  defaultSize: 5,
+  sizeUnit: 'columns',
+  randomizeLabel: 'New frontier board',
+});
+
+const TREE_DP_VIEW_CONFIG = createDpViewConfig<TreeDpScenario>({
+  codeLines: DP_ON_TREES_CODE,
+  createScenario: (size, presetId) => createTreeDpScenario(size, presetId),
+  generator: dpOnTreesGenerator,
+  legendItems: TREE_DP_LEGEND,
+  presetOptions: TREE_DP_PRESETS,
+  sizeOptions: [6, 7],
+  defaultSize: 7,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New rooted tree',
+});
+
+const BITMASK_DP_VIEW_CONFIG = createDpViewConfig<BitmaskDpScenario>({
+  codeLines: DP_WITH_BITMASK_CODE,
+  createScenario: (size, presetId) => createBitmaskDpScenario(size, presetId),
+  generator: dpWithBitmaskGenerator,
+  legendItems: BITMASK_DP_LEGEND,
+  presetOptions: BITMASK_DP_PRESETS,
+  sizeOptions: [3, 4],
+  defaultSize: 4,
+  sizeUnit: 'jobs',
+  randomizeLabel: 'New mask assignment',
+});
+
+const CHT_VIEW_CONFIG = createDpViewConfig<ChtDpScenario>({
+  codeLines: DP_CONVEX_HULL_TRICK_CODE,
+  createScenario: (size, presetId) => createChtDpScenario(size, presetId),
+  generator: dpConvexHullTrickGenerator,
+  legendItems: CHT_LEGEND,
+  presetOptions: CHT_PRESETS,
+  sizeOptions: [4, 6],
+  defaultSize: 6,
+  sizeUnit: 'points',
+  randomizeLabel: 'New hull run',
+});
+
+const DIVIDE_CONQUER_VIEW_CONFIG = createDpViewConfig<DivideConquerDpScenario>({
+  codeLines: DIVIDE_CONQUER_DP_OPTIMIZATION_CODE,
+  createScenario: (size, presetId) => createDivideConquerDpScenario(size, presetId),
+  generator: divideConquerDpOptimizationGenerator,
+  legendItems: DIVIDE_CONQUER_LEGEND,
+  presetOptions: DIVIDE_CONQUER_PRESETS,
+  sizeOptions: [5, 7],
+  defaultSize: 7,
+  sizeUnit: 'values',
+  randomizeLabel: 'New partition case',
+});
+
+const KNUTH_VIEW_CONFIG = createDpViewConfig<KnuthDpScenario>({
+  codeLines: KNUTH_DP_OPTIMIZATION_CODE,
+  createScenario: (size, presetId) => createKnuthDpScenario(size, presetId),
+  generator: knuthDpOptimizationGenerator,
+  legendItems: KNUTH_LEGEND,
+  presetOptions: KNUTH_PRESETS,
+  sizeOptions: [4, 6],
+  defaultSize: 6,
+  sizeUnit: 'files',
+  randomizeLabel: 'New merge chain',
 });
 
 const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
@@ -1031,6 +1644,18 @@ const DINIC_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
   defaultSize: 8,
   sizeUnit: 'nodes',
   randomizeLabel: 'New flow network',
+});
+
+const EDMONDS_KARP_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
+  codeLines: EDMONDS_KARP_CODE,
+  variantOptions: EDMONDS_KARP_VARIANT_OPTIONS,
+  createScenario: (size) => createEdmondsKarpScenario(size),
+  generator: edmondsKarpGenerator,
+  legendItems: EDMONDS_KARP_LEGEND,
+  sizeOptions: [8, 10],
+  defaultSize: 8,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New augmenting network',
 });
 
 @Component({
@@ -1114,6 +1739,69 @@ export class AlgorithmDetail {
     if (algorithm.id === 'binary-search-variants') {
       return BINARY_SEARCH_VARIANTS_VIEW_CONFIG;
     }
+    if (algorithm.id === 'knapsack-01') {
+      return KNAPSACK_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'longest-common-subsequence') {
+      return LCS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'edit-distance') {
+      return EDIT_DISTANCE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'matrix-chain-multiplication') {
+      return MATRIX_CHAIN_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'coin-change') {
+      return COIN_CHANGE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'subset-sum') {
+      return SUBSET_SUM_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'longest-palindromic-subsequence') {
+      return LPS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'burst-balloons') {
+      return BURST_BALLOONS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'wildcard-matching') {
+      return WILDCARD_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'longest-increasing-subsequence') {
+      return LIS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'climbing-stairs') {
+      return CLIMBING_STAIRS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'fibonacci-dp') {
+      return FIBONACCI_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'regex-matching-dp') {
+      return REGEX_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'traveling-salesman-dp') {
+      return TSP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'sos-dp') {
+      return SOS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'profile-dp') {
+      return PROFILE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'dp-on-trees') {
+      return TREE_DP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'dp-with-bitmask') {
+      return BITMASK_DP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'dp-convex-hull-trick') {
+      return CHT_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'divide-conquer-dp-optimization') {
+      return DIVIDE_CONQUER_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'knuth-dp-optimization') {
+      return KNUTH_VIEW_CONFIG;
+    }
     if (algorithm.id === 'dijkstra') {
       return DIJKSTRA_VIEW_CONFIG;
     }
@@ -1150,6 +1838,9 @@ export class AlgorithmDetail {
     if (algorithm.id === 'kosaraju-scc') {
       return KOSARAJU_SCC_VIEW_CONFIG;
     }
+    if (algorithm.id === 'euler-path-circuit') {
+      return EULER_VIEW_CONFIG;
+    }
     if (algorithm.id === 'flood-fill') {
       return FLOOD_FILL_VIEW_CONFIG;
     }
@@ -1174,6 +1865,9 @@ export class AlgorithmDetail {
     if (algorithm.id === 'dinic-max-flow') {
       return DINIC_VIEW_CONFIG;
     }
+    if (algorithm.id === 'edmonds-karp') {
+      return EDMONDS_KARP_VIEW_CONFIG;
+    }
     return BUBBLE_VIEW_CONFIG;
   });
 
@@ -1182,6 +1876,7 @@ export class AlgorithmDetail {
   private readonly mutedSig = signal(true);
   private readonly arraySig = signal<readonly number[]>(this.generateArray(16, { min: 1, max: 99 }));
   private readonly graphSig = signal<WeightedGraphData | null>(null);
+  private readonly dpPresetSig = signal<string | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
@@ -1192,6 +1887,7 @@ export class AlgorithmDetail {
   readonly muted = this.mutedSig.asReadonly();
   readonly array = this.arraySig.asReadonly();
   readonly graph = this.graphSig.asReadonly();
+  readonly dpPresetId = this.dpPresetSig.asReadonly();
   readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
@@ -1201,9 +1897,14 @@ export class AlgorithmDetail {
   readonly logEntries = this.logEntriesSig.asReadonly();
   readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
   readonly variantOptions = computed(() => this.config()?.variantOptions ?? []);
+  readonly dpPresetOptions = computed<readonly DpPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'dp' ? config.presetOptions : [];
+  });
   readonly sizeUnit = computed(() => this.config()?.sizeUnit ?? 'elements');
   readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
+  readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
   readonly dsuTrace = computed<DsuTraceState | null>(() => this.currentSnapshot()?.dsu ?? null);
   readonly gridTrace = computed<GridTraceState | null>(() => this.currentSnapshot()?.grid ?? null);
   readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
@@ -1266,6 +1967,7 @@ export class AlgorithmDetail {
           this.lastLoggedStep = -1;
           this.currentSnapshot.set(null);
           this.graphSig.set(null);
+          this.dpPresetSig.set(null);
           this.graphFocusTargetIdSig.set(null);
           this.engine.reset();
           return;
@@ -1274,6 +1976,7 @@ export class AlgorithmDetail {
         this.sizeSig.set(config.defaultSize);
         this.variantSig.set(config.defaultVariant);
         this.mutedSig.set(true);
+        this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
         this.graphFocusTargetIdSig.set(null);
 
         if (config.kind === 'graph') {
@@ -1305,6 +2008,14 @@ export class AlgorithmDetail {
           this.arraySig.set([]);
           this.graphSig.set(null);
           this.loadMatrixEngine(scenario, config.generator);
+          return;
+        }
+
+        if (config.kind === 'dp') {
+          const scenario = config.createScenario(config.defaultSize, config.defaultPresetId);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadDpEngine(scenario, config.generator);
           return;
         }
 
@@ -1401,6 +2112,15 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'dp') {
+      const presetId = this.dpPresetSig() ?? config.defaultPresetId;
+      const scenario = config.createScenario(value, presetId);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadDpEngine(scenario, config.generator);
+      return;
+    }
+
     if (config.kind === 'dsu') {
       const scenario = config.createScenario(value);
       this.arraySig.set([]);
@@ -1459,6 +2179,15 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'dp') {
+      const presetId = this.dpPresetSig() ?? config.defaultPresetId;
+      const scenario = config.createScenario(this.sizeSig(), presetId);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadDpEngine(scenario, config.generator);
+      return;
+    }
+
     if (config.kind === 'dsu') {
       const scenario = config.createScenario(this.sizeSig());
       this.arraySig.set([]);
@@ -1501,6 +2230,19 @@ export class AlgorithmDetail {
     this.graphFocusTargetIdSig.set(value);
   }
 
+  onDpPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'dp') return;
+    const allowed = config.presetOptions.some((option) => option.id === value);
+    if (!allowed || value === this.dpPresetSig()) return;
+
+    this.dpPresetSig.set(value);
+    const scenario = config.createScenario(this.sizeSig(), value);
+    this.arraySig.set([]);
+    this.graphSig.set(null);
+    this.loadDpEngine(scenario, config.generator);
+  }
+
   private loadArrayEngine(
     array: readonly number[],
     generator: (values: readonly number[]) => Generator<SortStep>,
@@ -1530,6 +2272,13 @@ export class AlgorithmDetail {
   }
 
   private loadMatrixEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadDpEngine<TScenario>(
     scenario: TScenario,
     generator: (scenario: TScenario) => Generator<SortStep>,
   ): void {

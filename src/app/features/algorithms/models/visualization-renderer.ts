@@ -14,6 +14,7 @@ export type VisualizationVariant =
   | 'radial'
   | 'sound'
   | 'search'
+  | 'dp'
   | 'grid'
   | 'matrix'
   | 'dsu'

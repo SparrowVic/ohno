@@ -546,6 +546,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'flow-matching',
     tags: ['max flow', 'BFS', 'augmenting path'],
+    complexity: {
+      timeBest: 'O(VE²)',
+      timeAverage: 'O(VE²)',
+      timeWorst: 'O(VE²)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'hungarian-algorithm',
@@ -571,6 +578,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'advanced',
     tags: ['trail', 'degree parity', 'graph traversal'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'hopcroft-karp',
@@ -648,6 +662,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'classic',
     tags: ['capacity', 'DP table', 'optimization'],
+    complexity: {
+      timeBest: 'O(nW)',
+      timeAverage: 'O(nW)',
+      timeWorst: 'O(nW)',
+      space: 'O(nW)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'longest-common-subsequence',
@@ -657,6 +678,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'sequences',
     tags: ['strings', 'DP table', 'sequence'],
+    complexity: {
+      timeBest: 'O(mn)',
+      timeAverage: 'O(mn)',
+      timeWorst: 'O(mn)',
+      space: 'O(mn)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'longest-increasing-subsequence',
@@ -666,15 +694,29 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'sequences',
     tags: ['sequence', 'patience sorting', 'DP'],
+    complexity: {
+      timeBest: 'O(n²)',
+      timeAverage: 'O(n²)',
+      timeWorst: 'O(n²)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'coin-change',
     name: 'Coin Change',
-    description: 'Counts or minimizes combinations of coins for a target amount.',
+    description: 'Finds the minimum number of coins needed to hit a target amount.',
     difficulty: Difficulty.Medium,
     category: 'dp',
     subcategory: 'classic',
     tags: ['amount', 'unbounded', 'DP'],
+    complexity: {
+      timeBest: 'O(nA)',
+      timeAverage: 'O(nA)',
+      timeWorst: 'O(nA)',
+      space: 'O(nA)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'edit-distance',
@@ -684,6 +726,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'sequences',
     tags: ['Levenshtein', 'strings', 'DP table'],
+    complexity: {
+      timeBest: 'O(mn)',
+      timeAverage: 'O(mn)',
+      timeWorst: 'O(mn)',
+      space: 'O(mn)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'climbing-stairs',
@@ -693,6 +742,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'classic',
     tags: ['counting', 'recurrence', 'Fibonacci-like'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'matrix-chain-multiplication',
@@ -702,6 +758,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'classic',
     tags: ['interval DP', 'parenthesization', 'cost'],
+    complexity: {
+      timeBest: 'O(n³)',
+      timeAverage: 'O(n³)',
+      timeWorst: 'O(n³)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'fibonacci-dp',
@@ -711,6 +774,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'classic',
     tags: ['memoization', 'tabulation', 'DP intro'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dp-on-trees',
@@ -720,6 +790,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'advanced',
     tags: ['tree DP', 'subtree states', 'rerooting'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dp-with-bitmask',
@@ -729,6 +806,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'advanced',
     tags: ['subset state', 'bitmask', 'optimization'],
+    complexity: {
+      timeBest: 'O(n²·2ⁿ)',
+      timeAverage: 'O(n²·2ⁿ)',
+      timeWorst: 'O(n²·2ⁿ)',
+      space: 'O(n·2ⁿ)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'longest-palindromic-subsequence',
@@ -738,6 +822,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'sequences',
     tags: ['palindrome', 'interval DP', 'strings'],
+    complexity: {
+      timeBest: 'O(n²)',
+      timeAverage: 'O(n²)',
+      timeWorst: 'O(n²)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'traveling-salesman-dp',
@@ -747,6 +838,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'advanced',
     tags: ['TSP', 'bitmask', 'Hamiltonian'],
+    complexity: {
+      timeBest: 'O(n²·2ⁿ)',
+      timeAverage: 'O(n²·2ⁿ)',
+      timeWorst: 'O(n²·2ⁿ)',
+      space: 'O(n·2ⁿ)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'subset-sum',
@@ -756,6 +854,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'classic',
     tags: ['target sum', 'DP', 'subset'],
+    complexity: {
+      timeBest: 'O(nS)',
+      timeAverage: 'O(nS)',
+      timeWorst: 'O(nS)',
+      space: 'O(nS)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'burst-balloons',
@@ -765,6 +870,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'advanced',
     tags: ['interval DP', 'optimization', 'ordering'],
+    complexity: {
+      timeBest: 'O(n³)',
+      timeAverage: 'O(n³)',
+      timeWorst: 'O(n³)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'regex-matching-dp',
@@ -774,6 +886,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'sequences',
     tags: ['pattern', 'strings', 'DP table'],
+    complexity: {
+      timeBest: 'O(mn)',
+      timeAverage: 'O(mn)',
+      timeWorst: 'O(mn)',
+      space: 'O(mn)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'wildcard-matching',
@@ -783,6 +902,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'sequences',
     tags: ['wildcards', 'strings', 'DP'],
+    complexity: {
+      timeBest: 'O(mn)',
+      timeAverage: 'O(mn)',
+      timeWorst: 'O(mn)',
+      space: 'O(mn)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dp-convex-hull-trick',
@@ -792,6 +918,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'optimization',
     tags: ['CHT', 'optimization', 'lines'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'divide-conquer-dp-optimization',
@@ -801,6 +934,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'optimization',
     tags: ['optimization', 'monotonicity', 'DP'],
+    complexity: {
+      timeBest: 'O(k n log n)',
+      timeAverage: 'O(k n log n)',
+      timeWorst: 'O(k n log n)',
+      space: 'O(k n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'knuth-dp-optimization',
@@ -810,6 +950,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'optimization',
     tags: ['interval DP', 'optimization', 'quadrangle inequality'],
+    complexity: {
+      timeBest: 'O(n²)',
+      timeAverage: 'O(n²)',
+      timeWorst: 'O(n²)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'sos-dp',
@@ -819,6 +966,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'optimization',
     tags: ['subsets', 'bitmask', 'sum over subsets'],
+    complexity: {
+      timeBest: 'O(B · 2^B)',
+      timeAverage: 'O(B · 2^B)',
+      timeWorst: 'O(B · 2^B)',
+      space: 'O(2^B)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'profile-dp',
@@ -828,6 +982,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'dp',
     subcategory: 'optimization',
     tags: ['grids', 'bitmask frontier', 'tiling'],
+    complexity: {
+      timeBest: 'O(W · 2^H)',
+      timeAverage: 'O(W · 2^H)',
+      timeWorst: 'O(W · 2^H)',
+      space: 'O(W · 2^H)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'kmp-pattern-matching',

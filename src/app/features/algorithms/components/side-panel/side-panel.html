@@ -24,6 +24,8 @@
             [focusModeLabel]="graphFocusModeLabel()"
             [focusHint]="graphFocusHint()"
           />
+        } @else if (dpState()) {
+          <app-dp-trace-panel [state]="dpState()" />
         } @else if (dsuState()) {
           <app-dsu-trace-panel [state]="dsuState()" />
         } @else if (gridState()) {

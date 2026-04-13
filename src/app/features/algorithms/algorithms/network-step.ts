@@ -78,7 +78,12 @@ export function createNetworkStep(args: NetworkStepArgs): SortStep {
     phase: args.phase,
     network: {
       mode: args.mode,
-      modeLabel: args.mode === 'dinic' ? "Dinic's Max Flow" : 'Hopcroft-Karp',
+      modeLabel:
+        args.mode === 'dinic'
+          ? "Dinic's Max Flow"
+          : args.mode === 'edmonds-karp'
+            ? 'Edmonds-Karp'
+            : 'Hopcroft-Karp',
       phaseLabel: args.phaseLabel,
       statusLabel: args.statusLabel,
       resultLabel: args.resultLabel,

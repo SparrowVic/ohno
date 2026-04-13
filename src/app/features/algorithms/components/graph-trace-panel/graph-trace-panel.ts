@@ -22,6 +22,9 @@ export class GraphTracePanel {
     return source?.label ?? '—';
   });
   readonly sourceCardLabel = computed(() => {
+    if (this.state()?.detailLabel.startsWith('Euler')) {
+      return 'Start';
+    }
     switch (this.state()?.detailLabel) {
       case 'MST tree':
         return 'Start';
