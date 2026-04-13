@@ -1,18 +1,50 @@
 <aside class="sidebar">
   @for (group of groups(); track group.id) {
-    <div class="sidebar__section">
-      <div class="sidebar__label">{{ group.label }}</div>
-      @for (item of group.items; track item.id) {
+    @if (group.items.length === 1) {
+      <div class="sidebar__solo">
         <button
           type="button"
-          class="sidebar__item"
-          [class.sidebar__item--active]="isActive(group.id, item.id)"
-          (click)="selectItem(group.id, item.id)"
+          class="sidebar__solo-btn"
+          [class.sidebar__solo-btn--active]="isActive(group.id, group.items[0].id)"
+          (click)="selectItem(group.id, group.items[0].id)"
         >
-          <span class="sidebar__item-label">{{ item.label }}</span>
-          <span class="sidebar__count">{{ item.count }}</span>
+          <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
+          <span class="sidebar__solo-label">{{ group.items[0].label }}</span>
+          <span class="sidebar__count">{{ group.items[0].count }}</span>
         </button>
-      }
-    </div>
+      </div>
+    } @else {
+      <div class="sidebar__group" [class.sidebar__group--expanded]="isExpanded(group.id)">
+        <button
+          type="button"
+          class="sidebar__group-header"
+          [class.sidebar__group-header--active]="isGroupActive(group.id)"
+          (click)="toggleGroup(group.id)"
+        >
+          <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
+          <span class="sidebar__group-label">{{ group.label }}</span>
+          <span class="sidebar__count">{{ getCategoryCount(group.id) }}</span>
+          <svg class="sidebar__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4,6 8,10 12,6"/>
+          </svg>
+        </button>
+
+        <div class="sidebar__items">
+          <div class="sidebar__items-inner">
+            @for (item of group.items; track item.id) {
+              <button
+                type="button"
+                class="sidebar__item"
+                [class.sidebar__item--active]="isActive(group.id, item.id)"
+                (click)="selectItem(group.id, item.id)"
+              >
+                <span class="sidebar__item-label">{{ item.label }}</span>
+                <span class="sidebar__count">{{ item.count }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    }
   }
 </aside>
