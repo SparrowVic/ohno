@@ -16,17 +16,29 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { bfsGenerator } from '../algorithms/bfs';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
+import { countingSortGenerator } from '../algorithms/counting-sort';
 import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
 import { dfsGenerator } from '../algorithms/dfs';
+import { heapSortGenerator } from '../algorithms/heap-sort';
+import { insertionSortGenerator } from '../algorithms/insertion-sort';
+import { mergeSortGenerator } from '../algorithms/merge-sort';
+import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
+import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
 import { BFS_CODE } from '../data/bfs-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
 import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
+import { HEAP_SORT_CODE } from '../data/heap-sort-code';
+import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
+import { MERGE_SORT_CODE } from '../data/merge-sort-code';
+import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
+import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { WeightedGraphData } from '../models/graph';
 import { AlgorithmItem } from '../models/algorithm';
@@ -126,6 +138,11 @@ const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'sound', label: 'Sound Bars' },
 ];
 
+const SORT_BAR_BLOCK_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'bar', label: 'Bar Chart' },
+  { value: 'block', label: 'Block Swap' },
+];
+
 const RADIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'radix', label: 'Bucket Flow' },
   { value: 'radix-strip', label: 'Digit Strip' },
@@ -153,6 +170,7 @@ const CYCLE_DETECTION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
+const COUNTING_SIZE_OPTIONS: readonly number[] = [12, 24, 36];
 const RADIX_SIZE_OPTIONS: readonly number[] = [12, 18, 24];
 const DIJKSTRA_SIZE_OPTIONS: readonly number[] = [6, 8, 10];
 
@@ -217,6 +235,72 @@ const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeUnit: 'elements',
   randomizeLabel: 'Randomize',
 };
+
+function createSortViewConfig(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly generator: (array: readonly number[]) => Generator<SortStep>;
+  readonly randomRange: RandomRange;
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+}): AlgorithmViewConfig {
+  const sizeOptions = args.sizeOptions ?? BUBBLE_SIZE_OPTIONS;
+  return {
+    kind: 'array',
+    codeLines: args.codeLines,
+    variantOptions: SORT_BAR_BLOCK_VARIANT_OPTIONS,
+    defaultVariant: 'bar',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 16,
+    randomRange: args.randomRange,
+    generator: args.generator,
+    legendItems: (variant) => (variant === 'block' ? BLOCK_LEGEND : BAR_LEGEND),
+    sizeUnit: 'elements',
+    randomizeLabel: 'Randomize',
+  };
+}
+
+const SELECTION_VIEW_CONFIG = createSortViewConfig({
+  codeLines: SELECTION_SORT_CODE,
+  generator: selectionSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
+const INSERTION_VIEW_CONFIG = createSortViewConfig({
+  codeLines: INSERTION_SORT_CODE,
+  generator: insertionSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
+const COUNTING_VIEW_CONFIG = createSortViewConfig({
+  codeLines: COUNTING_SORT_CODE,
+  generator: countingSortGenerator,
+  randomRange: { min: 1, max: 24 },
+  sizeOptions: COUNTING_SIZE_OPTIONS,
+  defaultSize: 24,
+});
+
+const MERGE_VIEW_CONFIG = createSortViewConfig({
+  codeLines: MERGE_SORT_CODE,
+  generator: mergeSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
+const QUICK_VIEW_CONFIG = createSortViewConfig({
+  codeLines: QUICK_SORT_CODE,
+  generator: quickSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
+const HEAP_VIEW_CONFIG = createSortViewConfig({
+  codeLines: HEAP_SORT_CODE,
+  generator: heapSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
 
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
@@ -332,6 +416,24 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'radix-sort') {
       return RADIX_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'selection-sort') {
+      return SELECTION_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'insertion-sort') {
+      return INSERTION_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'counting-sort') {
+      return COUNTING_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'merge-sort') {
+      return MERGE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'quick-sort') {
+      return QUICK_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'heap-sort') {
+      return HEAP_VIEW_CONFIG;
     }
     if (algorithm.id === 'dijkstra') {
       return DIJKSTRA_VIEW_CONFIG;

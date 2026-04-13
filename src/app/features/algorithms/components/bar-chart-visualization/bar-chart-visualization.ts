@@ -169,8 +169,8 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
 
     barA.position = b;
     barB.position = a;
-    this.animateBarTo(barA, b, a);
-    this.animateBarTo(barB, a, b);
+    this.animateBarTo(barA, a, b);
+    this.animateBarTo(barB, b, a);
     return true;
   }
 

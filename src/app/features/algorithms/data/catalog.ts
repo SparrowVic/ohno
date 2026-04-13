@@ -53,6 +53,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     },
     stable: false,
     inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'insertion-sort',
@@ -70,6 +71,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     },
     stable: true,
     inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'counting-sort',
@@ -79,6 +81,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'sorting',
     subcategory: 'non-comparison',
     tags: ['O(n + k)', 'stable', 'counting'],
+    complexity: {
+      timeBest: 'O(n + k)',
+      timeAverage: 'O(n + k)',
+      timeWorst: 'O(n + k)',
+      space: 'O(n + k)',
+    },
+    stable: true,
+    implemented: true,
   }),
   algo({
     id: 'merge-sort',
@@ -95,6 +105,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
       space: 'O(n)',
     },
     stable: true,
+    implemented: true,
   }),
   algo({
     id: 'quick-sort',
@@ -111,6 +122,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
       space: 'O(log n)',
     },
     inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'heap-sort',
@@ -127,6 +139,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
       space: 'O(1)',
     },
     inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'radix-sort',
