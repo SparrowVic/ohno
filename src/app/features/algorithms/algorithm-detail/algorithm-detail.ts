@@ -15,10 +15,14 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { bfsGenerator } from '../algorithms/bfs';
+import { bellmanFordGenerator } from '../algorithms/bellman-ford';
 import { binarySearchGenerator } from '../algorithms/binary-search';
 import { binarySearchVariantsGenerator } from '../algorithms/binary-search-variants';
+import { bipartiteCheckGenerator } from '../algorithms/bipartite-check';
+import { bridgesArticulationPointsGenerator } from '../algorithms/bridges-articulation-points';
 import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
+import { connectedComponentsGenerator } from '../algorithms/connected-components';
 import { countingSortGenerator } from '../algorithms/counting-sort';
 import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
@@ -29,15 +33,20 @@ import { linearSearchGenerator } from '../algorithms/linear-search';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
+import { primsMstGenerator } from '../algorithms/prims-mst';
 import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
+import { BELLMAN_FORD_CODE } from '../data/bellman-ford-code';
 import { BFS_CODE } from '../data/bfs-code';
 import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
 import { BINARY_SEARCH_VARIANTS_CODE } from '../data/binary-search-variants-code';
+import { BIPARTITE_CHECK_CODE } from '../data/bipartite-check-code';
+import { BRIDGES_ARTICULATION_POINTS_CODE } from '../data/bridges-articulation-points-code';
 import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
 import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
@@ -46,6 +55,7 @@ import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
 import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
+import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
@@ -62,6 +72,10 @@ import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
 import {
+  generateBellmanFordGraph,
+  generateBipartiteGraph,
+  generateBridgesGraph,
+  generateConnectedComponentsGraph,
   generateCycleDetectionGraph,
   generateDagGraph,
   generateDijkstraGraph,
@@ -145,6 +159,45 @@ const CYCLE_DETECTION_LEGEND: readonly LegendItem[] = [
   { label: 'Cycle edge', color: '#5eead4' },
 ];
 
+const CONNECTED_COMPONENTS_LEGEND: readonly LegendItem[] = [
+  { label: 'Current seed / node', color: '#f0b429' },
+  { label: 'Component frontier', color: '#7c6ef0' },
+  { label: 'Assigned node', color: '#3ecf8e' },
+  { label: 'Component tree edge', color: '#5eead4' },
+];
+
+const BIPARTITE_CHECK_LEGEND: readonly LegendItem[] = [
+  { label: 'Side 0', color: '#38bdf8' },
+  { label: 'Side 1', color: '#f59e0b' },
+  { label: 'Queue frontier', color: '#7c6ef0' },
+  { label: 'Conflict edge / node', color: '#f43f5e' },
+];
+
+const BELLMAN_FORD_LEGEND: readonly LegendItem[] = [
+  { label: 'Source', color: '#38bdf8' },
+  { label: 'Updated this pass', color: '#7c6ef0' },
+  { label: 'Current relaxation', color: '#f0b429' },
+  { label: 'Shortest-path tree', color: '#3ecf8e' },
+  { label: 'Focused route', color: '#ffde59' },
+  { label: 'Negative-cycle evidence', color: '#f43f5e' },
+];
+
+const PRIMS_MST_LEGEND: readonly LegendItem[] = [
+  { label: 'Start node', color: '#38bdf8' },
+  { label: 'Candidate frontier', color: '#7c6ef0' },
+  { label: 'Current node', color: '#f0b429' },
+  { label: 'MST edge', color: '#3ecf8e' },
+  { label: 'Active edge check', color: '#5eead4' },
+];
+
+const BRIDGES_ARTICULATION_LEGEND: readonly LegendItem[] = [
+  { label: 'DFS stack', color: '#7c6ef0' },
+  { label: 'Current node', color: '#f0b429' },
+  { label: 'Closed node', color: '#3ecf8e' },
+  { label: 'Articulation point', color: '#f43f5e' },
+  { label: 'Bridge edge', color: '#f43f5e' },
+];
+
 const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: 'Candidate window', color: '#7c6ef0' },
   { label: 'Probe', color: '#f0b429' },
@@ -195,6 +248,26 @@ const TOPOLOGICAL_SORT_KAHN_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const CYCLE_DETECTION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Back Edge Hunt' },
+];
+
+const CONNECTED_COMPONENTS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Island Sweep' },
+];
+
+const BIPARTITE_CHECK_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Two-Side Check' },
+];
+
+const BELLMAN_FORD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Pass Relaxation' },
+];
+
+const PRIMS_MST_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Tree Builder' },
+];
+
+const BRIDGES_ARTICULATION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Critical Cuts' },
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
@@ -479,6 +552,76 @@ const CYCLE_DETECTION_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New graph',
 };
 
+const CONNECTED_COMPONENTS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: CONNECTED_COMPONENTS_CODE,
+  variantOptions: CONNECTED_COMPONENTS_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateConnectedComponentsGraph,
+  generator: connectedComponentsGenerator,
+  legendItems: () => CONNECTED_COMPONENTS_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
+const BIPARTITE_CHECK_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: BIPARTITE_CHECK_CODE,
+  variantOptions: BIPARTITE_CHECK_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateBipartiteGraph,
+  generator: bipartiteCheckGenerator,
+  legendItems: () => BIPARTITE_CHECK_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
+const BELLMAN_FORD_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: BELLMAN_FORD_CODE,
+  variantOptions: BELLMAN_FORD_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateBellmanFordGraph,
+  generator: bellmanFordGenerator,
+  legendItems: () => BELLMAN_FORD_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
+const PRIMS_MST_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: PRIMS_MST_CODE,
+  variantOptions: PRIMS_MST_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateDijkstraGraph,
+  generator: primsMstGenerator,
+  legendItems: () => PRIMS_MST_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
+const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: BRIDGES_ARTICULATION_POINTS_CODE,
+  variantOptions: BRIDGES_ARTICULATION_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateBridgesGraph,
+  generator: bridgesArticulationPointsGenerator,
+  legendItems: () => BRIDGES_ARTICULATION_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -574,6 +717,21 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'cycle-detection') {
       return CYCLE_DETECTION_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'connected-components') {
+      return CONNECTED_COMPONENTS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'bipartite-check') {
+      return BIPARTITE_CHECK_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'bellman-ford') {
+      return BELLMAN_FORD_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'prims-mst') {
+      return PRIMS_MST_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'bridges-articulation-points') {
+      return BRIDGES_ARTICULATION_VIEW_CONFIG;
     }
     return BUBBLE_VIEW_CONFIG;
   });

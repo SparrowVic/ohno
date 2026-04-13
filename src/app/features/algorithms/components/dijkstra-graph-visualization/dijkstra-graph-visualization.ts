@@ -131,6 +131,10 @@ export class DijkstraGraphVisualization {
       case 'dfs-tree':
         return 'DFS discovery tree';
       default:
+        if (this.detailLabel() === 'Component sweep') return 'Component partition';
+        if (this.detailLabel() === 'Partition check') return 'Two-color validation';
+        if (this.detailLabel() === 'MST tree') return 'Minimum spanning tree';
+        if (this.detailLabel() === 'Critical links') return 'Low-link analysis';
         if (this.detailLabel() === 'Cycle') return 'Cycle witness';
         if (this.detailLabel() === 'Topo order') return 'Ordering flow';
         return 'Graph state';
@@ -145,6 +149,18 @@ export class DijkstraGraphVisualization {
       case 'dfs-tree':
         return 'Tree edges show DFS discovery order. Click a node to inspect one explored branch.';
       default:
+        if (this.detailLabel() === 'Component sweep') {
+          return 'The algorithm expands one disconnected component at a time and labels every reached node.';
+        }
+        if (this.detailLabel() === 'Partition check') {
+          return 'Blue and amber nodes should only connect across sides. A red edge marks an odd-cycle conflict.';
+        }
+        if (this.detailLabel() === 'MST tree') {
+          return 'Teal edges belong to the growing minimum spanning tree. Candidate costs compete to connect the next node.';
+        }
+        if (this.detailLabel() === 'Critical links') {
+          return 'Red nodes or edges are articulation points and bridges whose removal disconnects the graph.';
+        }
         if (this.detailLabel() === 'Cycle') return 'This view explains DFS state and the detected cycle, not a single source-to-target path.';
         if (this.detailLabel() === 'Topo order') return 'This view explains how nodes enter topological order, not source-to-target routes.';
         return 'The graph highlights the algorithm state step by step.';

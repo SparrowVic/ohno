@@ -210,6 +210,12 @@
   }
 }
 
+.edge-line[data-tone='critical'],
+.edge-line[data-tone='bridge'] {
+  stroke: rgba(244, 63, 94, 0.9);
+  stroke-width: 5.5;
+}
+
 .edge-weight {
   rect {
     fill: rgba(13, 16, 24, 0.9);
@@ -275,6 +281,42 @@
 .node__label {
   font-size: 18px;
   font-weight: 700;
+}
+
+.node[data-tone='left'] {
+  .node__body {
+    fill: rgba(56, 189, 248, 0.18);
+    stroke: rgba(56, 189, 248, 0.72);
+  }
+
+  .node__distance rect,
+  .node__previous rect {
+    stroke: rgba(56, 189, 248, 0.35);
+  }
+}
+
+.node[data-tone='right'] {
+  .node__body {
+    fill: rgba(245, 158, 11, 0.18);
+    stroke: rgba(245, 158, 11, 0.72);
+  }
+
+  .node__distance rect,
+  .node__previous rect {
+    stroke: rgba(245, 158, 11, 0.35);
+  }
+}
+
+.node[data-tone='critical'] {
+  .node__body {
+    fill: rgba(244, 63, 94, 0.18);
+    stroke: rgba(244, 63, 94, 0.82);
+  }
+
+  .node__distance rect,
+  .node__previous rect {
+    stroke: rgba(244, 63, 94, 0.42);
+  }
 }
 
 .node--muted {
@@ -354,6 +396,27 @@
   .node__body {
     fill: rgba(62, 207, 142, 0.22);
     stroke: rgba(62, 207, 142, 0.9);
+  }
+}
+
+.node[data-tone='left']:not(.node--current):not(.node--frontier):not(.node--source) {
+  .node__body {
+    fill: rgba(56, 189, 248, 0.18);
+    stroke: rgba(56, 189, 248, 0.72);
+  }
+}
+
+.node[data-tone='right']:not(.node--current):not(.node--frontier):not(.node--source) {
+  .node__body {
+    fill: rgba(245, 158, 11, 0.18);
+    stroke: rgba(245, 158, 11, 0.72);
+  }
+}
+
+.node[data-tone='critical']:not(.node--current):not(.node--frontier):not(.node--source) {
+  .node__body {
+    fill: rgba(244, 63, 94, 0.18);
+    stroke: rgba(244, 63, 94, 0.82);
   }
 }
 

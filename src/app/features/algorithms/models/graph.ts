@@ -19,6 +19,8 @@ export interface WeightedGraphData {
   readonly sourceId: string;
 }
 
+export type GraphTone = 'left' | 'right' | 'critical' | 'bridge';
+
 export interface GraphNodeSnapshot extends WeightedGraphNode {
   readonly distance: number | null;
   readonly previousId: string | null;
@@ -27,12 +29,14 @@ export interface GraphNodeSnapshot extends WeightedGraphNode {
   readonly isCurrent: boolean;
   readonly isSettled: boolean;
   readonly isFrontier: boolean;
+  readonly tone?: GraphTone | null;
 }
 
 export interface GraphEdgeSnapshot extends WeightedGraphEdge {
   readonly isActive: boolean;
   readonly isRelaxed: boolean;
   readonly isTree: boolean;
+  readonly tone?: GraphTone | null;
 }
 
 export interface GraphQueueEntry {

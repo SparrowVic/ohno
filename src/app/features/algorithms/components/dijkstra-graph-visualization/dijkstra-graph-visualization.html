@@ -92,6 +92,7 @@
       <g class="edge-group">
         <line
           class="edge-line"
+          [attr.data-tone]="edge.tone ?? null"
           [class.edge-line--tree]="edge.isTree"
           [class.edge-line--focused]="isEdgeFocused(edge.id)"
           [class.edge-line--active]="edge.isActive"
@@ -105,7 +106,7 @@
         />
         @if (showEdgeWeights()) {
           <g class="edge-weight" [attr.transform]="weightTransform(edge.id)">
-            <rect x="-18" y="-14" width="36" height="28" rx="14" />
+            <rect x="-21" y="-14" width="42" height="28" rx="14" />
             <text y="4">{{ edge.weight }}</text>
           </g>
         }
@@ -122,6 +123,7 @@
         [class.node--selected]="isNodeSelected(node.id)"
         [class.node--path]="isNodeInFocusedPath(node.id)"
         [class.node--muted]="isNodeMuted(node.id)"
+        [attr.data-tone]="node.tone ?? null"
         [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
         [class.node--clickable]="routeMode()"
         (click)="selectNode(node.id)"

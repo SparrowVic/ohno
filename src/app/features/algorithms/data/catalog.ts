@@ -354,6 +354,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['BFS', 'DFS', 'partitioning'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'union-find',
@@ -381,6 +388,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['coloring', 'BFS', 'graph property'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'bellman-ford',
@@ -390,6 +404,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'pathfinding',
     tags: ['negative edges', 'shortest path', 'relaxation'],
+    complexity: {
+      timeBest: 'O(VE)',
+      timeAverage: 'O(VE)',
+      timeWorst: 'O(VE)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'floyd-warshall',
@@ -417,6 +438,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'mst',
     tags: ['MST', 'greedy', 'priority queue'],
+    complexity: {
+      timeBest: 'O((V + E) log V)',
+      timeAverage: 'O((V + E) log V)',
+      timeWorst: 'O((V + E) log V)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'kruskals-mst',
@@ -453,6 +481,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['low-link', 'critical graph', 'DFS'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'edmonds-karp',

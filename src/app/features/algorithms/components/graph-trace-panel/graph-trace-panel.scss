@@ -268,7 +268,12 @@
   }
 
   &--settled,
-  &--visited {
+  &--visited,
+  &--assigned,
+  &--colored,
+  &--reached,
+  &--closed,
+  &--in-tree {
     background: rgba(62, 207, 142, 0.14);
     color: #8bf0ba;
   }
@@ -279,7 +284,10 @@
   }
 
   &--queued,
-  &--frontier {
+  &--frontier,
+  &--updated,
+  &--candidate,
+  &--stacked {
     background: rgba(124, 110, 240, 0.14);
     color: #c9c3ff;
   }
