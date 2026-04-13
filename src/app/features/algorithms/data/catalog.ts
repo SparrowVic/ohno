@@ -217,6 +217,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'searching',
     subcategory: 'array',
     tags: ['O(n)', 'scan', 'baseline'],
+    complexity: {
+      timeBest: 'O(1)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'binary-search',
@@ -226,6 +233,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'searching',
     subcategory: 'binary',
     tags: ['O(log n)', 'sorted array', 'divide & conquer'],
+    complexity: {
+      timeBest: 'O(1)',
+      timeAverage: 'O(log n)',
+      timeWorst: 'O(log n)',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'binary-search-variants',
@@ -235,6 +249,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'searching',
     subcategory: 'binary',
     tags: ['bounds', 'O(log n)', 'variants'],
+    complexity: {
+      timeBest: 'O(log n)',
+      timeAverage: 'O(log n)',
+      timeWorst: 'O(log n)',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'tree-traversals',

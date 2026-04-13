@@ -15,6 +15,8 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { bfsGenerator } from '../algorithms/bfs';
+import { binarySearchGenerator } from '../algorithms/binary-search';
+import { binarySearchVariantsGenerator } from '../algorithms/binary-search-variants';
 import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { countingSortGenerator } from '../algorithms/counting-sort';
@@ -23,6 +25,7 @@ import { dijkstraGenerator } from '../algorithms/dijkstra';
 import { dfsGenerator } from '../algorithms/dfs';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
+import { linearSearchGenerator } from '../algorithms/linear-search';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
@@ -31,6 +34,8 @@ import { shellSortGenerator } from '../algorithms/shell-sort';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
 import { BFS_CODE } from '../data/bfs-code';
+import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
+import { BINARY_SEARCH_VARIANTS_CODE } from '../data/binary-search-variants-code';
 import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
@@ -39,6 +44,7 @@ import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
+import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
@@ -47,6 +53,7 @@ import { SHELL_SORT_CODE } from '../data/shell-sort-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { WeightedGraphData } from '../models/graph';
+import { SearchTraceState } from '../models/search';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { SortStep } from '../models/sort-step';
@@ -135,6 +142,14 @@ const CYCLE_DETECTION_LEGEND: readonly LegendItem[] = [
   { label: 'Cycle edge', color: '#5eead4' },
 ];
 
+const SEARCH_LEGEND: readonly LegendItem[] = [
+  { label: 'Candidate window', color: '#7c6ef0' },
+  { label: 'Probe', color: '#f0b429' },
+  { label: 'Visited', color: '#38bdf8' },
+  { label: 'Eliminated', color: 'var(--text-secondary)', opacity: 0.55 },
+  { label: 'Found', color: '#3ecf8e' },
+];
+
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'bar', label: 'Bar Chart' },
   { value: 'block', label: 'Block Swap' },
@@ -153,6 +168,10 @@ const RADIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'radix', label: 'Bucket Flow' },
   { value: 'radix-strip', label: 'Digit Strip' },
   { value: 'radix-matrix', label: 'Digit Matrix' },
+];
+
+const SEARCH_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'search', label: 'Signal Sweep' },
 ];
 
 const DIJKSTRA_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -208,7 +227,18 @@ interface GraphAlgorithmViewConfig extends BaseAlgorithmViewConfig {
   readonly generator: (graph: WeightedGraphData) => Generator<SortStep>;
 }
 
-type AlgorithmViewConfig = ArrayAlgorithmViewConfig | GraphAlgorithmViewConfig;
+interface SearchScenario {
+  readonly array: readonly number[];
+  readonly target: number;
+}
+
+interface SearchAlgorithmViewConfig extends BaseAlgorithmViewConfig {
+  readonly kind: 'search';
+  readonly createScenario: (size: number) => SearchScenario;
+  readonly generator: (scenario: SearchScenario) => Generator<SortStep>;
+}
+
+type AlgorithmViewConfig = ArrayAlgorithmViewConfig | GraphAlgorithmViewConfig | SearchAlgorithmViewConfig;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -308,6 +338,29 @@ const HEAP_VIEW_CONFIG = createSortViewConfig({
   defaultSize: 16,
 });
 
+function createSearchViewConfig(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly createScenario: (size: number) => SearchScenario;
+  readonly generator: (scenario: SearchScenario) => Generator<SortStep>;
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+}): AlgorithmViewConfig {
+  const sizeOptions = args.sizeOptions ?? BUBBLE_SIZE_OPTIONS;
+  return {
+    kind: 'search',
+    codeLines: args.codeLines,
+    variantOptions: SEARCH_VARIANT_OPTIONS,
+    defaultVariant: 'search',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 16,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => SEARCH_LEGEND,
+    sizeUnit: 'items',
+    randomizeLabel: 'New challenge',
+  };
+}
+
 const BUCKET_VIEW_CONFIG = createSortViewConfig({
   codeLines: BUCKET_SORT_CODE,
   generator: bucketSortGenerator,
@@ -327,6 +380,30 @@ const TIM_VIEW_CONFIG = createSortViewConfig({
   generator: timSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
+});
+
+const LINEAR_SEARCH_VIEW_CONFIG = createSearchViewConfig({
+  codeLines: LINEAR_SEARCH_CODE,
+  createScenario: (size) => createLinearSearchScenario(size),
+  generator: linearSearchGenerator,
+  sizeOptions: [12, 20, 28],
+  defaultSize: 20,
+});
+
+const BINARY_SEARCH_VIEW_CONFIG = createSearchViewConfig({
+  codeLines: BINARY_SEARCH_CODE,
+  createScenario: (size) => createBinarySearchScenario(size),
+  generator: binarySearchGenerator,
+  sizeOptions: [16, 24, 32],
+  defaultSize: 24,
+});
+
+const BINARY_SEARCH_VARIANTS_VIEW_CONFIG = createSearchViewConfig({
+  codeLines: BINARY_SEARCH_VARIANTS_CODE,
+  createScenario: (size) => createBinarySearchVariantsScenario(size),
+  generator: binarySearchVariantsGenerator,
+  sizeOptions: [16, 24, 32],
+  defaultSize: 24,
 });
 
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -471,6 +548,15 @@ export class AlgorithmDetail {
     if (algorithm.id === 'tim-sort') {
       return TIM_VIEW_CONFIG;
     }
+    if (algorithm.id === 'linear-search') {
+      return LINEAR_SEARCH_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'binary-search') {
+      return BINARY_SEARCH_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'binary-search-variants') {
+      return BINARY_SEARCH_VARIANTS_VIEW_CONFIG;
+    }
     if (algorithm.id === 'dijkstra') {
       return DIJKSTRA_VIEW_CONFIG;
     }
@@ -514,6 +600,7 @@ export class AlgorithmDetail {
   readonly sizeUnit = computed(() => this.config()?.sizeUnit ?? 'elements');
   readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
+  readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
 
   readonly activeLineNumber = computed<number | null>(() => {
     const snap = this.currentSnapshot();
@@ -550,6 +637,14 @@ export class AlgorithmDetail {
           this.arraySig.set([]);
           this.graphSig.set(nextGraph);
           this.loadGraphEngine(nextGraph, config.generator);
+          return;
+        }
+
+        if (config.kind === 'search') {
+          const scenario = config.createScenario(config.defaultSize);
+          this.arraySig.set(scenario.array);
+          this.graphSig.set(null);
+          this.loadSearchEngine(scenario, config.generator);
           return;
         }
 
@@ -605,6 +700,14 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'search') {
+      const scenario = config.createScenario(value);
+      this.arraySig.set(scenario.array);
+      this.graphSig.set(null);
+      this.loadSearchEngine(scenario, config.generator);
+      return;
+    }
+
     const nextArray = this.generateArray(value, config.randomRange);
     this.arraySig.set(nextArray);
     this.graphSig.set(null);
@@ -620,6 +723,14 @@ export class AlgorithmDetail {
       this.graphSig.set(nextGraph);
       this.arraySig.set([]);
       this.loadGraphEngine(nextGraph, config.generator);
+      return;
+    }
+
+    if (config.kind === 'search') {
+      const scenario = config.createScenario(this.sizeSig());
+      this.arraySig.set(scenario.array);
+      this.graphSig.set(null);
+      this.loadSearchEngine(scenario, config.generator);
       return;
     }
 
@@ -659,6 +770,13 @@ export class AlgorithmDetail {
     this.loadEngine(generator(graph));
   }
 
+  private loadSearchEngine(
+    scenario: SearchScenario,
+    generator: (scenario: SearchScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
   private loadEngine(generator: Generator<SortStep>): void {
     this.logEntriesSig.set([]);
     this.lastLoggedStep = -1;
@@ -689,4 +807,81 @@ export class AlgorithmDetail {
     }
     return result;
   }
+}
+
+function createLinearSearchScenario(size: number): SearchScenario {
+  const array = Array.from({ length: size }, () => Math.floor(Math.random() * 89) + 10);
+  const shouldHit = Math.random() < 0.78;
+  if (shouldHit && array.length > 0) {
+    return {
+      array,
+      target: array[Math.floor(Math.random() * array.length)] ?? 0,
+    };
+  }
+
+  let target = Math.floor(Math.random() * 89) + 10;
+  while (array.includes(target)) {
+    target = Math.floor(Math.random() * 89) + 10;
+  }
+  return { array, target };
+}
+
+function createBinarySearchScenario(size: number): SearchScenario {
+  const set = new Set<number>();
+  while (set.size < size) {
+    set.add(Math.floor(Math.random() * 90) + 10);
+  }
+  const array = [...set].sort((left, right) => left - right);
+  const shouldHit = Math.random() < 0.76;
+
+  if (shouldHit && array.length > 0) {
+    return {
+      array,
+      target: array[Math.floor(Math.random() * array.length)] ?? 0,
+    };
+  }
+
+  let target = (array[0] ?? 10) - 1;
+  while (array.includes(target)) {
+    target++;
+  }
+  return { array, target };
+}
+
+function createBinarySearchVariantsScenario(size: number): SearchScenario {
+  const baseValues: number[] = [];
+  let current = Math.floor(Math.random() * 6) + 8;
+  while (baseValues.length < Math.max(6, Math.ceil(size / 2))) {
+    current += Math.floor(Math.random() * 4) + 1;
+    baseValues.push(current);
+  }
+
+  const array: number[] = [];
+  for (const value of baseValues) {
+    array.push(value);
+    if (array.length >= size) break;
+    if (Math.random() < 0.58 && array.length < size) array.push(value);
+    if (Math.random() < 0.22 && array.length < size) array.push(value);
+    if (array.length >= size) break;
+  }
+
+  while (array.length < size) {
+    array.push(baseValues[Math.floor(Math.random() * baseValues.length)] ?? current);
+  }
+
+  array.sort((left, right) => left - right);
+
+  const counts = new Map<number, number>();
+  for (const value of array) {
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+  const duplicatedValues = [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([value]) => value);
+
+  const targetPool = duplicatedValues.length > 0 ? duplicatedValues : array;
+  return {
+    array,
+    target: targetPool[Math.floor(Math.random() * targetPool.length)] ?? array[0] ?? 0,
+  };
 }

@@ -1,4 +1,5 @@
 import { GraphStepState } from './graph';
+import { SearchTraceState } from './search';
 
 export type SortPhase =
   | 'idle'
@@ -15,7 +16,8 @@ export type SortPhase =
   | 'relax'
   | 'skip-relax'
   | 'settle-node'
-  | 'graph-complete';
+  | 'graph-complete'
+  | 'search-complete';
 
 export interface SortItemSnapshot {
   readonly id: string;
@@ -44,4 +46,5 @@ export interface SortStep {
   readonly activeItemId?: string | null;
   readonly activeBucket?: number | null;
   readonly graph?: GraphStepState | null;
+  readonly search?: SearchTraceState | null;
 }

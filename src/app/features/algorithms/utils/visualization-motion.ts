@@ -92,6 +92,42 @@ export function pulseSvgElement(target: SVGElement, options: PulseOptions): void
   );
 }
 
+export function pulseElement(target: HTMLElement, options: PulseOptions): void {
+  target.style.transformOrigin = options.origin ?? 'center';
+  cancelElementAnimations(target);
+  const opacity = options.opacity ?? [1, 1, 1];
+  const filter = options.filter ?? [
+    'drop-shadow(0 0 0 transparent)',
+    'drop-shadow(0 0 12px rgba(255,255,255,0.28))',
+    'drop-shadow(0 0 0 transparent)',
+  ];
+  const scale = options.scale ?? 1.04;
+  target.animate(
+    [
+      {
+        transform: 'scale(1)',
+        opacity: opacity[0],
+        filter: filter[0],
+      },
+      {
+        transform: `scale(${scale})`,
+        opacity: opacity[1],
+        filter: filter[1],
+      },
+      {
+        transform: 'scale(1)',
+        opacity: opacity[2],
+        filter: filter[2],
+      },
+    ],
+    {
+      duration: options.duration,
+      delay: options.delay ?? 0,
+      easing: options.easing ?? MOTION_EASING,
+    },
+  );
+}
+
 function prepareSvgTarget(target: SVGElement, origin: string): void {
   target.style.transformBox = 'fill-box';
   target.style.transformOrigin = origin;

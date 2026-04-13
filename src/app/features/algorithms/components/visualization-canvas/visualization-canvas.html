@@ -35,5 +35,8 @@
         [muted]="muted()"
       />
     }
+    @case ('search') {
+      <app-search-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
   }
 </div>

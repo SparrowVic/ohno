@@ -16,7 +16,11 @@
   <div class="side-content">
     @switch (activeTab()) {
       @case ('trace') {
-        <app-graph-trace-panel [state]="traceState()" />
+        @if (traceState()) {
+          <app-graph-trace-panel [state]="traceState()" />
+        } @else {
+          <app-search-trace-panel [state]="searchState()" />
+        }
       }
       @case ('code') {
         <app-code-panel [lines]="codeLines()" [activeLineNumber]="activeLineNumber()" />

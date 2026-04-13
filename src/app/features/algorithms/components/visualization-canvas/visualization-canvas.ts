@@ -12,6 +12,7 @@ import { RadixBucketVisualization } from '../radix-bucket-visualization/radix-bu
 import { RadixMatrixVisualization } from '../radix-matrix-visualization/radix-matrix-visualization';
 import { RadixStripVisualization } from '../radix-strip-visualization/radix-strip-visualization';
 import { RadialVisualization } from '../radial-visualization/radial-visualization';
+import { SearchVisualization } from '../search-visualization/search-visualization';
 import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-visualization';
 
 @Component({
@@ -26,6 +27,7 @@ import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-v
     RadixMatrixVisualization,
     RadixStripVisualization,
     RadialVisualization,
+    SearchVisualization,
     SoundBarsVisualization,
   ],
   templateUrl: './visualization-canvas.html',

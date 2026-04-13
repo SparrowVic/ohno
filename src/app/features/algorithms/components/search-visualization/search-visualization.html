@@ -1,0 +1,64 @@
+<div class="search-viz" #container>
+  @if (searchState(); as search) {
+    <div class="search-viz__hero">
+      <div class="search-viz__target-card">
+        <span class="search-viz__eyebrow">Target</span>
+        <span class="search-viz__target-value">{{ search.target }}</span>
+        <span class="search-viz__target-subtitle">{{ search.modeLabel }}</span>
+      </div>
+
+      <div class="search-viz__status-band">
+        <div class="search-viz__metric">
+          <span class="search-viz__metric-label">Window</span>
+          <span class="search-viz__metric-value">
+            @if (search.low !== null && search.high !== null) {
+              [{{ search.low }}, {{ search.high }}]
+            } @else {
+              empty
+            }
+          </span>
+        </div>
+        <div class="search-viz__metric">
+          <span class="search-viz__metric-label">Probe</span>
+          <span class="search-viz__metric-value">
+            @if (search.probeIndex !== null) {
+              {{ search.probeIndex }}
+            } @else {
+              —
+            }
+          </span>
+        </div>
+        <div class="search-viz__metric">
+          <span class="search-viz__metric-label">Hits</span>
+          <span class="search-viz__metric-value">{{ hitRangeLabel() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-viz__decision-shell">
+      <div class="search-viz__decision-label">{{ search.statusLabel }}</div>
+      <div class="search-viz__decision">{{ search.decision ?? 'watch the signal sweep the array' }}</div>
+    </div>
+
+    <div class="search-viz__board">
+      <div class="search-viz__row">
+        @for (value of step()?.array ?? []; track $index) {
+          <div
+            [class]="cellClass($index)"
+            [class.cell--window-glow]="isInsideWindow($index)"
+            [attr.data-index]="$index"
+          >
+            <div class="cell__beam"></div>
+            <div class="cell__chrome">
+              <span class="cell__index">#{{ $index }}</span>
+              @if (boundLabel($index); as label) {
+                <span class="cell__bound">{{ label }}</span>
+              }
+            </div>
+            <div class="cell__value">{{ value }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

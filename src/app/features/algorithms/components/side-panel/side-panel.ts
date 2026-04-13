@@ -15,10 +15,12 @@ import {
 import { GraphStepState } from '../../models/graph';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, LogEntry } from '../../models/detail';
+import { SearchTraceState } from '../../models/search';
 import { CodePanel } from '../code-panel/code-panel';
 import { GraphTracePanel } from '../graph-trace-panel/graph-trace-panel';
 import { InfoPanel } from '../info-panel/info-panel';
 import { LogPanel } from '../log-panel/log-panel';
+import { SearchTracePanel } from '../search-trace-panel/search-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
 
@@ -42,7 +44,7 @@ const MAX_WIDTH = 680;
 
 @Component({
   selector: 'app-side-panel',
-  imports: [CodePanel, GraphTracePanel, InfoPanel, LogPanel],
+  imports: [CodePanel, GraphTracePanel, InfoPanel, LogPanel, SearchTracePanel],
   templateUrl: './side-panel.html',
   styleUrl: './side-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,9 +55,10 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly activeLineNumber = input<number | null>(null);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
+  readonly searchState = input<SearchTraceState | null>(null);
 
   readonly tabs = computed<readonly SideTab[]>(() =>
-    this.traceState() ? [TRACE_TAB, ...BASE_SIDE_TABS] : BASE_SIDE_TABS,
+    this.traceState() || this.searchState() ? [TRACE_TAB, ...BASE_SIDE_TABS] : BASE_SIDE_TABS,
   );
 
   private readonly activeTabState = signal<SideTabId>('code');
@@ -72,7 +75,7 @@ export class SidePanel implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      const hasTrace = this.traceState() !== null;
+      const hasTrace = this.traceState() !== null || this.searchState() !== null;
       if (!hasTrace && this.activeTabState() === 'trace') {
         this.activeTabState.set('code');
       }

@@ -13,6 +13,7 @@ export type VisualizationVariant =
   | 'dot'
   | 'radial'
   | 'sound'
+  | 'search'
   | 'radix'
   | 'radix-strip'
   | 'radix-matrix'
