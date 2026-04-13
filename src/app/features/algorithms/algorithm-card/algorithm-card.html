@@ -1,18 +1,41 @@
-<a class="card" [routerLink]="['/algorithms', algorithm().id]">
-  <div class="card__top">
-    <span class="card__name">{{ algorithm().name }}</span>
-    <span class="badge badge--{{ algorithm().difficulty }}">
-      {{ algorithm().difficulty | titlecase }}
-    </span>
-  </div>
+@if (algorithm().implemented) {
+  <a class="card" [routerLink]="['/algorithms', algorithm().id]">
+    <div class="card__top">
+      <span class="card__name">{{ algorithm().name }}</span>
+      <span class="badge badge--{{ algorithm().difficulty }}">
+        {{ difficultyLabel() }}
+      </span>
+    </div>
 
-  <p class="card__desc">{{ algorithm().description }}</p>
+    <p class="card__desc">{{ algorithm().description }}</p>
 
-  <div class="card__preview" aria-hidden="true"></div>
+    <div class="card__preview" aria-hidden="true"></div>
 
-  <div class="card__tags">
-    @for (tag of algorithm().tags; track tag) {
-      <span class="tag">{{ tag }}</span>
-    }
-  </div>
-</a>
+    <div class="card__tags">
+      @for (tag of algorithm().tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+      }
+    </div>
+  </a>
+} @else {
+  <article class="card card--disabled" aria-disabled="true">
+    <div class="card__top">
+      <span class="card__name">{{ algorithm().name }}</span>
+      <span class="badge badge--{{ algorithm().difficulty }}">
+        {{ difficultyLabel() }}
+      </span>
+    </div>
+
+    <p class="card__desc">{{ algorithm().description }}</p>
+
+    <div class="card__preview card__preview--disabled" aria-hidden="true">
+      <span class="card__status">{{ statusLabel() }}</span>
+    </div>
+
+    <div class="card__tags">
+      @for (tag of algorithm().tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+      }
+    </div>
+  </article>
+}

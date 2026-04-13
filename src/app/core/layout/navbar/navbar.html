@@ -33,8 +33,9 @@
   </div>
 
   <div class="navbar__right">
+    <app-language-switcher />
     <div class="search-box">
-      <span class="search-box__placeholder">Search...</span>
+      <span class="search-box__placeholder">{{ searchPlaceholder() }}</span>
       <kbd class="search-box__kbd">/</kbd>
     </div>
   </div>

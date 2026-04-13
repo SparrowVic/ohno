@@ -2,6 +2,7 @@ export enum Difficulty {
   Easy = 'easy',
   Medium = 'medium',
   Hard = 'hard',
+  UltraHard = 'ultra-hard',
 }
 
 export interface ComplexityInfo {
@@ -20,6 +21,7 @@ export interface AlgorithmItem {
   readonly subcategory: string;
   readonly tags: readonly string[];
   readonly complexity: ComplexityInfo;
+  readonly implemented: boolean;
   readonly stable?: boolean;
   readonly inPlace?: boolean;
 }

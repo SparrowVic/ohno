@@ -1,8 +1,11 @@
 <section class="page">
   <header class="page__header">
-    <h1 class="page__title">{{ title() }}</h1>
+    <div class="page__title-wrap">
+      <h1 class="page__title">{{ title() }}</h1>
+      <p class="page__meta">{{ totalItems() }} items</p>
+    </div>
     <div class="filter-pills">
-      @for (pill of pills; track pill.value) {
+      @for (pill of pills(); track pill.value) {
         <button
           type="button"
           class="pill"

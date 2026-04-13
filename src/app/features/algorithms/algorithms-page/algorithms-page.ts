@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
+import { AppLanguageService } from '../../../core/i18n/app-language.service';
+import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { APP_LANG } from '../../../core/i18n/app-lang';
 import { NavigationService } from '../../../core/services/navigation-service';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
@@ -12,13 +15,6 @@ interface PillOption {
   readonly label: string;
 }
 
-const PILLS: readonly PillOption[] = [
-  { value: 'all', label: 'All' },
-  { value: Difficulty.Easy, label: 'Easy' },
-  { value: Difficulty.Medium, label: 'Medium' },
-  { value: Difficulty.Hard, label: 'Hard' },
-];
-
 @Component({
   selector: 'app-algorithms-page',
   imports: [AlgorithmCard],
@@ -29,21 +25,30 @@ const PILLS: readonly PillOption[] = [
 export class AlgorithmsPage {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly navigation = inject(NavigationService);
+  private readonly language = inject(AppLanguageService);
 
-  readonly pills = PILLS;
+  readonly pills = computed<readonly PillOption[]>(() => {
+    const lang = this.language.activeLang();
+    return [
+      { value: 'all', label: lang === APP_LANG.EN ? 'All' : 'Wszystkie' },
+      { value: Difficulty.Easy, label: getDifficultyLabel(Difficulty.Easy, lang) },
+      { value: Difficulty.Medium, label: getDifficultyLabel(Difficulty.Medium, lang) },
+      { value: Difficulty.Hard, label: getDifficultyLabel(Difficulty.Hard, lang) },
+      { value: Difficulty.UltraHard, label: getDifficultyLabel(Difficulty.UltraHard, lang) },
+    ];
+  });
 
   private readonly difficultyFilter = signal<DifficultyFilter>('all');
   readonly activeDifficulty = this.difficultyFilter.asReadonly();
 
   readonly title = computed(() => this.navigation.activeItem()?.sectionTitle ?? 'Algorithms');
+  readonly totalItems = computed(() => this.filteredItems().length);
 
   readonly filteredItems = computed<readonly AlgorithmItem[]>(() => {
     const sidebarFilter = this.navigation.activeItem()?.filter;
     const difficulty = this.difficultyFilter();
 
-    const base: readonly AlgorithmItem[] = sidebarFilter
-      ? this.registry.filterByCategory(sidebarFilter.category, sidebarFilter.subcategory)
-      : this.registry.all();
+    const base = this.registry.filter(sidebarFilter);
 
     if (difficulty === 'all') {
       return base;

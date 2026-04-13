@@ -1,0 +1,24 @@
+<article
+  class="card"
+  [class.card--disabled]="!structure().implemented"
+  [attr.aria-disabled]="!structure().implemented"
+>
+  <div class="card__top">
+    <span class="card__name">{{ structure().name }}</span>
+    <span class="badge badge--{{ structure().difficulty }}">
+      {{ difficultyLabel() }}
+    </span>
+  </div>
+
+  <p class="card__desc">{{ structure().description }}</p>
+
+  <div class="card__preview" aria-hidden="true">
+    <span class="card__status">{{ statusLabel() }}</span>
+  </div>
+
+  <div class="card__tags">
+    @for (tag of structure().tags; track tag) {
+      <span class="tag">{{ tag }}</span>
+    }
+  </div>
+</article>

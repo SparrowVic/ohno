@@ -1,24 +1,23 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
-import { AlgorithmItem } from '../models/algorithm';
+import { StructureItem } from '../models/structure';
 
 @Component({
-  selector: 'app-algorithm-card',
-  imports: [RouterLink],
-  templateUrl: './algorithm-card.html',
-  styleUrl: './algorithm-card.scss',
+  selector: 'app-structure-card',
+  imports: [],
+  templateUrl: './structure-card.html',
+  styleUrl: './structure-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlgorithmCard {
+export class StructureCard {
   private readonly language = inject(AppLanguageService);
 
-  readonly algorithm = input.required<AlgorithmItem>();
+  readonly structure = input.required<StructureItem>();
   readonly difficultyLabel = computed(() =>
-    getDifficultyLabel(this.algorithm().difficulty, this.language.activeLang()),
+    getDifficultyLabel(this.structure().difficulty, this.language.activeLang()),
   );
   readonly statusLabel = computed(() =>
     this.language.activeLang() === APP_LANG.EN ? 'Coming soon' : 'Wkrótce',

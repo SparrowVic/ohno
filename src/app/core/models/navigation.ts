@@ -7,7 +7,7 @@ export interface NavTab {
 }
 
 export interface SidebarFilter {
-  readonly category: string;
+  readonly category?: string;
   readonly subcategory?: string;
 }
 

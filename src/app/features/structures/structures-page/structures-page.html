@@ -1,5 +1,30 @@
 <section class="page">
   <header class="page__header">
-    <h1 class="page__title">Structures</h1>
+    <div class="page__title-wrap">
+      <h1 class="page__title">{{ title() }}</h1>
+      <p class="page__meta">{{ totalItems() }} items</p>
+    </div>
+    <div class="filter-pills">
+      @for (pill of pills(); track pill.value) {
+        <button
+          type="button"
+          class="pill"
+          [class.pill--active]="activeDifficulty() === pill.value"
+          (click)="selectDifficulty(pill.value)"
+        >
+          {{ pill.label }}
+        </button>
+      }
+    </div>
   </header>
+
+  @if (filteredItems().length > 0) {
+    <div class="cards-grid">
+      @for (structure of filteredItems(); track structure.id) {
+        <app-structure-card [structure]="structure" />
+      }
+    </div>
+  } @else {
+    <div class="page__empty">No structures match the current filters.</div>
+  }
 </section>

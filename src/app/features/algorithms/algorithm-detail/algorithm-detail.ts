@@ -1,4 +1,3 @@
-import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,6 +11,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 
+import { AppLanguageService } from '../../../core/i18n/app-language.service';
+import { APP_LANG } from '../../../core/i18n/app-lang';
+import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
@@ -121,7 +123,6 @@ const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
 @Component({
   selector: 'app-algorithm-detail',
   imports: [
-    TitleCasePipe,
     LegendBar,
     SidePanel,
     VisualizationCanvas,
@@ -137,6 +138,7 @@ export class AlgorithmDetail {
   private readonly router = inject(Router);
   private readonly registry = inject(AlgorithmRegistry);
   private readonly engine = inject(VisualizationEngine);
+  private readonly language = inject(AppLanguageService);
 
   private readonly idParam = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('id'))),
@@ -148,8 +150,21 @@ export class AlgorithmDetail {
     return id ? this.registry.getById(id) : undefined;
   });
 
-  readonly config = computed<AlgorithmViewConfig>(() => {
+  readonly difficultyLabel = computed(() => {
     const algorithm = this.algorithm();
+    if (!algorithm) return '';
+    return getDifficultyLabel(algorithm.difficulty, this.language.activeLang());
+  });
+  readonly unavailableLabel = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'Visualization is not implemented yet.'
+      : 'Ta wizualizacja nie jest jeszcze zaimplementowana.',
+  );
+  readonly config = computed<AlgorithmViewConfig | null>(() => {
+    const algorithm = this.algorithm();
+    if (!algorithm?.implemented) {
+      return null;
+    }
     if (algorithm?.id === 'radix-sort') {
       return RADIX_VIEW_CONFIG;
     }
@@ -174,8 +189,8 @@ export class AlgorithmDetail {
   readonly speed = this.engine.speed;
   readonly step = this.currentSnapshot.asReadonly();
   readonly logEntries = this.logEntriesSig.asReadonly();
-  readonly sizeOptions = computed(() => this.config().sizeOptions);
-  readonly variantOptions = computed(() => this.config().variantOptions);
+  readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
+  readonly variantOptions = computed(() => this.config()?.variantOptions ?? []);
 
   readonly activeLineNumber = computed<number | null>(() => {
     const snap = this.currentSnapshot();
@@ -183,15 +198,23 @@ export class AlgorithmDetail {
   });
 
   readonly legendItems = computed<readonly LegendItem[]>(() => {
-    return this.config().legendItems(this.variantSig());
+    return this.config()?.legendItems(this.variantSig()) ?? [];
   });
 
-  readonly codeLines = computed(() => this.config().codeLines);
+  readonly codeLines = computed(() => this.config()?.codeLines ?? []);
 
   constructor() {
     effect(() => {
       const config = this.config();
+      const algorithm = this.algorithm();
       untracked(() => {
+        if (!algorithm?.implemented || !config) {
+          this.logEntriesSig.set([]);
+          this.lastLoggedStep = -1;
+          this.currentSnapshot.set(null);
+          this.engine.reset();
+          return;
+        }
         this.sizeSig.set(config.defaultSize);
         this.variantSig.set(config.defaultVariant);
         this.mutedSig.set(true);
@@ -233,20 +256,26 @@ export class AlgorithmDetail {
   }
 
   onSizeChange(value: number): void {
+    const config = this.config();
+    if (!config) return;
     this.sizeSig.set(value);
-    const next = this.generateArray(value, this.config().randomRange);
+    const next = this.generateArray(value, config.randomRange);
     this.arraySig.set(next);
-    this.loadEngine(next, this.config().generator);
+    this.loadEngine(next, config.generator);
   }
 
   onRandomize(): void {
-    const next = this.generateArray(this.sizeSig(), this.config().randomRange);
+    const config = this.config();
+    if (!config) return;
+    const next = this.generateArray(this.sizeSig(), config.randomRange);
     this.arraySig.set(next);
-    this.loadEngine(next, this.config().generator);
+    this.loadEngine(next, config.generator);
   }
 
   onVariantChange(value: VisualizationVariant): void {
-    const allowed = this.config().variantOptions.some((option) => option.value === value);
+    const config = this.config();
+    if (!config) return;
+    const allowed = config.variantOptions.some((option) => option.value === value);
     if (!allowed) return;
     if (value === this.variantSig()) return;
     this.variantSig.set(value);

@@ -8,6 +8,13 @@
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.page__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .page__title {
@@ -16,9 +23,15 @@
   color: var(--text-primary);
 }
 
+.page__meta {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
 .filter-pills {
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .pill {
@@ -44,7 +57,7 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 12px;
 }
 

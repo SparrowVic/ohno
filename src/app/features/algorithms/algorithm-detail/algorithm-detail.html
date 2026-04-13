@@ -11,7 +11,7 @@
         <div class="topbar__divider"></div>
         <span class="topbar__title">{{ algo.name }}</span>
         <span class="topbar__badge topbar__badge--{{ algo.difficulty }}">
-          {{ algo.difficulty | titlecase }}
+          {{ difficultyLabel() }}
         </span>
       </div>
       <div class="topbar__right">
@@ -31,45 +31,56 @@
       </div>
     </nav>
 
-    <div class="detail__content">
-      <div class="viz-panel">
-        <app-visualization-toolbar
-          [isPlaying]="isPlaying()"
-          [speed]="speed()"
-          [currentStep]="currentStep()"
-          [totalSteps]="totalSteps()"
-          [size]="size()"
-          [sizeOptions]="sizeOptions()"
-          [variant]="variant()"
-          [variantOptions]="variantOptions()"
-          [muted]="muted()"
-          (resetClick)="onReset()"
-          (stepBackClick)="onStepBack()"
-          (playToggle)="onPlayToggle()"
-          (stepForwardClick)="onStepForward()"
-          (speedChange)="onSpeedChange($event)"
-          (sizeChange)="onSizeChange($event)"
-          (randomizeClick)="onRandomize()"
-          (variantChange)="onVariantChange($event)"
-          (muteToggle)="onMuteToggle()"
-        />
-        <app-visualization-canvas
-          [variant]="variant()"
-          [array]="array()"
-          [step]="step()"
-          [speed]="speed()"
-          [muted]="muted()"
-        />
-        <app-legend-bar [items]="legendItems()" />
-      </div>
+    @if (algo.implemented) {
+      <div class="detail__content">
+        <div class="viz-panel">
+          <app-visualization-toolbar
+            [isPlaying]="isPlaying()"
+            [speed]="speed()"
+            [currentStep]="currentStep()"
+            [totalSteps]="totalSteps()"
+            [size]="size()"
+            [sizeOptions]="sizeOptions()"
+            [variant]="variant()"
+            [variantOptions]="variantOptions()"
+            [muted]="muted()"
+            (resetClick)="onReset()"
+            (stepBackClick)="onStepBack()"
+            (playToggle)="onPlayToggle()"
+            (stepForwardClick)="onStepForward()"
+            (speedChange)="onSpeedChange($event)"
+            (sizeChange)="onSizeChange($event)"
+            (randomizeClick)="onRandomize()"
+            (variantChange)="onVariantChange($event)"
+            (muteToggle)="onMuteToggle()"
+          />
+          <app-visualization-canvas
+            [variant]="variant()"
+            [array]="array()"
+            [step]="step()"
+            [speed]="speed()"
+            [muted]="muted()"
+          />
+          <app-legend-bar [items]="legendItems()" />
+        </div>
 
-      <app-side-panel
-        [algorithm]="algo"
-        [codeLines]="codeLines()"
-        [activeLineNumber]="activeLineNumber()"
-        [logEntries]="logEntries()"
-      />
-    </div>
+        <app-side-panel
+          [algorithm]="algo"
+          [codeLines]="codeLines()"
+          [activeLineNumber]="activeLineNumber()"
+          [logEntries]="logEntries()"
+        />
+      </div>
+    } @else {
+      <div class="unavailable">
+        <div class="unavailable__panel">
+          <div class="unavailable__eyebrow">Locked</div>
+          <h2 class="unavailable__title">{{ algo.name }}</h2>
+          <p class="unavailable__desc">{{ unavailableLabel() }}</p>
+          <p class="unavailable__hint">{{ algo.description }}</p>
+        </div>
+      </div>
+    }
   </div>
 } @else {
   <div class="not-found">
