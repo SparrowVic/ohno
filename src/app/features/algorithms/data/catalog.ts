@@ -166,6 +166,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'sorting',
     subcategory: 'non-comparison',
     tags: ['distribution', 'buckets', 'average O(n)'],
+    complexity: {
+      timeBest: 'O(n + k)',
+      timeAverage: 'O(n + k)',
+      timeWorst: 'O(n²)',
+      space: 'O(n + k)',
+    },
+    stable: true,
+    implemented: true,
   }),
   algo({
     id: 'shell-sort',
@@ -175,6 +183,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'sorting',
     subcategory: 'comparison',
     tags: ['gap sort', 'in-place', 'incremental'],
+    complexity: {
+      timeBest: 'O(n log n)',
+      timeAverage: 'O(n^1.5)',
+      timeWorst: 'O(n²)',
+      space: 'O(1)',
+    },
+    inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'tim-sort',
@@ -184,6 +200,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'sorting',
     subcategory: 'comparison',
     tags: ['hybrid', 'stable', 'production'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n log n)',
+      timeWorst: 'O(n log n)',
+      space: 'O(n)',
+    },
+    stable: true,
+    implemented: true,
   }),
   algo({
     id: 'linear-search',

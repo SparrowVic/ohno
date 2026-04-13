@@ -15,6 +15,7 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { bfsGenerator } from '../algorithms/bfs';
+import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { countingSortGenerator } from '../algorithms/counting-sort';
 import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
@@ -26,8 +27,11 @@ import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
 import { selectionSortGenerator } from '../algorithms/selection-sort';
+import { shellSortGenerator } from '../algorithms/shell-sort';
+import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
 import { BFS_CODE } from '../data/bfs-code';
+import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
 import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
@@ -39,6 +43,8 @@ import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
+import { SHELL_SORT_CODE } from '../data/shell-sort-code';
+import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { WeightedGraphData } from '../models/graph';
 import { AlgorithmItem } from '../models/algorithm';
@@ -302,6 +308,27 @@ const HEAP_VIEW_CONFIG = createSortViewConfig({
   defaultSize: 16,
 });
 
+const BUCKET_VIEW_CONFIG = createSortViewConfig({
+  codeLines: BUCKET_SORT_CODE,
+  generator: bucketSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
+const SHELL_VIEW_CONFIG = createSortViewConfig({
+  codeLines: SHELL_SORT_CODE,
+  generator: shellSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
+const TIM_VIEW_CONFIG = createSortViewConfig({
+  codeLines: TIM_SORT_CODE,
+  generator: timSortGenerator,
+  randomRange: { min: 1, max: 99 },
+  defaultSize: 16,
+});
+
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: DIJKSTRA_CODE,
@@ -434,6 +461,15 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'heap-sort') {
       return HEAP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'bucket-sort') {
+      return BUCKET_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'shell-sort') {
+      return SHELL_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'tim-sort') {
+      return TIM_VIEW_CONFIG;
     }
     if (algorithm.id === 'dijkstra') {
       return DIJKSTRA_VIEW_CONFIG;
