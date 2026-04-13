@@ -61,6 +61,14 @@ export interface GraphStepState {
   readonly nodes: readonly GraphNodeSnapshot[];
   readonly edges: readonly GraphEdgeSnapshot[];
   readonly sourceId: string;
+  readonly phaseLabel: string;
+  readonly metricLabel: string;
+  readonly frontierLabel: string;
+  readonly frontierHeadLabel: string;
+  readonly completionLabel: string;
+  readonly frontierStatusLabel: string;
+  readonly completionStatusLabel: string;
+  readonly showEdgeWeights: boolean;
   readonly currentNodeId: string | null;
   readonly activeEdgeId: string | null;
   readonly queue: readonly GraphQueueEntry[];

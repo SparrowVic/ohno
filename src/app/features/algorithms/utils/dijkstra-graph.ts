@@ -149,6 +149,17 @@ export function generateDijkstraGraph(size: number): WeightedGraphData {
   };
 }
 
+export function generateTraversalGraph(size: number): WeightedGraphData {
+  const graph = generateDijkstraGraph(size);
+  return {
+    ...graph,
+    edges: graph.edges.map((edge) => ({
+      ...edge,
+      weight: 1,
+    })),
+  };
+}
+
 function randomWeight(): number {
   return Math.floor(Math.random() * 9) + 1;
 }

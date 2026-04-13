@@ -14,10 +14,14 @@ import { map } from 'rxjs';
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { bfsGenerator } from '../algorithms/bfs';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
+import { dfsGenerator } from '../algorithms/dfs';
 import { radixSortGenerator } from '../algorithms/radix-sort';
+import { BFS_CODE } from '../data/bfs-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
 import { WeightedGraphData } from '../models/graph';
@@ -28,7 +32,7 @@ import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
-import { generateDijkstraGraph } from '../utils/dijkstra-graph';
+import { generateDijkstraGraph, generateTraversalGraph } from '../utils/dijkstra-graph';
 import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
@@ -72,6 +76,22 @@ const DIJKSTRA_LEGEND: readonly LegendItem[] = [
   { label: 'Active edge relaxation', color: '#5eead4' },
 ];
 
+const BFS_LEGEND: readonly LegendItem[] = [
+  { label: 'Source', color: '#38bdf8' },
+  { label: 'Queue frontier', color: '#7c6ef0' },
+  { label: 'Current node', color: '#f0b429' },
+  { label: 'Visited layer tree', color: '#3ecf8e' },
+  { label: 'Inspected edge', color: '#5eead4' },
+];
+
+const DFS_LEGEND: readonly LegendItem[] = [
+  { label: 'Source', color: '#38bdf8' },
+  { label: 'Stack frontier', color: '#7c6ef0' },
+  { label: 'Current node', color: '#f0b429' },
+  { label: 'Visited depth tree', color: '#3ecf8e' },
+  { label: 'Inspected edge', color: '#5eead4' },
+];
+
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'bar', label: 'Bar Chart' },
   { value: 'block', label: 'Block Swap' },
@@ -89,6 +109,14 @@ const RADIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const DIJKSTRA_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Path Network' },
+];
+
+const BFS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Layer Wave' },
+];
+
+const DFS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Depth Chase' },
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
@@ -171,6 +199,34 @@ const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New graph',
 };
 
+const BFS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: BFS_CODE,
+  variantOptions: BFS_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateTraversalGraph,
+  generator: bfsGenerator,
+  legendItems: () => BFS_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
+const DFS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: DFS_CODE,
+  variantOptions: DFS_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateTraversalGraph,
+  generator: dfsGenerator,
+  legendItems: () => DFS_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -218,6 +274,12 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'dijkstra') {
       return DIJKSTRA_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'bfs') {
+      return BFS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'dfs') {
+      return DFS_VIEW_CONFIG;
     }
     return BUBBLE_VIEW_CONFIG;
   });

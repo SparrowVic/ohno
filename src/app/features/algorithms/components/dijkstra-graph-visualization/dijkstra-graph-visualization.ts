@@ -31,6 +31,11 @@ export class DijkstraGraphVisualization {
   readonly graphState = computed(() => this.step()?.graph ?? null);
   readonly nodes = computed(() => this.graphState()?.nodes ?? []);
   readonly edges = computed(() => this.graphState()?.edges ?? []);
+  readonly metricLabel = computed(() => this.graphState()?.metricLabel ?? 'Distance');
+  readonly frontierLabel = computed(() => this.graphState()?.frontierLabel ?? 'Queue');
+  readonly frontierHeadLabel = computed(() => this.graphState()?.frontierHeadLabel ?? 'Queue head');
+  readonly completionLabel = computed(() => this.graphState()?.completionLabel ?? 'Visited');
+  readonly showEdgeWeights = computed(() => this.graphState()?.showEdgeWeights ?? true);
   readonly sourceLabel = computed(() => {
     const sourceId = this.graphState()?.sourceId ?? this.graph()?.sourceId ?? null;
     if (!sourceId) return '—';
@@ -42,23 +47,7 @@ export class DijkstraGraphVisualization {
     return this.nodes().find((node) => node.id === currentNodeId)?.label ?? 'Scanning';
   });
   readonly phaseLabel = computed(() => {
-    const phase = this.step()?.phase;
-    switch (phase) {
-      case 'pick-node':
-        return 'Pick next node';
-      case 'inspect-edge':
-        return 'Inspect edge';
-      case 'relax':
-        return 'Relax edge';
-      case 'skip-relax':
-        return 'Keep current best';
-      case 'settle-node':
-        return 'Finalize node';
-      case 'graph-complete':
-        return 'Shortest paths ready';
-      default:
-        return 'Initialize graph';
-    }
+    return this.graphState()?.phaseLabel ?? 'Initialize graph';
   });
   readonly settledCount = computed(() => this.nodes().filter((node) => node.isSettled).length);
   readonly frontierCount = computed(() => this.nodes().filter((node) => node.isFrontier).length);
@@ -67,6 +56,9 @@ export class DijkstraGraphVisualization {
     if (!edgeId) return '—';
     const edge = this.edges().find((item) => item.id === edgeId);
     if (!edge) return '—';
+    if (!this.showEdgeWeights()) {
+      return `${this.nodeLabel(edge.from)} → ${this.nodeLabel(edge.to)}`;
+    }
     return `${this.nodeLabel(edge.from)} → ${this.nodeLabel(edge.to)} · ${edge.weight}`;
   });
   readonly queueLead = computed(() => {

@@ -20,12 +20,15 @@ export class GraphTracePanel {
   readonly settledCount = computed(() => this.state()?.traceRows.filter((item) => item.isSettled).length ?? 0);
   readonly queueLength = computed(() => this.state()?.queue.length ?? 0);
   readonly hasComputation = computed(() => this.state()?.computation !== null);
+  readonly completionLabel = computed(() => this.state()?.completionLabel ?? 'Visited');
+  readonly frontierLabel = computed(() => this.state()?.frontierLabel ?? 'Queue');
+  readonly metricLabel = computed(() => this.state()?.metricLabel ?? 'Distance');
 
   statusLabel(row: GraphTraceRow): string {
     if (row.isCurrent) return 'current';
-    if (row.isSettled) return 'settled';
+    if (row.isSettled) return this.state()?.completionStatusLabel ?? 'visited';
     if (row.isSource) return 'source';
-    if (row.isFrontier) return 'queued';
+    if (row.isFrontier) return this.state()?.frontierStatusLabel ?? 'queued';
     return 'unseen';
   }
 

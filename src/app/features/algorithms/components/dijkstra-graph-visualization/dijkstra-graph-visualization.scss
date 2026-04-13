@@ -186,6 +186,14 @@
   text-anchor: middle;
 }
 
+.node__metric-label {
+  fill: var(--text-tertiary);
+  text-anchor: middle;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .node__label {
   font-size: 18px;
   font-weight: 700;

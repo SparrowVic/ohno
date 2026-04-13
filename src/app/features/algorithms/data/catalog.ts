@@ -216,6 +216,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'traversal',
     tags: ['queue', 'layers', 'unweighted'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dfs',
@@ -225,6 +232,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'traversal',
     tags: ['stack', 'backtracking', 'components'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dijkstra',

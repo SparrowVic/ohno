@@ -9,11 +9,11 @@
       <span class="hud-card__value">{{ currentLabel() }}</span>
     </div>
     <div class="hud-card" [class.hud-card--changed]="isCardChanged('settled')">
-      <span class="hud-card__label">Settled</span>
+      <span class="hud-card__label">{{ completionLabel() }}</span>
       <span class="hud-card__value">{{ settledCount() }}</span>
     </div>
     <div class="hud-card" [class.hud-card--changed]="isCardChanged('queue')">
-      <span class="hud-card__label">Queue</span>
+      <span class="hud-card__label">{{ frontierLabel() }}</span>
       <span class="hud-card__value">{{ frontierCount() }}</span>
     </div>
   </div>
@@ -28,7 +28,7 @@
       <span class="focus-pill__value">{{ activeEdgeLabel() }}</span>
     </div>
     <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('queueLead')">
-      <span class="focus-pill__label">Queue head</span>
+      <span class="focus-pill__label">{{ frontierHeadLabel() }}</span>
       <span class="focus-pill__value">{{ queueLead() }}</span>
     </div>
     <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('path')">
@@ -65,10 +65,12 @@
           [attr.x2]="edgePoint(edge.id, 'to', 'x')"
           [attr.y2]="edgePoint(edge.id, 'to', 'y')"
         />
-        <g class="edge-weight" [attr.transform]="weightTransform(edge.id)">
-          <rect x="-18" y="-14" width="36" height="28" rx="14" />
-          <text y="4">{{ edge.weight }}</text>
-        </g>
+        @if (showEdgeWeights()) {
+          <g class="edge-weight" [attr.transform]="weightTransform(edge.id)">
+            <rect x="-18" y="-14" width="36" height="28" rx="14" />
+            <text y="4">{{ edge.weight }}</text>
+          </g>
+        }
       </g>
     }
 
@@ -87,7 +89,8 @@
         <text class="node__label" y="6">{{ node.label }}</text>
 
         <g class="node__distance" transform="translate(0 -48)">
-          <rect x="-22" y="-14" width="44" height="28" rx="14" />
+          <rect x="-34" y="-14" width="68" height="28" rx="14" />
+          <text class="node__metric-label" y="-18">{{ metricLabel() }}</text>
           <text y="4">{{ formatDistance(node.distance) }}</text>
         </g>
 

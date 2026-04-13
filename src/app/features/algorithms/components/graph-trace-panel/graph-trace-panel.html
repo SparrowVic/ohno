@@ -7,11 +7,11 @@
           <span class="trace__summary-value">{{ currentLabel() }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Settled</span>
+          <span class="trace__summary-label">{{ completionLabel() }}</span>
           <span class="trace__summary-value">{{ settledCount() }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Queued</span>
+          <span class="trace__summary-label">{{ frontierLabel() }}</span>
           <span class="trace__summary-value">{{ queueLength() }}</span>
         </div>
       </div>
@@ -26,7 +26,7 @@
       }
 
       <div class="trace__queue">
-        <div class="trace__queue-label">Priority queue</div>
+        <div class="trace__queue-label">{{ frontierLabel() }}</div>
         <div class="trace__queue-items">
           @if (graphState.queue.length === 0) {
             <span class="trace__queue-empty">empty</span>
@@ -57,7 +57,7 @@
         <thead>
           <tr>
             <th>Node</th>
-            <th>Dist</th>
+            <th>{{ metricLabel() }}</th>
             <th>Prev</th>
             <th>Status</th>
           </tr>

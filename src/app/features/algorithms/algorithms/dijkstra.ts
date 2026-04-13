@@ -236,6 +236,14 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
+      phaseLabel: phaseLabel(args.phase),
+      metricLabel: 'Distance',
+      frontierLabel: 'Priority queue',
+      frontierHeadLabel: 'Queue head',
+      completionLabel: 'Settled',
+      frontierStatusLabel: 'queued',
+      completionStatusLabel: 'settled',
+      showEdgeWeights: true,
       currentNodeId,
       activeEdgeId,
       queue,
@@ -244,6 +252,25 @@ function createStep(args: {
       computation: args.computation ?? null,
     },
   };
+}
+
+function phaseLabel(phase: SortStep['phase']): string {
+  switch (phase) {
+    case 'pick-node':
+      return 'Pick next node';
+    case 'inspect-edge':
+      return 'Inspect edge';
+    case 'relax':
+      return 'Relax edge';
+    case 'skip-relax':
+      return 'Keep current best';
+    case 'settle-node':
+      return 'Finalize node';
+    case 'graph-complete':
+      return 'Shortest paths ready';
+    default:
+      return 'Initialize graph';
+  }
 }
 
 function outgoingEdges(graph: WeightedGraphData, nodeId: string) {
