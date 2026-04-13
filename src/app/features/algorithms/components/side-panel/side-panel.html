@@ -34,8 +34,22 @@
           <app-matrix-trace-panel [state]="matrixState()" />
         } @else if (networkState()) {
           <app-network-trace-panel [state]="networkState()" />
-        } @else if (geometryState()) {
-          <app-geometry-trace-panel [state]="geometryState()" />
+        } @else if (closestPairGeometryState()) {
+          <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
+        } @else if (lineIntersectionGeometryState()) {
+          <app-line-intersection-trace-panel [state]="lineIntersectionGeometryState()" />
+        } @else if (halfPlaneGeometryState()) {
+          <app-half-plane-trace-panel [state]="halfPlaneGeometryState()" />
+        } @else if (minkowskiGeometryState()) {
+          <app-minkowski-sum-trace-panel [state]="minkowskiGeometryState()" />
+        } @else if (sweepLineGeometryState()) {
+          <app-sweep-line-trace-panel [state]="sweepLineGeometryState()" />
+        } @else if (voronoiGeometryState()) {
+          <app-voronoi-trace-panel [state]="voronoiGeometryState()" />
+        } @else if (delaunayGeometryState()) {
+          <app-delaunay-trace-panel [state]="delaunayGeometryState()" />
+        } @else if (convexHullGeometryState()) {
+          <app-geometry-trace-panel [state]="convexHullGeometryState()" />
         } @else {
           <app-search-trace-panel [state]="searchState()" />
         }

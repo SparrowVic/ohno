@@ -1,0 +1,41 @@
+<div class="sltp">
+  @if (state(); as geo) {
+    <div class="sltp__header">
+      <div>
+        <div class="sltp__eyebrow">Scanline</div>
+        <div class="sltp__title">{{ geo.currentEventLabel }}</div>
+      </div>
+      <div class="sltp__stats">
+        <span>{{ geo.coveredArea.toFixed(1) }} area</span>
+        <span>{{ geo.spans.length }} spans</span>
+      </div>
+    </div>
+
+    <div class="sltp__card">
+      <span class="sltp__label">Active merged spans</span>
+      @if (geo.spans.length === 0) {
+        <div class="sltp__placeholder">No vertical coverage on the current sweep line.</div>
+      } @else {
+        <div class="sltp__table">
+          @for (span of geo.spans; track span.id) {
+            <div class="sltp__row">
+              <span>{{ span.id }}</span>
+              <span>[{{ span.y0.toFixed(1) }}, {{ span.y1.toFixed(1) }}]</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="sltp__card">
+      <span class="sltp__label">Event queue</span>
+      <div class="sltp__chips">
+        @for (event of geo.events; track event.id) {
+          <span class="sltp__chip sltp__chip--{{ event.tone }}">{{ event.label }}</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="sltp__placeholder">No trace data for this geometry step.</div>
+  }
+</div>

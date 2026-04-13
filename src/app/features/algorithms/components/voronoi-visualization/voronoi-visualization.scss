@@ -1,0 +1,158 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.vrv {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 16px 12px;
+}
+
+.vrv__stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 0.5px solid rgba(255, 255, 255, 0.07);
+  background:
+    radial-gradient(circle at top, rgba(186, 230, 253, 0.06), transparent 24%),
+    rgba(9, 14, 26, 0.94);
+}
+
+.vrv__svg {
+  width: 100%;
+  flex: 1;
+}
+
+.vrv__sweep {
+  stroke: rgba(255, 122, 69, 0.84);
+  stroke-width: 0.75;
+  stroke-dasharray: 3 2;
+}
+
+.vrv__cell {
+  stroke-width: 0.6;
+  transition: opacity 160ms ease;
+
+  &--active {
+    stroke-width: 0.95;
+    opacity: 1;
+  }
+}
+
+.vrv__site-glow {
+  opacity: 0.16;
+
+  &--idle {
+    fill: rgba(255, 255, 255, 0.18);
+  }
+
+  &--active {
+    fill: rgba(255, 122, 69, 0.5);
+  }
+}
+
+.vrv__site {
+  stroke-width: 0.55;
+
+  &--idle {
+    fill: rgba(255, 255, 255, 0.92);
+    stroke: rgba(255, 255, 255, 0.24);
+  }
+
+  &--active {
+    fill: #ff7a45;
+    stroke: rgba(255, 122, 69, 0.44);
+  }
+}
+
+.vrv__hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  pointer-events: none;
+}
+
+.vrv__card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 13px;
+  border: 0.5px solid rgba(255, 255, 255, 0.07);
+  background: rgba(3, 7, 18, 0.72);
+}
+
+.vrv__key,
+.vrv__footer-key {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.vrv__val {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &--accent {
+    color: #bae6fd;
+  }
+}
+
+.vrv__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vrv__events {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.vrv__event {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+
+  &--queued {
+    color: rgba(226, 232, 240, 0.64);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &--current {
+    color: #ff7a45;
+    background: rgba(255, 122, 69, 0.08);
+  }
+
+  &--done {
+    color: #bae6fd;
+    background: rgba(186, 230, 253, 0.08);
+  }
+}
+
+@media (max-width: 900px) {
+  .vrv__hud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

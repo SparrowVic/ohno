@@ -1135,6 +1135,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'computational',
     tags: ['segments', 'orientation', 'geometry'],
+    implemented: true,
   }),
   algo({
     id: 'closest-pair-of-points',
@@ -1144,6 +1145,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'computational',
     tags: ['divide & conquer', 'distance', 'geometry'],
+    implemented: true,
   }),
   algo({
     id: 'sweep-line',
@@ -1153,6 +1155,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'computational',
     tags: ['events', 'active set', 'geometry'],
+    implemented: true,
   }),
   algo({
     id: 'voronoi-diagram',
@@ -1162,6 +1165,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'advanced',
     tags: ['regions', 'sites', 'computational geometry'],
+    implemented: true,
   }),
   algo({
     id: 'delaunay-triangulation',
@@ -1171,6 +1175,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'advanced',
     tags: ['triangulation', 'geometry', 'duality'],
+    implemented: true,
   }),
   algo({
     id: 'minkowski-sum',
@@ -1180,6 +1185,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'advanced',
     tags: ['polygons', 'vector sum', 'geometry'],
+    implemented: true,
   }),
   algo({
     id: 'half-plane-intersection',
@@ -1189,6 +1195,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'advanced',
     tags: ['constraints', 'geometry', 'feasible region'],
+    implemented: true,
   }),
   algo({
     id: 'fibonacci-iterative',

@@ -23,4 +23,11 @@ export type VisualizationVariant =
   | 'radix-strip'
   | 'radix-matrix'
   | 'dijkstra-graph'
-  | 'convex-hull';
+  | 'convex-hull'
+  | 'closest-pair'
+  | 'line-intersection'
+  | 'half-plane'
+  | 'minkowski-sum'
+  | 'sweep-line'
+  | 'voronoi'
+  | 'delaunay';

@@ -5,7 +5,7 @@ import {
   input,
 } from '@angular/core';
 
-import { GeometryPoint, GeometryStepState } from '../../models/geometry';
+import { ConvexHullStepState, GeometryPoint, isConvexHullState } from '../../models/geometry';
 import { SortStep } from '../../models/sort-step';
 
 @Component({
@@ -20,7 +20,10 @@ export class ConvexHullVisualization {
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  readonly geoState = computed<GeometryStepState | null>(() => this.step()?.geometry ?? null);
+  readonly geoState = computed<ConvexHullStepState | null>(() => {
+    const geometry = this.step()?.geometry ?? null;
+    return isConvexHullState(geometry) ? geometry : null;
+  });
   readonly points = computed(() => this.geoState()?.points ?? []);
   readonly edges = computed(() => this.geoState()?.edges ?? []);
   readonly isComplete = computed(() => this.geoState()?.phase === 'complete');

@@ -1,0 +1,37 @@
+<div class="vrtp">
+  @if (state(); as geo) {
+    <div class="vrtp__header">
+      <div>
+        <div class="vrtp__eyebrow">Voronoi</div>
+        <div class="vrtp__title">{{ geo.currentCellLabel }}</div>
+      </div>
+      <div class="vrtp__stats">
+        <span>{{ geo.closedCells }} cells</span>
+        <span>{{ geo.sweepY !== null ? geo.sweepY.toFixed(1) : 'done' }} y</span>
+      </div>
+    </div>
+
+    <div class="vrtp__card">
+      <span class="vrtp__label">Active site</span>
+      @if (activeSite(); as site) {
+        <div class="vrtp__row">
+          <span>P{{ site.id }}</span>
+          <span>({{ site.x.toFixed(1) }}, {{ site.y.toFixed(1) }})</span>
+        </div>
+      } @else {
+        <div class="vrtp__placeholder">No active site in this frame.</div>
+      }
+    </div>
+
+    <div class="vrtp__card">
+      <span class="vrtp__label">Site event rail</span>
+      <div class="vrtp__chips">
+        @for (event of geo.events; track event.id) {
+          <span class="vrtp__chip vrtp__chip--{{ event.tone }}">{{ event.label }}</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="vrtp__placeholder">No trace data for this geometry step.</div>
+  }
+</div>

@@ -1,0 +1,116 @@
+<div class="cpv">
+  <div class="cpv__stage">
+    <svg class="cpv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <pattern id="cpv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.3" />
+        </pattern>
+      </defs>
+
+      <rect x="-6" y="-6" width="112" height="112" fill="url(#cpv-grid)" />
+
+      @for (band of bands(); track band.tone + ':' + band.x0 + ':' + band.x1 + ':' + (band.label ?? '')) {
+        <rect
+          [attr.x]="band.x0"
+          y="0"
+          [attr.width]="band.x1 - band.x0"
+          height="100"
+          [class]="'cpv__band cpv__band--' + band.tone"
+          [attr.opacity]="bandOpacity(band)"
+        />
+      }
+
+      @for (divider of dividers(); track divider.tone + ':' + divider.x + ':' + (divider.label ?? '')) {
+        <line
+          [attr.x1]="divider.x"
+          y1="0"
+          [attr.x2]="divider.x"
+          y2="100"
+          [class]="'cpv__divider cpv__divider--' + divider.tone"
+        />
+        @if (divider.label) {
+          <text class="cpv__divider-label" [attr.x]="divider.x" y="4" text-anchor="middle">
+            {{ divider.label }}
+          </text>
+        }
+      }
+
+      @for (pair of pairLines(); track pair.tone + ':' + pair.pointIds[0] + ':' + pair.pointIds[1]) {
+        <line
+          [attr.x1]="ptSvgX(pair.pointIds[0])"
+          [attr.y1]="ptSvgY(pair.pointIds[0])"
+          [attr.x2]="ptSvgX(pair.pointIds[1])"
+          [attr.y2]="ptSvgY(pair.pointIds[1])"
+          [class]="'cpv__pair cpv__pair--' + pair.tone"
+        />
+        <g [attr.transform]="'translate(' + pairMidX(pair) + ',' + pairMidY(pair) + ')'">
+          <rect class="cpv__pair-pill" x="-9" y="-3.8" rx="3.6" ry="3.6" width="18" height="7.6" />
+          <text class="cpv__pair-label" text-anchor="middle" dominant-baseline="middle">
+            {{ pair.distance.toFixed(2) }}
+          </text>
+        </g>
+      }
+
+      @for (point of points(); track point.id) {
+        <g [attr.transform]="ptTransform(point)">
+          @if (showGlow(point)) {
+            <circle [class]="'cpv__glow cpv__glow--' + point.status" r="6.4" />
+          }
+          <circle [class]="'cpv__point cpv__point--' + point.status" r="3.6" />
+          <text class="cpv__point-id" text-anchor="middle" dominant-baseline="middle">{{ point.id }}</text>
+        </g>
+      }
+    </svg>
+
+    @if (geoState(); as geo) {
+      <div class="cpv__hud">
+        <div class="cpv__card cpv__card--phase">
+          <span class="cpv__card-key">Phase</span>
+          <span class="cpv__card-val">{{ phaseLabel(geo.phase) }}</span>
+        </div>
+        <div class="cpv__card">
+          <span class="cpv__card-key">Region</span>
+          <span class="cpv__card-val">{{ geo.regionLabel }}</span>
+        </div>
+        <div class="cpv__card">
+          <span class="cpv__card-key">Best</span>
+          <span class="cpv__card-val cpv__card-val--best">{{ formatDistance(geo.bestDistance) }}</span>
+        </div>
+        <div class="cpv__card">
+          <span class="cpv__card-key">Current</span>
+          <span class="cpv__card-val cpv__card-val--current">{{ formatDistance(geo.candidateDistance) }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (geoState(); as geo) {
+    <div class="cpv__footer">
+      <div class="cpv__meta">
+        <span class="cpv__meta-key">Trail</span>
+        <div class="cpv__trail">
+          @for (part of geo.trail; track part) {
+            <span class="cpv__trail-chip">{{ part }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="cpv__meta">
+        <span class="cpv__meta-key">Pair checks</span>
+        <span class="cpv__meta-val">{{ geo.checkedPairs }}</span>
+      </div>
+
+      <div class="cpv__meta">
+        <span class="cpv__meta-key">Depth</span>
+        <span class="cpv__meta-val">{{ geo.depth }}</span>
+      </div>
+
+      <div class="cpv__meta">
+        <span class="cpv__meta-key">Strip</span>
+        <span class="cpv__meta-val">
+          {{ geo.stripWidth !== null ? ('±' + geo.stripWidth.toFixed(2)) : 'inactive' }}
+        </span>
+      </div>
+    </div>
+  }
+</div>

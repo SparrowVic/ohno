@@ -1,0 +1,56 @@
+<div class="hptp">
+  @if (state(); as geo) {
+    <div class="hptp__phase hptp__phase--{{ geo.phase }}">
+      <div class="hptp__phase-copy">
+        <span class="hptp__eyebrow">Phase</span>
+        <span class="hptp__title">{{ phaseLabel(geo.phase) }}</span>
+      </div>
+      <div class="hptp__stats">
+        <div class="hptp__stat">
+          <span class="hptp__stat-value">{{ geo.vertexCount }}</span>
+          <span class="hptp__stat-label">verts</span>
+        </div>
+        <div class="hptp__stat">
+          <span class="hptp__stat-value">{{ geo.feasibleArea !== null ? geo.feasibleArea.toFixed(1) : '0.0' }}</span>
+          <span class="hptp__stat-label">area</span>
+        </div>
+        <div class="hptp__stat">
+          <span class="hptp__stat-value">{{ geo.status }}</span>
+          <span class="hptp__stat-label">status</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hptp__card">
+      <span class="hptp__card-key">Current boundary</span>
+      <span class="hptp__focus">{{ geo.currentConstraintLabel }}</span>
+    </div>
+
+    <div class="hptp__card">
+      <span class="hptp__card-key">Constraint rail</span>
+      <div class="hptp__chips">
+        @for (event of geo.events; track event.id) {
+          <span class="hptp__chip hptp__chip--{{ event.tone }}">{{ event.label }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="hptp__card">
+      <span class="hptp__card-key">Feasible polygon vertices</span>
+      @if (feasiblePolygon(); as polygon) {
+        <div class="hptp__table">
+          @for (vertex of polygon.vertices; track $index) {
+            <div class="hptp__row">
+              <span class="hptp__row-label">V{{ $index }}</span>
+              <span class="hptp__row-value">({{ vertex.x.toFixed(1) }}, {{ vertex.y.toFixed(1) }})</span>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="hptp__placeholder">No feasible polygon remains.</div>
+      }
+    </div>
+  } @else {
+    <div class="hptp__empty">No trace data for this geometry step.</div>
+  }
+</div>

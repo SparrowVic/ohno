@@ -1,0 +1,72 @@
+<div class="slv">
+  @if (geoState(); as geo) {
+    <div class="slv__stage">
+      <svg class="slv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="slv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.3" />
+          </pattern>
+        </defs>
+        <rect x="-6" y="-6" width="112" height="112" fill="url(#slv-grid)" />
+
+        @if (geo.fillWidth !== null) {
+          <rect x="0" y="0" [attr.width]="geo.fillWidth" height="100" class="slv__progress" />
+        }
+
+        @for (rect of geo.rectangles; track rect.id) {
+          <rect
+            [attr.x]="rect.x"
+            [attr.y]="100 - rect.y - rect.height"
+            [attr.width]="rect.width"
+            [attr.height]="rect.height"
+            [class]="'slv__rect slv__rect--' + rect.tone"
+          />
+        }
+
+        @if (geo.sweepX !== null) {
+          <line [attr.x1]="geo.sweepX" y1="0" [attr.x2]="geo.sweepX" y2="100" class="slv__sweep" />
+        }
+
+        <g transform="translate(92, 6)">
+          @for (span of geo.spans; track span.id) {
+            <rect
+              x="0"
+              [attr.y]="100 - span.y1"
+              width="4"
+              [attr.height]="span.y1 - span.y0"
+              class="slv__span"
+            />
+          }
+        </g>
+      </svg>
+
+      <div class="slv__hud">
+        <div class="slv__card slv__card--phase">
+          <span class="slv__key">Phase</span>
+          <span class="slv__val">{{ phaseLabel(geo.phase) }}</span>
+        </div>
+        <div class="slv__card">
+          <span class="slv__key">Area</span>
+          <span class="slv__val slv__val--accent">{{ geo.coveredArea.toFixed(1) }}</span>
+        </div>
+        <div class="slv__card">
+          <span class="slv__key">Sweep x</span>
+          <span class="slv__val">{{ geo.sweepX !== null ? geo.sweepX.toFixed(1) : 'ready' }}</span>
+        </div>
+        <div class="slv__card">
+          <span class="slv__key">Event</span>
+          <span class="slv__val">{{ geo.currentEventLabel }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="slv__footer">
+      <span class="slv__footer-key">Event rail</span>
+      <div class="slv__events">
+        @for (event of geo.events; track event.id) {
+          <span class="slv__event slv__event--{{ event.kind }} slv__event--{{ event.tone }}">{{ event.label }}</span>
+        }
+      </div>
+    </div>
+  }
+</div>

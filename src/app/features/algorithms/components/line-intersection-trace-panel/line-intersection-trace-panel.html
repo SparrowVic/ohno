@@ -1,0 +1,77 @@
+<div class="litp">
+  @if (state(); as geo) {
+    <div class="litp__phase litp__phase--{{ geo.phase }}">
+      <div class="litp__phase-copy">
+        <span class="litp__eyebrow">Phase</span>
+        <span class="litp__title">{{ phaseLabel(geo.phase) }}</span>
+      </div>
+      <div class="litp__stats">
+        <div class="litp__stat">
+          <span class="litp__stat-value">{{ geo.foundCount }}</span>
+          <span class="litp__stat-label">hits</span>
+        </div>
+        <div class="litp__stat">
+          <span class="litp__stat-value">{{ geo.activeOrder.length }}</span>
+          <span class="litp__stat-label">active</span>
+        </div>
+        <div class="litp__stat">
+          <span class="litp__stat-value">{{ geo.sweepX !== null ? geo.sweepX.toFixed(1) : '—' }}</span>
+          <span class="litp__stat-label">x</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="litp__card">
+      <span class="litp__card-key">Current event</span>
+      @if (currentEvent(); as event) {
+        <div class="litp__event-row">
+          <span class="litp__event-pill litp__event-pill--{{ event.kind }}">{{ event.label }}</span>
+          <span class="litp__event-x">x = {{ event.x.toFixed(1) }}</span>
+        </div>
+      } @else {
+        <div class="litp__placeholder">Sweep is between event checkpoints.</div>
+      }
+    </div>
+
+    <div class="litp__card">
+      <span class="litp__card-key">Active ordering on sweep line</span>
+      <div class="litp__chips">
+        @if (geo.activeOrder.length === 0) {
+          <span class="litp__placeholder">No segment currently intersects the sweep line.</span>
+        }
+        @for (label of geo.activeOrder; track label) {
+          <span class="litp__chip">{{ label }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="litp__card">
+      <span class="litp__card-key">Upcoming queue</span>
+      <div class="litp__chips">
+        @for (event of upcomingEvents(); track event.id) {
+          <span class="litp__queue-item litp__queue-item--{{ event.kind }} litp__queue-item--{{ event.tone }}">
+            {{ event.label }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="litp__card">
+      <span class="litp__card-key">Found intersections</span>
+      @if (geo.intersections.length === 0) {
+        <div class="litp__placeholder">No crossing has been confirmed yet.</div>
+      } @else {
+        <div class="litp__table">
+          @for (marker of geo.intersections; track marker.id) {
+            <div class="litp__row">
+              <span class="litp__row-label">{{ marker.label }}</span>
+              <span class="litp__row-value">({{ marker.x.toFixed(1) }}, {{ marker.y.toFixed(1) }})</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="litp__empty">No trace data for this geometry step.</div>
+  }
+</div>

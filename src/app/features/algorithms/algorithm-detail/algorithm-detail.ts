@@ -26,6 +26,7 @@ import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { climbingStairsGenerator } from '../algorithms/climbing-stairs';
 import { chromaticNumberGenerator } from '../algorithms/chromatic-number';
+import { closestPairOfPointsGenerator, ClosestPairScenario } from '../algorithms/closest-pair-of-points';
 import { coinChangeGenerator } from '../algorithms/coin-change';
 import { connectedComponentsGenerator } from '../algorithms/connected-components';
 import { countingSortGenerator } from '../algorithms/counting-sort';
@@ -44,18 +45,21 @@ import { eulerPathCircuitGenerator } from '../algorithms/euler-path-circuit';
 import { fibonacciDpGenerator } from '../algorithms/fibonacci-dp';
 import { floydWarshallGenerator } from '../algorithms/floyd-warshall';
 import { floodFillGenerator } from '../algorithms/flood-fill';
+import { halfPlaneIntersectionGenerator, HalfPlaneIntersectionScenario } from '../algorithms/half-plane-intersection';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
 import { knapsack01Generator } from '../algorithms/knapsack-01';
 import { knuthDpOptimizationGenerator } from '../algorithms/knuth-dp-optimization';
 import { kruskalsMstGenerator } from '../algorithms/kruskals-mst';
 import { linearSearchGenerator } from '../algorithms/linear-search';
+import { lineIntersectionGenerator, LineIntersectionScenario } from '../algorithms/line-intersection';
 import { longestCommonSubsequenceGenerator } from '../algorithms/longest-common-subsequence';
 import { longestIncreasingSubsequenceGenerator } from '../algorithms/longest-increasing-subsequence';
 import { longestPalindromicSubsequenceGenerator } from '../algorithms/longest-palindromic-subsequence';
 import { matrixChainMultiplicationGenerator } from '../algorithms/matrix-chain-multiplication';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { minCostMaxFlowGenerator } from '../algorithms/min-cost-max-flow';
+import { minkowskiSumGenerator, MinkowskiSumScenario } from '../algorithms/minkowski-sum';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
 import { primsMstGenerator } from '../algorithms/prims-mst';
@@ -66,13 +70,16 @@ import { shellSortGenerator } from '../algorithms/shell-sort';
 import { sosDpGenerator } from '../algorithms/sos-dp';
 import { subsetSumGenerator } from '../algorithms/subset-sum';
 import { steinerTreeGenerator } from '../algorithms/steiner-tree';
+import { sweepLineGenerator, SweepLineScenario } from '../algorithms/sweep-line';
 import { tarjanSccGenerator } from '../algorithms/tarjan-scc';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
 import { travelingSalesmanDpGenerator } from '../algorithms/traveling-salesman-dp';
 import { unionFindGenerator } from '../algorithms/union-find';
+import { voronoiDiagramGenerator, VoronoiDiagramScenario } from '../algorithms/voronoi-diagram';
 import { wildcardMatchingGenerator } from '../algorithms/wildcard-matching';
 import { convexHullGenerator, ConvexHullScenario } from '../algorithms/convex-hull';
+import { delaunayTriangulationGenerator, DelaunayTriangulationScenario } from '../algorithms/delaunay-triangulation';
 import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
 import { hungarianAlgorithmGenerator } from '../algorithms/hungarian-algorithm';
 import { kosarajuSccGenerator } from '../algorithms/kosaraju-scc';
@@ -88,6 +95,7 @@ import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
 import { CLIMBING_STAIRS_CODE } from '../data/climbing-stairs-code';
 import { CHROMATIC_NUMBER_CODE } from '../data/chromatic-number-code';
+import { CLOSEST_PAIR_OF_POINTS_CODE } from '../data/closest-pair-of-points-code';
 import { COIN_CHANGE_CODE } from '../data/coin-change-code';
 import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
@@ -106,18 +114,21 @@ import { EULER_PATH_CIRCUIT_CODE } from '../data/euler-path-circuit-code';
 import { FIBONACCI_DP_CODE } from '../data/fibonacci-dp-code';
 import { FLOYD_WARSHALL_CODE } from '../data/floyd-warshall-code';
 import { FLOOD_FILL_CODE } from '../data/flood-fill-code';
+import { HALF_PLANE_INTERSECTION_CODE } from '../data/half-plane-intersection-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
 import { KNAPSACK_01_CODE } from '../data/knapsack-01-code';
 import { KNUTH_DP_OPTIMIZATION_CODE } from '../data/knuth-dp-optimization-code';
 import { KRUSKALS_MST_CODE } from '../data/kruskals-mst-code';
 import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
+import { LINE_INTERSECTION_CODE } from '../data/line-intersection-code';
 import { LONGEST_COMMON_SUBSEQUENCE_CODE } from '../data/longest-common-subsequence-code';
 import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-subsequence-code';
 import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
 import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
+import { MINKOWSKI_SUM_CODE } from '../data/minkowski-sum-code';
 import { PROFILE_DP_CODE } from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
@@ -128,11 +139,13 @@ import { SHELL_SORT_CODE } from '../data/shell-sort-code';
 import { SOS_DP_CODE } from '../data/sos-dp-code';
 import { SUBSET_SUM_CODE } from '../data/subset-sum-code';
 import { STEINER_TREE_CODE } from '../data/steiner-tree-code';
+import { SWEEP_LINE_CODE } from '../data/sweep-line-code';
 import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { TRAVELING_SALESMAN_DP_CODE } from '../data/traveling-salesman-dp-code';
 import { UNION_FIND_CODE } from '../data/union-find-code';
+import { VORONOI_DIAGRAM_CODE } from '../data/voronoi-diagram-code';
 import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
 import { DpPresetOption, DpTraceState } from '../models/dp';
 import { DsuTraceState } from '../models/dsu';
@@ -147,6 +160,7 @@ import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
 import { CONVEX_HULL_CODE } from '../data/convex-hull-code';
 import { KOSARAJU_SCC_CODE } from '../data/kosaraju-scc-code';
+import { DELAUNAY_TRIANGULATION_CODE } from '../data/delaunay-triangulation-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
@@ -686,8 +700,92 @@ const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
   { label: 'Rejected (interior point)', color: 'rgba(244,63,94,0.55)' },
 ];
 
+const CLOSEST_PAIR_LEGEND: readonly LegendItem[] = [
+  { label: 'Left recursive half', color: '#38bdf8' },
+  { label: 'Right recursive half', color: '#fb923c' },
+  { label: 'Strip corridor candidate', color: '#2dd4bf' },
+  { label: 'Current distance check', color: '#f0b429' },
+  { label: 'Best pair so far', color: '#ffde59' },
+];
+
+const LINE_INTERSECTION_LEGEND: readonly LegendItem[] = [
+  { label: 'Pending segment', color: 'rgba(148,163,184,0.55)' },
+  { label: 'Active sweep segment', color: '#5eead4' },
+  { label: 'Focused event segment', color: '#f0b429' },
+  { label: 'Confirmed crossing point', color: '#38bdf8' },
+  { label: 'Sweep line', color: '#fff176' },
+];
+
+const HALF_PLANE_LEGEND: readonly LegendItem[] = [
+  { label: 'Current boundary line', color: '#ffde59' },
+  { label: 'Already applied constraint', color: '#2dd4bf' },
+  { label: 'Forbidden side', color: 'rgba(244,63,94,0.52)' },
+  { label: 'Feasible polygon', color: '#ffde59' },
+  { label: 'Final intersection polygon', color: '#2dd4bf' },
+];
+
+const MINKOWSKI_SUM_LEGEND: readonly LegendItem[] = [
+  { label: 'Obstacle polygon A', color: 'rgba(244,63,94,0.6)' },
+  { label: 'Robot polygon B', color: '#38bdf8' },
+  { label: "Reflected robot -B", color: '#7c6ef0' },
+  { label: 'Growing sum path', color: '#ffde59' },
+  { label: 'Final configuration obstacle', color: '#2dd4bf' },
+];
+
+const SWEEP_LINE_LEGEND: readonly LegendItem[] = [
+  { label: 'Pending rectangle', color: 'rgba(148,163,184,0.5)' },
+  { label: 'Active rectangle at sweep x', color: '#5eead4' },
+  { label: 'Focused event rectangle', color: '#f0b429' },
+  { label: 'Merged vertical coverage span', color: '#ffde59' },
+  { label: 'Sweep progress region', color: 'rgba(45,212,191,0.32)' },
+];
+
+const VORONOI_LEGEND: readonly LegendItem[] = [
+  { label: 'Site points', color: 'rgba(255,255,255,0.92)' },
+  { label: 'Active site event', color: '#ff7a45' },
+  { label: 'Settled Voronoi cell', color: 'rgba(186,230,253,0.5)' },
+  { label: 'Current cell freeze', color: '#ff7a45' },
+  { label: 'Descending sweep line', color: '#ff7a45' },
+];
+
+const DELAUNAY_LEGEND: readonly LegendItem[] = [
+  { label: 'Committed triangle mesh', color: 'rgba(56,189,248,0.45)' },
+  { label: 'Current candidate triangle', color: '#f0b429' },
+  { label: 'Active circumcircle', color: '#ffde59' },
+  { label: 'Committed mesh edges', color: 'rgba(186,230,253,0.5)' },
+  { label: 'Active triangle vertices', color: '#ffde59' },
+];
+
 const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'convex-hull', label: 'Point Cloud' },
+];
+
+const CLOSEST_PAIR_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'closest-pair', label: 'Divide & Strip' },
+];
+
+const LINE_INTERSECTION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'line-intersection', label: 'Laser Sweep' },
+];
+
+const HALF_PLANE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'half-plane', label: 'Constraint Clip' },
+];
+
+const MINKOWSKI_SUM_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'minkowski-sum', label: 'Vector Merge' },
+];
+
+const SWEEP_LINE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'sweep-line', label: 'Area Scanner' },
+];
+
+const VORONOI_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'voronoi', label: 'Crystal Cells' },
+];
+
+const DELAUNAY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'delaunay', label: 'Triangle Mesh' },
 ];
 
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -1810,6 +1908,104 @@ const CONVEX_HULL_VIEW_CONFIG: GeometryAlgorithmViewConfig<ConvexHullScenario> =
   randomizeLabel: 'New point cloud',
 };
 
+const CLOSEST_PAIR_VIEW_CONFIG: GeometryAlgorithmViewConfig<ClosestPairScenario> = {
+  kind: 'geometry',
+  codeLines: CLOSEST_PAIR_OF_POINTS_CODE,
+  variantOptions: CLOSEST_PAIR_VARIANT_OPTIONS,
+  defaultVariant: 'closest-pair',
+  sizeOptions: [10, 14, 18],
+  defaultSize: 14,
+  createScenario: createClosestPairScenario,
+  generator: closestPairOfPointsGenerator,
+  legendItems: () => CLOSEST_PAIR_LEGEND,
+  sizeUnit: 'points',
+  randomizeLabel: 'New split cloud',
+};
+
+const LINE_INTERSECTION_VIEW_CONFIG: GeometryAlgorithmViewConfig<LineIntersectionScenario> = {
+  kind: 'geometry',
+  codeLines: LINE_INTERSECTION_CODE,
+  variantOptions: LINE_INTERSECTION_VARIANT_OPTIONS,
+  defaultVariant: 'line-intersection',
+  sizeOptions: [5, 6, 7],
+  defaultSize: 6,
+  createScenario: createLineIntersectionScenario,
+  generator: lineIntersectionGenerator,
+  legendItems: () => LINE_INTERSECTION_LEGEND,
+  sizeUnit: 'segments',
+  randomizeLabel: 'New segment field',
+};
+
+const HALF_PLANE_VIEW_CONFIG: GeometryAlgorithmViewConfig<HalfPlaneIntersectionScenario> = {
+  kind: 'geometry',
+  codeLines: HALF_PLANE_INTERSECTION_CODE,
+  variantOptions: HALF_PLANE_VARIANT_OPTIONS,
+  defaultVariant: 'half-plane',
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  createScenario: createHalfPlaneIntersectionScenario,
+  generator: halfPlaneIntersectionGenerator,
+  legendItems: () => HALF_PLANE_LEGEND,
+  sizeUnit: 'planes',
+  randomizeLabel: 'New feasible cut',
+};
+
+const MINKOWSKI_SUM_VIEW_CONFIG: GeometryAlgorithmViewConfig<MinkowskiSumScenario> = {
+  kind: 'geometry',
+  codeLines: MINKOWSKI_SUM_CODE,
+  variantOptions: MINKOWSKI_SUM_VARIANT_OPTIONS,
+  defaultVariant: 'minkowski-sum',
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  createScenario: createMinkowskiSumScenario,
+  generator: minkowskiSumGenerator,
+  legendItems: () => MINKOWSKI_SUM_LEGEND,
+  sizeUnit: 'verts',
+  randomizeLabel: 'New shape pair',
+};
+
+const SWEEP_LINE_VIEW_CONFIG: GeometryAlgorithmViewConfig<SweepLineScenario> = {
+  kind: 'geometry',
+  codeLines: SWEEP_LINE_CODE,
+  variantOptions: SWEEP_LINE_VARIANT_OPTIONS,
+  defaultVariant: 'sweep-line',
+  sizeOptions: [5, 7, 9],
+  defaultSize: 7,
+  createScenario: createSweepLineScenario,
+  generator: sweepLineGenerator,
+  legendItems: () => SWEEP_LINE_LEGEND,
+  sizeUnit: 'rects',
+  randomizeLabel: 'New scan field',
+};
+
+const VORONOI_VIEW_CONFIG: GeometryAlgorithmViewConfig<VoronoiDiagramScenario> = {
+  kind: 'geometry',
+  codeLines: VORONOI_DIAGRAM_CODE,
+  variantOptions: VORONOI_VARIANT_OPTIONS,
+  defaultVariant: 'voronoi',
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  createScenario: createVoronoiScenario,
+  generator: voronoiDiagramGenerator,
+  legendItems: () => VORONOI_LEGEND,
+  sizeUnit: 'sites',
+  randomizeLabel: 'New crystal field',
+};
+
+const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationScenario> = {
+  kind: 'geometry',
+  codeLines: DELAUNAY_TRIANGULATION_CODE,
+  variantOptions: DELAUNAY_VARIANT_OPTIONS,
+  defaultVariant: 'delaunay',
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  createScenario: createDelaunayScenario,
+  generator: delaunayTriangulationGenerator,
+  legendItems: () => DELAUNAY_LEGEND,
+  sizeUnit: 'sites',
+  randomizeLabel: 'New star mesh',
+};
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -2034,6 +2230,27 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'convex-hull') {
       return CONVEX_HULL_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'closest-pair-of-points') {
+      return CLOSEST_PAIR_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'line-intersection') {
+      return LINE_INTERSECTION_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'half-plane-intersection') {
+      return HALF_PLANE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'minkowski-sum') {
+      return MINKOWSKI_SUM_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'sweep-line') {
+      return SWEEP_LINE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'voronoi-diagram') {
+      return VORONOI_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'delaunay-triangulation') {
+      return DELAUNAY_VIEW_CONFIG;
     }
     return BUBBLE_VIEW_CONFIG;
   });
@@ -2618,6 +2835,171 @@ function createConvexHullScenario(size: number): ConvexHullScenario {
     });
   }
   return { points };
+}
+
+function createClosestPairScenario(size: number): ClosestPairScenario {
+  const points: { x: number; y: number }[] = [];
+  const closePairY = Math.round(Math.random() * 26) + 34;
+  const centerX = 50 + (Math.random() * 2 - 1);
+
+  points.push({ x: Number((centerX - 1.4).toFixed(1)), y: Number((closePairY - 0.9).toFixed(1)) });
+  points.push({ x: Number((centerX + 1.3).toFixed(1)), y: Number((closePairY + 1.2).toFixed(1)) });
+
+  const leftTarget = Math.floor((size - 2) / 2);
+
+  const tryAddPoint = (xMin: number, xMax: number, yMin: number, yMax: number): boolean => {
+    const candidate = {
+      x: Math.round(Math.random() * (xMax - xMin)) + xMin,
+      y: Math.round(Math.random() * (yMax - yMin)) + yMin,
+    };
+    const tooClose = points.some(
+      (point) => Math.hypot(point.x - candidate.x, point.y - candidate.y) < 7,
+    );
+    if (tooClose) return false;
+    points.push(candidate);
+    return true;
+  };
+
+  let guard = 0;
+  while (points.length < leftTarget + 2 && guard < 300) {
+    guard += 1;
+    tryAddPoint(12, 42, 12, 86);
+  }
+
+  guard = 0;
+  while (points.length < size && guard < 400) {
+    guard += 1;
+    const remainingRight = points.length >= leftTarget + 2;
+    if (remainingRight) {
+      tryAddPoint(58, 88, 12, 86);
+    } else {
+      tryAddPoint(12, 42, 12, 86);
+    }
+  }
+
+  while (points.length < size) {
+    const onRight = points.length >= leftTarget + 2;
+    points.push({
+      x: Math.round(Math.random() * 20) + (onRight ? 60 : 16),
+      y: Math.round(Math.random() * 64) + 16,
+    });
+  }
+
+  return { points: points.slice(0, Math.max(2, size)) };
+}
+
+function createLineIntersectionScenario(size: number): LineIntersectionScenario {
+  const count = Math.max(4, size);
+  const step = count > 1 ? 70 / (count - 1) : 0;
+  const leftYs = Array.from({ length: count }, (_, index) =>
+    Number((15 + index * step + (Math.random() * 3 - 1.5)).toFixed(1)),
+  );
+  const rightYs = [...leftYs].reverse().map((value, index) =>
+    Number((value + (index % 2 === 0 ? 2.2 : -2.2)).toFixed(1)),
+  );
+
+  return {
+    segments: leftYs.map((leftY, index) => ({
+      x1: Number((12 + index * 1.2).toFixed(1)),
+      y1: leftY,
+      x2: Number((88 - index * 1.1).toFixed(1)),
+      y2: Math.max(12, Math.min(88, rightYs[index] ?? leftY)),
+    })),
+  };
+}
+
+function createHalfPlaneIntersectionScenario(size: number): HalfPlaneIntersectionScenario {
+  const polygon = createConvexPolygon(size, 50, 50, 18, 28);
+  const constraints = polygon.map((vertex, index) => ({
+    start: vertex,
+    end: polygon[(index + 1) % polygon.length]!,
+  }));
+
+  shuffleInPlace(constraints);
+  return { constraints };
+}
+
+function createMinkowskiSumScenario(size: number): MinkowskiSumScenario {
+  const obstacle = createConvexPolygon(size, 0, 0, 10, 18);
+  const robot = createConvexPolygon(Math.max(3, Math.min(5, size - 1)), 0, 0, 4, 8);
+  return { obstacle, robot };
+}
+
+function createSweepLineScenario(size: number): SweepLineScenario {
+  const rectangles: { x: number; y: number; width: number; height: number }[] = [];
+  for (let index = 0; index < Math.max(4, size); index++) {
+    const width = Math.round(Math.random() * 12) + 12;
+    const height = Math.round(Math.random() * 18) + 10;
+    rectangles.push({
+      x: Math.round(Math.random() * 52) + 10,
+      y: Math.round(Math.random() * (78 - height)) + 10,
+      width,
+      height,
+    });
+  }
+  return { rectangles };
+}
+
+function createVoronoiScenario(size: number): VoronoiDiagramScenario {
+  return { points: createSpacedGeometryPoints(Math.max(5, size), 9) };
+}
+
+function createDelaunayScenario(size: number): DelaunayTriangulationScenario {
+  return { points: createSpacedGeometryPoints(Math.max(5, size), 9) };
+}
+
+function createConvexPolygon(
+  count: number,
+  centerX: number,
+  centerY: number,
+  radiusMin: number,
+  radiusMax: number,
+): { x: number; y: number }[] {
+  const vertexCount = Math.max(3, count);
+  const baseRadius = (radiusMin + radiusMax) / 2;
+  return Array.from({ length: vertexCount }, (_, index) => {
+    const angle =
+      (Math.PI * 2 * index) / vertexCount +
+      (Math.random() * 0.3 - 0.15);
+    const radius = baseRadius * (0.88 + Math.random() * 0.18);
+    return {
+      x: Number((centerX + Math.cos(angle) * radius).toFixed(1)),
+      y: Number((centerY + Math.sin(angle) * radius).toFixed(1)),
+    };
+  });
+}
+
+function shuffleInPlace<T>(values: T[]): void {
+  for (let index = values.length - 1; index > 0; index--) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [values[index], values[swapIndex]] = [values[swapIndex]!, values[index]!];
+  }
+}
+
+function createSpacedGeometryPoints(count: number, minDistance: number): { x: number; y: number }[] {
+  const points: { x: number; y: number }[] = [];
+  let guard = 0;
+
+  while (points.length < count && guard < count * 120) {
+    guard += 1;
+    const candidate = {
+      x: Math.round(Math.random() * 74) + 12,
+      y: Math.round(Math.random() * 74) + 12,
+    };
+    const tooClose = points.some((point) => Math.hypot(point.x - candidate.x, point.y - candidate.y) < minDistance);
+    if (!tooClose) {
+      points.push(candidate);
+    }
+  }
+
+  while (points.length < count) {
+    points.push({
+      x: Math.round(Math.random() * 74) + 12,
+      y: Math.round(Math.random() * 74) + 12,
+    });
+  }
+
+  return points;
 }
 
 function createBinarySearchVariantsScenario(size: number): SearchScenario {

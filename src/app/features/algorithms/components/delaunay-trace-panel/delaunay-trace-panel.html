@@ -1,0 +1,40 @@
+<div class="dltp">
+  @if (state(); as geo) {
+    <div class="dltp__header">
+      <div>
+        <div class="dltp__eyebrow">Delaunay</div>
+        <div class="dltp__title">{{ geo.activeTriangleLabel }}</div>
+      </div>
+      <div class="dltp__stats">
+        <span>{{ geo.triangleCount }} committed</span>
+      </div>
+    </div>
+
+    <div class="dltp__card">
+      <span class="dltp__label">Circumcircle</span>
+      @if (currentCircle(); as circle) {
+        <div class="dltp__row">
+          <span>center</span>
+          <span>({{ circle.cx.toFixed(1) }}, {{ circle.cy.toFixed(1) }})</span>
+        </div>
+        <div class="dltp__row">
+          <span>radius</span>
+          <span>{{ circle.r.toFixed(1) }}</span>
+        </div>
+      } @else {
+        <div class="dltp__placeholder">No active circumcircle in this step.</div>
+      }
+    </div>
+
+    <div class="dltp__card">
+      <span class="dltp__label">Triangle rail</span>
+      <div class="dltp__chips">
+        @for (event of geo.events; track event.id) {
+          <span class="dltp__chip dltp__chip--{{ event.tone }}">{{ event.label }}</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="dltp__placeholder">No trace data for this geometry step.</div>
+  }
+</div>

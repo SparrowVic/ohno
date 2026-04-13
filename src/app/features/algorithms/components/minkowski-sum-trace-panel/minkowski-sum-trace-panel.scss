@@ -1,0 +1,146 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.mstp {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 12px 14px 14px;
+}
+
+.mstp__phase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mstp__phase-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mstp__eyebrow,
+.mstp__card-key {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.mstp__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mstp__stats {
+  display: flex;
+  gap: 10px;
+}
+
+.mstp__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.mstp__stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: ui-monospace, monospace;
+}
+
+.mstp__stat-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.mstp__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.mstp__focus {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffde59;
+  text-transform: uppercase;
+}
+
+.mstp__subtle,
+.mstp__row-value {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: ui-monospace, monospace;
+}
+
+.mstp__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mstp__chip {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+
+  &--queued {
+    color: rgba(226, 232, 240, 0.64);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &--current {
+    color: #ffde59;
+    background: rgba(255, 222, 89, 0.08);
+    border: 0.5px solid rgba(255, 222, 89, 0.18);
+  }
+
+  &--done {
+    color: #5eead4;
+    background: rgba(94, 234, 212, 0.08);
+  }
+}
+
+.mstp__table {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mstp__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mstp__row-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mstp__placeholder,
+.mstp__empty {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}

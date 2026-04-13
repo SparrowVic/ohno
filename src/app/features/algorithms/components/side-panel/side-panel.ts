@@ -11,9 +11,29 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { ClosestPairTracePanel } from '../closest-pair-trace-panel/closest-pair-trace-panel';
+import { DelaunayTracePanel } from '../delaunay-trace-panel/delaunay-trace-panel';
 import { DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
-import { GeometryStepState } from '../../models/geometry';
+import {
+  ClosestPairStepState,
+  ConvexHullStepState,
+  DelaunayTriangulationStepState,
+  GeometryStepState,
+  HalfPlaneIntersectionStepState,
+  LineIntersectionStepState,
+  MinkowskiSumStepState,
+  SweepLineStepState,
+  VoronoiDiagramStepState,
+  isDelaunayTriangulationState,
+  isHalfPlaneIntersectionState,
+  isClosestPairState,
+  isConvexHullState,
+  isLineIntersectionState,
+  isMinkowskiSumState,
+  isSweepLineState,
+  isVoronoiDiagramState,
+} from '../../models/geometry';
 import { GraphStepState } from '../../models/graph';
 import { GridTraceState } from '../../models/grid';
 import { MatrixTraceState } from '../../models/matrix';
@@ -27,11 +47,16 @@ import { DsuTracePanel } from '../dsu-trace-panel/dsu-trace-panel';
 import { GeometryTracePanel } from '../geometry-trace-panel/geometry-trace-panel';
 import { GraphTracePanel } from '../graph-trace-panel/graph-trace-panel';
 import { GridTracePanel } from '../grid-trace-panel/grid-trace-panel';
+import { HalfPlaneTracePanel } from '../half-plane-trace-panel/half-plane-trace-panel';
 import { InfoPanel } from '../info-panel/info-panel';
+import { LineIntersectionTracePanel } from '../line-intersection-trace-panel/line-intersection-trace-panel';
 import { LogPanel } from '../log-panel/log-panel';
 import { MatrixTracePanel } from '../matrix-trace-panel/matrix-trace-panel';
+import { MinkowskiSumTracePanel } from '../minkowski-sum-trace-panel/minkowski-sum-trace-panel';
 import { NetworkTracePanel } from '../network-trace-panel/network-trace-panel';
 import { SearchTracePanel } from '../search-trace-panel/search-trace-panel';
+import { SweepLineTracePanel } from '../sweep-line-trace-panel/sweep-line-trace-panel';
+import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
 
@@ -56,17 +81,24 @@ const MAX_WIDTH = 680;
 @Component({
   selector: 'app-side-panel',
   imports: [
+    ClosestPairTracePanel,
     CodePanel,
+    DelaunayTracePanel,
     DpTracePanel,
     DsuTracePanel,
     GeometryTracePanel,
     GraphTracePanel,
     GridTracePanel,
+    HalfPlaneTracePanel,
     InfoPanel,
+    LineIntersectionTracePanel,
     LogPanel,
     MatrixTracePanel,
+    MinkowskiSumTracePanel,
     NetworkTracePanel,
     SearchTracePanel,
+    SweepLineTracePanel,
+    VoronoiTracePanel,
   ],
   templateUrl: './side-panel.html',
   styleUrl: './side-panel.scss',
@@ -95,6 +127,38 @@ export class SidePanel implements OnInit, OnDestroy {
       ? [TRACE_TAB, ...BASE_SIDE_TABS]
       : BASE_SIDE_TABS,
   );
+  readonly convexHullGeometryState = computed<ConvexHullStepState | null>(() => {
+    const state = this.geometryState();
+    return isConvexHullState(state) ? state : null;
+  });
+  readonly closestPairGeometryState = computed<ClosestPairStepState | null>(() => {
+    const state = this.geometryState();
+    return isClosestPairState(state) ? state : null;
+  });
+  readonly lineIntersectionGeometryState = computed<LineIntersectionStepState | null>(() => {
+    const state = this.geometryState();
+    return isLineIntersectionState(state) ? state : null;
+  });
+  readonly halfPlaneGeometryState = computed<HalfPlaneIntersectionStepState | null>(() => {
+    const state = this.geometryState();
+    return isHalfPlaneIntersectionState(state) ? state : null;
+  });
+  readonly minkowskiGeometryState = computed<MinkowskiSumStepState | null>(() => {
+    const state = this.geometryState();
+    return isMinkowskiSumState(state) ? state : null;
+  });
+  readonly sweepLineGeometryState = computed<SweepLineStepState | null>(() => {
+    const state = this.geometryState();
+    return isSweepLineState(state) ? state : null;
+  });
+  readonly voronoiGeometryState = computed<VoronoiDiagramStepState | null>(() => {
+    const state = this.geometryState();
+    return isVoronoiDiagramState(state) ? state : null;
+  });
+  readonly delaunayGeometryState = computed<DelaunayTriangulationStepState | null>(() => {
+    const state = this.geometryState();
+    return isDelaunayTriangulationState(state) ? state : null;
+  });
 
   private readonly activeTabState = signal<SideTabId>('code');
   readonly activeTab = this.activeTabState.asReadonly();

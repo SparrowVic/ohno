@@ -1,4 +1,4 @@
-import { GeometryEdge, GeometryPoint, GeometryStepState, PointStatus } from '../models/geometry';
+import { ConvexHullStepState, GeometryEdge, GeometryPoint, PointStatus } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
 
 export interface ConvexHullScenario {
@@ -30,7 +30,8 @@ function makeStep(
   turnCheck: readonly [number, number, number] | null,
   crossProduct: number | null,
 ): SortStep {
-  const geometry: GeometryStepState = {
+  const geometry: ConvexHullStepState = {
+    mode: 'convex-hull',
     points: pts,
     edges,
     stackIds,

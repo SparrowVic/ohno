@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-import { GeometryPoint, GeometryStepState } from '../../models/geometry';
+import { ConvexHullStepState, GeometryPoint } from '../../models/geometry';
 
 @Component({
   selector: 'app-geometry-trace-panel',
@@ -10,7 +10,7 @@ import { GeometryPoint, GeometryStepState } from '../../models/geometry';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeometryTracePanel {
-  readonly state = input<GeometryStepState | null>(null);
+  readonly state = input<ConvexHullStepState | null>(null);
 
   readonly stackPoints = computed<readonly (GeometryPoint | undefined)[]>(() => {
     const s = this.state();

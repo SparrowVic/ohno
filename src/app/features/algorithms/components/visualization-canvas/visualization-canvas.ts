@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { ClosestPairVisualization } from '../closest-pair-visualization/closest-pair-visualization';
 import { ConvexHullVisualization } from '../convex-hull-visualization/convex-hull-visualization';
+import { DelaunayVisualization } from '../delaunay-visualization/delaunay-visualization';
 import { DpPresetOption } from '../../models/dp';
 import { WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
@@ -11,7 +13,10 @@ import { ColorGradientVisualization } from '../color-gradient-visualization/colo
 import { DijkstraGraphVisualization } from '../dijkstra-graph-visualization/dijkstra-graph-visualization';
 import { DpVisualization } from '../dp-visualization/dp-visualization';
 import { DsuVisualization } from '../dsu-visualization/dsu-visualization';
+import { HalfPlaneVisualization } from '../half-plane-visualization/half-plane-visualization';
+import { LineIntersectionVisualization } from '../line-intersection-visualization/line-intersection-visualization';
 import { MatrixVisualization } from '../matrix-visualization/matrix-visualization';
+import { MinkowskiSumVisualization } from '../minkowski-sum-visualization/minkowski-sum-visualization';
 import { NetworkVisualization } from '../network-visualization/network-visualization';
 import { DotPlotVisualization } from '../dot-plot-visualization/dot-plot-visualization';
 import { GridVisualization } from '../grid-visualization/grid-visualization';
@@ -21,18 +26,25 @@ import { RadixStripVisualization } from '../radix-strip-visualization/radix-stri
 import { RadialVisualization } from '../radial-visualization/radial-visualization';
 import { SearchVisualization } from '../search-visualization/search-visualization';
 import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-visualization';
+import { SweepLineVisualization } from '../sweep-line-visualization/sweep-line-visualization';
+import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualization';
 
 @Component({
   selector: 'app-visualization-canvas',
   imports: [
     BarChartVisualization,
+    ClosestPairVisualization,
     ConvexHullVisualization,
+    DelaunayVisualization,
     BlockSwapVisualization,
     ColorGradientVisualization,
     DijkstraGraphVisualization,
     DpVisualization,
     DsuVisualization,
+    HalfPlaneVisualization,
     MatrixVisualization,
+    LineIntersectionVisualization,
+    MinkowskiSumVisualization,
     NetworkVisualization,
     DotPlotVisualization,
     GridVisualization,
@@ -42,6 +54,8 @@ import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-v
     RadialVisualization,
     SearchVisualization,
     SoundBarsVisualization,
+    SweepLineVisualization,
+    VoronoiVisualization,
   ],
   templateUrl: './visualization-canvas.html',
   styleUrl: './visualization-canvas.scss',
