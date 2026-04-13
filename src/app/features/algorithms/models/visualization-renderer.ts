@@ -15,4 +15,5 @@ export type VisualizationVariant =
   | 'sound'
   | 'radix'
   | 'radix-strip'
-  | 'radix-matrix';
+  | 'radix-matrix'
+  | 'dijkstra-graph';

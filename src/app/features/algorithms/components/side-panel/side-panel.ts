@@ -2,41 +2,47 @@ import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   OnDestroy,
   OnInit,
+  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
 
+import { GraphStepState } from '../../models/graph';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, LogEntry } from '../../models/detail';
 import { CodePanel } from '../code-panel/code-panel';
+import { GraphTracePanel } from '../graph-trace-panel/graph-trace-panel';
 import { InfoPanel } from '../info-panel/info-panel';
 import { LogPanel } from '../log-panel/log-panel';
 
-type SideTabId = 'code' | 'info' | 'log';
+type SideTabId = 'trace' | 'code' | 'info' | 'log';
 
 interface SideTab {
   readonly id: SideTabId;
   readonly label: string;
 }
 
-const SIDE_TABS: readonly SideTab[] = [
+const BASE_SIDE_TABS: readonly SideTab[] = [
   { id: 'code', label: 'Code' },
   { id: 'info', label: 'Info' },
   { id: 'log', label: 'Log' },
 ];
 
+const TRACE_TAB: SideTab = { id: 'trace', label: 'Trace' };
+
 const LS_KEY = 'ohno:side-panel-width';
 const DEFAULT_WIDTH = 340;
 const MIN_WIDTH = 260;
-const MAX_WIDTH = 480;
+const MAX_WIDTH = 680;
 
 @Component({
   selector: 'app-side-panel',
-  imports: [CodePanel, InfoPanel, LogPanel],
+  imports: [CodePanel, GraphTracePanel, InfoPanel, LogPanel],
   templateUrl: './side-panel.html',
   styleUrl: './side-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,8 +52,11 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly codeLines = input.required<readonly CodeLine[]>();
   readonly activeLineNumber = input<number | null>(null);
   readonly logEntries = input.required<readonly LogEntry[]>();
+  readonly traceState = input<GraphStepState | null>(null);
 
-  readonly tabs = SIDE_TABS;
+  readonly tabs = computed<readonly SideTab[]>(() =>
+    this.traceState() ? [TRACE_TAB, ...BASE_SIDE_TABS] : BASE_SIDE_TABS,
+  );
 
   private readonly activeTabState = signal<SideTabId>('code');
   readonly activeTab = this.activeTabState.asReadonly();
@@ -60,6 +69,15 @@ export class SidePanel implements OnInit, OnDestroy {
   private dragStartWidth = 0;
   private readonly boundMove = (e: MouseEvent) => this.onMouseMove(e);
   private readonly boundUp = () => this.onMouseUp();
+
+  constructor() {
+    effect(() => {
+      const hasTrace = this.traceState() !== null;
+      if (!hasTrace && this.activeTabState() === 'trace') {
+        this.activeTabState.set('code');
+      }
+    });
+  }
 
   ngOnInit(): void {
     const saved = this.doc.defaultView?.localStorage.getItem(LS_KEY);

@@ -1,3 +1,5 @@
+import { GraphStepState } from './graph';
+
 export type SortPhase =
   | 'idle'
   | 'compare'
@@ -6,7 +8,14 @@ export type SortPhase =
   | 'distribute'
   | 'gather'
   | 'pass-complete'
-  | 'complete';
+  | 'complete'
+  | 'init'
+  | 'pick-node'
+  | 'inspect-edge'
+  | 'relax'
+  | 'skip-relax'
+  | 'settle-node'
+  | 'graph-complete';
 
 export interface SortItemSnapshot {
   readonly id: string;
@@ -34,4 +43,5 @@ export interface SortStep {
   readonly maxDigits?: number | null;
   readonly activeItemId?: string | null;
   readonly activeBucket?: number | null;
+  readonly graph?: GraphStepState | null;
 }

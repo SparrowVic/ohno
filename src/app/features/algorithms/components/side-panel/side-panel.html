@@ -1,7 +1,7 @@
 <div class="drag-handle" (mousedown)="onHandleMousedown($event)"></div>
 <div class="side-panel">
   <div class="side-tabs">
-    @for (tab of tabs; track tab.id) {
+    @for (tab of tabs(); track tab.id) {
       <button
         type="button"
         class="side-tab"
@@ -15,6 +15,9 @@
 
   <div class="side-content">
     @switch (activeTab()) {
+      @case ('trace') {
+        <app-graph-trace-panel [state]="traceState()" />
+      }
       @case ('code') {
         <app-code-panel [lines]="codeLines()" [activeLineNumber]="activeLineNumber()" />
       }

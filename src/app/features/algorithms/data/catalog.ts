@@ -234,6 +234,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'pathfinding',
     tags: ['shortest path', 'priority queue', 'greedy'],
+    complexity: {
+      timeBest: 'O((V + E) log V)',
+      timeAverage: 'O((V + E) log V)',
+      timeWorst: 'O((V + E) log V)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'topological-sort-kahn',

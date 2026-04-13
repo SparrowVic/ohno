@@ -23,12 +23,19 @@ export class InfoPanel {
       { label: 'Time best', value: algo.complexity.timeBest },
       { label: 'Time worst', value: algo.complexity.timeWorst },
       { label: 'Space', value: algo.complexity.space },
-      { label: 'Stable', value: this.stableLabel(algo.stable) },
+      this.metaCard(algo),
     ];
   });
 
-  private stableLabel(stable: boolean | undefined): string {
-    if (stable === undefined) return '—';
-    return stable ? 'Yes' : 'No';
+  private metaCard(algo: AlgorithmItem): ComplexityCard {
+    if (algo.stable !== undefined) {
+      return { label: 'Stable', value: algo.stable ? 'Yes' : 'No' };
+    }
+
+    if (algo.inPlace !== undefined) {
+      return { label: 'In place', value: algo.inPlace ? 'Yes' : 'No' };
+    }
+
+    return { label: 'Category', value: algo.category };
   }
 }

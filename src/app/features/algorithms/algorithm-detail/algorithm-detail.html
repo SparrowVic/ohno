@@ -43,6 +43,8 @@
             [sizeOptions]="sizeOptions()"
             [variant]="variant()"
             [variantOptions]="variantOptions()"
+            [sizeUnit]="sizeUnit()"
+            [randomizeLabel]="randomizeLabel()"
             [muted]="muted()"
             (resetClick)="onReset()"
             (stepBackClick)="onStepBack()"
@@ -57,6 +59,7 @@
           <app-visualization-canvas
             [variant]="variant()"
             [array]="array()"
+            [graph]="graph()"
             [step]="step()"
             [speed]="speed()"
             [muted]="muted()"
@@ -69,6 +72,7 @@
           [codeLines]="codeLines()"
           [activeLineNumber]="activeLineNumber()"
           [logEntries]="logEntries()"
+          [traceState]="graphTrace()"
         />
       </div>
     } @else {

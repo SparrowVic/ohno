@@ -20,6 +20,8 @@ export class VisualizationToolbar {
   readonly muted = input<boolean>(true);
   readonly sizeOptions = input<readonly number[]>([]);
   readonly variantOptions = input<readonly VisualizationOption[]>([]);
+  readonly sizeUnit = input<string>('elements');
+  readonly randomizeLabel = input<string>('Randomize');
 
   readonly canStepBack = computed(() => this.currentStep() > 0);
   readonly canStepForward = computed(() => this.currentStep() < this.totalSteps());

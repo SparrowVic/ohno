@@ -1,0 +1,84 @@
+<div class="trace">
+  @if (state(); as graphState) {
+    <div class="trace__header">
+      <div class="trace__summary">
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Current</span>
+          <span class="trace__summary-value">{{ currentLabel() }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Settled</span>
+          <span class="trace__summary-value">{{ settledCount() }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Queued</span>
+          <span class="trace__summary-value">{{ queueLength() }}</span>
+        </div>
+      </div>
+
+      @if (graphState.computation; as computation) {
+        <div class="trace__calculation trace__calculation--{{ decisionTone() }}">
+          <div class="trace__calc-label">{{ computation.candidateLabel }}</div>
+          <div class="trace__calc-expression">{{ computation.expression }}</div>
+          <div class="trace__calc-result">= {{ computation.result }}</div>
+          <div class="trace__calc-decision">{{ computation.decision }}</div>
+        </div>
+      }
+
+      <div class="trace__queue">
+        <div class="trace__queue-label">Priority queue</div>
+        <div class="trace__queue-items">
+          @if (graphState.queue.length === 0) {
+            <span class="trace__queue-empty">empty</span>
+          } @else {
+            @for (entry of graphState.queue; track entry.nodeId) {
+              <span class="trace__queue-chip">{{ entry.label }} · {{ formatDistance(entry.distance) }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="trace__queue">
+        <div class="trace__queue-label">Visit order</div>
+        <div class="trace__queue-items">
+          @if (graphState.visitOrder.length === 0) {
+            <span class="trace__queue-empty">not started</span>
+          } @else {
+            @for (label of graphState.visitOrder; track label) {
+              <span class="trace__queue-chip trace__queue-chip--done">{{ label }}</span>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="trace__table-wrap">
+      <table class="trace__table">
+        <thead>
+          <tr>
+            <th>Node</th>
+            <th>Dist</th>
+            <th>Prev</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of graphState.traceRows; track row.nodeId) {
+            <tr [class.trace__row--current]="row.isCurrent" [class.trace__row--settled]="row.isSettled">
+              <td>{{ row.label }}</td>
+              <td>{{ formatDistance(row.distance) }}</td>
+              <td>{{ row.previousLabel ?? '—' }}</td>
+              <td>
+                <span class="trace__status trace__status--{{ statusLabel(row) }}">
+                  {{ statusLabel(row) }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="trace__empty">No trace available for this step.</div>
+  }
+</div>

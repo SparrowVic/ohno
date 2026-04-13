@@ -85,15 +85,21 @@
     @if (hasVariantChoice()) {
       <select class="size-select" [value]="variant()" (change)="onVariantChange($event)">
         @for (option of variantOptions(); track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
+          <option [value]="option.value" [selected]="option.value === variant()">
+            {{ option.label }}
+          </option>
         }
       </select>
     }
     <select class="size-select" [value]="size()" (change)="onSizeChange($event)">
       @for (option of sizeOptions(); track option) {
-        <option [value]="option">{{ option }} elements</option>
+        <option [value]="option" [selected]="option === size()">
+          {{ option }} {{ sizeUnit() }}
+        </option>
       }
     </select>
-    <button type="button" class="generate-btn" (click)="randomizeClick.emit()">Randomize</button>
+    <button type="button" class="generate-btn" (click)="randomizeClick.emit()">
+      {{ randomizeLabel() }}
+    </button>
   </div>
 </div>
