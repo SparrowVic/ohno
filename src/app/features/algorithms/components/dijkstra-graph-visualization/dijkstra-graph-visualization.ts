@@ -32,10 +32,12 @@ export class DijkstraGraphVisualization {
   readonly nodes = computed(() => this.graphState()?.nodes ?? []);
   readonly edges = computed(() => this.graphState()?.edges ?? []);
   readonly metricLabel = computed(() => this.graphState()?.metricLabel ?? 'Distance');
+  readonly secondaryLabel = computed(() => this.graphState()?.secondaryLabel ?? 'Prev');
   readonly frontierLabel = computed(() => this.graphState()?.frontierLabel ?? 'Queue');
   readonly frontierHeadLabel = computed(() => this.graphState()?.frontierHeadLabel ?? 'Queue head');
   readonly completionLabel = computed(() => this.graphState()?.completionLabel ?? 'Visited');
   readonly showEdgeWeights = computed(() => this.graphState()?.showEdgeWeights ?? true);
+  readonly detailLabel = computed(() => this.graphState()?.detailLabel ?? 'Path');
   readonly sourceLabel = computed(() => {
     const sourceId = this.graphState()?.sourceId ?? this.graph()?.sourceId ?? null;
     if (!sourceId) return '—';
@@ -66,7 +68,9 @@ export class DijkstraGraphVisualization {
     if (!entry) return 'empty';
     return `${entry.label} · ${this.formatDistance(entry.distance)}`;
   });
-  readonly pathPreview = computed(() => {
+  readonly detailValue = computed(() => {
+    const value = this.graphState()?.detailValue;
+    if (value) return value;
     const currentNodeId = this.graphState()?.currentNodeId;
     if (!currentNodeId) return 'No active node';
     return this.describePath(currentNodeId);
@@ -83,7 +87,7 @@ export class DijkstraGraphVisualization {
         phase: this.phaseLabel(),
         edge: this.activeEdgeLabel(),
         queueLead: this.queueLead(),
-        path: this.pathPreview(),
+        detail: this.detailValue(),
       };
 
       untracked(() => {
@@ -139,6 +143,15 @@ export class DijkstraGraphVisualization {
     return node?.[axis] ?? 0;
   }
 
+  edgeMarker(edgeId: string): string {
+    const edge = this.edges().find((item) => item.id === edgeId);
+    if (!edge?.directed) return '';
+    if (edge.isRelaxed) return 'url(#graphArrowRelaxed)';
+    if (edge.isActive) return 'url(#graphArrowActive)';
+    if (edge.isTree) return 'url(#graphArrowTree)';
+    return 'url(#graphArrowDefault)';
+  }
+
   weightTransform(edgeId: string): string {
     const edge = this.edges().find((item) => item.id === edgeId);
     if (!edge) return 'translate(0 0)';
@@ -157,6 +170,10 @@ export class DijkstraGraphVisualization {
   previousLabel(previousId: string | null): string {
     if (!previousId) return '—';
     return this.nodes().find((node) => node.id === previousId)?.label ?? '—';
+  }
+
+  secondaryText(nodeId: string): string {
+    return this.nodes().find((node) => node.id === nodeId)?.secondaryText ?? '—';
   }
 
   isEdgeMuted(edgeId: string): boolean {

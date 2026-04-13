@@ -23,6 +23,8 @@ export class GraphTracePanel {
   readonly completionLabel = computed(() => this.state()?.completionLabel ?? 'Visited');
   readonly frontierLabel = computed(() => this.state()?.frontierLabel ?? 'Queue');
   readonly metricLabel = computed(() => this.state()?.metricLabel ?? 'Distance');
+  readonly secondaryLabel = computed(() => this.state()?.secondaryLabel ?? 'Prev');
+  readonly visitOrderLabel = computed(() => this.state()?.visitOrderLabel ?? 'Visit order');
 
   statusLabel(row: GraphTraceRow): string {
     if (row.isCurrent) return 'current';
@@ -34,6 +36,10 @@ export class GraphTracePanel {
 
   formatDistance(distance: number | null): string {
     return distance === null ? '∞' : String(distance);
+  }
+
+  formatSecondary(value: string | null): string {
+    return value ?? '—';
   }
 
   decisionTone(): 'improve' | 'keep' | 'idle' {

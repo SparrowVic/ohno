@@ -264,6 +264,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'traversal',
     tags: ['DAG', 'in-degree', 'queue'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'cycle-detection',
@@ -273,6 +280,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['DFS', 'visited state', 'graph validity'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'connected-components',

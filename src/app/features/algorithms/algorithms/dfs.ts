@@ -185,6 +185,9 @@ function createStep(args: {
     ...node,
     distance: args.depthMap.get(node.id) ?? null,
     previousId: args.previousMap.get(node.id) ?? null,
+    secondaryText: args.previousMap.get(node.id)
+      ? (labelMap.get(args.previousMap.get(node.id) as string) ?? null)
+      : null,
     isSource: node.id === args.graph.sourceId,
     isCurrent: node.id === currentNodeId,
     isSettled: args.visited.has(node.id),
@@ -214,7 +217,7 @@ function createStep(args: {
     nodeId: node.id,
     label: node.label,
     distance: node.distance,
-    previousLabel: node.previousId ? (labelMap.get(node.previousId) ?? null) : null,
+    secondaryText: node.secondaryText,
     isSource: node.isSource,
     isCurrent: node.isCurrent,
     isSettled: node.isSettled,
@@ -236,12 +239,16 @@ function createStep(args: {
       sourceId: args.graph.sourceId,
       phaseLabel: phaseLabel(args.phase),
       metricLabel: 'Depth',
+      secondaryLabel: 'Prev',
       frontierLabel: 'Stack',
       frontierHeadLabel: 'Stack top',
       completionLabel: 'Visited',
       frontierStatusLabel: 'stacked',
       completionStatusLabel: 'visited',
       showEdgeWeights: false,
+      detailLabel: 'Depth path',
+      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : 'No active node',
+      visitOrderLabel: 'Visit order',
       currentNodeId,
       activeEdgeId,
       queue,
@@ -264,6 +271,22 @@ function outgoingEdges(graph: WeightedGraphData, nodeId: string) {
 
 function labelOf(nodes: ReadonlyMap<string, { readonly label: string }>, nodeId: string): string {
   return nodes.get(nodeId)?.label ?? nodeId;
+}
+
+function describePath(
+  nodeId: string,
+  previousMap: ReadonlyMap<string, string | null>,
+  labelMap: ReadonlyMap<string, string>,
+): string {
+  const path: string[] = [];
+  let currentId: string | null = nodeId;
+  let hops = 0;
+  while (currentId && hops < labelMap.size + 1) {
+    path.unshift(labelMap.get(currentId) ?? currentId);
+    currentId = previousMap.get(currentId) ?? null;
+    hops++;
+  }
+  return path.join(' → ');
 }
 
 function phaseLabel(phase: SortStep['phase']): string {

@@ -16,14 +16,18 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { bfsGenerator } from '../algorithms/bfs';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
+import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
 import { dfsGenerator } from '../algorithms/dfs';
 import { radixSortGenerator } from '../algorithms/radix-sort';
+import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
 import { BFS_CODE } from '../data/bfs-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
+import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { WeightedGraphData } from '../models/graph';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
@@ -32,7 +36,12 @@ import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
-import { generateDijkstraGraph, generateTraversalGraph } from '../utils/dijkstra-graph';
+import {
+  generateCycleDetectionGraph,
+  generateDagGraph,
+  generateDijkstraGraph,
+  generateTraversalGraph,
+} from '../utils/dijkstra-graph';
 import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
@@ -92,6 +101,22 @@ const DFS_LEGEND: readonly LegendItem[] = [
   { label: 'Inspected edge', color: '#5eead4' },
 ];
 
+const TOPOLOGICAL_SORT_KAHN_LEGEND: readonly LegendItem[] = [
+  { label: 'Seed node', color: '#38bdf8' },
+  { label: 'Zero in-degree queue', color: '#7c6ef0' },
+  { label: 'Current node', color: '#f0b429' },
+  { label: 'Ordered node', color: '#3ecf8e' },
+  { label: 'Directed dependency', color: '#5eead4' },
+];
+
+const CYCLE_DETECTION_LEGEND: readonly LegendItem[] = [
+  { label: 'Entry node', color: '#38bdf8' },
+  { label: 'Recursion stack', color: '#7c6ef0' },
+  { label: 'Current node', color: '#f0b429' },
+  { label: 'Closed node', color: '#3ecf8e' },
+  { label: 'Cycle edge', color: '#5eead4' },
+];
+
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'bar', label: 'Bar Chart' },
   { value: 'block', label: 'Block Swap' },
@@ -117,6 +142,14 @@ const BFS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const DFS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Depth Chase' },
+];
+
+const TOPOLOGICAL_SORT_KAHN_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'DAG Flow' },
+];
+
+const CYCLE_DETECTION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Back Edge Hunt' },
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
@@ -227,6 +260,34 @@ const DFS_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New graph',
 };
 
+const TOPOLOGICAL_SORT_KAHN_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: TOPOLOGICAL_SORT_KAHN_CODE,
+  variantOptions: TOPOLOGICAL_SORT_KAHN_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateDagGraph,
+  generator: topologicalSortKahnGenerator,
+  legendItems: () => TOPOLOGICAL_SORT_KAHN_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New DAG',
+};
+
+const CYCLE_DETECTION_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: CYCLE_DETECTION_CODE,
+  variantOptions: CYCLE_DETECTION_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateCycleDetectionGraph,
+  generator: cycleDetectionGenerator,
+  legendItems: () => CYCLE_DETECTION_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -280,6 +341,12 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'dfs') {
       return DFS_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'topological-sort-kahn') {
+      return TOPOLOGICAL_SORT_KAHN_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'cycle-detection') {
+      return CYCLE_DETECTION_VIEW_CONFIG;
     }
     return BUBBLE_VIEW_CONFIG;
   });

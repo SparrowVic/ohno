@@ -31,9 +31,9 @@
       <span class="focus-pill__label">{{ frontierHeadLabel() }}</span>
       <span class="focus-pill__value">{{ queueLead() }}</span>
     </div>
-    <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('path')">
-      <span class="focus-pill__label">Path</span>
-      <span class="focus-pill__value">{{ pathPreview() }}</span>
+    <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('detail')">
+      <span class="focus-pill__label">{{ detailLabel() }}</span>
+      <span class="focus-pill__value">{{ detailValue() }}</span>
     </div>
   </div>
 
@@ -43,6 +43,18 @@
         <stop offset="0%" stop-color="#5eead4" />
         <stop offset="100%" stop-color="#7c6ef0" />
       </linearGradient>
+      <marker id="graphArrowDefault" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+        <path d="M0 0L10 5L0 10Z" fill="rgba(255,255,255,0.52)" />
+      </marker>
+      <marker id="graphArrowTree" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+        <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.66)" />
+      </marker>
+      <marker id="graphArrowActive" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+        <path d="M0 0L10 5L0 10Z" fill="rgba(124,110,240,0.82)" />
+      </marker>
+      <marker id="graphArrowRelaxed" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+        <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.94)" />
+      </marker>
       <filter id="graphNodeGlow">
         <feGaussianBlur stdDeviation="8" result="blur" />
         <feMerge>
@@ -60,6 +72,7 @@
           [class.edge-line--active]="edge.isActive"
           [class.edge-line--relaxed]="edge.isRelaxed"
           [class.edge-line--muted]="isEdgeMuted(edge.id)"
+          [attr.marker-end]="edge.directed ? edgeMarker(edge.id) : null"
           [attr.x1]="edgePoint(edge.id, 'from', 'x')"
           [attr.y1]="edgePoint(edge.id, 'from', 'y')"
           [attr.x2]="edgePoint(edge.id, 'to', 'x')"
@@ -95,8 +108,8 @@
         </g>
 
         <g class="node__previous" transform="translate(0 50)">
-          <rect x="-30" y="-12" width="60" height="24" rx="12" />
-          <text y="4">prev {{ previousLabel(node.previousId) }}</text>
+          <rect x="-34" y="-12" width="68" height="24" rx="12" />
+          <text y="4">{{ secondaryLabel() }} {{ secondaryText(node.id) }}</text>
         </g>
       </g>
     }

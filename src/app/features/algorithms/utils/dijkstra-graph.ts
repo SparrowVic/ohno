@@ -160,12 +160,76 @@ export function generateTraversalGraph(size: number): WeightedGraphData {
   };
 }
 
+export function generateDagGraph(size: number): WeightedGraphData {
+  const layout = GRAPH_LAYOUTS[size] ?? GRAPH_LAYOUTS[8];
+  const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const nodes: WeightedGraphNode[] = layout.positions.slice(0, size).map(([x, y], index) => ({
+    id: `node-${index}`,
+    label: labels[index],
+    x,
+    y,
+  }));
+
+  const edgePairs: [number, number][] = [...layout.spine].map(([a, b]) => [Math.min(a, b), Math.max(a, b)]);
+  const optionalPairs = shuffle([...layout.optional]).map(([a, b]) => [Math.min(a, b), Math.max(a, b)] as [number, number]);
+  const minEdges = size + Math.max(1, Math.floor(size / 3));
+
+  for (const pair of optionalPairs) {
+    if (edgePairs.length >= minEdges) break;
+    if (!edgePairs.some(([a, b]) => a === pair[0] && b === pair[1])) {
+      edgePairs.push(pair);
+    }
+  }
+
+  const edges: WeightedGraphEdge[] = edgePairs.map(([fromIndex, toIndex]) => ({
+    id: directedEdgeId(nodes[fromIndex].id, nodes[toIndex].id),
+    from: nodes[fromIndex].id,
+    to: nodes[toIndex].id,
+    weight: 1,
+    directed: true,
+  }));
+
+  return {
+    nodes,
+    edges,
+    sourceId: nodes[0]?.id ?? '',
+  };
+}
+
+export function generateCycleDetectionGraph(size: number): WeightedGraphData {
+  const dag = generateDagGraph(size);
+  const cycleTargets: Record<number, [number, number]> = {
+    6: [4, 1],
+    8: [6, 2],
+    10: [8, 3],
+  };
+  const [fromIndex, toIndex] = cycleTargets[size] ?? cycleTargets[8];
+  const from = dag.nodes[fromIndex];
+  const to = dag.nodes[toIndex];
+  const cycleEdge: WeightedGraphEdge = {
+    id: directedEdgeId(from.id, to.id),
+    from: from.id,
+    to: to.id,
+    weight: 1,
+    directed: true,
+  };
+
+  return {
+    ...dag,
+    edges: [...dag.edges, cycleEdge],
+  };
+}
+
 function randomWeight(): number {
   return Math.floor(Math.random() * 9) + 1;
 }
 
 function edgeId(a: string, b: string): string {
   return [a, b].sort().join('__');
+}
+
+function directedEdgeId(from: string, to: string): string {
+  return `${from}__${to}`;
 }
 
 function hasPair(a: number, b: number, pair: readonly [number, number]): boolean {

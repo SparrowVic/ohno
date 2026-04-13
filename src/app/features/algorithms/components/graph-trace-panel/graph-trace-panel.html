@@ -39,7 +39,7 @@
       </div>
 
       <div class="trace__queue">
-        <div class="trace__queue-label">Visit order</div>
+        <div class="trace__queue-label">{{ visitOrderLabel() }}</div>
         <div class="trace__queue-items">
           @if (graphState.visitOrder.length === 0) {
             <span class="trace__queue-empty">not started</span>
@@ -58,7 +58,7 @@
           <tr>
             <th>Node</th>
             <th>{{ metricLabel() }}</th>
-            <th>Prev</th>
+            <th>{{ secondaryLabel() }}</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -67,7 +67,7 @@
             <tr [class.trace__row--current]="row.isCurrent" [class.trace__row--settled]="row.isSettled">
               <td>{{ row.label }}</td>
               <td>{{ formatDistance(row.distance) }}</td>
-              <td>{{ row.previousLabel ?? '—' }}</td>
+              <td>{{ formatSecondary(row.secondaryText) }}</td>
               <td>
                 <span class="trace__status trace__status--{{ statusLabel(row) }}">
                   {{ statusLabel(row) }}

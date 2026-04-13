@@ -10,6 +10,7 @@ export interface WeightedGraphEdge {
   readonly from: string;
   readonly to: string;
   readonly weight: number;
+  readonly directed?: boolean;
 }
 
 export interface WeightedGraphData {
@@ -21,6 +22,7 @@ export interface WeightedGraphData {
 export interface GraphNodeSnapshot extends WeightedGraphNode {
   readonly distance: number | null;
   readonly previousId: string | null;
+  readonly secondaryText: string | null;
   readonly isSource: boolean;
   readonly isCurrent: boolean;
   readonly isSettled: boolean;
@@ -43,7 +45,7 @@ export interface GraphTraceRow {
   readonly nodeId: string;
   readonly label: string;
   readonly distance: number | null;
-  readonly previousLabel: string | null;
+  readonly secondaryText: string | null;
   readonly isSource: boolean;
   readonly isCurrent: boolean;
   readonly isSettled: boolean;
@@ -63,12 +65,16 @@ export interface GraphStepState {
   readonly sourceId: string;
   readonly phaseLabel: string;
   readonly metricLabel: string;
+  readonly secondaryLabel: string;
   readonly frontierLabel: string;
   readonly frontierHeadLabel: string;
   readonly completionLabel: string;
   readonly frontierStatusLabel: string;
   readonly completionStatusLabel: string;
   readonly showEdgeWeights: boolean;
+  readonly detailLabel: string;
+  readonly detailValue: string;
+  readonly visitOrderLabel: string;
   readonly currentNodeId: string | null;
   readonly activeEdgeId: string | null;
   readonly queue: readonly GraphQueueEntry[];
