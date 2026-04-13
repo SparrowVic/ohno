@@ -81,6 +81,8 @@ export function createNetworkStep(args: NetworkStepArgs): SortStep {
       modeLabel:
         args.mode === 'dinic'
           ? "Dinic's Max Flow"
+          : args.mode === 'min-cost-max-flow'
+            ? 'Min-Cost Max Flow'
           : args.mode === 'edmonds-karp'
             ? 'Edmonds-Karp'
             : 'Hopcroft-Karp',

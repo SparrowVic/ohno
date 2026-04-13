@@ -25,6 +25,12 @@ export class GraphTracePanel {
     if (this.state()?.detailLabel.startsWith('Euler')) {
       return 'Start';
     }
+    if (this.state()?.detailLabel === 'Steiner tree') {
+      return 'Terminal';
+    }
+    if (this.state()?.detailLabel === 'Dominator tree') {
+      return 'Entry';
+    }
     switch (this.state()?.detailLabel) {
       case 'MST tree':
         return 'Start';
@@ -94,6 +100,9 @@ export class GraphTracePanel {
   }
 
   formatDistance(distance: number | null): string {
+    if (distance === null && (this.metricLabel() === 'Color' || this.metricLabel() === 'Dom#')) {
+      return '—';
+    }
     return distance === null ? '∞' : String(distance);
   }
 

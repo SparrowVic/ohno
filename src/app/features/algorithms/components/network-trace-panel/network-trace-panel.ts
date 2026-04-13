@@ -56,6 +56,9 @@ export class NetworkTracePanel {
     const queue = this.state()?.queue ?? [];
     return queue.length > 0 ? queue : ['empty'];
   });
+  readonly levelHeaderLabel = computed(() =>
+    this.state()?.mode === 'min-cost-max-flow' ? 'Cost' : 'Level',
+  );
 
   statusClass(row: NetworkTraceRow): string {
     return row.status;

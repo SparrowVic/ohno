@@ -46,6 +46,12 @@ export class DijkstraGraphVisualization {
     if (this.detailLabel().startsWith('Euler')) {
       return 'Start';
     }
+    if (this.detailLabel() === 'Steiner tree') {
+      return 'Terminal';
+    }
+    if (this.detailLabel() === 'Dominator tree') {
+      return 'Entry';
+    }
     switch (this.detailLabel()) {
       case 'MST tree':
         return 'Start';
@@ -153,6 +159,9 @@ export class DijkstraGraphVisualization {
         if (this.detailLabel() === 'Partition check') return 'Two-color validation';
         if (this.detailLabel() === 'MST tree') return 'Minimum spanning tree';
         if (this.detailLabel().startsWith('Euler')) return 'Edge-by-edge trail';
+        if (this.detailLabel() === 'Color search') return 'Constraint coloring search';
+        if (this.detailLabel() === 'Steiner tree') return 'Exact terminal DP tree';
+        if (this.detailLabel() === 'Dominator tree') return 'Control-flow dominance';
         if (this.detailLabel() === 'Critical links') return 'Low-link analysis';
         if (this.detailLabel() === 'Tarjan SCC map') return 'Low-link SCC sweep';
         if (this.detailLabel() === 'Finish stack') return 'Finish-order sweep';
@@ -182,6 +191,15 @@ export class DijkstraGraphVisualization {
         }
         if (this.detailLabel().startsWith('Euler')) {
           return 'Purple edges extend the live walk, teal edges are already locked into the final trail, and odd endpoints mark a path instead of a circuit.';
+        }
+        if (this.detailLabel() === 'Color search') {
+          return 'Colored nodes show the current palette assignment, while red edges expose the conflicts that force backtracking.';
+        }
+        if (this.detailLabel() === 'Steiner tree') {
+          return 'Blue terminals must be connected, green nodes are optional Steiner connectors, and teal edges form the exact minimum-cost terminal tree.';
+        }
+        if (this.detailLabel() === 'Dominator tree') {
+          return 'The directed graph is the CFG, while teal arrows show immediate dominance once every block settles to its final dominator set.';
         }
         if (this.detailLabel() === 'Critical links') {
           return 'Red nodes or edges are articulation points and bridges whose removal disconnects the graph.';
@@ -318,6 +336,9 @@ export class DijkstraGraphVisualization {
   }
 
   formatDistance(distance: number | null): string {
+    if (distance === null && (this.metricLabel() === 'Color' || this.metricLabel() === 'Dom#')) {
+      return '—';
+    }
     return distance === null ? '∞' : String(distance);
   }
 

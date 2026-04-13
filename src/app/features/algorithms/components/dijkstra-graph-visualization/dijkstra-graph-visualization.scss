@@ -236,6 +236,16 @@
   stroke-width: 4.5;
 }
 
+.edge-line[data-tone='terminal'] {
+  stroke: rgba(56, 189, 248, 0.58);
+  stroke-width: 4.5;
+}
+
+.edge-line[data-tone='steiner'] {
+  stroke: rgba(52, 211, 153, 0.58);
+  stroke-width: 4.5;
+}
+
 .edge-weight {
   rect {
     fill: rgba(13, 16, 24, 0.9);
@@ -343,6 +353,18 @@
   --node-tone-fill: rgba(245, 158, 11, 0.18);
   --node-tone-stroke: rgba(245, 158, 11, 0.76);
   --node-tone-rect: rgba(245, 158, 11, 0.35);
+}
+
+.node[data-tone='terminal'] {
+  --node-tone-fill: rgba(56, 189, 248, 0.18);
+  --node-tone-stroke: rgba(56, 189, 248, 0.76);
+  --node-tone-rect: rgba(56, 189, 248, 0.35);
+}
+
+.node[data-tone='steiner'] {
+  --node-tone-fill: rgba(52, 211, 153, 0.18);
+  --node-tone-stroke: rgba(52, 211, 153, 0.78);
+  --node-tone-rect: rgba(52, 211, 153, 0.35);
 }
 
 .node--muted {

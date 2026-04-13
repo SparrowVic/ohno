@@ -25,6 +25,7 @@ import { burstBalloonsGenerator } from '../algorithms/burst-balloons';
 import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { climbingStairsGenerator } from '../algorithms/climbing-stairs';
+import { chromaticNumberGenerator } from '../algorithms/chromatic-number';
 import { coinChangeGenerator } from '../algorithms/coin-change';
 import { connectedComponentsGenerator } from '../algorithms/connected-components';
 import { countingSortGenerator } from '../algorithms/counting-sort';
@@ -37,6 +38,7 @@ import { dinicMaxFlowGenerator } from '../algorithms/dinic-max-flow';
 import { divideConquerDpOptimizationGenerator } from '../algorithms/divide-conquer-dp-optimization';
 import { edmondsKarpGenerator } from '../algorithms/edmonds-karp';
 import { dfsGenerator } from '../algorithms/dfs';
+import { dominatorTreeGenerator } from '../algorithms/dominator-tree';
 import { editDistanceGenerator } from '../algorithms/edit-distance';
 import { eulerPathCircuitGenerator } from '../algorithms/euler-path-circuit';
 import { fibonacciDpGenerator } from '../algorithms/fibonacci-dp';
@@ -53,6 +55,7 @@ import { longestIncreasingSubsequenceGenerator } from '../algorithms/longest-inc
 import { longestPalindromicSubsequenceGenerator } from '../algorithms/longest-palindromic-subsequence';
 import { matrixChainMultiplicationGenerator } from '../algorithms/matrix-chain-multiplication';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
+import { minCostMaxFlowGenerator } from '../algorithms/min-cost-max-flow';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
 import { primsMstGenerator } from '../algorithms/prims-mst';
@@ -62,6 +65,7 @@ import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
 import { sosDpGenerator } from '../algorithms/sos-dp';
 import { subsetSumGenerator } from '../algorithms/subset-sum';
+import { steinerTreeGenerator } from '../algorithms/steiner-tree';
 import { tarjanSccGenerator } from '../algorithms/tarjan-scc';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
@@ -82,6 +86,7 @@ import { BURST_BALLOONS_CODE } from '../data/burst-balloons-code';
 import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
 import { CLIMBING_STAIRS_CODE } from '../data/climbing-stairs-code';
+import { CHROMATIC_NUMBER_CODE } from '../data/chromatic-number-code';
 import { COIN_CHANGE_CODE } from '../data/coin-change-code';
 import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
@@ -89,6 +94,7 @@ import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { DINIC_MAX_FLOW_CODE } from '../data/dinic-max-flow-code';
+import { DOMINATOR_TREE_CODE } from '../data/dominator-tree-code';
 import { DP_CONVEX_HULL_TRICK_CODE } from '../data/dp-convex-hull-trick-code';
 import { DP_ON_TREES_CODE } from '../data/dp-on-trees-code';
 import { DP_WITH_BITMASK_CODE } from '../data/dp-with-bitmask-code';
@@ -110,6 +116,7 @@ import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-
 import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
 import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
+import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
 import { PROFILE_DP_CODE } from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
@@ -119,6 +126,7 @@ import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
 import { SOS_DP_CODE } from '../data/sos-dp-code';
 import { SUBSET_SUM_CODE } from '../data/subset-sum-code';
+import { STEINER_TREE_CODE } from '../data/steiner-tree-code';
 import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
@@ -217,11 +225,14 @@ import {
   generateBipartiteGraph,
   generateBridgesGraph,
   generateConnectedComponentsGraph,
+  generateColoringGraph,
   generateCycleDetectionGraph,
   generateDagGraph,
   generateDijkstraGraph,
+  generateDominatorGraph,
   generateEulerGraph,
   generateSccGraph,
+  generateSteinerGraph,
   generateTraversalGraph,
 } from '../utils/dijkstra-graph';
 import { AStarScenario, createAStarScenario, createFloodFillScenario, FloodFillScenario } from '../utils/grid-scenarios';
@@ -236,8 +247,10 @@ import {
   createEdmondsKarpScenario,
   createDinicScenario,
   createHopcroftKarpScenario,
+  createMinCostMaxFlowScenario,
   DinicScenario,
   HopcroftKarpScenario,
+  MinCostMaxFlowScenario,
 } from '../utils/network-scenarios';
 import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
@@ -380,6 +393,30 @@ const EULER_LEGEND: readonly LegendItem[] = [
   { label: 'Sealed trail node', color: '#ffde59' },
 ];
 
+const CHROMATIC_NUMBER_LEGEND: readonly LegendItem[] = [
+  { label: 'Color class 1', color: 'rgba(56, 189, 248, 0.72)' },
+  { label: 'Color class 2', color: 'rgba(139, 92, 246, 0.72)' },
+  { label: 'Color class 3', color: 'rgba(52, 211, 153, 0.72)' },
+  { label: 'Color class 4', color: 'rgba(245, 158, 11, 0.76)' },
+  { label: 'Conflict edge', color: '#f43f5e' },
+];
+
+const DOMINATOR_TREE_LEGEND: readonly LegendItem[] = [
+  { label: 'Entry block', color: '#38bdf8' },
+  { label: 'Current predecessor inspect', color: '#f0b429' },
+  { label: 'Stable dominator set', color: '#7c6ef0' },
+  { label: 'Immediate dominator tree edge', color: '#3ecf8e' },
+  { label: 'Current worklist block', color: '#5eead4' },
+];
+
+const STEINER_TREE_LEGEND: readonly LegendItem[] = [
+  { label: 'Terminal node', color: 'rgba(56, 189, 248, 0.72)' },
+  { label: 'Steiner connector', color: 'rgba(52, 211, 153, 0.74)' },
+  { label: 'Weighted graph edge', color: 'rgba(255,255,255,0.22)' },
+  { label: 'Exact selected tree edge', color: '#3ecf8e' },
+  { label: 'Active subset root', color: '#f0b429' },
+];
+
 const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: 'Candidate window', color: '#7c6ef0' },
   { label: 'Probe', color: '#f0b429' },
@@ -429,6 +466,14 @@ const EDMONDS_KARP_LEGEND: readonly LegendItem[] = [
   { label: 'Current inspect edge', color: '#f0b429' },
   { label: 'Augmenting path', color: '#5eead4' },
   { label: 'Positive flow / saturated edge', color: '#3ecf8e' },
+];
+
+const MIN_COST_MAX_FLOW_LEGEND: readonly LegendItem[] = [
+  { label: 'Residual candidate edge', color: 'rgba(255,255,255,0.2)' },
+  { label: 'Cheapest frontier', color: '#7c6ef0' },
+  { label: 'Current cost relax edge', color: '#f0b429' },
+  { label: 'Cheapest augmenting route', color: '#5eead4' },
+  { label: 'Committed flow with price', color: '#3ecf8e' },
 ];
 
 const FLOYD_WARSHALL_LEGEND: readonly LegendItem[] = [
@@ -685,6 +730,10 @@ const EDMONDS_KARP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'network', label: 'Augmenting Route' },
 ];
 
+const MIN_COST_MAX_FLOW_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'network', label: 'Costed Residuals' },
+];
+
 const DIJKSTRA_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Path Network' },
 ];
@@ -735,6 +784,18 @@ const KOSARAJU_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const EULER_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Edge Trail' },
+];
+
+const CHROMATIC_NUMBER_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Color Search' },
+];
+
+const STEINER_TREE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Terminal DP Tree' },
+];
+
+const DOMINATOR_TREE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'CFG Dominance' },
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
@@ -1306,6 +1367,48 @@ const EULER_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New trail graph',
 };
 
+const CHROMATIC_NUMBER_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: CHROMATIC_NUMBER_CODE,
+  variantOptions: CHROMATIC_NUMBER_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateColoringGraph,
+  generator: chromaticNumberGenerator,
+  legendItems: () => CHROMATIC_NUMBER_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New conflict graph',
+};
+
+const STEINER_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: STEINER_TREE_CODE,
+  variantOptions: STEINER_TREE_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateSteinerGraph,
+  generator: steinerTreeGenerator,
+  legendItems: () => STEINER_TREE_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New terminal graph',
+};
+
+const DOMINATOR_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: DOMINATOR_TREE_CODE,
+  variantOptions: DOMINATOR_TREE_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateDominatorGraph,
+  generator: dominatorTreeGenerator,
+  legendItems: () => DOMINATOR_TREE_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New CFG',
+};
+
 const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
   codeLines: FLOOD_FILL_CODE,
   createScenario: (size) => createFloodFillScenario(size),
@@ -1658,6 +1761,18 @@ const EDMONDS_KARP_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
   randomizeLabel: 'New augmenting network',
 });
 
+const MIN_COST_MAX_FLOW_VIEW_CONFIG = createNetworkViewConfig<MinCostMaxFlowScenario>({
+  codeLines: MIN_COST_MAX_FLOW_CODE,
+  variantOptions: MIN_COST_MAX_FLOW_VARIANT_OPTIONS,
+  createScenario: (size) => createMinCostMaxFlowScenario(size),
+  generator: minCostMaxFlowGenerator,
+  legendItems: MIN_COST_MAX_FLOW_LEGEND,
+  sizeOptions: [8, 10],
+  defaultSize: 8,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New priced network',
+});
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -1841,6 +1956,15 @@ export class AlgorithmDetail {
     if (algorithm.id === 'euler-path-circuit') {
       return EULER_VIEW_CONFIG;
     }
+    if (algorithm.id === 'chromatic-number') {
+      return CHROMATIC_NUMBER_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'steiner-tree') {
+      return STEINER_TREE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'dominator-tree') {
+      return DOMINATOR_TREE_VIEW_CONFIG;
+    }
     if (algorithm.id === 'flood-fill') {
       return FLOOD_FILL_VIEW_CONFIG;
     }
@@ -1867,6 +1991,9 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'edmonds-karp') {
       return EDMONDS_KARP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'min-cost-max-flow') {
+      return MIN_COST_MAX_FLOW_VIEW_CONFIG;
     }
     return BUBBLE_VIEW_CONFIG;
   });

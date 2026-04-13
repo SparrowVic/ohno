@@ -583,6 +583,189 @@ export function generateEulerGraph(size: number): WeightedGraphData {
   };
 }
 
+export function generateColoringGraph(size: number): WeightedGraphData {
+  const layout = GRAPH_LAYOUTS[size] ?? GRAPH_LAYOUTS[8];
+  const nodes = buildLayoutNodes(layout, size);
+  const edgePairs: Record<number, readonly [number, number][]> = {
+    6: [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [1, 2],
+      [1, 3],
+      [2, 3],
+      [2, 4],
+      [3, 4],
+      [1, 5],
+      [3, 5],
+    ],
+    8: [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [1, 2],
+      [1, 3],
+      [2, 3],
+      [0, 4],
+      [1, 4],
+      [2, 5],
+      [3, 5],
+      [4, 6],
+      [5, 6],
+      [4, 7],
+      [5, 7],
+      [6, 7],
+    ],
+    10: [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [1, 2],
+      [1, 3],
+      [2, 3],
+      [0, 4],
+      [1, 5],
+      [2, 6],
+      [3, 7],
+      [4, 5],
+      [5, 6],
+      [6, 7],
+      [4, 8],
+      [6, 8],
+      [5, 9],
+      [7, 9],
+      [8, 9],
+    ],
+  };
+
+  return {
+    nodes,
+    edges: (edgePairs[size] ?? edgePairs[8]).map(([fromIndex, toIndex]) => ({
+      id: edgeId(nodes[fromIndex].id, nodes[toIndex].id),
+      from: nodes[fromIndex].id,
+      to: nodes[toIndex].id,
+      weight: 1,
+    })),
+    sourceId: nodes[0]?.id ?? '',
+  };
+}
+
+export function generateSteinerGraph(size: number): WeightedGraphData {
+  const layout = GRAPH_LAYOUTS[size] ?? GRAPH_LAYOUTS[8];
+  const nodes = buildLayoutNodes(layout, size);
+  const weightedPairs: Record<number, readonly [number, number, number][]> = {
+    6: [
+      [0, 1, 2],
+      [1, 2, 2],
+      [0, 3, 3],
+      [1, 3, 1],
+      [1, 4, 2],
+      [2, 4, 2],
+      [3, 4, 1],
+      [4, 5, 2],
+      [2, 5, 4],
+    ],
+    8: [
+      [0, 1, 2],
+      [1, 2, 2],
+      [2, 3, 3],
+      [0, 4, 3],
+      [1, 4, 1],
+      [1, 5, 2],
+      [2, 5, 1],
+      [3, 6, 2],
+      [4, 5, 1],
+      [5, 6, 2],
+      [6, 7, 2],
+      [5, 7, 3],
+      [2, 6, 3],
+    ],
+    10: [
+      [0, 1, 2],
+      [1, 2, 2],
+      [2, 3, 2],
+      [3, 4, 3],
+      [0, 5, 3],
+      [1, 5, 1],
+      [2, 6, 1],
+      [3, 7, 2],
+      [4, 8, 2],
+      [5, 6, 1],
+      [6, 7, 1],
+      [7, 8, 1],
+      [8, 9, 2],
+      [6, 8, 2],
+      [5, 7, 2],
+      [2, 7, 3],
+    ],
+  };
+
+  return {
+    nodes,
+    edges: (weightedPairs[size] ?? weightedPairs[8]).map(([fromIndex, toIndex, weight]) => ({
+      id: edgeId(nodes[fromIndex].id, nodes[toIndex].id),
+      from: nodes[fromIndex].id,
+      to: nodes[toIndex].id,
+      weight,
+    })),
+    sourceId: nodes[0]?.id ?? '',
+  };
+}
+
+export function generateDominatorGraph(size: number): WeightedGraphData {
+  const layout = GRAPH_LAYOUTS[size] ?? GRAPH_LAYOUTS[8];
+  const nodes = buildLayoutNodes(layout, size);
+  const directedPairs: Record<number, readonly [number, number][]> = {
+    6: [
+      [0, 1],
+      [0, 3],
+      [1, 2],
+      [1, 4],
+      [3, 4],
+      [2, 5],
+      [4, 5],
+    ],
+    8: [
+      [0, 1],
+      [0, 4],
+      [1, 2],
+      [1, 5],
+      [4, 5],
+      [2, 3],
+      [2, 6],
+      [5, 6],
+      [3, 7],
+      [6, 7],
+    ],
+    10: [
+      [0, 1],
+      [0, 5],
+      [1, 2],
+      [1, 6],
+      [5, 6],
+      [2, 3],
+      [2, 7],
+      [6, 7],
+      [3, 4],
+      [7, 8],
+      [4, 9],
+      [8, 9],
+    ],
+  };
+
+  return {
+    nodes,
+    edges: (directedPairs[size] ?? directedPairs[8]).map(([fromIndex, toIndex]) => ({
+      id: directedEdgeId(nodes[fromIndex].id, nodes[toIndex].id),
+      from: nodes[fromIndex].id,
+      to: nodes[toIndex].id,
+      weight: 1,
+      directed: true,
+    })),
+    sourceId: nodes[0]?.id ?? '',
+  };
+}
+
 function buildLayoutNodes(layout: GraphLayout, size: number): WeightedGraphNode[] {
   const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   return layout.positions.slice(0, size).map(([x, y], index) => ({

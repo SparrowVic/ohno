@@ -1,4 +1,4 @@
-export type NetworkMode = 'dinic' | 'hopcroft-karp' | 'edmonds-karp';
+export type NetworkMode = 'dinic' | 'hopcroft-karp' | 'edmonds-karp' | 'min-cost-max-flow';
 
 export type NetworkLane = 'source' | 'sink' | 'left' | 'right' | 'inner';
 

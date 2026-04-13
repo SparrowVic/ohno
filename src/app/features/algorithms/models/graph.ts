@@ -24,6 +24,8 @@ export type GraphTone =
   | 'right'
   | 'critical'
   | 'bridge'
+  | 'terminal'
+  | 'steiner'
   | 'component-a'
   | 'component-b'
   | 'component-c'

@@ -14,6 +14,7 @@ export interface LayeredNetworkEdge {
   readonly toId: string;
   readonly directed: boolean;
   readonly capacity: number | null;
+  readonly cost?: number | null;
 }
 
 export interface DinicScenario {
@@ -32,6 +33,14 @@ export interface HopcroftKarpScenario {
   readonly rightIds: readonly string[];
 }
 
+export interface MinCostMaxFlowScenario {
+  readonly kind: 'min-cost-max-flow';
+  readonly nodes: readonly LayeredNetworkNode[];
+  readonly edges: readonly LayeredNetworkEdge[];
+  readonly sourceId: string;
+  readonly sinkId: string;
+}
+
 export function createDinicScenario(size: number): DinicScenario {
   return size >= 10 ? createLargeDinicScenario() : createCompactDinicScenario();
 }
@@ -40,8 +49,83 @@ export function createHopcroftKarpScenario(size: number): HopcroftKarpScenario {
   return size >= 10 ? createLargeMatchingScenario() : createCompactMatchingScenario();
 }
 
+export function createMinCostMaxFlowScenario(size: number): MinCostMaxFlowScenario {
+  return size >= 10 ? createLargeMinCostScenario() : createCompactMinCostScenario();
+}
+
 export function createEdmondsKarpScenario(size: number): DinicScenario {
   return size >= 10 ? createLargeEdmondsKarpScenario() : createCompactEdmondsKarpScenario();
+}
+
+function createCompactMinCostScenario(): MinCostMaxFlowScenario {
+  const nodes: readonly LayeredNetworkNode[] = [
+    { id: 's', label: 'S', x: 110, y: 280, lane: 'source' },
+    { id: 'a', label: 'A', x: 260, y: 160, lane: 'inner' },
+    { id: 'b', label: 'B', x: 260, y: 396, lane: 'inner' },
+    { id: 'c', label: 'C', x: 460, y: 136, lane: 'inner' },
+    { id: 'd', label: 'D', x: 460, y: 280, lane: 'inner' },
+    { id: 'e', label: 'E', x: 460, y: 424, lane: 'inner' },
+    { id: 'f', label: 'F', x: 690, y: 224, lane: 'inner' },
+    { id: 't', label: 'T', x: 840, y: 280, lane: 'sink' },
+  ];
+
+  return {
+    kind: 'min-cost-max-flow',
+    sourceId: 's',
+    sinkId: 't',
+    nodes,
+    edges: [
+      edge('s', 'a', 2, 1),
+      edge('s', 'b', 2, 2),
+      edge('a', 'c', 1, 1),
+      edge('a', 'd', 1, 2),
+      edge('b', 'd', 1, 1),
+      edge('b', 'e', 1, 2),
+      edge('c', 'f', 1, 1),
+      edge('d', 'f', 1, 1),
+      edge('d', 't', 1, 2),
+      edge('e', 't', 1, 1),
+      edge('f', 't', 2, 1),
+    ],
+  };
+}
+
+function createLargeMinCostScenario(): MinCostMaxFlowScenario {
+  const nodes: readonly LayeredNetworkNode[] = [
+    { id: 's', label: 'S', x: 96, y: 280, lane: 'source' },
+    { id: 'a', label: 'A', x: 210, y: 110, lane: 'inner' },
+    { id: 'b', label: 'B', x: 210, y: 280, lane: 'inner' },
+    { id: 'c', label: 'C', x: 210, y: 450, lane: 'inner' },
+    { id: 'd', label: 'D', x: 430, y: 104, lane: 'inner' },
+    { id: 'e', label: 'E', x: 430, y: 244, lane: 'inner' },
+    { id: 'f', label: 'F', x: 430, y: 414, lane: 'inner' },
+    { id: 'g', label: 'G', x: 676, y: 154, lane: 'inner' },
+    { id: 'h', label: 'H', x: 676, y: 368, lane: 'inner' },
+    { id: 't', label: 'T', x: 900, y: 280, lane: 'sink' },
+  ];
+
+  return {
+    kind: 'min-cost-max-flow',
+    sourceId: 's',
+    sinkId: 't',
+    nodes,
+    edges: [
+      edge('s', 'a', 2, 1),
+      edge('s', 'b', 2, 2),
+      edge('s', 'c', 2, 3),
+      edge('a', 'd', 1, 1),
+      edge('a', 'e', 1, 2),
+      edge('b', 'e', 1, 1),
+      edge('b', 'f', 1, 2),
+      edge('c', 'f', 2, 1),
+      edge('d', 'g', 1, 1),
+      edge('e', 'g', 1, 1),
+      edge('e', 'h', 1, 2),
+      edge('f', 'h', 2, 1),
+      edge('g', 't', 2, 1),
+      edge('h', 't', 2, 1),
+    ],
+  };
 }
 
 function createCompactEdmondsKarpScenario(): DinicScenario {
@@ -250,12 +334,13 @@ function buildPartition(
   }));
 }
 
-function edge(fromId: string, toId: string, capacity: number | null = null): LayeredNetworkEdge {
+function edge(fromId: string, toId: string, capacity: number | null = null, cost: number | null = null): LayeredNetworkEdge {
   return {
     id: `${fromId}->${toId}`,
     fromId,
     toId,
     directed: true,
     capacity,
+    cost,
   };
 }

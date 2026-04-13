@@ -98,6 +98,9 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
   }
 
   levelLabel(node: NetworkNodeSnapshot): string {
+    if (this.state()?.mode === 'min-cost-max-flow') {
+      return node.level === null ? 'C—' : `C${node.level}`;
+    }
     return node.level === null ? 'L—' : `L${node.level}`;
   }
 

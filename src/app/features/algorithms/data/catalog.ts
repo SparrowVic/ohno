@@ -626,6 +626,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'flow-matching',
     tags: ['flow', 'cost', 'optimization'],
+    complexity: {
+      timeBest: 'O(FVE)',
+      timeAverage: 'O(FVE)',
+      timeWorst: 'O(FVE)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'chromatic-number',
@@ -635,6 +642,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'advanced',
     tags: ['coloring', 'NP-hard', 'search'],
+    complexity: {
+      timeBest: 'Exponential',
+      timeAverage: 'Exponential',
+      timeWorst: 'Exponential',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'steiner-tree',
@@ -644,6 +658,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'advanced',
     tags: ['terminals', 'optimization', 'NP-hard'],
+    complexity: {
+      timeBest: 'O(3^T · V + 2^T · V²)',
+      timeAverage: 'O(3^T · V + 2^T · V²)',
+      timeWorst: 'O(3^T · V + 2^T · V²)',
+      space: 'O(2^T · V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dominator-tree',
@@ -653,6 +674,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'advanced',
     tags: ['control flow', 'compiler', 'dominance'],
+    complexity: {
+      timeBest: 'O(VE)',
+      timeAverage: 'O(VE)',
+      timeWorst: 'O(VE)',
+      space: 'O(V²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'knapsack-01',
