@@ -11,15 +11,21 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { DsuTraceState } from '../../models/dsu';
 
 import { GraphStepState } from '../../models/graph';
+import { GridTraceState } from '../../models/grid';
+import { NetworkTraceState } from '../../models/network';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, LogEntry } from '../../models/detail';
 import { SearchTraceState } from '../../models/search';
 import { CodePanel } from '../code-panel/code-panel';
+import { DsuTracePanel } from '../dsu-trace-panel/dsu-trace-panel';
 import { GraphTracePanel } from '../graph-trace-panel/graph-trace-panel';
+import { GridTracePanel } from '../grid-trace-panel/grid-trace-panel';
 import { InfoPanel } from '../info-panel/info-panel';
 import { LogPanel } from '../log-panel/log-panel';
+import { NetworkTracePanel } from '../network-trace-panel/network-trace-panel';
 import { SearchTracePanel } from '../search-trace-panel/search-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
@@ -44,7 +50,7 @@ const MAX_WIDTH = 680;
 
 @Component({
   selector: 'app-side-panel',
-  imports: [CodePanel, GraphTracePanel, InfoPanel, LogPanel, SearchTracePanel],
+  imports: [CodePanel, DsuTracePanel, GraphTracePanel, GridTracePanel, InfoPanel, LogPanel, NetworkTracePanel, SearchTracePanel],
   templateUrl: './side-panel.html',
   styleUrl: './side-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +61,9 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly activeLineNumber = input<number | null>(null);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
+  readonly dsuState = input<DsuTraceState | null>(null);
+  readonly gridState = input<GridTraceState | null>(null);
+  readonly networkState = input<NetworkTraceState | null>(null);
   readonly searchState = input<SearchTraceState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
   readonly graphFocusPathLabel = input<string | null>(null);
@@ -62,7 +71,9 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusHint = input<string | null>(null);
 
   readonly tabs = computed<readonly SideTab[]>(() =>
-    this.traceState() || this.searchState() ? [TRACE_TAB, ...BASE_SIDE_TABS] : BASE_SIDE_TABS,
+    this.traceState() || this.dsuState() || this.gridState() || this.networkState() || this.searchState()
+      ? [TRACE_TAB, ...BASE_SIDE_TABS]
+      : BASE_SIDE_TABS,
   );
 
   private readonly activeTabState = signal<SideTabId>('code');
@@ -79,7 +90,12 @@ export class SidePanel implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      const hasTrace = this.traceState() !== null || this.searchState() !== null;
+      const hasTrace =
+        this.traceState() !== null ||
+        this.dsuState() !== null ||
+        this.gridState() !== null ||
+        this.networkState() !== null ||
+        this.searchState() !== null;
       if (!hasTrace && this.activeTabState() === 'trace') {
         this.activeTabState.set('code');
       }

@@ -33,6 +33,15 @@
         (focusedNodeIdChange)="graphFocusTargetChange.emit($event)"
       />
     }
+    @case ('dsu') {
+      <app-dsu-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
+    @case ('network') {
+      <app-network-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
+    @case ('grid') {
+      <app-grid-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
     @case ('sound') {
       <app-sound-bars-visualization
         [array]="array()"

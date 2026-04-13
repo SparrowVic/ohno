@@ -1,0 +1,119 @@
+<div class="trace">
+  @if (state(); as gridState) {
+    <div class="trace__header">
+      <div class="trace__summary">
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Mode</span>
+          <span class="trace__summary-value">{{ gridState.modeLabel }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Active</span>
+          <span class="trace__summary-value">{{ activeLabel() }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Frontier</span>
+          <span class="trace__summary-value">{{ gridState.frontierCount }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Visited</span>
+          <span class="trace__summary-value">{{ gridState.visitedCount }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Result</span>
+          <span class="trace__summary-value">{{ resultLabel() }}</span>
+        </div>
+      </div>
+
+      <div class="trace__calculation">
+        <div class="trace__calc-strip">
+          <div class="trace__calc-pill">
+            <span class="trace__calc-label">Source</span>
+            <span class="trace__calc-value">{{ gridState.sourceLabel }}</span>
+          </div>
+          <div class="trace__calc-pill">
+            <span class="trace__calc-label">Target</span>
+            <span class="trace__calc-value">{{ gridState.targetLabel }}</span>
+          </div>
+          <div class="trace__calc-pill">
+            <span class="trace__calc-label">Board</span>
+            <span class="trace__calc-value">{{ gridState.rows }}×{{ gridState.cols }}</span>
+          </div>
+        </div>
+        <div class="trace__calc-decision">{{ gridState.decision ?? 'waiting for next step' }}</div>
+      </div>
+
+      <div class="trace__queue">
+        <div class="trace__queue-label">Visit order</div>
+        <div class="trace__queue-items">
+          @if (gridState.visitOrder.length === 0) {
+            <span class="trace__queue-empty">not started</span>
+          } @else {
+            @for (label of gridState.visitOrder; track $index) {
+              <span class="trace__queue-chip">{{ label }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="trace__legend">
+        <div class="trace__queue-label">Tag legend</div>
+        <div class="trace__legend-grid">
+          @for (item of legend; track item.id) {
+            <div class="trace__legend-item">
+              <span class="trace__tag trace__tag--{{ item.id }}" [attr.title]="item.label" [attr.aria-label]="item.label">
+                <fa-icon [icon]="item.icon" />
+              </span>
+              <span class="trace__legend-text">{{ item.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="trace__table-wrap">
+      <table class="trace__table">
+        <colgroup>
+          <col class="trace__col trace__col--cell" />
+          <col class="trace__col trace__col--value" />
+          <col class="trace__col trace__col--status" />
+          <col class="trace__col trace__col--tags" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Cell</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th>Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cell of visibleRows(); track cell.id) {
+            <tr
+              [class.trace__row--current]="cell.status === 'current'"
+              [class.trace__row--result]="cell.status === 'filled' || cell.status === 'path'"
+            >
+              <td>{{ cell.metaLabel }}</td>
+              <td>{{ cell.valueLabel || '—' }}</td>
+              <td>
+                <span class="trace__status trace__status--{{ cell.status }}">
+                  {{ cell.status }}
+                </span>
+              </td>
+              <td>
+                <div class="trace__tags">
+                  @for (tag of cell.tags; track tag) {
+                    <span class="trace__tag trace__tag--{{ tag }}" [attr.title]="tagLabel(tag)" [attr.aria-label]="tagLabel(tag)">
+                      <fa-icon [icon]="tagIcon(tag)" />
+                    </span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="trace__empty">No grid trace available for this step.</div>
+  }
+</div>

@@ -1,0 +1,276 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.network-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  border-radius: 28px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 26%),
+    radial-gradient(circle at top right, rgba(124, 110, 240, 0.1), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+    #12151e;
+  overflow: hidden;
+}
+
+.network-shell__hud,
+.network-shell__focus {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px 14px 0;
+}
+
+.network-shell__focus {
+  padding-top: 8px;
+}
+
+.hud-card,
+.focus-pill {
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(12px);
+}
+
+.hud-card {
+  grid-column: span 2;
+}
+
+.hud-card--wide {
+  grid-column: span 4;
+}
+
+.hud-card__label,
+.focus-pill__label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.hud-card__value,
+.focus-pill__value {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-card__hint,
+.focus-pill__empty {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.focus-pill--status {
+  grid-column: span 3;
+}
+
+.focus-pill--decision {
+  grid-column: span 4;
+}
+
+.focus-pill--chips {
+  grid-column: span 5;
+}
+
+.focus-pill__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.focus-pill__chip {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(124, 110, 240, 0.13);
+  color: #cbc6ff;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.network {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.edge-line {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 3.5;
+  transition:
+    stroke 220ms ease,
+    opacity 220ms ease,
+    stroke-width 220ms ease;
+
+  &--candidate {
+    stroke: rgba(94, 234, 212, 0.5);
+    stroke-dasharray: 11 8;
+  }
+
+  &--active {
+    stroke: rgba(240, 180, 41, 0.9);
+    stroke-width: 5.5;
+    stroke-dasharray: 12 8;
+  }
+
+  &--augment {
+    stroke: #3ecf8e;
+    stroke-width: 6;
+  }
+
+  &--matched,
+  &--flow {
+    stroke: url(#networkEdgeGlow);
+    stroke-width: 5;
+  }
+
+  &--saturated {
+    stroke: rgba(255, 255, 255, 0.08);
+    opacity: 0.42;
+  }
+
+  &--blocked {
+    stroke: rgba(244, 63, 94, 0.72);
+    stroke-width: 4.5;
+  }
+}
+
+.edge-label {
+  rect {
+    fill: rgba(10, 14, 24, 0.86);
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 0.5;
+  }
+
+  text {
+    text-anchor: middle;
+    fill: var(--text-primary);
+    font-size: 10px;
+    font-weight: 600;
+  }
+}
+
+.edge-label__secondary {
+  fill: var(--text-secondary);
+  font-size: 8.5px;
+  font-weight: 500;
+}
+
+.node {
+  transition: opacity 220ms ease;
+}
+
+.node__halo {
+  fill: rgba(255, 255, 255, 0.04);
+}
+
+.node__body {
+  fill: rgba(255, 255, 255, 0.08);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.5;
+}
+
+.node__label {
+  text-anchor: middle;
+  fill: var(--text-primary);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.node__metric rect,
+.node__link rect {
+  fill: rgba(10, 14, 24, 0.86);
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 0.5;
+}
+
+.node__metric text,
+.node__link text {
+  text-anchor: middle;
+  fill: var(--text-primary);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.node[data-lane='left'] .node__halo {
+  fill: rgba(56, 189, 248, 0.08);
+}
+
+.node[data-lane='right'] .node__halo {
+  fill: rgba(245, 158, 11, 0.08);
+}
+
+.node--source .node__body {
+  fill: rgba(56, 189, 248, 0.24);
+  stroke: rgba(56, 189, 248, 0.58);
+}
+
+.node--sink .node__body {
+  fill: rgba(245, 158, 11, 0.24);
+  stroke: rgba(245, 158, 11, 0.58);
+}
+
+.node--frontier .node__body {
+  fill: rgba(124, 110, 240, 0.26);
+  stroke: rgba(124, 110, 240, 0.56);
+}
+
+.node--current .node__body {
+  fill: rgba(240, 180, 41, 0.28);
+  stroke: rgba(240, 180, 41, 0.72);
+}
+
+.node--linked .node__body {
+  fill: rgba(62, 207, 142, 0.2);
+  stroke: rgba(62, 207, 142, 0.58);
+}
+
+.node--visited .node__body {
+  fill: rgba(94, 234, 212, 0.16);
+  stroke: rgba(94, 234, 212, 0.42);
+}
+
+.node--blocked .node__body {
+  fill: rgba(244, 63, 94, 0.18);
+  stroke: rgba(244, 63, 94, 0.56);
+}
+
+.network-shell__empty {
+  padding: 24px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1080px) {
+  .hud-card {
+    grid-column: span 3;
+  }
+
+  .hud-card--wide {
+    grid-column: span 6;
+  }
+
+  .focus-pill--status,
+  .focus-pill--decision,
+  .focus-pill--chips {
+    grid-column: span 12;
+  }
+}

@@ -1,0 +1,135 @@
+<div class="trace">
+  @if (state(); as networkState) {
+    <div class="trace__header">
+      <div class="trace__summary">
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Mode</span>
+          <span class="trace__summary-value">{{ networkState.modeLabel }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Phase</span>
+          <span class="trace__summary-value">{{ networkState.phaseLabel }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">{{ networkState.frontierLabel }}</span>
+          <span class="trace__summary-value">{{ networkState.frontierCount }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Result</span>
+          <span class="trace__summary-value">{{ networkState.resultLabel }}</span>
+        </div>
+      </div>
+
+      <div class="trace__calc">
+        <div class="trace__calc-strip">
+          <div class="trace__calc-pill">
+            <span class="trace__summary-label">Status</span>
+            <span class="trace__calc-value">{{ networkState.statusLabel }}</span>
+          </div>
+          <div class="trace__calc-pill">
+            <span class="trace__summary-label">Route</span>
+            <span class="trace__calc-value">{{ networkState.activeRouteLabel ?? '—' }}</span>
+          </div>
+        </div>
+        <div class="trace__calc-decision">
+          @if (networkState.computation) {
+            <strong>{{ networkState.computation.label }}:</strong>
+            {{ networkState.computation.expression }}
+            @if (networkState.computation.result) {
+              <span> = {{ networkState.computation.result }}</span>
+            }
+            <span> · {{ networkState.computation.decision }}</span>
+          } @else {
+            <span>Waiting for the next BFS / DFS / augment step.</span>
+          }
+        </div>
+      </div>
+
+      <div class="trace__queue">
+        <div class="trace__section-label">{{ networkState.queueLabel }}</div>
+        <div class="trace__queue-items">
+          @for (item of queuePreview(); track item) {
+            <span class="trace__queue-chip">{{ item }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="trace__queue">
+        <div class="trace__section-label">{{ networkState.focusItemsLabel }}</div>
+        <div class="trace__queue-items">
+          @if (networkState.focusItems.length === 0) {
+            <span class="trace__queue-empty">none yet</span>
+          } @else {
+            @for (item of networkState.focusItems; track item) {
+              <span class="trace__queue-chip trace__queue-chip--done">{{ item }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="trace__legend">
+        <div class="trace__section-label">Tag legend</div>
+        <div class="trace__legend-grid">
+          @for (item of legend; track item.id) {
+            <div class="trace__legend-item">
+              <span class="trace__tag trace__tag--{{ item.id }}" [attr.title]="item.label" [attr.aria-label]="item.label">
+                <fa-icon [icon]="item.icon" />
+              </span>
+              <span class="trace__legend-text">{{ item.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="trace__table-wrap">
+      <table class="trace__table">
+        <colgroup>
+          <col class="trace__col trace__col--node" />
+          <col class="trace__col trace__col--lane" />
+          <col class="trace__col trace__col--link" />
+          <col class="trace__col trace__col--level" />
+          <col class="trace__col trace__col--status" />
+          <col class="trace__col trace__col--tags" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Node</th>
+            <th>Lane</th>
+            <th>Link</th>
+            <th>Level</th>
+            <th>Status</th>
+            <th>Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of visibleRows(); track row.nodeId) {
+            <tr
+              [class.trace__row--active]="row.status === 'current' || row.status === 'frontier'"
+              [class.trace__row--done]="row.status === 'linked' || row.status === 'visited'"
+            >
+              <td>{{ row.label }}</td>
+              <td>{{ row.laneLabel }}</td>
+              <td>{{ row.linkLabel ?? '—' }}</td>
+              <td>{{ row.level === null ? '—' : row.level }}</td>
+              <td>
+                <span class="trace__status trace__status--{{ statusClass(row) }}">{{ row.status }}</span>
+              </td>
+              <td>
+                <div class="trace__tags">
+                  @for (tag of row.tags; track tag) {
+                    <span class="trace__tag trace__tag--{{ tag }}" [attr.title]="tagLabel(tag)" [attr.aria-label]="tagLabel(tag)">
+                      <fa-icon [icon]="tagIcon(tag)" />
+                    </span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="trace__empty">No network trace available for this step.</div>
+  }
+</div>

@@ -370,6 +370,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['DSU', 'amortized', 'components'],
+    complexity: {
+      timeBest: 'O(1)',
+      timeAverage: 'O(α(n)) amortized',
+      timeWorst: 'O(α(n)) amortized',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'flood-fill',
@@ -379,6 +386,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'pathfinding',
     tags: ['grid', 'BFS/DFS', 'region fill'],
+    complexity: {
+      timeBest: 'O(R)',
+      timeAverage: 'O(R)',
+      timeWorst: 'O(mn)',
+      space: 'O(mn)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'bipartite-check',
@@ -429,6 +443,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'pathfinding',
     tags: ['heuristic', 'priority queue', 'grid'],
+    complexity: {
+      timeBest: 'O(E)',
+      timeAverage: 'O(E log V)',
+      timeWorst: 'O(E log V)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'prims-mst',
@@ -454,6 +475,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'mst',
     tags: ['MST', 'DSU', 'edge sorting'],
+    complexity: {
+      timeBest: 'O(E log E)',
+      timeAverage: 'O(E log E)',
+      timeWorst: 'O(E log E)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'tarjan-scc',
@@ -524,6 +552,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'flow-matching',
     tags: ['matching', 'bipartite', 'layered search'],
+    complexity: {
+      timeBest: 'O(E√V)',
+      timeAverage: 'O(E√V)',
+      timeWorst: 'O(E√V)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'dinic-max-flow',
@@ -533,6 +568,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'flow-matching',
     tags: ['max flow', 'level graph', 'blocking flow'],
+    complexity: {
+      timeBest: 'O(V²E)',
+      timeAverage: 'O(V²E)',
+      timeWorst: 'O(V²E)',
+      space: 'O(V + E)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'min-cost-max-flow',

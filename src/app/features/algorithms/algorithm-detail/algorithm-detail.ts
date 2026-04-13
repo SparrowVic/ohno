@@ -14,6 +14,7 @@ import { map } from 'rxjs';
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { aStarPathfindingGenerator } from '../algorithms/a-star-pathfinding';
 import { bfsGenerator } from '../algorithms/bfs';
 import { bellmanFordGenerator } from '../algorithms/bellman-ford';
 import { binarySearchGenerator } from '../algorithms/binary-search';
@@ -26,9 +27,12 @@ import { connectedComponentsGenerator } from '../algorithms/connected-components
 import { countingSortGenerator } from '../algorithms/counting-sort';
 import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
+import { dinicMaxFlowGenerator } from '../algorithms/dinic-max-flow';
 import { dfsGenerator } from '../algorithms/dfs';
+import { floodFillGenerator } from '../algorithms/flood-fill';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
+import { kruskalsMstGenerator } from '../algorithms/kruskals-mst';
 import { linearSearchGenerator } from '../algorithms/linear-search';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { quickSortGenerator } from '../algorithms/quick-sort';
@@ -38,6 +42,9 @@ import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
+import { unionFindGenerator } from '../algorithms/union-find';
+import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
+import { A_STAR_PATHFINDING_CODE } from '../data/a-star-pathfinding-code';
 import { BELLMAN_FORD_CODE } from '../data/bellman-ford-code';
 import { BFS_CODE } from '../data/bfs-code';
 import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
@@ -51,8 +58,11 @@ import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
 import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
+import { DINIC_MAX_FLOW_CODE } from '../data/dinic-max-flow-code';
+import { FLOOD_FILL_CODE } from '../data/flood-fill-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
+import { KRUSKALS_MST_CODE } from '../data/kruskals-mst-code';
 import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
@@ -62,15 +72,26 @@ import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
+import { UNION_FIND_CODE } from '../data/union-find-code';
+import { DsuTraceState } from '../models/dsu';
 import { GraphStepState, WeightedGraphData } from '../models/graph';
+import { GridTraceState } from '../models/grid';
+import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
+import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
+import {
+  createKruskalScenario,
+  createUnionFindScenario,
+  KruskalScenario,
+  UnionFindScenario,
+} from '../utils/dsu-scenarios';
 import {
   generateBellmanFordGraph,
   generateBipartiteGraph,
@@ -81,6 +102,13 @@ import {
   generateDijkstraGraph,
   generateTraversalGraph,
 } from '../utils/dijkstra-graph';
+import { AStarScenario, createAStarScenario, createFloodFillScenario, FloodFillScenario } from '../utils/grid-scenarios';
+import {
+  createDinicScenario,
+  createHopcroftKarpScenario,
+  DinicScenario,
+  HopcroftKarpScenario,
+} from '../utils/network-scenarios';
 import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
@@ -206,6 +234,57 @@ const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: 'Found', color: '#3ecf8e' },
 ];
 
+const FLOOD_FILL_LEGEND: readonly LegendItem[] = [
+  { label: 'Seed cell', color: '#38bdf8' },
+  { label: 'Current wave cell', color: '#f0b429' },
+  { label: 'Fill frontier', color: '#7c6ef0' },
+  { label: 'Painted region', color: '#3ecf8e' },
+  { label: 'Rejected cell', color: 'var(--text-secondary)', opacity: 0.55 },
+];
+
+const A_STAR_LEGEND: readonly LegendItem[] = [
+  { label: 'Start', color: '#38bdf8' },
+  { label: 'Goal', color: '#f59e0b' },
+  { label: 'Open set', color: '#7c6ef0' },
+  { label: 'Current cell', color: '#f0b429' },
+  { label: 'Closed set', color: '#5eead4' },
+  { label: 'Final path', color: '#3ecf8e' },
+];
+
+const HOPCROFT_KARP_LEGEND: readonly LegendItem[] = [
+  { label: 'Left partition', color: '#38bdf8' },
+  { label: 'Right partition', color: '#f59e0b' },
+  { label: 'BFS frontier', color: '#7c6ef0' },
+  { label: 'Matching edge', color: '#3ecf8e' },
+  { label: 'Augmenting path', color: '#5eead4' },
+  { label: 'Current inspect edge', color: '#f0b429' },
+];
+
+const DINIC_LEGEND: readonly LegendItem[] = [
+  { label: 'Source', color: '#38bdf8' },
+  { label: 'Sink', color: '#f59e0b' },
+  { label: 'Admissible level edge', color: '#7c6ef0' },
+  { label: 'Positive flow', color: '#3ecf8e' },
+  { label: 'Current augment path', color: '#5eead4' },
+  { label: 'Saturated edge', color: 'var(--text-secondary)', opacity: 0.6 },
+];
+
+const UNION_FIND_LEGEND: readonly LegendItem[] = [
+  { label: 'Root representative', color: '#38bdf8' },
+  { label: 'Active / queried node', color: '#f0b429' },
+  { label: 'Merged / compressed node', color: '#3ecf8e' },
+  { label: 'Pending operation', color: '#7c6ef0' },
+  { label: 'Completed operation', color: '#5eead4' },
+];
+
+const KRUSKAL_LEGEND: readonly LegendItem[] = [
+  { label: 'Current edge check', color: '#f0b429' },
+  { label: 'Accepted MST edge', color: '#3ecf8e' },
+  { label: 'Rejected cycle edge', color: '#f43f5e' },
+  { label: 'Current DSU roots', color: '#38bdf8' },
+  { label: 'Pending sorted edge', color: '#7c6ef0' },
+];
+
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'bar', label: 'Bar Chart' },
   { value: 'block', label: 'Block Swap' },
@@ -228,6 +307,26 @@ const RADIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const SEARCH_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'search', label: 'Signal Sweep' },
+];
+
+const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'grid', label: 'Grid Board' },
+];
+
+const UNION_FIND_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dsu', label: 'Set Forest' },
+];
+
+const KRUSKAL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dsu', label: 'Edge Forest' },
+];
+
+const HOPCROFT_KARP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'network', label: 'Matching Layers' },
+];
+
+const DINIC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'network', label: 'Residual Layers' },
 ];
 
 const DIJKSTRA_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -314,7 +413,31 @@ interface SearchAlgorithmViewConfig extends BaseAlgorithmViewConfig {
   readonly generator: (scenario: SearchScenario) => Generator<SortStep>;
 }
 
-type AlgorithmViewConfig = ArrayAlgorithmViewConfig | GraphAlgorithmViewConfig | SearchAlgorithmViewConfig;
+interface GridAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'grid';
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
+interface DsuAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'dsu';
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
+interface NetworkAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'network';
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
+type AlgorithmViewConfig =
+  | ArrayAlgorithmViewConfig
+  | GraphAlgorithmViewConfig
+  | SearchAlgorithmViewConfig
+  | GridAlgorithmViewConfig<any>
+  | DsuAlgorithmViewConfig<any>
+  | NetworkAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -434,6 +557,85 @@ function createSearchViewConfig(args: {
     legendItems: () => SEARCH_LEGEND,
     sizeUnit: 'items',
     randomizeLabel: 'New challenge',
+  };
+}
+
+function createGridViewConfig<TScenario>(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly legendItems: readonly LegendItem[];
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+  readonly randomizeLabel?: string;
+}): GridAlgorithmViewConfig<TScenario> {
+  const sizeOptions = args.sizeOptions ?? [8, 10, 12];
+  return {
+    kind: 'grid',
+    codeLines: args.codeLines,
+    variantOptions: GRID_VARIANT_OPTIONS,
+    defaultVariant: 'grid',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 8,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => args.legendItems,
+    sizeUnit: 'cells / side',
+    randomizeLabel: args.randomizeLabel ?? 'New board',
+  };
+}
+
+function createDsuViewConfig<TScenario>(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly variantOptions: readonly VisualizationOption[];
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly legendItems: readonly LegendItem[];
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+  readonly sizeUnit?: string;
+  readonly randomizeLabel?: string;
+}): DsuAlgorithmViewConfig<TScenario> {
+  const sizeOptions = args.sizeOptions ?? [6, 8, 10];
+  return {
+    kind: 'dsu',
+    codeLines: args.codeLines,
+    variantOptions: args.variantOptions,
+    defaultVariant: 'dsu',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 6,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => args.legendItems,
+    sizeUnit: args.sizeUnit ?? 'nodes',
+    randomizeLabel: args.randomizeLabel ?? 'New scenario',
+  };
+}
+
+function createNetworkViewConfig<TScenario>(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly variantOptions: readonly VisualizationOption[];
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly legendItems: readonly LegendItem[];
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+  readonly sizeUnit?: string;
+  readonly randomizeLabel?: string;
+}): NetworkAlgorithmViewConfig<TScenario> {
+  const sizeOptions = args.sizeOptions ?? [8, 10];
+  return {
+    kind: 'network',
+    codeLines: args.codeLines,
+    variantOptions: args.variantOptions,
+    defaultVariant: 'network',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 8,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => args.legendItems,
+    sizeUnit: args.sizeUnit ?? 'nodes',
+    randomizeLabel: args.randomizeLabel ?? 'New network',
   };
 }
 
@@ -622,6 +824,74 @@ const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New graph',
 };
 
+const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
+  codeLines: FLOOD_FILL_CODE,
+  createScenario: (size) => createFloodFillScenario(size),
+  generator: floodFillGenerator,
+  legendItems: FLOOD_FILL_LEGEND,
+  sizeOptions: [8, 10, 12],
+  defaultSize: 10,
+  randomizeLabel: 'New board',
+});
+
+const A_STAR_VIEW_CONFIG = createGridViewConfig<AStarScenario>({
+  codeLines: A_STAR_PATHFINDING_CODE,
+  createScenario: (size) => createAStarScenario(size),
+  generator: aStarPathfindingGenerator,
+  legendItems: A_STAR_LEGEND,
+  sizeOptions: [8, 10, 12],
+  defaultSize: 10,
+  randomizeLabel: 'New board',
+});
+
+const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
+  codeLines: UNION_FIND_CODE,
+  variantOptions: UNION_FIND_VARIANT_OPTIONS,
+  createScenario: (size) => createUnionFindScenario(size),
+  generator: unionFindGenerator,
+  legendItems: UNION_FIND_LEGEND,
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New scenario',
+});
+
+const KRUSKAL_VIEW_CONFIG = createDsuViewConfig<KruskalScenario>({
+  codeLines: KRUSKALS_MST_CODE,
+  variantOptions: KRUSKAL_VARIANT_OPTIONS,
+  createScenario: (size) => createKruskalScenario(size),
+  generator: kruskalsMstGenerator,
+  legendItems: KRUSKAL_LEGEND,
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+});
+
+const HOPCROFT_KARP_VIEW_CONFIG = createNetworkViewConfig<HopcroftKarpScenario>({
+  codeLines: HOPCROFT_KARP_CODE,
+  variantOptions: HOPCROFT_KARP_VARIANT_OPTIONS,
+  createScenario: (size) => createHopcroftKarpScenario(size),
+  generator: hopcroftKarpGenerator,
+  legendItems: HOPCROFT_KARP_LEGEND,
+  sizeOptions: [8, 10],
+  defaultSize: 8,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New matching graph',
+});
+
+const DINIC_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
+  codeLines: DINIC_MAX_FLOW_CODE,
+  variantOptions: DINIC_VARIANT_OPTIONS,
+  createScenario: (size) => createDinicScenario(size),
+  generator: dinicMaxFlowGenerator,
+  legendItems: DINIC_LEGEND,
+  sizeOptions: [8, 10],
+  defaultSize: 8,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New flow network',
+});
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -733,6 +1003,24 @@ export class AlgorithmDetail {
     if (algorithm.id === 'bridges-articulation-points') {
       return BRIDGES_ARTICULATION_VIEW_CONFIG;
     }
+    if (algorithm.id === 'flood-fill') {
+      return FLOOD_FILL_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'a-star-pathfinding') {
+      return A_STAR_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'union-find') {
+      return UNION_FIND_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'kruskals-mst') {
+      return KRUSKAL_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'hopcroft-karp') {
+      return HOPCROFT_KARP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'dinic-max-flow') {
+      return DINIC_VIEW_CONFIG;
+    }
     return BUBBLE_VIEW_CONFIG;
   });
 
@@ -763,6 +1051,9 @@ export class AlgorithmDetail {
   readonly sizeUnit = computed(() => this.config()?.sizeUnit ?? 'elements');
   readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
+  readonly dsuTrace = computed<DsuTraceState | null>(() => this.currentSnapshot()?.dsu ?? null);
+  readonly gridTrace = computed<GridTraceState | null>(() => this.currentSnapshot()?.grid ?? null);
+  readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
   readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
   readonly graphRouteModeLabel = computed(() => {
     const trace = this.graphTrace();
@@ -847,6 +1138,30 @@ export class AlgorithmDetail {
           return;
         }
 
+        if (config.kind === 'grid') {
+          const scenario = config.createScenario(config.defaultSize);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadGridEngine(scenario, config.generator);
+          return;
+        }
+
+        if (config.kind === 'dsu') {
+          const scenario = config.createScenario(config.defaultSize);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadDsuEngine(scenario, config.generator);
+          return;
+        }
+
+        if (config.kind === 'network') {
+          const scenario = config.createScenario(config.defaultSize);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadNetworkEngine(scenario, config.generator);
+          return;
+        }
+
         const nextArray = this.generateArray(config.defaultSize, config.randomRange);
         this.arraySig.set(nextArray);
         this.graphSig.set(null);
@@ -908,6 +1223,30 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'grid') {
+      const scenario = config.createScenario(value);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadGridEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'dsu') {
+      const scenario = config.createScenario(value);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadDsuEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'network') {
+      const scenario = config.createScenario(value);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadNetworkEngine(scenario, config.generator);
+      return;
+    }
+
     const nextArray = this.generateArray(value, config.randomRange);
     this.arraySig.set(nextArray);
     this.graphSig.set(null);
@@ -931,6 +1270,30 @@ export class AlgorithmDetail {
       this.arraySig.set(scenario.array);
       this.graphSig.set(null);
       this.loadSearchEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'grid') {
+      const scenario = config.createScenario(this.sizeSig());
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadGridEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'dsu') {
+      const scenario = config.createScenario(this.sizeSig());
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadDsuEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'network') {
+      const scenario = config.createScenario(this.sizeSig());
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadNetworkEngine(scenario, config.generator);
       return;
     }
 
@@ -977,6 +1340,27 @@ export class AlgorithmDetail {
   private loadSearchEngine(
     scenario: SearchScenario,
     generator: (scenario: SearchScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadGridEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadDsuEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadNetworkEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
   ): void {
     this.loadEngine(generator(scenario));
   }

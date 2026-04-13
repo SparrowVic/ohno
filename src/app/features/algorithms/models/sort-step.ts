@@ -1,4 +1,7 @@
+import { DsuTraceState } from './dsu';
 import { GraphStepState } from './graph';
+import { GridTraceState } from './grid';
+import { NetworkTraceState } from './network';
 import { SearchTraceState } from './search';
 
 export type SortPhase =
@@ -46,5 +49,8 @@ export interface SortStep {
   readonly activeItemId?: string | null;
   readonly activeBucket?: number | null;
   readonly graph?: GraphStepState | null;
+  readonly dsu?: DsuTraceState | null;
+  readonly grid?: GridTraceState | null;
+  readonly network?: NetworkTraceState | null;
   readonly search?: SearchTraceState | null;
 }

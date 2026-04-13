@@ -7,7 +7,10 @@ import { BarChartVisualization } from '../bar-chart-visualization/bar-chart-visu
 import { BlockSwapVisualization } from '../block-swap-visualization/block-swap-visualization';
 import { ColorGradientVisualization } from '../color-gradient-visualization/color-gradient-visualization';
 import { DijkstraGraphVisualization } from '../dijkstra-graph-visualization/dijkstra-graph-visualization';
+import { DsuVisualization } from '../dsu-visualization/dsu-visualization';
+import { NetworkVisualization } from '../network-visualization/network-visualization';
 import { DotPlotVisualization } from '../dot-plot-visualization/dot-plot-visualization';
+import { GridVisualization } from '../grid-visualization/grid-visualization';
 import { RadixBucketVisualization } from '../radix-bucket-visualization/radix-bucket-visualization';
 import { RadixMatrixVisualization } from '../radix-matrix-visualization/radix-matrix-visualization';
 import { RadixStripVisualization } from '../radix-strip-visualization/radix-strip-visualization';
@@ -22,7 +25,10 @@ import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-v
     BlockSwapVisualization,
     ColorGradientVisualization,
     DijkstraGraphVisualization,
+    DsuVisualization,
+    NetworkVisualization,
     DotPlotVisualization,
+    GridVisualization,
     RadixBucketVisualization,
     RadixMatrixVisualization,
     RadixStripVisualization,

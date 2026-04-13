@@ -1,0 +1,110 @@
+<section class="network-shell" #container>
+  @if (state(); as networkState) {
+    <div class="network-shell__hud">
+      <div class="hud-card">
+        <span class="hud-card__label">Mode</span>
+        <span class="hud-card__value">{{ modeLabel() }}</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-card__label">Phase</span>
+        <span class="hud-card__value">{{ phaseLabel() }}</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-card__label">{{ frontierLabel() }}</span>
+        <span class="hud-card__value">{{ frontierCount() }}</span>
+      </div>
+      <div class="hud-card hud-card--wide">
+        <span class="hud-card__label">Active Route</span>
+        <span class="hud-card__value">{{ routeLabel() }}</span>
+        <span class="hud-card__hint">{{ queueLabel() }}: {{ queuePreview() }}</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-card__label">Result</span>
+        <span class="hud-card__value">{{ resultLabel() }}</span>
+      </div>
+    </div>
+
+    <div class="network-shell__focus">
+      <div class="focus-pill focus-pill--status">
+        <span class="focus-pill__label">Status</span>
+        <span class="focus-pill__value">{{ statusLabel() }}</span>
+      </div>
+      <div class="focus-pill focus-pill--decision">
+        <span class="focus-pill__label">Decision</span>
+        <span class="focus-pill__value">{{ decisionLabel() }}</span>
+      </div>
+      <div class="focus-pill focus-pill--chips">
+        <span class="focus-pill__label">{{ focusItemsLabel() }}</span>
+        <div class="focus-pill__chips">
+          @if (focusItems().length === 0) {
+            <span class="focus-pill__empty">none yet</span>
+          } @else {
+            @for (item of focusItems(); track item) {
+              <span class="focus-pill__chip">{{ item }}</span>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <svg class="network" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="networkEdgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#5eead4" />
+          <stop offset="100%" stop-color="#7c6ef0" />
+        </linearGradient>
+        <marker id="networkArrowDefault" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+          <path d="M0 0L10 5L0 10Z" fill="rgba(255,255,255,0.44)" />
+        </marker>
+        <marker id="networkArrowHot" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+          <path d="M0 0L10 5L0 10Z" fill="rgba(240,180,41,0.82)" />
+        </marker>
+      </defs>
+
+      @for (edge of edges(); track edge.id) {
+        <g class="edge-group" [attr.data-edge-id]="edge.id">
+          <line
+            class="edge-line edge-line--{{ edge.status }}"
+            [attr.marker-end]="edge.directed ? (edge.status === 'active' || edge.status === 'augment' ? 'url(#networkArrowHot)' : 'url(#networkArrowDefault)') : null"
+            [attr.x1]="node(edge.fromId)?.x ?? 0"
+            [attr.y1]="node(edge.fromId)?.y ?? 0"
+            [attr.x2]="node(edge.toId)?.x ?? 0"
+            [attr.y2]="node(edge.toId)?.y ?? 0"
+          />
+          <g class="edge-label" [attr.transform]="edgeTransform(edge)">
+            <rect x="-28" y="-17" width="56" height="34" rx="12" />
+            <text class="edge-label__primary" y="-1">{{ edge.primaryText }}</text>
+            @if (edge.secondaryText) {
+              <text class="edge-label__secondary" y="11">{{ edge.secondaryText }}</text>
+            }
+          </g>
+        </g>
+      }
+
+      @for (node of nodes(); track node.id) {
+        <g
+          class="node node--{{ node.status }}"
+          [attr.data-lane]="node.lane"
+          [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+          [attr.data-node-id]="node.id"
+        >
+          <circle class="node__halo" r="35" />
+          <circle class="node__body" r="26" />
+          <text class="node__label" y="6">{{ node.label }}</text>
+
+          <g class="node__metric" transform="translate(0 -45)">
+            <rect x="-24" y="-12" width="48" height="24" rx="12" />
+            <text y="4">{{ levelLabel(node) }}</text>
+          </g>
+
+          <g class="node__link" transform="translate(0 46)">
+            <rect x="-38" y="-12" width="76" height="24" rx="12" />
+            <text y="4">{{ linkLabel(node) }}</text>
+          </g>
+        </g>
+      }
+    </svg>
+  } @else {
+    <div class="network-shell__empty">No layered network trace available for this step.</div>
+  }
+</section>

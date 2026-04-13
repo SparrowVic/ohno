@@ -1,0 +1,56 @@
+<div class="grid-viz" #container>
+  @if (gridState(); as grid) {
+    <div class="grid-viz__hero">
+      <div class="grid-viz__focus-card">
+        <span class="grid-viz__eyebrow">{{ grid.modeLabel }}</span>
+        <span class="grid-viz__focus-value">{{ grid.sourceLabel }}</span>
+        <span class="grid-viz__focus-subtitle">{{ sourceSubtitle() }}</span>
+      </div>
+
+      <div class="grid-viz__status-band">
+        <div class="grid-viz__metric">
+          <span class="grid-viz__metric-label">Target</span>
+          <span class="grid-viz__metric-value">{{ grid.targetLabel }}</span>
+        </div>
+        <div class="grid-viz__metric">
+          <span class="grid-viz__metric-label">Frontier</span>
+          <span class="grid-viz__metric-value">{{ grid.frontierCount }}</span>
+        </div>
+        <div class="grid-viz__metric">
+          <span class="grid-viz__metric-label">Visited</span>
+          <span class="grid-viz__metric-value">{{ grid.visitedCount }}</span>
+        </div>
+        <div class="grid-viz__metric">
+          <span class="grid-viz__metric-label">Result</span>
+          <span class="grid-viz__metric-value">{{ resultLabel() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-viz__decision-shell">
+      <div class="grid-viz__decision-label">{{ grid.statusLabel }}</div>
+      <div class="grid-viz__decision">{{ grid.decision ?? 'watch the board evolve step by step' }}</div>
+    </div>
+
+    <div class="grid-viz__board-shell">
+      <div
+        class="grid-viz__board"
+        [style.grid-template-columns]="boardColumns()"
+        [style.--grid-cols]="grid.cols"
+      >
+        @for (cell of grid.cells; track cell.id) {
+          <div
+            [class]="cellClass(cell.status)"
+            [attr.data-cell-id]="cell.id"
+            [attr.data-tone]="cell.tone ?? null"
+          >
+            <div class="grid-cell__chrome">
+              <span class="grid-cell__meta">{{ cell.metaLabel ?? ' ' }}</span>
+            </div>
+            <div class="grid-cell__value">{{ cellCoreLabel(cell) }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
