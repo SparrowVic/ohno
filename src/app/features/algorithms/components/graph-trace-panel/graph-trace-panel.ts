@@ -11,6 +11,16 @@ import { GraphStepState, GraphTraceRow } from '../../models/graph';
 })
 export class GraphTracePanel {
   readonly state = input<GraphStepState | null>(null);
+  readonly focusTargetLabel = input<string | null>(null);
+  readonly focusPathLabel = input<string | null>(null);
+  readonly focusModeLabel = input<string | null>(null);
+  readonly focusHint = input<string | null>(null);
+  readonly sourceLabel = computed(() => {
+    const state = this.state();
+    if (!state) return '—';
+    const source = state.traceRows.find((item) => item.isSource) ?? state.traceRows.find((item) => item.nodeId === state.sourceId);
+    return source?.label ?? '—';
+  });
 
   readonly currentLabel = computed(() => {
     const row = this.state()?.traceRows.find((item) => item.isCurrent);
@@ -25,6 +35,24 @@ export class GraphTracePanel {
   readonly metricLabel = computed(() => this.state()?.metricLabel ?? 'Distance');
   readonly secondaryLabel = computed(() => this.state()?.secondaryLabel ?? 'Prev');
   readonly visitOrderLabel = computed(() => this.state()?.visitOrderLabel ?? 'Visit order');
+  readonly hasFocusedRoute = computed(() => this.focusTargetLabel() !== null && this.focusPathLabel() !== null);
+  readonly focusCardLabel = computed(() => this.focusModeLabel() ?? 'Focused route');
+  readonly focusCardPath = computed(() => {
+    if (this.hasFocusedRoute()) return this.focusPathLabel() ?? '—';
+    return 'No focused route';
+  });
+  readonly focusCardHint = computed(() => {
+    if (this.hasFocusedRoute()) {
+      return this.focusHint() ?? 'The route focus is a UI lens, not always an algorithm input.';
+    }
+    return 'This algorithm state is shown as a full graph structure, without a single selected route.';
+  });
+  readonly computationLabel = computed(() => this.state()?.computation?.candidateLabel ?? 'Step calculation');
+  readonly computationExpression = computed(() => this.state()?.computation?.expression ?? 'No edge update');
+  readonly computationResult = computed(() => this.state()?.computation?.result ?? null);
+  readonly computationDecision = computed(() => {
+    return this.state()?.computation?.decision ?? 'Waiting for a compare/relax/decision step.';
+  });
 
   statusLabel(row: GraphTraceRow): string {
     if (row.isCurrent) return 'current';

@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   input,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -23,10 +24,13 @@ export class DijkstraGraphVisualization {
   readonly graph = input<WeightedGraphData | null>(null);
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
+  readonly focusedNodeId = input<string | null>(null);
+  readonly focusedNodeIdChange = output<string | null>();
 
   private previousHighlights: Record<string, string> | null = null;
   private highlightTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly changedCardsState = signal<ReadonlySet<string>>(new Set());
+  private readonly selectedNodeIdState = signal<string | null>(null);
 
   readonly graphState = computed(() => this.step()?.graph ?? null);
   readonly nodes = computed(() => this.graphState()?.nodes ?? []);
@@ -74,6 +78,91 @@ export class DijkstraGraphVisualization {
     const currentNodeId = this.graphState()?.currentNodeId;
     if (!currentNodeId) return 'No active node';
     return this.describePath(currentNodeId);
+  });
+  readonly selectedNodeId = computed(() => {
+    const nodes = this.nodes();
+    const routeMode = this.routeMode();
+    if (!routeMode || nodes.length === 0) return null;
+
+    const selected = this.focusedNodeId() ?? this.selectedNodeIdState();
+    if (selected && nodes.some((node) => node.id === selected)) {
+      return selected;
+    }
+
+    const currentNodeId = this.graphState()?.currentNodeId;
+    if (currentNodeId) return currentNodeId;
+
+    return this.defaultFocusNodeId();
+  });
+  readonly focusedPathNodeIds = computed(() => {
+    const focusedNodeId = this.selectedNodeId();
+    if (!focusedNodeId || !this.routeMode()) return new Set<string>();
+    return new Set(this.pathNodeIds(focusedNodeId));
+  });
+  readonly focusedPathEdgeIds = computed(() => {
+    const focusedNodeId = this.selectedNodeId();
+    if (!focusedNodeId || !this.routeMode()) return new Set<string>();
+    const path = this.pathNodeIds(focusedNodeId);
+    const ids = new Set<string>();
+    for (let index = 0; index < path.length - 1; index++) {
+      const from = path[index];
+      const to = path[index + 1];
+      const edge = this.edges().find(
+        (item) => (item.from === from && item.to === to) || (item.from === to && item.to === from),
+      );
+      if (edge) ids.add(edge.id);
+    }
+    return ids;
+  });
+  readonly routeMode = computed<'shortest-tree' | 'bfs-tree' | 'dfs-tree' | null>(() => {
+    const metric = this.metricLabel();
+    const detail = this.detailLabel();
+    if (metric === 'Distance') return 'shortest-tree';
+    if (metric === 'Level') return 'bfs-tree';
+    if (metric === 'Depth' && detail === 'Depth path') return 'dfs-tree';
+    return null;
+  });
+  readonly structureLabel = computed(() => {
+    switch (this.routeMode()) {
+      case 'shortest-tree':
+        return 'Shortest-path tree';
+      case 'bfs-tree':
+        return 'BFS discovery tree';
+      case 'dfs-tree':
+        return 'DFS discovery tree';
+      default:
+        if (this.detailLabel() === 'Cycle') return 'Cycle witness';
+        if (this.detailLabel() === 'Topo order') return 'Ordering flow';
+        return 'Graph state';
+    }
+  });
+  readonly structureHint = computed(() => {
+    switch (this.routeMode()) {
+      case 'shortest-tree':
+        return 'Teal edges show all finalized shortest routes from the source. Click a node to focus one route.';
+      case 'bfs-tree':
+        return 'Tree edges show first discovery in BFS. Click a node to inspect one shortest unweighted route.';
+      case 'dfs-tree':
+        return 'Tree edges show DFS discovery order. Click a node to inspect one explored branch.';
+      default:
+        if (this.detailLabel() === 'Cycle') return 'This view explains DFS state and the detected cycle, not a single source-to-target path.';
+        if (this.detailLabel() === 'Topo order') return 'This view explains how nodes enter topological order, not source-to-target routes.';
+        return 'The graph highlights the algorithm state step by step.';
+    }
+  });
+  readonly focusedNodeLabel = computed(() => {
+    const focusedNodeId = this.selectedNodeId();
+    if (!focusedNodeId) return '—';
+    return this.nodeLabel(focusedNodeId);
+  });
+  readonly focusedPathLabel = computed(() => {
+    const focusedNodeId = this.selectedNodeId();
+    if (!focusedNodeId || !this.routeMode()) return '—';
+    return this.describePath(focusedNodeId);
+  });
+  readonly treeRouteCount = computed(() => {
+    if (!this.routeMode()) return 0;
+    return this.nodes().filter((node) => node.previousId !== null).length;
   });
 
   constructor() {
@@ -128,6 +217,16 @@ export class DijkstraGraphVisualization {
         }, this.highlightDuration());
       });
     });
+
+    effect(() => {
+      const resolved = this.selectedNodeId();
+      const incoming = this.focusedNodeId();
+      untracked(() => {
+        if (resolved !== incoming) {
+          this.focusedNodeIdChange.emit(resolved);
+        }
+      });
+    });
   }
 
   ngOnDestroy(): void {
@@ -177,12 +276,18 @@ export class DijkstraGraphVisualization {
   }
 
   isEdgeMuted(edgeId: string): boolean {
+    if (this.routeMode() && this.focusedPathEdgeIds().size > 0) {
+      return !this.focusedPathEdgeIds().has(edgeId) && !this.isTreeEdge(edgeId);
+    }
     const activeEdgeId = this.graphState()?.activeEdgeId;
     if (!activeEdgeId) return false;
     return edgeId !== activeEdgeId;
   }
 
   isNodeMuted(nodeId: string): boolean {
+    if (this.routeMode() && this.focusedPathNodeIds().size > 0) {
+      return !this.focusedPathNodeIds().has(nodeId) && !this.isNodeInTree(nodeId);
+    }
     const activeEdgeId = this.graphState()?.activeEdgeId;
     if (!activeEdgeId) return false;
     const edge = this.edges().find((item) => item.id === activeEdgeId);
@@ -193,6 +298,32 @@ export class DijkstraGraphVisualization {
 
   isCardChanged(id: string): boolean {
     return this.changedCardsState().has(id);
+  }
+
+  selectNode(nodeId: string): void {
+    if (!this.routeMode()) return;
+    this.selectedNodeIdState.set(nodeId);
+    this.focusedNodeIdChange.emit(nodeId);
+  }
+
+  isNodeSelected(nodeId: string): boolean {
+    return this.selectedNodeId() === nodeId;
+  }
+
+  isNodeInFocusedPath(nodeId: string): boolean {
+    return this.focusedPathNodeIds().has(nodeId);
+  }
+
+  isEdgeFocused(edgeId: string): boolean {
+    return this.focusedPathEdgeIds().has(edgeId);
+  }
+
+  isTreeEdge(edgeId: string): boolean {
+    return this.edges().find((edge) => edge.id === edgeId)?.isTree ?? false;
+  }
+
+  isNodeInTree(nodeId: string): boolean {
+    return this.nodes().some((node) => node.id === nodeId && (node.previousId !== null || node.isSource));
   }
 
   private nodeLabel(nodeId: string): string {
@@ -214,5 +345,34 @@ export class DijkstraGraphVisualization {
   private highlightDuration(): number {
     const speed = this.speed();
     return Math.max(280, 860 - speed * 55);
+  }
+
+  private defaultFocusNodeId(): string | null {
+    const routeMode = this.routeMode();
+    const sourceId = this.graphState()?.sourceId ?? null;
+    if (!routeMode || !sourceId) return null;
+
+    const candidates = this.nodes()
+      .filter((node) => node.id !== sourceId && node.distance !== null)
+      .sort((left, right) => {
+        const leftDistance = left.distance ?? Number.NEGATIVE_INFINITY;
+        const rightDistance = right.distance ?? Number.NEGATIVE_INFINITY;
+        if (leftDistance !== rightDistance) return rightDistance - leftDistance;
+        return left.label.localeCompare(right.label);
+      });
+
+    return candidates[0]?.id ?? sourceId;
+  }
+
+  private pathNodeIds(nodeId: string): string[] {
+    const path: string[] = [];
+    let currentId: string | null = nodeId;
+    let hops = 0;
+    while (currentId && hops < this.nodes().length + 1) {
+      path.unshift(currentId);
+      currentId = this.nodes().find((node) => node.id === currentId)?.previousId ?? null;
+      hops++;
+    }
+    return path;
   }
 }

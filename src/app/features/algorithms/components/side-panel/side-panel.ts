@@ -56,6 +56,10 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
   readonly searchState = input<SearchTraceState | null>(null);
+  readonly graphFocusTargetLabel = input<string | null>(null);
+  readonly graphFocusPathLabel = input<string | null>(null);
+  readonly graphFocusModeLabel = input<string | null>(null);
+  readonly graphFocusHint = input<string | null>(null);
 
   readonly tabs = computed<readonly SideTab[]>(() =>
     this.traceState() || this.searchState() ? [TRACE_TAB, ...BASE_SIDE_TABS] : BASE_SIDE_TABS,

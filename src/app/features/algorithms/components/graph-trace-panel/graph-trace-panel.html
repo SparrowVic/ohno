@@ -3,6 +3,14 @@
     <div class="trace__header">
       <div class="trace__summary">
         <div class="trace__summary-card">
+          <span class="trace__summary-label">Source</span>
+          <span class="trace__summary-value">{{ sourceLabel() }}</span>
+        </div>
+        <div class="trace__summary-card">
+          <span class="trace__summary-label">Focused target</span>
+          <span class="trace__summary-value">{{ focusTargetLabel() ?? '—' }}</span>
+        </div>
+        <div class="trace__summary-card">
           <span class="trace__summary-label">Current</span>
           <span class="trace__summary-value">{{ currentLabel() }}</span>
         </div>
@@ -16,38 +24,53 @@
         </div>
       </div>
 
-      @if (graphState.computation; as computation) {
-        <div class="trace__calculation trace__calculation--{{ decisionTone() }}">
-          <div class="trace__calc-label">{{ computation.candidateLabel }}</div>
-          <div class="trace__calc-expression">{{ computation.expression }}</div>
-          <div class="trace__calc-result">= {{ computation.result }}</div>
-          <div class="trace__calc-decision">{{ computation.decision }}</div>
+      <div class="trace__calc-grid">
+        <div class="trace__calculation trace__calculation--focus" [class.trace__calculation--muted]="!hasFocusedRoute()">
+          <div class="trace__calc-topline">
+            <div class="trace__calc-label">{{ focusCardLabel() }}</div>
+            <span class="trace__calc-badge">UI lens</span>
+          </div>
+          <div class="trace__calc-expression">{{ focusCardPath() }}</div>
+          <div class="trace__calc-decision">{{ focusCardHint() }}</div>
         </div>
-      }
 
-      <div class="trace__queue">
-        <div class="trace__queue-label">{{ frontierLabel() }}</div>
-        <div class="trace__queue-items">
-          @if (graphState.queue.length === 0) {
-            <span class="trace__queue-empty">empty</span>
+        <div class="trace__calculation trace__calculation--{{ decisionTone() }}" [class.trace__calculation--muted]="!hasComputation()">
+          <div class="trace__calc-label">{{ computationLabel() }}</div>
+          <div class="trace__calc-expression">{{ computationExpression() }}</div>
+          @if (computationResult(); as result) {
+            <div class="trace__calc-result">= {{ result }}</div>
           } @else {
-            @for (entry of graphState.queue; track entry.nodeId) {
-              <span class="trace__queue-chip">{{ entry.label }} · {{ formatDistance(entry.distance) }}</span>
-            }
+            <div class="trace__calc-result trace__calc-result--muted">—</div>
           }
+          <div class="trace__calc-decision">{{ computationDecision() }}</div>
         </div>
       </div>
 
-      <div class="trace__queue">
-        <div class="trace__queue-label">{{ visitOrderLabel() }}</div>
-        <div class="trace__queue-items">
-          @if (graphState.visitOrder.length === 0) {
-            <span class="trace__queue-empty">not started</span>
-          } @else {
-            @for (label of graphState.visitOrder; track label) {
-              <span class="trace__queue-chip trace__queue-chip--done">{{ label }}</span>
+      <div class="trace__meta-grid">
+        <div class="trace__queue">
+          <div class="trace__queue-label">{{ frontierLabel() }}</div>
+          <div class="trace__queue-items">
+            @if (graphState.queue.length === 0) {
+              <span class="trace__queue-empty">empty</span>
+            } @else {
+              @for (entry of graphState.queue; track entry.nodeId) {
+                <span class="trace__queue-chip">{{ entry.label }} · {{ formatDistance(entry.distance) }}</span>
+              }
             }
-          }
+          </div>
+        </div>
+
+        <div class="trace__queue">
+          <div class="trace__queue-label">{{ visitOrderLabel() }}</div>
+          <div class="trace__queue-items">
+            @if (graphState.visitOrder.length === 0) {
+              <span class="trace__queue-empty">not started</span>
+            } @else {
+              @for (label of graphState.visitOrder; track label) {
+                <span class="trace__queue-chip trace__queue-chip--done">{{ label }}</span>
+              }
+            }
+          </div>
         </div>
       </div>
     </div>

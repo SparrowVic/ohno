@@ -1,39 +1,63 @@
 <section class="graph-shell">
   <div class="graph-shell__hud">
-    <div class="hud-card" [class.hud-card--changed]="isCardChanged('source')">
+    <div class="hud-card hud-card--compact hud-card--source" [class.hud-card--changed]="isCardChanged('source')">
       <span class="hud-card__label">Source</span>
       <span class="hud-card__value">{{ sourceLabel() }}</span>
     </div>
-    <div class="hud-card" [class.hud-card--changed]="isCardChanged('current')">
+    <div class="hud-card hud-card--compact hud-card--focus">
+      <span class="hud-card__label">Focused target</span>
+      <span class="hud-card__value">{{ focusedNodeLabel() }}</span>
+      <span class="hud-card__hint">@if (routeMode()) { Click any node } @else { No target lens }</span>
+    </div>
+    <div class="hud-card hud-card--compact hud-card--current" [class.hud-card--changed]="isCardChanged('current')">
       <span class="hud-card__label">Current</span>
       <span class="hud-card__value">{{ currentLabel() }}</span>
     </div>
-    <div class="hud-card" [class.hud-card--changed]="isCardChanged('settled')">
-      <span class="hud-card__label">{{ completionLabel() }}</span>
-      <span class="hud-card__value">{{ settledCount() }}</span>
-    </div>
-    <div class="hud-card" [class.hud-card--changed]="isCardChanged('queue')">
+    <div class="hud-card hud-card--compact hud-card--frontier" [class.hud-card--changed]="isCardChanged('queue')">
       <span class="hud-card__label">{{ frontierLabel() }}</span>
-      <span class="hud-card__value">{{ frontierCount() }}</span>
+      <div class="hud-card__pair">
+        <div class="hud-card__mini">
+          <span class="hud-card__value">{{ frontierCount() }}</span>
+          <span class="hud-card__hint">active</span>
+        </div>
+        <div class="hud-card__mini hud-card__mini--secondary">
+          <span class="hud-card__meta">{{ frontierHeadLabel() }}</span>
+          <span class="hud-card__hint">{{ queueLead() }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="hud-card hud-card--compact hud-card--progress" [class.hud-card--changed]="isCardChanged('settled')">
+      <span class="hud-card__label">Progress</span>
+      <div class="hud-card__pair">
+        <div class="hud-card__mini">
+          <span class="hud-card__value">{{ settledCount() }}</span>
+          <span class="hud-card__hint">{{ completionLabel() }}</span>
+        </div>
+        <div class="hud-card__mini">
+          <span class="hud-card__value">@if (routeMode()) { {{ treeRouteCount() }} } @else { — }</span>
+          <span class="hud-card__hint">tree routes</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="graph-shell__focus">
-    <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('phase')">
+    <div class="focus-pill focus-pill--guide focus-pill--view">
+      <span class="focus-pill__label">View</span>
+      <span class="focus-pill__value">{{ structureLabel() }}</span>
+    </div>
+    <div class="focus-pill focus-pill--phase" [class.focus-pill--changed]="isCardChanged('phase')">
       <span class="focus-pill__label">Phase</span>
       <span class="focus-pill__value">{{ phaseLabel() }}</span>
     </div>
-    <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('edge')">
+    <div class="focus-pill focus-pill--edge" [class.focus-pill--changed]="isCardChanged('edge')">
       <span class="focus-pill__label">Edge</span>
       <span class="focus-pill__value">{{ activeEdgeLabel() }}</span>
     </div>
-    <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('queueLead')">
-      <span class="focus-pill__label">{{ frontierHeadLabel() }}</span>
-      <span class="focus-pill__value">{{ queueLead() }}</span>
-    </div>
-    <div class="focus-pill" [class.focus-pill--changed]="isCardChanged('detail')">
-      <span class="focus-pill__label">{{ detailLabel() }}</span>
-      <span class="focus-pill__value">{{ detailValue() }}</span>
+    <div class="focus-pill focus-pill--detail" [class.focus-pill--changed]="isCardChanged('detail')">
+      <span class="focus-pill__label">@if (routeMode()) { Focused route } @else { Detail }</span>
+      <span class="focus-pill__value">{{ focusedPathLabel() }}</span>
+      <span class="focus-pill__hint">{{ structureHint() }}</span>
     </div>
   </div>
 
@@ -56,7 +80,7 @@
         <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.94)" />
       </marker>
       <filter id="graphNodeGlow">
-        <feGaussianBlur stdDeviation="8" result="blur" />
+        <feGaussianBlur stdDeviation="6" result="blur" />
         <feMerge>
           <feMergeNode in="blur" />
           <feMergeNode in="SourceGraphic" />
@@ -69,6 +93,7 @@
         <line
           class="edge-line"
           [class.edge-line--tree]="edge.isTree"
+          [class.edge-line--focused]="isEdgeFocused(edge.id)"
           [class.edge-line--active]="edge.isActive"
           [class.edge-line--relaxed]="edge.isRelaxed"
           [class.edge-line--muted]="isEdgeMuted(edge.id)"
@@ -94,8 +119,12 @@
         [class.node--frontier]="node.isFrontier"
         [class.node--current]="node.isCurrent"
         [class.node--settled]="node.isSettled"
+        [class.node--selected]="isNodeSelected(node.id)"
+        [class.node--path]="isNodeInFocusedPath(node.id)"
         [class.node--muted]="isNodeMuted(node.id)"
         [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+        [class.node--clickable]="routeMode()"
+        (click)="selectNode(node.id)"
       >
         <circle class="node__halo" r="40" />
         <circle class="node__body" r="28" filter="url(#graphNodeGlow)" />

@@ -25,7 +25,13 @@
       <app-radix-matrix-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
     @case ('dijkstra-graph') {
-      <app-dijkstra-graph-visualization [graph]="graph()" [step]="step()" [speed]="speed()" />
+      <app-dijkstra-graph-visualization
+        [graph]="graph()"
+        [step]="step()"
+        [speed]="speed()"
+        [focusedNodeId]="graphFocusTargetId()"
+        (focusedNodeIdChange)="graphFocusTargetChange.emit($event)"
+      />
     }
     @case ('sound') {
       <app-sound-bars-visualization

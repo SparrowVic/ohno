@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 import { WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
@@ -41,4 +41,6 @@ export class VisualizationCanvas {
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
   readonly muted = input<boolean>(true);
+  readonly graphFocusTargetId = input<string | null>(null);
+  readonly graphFocusTargetChange = output<string | null>();
 }

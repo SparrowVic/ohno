@@ -63,6 +63,8 @@
             [step]="step()"
             [speed]="speed()"
             [muted]="muted()"
+            [graphFocusTargetId]="graphFocusTargetId()"
+            (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
           />
           <app-legend-bar [items]="legendItems()" />
         </div>
@@ -74,6 +76,10 @@
           [logEntries]="logEntries()"
           [traceState]="graphTrace()"
           [searchState]="searchTrace()"
+          [graphFocusTargetLabel]="graphFocusTargetLabel()"
+          [graphFocusPathLabel]="graphFocusPathLabel()"
+          [graphFocusModeLabel]="graphRouteModeLabel()"
+          [graphFocusHint]="graphFocusHint()"
         />
       </div>
     } @else {

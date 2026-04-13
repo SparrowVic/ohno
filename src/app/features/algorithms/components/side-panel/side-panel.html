@@ -17,7 +17,13 @@
     @switch (activeTab()) {
       @case ('trace') {
         @if (traceState()) {
-          <app-graph-trace-panel [state]="traceState()" />
+          <app-graph-trace-panel
+            [state]="traceState()"
+            [focusTargetLabel]="graphFocusTargetLabel()"
+            [focusPathLabel]="graphFocusPathLabel()"
+            [focusModeLabel]="graphFocusModeLabel()"
+            [focusHint]="graphFocusHint()"
+          />
         } @else {
           <app-search-trace-panel [state]="searchState()" />
         }

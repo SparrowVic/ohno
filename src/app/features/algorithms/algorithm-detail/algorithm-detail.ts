@@ -52,7 +52,7 @@ import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
-import { WeightedGraphData } from '../models/graph';
+import { GraphStepState, WeightedGraphData } from '../models/graph';
 import { SearchTraceState } from '../models/search';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
@@ -106,7 +106,8 @@ const DIJKSTRA_LEGEND: readonly LegendItem[] = [
   { label: 'Source', color: '#38bdf8' },
   { label: 'Frontier queue', color: '#7c6ef0' },
   { label: 'Current node', color: '#f0b429' },
-  { label: 'Settled shortest path', color: '#3ecf8e' },
+  { label: 'Shortest-path tree', color: '#3ecf8e' },
+  { label: 'Focused route', color: '#ffde59' },
   { label: 'Active edge relaxation', color: '#5eead4' },
 ];
 
@@ -114,7 +115,8 @@ const BFS_LEGEND: readonly LegendItem[] = [
   { label: 'Source', color: '#38bdf8' },
   { label: 'Queue frontier', color: '#7c6ef0' },
   { label: 'Current node', color: '#f0b429' },
-  { label: 'Visited layer tree', color: '#3ecf8e' },
+  { label: 'BFS tree', color: '#3ecf8e' },
+  { label: 'Focused route', color: '#ffde59' },
   { label: 'Inspected edge', color: '#5eead4' },
 ];
 
@@ -122,7 +124,8 @@ const DFS_LEGEND: readonly LegendItem[] = [
   { label: 'Source', color: '#38bdf8' },
   { label: 'Stack frontier', color: '#7c6ef0' },
   { label: 'Current node', color: '#f0b429' },
-  { label: 'Visited depth tree', color: '#3ecf8e' },
+  { label: 'DFS tree', color: '#3ecf8e' },
+  { label: 'Focused branch', color: '#ffde59' },
   { label: 'Inspected edge', color: '#5eead4' },
 ];
 
@@ -582,6 +585,7 @@ export class AlgorithmDetail {
   private readonly graphSig = signal<WeightedGraphData | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
+  private readonly graphFocusTargetIdSig = signal<string | null>(null);
   private lastLoggedStep = -1;
 
   readonly size = this.sizeSig.asReadonly();
@@ -589,6 +593,7 @@ export class AlgorithmDetail {
   readonly muted = this.mutedSig.asReadonly();
   readonly array = this.arraySig.asReadonly();
   readonly graph = this.graphSig.asReadonly();
+  readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
   readonly isPlaying = this.engine.isPlaying;
@@ -601,6 +606,40 @@ export class AlgorithmDetail {
   readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
+  readonly graphRouteModeLabel = computed(() => {
+    const trace = this.graphTrace();
+    if (!trace) return null;
+    if (trace.metricLabel === 'Distance') return 'Focused shortest path';
+    if (trace.metricLabel === 'Level') return 'Focused BFS route';
+    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') return 'Focused DFS branch';
+    return null;
+  });
+  readonly graphFocusTargetLabel = computed(() => {
+    const trace = this.graphTrace();
+    const targetId = this.resolvedGraphFocusTargetId();
+    if (!trace || !targetId || !this.graphRouteModeLabel()) return null;
+    return trace.nodes.find((node) => node.id === targetId)?.label ?? null;
+  });
+  readonly graphFocusPathLabel = computed(() => {
+    const trace = this.graphTrace();
+    const targetId = this.resolvedGraphFocusTargetId();
+    if (!trace || !targetId || !this.graphRouteModeLabel()) return null;
+    return describeGraphPath(trace, targetId);
+  });
+  readonly graphFocusHint = computed(() => {
+    const trace = this.graphTrace();
+    if (!trace || !this.graphRouteModeLabel()) return null;
+    if (trace.metricLabel === 'Distance') {
+      return 'Whole graph shows the shortest-path tree. This line shows one selected endpoint route.';
+    }
+    if (trace.metricLabel === 'Level') {
+      return 'Whole graph shows the BFS discovery tree. This line shows one selected source-to-node route.';
+    }
+    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
+      return 'Whole graph shows the DFS tree. This line shows one selected explored branch.';
+    }
+    return null;
+  });
 
   readonly activeLineNumber = computed<number | null>(() => {
     const snap = this.currentSnapshot();
@@ -624,6 +663,7 @@ export class AlgorithmDetail {
           this.lastLoggedStep = -1;
           this.currentSnapshot.set(null);
           this.graphSig.set(null);
+          this.graphFocusTargetIdSig.set(null);
           this.engine.reset();
           return;
         }
@@ -631,6 +671,7 @@ export class AlgorithmDetail {
         this.sizeSig.set(config.defaultSize);
         this.variantSig.set(config.defaultVariant);
         this.mutedSig.set(true);
+        this.graphFocusTargetIdSig.set(null);
 
         if (config.kind === 'graph') {
           const nextGraph = config.createGraph(config.defaultSize);
@@ -663,6 +704,7 @@ export class AlgorithmDetail {
   onReset(): void {
     this.logEntriesSig.set([]);
     this.lastLoggedStep = -1;
+    this.graphFocusTargetIdSig.set(null);
     this.engine.reset();
   }
 
@@ -756,6 +798,10 @@ export class AlgorithmDetail {
     this.mutedSig.update((muted) => !muted);
   }
 
+  onGraphFocusTargetChange(value: string | null): void {
+    this.graphFocusTargetIdSig.set(value);
+  }
+
   private loadArrayEngine(
     array: readonly number[],
     generator: (values: readonly number[]) => Generator<SortStep>,
@@ -781,6 +827,7 @@ export class AlgorithmDetail {
     this.logEntriesSig.set([]);
     this.lastLoggedStep = -1;
     this.currentSnapshot.set(null);
+    this.graphFocusTargetIdSig.set(null);
     this.engine.load(generator, (step, index) => {
       this.currentSnapshot.set(step);
       this.appendLog(step, index);
@@ -807,6 +854,45 @@ export class AlgorithmDetail {
     }
     return result;
   }
+
+  private resolvedGraphFocusTargetId(): string | null {
+    const trace = this.graphTrace();
+    if (!trace) return null;
+
+    const selected = this.graphFocusTargetIdSig();
+    if (selected && trace.nodes.some((node) => node.id === selected)) {
+      return selected;
+    }
+
+    if (trace.currentNodeId) {
+      return trace.currentNodeId;
+    }
+
+    const sourceId = trace.sourceId;
+    const candidates = trace.nodes
+      .filter((node) => node.id !== sourceId && node.distance !== null)
+      .sort((left, right) => {
+        const leftDistance = left.distance ?? Number.NEGATIVE_INFINITY;
+        const rightDistance = right.distance ?? Number.NEGATIVE_INFINITY;
+        if (leftDistance !== rightDistance) return rightDistance - leftDistance;
+        return left.label.localeCompare(right.label);
+      });
+
+    return candidates[0]?.id ?? sourceId ?? null;
+  }
+}
+
+function describeGraphPath(trace: GraphStepState, nodeId: string): string {
+  const path: string[] = [];
+  let currentId: string | null = nodeId;
+  let hops = 0;
+  while (currentId && hops < trace.nodes.length + 1) {
+    const node = trace.nodes.find((item) => item.id === currentId);
+    path.unshift(node?.label ?? currentId);
+    currentId = node?.previousId ?? null;
+    hops++;
+  }
+  return path.join(' → ');
 }
 
 function createLinearSearchScenario(size: number): SearchScenario {
