@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { ConvexHullVisualization } from '../convex-hull-visualization/convex-hull-visualization';
 import { DpPresetOption } from '../../models/dp';
 import { WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
@@ -25,6 +26,7 @@ import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-v
   selector: 'app-visualization-canvas',
   imports: [
     BarChartVisualization,
+    ConvexHullVisualization,
     BlockSwapVisualization,
     ColorGradientVisualization,
     DijkstraGraphVisualization,

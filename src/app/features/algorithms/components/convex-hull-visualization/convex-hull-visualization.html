@@ -1,0 +1,85 @@
+<div class="chv">
+  <svg class="chv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <!-- Subtle dot grid -->
+    <defs>
+      <pattern id="chv-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+        <circle cx="0" cy="0" r="0.4" fill="rgba(255,255,255,0.07)" />
+      </pattern>
+    </defs>
+    <rect x="-6" y="-6" width="112" height="112" fill="url(#chv-dots)" />
+
+    <!-- Hull polygon fill when complete -->
+    @if (isComplete()) {
+      <polygon [attr.points]="hullPolyPoints()" class="chv__hull-poly" />
+    }
+
+    <!-- Turn-check triangle highlight -->
+    @if (turnTriPoints(); as triPts) {
+      <polygon [attr.points]="triPts" class="chv__turn-tri" />
+    }
+
+    <!-- Edges: stack (dashed) or hull (solid) -->
+    @for (edge of edges(); track edge.fromId + '-' + edge.toId) {
+      <line
+        [attr.x1]="ptSvgX(edge.fromId)"
+        [attr.y1]="ptSvgY(edge.fromId)"
+        [attr.x2]="ptSvgX(edge.toId)"
+        [attr.y2]="ptSvgY(edge.toId)"
+        [class]="'chv__edge chv__edge--' + edge.kind"
+      />
+    }
+
+    <!-- Points (rendered as SVG groups with glow + circle + labels) -->
+    @for (pt of points(); track pt.id) {
+      <g [attr.transform]="ptTransform(pt)">
+        @if (showGlow(pt)) {
+          <circle [class]="'chv__glow chv__glow--' + pt.status" r="8" />
+        }
+        <circle [class]="'chv__pt chv__pt--' + pt.status" r="4.2" />
+
+        <!-- Sort order badge: small number above point -->
+        @if (pt.sortIndex !== null && pt.sortIndex !== undefined && pt.sortIndex > 0) {
+          <text class="chv__sort-badge" y="-7" text-anchor="middle">{{ pt.sortIndex }}</text>
+        }
+
+        <!-- Point ID inside circle -->
+        <text class="chv__pt-id" text-anchor="middle" dominant-baseline="middle">{{ pt.id }}</text>
+      </g>
+    }
+  </svg>
+
+  <!-- Bottom info bar -->
+  @if (geoState(); as geo) {
+    <div class="chv__bar">
+      <div class="chv__bar-section">
+        <span class="chv__bar-key">Phase</span>
+        <span class="chv__bar-phase chv__phase--{{ geo.phase }}">{{ phaseLabel(geo.phase) }}</span>
+      </div>
+
+      <div class="chv__bar-section chv__bar-section--stack">
+        <span class="chv__bar-key">Stack</span>
+        <div class="chv__stack-row">
+          @if (geo.stackIds.length === 0) {
+            <span class="chv__stack-empty">—</span>
+          }
+          @for (id of geo.stackIds; track id; let last = $last) {
+            <span class="chv__stack-chip" [class.chv__stack-chip--top]="last">P{{ id }}</span>
+          }
+        </div>
+      </div>
+
+      @if (geo.crossProduct !== null) {
+        <div class="chv__bar-section">
+          <span class="chv__bar-key">cross</span>
+          <span
+            class="chv__cross"
+            [class.chv__cross--pos]="geo.crossProduct > 0"
+            [class.chv__cross--neg]="geo.crossProduct <= 0"
+          >
+            {{ geo.crossProduct > 0 ? '↺ +' : '↻ ' }}{{ geo.crossProduct.toFixed(0) }}
+          </span>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -66,5 +66,8 @@
         (presetChange)="dpPresetChange.emit($event)"
       />
     }
+    @case ('convex-hull') {
+      <app-convex-hull-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
   }
 </div>

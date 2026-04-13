@@ -1,0 +1,152 @@
+<div class="gtp">
+  @if (state(); as geo) {
+
+    <!-- Phase banner -->
+    <div class="gtp__phase gtp__phase--{{ geo.phase }}">
+      <div class="gtp__phase-left">
+        <span class="gtp__phase-eyebrow">Phase</span>
+        <span class="gtp__phase-name">{{ phaseLabel() }}</span>
+      </div>
+      <div class="gtp__phase-stats">
+        <div class="gtp__stat">
+          <span class="gtp__stat-val">{{ geo.stackIds.length }}</span>
+          <span class="gtp__stat-lbl">on stack</span>
+        </div>
+        <div class="gtp__stat">
+          <span class="gtp__stat-val">{{ rejectedCount() }}</span>
+          <span class="gtp__stat-lbl">rejected</span>
+        </div>
+        <div class="gtp__stat">
+          <span class="gtp__stat-val">{{ pointCount() }}</span>
+          <span class="gtp__stat-lbl">total pts</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross product check (shown when checking) -->
+    @if (turnPoints(); as turn) {
+      <div class="gtp__check">
+        <div class="gtp__check-header">Cross Product Check</div>
+        <div class="gtp__check-formula">cross(A, B, C) = (B−A) × (C−A)</div>
+
+        <div class="gtp__check-trio">
+          <div class="gtp__check-pt gtp__check-pt--A">
+            <span class="gtp__badge gtp__badge--A">A</span>
+            <div class="gtp__check-info">
+              <span class="gtp__check-pid">P{{ turn.a?.id }}</span>
+              <span class="gtp__check-role">2nd from top</span>
+              <span class="gtp__check-coord">({{ fmt(turn.a?.x) }}, {{ fmt(turn.a?.y) }})</span>
+            </div>
+          </div>
+          <div class="gtp__check-pt gtp__check-pt--B">
+            <span class="gtp__badge gtp__badge--B">B</span>
+            <div class="gtp__check-info">
+              <span class="gtp__check-pid">P{{ turn.b?.id }}</span>
+              <span class="gtp__check-role">stack top</span>
+              <span class="gtp__check-coord">({{ fmt(turn.b?.x) }}, {{ fmt(turn.b?.y) }})</span>
+            </div>
+          </div>
+          <div class="gtp__check-pt gtp__check-pt--C">
+            <span class="gtp__badge gtp__badge--C">C</span>
+            <div class="gtp__check-info">
+              <span class="gtp__check-pid">P{{ turn.c?.id }}</span>
+              <span class="gtp__check-role">candidate</span>
+              <span class="gtp__check-coord">({{ fmt(turn.c?.x) }}, {{ fmt(turn.c?.y) }})</span>
+            </div>
+          </div>
+        </div>
+
+        @if (geo.crossProduct !== null) {
+          <div
+            class="gtp__check-result"
+            [class.gtp__check-result--good]="geo.crossProduct > 0"
+            [class.gtp__check-result--bad]="geo.crossProduct <= 0"
+          >
+            <span class="gtp__check-cp">
+              cross = {{ geo.crossProduct >= 0 ? '+' : '' }}{{ geo.crossProduct.toFixed(2) }}
+            </span>
+            @if (turnVerdict(); as verdict) {
+              <span class="gtp__check-verdict">{{ verdict.text }}</span>
+              <span class="gtp__check-action gtp__check-action--{{ verdict.tone }}">
+                → {{ verdict.action }}
+              </span>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Stack contents -->
+    <div class="gtp__stack">
+      <div class="gtp__stack-header">
+        <span class="gtp__stack-title">Hull Stack</span>
+        <span class="gtp__stack-size">{{ geo.stackIds.length }} points</span>
+      </div>
+
+      @if (stackPoints().length === 0) {
+        <div class="gtp__stack-empty">Stack is empty</div>
+      } @else {
+        <div class="gtp__stack-list">
+          @for (pt of stackPoints(); track pt?.id; let last = $last; let first = $first) {
+            <div
+              class="gtp__stack-row"
+              [class.gtp__stack-row--top]="last"
+              [class.gtp__stack-row--base]="first && stackPoints().length > 1"
+            >
+              <div class="gtp__stack-marker">
+                <div class="gtp__stack-dot"></div>
+                @if (!last) {
+                  <div class="gtp__stack-line"></div>
+                }
+              </div>
+              <div class="gtp__stack-content">
+                <span class="gtp__stack-pid">P{{ pt?.id }}</span>
+                <span class="gtp__stack-coord">({{ fmt(pt?.x) }}, {{ fmt(pt?.y) }})</span>
+                @if (last) {
+                  <span class="gtp__stack-tag gtp__stack-tag--top">top</span>
+                }
+                @if (first && stackPoints().length > 1) {
+                  <span class="gtp__stack-tag gtp__stack-tag--base">base</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Legend -->
+    <div class="gtp__legend">
+      <div class="gtp__legend-title">Point Status</div>
+      <div class="gtp__legend-grid">
+        <div class="gtp__legend-item">
+          <span class="gtp__dot gtp__dot--pivot"></span>
+          <span>Pivot (base point)</span>
+        </div>
+        <div class="gtp__legend-item">
+          <span class="gtp__dot gtp__dot--sorted"></span>
+          <span>Sorted (waiting)</span>
+        </div>
+        <div class="gtp__legend-item">
+          <span class="gtp__dot gtp__dot--checking"></span>
+          <span>Checking (cross product)</span>
+        </div>
+        <div class="gtp__legend-item">
+          <span class="gtp__dot gtp__dot--stack"></span>
+          <span>Stack (hull candidate)</span>
+        </div>
+        <div class="gtp__legend-item">
+          <span class="gtp__dot gtp__dot--hull"></span>
+          <span>Hull vertex (final)</span>
+        </div>
+        <div class="gtp__legend-item">
+          <span class="gtp__dot gtp__dot--rejected"></span>
+          <span>Rejected (interior)</span>
+        </div>
+      </div>
+    </div>
+
+  } @else {
+    <div class="gtp__empty">No geometry trace for this step.</div>
+  }
+</div>

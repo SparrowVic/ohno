@@ -34,6 +34,8 @@
           <app-matrix-trace-panel [state]="matrixState()" />
         } @else if (networkState()) {
           <app-network-trace-panel [state]="networkState()" />
+        } @else if (geometryState()) {
+          <app-geometry-trace-panel [state]="geometryState()" />
         } @else {
           <app-search-trace-panel [state]="searchState()" />
         }

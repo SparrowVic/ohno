@@ -1,5 +1,6 @@
 import { DpTraceState } from './dp';
 import { DsuTraceState } from './dsu';
+import { GeometryStepState } from './geometry';
 import { GraphStepState } from './graph';
 import { GridTraceState } from './grid';
 import { MatrixTraceState } from './matrix';
@@ -57,4 +58,5 @@ export interface SortStep {
   readonly matrix?: MatrixTraceState | null;
   readonly network?: NetworkTraceState | null;
   readonly search?: SearchTraceState | null;
+  readonly geometry?: GeometryStepState | null;
 }

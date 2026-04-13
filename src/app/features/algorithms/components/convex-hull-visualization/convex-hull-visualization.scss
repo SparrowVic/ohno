@@ -1,0 +1,238 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chv {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  padding: 10px 16px 0;
+  overflow: hidden;
+}
+
+/* ─── SVG canvas ─── */
+
+.chv__svg {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+}
+
+/* ─── Hull polygon fill ─── */
+
+.chv__hull-poly {
+  fill: rgba(62, 207, 142, 0.06);
+  stroke: rgba(62, 207, 142, 0.18);
+  stroke-width: 0.4;
+  stroke-linejoin: round;
+}
+
+/* ─── Turn check triangle ─── */
+
+.chv__turn-tri {
+  fill: rgba(240, 180, 41, 0.07);
+  stroke: rgba(240, 180, 41, 0.22);
+  stroke-width: 0.35;
+  stroke-dasharray: 1.5 1;
+}
+
+/* ─── Edges ─── */
+
+.chv__edge {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &--stack {
+    stroke: rgba(124, 110, 240, 0.55);
+    stroke-width: 0.9;
+    stroke-dasharray: 2.5 1.5;
+  }
+
+  &--hull {
+    stroke: #3ecf8e;
+    stroke-width: 1.1;
+    stroke-dasharray: none;
+  }
+}
+
+/* ─── Point glow rings ─── */
+
+.chv__glow {
+  opacity: 0.14;
+  fill: transparent;
+
+  &--pivot { fill: #38bdf8; opacity: 0.18; }
+  &--checking { fill: #f0b429; opacity: 0.18; }
+  &--stack { fill: #7c6ef0; opacity: 0.16; }
+  &--hull { fill: #3ecf8e; opacity: 0.2; }
+}
+
+/* ─── Points ─── */
+
+.chv__pt {
+  stroke-width: 0.6;
+  transition: fill 0.12s ease, stroke 0.12s ease;
+
+  &--default {
+    fill: rgba(255, 255, 255, 0.08);
+    stroke: rgba(255, 255, 255, 0.25);
+  }
+
+  &--pivot {
+    fill: #38bdf8;
+    stroke: rgba(56, 189, 248, 0.45);
+  }
+
+  &--sorted {
+    fill: rgba(148, 163, 184, 0.3);
+    stroke: rgba(148, 163, 184, 0.5);
+  }
+
+  &--checking {
+    fill: #f0b429;
+    stroke: rgba(240, 180, 41, 0.5);
+  }
+
+  &--stack {
+    fill: #7c6ef0;
+    stroke: rgba(124, 110, 240, 0.5);
+  }
+
+  &--hull {
+    fill: #3ecf8e;
+    stroke: rgba(62, 207, 142, 0.5);
+  }
+
+  &--rejected {
+    fill: rgba(244, 63, 94, 0.28);
+    stroke: rgba(244, 63, 94, 0.38);
+  }
+}
+
+/* ─── Sort-order badge (shown above point) ─── */
+
+.chv__sort-badge {
+  font-size: 2.6px;
+  fill: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+  pointer-events: none;
+  font-family: ui-monospace, monospace;
+}
+
+/* ─── Point ID label inside circle ─── */
+
+.chv__pt-id {
+  font-size: 3.2px;
+  fill: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  pointer-events: none;
+  font-family: ui-monospace, monospace;
+}
+
+/* ─── Bottom info bar ─── */
+
+.chv__bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 2px 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.chv__bar-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &--stack {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.chv__bar-key {
+  font-size: 9px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.chv__bar-phase {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Phase-specific colours */
+.chv__phase--pivot .chv__bar-phase,
+.chv__bar-phase.chv__phase--pivot { color: #38bdf8; background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.2); }
+
+.chv__phase--sort .chv__bar-phase,
+.chv__bar-phase.chv__phase--sort { color: #94a3b8; background: rgba(148, 163, 184, 0.1); }
+
+.chv__phase--checking .chv__bar-phase,
+.chv__bar-phase.chv__phase--checking { color: #f0b429; background: rgba(240, 180, 41, 0.1); border-color: rgba(240, 180, 41, 0.2); }
+
+.chv__phase--pop .chv__bar-phase,
+.chv__bar-phase.chv__phase--pop { color: #f43f5e; background: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.2); }
+
+.chv__phase--push .chv__bar-phase,
+.chv__bar-phase.chv__phase--push,
+.chv__phase--stack .chv__bar-phase { color: #a5b4fc; background: rgba(124, 110, 240, 0.1); border-color: rgba(124, 110, 240, 0.2); }
+
+.chv__phase--complete .chv__bar-phase,
+.chv__bar-phase.chv__phase--complete { color: #3ecf8e; background: rgba(62, 207, 142, 0.1); border-color: rgba(62, 207, 142, 0.2); }
+
+/* Stack chips */
+
+.chv__stack-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chv__stack-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(124, 110, 240, 0.12);
+  border: 0.5px solid rgba(124, 110, 240, 0.25);
+  color: rgba(165, 180, 252, 0.8);
+
+  &--top {
+    background: rgba(124, 110, 240, 0.24);
+    border-color: rgba(124, 110, 240, 0.45);
+    color: #c4b5fd;
+  }
+}
+
+.chv__stack-empty {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Cross product badge */
+
+.chv__cross {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+
+  &--pos { color: #3ecf8e; }
+  &--neg { color: #f43f5e; }
+}

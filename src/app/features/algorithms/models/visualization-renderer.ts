@@ -22,4 +22,5 @@ export type VisualizationVariant =
   | 'radix'
   | 'radix-strip'
   | 'radix-matrix'
-  | 'dijkstra-graph';
+  | 'dijkstra-graph'
+  | 'convex-hull';

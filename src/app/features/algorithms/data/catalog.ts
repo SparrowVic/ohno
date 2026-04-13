@@ -1125,6 +1125,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'geometry',
     subcategory: 'computational',
     tags: ['Graham scan', 'Jarvis march', 'hull'],
+    implemented: true,
   }),
   algo({
     id: 'line-intersection',

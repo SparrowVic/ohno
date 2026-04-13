@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
-
+import { GeometryStepState } from '../../models/geometry';
 import { GraphStepState } from '../../models/graph';
 import { GridTraceState } from '../../models/grid';
 import { MatrixTraceState } from '../../models/matrix';
@@ -24,6 +24,7 @@ import { SearchTraceState } from '../../models/search';
 import { CodePanel } from '../code-panel/code-panel';
 import { DpTracePanel } from '../dp-trace-panel/dp-trace-panel';
 import { DsuTracePanel } from '../dsu-trace-panel/dsu-trace-panel';
+import { GeometryTracePanel } from '../geometry-trace-panel/geometry-trace-panel';
 import { GraphTracePanel } from '../graph-trace-panel/graph-trace-panel';
 import { GridTracePanel } from '../grid-trace-panel/grid-trace-panel';
 import { InfoPanel } from '../info-panel/info-panel';
@@ -58,6 +59,7 @@ const MAX_WIDTH = 680;
     CodePanel,
     DpTracePanel,
     DsuTracePanel,
+    GeometryTracePanel,
     GraphTracePanel,
     GridTracePanel,
     InfoPanel,
@@ -82,13 +84,14 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly matrixState = input<MatrixTraceState | null>(null);
   readonly networkState = input<NetworkTraceState | null>(null);
   readonly searchState = input<SearchTraceState | null>(null);
+  readonly geometryState = input<GeometryStepState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
   readonly graphFocusPathLabel = input<string | null>(null);
   readonly graphFocusModeLabel = input<string | null>(null);
   readonly graphFocusHint = input<string | null>(null);
 
   readonly tabs = computed<readonly SideTab[]>(() =>
-    this.traceState() || this.dpState() || this.dsuState() || this.gridState() || this.matrixState() || this.networkState() || this.searchState()
+    this.traceState() || this.dpState() || this.dsuState() || this.gridState() || this.matrixState() || this.networkState() || this.searchState() || this.geometryState()
       ? [TRACE_TAB, ...BASE_SIDE_TABS]
       : BASE_SIDE_TABS,
   );
@@ -114,7 +117,8 @@ export class SidePanel implements OnInit, OnDestroy {
         this.gridState() !== null ||
         this.matrixState() !== null ||
         this.networkState() !== null ||
-        this.searchState() !== null;
+        this.searchState() !== null ||
+        this.geometryState() !== null;
       if (!hasTrace && this.activeTabState() === 'trace') {
         this.activeTabState.set('code');
       }

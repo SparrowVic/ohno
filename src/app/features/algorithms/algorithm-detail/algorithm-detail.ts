@@ -72,6 +72,7 @@ import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kah
 import { travelingSalesmanDpGenerator } from '../algorithms/traveling-salesman-dp';
 import { unionFindGenerator } from '../algorithms/union-find';
 import { wildcardMatchingGenerator } from '../algorithms/wildcard-matching';
+import { convexHullGenerator, ConvexHullScenario } from '../algorithms/convex-hull';
 import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
 import { hungarianAlgorithmGenerator } from '../algorithms/hungarian-algorithm';
 import { kosarajuSccGenerator } from '../algorithms/kosaraju-scc';
@@ -135,6 +136,7 @@ import { UNION_FIND_CODE } from '../data/union-find-code';
 import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
 import { DpPresetOption, DpTraceState } from '../models/dp';
 import { DsuTraceState } from '../models/dsu';
+import { GeometryStepState } from '../models/geometry';
 import { GraphStepState, WeightedGraphData } from '../models/graph';
 import { GridTraceState } from '../models/grid';
 import { MatrixTraceState } from '../models/matrix';
@@ -143,6 +145,7 @@ import { SearchTraceState } from '../models/search';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
+import { CONVEX_HULL_CODE } from '../data/convex-hull-code';
 import { KOSARAJU_SCC_CODE } from '../data/kosaraju-scc-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
@@ -674,6 +677,19 @@ const KRUSKAL_LEGEND: readonly LegendItem[] = [
   { label: 'Pending sorted edge', color: '#7c6ef0' },
 ];
 
+const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
+  { label: 'Pivot (base point)', color: '#38bdf8' },
+  { label: 'Sorted (waiting)', color: '#94a3b8', opacity: 0.7 },
+  { label: 'Checking (cross product)', color: '#f0b429' },
+  { label: 'Stack (hull candidate)', color: '#7c6ef0' },
+  { label: 'Hull vertex (final)', color: '#3ecf8e' },
+  { label: 'Rejected (interior point)', color: 'rgba(244,63,94,0.55)' },
+];
+
+const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'convex-hull', label: 'Point Cloud' },
+];
+
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'bar', label: 'Bar Chart' },
   { value: 'block', label: 'Block Swap' },
@@ -874,6 +890,12 @@ interface NetworkAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmV
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface GeometryAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'geometry';
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 type AlgorithmViewConfig =
   | ArrayAlgorithmViewConfig
   | GraphAlgorithmViewConfig
@@ -882,7 +904,8 @@ type AlgorithmViewConfig =
   | MatrixAlgorithmViewConfig<any>
   | DpAlgorithmViewConfig<any>
   | DsuAlgorithmViewConfig<any>
-  | NetworkAlgorithmViewConfig<any>;
+  | NetworkAlgorithmViewConfig<any>
+  | GeometryAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -1773,6 +1796,20 @@ const MIN_COST_MAX_FLOW_VIEW_CONFIG = createNetworkViewConfig<MinCostMaxFlowScen
   randomizeLabel: 'New priced network',
 });
 
+const CONVEX_HULL_VIEW_CONFIG: GeometryAlgorithmViewConfig<ConvexHullScenario> = {
+  kind: 'geometry',
+  codeLines: CONVEX_HULL_CODE,
+  variantOptions: CONVEX_HULL_VARIANT_OPTIONS,
+  defaultVariant: 'convex-hull',
+  sizeOptions: [10, 16, 24],
+  defaultSize: 16,
+  createScenario: createConvexHullScenario,
+  generator: convexHullGenerator,
+  legendItems: () => CONVEX_HULL_LEGEND,
+  sizeUnit: 'points',
+  randomizeLabel: 'New point cloud',
+};
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -1995,6 +2032,9 @@ export class AlgorithmDetail {
     if (algorithm.id === 'min-cost-max-flow') {
       return MIN_COST_MAX_FLOW_VIEW_CONFIG;
     }
+    if (algorithm.id === 'convex-hull') {
+      return CONVEX_HULL_VIEW_CONFIG;
+    }
     return BUBBLE_VIEW_CONFIG;
   });
 
@@ -2037,6 +2077,7 @@ export class AlgorithmDetail {
   readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
   readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
   readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
+  readonly geometryTrace = computed<GeometryStepState | null>(() => this.currentSnapshot()?.geometry ?? null);
   readonly graphRouteModeLabel = computed(() => {
     const trace = this.graphTrace();
     if (!trace) return null;
@@ -2162,6 +2203,14 @@ export class AlgorithmDetail {
           return;
         }
 
+        if (config.kind === 'geometry') {
+          const scenario = config.createScenario(config.defaultSize);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadGeometryEngine(scenario, config.generator);
+          return;
+        }
+
         const nextArray = this.generateArray(config.defaultSize, config.randomRange);
         this.arraySig.set(nextArray);
         this.graphSig.set(null);
@@ -2264,6 +2313,14 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'geometry') {
+      const scenario = config.createScenario(value);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadGeometryEngine(scenario, config.generator);
+      return;
+    }
+
     const nextArray = this.generateArray(value, config.randomRange);
     this.arraySig.set(nextArray);
     this.graphSig.set(null);
@@ -2328,6 +2385,14 @@ export class AlgorithmDetail {
       this.arraySig.set([]);
       this.graphSig.set(null);
       this.loadNetworkEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'geometry') {
+      const scenario = config.createScenario(this.sizeSig());
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadGeometryEngine(scenario, config.generator);
       return;
     }
 
@@ -2420,6 +2485,13 @@ export class AlgorithmDetail {
   }
 
   private loadNetworkEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadGeometryEngine<TScenario>(
     scenario: TScenario,
     generator: (scenario: TScenario) => Generator<SortStep>,
   ): void {
@@ -2535,6 +2607,17 @@ function createBinarySearchScenario(size: number): SearchScenario {
     target++;
   }
   return { array, target };
+}
+
+function createConvexHullScenario(size: number): ConvexHullScenario {
+  const points: { x: number; y: number }[] = [];
+  for (let i = 0; i < size; i++) {
+    points.push({
+      x: Math.round(Math.random() * 76) + 12,
+      y: Math.round(Math.random() * 76) + 12,
+    });
+  }
+  return { points };
 }
 
 function createBinarySearchVariantsScenario(size: number): SearchScenario {
