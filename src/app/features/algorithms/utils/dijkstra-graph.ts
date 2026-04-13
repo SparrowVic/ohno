@@ -452,6 +452,66 @@ export function generateBridgesGraph(size: number): WeightedGraphData {
   };
 }
 
+export function generateSccGraph(size: number): WeightedGraphData {
+  const layout = GRAPH_LAYOUTS[size] ?? GRAPH_LAYOUTS[8];
+  const nodes = buildLayoutNodes(layout, size);
+  const directedPairs: Record<number, readonly [number, number][]> = {
+    6: [
+      [0, 1],
+      [1, 3],
+      [3, 0],
+      [1, 2],
+      [3, 4],
+      [2, 4],
+      [4, 2],
+      [4, 5],
+    ],
+    8: [
+      [0, 1],
+      [1, 4],
+      [4, 0],
+      [1, 2],
+      [4, 5],
+      [2, 3],
+      [3, 6],
+      [6, 2],
+      [3, 5],
+      [5, 7],
+      [7, 5],
+      [6, 7],
+    ],
+    10: [
+      [0, 1],
+      [1, 5],
+      [5, 0],
+      [1, 2],
+      [5, 6],
+      [2, 3],
+      [3, 6],
+      [6, 2],
+      [3, 4],
+      [6, 7],
+      [4, 8],
+      [8, 4],
+      [8, 9],
+      [7, 9],
+      [9, 7],
+    ],
+  };
+
+  return {
+    nodes,
+    edges: (directedPairs[size] ?? directedPairs[8]).map(([fromIndex, toIndex]) => ({
+      id: directedEdgeId(nodes[fromIndex].id, nodes[toIndex].id),
+      from: nodes[fromIndex].id,
+      to: nodes[toIndex].id,
+      weight: 1,
+      directed: true,
+    })),
+    sourceId: nodes[0]?.id ?? '',
+  };
+}
+
 function buildLayoutNodes(layout: GraphLayout, size: number): WeightedGraphNode[] {
   const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   return layout.positions.slice(0, size).map(([x, y], index) => ({

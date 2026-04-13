@@ -434,6 +434,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'pathfinding',
     tags: ['all-pairs', 'DP', 'O(n³)'],
+    complexity: {
+      timeBest: 'O(V³)',
+      timeAverage: 'O(V³)',
+      timeWorst: 'O(V³)',
+      space: 'O(V²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'a-star-pathfinding',
@@ -491,6 +498,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['SCC', 'low-link', 'DFS'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'kosaraju-scc',
@@ -500,6 +514,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'connectivity',
     tags: ['SCC', 'reverse graph', 'DFS'],
+    complexity: {
+      timeBest: 'O(V + E)',
+      timeAverage: 'O(V + E)',
+      timeWorst: 'O(V + E)',
+      space: 'O(V)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'bridges-articulation-points',
@@ -534,6 +555,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'graphs',
     subcategory: 'flow-matching',
     tags: ['matching', 'assignment', 'cost matrix'],
+    complexity: {
+      timeBest: 'O(n³)',
+      timeAverage: 'O(n³)',
+      timeWorst: 'O(n³)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'euler-path-circuit',

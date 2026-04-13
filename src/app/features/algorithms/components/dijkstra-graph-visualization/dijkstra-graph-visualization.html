@@ -1,13 +1,13 @@
 <section class="graph-shell">
   <div class="graph-shell__hud">
     <div class="hud-card hud-card--compact hud-card--source" [class.hud-card--changed]="isCardChanged('source')">
-      <span class="hud-card__label">Source</span>
+      <span class="hud-card__label">{{ sourceCardLabel() }}</span>
       <span class="hud-card__value">{{ sourceLabel() }}</span>
     </div>
     <div class="hud-card hud-card--compact hud-card--focus">
-      <span class="hud-card__label">Focused target</span>
-      <span class="hud-card__value">{{ focusedNodeLabel() }}</span>
-      <span class="hud-card__hint">@if (routeMode()) { Click any node } @else { No target lens }</span>
+      <span class="hud-card__label">{{ focusCardLabel() }}</span>
+      <span class="hud-card__value">{{ focusCardValue() }}</span>
+      <span class="hud-card__hint">{{ focusCardHint() }}</span>
     </div>
     <div class="hud-card hud-card--compact hud-card--current" [class.hud-card--changed]="isCardChanged('current')">
       <span class="hud-card__label">Current</span>
@@ -55,8 +55,8 @@
       <span class="focus-pill__value">{{ activeEdgeLabel() }}</span>
     </div>
     <div class="focus-pill focus-pill--detail" [class.focus-pill--changed]="isCardChanged('detail')">
-      <span class="focus-pill__label">@if (routeMode()) { Focused route } @else { Detail }</span>
-      <span class="focus-pill__value">{{ focusedPathLabel() }}</span>
+      <span class="focus-pill__label">{{ detailPillLabel() }}</span>
+      <span class="focus-pill__value">{{ detailPillValue() }}</span>
       <span class="focus-pill__hint">{{ structureHint() }}</span>
     </div>
   </div>

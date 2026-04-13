@@ -8,6 +8,7 @@ import { BlockSwapVisualization } from '../block-swap-visualization/block-swap-v
 import { ColorGradientVisualization } from '../color-gradient-visualization/color-gradient-visualization';
 import { DijkstraGraphVisualization } from '../dijkstra-graph-visualization/dijkstra-graph-visualization';
 import { DsuVisualization } from '../dsu-visualization/dsu-visualization';
+import { MatrixVisualization } from '../matrix-visualization/matrix-visualization';
 import { NetworkVisualization } from '../network-visualization/network-visualization';
 import { DotPlotVisualization } from '../dot-plot-visualization/dot-plot-visualization';
 import { GridVisualization } from '../grid-visualization/grid-visualization';
@@ -26,6 +27,7 @@ import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-v
     ColorGradientVisualization,
     DijkstraGraphVisualization,
     DsuVisualization,
+    MatrixVisualization,
     NetworkVisualization,
     DotPlotVisualization,
     GridVisualization,

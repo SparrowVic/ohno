@@ -1,0 +1,214 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.matrix-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  border-radius: 28px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 24%),
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+    #12151e;
+  overflow: hidden;
+}
+
+.matrix-shell__hud {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px 14px 0;
+}
+
+.hud-card,
+.focus-pill {
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(12px);
+}
+
+.hud-card__label,
+.focus-pill__label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.hud-card__value {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.matrix-shell__focus {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px 14px 0;
+}
+
+.focus-pill__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.focus-pill__chip {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(124, 110, 240, 0.13);
+  color: #cbc6ff;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.focus-pill__chip--soft {
+  background: rgba(94, 234, 212, 0.12);
+  color: #97ece1;
+}
+
+.focus-pill__empty,
+.matrix-shell__empty {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.matrix-board-wrap {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 14px 14px;
+  overflow: auto;
+}
+
+.matrix-board {
+  --matrix-cols: 5;
+  display: grid;
+  gap: 6px;
+  min-width: 620px;
+}
+
+.matrix-corner,
+.matrix-head,
+.matrix-cell {
+  min-width: 0;
+  min-height: 64px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.024);
+}
+
+.matrix-corner,
+.matrix-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.matrix-corner {
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.matrix-head--active {
+  background: rgba(240, 180, 41, 0.12);
+  border-color: rgba(240, 180, 41, 0.18);
+}
+
+.matrix-head--pivot {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.matrix-head--covered {
+  background: rgba(124, 110, 240, 0.12);
+  border-color: rgba(124, 110, 240, 0.18);
+}
+
+.matrix-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 6px;
+}
+
+.matrix-cell__value {
+  font-size: clamp(14px, calc(23px - (var(--matrix-cols) * 1.2px)), 22px);
+  line-height: 1;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix-cell__meta {
+  font-size: clamp(9px, calc(12px - (var(--matrix-cols) * 0.25px)), 11px);
+  color: var(--text-secondary);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.matrix-cell--active {
+  background: rgba(240, 180, 41, 0.1);
+  border-color: rgba(240, 180, 41, 0.2);
+}
+
+.matrix-cell--pivot {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.16);
+}
+
+.matrix-cell--improved,
+.matrix-cell--assignment {
+  background: rgba(62, 207, 142, 0.1);
+  border-color: rgba(62, 207, 142, 0.2);
+}
+
+.matrix-cell--covered,
+.matrix-cell--candidate {
+  background: rgba(124, 110, 240, 0.08);
+  border-color: rgba(124, 110, 240, 0.16);
+}
+
+.matrix-cell--zero {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.matrix-cell--adjusted {
+  background: rgba(94, 234, 212, 0.08);
+  border-color: rgba(94, 234, 212, 0.18);
+}
+
+.matrix-cell--blocked {
+  background: rgba(244, 63, 94, 0.08);
+  border-color: rgba(244, 63, 94, 0.18);
+}
+
+@media (max-width: 980px) {
+  .matrix-shell__hud {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .matrix-shell__focus {
+    grid-template-columns: 1fr;
+  }
+}

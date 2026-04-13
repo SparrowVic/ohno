@@ -28,6 +28,8 @@
           <app-dsu-trace-panel [state]="dsuState()" />
         } @else if (gridState()) {
           <app-grid-trace-panel [state]="gridState()" />
+        } @else if (matrixState()) {
+          <app-matrix-trace-panel [state]="matrixState()" />
         } @else if (networkState()) {
           <app-network-trace-panel [state]="networkState()" />
         } @else {

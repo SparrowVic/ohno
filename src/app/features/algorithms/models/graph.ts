@@ -19,7 +19,15 @@ export interface WeightedGraphData {
   readonly sourceId: string;
 }
 
-export type GraphTone = 'left' | 'right' | 'critical' | 'bridge';
+export type GraphTone =
+  | 'left'
+  | 'right'
+  | 'critical'
+  | 'bridge'
+  | 'component-a'
+  | 'component-b'
+  | 'component-c'
+  | 'component-d';
 
 export interface GraphNodeSnapshot extends WeightedGraphNode {
   readonly distance: number | null;

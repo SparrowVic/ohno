@@ -21,6 +21,21 @@ export class GraphTracePanel {
     const source = state.traceRows.find((item) => item.isSource) ?? state.traceRows.find((item) => item.nodeId === state.sourceId);
     return source?.label ?? '—';
   });
+  readonly sourceCardLabel = computed(() => {
+    switch (this.state()?.detailLabel) {
+      case 'MST tree':
+        return 'Start';
+      case 'Component sweep':
+      case 'Partition check':
+      case 'Critical links':
+      case 'Tarjan SCC map':
+      case 'Finish stack':
+      case 'Kosaraju SCC map':
+        return 'Seed';
+      default:
+        return 'Source';
+    }
+  });
 
   readonly currentLabel = computed(() => {
     const row = this.state()?.traceRows.find((item) => item.isCurrent);
@@ -36,16 +51,29 @@ export class GraphTracePanel {
   readonly secondaryLabel = computed(() => this.state()?.secondaryLabel ?? 'Prev');
   readonly visitOrderLabel = computed(() => this.state()?.visitOrderLabel ?? 'Visit order');
   readonly hasFocusedRoute = computed(() => this.focusTargetLabel() !== null && this.focusPathLabel() !== null);
-  readonly focusCardLabel = computed(() => this.focusModeLabel() ?? 'Focused route');
+  readonly focusSummaryLabel = computed(() => (this.hasFocusedRoute() ? 'Focused target' : 'Context'));
+  readonly focusSummaryValue = computed(() => {
+    if (this.hasFocusedRoute()) return this.focusTargetLabel() ?? '—';
+    return this.state()?.detailLabel ?? '—';
+  });
   readonly focusCardPath = computed(() => {
     if (this.hasFocusedRoute()) return this.focusPathLabel() ?? '—';
-    return 'No focused route';
+    return this.state()?.detailValue ?? 'No detail';
   });
   readonly focusCardHint = computed(() => {
     if (this.hasFocusedRoute()) {
       return this.focusHint() ?? 'The route focus is a UI lens, not always an algorithm input.';
     }
-    return 'This algorithm state is shown as a full graph structure, without a single selected route.';
+    return 'This algorithm is explained as a whole graph structure, not as one selected route.';
+  });
+  readonly focusCardLabelResolved = computed(() => {
+    if (this.hasFocusedRoute()) return this.focusModeLabel() ?? 'Focused route';
+    return this.state()?.detailLabel ?? 'Detail';
+  });
+  readonly focusCardBadge = computed(() => (this.hasFocusedRoute() ? 'UI lens' : 'Graph state'));
+  readonly focusCardMuted = computed(() => {
+    if (this.hasFocusedRoute()) return false;
+    return !this.state()?.detailValue;
   });
   readonly computationLabel = computed(() => this.state()?.computation?.candidateLabel ?? 'Step calculation');
   readonly computationExpression = computed(() => this.state()?.computation?.expression ?? 'No edge update');

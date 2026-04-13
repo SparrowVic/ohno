@@ -3,12 +3,12 @@
     <div class="trace__header">
       <div class="trace__summary">
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Source</span>
+          <span class="trace__summary-label">{{ sourceCardLabel() }}</span>
           <span class="trace__summary-value">{{ sourceLabel() }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Focused target</span>
-          <span class="trace__summary-value">{{ focusTargetLabel() ?? '—' }}</span>
+          <span class="trace__summary-label">{{ focusSummaryLabel() }}</span>
+          <span class="trace__summary-value">{{ focusSummaryValue() }}</span>
         </div>
         <div class="trace__summary-card">
           <span class="trace__summary-label">Current</span>
@@ -25,10 +25,10 @@
       </div>
 
       <div class="trace__calc-grid">
-        <div class="trace__calculation trace__calculation--focus" [class.trace__calculation--muted]="!hasFocusedRoute()">
+        <div class="trace__calculation trace__calculation--focus" [class.trace__calculation--muted]="focusCardMuted()">
           <div class="trace__calc-topline">
-            <div class="trace__calc-label">{{ focusCardLabel() }}</div>
-            <span class="trace__calc-badge">UI lens</span>
+            <div class="trace__calc-label">{{ focusCardLabelResolved() }}</div>
+            <span class="trace__calc-badge">{{ focusCardBadge() }}</span>
           </div>
           <div class="trace__calc-expression">{{ focusCardPath() }}</div>
           <div class="trace__calc-decision">{{ focusCardHint() }}</div>

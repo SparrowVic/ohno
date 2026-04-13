@@ -42,6 +42,9 @@
     @case ('grid') {
       <app-grid-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
+    @case ('matrix') {
+      <app-matrix-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
     @case ('sound') {
       <app-sound-bars-visualization
         [array]="array()"

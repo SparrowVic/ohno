@@ -42,6 +42,21 @@ export class DijkstraGraphVisualization {
   readonly completionLabel = computed(() => this.graphState()?.completionLabel ?? 'Visited');
   readonly showEdgeWeights = computed(() => this.graphState()?.showEdgeWeights ?? true);
   readonly detailLabel = computed(() => this.graphState()?.detailLabel ?? 'Path');
+  readonly sourceCardLabel = computed(() => {
+    switch (this.detailLabel()) {
+      case 'MST tree':
+        return 'Start';
+      case 'Component sweep':
+      case 'Partition check':
+      case 'Critical links':
+      case 'Tarjan SCC map':
+      case 'Finish stack':
+      case 'Kosaraju SCC map':
+        return 'Seed';
+      default:
+        return 'Source';
+    }
+  });
   readonly sourceLabel = computed(() => {
     const sourceId = this.graphState()?.sourceId ?? this.graph()?.sourceId ?? null;
     if (!sourceId) return '—';
@@ -135,6 +150,9 @@ export class DijkstraGraphVisualization {
         if (this.detailLabel() === 'Partition check') return 'Two-color validation';
         if (this.detailLabel() === 'MST tree') return 'Minimum spanning tree';
         if (this.detailLabel() === 'Critical links') return 'Low-link analysis';
+        if (this.detailLabel() === 'Tarjan SCC map') return 'Low-link SCC sweep';
+        if (this.detailLabel() === 'Finish stack') return 'Finish-order sweep';
+        if (this.detailLabel() === 'Kosaraju SCC map') return 'Reverse-pass SCC sweep';
         if (this.detailLabel() === 'Cycle') return 'Cycle witness';
         if (this.detailLabel() === 'Topo order') return 'Ordering flow';
         return 'Graph state';
@@ -161,6 +179,15 @@ export class DijkstraGraphVisualization {
         if (this.detailLabel() === 'Critical links') {
           return 'Red nodes or edges are articulation points and bridges whose removal disconnects the graph.';
         }
+        if (this.detailLabel() === 'Tarjan SCC map') {
+          return 'Active nodes stay on one Tarjan stack until a root closes an entire strongly connected component.';
+        }
+        if (this.detailLabel() === 'Finish stack') {
+          return 'Pass 1 only builds finish order on the original graph. Pass 2 will traverse the reversed arrows.';
+        }
+        if (this.detailLabel() === 'Kosaraju SCC map') {
+          return 'Pass 2 follows reversed edges in finish order. Colored groups are finalized SCCs.';
+        }
         if (this.detailLabel() === 'Cycle') return 'This view explains DFS state and the detected cycle, not a single source-to-target path.';
         if (this.detailLabel() === 'Topo order') return 'This view explains how nodes enter topological order, not source-to-target routes.';
         return 'The graph highlights the algorithm state step by step.';
@@ -171,11 +198,16 @@ export class DijkstraGraphVisualization {
     if (!focusedNodeId) return '—';
     return this.nodeLabel(focusedNodeId);
   });
+  readonly focusCardLabel = computed(() => (this.routeMode() ? 'Focused target' : 'Context'));
+  readonly focusCardValue = computed(() => (this.routeMode() ? this.focusedNodeLabel() : this.detailLabel()));
+  readonly focusCardHint = computed(() => (this.routeMode() ? 'Click any node' : this.structureLabel()));
   readonly focusedPathLabel = computed(() => {
     const focusedNodeId = this.selectedNodeId();
     if (!focusedNodeId || !this.routeMode()) return '—';
     return this.describePath(focusedNodeId);
   });
+  readonly detailPillLabel = computed(() => (this.routeMode() ? 'Focused route' : this.detailLabel()));
+  readonly detailPillValue = computed(() => (this.routeMode() ? this.focusedPathLabel() : this.detailValue()));
   readonly treeRouteCount = computed(() => {
     if (!this.routeMode()) return 0;
     return this.nodes().filter((node) => node.previousId !== null).length;

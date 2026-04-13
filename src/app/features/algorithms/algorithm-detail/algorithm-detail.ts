@@ -29,6 +29,7 @@ import { cycleDetectionGenerator } from '../algorithms/cycle-detection';
 import { dijkstraGenerator } from '../algorithms/dijkstra';
 import { dinicMaxFlowGenerator } from '../algorithms/dinic-max-flow';
 import { dfsGenerator } from '../algorithms/dfs';
+import { floydWarshallGenerator } from '../algorithms/floyd-warshall';
 import { floodFillGenerator } from '../algorithms/flood-fill';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
@@ -40,10 +41,13 @@ import { radixSortGenerator } from '../algorithms/radix-sort';
 import { primsMstGenerator } from '../algorithms/prims-mst';
 import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
+import { tarjanSccGenerator } from '../algorithms/tarjan-scc';
 import { timSortGenerator } from '../algorithms/tim-sort';
 import { topologicalSortKahnGenerator } from '../algorithms/topological-sort-kahn';
 import { unionFindGenerator } from '../algorithms/union-find';
 import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
+import { hungarianAlgorithmGenerator } from '../algorithms/hungarian-algorithm';
+import { kosarajuSccGenerator } from '../algorithms/kosaraju-scc';
 import { A_STAR_PATHFINDING_CODE } from '../data/a-star-pathfinding-code';
 import { BELLMAN_FORD_CODE } from '../data/bellman-ford-code';
 import { BFS_CODE } from '../data/bfs-code';
@@ -59,6 +63,7 @@ import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
 import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { DINIC_MAX_FLOW_CODE } from '../data/dinic-max-flow-code';
+import { FLOYD_WARSHALL_CODE } from '../data/floyd-warshall-code';
 import { FLOOD_FILL_CODE } from '../data/flood-fill-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
@@ -70,17 +75,20 @@ import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
+import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { UNION_FIND_CODE } from '../data/union-find-code';
 import { DsuTraceState } from '../models/dsu';
 import { GraphStepState, WeightedGraphData } from '../models/graph';
 import { GridTraceState } from '../models/grid';
+import { MatrixTraceState } from '../models/matrix';
 import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
+import { KOSARAJU_SCC_CODE } from '../data/kosaraju-scc-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
@@ -100,9 +108,17 @@ import {
   generateCycleDetectionGraph,
   generateDagGraph,
   generateDijkstraGraph,
+  generateSccGraph,
   generateTraversalGraph,
 } from '../utils/dijkstra-graph';
 import { AStarScenario, createAStarScenario, createFloodFillScenario, FloodFillScenario } from '../utils/grid-scenarios';
+import { HUNGARIAN_ALGORITHM_CODE } from '../data/hungarian-algorithm-code';
+import {
+  createFloydWarshallScenario,
+  createHungarianScenario,
+  FloydWarshallScenario,
+  HungarianScenario,
+} from '../utils/matrix-scenarios';
 import {
   createDinicScenario,
   createHopcroftKarpScenario,
@@ -226,6 +242,22 @@ const BRIDGES_ARTICULATION_LEGEND: readonly LegendItem[] = [
   { label: 'Bridge edge', color: '#f43f5e' },
 ];
 
+const TARJAN_SCC_LEGEND: readonly LegendItem[] = [
+  { label: 'Seed / current node', color: '#f0b429' },
+  { label: 'Tarjan stack', color: '#7c6ef0' },
+  { label: 'Current inspect edge', color: '#5eead4' },
+  { label: 'Finished SCC color', color: '#38bdf8' },
+  { label: 'Back-edge low-link update', color: '#34d399' },
+];
+
+const KOSARAJU_SCC_LEGEND: readonly LegendItem[] = [
+  { label: 'Seed / current node', color: '#f0b429' },
+  { label: 'Pass 1 finish stack', color: '#7c6ef0' },
+  { label: 'Pass 2 reversed edge', color: '#5eead4' },
+  { label: 'Finished SCC color', color: '#38bdf8' },
+  { label: 'Assigned component', color: '#34d399' },
+];
+
 const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: 'Candidate window', color: '#7c6ef0' },
   { label: 'Probe', color: '#f0b429' },
@@ -267,6 +299,22 @@ const DINIC_LEGEND: readonly LegendItem[] = [
   { label: 'Positive flow', color: '#3ecf8e' },
   { label: 'Current augment path', color: '#5eead4' },
   { label: 'Saturated edge', color: 'var(--text-secondary)', opacity: 0.6 },
+];
+
+const FLOYD_WARSHALL_LEGEND: readonly LegendItem[] = [
+  { label: 'Pivot row / column', color: '#38bdf8' },
+  { label: 'Active compare cell', color: '#f0b429' },
+  { label: 'Improved shortest path', color: '#3ecf8e' },
+  { label: 'Reachable baseline', color: '#7c6ef0' },
+  { label: 'Infinity / unreachable', color: 'var(--text-secondary)', opacity: 0.6 },
+];
+
+const HUNGARIAN_LEGEND: readonly LegendItem[] = [
+  { label: 'Active reduction / inspect cell', color: '#f0b429' },
+  { label: 'Zero candidate', color: '#7c6ef0' },
+  { label: 'Covered line set', color: '#38bdf8' },
+  { label: 'Chosen assignment', color: '#3ecf8e' },
+  { label: 'Adjusted by matrix shift', color: '#5eead4' },
 ];
 
 const UNION_FIND_LEGEND: readonly LegendItem[] = [
@@ -311,6 +359,10 @@ const SEARCH_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
+];
+
+const MATRIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'matrix', label: 'Matrix Lab' },
 ];
 
 const UNION_FIND_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -369,6 +421,14 @@ const BRIDGES_ARTICULATION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dijkstra-graph', label: 'Critical Cuts' },
 ];
 
+const TARJAN_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Low-Link SCC' },
+];
+
+const KOSARAJU_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dijkstra-graph', label: 'Two-Pass SCC' },
+];
+
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
 const COUNTING_SIZE_OPTIONS: readonly number[] = [12, 24, 36];
 const RADIX_SIZE_OPTIONS: readonly number[] = [12, 18, 24];
@@ -419,6 +479,12 @@ interface GridAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmView
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface MatrixAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'matrix';
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 interface DsuAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
   readonly kind: 'dsu';
   readonly createScenario: (size: number) => TScenario;
@@ -436,6 +502,7 @@ type AlgorithmViewConfig =
   | GraphAlgorithmViewConfig
   | SearchAlgorithmViewConfig
   | GridAlgorithmViewConfig<any>
+  | MatrixAlgorithmViewConfig<any>
   | DsuAlgorithmViewConfig<any>
   | NetworkAlgorithmViewConfig<any>;
 
@@ -582,6 +649,32 @@ function createGridViewConfig<TScenario>(args: {
     legendItems: () => args.legendItems,
     sizeUnit: 'cells / side',
     randomizeLabel: args.randomizeLabel ?? 'New board',
+  };
+}
+
+function createMatrixViewConfig<TScenario>(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly createScenario: (size: number) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly legendItems: readonly LegendItem[];
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+  readonly randomizeLabel?: string;
+  readonly sizeUnit?: string;
+}): MatrixAlgorithmViewConfig<TScenario> {
+  const sizeOptions = args.sizeOptions ?? [4, 5, 6];
+  return {
+    kind: 'matrix',
+    codeLines: args.codeLines,
+    variantOptions: MATRIX_VARIANT_OPTIONS,
+    defaultVariant: 'matrix',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 4,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => args.legendItems,
+    sizeUnit: args.sizeUnit ?? 'rows / cols',
+    randomizeLabel: args.randomizeLabel ?? 'New matrix',
   };
 }
 
@@ -824,6 +917,34 @@ const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
   randomizeLabel: 'New graph',
 };
 
+const TARJAN_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: TARJAN_SCC_CODE,
+  variantOptions: TARJAN_SCC_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateSccGraph,
+  generator: tarjanSccGenerator,
+  legendItems: () => TARJAN_SCC_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
+const KOSARAJU_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'graph',
+  codeLines: KOSARAJU_SCC_CODE,
+  variantOptions: KOSARAJU_SCC_VARIANT_OPTIONS,
+  defaultVariant: 'dijkstra-graph',
+  sizeOptions: DIJKSTRA_SIZE_OPTIONS,
+  defaultSize: 8,
+  createGraph: generateSccGraph,
+  generator: kosarajuSccGenerator,
+  legendItems: () => KOSARAJU_SCC_LEGEND,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New graph',
+};
+
 const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
   codeLines: FLOOD_FILL_CODE,
   createScenario: (size) => createFloodFillScenario(size),
@@ -842,6 +963,26 @@ const A_STAR_VIEW_CONFIG = createGridViewConfig<AStarScenario>({
   sizeOptions: [8, 10, 12],
   defaultSize: 10,
   randomizeLabel: 'New board',
+});
+
+const FLOYD_WARSHALL_VIEW_CONFIG = createMatrixViewConfig<FloydWarshallScenario>({
+  codeLines: FLOYD_WARSHALL_CODE,
+  createScenario: (size) => createFloydWarshallScenario(size),
+  generator: floydWarshallGenerator,
+  legendItems: FLOYD_WARSHALL_LEGEND,
+  sizeOptions: [5, 6],
+  defaultSize: 5,
+  randomizeLabel: 'New matrix',
+});
+
+const HUNGARIAN_VIEW_CONFIG = createMatrixViewConfig<HungarianScenario>({
+  codeLines: HUNGARIAN_ALGORITHM_CODE,
+  createScenario: (size) => createHungarianScenario(size),
+  generator: hungarianAlgorithmGenerator,
+  legendItems: HUNGARIAN_LEGEND,
+  sizeOptions: [4, 5],
+  defaultSize: 4,
+  randomizeLabel: 'New assignment grid',
 });
 
 const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
@@ -1003,11 +1144,23 @@ export class AlgorithmDetail {
     if (algorithm.id === 'bridges-articulation-points') {
       return BRIDGES_ARTICULATION_VIEW_CONFIG;
     }
+    if (algorithm.id === 'tarjan-scc') {
+      return TARJAN_SCC_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'kosaraju-scc') {
+      return KOSARAJU_SCC_VIEW_CONFIG;
+    }
     if (algorithm.id === 'flood-fill') {
       return FLOOD_FILL_VIEW_CONFIG;
     }
     if (algorithm.id === 'a-star-pathfinding') {
       return A_STAR_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'floyd-warshall') {
+      return FLOYD_WARSHALL_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'hungarian-algorithm') {
+      return HUNGARIAN_VIEW_CONFIG;
     }
     if (algorithm.id === 'union-find') {
       return UNION_FIND_VIEW_CONFIG;
@@ -1053,6 +1206,7 @@ export class AlgorithmDetail {
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dsuTrace = computed<DsuTraceState | null>(() => this.currentSnapshot()?.dsu ?? null);
   readonly gridTrace = computed<GridTraceState | null>(() => this.currentSnapshot()?.grid ?? null);
+  readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
   readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
   readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
   readonly graphRouteModeLabel = computed(() => {
@@ -1146,6 +1300,14 @@ export class AlgorithmDetail {
           return;
         }
 
+        if (config.kind === 'matrix') {
+          const scenario = config.createScenario(config.defaultSize);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadMatrixEngine(scenario, config.generator);
+          return;
+        }
+
         if (config.kind === 'dsu') {
           const scenario = config.createScenario(config.defaultSize);
           this.arraySig.set([]);
@@ -1231,6 +1393,14 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'matrix') {
+      const scenario = config.createScenario(value);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadMatrixEngine(scenario, config.generator);
+      return;
+    }
+
     if (config.kind === 'dsu') {
       const scenario = config.createScenario(value);
       this.arraySig.set([]);
@@ -1278,6 +1448,14 @@ export class AlgorithmDetail {
       this.arraySig.set([]);
       this.graphSig.set(null);
       this.loadGridEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'matrix') {
+      const scenario = config.createScenario(this.sizeSig());
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadMatrixEngine(scenario, config.generator);
       return;
     }
 
@@ -1345,6 +1523,13 @@ export class AlgorithmDetail {
   }
 
   private loadGridEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadMatrixEngine<TScenario>(
     scenario: TScenario,
     generator: (scenario: TScenario) => Generator<SortStep>,
   ): void {
