@@ -4,9 +4,9 @@
 
 .toolbar {
   display: grid;
-  grid-template-columns: auto minmax(340px, 1fr) auto;
-  gap: 12px;
-  padding: 12px 14px;
+  grid-template-columns: auto minmax(320px, 1fr) auto;
+  gap: 8px;
+  padding: 8px 10px;
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
@@ -21,23 +21,23 @@
 }
 
 .toolbar__transport {
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .toolbar__group,
 .toolbar__actions {
-  gap: 6px;
+  gap: 5px;
 }
 
 .toolbar__progress {
-  min-width: 160px;
-  padding: 8px 11px;
-  border-radius: 15px;
+  min-width: 146px;
+  padding: 6px 9px;
+  border-radius: 13px;
   border: 0.5px solid var(--border);
   background: rgba(19, 20, 21, 0.9);
   display: grid;
-  gap: 7px;
+  gap: 5px;
 }
 
 .toolbar__progress-copy {
@@ -48,7 +48,7 @@
 }
 
 .toolbar__eyebrow {
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -56,12 +56,12 @@
 
 .toolbar__counter {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-primary);
 }
 
 .toolbar__progress-bar {
-  height: 5px;
+  height: 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.07);
   overflow: hidden;
@@ -77,15 +77,15 @@
 .toolbar__dock {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   align-items: stretch;
 }
 
 .ctrl-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
   border: 0.5px solid var(--border);
   background: rgba(24, 25, 27, 0.92);
   display: inline-flex;
@@ -104,8 +104,8 @@
   }
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     color: var(--text-secondary);
   }
 
@@ -132,14 +132,14 @@
 }
 
 .generate-btn {
-  min-height: 38px;
-  padding: 0 14px;
-  font-size: 12px;
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--accent-strong);
   background: rgba(184, 213, 110, 0.12);
   border: 0.5px solid rgba(184, 213, 110, 0.16);
-  border-radius: 14px;
+  border-radius: 12px;
   font-family: inherit;
   transition:
     background 160ms ease,

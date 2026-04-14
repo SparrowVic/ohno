@@ -6,7 +6,9 @@ import { KnapsackScenario } from '../utils/dp-scenarios';
 export function* knapsack01Generator(scenario: KnapsackScenario): Generator<SortStep> {
   const itemCount = scenario.items.length;
   const capacity = scenario.capacity;
-  const table = Array.from({ length: itemCount + 1 }, () => Array.from({ length: capacity + 1 }, () => 0));
+  const table = Array.from({ length: itemCount + 1 }, () =>
+    Array.from({ length: capacity + 1 }, () => 0),
+  );
   const chosenItems = new Set<number>();
   const backtrackCells = new Set<string>();
 
@@ -15,7 +17,7 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
     table,
     chosenItems,
     backtrackCells,
-    description: `Initialize a ${(itemCount + 1)} × ${(capacity + 1)} table. Row 0 and capacity 0 form the base cases.`,
+    description: `Initialize a ${itemCount + 1} × ${capacity + 1} table. Row 0 and capacity 0 form the base cases.`,
     activeCodeLine: 2,
     phaseLabel: 'Initialize base row',
     phase: 'init',
@@ -35,7 +37,12 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
         chosenItems,
         backtrackCells,
         activeCell: [row, cap],
-        candidateCells: canTake ? [[row - 1, cap], [row - 1, cap - item.weight]] : [[row - 1, cap]],
+        candidateCells: canTake
+          ? [
+              [row - 1, cap],
+              [row - 1, cap - item.weight],
+            ]
+          : [[row - 1, cap]],
         secondaryItems: [
           `skip = ${skipValue}`,
           canTake ? `take = ${takeValue}` : `take unavailable`,
@@ -52,11 +59,17 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
             ? `max(dp[${row - 1}][${cap}] = ${skipValue}, dp[${row - 1}][${cap - item.weight}] + ${item.value} = ${takeValue})`
             : `item weight ${item.weight} > capacity ${cap}`,
           result: canTake ? String(Math.max(skipValue, takeValue ?? 0)) : String(skipValue),
-          decision: canTake ? (takeValue! > skipValue ? 'take branch wins' : 'skip branch stays best') : 'forced skip',
+          decision: canTake
+            ? takeValue! > skipValue
+              ? 'take branch wins'
+              : 'skip branch stays best'
+            : 'forced skip',
         },
       });
 
-      table[row]![cap] = canTake ? Math.max(skipValue, takeValue ?? Number.NEGATIVE_INFINITY) : skipValue;
+      table[row]![cap] = canTake
+        ? Math.max(skipValue, takeValue ?? Number.NEGATIVE_INFINITY)
+        : skipValue;
 
       yield createStep({
         scenario,
@@ -64,11 +77,23 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
         chosenItems,
         backtrackCells,
         activeCell: [row, cap],
-        candidateCells: canTake ? [[row - 1, cap], [row - 1, cap - item.weight]] : [[row - 1, cap]],
-        activeCellStatus: canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue ? 'improved' : canTake ? 'chosen' : 'blocked',
+        candidateCells: canTake
+          ? [
+              [row - 1, cap],
+              [row - 1, cap - item.weight],
+            ]
+          : [[row - 1, cap]],
+        activeCellStatus:
+          canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue
+            ? 'improved'
+            : canTake
+              ? 'chosen'
+              : 'blocked',
         secondaryItems: [
           `best so far = ${table[row]![cap]!}`,
-          canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue ? `${item.label} enters candidate pack` : `${item.label} skipped here`,
+          canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue
+            ? `${item.label} enters candidate pack`
+            : `${item.label} skipped here`,
         ],
         description: `Write dp[${row}][${cap}] = ${table[row]![cap]!}.`,
         activeCodeLine: 8,
@@ -76,11 +101,12 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
         phase: 'settle-node',
         computation: {
           label: `dp[${row}][${cap}]`,
-          expression: canTake
-            ? `${skipValue} vs ${takeValue}`
-            : `${skipValue} only`,
+          expression: canTake ? `${skipValue} vs ${takeValue}` : `${skipValue} only`,
           result: String(table[row]![cap]!),
-          decision: canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue ? 'keep take branch' : 'keep skip branch',
+          decision:
+            canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue
+              ? 'keep take branch'
+              : 'keep skip branch',
         },
       });
     }
@@ -177,24 +203,46 @@ function createStep(args: {
     ...args.scenario.items.map((item, index) => ({
       id: `row-${index + 1}`,
       label: item.label,
-      status: (args.activeCell?.[0] === index + 1 ? 'active' : args.chosenItems.has(index) ? 'accent' : 'idle') as DpHeaderConfig['status'],
+      status: (args.activeCell?.[0] === index + 1
+        ? 'active'
+        : args.chosenItems.has(index)
+          ? 'accent'
+          : 'idle') as DpHeaderConfig['status'],
       metaLabel: `w${item.weight} · v${item.value}`,
     })),
   ];
-  const colHeaders: DpHeaderConfig[] = Array.from({ length: args.scenario.capacity + 1 }, (_, cap) => ({
-    id: `col-${cap}`,
-    label: String(cap),
-    status: args.activeCell?.[1] === cap ? 'active' : cap === 0 ? 'source' : 'idle',
-    metaLabel: cap === 0 ? 'base' : null,
-  }));
+  const colHeaders: DpHeaderConfig[] = Array.from(
+    { length: args.scenario.capacity + 1 },
+    (_, cap) => ({
+      id: `col-${cap}`,
+      label: String(cap),
+      status: args.activeCell?.[1] === cap ? 'active' : cap === 0 ? 'source' : 'idle',
+      metaLabel: cap === 0 ? 'base' : null,
+    }),
+  );
 
   const cells: DpCellConfig[] = [];
+  const activeRow = args.activeCell?.[0] ?? null;
+  const activeCap = args.activeCell?.[1] ?? null;
+  const activeItem =
+    activeRow && activeRow > 0 ? (args.scenario.items[activeRow - 1] ?? null) : null;
+
   for (let row = 0; row < args.table.length; row++) {
     const rowLabel = row === 0 ? 'base' : args.scenario.items[row - 1]!.label;
     for (let cap = 0; cap < args.table[row]!.length; cap++) {
       const id = dpCellId(row, cap);
       const isBase = row === 0 || cap === 0;
       const isBacktrack = args.backtrackCells.has(id);
+      const isSkipCandidate =
+        activeRow !== null && activeCap !== null && row === activeRow - 1 && cap === activeCap;
+      const isTakeCandidate =
+        activeRow !== null &&
+        activeCap !== null &&
+        activeItem !== null &&
+        activeItem.weight <= activeCap &&
+        row === activeRow - 1 &&
+        cap === activeCap - activeItem.weight;
+      const candidateRole = isTakeCandidate ? 'take' : isSkipCandidate ? 'skip' : null;
       const status = isBacktrack
         ? 'backtrack'
         : id === activeCellId
@@ -206,7 +254,11 @@ function createStep(args: {
               : 'idle';
       const tags = [
         ...(isBase ? (['base'] as const) : []),
-        ...(candidateIds.has(id) ? (['best'] as const) : []),
+        ...(candidateRole
+          ? ([candidateRole] as const)
+          : candidateIds.has(id)
+            ? (['best'] as const)
+            : []),
         ...(id === activeCellId ? (['active'] as const) : []),
         ...(isBacktrack ? (['path'] as const) : []),
       ];
@@ -222,7 +274,17 @@ function createStep(args: {
             ? 'packed'
             : id === activeCellId && args.activeCellStatus === 'blocked'
               ? 'too heavy'
-              : null,
+              : id === activeCellId && args.phase === 'compare'
+                ? 'compare'
+                : id === activeCellId && args.phase === 'settle-node'
+                  ? 'commit'
+                  : id === activeCellId && (args.phase === 'relax' || args.phase === 'skip-relax')
+                    ? 'trace'
+                    : candidateRole === 'skip'
+                      ? 'skip'
+                      : candidateRole === 'take'
+                        ? 'take'
+                        : null,
         status,
         tags,
       });
@@ -232,7 +294,11 @@ function createStep(args: {
   const insights: DpInsight[] = [
     { label: 'Capacity', value: String(args.scenario.capacity), tone: 'accent' },
     { label: 'Items', value: String(args.scenario.items.length), tone: 'info' },
-    { label: 'Best value', value: String(args.table[args.scenario.items.length]![args.scenario.capacity]!), tone: 'success' },
+    {
+      label: 'Best value',
+      value: String(args.table[args.scenario.items.length]![args.scenario.capacity]!),
+      tone: 'success',
+    },
     { label: 'Picked', value: String(args.chosenItems.size), tone: 'warning' },
     { label: 'Table', value: `${args.table.length} × ${args.scenario.capacity + 1}`, tone: 'info' },
   ];
@@ -250,7 +316,11 @@ function createStep(args: {
     primaryItemsLabel: 'Items',
     primaryItems: args.scenario.items.map((item) => `${item.label} w${item.weight}/v${item.value}`),
     secondaryItemsLabel: 'Current lens',
-    secondaryItems: args.secondaryItems ?? (args.chosenItems.size > 0 ? [...args.chosenItems].map((index) => args.scenario.items[index]!.label) : ['table fill']),
+    secondaryItems:
+      args.secondaryItems ??
+      (args.chosenItems.size > 0
+        ? [...args.chosenItems].map((index) => args.scenario.items[index]!.label)
+        : ['table fill']),
     insights,
     rowHeaders,
     colHeaders,

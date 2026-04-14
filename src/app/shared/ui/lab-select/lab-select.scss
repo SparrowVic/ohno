@@ -23,9 +23,9 @@
 
 .select__trigger {
   width: 100%;
-  min-height: 50px;
-  padding: 7px 12px;
-  border-radius: 15px;
+  min-height: 44px;
+  padding: 6px 11px;
+  border-radius: 14px;
   border: 0.5px solid var(--border);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
@@ -57,11 +57,11 @@
   min-width: 0;
   flex: 1;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .select__label {
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -72,7 +72,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
 }

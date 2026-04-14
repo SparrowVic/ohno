@@ -11,19 +11,19 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  padding: 8px;
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 12px 14px;
-  min-height: 72px;
+  gap: 12px;
+  padding: 9px 12px;
+  min-height: 60px;
   border: 0.5px solid var(--border);
-  border-radius: 22px;
+  border-radius: 18px;
   background:
     radial-gradient(circle at top left, rgba(184, 213, 110, 0.07), transparent 30%),
     linear-gradient(180deg, rgba(24, 25, 27, 0.96), rgba(15, 16, 17, 0.98));
@@ -40,18 +40,18 @@
 }
 
 .topbar__identity {
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
 .topbar__copy {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
 .topbar__eyebrow {
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -61,15 +61,15 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 38px;
-  padding: 0 12px;
-  font-size: 12px;
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-secondary);
   border: 0.5px solid var(--border);
   background: rgba(20, 21, 23, 0.9);
   font-family: inherit;
-  border-radius: 14px;
+  border-radius: 12px;
   transition:
     border-color 160ms ease,
     background 160ms ease,
@@ -93,14 +93,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .topbar__badge {
-  font-size: 10px;
-  padding: 5px 9px;
+  font-size: 9px;
+  padding: 4px 8px;
   border-radius: 999px;
   font-weight: 700;
 
@@ -126,18 +126,18 @@
 }
 
 .topbar__title-row {
-  gap: 8px;
+  gap: 6px;
 }
 
 .topbar__meta,
 .topbar__actions {
-  gap: 8px;
+  gap: 6px;
 }
 
 .topbar__pill,
 .topbar__action {
-  min-height: 38px;
-  border-radius: 14px;
+  min-height: 34px;
+  border-radius: 12px;
   border: 0.5px solid var(--border);
   background: rgba(18, 19, 20, 0.9);
 }
@@ -145,8 +145,8 @@
 .topbar__pill {
   display: inline-flex;
   align-items: center;
-  padding: 0 12px;
-  font-size: 11px;
+  padding: 0 10px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-secondary);
 
@@ -157,12 +157,12 @@
 }
 
 .topbar__action {
-  padding: 0 12px;
+  padding: 0 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-secondary);
   transition:
@@ -184,8 +184,8 @@
   }
 
   svg {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
   }
 }
 
@@ -194,7 +194,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  gap: 10px;
+  gap: 8px;
 }
 
 .viz-panel {
@@ -205,7 +205,7 @@
   min-height: 0;
   overflow: hidden;
   border: 0.5px solid var(--border);
-  border-radius: 24px;
+  border-radius: 20px;
   background:
     radial-gradient(circle at top left, rgba(184, 213, 110, 0.04), transparent 28%),
     linear-gradient(180deg, rgba(23, 24, 26, 0.98), rgba(12, 13, 14, 0.98));

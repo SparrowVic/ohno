@@ -1,116 +1,375 @@
-<section class="dp-shell" #container>
+<section class="dp-shell" [class.dp-shell--knapsack]="isKnapsack()" #container>
   @if (state(); as dpState) {
-    <div class="playground-bar">
-      <div class="playground-bar__copy">
-        <span class="playground-bar__eyebrow">Preset Lab</span>
-        <span class="playground-bar__title">{{ dpState.presetLabel }}</span>
-        <span class="playground-bar__desc">{{ dpState.presetDescription }}</span>
-      </div>
-      <div class="playground-bar__presets">
-        @for (option of presetOptions(); track option.id) {
-          <button
-            type="button"
-            class="preset-chip"
-            [class.preset-chip--active]="presetId() === option.id"
-            (click)="selectPreset(option.id)"
-          >
-            {{ option.label }}
-          </button>
-        }
-      </div>
-    </div>
+    @if (isKnapsack()) {
+      <div class="knapsack-workbench">
+        <aside class="knapsack-sidebar">
+          <section class="knapsack-sidebar__section knapsack-sidebar__section--guide">
+            <span class="section-kicker">Visual Guide</span>
+            <h3 class="section-title">Where to look now</h3>
 
-    <div class="dp-shell__hud">
-      <div class="hud-card">
-        <span class="hud-card__label">Mode</span>
-        <span class="hud-card__value">{{ dpState.modeLabel }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Phase</span>
-        <span class="hud-card__value">{{ dpState.phaseLabel }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Active</span>
-        <span class="hud-card__value">{{ activeLabel() }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Result</span>
-        <span class="hud-card__value">{{ dpState.resultLabel }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Path</span>
-        <span class="hud-card__value">{{ pathLabel() }}</span>
-      </div>
-    </div>
-
-    <div class="dp-shell__rails">
-      <div class="focus-pill">
-        <span class="focus-pill__label">{{ dpState.primaryItemsLabel }}</span>
-        <div class="focus-pill__chips">
-          @if (dpState.primaryItems.length === 0) {
-            <span class="focus-pill__empty">none yet</span>
-          } @else {
-            @for (item of dpState.primaryItems; track item) {
-              <span class="focus-pill__chip">{{ item }}</span>
+            @if (activeItemCard(); as activeItem) {
+              <div class="focus-card__hero">
+                <div class="focus-card__hero-label">Current item</div>
+                <div class="focus-card__hero-value">{{ activeItem.label }}</div>
+                <div class="focus-card__hero-meta">
+                  <span>weight {{ activeItem.weight ?? '—' }}</span>
+                  <span>value {{ activeItem.value ?? '—' }}</span>
+                </div>
+              </div>
+            } @else {
+              <div class="focus-card__hero">
+                <div class="focus-card__hero-label">Current item</div>
+                <div class="focus-card__hero-value">Base cases</div>
+                <div class="focus-card__hero-meta">
+                  <span>row 0 or capacity 0</span>
+                </div>
+              </div>
             }
+
+            <div class="focus-steps">
+              <div class="focus-step">
+                <span class="focus-step__index">1</span>
+                <div class="focus-step__copy">
+                  <div class="focus-step__label">Follow the active row</div>
+                  <div class="focus-step__value">{{ activeItemCard()?.label ?? 'Base row' }}</div>
+                </div>
+              </div>
+              <div class="focus-step">
+                <span class="focus-step__index">2</span>
+                <div class="focus-step__copy">
+                  <div class="focus-step__label">Lock the capacity column</div>
+                  <div class="focus-step__value">{{ activeLabel() }}</div>
+                </div>
+              </div>
+              <div class="focus-step">
+                <span class="focus-step__index">3</span>
+                <div class="focus-step__copy">
+                  <div class="focus-step__label">Apply the current move</div>
+                  <div class="focus-step__value">{{ step()?.description }}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="knapsack-sidebar__divider" aria-hidden="true"></div>
+
+          <section class="knapsack-sidebar__section">
+            <div class="focus-card__heading">
+              <div>
+                <span class="section-kicker">Decision Lens</span>
+                <h3 class="section-title">Skip vs take</h3>
+              </div>
+              <span class="knapsack-topbar__phase">{{ dpState.resultLabel }}</span>
+            </div>
+
+            <div class="decision-grid">
+              @for (branch of knapsackBranches(); track branch.kind) {
+                <article class="{{ branchClass(branch) }}" [attr.data-branch-kind]="branch.kind">
+                  <div class="decision-branch__label">{{ branch.label }}</div>
+                  <div class="decision-branch__value">{{ branch.value }}</div>
+                  <div class="decision-branch__note">{{ branch.note }}</div>
+                </article>
+              }
+            </div>
+
+            <div class="decision-formula" [class.decision-formula--muted]="!dpState.computation">
+              <div class="section-kicker">
+                {{ dpState.computation?.label ?? 'Current transition' }}
+              </div>
+              <div class="decision-formula__expression">
+                {{ dpState.computation?.expression ?? 'Waiting for the next comparison.' }}
+              </div>
+              <div class="decision-formula__footer">
+                <span class="decision-formula__result">
+                  @if (dpState.computation?.result; as result) {
+                    = {{ result }}
+                  } @else {
+                    —
+                  }
+                </span>
+                <span class="decision-formula__decision">
+                  {{ dpState.computation?.decision ?? 'No winning branch yet.' }}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <div class="knapsack-sidebar__divider" aria-hidden="true"></div>
+
+          <section class="knapsack-sidebar__section">
+            <div class="focus-card__heading">
+              <div>
+                <span class="section-kicker">Outcome</span>
+                <h3 class="section-title">Backpack status</h3>
+              </div>
+            </div>
+
+            <div class="pack-summary">
+              <div class="section-kicker">Current pack</div>
+              <div class="pack-summary__value">{{ pathLabel() }}</div>
+            </div>
+
+            <div class="pack-chips">
+              @if (packedItems().length === 0) {
+                <span class="pack-chips__empty"
+                  >Selected items appear here during backtracking.</span
+                >
+              } @else {
+                @for (item of packedItems(); track item) {
+                  <span class="pack-chip">{{ item }}</span>
+                }
+              }
+            </div>
+          </section>
+        </aside>
+
+        <section class="knapsack-brief-card">
+          <div class="knapsack-brief-card__hero">
+            <div class="knapsack-topbar__copy">
+              <span class="section-kicker">Knapsack Lab</span>
+              <div class="knapsack-topbar__title-row">
+                <h2 class="knapsack-topbar__title">{{ dpState.presetLabel }}</h2>
+                <span class="knapsack-topbar__phase">{{ dpState.phaseLabel }}</span>
+              </div>
+              <p class="knapsack-topbar__desc">{{ dpState.presetDescription }}</p>
+            </div>
+
+            <div class="knapsack-topbar__metrics">
+              @for (metric of knapsackMetrics(); track metric.label) {
+                <div class="{{ metricClass(metric.tone) }}">
+                  <span class="section-kicker">{{ metric.label }}</span>
+                  <span class="knapsack-metric__value">{{ metric.value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="knapsack-brief-card__divider" aria-hidden="true"></div>
+
+          <div class="knapsack-brief-card__rail">
+            <div class="knapsack-scenario-card">
+              <span class="section-kicker">Scenario</span>
+              <div class="knapsack-scenario-card__chips">
+                @for (option of presetOptions(); track option.id) {
+                  <button
+                    type="button"
+                    class="preset-chip"
+                    [class.preset-chip--active]="presetId() === option.id"
+                    (click)="selectPreset(option.id)"
+                  >
+                    {{ option.label }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <section class="item-shelf">
+              <div class="item-shelf__header">
+                <div>
+                  <span class="section-kicker">Input Shelf</span>
+                  <h3 class="section-title">Items feed the rows</h3>
+                </div>
+              </div>
+
+              <div class="item-shelf__grid">
+                @for (item of itemCards(); track item.row) {
+                  <article class="{{ itemCardClass(item) }}" [attr.data-item-row]="item.row">
+                    <div class="item-shelf__index">row {{ item.row }}</div>
+                    <div class="item-shelf__name">{{ item.label }}</div>
+                    <div class="item-shelf__stats">
+                      <span>w {{ item.weight ?? '—' }}</span>
+                      <span>v {{ item.value ?? '—' }}</span>
+                    </div>
+                  </article>
+                }
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="knapsack-stage">
+          <div class="knapsack-stage__header">
+            <div>
+              <span class="section-kicker">Workspace</span>
+              <h3 class="section-title">DP table is the hero</h3>
+            </div>
+
+            <div class="knapsack-stage__legend">
+              <span class="legend-pill">active cell</span>
+              <span class="legend-pill legend-pill--soft">source cells</span>
+              <span class="legend-pill legend-pill--warm">backtrack path</span>
+            </div>
+          </div>
+
+          <div class="capacity-ruler">
+            <div class="capacity-ruler__label">Capacity lane</div>
+            <div class="capacity-ruler__track">
+              @for (marker of capacityMarkers(); track marker.col) {
+                <div class="{{ markerClass(marker) }}" [attr.data-capacity-col]="marker.col">
+                  <span>{{ marker.label }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="dp-board-wrap dp-board-wrap--stage" #boardWrap>
+            <div
+              class="dp-board"
+              [class.dp-board--upper]="dpState.tableShape === 'upper-triangle'"
+              [style.grid-template-columns]="gridCols()"
+            >
+              <div class="dp-corner dp-corner--stage">
+                <span>items × capacity</span>
+                <small>{{ dpState.dimensionsLabel }}</small>
+              </div>
+
+              @for (colHeader of dpState.colHeaders; track colHeader.id) {
+                <div class="{{ headerClass(colHeader.status) }}">
+                  <span>{{ colHeader.label }}</span>
+                  @if (colHeader.metaLabel) {
+                    <small>{{ colHeader.metaLabel }}</small>
+                  }
+                </div>
+              }
+
+              @for (rowHeader of dpState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
+                <div class="{{ headerClass(rowHeader.status) }}">
+                  <span>{{ rowHeader.label }}</span>
+                  @if (rowHeader.metaLabel) {
+                    <small>{{ rowHeader.metaLabel }}</small>
+                  }
+                </div>
+
+                @for (cell of rowCells(rowIndex); track cell.id) {
+                  <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
+                    <span class="dp-cell__value">{{ cell.valueLabel }}</span>
+                    @if (cell.metaLabel) {
+                      <span class="dp-cell__meta">{{ cell.metaLabel }}</span>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </section>
+      </div>
+    } @else {
+      <div class="playground-bar">
+        <div class="playground-bar__copy">
+          <span class="playground-bar__eyebrow">Preset Lab</span>
+          <span class="playground-bar__title">{{ dpState.presetLabel }}</span>
+          <span class="playground-bar__desc">{{ dpState.presetDescription }}</span>
+        </div>
+        <div class="playground-bar__presets">
+          @for (option of presetOptions(); track option.id) {
+            <button
+              type="button"
+              class="preset-chip"
+              [class.preset-chip--active]="presetId() === option.id"
+              (click)="selectPreset(option.id)"
+            >
+              {{ option.label }}
+            </button>
           }
         </div>
       </div>
-      <div class="focus-pill">
-        <span class="focus-pill__label">{{ dpState.secondaryItemsLabel }}</span>
-        <div class="focus-pill__chips">
-          @if (dpState.secondaryItems.length === 0) {
-            <span class="focus-pill__empty">none yet</span>
-          } @else {
-            @for (item of dpState.secondaryItems; track item) {
-              <span class="focus-pill__chip focus-pill__chip--soft">{{ item }}</span>
-            }
-          }
+
+      <div class="dp-shell__hud">
+        <div class="hud-card">
+          <span class="hud-card__label">Mode</span>
+          <span class="hud-card__value">{{ dpState.modeLabel }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Phase</span>
+          <span class="hud-card__value">{{ dpState.phaseLabel }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Active</span>
+          <span class="hud-card__value">{{ activeLabel() }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Result</span>
+          <span class="hud-card__value">{{ dpState.resultLabel }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Path</span>
+          <span class="hud-card__value">{{ pathLabel() }}</span>
         </div>
       </div>
-    </div>
 
-    <div class="dp-shell__insights">
-      @for (insight of dpState.insights; track insight.label) {
-        <div class="{{ insightClass(insight.tone) }}">
-          <span class="insight-card__label">{{ insight.label }}</span>
-          <span class="insight-card__value">{{ insight.value }}</span>
-        </div>
-      }
-    </div>
-
-    <div class="dp-board-wrap">
-      <div class="dp-board" [class.dp-board--upper]="dpState.tableShape === 'upper-triangle'" [style.grid-template-columns]="gridCols()">
-        <div class="dp-corner">{{ dpState.dimensionsLabel }}</div>
-
-        @for (colHeader of dpState.colHeaders; track colHeader.id) {
-          <div class="{{ headerClass(colHeader.status) }}">
-            <span>{{ colHeader.label }}</span>
-            @if (colHeader.metaLabel) {
-              <small>{{ colHeader.metaLabel }}</small>
+      <div class="dp-shell__rails">
+        <div class="focus-pill">
+          <span class="focus-pill__label">{{ dpState.primaryItemsLabel }}</span>
+          <div class="focus-pill__chips">
+            @if (dpState.primaryItems.length === 0) {
+              <span class="focus-pill__empty">none yet</span>
+            } @else {
+              @for (item of dpState.primaryItems; track item) {
+                <span class="focus-pill__chip">{{ item }}</span>
+              }
             }
+          </div>
+        </div>
+        <div class="focus-pill">
+          <span class="focus-pill__label">{{ dpState.secondaryItemsLabel }}</span>
+          <div class="focus-pill__chips">
+            @if (dpState.secondaryItems.length === 0) {
+              <span class="focus-pill__empty">none yet</span>
+            } @else {
+              @for (item of dpState.secondaryItems; track item) {
+                <span class="focus-pill__chip focus-pill__chip--soft">{{ item }}</span>
+              }
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="dp-shell__insights">
+        @for (insight of dpState.insights; track insight.label) {
+          <div class="{{ insightClass(insight.tone) }}">
+            <span class="insight-card__label">{{ insight.label }}</span>
+            <span class="insight-card__value">{{ insight.value }}</span>
           </div>
         }
+      </div>
 
-        @for (rowHeader of dpState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
-          <div class="{{ headerClass(rowHeader.status) }}">
-            <span>{{ rowHeader.label }}</span>
-            @if (rowHeader.metaLabel) {
-              <small>{{ rowHeader.metaLabel }}</small>
-            }
-          </div>
+      <div class="dp-board-wrap">
+        <div
+          class="dp-board"
+          [class.dp-board--upper]="dpState.tableShape === 'upper-triangle'"
+          [style.grid-template-columns]="gridCols()"
+        >
+          <div class="dp-corner">{{ dpState.dimensionsLabel }}</div>
 
-          @for (cell of rowCells(rowIndex); track cell.id) {
-            <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
-              <span class="dp-cell__value">{{ cell.valueLabel }}</span>
-              @if (cell.metaLabel) {
-                <span class="dp-cell__meta">{{ cell.metaLabel }}</span>
+          @for (colHeader of dpState.colHeaders; track colHeader.id) {
+            <div class="{{ headerClass(colHeader.status) }}">
+              <span>{{ colHeader.label }}</span>
+              @if (colHeader.metaLabel) {
+                <small>{{ colHeader.metaLabel }}</small>
               }
             </div>
           }
-        }
+
+          @for (rowHeader of dpState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
+            <div class="{{ headerClass(rowHeader.status) }}">
+              <span>{{ rowHeader.label }}</span>
+              @if (rowHeader.metaLabel) {
+                <small>{{ rowHeader.metaLabel }}</small>
+              }
+            </div>
+
+            @for (cell of rowCells(rowIndex); track cell.id) {
+              <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
+                <span class="dp-cell__value">{{ cell.valueLabel }}</span>
+                @if (cell.metaLabel) {
+                  <span class="dp-cell__meta">{{ cell.metaLabel }}</span>
+                }
+              </div>
+            }
+          }
+        </div>
       </div>
-    </div>
+    }
   } @else {
     <div class="dp-shell__empty">No DP trace available for this step.</div>
   }
