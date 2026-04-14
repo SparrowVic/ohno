@@ -26,21 +26,21 @@ const PARTICLE_COUNT: Record<NavbarTabDeckVariant, number> = {
   aura: 0,
   gooey: 15,
   fusion: 10,
-  pill: 12,
+  pill: 5,
 };
 
 const PARTICLE_DISTANCES: Record<NavbarTabDeckVariant, readonly [number, number]> = {
   aura: [0, 0],
   gooey: [90, 10],
   fusion: [72, 14],
-  pill: [80, 12],
+  pill: [54, 8],
 };
 
 const PARTICLE_RADIUS: Record<NavbarTabDeckVariant, number> = {
   aura: 0,
   gooey: 100,
   fusion: 72,
-  pill: 88,
+  pill: 56,
 };
 
 interface ParticleConfig {

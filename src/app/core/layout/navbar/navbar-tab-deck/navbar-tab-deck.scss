@@ -447,79 +447,64 @@
 /* ─── Pill Variant ─────────────────────────────────────────────────────────── */
 
 .tab-deck--pill {
-  /*
-   * Warm cream fill — matches --chrome-accent-strong (#eadbcf).
-   * When the circle fully expands it turns the tab into a solid warm pill,
-   * exactly like the filled active tab in the React PillNav reference.
-   */
-  --pill-fill: rgba(234, 218, 204, 0.98);
-  --pill-fill-text: #1a0d07;
+  --pill-fill:
+    linear-gradient(
+      180deg,
+      rgba(var(--chrome-accent-rgb), 0.28),
+      rgba(var(--chrome-accent-rgb), 0.16)
+    );
+  --pill-fill-text: #faf7ff;
   --nav-color-1: rgba(var(--chrome-accent-rgb), 0.9);
-  --nav-color-2: rgba(244, 231, 217, 0.88);
-  --nav-color-3: rgba(220, 185, 155, 0.84);
-  --nav-color-4: rgba(255, 248, 240, 0.9);
+  --nav-color-2: rgba(229, 223, 255, 0.88);
+  --nav-color-3: rgba(182, 169, 255, 0.84);
+  --nav-color-4: rgba(255, 255, 255, 0.9);
   min-width: unset;
 }
 
-/* ── Container: frosted glass pill matching the React reference shape ── */
 .tab-deck--pill .tab-deck__list {
   gap: 3px;
-  padding: 5px;
+  padding: 4px;
   border-radius: 999px;
-  /*
-   * rgba(255,255,255,0.07) creates a visible surface on any dark bg —
-   * the page bg is #090a0d, so a white overlay is the only reliable way
-   * to make the container distinct without blending into the page color.
-   */
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  border: 1.5px solid rgba(var(--chrome-accent-rgb), 0.5);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.01)),
+    rgba(9, 12, 18, 0.52);
+  backdrop-filter: blur(16px) saturate(1.08);
+  -webkit-backdrop-filter: blur(16px) saturate(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 0 20px rgba(var(--chrome-accent-rgb), 0.12),
-    0 16px 36px rgba(0, 0, 0, 0.32);
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 10px 22px rgba(0, 0, 0, 0.16),
+    0 0 0 1px rgba(var(--chrome-accent-rgb), 0.05);
 }
 
-/* ── Tab items ── */
 .tab-deck--pill .tab-deck__item {
   position: relative;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.64);
   isolation: isolate;
   transition: color 0.24s ease;
 }
 
+.tab-deck--pill .tab-deck__item:hover {
+  color: rgba(255, 255, 255, 0.86);
+}
+
 .tab-deck--pill .tab-deck__item a {
   position: relative;
-  overflow: hidden; /* clips the sliding labels so they don't escape the pill */
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0 22px;
+  min-height: 36px;
+  padding: 0 18px;
   border-radius: inherit;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   white-space: nowrap;
   color: inherit;
 }
 
-/*
- * ── Hover circle: grows from bottom-center upward ──
- *
- * The React PillNav uses GSAP to grow an inscribed circle from the point
- * where it's tangent to the pill's bottom edge (bottom-center).
- *
- * CSS equivalent using clip-path:
- *   - The element is pill-shaped (inset:0, border-radius:inherit) so the
- *     background always looks like a perfect pill — no edge artifacts.
- *   - clip-path: circle(r at 50% 100%) reveals a circle centered at the
- *     pill's bottom-center that expands until it covers the full pill.
- *   - This is geometrically identical to the GSAP approach without any of
- *     the "circle bottom leaking through the pill edge" problem.
- */
 .tab-deck--pill .tab-deck__hover-circle {
   position: absolute;
   inset: 0;
@@ -530,15 +515,16 @@
   pointer-events: none;
   z-index: 0;
   will-change: clip-path;
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--chrome-accent-rgb), 0.18),
+    0 8px 16px rgba(var(--chrome-accent-rgb), 0.12);
 }
 
-/* Both hover and active show the fully revealed warm cream pill */
 .tab-deck--pill .tab-deck__item:hover .tab-deck__hover-circle,
 .tab-deck--pill .tab-deck__item.is-active .tab-deck__hover-circle {
   clip-path: circle(150% at 50% 100%);
 }
 
-/* ── Label stack: primary slides up, dark label enters from below ── */
 .tab-deck--pill .tab-deck__label-stack {
   position: relative;
   display: inline-block;
@@ -556,7 +542,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  color: var(--pill-fill-text);   /* dark on warm cream circle */
+  color: var(--pill-fill-text);
   transform: translateY(4em);
   opacity: 0;
   transition:
@@ -576,12 +562,10 @@
   opacity: 1;
 }
 
-/* Active tab: subtle lift + warm glow */
 .tab-deck--pill .tab-deck__item.is-active {
-  filter: drop-shadow(0 3px 10px rgba(var(--chrome-accent-rgb), 0.28));
+  filter: drop-shadow(0 4px 12px rgba(var(--chrome-accent-rgb), 0.14));
 }
 
-/* ── Effect spans: kept as particle hosts, no gooey visuals ── */
 .tab-deck--pill .tab-deck__effect--filter {
   z-index: 10;
   filter: none;
@@ -634,6 +618,6 @@
   }
 
   .tab-deck--pill .tab-deck__list {
-    padding: 8px 10px;
+    padding: 6px 8px;
   }
 }

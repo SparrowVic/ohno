@@ -20,8 +20,4 @@ export class Navbar {
   readonly activeTabId = this.navigation.activeTabId;
   readonly searchPlaceholder = translateSignal(I18N_KEY.navbar.searchPlaceholder);
   readonly tabDeckVariant: NavbarTabDeckVariant = 'pill';
-
-  toggleSidebar(): void {
-    this.navigation.toggleCollapsed();
-  }
 }

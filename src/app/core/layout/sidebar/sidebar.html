@@ -1,66 +1,97 @@
 <aside class="sidebar">
-  <div class="sidebar__intro">
-    <span class="sidebar__eyebrow">Knowledge Map</span>
-    <strong class="sidebar__headline">{{ catalogCount() }}</strong>
-    <span class="sidebar__caption">indexed entries</span>
+  <div class="sidebar__masthead">
+    <div class="sidebar__brand">
+      <span class="sidebar__brand-mark" aria-hidden="true">O</span>
+      <div class="sidebar__brand-copy">
+        <span class="sidebar__eyebrow">Core Navigator</span>
+        <strong class="sidebar__title">Knowledge Map</strong>
+      </div>
+    </div>
+    <div class="sidebar__meta">
+      <strong class="sidebar__stat">{{ catalogCount() }}</strong>
+      <span class="sidebar__caption">indexed entries</span>
+    </div>
   </div>
 
-  @for (group of groups(); track group.id) {
-    @if (group.items.length === 1) {
-      <div class="sidebar__solo">
-        <button
-          type="button"
-          class="sidebar__solo-btn"
-          [class.sidebar__solo-btn--active]="isActive(group.id, group.items[0].id)"
-          [attr.title]="group.items[0].label"
-          (click)="selectItem(group.id, group.items[0].id)"
-        >
-          <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
-          <span class="sidebar__solo-label">{{ group.items[0].label }}</span>
-          <span class="sidebar__count">{{ group.items[0].count }}</span>
-        </button>
-      </div>
-    } @else {
-      <div class="sidebar__group" [class.sidebar__group--expanded]="isExpanded(group.id)">
-        <button
-          type="button"
-          class="sidebar__group-header"
-          [class.sidebar__group-header--active]="isGroupActive(group.id)"
-          [attr.title]="group.label"
-          (click)="toggleGroup(group.id)"
-        >
-          <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
-          <span class="sidebar__group-label">{{ group.label }}</span>
-          <span class="sidebar__count">{{ getCategoryCount(group.id) }}</span>
-          <svg
-            class="sidebar__chevron"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="4,6 8,10 12,6" />
-          </svg>
-        </button>
+  <div class="sidebar__section-head">
+    <span class="sidebar__section-kicker">Browse Library</span>
+    <span class="sidebar__section-rule" aria-hidden="true"></span>
+  </div>
 
-        <div class="sidebar__items">
-          <div class="sidebar__items-inner">
-            @for (item of group.items; track item.id) {
-              <button
-                type="button"
-                class="sidebar__item"
-                [class.sidebar__item--active]="isActive(group.id, item.id)"
-                (click)="selectItem(group.id, item.id)"
-              >
-                <span class="sidebar__item-label">{{ item.label }}</span>
-                <span class="sidebar__count">{{ item.count }}</span>
-              </button>
-            }
+  <div class="sidebar__stack">
+    @for (group of groups(); track group.id) {
+      @if (group.items.length === 1) {
+        <div
+          class="sidebar__solo"
+          [class.sidebar__solo--active]="isActive(group.id, group.items[0].id)"
+        >
+          <button
+            type="button"
+            class="sidebar__solo-btn"
+            [attr.title]="group.items[0].label"
+            (click)="selectItem(group.id, group.items[0].id)"
+          >
+            <span class="sidebar__icon-shell">
+              <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
+            </span>
+            <span class="sidebar__solo-copy">
+              <span class="sidebar__solo-label">{{ group.items[0].label }}</span>
+              <span class="sidebar__solo-meta">{{ group.label }}</span>
+            </span>
+            <span class="sidebar__count">{{ group.items[0].count }}</span>
+          </button>
+        </div>
+      } @else {
+        <div
+          class="sidebar__group"
+          [class.sidebar__group--expanded]="isExpanded(group.id)"
+          [class.sidebar__group--active]="isGroupActive(group.id)"
+        >
+          <button
+            type="button"
+            class="sidebar__group-header"
+            [attr.title]="group.label"
+            (click)="toggleGroup(group.id)"
+          >
+            <span class="sidebar__icon-shell">
+              <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
+            </span>
+            <span class="sidebar__group-copy">
+              <span class="sidebar__group-label">{{ group.label }}</span>
+              <span class="sidebar__group-meta">{{ group.items.length }} views</span>
+            </span>
+            <span class="sidebar__count">{{ getCategoryCount(group.id) }}</span>
+            <svg
+              class="sidebar__chevron"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="4,6 8,10 12,6" />
+            </svg>
+          </button>
+
+          <div class="sidebar__items">
+            <div class="sidebar__items-inner">
+              @for (item of group.items; track item.id) {
+                <button
+                  type="button"
+                  class="sidebar__item"
+                  [class.sidebar__item--active]="isActive(group.id, item.id)"
+                  (click)="selectItem(group.id, item.id)"
+                >
+                  <span class="sidebar__item-bullet" aria-hidden="true"></span>
+                  <span class="sidebar__item-label">{{ item.label }}</span>
+                  <span class="sidebar__count">{{ item.count }}</span>
+                </button>
+              }
+            </div>
           </div>
         </div>
-      </div>
+      }
     }
-  }
+  </div>
 </aside>

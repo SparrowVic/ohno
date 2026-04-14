@@ -33,15 +33,11 @@ const GROUP_ICON_MAP: Record<string, NavIconName> = {
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '[class.sidebar-host--collapsed]': 'collapsed()',
-  },
 })
 export class Sidebar {
   private readonly navigation = inject(NavigationService);
 
   readonly groups = this.navigation.sidebarGroups;
-  readonly collapsed = this.navigation.collapsed;
   private readonly activeItemKey = this.navigation.activeItemKey;
 
   readonly isEmpty = computed(() => this.groups().length === 0);
@@ -80,12 +76,6 @@ export class Sidebar {
   }
 
   toggleGroup(groupId: string): void {
-    if (this.collapsed()) {
-      this.navigation.toggleCollapsed();
-      this.expandedGroupIds.update((ids) => new Set([...ids, groupId]));
-      return;
-    }
-
     this.expandedGroupIds.update((ids) => {
       const next = new Set(ids);
       if (next.has(groupId)) {
