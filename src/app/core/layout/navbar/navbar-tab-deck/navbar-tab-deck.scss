@@ -464,7 +464,7 @@
 /* ── Container: frosted glass pill matching the React reference shape ── */
 .tab-deck--pill .tab-deck__list {
   gap: 3px;
-  padding: 4px;
+  padding: 5px;
   border-radius: 999px;
   /*
    * rgba(255,255,255,0.07) creates a visible surface on any dark bg —
@@ -491,6 +491,7 @@
 
 .tab-deck--pill .tab-deck__item a {
   position: relative;
+  overflow: hidden; /* clips the sliding labels so they don't escape the pill */
   display: inline-flex;
   align-items: center;
   justify-content: center;
