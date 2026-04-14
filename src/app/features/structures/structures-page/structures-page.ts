@@ -16,6 +16,12 @@ interface PillOption {
   readonly label: string;
 }
 
+interface PageStat {
+  readonly value: string;
+  readonly label: string;
+  readonly tone: 'accent' | 'success' | 'neutral';
+}
+
 @Component({
   selector: 'app-structures-page',
   imports: [StructureCard],
@@ -56,6 +62,69 @@ export class StructuresPage {
   });
 
   readonly totalItems = computed(() => this.filteredItems().length);
+  readonly implementedCount = computed(
+    () => this.filteredItems().filter((item) => item.implemented).length,
+  );
+  readonly upcomingCount = computed(() => this.totalItems() - this.implementedCount());
+  readonly trackCount = computed(
+    () => new Set(this.filteredItems().map((item) => item.subcategory || item.category)).size,
+  );
+  readonly heroEyebrow = computed(() =>
+    this.language.activeLang() === APP_LANG.EN ? 'Structure Library' : 'Biblioteka struktur',
+  );
+  readonly heroDescription = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'A cleaner overview of foundational structures, grouped by learning track and ready for future interactive modules.'
+      : 'Czytelniejszy przegląd struktur bazowych, pogrupowanych w ścieżki nauki i gotowych pod przyszłe interaktywne moduły.',
+  );
+  readonly filterSummary = computed(() => {
+    const lang = this.language.activeLang();
+    const difficulty = this.activeDifficulty();
+
+    if (difficulty === 'all') {
+      return lang === APP_LANG.EN ? 'All difficulty levels' : 'Wszystkie poziomy trudności';
+    }
+
+    const label = getDifficultyLabel(difficulty, lang).toLowerCase();
+    return lang === APP_LANG.EN ? `Filtered by ${label}` : `Filtr: ${label}`;
+  });
+  readonly availabilitySummary = computed(() => {
+    const lang = this.language.activeLang();
+    return lang === APP_LANG.EN
+      ? `${this.implementedCount()} live • ${this.upcomingCount()} roadmap`
+      : `${this.implementedCount()} gotowych • ${this.upcomingCount()} w roadmapie`;
+  });
+  readonly resultsLabel = computed(() => {
+    const lang = this.language.activeLang();
+    return lang === APP_LANG.EN
+      ? `${this.totalItems()} structures in focus`
+      : `${this.totalItems()} struktur w bieżącym widoku`;
+  });
+  readonly resultsSubtitle = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'Use the difficulty pills to rebalance the library while staying inside the current topic.'
+      : 'Zmieniaj poziom trudności, pozostając w obrębie aktualnego obszaru biblioteki.',
+  );
+  readonly stats = computed<readonly PageStat[]>(() => {
+    const lang = this.language.activeLang();
+    return [
+      {
+        value: String(this.totalItems()),
+        label: lang === APP_LANG.EN ? 'Visible now' : 'Widoczne teraz',
+        tone: 'accent',
+      },
+      {
+        value: String(this.trackCount()),
+        label: lang === APP_LANG.EN ? 'Tracks' : 'Ścieżki',
+        tone: 'neutral',
+      },
+      {
+        value: String(this.upcomingCount()),
+        label: lang === APP_LANG.EN ? 'Roadmap' : 'Roadmap',
+        tone: 'success',
+      },
+    ];
+  });
 
   selectDifficulty(value: DifficultyFilter): void {
     this.difficultyFilter.set(value);

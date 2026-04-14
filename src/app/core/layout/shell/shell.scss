@@ -2,14 +2,31 @@
   display: block;
   height: 100%;
   min-height: 0;
-  background: var(--app-bg);
+  background: transparent;
 }
 
 .shell {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
   height: 100%;
   min-height: 0;
+  padding: 14px;
+  isolation: isolate;
+}
+
+.shell::before {
+  content: '';
+  position: fixed;
+  inset: -20vh -12vw auto auto;
+  width: min(34vw, 380px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 213, 110, 0.1) 0%, transparent 72%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .shell__navbar {
@@ -17,22 +34,50 @@
 }
 
 .shell__body {
-  display: flex;
-  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
   min-height: 0;
 }
 
 .shell__sidebar {
   flex-shrink: 0;
+  min-height: 0;
 }
 
 .shell__main {
-  flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding: 24px;
+  padding: 2px 2px 22px 0;
   background: var(--app-bg);
   overflow: auto;
+  background: transparent;
+}
+
+@media (max-width: 1080px) {
+  .shell {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .shell__body {
+    gap: 12px;
+  }
+
+  .shell__main {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .shell {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .shell__body {
+    gap: 10px;
+  }
 }

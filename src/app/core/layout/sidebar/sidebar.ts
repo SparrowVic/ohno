@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 
 import { NavigationService } from '../../services/navigation-service';
 import { NavIcon, NavIconName } from './nav-icon';
@@ -37,6 +45,7 @@ export class Sidebar {
   private readonly activeItemKey = this.navigation.activeItemKey;
 
   readonly isEmpty = computed(() => this.groups().length === 0);
+  readonly catalogCount = computed(() => this.groups()[0]?.items[0]?.count ?? 0);
 
   private readonly expandedGroupIds = signal<Set<string>>(new Set(['overview', 'catalog']));
 
@@ -71,6 +80,12 @@ export class Sidebar {
   }
 
   toggleGroup(groupId: string): void {
+    if (this.collapsed()) {
+      this.navigation.toggleCollapsed();
+      this.expandedGroupIds.update((ids) => new Set([...ids, groupId]));
+      return;
+    }
+
     this.expandedGroupIds.update((ids) => {
       const next = new Set(ids);
       if (next.has(groupId)) {

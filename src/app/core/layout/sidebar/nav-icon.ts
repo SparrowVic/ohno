@@ -58,7 +58,7 @@ const ICON_MAP: Record<NavIconName, IconDefinition> = {
         justify-content: center;
         width: 16px;
         height: 16px;
-        font-size: 13px;
+        font-size: 12px;
         flex-shrink: 0;
       }
     `,

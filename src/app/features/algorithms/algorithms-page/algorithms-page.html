@@ -1,9 +1,31 @@
 <section class="page">
-  <header class="page__header">
-    <div class="page__title-wrap">
+  <header class="page__hero">
+    <div class="page__hero-copy">
+      <span class="page__eyebrow">{{ heroEyebrow() }}</span>
       <h1 class="page__title">{{ title() }}</h1>
-      <p class="page__meta">{{ totalItems() }} items</p>
+      <p class="page__lede">{{ heroDescription() }}</p>
+      <div class="page__hero-meta">
+        <span class="page__meta-pill">{{ filterSummary() }}</span>
+        <span class="page__meta-pill">{{ availabilitySummary() }}</span>
+      </div>
     </div>
+
+    <div class="page__stats">
+      @for (stat of stats(); track stat.label) {
+        <article class="page__stat page__stat--{{ stat.tone }}">
+          <span class="page__stat-value">{{ stat.value }}</span>
+          <span class="page__stat-label">{{ stat.label }}</span>
+        </article>
+      }
+    </div>
+  </header>
+
+  <section class="page__controls">
+    <div class="page__results">
+      <p class="page__results-label">{{ resultsLabel() }}</p>
+      <p class="page__results-subtitle">{{ resultsSubtitle() }}</p>
+    </div>
+
     <div class="filter-pills">
       @for (pill of pills(); track pill.value) {
         <button
@@ -16,7 +38,7 @@
         </button>
       }
     </div>
-  </header>
+  </section>
 
   @if (filteredItems().length > 0) {
     <div class="cards-grid">

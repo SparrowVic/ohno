@@ -1,41 +1,105 @@
 @if (algorithm().implemented) {
   <a class="card" [routerLink]="['/algorithms', algorithm().id]">
-    <div class="card__top">
-      <span class="card__name">{{ algorithm().name }}</span>
-      <span class="badge badge--{{ algorithm().difficulty }}">
-        {{ difficultyLabel() }}
-      </span>
+    <div class="card__eyebrow">
+      <span class="card__section">{{ facetLabel() }}</span>
+      <span class="card__availability card__availability--live">{{ statusLabel() }}</span>
     </div>
 
-    <p class="card__desc">{{ algorithm().description }}</p>
+    <div class="card__title-block">
+      <div class="card__title-row">
+        <h2 class="card__name">{{ algorithm().name }}</h2>
+        <span class="badge badge--{{ algorithm().difficulty }}">
+          {{ difficultyLabel() }}
+        </span>
+      </div>
+      <p class="card__desc">{{ algorithm().description }}</p>
+    </div>
 
-    <div class="card__preview" aria-hidden="true"></div>
+    <div class="card__preview" aria-hidden="true">
+      <div class="card__preview-bars">
+        @for (bar of previewBars(); track $index) {
+          <span class="card__preview-bar" [style.height.%]="bar"></span>
+        }
+      </div>
 
-    <div class="card__tags">
-      @for (tag of algorithm().tags; track tag) {
-        <span class="tag">{{ tag }}</span>
+      <div class="card__preview-meta">
+        <span class="card__preview-chip">{{ previewLabel() }}</span>
+        <span class="card__preview-hint">{{ previewHint() }}</span>
+      </div>
+    </div>
+
+    <dl class="card__metrics">
+      @for (metric of metrics(); track metric.label) {
+        <div class="card__metric">
+          <dt>{{ metric.label }}</dt>
+          <dd>{{ metric.value }}</dd>
+        </div>
       }
+    </dl>
+
+    <div class="card__footer">
+      <div class="card__tags">
+        @for (tag of displayTags(); track tag) {
+          <span class="tag">{{ tag }}</span>
+        }
+        @if (hiddenTagsCount() > 0) {
+          <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
+        }
+      </div>
+
+      <span class="card__cta">{{ ctaLabel() }}</span>
     </div>
   </a>
 } @else {
   <article class="card card--disabled" aria-disabled="true">
-    <div class="card__top">
-      <span class="card__name">{{ algorithm().name }}</span>
-      <span class="badge badge--{{ algorithm().difficulty }}">
-        {{ difficultyLabel() }}
-      </span>
+    <div class="card__eyebrow">
+      <span class="card__section">{{ facetLabel() }}</span>
+      <span class="card__availability card__availability--planned">{{ statusLabel() }}</span>
     </div>
 
-    <p class="card__desc">{{ algorithm().description }}</p>
+    <div class="card__title-block">
+      <div class="card__title-row">
+        <h2 class="card__name">{{ algorithm().name }}</h2>
+        <span class="badge badge--{{ algorithm().difficulty }}">
+          {{ difficultyLabel() }}
+        </span>
+      </div>
+      <p class="card__desc">{{ algorithm().description }}</p>
+    </div>
 
     <div class="card__preview card__preview--disabled" aria-hidden="true">
-      <span class="card__status">{{ statusLabel() }}</span>
+      <div class="card__preview-bars">
+        @for (bar of previewBars(); track $index) {
+          <span class="card__preview-bar" [style.height.%]="bar"></span>
+        }
+      </div>
+
+      <div class="card__preview-meta">
+        <span class="card__preview-chip">{{ previewLabel() }}</span>
+        <span class="card__preview-hint">{{ previewHint() }}</span>
+      </div>
     </div>
 
-    <div class="card__tags">
-      @for (tag of algorithm().tags; track tag) {
-        <span class="tag">{{ tag }}</span>
+    <dl class="card__metrics">
+      @for (metric of metrics(); track metric.label) {
+        <div class="card__metric">
+          <dt>{{ metric.label }}</dt>
+          <dd>{{ metric.value }}</dd>
+        </div>
       }
+    </dl>
+
+    <div class="card__footer">
+      <div class="card__tags">
+        @for (tag of displayTags(); track tag) {
+          <span class="tag">{{ tag }}</span>
+        }
+        @if (hiddenTagsCount() > 0) {
+          <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
+        }
+      </div>
+
+      <span class="card__cta">{{ ctaLabel() }}</span>
     </div>
   </article>
 }

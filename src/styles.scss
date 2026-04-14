@@ -1,39 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --app-bg: #0f1117;
-  --surface: #1a1c25;
-  --surface-hover: #22242f;
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --text-primary: #e8e9ed;
-  --text-secondary: #8b8d97;
-  --text-tertiary: #5a5c66;
-  --accent: #7c6ef0;
-  --accent-dim: rgba(124, 110, 240, 0.12);
-  --accent-glow: rgba(124, 110, 240, 0.25);
-  --accent-teal: #2dd4bf;
-  --accent-teal-dim: rgba(45, 212, 191, 0.12);
-  --easy: #3ecf8e;
-  --easy-bg: rgba(62, 207, 142, 0.1);
-  --medium: #f0b429;
-  --medium-bg: rgba(240, 180, 41, 0.1);
-  --hard: #e24b4a;
-  --hard-bg: rgba(226, 75, 74, 0.1);
-  --ultra-hard: #ff5db1;
-  --ultra-hard-bg: rgba(255, 93, 177, 0.12);
-  --code-bg: #141620;
-  --line-highlight: rgba(124, 110, 240, 0.08);
-  --swap-color: #e24b4a;
-  --sorted-color: #3ecf8e;
-  --compare-color: #f0b429;
+  color-scheme: dark;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --font-mono: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  --app-bg: #090909;
+  --app-bg-rgb: 9 9 9;
+  --surface: rgba(18, 18, 18, 0.86);
+  --surface-raised: rgba(24, 24, 25, 0.94);
+  --surface-hover: rgba(30, 31, 33, 0.98);
+  --surface-strong: #202124;
+  --surface-soft: rgba(191, 215, 128, 0.08);
+  --chrome-navbar-bg: rgba(18, 19, 20, 0.92);
+  --chrome-sidebar-bg: rgba(14, 15, 16, 0.94);
+  --panel-bg: rgba(22, 23, 25, 0.88);
+  --panel-bg-strong: rgba(26, 27, 30, 0.94);
+  --card-bg: rgba(24, 25, 27, 0.9);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --text-primary: #f4f3ee;
+  --text-secondary: #b6b5ad;
+  --text-tertiary: #84837d;
+  --text-quaternary: #5d5d58;
+  --accent: #b8d56e;
+  --accent-strong: #d7eaa3;
+  --accent-dim: rgba(184, 213, 110, 0.14);
+  --accent-glow: rgba(184, 213, 110, 0.24);
+  --accent-soft: rgba(184, 213, 110, 0.1);
+  --easy: #78d89f;
+  --easy-bg: rgba(120, 216, 159, 0.12);
+  --medium: #d4b56d;
+  --medium-bg: rgba(212, 181, 109, 0.12);
+  --hard: #ef8c8c;
+  --hard-bg: rgba(239, 140, 140, 0.12);
+  --ultra-hard: #ca92db;
+  --ultra-hard-bg: rgba(202, 146, 219, 0.14);
+  --code-bg: rgba(13, 13, 14, 0.96);
+  --line-highlight: rgba(184, 213, 110, 0.08);
+  --swap-color: #ff7a7a;
+  --sorted-color: #78d89f;
+  --compare-color: #d4b56d;
+  --panel-shadow: 0 22px 54px rgba(0, 0, 0, 0.34);
+  --panel-shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.22);
 
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 10px;
-  --radius-2xl: 12px;
+  --font-sans: 'Sora', 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, monospace;
+
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
 }
 
 *,
@@ -53,10 +70,15 @@ body {
   background: var(--app-bg);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image:
+    radial-gradient(circle at top left, rgba(184, 213, 110, 0.07), transparent 26%),
+    radial-gradient(circle at 84% 8%, rgba(255, 255, 255, 0.05), transparent 22%),
+    radial-gradient(circle at 50% 120%, rgba(72, 72, 72, 0.16), transparent 30%),
+    linear-gradient(180deg, #121212 0%, #090909 100%);
 }
 
 button {
@@ -71,7 +93,33 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 2px solid rgba(215, 234, 163, 0.9);
+  outline-offset: 3px;
   border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: rgba(184, 213, 110, 0.28);
+  color: #f7f7f2;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.24);
+  background-clip: padding-box;
 }

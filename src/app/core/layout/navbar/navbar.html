@@ -6,37 +6,45 @@
       aria-label="Toggle sidebar"
       (click)="toggleSidebar()"
     >
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+      >
         <line x1="3" y1="4" x2="13" y2="4" />
         <line x1="3" y1="8" x2="13" y2="8" />
         <line x1="3" y1="12" x2="13" y2="12" />
       </svg>
     </button>
-    <div class="logo">
+    <a class="logo" routerLink="/algorithms">
       <div class="logo__icon" aria-hidden="true">
         <span class="logo__mark">O<sup>h</sup></span>
       </div>
-      <span class="logo__text">O(no)</span>
-    </div>
+      <div class="logo__copy">
+        <span class="logo__eyebrow">Visual Algorithm Lab</span>
+        <span class="logo__text">O(no)</span>
+      </div>
+    </a>
   </div>
 
   <div class="navbar__tabs">
     @for (tab of tabs(); track tab.id) {
-      <a
-        class="nav-tab"
-        [routerLink]="tab.path"
-        routerLinkActive="nav-tab--active"
-      >
+      <a class="nav-tab" [routerLink]="tab.path" routerLinkActive="nav-tab--active">
         {{ tab.label }}
       </a>
     }
   </div>
 
   <div class="navbar__right">
+    <button type="button" class="command-trigger" aria-label="Open search and command palette">
+      <span class="command-trigger__label">{{ searchPlaceholder() }}</span>
+      <span class="command-trigger__hint" aria-hidden="true">
+        <kbd class="command-trigger__kbd">/</kbd>
+        <kbd class="command-trigger__kbd">K</kbd>
+      </span>
+    </button>
     <app-language-switcher />
-    <div class="search-box">
-      <span class="search-box__placeholder">{{ searchPlaceholder() }}</span>
-      <kbd class="search-box__kbd">/</kbd>
-    </div>
   </div>
 </nav>

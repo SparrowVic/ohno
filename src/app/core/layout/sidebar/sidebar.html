@@ -1,4 +1,10 @@
 <aside class="sidebar">
+  <div class="sidebar__intro">
+    <span class="sidebar__eyebrow">Knowledge Map</span>
+    <strong class="sidebar__headline">{{ catalogCount() }}</strong>
+    <span class="sidebar__caption">indexed entries</span>
+  </div>
+
   @for (group of groups(); track group.id) {
     @if (group.items.length === 1) {
       <div class="sidebar__solo">
@@ -6,6 +12,7 @@
           type="button"
           class="sidebar__solo-btn"
           [class.sidebar__solo-btn--active]="isActive(group.id, group.items[0].id)"
+          [attr.title]="group.items[0].label"
           (click)="selectItem(group.id, group.items[0].id)"
         >
           <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
@@ -19,13 +26,22 @@
           type="button"
           class="sidebar__group-header"
           [class.sidebar__group-header--active]="isGroupActive(group.id)"
+          [attr.title]="group.label"
           (click)="toggleGroup(group.id)"
         >
           <app-nav-icon class="sidebar__icon" [name]="getGroupIcon(group.id)" />
           <span class="sidebar__group-label">{{ group.label }}</span>
           <span class="sidebar__count">{{ getCategoryCount(group.id) }}</span>
-          <svg class="sidebar__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="4,6 8,10 12,6"/>
+          <svg
+            class="sidebar__chevron"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="4,6 8,10 12,6" />
           </svg>
         </button>
 
