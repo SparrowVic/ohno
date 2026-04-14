@@ -39,6 +39,8 @@ export class LabSelect<
   readonly label = input.required<string>();
   readonly options = input<readonly LabSelectOption<T>[]>([]);
   readonly placeholder = input<string>('Select');
+  readonly compact = input(false);
+  readonly chrome = input(false);
 
   readonly open = signal(false);
   readonly selectedOption = computed(() => {

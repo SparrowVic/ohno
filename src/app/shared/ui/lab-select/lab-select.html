@@ -1,14 +1,23 @@
-<div class="select" [class.select--open]="open()" [class.select--disabled]="disabled()">
+<div
+  class="select"
+  [class.select--open]="open()"
+  [class.select--disabled]="disabled()"
+  [class.select--compact]="compact()"
+  [class.select--chrome]="chrome()"
+>
   <button
     type="button"
     class="select__trigger"
     [attr.aria-expanded]="open()"
+    [attr.aria-label]="label() || placeholder()"
     [disabled]="disabled()"
     (click)="toggleOpen()"
     (keydown)="onTriggerKeydown($event)"
   >
     <span class="select__copy">
-      <span class="select__label">{{ label() }}</span>
+      @if (label()) {
+        <span class="select__label">{{ label() }}</span>
+      }
       <span class="select__value">{{ selectedOption()?.label ?? placeholder() }}</span>
     </span>
     <span class="select__chevron" aria-hidden="true">
