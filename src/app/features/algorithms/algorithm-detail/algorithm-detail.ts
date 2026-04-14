@@ -45,6 +45,7 @@ import { eulerPathCircuitGenerator } from '../algorithms/euler-path-circuit';
 import { fibonacciDpGenerator } from '../algorithms/fibonacci-dp';
 import { floydWarshallGenerator } from '../algorithms/floyd-warshall';
 import { floodFillGenerator } from '../algorithms/flood-fill';
+import { huffmanCodingGenerator } from '../algorithms/huffman-coding';
 import { halfPlaneIntersectionGenerator, HalfPlaneIntersectionScenario } from '../algorithms/half-plane-intersection';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
@@ -67,6 +68,7 @@ import { radixSortGenerator } from '../algorithms/radix-sort';
 import { primsMstGenerator } from '../algorithms/prims-mst';
 import { profileDpGenerator } from '../algorithms/profile-dp';
 import { rabinKarpGenerator } from '../algorithms/rabin-karp';
+import { runLengthEncodingGenerator } from '../algorithms/run-length-encoding';
 import { regexMatchingDpGenerator } from '../algorithms/regex-matching-dp';
 import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
@@ -169,9 +171,11 @@ import { StringPresetOption, StringTraceState } from '../models/string';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
+import { HUFFMAN_CODE } from '../data/huffman-coding-code';
 import { CONVEX_HULL_CODE } from '../data/convex-hull-code';
 import { KOSARAJU_SCC_CODE } from '../data/kosaraju-scc-code';
 import { DELAUNAY_TRIANGULATION_CODE } from '../data/delaunay-triangulation-code';
+import { RLE_CODE } from '../data/run-length-encoding-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
@@ -282,19 +286,25 @@ import {
 } from '../utils/network-scenarios';
 import {
   BWT_PRESETS,
+  HUFFMAN_PRESETS,
   KMP_PRESETS,
   MANACHER_PRESETS,
   RABIN_KARP_PRESETS,
+  RLE_PRESETS,
   Z_ALGORITHM_PRESETS,
   BurrowsWheelerScenario,
+  HuffmanScenario,
   KmpScenario,
   ManacherScenario,
   RabinKarpScenario,
+  RleScenario,
   ZAlgorithmScenario,
   createBurrowsWheelerScenario,
+  createHuffmanScenario,
   createKmpScenario,
   createManacherScenario,
   createRabinKarpScenario,
+  createRleScenario,
   createZAlgorithmScenario,
 } from '../utils/string-scenarios';
 import { LegendBar } from '../components/legend-bar/legend-bar';
@@ -1440,6 +1450,28 @@ const BURROWS_WHEELER_VIEW_CONFIG =
     randomizeLabel: 'New BWT matrix',
   });
 
+const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
+  codeLines: RLE_CODE,
+  createScenario: (size, presetId) => createRleScenario(size, presetId),
+  generator: runLengthEncodingGenerator,
+  presetOptions: RLE_PRESETS,
+  sizeOptions: [10, 16, 22],
+  defaultSize: 16,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New run sequence',
+});
+
+const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
+  codeLines: HUFFMAN_CODE,
+  createScenario: (size, presetId) => createHuffmanScenario(size, presetId),
+  generator: huffmanCodingGenerator,
+  presetOptions: HUFFMAN_PRESETS,
+  sizeOptions: [8, 12, 16],
+  defaultSize: 12,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New frequency set',
+});
+
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: DIJKSTRA_CODE,
@@ -2235,6 +2267,12 @@ export class AlgorithmDetail {
     }
     if (algorithm.id === 'burrows-wheeler-transform') {
       return BURROWS_WHEELER_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'run-length-encoding') {
+      return RLE_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'huffman-coding') {
+      return HUFFMAN_VIEW_CONFIG;
     }
     if (algorithm.id === 'knapsack-01') {
       return KNAPSACK_VIEW_CONFIG;

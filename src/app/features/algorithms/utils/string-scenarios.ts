@@ -36,6 +36,16 @@ export interface BurrowsWheelerScenario extends BaseStringScenario {
   readonly source: string;
 }
 
+export interface RleScenario extends BaseStringScenario {
+  readonly kind: 'run-length-encoding';
+  readonly source: string;
+}
+
+export interface HuffmanScenario extends BaseStringScenario {
+  readonly kind: 'huffman-coding';
+  readonly source: string;
+}
+
 export const KMP_PRESETS: readonly StringPresetOption[] = [
   { id: 'overlap', label: 'Overlap', description: 'Classic self-overlap case where failure jumps save many retries.' },
   { id: 'dna', label: 'DNA', description: 'Short genome-style pattern with repeated prefixes and suffixes.' },
@@ -58,6 +68,18 @@ export const MANACHER_PRESETS: readonly StringPresetOption[] = [
   { id: 'banana', label: 'Banana Glow', description: 'Odd-length palindromes layer into a clean mirrored rainbow.' },
   { id: 'symmetry', label: 'Symmetry', description: 'Dense mirrored structure makes center reuse and boundary growth easy to see.' },
   { id: 'mixed', label: 'Mixed', description: 'Odd and even palindromes compete, so the longest answer is not obvious up front.' },
+];
+
+export const RLE_PRESETS: readonly StringPresetOption[] = [
+  { id: 'runs', label: 'Long runs', description: 'String with clear repeating runs' },
+  { id: 'mixed', label: 'Mixed', description: 'Mixture of short and long runs' },
+  { id: 'worst', label: 'No gain', description: 'String where RLE has no compression benefit' },
+];
+
+export const HUFFMAN_PRESETS: readonly StringPresetOption[] = [
+  { id: 'classic', label: 'Classic', description: 'Skewed frequency distribution' },
+  { id: 'uniform', label: 'Uniform', description: 'Nearly equal frequencies' },
+  { id: 'natural', label: 'Natural', description: 'Natural-language-like distribution' },
 ];
 
 export const BWT_PRESETS: readonly StringPresetOption[] = [
@@ -312,6 +334,102 @@ export function createBurrowsWheelerScenario(
     source: ensureSentinel(
       tier === 'short' ? 'BANANA' : tier === 'medium' ? 'BANANAS' : 'BANANABAN',
     ),
+  };
+}
+
+export function createRleScenario(size: number, presetId: string): RleScenario {
+  const preset = resolvePreset(RLE_PRESETS, presetId);
+  const tier = size <= 12 ? 'short' : size <= 18 ? 'medium' : 'long';
+
+  if (preset.id === 'mixed') {
+    return {
+      kind: 'run-length-encoding',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source:
+        tier === 'short'
+          ? 'AABBCBBA'
+          : tier === 'medium'
+            ? 'AABBCCCDDDBBAAA'
+            : 'AABBBBCCCCCDDDDAABBCC',
+    };
+  }
+
+  if (preset.id === 'worst') {
+    return {
+      kind: 'run-length-encoding',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source:
+        tier === 'short'
+          ? 'ABCDEFGH'
+          : tier === 'medium'
+            ? 'ABCDEFGHIJKLMN'
+            : 'ABCDEFGHIJKLMNOPQRST',
+    };
+  }
+
+  return {
+    kind: 'run-length-encoding',
+    presetId: preset.id,
+    presetLabel: preset.label,
+    presetDescription: preset.description,
+    source:
+      tier === 'short'
+        ? 'AAABBBCCC'
+        : tier === 'medium'
+          ? 'AAABBBBBCCCCCDDDD'
+          : 'AAAAABBBBBCCCCCDDDDDEEEEE',
+  };
+}
+
+export function createHuffmanScenario(size: number, presetId: string): HuffmanScenario {
+  const preset = resolvePreset(HUFFMAN_PRESETS, presetId);
+  const tier = size <= 8 ? 'short' : size <= 12 ? 'medium' : 'long';
+
+  if (preset.id === 'uniform') {
+    return {
+      kind: 'huffman-coding',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source:
+        tier === 'short'
+          ? 'ABCD'
+          : tier === 'medium'
+            ? 'AABBCCDD'
+            : 'AAABBBCCCDDD',
+    };
+  }
+
+  if (preset.id === 'natural') {
+    return {
+      kind: 'huffman-coding',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source:
+        tier === 'short'
+          ? 'MISSISSI'
+          : tier === 'medium'
+            ? 'MISSISSIPPI'
+            : 'ABRACADABRA!',
+    };
+  }
+
+  return {
+    kind: 'huffman-coding',
+    presetId: preset.id,
+    presetLabel: preset.label,
+    presetDescription: preset.description,
+    source:
+      tier === 'short'
+        ? 'AABBC'
+        : tier === 'medium'
+          ? 'AABBCCCDDDD'
+          : 'AABBBCCCDDDDEEEEEE',
   };
 }
 

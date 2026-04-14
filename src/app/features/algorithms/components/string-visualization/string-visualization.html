@@ -1,4 +1,8 @@
-<section class="string-lab" #container>
+<section
+  class="string-lab"
+  [class.string-lab--huffman]="state()?.mode === 'huffman'"
+  #container
+>
   @if (state(); as stringState) {
     <div class="playground-bar">
       <div class="playground-bar__copy">
@@ -375,6 +379,158 @@
                 </span>
               }
             </div>
+          </div>
+        }
+      }
+
+      @case ('rle') {
+        @if (rleState(); as rle) {
+          <div class="string-stage string-stage--rle">
+            <div class="string-row">
+              <span class="string-row__label">Input</span>
+              <div class="cell-track">
+                @for (char of rle.source; track $index; let index = $index) {
+                  <div class="{{ rleCellClass(rle, index) }}">
+                    <span>{{ char }}</span>
+                    <small>{{ index }}</small>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="rle-stats-row">
+              <div class="rle-stat-card">
+                <span class="rle-stat-card__label">Current char</span>
+                <span class="rle-stat-card__value">{{ rle.groupChar || '—' }}</span>
+              </div>
+              <div class="rle-stat-card rle-stat-card--count">
+                <span class="rle-stat-card__label">Count</span>
+                <span class="rle-stat-card__value">{{ rle.groupCount || 0 }}</span>
+              </div>
+              <div class="rle-stat-card rle-stat-card--ratio">
+                <span class="rle-stat-card__label">Size ratio</span>
+                <span class="rle-stat-card__value">
+                  {{ rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—' }}
+                </span>
+              </div>
+              <div class="rle-stat-card">
+                <span class="rle-stat-card__label">Runs done</span>
+                <span class="rle-stat-card__value">{{ rle.completedRuns.length }}</span>
+              </div>
+            </div>
+
+            <div class="rle-output-wrap">
+              <span class="rle-output-label">Output</span>
+              <div class="rle-chips-row">
+                @for (run of rle.completedRuns; track run.id) {
+                  <div class="rle-chip rle-chip--done">
+                    <span class="rle-chip__count">{{ run.count }}</span>
+                    <span class="rle-chip__char">{{ run.char }}</span>
+                  </div>
+                }
+                @if (rle.phase !== 'complete' && rle.groupCount > 0) {
+                  <div class="rle-chip rle-chip--active">
+                    <span class="rle-chip__count">{{ rle.groupCount }}</span>
+                    <span class="rle-chip__char">{{ rle.groupChar }}</span>
+                  </div>
+                }
+                @if (rle.completedRuns.length === 0 && rle.groupCount === 0) {
+                  <span class="rle-empty">Waiting for first run…</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      @case ('huffman') {
+        @if (huffmanState(); as huffman) {
+          <div class="string-stage string-stage--huffman">
+            @if (huffman.phase === 'freq') {
+              <div class="freq-chart">
+                @for (f of huffman.charFreqs; track f.char) {
+                  <div class="freq-col" [class.freq-col--active]="f.isActive">
+                    <div class="freq-bar-wrap">
+                      @if (f.isActive) {
+                        <span class="freq-count">{{ f.freq }}</span>
+                      }
+                      <div class="freq-bar" [style.height]="freqBarHeight(huffman, f.freq)"></div>
+                    </div>
+                    <div class="freq-char">'{{ f.char }}'</div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="huff-arena">
+                <div class="huff-tree-wrap">
+                  <svg
+                    class="huff-tree-svg"
+                    [attr.width]="huffmanSvgWidth(huffman)"
+                    [attr.height]="huffmanSvgHeight(huffman)"
+                    [attr.viewBox]="'0 0 ' + huffmanSvgWidth(huffman) + ' ' + huffmanSvgHeight(huffman)"
+                  >
+                    @for (edge of huffmanVisibleEdges(huffman); track edge.fromId + edge.toId) {
+                      @if (huffNodeById(huffman, edge.fromId); as fromNode) {
+                        @if (huffNodeById(huffman, edge.toId); as toNode) {
+                          <line
+                            class="huff-edge"
+                            [attr.x1]="fromNode.x"
+                            [attr.y1]="fromNode.y"
+                            [attr.x2]="toNode.x"
+                            [attr.y2]="toNode.y"
+                          />
+                          <text
+                            class="huff-edge-label huff-edge-label--{{ edge.label }}"
+                            [attr.x]="(fromNode.x + toNode.x) / 2"
+                            [attr.y]="(fromNode.y + toNode.y) / 2 - 6"
+                            text-anchor="middle"
+                          >{{ edge.label }}</text>
+                        }
+                      }
+                    }
+                    @for (node of huffmanVisibleNodes(huffman); track node.id) {
+                      <g class="huff-node-g huff-node-g--{{ node.tone }}" [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+                        <circle class="huff-node" r="22" />
+                        <text class="huff-node__freq" text-anchor="middle" dy="-3">{{ node.freq }}</text>
+                        @if (node.char) {
+                          <text class="huff-node__char" text-anchor="middle" dy="11">'{{ node.char }}'</text>
+                        }
+                      </g>
+                    }
+                  </svg>
+                </div>
+
+                <div class="huff-heap-strip">
+                  @for (item of huffman.heapItems; track item.id) {
+                    <div class="huff-heap-pill huff-heap-pill--{{ item.role ?? 'default' }}">
+                      <span class="huff-heap-pill__freq">{{ item.freq }}</span>
+                      @if (item.char) {
+                        <span class="huff-heap-pill__char">'{{ item.char }}'</span>
+                      } @else {
+                        <span class="huff-heap-pill__char huff-heap-pill__char--internal">∅</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              @if (huffman.phase === 'codes' && huffman.codeTable.length > 0) {
+                <div class="huff-code-table">
+                  @for (entry of huffman.codeTable; track entry.char) {
+                    <div class="huff-code-row">
+                      <span class="huff-code-row__char">'{{ entry.char }}'</span>
+                      <span class="huff-code-row__freq">f={{ entry.freq }}</span>
+                      <div class="huff-code-row__bits">
+                        @for (bit of entry.code.split(''); track $index) {
+                          <span class="huff-bit huff-bit--{{ bit }}">{{ bit }}</span>
+                        }
+                      </div>
+                      <span class="huff-code-row__len">{{ entry.code.length }}b</span>
+                    </div>
+                  }
+                </div>
+              }
+            }
           </div>
         }
       }

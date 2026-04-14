@@ -6,23 +6,29 @@ import {
   faBarsProgress,
   faCheckDouble,
   faCircleDot,
+  faCode,
   faCrosshairs,
   faLink,
   faRoute,
+  faTree,
   faWandMagicSparkles,
 } from '@fortawesome/pro-solid-svg-icons';
 
 import {
   BurrowsWheelerTraceState,
+  HuffmanTraceState,
   KmpTraceState,
   ManacherTraceState,
   RabinKarpTraceState,
+  RleTraceState,
   StringTraceState,
   ZAlgorithmTraceState,
   isBurrowsWheelerState,
+  isHuffmanState,
   isKmpState,
   isManacherState,
   isRabinKarpState,
+  isRleState,
   isZAlgorithmState,
 } from '../../models/string';
 
@@ -56,6 +62,14 @@ export class StringTracePanel {
     const state = this.state();
     return isBurrowsWheelerState(state) ? state : null;
   });
+  readonly rleState = computed<RleTraceState | null>(() => {
+    const state = this.state();
+    return isRleState(state) ? state : null;
+  });
+  readonly huffmanState = computed<HuffmanTraceState | null>(() => {
+    const state = this.state();
+    return isHuffmanState(state) ? state : null;
+  });
 
   readonly modeIcon = computed<IconDefinition>(() => {
     const state = this.state();
@@ -71,6 +85,10 @@ export class StringTracePanel {
         return faRoute;
       case 'burrows-wheeler-transform':
         return faLink;
+      case 'rle':
+        return faCode;
+      case 'huffman':
+        return faTree;
     }
   });
 
@@ -88,6 +106,10 @@ export class StringTracePanel {
         return 'success';
       case 'burrows-wheeler-transform':
         return 'accent';
+      case 'rle':
+        return 'success';
+      case 'huffman':
+        return 'warning';
     }
   });
 

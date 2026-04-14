@@ -14,16 +14,22 @@ import {
 
 import {
   BurrowsWheelerTraceState,
+  HuffmanTraceState,
+  HuffmanTreeNode,
+  HuffmanEdge,
   KmpTraceState,
   ManacherTraceState,
   RabinKarpTraceState,
+  RleTraceState,
   StringPresetOption,
   StringTraceState,
   ZAlgorithmTraceState,
   isBurrowsWheelerState,
+  isHuffmanState,
   isKmpState,
   isManacherState,
   isRabinKarpState,
+  isRleState,
   isZAlgorithmState,
 } from '../../models/string';
 import { SortStep } from '../../models/sort-step';
@@ -80,6 +86,14 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
   readonly bwtState = computed<BurrowsWheelerTraceState | null>(() => {
     const state = this.state();
     return isBurrowsWheelerState(state) ? state : null;
+  });
+  readonly rleState = computed<RleTraceState | null>(() => {
+    const state = this.state();
+    return isRleState(state) ? state : null;
+  });
+  readonly huffmanState = computed<HuffmanTraceState | null>(() => {
+    const state = this.state();
+    return isHuffmanState(state) ? state : null;
   });
 
   constructor() {
@@ -336,6 +350,52 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
     return tone === 'output' ? 'run-chip run-chip--output' : 'run-chip';
   }
 
+  rleCellClass(rle: RleTraceState, index: number): string {
+    if (index < rle.groupStart) return 'str-cell str-cell--found';
+    if (index === rle.scanIndex) return 'str-cell str-cell--focus';
+    if (
+      index >= rle.groupStart &&
+      index < rle.groupStart + rle.groupCount &&
+      index !== rle.scanIndex
+    ) {
+      return 'str-cell str-cell--window';
+    }
+    return 'str-cell';
+  }
+
+  huffmanVisibleNodes(huffman: HuffmanTraceState): readonly HuffmanTreeNode[] {
+    const visibleIds = new Set(huffman.visibleNodeIds);
+    return huffman.allNodes.filter((node) => visibleIds.has(node.id));
+  }
+
+  huffmanVisibleEdges(huffman: HuffmanTraceState): readonly HuffmanEdge[] {
+    const visibleIds = new Set(huffman.visibleEdgeIds);
+    return huffman.allEdges.filter((edge) =>
+      visibleIds.has(`${edge.fromId}|${edge.toId}`),
+    );
+  }
+
+  huffNodeById(huffman: HuffmanTraceState, id: string): HuffmanTreeNode | undefined {
+    return huffman.allNodes.find((node) => node.id === id);
+  }
+
+  huffmanSvgWidth(huffman: HuffmanTraceState): number {
+    const nodes = this.huffmanVisibleNodes(huffman);
+    if (nodes.length === 0) return 200;
+    return Math.max(...nodes.map((node) => node.x)) + 60;
+  }
+
+  huffmanSvgHeight(huffman: HuffmanTraceState): number {
+    const nodes = this.huffmanVisibleNodes(huffman);
+    if (nodes.length === 0) return 120;
+    return Math.max(...nodes.map((node) => node.y)) + 80;
+  }
+
+  freqBarHeight(huffman: HuffmanTraceState, freq: number): string {
+    const maxFreq = Math.max(...huffman.charFreqs.map((entry) => entry.freq), 1);
+    return `${8 + (freq / maxFreq) * 72}px`;
+  }
+
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
     const current = step.string;
     const previous = previousStep?.string ?? null;
@@ -402,6 +462,32 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
       ) {
         const row = this.findBySelector(`[data-bwt-row="${current.activeRows[0]}"]`);
         if (row) pulseElement(row, { duration: motion.compareMs, scale: 1.01 });
+      }
+      return;
+    }
+
+    if (current.mode === 'rle') {
+      if ((previous as RleTraceState | null)?.scanIndex !== current.scanIndex && current.scanIndex !== null) {
+        const cells = this.containerRef()
+          .nativeElement.querySelectorAll<HTMLElement>('.string-stage--rle .str-cell');
+        const cell = cells.item(current.scanIndex);
+        if (cell) pulseElement(cell, { duration: motion.compareMs, scale: 1.03 });
+      }
+      if ((previous as RleTraceState | null)?.completedRuns.length !== current.completedRuns.length) {
+        const chip = this.findBySelector('.rle-chip--done:last-child');
+        if (chip) pulseElement(chip, { duration: motion.settleMs, scale: 1.04 });
+      }
+      return;
+    }
+
+    if (current.mode === 'huffman') {
+      if ((previous as HuffmanTraceState | null)?.visibleNodeIds.length !== current.visibleNodeIds.length) {
+        const tree = this.findBySelector('.huff-tree-wrap');
+        if (tree) pulseElement(tree, { duration: motion.settleMs, scale: 1.01 });
+      }
+      if ((previous as HuffmanTraceState | null)?.codeTable.length !== current.codeTable.length) {
+        const row = this.findBySelector('.huff-code-row:last-child');
+        if (row) pulseElement(row, { duration: motion.settleMs, scale: 1.03 });
       }
     }
   }

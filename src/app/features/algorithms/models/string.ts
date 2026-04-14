@@ -121,12 +121,87 @@ export interface BurrowsWheelerTraceState extends StringTraceBase {
   readonly compressionRatio: number | null;
 }
 
+// --- RLE ---
+export interface RleRun {
+  readonly id: string;
+  readonly char: string;
+  readonly count: number;
+}
+
+export interface RleTraceState extends StringTraceBase {
+  readonly mode: 'rle';
+  readonly source: string;
+  readonly scanIndex: number | null;
+  readonly groupStart: number;
+  readonly groupChar: string;
+  readonly groupCount: number;
+  readonly completedRuns: readonly RleRun[];
+  readonly output: string;
+  readonly phase: 'scan' | 'extend' | 'emit' | 'complete';
+  readonly compressionRatio: number | null;
+}
+
+// --- Huffman ---
+export interface HuffmanFreq {
+  readonly char: string;
+  readonly freq: number;
+  readonly isActive: boolean;
+}
+
+export interface HuffmanHeapItem {
+  readonly id: string;
+  readonly char: string | null;
+  readonly freq: number;
+  readonly role: 'left' | 'right' | 'new' | null;
+}
+
+export interface HuffmanTreeNode {
+  readonly id: string;
+  readonly char: string | null;
+  readonly freq: number;
+  readonly code: string;
+  readonly leftId: string | null;
+  readonly rightId: string | null;
+  readonly x: number;
+  readonly y: number;
+  readonly tone: 'leaf' | 'internal' | 'left' | 'right' | 'new' | 'root';
+}
+
+export interface HuffmanEdge {
+  readonly fromId: string;
+  readonly toId: string;
+  readonly label: '0' | '1';
+}
+
+export interface HuffmanCodeEntry {
+  readonly char: string;
+  readonly freq: number;
+  readonly code: string;
+}
+
+export interface HuffmanTraceState extends StringTraceBase {
+  readonly mode: 'huffman';
+  readonly source: string;
+  readonly phase: 'freq' | 'heap' | 'merge' | 'codes';
+  readonly charFreqs: readonly HuffmanFreq[];
+  readonly heapItems: readonly HuffmanHeapItem[];
+  readonly visibleNodeIds: readonly string[];
+  readonly allNodes: readonly HuffmanTreeNode[];
+  readonly visibleEdgeIds: readonly string[];
+  readonly allEdges: readonly HuffmanEdge[];
+  readonly codeTable: readonly HuffmanCodeEntry[];
+  readonly totalOriginalBits: number;
+  readonly totalCompressedBits: number;
+}
+
 export type StringTraceState =
   | KmpTraceState
   | RabinKarpTraceState
   | ZAlgorithmTraceState
   | ManacherTraceState
-  | BurrowsWheelerTraceState;
+  | BurrowsWheelerTraceState
+  | RleTraceState
+  | HuffmanTraceState;
 
 export function isKmpState(
   state: StringTraceState | null | undefined,
@@ -156,4 +231,16 @@ export function isBurrowsWheelerState(
   state: StringTraceState | null | undefined,
 ): state is BurrowsWheelerTraceState {
   return state?.mode === 'burrows-wheeler-transform';
+}
+
+export function isRleState(
+  state: StringTraceState | null | undefined,
+): state is RleTraceState {
+  return state?.mode === 'rle';
+}
+
+export function isHuffmanState(
+  state: StringTraceState | null | undefined,
+): state is HuffmanTraceState {
+  return state?.mode === 'huffman';
 }

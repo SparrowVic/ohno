@@ -1112,6 +1112,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'compression',
     tags: ['compression', 'runs', 'encoding'],
+    implemented: true,
   }),
   algo({
     id: 'huffman-coding',
@@ -1121,6 +1122,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'compression',
     tags: ['compression', 'greedy', 'prefix code'],
+    implemented: true,
   }),
   algo({
     id: 'convex-hull',

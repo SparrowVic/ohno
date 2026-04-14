@@ -165,6 +165,52 @@
         </div>
       </div>
     }
+
+    @if (rleState(); as rle) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Scanner</span>
+          <div class="kv-list">
+            <div><span>Position</span><strong>{{ rle.scanIndex ?? '—' }}</strong></div>
+            <div><span>Char</span><strong>'{{ rle.groupChar || '—' }}'</strong></div>
+            <div><span>Count</span><strong>{{ rle.groupCount }}</strong></div>
+            <div><span>Phase</span><strong>{{ rle.phase }}</strong></div>
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Result</span>
+          <div class="kv-list">
+            <div><span>Runs done</span><strong>{{ rle.completedRuns.length }}</strong></div>
+            <div><span>Output</span><strong>{{ rle.output || '—' }}</strong></div>
+            <div><span>Ratio</span><strong>{{ rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—' }}</strong></div>
+            <div><span>Original</span><strong>{{ rle.source.length }} chars</strong></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (huffmanState(); as huffman) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Heap</span>
+          <div class="kv-list">
+            <div><span>Size</span><strong>{{ huffman.heapItems.length }}</strong></div>
+            <div><span>Phase</span><strong>{{ huffman.phase }}</strong></div>
+            <div><span>Unique chars</span><strong>{{ huffman.charFreqs.length }}</strong></div>
+            <div><span>Codes assigned</span><strong>{{ huffman.codeTable.length }}</strong></div>
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Compression</span>
+          <div class="kv-list">
+            <div><span>Original</span><strong>{{ huffman.totalOriginalBits }} bits</strong></div>
+            <div><span>Compressed</span><strong>{{ huffman.totalCompressedBits }} bits</strong></div>
+            <div><span>Savings</span><strong>{{ huffman.totalOriginalBits > 0 ? ((1 - huffman.totalCompressedBits / huffman.totalOriginalBits) * 100).toFixed(0) + '%' : '—' }}</strong></div>
+            <div><span>Ratio</span><strong>{{ formatRatio(huffman.totalOriginalBits > 0 ? huffman.totalCompressedBits / huffman.totalOriginalBits : null) }}</strong></div>
+          </div>
+        </div>
+      </div>
+    }
   </section>
 } @else {
   <section class="string-trace string-trace--empty">No string trace available.</section>
