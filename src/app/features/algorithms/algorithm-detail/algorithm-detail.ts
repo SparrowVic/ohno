@@ -56,14 +56,17 @@ import { lineIntersectionGenerator, LineIntersectionScenario } from '../algorith
 import { longestCommonSubsequenceGenerator } from '../algorithms/longest-common-subsequence';
 import { longestIncreasingSubsequenceGenerator } from '../algorithms/longest-increasing-subsequence';
 import { longestPalindromicSubsequenceGenerator } from '../algorithms/longest-palindromic-subsequence';
+import { manacherGenerator } from '../algorithms/manacher';
 import { matrixChainMultiplicationGenerator } from '../algorithms/matrix-chain-multiplication';
 import { mergeSortGenerator } from '../algorithms/merge-sort';
 import { minCostMaxFlowGenerator } from '../algorithms/min-cost-max-flow';
 import { minkowskiSumGenerator, MinkowskiSumScenario } from '../algorithms/minkowski-sum';
+import { kmpPatternMatchingGenerator } from '../algorithms/kmp-pattern-matching';
 import { quickSortGenerator } from '../algorithms/quick-sort';
 import { radixSortGenerator } from '../algorithms/radix-sort';
 import { primsMstGenerator } from '../algorithms/prims-mst';
 import { profileDpGenerator } from '../algorithms/profile-dp';
+import { rabinKarpGenerator } from '../algorithms/rabin-karp';
 import { regexMatchingDpGenerator } from '../algorithms/regex-matching-dp';
 import { selectionSortGenerator } from '../algorithms/selection-sort';
 import { shellSortGenerator } from '../algorithms/shell-sort';
@@ -78,6 +81,8 @@ import { travelingSalesmanDpGenerator } from '../algorithms/traveling-salesman-d
 import { unionFindGenerator } from '../algorithms/union-find';
 import { voronoiDiagramGenerator, VoronoiDiagramScenario } from '../algorithms/voronoi-diagram';
 import { wildcardMatchingGenerator } from '../algorithms/wildcard-matching';
+import { zAlgorithmGenerator } from '../algorithms/z-algorithm';
+import { burrowsWheelerTransformGenerator } from '../algorithms/burrows-wheeler-transform';
 import { convexHullGenerator, ConvexHullScenario } from '../algorithms/convex-hull';
 import { delaunayTriangulationGenerator, DelaunayTriangulationScenario } from '../algorithms/delaunay-triangulation';
 import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
@@ -125,14 +130,17 @@ import { LINE_INTERSECTION_CODE } from '../data/line-intersection-code';
 import { LONGEST_COMMON_SUBSEQUENCE_CODE } from '../data/longest-common-subsequence-code';
 import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-subsequence-code';
 import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
+import { MANACHER_CODE } from '../data/manacher-code';
 import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
 import { MINKOWSKI_SUM_CODE } from '../data/minkowski-sum-code';
+import { KMP_PATTERN_MATCHING_CODE } from '../data/kmp-pattern-matching-code';
 import { PROFILE_DP_CODE } from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
+import { RABIN_KARP_CODE } from '../data/rabin-karp-code';
 import { REGEX_MATCHING_DP_CODE } from '../data/regex-matching-dp-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
@@ -147,6 +155,8 @@ import { TRAVELING_SALESMAN_DP_CODE } from '../data/traveling-salesman-dp-code';
 import { UNION_FIND_CODE } from '../data/union-find-code';
 import { VORONOI_DIAGRAM_CODE } from '../data/voronoi-diagram-code';
 import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
+import { Z_ALGORITHM_CODE } from '../data/z-algorithm-code';
+import { BURROWS_WHEELER_TRANSFORM_CODE } from '../data/burrows-wheeler-transform-code';
 import { DpPresetOption, DpTraceState } from '../models/dp';
 import { DsuTraceState } from '../models/dsu';
 import { GeometryStepState } from '../models/geometry';
@@ -155,6 +165,7 @@ import { GridTraceState } from '../models/grid';
 import { MatrixTraceState } from '../models/matrix';
 import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
+import { StringPresetOption, StringTraceState } from '../models/string';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
@@ -269,6 +280,23 @@ import {
   HopcroftKarpScenario,
   MinCostMaxFlowScenario,
 } from '../utils/network-scenarios';
+import {
+  BWT_PRESETS,
+  KMP_PRESETS,
+  MANACHER_PRESETS,
+  RABIN_KARP_PRESETS,
+  Z_ALGORITHM_PRESETS,
+  BurrowsWheelerScenario,
+  KmpScenario,
+  ManacherScenario,
+  RabinKarpScenario,
+  ZAlgorithmScenario,
+  createBurrowsWheelerScenario,
+  createKmpScenario,
+  createManacherScenario,
+  createRabinKarpScenario,
+  createZAlgorithmScenario,
+} from '../utils/string-scenarios';
 import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
@@ -440,6 +468,14 @@ const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: 'Visited', color: '#38bdf8' },
   { label: 'Eliminated', color: 'var(--text-secondary)', opacity: 0.55 },
   { label: 'Found', color: '#3ecf8e' },
+];
+
+const STRING_LEGEND: readonly LegendItem[] = [
+  { label: 'Source symbols', color: 'rgba(255,255,255,0.42)' },
+  { label: 'Current compare / center', color: '#f0b429' },
+  { label: 'Reusable shortcut', color: '#38bdf8' },
+  { label: 'Active window / box', color: '#7c6ef0' },
+  { label: 'Confirmed hit / best output', color: '#3ecf8e' },
 ];
 
 const FLOOD_FILL_LEGEND: readonly LegendItem[] = [
@@ -812,6 +848,10 @@ const SEARCH_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'search', label: 'Signal Sweep' },
 ];
 
+const STRING_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'string', label: 'String Lab' },
+];
+
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
 ];
@@ -956,6 +996,14 @@ interface SearchAlgorithmViewConfig extends BaseAlgorithmViewConfig {
   readonly generator: (scenario: SearchScenario) => Generator<SortStep>;
 }
 
+interface StringAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'string';
+  readonly presetOptions: readonly StringPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 interface GridAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
   readonly kind: 'grid';
   readonly createScenario: (size: number) => TScenario;
@@ -998,6 +1046,7 @@ type AlgorithmViewConfig =
   | ArrayAlgorithmViewConfig
   | GraphAlgorithmViewConfig
   | SearchAlgorithmViewConfig
+  | StringAlgorithmViewConfig<any>
   | GridAlgorithmViewConfig<any>
   | MatrixAlgorithmViewConfig<any>
   | DpAlgorithmViewConfig<any>
@@ -1148,6 +1197,35 @@ function createGridViewConfig<TScenario>(args: {
     legendItems: () => args.legendItems,
     sizeUnit: 'cells / side',
     randomizeLabel: args.randomizeLabel ?? 'New board',
+  };
+}
+
+function createStringViewConfig<TScenario>(args: {
+  readonly codeLines: readonly CodeLine[];
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly presetOptions: readonly StringPresetOption[];
+  readonly sizeOptions?: readonly number[];
+  readonly defaultSize?: number;
+  readonly sizeUnit?: string;
+  readonly randomizeLabel?: string;
+}): StringAlgorithmViewConfig<TScenario> {
+  const sizeOptions = args.sizeOptions ?? [12, 18, 24];
+  const defaultPresetId = args.presetOptions[0]?.id ?? 'default';
+  return {
+    kind: 'string',
+    codeLines: args.codeLines,
+    variantOptions: STRING_VARIANT_OPTIONS,
+    defaultVariant: 'string',
+    sizeOptions,
+    defaultSize: args.defaultSize ?? sizeOptions[0] ?? 12,
+    presetOptions: args.presetOptions,
+    defaultPresetId,
+    createScenario: args.createScenario,
+    generator: args.generator,
+    legendItems: () => STRING_LEGEND,
+    sizeUnit: args.sizeUnit ?? 'chars',
+    randomizeLabel: args.randomizeLabel ?? 'New string case',
   };
 }
 
@@ -1305,6 +1383,62 @@ const BINARY_SEARCH_VARIANTS_VIEW_CONFIG = createSearchViewConfig({
   sizeOptions: [16, 24, 32],
   defaultSize: 24,
 });
+
+const KMP_VIEW_CONFIG = createStringViewConfig<KmpScenario>({
+  codeLines: KMP_PATTERN_MATCHING_CODE,
+  createScenario: (size, presetId) => createKmpScenario(size, presetId),
+  generator: kmpPatternMatchingGenerator,
+  presetOptions: KMP_PRESETS,
+  sizeOptions: [14, 20, 28],
+  defaultSize: 20,
+  sizeUnit: 'text chars',
+  randomizeLabel: 'New KMP case',
+});
+
+const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
+  codeLines: RABIN_KARP_CODE,
+  createScenario: (size, presetId) => createRabinKarpScenario(size, presetId),
+  generator: rabinKarpGenerator,
+  presetOptions: RABIN_KARP_PRESETS,
+  sizeOptions: [14, 20, 28],
+  defaultSize: 20,
+  sizeUnit: 'text chars',
+  randomizeLabel: 'New rolling-hash case',
+});
+
+const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
+  codeLines: Z_ALGORITHM_CODE,
+  createScenario: (size, presetId) => createZAlgorithmScenario(size, presetId),
+  generator: zAlgorithmGenerator,
+  presetOptions: Z_ALGORITHM_PRESETS,
+  sizeOptions: [14, 20, 28],
+  defaultSize: 20,
+  sizeUnit: 'combined chars',
+  randomizeLabel: 'New Z skyline',
+});
+
+const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
+  codeLines: MANACHER_CODE,
+  createScenario: (size, presetId) => createManacherScenario(size, presetId),
+  generator: manacherGenerator,
+  presetOptions: MANACHER_PRESETS,
+  sizeOptions: [10, 14, 18],
+  defaultSize: 14,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New palindrome field',
+});
+
+const BURROWS_WHEELER_VIEW_CONFIG =
+  createStringViewConfig<BurrowsWheelerScenario>({
+    codeLines: BURROWS_WHEELER_TRANSFORM_CODE,
+    createScenario: (size, presetId) => createBurrowsWheelerScenario(size, presetId),
+    generator: burrowsWheelerTransformGenerator,
+    presetOptions: BWT_PRESETS,
+    sizeOptions: [6, 8, 10],
+    defaultSize: 8,
+    sizeUnit: 'chars',
+    randomizeLabel: 'New BWT matrix',
+  });
 
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
@@ -2087,6 +2221,21 @@ export class AlgorithmDetail {
     if (algorithm.id === 'binary-search-variants') {
       return BINARY_SEARCH_VARIANTS_VIEW_CONFIG;
     }
+    if (algorithm.id === 'kmp-pattern-matching') {
+      return KMP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'rabin-karp') {
+      return RABIN_KARP_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'z-algorithm') {
+      return Z_ALGORITHM_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'manacher') {
+      return MANACHER_VIEW_CONFIG;
+    }
+    if (algorithm.id === 'burrows-wheeler-transform') {
+      return BURROWS_WHEELER_VIEW_CONFIG;
+    }
     if (algorithm.id === 'knapsack-01') {
       return KNAPSACK_VIEW_CONFIG;
     }
@@ -2261,6 +2410,7 @@ export class AlgorithmDetail {
   private readonly arraySig = signal<readonly number[]>(this.generateArray(16, { min: 1, max: 99 }));
   private readonly graphSig = signal<WeightedGraphData | null>(null);
   private readonly dpPresetSig = signal<string | null>(null);
+  private readonly stringPresetSig = signal<string | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
@@ -2272,6 +2422,7 @@ export class AlgorithmDetail {
   readonly array = this.arraySig.asReadonly();
   readonly graph = this.graphSig.asReadonly();
   readonly dpPresetId = this.dpPresetSig.asReadonly();
+  readonly stringPresetId = this.stringPresetSig.asReadonly();
   readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
@@ -2285,6 +2436,10 @@ export class AlgorithmDetail {
     const config = this.config();
     return config?.kind === 'dp' ? config.presetOptions : [];
   });
+  readonly stringPresetOptions = computed<readonly StringPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'string' ? config.presetOptions : [];
+  });
   readonly sizeUnit = computed(() => this.config()?.sizeUnit ?? 'elements');
   readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
@@ -2294,6 +2449,7 @@ export class AlgorithmDetail {
   readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
   readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
   readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
+  readonly stringTrace = computed<StringTraceState | null>(() => this.currentSnapshot()?.string ?? null);
   readonly geometryTrace = computed<GeometryStepState | null>(() => this.currentSnapshot()?.geometry ?? null);
   readonly graphRouteModeLabel = computed(() => {
     const trace = this.graphTrace();
@@ -2353,6 +2509,7 @@ export class AlgorithmDetail {
           this.currentSnapshot.set(null);
           this.graphSig.set(null);
           this.dpPresetSig.set(null);
+          this.stringPresetSig.set(null);
           this.graphFocusTargetIdSig.set(null);
           this.engine.reset();
           return;
@@ -2362,6 +2519,7 @@ export class AlgorithmDetail {
         this.variantSig.set(config.defaultVariant);
         this.mutedSig.set(true);
         this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
+        this.stringPresetSig.set(config.kind === 'string' ? config.defaultPresetId : null);
         this.graphFocusTargetIdSig.set(null);
 
         if (config.kind === 'graph') {
@@ -2377,6 +2535,14 @@ export class AlgorithmDetail {
           this.arraySig.set(scenario.array);
           this.graphSig.set(null);
           this.loadSearchEngine(scenario, config.generator);
+          return;
+        }
+
+        if (config.kind === 'string') {
+          const scenario = config.createScenario(config.defaultSize, config.defaultPresetId);
+          this.arraySig.set([]);
+          this.graphSig.set(null);
+          this.loadStringEngine(scenario, config.generator);
           return;
         }
 
@@ -2489,6 +2655,15 @@ export class AlgorithmDetail {
       return;
     }
 
+    if (config.kind === 'string') {
+      const presetId = this.stringPresetSig() ?? config.defaultPresetId;
+      const scenario = config.createScenario(value, presetId);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadStringEngine(scenario, config.generator);
+      return;
+    }
+
     if (config.kind === 'grid') {
       const scenario = config.createScenario(value);
       this.arraySig.set([]);
@@ -2561,6 +2736,15 @@ export class AlgorithmDetail {
       this.arraySig.set(scenario.array);
       this.graphSig.set(null);
       this.loadSearchEngine(scenario, config.generator);
+      return;
+    }
+
+    if (config.kind === 'string') {
+      const presetId = this.stringPresetSig() ?? config.defaultPresetId;
+      const scenario = config.createScenario(this.sizeSig(), presetId);
+      this.arraySig.set([]);
+      this.graphSig.set(null);
+      this.loadStringEngine(scenario, config.generator);
       return;
     }
 
@@ -2652,6 +2836,19 @@ export class AlgorithmDetail {
     this.loadDpEngine(scenario, config.generator);
   }
 
+  onStringPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'string') return;
+    const allowed = config.presetOptions.some((option) => option.id === value);
+    if (!allowed || value === this.stringPresetSig()) return;
+
+    this.stringPresetSig.set(value);
+    const scenario = config.createScenario(this.sizeSig(), value);
+    this.arraySig.set([]);
+    this.graphSig.set(null);
+    this.loadStringEngine(scenario, config.generator);
+  }
+
   private loadArrayEngine(
     array: readonly number[],
     generator: (values: readonly number[]) => Generator<SortStep>,
@@ -2669,6 +2866,13 @@ export class AlgorithmDetail {
   private loadSearchEngine(
     scenario: SearchScenario,
     generator: (scenario: SearchScenario) => Generator<SortStep>,
+  ): void {
+    this.loadEngine(generator(scenario));
+  }
+
+  private loadStringEngine<TScenario>(
+    scenario: TScenario,
+    generator: (scenario: TScenario) => Generator<SortStep>,
   ): void {
     this.loadEngine(generator(scenario));
   }

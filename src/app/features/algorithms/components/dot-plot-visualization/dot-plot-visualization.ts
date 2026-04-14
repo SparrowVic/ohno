@@ -9,7 +9,8 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import * as d3 from 'd3';
+import * as d3Scale from 'd3-scale';
+import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
@@ -52,14 +53,14 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private gridGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private dotsGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  private gridGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private dotsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private dots: Dot[] = [];
   private width = 0;
   private height = 0;
-  private xScale: d3.ScaleLinear<number, number> = d3.scaleLinear();
-  private yScale: d3.ScaleLinear<number, number> = d3.scaleLinear();
+  private xScale: d3Scale.ScaleLinear<number, number> = d3Scale.scaleLinear();
+  private yScale: d3Scale.ScaleLinear<number, number> = d3Scale.scaleLinear();
   private maxValue = 1;
   private initialized = false;
   private resizeObserver: ResizeObserver | null = null;
@@ -86,7 +87,7 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
 
   ngAfterViewInit(): void {
     const container = this.containerRef().nativeElement;
-    this.svg = d3
+    this.svg = d3Selection
       .select(container)
       .append('svg')
       .attr('width', '100%')
@@ -221,11 +222,11 @@ export class DotPlotVisualization implements AfterViewInit, OnDestroy, Visualiza
 
   private rebuildScales(): void {
     const count = Math.max(1, this.dots.length || 1);
-    this.xScale = d3
+    this.xScale = d3Scale
       .scaleLinear()
       .domain([0, count - 1])
       .range([PADDING_X, Math.max(PADDING_X, this.width - PADDING_X)]);
-    this.yScale = d3
+    this.yScale = d3Scale
       .scaleLinear()
       .domain([0, this.maxValue])
       .range([Math.max(PADDING_Y, this.height - PADDING_Y), PADDING_Y]);

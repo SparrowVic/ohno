@@ -9,7 +9,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import * as d3 from 'd3';
+import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
@@ -52,11 +52,11 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
   private ringEl: SVGCircleElement | null = null;
-  private linesGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private nodesGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private labelsGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private linesGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private nodesGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private labelsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private nodes: RadialNode[] = [];
   private width = 0;
   private height = 0;
@@ -89,7 +89,7 @@ export class RadialVisualization implements AfterViewInit, OnDestroy, Visualizat
 
   ngAfterViewInit(): void {
     const container = this.containerRef().nativeElement;
-    this.svg = d3
+    this.svg = d3Selection
       .select(container)
       .append('svg')
       .attr('width', '100%')

@@ -9,7 +9,8 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import * as d3 from 'd3';
+import * as d3Scale from 'd3-scale';
+import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
@@ -56,8 +57,8 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private barsGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  private barsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private bars: Bar[] = [];
   private width = 0;
   private height = 0;
@@ -67,7 +68,7 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
   private lastStep: SortStep | null = null;
 
   private audioCtx: AudioContext | null = null;
-  private freqScale: d3.ScaleLinear<number, number> = d3.scaleLinear();
+  private freqScale: d3Scale.ScaleLinear<number, number> = d3Scale.scaleLinear();
 
   constructor() {
     effect(() => {
@@ -90,7 +91,7 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
 
   ngAfterViewInit(): void {
     const container = this.containerRef().nativeElement;
-    this.svg = d3
+    this.svg = d3Selection
       .select(container)
       .append('svg')
       .attr('width', '100%')
@@ -117,7 +118,7 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
     this.clearBars();
     this.maxValue = Math.max(1, ...array);
     this.bars = array.map((value, i) => this.createBar(`sb-${i}`, value, i));
-    this.freqScale = d3
+    this.freqScale = d3Scale
       .scaleLinear()
       .domain([1, this.maxValue])
       .range([FREQ_MIN, FREQ_MAX])
@@ -191,7 +192,7 @@ export class SoundBarsVisualization implements AfterViewInit, OnDestroy, Visuali
   private snapRebuild(array: readonly number[]): void {
     this.clearBars();
     this.maxValue = Math.max(1, ...array);
-    this.freqScale = d3
+    this.freqScale = d3Scale
       .scaleLinear()
       .domain([1, this.maxValue])
       .range([FREQ_MIN, FREQ_MAX])

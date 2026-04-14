@@ -56,6 +56,16 @@
     @case ('search') {
       <app-search-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
+    @case ('string') {
+      <app-string-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="stringPresetOptions()"
+        [presetId]="stringPresetId()"
+        (presetChange)="stringPresetChange.emit($event)"
+      />
+    }
     @case ('dp') {
       <app-dp-visualization
         [array]="array()"

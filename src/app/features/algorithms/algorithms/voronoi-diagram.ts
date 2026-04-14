@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { Delaunay } from 'd3-delaunay';
 
 import {
   GeometryEventChip,
@@ -102,7 +102,7 @@ export function* voronoiDiagramGenerator(
   scenario: VoronoiDiagramScenario,
 ): Generator<SortStep> {
   const points = scenario.points.map((point) => [point.x, point.y] as [number, number]);
-  const delaunay = d3.Delaunay.from(points);
+  const delaunay = Delaunay.from(points);
   const voronoi = delaunay.voronoi([4, 4, 96, 96]);
 
   const sites: SiteRuntime[] = scenario.points

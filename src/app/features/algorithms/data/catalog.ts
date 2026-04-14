@@ -1026,6 +1026,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'pattern-matching',
     tags: ['prefix function', 'O(n + m)', 'search'],
+    implemented: true,
   }),
   algo({
     id: 'rabin-karp',
@@ -1035,6 +1036,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'pattern-matching',
     tags: ['rolling hash', 'search', 'string hashing'],
+    implemented: true,
   }),
   algo({
     id: 'z-algorithm',
@@ -1044,6 +1046,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'pattern-matching',
     tags: ['prefix matches', 'linear', 'search'],
+    implemented: true,
   }),
   algo({
     id: 'aho-corasick',
@@ -1062,6 +1065,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'suffix-palindromes',
     tags: ['palindromes', 'linear', 'centers'],
+    implemented: true,
   }),
   algo({
     id: 'suffix-array-construction',
@@ -1098,6 +1102,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'compression',
     tags: ['compression', 'suffixes', 'transform'],
+    implemented: true,
   }),
   algo({
     id: 'run-length-encoding',

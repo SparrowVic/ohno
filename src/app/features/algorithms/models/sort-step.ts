@@ -6,6 +6,7 @@ import { GridTraceState } from './grid';
 import { MatrixTraceState } from './matrix';
 import { NetworkTraceState } from './network';
 import { SearchTraceState } from './search';
+import { StringTraceState } from './string';
 
 export type SortPhase =
   | 'idle'
@@ -58,5 +59,6 @@ export interface SortStep {
   readonly matrix?: MatrixTraceState | null;
   readonly network?: NetworkTraceState | null;
   readonly search?: SearchTraceState | null;
+  readonly string?: StringTraceState | null;
   readonly geometry?: GeometryStepState | null;
 }

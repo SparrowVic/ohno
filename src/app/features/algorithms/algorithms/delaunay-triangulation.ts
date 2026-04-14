@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { Delaunay } from 'd3-delaunay';
 
 import {
   DelaunayTriangulationStepState,
@@ -182,7 +182,7 @@ export function* delaunayTriangulationGenerator(
     y: point.y,
   }));
 
-  const delaunay = d3.Delaunay.from(
+  const delaunay = Delaunay.from(
     points,
     (point) => point.x,
     (point) => point.y,

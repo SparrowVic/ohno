@@ -9,7 +9,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import * as d3 from 'd3';
+import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
@@ -50,8 +50,8 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private barsGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  private barsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private bars: Bar[] = [];
   private width = 0;
   private height = 0;
@@ -81,7 +81,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
 
   ngAfterViewInit(): void {
     const container = this.containerRef().nativeElement;
-    this.svg = d3
+    this.svg = d3Selection
       .select(container)
       .append('svg')
       .attr('width', '100%')

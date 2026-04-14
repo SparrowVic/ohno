@@ -1,0 +1,171 @@
+@if (state(); as stringState) {
+  <section class="string-trace">
+    <div class="trace-head trace-head--{{ modeTone() }}">
+      <div class="trace-head__icon">
+        <fa-icon [icon]="modeIcon()"></fa-icon>
+      </div>
+      <div class="trace-head__copy">
+        <span class="trace-head__eyebrow">Trace</span>
+        <span class="trace-head__title">{{ stringState.modeLabel }}</span>
+        <span class="trace-head__desc">{{ stringState.presetDescription }}</span>
+      </div>
+    </div>
+
+    <div class="trace-metrics">
+      <div class="trace-card">
+        <span class="trace-card__label">Phase</span>
+        <span class="trace-card__value">{{ stringState.phaseLabel }}</span>
+      </div>
+      <div class="trace-card">
+        <span class="trace-card__label">Active</span>
+        <span class="trace-card__value">{{ stringState.activeLabel }}</span>
+      </div>
+      <div class="trace-card">
+        <span class="trace-card__label">Result</span>
+        <span class="trace-card__value">{{ stringState.resultLabel }}</span>
+      </div>
+    </div>
+
+    <div class="trace-calc">
+      @if (stringState.computation; as computation) {
+        <span class="trace-calc__label">{{ computation.label }}</span>
+        <span class="trace-calc__expression">{{ computation.expression }}</span>
+        @if (computation.result) {
+          <span class="trace-calc__result">{{ computation.result }}</span>
+        }
+        <span class="trace-calc__note">{{ computation.note }}</span>
+      } @else {
+        <span class="trace-calc__label">Computation</span>
+        <span class="trace-calc__note">No extra formula on this step.</span>
+      }
+    </div>
+
+    <div class="trace-legend">
+      @for (item of legend; track item.label) {
+        <span class="trace-chip">
+          <fa-icon [icon]="item.icon"></fa-icon>
+          {{ item.label }}
+        </span>
+      }
+    </div>
+
+    @if (kmpState(); as kmp) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Failure table</span>
+          <div class="value-strip">
+            @for (value of failurePreview(kmp); track $index; let index = $index) {
+              <span class="value-chip" [class.value-chip--active]="index === kmp.patternIndex || index === kmp.comparePatternIndex">
+                {{ index }}:{{ value }}
+              </span>
+            }
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Scan state</span>
+          <div class="kv-list">
+            <div><span>Alignment</span><strong>{{ kmp.alignment }}</strong></div>
+            <div><span>Text index</span><strong>{{ kmp.textIndex ?? '—' }}</strong></div>
+            <div><span>Pattern index</span><strong>{{ kmp.patternIndex ?? '—' }}</strong></div>
+            <div><span>Jump</span><strong>{{ kmp.fallbackFrom !== null ? kmp.fallbackFrom + ' → ' + kmp.fallbackTo : 'none' }}</strong></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (rabinState(); as rabin) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Hashes</span>
+          <div class="kv-list">
+            <div><span>Pattern</span><strong>{{ rabin.patternHash }}</strong></div>
+            <div><span>Window</span><strong>{{ rabin.windowHash }}</strong></div>
+            <div><span>Base / mod</span><strong>{{ rabin.base }} / {{ rabin.mod }}</strong></div>
+            <div><span>Verify step</span><strong>{{ rabin.verificationIndex ?? '—' }}</strong></div>
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Rolling window</span>
+          <div class="kv-list">
+            <div><span>Start</span><strong>{{ rabin.windowStart }}</strong></div>
+            <div><span>Outgoing</span><strong>{{ rabin.outgoingChar ?? '—' }}</strong></div>
+            <div><span>Incoming</span><strong>{{ rabin.incomingChar ?? '—' }}</strong></div>
+            <div><span>Status</span><strong>{{ rabin.collision ? 'collision' : rabin.verifying ? 'verify' : 'hash only' }}</strong></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (zState(); as zStateValue) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Z skyline</span>
+          <div class="value-strip">
+            @for (value of zPreview(zStateValue); track $index; let index = $index) {
+              <span class="value-chip" [class.value-chip--active]="index === zStateValue.activeIndex">
+                {{ index }}:{{ value }}
+              </span>
+            }
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Z-box</span>
+          <div class="kv-list">
+            <div><span>L</span><strong>{{ zStateValue.boxLeft ?? '—' }}</strong></div>
+            <div><span>R</span><strong>{{ zStateValue.boxRight ?? '—' }}</strong></div>
+            <div><span>Prefix compare</span><strong>{{ zStateValue.comparePrefixIndex ?? '—' }}</strong></div>
+            <div><span>Text compare</span><strong>{{ zStateValue.compareMatchIndex ?? '—' }}</strong></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (manacherState(); as manacher) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Radius array</span>
+          <div class="value-strip">
+            @for (value of radiiPreview(manacher); track $index; let index = $index) {
+              <span class="value-chip" [class.value-chip--active]="index === manacher.currentCenter || index === manacher.longestCenter">
+                {{ index }}:{{ value }}
+              </span>
+            }
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Mirror window</span>
+          <div class="kv-list">
+            <div><span>Center</span><strong>{{ manacher.currentCenter ?? '—' }}</strong></div>
+            <div><span>Mirror</span><strong>{{ manacher.mirrorIndex ?? '—' }}</strong></div>
+            <div><span>Bounds</span><strong>{{ manacher.leftBoundary ?? '—' }}..{{ manacher.rightBoundary ?? '—' }}</strong></div>
+            <div><span>Longest</span><strong>{{ manacher.longestPalindrome || '—' }}</strong></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (bwtState(); as bwt) {
+      <div class="trace-grid">
+        <div class="trace-panel">
+          <span class="trace-panel__label">Columns</span>
+          <div class="kv-list">
+            <div><span>Input</span><strong>{{ bwt.source }}</strong></div>
+            <div><span>F</span><strong>{{ bwt.firstColumn || '—' }}</strong></div>
+            <div><span>L</span><strong>{{ bwt.lastColumn || '—' }}</strong></div>
+            <div><span>Gain</span><strong>{{ formatRatio(bwt.compressionRatio) }}</strong></div>
+          </div>
+        </div>
+        <div class="trace-panel">
+          <span class="trace-panel__label">Output runs</span>
+          <div class="value-strip">
+            @for (group of groupPreview(bwt); track group) {
+              <span class="value-chip value-chip--soft">{{ group }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+} @else {
+  <section class="string-trace string-trace--empty">No string trace available.</section>
+}

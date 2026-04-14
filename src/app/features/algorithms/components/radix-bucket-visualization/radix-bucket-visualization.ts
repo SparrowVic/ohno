@@ -10,7 +10,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import * as d3 from 'd3';
+import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
 import {
@@ -159,9 +159,9 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private bucketLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private cardLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  private bucketLayer: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private cardLayer: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private flowPath: SVGPathElement | null = null;
   private bucketElements = new Map<number, BucketElements>();
   private cards = new Map<string, Card>();
@@ -193,7 +193,7 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
 
   ngAfterViewInit(): void {
     const container = this.containerRef().nativeElement;
-    this.svg = d3
+    this.svg = d3Selection
       .select(container)
       .append('svg')
       .attr('width', '100%')
@@ -835,7 +835,7 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
   private syncDigitNodes(card: Card): void {
     const desired = card.digitsPayload.digits.length;
     while (card.digits.length < desired) {
-      const node = d3
+      const node = d3Selection
         .select(card.digitGroup)
         .append('text')
         .attr('text-anchor', 'middle')

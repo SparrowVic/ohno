@@ -1,0 +1,159 @@
+export interface StringPresetOption {
+  readonly id: string;
+  readonly label: string;
+  readonly description: string;
+}
+
+export interface StringInsight {
+  readonly label: string;
+  readonly value: string;
+  readonly tone: 'info' | 'accent' | 'success' | 'warning';
+}
+
+export interface StringComputation {
+  readonly label: string;
+  readonly expression: string;
+  readonly result: string | null;
+  readonly note: string;
+}
+
+interface StringTraceBase {
+  readonly modeLabel: string;
+  readonly phaseLabel: string;
+  readonly presetLabel: string;
+  readonly presetDescription: string;
+  readonly activeLabel: string;
+  readonly resultLabel: string;
+  readonly decisionLabel: string;
+  readonly insights: readonly StringInsight[];
+  readonly computation: StringComputation | null;
+}
+
+export interface KmpTraceState extends StringTraceBase {
+  readonly mode: 'kmp';
+  readonly stage: 'failure' | 'scan' | 'done';
+  readonly text: string;
+  readonly pattern: string;
+  readonly failure: readonly number[];
+  readonly failureReadyIndex: number;
+  readonly alignment: number;
+  readonly textIndex: number | null;
+  readonly patternIndex: number | null;
+  readonly compareTextIndex: number | null;
+  readonly comparePatternIndex: number | null;
+  readonly fallbackFrom: number | null;
+  readonly fallbackTo: number | null;
+  readonly matches: readonly number[];
+}
+
+export interface RabinKarpTraceState extends StringTraceBase {
+  readonly mode: 'rabin-karp';
+  readonly text: string;
+  readonly pattern: string;
+  readonly windowStart: number;
+  readonly windowLength: number;
+  readonly patternHash: number;
+  readonly windowHash: number;
+  readonly base: number;
+  readonly mod: number;
+  readonly highestPower: number;
+  readonly verifying: boolean;
+  readonly verificationIndex: number | null;
+  readonly collision: boolean;
+  readonly matches: readonly number[];
+  readonly outgoingChar: string | null;
+  readonly incomingChar: string | null;
+}
+
+export interface ZAlgorithmTraceState extends StringTraceBase {
+  readonly mode: 'z-algorithm';
+  readonly combined: string;
+  readonly patternLength: number;
+  readonly zValues: readonly number[];
+  readonly activeIndex: number | null;
+  readonly boxLeft: number | null;
+  readonly boxRight: number | null;
+  readonly comparePrefixIndex: number | null;
+  readonly compareMatchIndex: number | null;
+  readonly matches: readonly number[];
+}
+
+export interface ManacherTraceState extends StringTraceBase {
+  readonly mode: 'manacher';
+  readonly source: string;
+  readonly transformed: string;
+  readonly radii: readonly number[];
+  readonly currentCenter: number | null;
+  readonly mirrorIndex: number | null;
+  readonly leftBoundary: number | null;
+  readonly rightBoundary: number | null;
+  readonly activeRadius: number;
+  readonly compareLeft: number | null;
+  readonly compareRight: number | null;
+  readonly longestCenter: number | null;
+  readonly longestRadius: number;
+  readonly longestPalindrome: string;
+}
+
+export interface StringRotationRow {
+  readonly id: string;
+  readonly startIndex: number;
+  readonly text: string;
+  readonly tone: 'pending' | 'active' | 'compare' | 'sorted' | 'output';
+}
+
+export interface StringRunGroup {
+  readonly id: string;
+  readonly char: string;
+  readonly count: number;
+  readonly tone: 'input' | 'output';
+}
+
+export interface BurrowsWheelerTraceState extends StringTraceBase {
+  readonly mode: 'burrows-wheeler-transform';
+  readonly source: string;
+  readonly rotations: readonly StringRotationRow[];
+  readonly activeRows: readonly string[];
+  readonly firstColumn: string;
+  readonly lastColumn: string;
+  readonly output: string;
+  readonly runGroups: readonly StringRunGroup[];
+  readonly compressionRatio: number | null;
+}
+
+export type StringTraceState =
+  | KmpTraceState
+  | RabinKarpTraceState
+  | ZAlgorithmTraceState
+  | ManacherTraceState
+  | BurrowsWheelerTraceState;
+
+export function isKmpState(
+  state: StringTraceState | null | undefined,
+): state is KmpTraceState {
+  return state?.mode === 'kmp';
+}
+
+export function isRabinKarpState(
+  state: StringTraceState | null | undefined,
+): state is RabinKarpTraceState {
+  return state?.mode === 'rabin-karp';
+}
+
+export function isZAlgorithmState(
+  state: StringTraceState | null | undefined,
+): state is ZAlgorithmTraceState {
+  return state?.mode === 'z-algorithm';
+}
+
+export function isManacherState(
+  state: StringTraceState | null | undefined,
+): state is ManacherTraceState {
+  return state?.mode === 'manacher';
+}
+
+export function isBurrowsWheelerState(
+  state: StringTraceState | null | undefined,
+): state is BurrowsWheelerTraceState {
+  return state?.mode === 'burrows-wheeler-transform';
+}

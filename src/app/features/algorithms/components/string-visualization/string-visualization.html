@@ -1,0 +1,385 @@
+<section class="string-lab" #container>
+  @if (state(); as stringState) {
+    <div class="playground-bar">
+      <div class="playground-bar__copy">
+        <span class="playground-bar__eyebrow">String Lab</span>
+        <span class="playground-bar__title">{{ stringState.presetLabel }}</span>
+        <span class="playground-bar__desc">{{ stringState.presetDescription }}</span>
+      </div>
+      <div class="playground-bar__presets">
+        @for (option of presetOptions(); track option.id) {
+          <button
+            type="button"
+            class="preset-chip"
+            [class.preset-chip--active]="presetId() === option.id"
+            (click)="selectPreset(option.id)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="string-lab__hud">
+      <div class="hud-card">
+        <span class="hud-card__label">Mode</span>
+        <span class="hud-card__value">{{ stringState.modeLabel }}</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-card__label">Phase</span>
+        <span class="hud-card__value">{{ stringState.phaseLabel }}</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-card__label">Active</span>
+        <span class="hud-card__value">{{ stringState.activeLabel }}</span>
+      </div>
+      <div class="hud-card">
+        <span class="hud-card__label">Result</span>
+        <span class="hud-card__value">{{ stringState.resultLabel }}</span>
+      </div>
+      <div class="hud-card hud-card--wide">
+        <span class="hud-card__label">Decision</span>
+        <span class="hud-card__value">{{ stringState.decisionLabel }}</span>
+      </div>
+    </div>
+
+    <div class="string-lab__insights">
+      @for (insight of stringState.insights; track insight.label) {
+        <div class="insight-card insight-card--{{ insight.tone }}">
+          <span class="insight-card__label">{{ insight.label }}</span>
+          <span class="insight-card__value">{{ insight.value }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="string-lab__calc">
+      @if (stringState.computation; as computation) {
+        <div class="calc-card">
+          <span class="calc-card__label">{{ computation.label }}</span>
+          <span class="calc-card__expression">{{ computation.expression }}</span>
+          @if (computation.result) {
+            <span class="calc-card__result">{{ computation.result }}</span>
+          }
+          <span class="calc-card__note">{{ computation.note }}</span>
+        </div>
+      } @else {
+        <div class="calc-card calc-card--empty">
+          <span class="calc-card__label">Computation</span>
+          <span class="calc-card__note">This step is a pure state transition with no extra formula to explain.</span>
+        </div>
+      }
+    </div>
+
+    @switch (stringState.mode) {
+      @case ('kmp') {
+        @if (kmpState(); as kmp) {
+          <div class="string-stage">
+            <div class="string-row">
+              <span class="string-row__label">Text</span>
+              <div class="cell-track">
+                @for (char of kmp.text; track $index; let index = $index) {
+                  <div
+                    class="{{ kmpTextClass(index) }}"
+                    [attr.data-kmp-text]="index"
+                  >
+                    <span>{{ char }}</span>
+                    <small>{{ index }}</small>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="string-row">
+              <span class="string-row__label">Pattern</span>
+              <div class="cell-track cell-track--floating">
+                <div
+                  class="float-track"
+                  [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
+                >
+                  @for (char of kmp.pattern; track $index; let index = $index) {
+                    <div
+                      class="{{ kmpPatternClass(index) }}"
+                      [attr.data-kmp-pattern]="index"
+                    >
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="string-row">
+              <span class="string-row__label">Failure</span>
+              <div class="cell-track cell-track--floating">
+                <div
+                  class="float-track"
+                  [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
+                >
+                  @for (value of kmp.failure; track $index; let index = $index) {
+                    <div class="{{ failureClass(index) }}">
+                      <span>{{ index <= kmp.failureReadyIndex ? value : '·' }}</span>
+                      <small>f{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="string-jump">
+              <span class="string-jump__label">Jump</span>
+              <span class="string-jump__value">
+                @if (kmp.fallbackFrom !== null && kmp.fallbackTo !== null) {
+                  j: {{ kmp.fallbackFrom }} → {{ kmp.fallbackTo }}
+                } @else {
+                  No failure jump on this step
+                }
+              </span>
+            </div>
+          </div>
+        }
+      }
+
+      @case ('rabin-karp') {
+        @if (rabinState(); as rabin) {
+          <div class="string-stage">
+            <div class="string-row">
+              <span class="string-row__label">Text</span>
+              <div class="cell-track">
+                @for (char of rabin.text; track $index; let index = $index) {
+                  <div class="{{ rabinTextClass(index) }}">
+                    <span>{{ char }}</span>
+                    <small>{{ index }}</small>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="string-row">
+              <span class="string-row__label">Pattern</span>
+              <div class="cell-track">
+                @for (char of rabin.pattern; track $index; let index = $index) {
+                  <div class="{{ rabinPatternClass(index) }}">
+                    <span>{{ char }}</span>
+                    <small>{{ index }}</small>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="hash-strip">
+              <div class="hash-card">
+                <span class="hash-card__label">Pattern hash</span>
+                <span class="hash-card__value">{{ rabin.patternHash }}</span>
+              </div>
+              <div class="hash-card hash-card--window">
+                <span class="hash-card__label">Window hash</span>
+                <span class="hash-card__value">{{ rabin.windowHash }}</span>
+              </div>
+              <div class="hash-card">
+                <span class="hash-card__label">Window</span>
+                <span class="hash-card__value">{{ rabin.windowStart }}..{{ rabin.windowStart + rabin.windowLength - 1 }}</span>
+              </div>
+              <div class="hash-card hash-card--alert">
+                <span class="hash-card__label">Verification</span>
+                <span class="hash-card__value">
+                  @if (rabin.collision) {
+                    False alarm
+                  } @else if (rabin.verifying) {
+                    Checking chars
+                  } @else {
+                    Hash only
+                  }
+                </span>
+              </div>
+            </div>
+
+            <div class="hash-meta">
+              <span class="meta-pill">out: {{ rabin.outgoingChar ?? '—' }}</span>
+              <span class="meta-pill meta-pill--accent">in: {{ rabin.incomingChar ?? '—' }}</span>
+              <span class="meta-pill meta-pill--soft">base {{ rabin.base }} / mod {{ rabin.mod }}</span>
+            </div>
+          </div>
+        }
+      }
+
+      @case ('z-algorithm') {
+        @if (zState(); as zStateValue) {
+          <div class="string-stage string-stage--z">
+            <div class="string-row">
+              <span class="string-row__label">Combined</span>
+              <div class="cell-track">
+                @for (char of zStateValue.combined; track $index; let index = $index) {
+                  <div class="{{ zCharClass(index) }}">
+                    <span>{{ char }}</span>
+                    <small>{{ index }}</small>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="z-landscape">
+              @for (value of zStateValue.zValues; track $index; let index = $index) {
+                <div class="z-col">
+                  <div
+                    class="{{ zBarClass(index) }}"
+                    [style.height]="zBarHeight(value)"
+                    [attr.data-z-bar]="index"
+                  ></div>
+                  <span class="z-col__label">{{ value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      @case ('manacher') {
+        @if (manacherState(); as manacher) {
+          <div class="string-stage string-stage--manacher">
+
+            <div class="string-row">
+              <span class="string-row__label">Source</span>
+              <div class="cell-track">
+                @for (char of manacher.source; track $index; let index = $index) {
+                  <div class="str-cell str-cell--accent">
+                    <span>{{ char }}</span>
+                    <small>{{ index }}</small>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="arc-board-wrap">
+              <div class="manacher-stage" [style.width.px]="manacherTrackWidth()">
+
+                <svg
+                  class="arc-board"
+                  [attr.width]="manacherTrackWidth()"
+                  height="128"
+                  [attr.viewBox]="manacherArcViewBox()"
+                >
+                  <defs>
+                    <filter id="mch-glow-warm" x="-60%" y="-60%" width="220%" height="220%">
+                      <feGaussianBlur stdDeviation="4" result="b"/>
+                      <feMerge>
+                        <feMergeNode in="b"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                    <filter id="mch-glow-cool" x="-60%" y="-60%" width="220%" height="220%">
+                      <feGaussianBlur stdDeviation="5" result="b"/>
+                      <feMerge>
+                        <feMergeNode in="b"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  @if (manacher.leftBoundary !== null && manacher.rightBoundary !== null && manacher.rightBoundary > manacher.leftBoundary) {
+                    <rect
+                      class="mch-window"
+                      [attr.x]="manacherWindowX(manacher.leftBoundary)"
+                      y="0"
+                      [attr.width]="manacherWindowW(manacher.leftBoundary, manacher.rightBoundary)"
+                      height="128"
+                      rx="8"
+                    />
+                  }
+
+                  @for (arc of manacherArcs(); track arc.id) {
+                    <path
+                      class="arc arc--{{ arc.tone }}"
+                      [attr.d]="arc.path"
+                      pathLength="1"
+                    />
+                  }
+
+                  @if (manacher.currentCenter !== null) {
+                    <line
+                      class="mch-beam"
+                      [attr.x1]="manacherCenterX(manacher.currentCenter)"
+                      [attr.x2]="manacherCenterX(manacher.currentCenter)"
+                      y1="0"
+                      y2="128"
+                    />
+                  }
+                </svg>
+
+                <div class="cell-track cell-track--inline">
+                  @for (char of manacher.transformed; track $index; let index = $index) {
+                    <div
+                      class="{{ manacherCharClass(index) }}"
+                      [attr.data-manacher-char]="index"
+                    >
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+
+                <div class="mch-radius-row">
+                  @for (value of manacher.radii; track $index; let index = $index) {
+                    <div class="{{ radiusClass(index) }}">
+                      <span>{{ value }}</span>
+                      <small>P{{ index }}</small>
+                    </div>
+                  }
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        }
+      }
+
+      @case ('burrows-wheeler-transform') {
+        @if (bwtState(); as bwt) {
+          <div class="string-stage string-stage--bwt">
+            <div class="bwt-summary">
+              <div class="bwt-summary__card">
+                <span class="bwt-summary__label">Input</span>
+                <span class="bwt-summary__value">{{ bwt.source }}</span>
+              </div>
+              <div class="bwt-summary__card">
+                <span class="bwt-summary__label">F</span>
+                <span class="bwt-summary__value">{{ bwt.firstColumn || '—' }}</span>
+              </div>
+              <div class="bwt-summary__card">
+                <span class="bwt-summary__label">L</span>
+                <span class="bwt-summary__value bwt-summary__value--output">{{ bwt.lastColumn || '—' }}</span>
+              </div>
+            </div>
+
+            <div class="bwt-matrix-wrap">
+              @for (row of bwt.rotations; track row.id) {
+                <div
+                  class="{{ bwtRowClass(row) }}"
+                  [attr.data-bwt-row]="row.id"
+                >
+                  <span class="bwt-row__index">{{ row.startIndex }}</span>
+                  <div class="bwt-row__chars">
+                    @for (char of row.text; track $index; let index = $index) {
+                      <span class="{{ bwtCellClass(row, index) }}">{{ char }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="run-strip">
+              @for (group of bwt.runGroups; track group.id) {
+                <span class="{{ bwtRunClass(group.tone) }}">
+                  {{ group.count }}×{{ group.char }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+      }
+    }
+  } @else {
+    <div class="string-lab__empty">No String Lab trace available for this step.</div>
+  }
+</section>

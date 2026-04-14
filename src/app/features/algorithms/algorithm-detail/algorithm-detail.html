@@ -66,8 +66,11 @@
             [graphFocusTargetId]="graphFocusTargetId()"
             [dpPresetOptions]="dpPresetOptions()"
             [dpPresetId]="dpPresetId()"
+            [stringPresetOptions]="stringPresetOptions()"
+            [stringPresetId]="stringPresetId()"
             (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
             (dpPresetChange)="onDpPresetChange($event)"
+            (stringPresetChange)="onStringPresetChange($event)"
           />
           <app-legend-bar [items]="legendItems()" />
         </div>
@@ -84,6 +87,7 @@
           [matrixState]="matrixTrace()"
           [networkState]="networkTrace()"
           [searchState]="searchTrace()"
+          [stringState]="stringTrace()"
           [geometryState]="geometryTrace()"
           [graphFocusTargetLabel]="graphFocusTargetLabel()"
           [graphFocusPathLabel]="graphFocusPathLabel()"

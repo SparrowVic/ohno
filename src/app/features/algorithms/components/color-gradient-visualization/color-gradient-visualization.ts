@@ -9,7 +9,8 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import * as d3 from 'd3';
+import * as d3Scale from 'd3-scale';
+import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
 import { SortStep } from '../../models/sort-step';
@@ -62,14 +63,14 @@ export class ColorGradientVisualization
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private rowGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  private rowGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private cells: Cell[] = [];
   private width = 0;
   private height = 0;
   private itemsPerRow = 1;
   private gridTop = 0;
-  private opacityScale: d3.ScaleLinear<number, number> = d3.scaleLinear();
+  private opacityScale: d3Scale.ScaleLinear<number, number> = d3Scale.scaleLinear();
   private initialized = false;
   private resizeObserver: ResizeObserver | null = null;
   private lastStep: SortStep | null = null;
@@ -95,7 +96,7 @@ export class ColorGradientVisualization
 
   ngAfterViewInit(): void {
     const container = this.containerRef().nativeElement;
-    this.svg = d3
+    this.svg = d3Selection
       .select(container)
       .append('svg')
       .attr('width', '100%')
@@ -121,7 +122,7 @@ export class ColorGradientVisualization
 
   initialize(array: readonly number[]): void {
     this.clearCells();
-    this.opacityScale = d3
+    this.opacityScale = d3Scale
       .scaleLinear<number, number>()
       .domain([Math.min(1, ...array), Math.max(1, ...array)])
       .range([MIN_OPACITY, MAX_OPACITY])
@@ -185,7 +186,7 @@ export class ColorGradientVisualization
 
   private snapRebuild(array: readonly number[]): void {
     this.clearCells();
-    this.opacityScale = d3
+    this.opacityScale = d3Scale
       .scaleLinear<number, number>()
       .domain([Math.min(1, ...array), Math.max(1, ...array)])
       .range([MIN_OPACITY, MAX_OPACITY])

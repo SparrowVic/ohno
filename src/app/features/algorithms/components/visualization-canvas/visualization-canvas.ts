@@ -26,6 +26,8 @@ import { RadixStripVisualization } from '../radix-strip-visualization/radix-stri
 import { RadialVisualization } from '../radial-visualization/radial-visualization';
 import { SearchVisualization } from '../search-visualization/search-visualization';
 import { SoundBarsVisualization } from '../sound-bars-visualization/sound-bars-visualization';
+import { StringPresetOption } from '../../models/string';
+import { StringVisualization } from '../string-visualization/string-visualization';
 import { SweepLineVisualization } from '../sweep-line-visualization/sweep-line-visualization';
 import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualization';
 
@@ -54,6 +56,7 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     RadialVisualization,
     SearchVisualization,
     SoundBarsVisualization,
+    StringVisualization,
     SweepLineVisualization,
     VoronoiVisualization,
   ],
@@ -71,6 +74,9 @@ export class VisualizationCanvas {
   readonly graphFocusTargetId = input<string | null>(null);
   readonly dpPresetOptions = input<readonly DpPresetOption[]>([]);
   readonly dpPresetId = input<string | null>(null);
+  readonly stringPresetOptions = input<readonly StringPresetOption[]>([]);
+  readonly stringPresetId = input<string | null>(null);
   readonly graphFocusTargetChange = output<string | null>();
   readonly dpPresetChange = output<string>();
+  readonly stringPresetChange = output<string>();
 }

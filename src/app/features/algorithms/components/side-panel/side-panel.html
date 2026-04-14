@@ -34,6 +34,8 @@
           <app-matrix-trace-panel [state]="matrixState()" />
         } @else if (networkState()) {
           <app-network-trace-panel [state]="networkState()" />
+        } @else if (stringState()) {
+          <app-string-trace-panel [state]="stringState()" />
         } @else if (closestPairGeometryState()) {
           <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
         } @else if (lineIntersectionGeometryState()) {
