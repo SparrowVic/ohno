@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -326,7 +327,7 @@ import {
   createZAlgorithmScenario,
 } from '../utils/string-scenarios';
 import { LegendBar } from '../components/legend-bar/legend-bar';
-import { SidePanel } from '../components/side-panel/side-panel';
+import { SidePanel, SideTabLayout } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
 import { VisualizationToolbar } from '../components/visualization-toolbar/visualization-toolbar';
 
@@ -2196,6 +2197,16 @@ const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationSce
   randomizeLabel: 'New star mesh',
 };
 
+const INSPECTOR_COLLAPSED_KEY = 'ohno:algorithm-detail:inspector-collapsed';
+const INSPECTOR_LAYOUT_KEY = 'ohno:algorithm-detail:inspector-layout';
+
+function humanizeLabel(value: string): string {
+  return value
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 @Component({
   selector: 'app-algorithm-detail',
   imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
@@ -2210,6 +2221,7 @@ export class AlgorithmDetail {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly engine = inject(VisualizationEngine);
   private readonly language = inject(AppLanguageService);
+  private readonly doc = inject(DOCUMENT);
 
   private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
     initialValue: this.route.snapshot.paramMap.get('id'),
@@ -2231,6 +2243,11 @@ export class AlgorithmDetail {
       ? 'Visualization is not implemented yet.'
       : 'Ta wizualizacja nie jest jeszcze zaimplementowana.',
   );
+  readonly labEyebrow = computed(() => {
+    const algorithm = this.algorithm();
+    if (!algorithm) return '';
+    return `${humanizeLabel(algorithm.category)} / ${humanizeLabel(algorithm.subcategory)}`;
+  });
 
   readonly config = computed<AlgorithmViewConfig | null>(() => {
     const algorithm = this.algorithm();
@@ -2477,6 +2494,8 @@ export class AlgorithmDetail {
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
+  private readonly inspectorCollapsedSig = signal(this.readStoredBoolean(INSPECTOR_COLLAPSED_KEY));
+  private readonly inspectorLayoutSig = signal<SideTabLayout>(this.readStoredLayout());
   private lastLoggedStep = -1;
 
   readonly size = this.sizeSig.asReadonly();
@@ -2493,6 +2512,8 @@ export class AlgorithmDetail {
   readonly speed = this.engine.speed;
   readonly step = this.currentSnapshot.asReadonly();
   readonly logEntries = this.logEntriesSig.asReadonly();
+  readonly inspectorCollapsed = this.inspectorCollapsedSig.asReadonly();
+  readonly inspectorLayout = this.inspectorLayoutSig.asReadonly();
   readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
   readonly variantOptions = computed(() => this.config()?.variantOptions ?? []);
   readonly dpPresetOptions = computed<readonly DpPresetOption[]>(() => {
@@ -2505,6 +2526,21 @@ export class AlgorithmDetail {
   });
   readonly sizeUnit = computed(() => this.config()?.sizeUnit ?? 'elements');
   readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
+  readonly currentVariantLabel = computed(() => {
+    const active = this.variantSig();
+    return (
+      this.variantOptions().find((option) => option.value === active)?.label ??
+      humanizeLabel(active)
+    );
+  });
+  readonly sizeSummaryLabel = computed(() => `${this.sizeSig()} ${this.sizeUnit()}`);
+  readonly stepSummaryLabel = computed(() => `Step ${this.currentStep()} / ${this.totalSteps()}`);
+  readonly inspectorToggleLabel = computed(() =>
+    this.inspectorCollapsed() ? 'Show inspector' : 'Hide inspector',
+  );
+  readonly inspectorLayoutLabel = computed(() =>
+    this.inspectorLayout() === 'vertical' ? 'Side rail' : 'Top tabs',
+  );
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
   readonly dsuTrace = computed<DsuTraceState | null>(() => this.currentSnapshot()?.dsu ?? null);
@@ -2572,6 +2608,17 @@ export class AlgorithmDetail {
   readonly codeLines = computed(() => this.config()?.codeLines ?? []);
 
   constructor() {
+    effect(() => {
+      this.doc.defaultView?.localStorage.setItem(
+        INSPECTOR_COLLAPSED_KEY,
+        this.inspectorCollapsed() ? '1' : '0',
+      );
+    });
+
+    effect(() => {
+      this.doc.defaultView?.localStorage.setItem(INSPECTOR_LAYOUT_KEY, this.inspectorLayout());
+    });
+
     effect(() => {
       const config = this.config();
       const algorithm = this.algorithm();
@@ -2678,6 +2725,14 @@ export class AlgorithmDetail {
 
   back(): void {
     this.router.navigate(['/algorithms']);
+  }
+
+  toggleInspectorCollapse(): void {
+    this.inspectorCollapsedSig.update((collapsed) => !collapsed);
+  }
+
+  toggleInspectorLayout(): void {
+    this.inspectorLayoutSig.update((layout) => (layout === 'vertical' ? 'horizontal' : 'vertical'));
   }
 
   onReset(): void {
@@ -2921,6 +2976,19 @@ export class AlgorithmDetail {
     this.arraySig.set([]);
     this.graphSig.set(null);
     this.loadStringEngine(scenario, config.generator);
+  }
+
+  onInspectorLayoutChange(value: SideTabLayout): void {
+    this.inspectorLayoutSig.set(value);
+  }
+
+  private readStoredBoolean(key: string): boolean {
+    return this.doc.defaultView?.localStorage.getItem(key) === '1';
+  }
+
+  private readStoredLayout(): SideTabLayout {
+    const value = this.doc.defaultView?.localStorage.getItem(INSPECTOR_LAYOUT_KEY);
+    return value === 'horizontal' ? 'horizontal' : 'vertical';
   }
 
   private loadArrayEngine(

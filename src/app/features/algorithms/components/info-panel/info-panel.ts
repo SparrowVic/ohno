@@ -7,6 +7,13 @@ interface ComplexityCard {
   readonly value: string;
 }
 
+function humanize(value: string): string {
+  return value
+    .split('-')
+    .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
+    .join(' ');
+}
+
 @Component({
   selector: 'app-info-panel',
   imports: [],
@@ -21,11 +28,14 @@ export class InfoPanel {
     const algo = this.algorithm();
     return [
       { label: 'Time best', value: algo.complexity.timeBest },
+      { label: 'Time average', value: algo.complexity.timeAverage },
       { label: 'Time worst', value: algo.complexity.timeWorst },
       { label: 'Space', value: algo.complexity.space },
       this.metaCard(algo),
+      { label: 'Subcategory', value: humanize(algo.subcategory) },
     ];
   });
+  readonly tags = computed(() => this.algorithm().tags);
 
   private metaCard(algo: AlgorithmItem): ComplexityCard {
     if (algo.stable !== undefined) {
@@ -36,6 +46,6 @@ export class InfoPanel {
       return { label: 'In place', value: algo.inPlace ? 'Yes' : 'No' };
     }
 
-    return { label: 'Category', value: algo.category };
+    return { label: 'Category', value: humanize(algo.category) };
   }
 }

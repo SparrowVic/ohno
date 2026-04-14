@@ -1,66 +1,99 @@
 <div class="toolbar">
-  <div class="toolbar__left">
-    <button type="button" class="ctrl-btn" aria-label="Reset" (click)="resetClick.emit()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M3 3h10M3 8h10M3 13h10" />
-      </svg>
-    </button>
-    <button
-      type="button"
-      class="ctrl-btn"
-      aria-label="Step back"
-      [disabled]="!canStepBack()"
-      (click)="stepBackClick.emit()"
-    >
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M4 13V3M4 3l3 3" />
-      </svg>
-    </button>
-    <button
-      type="button"
-      class="ctrl-btn ctrl-btn--play"
-      [attr.aria-label]="isPlaying() ? 'Pause' : 'Play'"
-      (click)="playToggle.emit()"
-    >
-      @if (isPlaying()) {
-        <svg viewBox="0 0 16 16" fill="currentColor">
-          <rect x="4" y="3" width="3" height="10" rx="0.5" />
-          <rect x="9" y="3" width="3" height="10" rx="0.5" />
+  <div class="toolbar__transport">
+    <div class="toolbar__group">
+      <button
+        type="button"
+        class="ctrl-btn"
+        aria-label="Reset scenario"
+        title="Reset scenario"
+        (click)="resetClick.emit()"
+      >
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M13 4.5V1.8H10.3" />
+          <path d="M12.4 8a4.9 4.9 0 10-1.3 3.3L13 9.7" />
         </svg>
-      } @else {
-        <svg viewBox="0 0 16 16" fill="currentColor">
-          <path d="M5 3l8 5-8 5V3z" />
+      </button>
+      <button
+        type="button"
+        class="ctrl-btn"
+        aria-label="Previous step"
+        title="Previous step"
+        [disabled]="!canStepBack()"
+        (click)="stepBackClick.emit()"
+      >
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M11.8 3.5L6.1 8l5.7 4.5" />
+          <path d="M5 3.5v9" />
         </svg>
-      }
-    </button>
-    <button
-      type="button"
-      class="ctrl-btn"
-      aria-label="Step forward"
-      [disabled]="!canStepForward()"
-      (click)="stepForwardClick.emit()"
-    >
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M12 13V3M12 3L9 6" />
-      </svg>
-    </button>
+      </button>
+      <button
+        type="button"
+        class="ctrl-btn ctrl-btn--play"
+        [attr.aria-label]="transportLabel()"
+        [attr.title]="transportLabel()"
+        (click)="playToggle.emit()"
+      >
+        @if (isPlaying()) {
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <rect x="4.2" y="3.2" width="2.7" height="9.6" rx="0.9" />
+            <rect x="9.1" y="3.2" width="2.7" height="9.6" rx="0.9" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M5 3.3l7 4.7L5 12.7V3.3z" />
+          </svg>
+        }
+      </button>
+      <button
+        type="button"
+        class="ctrl-btn"
+        aria-label="Next step"
+        title="Next step"
+        [disabled]="!canStepForward()"
+        (click)="stepForwardClick.emit()"
+      >
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M4.2 3.5L9.9 8l-5.7 4.5" />
+          <path d="M11 3.5v9" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="toolbar__progress">
+      <div class="toolbar__progress-copy">
+        <span class="toolbar__eyebrow">Run state</span>
+        <span class="toolbar__counter">Step {{ currentStep() }} / {{ totalSteps() }}</span>
+      </div>
+      <div class="toolbar__progress-bar">
+        <span class="toolbar__progress-fill" [style.width.%]="progressRatio()"></span>
+      </div>
+    </div>
   </div>
 
-  <div class="toolbar__center">
-    <span class="speed-label">Speed</span>
-    <input
-      type="range"
-      class="speed-slider"
-      min="1"
-      max="10"
-      [value]="speed()"
-      (input)="onSpeedInput($event)"
+  <div class="toolbar__dock">
+    @if (hasVariantChoice()) {
+      <app-lab-select
+        label="View"
+        [options]="variantSelectOptions()"
+        [formControl]="variantControl"
+      />
+    }
+    <app-lab-select
+      label="Dataset size"
+      [options]="sizeSelectOptions()"
+      [formControl]="sizeControl"
     />
-    <span class="speed-value">{{ speed() }}x</span>
-    <span class="step-counter">Step {{ currentStep() }} / {{ totalSteps() }}</span>
+    <app-lab-slider
+      label="Speed"
+      [min]="1"
+      [max]="10"
+      [step]="1"
+      valueSuffix="x"
+      [formControl]="speedControl"
+    />
   </div>
 
-  <div class="toolbar__right">
+  <div class="toolbar__actions">
     @if (variant() === 'sound') {
       <button
         type="button"
@@ -82,22 +115,6 @@
         }
       </button>
     }
-    @if (hasVariantChoice()) {
-      <select class="size-select" [value]="variant()" (change)="onVariantChange($event)">
-        @for (option of variantOptions(); track option.value) {
-          <option [value]="option.value" [selected]="option.value === variant()">
-            {{ option.label }}
-          </option>
-        }
-      </select>
-    }
-    <select class="size-select" [value]="size()" (change)="onSizeChange($event)">
-      @for (option of sizeOptions(); track option) {
-        <option [value]="option" [selected]="option === size()">
-          {{ option }} {{ sizeUnit() }}
-        </option>
-      }
-    </select>
     <button type="button" class="generate-btn" (click)="randomizeClick.emit()">
       {{ randomizeLabel() }}
     </button>

@@ -6,49 +6,60 @@
 }
 
 .code-view {
-  padding: 16px;
+  padding: 10px;
   font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.8;
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .code-line {
   display: flex;
-  padding: 0 8px;
-  border-radius: 3px;
+  gap: 10px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 0.5px solid transparent;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 
   &--highlight {
-    background: var(--line-highlight);
+    background:
+      linear-gradient(180deg, rgba(184, 213, 110, 0.12), rgba(184, 213, 110, 0.04)),
+      rgba(255, 255, 255, 0.02);
+    border-color: rgba(184, 213, 110, 0.12);
+    transform: translateX(3px);
   }
 }
 
 .line-num {
   color: var(--text-tertiary);
-  min-width: 24px;
+  min-width: 26px;
   user-select: none;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .line-code {
   color: var(--text-secondary);
   white-space: pre;
+  overflow-x: auto;
 }
 
 .kw {
-  color: #c792ea;
+  color: var(--viz-window-ink);
 }
 .fn {
-  color: #82aaff;
+  color: var(--viz-accent-ink);
 }
 .str {
-  color: #c3e88d;
+  color: var(--viz-success-ink);
 }
 .num {
-  color: #f78c6c;
+  color: var(--viz-ember-ink);
 }
 .cm {
   color: var(--text-tertiary);
 }
 .op {
-  color: #89ddff;
+  color: var(--viz-route-ink);
 }

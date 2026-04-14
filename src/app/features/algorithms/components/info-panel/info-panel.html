@@ -1,5 +1,16 @@
 <section class="info">
-  <h2 class="info__title">Complexity</h2>
+  <div class="info__hero">
+    <div class="info__eyebrow">Briefing</div>
+    <h2 class="info__title">Algorithm profile</h2>
+    <p class="info__desc">{{ algorithm().description }}</p>
+  </div>
+
+  <div class="info__tags">
+    @for (tag of tags(); track tag) {
+      <span class="info__tag">{{ tag }}</span>
+    }
+  </div>
+
   <div class="info__grid">
     @for (card of cards(); track card.label) {
       <div class="info__card">
@@ -8,5 +19,4 @@
       </div>
     }
   </div>
-  <p class="info__desc">{{ algorithm().description }}</p>
 </section>
