@@ -1,44 +1,79 @@
-<div class="mkv">
+<div class="mkv viz-flow">
   @if (geoState(); as geo) {
-    <div class="mkv__gallery">
-      <article class="mkv__card">
-        <div class="mkv__card-head">
-          <span class="mkv__eyebrow">Input A</span>
-          <span class="mkv__title">Obstacle</span>
-        </div>
-        <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-          @if (obstacle(); as polygon) {
-            <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--a" />
-          }
-        </svg>
-      </article>
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Merge Guide</span>
+        <h3 class="viz-flow__title">Follow the edge vectors</h3>
+        <p class="viz-flow__desc">The vector rail and merge events explain how the two polygon boundaries get stitched into the final C-space hull.</p>
+      </div>
 
-      <article class="mkv__card">
-        <div class="mkv__card-head">
-          <span class="mkv__eyebrow">Input B</span>
-          <span class="mkv__title">Robot</span>
-        </div>
-        <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-          @if (robot(); as polygon) {
-            <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--b" />
+      <div class="mkv__rail">
+        <span class="mkv__rail-title">Edge vectors</span>
+        <div class="mkv__vector-list">
+          @for (vector of geo.vectors; track vector.id) {
+            <div class="mkv__vector mkv__vector--{{ vector.tone }}">
+              <span class="mkv__vector-label">{{ vector.label }}</span>
+              <span class="mkv__vector-value">({{ vector.dx.toFixed(1) }}, {{ vector.dy.toFixed(1) }})</span>
+            </div>
           }
-        </svg>
-      </article>
-
-      <article class="mkv__card">
-        <div class="mkv__card-head">
-          <span class="mkv__eyebrow">Reflected</span>
-          <span class="mkv__title">-B</span>
         </div>
-        <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-          @if (reflected(); as polygon) {
-            <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--reflected" />
-          }
-        </svg>
-      </article>
-    </div>
+      </div>
 
-    <div class="mkv__stage">
+      <div class="mkv__footer">
+        <span class="mkv__footer-key">Vector merge rail</span>
+        <div class="mkv__events">
+          @for (event of geo.events; track event.id) {
+            <span class="mkv__event mkv__event--{{ event.tone }}">{{ event.label }}</span>
+          }
+        </div>
+      </div>
+    </aside>
+
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Snapshot</span>
+        <h3 class="viz-flow__title">{{ phaseLabel(geo.phase) }}</h3>
+        <p class="viz-flow__desc">Input shapes and merge progress stay together above the result stage.</p>
+      </div>
+
+      <div class="mkv__gallery">
+        <article class="mkv__card">
+          <div class="mkv__card-head">
+            <span class="mkv__eyebrow">Input A</span>
+            <span class="mkv__title">Obstacle</span>
+          </div>
+          <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            @if (obstacle(); as polygon) {
+              <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--a" />
+            }
+          </svg>
+        </article>
+
+        <article class="mkv__card">
+          <div class="mkv__card-head">
+            <span class="mkv__eyebrow">Input B</span>
+            <span class="mkv__title">Robot</span>
+          </div>
+          <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            @if (robot(); as polygon) {
+              <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--b" />
+            }
+          </svg>
+        </article>
+
+        <article class="mkv__card">
+          <div class="mkv__card-head">
+            <span class="mkv__eyebrow">Reflected</span>
+            <span class="mkv__title">-B</span>
+          </div>
+          <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            @if (reflected(); as polygon) {
+              <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--reflected" />
+            }
+          </svg>
+        </article>
+      </div>
+
       <div class="mkv__hud">
         <div class="mkv__hud-card">
           <span class="mkv__eyebrow">Phase</span>
@@ -57,44 +92,37 @@
           <span class="mkv__hud-value">{{ geo.resultArea !== null ? geo.resultArea.toFixed(1) : '—' }}</span>
         </div>
       </div>
+    </section>
 
-      <div class="mkv__result">
-        <svg class="mkv__sum" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-          @if (result(); as polygon) {
-            <polygon
-              [attr.points]="stagePoints(polygon)"
-              [class]="'mkv__poly ' + (polygon.tone === 'result' ? 'mkv__poly--result' : 'mkv__poly--preview')"
-            />
-            @for (vertex of polygon.vertices; track $index) {
-              <g [attr.transform]="stageVertexTransform(vertex)">
-                <circle class="mkv__vertex-glow" r="4.2" />
-                <circle class="mkv__vertex" r="2" />
-              </g>
-            }
-          }
-        </svg>
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">Configuration-space hull</h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ geo.activeSource ?? 'result' }}</span>
       </div>
 
-      <div class="mkv__rail">
-        <span class="mkv__rail-title">Edge vectors</span>
-        <div class="mkv__vector-list">
-          @for (vector of geo.vectors; track vector.id) {
-            <div class="mkv__vector mkv__vector--{{ vector.tone }}">
-              <span class="mkv__vector-label">{{ vector.label }}</span>
-              <span class="mkv__vector-value">({{ vector.dx.toFixed(1) }}, {{ vector.dy.toFixed(1) }})</span>
-            </div>
-          }
+      <div class="viz-flow__stage-body">
+        <div class="mkv__stage">
+          <div class="mkv__result">
+            <svg class="mkv__sum" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+              @if (result(); as polygon) {
+                <polygon
+                  [attr.points]="stagePoints(polygon)"
+                  [class]="'mkv__poly ' + (polygon.tone === 'result' ? 'mkv__poly--result' : 'mkv__poly--preview')"
+                />
+                @for (vertex of polygon.vertices; track $index) {
+                  <g [attr.transform]="stageVertexTransform(vertex)">
+                    <circle class="mkv__vertex-glow" r="4.2" />
+                    <circle class="mkv__vertex" r="2" />
+                  </g>
+                }
+              }
+            </svg>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="mkv__footer">
-      <span class="mkv__footer-key">Vector merge rail</span>
-      <div class="mkv__events">
-        @for (event of geo.events; track event.id) {
-          <span class="mkv__event mkv__event--{{ event.tone }}">{{ event.label }}</span>
-        }
-      </div>
-    </div>
+    </section>
   }
 </div>

@@ -1,77 +1,105 @@
-<section class="matrix-shell" #container>
+<section class="matrix-shell viz-flow" #container>
   @if (state(); as matrixState) {
-    <div class="matrix-shell__hud">
-      <div class="hud-card">
-        <span class="hud-card__label">Mode</span>
-        <span class="hud-card__value">{{ modeLabel() }}</span>
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Matrix Guide</span>
+        <h3 class="viz-flow__title">Track the active axes</h3>
+        <p class="viz-flow__desc">Follow the highlighted rows, columns and pivot cells first. The rest of the matrix is supporting context.</p>
       </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Phase</span>
-        <span class="hud-card__value">{{ phaseLabel() }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Active</span>
-        <span class="hud-card__value">{{ activeLabel() }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Pivot</span>
-        <span class="hud-card__value">{{ pivotLabel() }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Result</span>
-        <span class="hud-card__value">{{ resultLabel() }}</span>
-      </div>
-    </div>
 
-    <div class="matrix-shell__focus">
-      <div class="focus-pill">
-        <span class="focus-pill__label">{{ matrixState.focusItemsLabel }}</span>
-        <div class="focus-pill__chips">
-          @if (focusItems().length === 0) {
-            <span class="focus-pill__empty">none yet</span>
-          } @else {
-            @for (item of focusItems(); track item) {
-              <span class="focus-pill__chip">{{ item }}</span>
-            }
-          }
-        </div>
-      </div>
-      <div class="focus-pill">
-        <span class="focus-pill__label">{{ matrixState.secondaryItemsLabel }}</span>
-        <div class="focus-pill__chips">
-          @if (secondaryItems().length === 0) {
-            <span class="focus-pill__empty">none yet</span>
-          } @else {
-            @for (item of secondaryItems(); track item) {
-              <span class="focus-pill__chip focus-pill__chip--soft">{{ item }}</span>
-            }
-          }
-        </div>
-      </div>
-    </div>
-
-    <div class="matrix-board-wrap">
-      <div class="matrix-board" [style.grid-template-columns]="gridCols()" [style.--matrix-cols]="matrixState.colHeaders.length">
-        <div class="matrix-corner">{{ matrixState.dimensionsLabel }}</div>
-
-        @for (colHeader of matrixState.colHeaders; track colHeader.id) {
-          <div class="{{ headerClass(colHeader.status) }}">{{ colHeader.label }}</div>
-        }
-
-        @for (rowHeader of matrixState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
-          <div class="{{ headerClass(rowHeader.status) }}">{{ rowHeader.label }}</div>
-
-          @for (cell of rowCells(rowIndex); track cell.id) {
-            <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
-              <span class="matrix-cell__value">{{ cell.valueLabel }}</span>
-              @if (cell.metaLabel) {
-                <span class="matrix-cell__meta">{{ cell.metaLabel }}</span>
+      <div class="matrix-shell__focus">
+        <div class="focus-pill">
+          <span class="focus-pill__label">{{ matrixState.focusItemsLabel }}</span>
+          <div class="focus-pill__chips">
+            @if (focusItems().length === 0) {
+              <span class="focus-pill__empty">none yet</span>
+            } @else {
+              @for (item of focusItems(); track item) {
+                <span class="focus-pill__chip">{{ item }}</span>
               }
-            </div>
-          }
-        }
+            }
+          </div>
+        </div>
+        <div class="focus-pill">
+          <span class="focus-pill__label">{{ matrixState.secondaryItemsLabel }}</span>
+          <div class="focus-pill__chips">
+            @if (secondaryItems().length === 0) {
+              <span class="focus-pill__empty">none yet</span>
+            } @else {
+              @for (item of secondaryItems(); track item) {
+                <span class="focus-pill__chip focus-pill__chip--soft">{{ item }}</span>
+              }
+            }
+          </div>
+        </div>
       </div>
-    </div>
+    </aside>
+
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Snapshot</span>
+        <h3 class="viz-flow__title">{{ modeLabel() }}</h3>
+        <p class="viz-flow__desc">Current phase, pivot and result stay visible without competing with the board itself.</p>
+      </div>
+
+      <div class="matrix-shell__hud">
+        <div class="hud-card">
+          <span class="hud-card__label">Mode</span>
+          <span class="hud-card__value">{{ modeLabel() }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Phase</span>
+          <span class="hud-card__value">{{ phaseLabel() }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Active</span>
+          <span class="hud-card__value">{{ activeLabel() }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Pivot</span>
+          <span class="hud-card__value">{{ pivotLabel() }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Result</span>
+          <span class="hud-card__value">{{ resultLabel() }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">Matrix workspace</h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ phaseLabel() }}</span>
+      </div>
+
+      <div class="viz-flow__stage-body">
+        <div class="matrix-board-wrap">
+          <div class="matrix-board" [style.grid-template-columns]="gridCols()" [style.--matrix-cols]="matrixState.colHeaders.length">
+            <div class="matrix-corner">{{ matrixState.dimensionsLabel }}</div>
+
+            @for (colHeader of matrixState.colHeaders; track colHeader.id) {
+              <div class="{{ headerClass(colHeader.status) }}">{{ colHeader.label }}</div>
+            }
+
+            @for (rowHeader of matrixState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
+              <div class="{{ headerClass(rowHeader.status) }}">{{ rowHeader.label }}</div>
+
+              @for (cell of rowCells(rowIndex); track cell.id) {
+                <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
+                  <span class="matrix-cell__value">{{ cell.valueLabel }}</span>
+                  @if (cell.metaLabel) {
+                    <span class="matrix-cell__meta">{{ cell.metaLabel }}</span>
+                  }
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </section>
   } @else {
     <div class="matrix-shell__empty">No matrix trace available for this step.</div>
   }

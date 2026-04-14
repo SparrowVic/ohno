@@ -1,10 +1,29 @@
-<div class="search-viz" #container>
+<div class="search-viz viz-flow" #container>
   @if (searchState(); as search) {
-    <div class="search-viz__hero">
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Search Guide</span>
+        <h3 class="viz-flow__title">Watch the probe</h3>
+        <p class="viz-flow__desc">{{ search.decision ?? 'Track the active probe before you scan the rest of the array.' }}</p>
+      </div>
+
       <div class="search-viz__target-card">
         <span class="search-viz__eyebrow">Target</span>
         <span class="search-viz__target-value">{{ search.target }}</span>
         <span class="search-viz__target-subtitle">{{ search.modeLabel }}</span>
+      </div>
+
+      <div class="search-viz__decision-shell">
+        <div class="search-viz__decision-label">{{ search.statusLabel }}</div>
+        <div class="search-viz__decision">{{ search.decision ?? 'watch the signal sweep the array' }}</div>
+      </div>
+    </aside>
+
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Snapshot</span>
+        <h3 class="viz-flow__title">{{ search.modeLabel }}</h3>
+        <p class="viz-flow__desc">Window bounds, probe position and confirmed hits stay in one compact overview.</p>
       </div>
 
       <div class="search-viz__status-band">
@@ -33,32 +52,39 @@
           <span class="search-viz__metric-value">{{ hitRangeLabel() }}</span>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="search-viz__decision-shell">
-      <div class="search-viz__decision-label">{{ search.statusLabel }}</div>
-      <div class="search-viz__decision">{{ search.decision ?? 'watch the signal sweep the array' }}</div>
-    </div>
-
-    <div class="search-viz__board">
-      <div class="search-viz__row">
-        @for (value of step()?.array ?? []; track $index) {
-          <div
-            [class]="cellClass($index)"
-            [class.cell--window-glow]="isInsideWindow($index)"
-            [attr.data-index]="$index"
-          >
-            <div class="cell__beam"></div>
-            <div class="cell__chrome">
-              <span class="cell__index">#{{ $index }}</span>
-              @if (boundLabel($index); as label) {
-                <span class="cell__bound">{{ label }}</span>
-              }
-            </div>
-            <div class="cell__value">{{ value }}</div>
-          </div>
-        }
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">Array under inspection</h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--warm">{{ search.statusLabel }}</span>
       </div>
-    </div>
+
+      <div class="viz-flow__stage-body">
+        <div class="search-viz__board">
+          <div class="search-viz__row">
+            @for (value of step()?.array ?? []; track $index) {
+              <div
+                [class]="cellClass($index)"
+                [class.cell--window-glow]="isInsideWindow($index)"
+                [attr.data-index]="$index"
+              >
+                <div class="cell__beam"></div>
+                <div class="cell__chrome">
+                  <span class="cell__index">#{{ $index }}</span>
+                  @if (boundLabel($index); as label) {
+                    <span class="cell__bound">{{ label }}</span>
+                  }
+                </div>
+                <div class="cell__value">{{ value }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
   }
 </div>

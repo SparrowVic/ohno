@@ -1,57 +1,30 @@
-<div class="dsu-viz" #container>
+<div class="dsu-viz viz-flow" #container>
   @if (state(); as dsuState) {
-    <div class="dsu-viz__hud">
-      <div class="dsu-viz__stat">
-        <span class="dsu-viz__label">Mode</span>
-        <span class="dsu-viz__value">{{ dsuState.modeLabel }}</span>
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">DSU Guide</span>
+        <h3 class="viz-flow__title">Watch unions and finds</h3>
+        <p class="viz-flow__desc">Start with the active edge or query, then verify how roots and compressed pointers react.</p>
       </div>
-      <div class="dsu-viz__stat">
-        <span class="dsu-viz__label">Components</span>
-        <span class="dsu-viz__value">{{ dsuState.componentCount }}</span>
-      </div>
-      <div class="dsu-viz__stat">
-        <span class="dsu-viz__label">Active</span>
-        <span class="dsu-viz__value">{{ activeLabel() }}</span>
-      </div>
-      <div class="dsu-viz__stat">
-        <span class="dsu-viz__label">Result</span>
-        <span class="dsu-viz__value">{{ dsuState.resultLabel }}</span>
-      </div>
-    </div>
 
-    <div class="dsu-viz__body">
-      <section class="dsu-viz__panel">
-        <div class="dsu-viz__panel-head">
-          <div>
-            <div class="dsu-viz__panel-label">Set Forest</div>
-            <div class="dsu-viz__panel-title">{{ dsuState.statusLabel }}</div>
-          </div>
-          <span class="dsu-viz__panel-pill">{{ modeHint() }}</span>
+      <div class="dsu-viz__hud">
+        <div class="dsu-viz__stat">
+          <span class="dsu-viz__label">Mode</span>
+          <span class="dsu-viz__value">{{ dsuState.modeLabel }}</span>
         </div>
-
-        <div class="dsu-viz__groups">
-          @for (group of groups(); track group.rootId) {
-            <article class="dsu-group" [class.dsu-group--active]="group.active" [attr.data-group-root]="group.rootId">
-              <div class="dsu-group__head">
-                <div>
-                  <div class="dsu-group__root">{{ group.rootLabel }}</div>
-                  <div class="dsu-group__meta">{{ group.size }} node{{ group.size === 1 ? '' : 's' }}</div>
-                </div>
-                <span class="dsu-group__badge">root {{ group.rootLabel }}</span>
-              </div>
-
-              <div class="dsu-group__chips">
-                @for (node of nodesForGroup(group); track node.id) {
-                  <div class="dsu-node-chip dsu-node-chip--{{ node.status }}" [attr.data-node-id]="node.id">
-                    <span class="dsu-node-chip__label">{{ node.label }}</span>
-                    <span class="dsu-node-chip__meta">{{ nodeSubtitle(node) }}</span>
-                  </div>
-                }
-              </div>
-            </article>
-          }
+        <div class="dsu-viz__stat">
+          <span class="dsu-viz__label">Components</span>
+          <span class="dsu-viz__value">{{ dsuState.componentCount }}</span>
         </div>
-      </section>
+        <div class="dsu-viz__stat">
+          <span class="dsu-viz__label">Active</span>
+          <span class="dsu-viz__value">{{ activeLabel() }}</span>
+        </div>
+        <div class="dsu-viz__stat">
+          <span class="dsu-viz__label">Result</span>
+          <span class="dsu-viz__value">{{ dsuState.resultLabel }}</span>
+        </div>
+      </div>
 
       <section class="dsu-viz__panel dsu-viz__panel--rail">
         <div class="dsu-viz__panel-head">
@@ -75,30 +48,83 @@
           }
         </div>
       </section>
-    </div>
+    </aside>
 
-    <section class="dsu-viz__panel dsu-viz__panel--dense">
-      <div class="dsu-viz__panel-head">
-        <div>
-          <div class="dsu-viz__panel-label">Parent Map</div>
-          <div class="dsu-viz__panel-title">Compact DSU pointer view</div>
-        </div>
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Snapshot</span>
+        <h3 class="viz-flow__title">Pointer map</h3>
+        <p class="viz-flow__desc">Use this compact rail to verify which root each node currently points to.</p>
       </div>
 
-      <div class="dsu-links">
-        @for (node of nodeRows(); track node.id) {
-          <div class="dsu-link dsu-link--{{ node.status }}" [attr.data-parent-id]="node.id">
-            <div class="dsu-link__name">{{ node.label }}</div>
-            <div class="dsu-link__arrow">
-              @if (node.parentId === node.id) {
-                <span>root</span>
-              } @else {
-                <span>→ {{ node.parentLabel }}</span>
-              }
-            </div>
-            <div class="dsu-link__meta">rank {{ node.rank }} · size {{ node.size }}</div>
+      <section class="dsu-viz__panel dsu-viz__panel--dense">
+        <div class="dsu-viz__panel-head">
+          <div>
+            <div class="dsu-viz__panel-label">Parent Map</div>
+            <div class="dsu-viz__panel-title">Compact DSU pointer view</div>
           </div>
-        }
+        </div>
+
+        <div class="dsu-links">
+          @for (node of nodeRows(); track node.id) {
+            <div class="dsu-link dsu-link--{{ node.status }}" [attr.data-parent-id]="node.id">
+              <div class="dsu-link__name">{{ node.label }}</div>
+              <div class="dsu-link__arrow">
+                @if (node.parentId === node.id) {
+                  <span>root</span>
+                } @else {
+                  <span>→ {{ node.parentLabel }}</span>
+                }
+              </div>
+              <div class="dsu-link__meta">rank {{ node.rank }} · size {{ node.size }}</div>
+            </div>
+          }
+        </div>
+      </section>
+    </section>
+
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">Set forest</h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ dsuState.statusLabel }}</span>
+      </div>
+
+      <div class="viz-flow__stage-body">
+        <section class="dsu-viz__panel">
+          <div class="dsu-viz__panel-head">
+            <div>
+              <div class="dsu-viz__panel-label">Set Forest</div>
+              <div class="dsu-viz__panel-title">{{ dsuState.statusLabel }}</div>
+            </div>
+            <span class="dsu-viz__panel-pill">{{ modeHint() }}</span>
+          </div>
+
+          <div class="dsu-viz__groups">
+            @for (group of groups(); track group.rootId) {
+              <article class="dsu-group" [class.dsu-group--active]="group.active" [attr.data-group-root]="group.rootId">
+                <div class="dsu-group__head">
+                  <div>
+                    <div class="dsu-group__root">{{ group.rootLabel }}</div>
+                    <div class="dsu-group__meta">{{ group.size }} node{{ group.size === 1 ? '' : 's' }}</div>
+                  </div>
+                  <span class="dsu-group__badge">root {{ group.rootLabel }}</span>
+                </div>
+
+                <div class="dsu-group__chips">
+                  @for (node of nodesForGroup(group); track node.id) {
+                    <div class="dsu-node-chip dsu-node-chip--{{ node.status }}" [attr.data-node-id]="node.id">
+                      <span class="dsu-node-chip__label">{{ node.label }}</span>
+                      <span class="dsu-node-chip__meta">{{ nodeSubtitle(node) }}</span>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </section>
       </div>
     </section>
   } @else {

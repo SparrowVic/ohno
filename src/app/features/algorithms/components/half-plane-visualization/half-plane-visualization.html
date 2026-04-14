@@ -1,7 +1,62 @@
-<div class="hpv">
+<div class="hpv viz-flow">
   @if (geoState(); as geo) {
-    <div class="hpv__stage">
-      <svg class="hpv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Constraint Guide</span>
+        <h3 class="viz-flow__title">Clip the feasible region</h3>
+        <p class="viz-flow__desc">Current boundary and event chips explain why the feasible polygon grows, shrinks or disappears.</p>
+      </div>
+
+      <div class="hpv__footer">
+        <span class="hpv__footer-key">Current boundary</span>
+        <span class="hpv__footer-chip">{{ geo.currentConstraintLabel }}</span>
+        <div class="hpv__queue">
+          @for (event of geo.events; track event.id) {
+            <span class="hpv__queue-item hpv__queue-item--{{ event.tone }}">{{ event.label }}</span>
+          }
+        </div>
+      </div>
+    </aside>
+
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Snapshot</span>
+        <h3 class="viz-flow__title">{{ phaseLabel(geo.phase) }}</h3>
+        <p class="viz-flow__desc">Phase, status, area and vertex count stay visible while the polygon itself remains the hero.</p>
+      </div>
+
+      <div class="hpv__hud">
+        <div class="hpv__card hpv__card--phase">
+          <span class="hpv__card-key">Phase</span>
+          <span class="hpv__card-val">{{ phaseLabel(geo.phase) }}</span>
+        </div>
+        <div class="hpv__card">
+          <span class="hpv__card-key">Status</span>
+          <span class="hpv__card-val">{{ geo.status }}</span>
+        </div>
+        <div class="hpv__card">
+          <span class="hpv__card-key">Area</span>
+          <span class="hpv__card-val">{{ geo.feasibleArea !== null ? geo.feasibleArea.toFixed(1) : '0.0' }}</span>
+        </div>
+        <div class="hpv__card">
+          <span class="hpv__card-key">Vertices</span>
+          <span class="hpv__card-val">{{ geo.vertexCount }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">Feasible region</h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ geo.status }}</span>
+      </div>
+
+      <div class="viz-flow__stage-body">
+        <div class="hpv__stage">
+          <svg class="hpv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="hpv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
             <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
@@ -29,36 +84,9 @@
             <circle class="hpv__vertex" r="1.9" />
           </g>
         }
-      </svg>
-
-      <div class="hpv__hud">
-        <div class="hpv__card hpv__card--phase">
-          <span class="hpv__card-key">Phase</span>
-          <span class="hpv__card-val">{{ phaseLabel(geo.phase) }}</span>
-        </div>
-        <div class="hpv__card">
-          <span class="hpv__card-key">Status</span>
-          <span class="hpv__card-val">{{ geo.status }}</span>
-        </div>
-        <div class="hpv__card">
-          <span class="hpv__card-key">Area</span>
-          <span class="hpv__card-val">{{ geo.feasibleArea !== null ? geo.feasibleArea.toFixed(1) : '0.0' }}</span>
-        </div>
-        <div class="hpv__card">
-          <span class="hpv__card-key">Vertices</span>
-          <span class="hpv__card-val">{{ geo.vertexCount }}</span>
+          </svg>
         </div>
       </div>
-    </div>
-
-    <div class="hpv__footer">
-      <span class="hpv__footer-key">Current boundary</span>
-      <span class="hpv__footer-chip">{{ geo.currentConstraintLabel }}</span>
-      <div class="hpv__queue">
-        @for (event of geo.events; track event.id) {
-          <span class="hpv__queue-item hpv__queue-item--{{ event.tone }}">{{ event.label }}</span>
-        }
-      </div>
-    </div>
+    </section>
   }
 </div>

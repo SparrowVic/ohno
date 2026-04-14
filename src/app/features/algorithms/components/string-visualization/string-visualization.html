@@ -1,80 +1,106 @@
 <section
-  class="string-lab"
+  class="string-lab viz-flow"
   [class.string-lab--huffman]="state()?.mode === 'huffman'"
   #container
 >
   @if (state(); as stringState) {
-    <div class="playground-bar">
-      <div class="playground-bar__copy">
-        <span class="playground-bar__eyebrow">String Lab</span>
-        <span class="playground-bar__title">{{ stringState.presetLabel }}</span>
-        <span class="playground-bar__desc">{{ stringState.presetDescription }}</span>
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">String Guide</span>
+        <h3 class="viz-flow__title">{{ stringState.modeLabel }}</h3>
+        <p class="viz-flow__desc">{{ stringState.decisionLabel }}</p>
       </div>
-      <div class="playground-bar__presets">
-        @for (option of presetOptions(); track option.id) {
-          <button
-            type="button"
-            class="preset-chip"
-            [class.preset-chip--active]="presetId() === option.id"
-            (click)="selectPreset(option.id)"
-          >
-            {{ option.label }}
-          </button>
+
+      <div class="string-lab__hud">
+        <div class="hud-card">
+          <span class="hud-card__label">Mode</span>
+          <span class="hud-card__value">{{ stringState.modeLabel }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Phase</span>
+          <span class="hud-card__value">{{ stringState.phaseLabel }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Active</span>
+          <span class="hud-card__value">{{ stringState.activeLabel }}</span>
+        </div>
+        <div class="hud-card">
+          <span class="hud-card__label">Result</span>
+          <span class="hud-card__value">{{ stringState.resultLabel }}</span>
+        </div>
+        <div class="hud-card hud-card--wide">
+          <span class="hud-card__label">Decision</span>
+          <span class="hud-card__value">{{ stringState.decisionLabel }}</span>
+        </div>
+      </div>
+
+      <div class="string-lab__calc">
+        @if (stringState.computation; as computation) {
+          <div class="calc-card">
+            <span class="calc-card__label">{{ computation.label }}</span>
+            <span class="calc-card__expression">{{ computation.expression }}</span>
+            @if (computation.result) {
+              <span class="calc-card__result">{{ computation.result }}</span>
+            }
+            <span class="calc-card__note">{{ computation.note }}</span>
+          </div>
+        } @else {
+          <div class="calc-card calc-card--empty">
+            <span class="calc-card__label">Computation</span>
+            <span class="calc-card__note">This step is a pure state transition with no extra formula to explain.</span>
+          </div>
         }
       </div>
-    </div>
+    </aside>
 
-    <div class="string-lab__hud">
-      <div class="hud-card">
-        <span class="hud-card__label">Mode</span>
-        <span class="hud-card__value">{{ stringState.modeLabel }}</span>
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">String Lab</span>
+        <h3 class="viz-flow__title">{{ stringState.presetLabel }}</h3>
+        <p class="viz-flow__desc">{{ stringState.presetDescription }}</p>
       </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Phase</span>
-        <span class="hud-card__value">{{ stringState.phaseLabel }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Active</span>
-        <span class="hud-card__value">{{ stringState.activeLabel }}</span>
-      </div>
-      <div class="hud-card">
-        <span class="hud-card__label">Result</span>
-        <span class="hud-card__value">{{ stringState.resultLabel }}</span>
-      </div>
-      <div class="hud-card hud-card--wide">
-        <span class="hud-card__label">Decision</span>
-        <span class="hud-card__value">{{ stringState.decisionLabel }}</span>
-      </div>
-    </div>
 
-    <div class="string-lab__insights">
-      @for (insight of stringState.insights; track insight.label) {
-        <div class="insight-card insight-card--{{ insight.tone }}">
-          <span class="insight-card__label">{{ insight.label }}</span>
-          <span class="insight-card__value">{{ insight.value }}</span>
+      <div class="playground-bar">
+        <div class="playground-bar__copy">
+          <span class="playground-bar__eyebrow">Preset</span>
+          <span class="playground-bar__title">{{ stringState.phaseLabel }}</span>
+          <span class="playground-bar__desc">{{ stringState.activeLabel }}</span>
         </div>
-      }
-    </div>
-
-    <div class="string-lab__calc">
-      @if (stringState.computation; as computation) {
-        <div class="calc-card">
-          <span class="calc-card__label">{{ computation.label }}</span>
-          <span class="calc-card__expression">{{ computation.expression }}</span>
-          @if (computation.result) {
-            <span class="calc-card__result">{{ computation.result }}</span>
+        <div class="playground-bar__presets">
+          @for (option of presetOptions(); track option.id) {
+            <button
+              type="button"
+              class="preset-chip"
+              [class.preset-chip--active]="presetId() === option.id"
+              (click)="selectPreset(option.id)"
+            >
+              {{ option.label }}
+            </button>
           }
-          <span class="calc-card__note">{{ computation.note }}</span>
         </div>
-      } @else {
-        <div class="calc-card calc-card--empty">
-          <span class="calc-card__label">Computation</span>
-          <span class="calc-card__note">This step is a pure state transition with no extra formula to explain.</span>
-        </div>
-      }
-    </div>
+      </div>
 
-    @switch (stringState.mode) {
+      <div class="string-lab__insights">
+        @for (insight of stringState.insights; track insight.label) {
+          <div class="insight-card insight-card--{{ insight.tone }}">
+            <span class="insight-card__label">{{ insight.label }}</span>
+            <span class="insight-card__value">{{ insight.value }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">{{ stringState.modeLabel }}</h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ stringState.phaseLabel }}</span>
+      </div>
+
+      <div class="viz-flow__stage-body">
+        @switch (stringState.mode) {
       @case ('kmp') {
         @if (kmpState(); as kmp) {
           <div class="string-stage">
@@ -535,6 +561,8 @@
         }
       }
     }
+      </div>
+    </section>
   } @else {
     <div class="string-lab__empty">No String Lab trace available for this step.</div>
   }
