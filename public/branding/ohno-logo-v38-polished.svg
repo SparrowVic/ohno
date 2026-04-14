@@ -1,0 +1,58 @@
+<svg width="860" height="240" viewBox="0 0 860 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="v38p-ink" x1="42" y1="22" x2="744" y2="202" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F3EE"/>
+      <stop offset="0.5" stop-color="#E9E6DA"/>
+      <stop offset="1" stop-color="#D8E0E8"/>
+    </linearGradient>
+    <linearGradient id="v38p-accent" x1="82" y1="38" x2="566" y2="182" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7EAA3"/>
+      <stop offset="0.44" stop-color="#B8D56E"/>
+      <stop offset="0.8" stop-color="#32D9FF"/>
+      <stop offset="1" stop-color="#DDD7FF"/>
+    </linearGradient>
+    <filter id="v38p-shadow" x="0" y="0" width="860" height="240" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="8"/>
+      <feGaussianBlur stdDeviation="10"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.04 0 0 0 0 0.06 0 0 0 0 0.1 0 0 0 0.34 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+    <clipPath id="v38p-clip">
+      <circle cx="142" cy="120" r="88"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#v38p-shadow)">
+    <circle cx="142" cy="120" r="88" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="3"/>
+    <circle cx="142" cy="120" r="76" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="2" stroke-dasharray="5 9"/>
+    <circle cx="142" cy="120" r="62" stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1.8"/>
+
+    <g clip-path="url(#v38p-clip)">
+      <path d="M56 72H228M56 96H228M56 120H228M56 144H228M56 168H228" stroke="#FFFFFF" stroke-opacity="0.048" stroke-width="1.5"/>
+      <path d="M78 44V196M102 44V196M126 44V196M150 44V196M174 44V196M198 44V196" stroke="#FFFFFF" stroke-opacity="0.04" stroke-width="1.5"/>
+      <text x="80" y="136" fill="url(#v38p-ink)" font-family="Bradley Hand, Segoe Print, Kalam, Patrick Hand, cursive" font-size="78" font-style="italic" font-weight="400">O</text>
+      <path d="M126 82L126 112L126 146" stroke="url(#v38p-accent)" stroke-width="4.8" stroke-linecap="round"/>
+      <path d="M126 112L148 98L170 102L188 120L188 146" stroke="url(#v38p-accent)" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="126" cy="82" r="5.5" fill="#D7EAA3"/>
+      <circle cx="126" cy="112" r="5.5" fill="#B8D56E"/>
+      <circle cx="126" cy="146" r="5.5" fill="#D7EAA3"/>
+      <circle cx="148" cy="98" r="5" fill="#F4F3EE"/>
+      <circle cx="170" cy="102" r="5" fill="#F4F3EE"/>
+      <circle cx="188" cy="120" r="5.5" fill="#32D9FF"/>
+      <circle cx="188" cy="146" r="5.5" fill="#DDD7FF"/>
+      <path d="M126 62V70M188 62V70M106 112H114M198 112H206" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="2" stroke-linecap="round"/>
+      <path d="M96 160L108 160M196 160L208 160" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+
+    <path d="M240 120H258" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="274" y="164" fill="url(#v38p-ink)" font-family="Bradley Hand, Segoe Print, Kalam, Patrick Hand, cursive" font-size="124" font-style="italic" font-weight="400">h(no)</text>
+    <path d="M336 92L390 74L446 76L504 58L562 60" stroke="url(#v38p-accent)" stroke-width="3.9" stroke-linecap="round" stroke-linejoin="round" opacity="0.84"/>
+    <circle cx="390" cy="74" r="4" fill="#D7EAA3"/>
+    <circle cx="504" cy="58" r="4.5" fill="#32D9FF"/>
+    <path d="M274 184C356 196 454 194 568 178" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+</svg>

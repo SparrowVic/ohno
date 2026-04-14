@@ -1,15 +1,4 @@
 <aside class="sidebar">
-  <div class="sidebar__head">
-    <div class="sidebar__brand">
-      <span class="sidebar__brand-mark" aria-hidden="true">O</span>
-      <div class="sidebar__brand-copy">
-        <strong class="sidebar__title">Knowledge Map</strong>
-        <span class="sidebar__hint">Algorithms and structures</span>
-      </div>
-    </div>
-    <span class="sidebar__catalog-chip">{{ catalogCount() }} indexed</span>
-  </div>
-
   <div class="sidebar__stack">
     @for (group of groups(); track group.id) {
       @if (group.items.length === 1) {
