@@ -15,8 +15,9 @@
   border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 24px;
   background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(9, 12, 20, 0.98));
+    radial-gradient(circle at top left, rgb(var(--viz-accent-rgb) / 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgb(var(--viz-window-rgb) / 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(24, 25, 27, 0.98), rgba(11, 11, 12, 0.98));
   overflow: hidden;
 }
 
@@ -41,7 +42,7 @@
   padding: 0 12px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(15, 23, 42, 0.72);
+  background: rgba(24, 25, 27, 0.72);
   color: rgba(226, 232, 240, 0.84);
   font-size: 11px;
   font-weight: 700;
@@ -50,16 +51,16 @@
 }
 
 .strip__chip--accent {
-  border-color: rgba(56, 189, 248, 0.28);
-  color: #7dd3fc;
-  background: rgba(8, 47, 73, 0.82);
+  border-color: rgb(var(--viz-accent-rgb) / 0.28);
+  color: var(--viz-accent-ink);
+  background: rgb(var(--viz-accent-rgb) / 0.14);
 }
 
 .strip__summary {
   min-height: 32px;
   padding: 8px 14px;
   border-radius: 16px;
-  background: rgba(15, 23, 42, 0.58);
+  background: rgba(24, 25, 27, 0.58);
   color: rgba(196, 206, 226, 0.8);
   font-size: 12px;
 }
@@ -80,7 +81,7 @@
   padding: 0 12px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.1);
-  background: rgba(15, 23, 42, 0.56);
+  background: rgba(24, 25, 27, 0.56);
   color: rgba(148, 163, 184, 0.82);
   font-size: 11px;
   font-weight: 700;
@@ -95,8 +96,8 @@
 
 .strip__digit--active {
   color: #f8fafc;
-  border-color: rgba(56, 189, 248, 0.34);
-  background: linear-gradient(135deg, rgba(8, 47, 73, 0.9), rgba(14, 116, 144, 0.7));
+  border-color: rgb(var(--viz-accent-rgb) / 0.34);
+  background: linear-gradient(135deg, rgb(var(--viz-accent-rgb) / 0.34), rgba(24, 25, 27, 0.94));
   transform: translateY(-2px);
 }
 
@@ -125,7 +126,7 @@
   padding: 14px;
   border-radius: 20px;
   border: 1px solid rgba(148, 163, 184, 0.08);
-  background: rgba(15, 23, 42, 0.54);
+  background: rgba(24, 25, 27, 0.54);
 }
 
 .lane__track--output {
@@ -140,8 +141,8 @@
   min-width: 78px;
   padding: 12px 14px;
   border-radius: 18px;
-  border: 1px solid rgba(124, 110, 240, 0.28);
-  background: linear-gradient(180deg, rgba(35, 36, 68, 0.92), rgba(18, 20, 36, 0.96));
+  border: 1px solid rgb(var(--viz-window-rgb) / 0.28);
+  background: linear-gradient(180deg, rgba(40, 40, 43, 0.92), rgba(18, 18, 19, 0.96));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition:
     transform var(--radix-swap-ms) ease,
@@ -153,11 +154,11 @@
 
 .card--active {
   transform: translateY(-6px) scale(1.04);
-  border-color: rgba(56, 189, 248, 0.68);
-  background: linear-gradient(180deg, rgba(10, 58, 84, 0.94), rgba(18, 20, 36, 0.96));
+  border-color: rgb(var(--viz-accent-rgb) / 0.68);
+  background: linear-gradient(180deg, rgb(var(--viz-accent-rgb) / 0.28), rgba(18, 18, 19, 0.96));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 16px 30px rgba(14, 116, 144, 0.24);
+    0 16px 30px rgb(var(--viz-accent-rgb) / 0.22);
 }
 
 .card--ghost {
@@ -166,12 +167,12 @@
 }
 
 .card--settled {
-  border-color: rgba(74, 222, 128, 0.32);
-  background: linear-gradient(180deg, rgba(12, 56, 40, 0.82), rgba(18, 20, 36, 0.96));
+  border-color: rgb(var(--viz-success-rgb) / 0.32);
+  background: linear-gradient(180deg, rgb(var(--viz-success-rgb) / 0.18), rgba(18, 18, 19, 0.96));
 }
 
 .card--output {
-  border-color: rgba(74, 222, 128, 0.32);
+  border-color: rgb(var(--viz-success-rgb) / 0.32);
 }
 
 .card__value {
@@ -205,7 +206,7 @@
 
 .card__digit--active {
   color: #f8fafc;
-  background: rgba(56, 189, 248, 0.2);
+  background: rgb(var(--viz-accent-rgb) / 0.2);
   transform: translateY(-1px);
 }
 
@@ -223,7 +224,7 @@
   padding: 14px;
   border-radius: 20px;
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(8, 11, 19, 0.82);
+  background: rgba(15, 16, 17, 0.82);
   transition:
     transform var(--radix-swap-ms) ease,
     border-color var(--radix-compare-ms) ease,
@@ -234,7 +235,7 @@
 .bucket--active {
   transform: translateY(-4px);
   border-color: color-mix(in srgb, var(--bucket-color) 58%, white 12%);
-  background: color-mix(in srgb, var(--bucket-color) 10%, rgba(8, 11, 19, 0.88));
+  background: color-mix(in srgb, var(--bucket-color) 10%, rgba(15, 16, 17, 0.88));
   box-shadow: 0 14px 28px color-mix(in srgb, var(--bucket-color) 22%, transparent);
 }
 
@@ -265,7 +266,7 @@
   min-width: 86px;
   padding: 10px 12px;
   border-radius: 14px;
-  background: rgba(15, 23, 42, 0.76);
+  background: rgba(24, 25, 27, 0.76);
   border: 1px solid color-mix(in srgb, var(--bucket-color) 28%, rgba(148, 163, 184, 0.16));
   transition:
     transform var(--radix-swap-ms) ease,

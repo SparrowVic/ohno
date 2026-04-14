@@ -74,7 +74,7 @@
 .dsu-viz__panel-pill {
   padding: 5px 8px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.12);
+  background: rgb(var(--viz-window-rgb) / 0.12);
   color: #cdc7ff;
   font-size: 10px;
   font-weight: 600;
@@ -96,8 +96,8 @@
 }
 
 .dsu-group--active {
-  border-color: rgba(240, 180, 41, 0.18);
-  background: rgba(240, 180, 41, 0.045);
+  border-color: rgb(var(--viz-warning-rgb) / 0.18);
+  background: rgb(var(--viz-warning-rgb) / 0.045);
 }
 
 .dsu-group__head {
@@ -127,8 +127,8 @@
 .dsu-edge__weight {
   padding: 4px 7px;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.1);
-  color: #8edcff;
+  background: rgb(var(--viz-accent-rgb) / 0.1);
+  color: var(--viz-accent-ink);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -170,24 +170,24 @@
 
 .dsu-node-chip--root,
 .dsu-link--root {
-  border-color: rgba(56, 189, 248, 0.18);
-  background: rgba(56, 189, 248, 0.055);
+  border-color: rgb(var(--viz-accent-rgb) / 0.18);
+  background: rgb(var(--viz-accent-rgb) / 0.055);
 }
 
 .dsu-node-chip--active,
 .dsu-node-chip--query,
 .dsu-link--active,
 .dsu-link--query {
-  border-color: rgba(240, 180, 41, 0.18);
-  background: rgba(240, 180, 41, 0.05);
+  border-color: rgb(var(--viz-warning-rgb) / 0.18);
+  background: rgb(var(--viz-warning-rgb) / 0.05);
 }
 
 .dsu-node-chip--merged,
 .dsu-node-chip--compressed,
 .dsu-link--merged,
 .dsu-link--compressed {
-  border-color: rgba(62, 207, 142, 0.18);
-  background: rgba(62, 207, 142, 0.055);
+  border-color: rgb(var(--viz-success-rgb) / 0.18);
+  background: rgb(var(--viz-success-rgb) / 0.055);
 }
 
 .dsu-edge-list {
@@ -208,23 +208,23 @@
 }
 
 .dsu-edge--pending {
-  border-color: rgba(124, 110, 240, 0.14);
-  background: rgba(124, 110, 240, 0.055);
+  border-color: rgb(var(--viz-window-rgb) / 0.14);
+  background: rgb(var(--viz-window-rgb) / 0.055);
 }
 
 .dsu-edge--active {
-  border-color: rgba(240, 180, 41, 0.18);
-  background: rgba(240, 180, 41, 0.058);
+  border-color: rgb(var(--viz-warning-rgb) / 0.18);
+  background: rgb(var(--viz-warning-rgb) / 0.058);
 }
 
 .dsu-edge--accepted {
-  border-color: rgba(62, 207, 142, 0.18);
-  background: rgba(62, 207, 142, 0.058);
+  border-color: rgb(var(--viz-success-rgb) / 0.18);
+  background: rgb(var(--viz-success-rgb) / 0.058);
 }
 
 .dsu-edge--rejected {
-  border-color: rgba(244, 63, 94, 0.18);
-  background: rgba(244, 63, 94, 0.05);
+  border-color: rgb(var(--viz-danger-rgb) / 0.18);
+  background: rgb(var(--viz-danger-rgb) / 0.05);
 }
 
 .dsu-viz__panel--dense {

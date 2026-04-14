@@ -13,9 +13,9 @@
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 26px;
   background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 28%),
-    radial-gradient(circle at top right, rgba(244, 114, 182, 0.14), transparent 24%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(7, 10, 18, 0.98));
+    radial-gradient(circle at top left, rgb(var(--viz-accent-rgb) / 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgb(var(--viz-window-rgb) / 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(26, 27, 29, 0.96), rgba(11, 11, 12, 0.98));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     0 20px 40px rgba(2, 6, 23, 0.28);
@@ -61,7 +61,7 @@
   padding: 0 12px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(15, 23, 42, 0.72);
+  background: rgba(24, 25, 27, 0.72);
   color: rgba(226, 232, 240, 0.86);
   font-size: 11px;
   font-weight: 600;
@@ -71,16 +71,16 @@
 }
 
 .hud__chip--accent {
-  border-color: rgba(56, 189, 248, 0.28);
-  background: rgba(8, 47, 73, 0.74);
-  color: #7dd3fc;
+  border-color: rgb(var(--viz-accent-rgb) / 0.28);
+  background: rgb(var(--viz-accent-rgb) / 0.14);
+  color: var(--viz-accent-ink);
 }
 
 .hud__summary {
   min-height: 32px;
   padding: 8px 14px;
   border-radius: 16px;
-  background: rgba(15, 23, 42, 0.56);
+  background: rgba(24, 25, 27, 0.56);
   color: rgba(196, 206, 226, 0.78);
   font-size: 12px;
   line-height: 1.35;
@@ -105,7 +105,7 @@
   padding: 0 12px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.1);
-  background: rgba(15, 23, 42, 0.62);
+  background: rgba(24, 25, 27, 0.62);
   color: rgba(148, 163, 184, 0.82);
   font-size: 11px;
   font-weight: 600;
@@ -121,7 +121,9 @@
 
 .hud__digit--active {
   color: #f8fafc;
-  border-color: rgba(56, 189, 248, 0.32);
-  background: linear-gradient(135deg, rgba(8, 47, 73, 0.86), rgba(14, 116, 144, 0.72));
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.12), 0 12px 24px rgba(14, 116, 144, 0.24);
+  border-color: rgb(var(--viz-accent-rgb) / 0.32);
+  background: linear-gradient(135deg, rgb(var(--viz-accent-rgb) / 0.32), rgba(24, 25, 27, 0.94));
+  box-shadow:
+    0 0 0 1px rgb(var(--viz-accent-rgb) / 0.12),
+    0 12px 24px rgb(var(--viz-accent-rgb) / 0.18);
 }

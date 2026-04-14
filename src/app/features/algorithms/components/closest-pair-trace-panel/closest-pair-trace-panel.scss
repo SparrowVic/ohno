@@ -45,17 +45,17 @@
 
 .cpt__phase--divide .cpt__title,
 .cpt__phase--merge .cpt__title {
-  color: #5eead4;
+  color: var(--viz-route);
 }
 
 .cpt__phase--compare .cpt__title,
 .cpt__phase--compare-strip .cpt__title {
-  color: #f0b429;
+  color: var(--viz-warning);
 }
 
 .cpt__phase--update .cpt__title,
 .cpt__phase--complete .cpt__title {
-  color: #ffde59;
+  color: var(--viz-hit);
 }
 
 .cpt__phase-stats {
@@ -169,15 +169,15 @@
   font-family: ui-monospace, monospace;
 
   &--current {
-    color: #f0b429;
-    background: rgba(240, 180, 41, 0.1);
-    border: 0.5px solid rgba(240, 180, 41, 0.24);
+    color: var(--viz-warning);
+    background: rgb(var(--viz-warning-rgb) / 0.1);
+    border: 0.5px solid rgb(var(--viz-warning-rgb) / 0.24);
   }
 
   &--best {
-    color: #ffde59;
-    background: rgba(255, 222, 89, 0.1);
-    border: 0.5px solid rgba(255, 222, 89, 0.24);
+    color: var(--viz-hit);
+    background: rgb(var(--viz-hit-rgb) / 0.1);
+    border: 0.5px solid rgb(var(--viz-hit-rgb) / 0.24);
   }
 }
 
@@ -185,10 +185,10 @@
   font-size: 12px;
   font-weight: 700;
   font-family: ui-monospace, monospace;
-  color: #f0b429;
+  color: var(--viz-warning);
 
   &--best {
-    color: #ffde59;
+    color: var(--viz-hit);
   }
 }
 
@@ -232,8 +232,8 @@
 .cpt__trail-chip {
   padding: 4px 8px;
   border-radius: 999px;
-  border: 0.5px solid rgba(94, 234, 212, 0.18);
-  background: rgba(94, 234, 212, 0.07);
+  border: 0.5px solid rgb(var(--viz-route-rgb) / 0.18);
+  background: rgb(var(--viz-route-rgb) / 0.07);
   color: rgba(204, 251, 241, 0.92);
   font-size: 10px;
   font-weight: 700;
@@ -263,7 +263,7 @@
   flex-shrink: 0;
 
   &--left {
-    background: #38bdf8;
+    background: var(--viz-accent);
   }
 
   &--right {
@@ -271,15 +271,15 @@
   }
 
   &--strip {
-    background: #2dd4bf;
+    background: var(--viz-route);
   }
 
   &--current {
-    background: #f0b429;
+    background: var(--viz-warning);
   }
 
   &--best {
-    background: #ffde59;
+    background: var(--viz-hit);
   }
 }
 

@@ -92,8 +92,8 @@
   }
 
   &--done {
-    color: #5eead4;
-    background: rgba(94, 234, 212, 0.08);
+    color: var(--viz-route);
+    background: rgb(var(--viz-route-rgb) / 0.08);
   }
 }
 

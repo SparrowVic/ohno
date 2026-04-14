@@ -13,17 +13,14 @@ import {
 import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
-import {
-  SortBucketSnapshot,
-  SortItemSnapshot,
-  SortStep,
-} from '../../models/sort-step';
+import { SortBucketSnapshot, SortItemSnapshot, SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
   MotionProfile,
   createMotionProfile,
   pulseSvgElement,
 } from '../../utils/visualization-motion';
+import { VIZ_BUCKET_COLORS, VIZ_HEX } from '../../utils/visualization-palette';
 
 interface MutableGeometry {
   x: number;
@@ -96,18 +93,7 @@ const BUCKET_PADDING = 12;
 const BUCKET_CARD_GAP_X = 8;
 const BUCKET_CARD_GAP_Y = 8;
 
-const BUCKET_COLORS = [
-  '#38bdf8',
-  '#22d3ee',
-  '#06b6d4',
-  '#2dd4bf',
-  '#34d399',
-  '#a3e635',
-  '#facc15',
-  '#f59e0b',
-  '#fb7185',
-  '#f472b6',
-] as const;
+const BUCKET_COLORS = VIZ_BUCKET_COLORS;
 
 @Component({
   selector: 'app-radix-bucket-visualization',
@@ -295,11 +281,7 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
       .attr('fill', 'rgba(11, 18, 33, 0.7)')
       .attr('stroke-width', 1.25)
       .attr('stroke', 'rgba(255, 255, 255, 0.08)');
-    const header = group
-      .append('rect')
-      .attr('rx', 18)
-      .attr('ry', 18)
-      .attr('fill-opacity', 0.18);
+    const header = group.append('rect').attr('rx', 18).attr('ry', 18).attr('fill-opacity', 0.18);
     const label = group
       .append('text')
       .attr('font-size', 11)
@@ -326,21 +308,13 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
       throw new Error('card layer not initialized');
     }
     const group = this.cardLayer.append('g').attr('class', 'card').attr('data-id', id);
-    const rect = group
-      .append('rect')
-      .attr('rx', 16)
-      .attr('ry', 16)
-      .attr('stroke-width', 1.3);
+    const rect = group.append('rect').attr('rx', 16).attr('ry', 16).attr('stroke-width', 1.3);
     const gloss = group
       .append('rect')
       .attr('rx', 16)
       .attr('ry', 16)
       .attr('fill', 'rgba(255, 255, 255, 0.06)');
-    const accent = group
-      .append('rect')
-      .attr('rx', 10)
-      .attr('ry', 10)
-      .attr('fill-opacity', 0.92);
+    const accent = group.append('rect').attr('rx', 10).attr('ry', 10).attr('fill-opacity', 0.92);
     const frame = group
       .append('rect')
       .attr('rx', 16)
@@ -404,7 +378,9 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
 
   private computeLayout(step: SortStep): LayoutSnapshot {
     const placements = new Map<string, CardGeometry>();
-    const sourceItems = step.sourceItems?.length ? step.sourceItems : step.items ?? this.collectUniqueItems(step);
+    const sourceItems = step.sourceItems?.length
+      ? step.sourceItems
+      : (step.items ?? this.collectUniqueItems(step));
     const topItems = this.resolveTopItems(step, sourceItems);
     const totalItems = Math.max(this.cards.size, sourceItems.length, this.array().length, 1);
     const usableWidth = Math.max(320, this.width - STAGE_PADDING_X * 2);
@@ -561,7 +537,8 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
     const innerTop = rect.y + BUCKET_HEADER_HEIGHT + BUCKET_PADDING;
     for (let row = 0; row < rows; row++) {
       const rowItems = items.slice(row * cols, row * cols + cols);
-      const rowWidth = rowItems.length * geometry.width + Math.max(0, rowItems.length - 1) * BUCKET_CARD_GAP_X;
+      const rowWidth =
+        rowItems.length * geometry.width + Math.max(0, rowItems.length - 1) * BUCKET_CARD_GAP_X;
       const startX = rect.x + Math.max(0, (rect.width - rowWidth) / 2);
       rowItems.forEach((item, index) => {
         placements.set(item.id, {
@@ -586,14 +563,21 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
       const color = BUCKET_COLORS[bucket];
       const snapshot = step.buckets?.find((entry) => entry.bucket === bucket);
       const count = snapshot?.items.length ?? 0;
-      const isActive = activeBucket === bucket && (step.phase === 'distribute' || step.phase === 'gather');
+      const isActive =
+        activeBucket === bucket && (step.phase === 'distribute' || step.phase === 'gather');
 
       elements.panel.setAttribute('x', String(rect.x));
       elements.panel.setAttribute('y', String(rect.y));
       elements.panel.setAttribute('width', String(rect.width));
       elements.panel.setAttribute('height', String(rect.height));
-      elements.panel.setAttribute('fill', isActive ? hexToRgba(color, 0.18) : 'rgba(11, 18, 33, 0.72)');
-      elements.panel.setAttribute('stroke', isActive ? hexToRgba(color, 0.92) : 'rgba(148, 163, 184, 0.18)');
+      elements.panel.setAttribute(
+        'fill',
+        isActive ? hexToRgba(color, 0.18) : 'rgba(11, 18, 33, 0.72)',
+      );
+      elements.panel.setAttribute(
+        'stroke',
+        isActive ? hexToRgba(color, 0.92) : 'rgba(148, 163, 184, 0.18)',
+      );
 
       elements.header.setAttribute('x', String(rect.x));
       elements.header.setAttribute('y', String(rect.y));
@@ -685,7 +669,11 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
         continue;
       }
       const from = { ...card.geometry };
-      if (sameGeometry(from, target) && card.zone === target.zone && card.bucket === target.bucket) {
+      if (
+        sameGeometry(from, target) &&
+        card.zone === target.zone &&
+        card.bucket === target.bucket
+      ) {
         this.commitGeometry(card, target);
         continue;
       }
@@ -757,9 +745,9 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
     const isComplete = step.phase === 'complete';
     const isPassComplete = step.phase === 'pass-complete';
 
-    let fill = 'rgba(124, 110, 240, 0.14)';
-    let stroke = 'rgba(124, 110, 240, 0.38)';
-    let accent = 'rgba(167, 139, 250, 0.92)';
+    let fill = hexToRgba(VIZ_HEX.window, 0.14);
+    let stroke = hexToRgba(VIZ_HEX.window, 0.38);
+    let accent = hexToRgba(VIZ_HEX.window, 0.92);
     let frame = 'rgba(255, 255, 255, 0.08)';
     let shadow = 'drop-shadow(0 18px 24px rgba(11, 18, 33, 0.28))';
 
@@ -772,35 +760,35 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
     }
 
     if (isActive && step.phase === 'distribute') {
-      fill = 'rgba(56, 189, 248, 0.22)';
-      stroke = 'rgba(56, 189, 248, 0.96)';
-      accent = bucketColor ?? '#38bdf8';
-      frame = 'rgba(125, 211, 252, 0.52)';
-      shadow = 'drop-shadow(0 20px 24px rgba(56, 189, 248, 0.26))';
+      fill = hexToRgba(VIZ_HEX.accent, 0.22);
+      stroke = hexToRgba(VIZ_HEX.accent, 0.96);
+      accent = bucketColor ?? VIZ_HEX.accent;
+      frame = hexToRgba(VIZ_HEX.accent, 0.52);
+      shadow = `drop-shadow(0 20px 24px ${hexToRgba(VIZ_HEX.accent, 0.26)})`;
     }
 
     if (isActive && step.phase === 'gather') {
-      fill = 'rgba(52, 211, 153, 0.22)';
-      stroke = 'rgba(52, 211, 153, 0.94)';
-      accent = '#34d399';
-      frame = 'rgba(110, 231, 183, 0.48)';
-      shadow = 'drop-shadow(0 20px 24px rgba(52, 211, 153, 0.24))';
+      fill = hexToRgba(VIZ_HEX.success, 0.22);
+      stroke = hexToRgba(VIZ_HEX.success, 0.94);
+      accent = VIZ_HEX.success;
+      frame = hexToRgba(VIZ_HEX.success, 0.48);
+      shadow = `drop-shadow(0 20px 24px ${hexToRgba(VIZ_HEX.success, 0.24)})`;
     }
 
     if (isPassComplete && geometry.zone === 'top') {
-      fill = 'rgba(52, 211, 153, 0.14)';
-      stroke = 'rgba(74, 222, 128, 0.7)';
-      accent = '#4ade80';
-      frame = 'rgba(134, 239, 172, 0.28)';
-      shadow = 'drop-shadow(0 18px 22px rgba(34, 197, 94, 0.18))';
+      fill = hexToRgba(VIZ_HEX.success, 0.14);
+      stroke = hexToRgba(VIZ_HEX.success, 0.7);
+      accent = VIZ_HEX.success;
+      frame = hexToRgba(VIZ_HEX.success, 0.28);
+      shadow = `drop-shadow(0 18px 22px ${hexToRgba(VIZ_HEX.success, 0.18)})`;
     }
 
     if (isComplete) {
-      fill = 'rgba(34, 197, 94, 0.16)';
-      stroke = 'rgba(74, 222, 128, 0.82)';
-      accent = '#4ade80';
-      frame = 'rgba(187, 247, 208, 0.34)';
-      shadow = 'drop-shadow(0 18px 22px rgba(34, 197, 94, 0.22))';
+      fill = hexToRgba(VIZ_HEX.success, 0.16);
+      stroke = hexToRgba(VIZ_HEX.success, 0.82);
+      accent = VIZ_HEX.success;
+      frame = hexToRgba(VIZ_HEX.success, 0.34);
+      shadow = `drop-shadow(0 18px 22px ${hexToRgba(VIZ_HEX.success, 0.22)})`;
     }
 
     card.rect.setAttribute('fill', fill);
@@ -823,12 +811,12 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
   ): CardDigitsPayload {
     const maxDigits = step.maxDigits ?? Math.max(1, String(Math.max(0, ...this.array())).length);
     const activeCharIndex =
-      step.digitIndex === null || step.digitIndex === undefined ? null : maxDigits - step.digitIndex - 1;
+      step.digitIndex === null || step.digitIndex === undefined
+        ? null
+        : maxDigits - step.digitIndex - 1;
     const digits = String(card.value).padStart(maxDigits, '0').split('');
     const base = inBucket ? 'rgba(226, 232, 240, 0.9)' : 'rgba(241, 245, 249, 0.92)';
-    const colors = digits.map((_, index) =>
-      index === activeCharIndex ? accent : base,
-    );
+    const colors = digits.map((_, index) => (index === activeCharIndex ? accent : base));
     return { digits, colors };
   }
 
@@ -861,7 +849,11 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
     });
   }
 
-  private animateStepEffects(previousStep: SortStep | null, step: SortStep, layout: LayoutSnapshot): void {
+  private animateStepEffects(
+    previousStep: SortStep | null,
+    step: SortStep,
+    layout: LayoutSnapshot,
+  ): void {
     const activeId = step.activeItemId;
     if (activeId && activeId !== previousStep?.activeItemId) {
       const card = this.cards.get(activeId);
@@ -871,24 +863,21 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
           scale: 1.05,
           filter: [
             'drop-shadow(0 0 0 transparent)',
-            `drop-shadow(0 0 18px ${step.activeBucket === null || step.activeBucket === undefined ? '#38bdf8' : hexToRgba(BUCKET_COLORS[step.activeBucket], 0.65)})`,
+            `drop-shadow(0 0 18px ${step.activeBucket === null || step.activeBucket === undefined ? VIZ_HEX.accent : hexToRgba(BUCKET_COLORS[step.activeBucket], 0.65)})`,
             'drop-shadow(0 0 0 transparent)',
           ],
         });
       }
     }
 
-    if (
-      step.phase === 'focus-digit' &&
-      step.digitIndex !== previousStep?.digitIndex
-    ) {
+    if (step.phase === 'focus-digit' && step.digitIndex !== previousStep?.digitIndex) {
       for (const card of this.cards.values()) {
         pulseSvgElement(card.frame, {
           duration: this.motion().compareMs,
           scale: 1.03,
           filter: [
             'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 12px rgba(56, 189, 248, 0.38))',
+            `drop-shadow(0 0 12px ${hexToRgba(VIZ_HEX.accent, 0.38)})`,
             'drop-shadow(0 0 0 transparent)',
           ],
         });
@@ -932,7 +921,11 @@ export class RadixBucketVisualization implements AfterViewInit, OnDestroy, Visua
     }
 
     const activeBucket = step.activeBucket;
-    if (activeBucket !== null && activeBucket !== undefined && activeBucket !== previousStep?.activeBucket) {
+    if (
+      activeBucket !== null &&
+      activeBucket !== undefined &&
+      activeBucket !== previousStep?.activeBucket
+    ) {
       const rect = layout.bucketRects.get(activeBucket);
       if (rect && this.flowPath) {
         this.flowPath.setAttribute('stroke-dashoffset', '0');

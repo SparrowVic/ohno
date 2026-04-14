@@ -88,14 +88,14 @@
 .trace__queue-chip {
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.14);
+  background: rgb(var(--viz-window-rgb) / 0.14);
   color: #cbc6ff;
   font-size: 9px;
   font-weight: 600;
 }
 
 .trace__queue-chip--soft {
-  background: rgba(94, 234, 212, 0.12);
+  background: rgb(var(--viz-route-rgb) / 0.12);
   color: #97ece1;
 }
 
@@ -176,12 +176,12 @@
 }
 
 .trace__row--active td {
-  background: rgba(240, 180, 41, 0.07);
+  background: rgb(var(--viz-warning-rgb) / 0.07);
   color: var(--text-primary);
 }
 
 .trace__row--done td {
-  background: rgba(62, 207, 142, 0.05);
+  background: rgb(var(--viz-success-rgb) / 0.05);
 }
 
 .trace__status {
@@ -197,25 +197,25 @@
   &--active,
   &--candidate,
   &--pivot {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
   &--improved,
   &--assignment,
   &--adjusted {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--covered,
   &--zero {
-    background: rgba(124, 110, 240, 0.14);
+    background: rgb(var(--viz-window-rgb) / 0.14);
     color: #cbc6ff;
   }
 
   &--blocked {
-    background: rgba(244, 63, 94, 0.14);
+    background: rgb(var(--viz-danger-rgb) / 0.14);
     color: #ff9fb0;
   }
 
@@ -240,26 +240,26 @@
   &--active,
   &--row,
   &--column {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
   &--improved,
   &--assignment,
   &--adjusted {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--covered,
   &--zero {
-    background: rgba(124, 110, 240, 0.14);
+    background: rgb(var(--viz-window-rgb) / 0.14);
     color: #cbc6ff;
   }
 
   &--infinite {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 }
 

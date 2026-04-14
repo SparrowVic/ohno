@@ -23,7 +23,7 @@
   border-radius: 18px;
   overflow: hidden;
   background:
-    radial-gradient(circle at top, rgba(94, 234, 212, 0.05), transparent 38%),
+    radial-gradient(circle at top, rgb(var(--viz-route-rgb) / 0.05), transparent 38%),
     linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.84));
   border: 0.5px solid rgba(255, 255, 255, 0.07);
 }
@@ -43,7 +43,7 @@
   }
 
   &--left {
-    fill: rgba(56, 189, 248, 0.62);
+    fill: rgb(var(--viz-accent-rgb) / 0.62);
   }
 
   &--right {
@@ -51,7 +51,7 @@
   }
 
   &--strip {
-    fill: rgba(45, 212, 191, 0.72);
+    fill: rgb(var(--viz-route-rgb) / 0.72);
   }
 }
 
@@ -66,7 +66,7 @@
   }
 
   &--strip {
-    stroke: rgba(94, 234, 212, 0.72);
+    stroke: rgb(var(--viz-route-rgb) / 0.72);
     stroke-width: 0.5;
     stroke-dasharray: 1.6 1.2;
   }
@@ -83,21 +83,23 @@
 
 .cpv__pair {
   stroke-linecap: round;
-  transition: stroke 180ms ease, opacity 180ms ease;
+  transition:
+    stroke 180ms ease,
+    opacity 180ms ease;
 
   &--candidate {
-    stroke: #f0b429;
+    stroke: var(--viz-warning);
     stroke-width: 1;
     stroke-dasharray: 2.8 1.5;
   }
 
   &--best {
-    stroke: #34d399;
+    stroke: var(--viz-success);
     stroke-width: 1.2;
   }
 
   &--final {
-    stroke: #ffde59;
+    stroke: var(--viz-hit);
     stroke-width: 1.35;
   }
 }
@@ -120,21 +122,23 @@
   opacity: 0.16;
 
   &--strip {
-    fill: rgba(45, 212, 191, 0.6);
+    fill: rgb(var(--viz-route-rgb) / 0.6);
   }
 
   &--compare {
-    fill: rgba(240, 180, 41, 0.7);
+    fill: rgb(var(--viz-warning-rgb) / 0.7);
   }
 
   &--best {
-    fill: rgba(255, 222, 89, 0.72);
+    fill: rgb(var(--viz-hit-rgb) / 0.72);
   }
 }
 
 .cpv__point {
   stroke-width: 0.55;
-  transition: fill 180ms ease, stroke 180ms ease;
+  transition:
+    fill 180ms ease,
+    stroke 180ms ease;
 
   &--default {
     fill: rgba(255, 255, 255, 0.1);
@@ -147,8 +151,8 @@
   }
 
   &--left {
-    fill: #38bdf8;
-    stroke: rgba(56, 189, 248, 0.4);
+    fill: var(--viz-accent);
+    stroke: rgb(var(--viz-accent-rgb) / 0.4);
   }
 
   &--right {
@@ -157,18 +161,18 @@
   }
 
   &--strip {
-    fill: #2dd4bf;
-    stroke: rgba(45, 212, 191, 0.42);
+    fill: var(--viz-route);
+    stroke: rgb(var(--viz-route-rgb) / 0.42);
   }
 
   &--compare {
-    fill: #f0b429;
-    stroke: rgba(240, 180, 41, 0.46);
+    fill: var(--viz-warning);
+    stroke: rgb(var(--viz-warning-rgb) / 0.46);
   }
 
   &--best {
-    fill: #ffde59;
-    stroke: rgba(255, 222, 89, 0.5);
+    fill: var(--viz-hit);
+    stroke: rgb(var(--viz-hit-rgb) / 0.5);
   }
 }
 
@@ -203,7 +207,7 @@
   backdrop-filter: blur(10px);
 
   &--phase {
-    border-color: rgba(94, 234, 212, 0.16);
+    border-color: rgb(var(--viz-route-rgb) / 0.16);
     background: rgba(2, 6, 23, 0.78);
   }
 }
@@ -225,11 +229,11 @@
   color: var(--text-primary);
 
   &--best {
-    color: #ffde59;
+    color: var(--viz-hit);
   }
 
   &--current {
-    color: #f0b429;
+    color: var(--viz-warning);
   }
 }
 
@@ -269,8 +273,8 @@
 .cpv__trail-chip {
   padding: 3px 8px;
   border-radius: 999px;
-  border: 0.5px solid rgba(94, 234, 212, 0.16);
-  background: rgba(94, 234, 212, 0.08);
+  border: 0.5px solid rgb(var(--viz-route-rgb) / 0.16);
+  background: rgb(var(--viz-route-rgb) / 0.08);
   color: rgba(204, 251, 241, 0.92);
   font-size: 10px;
   font-weight: 700;

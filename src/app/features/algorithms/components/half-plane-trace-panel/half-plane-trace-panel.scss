@@ -80,7 +80,7 @@
 .hptp__focus {
   font-size: 13px;
   font-weight: 700;
-  color: #ffde59;
+  color: var(--viz-hit);
 }
 
 .hptp__chips {
@@ -101,14 +101,14 @@
   }
 
   &--current {
-    color: #ffde59;
-    background: rgba(255, 222, 89, 0.08);
-    border: 0.5px solid rgba(255, 222, 89, 0.18);
+    color: var(--viz-hit);
+    background: rgb(var(--viz-hit-rgb) / 0.08);
+    border: 0.5px solid rgb(var(--viz-hit-rgb) / 0.18);
   }
 
   &--done {
-    color: #5eead4;
-    background: rgba(94, 234, 212, 0.08);
+    color: var(--viz-route);
+    background: rgb(var(--viz-route-rgb) / 0.08);
   }
 }
 

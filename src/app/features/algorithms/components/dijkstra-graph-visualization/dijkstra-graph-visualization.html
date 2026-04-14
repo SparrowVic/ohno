@@ -1,6 +1,9 @@
 <section class="graph-shell">
   <div class="graph-shell__hud">
-    <div class="hud-card hud-card--compact hud-card--source" [class.hud-card--changed]="isCardChanged('source')">
+    <div
+      class="hud-card hud-card--compact hud-card--source"
+      [class.hud-card--changed]="isCardChanged('source')"
+    >
       <span class="hud-card__label">{{ sourceCardLabel() }}</span>
       <span class="hud-card__value">{{ sourceLabel() }}</span>
     </div>
@@ -9,11 +12,17 @@
       <span class="hud-card__value">{{ focusCardValue() }}</span>
       <span class="hud-card__hint">{{ focusCardHint() }}</span>
     </div>
-    <div class="hud-card hud-card--compact hud-card--current" [class.hud-card--changed]="isCardChanged('current')">
+    <div
+      class="hud-card hud-card--compact hud-card--current"
+      [class.hud-card--changed]="isCardChanged('current')"
+    >
       <span class="hud-card__label">Current</span>
       <span class="hud-card__value">{{ currentLabel() }}</span>
     </div>
-    <div class="hud-card hud-card--compact hud-card--frontier" [class.hud-card--changed]="isCardChanged('queue')">
+    <div
+      class="hud-card hud-card--compact hud-card--frontier"
+      [class.hud-card--changed]="isCardChanged('queue')"
+    >
       <span class="hud-card__label">{{ frontierLabel() }}</span>
       <div class="hud-card__pair">
         <div class="hud-card__mini">
@@ -26,7 +35,10 @@
         </div>
       </div>
     </div>
-    <div class="hud-card hud-card--compact hud-card--progress" [class.hud-card--changed]="isCardChanged('settled')">
+    <div
+      class="hud-card hud-card--compact hud-card--progress"
+      [class.hud-card--changed]="isCardChanged('settled')"
+    >
       <span class="hud-card__label">Progress</span>
       <div class="hud-card__pair">
         <div class="hud-card__mini">
@@ -34,7 +46,13 @@
           <span class="hud-card__hint">{{ completionLabel() }}</span>
         </div>
         <div class="hud-card__mini">
-          <span class="hud-card__value">@if (routeMode()) { {{ treeRouteCount() }} } @else { — }</span>
+          <span class="hud-card__value">
+            @if (routeMode()) {
+              {{ treeRouteCount() }}
+            } @else {
+              —
+            }
+          </span>
           <span class="hud-card__hint">tree routes</span>
         </div>
       </div>
@@ -54,7 +72,10 @@
       <span class="focus-pill__label">Edge</span>
       <span class="focus-pill__value">{{ activeEdgeLabel() }}</span>
     </div>
-    <div class="focus-pill focus-pill--detail" [class.focus-pill--changed]="isCardChanged('detail')">
+    <div
+      class="focus-pill focus-pill--detail"
+      [class.focus-pill--changed]="isCardChanged('detail')"
+    >
       <span class="focus-pill__label">{{ detailPillLabel() }}</span>
       <span class="focus-pill__value">{{ detailPillValue() }}</span>
       <span class="focus-pill__hint">{{ structureHint() }}</span>
@@ -64,19 +85,47 @@
   <svg class="graph" viewBox="0 0 960 620" preserveAspectRatio="xMidYMid meet">
     <defs>
       <linearGradient id="graphEdgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#5eead4" />
-        <stop offset="100%" stop-color="#7c6ef0" />
+        <stop offset="0%" stop-color="var(--viz-route)" />
+        <stop offset="100%" stop-color="var(--viz-window)" />
       </linearGradient>
-      <marker id="graphArrowDefault" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <marker
+        id="graphArrowDefault"
+        markerWidth="10"
+        markerHeight="10"
+        refX="8"
+        refY="5"
+        orient="auto"
+      >
         <path d="M0 0L10 5L0 10Z" fill="rgba(255,255,255,0.52)" />
       </marker>
-      <marker id="graphArrowTree" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <marker
+        id="graphArrowTree"
+        markerWidth="10"
+        markerHeight="10"
+        refX="8"
+        refY="5"
+        orient="auto"
+      >
         <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.66)" />
       </marker>
-      <marker id="graphArrowActive" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <marker
+        id="graphArrowActive"
+        markerWidth="10"
+        markerHeight="10"
+        refX="8"
+        refY="5"
+        orient="auto"
+      >
         <path d="M0 0L10 5L0 10Z" fill="rgba(124,110,240,0.82)" />
       </marker>
-      <marker id="graphArrowRelaxed" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <marker
+        id="graphArrowRelaxed"
+        markerWidth="10"
+        markerHeight="10"
+        refX="8"
+        refY="5"
+        orient="auto"
+      >
         <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.94)" />
       </marker>
       <filter id="graphNodeGlow">

@@ -66,8 +66,8 @@
   min-height: 94px;
 
   &--preset {
-    background: rgba(56, 189, 248, 0.06);
-    border-color: rgba(56, 189, 248, 0.14);
+    background: rgb(var(--viz-accent-rgb) / 0.06);
+    border-color: rgb(var(--viz-accent-rgb) / 0.14);
   }
 
   &--muted {
@@ -87,7 +87,7 @@
 .trace__calc-result {
   margin-top: 4px;
   font-size: 10px;
-  color: #8bf0ba;
+  color: var(--viz-success-ink);
 }
 
 .trace__calc-decision {
@@ -116,14 +116,14 @@
   gap: 5px;
   padding: 3px 7px;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.12);
+  background: rgb(var(--viz-accent-rgb) / 0.12);
   color: #a4e6ff;
   font-size: 9px;
   font-weight: 600;
 }
 
 .trace__chip--soft {
-  background: rgba(124, 110, 240, 0.12);
+  background: rgb(var(--viz-window-rgb) / 0.12);
   color: #d0c9ff;
 }
 
@@ -183,24 +183,24 @@
   letter-spacing: 0.08em;
 
   &--active {
-    background: rgba(245, 158, 11, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd691;
   }
 
   &--candidate {
-    background: rgba(124, 110, 240, 0.14);
+    background: rgb(var(--viz-window-rgb) / 0.14);
     color: #cfc8ff;
   }
 
   &--improved,
   &--chosen,
   &--match {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--backtrack {
-    background: rgba(255, 222, 89, 0.16);
+    background: rgb(var(--viz-hit-rgb) / 0.16);
     color: #ffe891;
   }
 

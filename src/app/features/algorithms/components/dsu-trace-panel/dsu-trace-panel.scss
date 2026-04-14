@@ -94,8 +94,8 @@
 }
 
 .trace__group--active {
-  border-color: rgba(240, 180, 41, 0.2);
-  background: rgba(240, 180, 41, 0.055);
+  border-color: rgb(var(--viz-warning-rgb) / 0.2);
+  background: rgb(var(--viz-warning-rgb) / 0.055);
 }
 
 .trace__group-head {
@@ -114,8 +114,8 @@
 .trace__group-size {
   padding: 2px 6px;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.12);
-  color: #8edcff;
+  background: rgb(var(--viz-accent-rgb) / 0.12);
+  color: var(--viz-accent-ink);
   font-size: 9px;
   font-weight: 700;
 }
@@ -152,22 +152,22 @@
 }
 
 .trace__queue-chip--pending {
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
 }
 
 .trace__queue-chip--active {
-  background: rgba(240, 180, 41, 0.14);
+  background: rgb(var(--viz-warning-rgb) / 0.14);
   color: #ffd98a;
 }
 
 .trace__queue-chip--accepted {
-  background: rgba(62, 207, 142, 0.14);
-  color: #8bf0ba;
+  background: rgb(var(--viz-success-rgb) / 0.14);
+  color: var(--viz-success-ink);
 }
 
 .trace__queue-chip--rejected {
-  background: rgba(244, 63, 94, 0.14);
+  background: rgb(var(--viz-danger-rgb) / 0.14);
   color: #ff9fb0;
 }
 
@@ -239,12 +239,12 @@
 }
 
 .trace__row--active td {
-  background: rgba(240, 180, 41, 0.07);
+  background: rgb(var(--viz-warning-rgb) / 0.07);
   color: var(--text-primary);
 }
 
 .trace__row--done td {
-  background: rgba(62, 207, 142, 0.05);
+  background: rgb(var(--viz-success-rgb) / 0.05);
 }
 
 .trace__status {
@@ -258,20 +258,20 @@
   white-space: nowrap;
 
   &--root {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 
   &--active,
   &--query {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
   &--merged,
   &--compressed {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--idle {
@@ -292,25 +292,25 @@
   color: var(--text-secondary);
 
   &--root {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 
   &--active,
   &--query {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
   &--merged,
   &--compressed,
   &--accepted {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--rejected {
-    background: rgba(244, 63, 94, 0.14);
+    background: rgb(var(--viz-danger-rgb) / 0.14);
     color: #ff9fb0;
   }
 }

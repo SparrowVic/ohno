@@ -75,7 +75,7 @@
   border-radius: 18px;
   border: 0.5px solid rgba(255, 255, 255, 0.07);
   background:
-    radial-gradient(circle at top, rgba(94, 234, 212, 0.05), transparent 26%),
+    radial-gradient(circle at top, rgb(var(--viz-route-rgb) / 0.05), transparent 26%),
     rgba(10, 16, 28, 0.92);
 }
 
@@ -126,39 +126,39 @@
   stroke-linejoin: round;
 
   &--a {
-    fill: rgba(244, 63, 94, 0.08);
-    stroke: rgba(244, 63, 94, 0.5);
+    fill: rgb(var(--viz-danger-rgb) / 0.08);
+    stroke: rgb(var(--viz-danger-rgb) / 0.5);
     stroke-width: 2.2;
   }
 
   &--b {
-    fill: rgba(56, 189, 248, 0.08);
-    stroke: rgba(56, 189, 248, 0.5);
+    fill: rgb(var(--viz-accent-rgb) / 0.08);
+    stroke: rgb(var(--viz-accent-rgb) / 0.5);
     stroke-width: 2.2;
   }
 
   &--reflected {
-    fill: rgba(124, 110, 240, 0.08);
-    stroke: rgba(124, 110, 240, 0.52);
+    fill: rgb(var(--viz-window-rgb) / 0.08);
+    stroke: rgb(var(--viz-window-rgb) / 0.52);
     stroke-width: 2.2;
   }
 
   &--preview {
-    fill: rgba(255, 222, 89, 0.08);
-    stroke: rgba(255, 222, 89, 0.58);
+    fill: rgb(var(--viz-hit-rgb) / 0.08);
+    stroke: rgb(var(--viz-hit-rgb) / 0.58);
     stroke-width: 1.6;
     stroke-dasharray: 3 2;
   }
 
   &--result {
-    fill: rgba(45, 212, 191, 0.1);
-    stroke: rgba(45, 212, 191, 0.62);
+    fill: rgb(var(--viz-route-rgb) / 0.1);
+    stroke: rgb(var(--viz-route-rgb) / 0.62);
     stroke-width: 1.8;
   }
 }
 
 .mkv__vertex-glow {
-  fill: rgba(255, 222, 89, 0.18);
+  fill: rgb(var(--viz-hit-rgb) / 0.18);
 }
 
 .mkv__vertex {
@@ -190,23 +190,23 @@
 
   &--shape-a {
     color: #fda4af;
-    background: rgba(244, 63, 94, 0.05);
+    background: rgb(var(--viz-danger-rgb) / 0.05);
   }
 
   &--shape-b {
     color: #93c5fd;
-    background: rgba(56, 189, 248, 0.05);
+    background: rgb(var(--viz-accent-rgb) / 0.05);
   }
 
   &--current {
-    color: #ffde59;
-    background: rgba(255, 222, 89, 0.08);
-    border-color: rgba(255, 222, 89, 0.18);
+    color: var(--viz-hit);
+    background: rgb(var(--viz-hit-rgb) / 0.08);
+    border-color: rgb(var(--viz-hit-rgb) / 0.18);
   }
 
   &--done {
-    color: #5eead4;
-    background: rgba(94, 234, 212, 0.08);
+    color: var(--viz-route);
+    background: rgb(var(--viz-route-rgb) / 0.08);
   }
 }
 
@@ -240,14 +240,14 @@
   }
 
   &--current {
-    color: #ffde59;
-    background: rgba(255, 222, 89, 0.08);
-    border: 0.5px solid rgba(255, 222, 89, 0.18);
+    color: var(--viz-hit);
+    background: rgb(var(--viz-hit-rgb) / 0.08);
+    border: 0.5px solid rgb(var(--viz-hit-rgb) / 0.18);
   }
 
   &--done {
-    color: #5eead4;
-    background: rgba(94, 234, 212, 0.08);
+    color: var(--viz-route);
+    background: rgb(var(--viz-route-rgb) / 0.08);
   }
 }
 

@@ -74,7 +74,7 @@
   flex-shrink: 0;
   padding: 2px 7px;
   border-radius: 999px;
-  background: rgba(255, 222, 89, 0.12);
+  background: rgb(var(--viz-hit-rgb) / 0.12);
   color: #ffe891;
   font-size: 9px;
   font-weight: 600;
@@ -94,7 +94,7 @@
 .trace__calc-result {
   margin-top: 2px;
   font-size: 11px;
-  color: #5eead4;
+  color: var(--viz-route);
 }
 
 .trace__calc-result--muted {
@@ -117,19 +117,19 @@
 
   &--focus {
     background:
-      linear-gradient(180deg, rgba(255, 222, 89, 0.06), rgba(255, 222, 89, 0.02)),
+      linear-gradient(180deg, rgb(var(--viz-hit-rgb) / 0.06), rgb(var(--viz-hit-rgb) / 0.02)),
       rgba(255, 255, 255, 0.02);
-    border-color: rgba(255, 222, 89, 0.16);
+    border-color: rgb(var(--viz-hit-rgb) / 0.16);
   }
 
   &--improve {
-    border-color: rgba(62, 207, 142, 0.24);
-    background: rgba(62, 207, 142, 0.06);
+    border-color: rgb(var(--viz-success-rgb) / 0.24);
+    background: rgb(var(--viz-success-rgb) / 0.06);
   }
 
   &--keep {
-    border-color: rgba(240, 180, 41, 0.24);
-    background: rgba(240, 180, 41, 0.06);
+    border-color: rgb(var(--viz-warning-rgb) / 0.24);
+    background: rgb(var(--viz-warning-rgb) / 0.06);
   }
 
   &--idle,
@@ -161,8 +161,8 @@
   max-width: 100%;
   padding: 3px 7px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
   font-size: 9px;
   font-weight: 500;
   white-space: nowrap;
@@ -170,8 +170,8 @@
   text-overflow: ellipsis;
 
   &--done {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 }
 
@@ -240,12 +240,12 @@
 }
 
 .trace__row--current td {
-  background: rgba(240, 180, 41, 0.08);
+  background: rgb(var(--viz-warning-rgb) / 0.08);
   color: var(--text-primary);
 }
 
 .trace__row--settled td {
-  background: rgba(62, 207, 142, 0.05);
+  background: rgb(var(--viz-success-rgb) / 0.05);
 }
 
 .trace__status {
@@ -263,7 +263,7 @@
   text-overflow: ellipsis;
 
   &--current {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
@@ -274,13 +274,13 @@
   &--reached,
   &--closed,
   &--in-tree {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--source {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 
   &--queued,
@@ -288,8 +288,8 @@
   &--updated,
   &--candidate,
   &--stacked {
-    background: rgba(124, 110, 240, 0.14);
-    color: #c9c3ff;
+    background: rgb(var(--viz-window-rgb) / 0.14);
+    color: var(--viz-window-ink);
   }
 
   &--unseen {

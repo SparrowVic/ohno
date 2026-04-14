@@ -25,7 +25,7 @@
   border-radius: 24px;
   border: 0.5px solid rgba(255, 255, 255, 0.06);
   background:
-    radial-gradient(circle at top right, rgba(124, 110, 240, 0.09), transparent 42%),
+    radial-gradient(circle at top right, rgb(var(--viz-window-rgb) / 0.09), transparent 42%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
   box-shadow: 0 8px 22px rgba(8, 12, 24, 0.14);
 }
@@ -56,7 +56,7 @@
 
 .search-viz__target-subtitle {
   font-size: 13px;
-  color: #c9c3ff;
+  color: var(--viz-window-ink);
 }
 
 .search-viz__status-band {
@@ -152,8 +152,8 @@
 .cell__bound {
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(94, 234, 212, 0.14);
-  color: #8ef3e9;
+  background: rgb(var(--viz-route-rgb) / 0.14);
+  color: var(--viz-route-ink);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -167,31 +167,31 @@
 }
 
 .cell--window {
-  border-color: rgba(124, 110, 240, 0.28);
+  border-color: rgb(var(--viz-window-rgb) / 0.28);
   background:
-    linear-gradient(180deg, rgba(124, 110, 240, 0.14), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgb(var(--viz-window-rgb) / 0.14), rgba(255, 255, 255, 0.02)),
     rgba(8, 12, 24, 0.6);
 }
 
 .cell--window-glow {
-  box-shadow: inset 0 0 0 1px rgba(124, 110, 240, 0.14);
+  box-shadow: inset 0 0 0 1px rgb(var(--viz-window-rgb) / 0.14);
 }
 
 .cell--visited {
-  border-color: rgba(56, 189, 248, 0.2);
+  border-color: rgb(var(--viz-accent-rgb) / 0.2);
   background:
-    linear-gradient(180deg, rgba(56, 189, 248, 0.12), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgb(var(--viz-accent-rgb) / 0.12), rgba(255, 255, 255, 0.02)),
     rgba(8, 12, 24, 0.55);
 }
 
 .cell--probe {
   transform: translateY(-2px) scale(1.005);
-  border-color: rgba(240, 180, 41, 0.42);
+  border-color: rgb(var(--viz-warning-rgb) / 0.42);
   background:
-    radial-gradient(circle at top center, rgba(240, 180, 41, 0.14), transparent 52%),
-    linear-gradient(180deg, rgba(240, 180, 41, 0.06), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at top center, rgb(var(--viz-warning-rgb) / 0.14), transparent 52%),
+    linear-gradient(180deg, rgb(var(--viz-warning-rgb) / 0.06), rgba(255, 255, 255, 0.02)),
     rgba(8, 12, 24, 0.7);
-  box-shadow: 0 8px 18px rgba(240, 180, 41, 0.08);
+  box-shadow: 0 8px 18px rgb(var(--viz-warning-rgb) / 0.08);
 
   .cell__beam {
     opacity: 0.55;
@@ -199,20 +199,20 @@
 }
 
 .cell--bound {
-  border-color: rgba(94, 234, 212, 0.38);
+  border-color: rgb(var(--viz-route-rgb) / 0.38);
   background:
-    linear-gradient(180deg, rgba(94, 234, 212, 0.12), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgb(var(--viz-route-rgb) / 0.12), rgba(255, 255, 255, 0.02)),
     rgba(8, 12, 24, 0.6);
 }
 
 .cell--found {
   transform: translateY(-2px);
-  border-color: rgba(62, 207, 142, 0.4);
+  border-color: rgb(var(--viz-success-rgb) / 0.4);
   background:
-    radial-gradient(circle at top center, rgba(62, 207, 142, 0.14), transparent 54%),
-    linear-gradient(180deg, rgba(62, 207, 142, 0.08), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at top center, rgb(var(--viz-success-rgb) / 0.14), transparent 54%),
+    linear-gradient(180deg, rgb(var(--viz-success-rgb) / 0.08), rgba(255, 255, 255, 0.02)),
     rgba(8, 12, 24, 0.72);
-  box-shadow: 0 8px 20px rgba(62, 207, 142, 0.08);
+  box-shadow: 0 8px 20px rgb(var(--viz-success-rgb) / 0.08);
 }
 
 .cell--eliminated {

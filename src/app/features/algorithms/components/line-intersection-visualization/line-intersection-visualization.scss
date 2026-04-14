@@ -41,7 +41,9 @@
 
 .liv__segment {
   stroke-linecap: round;
-  transition: stroke 160ms ease, opacity 160ms ease;
+  transition:
+    stroke 160ms ease,
+    opacity 160ms ease;
 
   &--pending {
     stroke: rgba(148, 163, 184, 0.38);
@@ -49,17 +51,17 @@
   }
 
   &--active {
-    stroke: rgba(94, 234, 212, 0.72);
+    stroke: rgb(var(--viz-route-rgb) / 0.72);
     stroke-width: 0.95;
   }
 
   &--focus {
-    stroke: #f0b429;
+    stroke: var(--viz-warning);
     stroke-width: 1.15;
   }
 
   &--hit {
-    stroke: rgba(56, 189, 248, 0.78);
+    stroke: rgb(var(--viz-accent-rgb) / 0.78);
     stroke-width: 1.05;
   }
 
@@ -73,11 +75,11 @@
   opacity: 0.16;
 
   &--intersection {
-    fill: rgba(56, 189, 248, 0.7);
+    fill: rgb(var(--viz-accent-rgb) / 0.7);
   }
 
   &--current {
-    fill: rgba(240, 180, 41, 0.8);
+    fill: rgb(var(--viz-warning-rgb) / 0.8);
   }
 }
 
@@ -109,7 +111,7 @@
   backdrop-filter: blur(8px);
 
   &--phase {
-    border-color: rgba(240, 180, 41, 0.15);
+    border-color: rgb(var(--viz-warning-rgb) / 0.15);
   }
 }
 
@@ -130,7 +132,7 @@
   color: var(--text-primary);
 
   &--accent {
-    color: #5eead4;
+    color: var(--viz-route);
   }
 }
 
@@ -159,13 +161,13 @@
   }
 
   &--current {
-    color: #f0b429;
-    border-color: rgba(240, 180, 41, 0.26);
+    color: var(--viz-warning);
+    border-color: rgb(var(--viz-warning-rgb) / 0.26);
   }
 
   &--done {
-    color: #5eead4;
-    border-color: rgba(94, 234, 212, 0.22);
+    color: var(--viz-route);
+    border-color: rgb(var(--viz-route-rgb) / 0.22);
   }
 }
 
@@ -192,8 +194,8 @@
 .liv__order-chip {
   padding: 4px 8px;
   border-radius: 999px;
-  border: 0.5px solid rgba(56, 189, 248, 0.18);
-  background: rgba(56, 189, 248, 0.08);
+  border: 0.5px solid rgb(var(--viz-accent-rgb) / 0.18);
+  background: rgb(var(--viz-accent-rgb) / 0.08);
   color: rgba(191, 219, 254, 0.9);
   font-size: 10px;
   font-weight: 700;

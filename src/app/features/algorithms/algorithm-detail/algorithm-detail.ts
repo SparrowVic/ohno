@@ -26,7 +26,10 @@ import { bucketSortGenerator } from '../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../algorithms/bubble-sort';
 import { climbingStairsGenerator } from '../algorithms/climbing-stairs';
 import { chromaticNumberGenerator } from '../algorithms/chromatic-number';
-import { closestPairOfPointsGenerator, ClosestPairScenario } from '../algorithms/closest-pair-of-points';
+import {
+  closestPairOfPointsGenerator,
+  ClosestPairScenario,
+} from '../algorithms/closest-pair-of-points';
 import { coinChangeGenerator } from '../algorithms/coin-change';
 import { connectedComponentsGenerator } from '../algorithms/connected-components';
 import { countingSortGenerator } from '../algorithms/counting-sort';
@@ -46,14 +49,20 @@ import { fibonacciDpGenerator } from '../algorithms/fibonacci-dp';
 import { floydWarshallGenerator } from '../algorithms/floyd-warshall';
 import { floodFillGenerator } from '../algorithms/flood-fill';
 import { huffmanCodingGenerator } from '../algorithms/huffman-coding';
-import { halfPlaneIntersectionGenerator, HalfPlaneIntersectionScenario } from '../algorithms/half-plane-intersection';
+import {
+  halfPlaneIntersectionGenerator,
+  HalfPlaneIntersectionScenario,
+} from '../algorithms/half-plane-intersection';
 import { heapSortGenerator } from '../algorithms/heap-sort';
 import { insertionSortGenerator } from '../algorithms/insertion-sort';
 import { knapsack01Generator } from '../algorithms/knapsack-01';
 import { knuthDpOptimizationGenerator } from '../algorithms/knuth-dp-optimization';
 import { kruskalsMstGenerator } from '../algorithms/kruskals-mst';
 import { linearSearchGenerator } from '../algorithms/linear-search';
-import { lineIntersectionGenerator, LineIntersectionScenario } from '../algorithms/line-intersection';
+import {
+  lineIntersectionGenerator,
+  LineIntersectionScenario,
+} from '../algorithms/line-intersection';
 import { longestCommonSubsequenceGenerator } from '../algorithms/longest-common-subsequence';
 import { longestIncreasingSubsequenceGenerator } from '../algorithms/longest-increasing-subsequence';
 import { longestPalindromicSubsequenceGenerator } from '../algorithms/longest-palindromic-subsequence';
@@ -86,7 +95,10 @@ import { wildcardMatchingGenerator } from '../algorithms/wildcard-matching';
 import { zAlgorithmGenerator } from '../algorithms/z-algorithm';
 import { burrowsWheelerTransformGenerator } from '../algorithms/burrows-wheeler-transform';
 import { convexHullGenerator, ConvexHullScenario } from '../algorithms/convex-hull';
-import { delaunayTriangulationGenerator, DelaunayTriangulationScenario } from '../algorithms/delaunay-triangulation';
+import {
+  delaunayTriangulationGenerator,
+  DelaunayTriangulationScenario,
+} from '../algorithms/delaunay-triangulation';
 import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
 import { hungarianAlgorithmGenerator } from '../algorithms/hungarian-algorithm';
 import { kosarajuSccGenerator } from '../algorithms/kosaraju-scc';
@@ -181,6 +193,7 @@ import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine';
+import { VIZ_COLOR } from '../utils/visualization-palette';
 import {
   BITMASK_DP_PRESETS,
   BURST_BALLOONS_PRESETS,
@@ -267,7 +280,12 @@ import {
   generateSteinerGraph,
   generateTraversalGraph,
 } from '../utils/dijkstra-graph';
-import { AStarScenario, createAStarScenario, createFloodFillScenario, FloodFillScenario } from '../utils/grid-scenarios';
+import {
+  AStarScenario,
+  createAStarScenario,
+  createFloodFillScenario,
+  FloodFillScenario,
+} from '../utils/grid-scenarios';
 import { HUNGARIAN_ALGORITHM_CODE } from '../data/hungarian-algorithm-code';
 import {
   createFloydWarshallScenario,
@@ -335,117 +353,126 @@ const SOUND_LEGEND: readonly LegendItem[] = [
   { label: 'Audio on compare/swap', color: 'var(--text-secondary)', opacity: 0.6 },
 ];
 
+const VIZ_ACCENT = VIZ_COLOR.accent;
+const VIZ_WINDOW = VIZ_COLOR.window;
+const VIZ_WARNING = VIZ_COLOR.warning;
+const VIZ_SUCCESS = VIZ_COLOR.success;
+const VIZ_ROUTE = VIZ_COLOR.route;
+const VIZ_DANGER = VIZ_COLOR.danger;
+const VIZ_HIT = VIZ_COLOR.hit;
+const VIZ_EMBER = VIZ_COLOR.ember;
+
 const RADIX_LEGEND: readonly LegendItem[] = [
-  { label: 'Input stream', color: '#7c6ef0', opacity: 0.55 },
-  { label: 'Active digit', color: '#38bdf8' },
-  { label: 'Bucket lane', color: '#f59e0b' },
-  { label: 'Gathered output', color: '#34d399' },
+  { label: 'Input stream', color: VIZ_WINDOW, opacity: 0.55 },
+  { label: 'Active digit', color: VIZ_ACCENT },
+  { label: 'Bucket lane', color: VIZ_EMBER },
+  { label: 'Gathered output', color: VIZ_SUCCESS },
 ];
 
 const DIJKSTRA_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: '#38bdf8' },
-  { label: 'Frontier queue', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'Shortest-path tree', color: '#3ecf8e' },
-  { label: 'Focused route', color: '#ffde59' },
-  { label: 'Active edge relaxation', color: '#5eead4' },
+  { label: 'Source', color: VIZ_ACCENT },
+  { label: 'Frontier queue', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'Shortest-path tree', color: VIZ_SUCCESS },
+  { label: 'Focused route', color: VIZ_HIT },
+  { label: 'Active edge relaxation', color: VIZ_ROUTE },
 ];
 
 const BFS_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: '#38bdf8' },
-  { label: 'Queue frontier', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'BFS tree', color: '#3ecf8e' },
-  { label: 'Focused route', color: '#ffde59' },
-  { label: 'Inspected edge', color: '#5eead4' },
+  { label: 'Source', color: VIZ_ACCENT },
+  { label: 'Queue frontier', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'BFS tree', color: VIZ_SUCCESS },
+  { label: 'Focused route', color: VIZ_HIT },
+  { label: 'Inspected edge', color: VIZ_ROUTE },
 ];
 
 const DFS_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: '#38bdf8' },
-  { label: 'Stack frontier', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'DFS tree', color: '#3ecf8e' },
-  { label: 'Focused branch', color: '#ffde59' },
-  { label: 'Inspected edge', color: '#5eead4' },
+  { label: 'Source', color: VIZ_ACCENT },
+  { label: 'Stack frontier', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'DFS tree', color: VIZ_SUCCESS },
+  { label: 'Focused branch', color: VIZ_HIT },
+  { label: 'Inspected edge', color: VIZ_ROUTE },
 ];
 
 const TOPOLOGICAL_SORT_KAHN_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed node', color: '#38bdf8' },
-  { label: 'Zero in-degree queue', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'Ordered node', color: '#3ecf8e' },
-  { label: 'Directed dependency', color: '#5eead4' },
+  { label: 'Seed node', color: VIZ_ACCENT },
+  { label: 'Zero in-degree queue', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'Ordered node', color: VIZ_SUCCESS },
+  { label: 'Directed dependency', color: VIZ_ROUTE },
 ];
 
 const CYCLE_DETECTION_LEGEND: readonly LegendItem[] = [
-  { label: 'Entry node', color: '#38bdf8' },
-  { label: 'Recursion stack', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'Closed node', color: '#3ecf8e' },
-  { label: 'Cycle edge', color: '#5eead4' },
+  { label: 'Entry node', color: VIZ_ACCENT },
+  { label: 'Recursion stack', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'Closed node', color: VIZ_SUCCESS },
+  { label: 'Cycle edge', color: VIZ_ROUTE },
 ];
 
 const CONNECTED_COMPONENTS_LEGEND: readonly LegendItem[] = [
-  { label: 'Current seed / node', color: '#f0b429' },
-  { label: 'Component frontier', color: '#7c6ef0' },
-  { label: 'Assigned node', color: '#3ecf8e' },
-  { label: 'Component tree edge', color: '#5eead4' },
+  { label: 'Current seed / node', color: VIZ_WARNING },
+  { label: 'Component frontier', color: VIZ_WINDOW },
+  { label: 'Assigned node', color: VIZ_SUCCESS },
+  { label: 'Component tree edge', color: VIZ_ROUTE },
 ];
 
 const BIPARTITE_CHECK_LEGEND: readonly LegendItem[] = [
-  { label: 'Side 0', color: '#38bdf8' },
-  { label: 'Side 1', color: '#f59e0b' },
-  { label: 'Queue frontier', color: '#7c6ef0' },
-  { label: 'Conflict edge / node', color: '#f43f5e' },
+  { label: 'Side 0', color: VIZ_ACCENT },
+  { label: 'Side 1', color: VIZ_EMBER },
+  { label: 'Queue frontier', color: VIZ_WINDOW },
+  { label: 'Conflict edge / node', color: VIZ_DANGER },
 ];
 
 const BELLMAN_FORD_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: '#38bdf8' },
-  { label: 'Updated this pass', color: '#7c6ef0' },
-  { label: 'Current relaxation', color: '#f0b429' },
-  { label: 'Shortest-path tree', color: '#3ecf8e' },
-  { label: 'Focused route', color: '#ffde59' },
-  { label: 'Negative-cycle evidence', color: '#f43f5e' },
+  { label: 'Source', color: VIZ_ACCENT },
+  { label: 'Updated this pass', color: VIZ_WINDOW },
+  { label: 'Current relaxation', color: VIZ_WARNING },
+  { label: 'Shortest-path tree', color: VIZ_SUCCESS },
+  { label: 'Focused route', color: VIZ_HIT },
+  { label: 'Negative-cycle evidence', color: VIZ_DANGER },
 ];
 
 const PRIMS_MST_LEGEND: readonly LegendItem[] = [
-  { label: 'Start node', color: '#38bdf8' },
-  { label: 'Candidate frontier', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'MST edge', color: '#3ecf8e' },
-  { label: 'Active edge check', color: '#5eead4' },
+  { label: 'Start node', color: VIZ_ACCENT },
+  { label: 'Candidate frontier', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'MST edge', color: VIZ_SUCCESS },
+  { label: 'Active edge check', color: VIZ_ROUTE },
 ];
 
 const BRIDGES_ARTICULATION_LEGEND: readonly LegendItem[] = [
-  { label: 'DFS stack', color: '#7c6ef0' },
-  { label: 'Current node', color: '#f0b429' },
-  { label: 'Closed node', color: '#3ecf8e' },
-  { label: 'Articulation point', color: '#f43f5e' },
-  { label: 'Bridge edge', color: '#f43f5e' },
+  { label: 'DFS stack', color: VIZ_WINDOW },
+  { label: 'Current node', color: VIZ_WARNING },
+  { label: 'Closed node', color: VIZ_SUCCESS },
+  { label: 'Articulation point', color: VIZ_DANGER },
+  { label: 'Bridge edge', color: VIZ_DANGER },
 ];
 
 const TARJAN_SCC_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed / current node', color: '#f0b429' },
-  { label: 'Tarjan stack', color: '#7c6ef0' },
-  { label: 'Current inspect edge', color: '#5eead4' },
-  { label: 'Finished SCC color', color: '#38bdf8' },
-  { label: 'Back-edge low-link update', color: '#34d399' },
+  { label: 'Seed / current node', color: VIZ_WARNING },
+  { label: 'Tarjan stack', color: VIZ_WINDOW },
+  { label: 'Current inspect edge', color: VIZ_ROUTE },
+  { label: 'Finished SCC color', color: VIZ_ACCENT },
+  { label: 'Back-edge low-link update', color: VIZ_SUCCESS },
 ];
 
 const KOSARAJU_SCC_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed / current node', color: '#f0b429' },
-  { label: 'Pass 1 finish stack', color: '#7c6ef0' },
-  { label: 'Pass 2 reversed edge', color: '#5eead4' },
-  { label: 'Finished SCC color', color: '#38bdf8' },
-  { label: 'Assigned component', color: '#34d399' },
+  { label: 'Seed / current node', color: VIZ_WARNING },
+  { label: 'Pass 1 finish stack', color: VIZ_WINDOW },
+  { label: 'Pass 2 reversed edge', color: VIZ_ROUTE },
+  { label: 'Finished SCC color', color: VIZ_ACCENT },
+  { label: 'Assigned component', color: VIZ_SUCCESS },
 ];
 
 const EULER_LEGEND: readonly LegendItem[] = [
   { label: 'Unused edge', color: 'rgba(255,255,255,0.22)' },
-  { label: 'Current traversal edge', color: '#7c6ef0' },
-  { label: 'Committed trail edge', color: '#3ecf8e' },
-  { label: 'Odd start / end node', color: '#38bdf8' },
-  { label: 'Sealed trail node', color: '#ffde59' },
+  { label: 'Current traversal edge', color: VIZ_WINDOW },
+  { label: 'Committed trail edge', color: VIZ_SUCCESS },
+  { label: 'Odd start / end node', color: VIZ_ACCENT },
+  { label: 'Sealed trail node', color: VIZ_HIT },
 ];
 
 const CHROMATIC_NUMBER_LEGEND: readonly LegendItem[] = [
@@ -453,353 +480,353 @@ const CHROMATIC_NUMBER_LEGEND: readonly LegendItem[] = [
   { label: 'Color class 2', color: 'rgba(139, 92, 246, 0.72)' },
   { label: 'Color class 3', color: 'rgba(52, 211, 153, 0.72)' },
   { label: 'Color class 4', color: 'rgba(245, 158, 11, 0.76)' },
-  { label: 'Conflict edge', color: '#f43f5e' },
+  { label: 'Conflict edge', color: VIZ_DANGER },
 ];
 
 const DOMINATOR_TREE_LEGEND: readonly LegendItem[] = [
-  { label: 'Entry block', color: '#38bdf8' },
-  { label: 'Current predecessor inspect', color: '#f0b429' },
-  { label: 'Stable dominator set', color: '#7c6ef0' },
-  { label: 'Immediate dominator tree edge', color: '#3ecf8e' },
-  { label: 'Current worklist block', color: '#5eead4' },
+  { label: 'Entry block', color: VIZ_ACCENT },
+  { label: 'Current predecessor inspect', color: VIZ_WARNING },
+  { label: 'Stable dominator set', color: VIZ_WINDOW },
+  { label: 'Immediate dominator tree edge', color: VIZ_SUCCESS },
+  { label: 'Current worklist block', color: VIZ_ROUTE },
 ];
 
 const STEINER_TREE_LEGEND: readonly LegendItem[] = [
   { label: 'Terminal node', color: 'rgba(56, 189, 248, 0.72)' },
   { label: 'Steiner connector', color: 'rgba(52, 211, 153, 0.74)' },
   { label: 'Weighted graph edge', color: 'rgba(255,255,255,0.22)' },
-  { label: 'Exact selected tree edge', color: '#3ecf8e' },
-  { label: 'Active subset root', color: '#f0b429' },
+  { label: 'Exact selected tree edge', color: VIZ_SUCCESS },
+  { label: 'Active subset root', color: VIZ_WARNING },
 ];
 
 const SEARCH_LEGEND: readonly LegendItem[] = [
-  { label: 'Candidate window', color: '#7c6ef0' },
-  { label: 'Probe', color: '#f0b429' },
-  { label: 'Visited', color: '#38bdf8' },
+  { label: 'Candidate window', color: VIZ_WINDOW },
+  { label: 'Probe', color: VIZ_WARNING },
+  { label: 'Visited', color: VIZ_ACCENT },
   { label: 'Eliminated', color: 'var(--text-secondary)', opacity: 0.55 },
-  { label: 'Found', color: '#3ecf8e' },
+  { label: 'Found', color: VIZ_SUCCESS },
 ];
 
 const STRING_LEGEND: readonly LegendItem[] = [
   { label: 'Source symbols', color: 'rgba(255,255,255,0.42)' },
-  { label: 'Current compare / center', color: '#f0b429' },
-  { label: 'Reusable shortcut', color: '#38bdf8' },
-  { label: 'Active window / box', color: '#7c6ef0' },
-  { label: 'Confirmed hit / best output', color: '#3ecf8e' },
+  { label: 'Current compare / center', color: VIZ_WARNING },
+  { label: 'Reusable shortcut', color: VIZ_ACCENT },
+  { label: 'Active window / box', color: VIZ_WINDOW },
+  { label: 'Confirmed hit / best output', color: VIZ_SUCCESS },
 ];
 
 const FLOOD_FILL_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed cell', color: '#38bdf8' },
-  { label: 'Current wave cell', color: '#f0b429' },
-  { label: 'Fill frontier', color: '#7c6ef0' },
-  { label: 'Painted region', color: '#3ecf8e' },
+  { label: 'Seed cell', color: VIZ_ACCENT },
+  { label: 'Current wave cell', color: VIZ_WARNING },
+  { label: 'Fill frontier', color: VIZ_WINDOW },
+  { label: 'Painted region', color: VIZ_SUCCESS },
   { label: 'Rejected cell', color: 'var(--text-secondary)', opacity: 0.55 },
 ];
 
 const A_STAR_LEGEND: readonly LegendItem[] = [
-  { label: 'Start', color: '#38bdf8' },
-  { label: 'Goal', color: '#f59e0b' },
-  { label: 'Open set', color: '#7c6ef0' },
-  { label: 'Current cell', color: '#f0b429' },
-  { label: 'Closed set', color: '#5eead4' },
-  { label: 'Final path', color: '#3ecf8e' },
+  { label: 'Start', color: VIZ_ACCENT },
+  { label: 'Goal', color: VIZ_EMBER },
+  { label: 'Open set', color: VIZ_WINDOW },
+  { label: 'Current cell', color: VIZ_WARNING },
+  { label: 'Closed set', color: VIZ_ROUTE },
+  { label: 'Final path', color: VIZ_SUCCESS },
 ];
 
 const HOPCROFT_KARP_LEGEND: readonly LegendItem[] = [
-  { label: 'Left partition', color: '#38bdf8' },
-  { label: 'Right partition', color: '#f59e0b' },
-  { label: 'BFS frontier', color: '#7c6ef0' },
-  { label: 'Matching edge', color: '#3ecf8e' },
-  { label: 'Augmenting path', color: '#5eead4' },
-  { label: 'Current inspect edge', color: '#f0b429' },
+  { label: 'Left partition', color: VIZ_ACCENT },
+  { label: 'Right partition', color: VIZ_EMBER },
+  { label: 'BFS frontier', color: VIZ_WINDOW },
+  { label: 'Matching edge', color: VIZ_SUCCESS },
+  { label: 'Augmenting path', color: VIZ_ROUTE },
+  { label: 'Current inspect edge', color: VIZ_WARNING },
 ];
 
 const DINIC_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: '#38bdf8' },
-  { label: 'Sink', color: '#f59e0b' },
-  { label: 'Admissible level edge', color: '#7c6ef0' },
-  { label: 'Positive flow', color: '#3ecf8e' },
-  { label: 'Current augment path', color: '#5eead4' },
+  { label: 'Source', color: VIZ_ACCENT },
+  { label: 'Sink', color: VIZ_EMBER },
+  { label: 'Admissible level edge', color: VIZ_WINDOW },
+  { label: 'Positive flow', color: VIZ_SUCCESS },
+  { label: 'Current augment path', color: VIZ_ROUTE },
   { label: 'Saturated edge', color: 'var(--text-secondary)', opacity: 0.6 },
 ];
 
 const EDMONDS_KARP_LEGEND: readonly LegendItem[] = [
   { label: 'Residual candidate edge', color: 'rgba(255,255,255,0.2)' },
-  { label: 'BFS frontier', color: '#7c6ef0' },
-  { label: 'Current inspect edge', color: '#f0b429' },
-  { label: 'Augmenting path', color: '#5eead4' },
-  { label: 'Positive flow / saturated edge', color: '#3ecf8e' },
+  { label: 'BFS frontier', color: VIZ_WINDOW },
+  { label: 'Current inspect edge', color: VIZ_WARNING },
+  { label: 'Augmenting path', color: VIZ_ROUTE },
+  { label: 'Positive flow / saturated edge', color: VIZ_SUCCESS },
 ];
 
 const MIN_COST_MAX_FLOW_LEGEND: readonly LegendItem[] = [
   { label: 'Residual candidate edge', color: 'rgba(255,255,255,0.2)' },
-  { label: 'Cheapest frontier', color: '#7c6ef0' },
-  { label: 'Current cost relax edge', color: '#f0b429' },
-  { label: 'Cheapest augmenting route', color: '#5eead4' },
-  { label: 'Committed flow with price', color: '#3ecf8e' },
+  { label: 'Cheapest frontier', color: VIZ_WINDOW },
+  { label: 'Current cost relax edge', color: VIZ_WARNING },
+  { label: 'Cheapest augmenting route', color: VIZ_ROUTE },
+  { label: 'Committed flow with price', color: VIZ_SUCCESS },
 ];
 
 const FLOYD_WARSHALL_LEGEND: readonly LegendItem[] = [
-  { label: 'Pivot row / column', color: '#38bdf8' },
-  { label: 'Active compare cell', color: '#f0b429' },
-  { label: 'Improved shortest path', color: '#3ecf8e' },
-  { label: 'Reachable baseline', color: '#7c6ef0' },
+  { label: 'Pivot row / column', color: VIZ_ACCENT },
+  { label: 'Active compare cell', color: VIZ_WARNING },
+  { label: 'Improved shortest path', color: VIZ_SUCCESS },
+  { label: 'Reachable baseline', color: VIZ_WINDOW },
   { label: 'Infinity / unreachable', color: 'var(--text-secondary)', opacity: 0.6 },
 ];
 
 const HUNGARIAN_LEGEND: readonly LegendItem[] = [
-  { label: 'Active reduction / inspect cell', color: '#f0b429' },
-  { label: 'Zero candidate', color: '#7c6ef0' },
-  { label: 'Covered line set', color: '#38bdf8' },
-  { label: 'Chosen assignment', color: '#3ecf8e' },
-  { label: 'Adjusted by matrix shift', color: '#5eead4' },
+  { label: 'Active reduction / inspect cell', color: VIZ_WARNING },
+  { label: 'Zero candidate', color: VIZ_WINDOW },
+  { label: 'Covered line set', color: VIZ_ACCENT },
+  { label: 'Chosen assignment', color: VIZ_SUCCESS },
+  { label: 'Adjusted by matrix shift', color: VIZ_ROUTE },
 ];
 
 const KNAPSACK_LEGEND: readonly LegendItem[] = [
   { label: 'Base case', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active DP cell', color: '#f0b429' },
-  { label: 'Candidate predecessor', color: '#7c6ef0' },
-  { label: 'Committed best value', color: '#3ecf8e' },
-  { label: 'Backtrack path', color: '#ffde59' },
+  { label: 'Active DP cell', color: VIZ_WARNING },
+  { label: 'Candidate predecessor', color: VIZ_WINDOW },
+  { label: 'Committed best value', color: VIZ_SUCCESS },
+  { label: 'Backtrack path', color: VIZ_HIT },
 ];
 
 const LCS_LEGEND: readonly LegendItem[] = [
   { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active compare cell', color: '#f0b429' },
-  { label: 'Character match', color: '#38bdf8' },
-  { label: 'Chosen carry / best value', color: '#3ecf8e' },
-  { label: 'Recovered subsequence path', color: '#ffde59' },
+  { label: 'Active compare cell', color: VIZ_WARNING },
+  { label: 'Character match', color: VIZ_ACCENT },
+  { label: 'Chosen carry / best value', color: VIZ_SUCCESS },
+  { label: 'Recovered subsequence path', color: VIZ_HIT },
 ];
 
 const EDIT_DISTANCE_LEGEND: readonly LegendItem[] = [
   { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active transition', color: '#f0b429' },
-  { label: 'Free carry / char match', color: '#38bdf8' },
-  { label: 'Stored cheapest edit count', color: '#3ecf8e' },
-  { label: 'Recovered edit script', color: '#ffde59' },
+  { label: 'Active transition', color: VIZ_WARNING },
+  { label: 'Free carry / char match', color: VIZ_ACCENT },
+  { label: 'Stored cheapest edit count', color: VIZ_SUCCESS },
+  { label: 'Recovered edit script', color: VIZ_HIT },
 ];
 
 const MATRIX_CHAIN_LEGEND: readonly LegendItem[] = [
   { label: 'Diagonal base interval', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active interval', color: '#f0b429' },
-  { label: 'Candidate subproblem', color: '#7c6ef0' },
-  { label: 'Committed best split', color: '#3ecf8e' },
-  { label: 'Optimal split trace', color: '#ffde59' },
+  { label: 'Active interval', color: VIZ_WARNING },
+  { label: 'Candidate subproblem', color: VIZ_WINDOW },
+  { label: 'Committed best split', color: VIZ_SUCCESS },
+  { label: 'Optimal split trace', color: VIZ_HIT },
 ];
 
 const COIN_CHANGE_LEGEND: readonly LegendItem[] = [
   { label: 'Base amount / reachable zero', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active amount check', color: '#f0b429' },
-  { label: 'Candidate predecessor', color: '#7c6ef0' },
-  { label: 'Committed min-coin answer', color: '#3ecf8e' },
-  { label: 'Recovered coin path', color: '#ffde59' },
+  { label: 'Active amount check', color: VIZ_WARNING },
+  { label: 'Candidate predecessor', color: VIZ_WINDOW },
+  { label: 'Committed min-coin answer', color: VIZ_SUCCESS },
+  { label: 'Recovered coin path', color: VIZ_HIT },
 ];
 
 const SUBSET_SUM_LEGEND: readonly LegendItem[] = [
   { label: 'Base case', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active sum check', color: '#f0b429' },
-  { label: 'Candidate predecessor', color: '#7c6ef0' },
-  { label: 'Reachable boolean state', color: '#3ecf8e' },
-  { label: 'Recovered witness subset', color: '#ffde59' },
+  { label: 'Active sum check', color: VIZ_WARNING },
+  { label: 'Candidate predecessor', color: VIZ_WINDOW },
+  { label: 'Reachable boolean state', color: VIZ_SUCCESS },
+  { label: 'Recovered witness subset', color: VIZ_HIT },
 ];
 
 const LPS_LEGEND: readonly LegendItem[] = [
   { label: 'Diagonal single-char base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active interval', color: '#f0b429' },
-  { label: 'Mirrored character pair', color: '#38bdf8' },
-  { label: 'Committed interval answer', color: '#3ecf8e' },
-  { label: 'Recovered palindrome trace', color: '#ffde59' },
+  { label: 'Active interval', color: VIZ_WARNING },
+  { label: 'Mirrored character pair', color: VIZ_ACCENT },
+  { label: 'Committed interval answer', color: VIZ_SUCCESS },
+  { label: 'Recovered palindrome trace', color: VIZ_HIT },
 ];
 
 const BURST_BALLOONS_LEGEND: readonly LegendItem[] = [
-  { label: 'Active interval', color: '#f0b429' },
-  { label: 'Candidate subinterval', color: '#7c6ef0' },
-  { label: 'Saved last-burst split', color: '#38bdf8' },
-  { label: 'Committed max-coin score', color: '#3ecf8e' },
-  { label: 'Recovered burst order', color: '#ffde59' },
+  { label: 'Active interval', color: VIZ_WARNING },
+  { label: 'Candidate subinterval', color: VIZ_WINDOW },
+  { label: 'Saved last-burst split', color: VIZ_ACCENT },
+  { label: 'Committed max-coin score', color: VIZ_SUCCESS },
+  { label: 'Recovered burst order', color: VIZ_HIT },
 ];
 
 const WILDCARD_LEGEND: readonly LegendItem[] = [
   { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active transition', color: '#f0b429' },
-  { label: 'Direct char / ? match', color: '#38bdf8' },
-  { label: 'Reachable wildcard state', color: '#3ecf8e' },
-  { label: 'Recovered match route', color: '#ffde59' },
+  { label: 'Active transition', color: VIZ_WARNING },
+  { label: 'Direct char / ? match', color: VIZ_ACCENT },
+  { label: 'Reachable wildcard state', color: VIZ_SUCCESS },
+  { label: 'Recovered match route', color: VIZ_HIT },
 ];
 
 const LIS_LEGEND: readonly LegendItem[] = [
   { label: 'Input strip / base value', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active end index', color: '#f0b429' },
-  { label: 'Candidate predecessor', color: '#7c6ef0' },
-  { label: 'Committed LIS length', color: '#3ecf8e' },
-  { label: 'Recovered subsequence', color: '#ffde59' },
+  { label: 'Active end index', color: VIZ_WARNING },
+  { label: 'Candidate predecessor', color: VIZ_WINDOW },
+  { label: 'Committed LIS length', color: VIZ_SUCCESS },
+  { label: 'Recovered subsequence', color: VIZ_HIT },
 ];
 
 const CLIMBING_STAIRS_LEGEND: readonly LegendItem[] = [
   { label: 'Base landing', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active stair', color: '#f0b429' },
-  { label: 'Previous two landings', color: '#7c6ef0' },
-  { label: 'Committed ways count', color: '#3ecf8e' },
+  { label: 'Active stair', color: VIZ_WARNING },
+  { label: 'Previous two landings', color: VIZ_WINDOW },
+  { label: 'Committed ways count', color: VIZ_SUCCESS },
 ];
 
 const FIBONACCI_LEGEND: readonly LegendItem[] = [
   { label: 'Base term', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active term', color: '#f0b429' },
-  { label: 'Previous cache terms', color: '#7c6ef0' },
-  { label: 'Committed Fibonacci value', color: '#3ecf8e' },
+  { label: 'Active term', color: VIZ_WARNING },
+  { label: 'Previous cache terms', color: VIZ_WINDOW },
+  { label: 'Committed Fibonacci value', color: VIZ_SUCCESS },
 ];
 
 const REGEX_LEGEND: readonly LegendItem[] = [
   { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active regex state', color: '#f0b429' },
-  { label: 'Dot / literal match', color: '#38bdf8' },
-  { label: 'Reachable regex state', color: '#3ecf8e' },
-  { label: 'Recovered derivation route', color: '#ffde59' },
+  { label: 'Active regex state', color: VIZ_WARNING },
+  { label: 'Dot / literal match', color: VIZ_ACCENT },
+  { label: 'Reachable regex state', color: VIZ_SUCCESS },
+  { label: 'Recovered derivation route', color: VIZ_HIT },
 ];
 
 const TSP_LEGEND: readonly LegendItem[] = [
   { label: 'Start subset', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active subset expansion', color: '#f0b429' },
-  { label: 'Candidate predecessor state', color: '#7c6ef0' },
-  { label: 'Committed subset route', color: '#3ecf8e' },
-  { label: 'Recovered optimal tour', color: '#ffde59' },
+  { label: 'Active subset expansion', color: VIZ_WARNING },
+  { label: 'Candidate predecessor state', color: VIZ_WINDOW },
+  { label: 'Committed subset route', color: VIZ_SUCCESS },
+  { label: 'Recovered optimal tour', color: VIZ_HIT },
 ];
 
 const SOS_LEGEND: readonly LegendItem[] = [
   { label: 'Base subset row', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active SOS state', color: '#f0b429' },
-  { label: 'Candidate source states', color: '#7c6ef0' },
-  { label: 'Committed aggregated value', color: '#3ecf8e' },
-  { label: 'Recovered contributing submasks', color: '#ffde59' },
+  { label: 'Active SOS state', color: VIZ_WARNING },
+  { label: 'Candidate source states', color: VIZ_WINDOW },
+  { label: 'Committed aggregated value', color: VIZ_SUCCESS },
+  { label: 'Recovered contributing submasks', color: VIZ_HIT },
 ];
 
 const PROFILE_LEGEND: readonly LegendItem[] = [
   { label: 'Empty frontier base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active profile state', color: '#f0b429' },
-  { label: 'Candidate predecessor profile', color: '#7c6ef0' },
-  { label: 'Committed tiling count', color: '#3ecf8e' },
-  { label: 'Recovered frontier route', color: '#ffde59' },
+  { label: 'Active profile state', color: VIZ_WARNING },
+  { label: 'Candidate predecessor profile', color: VIZ_WINDOW },
+  { label: 'Committed tiling count', color: VIZ_SUCCESS },
+  { label: 'Recovered frontier route', color: VIZ_HIT },
 ];
 
 const TREE_DP_LEGEND: readonly LegendItem[] = [
   { label: 'Node weight base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active parent node', color: '#f0b429' },
-  { label: 'Child subtree being merged', color: '#7c6ef0' },
-  { label: 'Committed subtree DP', color: '#3ecf8e' },
-  { label: 'Recovered independent set', color: '#ffde59' },
+  { label: 'Active parent node', color: VIZ_WARNING },
+  { label: 'Child subtree being merged', color: VIZ_WINDOW },
+  { label: 'Committed subtree DP', color: VIZ_SUCCESS },
+  { label: 'Recovered independent set', color: VIZ_HIT },
 ];
 
 const BITMASK_DP_LEGEND: readonly LegendItem[] = [
   { label: 'Empty-mask base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active subset state', color: '#f0b429' },
-  { label: 'Candidate predecessor mask', color: '#7c6ef0' },
-  { label: 'Committed subset cost', color: '#3ecf8e' },
-  { label: 'Recovered assignment path', color: '#ffde59' },
+  { label: 'Active subset state', color: VIZ_WARNING },
+  { label: 'Candidate predecessor mask', color: VIZ_WINDOW },
+  { label: 'Committed subset cost', color: VIZ_SUCCESS },
+  { label: 'Recovered assignment path', color: VIZ_HIT },
 ];
 
 const CHT_LEGEND: readonly LegendItem[] = [
   { label: 'Base point', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active query point', color: '#f0b429' },
-  { label: 'Candidate predecessor line', color: '#7c6ef0' },
-  { label: 'Committed query answer', color: '#3ecf8e' },
-  { label: 'Recovered transition chain', color: '#ffde59' },
+  { label: 'Active query point', color: VIZ_WARNING },
+  { label: 'Candidate predecessor line', color: VIZ_WINDOW },
+  { label: 'Committed query answer', color: VIZ_SUCCESS },
+  { label: 'Recovered transition chain', color: VIZ_HIT },
 ];
 
 const DIVIDE_CONQUER_LEGEND: readonly LegendItem[] = [
   { label: 'Base DP state', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active midpoint cell', color: '#f0b429' },
-  { label: 'Candidate split source', color: '#7c6ef0' },
-  { label: 'Committed midpoint answer', color: '#3ecf8e' },
-  { label: 'Recovered partition cuts', color: '#ffde59' },
+  { label: 'Active midpoint cell', color: VIZ_WARNING },
+  { label: 'Candidate split source', color: VIZ_WINDOW },
+  { label: 'Committed midpoint answer', color: VIZ_SUCCESS },
+  { label: 'Recovered partition cuts', color: VIZ_HIT },
 ];
 
 const KNUTH_LEGEND: readonly LegendItem[] = [
   { label: 'Diagonal base interval', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active interval', color: '#f0b429' },
-  { label: 'Candidate subinterval', color: '#7c6ef0' },
-  { label: 'Committed split window answer', color: '#3ecf8e' },
-  { label: 'Recovered merge tree', color: '#ffde59' },
+  { label: 'Active interval', color: VIZ_WARNING },
+  { label: 'Candidate subinterval', color: VIZ_WINDOW },
+  { label: 'Committed split window answer', color: VIZ_SUCCESS },
+  { label: 'Recovered merge tree', color: VIZ_HIT },
 ];
 
 const UNION_FIND_LEGEND: readonly LegendItem[] = [
-  { label: 'Root representative', color: '#38bdf8' },
-  { label: 'Active / queried node', color: '#f0b429' },
-  { label: 'Merged / compressed node', color: '#3ecf8e' },
-  { label: 'Pending operation', color: '#7c6ef0' },
-  { label: 'Completed operation', color: '#5eead4' },
+  { label: 'Root representative', color: VIZ_ACCENT },
+  { label: 'Active / queried node', color: VIZ_WARNING },
+  { label: 'Merged / compressed node', color: VIZ_SUCCESS },
+  { label: 'Pending operation', color: VIZ_WINDOW },
+  { label: 'Completed operation', color: VIZ_ROUTE },
 ];
 
 const KRUSKAL_LEGEND: readonly LegendItem[] = [
-  { label: 'Current edge check', color: '#f0b429' },
-  { label: 'Accepted MST edge', color: '#3ecf8e' },
-  { label: 'Rejected cycle edge', color: '#f43f5e' },
-  { label: 'Current DSU roots', color: '#38bdf8' },
-  { label: 'Pending sorted edge', color: '#7c6ef0' },
+  { label: 'Current edge check', color: VIZ_WARNING },
+  { label: 'Accepted MST edge', color: VIZ_SUCCESS },
+  { label: 'Rejected cycle edge', color: VIZ_DANGER },
+  { label: 'Current DSU roots', color: VIZ_ACCENT },
+  { label: 'Pending sorted edge', color: VIZ_WINDOW },
 ];
 
 const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
-  { label: 'Pivot (base point)', color: '#38bdf8' },
+  { label: 'Pivot (base point)', color: VIZ_ACCENT },
   { label: 'Sorted (waiting)', color: '#94a3b8', opacity: 0.7 },
-  { label: 'Checking (cross product)', color: '#f0b429' },
-  { label: 'Stack (hull candidate)', color: '#7c6ef0' },
-  { label: 'Hull vertex (final)', color: '#3ecf8e' },
+  { label: 'Checking (cross product)', color: VIZ_WARNING },
+  { label: 'Stack (hull candidate)', color: VIZ_WINDOW },
+  { label: 'Hull vertex (final)', color: VIZ_SUCCESS },
   { label: 'Rejected (interior point)', color: 'rgba(244,63,94,0.55)' },
 ];
 
 const CLOSEST_PAIR_LEGEND: readonly LegendItem[] = [
-  { label: 'Left recursive half', color: '#38bdf8' },
-  { label: 'Right recursive half', color: '#fb923c' },
-  { label: 'Strip corridor candidate', color: '#2dd4bf' },
-  { label: 'Current distance check', color: '#f0b429' },
-  { label: 'Best pair so far', color: '#ffde59' },
+  { label: 'Left recursive half', color: VIZ_ACCENT },
+  { label: 'Right recursive half', color: VIZ_EMBER },
+  { label: 'Strip corridor candidate', color: VIZ_ROUTE },
+  { label: 'Current distance check', color: VIZ_WARNING },
+  { label: 'Best pair so far', color: VIZ_HIT },
 ];
 
 const LINE_INTERSECTION_LEGEND: readonly LegendItem[] = [
   { label: 'Pending segment', color: 'rgba(148,163,184,0.55)' },
-  { label: 'Active sweep segment', color: '#5eead4' },
-  { label: 'Focused event segment', color: '#f0b429' },
-  { label: 'Confirmed crossing point', color: '#38bdf8' },
-  { label: 'Sweep line', color: '#fff176' },
+  { label: 'Active sweep segment', color: VIZ_ROUTE },
+  { label: 'Focused event segment', color: VIZ_WARNING },
+  { label: 'Confirmed crossing point', color: VIZ_ACCENT },
+  { label: 'Sweep line', color: VIZ_HIT },
 ];
 
 const HALF_PLANE_LEGEND: readonly LegendItem[] = [
-  { label: 'Current boundary line', color: '#ffde59' },
-  { label: 'Already applied constraint', color: '#2dd4bf' },
+  { label: 'Current boundary line', color: VIZ_HIT },
+  { label: 'Already applied constraint', color: VIZ_ROUTE },
   { label: 'Forbidden side', color: 'rgba(244,63,94,0.52)' },
-  { label: 'Feasible polygon', color: '#ffde59' },
-  { label: 'Final intersection polygon', color: '#2dd4bf' },
+  { label: 'Feasible polygon', color: VIZ_HIT },
+  { label: 'Final intersection polygon', color: VIZ_ROUTE },
 ];
 
 const MINKOWSKI_SUM_LEGEND: readonly LegendItem[] = [
   { label: 'Obstacle polygon A', color: 'rgba(244,63,94,0.6)' },
-  { label: 'Robot polygon B', color: '#38bdf8' },
-  { label: "Reflected robot -B", color: '#7c6ef0' },
-  { label: 'Growing sum path', color: '#ffde59' },
-  { label: 'Final configuration obstacle', color: '#2dd4bf' },
+  { label: 'Robot polygon B', color: VIZ_ACCENT },
+  { label: 'Reflected robot -B', color: VIZ_WINDOW },
+  { label: 'Growing sum path', color: VIZ_HIT },
+  { label: 'Final configuration obstacle', color: VIZ_ROUTE },
 ];
 
 const SWEEP_LINE_LEGEND: readonly LegendItem[] = [
   { label: 'Pending rectangle', color: 'rgba(148,163,184,0.5)' },
-  { label: 'Active rectangle at sweep x', color: '#5eead4' },
-  { label: 'Focused event rectangle', color: '#f0b429' },
-  { label: 'Merged vertical coverage span', color: '#ffde59' },
+  { label: 'Active rectangle at sweep x', color: VIZ_ROUTE },
+  { label: 'Focused event rectangle', color: VIZ_WARNING },
+  { label: 'Merged vertical coverage span', color: VIZ_HIT },
   { label: 'Sweep progress region', color: 'rgba(45,212,191,0.32)' },
 ];
 
 const VORONOI_LEGEND: readonly LegendItem[] = [
   { label: 'Site points', color: 'rgba(255,255,255,0.92)' },
-  { label: 'Active site event', color: '#ff7a45' },
+  { label: 'Active site event', color: VIZ_EMBER },
   { label: 'Settled Voronoi cell', color: 'rgba(186,230,253,0.5)' },
-  { label: 'Current cell freeze', color: '#ff7a45' },
-  { label: 'Descending sweep line', color: '#ff7a45' },
+  { label: 'Current cell freeze', color: VIZ_EMBER },
+  { label: 'Descending sweep line', color: VIZ_EMBER },
 ];
 
 const DELAUNAY_LEGEND: readonly LegendItem[] = [
   { label: 'Committed triangle mesh', color: 'rgba(56,189,248,0.45)' },
-  { label: 'Current candidate triangle', color: '#f0b429' },
-  { label: 'Active circumcircle', color: '#ffde59' },
+  { label: 'Current candidate triangle', color: VIZ_WARNING },
+  { label: 'Active circumcircle', color: VIZ_HIT },
   { label: 'Committed mesh edges', color: 'rgba(186,230,253,0.5)' },
-  { label: 'Active triangle vertices', color: '#ffde59' },
+  { label: 'Active triangle vertices', color: VIZ_HIT },
 ];
 
 const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -870,9 +897,7 @@ const MATRIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'matrix', label: 'Matrix Lab' },
 ];
 
-const DP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dp', label: 'DP Lab' },
-];
+const DP_VARIANT_OPTIONS: readonly VisualizationOption[] = [{ value: 'dp', label: 'DP Lab' }];
 
 const UNION_FIND_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'dsu', label: 'Set Forest' },
@@ -1438,17 +1463,16 @@ const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
   randomizeLabel: 'New palindrome field',
 });
 
-const BURROWS_WHEELER_VIEW_CONFIG =
-  createStringViewConfig<BurrowsWheelerScenario>({
-    codeLines: BURROWS_WHEELER_TRANSFORM_CODE,
-    createScenario: (size, presetId) => createBurrowsWheelerScenario(size, presetId),
-    generator: burrowsWheelerTransformGenerator,
-    presetOptions: BWT_PRESETS,
-    sizeOptions: [6, 8, 10],
-    defaultSize: 8,
-    sizeUnit: 'chars',
-    randomizeLabel: 'New BWT matrix',
-  });
+const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenario>({
+  codeLines: BURROWS_WHEELER_TRANSFORM_CODE,
+  createScenario: (size, presetId) => createBurrowsWheelerScenario(size, presetId),
+  generator: burrowsWheelerTransformGenerator,
+  presetOptions: BWT_PRESETS,
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New BWT matrix',
+});
 
 const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
   codeLines: RLE_CODE,
@@ -2187,10 +2211,9 @@ export class AlgorithmDetail {
   private readonly engine = inject(VisualizationEngine);
   private readonly language = inject(AppLanguageService);
 
-  private readonly idParam = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('id'))),
-    { initialValue: this.route.snapshot.paramMap.get('id') },
-  );
+  private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
+    initialValue: this.route.snapshot.paramMap.get('id'),
+  });
 
   readonly algorithm = computed<AlgorithmItem | undefined>(() => {
     const id = this.idParam();
@@ -2445,7 +2468,9 @@ export class AlgorithmDetail {
   private readonly sizeSig = signal(16);
   private readonly variantSig = signal<VisualizationVariant>('bar');
   private readonly mutedSig = signal(true);
-  private readonly arraySig = signal<readonly number[]>(this.generateArray(16, { min: 1, max: 99 }));
+  private readonly arraySig = signal<readonly number[]>(
+    this.generateArray(16, { min: 1, max: 99 }),
+  );
   private readonly graphSig = signal<WeightedGraphData | null>(null);
   private readonly dpPresetSig = signal<string | null>(null);
   private readonly stringPresetSig = signal<string | null>(null);
@@ -2484,17 +2509,28 @@ export class AlgorithmDetail {
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
   readonly dsuTrace = computed<DsuTraceState | null>(() => this.currentSnapshot()?.dsu ?? null);
   readonly gridTrace = computed<GridTraceState | null>(() => this.currentSnapshot()?.grid ?? null);
-  readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
-  readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
-  readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
-  readonly stringTrace = computed<StringTraceState | null>(() => this.currentSnapshot()?.string ?? null);
-  readonly geometryTrace = computed<GeometryStepState | null>(() => this.currentSnapshot()?.geometry ?? null);
+  readonly matrixTrace = computed<MatrixTraceState | null>(
+    () => this.currentSnapshot()?.matrix ?? null,
+  );
+  readonly networkTrace = computed<NetworkTraceState | null>(
+    () => this.currentSnapshot()?.network ?? null,
+  );
+  readonly searchTrace = computed<SearchTraceState | null>(
+    () => this.currentSnapshot()?.search ?? null,
+  );
+  readonly stringTrace = computed<StringTraceState | null>(
+    () => this.currentSnapshot()?.string ?? null,
+  );
+  readonly geometryTrace = computed<GeometryStepState | null>(
+    () => this.currentSnapshot()?.geometry ?? null,
+  );
   readonly graphRouteModeLabel = computed(() => {
     const trace = this.graphTrace();
     if (!trace) return null;
     if (trace.metricLabel === 'Distance') return 'Focused shortest path';
     if (trace.metricLabel === 'Level') return 'Focused BFS route';
-    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') return 'Focused DFS branch';
+    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path')
+      return 'Focused DFS branch';
     return null;
   });
   readonly graphFocusTargetLabel = computed(() => {
@@ -3136,9 +3172,9 @@ function createLineIntersectionScenario(size: number): LineIntersectionScenario 
   const leftYs = Array.from({ length: count }, (_, index) =>
     Number((15 + index * step + (Math.random() * 3 - 1.5)).toFixed(1)),
   );
-  const rightYs = [...leftYs].reverse().map((value, index) =>
-    Number((value + (index % 2 === 0 ? 2.2 : -2.2)).toFixed(1)),
-  );
+  const rightYs = [...leftYs]
+    .reverse()
+    .map((value, index) => Number((value + (index % 2 === 0 ? 2.2 : -2.2)).toFixed(1)));
 
   return {
     segments: leftYs.map((leftY, index) => ({
@@ -3200,9 +3236,7 @@ function createConvexPolygon(
   const vertexCount = Math.max(3, count);
   const baseRadius = (radiusMin + radiusMax) / 2;
   return Array.from({ length: vertexCount }, (_, index) => {
-    const angle =
-      (Math.PI * 2 * index) / vertexCount +
-      (Math.random() * 0.3 - 0.15);
+    const angle = (Math.PI * 2 * index) / vertexCount + (Math.random() * 0.3 - 0.15);
     const radius = baseRadius * (0.88 + Math.random() * 0.18);
     return {
       x: Number((centerX + Math.cos(angle) * radius).toFixed(1)),
@@ -3218,7 +3252,10 @@ function shuffleInPlace<T>(values: T[]): void {
   }
 }
 
-function createSpacedGeometryPoints(count: number, minDistance: number): { x: number; y: number }[] {
+function createSpacedGeometryPoints(
+  count: number,
+  minDistance: number,
+): { x: number; y: number }[] {
   const points: { x: number; y: number }[] = [];
   let guard = 0;
 
@@ -3228,7 +3265,9 @@ function createSpacedGeometryPoints(count: number, minDistance: number): { x: nu
       x: Math.round(Math.random() * 74) + 12,
       y: Math.round(Math.random() * 74) + 12,
     };
-    const tooClose = points.some((point) => Math.hypot(point.x - candidate.x, point.y - candidate.y) < minDistance);
+    const tooClose = points.some(
+      (point) => Math.hypot(point.x - candidate.x, point.y - candidate.y) < minDistance,
+    );
     if (!tooClose) {
       points.push(candidate);
     }

@@ -12,10 +12,9 @@
   border-radius: 28px;
   border: 0.5px solid rgba(255, 255, 255, 0.08);
   background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 26%),
-    radial-gradient(circle at top right, rgba(124, 110, 240, 0.1), transparent 32%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
-    #12151e;
+    radial-gradient(circle at top left, rgb(var(--viz-accent-rgb) / 0.08), transparent 26%),
+    radial-gradient(circle at top right, rgb(var(--viz-window-rgb) / 0.1), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)), #12151e;
   overflow: hidden;
 }
 
@@ -100,7 +99,7 @@
 .focus-pill__chip {
   padding: 4px 7px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.13);
+  background: rgb(var(--viz-window-rgb) / 0.13);
   color: #cbc6ff;
   font-size: 9px;
   font-weight: 600;
@@ -121,18 +120,18 @@
     stroke-width 220ms ease;
 
   &--candidate {
-    stroke: rgba(94, 234, 212, 0.5);
+    stroke: rgb(var(--viz-route-rgb) / 0.5);
     stroke-dasharray: 11 8;
   }
 
   &--active {
-    stroke: rgba(240, 180, 41, 0.9);
+    stroke: rgb(var(--viz-warning-rgb) / 0.9);
     stroke-width: 5.5;
     stroke-dasharray: 12 8;
   }
 
   &--augment {
-    stroke: #3ecf8e;
+    stroke: var(--viz-success);
     stroke-width: 6;
   }
 
@@ -148,7 +147,7 @@
   }
 
   &--blocked {
-    stroke: rgba(244, 63, 94, 0.72);
+    stroke: rgb(var(--viz-danger-rgb) / 0.72);
     stroke-width: 4.5;
   }
 }
@@ -211,46 +210,46 @@
 }
 
 .node[data-lane='left'] .node__halo {
-  fill: rgba(56, 189, 248, 0.08);
+  fill: rgb(var(--viz-accent-rgb) / 0.08);
 }
 
 .node[data-lane='right'] .node__halo {
-  fill: rgba(245, 158, 11, 0.08);
+  fill: rgb(var(--viz-warning-rgb) / 0.08);
 }
 
 .node--source .node__body {
-  fill: rgba(56, 189, 248, 0.24);
-  stroke: rgba(56, 189, 248, 0.58);
+  fill: rgb(var(--viz-accent-rgb) / 0.24);
+  stroke: rgb(var(--viz-accent-rgb) / 0.58);
 }
 
 .node--sink .node__body {
-  fill: rgba(245, 158, 11, 0.24);
-  stroke: rgba(245, 158, 11, 0.58);
+  fill: rgb(var(--viz-warning-rgb) / 0.24);
+  stroke: rgb(var(--viz-warning-rgb) / 0.58);
 }
 
 .node--frontier .node__body {
-  fill: rgba(124, 110, 240, 0.26);
-  stroke: rgba(124, 110, 240, 0.56);
+  fill: rgb(var(--viz-window-rgb) / 0.26);
+  stroke: rgb(var(--viz-window-rgb) / 0.56);
 }
 
 .node--current .node__body {
-  fill: rgba(240, 180, 41, 0.28);
-  stroke: rgba(240, 180, 41, 0.72);
+  fill: rgb(var(--viz-warning-rgb) / 0.28);
+  stroke: rgb(var(--viz-warning-rgb) / 0.72);
 }
 
 .node--linked .node__body {
-  fill: rgba(62, 207, 142, 0.2);
-  stroke: rgba(62, 207, 142, 0.58);
+  fill: rgb(var(--viz-success-rgb) / 0.2);
+  stroke: rgb(var(--viz-success-rgb) / 0.58);
 }
 
 .node--visited .node__body {
-  fill: rgba(94, 234, 212, 0.16);
-  stroke: rgba(94, 234, 212, 0.42);
+  fill: rgb(var(--viz-route-rgb) / 0.16);
+  stroke: rgb(var(--viz-route-rgb) / 0.42);
 }
 
 .node--blocked .node__body {
-  fill: rgba(244, 63, 94, 0.18);
-  stroke: rgba(244, 63, 94, 0.56);
+  fill: rgb(var(--viz-danger-rgb) / 0.18);
+  stroke: rgb(var(--viz-danger-rgb) / 0.56);
 }
 
 .network-shell__empty {

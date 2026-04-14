@@ -25,18 +25,18 @@
   padding: 10px 12px;
 
   &--accent {
-    background: rgba(56, 189, 248, 0.07);
-    border-color: rgba(56, 189, 248, 0.14);
+    background: rgb(var(--viz-accent-rgb) / 0.07);
+    border-color: rgb(var(--viz-accent-rgb) / 0.14);
   }
 
   &--warning {
-    background: rgba(245, 158, 11, 0.07);
-    border-color: rgba(245, 158, 11, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.07);
+    border-color: rgb(var(--viz-warning-rgb) / 0.14);
   }
 
   &--success {
-    background: rgba(62, 207, 142, 0.07);
-    border-color: rgba(62, 207, 142, 0.14);
+    background: rgb(var(--viz-success-rgb) / 0.07);
+    border-color: rgb(var(--viz-success-rgb) / 0.14);
   }
 }
 
@@ -123,7 +123,7 @@
 }
 
 .trace-calc__result {
-  color: #a7e6ff;
+  color: var(--viz-accent-ink);
   font-weight: 700;
 }
 
@@ -152,15 +152,15 @@
 }
 
 .value-chip--active {
-  background: rgba(56, 189, 248, 0.11);
-  border-color: rgba(56, 189, 248, 0.2);
-  color: #a7e6ff;
+  background: rgb(var(--viz-accent-rgb) / 0.11);
+  border-color: rgb(var(--viz-accent-rgb) / 0.2);
+  color: var(--viz-accent-ink);
 }
 
 .value-chip--soft {
-  background: rgba(124, 110, 240, 0.11);
-  border-color: rgba(124, 110, 240, 0.2);
-  color: #cbc5ff;
+  background: rgb(var(--viz-window-rgb) / 0.11);
+  border-color: rgb(var(--viz-window-rgb) / 0.2);
+  color: var(--viz-window-ink);
 }
 
 .kv-list {

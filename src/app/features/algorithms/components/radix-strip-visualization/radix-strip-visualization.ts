@@ -1,12 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { SortItemSnapshot, SortStep } from '../../models/sort-step';
 import { createMotionProfile } from '../../utils/visualization-motion';
+import { VIZ_BUCKET_COLORS } from '../../utils/visualization-palette';
 import {
   RadixDigitBadge,
   RadixViewState,
@@ -39,18 +35,7 @@ interface StripBucket {
   readonly items: readonly StripCard[];
 }
 
-const BUCKET_COLORS = [
-  '#38bdf8',
-  '#22d3ee',
-  '#06b6d4',
-  '#2dd4bf',
-  '#34d399',
-  '#a3e635',
-  '#facc15',
-  '#f59e0b',
-  '#fb7185',
-  '#f472b6',
-] as const;
+const BUCKET_COLORS = VIZ_BUCKET_COLORS;
 
 @Component({
   selector: 'app-radix-strip-visualization',

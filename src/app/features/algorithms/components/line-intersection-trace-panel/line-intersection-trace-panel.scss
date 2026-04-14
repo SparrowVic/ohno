@@ -98,9 +98,9 @@
 
 .litp__event-pill--start,
 .litp__queue-item--start {
-  color: #5eead4;
-  background: rgba(94, 234, 212, 0.08);
-  border: 0.5px solid rgba(94, 234, 212, 0.18);
+  color: var(--viz-route);
+  background: rgb(var(--viz-route-rgb) / 0.08);
+  border: 0.5px solid rgb(var(--viz-route-rgb) / 0.18);
 }
 
 .litp__event-pill--end,
@@ -112,9 +112,9 @@
 
 .litp__event-pill--intersection,
 .litp__queue-item--intersection {
-  color: #f0b429;
-  background: rgba(240, 180, 41, 0.08);
-  border: 0.5px solid rgba(240, 180, 41, 0.18);
+  color: var(--viz-warning);
+  background: rgb(var(--viz-warning-rgb) / 0.08);
+  border: 0.5px solid rgb(var(--viz-warning-rgb) / 0.18);
 }
 
 .litp__event-x,
@@ -132,8 +132,8 @@
 
 .litp__chip {
   color: #bfdbfe;
-  background: rgba(56, 189, 248, 0.08);
-  border: 0.5px solid rgba(56, 189, 248, 0.18);
+  background: rgb(var(--viz-accent-rgb) / 0.08);
+  border: 0.5px solid rgb(var(--viz-accent-rgb) / 0.18);
 }
 
 .litp__queue-item--done {

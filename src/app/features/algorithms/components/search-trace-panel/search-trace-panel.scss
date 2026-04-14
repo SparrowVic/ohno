@@ -82,7 +82,7 @@
 }
 
 .trace__calc-value--accent {
-  color: #7dd3fc;
+  color: var(--viz-accent-ink);
 }
 
 .trace__calc-decision {
@@ -92,13 +92,13 @@
 }
 
 .trace__calculation--found {
-  border-color: rgba(62, 207, 142, 0.24);
-  background: rgba(62, 207, 142, 0.06);
+  border-color: rgb(var(--viz-success-rgb) / 0.24);
+  background: rgb(var(--viz-success-rgb) / 0.06);
 }
 
 .trace__calculation--searching {
-  border-color: rgba(240, 180, 41, 0.24);
-  background: rgba(240, 180, 41, 0.06);
+  border-color: rgb(var(--viz-warning-rgb) / 0.24);
+  background: rgb(var(--viz-warning-rgb) / 0.06);
 }
 
 .trace__queue {
@@ -141,15 +141,15 @@
 .trace__queue-chip {
   padding: 4px 9px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
   font-size: 10px;
   font-weight: 500;
 }
 
 .trace__queue-chip--done {
-  background: rgba(62, 207, 142, 0.14);
-  color: #8bf0ba;
+  background: rgb(var(--viz-success-rgb) / 0.14);
+  color: var(--viz-success-ink);
 }
 
 .trace__queue-empty {
@@ -208,12 +208,12 @@
 }
 
 .trace__row--probe td {
-  background: rgba(240, 180, 41, 0.08);
+  background: rgb(var(--viz-warning-rgb) / 0.08);
   color: var(--text-primary);
 }
 
 .trace__row--found td {
-  background: rgba(62, 207, 142, 0.05);
+  background: rgb(var(--viz-success-rgb) / 0.05);
 }
 
 .trace__status {
@@ -227,28 +227,28 @@
 }
 
 .trace__status--probe {
-  background: rgba(240, 180, 41, 0.14);
+  background: rgb(var(--viz-warning-rgb) / 0.14);
   color: #ffd98a;
 }
 
 .trace__status--found {
-  background: rgba(62, 207, 142, 0.14);
-  color: #8bf0ba;
+  background: rgb(var(--viz-success-rgb) / 0.14);
+  color: var(--viz-success-ink);
 }
 
 .trace__status--bound {
-  background: rgba(94, 234, 212, 0.14);
-  color: #8ef3e9;
+  background: rgb(var(--viz-route-rgb) / 0.14);
+  color: var(--viz-route-ink);
 }
 
 .trace__status--visited {
-  background: rgba(56, 189, 248, 0.14);
-  color: #8edcff;
+  background: rgb(var(--viz-accent-rgb) / 0.14);
+  color: var(--viz-accent-ink);
 }
 
 .trace__status--window {
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
 }
 
 .trace__status--eliminated,
@@ -281,18 +281,18 @@
 }
 
 .trace__tag--candidate {
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
 }
 
 .trace__tag--compare {
-  background: rgba(240, 180, 41, 0.14);
+  background: rgb(var(--viz-warning-rgb) / 0.14);
   color: #ffd98a;
 }
 
 .trace__tag--checked {
-  background: rgba(56, 189, 248, 0.14);
-  color: #8edcff;
+  background: rgb(var(--viz-accent-rgb) / 0.14);
+  color: var(--viz-accent-ink);
 }
 
 .trace__tag--pruned {
@@ -301,13 +301,13 @@
 }
 
 .trace__tag--bound {
-  background: rgba(94, 234, 212, 0.14);
-  color: #8ef3e9;
+  background: rgb(var(--viz-route-rgb) / 0.14);
+  color: var(--viz-route-ink);
 }
 
 .trace__tag--match {
-  background: rgba(62, 207, 142, 0.14);
-  color: #8bf0ba;
+  background: rgb(var(--viz-success-rgb) / 0.14);
+  color: var(--viz-success-ink);
 }
 
 .trace__empty {

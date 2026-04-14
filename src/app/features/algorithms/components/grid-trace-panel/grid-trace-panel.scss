@@ -96,8 +96,8 @@
 .trace__queue-chip {
   padding: 3px 7px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
   font-size: 9px;
   font-weight: 500;
 }
@@ -161,12 +161,12 @@
 }
 
 .trace__row--current td {
-  background: rgba(240, 180, 41, 0.08);
+  background: rgb(var(--viz-warning-rgb) / 0.08);
   color: var(--text-primary);
 }
 
 .trace__row--result td {
-  background: rgba(62, 207, 142, 0.05);
+  background: rgb(var(--viz-success-rgb) / 0.05);
 }
 
 .trace__status {
@@ -180,30 +180,30 @@
   white-space: nowrap;
 
   &--source {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 
   &--goal {
-    background: rgba(245, 158, 11, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd08a;
   }
 
   &--frontier {
-    background: rgba(124, 110, 240, 0.14);
-    color: #c9c3ff;
+    background: rgb(var(--viz-window-rgb) / 0.14);
+    color: var(--viz-window-ink);
   }
 
   &--current {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
   &--filled,
   &--closed,
   &--path {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--wall,
@@ -232,31 +232,31 @@
 }
 
 .trace__tag--seed {
-  background: rgba(56, 189, 248, 0.14);
-  color: #8edcff;
+  background: rgb(var(--viz-accent-rgb) / 0.14);
+  color: var(--viz-accent-ink);
 }
 
 .trace__tag--goal {
-  background: rgba(245, 158, 11, 0.14);
+  background: rgb(var(--viz-warning-rgb) / 0.14);
   color: #ffd08a;
 }
 
 .trace__tag--frontier,
 .trace__tag--candidate {
-  background: rgba(124, 110, 240, 0.14);
-  color: #c9c3ff;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
 }
 
 .trace__tag--current {
-  background: rgba(240, 180, 41, 0.14);
+  background: rgb(var(--viz-warning-rgb) / 0.14);
   color: #ffd98a;
 }
 
 .trace__tag--filled,
 .trace__tag--closed,
 .trace__tag--path {
-  background: rgba(62, 207, 142, 0.14);
-  color: #8bf0ba;
+  background: rgb(var(--viz-success-rgb) / 0.14);
+  color: var(--viz-success-ink);
 }
 
 .trace__tag--wall,

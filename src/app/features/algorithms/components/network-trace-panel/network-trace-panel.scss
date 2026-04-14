@@ -88,15 +88,15 @@
 .trace__queue-chip {
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.14);
+  background: rgb(var(--viz-window-rgb) / 0.14);
   color: #cbc6ff;
   font-size: 9px;
   font-weight: 600;
 }
 
 .trace__queue-chip--done {
-  background: rgba(62, 207, 142, 0.14);
-  color: #8bf0ba;
+  background: rgb(var(--viz-success-rgb) / 0.14);
+  color: var(--viz-success-ink);
 }
 
 .trace__queue-empty,
@@ -177,12 +177,12 @@
 }
 
 .trace__row--active td {
-  background: rgba(240, 180, 41, 0.07);
+  background: rgb(var(--viz-warning-rgb) / 0.07);
   color: var(--text-primary);
 }
 
 .trace__row--done td {
-  background: rgba(62, 207, 142, 0.05);
+  background: rgb(var(--viz-success-rgb) / 0.05);
 }
 
 .trace__status {
@@ -197,24 +197,24 @@
 
   &--source,
   &--sink {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 
   &--frontier,
   &--current {
-    background: rgba(240, 180, 41, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd98a;
   }
 
   &--linked,
   &--visited {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--blocked {
-    background: rgba(244, 63, 94, 0.14);
+    background: rgb(var(--viz-danger-rgb) / 0.14);
     color: #ff9fb0;
   }
 
@@ -237,20 +237,20 @@
 
   &--source,
   &--left {
-    background: rgba(56, 189, 248, 0.14);
-    color: #8edcff;
+    background: rgb(var(--viz-accent-rgb) / 0.14);
+    color: var(--viz-accent-ink);
   }
 
   &--sink,
   &--right {
-    background: rgba(245, 158, 11, 0.14);
+    background: rgb(var(--viz-warning-rgb) / 0.14);
     color: #ffd08a;
   }
 
   &--frontier,
   &--current,
   &--level {
-    background: rgba(124, 110, 240, 0.14);
+    background: rgb(var(--viz-window-rgb) / 0.14);
     color: #cbc6ff;
   }
 
@@ -258,12 +258,12 @@
   &--augment,
   &--flow,
   &--saturated {
-    background: rgba(62, 207, 142, 0.14);
-    color: #8bf0ba;
+    background: rgb(var(--viz-success-rgb) / 0.14);
+    color: var(--viz-success-ink);
   }
 
   &--blocked {
-    background: rgba(244, 63, 94, 0.14);
+    background: rgb(var(--viz-danger-rgb) / 0.14);
     color: #ff9fb0;
   }
 }

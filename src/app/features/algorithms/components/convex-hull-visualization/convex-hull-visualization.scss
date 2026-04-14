@@ -27,8 +27,8 @@
 /* ─── Hull polygon fill ─── */
 
 .chv__hull-poly {
-  fill: rgba(62, 207, 142, 0.06);
-  stroke: rgba(62, 207, 142, 0.18);
+  fill: rgb(var(--viz-success-rgb) / 0.06);
+  stroke: rgb(var(--viz-success-rgb) / 0.18);
   stroke-width: 0.4;
   stroke-linejoin: round;
 }
@@ -36,8 +36,8 @@
 /* ─── Turn check triangle ─── */
 
 .chv__turn-tri {
-  fill: rgba(240, 180, 41, 0.07);
-  stroke: rgba(240, 180, 41, 0.22);
+  fill: rgb(var(--viz-warning-rgb) / 0.07);
+  stroke: rgb(var(--viz-warning-rgb) / 0.22);
   stroke-width: 0.35;
   stroke-dasharray: 1.5 1;
 }
@@ -49,13 +49,13 @@
   stroke-linejoin: round;
 
   &--stack {
-    stroke: rgba(124, 110, 240, 0.55);
+    stroke: rgb(var(--viz-window-rgb) / 0.55);
     stroke-width: 0.9;
     stroke-dasharray: 2.5 1.5;
   }
 
   &--hull {
-    stroke: #3ecf8e;
+    stroke: var(--viz-success);
     stroke-width: 1.1;
     stroke-dasharray: none;
   }
@@ -67,17 +67,31 @@
   opacity: 0.14;
   fill: transparent;
 
-  &--pivot { fill: #38bdf8; opacity: 0.18; }
-  &--checking { fill: #f0b429; opacity: 0.18; }
-  &--stack { fill: #7c6ef0; opacity: 0.16; }
-  &--hull { fill: #3ecf8e; opacity: 0.2; }
+  &--pivot {
+    fill: var(--viz-accent);
+    opacity: 0.18;
+  }
+  &--checking {
+    fill: var(--viz-warning);
+    opacity: 0.18;
+  }
+  &--stack {
+    fill: var(--viz-window);
+    opacity: 0.16;
+  }
+  &--hull {
+    fill: var(--viz-success);
+    opacity: 0.2;
+  }
 }
 
 /* ─── Points ─── */
 
 .chv__pt {
   stroke-width: 0.6;
-  transition: fill 0.12s ease, stroke 0.12s ease;
+  transition:
+    fill 0.12s ease,
+    stroke 0.12s ease;
 
   &--default {
     fill: rgba(255, 255, 255, 0.08);
@@ -85,8 +99,8 @@
   }
 
   &--pivot {
-    fill: #38bdf8;
-    stroke: rgba(56, 189, 248, 0.45);
+    fill: var(--viz-accent);
+    stroke: rgb(var(--viz-accent-rgb) / 0.45);
   }
 
   &--sorted {
@@ -95,23 +109,23 @@
   }
 
   &--checking {
-    fill: #f0b429;
-    stroke: rgba(240, 180, 41, 0.5);
+    fill: var(--viz-warning);
+    stroke: rgb(var(--viz-warning-rgb) / 0.5);
   }
 
   &--stack {
-    fill: #7c6ef0;
-    stroke: rgba(124, 110, 240, 0.5);
+    fill: var(--viz-window);
+    stroke: rgb(var(--viz-window-rgb) / 0.5);
   }
 
   &--hull {
-    fill: #3ecf8e;
-    stroke: rgba(62, 207, 142, 0.5);
+    fill: var(--viz-success);
+    stroke: rgb(var(--viz-success-rgb) / 0.5);
   }
 
   &--rejected {
-    fill: rgba(244, 63, 94, 0.28);
-    stroke: rgba(244, 63, 94, 0.38);
+    fill: rgb(var(--viz-danger-rgb) / 0.28);
+    stroke: rgb(var(--viz-danger-rgb) / 0.38);
   }
 }
 
@@ -178,23 +192,46 @@
 
 /* Phase-specific colours */
 .chv__phase--pivot .chv__bar-phase,
-.chv__bar-phase.chv__phase--pivot { color: #38bdf8; background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.2); }
+.chv__bar-phase.chv__phase--pivot {
+  color: var(--viz-accent);
+  background: rgb(var(--viz-accent-rgb) / 0.1);
+  border-color: rgb(var(--viz-accent-rgb) / 0.2);
+}
 
 .chv__phase--sort .chv__bar-phase,
-.chv__bar-phase.chv__phase--sort { color: #94a3b8; background: rgba(148, 163, 184, 0.1); }
+.chv__bar-phase.chv__phase--sort {
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.1);
+}
 
 .chv__phase--checking .chv__bar-phase,
-.chv__bar-phase.chv__phase--checking { color: #f0b429; background: rgba(240, 180, 41, 0.1); border-color: rgba(240, 180, 41, 0.2); }
+.chv__bar-phase.chv__phase--checking {
+  color: var(--viz-warning);
+  background: rgb(var(--viz-warning-rgb) / 0.1);
+  border-color: rgb(var(--viz-warning-rgb) / 0.2);
+}
 
 .chv__phase--pop .chv__bar-phase,
-.chv__bar-phase.chv__phase--pop { color: #f43f5e; background: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.2); }
+.chv__bar-phase.chv__phase--pop {
+  color: #f43f5e;
+  background: rgb(var(--viz-danger-rgb) / 0.1);
+  border-color: rgb(var(--viz-danger-rgb) / 0.2);
+}
 
 .chv__phase--push .chv__bar-phase,
 .chv__bar-phase.chv__phase--push,
-.chv__phase--stack .chv__bar-phase { color: #a5b4fc; background: rgba(124, 110, 240, 0.1); border-color: rgba(124, 110, 240, 0.2); }
+.chv__phase--stack .chv__bar-phase {
+  color: #a5b4fc;
+  background: rgb(var(--viz-window-rgb) / 0.1);
+  border-color: rgb(var(--viz-window-rgb) / 0.2);
+}
 
 .chv__phase--complete .chv__bar-phase,
-.chv__bar-phase.chv__phase--complete { color: #3ecf8e; background: rgba(62, 207, 142, 0.1); border-color: rgba(62, 207, 142, 0.2); }
+.chv__bar-phase.chv__phase--complete {
+  color: var(--viz-success);
+  background: rgb(var(--viz-success-rgb) / 0.1);
+  border-color: rgb(var(--viz-success-rgb) / 0.2);
+}
 
 /* Stack chips */
 
@@ -210,13 +247,13 @@
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 100px;
-  background: rgba(124, 110, 240, 0.12);
-  border: 0.5px solid rgba(124, 110, 240, 0.25);
+  background: rgb(var(--viz-window-rgb) / 0.12);
+  border: 0.5px solid rgb(var(--viz-window-rgb) / 0.25);
   color: rgba(165, 180, 252, 0.8);
 
   &--top {
-    background: rgba(124, 110, 240, 0.24);
-    border-color: rgba(124, 110, 240, 0.45);
+    background: rgb(var(--viz-window-rgb) / 0.24);
+    border-color: rgb(var(--viz-window-rgb) / 0.45);
     color: #c4b5fd;
   }
 }
@@ -233,6 +270,10 @@
   font-weight: 700;
   font-family: ui-monospace, monospace;
 
-  &--pos { color: #3ecf8e; }
-  &--neg { color: #f43f5e; }
+  &--pos {
+    color: var(--viz-success);
+  }
+  &--neg {
+    color: #f43f5e;
+  }
 }

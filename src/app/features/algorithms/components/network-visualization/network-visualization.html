@@ -50,13 +50,27 @@
     <svg class="network" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="networkEdgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#5eead4" />
-          <stop offset="100%" stop-color="#7c6ef0" />
+          <stop offset="0%" stop-color="var(--viz-route)" />
+          <stop offset="100%" stop-color="var(--viz-window)" />
         </linearGradient>
-        <marker id="networkArrowDefault" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+        <marker
+          id="networkArrowDefault"
+          markerWidth="10"
+          markerHeight="10"
+          refX="8"
+          refY="5"
+          orient="auto"
+        >
           <path d="M0 0L10 5L0 10Z" fill="rgba(255,255,255,0.44)" />
         </marker>
-        <marker id="networkArrowHot" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+        <marker
+          id="networkArrowHot"
+          markerWidth="10"
+          markerHeight="10"
+          refX="8"
+          refY="5"
+          orient="auto"
+        >
           <path d="M0 0L10 5L0 10Z" fill="rgba(240,180,41,0.82)" />
         </marker>
       </defs>
@@ -65,7 +79,13 @@
         <g class="edge-group" [attr.data-edge-id]="edge.id">
           <line
             class="edge-line edge-line--{{ edge.status }}"
-            [attr.marker-end]="edge.directed ? (edge.status === 'active' || edge.status === 'augment' ? 'url(#networkArrowHot)' : 'url(#networkArrowDefault)') : null"
+            [attr.marker-end]="
+              edge.directed
+                ? edge.status === 'active' || edge.status === 'augment'
+                  ? 'url(#networkArrowHot)'
+                  : 'url(#networkArrowDefault)'
+                : null
+            "
             [attr.x1]="node(edge.fromId)?.x ?? 0"
             [attr.y1]="node(edge.fromId)?.y ?? 0"
             [attr.x2]="node(edge.toId)?.x ?? 0"
