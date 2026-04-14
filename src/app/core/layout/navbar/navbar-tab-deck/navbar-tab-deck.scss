@@ -1,0 +1,638 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.tab-deck {
+  --linear-ease: linear(
+    0,
+    0.068,
+    0.19 2.7%,
+    0.804 8.1%,
+    1.037,
+    1.199 13.2%,
+    1.245,
+    1.27 15.8%,
+    1.274,
+    1.272 17.4%,
+    1.249 19.1%,
+    0.996 28%,
+    0.949,
+    0.928 33.3%,
+    0.926,
+    0.933 36.8%,
+    1.001 45.6%,
+    1.013,
+    1.019 50.8%,
+    1.018 54.4%,
+    1 63.1%,
+    0.995 68%,
+    1.001 85%,
+    1
+  );
+  --nav-color-1: rgba(var(--chrome-accent-rgb), 0.9);
+  --nav-color-2: rgba(248, 232, 214, 0.88);
+  --nav-color-3: rgba(245, 202, 166, 0.84);
+  --nav-color-4: rgba(255, 255, 255, 0.88);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: min(100%, 420px);
+}
+
+.tab-deck__nav {
+  position: relative;
+  transform: translate3d(0, 0, 0.01px);
+  z-index: 3;
+}
+
+.tab-deck__list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+  z-index: 3;
+}
+
+.tab-deck__item {
+  position: relative;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition:
+    color 0.28s ease,
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tab-deck__item a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tab-deck__effect {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  transition:
+    left 0.44s var(--linear-ease),
+    top 0.44s var(--linear-ease),
+    width 0.44s var(--linear-ease),
+    height 0.44s var(--linear-ease);
+}
+
+.tab-deck__effect--filter {
+  z-index: 1;
+}
+
+.tab-deck__effect--text {
+  z-index: 4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    left 0.44s var(--linear-ease),
+    top 0.44s var(--linear-ease),
+    width 0.44s var(--linear-ease),
+    height 0.44s var(--linear-ease),
+    color 0.22s ease;
+}
+
+.tab-deck__effect--filter::before,
+.tab-deck__effect--filter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+}
+
+.tab-deck__effect--text {
+  opacity: 0;
+}
+
+.tab-deck__effect--text.is-active {
+  opacity: 1;
+}
+
+.tab-deck__item.is-active {
+  transform: translateY(-1px);
+}
+
+.tab-deck__particle,
+.tab-deck__point {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  opacity: 0;
+  transform-origin: center;
+}
+
+.tab-deck__particle {
+  position: absolute;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  animation: nav-particle var(--particle-time) ease 1 -320ms;
+}
+
+.tab-deck__point {
+  background: var(--particle-color);
+  opacity: 1;
+  animation: nav-point var(--particle-time) ease 1 -320ms;
+}
+
+.tab-deck--aura {
+  min-width: min(100%, 470px);
+}
+
+.tab-deck--aura .tab-deck__list {
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
+    rgba(255, 255, 255, 0.02);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 30px rgba(0, 0, 0, 0.22);
+}
+
+.tab-deck--aura .tab-deck__item {
+  color: var(--text-secondary);
+}
+
+.tab-deck--aura .tab-deck__item:hover {
+  color: var(--text-primary);
+}
+
+.tab-deck--aura .tab-deck__item.is-active {
+  color: var(--chrome-accent-ink);
+}
+
+.tab-deck--aura .tab-deck__effect--text {
+  display: none;
+}
+
+.tab-deck--aura .tab-deck__effect--filter::before {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02)),
+    linear-gradient(135deg, rgba(var(--chrome-accent-rgb), 0.24), rgba(255, 255, 255, 0.08));
+  border: 1px solid rgba(var(--chrome-accent-rgb), 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 20px rgba(0, 0, 0, 0.2),
+    0 0 28px rgba(var(--chrome-accent-rgb), 0.12);
+}
+
+.tab-deck--aura .tab-deck__effect--filter::after {
+  inset: 1px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
+  opacity: 0.8;
+}
+
+.tab-deck--gooey {
+  --nav-color-1: #fff5ea;
+  --nav-color-2: #f7dfca;
+  --nav-color-3: #ffd6ad;
+  --nav-color-4: #ffffff;
+}
+
+.tab-deck--gooey .tab-deck__list {
+  gap: 2em;
+  padding: 0 1em;
+}
+
+.tab-deck--gooey .tab-deck__item {
+  color: white;
+  text-shadow: 0 1px 1px rgb(23 17 12 / 0.28);
+  box-shadow: 0 0 0.5px 1.5px transparent;
+  transition:
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.tab-deck--gooey .tab-deck__item a {
+  min-height: 42px;
+  padding: 0 16px;
+  letter-spacing: 0.1em;
+}
+
+.tab-deck--gooey .tab-deck__item.is-active a {
+  color: transparent;
+}
+
+.tab-deck--gooey .tab-deck__effect--text {
+  color: white;
+}
+
+.tab-deck--gooey .tab-deck__effect--text.is-active {
+  color: #090909;
+}
+
+.tab-deck--gooey .tab-deck__effect--filter {
+  filter: blur(7px) contrast(100) blur(0);
+  mix-blend-mode: lighten;
+}
+
+.tab-deck--gooey .tab-deck__effect--filter::before {
+  inset: -75px;
+  z-index: -2;
+  background: black;
+}
+
+.tab-deck--gooey .tab-deck__effect--filter::after {
+  background: white;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.tab-deck--gooey .tab-deck__effect--filter.is-active::after {
+  animation: nav-pill 0.3s ease both;
+}
+
+.tab-deck--fusion {
+  --nav-color-1: rgba(var(--chrome-accent-rgb), 0.94);
+  --nav-color-2: rgba(244, 231, 217, 0.92);
+  --nav-color-3: rgba(242, 191, 143, 0.82);
+  --nav-color-4: rgba(255, 255, 255, 0.9);
+}
+
+.tab-deck--fusion::before {
+  content: '';
+  position: absolute;
+  inset: 4px 14px auto 14px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--chrome-accent-rgb), 0.32),
+    rgba(255, 255, 255, 0.08),
+    rgba(var(--chrome-accent-rgb), 0.32),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.tab-deck--fusion .tab-deck__list {
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at top center, rgba(var(--chrome-accent-rgb), 0.12), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+    rgba(255, 255, 255, 0.02);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 18px 34px rgba(0, 0, 0, 0.26);
+}
+
+.tab-deck--fusion .tab-deck__item {
+  color: var(--text-secondary);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.tab-deck--fusion .tab-deck__item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1)),
+    linear-gradient(
+      135deg,
+      rgba(255, 245, 233, 0.98),
+      rgba(238, 214, 190, 0.96) 42%,
+      rgba(var(--chrome-accent-rgb), 0.92)
+    );
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 22px rgba(0, 0, 0, 0.22),
+    0 0 22px rgba(var(--chrome-accent-rgb), 0.16);
+  opacity: 0;
+  transform: scale(0.86);
+  transition:
+    opacity 0.22s ease,
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.24s ease;
+  pointer-events: none;
+}
+
+.tab-deck--fusion .tab-deck__item:hover {
+  color: var(--text-primary);
+}
+
+.tab-deck--fusion .tab-deck__item:hover::before {
+  opacity: 0.32;
+  transform: scale(0.96);
+}
+
+.tab-deck--fusion .tab-deck__item.is-active::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tab-deck--fusion .tab-deck__item.is-active a {
+  color: #221a14;
+  text-shadow: none;
+}
+
+.tab-deck--fusion .tab-deck__effect--text {
+  display: none;
+}
+
+.tab-deck--fusion .tab-deck__effect--text.is-active {
+  color: inherit;
+}
+
+.tab-deck--fusion .tab-deck__effect--filter {
+  display: none;
+}
+
+.tab-deck--fusion .tab-deck__effect--filter::before {
+  inset: -34px;
+  z-index: -2;
+  background: radial-gradient(circle, rgba(var(--chrome-accent-rgb), 0.28), transparent 72%);
+}
+
+@keyframes nav-pill {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes nav-particle {
+  0% {
+    transform: rotate(0deg) translate(var(--start-x), var(--start-y));
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+
+  70% {
+    transform: rotate(calc(var(--particle-rotate) * 0.5))
+      translate(calc(var(--end-x) * 1.2), calc(var(--end-y) * 1.2));
+    opacity: 1;
+    animation-timing-function: ease;
+  }
+
+  85% {
+    transform: rotate(calc(var(--particle-rotate) * 0.66)) translate(var(--end-x), var(--end-y));
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(calc(var(--particle-rotate) * 1.2))
+      translate(calc(var(--end-x) * 0.5), calc(var(--end-y) * 0.5));
+    opacity: 1;
+  }
+}
+
+@keyframes nav-point {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+
+  25% {
+    transform: scale(calc(var(--particle-scale) * 0.25));
+  }
+
+  38% {
+    opacity: 1;
+  }
+
+  65% {
+    transform: scale(var(--particle-scale));
+    opacity: 1;
+    animation-timing-function: ease;
+  }
+
+  85% {
+    transform: scale(var(--particle-scale));
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* ─── Pill Variant ─────────────────────────────────────────────────────────── */
+
+.tab-deck--pill {
+  /*
+   * Warm cream fill — matches --chrome-accent-strong (#eadbcf).
+   * When the circle fully expands it turns the tab into a solid warm pill,
+   * exactly like the filled active tab in the React PillNav reference.
+   */
+  --pill-fill: rgba(234, 218, 204, 0.98);
+  --pill-fill-text: #1a0d07;
+  --nav-color-1: rgba(var(--chrome-accent-rgb), 0.9);
+  --nav-color-2: rgba(244, 231, 217, 0.88);
+  --nav-color-3: rgba(220, 185, 155, 0.84);
+  --nav-color-4: rgba(255, 248, 240, 0.9);
+  min-width: unset;
+}
+
+/* ── Container: frosted glass pill matching the React reference shape ── */
+.tab-deck--pill .tab-deck__list {
+  gap: 3px;
+  padding: 4px;
+  border-radius: 999px;
+  /*
+   * rgba(255,255,255,0.07) creates a visible surface on any dark bg —
+   * the page bg is #090a0d, so a white overlay is the only reliable way
+   * to make the container distinct without blending into the page color.
+   */
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1.5px solid rgba(var(--chrome-accent-rgb), 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 20px rgba(var(--chrome-accent-rgb), 0.12),
+    0 16px 36px rgba(0, 0, 0, 0.32);
+}
+
+/* ── Tab items ── */
+.tab-deck--pill .tab-deck__item {
+  position: relative;
+  color: rgba(255, 255, 255, 0.72);
+  isolation: isolate;
+  transition: color 0.24s ease;
+}
+
+.tab-deck--pill .tab-deck__item a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 22px;
+  border-radius: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
+}
+
+/*
+ * ── Hover circle: grows from bottom-center upward ──
+ *
+ * The React PillNav uses GSAP to grow an inscribed circle from the point
+ * where it's tangent to the pill's bottom edge (bottom-center).
+ *
+ * CSS equivalent using clip-path:
+ *   - The element is pill-shaped (inset:0, border-radius:inherit) so the
+ *     background always looks like a perfect pill — no edge artifacts.
+ *   - clip-path: circle(r at 50% 100%) reveals a circle centered at the
+ *     pill's bottom-center that expands until it covers the full pill.
+ *   - This is geometrically identical to the GSAP approach without any of
+ *     the "circle bottom leaking through the pill edge" problem.
+ */
+.tab-deck--pill .tab-deck__hover-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--pill-fill);
+  clip-path: circle(0% at 50% 100%);
+  transition: clip-path 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 0;
+  will-change: clip-path;
+}
+
+/* Both hover and active show the fully revealed warm cream pill */
+.tab-deck--pill .tab-deck__item:hover .tab-deck__hover-circle,
+.tab-deck--pill .tab-deck__item.is-active .tab-deck__hover-circle {
+  clip-path: circle(150% at 50% 100%);
+}
+
+/* ── Label stack: primary slides up, dark label enters from below ── */
+.tab-deck--pill .tab-deck__label-stack {
+  position: relative;
+  display: inline-block;
+  z-index: 2;
+  line-height: 1;
+}
+
+.tab-deck--pill .tab-deck__label {
+  display: block;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.tab-deck--pill .tab-deck__label-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--pill-fill-text);   /* dark on warm cream circle */
+  transform: translateY(4em);
+  opacity: 0;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.1s ease;
+  will-change: transform, opacity;
+}
+
+.tab-deck--pill .tab-deck__item:hover .tab-deck__label,
+.tab-deck--pill .tab-deck__item.is-active .tab-deck__label {
+  transform: translateY(-4em);
+}
+
+.tab-deck--pill .tab-deck__item:hover .tab-deck__label-hover,
+.tab-deck--pill .tab-deck__item.is-active .tab-deck__label-hover {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Active tab: subtle lift + warm glow */
+.tab-deck--pill .tab-deck__item.is-active {
+  filter: drop-shadow(0 3px 10px rgba(var(--chrome-accent-rgb), 0.28));
+}
+
+/* ── Effect spans: kept as particle hosts, no gooey visuals ── */
+.tab-deck--pill .tab-deck__effect--filter {
+  z-index: 10;
+  filter: none;
+  mix-blend-mode: normal;
+  pointer-events: none;
+}
+
+.tab-deck--pill .tab-deck__effect--filter::before,
+.tab-deck--pill .tab-deck__effect--filter::after {
+  display: none;
+}
+
+.tab-deck--pill .tab-deck__effect--text {
+  display: none;
+}
+
+/* ─── Media Queries ────────────────────────────────────────────────────────── */
+
+@media (max-width: 820px) {
+  :host {
+    width: 100%;
+  }
+
+  .tab-deck {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tab-deck__nav,
+  .tab-deck__list {
+    width: 100%;
+  }
+
+  .tab-deck__list {
+    justify-content: stretch;
+  }
+
+  .tab-deck__item {
+    flex: 1;
+  }
+
+  .tab-deck__item a {
+    width: 100%;
+    padding-inline: 12px;
+  }
+
+  .tab-deck--gooey .tab-deck__list {
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .tab-deck--pill .tab-deck__list {
+    padding: 8px 10px;
+  }
+}
