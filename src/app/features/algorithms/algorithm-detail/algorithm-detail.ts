@@ -160,7 +160,12 @@ import {
 import { LONGEST_COMMON_SUBSEQUENCE_CODE } from '../data/longest-common-subsequence-code';
 import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-subsequence-code';
 import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
-import { MANACHER_CODE } from '../data/manacher-code';
+import {
+  MANACHER_CODE,
+  MANACHER_CODE_HIGHLIGHT_MAP,
+  MANACHER_CODE_REGIONS,
+  MANACHER_CODE_VARIANTS,
+} from '../data/manacher-code';
 import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
@@ -170,12 +175,22 @@ import {
   MINKOWSKI_SUM_CODE_REGIONS,
   MINKOWSKI_SUM_CODE_VARIANTS,
 } from '../data/minkowski-sum-code';
-import { KMP_PATTERN_MATCHING_CODE } from '../data/kmp-pattern-matching-code';
+import {
+  KMP_PATTERN_MATCHING_CODE,
+  KMP_PATTERN_MATCHING_CODE_HIGHLIGHT_MAP,
+  KMP_PATTERN_MATCHING_CODE_REGIONS,
+  KMP_PATTERN_MATCHING_CODE_VARIANTS,
+} from '../data/kmp-pattern-matching-code';
 import { PROFILE_DP_CODE } from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
-import { RABIN_KARP_CODE } from '../data/rabin-karp-code';
+import {
+  RABIN_KARP_CODE,
+  RABIN_KARP_CODE_HIGHLIGHT_MAP,
+  RABIN_KARP_CODE_REGIONS,
+  RABIN_KARP_CODE_VARIANTS,
+} from '../data/rabin-karp-code';
 import { REGEX_MATCHING_DP_CODE } from '../data/regex-matching-dp-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
@@ -200,8 +215,18 @@ import {
   VORONOI_DIAGRAM_CODE_VARIANTS,
 } from '../data/voronoi-diagram-code';
 import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
-import { Z_ALGORITHM_CODE } from '../data/z-algorithm-code';
-import { BURROWS_WHEELER_TRANSFORM_CODE } from '../data/burrows-wheeler-transform-code';
+import {
+  Z_ALGORITHM_CODE,
+  Z_ALGORITHM_CODE_HIGHLIGHT_MAP,
+  Z_ALGORITHM_CODE_REGIONS,
+  Z_ALGORITHM_CODE_VARIANTS,
+} from '../data/z-algorithm-code';
+import {
+  BURROWS_WHEELER_TRANSFORM_CODE,
+  BURROWS_WHEELER_TRANSFORM_CODE_HIGHLIGHT_MAP,
+  BURROWS_WHEELER_TRANSFORM_CODE_REGIONS,
+  BURROWS_WHEELER_TRANSFORM_CODE_VARIANTS,
+} from '../data/burrows-wheeler-transform-code';
 import { DpPresetOption, DpTraceState } from '../models/dp';
 import { DsuTraceState } from '../models/dsu';
 import { GeometryStepState } from '../models/geometry';
@@ -214,7 +239,12 @@ import { StringPresetOption, StringTraceState } from '../models/string';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
-import { HUFFMAN_CODE } from '../data/huffman-coding-code';
+import {
+  HUFFMAN_CODE,
+  HUFFMAN_CODE_HIGHLIGHT_MAP,
+  HUFFMAN_CODE_REGIONS,
+  HUFFMAN_CODE_VARIANTS,
+} from '../data/huffman-coding-code';
 import {
   CONVEX_HULL_CODE,
   CONVEX_HULL_CODE_HIGHLIGHT_MAP,
@@ -228,7 +258,12 @@ import {
   DELAUNAY_TRIANGULATION_CODE_REGIONS,
   DELAUNAY_TRIANGULATION_CODE_VARIANTS,
 } from '../data/delaunay-triangulation-code';
-import { RLE_CODE } from '../data/run-length-encoding-code';
+import {
+  RLE_CODE,
+  RLE_CODE_HIGHLIGHT_MAP,
+  RLE_CODE_REGIONS,
+  RLE_CODE_VARIANTS,
+} from '../data/run-length-encoding-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
 import { VisualizationVariant } from '../models/visualization-renderer';
@@ -1281,6 +1316,9 @@ function createGridViewConfig<TScenario>(args: {
 
 function createStringViewConfig<TScenario>(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeRegions?: readonly CodeRegion[];
+  readonly codeHighlightMap?: Readonly<Record<number, number>>;
+  readonly codeVariants?: CodeVariantMap;
   readonly createScenario: (size: number, presetId: string) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
   readonly presetOptions: readonly StringPresetOption[];
@@ -1294,6 +1332,9 @@ function createStringViewConfig<TScenario>(args: {
   return {
     kind: 'string',
     codeLines: args.codeLines,
+    codeRegions: args.codeRegions,
+    codeHighlightMap: args.codeHighlightMap,
+    codeVariants: args.codeVariants,
     variantOptions: STRING_VARIANT_OPTIONS,
     defaultVariant: 'string',
     sizeOptions,
@@ -1465,6 +1506,9 @@ const BINARY_SEARCH_VARIANTS_VIEW_CONFIG = createSearchViewConfig({
 
 const KMP_VIEW_CONFIG = createStringViewConfig<KmpScenario>({
   codeLines: KMP_PATTERN_MATCHING_CODE,
+  codeRegions: KMP_PATTERN_MATCHING_CODE_REGIONS,
+  codeHighlightMap: KMP_PATTERN_MATCHING_CODE_HIGHLIGHT_MAP,
+  codeVariants: KMP_PATTERN_MATCHING_CODE_VARIANTS,
   createScenario: (size, presetId) => createKmpScenario(size, presetId),
   generator: kmpPatternMatchingGenerator,
   presetOptions: KMP_PRESETS,
@@ -1476,6 +1520,9 @@ const KMP_VIEW_CONFIG = createStringViewConfig<KmpScenario>({
 
 const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
   codeLines: RABIN_KARP_CODE,
+  codeRegions: RABIN_KARP_CODE_REGIONS,
+  codeHighlightMap: RABIN_KARP_CODE_HIGHLIGHT_MAP,
+  codeVariants: RABIN_KARP_CODE_VARIANTS,
   createScenario: (size, presetId) => createRabinKarpScenario(size, presetId),
   generator: rabinKarpGenerator,
   presetOptions: RABIN_KARP_PRESETS,
@@ -1487,6 +1534,9 @@ const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
 
 const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
   codeLines: Z_ALGORITHM_CODE,
+  codeRegions: Z_ALGORITHM_CODE_REGIONS,
+  codeHighlightMap: Z_ALGORITHM_CODE_HIGHLIGHT_MAP,
+  codeVariants: Z_ALGORITHM_CODE_VARIANTS,
   createScenario: (size, presetId) => createZAlgorithmScenario(size, presetId),
   generator: zAlgorithmGenerator,
   presetOptions: Z_ALGORITHM_PRESETS,
@@ -1498,6 +1548,9 @@ const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
 
 const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
   codeLines: MANACHER_CODE,
+  codeRegions: MANACHER_CODE_REGIONS,
+  codeHighlightMap: MANACHER_CODE_HIGHLIGHT_MAP,
+  codeVariants: MANACHER_CODE_VARIANTS,
   createScenario: (size, presetId) => createManacherScenario(size, presetId),
   generator: manacherGenerator,
   presetOptions: MANACHER_PRESETS,
@@ -1509,6 +1562,9 @@ const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
 
 const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenario>({
   codeLines: BURROWS_WHEELER_TRANSFORM_CODE,
+  codeRegions: BURROWS_WHEELER_TRANSFORM_CODE_REGIONS,
+  codeHighlightMap: BURROWS_WHEELER_TRANSFORM_CODE_HIGHLIGHT_MAP,
+  codeVariants: BURROWS_WHEELER_TRANSFORM_CODE_VARIANTS,
   createScenario: (size, presetId) => createBurrowsWheelerScenario(size, presetId),
   generator: burrowsWheelerTransformGenerator,
   presetOptions: BWT_PRESETS,
@@ -1520,6 +1576,9 @@ const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenari
 
 const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
   codeLines: RLE_CODE,
+  codeRegions: RLE_CODE_REGIONS,
+  codeHighlightMap: RLE_CODE_HIGHLIGHT_MAP,
+  codeVariants: RLE_CODE_VARIANTS,
   createScenario: (size, presetId) => createRleScenario(size, presetId),
   generator: runLengthEncodingGenerator,
   presetOptions: RLE_PRESETS,
@@ -1531,6 +1590,9 @@ const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
 
 const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
   codeLines: HUFFMAN_CODE,
+  codeRegions: HUFFMAN_CODE_REGIONS,
+  codeHighlightMap: HUFFMAN_CODE_HIGHLIGHT_MAP,
+  codeVariants: HUFFMAN_CODE_VARIANTS,
   createScenario: (size, presetId) => createHuffmanScenario(size, presetId),
   generator: huffmanCodingGenerator,
   presetOptions: HUFFMAN_PRESETS,
