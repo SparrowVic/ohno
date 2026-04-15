@@ -9,12 +9,12 @@
   gap: 12px;
   min-height: 100%;
   padding: 16px;
-  border: 1px solid rgb(var(--card-accent-rgb, 255 255 255) / 0.14);
+  border: 1px solid var(--border);
   border-radius: 18px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
     var(--card-bg);
-  box-shadow: var(--panel-shadow-soft);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
   overflow: hidden;
   isolation: isolate;
   transition:
@@ -42,10 +42,10 @@
   background:
     linear-gradient(
       145deg,
-      rgb(var(--card-accent-rgb, 184 213 110) / 0.26),
-      rgb(var(--card-accent-rgb, 184 213 110) / 0.12) 28%,
-      transparent 58%,
-      rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.1) 100%
+      rgb(var(--card-accent-rgb, 184 213 110) / 0.11),
+      rgb(var(--card-accent-rgb, 184 213 110) / 0.05) 34%,
+      transparent 62%,
+      rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.06) 100%
     );
   opacity: 1;
 }
@@ -53,8 +53,8 @@
 .card__blob {
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  filter: blur(9px);
-  opacity: 1;
+  filter: blur(18px);
+  opacity: 0.94;
   transition:
     transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.22s ease;
@@ -68,10 +68,10 @@
   height: var(--card-blob-1-height, 180px);
   background: radial-gradient(
     circle,
-    rgb(var(--card-accent-rgb, 184 213 110) / 0.64) 0%,
-    rgb(var(--card-accent-rgb, 184 213 110) / 0.36) 32%,
-    rgb(var(--card-accent-rgb, 184 213 110) / 0.10) 58%,
-    transparent 72%
+    rgb(var(--card-accent-rgb, 184 213 110) / 0.30) 0%,
+    rgb(var(--card-accent-rgb, 184 213 110) / 0.16) 34%,
+    rgb(var(--card-accent-rgb, 184 213 110) / 0.07) 58%,
+    transparent 74%
   );
 }
 
@@ -83,24 +83,23 @@
   height: var(--card-blob-2-height, 164px);
   background: radial-gradient(
     circle,
-    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.48) 0%,
-    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.26) 30%,
-    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.08) 56%,
+    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.20) 0%,
+    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.11) 30%,
+    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.04) 56%,
     transparent 72%
   );
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  border-color: rgb(var(--card-accent-rgb, 184 213 110) / 0.32);
+  transform: translateY(-2px);
+  border-color: rgb(var(--card-accent-rgb, 184 213 110) / 0.20);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
     var(--panel-bg-strong);
   box-shadow:
-    var(--panel-shadow),
-    0 18px 36px rgb(var(--card-accent-rgb, 184 213 110) / 0.16),
-    0 12px 28px rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.10),
-    0 0 0 1px rgb(var(--card-accent-rgb, 184 213 110) / 0.12);
+    0 14px 30px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgb(var(--card-accent-rgb, 184 213 110) / 0.09),
+    0 0 22px rgb(var(--card-accent-rgb, 184 213 110) / 0.08);
 }
 
 .card:hover .card__wash {
@@ -108,11 +107,11 @@
 }
 
 .card:hover .card__blob--primary {
-  transform: translate(calc(-50% + 10px), calc(-50% + 8px)) scale(1.08);
+  transform: translate(calc(-50% + 6px), calc(-50% + 5px)) scale(1.03);
 }
 
 .card:hover .card__blob--secondary {
-  transform: translate(calc(-50% + 8px), calc(-50% - 6px)) scale(1.1);
+  transform: translate(calc(-50% + 5px), calc(-50% - 4px)) scale(1.04);
 }
 
 .card--disabled {
@@ -120,7 +119,7 @@
 }
 
 .card--disabled:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .card__eyebrow,
@@ -234,12 +233,12 @@
   min-height: 110px;
   padding: 13px;
   border-radius: 16px;
-  border: 1px solid rgb(var(--card-accent-rgb, 184 213 110) / 0.22);
+  border: 1px solid rgb(var(--card-accent-rgb, 184 213 110) / 0.14);
   background:
     linear-gradient(
       var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 184 213 110) / 0.22),
-      rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.12) 56%,
+      rgb(var(--card-accent-rgb, 184 213 110) / 0.12),
+      rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.06) 56%,
       rgba(255, 255, 255, 0.02)
     ),
     rgba(255, 255, 255, 0.025);
@@ -257,7 +256,7 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(
     circle,
-    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.18),
+    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.10),
     transparent 72%
   );
   pointer-events: none;
@@ -279,8 +278,8 @@
   background:
     linear-gradient(
       var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 184 213 110) / 0.12),
-      rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.08) 62%,
+      rgb(var(--card-accent-rgb, 184 213 110) / 0.08),
+      rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.05) 62%,
       rgba(255, 255, 255, 0.02)
     ),
     rgba(255, 255, 255, 0.02);
@@ -302,10 +301,10 @@
   background: linear-gradient(
     180deg,
     var(--card-accent-strong, #d7eaa3),
-    rgb(var(--card-accent-rgb, 184 213 110) / 0.18)
+    rgb(var(--card-accent-rgb, 184 213 110) / 0.12)
   );
   box-shadow:
-    0 10px 16px rgb(var(--card-accent-rgb, 184 213 110) / 0.12),
+    0 8px 14px rgb(var(--card-accent-rgb, 184 213 110) / 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
@@ -313,10 +312,10 @@
   background: linear-gradient(
     180deg,
     var(--card-accent-alt-strong, #ffd9b2),
-    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.18)
+    rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.10)
   );
   box-shadow:
-    0 10px 16px rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.12),
+    0 8px 14px rgb(var(--card-accent-alt-rgb, 50 217 255) / 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 

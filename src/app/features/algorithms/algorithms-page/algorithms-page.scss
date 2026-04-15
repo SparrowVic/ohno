@@ -241,20 +241,20 @@
 .pill--hard.pill--active {
   border-color: rgba(var(--hard-rgb), 0.34);
   color: #180a0a;
-  background: linear-gradient(135deg, #ffc0c0, var(--hard));
+  background: linear-gradient(135deg, #ffc7c7, var(--hard));
   box-shadow:
-    0 10px 18px rgba(var(--hard-rgb), 0.18),
-    0 0 18px rgba(var(--hard-rgb), 0.1),
+    0 10px 18px rgba(var(--hard-rgb), 0.16),
+    0 0 18px rgba(var(--hard-rgb), 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .pill--ultra-hard.pill--active {
   border-color: rgba(var(--ultra-hard-rgb), 0.36);
   color: #150a18;
-  background: linear-gradient(135deg, #e7c4f1, var(--ultra-hard));
+  background: linear-gradient(135deg, #ddc0ff, var(--ultra-hard));
   box-shadow:
     0 10px 18px rgba(var(--ultra-hard-rgb), 0.18),
-    0 0 18px rgba(var(--ultra-hard-rgb), 0.1),
+    0 0 18px rgba(var(--ultra-hard-rgb), 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 

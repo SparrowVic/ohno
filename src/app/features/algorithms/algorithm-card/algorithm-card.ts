@@ -5,8 +5,8 @@ import { RouterLink } from '@angular/router';
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
-import { buildCategoryThemeVars, getCategoryTheme } from '../../../shared/category-theme';
-import { AlgorithmItem } from '../models/algorithm';
+import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
+import { AlgorithmItem, Difficulty } from '../models/algorithm';
 
 interface CardMetric {
   readonly label: string;
@@ -28,36 +28,36 @@ function rgbToComma(spaceSep: string): string {
   return spaceSep.trim().replace(/\s+/g, ', ');
 }
 
-function createPrimaryBlobStyle(seed: string, category: string): Record<string, string> {
-  const theme = getCategoryTheme(category);
+function createPrimaryBlobStyle(seed: string, difficulty: Difficulty): Record<string, string> {
+  const theme = getDifficultyTheme(difficulty);
   const rgb = rgbToComma(theme.accentRgb);
   return {
-    top: `${numberFromSeed(seed, 12, -12, 20).toFixed(1)}%`,
-    left: `${numberFromSeed(seed, 11, -6, 26).toFixed(1)}%`,
-    width: `${numberFromSeed(seed, 13, 180, 260).toFixed(0)}px`,
-    height: `${numberFromSeed(seed, 14, 140, 220).toFixed(0)}px`,
-    background: `radial-gradient(circle, rgba(${rgb}, 0.68) 0%, rgba(${rgb}, 0.40) 30%, rgba(${rgb}, 0.14) 58%, transparent 70%)`,
+    top: `${numberFromSeed(seed, 12, 0, 18).toFixed(1)}%`,
+    left: `${numberFromSeed(seed, 11, 6, 24).toFixed(1)}%`,
+    width: `${numberFromSeed(seed, 13, 168, 236).toFixed(0)}px`,
+    height: `${numberFromSeed(seed, 14, 132, 196).toFixed(0)}px`,
+    background: `radial-gradient(circle, rgba(${rgb}, 0.30) 0%, rgba(${rgb}, 0.16) 34%, rgba(${rgb}, 0.07) 58%, transparent 74%)`,
   };
 }
 
-function createSecondaryBlobStyle(seed: string, category: string): Record<string, string> {
-  const theme = getCategoryTheme(category);
+function createSecondaryBlobStyle(seed: string, difficulty: Difficulty): Record<string, string> {
+  const theme = getDifficultyTheme(difficulty);
   const rgb = rgbToComma(theme.accentAltRgb);
   return {
-    top: `${numberFromSeed(seed, 16, 46, 94).toFixed(1)}%`,
-    left: `${numberFromSeed(seed, 15, 72, 108).toFixed(1)}%`,
-    width: `${numberFromSeed(seed, 17, 150, 228).toFixed(0)}px`,
-    height: `${numberFromSeed(seed, 18, 132, 208).toFixed(0)}px`,
-    background: `radial-gradient(circle, rgba(${rgb}, 0.52) 0%, rgba(${rgb}, 0.28) 28%, rgba(${rgb}, 0.08) 54%, transparent 70%)`,
+    top: `${numberFromSeed(seed, 16, 58, 88).toFixed(1)}%`,
+    left: `${numberFromSeed(seed, 15, 72, 96).toFixed(1)}%`,
+    width: `${numberFromSeed(seed, 17, 132, 196).toFixed(0)}px`,
+    height: `${numberFromSeed(seed, 18, 116, 176).toFixed(0)}px`,
+    background: `radial-gradient(circle, rgba(${rgb}, 0.20) 0%, rgba(${rgb}, 0.11) 30%, rgba(${rgb}, 0.04) 54%, transparent 72%)`,
   };
 }
 
-function createWashStyle(category: string): Record<string, string> {
-  const theme = getCategoryTheme(category);
+function createWashStyle(difficulty: Difficulty): Record<string, string> {
+  const theme = getDifficultyTheme(difficulty);
   const rgb1 = rgbToComma(theme.accentRgb);
   const rgb2 = rgbToComma(theme.accentAltRgb);
   return {
-    background: `linear-gradient(145deg, rgba(${rgb1}, 0.28) 0%, rgba(${rgb1}, 0.14) 28%, transparent 58%, rgba(${rgb2}, 0.12) 100%)`,
+    background: `linear-gradient(145deg, rgba(${rgb1}, 0.11) 0%, rgba(${rgb1}, 0.05) 34%, transparent 62%, rgba(${rgb2}, 0.06) 100%)`,
   };
 }
 
@@ -86,17 +86,17 @@ function numberFromSeed(seed: string, salt: number, min: number, max: number): n
   return min + ratio * (max - min);
 }
 
-function createCardStyleVars(seed: string, category: string): Record<string, string> {
+function createCardStyleVars(seed: string, difficulty: Difficulty): Record<string, string> {
   return {
-    ...buildCategoryThemeVars(category, 'card'),
-    '--card-blob-1-x': `${numberFromSeed(seed, 11, -6, 26).toFixed(1)}%`,
-    '--card-blob-1-y': `${numberFromSeed(seed, 12, -12, 20).toFixed(1)}%`,
-    '--card-blob-1-width': `${numberFromSeed(seed, 13, 180, 260).toFixed(0)}px`,
-    '--card-blob-1-height': `${numberFromSeed(seed, 14, 140, 220).toFixed(0)}px`,
-    '--card-blob-2-x': `${numberFromSeed(seed, 15, 72, 108).toFixed(1)}%`,
-    '--card-blob-2-y': `${numberFromSeed(seed, 16, 46, 94).toFixed(1)}%`,
-    '--card-blob-2-width': `${numberFromSeed(seed, 17, 150, 228).toFixed(0)}px`,
-    '--card-blob-2-height': `${numberFromSeed(seed, 18, 132, 208).toFixed(0)}px`,
+    ...buildDifficultyThemeVars(difficulty, 'card'),
+    '--card-blob-1-x': `${numberFromSeed(seed, 11, 6, 24).toFixed(1)}%`,
+    '--card-blob-1-y': `${numberFromSeed(seed, 12, 0, 18).toFixed(1)}%`,
+    '--card-blob-1-width': `${numberFromSeed(seed, 13, 168, 236).toFixed(0)}px`,
+    '--card-blob-1-height': `${numberFromSeed(seed, 14, 132, 196).toFixed(0)}px`,
+    '--card-blob-2-x': `${numberFromSeed(seed, 15, 72, 96).toFixed(1)}%`,
+    '--card-blob-2-y': `${numberFromSeed(seed, 16, 58, 88).toFixed(1)}%`,
+    '--card-blob-2-width': `${numberFromSeed(seed, 17, 132, 196).toFixed(0)}px`,
+    '--card-blob-2-height': `${numberFromSeed(seed, 18, 116, 176).toFixed(0)}px`,
     '--card-grid-size': `${numberFromSeed(seed, 19, 18, 25).toFixed(0)}px`,
     '--card-preview-angle': `${numberFromSeed(seed, 20, 144, 196).toFixed(0)}deg`,
   };
@@ -159,26 +159,15 @@ export class AlgorithmCard {
   );
   readonly previewBars = computed(() => createPreviewBars(this.algorithm().id));
   readonly cardStyle = computed<Record<string, string>>(() =>
-    createCardStyleVars(
-      this.algorithm().id,
-      this.algorithm().subcategory || this.algorithm().category,
-    ),
+    createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
   );
   readonly primaryBlobStyle = computed(() =>
-    createPrimaryBlobStyle(
-      this.algorithm().id,
-      this.algorithm().subcategory || this.algorithm().category,
-    ),
+    createPrimaryBlobStyle(this.algorithm().id, this.algorithm().difficulty),
   );
   readonly secondaryBlobStyle = computed(() =>
-    createSecondaryBlobStyle(
-      this.algorithm().id,
-      this.algorithm().subcategory || this.algorithm().category,
-    ),
+    createSecondaryBlobStyle(this.algorithm().id, this.algorithm().difficulty),
   );
-  readonly washStyle = computed(() =>
-    createWashStyle(this.algorithm().subcategory || this.algorithm().category),
-  );
+  readonly washStyle = computed(() => createWashStyle(this.algorithm().difficulty));
   readonly metrics = computed<readonly CardMetric[]>(() => {
     const lang = this.language.activeLang();
     return [
