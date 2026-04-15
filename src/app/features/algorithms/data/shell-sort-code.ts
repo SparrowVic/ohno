@@ -1,78 +1,201 @@
-import { CodeLine } from '../models/detail';
+import { CodeVariantMap } from '../models/detail';
+import { buildStructuredCode } from './code-line-builder';
 
-export const SHELL_SORT_CODE: readonly CodeLine[] = [
+const SHELL_SORT_TS = buildStructuredCode(`
+  /**
+   * Sort the array in ascending order with Shell sort using halving gaps.
+   * Input: mutable array of numbers.
+   * Returns: the same array after in-place sorting.
+   */
+  //#region shell-sort function open
+  //@step 1
+  function shellSort(values: number[]): number[] {
+    //@step 2
+    for (let gap = Math.floor(values.length / 2); gap > 0; gap = Math.floor(gap / 2)) {
+      for (let index = gap; index < values.length; index += 1) {
+        const current = values[index];
+        let scan = index;
+
+        //@step 4
+        while (scan >= gap && values[scan - gap] > current) {
+          //@step 6
+          values[scan] = values[scan - gap];
+          //@step 7
+          scan -= gap;
+        }
+
+        //@step 9
+        values[scan] = current;
+      }
+    }
+
+    //@step 12
+    return values;
+  }
+  //#endregion shell-sort
+`);
+
+const SHELL_SORT_PY = buildStructuredCode(
+  `
+  """
+  Sort the array in ascending order with Shell sort using halving gaps.
+  Input: mutable list of numbers.
+  Returns: the same list after in-place sorting.
+  """
+  //#region shell-sort function open
+  //@step 1
+  def shell_sort(values: list[int]) -> list[int]:
+      gap = len(values) // 2
+
+      //@step 2
+      while gap > 0:
+          for index in range(gap, len(values)):
+              current = values[index]
+              scan = index
+
+              //@step 4
+              while scan >= gap and values[scan - gap] > current:
+                  //@step 6
+                  values[scan] = values[scan - gap]
+                  //@step 7
+                  scan -= gap
+
+              //@step 9
+              values[scan] = current
+
+          gap //= 2
+
+      //@step 12
+      return values
+  //#endregion shell-sort
+  `,
+  'python',
+);
+
+const SHELL_SORT_CS = buildStructuredCode(
+  `
+  /// <summary>
+  /// Sorts the array in ascending order with Shell sort using halving gaps.
+  /// Input: mutable array of integers.
+  /// Returns: the same array after in-place sorting.
+  /// </summary>
+  //#region shell-sort function open
+  //@step 1
+  public static int[] ShellSort(int[] values)
   {
-    number: 1,
-    tokens: [
-      { kind: 'kw', text: 'function' }, { kind: 'text', text: ' ' }, { kind: 'fn', text: 'shellSort' },
-      { kind: 'text', text: '(arr: number[]): number[] {' },
-    ],
-  },
-  {
-    number: 2,
-    tokens: [
-      { kind: 'text', text: '  ' }, { kind: 'kw', text: 'for' }, { kind: 'text', text: ' (' },
-      { kind: 'kw', text: 'let' }, { kind: 'text', text: ' gap ' }, { kind: 'op', text: '=' },
-      { kind: 'text', text: ' Math.floor(arr.length / ' }, { kind: 'num', text: '2' }, { kind: 'text', text: '); gap ' },
-      { kind: 'op', text: '>' }, { kind: 'text', text: ' ' }, { kind: 'num', text: '0' },
-      { kind: 'text', text: '; gap = Math.floor(gap / ' }, { kind: 'num', text: '2' }, { kind: 'text', text: ')) {' },
-    ],
-  },
-  {
-    number: 3,
-    tokens: [
-      { kind: 'text', text: '    ' }, { kind: 'kw', text: 'for' }, { kind: 'text', text: ' (' },
-      { kind: 'kw', text: 'let' }, { kind: 'text', text: ' i ' }, { kind: 'op', text: '=' }, { kind: 'text', text: ' gap; i ' },
-      { kind: 'op', text: '<' }, { kind: 'text', text: ' arr.length; i++) {' },
-    ],
-  },
-  {
-    number: 4,
-    tokens: [
-      { kind: 'text', text: '      ' }, { kind: 'kw', text: 'const' }, { kind: 'text', text: ' value ' },
-      { kind: 'op', text: '=' }, { kind: 'text', text: ' arr[i];' },
-    ],
-  },
-  {
-    number: 5,
-    tokens: [
-      { kind: 'text', text: '      ' }, { kind: 'kw', text: 'let' }, { kind: 'text', text: ' j ' },
-      { kind: 'op', text: '=' }, { kind: 'text', text: ' i;' },
-    ],
-  },
-  {
-    number: 6,
-    tokens: [
-      { kind: 'text', text: '      ' }, { kind: 'kw', text: 'while' }, { kind: 'text', text: ' (j ' },
-      { kind: 'op', text: '>=' }, { kind: 'text', text: ' gap ' }, { kind: 'op', text: '&&' },
-      { kind: 'text', text: ' arr[j - gap] ' }, { kind: 'op', text: '>' }, { kind: 'text', text: ' value) {' },
-    ],
-  },
-  {
-    number: 7,
-    tokens: [
-      { kind: 'text', text: '        arr[j] ' }, { kind: 'op', text: '=' }, { kind: 'text', text: ' arr[j - gap];' },
-    ],
-  },
-  {
-    number: 8,
-    tokens: [
-      { kind: 'text', text: '        j ' }, { kind: 'op', text: '-=' }, { kind: 'text', text: ' gap;' },
-    ],
-  },
-  {
-    number: 9,
-    tokens: [
-      { kind: 'text', text: '      arr[j] ' }, { kind: 'op', text: '=' }, { kind: 'text', text: ' value;' },
-    ],
-  },
-  { number: 10, tokens: [{ kind: 'text', text: '    }' }] },
-  { number: 11, tokens: [{ kind: 'text', text: '  }' }] },
-  {
-    number: 12,
-    tokens: [
-      { kind: 'text', text: '  ' }, { kind: 'kw', text: 'return' }, { kind: 'text', text: ' arr;' },
-    ],
-  },
-  { number: 13, tokens: [{ kind: 'text', text: '}' }] },
-];
+      //@step 2
+      for (var gap = values.Length / 2; gap > 0; gap /= 2)
+      {
+          for (var index = gap; index < values.Length; index += 1)
+          {
+              var current = values[index];
+              var scan = index;
+
+              //@step 4
+              while (scan >= gap && values[scan - gap] > current)
+              {
+                  //@step 6
+                  values[scan] = values[scan - gap];
+                  //@step 7
+                  scan -= gap;
+              }
+
+              //@step 9
+              values[scan] = current;
+          }
+      }
+
+      //@step 12
+      return values;
+  }
+  //#endregion shell-sort
+  `,
+  'csharp',
+);
+
+const SHELL_SORT_JAVA = buildStructuredCode(
+  `
+  /**
+   * Sorts the array in ascending order with Shell sort using halving gaps.
+   * Input: mutable array of integers.
+   * Returns: the same array after in-place sorting.
+   */
+  //#region shell-sort function open
+  //@step 1
+  public static int[] shellSort(int[] values) {
+      //@step 2
+      for (int gap = values.length / 2; gap > 0; gap /= 2) {
+          for (int index = gap; index < values.length; index += 1) {
+              int current = values[index];
+              int scan = index;
+
+              //@step 4
+              while (scan >= gap && values[scan - gap] > current) {
+                  //@step 6
+                  values[scan] = values[scan - gap];
+                  //@step 7
+                  scan -= gap;
+              }
+
+              //@step 9
+              values[scan] = current;
+          }
+      }
+
+      //@step 12
+      return values;
+  }
+  //#endregion shell-sort
+  `,
+  'java',
+);
+
+const SHELL_SORT_CPP = buildStructuredCode(
+  `
+  #include <vector>
+
+  /**
+   * Sorts the array in ascending order with Shell sort using halving gaps.
+   * Input: mutable vector of integers.
+   * Returns: the same vector after in-place sorting.
+   */
+  //#region shell-sort function open
+  //@step 1
+  std::vector<int> shellSort(std::vector<int> values) {
+      //@step 2
+      for (int gap = static_cast<int>(values.size()) / 2; gap > 0; gap /= 2) {
+          for (int index = gap; index < static_cast<int>(values.size()); index += 1) {
+              int current = values[index];
+              int scan = index;
+
+              //@step 4
+              while (scan >= gap && values[scan - gap] > current) {
+                  //@step 6
+                  values[scan] = values[scan - gap];
+                  //@step 7
+                  scan -= gap;
+              }
+
+              //@step 9
+              values[scan] = current;
+          }
+      }
+
+      //@step 12
+      return values;
+  }
+  //#endregion shell-sort
+  `,
+  'cpp',
+);
+
+export const SHELL_SORT_CODE = SHELL_SORT_TS.lines;
+export const SHELL_SORT_CODE_REGIONS = SHELL_SORT_TS.regions;
+export const SHELL_SORT_CODE_HIGHLIGHT_MAP = SHELL_SORT_TS.highlightMap;
+export const SHELL_SORT_CODE_VARIANTS: CodeVariantMap = {
+  typescript: { language: 'typescript', lines: SHELL_SORT_TS.lines, regions: SHELL_SORT_TS.regions, highlightMap: SHELL_SORT_TS.highlightMap, source: SHELL_SORT_TS.source },
+  python: { language: 'python', lines: SHELL_SORT_PY.lines, regions: SHELL_SORT_PY.regions, highlightMap: SHELL_SORT_PY.highlightMap, source: SHELL_SORT_PY.source },
+  csharp: { language: 'csharp', lines: SHELL_SORT_CS.lines, regions: SHELL_SORT_CS.regions, highlightMap: SHELL_SORT_CS.highlightMap, source: SHELL_SORT_CS.source },
+  java: { language: 'java', lines: SHELL_SORT_JAVA.lines, regions: SHELL_SORT_JAVA.regions, highlightMap: SHELL_SORT_JAVA.highlightMap, source: SHELL_SORT_JAVA.source },
+  cpp: { language: 'cpp', lines: SHELL_SORT_CPP.lines, regions: SHELL_SORT_CPP.regions, highlightMap: SHELL_SORT_CPP.highlightMap, source: SHELL_SORT_CPP.source },
+};

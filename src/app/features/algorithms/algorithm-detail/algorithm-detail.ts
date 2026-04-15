@@ -116,8 +116,18 @@ import {
   BFS_CODE_REGIONS,
   BFS_CODE_VARIANTS,
 } from '../data/bfs-code';
-import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
-import { BINARY_SEARCH_VARIANTS_CODE } from '../data/binary-search-variants-code';
+import {
+  BINARY_SEARCH_CODE,
+  BINARY_SEARCH_CODE_HIGHLIGHT_MAP,
+  BINARY_SEARCH_CODE_REGIONS,
+  BINARY_SEARCH_CODE_VARIANTS,
+} from '../data/binary-search-code';
+import {
+  BINARY_SEARCH_VARIANTS_CODE,
+  BINARY_SEARCH_VARIANTS_CODE_HIGHLIGHT_MAP,
+  BINARY_SEARCH_VARIANTS_CODE_REGIONS,
+  BINARY_SEARCH_VARIANTS_CODE_VARIANTS,
+} from '../data/binary-search-variants-code';
 import {
   BIPARTITE_CHECK_CODE,
   BIPARTITE_CHECK_CODE_HIGHLIGHT_MAP,
@@ -136,8 +146,18 @@ import {
   BURST_BALLOONS_CODE_REGIONS,
   BURST_BALLOONS_CODE_VARIANTS,
 } from '../data/burst-balloons-code';
-import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
-import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
+import {
+  BUCKET_SORT_CODE,
+  BUCKET_SORT_CODE_HIGHLIGHT_MAP,
+  BUCKET_SORT_CODE_REGIONS,
+  BUCKET_SORT_CODE_VARIANTS,
+} from '../data/bucket-sort-code';
+import {
+  BUBBLE_SORT_CODE,
+  BUBBLE_SORT_CODE_HIGHLIGHT_MAP,
+  BUBBLE_SORT_CODE_REGIONS,
+  BUBBLE_SORT_CODE_VARIANTS,
+} from '../data/bubble-sort-code';
 import {
   CLIMBING_STAIRS_CODE,
   CLIMBING_STAIRS_CODE_HIGHLIGHT_MAP,
@@ -168,7 +188,12 @@ import {
   CONNECTED_COMPONENTS_CODE_REGIONS,
   CONNECTED_COMPONENTS_CODE_VARIANTS,
 } from '../data/connected-components-code';
-import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
+import {
+  COUNTING_SORT_CODE,
+  COUNTING_SORT_CODE_HIGHLIGHT_MAP,
+  COUNTING_SORT_CODE_REGIONS,
+  COUNTING_SORT_CODE_VARIANTS,
+} from '../data/counting-sort-code';
 import {
   CYCLE_DETECTION_CODE,
   CYCLE_DETECTION_CODE_HIGHLIGHT_MAP,
@@ -245,8 +270,18 @@ import {
   HALF_PLANE_INTERSECTION_CODE_REGIONS,
   HALF_PLANE_INTERSECTION_CODE_VARIANTS,
 } from '../data/half-plane-intersection-code';
-import { HEAP_SORT_CODE } from '../data/heap-sort-code';
-import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
+import {
+  HEAP_SORT_CODE,
+  HEAP_SORT_CODE_HIGHLIGHT_MAP,
+  HEAP_SORT_CODE_REGIONS,
+  HEAP_SORT_CODE_VARIANTS,
+} from '../data/heap-sort-code';
+import {
+  INSERTION_SORT_CODE,
+  INSERTION_SORT_CODE_HIGHLIGHT_MAP,
+  INSERTION_SORT_CODE_REGIONS,
+  INSERTION_SORT_CODE_VARIANTS,
+} from '../data/insertion-sort-code';
 import {
   KNAPSACK_01_CODE,
   KNAPSACK_01_CODE_HIGHLIGHT_MAP,
@@ -260,7 +295,12 @@ import {
   KNUTH_DP_OPTIMIZATION_CODE_VARIANTS,
 } from '../data/knuth-dp-optimization-code';
 import { KRUSKALS_MST_CODE } from '../data/kruskals-mst-code';
-import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
+import {
+  LINEAR_SEARCH_CODE,
+  LINEAR_SEARCH_CODE_HIGHLIGHT_MAP,
+  LINEAR_SEARCH_CODE_REGIONS,
+  LINEAR_SEARCH_CODE_VARIANTS,
+} from '../data/linear-search-code';
 import {
   LINE_INTERSECTION_CODE,
   LINE_INTERSECTION_CODE_HIGHLIGHT_MAP,
@@ -297,7 +337,12 @@ import {
   MATRIX_CHAIN_MULTIPLICATION_CODE_REGIONS,
   MATRIX_CHAIN_MULTIPLICATION_CODE_VARIANTS,
 } from '../data/matrix-chain-multiplication-code';
-import { MERGE_SORT_CODE } from '../data/merge-sort-code';
+import {
+  MERGE_SORT_CODE,
+  MERGE_SORT_CODE_HIGHLIGHT_MAP,
+  MERGE_SORT_CODE_REGIONS,
+  MERGE_SORT_CODE_VARIANTS,
+} from '../data/merge-sort-code';
 import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
 import {
   MINKOWSKI_SUM_CODE,
@@ -323,8 +368,18 @@ import {
   PRIMS_MST_CODE_REGIONS,
   PRIMS_MST_CODE_VARIANTS,
 } from '../data/prims-mst-code';
-import { QUICK_SORT_CODE } from '../data/quick-sort-code';
-import { RADIX_SORT_CODE } from '../data/radix-sort-code';
+import {
+  QUICK_SORT_CODE,
+  QUICK_SORT_CODE_HIGHLIGHT_MAP,
+  QUICK_SORT_CODE_REGIONS,
+  QUICK_SORT_CODE_VARIANTS,
+} from '../data/quick-sort-code';
+import {
+  RADIX_SORT_CODE,
+  RADIX_SORT_CODE_HIGHLIGHT_MAP,
+  RADIX_SORT_CODE_REGIONS,
+  RADIX_SORT_CODE_VARIANTS,
+} from '../data/radix-sort-code';
 import {
   RABIN_KARP_CODE,
   RABIN_KARP_CODE_HIGHLIGHT_MAP,
@@ -337,8 +392,18 @@ import {
   REGEX_MATCHING_DP_CODE_REGIONS,
   REGEX_MATCHING_DP_CODE_VARIANTS,
 } from '../data/regex-matching-dp-code';
-import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
-import { SHELL_SORT_CODE } from '../data/shell-sort-code';
+import {
+  SELECTION_SORT_CODE,
+  SELECTION_SORT_CODE_HIGHLIGHT_MAP,
+  SELECTION_SORT_CODE_REGIONS,
+  SELECTION_SORT_CODE_VARIANTS,
+} from '../data/selection-sort-code';
+import {
+  SHELL_SORT_CODE,
+  SHELL_SORT_CODE_HIGHLIGHT_MAP,
+  SHELL_SORT_CODE_REGIONS,
+  SHELL_SORT_CODE_VARIANTS,
+} from '../data/shell-sort-code';
 import {
   SOS_DP_CODE,
   SOS_DP_CODE_HIGHLIGHT_MAP,
@@ -369,7 +434,12 @@ import {
   TARJAN_SCC_CODE_REGIONS,
   TARJAN_SCC_CODE_VARIANTS,
 } from '../data/tarjan-scc-code';
-import { TIM_SORT_CODE } from '../data/tim-sort-code';
+import {
+  TIM_SORT_CODE,
+  TIM_SORT_CODE_HIGHLIGHT_MAP,
+  TIM_SORT_CODE_REGIONS,
+  TIM_SORT_CODE_VARIANTS,
+} from '../data/tim-sort-code';
 import {
   TOPOLOGICAL_SORT_KAHN_CODE,
   TOPOLOGICAL_SORT_KAHN_CODE_HIGHLIGHT_MAP,
@@ -1356,6 +1426,9 @@ type AlgorithmViewConfig =
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
   codeLines: BUBBLE_SORT_CODE,
+  codeRegions: BUBBLE_SORT_CODE_REGIONS,
+  codeHighlightMap: BUBBLE_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: BUBBLE_SORT_CODE_VARIANTS,
   variantOptions: BUBBLE_VARIANT_OPTIONS,
   defaultVariant: 'bar',
   sizeOptions: BUBBLE_SIZE_OPTIONS,
@@ -1374,6 +1447,9 @@ const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
 const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
   codeLines: RADIX_SORT_CODE,
+  codeRegions: RADIX_SORT_CODE_REGIONS,
+  codeHighlightMap: RADIX_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: RADIX_SORT_CODE_VARIANTS,
   variantOptions: RADIX_VARIANT_OPTIONS,
   defaultVariant: 'radix',
   sizeOptions: RADIX_SIZE_OPTIONS,
@@ -1387,6 +1463,9 @@ const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
 
 function createSortViewConfig(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeRegions?: readonly CodeRegion[];
+  readonly codeHighlightMap?: Readonly<Record<number, number>>;
+  readonly codeVariants?: CodeVariantMap;
   readonly generator: (array: readonly number[]) => Generator<SortStep>;
   readonly randomRange: RandomRange;
   readonly sizeOptions?: readonly number[];
@@ -1396,6 +1475,9 @@ function createSortViewConfig(args: {
   return {
     kind: 'array',
     codeLines: args.codeLines,
+    codeRegions: args.codeRegions,
+    codeHighlightMap: args.codeHighlightMap,
+    codeVariants: args.codeVariants,
     variantOptions: SORT_BAR_BLOCK_VARIANT_OPTIONS,
     defaultVariant: 'bar',
     sizeOptions,
@@ -1410,6 +1492,9 @@ function createSortViewConfig(args: {
 
 const SELECTION_VIEW_CONFIG = createSortViewConfig({
   codeLines: SELECTION_SORT_CODE,
+  codeRegions: SELECTION_SORT_CODE_REGIONS,
+  codeHighlightMap: SELECTION_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: SELECTION_SORT_CODE_VARIANTS,
   generator: selectionSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1417,6 +1502,9 @@ const SELECTION_VIEW_CONFIG = createSortViewConfig({
 
 const INSERTION_VIEW_CONFIG = createSortViewConfig({
   codeLines: INSERTION_SORT_CODE,
+  codeRegions: INSERTION_SORT_CODE_REGIONS,
+  codeHighlightMap: INSERTION_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: INSERTION_SORT_CODE_VARIANTS,
   generator: insertionSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1424,6 +1512,9 @@ const INSERTION_VIEW_CONFIG = createSortViewConfig({
 
 const COUNTING_VIEW_CONFIG = createSortViewConfig({
   codeLines: COUNTING_SORT_CODE,
+  codeRegions: COUNTING_SORT_CODE_REGIONS,
+  codeHighlightMap: COUNTING_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: COUNTING_SORT_CODE_VARIANTS,
   generator: countingSortGenerator,
   randomRange: { min: 1, max: 24 },
   sizeOptions: COUNTING_SIZE_OPTIONS,
@@ -1432,6 +1523,9 @@ const COUNTING_VIEW_CONFIG = createSortViewConfig({
 
 const MERGE_VIEW_CONFIG = createSortViewConfig({
   codeLines: MERGE_SORT_CODE,
+  codeRegions: MERGE_SORT_CODE_REGIONS,
+  codeHighlightMap: MERGE_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: MERGE_SORT_CODE_VARIANTS,
   generator: mergeSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1439,6 +1533,9 @@ const MERGE_VIEW_CONFIG = createSortViewConfig({
 
 const QUICK_VIEW_CONFIG = createSortViewConfig({
   codeLines: QUICK_SORT_CODE,
+  codeRegions: QUICK_SORT_CODE_REGIONS,
+  codeHighlightMap: QUICK_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: QUICK_SORT_CODE_VARIANTS,
   generator: quickSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1446,6 +1543,9 @@ const QUICK_VIEW_CONFIG = createSortViewConfig({
 
 const HEAP_VIEW_CONFIG = createSortViewConfig({
   codeLines: HEAP_SORT_CODE,
+  codeRegions: HEAP_SORT_CODE_REGIONS,
+  codeHighlightMap: HEAP_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: HEAP_SORT_CODE_VARIANTS,
   generator: heapSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1453,6 +1553,9 @@ const HEAP_VIEW_CONFIG = createSortViewConfig({
 
 function createSearchViewConfig(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeRegions?: readonly CodeRegion[];
+  readonly codeHighlightMap?: Readonly<Record<number, number>>;
+  readonly codeVariants?: CodeVariantMap;
   readonly createScenario: (size: number) => SearchScenario;
   readonly generator: (scenario: SearchScenario) => Generator<SortStep>;
   readonly sizeOptions?: readonly number[];
@@ -1462,6 +1565,9 @@ function createSearchViewConfig(args: {
   return {
     kind: 'search',
     codeLines: args.codeLines,
+    codeRegions: args.codeRegions,
+    codeHighlightMap: args.codeHighlightMap,
+    codeVariants: args.codeVariants,
     variantOptions: SEARCH_VARIANT_OPTIONS,
     defaultVariant: 'search',
     sizeOptions,
@@ -1652,6 +1758,9 @@ function createNetworkViewConfig<TScenario>(args: {
 
 const BUCKET_VIEW_CONFIG = createSortViewConfig({
   codeLines: BUCKET_SORT_CODE,
+  codeRegions: BUCKET_SORT_CODE_REGIONS,
+  codeHighlightMap: BUCKET_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: BUCKET_SORT_CODE_VARIANTS,
   generator: bucketSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1659,6 +1768,9 @@ const BUCKET_VIEW_CONFIG = createSortViewConfig({
 
 const SHELL_VIEW_CONFIG = createSortViewConfig({
   codeLines: SHELL_SORT_CODE,
+  codeRegions: SHELL_SORT_CODE_REGIONS,
+  codeHighlightMap: SHELL_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: SHELL_SORT_CODE_VARIANTS,
   generator: shellSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1666,6 +1778,9 @@ const SHELL_VIEW_CONFIG = createSortViewConfig({
 
 const TIM_VIEW_CONFIG = createSortViewConfig({
   codeLines: TIM_SORT_CODE,
+  codeRegions: TIM_SORT_CODE_REGIONS,
+  codeHighlightMap: TIM_SORT_CODE_HIGHLIGHT_MAP,
+  codeVariants: TIM_SORT_CODE_VARIANTS,
   generator: timSortGenerator,
   randomRange: { min: 1, max: 99 },
   defaultSize: 16,
@@ -1673,6 +1788,9 @@ const TIM_VIEW_CONFIG = createSortViewConfig({
 
 const LINEAR_SEARCH_VIEW_CONFIG = createSearchViewConfig({
   codeLines: LINEAR_SEARCH_CODE,
+  codeRegions: LINEAR_SEARCH_CODE_REGIONS,
+  codeHighlightMap: LINEAR_SEARCH_CODE_HIGHLIGHT_MAP,
+  codeVariants: LINEAR_SEARCH_CODE_VARIANTS,
   createScenario: (size) => createLinearSearchScenario(size),
   generator: linearSearchGenerator,
   sizeOptions: [12, 20, 28],
@@ -1681,6 +1799,9 @@ const LINEAR_SEARCH_VIEW_CONFIG = createSearchViewConfig({
 
 const BINARY_SEARCH_VIEW_CONFIG = createSearchViewConfig({
   codeLines: BINARY_SEARCH_CODE,
+  codeRegions: BINARY_SEARCH_CODE_REGIONS,
+  codeHighlightMap: BINARY_SEARCH_CODE_HIGHLIGHT_MAP,
+  codeVariants: BINARY_SEARCH_CODE_VARIANTS,
   createScenario: (size) => createBinarySearchScenario(size),
   generator: binarySearchGenerator,
   sizeOptions: [16, 24, 32],
@@ -1689,6 +1810,9 @@ const BINARY_SEARCH_VIEW_CONFIG = createSearchViewConfig({
 
 const BINARY_SEARCH_VARIANTS_VIEW_CONFIG = createSearchViewConfig({
   codeLines: BINARY_SEARCH_VARIANTS_CODE,
+  codeRegions: BINARY_SEARCH_VARIANTS_CODE_REGIONS,
+  codeHighlightMap: BINARY_SEARCH_VARIANTS_CODE_HIGHLIGHT_MAP,
+  codeVariants: BINARY_SEARCH_VARIANTS_CODE_VARIANTS,
   createScenario: (size) => createBinarySearchVariantsScenario(size),
   generator: binarySearchVariantsGenerator,
   sizeOptions: [16, 24, 32],
