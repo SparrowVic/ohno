@@ -157,8 +157,6 @@ export class WorldFlagGlobe implements AfterViewInit {
   private boundaryMaterial: PointsMaterial | null = null;
   private boundaryGlowMaterial: PointsMaterial | null = null;
   private hoverCountryMaterial: PointsMaterial | null = null;
-  private hoverBeacon: Mesh | null = null;
-  private hoverBeaconMaterial: MeshBasicMaterial | null = null;
   private ringMeshes: Mesh[] = [];
   private ringMaterials: MeshBasicMaterial[] = [];
   private markers: GlobeMarker[] = [];
@@ -345,7 +343,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       color: 0x91d6ff,
       wireframe: true,
       transparent: true,
-      opacity: 0.055,
+      opacity: 0.003,
     });
     const shell = new THREE.Mesh(new THREE.SphereGeometry(1.64, 36, 36), shellMaterial);
     globeGroup.add(shell);
@@ -353,37 +351,15 @@ export class WorldFlagGlobe implements AfterViewInit {
     const atmosphereMaterial = new THREE.MeshBasicMaterial({
       color: 0x48c8ff,
       transparent: true,
-      opacity: 0.13,
+      opacity: 0.026,
       side: THREE.BackSide,
       blending: THREE.AdditiveBlending,
     });
-    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.84, 72, 72), atmosphereMaterial);
+    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.67, 72, 72), atmosphereMaterial);
     globeGroup.add(atmosphere);
 
     this.dotTexture = this.createDotTexture(THREE);
     this.createCountrySurface(THREE, globeGroup, countries, surfaceDots, boundaryDots);
-
-    const ringMeshes: Mesh[] = [];
-    const ringMaterials: MeshBasicMaterial[] = [];
-    for (const config of [
-      { radius: 2.08, tube: 0.006, color: 0x52d9ff, rotation: [0.92, 0.34, 0.12] as const },
-      { radius: 2.28, tube: 0.005, color: 0x8f82ff, rotation: [0.42, -0.62, 0.58] as const },
-      { radius: 2.5, tube: 0.0045, color: 0xffab78, rotation: [1.18, 0.22, -0.42] as const },
-    ]) {
-      const material = new THREE.MeshBasicMaterial({
-        color: config.color,
-        transparent: true,
-        opacity: 0.22,
-      });
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(config.radius, config.tube, 12, 200),
-        material,
-      );
-      ring.rotation.set(config.rotation[0], config.rotation[1], config.rotation[2]);
-      scene.add(ring);
-      ringMeshes.push(ring);
-      ringMaterials.push(material);
-    }
 
     this.markers = this.createMarkers(THREE, countries);
     const starField = this.createStarField(THREE);
@@ -432,8 +408,8 @@ export class WorldFlagGlobe implements AfterViewInit {
     this.globeGroup = globeGroup;
     this.atmosphereMaterial = atmosphereMaterial;
     this.shellMaterial = shellMaterial;
-    this.ringMeshes = ringMeshes;
-    this.ringMaterials = ringMaterials;
+    this.ringMeshes = [];
+    this.ringMaterials = [];
     this.hoveredMarker = null;
     this.lastVisibleCount = -1;
     this.zone.runOutsideAngular(() => this.startLoop());
@@ -543,8 +519,8 @@ export class WorldFlagGlobe implements AfterViewInit {
 
     const surfaceGlowMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.04,
-      size: 0.0192,
+      alphaTest: 0.08,
+      size: 0.0114,
       vertexColors: true,
       transparent: true,
       opacity: 0,
@@ -584,9 +560,9 @@ export class WorldFlagGlobe implements AfterViewInit {
 
     const boundaryGlowMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.04,
+      alphaTest: 0.08,
       color: 0x2fe8ff,
-      size: 0.0076,
+      size: 0.0046,
       transparent: true,
       opacity: 0,
       sizeAttenuation: true,
@@ -617,26 +593,12 @@ export class WorldFlagGlobe implements AfterViewInit {
     hoverCountryField.visible = false;
     hoverCountryField.frustumCulled = false;
 
-    const hoverBeaconMaterial = new THREE.MeshBasicMaterial({
-      color: 0x9ff6ff,
-      transparent: true,
-      opacity: 0,
-      blending: THREE.AdditiveBlending,
-    });
-    const hoverBeacon = new THREE.Mesh(
-      new THREE.SphereGeometry(0.045, 18, 18),
-      hoverBeaconMaterial,
-    );
-    hoverBeacon.visible = false;
-    hoverBeacon.renderOrder = 7;
-
     globeGroup.add(
       surfaceGlowField,
       surfaceField,
       boundaryGlowField,
       boundaryField,
       hoverCountryField,
-      hoverBeacon,
     );
 
     this.surfaceField = surfaceField;
@@ -649,8 +611,6 @@ export class WorldFlagGlobe implements AfterViewInit {
     this.boundaryGlowMaterial = boundaryGlowMaterial;
     this.hoverCountryField = hoverCountryField;
     this.hoverCountryMaterial = hoverCountryMaterial;
-    this.hoverBeacon = hoverBeacon;
-    this.hoverBeaconMaterial = hoverBeaconMaterial;
     this.surfaceCountryIndices = surfaceCountryIndices;
     this.surfacePositionsByCountry = new Map(
       [...countryPositions.entries()].map(([countryIndex, coords]) => [
@@ -801,23 +761,13 @@ export class WorldFlagGlobe implements AfterViewInit {
       }
 
       const shimmer = (Math.sin(performance.now() * 0.00115) + 1) * 0.5;
-      this.ringMeshes.forEach((ring, index) => {
-        const drift = 0.00042 + index * 0.00013;
-        ring.rotation.x += drift * 0.28;
-        ring.rotation.y += drift * 0.44;
-        ring.rotation.z -= drift * 0.22;
-      });
 
       if (this.atmosphereMaterial) {
-        this.atmosphereMaterial.opacity = 0.08 + this.introState.progress * 0.13;
-      }
-
-      for (const material of this.ringMaterials) {
-        material.opacity = 0.08 + this.introState.progress * 0.14;
+        this.atmosphereMaterial.opacity = 0.012 + this.introState.progress * 0.026;
       }
 
       if (this.shellMaterial && 'opacity' in this.shellMaterial) {
-        this.shellMaterial.opacity = 0.006 + this.introState.progress * 0.018;
+        this.shellMaterial.opacity = 0.0004 + this.introState.progress * 0.0014;
       }
 
       if (this.surfaceMaterial) {
@@ -825,7 +775,8 @@ export class WorldFlagGlobe implements AfterViewInit {
       }
 
       if (this.surfaceGlowMaterial) {
-        this.surfaceGlowMaterial.opacity = 0.11 + this.introState.progress * (0.22 + shimmer * 0.1);
+        this.surfaceGlowMaterial.opacity =
+          0.01 + this.introState.progress * (0.05 + shimmer * 0.018);
       }
 
       if (this.boundaryMaterial) {
@@ -834,7 +785,7 @@ export class WorldFlagGlobe implements AfterViewInit {
 
       if (this.boundaryGlowMaterial) {
         this.boundaryGlowMaterial.opacity =
-          0.04 + this.introState.progress * (0.1 + shimmer * 0.06);
+          0.006 + this.introState.progress * (0.02 + shimmer * 0.01);
       }
 
       this.renderer.render(this.scene, this.camera);
@@ -933,16 +884,11 @@ export class WorldFlagGlobe implements AfterViewInit {
     const overlay = this.hoverFlagCardRef()?.nativeElement;
     const hovered = this.hoveredMarker;
     const hoverCountryMaterial = this.hoverCountryMaterial;
-    const hoverBeacon = this.hoverBeacon;
-    const hoverBeaconMaterial = this.hoverBeaconMaterial;
 
-    if (!hovered || !hoverCountryMaterial || !hoverBeacon || !hoverBeaconMaterial) {
+    if (!hovered || !hoverCountryMaterial) {
       if (overlay) {
         overlay.style.opacity = '0';
         overlay.style.transform = 'translate3d(-999px, -999px, 0) scale(0.9)';
-      }
-      if (hoverBeacon) {
-        hoverBeacon.visible = false;
       }
       if (this.hoverCountryField) {
         this.hoverCountryField.visible = false;
@@ -963,11 +909,6 @@ export class WorldFlagGlobe implements AfterViewInit {
     }
     hoverCountryMaterial.opacity = Math.min(0.22 + opacity * 0.58 + boost * 0.16, 0.92);
     hoverCountryMaterial.size = 0.011 + opacity * 0.004 + boost * 0.003;
-
-    hoverBeacon.visible = opacity > 0.02;
-    hoverBeacon.position.copy(worldNormal.clone().multiplyScalar(1.642));
-    hoverBeacon.scale.setScalar(0.76 + opacity * 0.9 + boost * 0.75);
-    hoverBeaconMaterial.opacity = Math.min(0.08 + opacity * 0.34 + boost * 0.22, 0.82);
 
     if (!overlay) {
       return;
@@ -1075,8 +1016,6 @@ export class WorldFlagGlobe implements AfterViewInit {
     this.boundaryMaterial = null;
     this.boundaryGlowMaterial = null;
     this.hoverCountryMaterial = null;
-    this.hoverBeacon = null;
-    this.hoverBeaconMaterial = null;
     this.ringMeshes = [];
     this.ringMaterials = [];
     this.markers = [];
