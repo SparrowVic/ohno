@@ -6,6 +6,7 @@ import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { NavigationService } from '../../../core/services/navigation-service';
 import { buildCategoryThemeVars } from '../../../shared/category-theme';
+import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
@@ -26,7 +27,7 @@ interface PageStat {
 
 @Component({
   selector: 'app-algorithms-page',
-  imports: [AlgorithmCard, NgStyle],
+  imports: [AlgorithmCard, NgStyle, ShaderCardEffect],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

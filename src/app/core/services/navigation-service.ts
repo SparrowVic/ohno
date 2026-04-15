@@ -3,7 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-import { NavTab, NavTabId, SidebarGroup, SidebarItem } from '../models/navigation';
+import {
+  NavTab,
+  NavTabId,
+  SidebarFilter,
+  SidebarGroup,
+  SidebarItem,
+} from '../models/navigation';
 import { AlgorithmRegistry } from '../../features/algorithms/registry/algorithm-registry';
 import { StructureRegistry } from '../../features/structures/registry/structure-registry';
 
@@ -429,6 +435,11 @@ const DEFAULT_ACTIVE_ITEM_KEY: Record<SidebarTabId, string> = {
   structures: 'catalog:all-structures',
 };
 
+const TAB_BASE_PATH: Record<SidebarTabId, string> = {
+  algorithms: '/algorithms',
+  structures: '/structures',
+};
+
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
   private readonly router = inject(Router);
@@ -497,6 +508,19 @@ export class NavigationService {
       if (tabId === 'playground') return;
 
       const groups = this.sidebarGroups();
+      const routedKey = this.findItemKeyByRoute(tabId, groups, this.currentUrl());
+      if (routedKey) {
+        this.activeItemState.update((state) =>
+          state[tabId] === routedKey
+            ? state
+            : {
+                ...state,
+                [tabId]: routedKey,
+              },
+        );
+        return;
+      }
+
       const activeKey = this.activeItemKey();
       if (this.findItemByKey(groups, activeKey)) return;
 
@@ -520,10 +544,18 @@ export class NavigationService {
     const tabId = this.activeTabId();
     if (tabId === 'playground') return;
 
+    const key = `${groupId}:${itemId}`;
+    const item = this.getItemByKey(this.sidebarGroups(), key);
+    if (!item) return;
+
     this.activeItemState.update((state) => ({
       ...state,
-      [tabId]: `${groupId}:${itemId}`,
+      [tabId]: key,
     }));
+
+    void this.router.navigate([TAB_BASE_PATH[tabId]], {
+      queryParams: this.filterToQueryParams(item.filter),
+    });
   }
 
   private buildSidebarGroups(
@@ -553,6 +585,100 @@ export class NavigationService {
       }
     }
     return null;
+  }
+
+  private getItemByKey(groups: readonly SidebarGroup[], key: string): SidebarItem | null {
+    for (const group of groups) {
+      for (const item of group.items) {
+        if (`${group.id}:${item.id}` === key) {
+          return item;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private findItemKeyByRoute(
+    tabId: SidebarTabId,
+    groups: readonly SidebarGroup[],
+    url: string,
+  ): string | null {
+    const routeFilter = this.getFilterFromUrl(tabId, url);
+    if (!routeFilter) {
+      return null;
+    }
+
+    return this.findItemKeyByFilter(groups, routeFilter);
+  }
+
+  private getFilterFromUrl(tabId: SidebarTabId, url: string): SidebarFilter | null {
+    const parsed = this.router.parseUrl(url);
+    const primary = parsed.root.children['primary'];
+    const segments = primary?.segments.map((segment) => segment.path) ?? [];
+    const expected = TAB_BASE_PATH[tabId].replace(/^\//, '');
+
+    if (segments.length !== 1 || segments[0] !== expected) {
+      return null;
+    }
+
+    const category = parsed.queryParams['category'];
+    const subcategory = parsed.queryParams['subcategory'];
+
+    return {
+      category: typeof category === 'string' && category.length > 0 ? category : undefined,
+      subcategory:
+        typeof subcategory === 'string' && subcategory.length > 0 ? subcategory : undefined,
+    };
+  }
+
+  private findItemKeyByFilter(
+    groups: readonly SidebarGroup[],
+    filterValue: SidebarFilter,
+  ): string | null {
+    const exactKey = this.findMatchingItemKey(groups, filterValue);
+    if (exactKey) {
+      return exactKey;
+    }
+
+    if (filterValue.category && filterValue.subcategory) {
+      return this.findMatchingItemKey(groups, { category: filterValue.category });
+    }
+
+    return this.findMatchingItemKey(groups, {});
+  }
+
+  private findMatchingItemKey(
+    groups: readonly SidebarGroup[],
+    filterValue: SidebarFilter,
+  ): string | null {
+    for (const group of groups) {
+      for (const item of group.items) {
+        const itemFilter = item.filter;
+        if (
+          itemFilter.category === filterValue.category &&
+          itemFilter.subcategory === filterValue.subcategory
+        ) {
+          return `${group.id}:${item.id}`;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private filterToQueryParams(filterValue: SidebarFilter): Record<string, string> {
+    const queryParams: Record<string, string> = {};
+
+    if (filterValue.category) {
+      queryParams['category'] = filterValue.category;
+    }
+
+    if (filterValue.subcategory) {
+      queryParams['subcategory'] = filterValue.subcategory;
+    }
+
+    return queryParams;
   }
 
   private firstItemKey(groups: readonly SidebarGroup[]): string | null {

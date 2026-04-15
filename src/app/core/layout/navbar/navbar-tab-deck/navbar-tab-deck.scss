@@ -444,15 +444,48 @@
   }
 }
 
+@keyframes nav-pill-sheen {
+  0% {
+    transform: translateX(-155%) skewX(-20deg);
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 0.18;
+  }
+
+  52% {
+    opacity: 0.58;
+  }
+
+  100% {
+    transform: translateX(155%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+@keyframes nav-current-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* ─── Pill Variant ─────────────────────────────────────────────────────────── */
 
 .tab-deck--pill {
-  --pill-fill:
-    linear-gradient(135deg, rgba(var(--chrome-accent-rgb), 0.32), rgba(var(--chrome-accent-alt-rgb), 0.2));
-  --pill-fill-text: #faf7ff;
-  --nav-color-1: rgba(var(--chrome-accent-rgb), 0.9);
+  --pill-fill: linear-gradient(
+    135deg,
+    rgba(var(--chrome-accent-rgb), 0.94) 0%,
+    rgba(var(--chrome-accent-alt-rgb), 0.54) 100%
+  );
+  --pill-fill-text: #f0ecff;
+  --nav-color-1: rgba(var(--chrome-accent-rgb), 0.95);
   --nav-color-2: rgba(var(--chrome-accent-alt-rgb), 0.9);
-  --nav-color-3: rgba(212, 246, 255, 0.92);
+  --nav-color-3: rgba(200, 180, 255, 0.92);
   --nav-color-4: rgba(255, 255, 255, 0.9);
   min-width: unset;
 }
@@ -466,19 +499,68 @@
     rgba(9, 12, 18, 0.52);
   backdrop-filter: blur(16px) saturate(1.08);
   -webkit-backdrop-filter: blur(16px) saturate(1.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--chrome-accent-rgb), 0.32);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     0 10px 22px rgba(0, 0, 0, 0.16),
-    0 0 0 1px rgba(var(--chrome-accent-rgb), 0.05),
-    0 0 24px rgba(var(--chrome-accent-alt-rgb), 0.03);
+    0 0 0 1px rgba(var(--chrome-accent-rgb), 0.1),
+    0 0 32px rgba(var(--chrome-accent-rgb), 0.1),
+    0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.06);
 }
 
 .tab-deck--pill .tab-deck__item {
   position: relative;
   color: rgba(255, 255, 255, 0.64);
   isolation: isolate;
-  transition: color 0.24s ease;
+  transition:
+    color 0.24s ease,
+    filter 0.24s ease,
+    transform 0.24s ease;
+}
+
+.tab-deck--pill .tab-deck__item::before,
+.tab-deck--pill .tab-deck__item::after {
+  content: '';
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.28s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tab-deck--pill .tab-deck__item::before {
+  inset: -4px;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 16% 50%, rgba(var(--chrome-accent-rgb), 0.2), transparent 42%),
+    radial-gradient(circle at 82% 50%, rgba(var(--chrome-accent-alt-rgb), 0.18), transparent 42%);
+  filter: blur(10px);
+  transform: scale(0.92);
+}
+
+.tab-deck--pill .tab-deck__item::after {
+  inset: -1px;
+  z-index: 1;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(var(--chrome-accent-rgb), 0.04),
+    rgba(var(--chrome-accent-rgb), 0.72) 18%,
+    rgba(var(--chrome-accent-alt-rgb), 0.78) 34%,
+    rgba(255, 255, 255, 0.2) 48%,
+    rgba(var(--chrome-accent-alt-rgb), 0.12) 62%,
+    rgba(var(--chrome-accent-rgb), 0.64) 82%,
+    rgba(var(--chrome-accent-rgb), 0.04)
+  );
+  transform: scale(0.96);
+  animation: nav-current-ring 4.8s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 .tab-deck--pill .tab-deck__item:hover {
@@ -501,6 +583,7 @@
   text-transform: uppercase;
   white-space: nowrap;
   color: inherit;
+  z-index: 2;
 }
 
 .tab-deck--pill .tab-deck__hover-circle {
@@ -514,14 +597,38 @@
   z-index: 0;
   will-change: clip-path;
   box-shadow:
-    inset 0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.24),
-    0 8px 16px rgba(var(--chrome-accent-rgb), 0.12),
-    0 0 22px rgba(var(--chrome-accent-alt-rgb), 0.12);
+    inset 0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 8px 22px rgba(var(--chrome-accent-rgb), 0.38),
+    0 0 32px rgba(var(--chrome-accent-rgb), 0.28),
+    0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.2);
+}
+
+.tab-deck--pill .tab-deck__hover-circle::before {
+  content: '';
+  position: absolute;
+  inset: -18% -32%;
+  background: linear-gradient(
+    112deg,
+    transparent 22%,
+    rgba(255, 255, 255, 0.06) 34%,
+    rgba(255, 255, 255, 0.46) 48%,
+    rgba(var(--chrome-accent-alt-rgb), 0.24) 54%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: translateX(-155%) skewX(-20deg);
 }
 
 .tab-deck--pill .tab-deck__item:hover .tab-deck__hover-circle,
 .tab-deck--pill .tab-deck__item.is-active .tab-deck__hover-circle {
   clip-path: circle(150% at 50% 100%);
+}
+
+.tab-deck--pill .tab-deck__item:hover .tab-deck__hover-circle::before,
+.tab-deck--pill .tab-deck__item.is-active .tab-deck__hover-circle::before {
+  opacity: 1;
+  animation: nav-pill-sheen 3.6s linear infinite;
 }
 
 .tab-deck--pill .tab-deck__label-stack {
@@ -563,9 +670,29 @@
 
 .tab-deck--pill .tab-deck__item.is-active {
   filter:
-    drop-shadow(0 4px 12px rgba(var(--chrome-accent-rgb), 0.14))
-    drop-shadow(0 0 12px rgba(var(--chrome-accent-alt-rgb), 0.12));
+    drop-shadow(0 0 16px rgba(var(--chrome-accent-rgb), 0.36))
+    drop-shadow(0 0 12px rgba(var(--chrome-accent-alt-rgb), 0.18));
   transform: translateY(-1px) scale(1.01);
+}
+
+.tab-deck--pill .tab-deck__item.is-active::before,
+.tab-deck--pill .tab-deck__item.is-active::after {
+  opacity: 1;
+}
+
+.tab-deck--pill .tab-deck__item.is-active::before {
+  transform: scale(1);
+}
+
+.tab-deck--pill .tab-deck__item.is-active .tab-deck__label-hover {
+  color: var(--chrome-accent-ink);
+  text-shadow:
+    0 0 12px rgba(var(--chrome-accent-rgb), 0.22),
+    0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.1);
+}
+
+.tab-deck--pill .tab-deck__item:hover:not(.is-active) {
+  filter: drop-shadow(0 0 12px rgba(var(--chrome-accent-rgb), 0.22));
 }
 
 .tab-deck--pill .tab-deck__item a:focus-visible {
@@ -629,5 +756,12 @@
 
   .tab-deck--pill .tab-deck__list {
     padding: 6px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-deck--pill .tab-deck__item::after,
+  .tab-deck--pill .tab-deck__hover-circle::before {
+    animation: none;
   }
 }

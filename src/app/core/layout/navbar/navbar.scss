@@ -77,11 +77,7 @@
   width: 100%;
   padding: 2px 4px 2px 0;
   min-width: 0;
-  transition: transform 0.22s ease;
-}
-
-.navbar__brand:hover {
-  transform: translateY(-1px);
+  transition: filter 0.22s ease, opacity 0.22s ease;
 }
 
 .navbar__brand-logo {
@@ -94,17 +90,16 @@
     drop-shadow(0 0 16px rgba(var(--chrome-accent-rgb), 0.08))
     drop-shadow(0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.05));
   transition:
-    transform 0.22s ease,
     filter 0.22s ease,
     opacity 0.22s ease;
 }
 
 .navbar__brand:hover .navbar__brand-logo {
-  transform: translateY(-1px) scale(1.01);
+  opacity: 0.985;
   filter:
-    drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2))
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.18))
     drop-shadow(0 0 18px rgba(var(--chrome-accent-rgb), 0.1))
-    drop-shadow(0 0 22px rgba(var(--chrome-accent-alt-rgb), 0.08));
+    drop-shadow(0 0 24px rgba(var(--chrome-accent-alt-rgb), 0.08));
 }
 
 .navbar__actions {
