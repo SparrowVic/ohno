@@ -9,7 +9,7 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
@@ -2209,7 +2209,7 @@ function humanizeLabel(value: string): string {
 
 @Component({
   selector: 'app-algorithm-detail',
-  imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar],
+  imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar, RouterLink],
   templateUrl: './algorithm-detail.html',
   styleUrl: './algorithm-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,9 +7,7 @@
   position: relative;
   border: 0.5px solid var(--border);
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, rgba(184, 213, 110, 0.07), transparent 34%),
-    linear-gradient(180deg, rgba(23, 24, 26, 0.98), rgba(13, 14, 15, 0.98));
+  background: rgba(17, 18, 20, 0.78);
   box-shadow: var(--panel-shadow-soft);
 }
 
@@ -223,9 +221,7 @@
 .side-accordion__item {
   border-radius: 18px;
   border: 0.5px solid rgba(255, 255, 255, 0.05);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
-    rgba(12, 13, 14, 0.58);
+  background: rgba(12, 13, 14, 0.58);
   overflow: hidden;
   transition:
     border-color 160ms ease,
@@ -234,9 +230,7 @@
 
   &--open {
     border-color: rgba(184, 213, 110, 0.12);
-    background:
-      linear-gradient(180deg, rgba(184, 213, 110, 0.08), rgba(184, 213, 110, 0.02)),
-      rgba(14, 15, 16, 0.76);
+    background: rgba(14, 15, 16, 0.76);
     box-shadow: inset 0 0 0 1px rgba(184, 213, 110, 0.04);
   }
 }
@@ -319,9 +313,7 @@
   overflow: hidden;
   border-radius: 16px;
   border: 0.5px solid rgba(255, 255, 255, 0.05);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.008)),
-    rgba(11, 12, 13, 0.54);
+  background: rgba(11, 12, 13, 0.54);
 }
 
 .side-content {
@@ -332,9 +324,7 @@
   flex-direction: column;
   border-radius: 20px;
   border: 0.5px solid rgba(255, 255, 255, 0.05);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.008)),
-    rgba(11, 12, 13, 0.54);
+  background: rgba(11, 12, 13, 0.54);
   scrollbar-gutter: stable both-edges;
 }
 
