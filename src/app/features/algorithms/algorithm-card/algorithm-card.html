@@ -54,7 +54,9 @@
 
       <div class="card__preview-meta">
         <span class="card__preview-chip">{{ previewLabel() }}</span>
-        <span class="card__preview-hint">{{ previewHint() }}</span>
+        @if (previewHint(); as hint) {
+          <span class="card__preview-hint">{{ hint }}</span>
+        }
       </div>
     </div>
 
@@ -68,14 +70,16 @@
     </dl>
 
     <div class="card__footer">
-      <div class="card__tags">
-        @for (tag of displayTags(); track tag) {
-          <span class="tag">{{ tag }}</span>
-        }
-        @if (hiddenTagsCount() > 0) {
-          <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
-        }
-      </div>
+      @if (displayTags().length > 0 || hiddenTagsCount() > 0) {
+        <div class="card__tags">
+          @for (tag of displayTags(); track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+          @if (hiddenTagsCount() > 0) {
+            <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
+          }
+        </div>
+      }
 
       <span class="card__cta">{{ ctaLabel() }}</span>
     </div>
@@ -135,7 +139,9 @@
 
       <div class="card__preview-meta">
         <span class="card__preview-chip">{{ previewLabel() }}</span>
-        <span class="card__preview-hint">{{ previewHint() }}</span>
+        @if (previewHint(); as hint) {
+          <span class="card__preview-hint">{{ hint }}</span>
+        }
       </div>
     </div>
 
@@ -149,14 +155,16 @@
     </dl>
 
     <div class="card__footer">
-      <div class="card__tags">
-        @for (tag of displayTags(); track tag) {
-          <span class="tag">{{ tag }}</span>
-        }
-        @if (hiddenTagsCount() > 0) {
-          <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
-        }
-      </div>
+      @if (displayTags().length > 0 || hiddenTagsCount() > 0) {
+        <div class="card__tags">
+          @for (tag of displayTags(); track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+          @if (hiddenTagsCount() > 0) {
+            <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
+          }
+        </div>
+      }
 
       <span class="card__cta">{{ ctaLabel() }}</span>
     </div>

@@ -29,6 +29,50 @@ interface CardMetric {
   readonly value: string;
 }
 
+function normalizeCardValue(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[–—]/g, '-')
+    .replace(/\s+/g, '')
+    .trim();
+}
+
+function isComplexityNotation(value: string): boolean {
+  return /(?:^|[^a-z])(o|θ|ω)\s*\(/iu.test(value);
+}
+
+function buildSemanticTags(algorithm: AlgorithmItem): readonly string[] {
+  const complexityValues = new Set(
+    [
+      algorithm.complexity.timeBest,
+      algorithm.complexity.timeAverage,
+      algorithm.complexity.timeWorst,
+      algorithm.complexity.space,
+    ].map(normalizeCardValue),
+  );
+
+  const seen = new Set<string>();
+
+  return algorithm.tags.filter((tag) => {
+    const normalized = normalizeCardValue(tag);
+
+    if (!normalized) {
+      return false;
+    }
+
+    if (isComplexityNotation(tag) || complexityValues.has(normalized)) {
+      return false;
+    }
+
+    if (seen.has(normalized)) {
+      return false;
+    }
+
+    seen.add(normalized);
+    return true;
+  });
+}
+
 function formatFacetLabel(value: string): string {
   return value
     .split('-')
@@ -158,14 +202,15 @@ export class AlgorithmCard implements AfterViewInit {
   );
   readonly previewHint = computed(() =>
     this.algorithm().implemented
-      ? this.algorithm().complexity.timeAverage
+      ? null
       : this.language.activeLang() === APP_LANG.EN
         ? 'Interactive walkthrough planned'
         : 'Planowana interaktywna wizualizacja',
   );
-  readonly displayTags = computed(() => this.algorithm().tags.slice(0, 3));
+  readonly semanticTags = computed(() => buildSemanticTags(this.algorithm()));
+  readonly displayTags = computed(() => this.semanticTags().slice(0, 3));
   readonly hiddenTagsCount = computed(
-    () => this.algorithm().tags.length - this.displayTags().length,
+    () => this.semanticTags().length - this.displayTags().length,
   );
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
