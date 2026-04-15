@@ -2,7 +2,7 @@
   display: block;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .code-shell {
@@ -10,23 +10,31 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: visible;
 }
 
 .code-toolbar {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
+  min-height: 30px;
   padding: 10px 10px 8px;
+  overflow: visible;
+  z-index: 3;
 }
 
-.code-language-switcher {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.code-toolbar__dial {
+  // TODO: move the language dial into a dedicated overlay/portal layer so it never risks clipping
+  // against inspector bounds on narrower layouts and doesn't need local stacking workarounds here.
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
 }
 
-.code-language-switcher__button,
+.code-toolbar__copy,
 .code-copy-button {
   display: inline-flex;
   align-items: center;
@@ -48,20 +56,10 @@
     box-shadow 160ms ease;
 }
 
-.code-language-switcher__button:hover,
 .code-copy-button:hover {
   border-color: rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
-}
-
-.code-language-switcher__button--active {
-  border-color: rgba(184, 213, 110, 0.24);
-  background:
-    linear-gradient(180deg, rgba(184, 213, 110, 0.16), rgba(184, 213, 110, 0.06)),
-    rgba(255, 255, 255, 0.03);
-  color: var(--text-primary);
-  box-shadow: 0 0 0 1px rgba(184, 213, 110, 0.08) inset;
 }
 
 .code-copy-button {
@@ -186,11 +184,23 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .code-language-switcher__button,
   .code-copy-button,
   :host ::ng-deep .code-panel__render-line,
   :host ::ng-deep .code-panel__fold-toggle,
   :host ::ng-deep .code-panel__fold-toggle svg {
     transition: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .code-toolbar {
+    padding-bottom: 6px;
+  }
+
+  .code-copy-button {
+    height: 28px;
+    padding: 0 10px;
+    gap: 6px;
+    font-size: 10px;
   }
 }

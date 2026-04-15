@@ -14,31 +14,36 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faJava, faPython } from '@fortawesome/free-brands-svg-icons';
-import { faCheck, faCode, faCopy } from '@fortawesome/pro-solid-svg-icons';
+import { faCheck, faCopy } from '@fortawesome/pro-solid-svg-icons';
 
 import { CodeHighlightService } from '../../../../shared/code-highlight.service';
+import {
+  CodeLanguageDial,
+  CodeLanguageDialOption,
+} from '../../../../shared/code-language-dial/code-language-dial';
 import { CodeLanguage, CodeLine, CodeRegion, CodeVariant, CodeVariantMap } from '../../models/detail';
 
-interface CodeLanguageOption {
-  readonly language: CodeLanguage;
-  readonly label: string;
-  readonly icon: IconDefinition;
-}
-
-const LANGUAGE_META: Record<CodeLanguage, Omit<CodeLanguageOption, 'language'>> = {
-  typescript: { label: 'TS', icon: faCode },
-  python: { label: 'Python', icon: faPython },
-  csharp: { label: 'C#', icon: faCode },
-  java: { label: 'Java', icon: faJava },
-  cpp: { label: 'C/C++', icon: faCode },
-  plaintext: { label: 'Text', icon: faCode },
+const LANGUAGE_LABELS: Record<CodeLanguage, string> = {
+  typescript: 'TypeScript',
+  python: 'Python',
+  csharp: 'C#',
+  java: 'Java',
+  cpp: 'C/C++',
+  plaintext: 'Text',
 };
+
+const SUGGESTED_LANGUAGE_OPTIONS: readonly CodeLanguageDialOption[] = [
+  { id: 'javascript', label: 'JavaScript', disabled: true, hint: 'Coming soon' },
+  { id: 'go', label: 'Go', disabled: true, hint: 'Coming soon' },
+  { id: 'rust', label: 'Rust', disabled: true, hint: 'Coming soon' },
+  { id: 'swift', label: 'Swift', disabled: true, hint: 'Coming soon' },
+  { id: 'php', label: 'PHP', disabled: true, hint: 'Coming soon' },
+  { id: 'kotlin', label: 'Kotlin', disabled: true, hint: 'Coming soon' },
+];
 
 @Component({
   selector: 'app-code-panel',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, CodeLanguageDial],
   templateUrl: './code-panel.html',
   styleUrl: './code-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,12 +69,15 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
     copy: faCopy,
     check: faCheck,
   };
-  protected readonly availableLanguages = computed<readonly CodeLanguageOption[]>(() => {
-    return Object.values(this.variantMap()).map((variant) => ({
-      language: variant.language,
-      label: LANGUAGE_META[variant.language].label,
-      icon: LANGUAGE_META[variant.language].icon,
-    }));
+  protected readonly availableLanguages = computed<readonly CodeLanguageDialOption[]>(() => {
+    return [
+      ...Object.values(this.variantMap()).map((variant) => ({
+        id: variant.language,
+        language: variant.language,
+        label: LANGUAGE_LABELS[variant.language],
+      })),
+      ...SUGGESTED_LANGUAGE_OPTIONS,
+    ];
   });
   protected readonly activeVariant = computed<CodeVariant>(() => {
     const variants = this.variantMap();

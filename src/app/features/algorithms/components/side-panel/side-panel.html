@@ -173,7 +173,7 @@
 
             @if (isAccordionSectionExpanded(tab.id)) {
               <div class="side-accordion__body" [id]="'accordion-panel-' + tab.id">
-                <div class="side-accordion__panel">
+                <div class="side-accordion__panel" [class.side-accordion__panel--code]="tab.id === 'code'">
                   <ng-container *ngTemplateOutlet="tabPanel; context: { id: tab.id }" />
                 </div>
               </div>
@@ -200,7 +200,7 @@
         }
       </div>
 
-      <div class="side-content">
+      <div class="side-content" [class.side-content--code]="activeTab() === 'code'">
         <ng-container *ngTemplateOutlet="tabPanel; context: { id: activeTab() }" />
       </div>
     }

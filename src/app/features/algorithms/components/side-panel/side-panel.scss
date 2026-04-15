@@ -316,6 +316,10 @@
   background: rgba(11, 12, 13, 0.54);
 }
 
+.side-accordion__panel--code {
+  overflow: visible;
+}
+
 .side-content {
   flex: 1;
   min-height: 0;
@@ -326,6 +330,10 @@
   border: 0.5px solid rgba(255, 255, 255, 0.05);
   background: rgba(11, 12, 13, 0.54);
   scrollbar-gutter: stable both-edges;
+}
+
+.side-content--code {
+  overflow: visible;
 }
 
 @media (max-width: 1080px) {
