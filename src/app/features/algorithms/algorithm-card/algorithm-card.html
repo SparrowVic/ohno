@@ -1,5 +1,9 @@
 @if (algorithm().implemented) {
-  <a class="card" [routerLink]="['/algorithms', algorithm().id]">
+  <a class="card" [ngStyle]="cardStyle()" [routerLink]="['/algorithms', algorithm().id]">
+    <span class="card__wash" [ngStyle]="washStyle()" aria-hidden="true"></span>
+    <span class="card__blob card__blob--primary" [ngStyle]="primaryBlobStyle()" aria-hidden="true"></span>
+    <span class="card__blob card__blob--secondary" [ngStyle]="secondaryBlobStyle()" aria-hidden="true"></span>
+
     <div class="card__eyebrow">
       <span class="card__section">{{ facetLabel() }}</span>
       <span class="card__availability card__availability--live">{{ statusLabel() }}</span>
@@ -51,7 +55,11 @@
     </div>
   </a>
 } @else {
-  <article class="card card--disabled" aria-disabled="true">
+  <article class="card card--disabled" [ngStyle]="cardStyle()" aria-disabled="true">
+    <span class="card__wash" [ngStyle]="washStyle()" aria-hidden="true"></span>
+    <span class="card__blob card__blob--primary" [ngStyle]="primaryBlobStyle()" aria-hidden="true"></span>
+    <span class="card__blob card__blob--secondary" [ngStyle]="secondaryBlobStyle()" aria-hidden="true"></span>
+
     <div class="card__eyebrow">
       <span class="card__section">{{ facetLabel() }}</span>
       <span class="card__availability card__availability--planned">{{ statusLabel() }}</span>

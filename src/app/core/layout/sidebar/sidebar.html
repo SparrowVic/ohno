@@ -5,6 +5,7 @@
         <div
           class="sidebar__solo"
           [class.sidebar__solo--active]="isActive(group.id, group.items[0].id)"
+          [ngStyle]="getGroupThemeVars(group.id)"
         >
           <button
             type="button"
@@ -24,6 +25,7 @@
           class="sidebar__group"
           [class.sidebar__group--expanded]="isExpanded(group.id)"
           [class.sidebar__group--active]="isGroupActive(group.id)"
+          [ngStyle]="getGroupThemeVars(group.id)"
         >
           <button
             type="button"

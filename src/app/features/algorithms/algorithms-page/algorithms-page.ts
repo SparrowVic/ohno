@@ -1,9 +1,11 @@
+import { NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { NavigationService } from '../../../core/services/navigation-service';
+import { buildCategoryThemeVars } from '../../../shared/category-theme';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
@@ -13,6 +15,7 @@ type DifficultyFilter = 'all' | Difficulty;
 interface PillOption {
   readonly value: DifficultyFilter;
   readonly label: string;
+  readonly tone: DifficultyFilter;
 }
 
 interface PageStat {
@@ -23,7 +26,7 @@ interface PageStat {
 
 @Component({
   selector: 'app-algorithms-page',
-  imports: [AlgorithmCard],
+  imports: [AlgorithmCard, NgStyle],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,16 +39,38 @@ export class AlgorithmsPage {
   readonly pills = computed<readonly PillOption[]>(() => {
     const lang = this.language.activeLang();
     return [
-      { value: 'all', label: lang === APP_LANG.EN ? 'All' : 'Wszystkie' },
-      { value: Difficulty.Easy, label: getDifficultyLabel(Difficulty.Easy, lang) },
-      { value: Difficulty.Medium, label: getDifficultyLabel(Difficulty.Medium, lang) },
-      { value: Difficulty.Hard, label: getDifficultyLabel(Difficulty.Hard, lang) },
-      { value: Difficulty.UltraHard, label: getDifficultyLabel(Difficulty.UltraHard, lang) },
+      { value: 'all', label: lang === APP_LANG.EN ? 'All' : 'Wszystkie', tone: 'all' },
+      {
+        value: Difficulty.Easy,
+        label: getDifficultyLabel(Difficulty.Easy, lang),
+        tone: Difficulty.Easy,
+      },
+      {
+        value: Difficulty.Medium,
+        label: getDifficultyLabel(Difficulty.Medium, lang),
+        tone: Difficulty.Medium,
+      },
+      {
+        value: Difficulty.Hard,
+        label: getDifficultyLabel(Difficulty.Hard, lang),
+        tone: Difficulty.Hard,
+      },
+      {
+        value: Difficulty.UltraHard,
+        label: getDifficultyLabel(Difficulty.UltraHard, lang),
+        tone: Difficulty.UltraHard,
+      },
     ];
   });
 
   private readonly difficultyFilter = signal<DifficultyFilter>('all');
   readonly activeDifficulty = this.difficultyFilter.asReadonly();
+  readonly activeCategory = computed(
+    () => this.navigation.activeItem()?.filter.category ?? 'overview',
+  );
+  readonly pageThemeStyle = computed<Record<string, string>>(() =>
+    buildCategoryThemeVars(this.activeCategory(), 'page'),
+  );
 
   readonly title = computed(() => this.navigation.activeItem()?.sectionTitle ?? 'Algorithms');
 

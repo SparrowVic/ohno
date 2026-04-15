@@ -1,3 +1,4 @@
+import { NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,6 +10,7 @@ import {
 } from '@angular/core';
 
 import { NavigationService } from '../../services/navigation-service';
+import { buildCategoryThemeVars } from '../../../shared/category-theme';
 import { NavIcon, NavIconName } from './nav-icon';
 
 const GROUP_ICON_MAP: Record<string, NavIconName> = {
@@ -29,7 +31,7 @@ const GROUP_ICON_MAP: Record<string, NavIconName> = {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [NavIcon],
+  imports: [NavIcon, NgStyle],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,5 +100,9 @@ export class Sidebar {
   getCategoryCount(groupId: string): number {
     const group = this.groups().find((g) => g.id === groupId);
     return group?.items[0]?.count ?? 0;
+  }
+
+  getGroupThemeVars(groupId: string): Record<string, string> {
+    return buildCategoryThemeVars(groupId, 'group');
   }
 }

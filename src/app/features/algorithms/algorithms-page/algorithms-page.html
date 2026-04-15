@@ -1,4 +1,4 @@
-<section class="page">
+<section class="page" [ngStyle]="pageThemeStyle()">
   <header class="page__hero">
     <div class="page__hero-copy">
       <span class="page__eyebrow">{{ heroEyebrow() }}</span>
@@ -31,6 +31,11 @@
         <button
           type="button"
           class="pill"
+          [class.pill--all]="pill.tone === 'all'"
+          [class.pill--easy]="pill.tone === 'easy'"
+          [class.pill--medium]="pill.tone === 'medium'"
+          [class.pill--hard]="pill.tone === 'hard'"
+          [class.pill--ultra-hard]="pill.tone === 'ultra-hard'"
           [class.pill--active]="activeDifficulty() === pill.value"
           (click)="selectDifficulty(pill.value)"
         >
