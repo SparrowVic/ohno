@@ -26,46 +26,137 @@
       <p class="page__results-subtitle">{{ resultsSubtitle() }}</p>
     </div>
 
-    <div class="filter-pills">
-      @for (pill of pills(); track pill.value) {
-        <button
-          type="button"
-          class="pill"
-          [class.pill--all]="pill.tone === 'all'"
-          [class.pill--easy]="pill.tone === 'easy'"
-          [class.pill--medium]="pill.tone === 'medium'"
-          [class.pill--hard]="pill.tone === 'hard'"
-          [class.pill--ultra-hard]="pill.tone === 'ultra-hard'"
-          [class.pill--active]="activeDifficulty() === pill.value"
-          [attr.aria-pressed]="activeDifficulty() === pill.value"
-          (click)="selectDifficulty(pill.value)"
-        >
-          @if (pill.tone === 'ultra-hard' && activeDifficulty() === pill.value) {
-            <app-shader-card-effect
-              class="pill__shader"
-              seed="insane-filter-pill"
-              color="#ff7a2f"
-              [positionX]="0.5"
-              [positionY]="0.01"
-              [speed]="0.4"
-              [scale]="3.3"
-              [effectRadius]="0.94"
-              [effectBoost]="0.28"
-              [edgeMin]="0.08"
-              [edgeMax]="0.78"
-              [falloffPower]="2.1"
-              [noiseScale]="1.06"
-              [widthFactor]="1.54"
-              [waveAmount]="0.07"
-              [branchIntensity]="2.05"
-              [verticalExtent]="1.54"
-              [horizontalExtent]="1.34"
-              [blur]="2.2"
-              [opacity]="0.42"
-            ></app-shader-card-effect>
+    <div class="page__filter-stack">
+      <div class="page__filters">
+        <div class="filter-pills">
+          @for (pill of pills(); track pill.value) {
+            <button
+              type="button"
+              class="pill"
+              [class.pill--all]="pill.tone === 'all'"
+              [class.pill--easy]="pill.tone === 'easy'"
+              [class.pill--medium]="pill.tone === 'medium'"
+              [class.pill--hard]="pill.tone === 'hard'"
+              [class.pill--ultra-hard]="pill.tone === 'ultra-hard'"
+              [class.pill--active]="activeDifficulty() === pill.value"
+              [attr.aria-pressed]="activeDifficulty() === pill.value"
+              (click)="selectDifficulty(pill.value)"
+            >
+              @if (pill.tone === 'ultra-hard' && activeDifficulty() === pill.value) {
+                <app-shader-card-effect
+                  class="pill__shader"
+                  seed="insane-filter-pill"
+                  color="#ff7a2f"
+                  [positionX]="0.5"
+                  [positionY]="0.01"
+                  [speed]="0.4"
+                  [scale]="3.3"
+                  [effectRadius]="0.94"
+                  [effectBoost]="0.28"
+                  [edgeMin]="0.08"
+                  [edgeMax]="0.78"
+                  [falloffPower]="2.1"
+                  [noiseScale]="1.06"
+                  [widthFactor]="1.54"
+                  [waveAmount]="0.07"
+                  [branchIntensity]="2.05"
+                  [verticalExtent]="1.54"
+                  [horizontalExtent]="1.34"
+                  [blur]="2.2"
+                  [opacity]="0.42"
+                ></app-shader-card-effect>
+              }
+              <span class="pill__label">{{ pill.label }}</span>
+            </button>
           }
-          <span class="pill__label">{{ pill.label }}</span>
-        </button>
+        </div>
+
+        <div class="traits-filter">
+          <button
+            type="button"
+            class="traits-trigger"
+            [class.traits-trigger--active]="activeTraits().length > 0"
+            [class.traits-trigger--open]="traitsOpen()"
+            [attr.aria-expanded]="traitsOpen()"
+            (click)="toggleTraitsOpen()"
+          >
+            <span class="traits-trigger__label">{{ traitsTriggerLabel() }}</span>
+            @if (activeTraits().length > 0) {
+              <span class="traits-trigger__count">{{ activeTraits().length }}</span>
+            }
+          </button>
+
+          @if (traitsOpen()) {
+            <div class="traits-popover">
+              <header class="traits-popover__header">
+                <div class="traits-popover__copy">
+                  <p class="traits-popover__eyebrow">{{ traitsTriggerLabel() }}</p>
+                  <h3 class="traits-popover__title">{{ traitsPopoverTitle() }}</h3>
+                  <p class="traits-popover__subtitle">{{ traitsPopoverSubtitle() }}</p>
+                </div>
+
+                @if (activeTraits().length > 0) {
+                  <button
+                    type="button"
+                    class="traits-popover__clear"
+                    (click)="clearTraits()"
+                  >
+                    {{ clearTraitsLabel() }}
+                  </button>
+                }
+              </header>
+
+              @if (traitGroups().length > 0) {
+                <div class="traits-popover__groups">
+                  @for (group of traitGroups(); track group.id) {
+                    <section class="traits-group">
+                      <h4 class="traits-group__title">{{ group.label }}</h4>
+
+                      <div class="traits-group__options">
+                        @for (option of group.options; track option.id) {
+                          <label class="trait-option">
+                            <input
+                              type="checkbox"
+                              class="trait-option__input"
+                              [checked]="option.selected"
+                              (change)="toggleTrait(option.id)"
+                            />
+                            <span class="trait-option__check"></span>
+                            <span class="trait-option__copy">
+                              <span class="trait-option__label">{{ option.label }}</span>
+                              <span class="trait-option__count">{{ option.count }}</span>
+                            </span>
+                          </label>
+                        }
+                      </div>
+                    </section>
+                  }
+                </div>
+              } @else {
+                <p class="traits-popover__empty">{{ traitsEmptyLabel() }}</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (activeTraitOptions().length > 0) {
+        <div class="active-traits">
+          @for (trait of activeTraitOptions(); track trait.id) {
+            <button
+              type="button"
+              class="active-trait"
+              (click)="toggleTrait(trait.id)"
+            >
+              <span class="active-trait__label">{{ trait.label }}</span>
+              <span class="active-trait__remove">×</span>
+            </button>
+          }
+
+          <button type="button" class="active-traits__clear" (click)="clearTraits()">
+            {{ clearTraitsLabel() }}
+          </button>
+        </div>
       }
     </div>
   </section>
@@ -77,6 +168,6 @@
       }
     </div>
   } @else {
-    <div class="page__empty">No algorithms match the current filters.</div>
+    <div class="page__empty">{{ emptyLabel() }}</div>
   }
 </section>
