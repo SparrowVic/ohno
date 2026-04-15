@@ -255,7 +255,7 @@ const DIVIDE_CONQUER_JAVA = buildStructuredCode(
   }
   //#endregion divide-conquer-dp
 
-  //#region helper collapsed
+  //#region helper-block helper collapsed
   private static long cost(long[] prefix, int left, int right) {
       long segmentSum = prefix[right] - prefix[left - 1];
       return segmentSum * segmentSum;
@@ -295,7 +295,7 @@ const DIVIDE_CONQUER_JAVA = buildStructuredCode(
       solveRow(n, prefix, previous, choice, group, current, left, mid - 1, optLeft, bestSplit);
       solveRow(n, prefix, previous, choice, group, current, mid + 1, right, bestSplit, optRight);
   }
-  //#endregion helper
+  //#endregion helper-block
   `,
   'java',
 );
@@ -340,7 +340,7 @@ const DIVIDE_CONQUER_CPP = buildStructuredCode(
   }
   //#endregion divide-conquer-dp
 
-  //#region helper collapsed
+  //#region helper-block helper collapsed
   long long cost(const std::vector<long long>& prefix, int left, int right) {
       long long segmentSum = prefix[right] - prefix[left - 1];
       return segmentSum * segmentSum;
@@ -379,7 +379,7 @@ const DIVIDE_CONQUER_CPP = buildStructuredCode(
       solveRow(prefix, previous, choice, group, current, left, mid - 1, optLeft, bestSplit);
       solveRow(prefix, previous, choice, group, current, mid + 1, right, bestSplit, optRight);
   }
-  //#endregion helper
+  //#endregion helper-block
   `,
   'cpp',
 );
