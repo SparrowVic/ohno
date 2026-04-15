@@ -50,11 +50,7 @@
     </div>
 
     <div class="card__preview" aria-hidden="true">
-      <div class="card__preview-bars">
-        @for (bar of previewBars(); track $index) {
-          <span class="card__preview-bar" [style.height.%]="bar"></span>
-        }
-      </div>
+      <app-algorithm-card-preview class="card__preview-art" [algorithm]="algorithm()" />
 
       <div class="card__preview-meta">
         <span class="card__preview-chip">{{ previewLabel() }}</span>
@@ -135,11 +131,7 @@
     </div>
 
     <div class="card__preview card__preview--disabled" aria-hidden="true">
-      <div class="card__preview-bars">
-        @for (bar of previewBars(); track $index) {
-          <span class="card__preview-bar" [style.height.%]="bar"></span>
-        }
-      </div>
+      <app-algorithm-card-preview class="card__preview-art" [algorithm]="algorithm()" />
 
       <div class="card__preview-meta">
         <span class="card__preview-chip">{{ previewLabel() }}</span>

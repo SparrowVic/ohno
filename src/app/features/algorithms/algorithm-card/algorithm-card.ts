@@ -21,6 +21,7 @@ import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
+import { AlgorithmCardPreview } from './algorithm-card-preview';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 
 interface CardMetric {
@@ -66,15 +67,6 @@ function createWashStyle(difficulty: Difficulty): Record<string, string> {
   };
 }
 
-function createPreviewBars(seed: string): readonly number[] {
-  const source = seed.replace(/-/g, '') || 'visual';
-
-  return Array.from({ length: 7 }, (_, index) => {
-    const code = source.charCodeAt(index % source.length);
-    return 26 + (code % 54);
-  });
-}
-
 function hashSeed(value: string, salt: number): number {
   let hash = 2166136261 ^ salt;
 
@@ -108,7 +100,7 @@ function createCardStyleVars(seed: string, difficulty: Difficulty): Record<strin
 
 @Component({
   selector: 'app-algorithm-card',
-  imports: [NgStyle, RouterLink, ShaderCardEffect],
+  imports: [NgStyle, RouterLink, ShaderCardEffect, AlgorithmCardPreview],
   templateUrl: './algorithm-card.html',
   styleUrl: './algorithm-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -175,7 +167,6 @@ export class AlgorithmCard implements AfterViewInit {
   readonly hiddenTagsCount = computed(
     () => this.algorithm().tags.length - this.displayTags().length,
   );
-  readonly previewBars = computed(() => createPreviewBars(this.algorithm().id));
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
   );
