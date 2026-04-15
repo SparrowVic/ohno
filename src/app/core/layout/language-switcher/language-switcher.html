@@ -1,11 +1,41 @@
 <div class="lang-switcher">
-  <app-lab-select
-    label="Language"
-    placeholder="Language"
-    [options]="options"
-    [compact]="true"
-    [chrome]="true"
-    [ngModel]="activeLang()"
-    (ngModelChange)="setLang($event)"
-  />
+  <button
+    type="button"
+    class="lang-switcher__trigger"
+    [class.lang-switcher__trigger--open]="open()"
+    [attr.aria-expanded]="open()"
+    aria-label="Open world flag globe"
+    (click)="toggleOpen()"
+  >
+    <span class="lang-switcher__orb" aria-hidden="true">
+      <span class="lang-switcher__orb-core"></span>
+    </span>
+
+    <span class="lang-switcher__copy">
+      <span class="lang-switcher__eyebrow">Language atlas</span>
+      <span class="lang-switcher__label">{{ activeLangLabel() }}</span>
+    </span>
+
+    <span class="lang-switcher__meta" aria-hidden="true">250</span>
+  </button>
+
+  @if (open()) {
+    <div class="lang-switcher__overlay" role="dialog" aria-modal="true" aria-label="World flag globe">
+      <button
+        #backdrop
+        type="button"
+        class="lang-switcher__backdrop"
+        aria-label="Close world flag globe"
+        (click)="close()"
+      ></button>
+
+      <div #panel class="lang-switcher__panel">
+        <button type="button" class="lang-switcher__close" aria-label="Close overlay" (click)="close()">
+          Close
+        </button>
+
+        <app-world-flag-globe />
+      </div>
+    </div>
+  }
 </div>

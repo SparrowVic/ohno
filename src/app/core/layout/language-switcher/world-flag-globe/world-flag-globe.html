@@ -1,0 +1,61 @@
+<section class="world-globe">
+  <div class="world-globe__viewport">
+    <div #canvasHost class="world-globe__canvas"></div>
+    <div #hoverFlagCard class="world-globe__hover-flag">
+      <span class="world-globe__hover-flag-emoji">{{ hoverFlag() }}</span>
+      <span class="world-globe__hover-flag-name">{{ hoverHeadline() }}</span>
+    </div>
+
+    <div #hud class="world-globe__hud">
+      <div class="world-globe__hud-top">
+        <div class="world-globe__hero">
+          <div class="world-globe__copy">
+            <p class="world-globe__eyebrow">Atlas Observatory</p>
+            <h3 class="world-globe__title">World Flag Globe</h3>
+            <p class="world-globe__subtitle">
+              Full-screen planetary atlas with real country silhouettes and neon micro-cells that
+              inherit the colors of each nation&apos;s flag.
+            </p>
+          </div>
+
+          <div class="world-globe__stats">
+            <span class="world-globe__chip">{{ surfaceDotLabel() }} country cells</span>
+            <span class="world-globe__chip">{{ boundaryDotLabel() }} boundary dots</span>
+            <span class="world-globe__chip world-globe__chip--accent"
+              >{{ markerLabel() }} flag palettes</span
+            >
+          </div>
+        </div>
+
+        <div class="world-globe__reticle" aria-hidden="true"></div>
+      </div>
+
+      <div class="world-globe__hud-bottom">
+        <div class="world-globe__badge">
+          <span class="world-globe__badge-eyebrow">Inspect</span>
+          <strong class="world-globe__badge-title">{{ hoverFlag() }} {{ hoverHeadline() }}</strong>
+          <span class="world-globe__badge-copy">{{ hoverNote() }}</span>
+        </div>
+
+        <div class="world-globe__legend">
+          <span class="world-globe__legend-pill">Hover country</span>
+          <span class="world-globe__legend-pill">Drag orbit</span>
+          <span class="world-globe__legend-pill">Wheel zoom</span>
+        </div>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="world-globe__overlay world-globe__overlay--loading">
+        <div class="world-globe__loader"></div>
+        <p>Building atlas surface…</p>
+      </div>
+    }
+
+    @if (loadError(); as error) {
+      <div class="world-globe__overlay world-globe__overlay--error">
+        <p>{{ error }}</p>
+      </div>
+    }
+  </div>
+</section>
