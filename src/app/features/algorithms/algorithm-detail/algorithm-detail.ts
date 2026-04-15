@@ -110,10 +110,20 @@ import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
 import { BINARY_SEARCH_VARIANTS_CODE } from '../data/binary-search-variants-code';
 import { BIPARTITE_CHECK_CODE } from '../data/bipartite-check-code';
 import { BRIDGES_ARTICULATION_POINTS_CODE } from '../data/bridges-articulation-points-code';
-import { BURST_BALLOONS_CODE } from '../data/burst-balloons-code';
+import {
+  BURST_BALLOONS_CODE,
+  BURST_BALLOONS_CODE_HIGHLIGHT_MAP,
+  BURST_BALLOONS_CODE_REGIONS,
+  BURST_BALLOONS_CODE_VARIANTS,
+} from '../data/burst-balloons-code';
 import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
-import { CLIMBING_STAIRS_CODE } from '../data/climbing-stairs-code';
+import {
+  CLIMBING_STAIRS_CODE,
+  CLIMBING_STAIRS_CODE_HIGHLIGHT_MAP,
+  CLIMBING_STAIRS_CODE_REGIONS,
+  CLIMBING_STAIRS_CODE_VARIANTS,
+} from '../data/climbing-stairs-code';
 import { CHROMATIC_NUMBER_CODE } from '../data/chromatic-number-code';
 import {
   CLOSEST_PAIR_OF_POINTS_CODE,
@@ -121,7 +131,12 @@ import {
   CLOSEST_PAIR_OF_POINTS_CODE_REGIONS,
   CLOSEST_PAIR_OF_POINTS_CODE_VARIANTS,
 } from '../data/closest-pair-of-points-code';
-import { COIN_CHANGE_CODE } from '../data/coin-change-code';
+import {
+  COIN_CHANGE_CODE,
+  COIN_CHANGE_CODE_HIGHLIGHT_MAP,
+  COIN_CHANGE_CODE_REGIONS,
+  COIN_CHANGE_CODE_VARIANTS,
+} from '../data/coin-change-code';
 import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
 import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
@@ -129,14 +144,44 @@ import { DFS_CODE } from '../data/dfs-code';
 import { DIJKSTRA_CODE } from '../data/dijkstra-code';
 import { DINIC_MAX_FLOW_CODE } from '../data/dinic-max-flow-code';
 import { DOMINATOR_TREE_CODE } from '../data/dominator-tree-code';
-import { DP_CONVEX_HULL_TRICK_CODE } from '../data/dp-convex-hull-trick-code';
-import { DP_ON_TREES_CODE } from '../data/dp-on-trees-code';
-import { DP_WITH_BITMASK_CODE } from '../data/dp-with-bitmask-code';
-import { DIVIDE_CONQUER_DP_OPTIMIZATION_CODE } from '../data/divide-conquer-dp-optimization-code';
+import {
+  DP_CONVEX_HULL_TRICK_CODE,
+  DP_CONVEX_HULL_TRICK_CODE_HIGHLIGHT_MAP,
+  DP_CONVEX_HULL_TRICK_CODE_REGIONS,
+  DP_CONVEX_HULL_TRICK_CODE_VARIANTS,
+} from '../data/dp-convex-hull-trick-code';
+import {
+  DP_ON_TREES_CODE,
+  DP_ON_TREES_CODE_HIGHLIGHT_MAP,
+  DP_ON_TREES_CODE_REGIONS,
+  DP_ON_TREES_CODE_VARIANTS,
+} from '../data/dp-on-trees-code';
+import {
+  DP_WITH_BITMASK_CODE,
+  DP_WITH_BITMASK_CODE_HIGHLIGHT_MAP,
+  DP_WITH_BITMASK_CODE_REGIONS,
+  DP_WITH_BITMASK_CODE_VARIANTS,
+} from '../data/dp-with-bitmask-code';
+import {
+  DIVIDE_CONQUER_DP_OPTIMIZATION_CODE,
+  DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_HIGHLIGHT_MAP,
+  DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_REGIONS,
+  DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_VARIANTS,
+} from '../data/divide-conquer-dp-optimization-code';
 import { EDMONDS_KARP_CODE } from '../data/edmonds-karp-code';
-import { EDIT_DISTANCE_CODE } from '../data/edit-distance-code';
+import {
+  EDIT_DISTANCE_CODE,
+  EDIT_DISTANCE_CODE_HIGHLIGHT_MAP,
+  EDIT_DISTANCE_CODE_REGIONS,
+  EDIT_DISTANCE_CODE_VARIANTS,
+} from '../data/edit-distance-code';
 import { EULER_PATH_CIRCUIT_CODE } from '../data/euler-path-circuit-code';
-import { FIBONACCI_DP_CODE } from '../data/fibonacci-dp-code';
+import {
+  FIBONACCI_DP_CODE,
+  FIBONACCI_DP_CODE_HIGHLIGHT_MAP,
+  FIBONACCI_DP_CODE_REGIONS,
+  FIBONACCI_DP_CODE_VARIANTS,
+} from '../data/fibonacci-dp-code';
 import { FLOYD_WARSHALL_CODE } from '../data/floyd-warshall-code';
 import { FLOOD_FILL_CODE } from '../data/flood-fill-code';
 import {
@@ -147,8 +192,18 @@ import {
 } from '../data/half-plane-intersection-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
-import { KNAPSACK_01_CODE } from '../data/knapsack-01-code';
-import { KNUTH_DP_OPTIMIZATION_CODE } from '../data/knuth-dp-optimization-code';
+import {
+  KNAPSACK_01_CODE,
+  KNAPSACK_01_CODE_HIGHLIGHT_MAP,
+  KNAPSACK_01_CODE_REGIONS,
+  KNAPSACK_01_CODE_VARIANTS,
+} from '../data/knapsack-01-code';
+import {
+  KNUTH_DP_OPTIMIZATION_CODE,
+  KNUTH_DP_OPTIMIZATION_CODE_HIGHLIGHT_MAP,
+  KNUTH_DP_OPTIMIZATION_CODE_REGIONS,
+  KNUTH_DP_OPTIMIZATION_CODE_VARIANTS,
+} from '../data/knuth-dp-optimization-code';
 import { KRUSKALS_MST_CODE } from '../data/kruskals-mst-code';
 import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
 import {
@@ -157,16 +212,36 @@ import {
   LINE_INTERSECTION_CODE_REGIONS,
   LINE_INTERSECTION_CODE_VARIANTS,
 } from '../data/line-intersection-code';
-import { LONGEST_COMMON_SUBSEQUENCE_CODE } from '../data/longest-common-subsequence-code';
-import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-subsequence-code';
-import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
+import {
+  LONGEST_COMMON_SUBSEQUENCE_CODE,
+  LONGEST_COMMON_SUBSEQUENCE_CODE_HIGHLIGHT_MAP,
+  LONGEST_COMMON_SUBSEQUENCE_CODE_REGIONS,
+  LONGEST_COMMON_SUBSEQUENCE_CODE_VARIANTS,
+} from '../data/longest-common-subsequence-code';
+import {
+  LONGEST_INCREASING_SUBSEQUENCE_CODE,
+  LONGEST_INCREASING_SUBSEQUENCE_CODE_HIGHLIGHT_MAP,
+  LONGEST_INCREASING_SUBSEQUENCE_CODE_REGIONS,
+  LONGEST_INCREASING_SUBSEQUENCE_CODE_VARIANTS,
+} from '../data/longest-increasing-subsequence-code';
+import {
+  LONGEST_PALINDROMIC_SUBSEQUENCE_CODE,
+  LONGEST_PALINDROMIC_SUBSEQUENCE_CODE_HIGHLIGHT_MAP,
+  LONGEST_PALINDROMIC_SUBSEQUENCE_CODE_REGIONS,
+  LONGEST_PALINDROMIC_SUBSEQUENCE_CODE_VARIANTS,
+} from '../data/longest-palindromic-subsequence-code';
 import {
   MANACHER_CODE,
   MANACHER_CODE_HIGHLIGHT_MAP,
   MANACHER_CODE_REGIONS,
   MANACHER_CODE_VARIANTS,
 } from '../data/manacher-code';
-import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
+import {
+  MATRIX_CHAIN_MULTIPLICATION_CODE,
+  MATRIX_CHAIN_MULTIPLICATION_CODE_HIGHLIGHT_MAP,
+  MATRIX_CHAIN_MULTIPLICATION_CODE_REGIONS,
+  MATRIX_CHAIN_MULTIPLICATION_CODE_VARIANTS,
+} from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
 import {
@@ -181,7 +256,12 @@ import {
   KMP_PATTERN_MATCHING_CODE_REGIONS,
   KMP_PATTERN_MATCHING_CODE_VARIANTS,
 } from '../data/kmp-pattern-matching-code';
-import { PROFILE_DP_CODE } from '../data/profile-dp-code';
+import {
+  PROFILE_DP_CODE,
+  PROFILE_DP_CODE_HIGHLIGHT_MAP,
+  PROFILE_DP_CODE_REGIONS,
+  PROFILE_DP_CODE_VARIANTS,
+} from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
@@ -191,11 +271,26 @@ import {
   RABIN_KARP_CODE_REGIONS,
   RABIN_KARP_CODE_VARIANTS,
 } from '../data/rabin-karp-code';
-import { REGEX_MATCHING_DP_CODE } from '../data/regex-matching-dp-code';
+import {
+  REGEX_MATCHING_DP_CODE,
+  REGEX_MATCHING_DP_CODE_HIGHLIGHT_MAP,
+  REGEX_MATCHING_DP_CODE_REGIONS,
+  REGEX_MATCHING_DP_CODE_VARIANTS,
+} from '../data/regex-matching-dp-code';
 import { SELECTION_SORT_CODE } from '../data/selection-sort-code';
 import { SHELL_SORT_CODE } from '../data/shell-sort-code';
-import { SOS_DP_CODE } from '../data/sos-dp-code';
-import { SUBSET_SUM_CODE } from '../data/subset-sum-code';
+import {
+  SOS_DP_CODE,
+  SOS_DP_CODE_HIGHLIGHT_MAP,
+  SOS_DP_CODE_REGIONS,
+  SOS_DP_CODE_VARIANTS,
+} from '../data/sos-dp-code';
+import {
+  SUBSET_SUM_CODE,
+  SUBSET_SUM_CODE_HIGHLIGHT_MAP,
+  SUBSET_SUM_CODE_REGIONS,
+  SUBSET_SUM_CODE_VARIANTS,
+} from '../data/subset-sum-code';
 import { STEINER_TREE_CODE } from '../data/steiner-tree-code';
 import {
   SWEEP_LINE_CODE,
@@ -206,7 +301,12 @@ import {
 import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
-import { TRAVELING_SALESMAN_DP_CODE } from '../data/traveling-salesman-dp-code';
+import {
+  TRAVELING_SALESMAN_DP_CODE,
+  TRAVELING_SALESMAN_DP_CODE_HIGHLIGHT_MAP,
+  TRAVELING_SALESMAN_DP_CODE_REGIONS,
+  TRAVELING_SALESMAN_DP_CODE_VARIANTS,
+} from '../data/traveling-salesman-dp-code';
 import { UNION_FIND_CODE } from '../data/union-find-code';
 import {
   VORONOI_DIAGRAM_CODE,
@@ -214,7 +314,12 @@ import {
   VORONOI_DIAGRAM_CODE_REGIONS,
   VORONOI_DIAGRAM_CODE_VARIANTS,
 } from '../data/voronoi-diagram-code';
-import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
+import {
+  WILDCARD_MATCHING_CODE,
+  WILDCARD_MATCHING_CODE_HIGHLIGHT_MAP,
+  WILDCARD_MATCHING_CODE_REGIONS,
+  WILDCARD_MATCHING_CODE_VARIANTS,
+} from '../data/wildcard-matching-code';
 import {
   Z_ALGORITHM_CODE,
   Z_ALGORITHM_CODE_HIGHLIGHT_MAP,
@@ -1377,6 +1482,9 @@ function createMatrixViewConfig<TScenario>(args: {
 
 function createDpViewConfig<TScenario>(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeRegions?: readonly CodeRegion[];
+  readonly codeHighlightMap?: Readonly<Record<number, number>>;
+  readonly codeVariants?: CodeVariantMap;
   readonly createScenario: (size: number, presetId: string) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
   readonly legendItems: readonly LegendItem[];
@@ -1391,6 +1499,9 @@ function createDpViewConfig<TScenario>(args: {
   return {
     kind: 'dp',
     codeLines: args.codeLines,
+    codeRegions: args.codeRegions,
+    codeHighlightMap: args.codeHighlightMap,
+    codeVariants: args.codeVariants,
     variantOptions: DP_VARIANT_OPTIONS,
     defaultVariant: 'dp',
     sizeOptions,
@@ -1868,6 +1979,9 @@ const HUNGARIAN_VIEW_CONFIG = createMatrixViewConfig<HungarianScenario>({
 
 const KNAPSACK_VIEW_CONFIG = createDpViewConfig<KnapsackScenario>({
   codeLines: KNAPSACK_01_CODE,
+  codeRegions: KNAPSACK_01_CODE_REGIONS,
+  codeHighlightMap: KNAPSACK_01_CODE_HIGHLIGHT_MAP,
+  codeVariants: KNAPSACK_01_CODE_VARIANTS,
   createScenario: (size, presetId) => createKnapsackScenario(size, presetId),
   generator: knapsack01Generator,
   legendItems: KNAPSACK_LEGEND,
@@ -1880,6 +1994,9 @@ const KNAPSACK_VIEW_CONFIG = createDpViewConfig<KnapsackScenario>({
 
 const LCS_VIEW_CONFIG = createDpViewConfig<LcsScenario>({
   codeLines: LONGEST_COMMON_SUBSEQUENCE_CODE,
+  codeRegions: LONGEST_COMMON_SUBSEQUENCE_CODE_REGIONS,
+  codeHighlightMap: LONGEST_COMMON_SUBSEQUENCE_CODE_HIGHLIGHT_MAP,
+  codeVariants: LONGEST_COMMON_SUBSEQUENCE_CODE_VARIANTS,
   createScenario: (size, presetId) => createLcsScenario(size, presetId),
   generator: longestCommonSubsequenceGenerator,
   legendItems: LCS_LEGEND,
@@ -1892,6 +2009,9 @@ const LCS_VIEW_CONFIG = createDpViewConfig<LcsScenario>({
 
 const EDIT_DISTANCE_VIEW_CONFIG = createDpViewConfig<EditDistanceScenario>({
   codeLines: EDIT_DISTANCE_CODE,
+  codeRegions: EDIT_DISTANCE_CODE_REGIONS,
+  codeHighlightMap: EDIT_DISTANCE_CODE_HIGHLIGHT_MAP,
+  codeVariants: EDIT_DISTANCE_CODE_VARIANTS,
   createScenario: (size, presetId) => createEditDistanceScenario(size, presetId),
   generator: editDistanceGenerator,
   legendItems: EDIT_DISTANCE_LEGEND,
@@ -1904,6 +2024,9 @@ const EDIT_DISTANCE_VIEW_CONFIG = createDpViewConfig<EditDistanceScenario>({
 
 const MATRIX_CHAIN_VIEW_CONFIG = createDpViewConfig<MatrixChainScenario>({
   codeLines: MATRIX_CHAIN_MULTIPLICATION_CODE,
+  codeRegions: MATRIX_CHAIN_MULTIPLICATION_CODE_REGIONS,
+  codeHighlightMap: MATRIX_CHAIN_MULTIPLICATION_CODE_HIGHLIGHT_MAP,
+  codeVariants: MATRIX_CHAIN_MULTIPLICATION_CODE_VARIANTS,
   createScenario: (size, presetId) => createMatrixChainScenario(size, presetId),
   generator: matrixChainMultiplicationGenerator,
   legendItems: MATRIX_CHAIN_LEGEND,
@@ -1916,6 +2039,9 @@ const MATRIX_CHAIN_VIEW_CONFIG = createDpViewConfig<MatrixChainScenario>({
 
 const COIN_CHANGE_VIEW_CONFIG = createDpViewConfig<CoinChangeScenario>({
   codeLines: COIN_CHANGE_CODE,
+  codeRegions: COIN_CHANGE_CODE_REGIONS,
+  codeHighlightMap: COIN_CHANGE_CODE_HIGHLIGHT_MAP,
+  codeVariants: COIN_CHANGE_CODE_VARIANTS,
   createScenario: (size, presetId) => createCoinChangeScenario(size, presetId),
   generator: coinChangeGenerator,
   legendItems: COIN_CHANGE_LEGEND,
@@ -1928,6 +2054,9 @@ const COIN_CHANGE_VIEW_CONFIG = createDpViewConfig<CoinChangeScenario>({
 
 const SUBSET_SUM_VIEW_CONFIG = createDpViewConfig<SubsetSumScenario>({
   codeLines: SUBSET_SUM_CODE,
+  codeRegions: SUBSET_SUM_CODE_REGIONS,
+  codeHighlightMap: SUBSET_SUM_CODE_HIGHLIGHT_MAP,
+  codeVariants: SUBSET_SUM_CODE_VARIANTS,
   createScenario: (size, presetId) => createSubsetSumScenario(size, presetId),
   generator: subsetSumGenerator,
   legendItems: SUBSET_SUM_LEGEND,
@@ -1940,6 +2069,9 @@ const SUBSET_SUM_VIEW_CONFIG = createDpViewConfig<SubsetSumScenario>({
 
 const LPS_VIEW_CONFIG = createDpViewConfig<LpsScenario>({
   codeLines: LONGEST_PALINDROMIC_SUBSEQUENCE_CODE,
+  codeRegions: LONGEST_PALINDROMIC_SUBSEQUENCE_CODE_REGIONS,
+  codeHighlightMap: LONGEST_PALINDROMIC_SUBSEQUENCE_CODE_HIGHLIGHT_MAP,
+  codeVariants: LONGEST_PALINDROMIC_SUBSEQUENCE_CODE_VARIANTS,
   createScenario: (size, presetId) => createLpsScenario(size, presetId),
   generator: longestPalindromicSubsequenceGenerator,
   legendItems: LPS_LEGEND,
@@ -1952,6 +2084,9 @@ const LPS_VIEW_CONFIG = createDpViewConfig<LpsScenario>({
 
 const BURST_BALLOONS_VIEW_CONFIG = createDpViewConfig<BurstBalloonsScenario>({
   codeLines: BURST_BALLOONS_CODE,
+  codeRegions: BURST_BALLOONS_CODE_REGIONS,
+  codeHighlightMap: BURST_BALLOONS_CODE_HIGHLIGHT_MAP,
+  codeVariants: BURST_BALLOONS_CODE_VARIANTS,
   createScenario: (size, presetId) => createBurstBalloonsScenario(size, presetId),
   generator: burstBalloonsGenerator,
   legendItems: BURST_BALLOONS_LEGEND,
@@ -1964,6 +2099,9 @@ const BURST_BALLOONS_VIEW_CONFIG = createDpViewConfig<BurstBalloonsScenario>({
 
 const WILDCARD_VIEW_CONFIG = createDpViewConfig<WildcardMatchingScenario>({
   codeLines: WILDCARD_MATCHING_CODE,
+  codeRegions: WILDCARD_MATCHING_CODE_REGIONS,
+  codeHighlightMap: WILDCARD_MATCHING_CODE_HIGHLIGHT_MAP,
+  codeVariants: WILDCARD_MATCHING_CODE_VARIANTS,
   createScenario: (size, presetId) => createWildcardMatchingScenario(size, presetId),
   generator: wildcardMatchingGenerator,
   legendItems: WILDCARD_LEGEND,
@@ -1976,6 +2114,9 @@ const WILDCARD_VIEW_CONFIG = createDpViewConfig<WildcardMatchingScenario>({
 
 const LIS_VIEW_CONFIG = createDpViewConfig<LisScenario>({
   codeLines: LONGEST_INCREASING_SUBSEQUENCE_CODE,
+  codeRegions: LONGEST_INCREASING_SUBSEQUENCE_CODE_REGIONS,
+  codeHighlightMap: LONGEST_INCREASING_SUBSEQUENCE_CODE_HIGHLIGHT_MAP,
+  codeVariants: LONGEST_INCREASING_SUBSEQUENCE_CODE_VARIANTS,
   createScenario: (size, presetId) => createLisScenario(size, presetId),
   generator: longestIncreasingSubsequenceGenerator,
   legendItems: LIS_LEGEND,
@@ -1988,6 +2129,9 @@ const LIS_VIEW_CONFIG = createDpViewConfig<LisScenario>({
 
 const CLIMBING_STAIRS_VIEW_CONFIG = createDpViewConfig<ClimbingStairsScenario>({
   codeLines: CLIMBING_STAIRS_CODE,
+  codeRegions: CLIMBING_STAIRS_CODE_REGIONS,
+  codeHighlightMap: CLIMBING_STAIRS_CODE_HIGHLIGHT_MAP,
+  codeVariants: CLIMBING_STAIRS_CODE_VARIANTS,
   createScenario: (size, presetId) => createClimbingStairsScenario(size, presetId),
   generator: climbingStairsGenerator,
   legendItems: CLIMBING_STAIRS_LEGEND,
@@ -2000,6 +2144,9 @@ const CLIMBING_STAIRS_VIEW_CONFIG = createDpViewConfig<ClimbingStairsScenario>({
 
 const FIBONACCI_VIEW_CONFIG = createDpViewConfig<FibonacciScenario>({
   codeLines: FIBONACCI_DP_CODE,
+  codeRegions: FIBONACCI_DP_CODE_REGIONS,
+  codeHighlightMap: FIBONACCI_DP_CODE_HIGHLIGHT_MAP,
+  codeVariants: FIBONACCI_DP_CODE_VARIANTS,
   createScenario: (size, presetId) => createFibonacciScenario(size, presetId),
   generator: fibonacciDpGenerator,
   legendItems: FIBONACCI_LEGEND,
@@ -2012,6 +2159,9 @@ const FIBONACCI_VIEW_CONFIG = createDpViewConfig<FibonacciScenario>({
 
 const REGEX_VIEW_CONFIG = createDpViewConfig<RegexMatchingScenario>({
   codeLines: REGEX_MATCHING_DP_CODE,
+  codeRegions: REGEX_MATCHING_DP_CODE_REGIONS,
+  codeHighlightMap: REGEX_MATCHING_DP_CODE_HIGHLIGHT_MAP,
+  codeVariants: REGEX_MATCHING_DP_CODE_VARIANTS,
   createScenario: (size, presetId) => createRegexMatchingScenario(size, presetId),
   generator: regexMatchingDpGenerator,
   legendItems: REGEX_LEGEND,
@@ -2024,6 +2174,9 @@ const REGEX_VIEW_CONFIG = createDpViewConfig<RegexMatchingScenario>({
 
 const TSP_VIEW_CONFIG = createDpViewConfig<TravelingSalesmanScenario>({
   codeLines: TRAVELING_SALESMAN_DP_CODE,
+  codeRegions: TRAVELING_SALESMAN_DP_CODE_REGIONS,
+  codeHighlightMap: TRAVELING_SALESMAN_DP_CODE_HIGHLIGHT_MAP,
+  codeVariants: TRAVELING_SALESMAN_DP_CODE_VARIANTS,
   createScenario: (size, presetId) => createTravelingSalesmanScenario(size, presetId),
   generator: travelingSalesmanDpGenerator,
   legendItems: TSP_LEGEND,
@@ -2036,6 +2189,9 @@ const TSP_VIEW_CONFIG = createDpViewConfig<TravelingSalesmanScenario>({
 
 const SOS_VIEW_CONFIG = createDpViewConfig<SosDpScenario>({
   codeLines: SOS_DP_CODE,
+  codeRegions: SOS_DP_CODE_REGIONS,
+  codeHighlightMap: SOS_DP_CODE_HIGHLIGHT_MAP,
+  codeVariants: SOS_DP_CODE_VARIANTS,
   createScenario: (size, presetId) => createSosDpScenario(size, presetId),
   generator: sosDpGenerator,
   legendItems: SOS_LEGEND,
@@ -2048,6 +2204,9 @@ const SOS_VIEW_CONFIG = createDpViewConfig<SosDpScenario>({
 
 const PROFILE_VIEW_CONFIG = createDpViewConfig<ProfileDpScenario>({
   codeLines: PROFILE_DP_CODE,
+  codeRegions: PROFILE_DP_CODE_REGIONS,
+  codeHighlightMap: PROFILE_DP_CODE_HIGHLIGHT_MAP,
+  codeVariants: PROFILE_DP_CODE_VARIANTS,
   createScenario: (size, presetId) => createProfileDpScenario(size, presetId),
   generator: profileDpGenerator,
   legendItems: PROFILE_LEGEND,
@@ -2060,6 +2219,9 @@ const PROFILE_VIEW_CONFIG = createDpViewConfig<ProfileDpScenario>({
 
 const TREE_DP_VIEW_CONFIG = createDpViewConfig<TreeDpScenario>({
   codeLines: DP_ON_TREES_CODE,
+  codeRegions: DP_ON_TREES_CODE_REGIONS,
+  codeHighlightMap: DP_ON_TREES_CODE_HIGHLIGHT_MAP,
+  codeVariants: DP_ON_TREES_CODE_VARIANTS,
   createScenario: (size, presetId) => createTreeDpScenario(size, presetId),
   generator: dpOnTreesGenerator,
   legendItems: TREE_DP_LEGEND,
@@ -2072,6 +2234,9 @@ const TREE_DP_VIEW_CONFIG = createDpViewConfig<TreeDpScenario>({
 
 const BITMASK_DP_VIEW_CONFIG = createDpViewConfig<BitmaskDpScenario>({
   codeLines: DP_WITH_BITMASK_CODE,
+  codeRegions: DP_WITH_BITMASK_CODE_REGIONS,
+  codeHighlightMap: DP_WITH_BITMASK_CODE_HIGHLIGHT_MAP,
+  codeVariants: DP_WITH_BITMASK_CODE_VARIANTS,
   createScenario: (size, presetId) => createBitmaskDpScenario(size, presetId),
   generator: dpWithBitmaskGenerator,
   legendItems: BITMASK_DP_LEGEND,
@@ -2084,6 +2249,9 @@ const BITMASK_DP_VIEW_CONFIG = createDpViewConfig<BitmaskDpScenario>({
 
 const CHT_VIEW_CONFIG = createDpViewConfig<ChtDpScenario>({
   codeLines: DP_CONVEX_HULL_TRICK_CODE,
+  codeRegions: DP_CONVEX_HULL_TRICK_CODE_REGIONS,
+  codeHighlightMap: DP_CONVEX_HULL_TRICK_CODE_HIGHLIGHT_MAP,
+  codeVariants: DP_CONVEX_HULL_TRICK_CODE_VARIANTS,
   createScenario: (size, presetId) => createChtDpScenario(size, presetId),
   generator: dpConvexHullTrickGenerator,
   legendItems: CHT_LEGEND,
@@ -2096,6 +2264,9 @@ const CHT_VIEW_CONFIG = createDpViewConfig<ChtDpScenario>({
 
 const DIVIDE_CONQUER_VIEW_CONFIG = createDpViewConfig<DivideConquerDpScenario>({
   codeLines: DIVIDE_CONQUER_DP_OPTIMIZATION_CODE,
+  codeRegions: DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_REGIONS,
+  codeHighlightMap: DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_HIGHLIGHT_MAP,
+  codeVariants: DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_VARIANTS,
   createScenario: (size, presetId) => createDivideConquerDpScenario(size, presetId),
   generator: divideConquerDpOptimizationGenerator,
   legendItems: DIVIDE_CONQUER_LEGEND,
@@ -2108,6 +2279,9 @@ const DIVIDE_CONQUER_VIEW_CONFIG = createDpViewConfig<DivideConquerDpScenario>({
 
 const KNUTH_VIEW_CONFIG = createDpViewConfig<KnuthDpScenario>({
   codeLines: KNUTH_DP_OPTIMIZATION_CODE,
+  codeRegions: KNUTH_DP_OPTIMIZATION_CODE_REGIONS,
+  codeHighlightMap: KNUTH_DP_OPTIMIZATION_CODE_HIGHLIGHT_MAP,
+  codeVariants: KNUTH_DP_OPTIMIZATION_CODE_VARIANTS,
   createScenario: (size, presetId) => createKnuthDpScenario(size, presetId),
   generator: knuthDpOptimizationGenerator,
   legendItems: KNUTH_LEGEND,
