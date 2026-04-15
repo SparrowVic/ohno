@@ -39,11 +39,11 @@ const DIFFICULTY_THEME_MAP: Record<Difficulty, DifficultyTheme> = {
     ink: '#fff1f1',
   },
   [Difficulty.UltraHard]: {
-    accentRgb: '168 85 247',
-    accentAltRgb: '205 92 255',
-    accentStrong: '#ead8ff',
-    accentAltStrong: '#f3ddff',
-    ink: '#faf3ff',
+    accentRgb: '255 122 47',
+    accentAltRgb: '255 198 102',
+    accentStrong: '#ffd8b8',
+    accentAltStrong: '#fff0c7',
+    ink: '#fff4ea',
   },
 };
 

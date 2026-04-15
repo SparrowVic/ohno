@@ -1,11 +1,26 @@
-import { NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { NgStyle, isPlatformBrowser } from '@angular/common';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  PLATFORM_ID,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
+import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
+import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 
 interface CardMetric {
@@ -31,33 +46,23 @@ function rgbToComma(spaceSep: string): string {
 function createPrimaryBlobStyle(seed: string, difficulty: Difficulty): Record<string, string> {
   const theme = getDifficultyTheme(difficulty);
   const rgb = rgbToComma(theme.accentRgb);
+  const fromRight = hashSeed(seed, 31) % 2 === 0;
   return {
-    top: `${numberFromSeed(seed, 12, 0, 18).toFixed(1)}%`,
-    left: `${numberFromSeed(seed, 11, 6, 24).toFixed(1)}%`,
-    width: `${numberFromSeed(seed, 13, 168, 236).toFixed(0)}px`,
-    height: `${numberFromSeed(seed, 14, 132, 196).toFixed(0)}px`,
-    background: `radial-gradient(circle, rgba(${rgb}, 0.30) 0%, rgba(${rgb}, 0.16) 34%, rgba(${rgb}, 0.07) 58%, transparent 74%)`,
-  };
-}
-
-function createSecondaryBlobStyle(seed: string, difficulty: Difficulty): Record<string, string> {
-  const theme = getDifficultyTheme(difficulty);
-  const rgb = rgbToComma(theme.accentAltRgb);
-  return {
-    top: `${numberFromSeed(seed, 16, 58, 88).toFixed(1)}%`,
-    left: `${numberFromSeed(seed, 15, 72, 96).toFixed(1)}%`,
-    width: `${numberFromSeed(seed, 17, 132, 196).toFixed(0)}px`,
-    height: `${numberFromSeed(seed, 18, 116, 176).toFixed(0)}px`,
-    background: `radial-gradient(circle, rgba(${rgb}, 0.20) 0%, rgba(${rgb}, 0.11) 30%, rgba(${rgb}, 0.04) 54%, transparent 72%)`,
+    top: `${numberFromSeed(seed, 12, 18, 82).toFixed(1)}%`,
+    left: fromRight
+      ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
+      : `${numberFromSeed(seed, 11, -8, 10).toFixed(1)}%`,
+    width: `${numberFromSeed(seed, 13, 228, 320).toFixed(0)}px`,
+    height: `${numberFromSeed(seed, 14, 196, 286).toFixed(0)}px`,
+    background: `radial-gradient(ellipse at center, rgba(${rgb}, 0.24) 0%, rgba(${rgb}, 0.13) 36%, rgba(${rgb}, 0.05) 58%, transparent 76%)`,
   };
 }
 
 function createWashStyle(difficulty: Difficulty): Record<string, string> {
   const theme = getDifficultyTheme(difficulty);
   const rgb1 = rgbToComma(theme.accentRgb);
-  const rgb2 = rgbToComma(theme.accentAltRgb);
   return {
-    background: `linear-gradient(145deg, rgba(${rgb1}, 0.11) 0%, rgba(${rgb1}, 0.05) 34%, transparent 62%, rgba(${rgb2}, 0.06) 100%)`,
+    background: `linear-gradient(145deg, rgba(${rgb1}, 0.06) 0%, rgba(${rgb1}, 0.03) 32%, transparent 58%, rgba(${rgb1}, 0.015) 100%)`,
   };
 }
 
@@ -87,16 +92,15 @@ function numberFromSeed(seed: string, salt: number, min: number, max: number): n
 }
 
 function createCardStyleVars(seed: string, difficulty: Difficulty): Record<string, string> {
+  const fromRight = hashSeed(seed, 31) % 2 === 0;
   return {
     ...buildDifficultyThemeVars(difficulty, 'card'),
-    '--card-blob-1-x': `${numberFromSeed(seed, 11, 6, 24).toFixed(1)}%`,
-    '--card-blob-1-y': `${numberFromSeed(seed, 12, 0, 18).toFixed(1)}%`,
-    '--card-blob-1-width': `${numberFromSeed(seed, 13, 168, 236).toFixed(0)}px`,
-    '--card-blob-1-height': `${numberFromSeed(seed, 14, 132, 196).toFixed(0)}px`,
-    '--card-blob-2-x': `${numberFromSeed(seed, 15, 72, 96).toFixed(1)}%`,
-    '--card-blob-2-y': `${numberFromSeed(seed, 16, 58, 88).toFixed(1)}%`,
-    '--card-blob-2-width': `${numberFromSeed(seed, 17, 132, 196).toFixed(0)}px`,
-    '--card-blob-2-height': `${numberFromSeed(seed, 18, 116, 176).toFixed(0)}px`,
+    '--card-blob-1-x': fromRight
+      ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
+      : `${numberFromSeed(seed, 11, -8, 10).toFixed(1)}%`,
+    '--card-blob-1-y': `${numberFromSeed(seed, 12, 18, 82).toFixed(1)}%`,
+    '--card-blob-1-width': `${numberFromSeed(seed, 13, 228, 320).toFixed(0)}px`,
+    '--card-blob-1-height': `${numberFromSeed(seed, 14, 196, 286).toFixed(0)}px`,
     '--card-grid-size': `${numberFromSeed(seed, 19, 18, 25).toFixed(0)}px`,
     '--card-preview-angle': `${numberFromSeed(seed, 20, 144, 196).toFixed(0)}deg`,
   };
@@ -104,15 +108,29 @@ function createCardStyleVars(seed: string, difficulty: Difficulty): Record<strin
 
 @Component({
   selector: 'app-algorithm-card',
-  imports: [NgStyle, RouterLink],
+  imports: [NgStyle, RouterLink, ShaderCardEffect],
   templateUrl: './algorithm-card.html',
   styleUrl: './algorithm-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlgorithmCard {
+export class AlgorithmCard implements AfterViewInit {
   private readonly language = inject(AppLanguageService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly hostRef = inject(ElementRef<HTMLElement>);
+  private readonly injector = inject(Injector);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly shaderPool = inject(InsaneShaderPoolService);
+  private readonly inViewportState = signal(false);
+  private intersectionObserver: IntersectionObserver | null = null;
 
   readonly algorithm = input.required<AlgorithmItem>();
+  readonly isInsane = computed(() => this.algorithm().difficulty === Difficulty.UltraHard);
+  readonly showShader = computed(
+    () =>
+      this.isInsane() &&
+      this.inViewportState() &&
+      this.shaderPool.has(this.algorithm().id),
+  );
   readonly facetLabel = computed(() =>
     formatFacetLabel(this.algorithm().subcategory || this.algorithm().category),
   );
@@ -161,11 +179,11 @@ export class AlgorithmCard {
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
   );
+  readonly insaneShaderColor = computed(() => '#ff7a2f');
+  readonly insaneShaderPositionX = computed(() => 0.5);
+  readonly insaneShaderPositionY = computed(() => 0.052);
   readonly primaryBlobStyle = computed(() =>
     createPrimaryBlobStyle(this.algorithm().id, this.algorithm().difficulty),
-  );
-  readonly secondaryBlobStyle = computed(() =>
-    createSecondaryBlobStyle(this.algorithm().id, this.algorithm().difficulty),
   );
   readonly washStyle = computed(() => createWashStyle(this.algorithm().difficulty));
   readonly metrics = computed<readonly CardMetric[]>(() => {
@@ -181,4 +199,44 @@ export class AlgorithmCard {
       },
     ];
   });
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.intersectionObserver?.disconnect();
+      this.shaderPool.deactivate(this.algorithm().id);
+    });
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        this.inViewportState.set(entry?.isIntersecting ?? false);
+      },
+      {
+        threshold: 0.04,
+        rootMargin: '120px 0px',
+      },
+    );
+
+    this.intersectionObserver.observe(this.hostRef.nativeElement);
+
+    effect(
+      () => {
+        const id = this.algorithm().id;
+        const shouldActivate = this.isInsane() && this.inViewportState();
+        this.shaderPool.activeIds();
+
+        if (shouldActivate) {
+          this.shaderPool.activate(id);
+        } else {
+          this.shaderPool.deactivate(id);
+        }
+      },
+      { injector: this.injector },
+    );
+  }
 }

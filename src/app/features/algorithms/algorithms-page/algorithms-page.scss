@@ -161,11 +161,14 @@
 }
 
 .pill {
+  position: relative;
   min-height: 34px;
   padding: 0 13px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.03);
+  isolation: isolate;
+  overflow: hidden;
   color: var(--text-secondary);
   font-size: 11px;
   font-weight: 600;
@@ -202,6 +205,18 @@
       0 8px 20px rgba(var(--page-accent-alt-rgb, 50 217 255), 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
+}
+
+.pill::before,
+.pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.24s ease;
+  z-index: -1;
 }
 
 .pill--all.pill--active {
@@ -250,12 +265,49 @@
 
 .pill--ultra-hard.pill--active {
   border-color: rgba(var(--ultra-hard-rgb), 0.36);
-  color: #150a18;
-  background: linear-gradient(135deg, #ddc0ff, var(--ultra-hard));
+  color: #fff5ea;
+  background: linear-gradient(135deg, rgba(57, 18, 9, 0.96), rgba(114, 34, 12, 0.94));
   box-shadow:
     0 10px 18px rgba(var(--ultra-hard-rgb), 0.18),
-    0 0 18px rgba(var(--ultra-hard-rgb), 0.08),
+    0 0 18px rgba(var(--ultra-hard-rgb), 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.pill--ultra-hard.pill--active::before {
+  inset: -56% -12%;
+  opacity: 0.96;
+  background:
+    radial-gradient(circle at 34% 32%, rgba(255, 255, 255, 0.14) 0 6%, transparent 16%),
+    radial-gradient(circle at 26% 30%, rgba(255, 227, 168, 0.34) 0 12%, transparent 32%),
+    radial-gradient(circle at 54% 30%, rgba(255, 170, 88, 0.44) 0 18%, transparent 40%),
+    radial-gradient(circle at 58% 66%, rgba(255, 111, 32, 0.4) 0 18%, transparent 40%),
+    radial-gradient(circle at 24% 70%, rgba(214, 54, 18, 0.3) 0 16%, transparent 36%),
+    conic-gradient(
+      from 210deg at 50% 50%,
+      rgba(255, 209, 120, 0.0) 0deg,
+      rgba(255, 209, 120, 0.26) 52deg,
+      rgba(255, 142, 58, 0.42) 126deg,
+      rgba(255, 83, 24, 0.48) 206deg,
+      rgba(178, 41, 12, 0.36) 290deg,
+      rgba(255, 209, 120, 0.24) 360deg
+    );
+  filter: blur(7px) saturate(128%) brightness(1.04);
+  animation: insane-pill-flow 10s ease-in-out infinite;
+}
+
+.pill--ultra-hard.pill--active::after {
+  opacity: 0.82;
+  background:
+    radial-gradient(circle at 16% 52%, rgba(255, 255, 255, 0.96) 0 0.7px, transparent 2.3px),
+    radial-gradient(circle at 34% 24%, rgba(255, 236, 191, 0.92) 0 0.75px, transparent 2.4px),
+    radial-gradient(circle at 52% 66%, rgba(255, 196, 120, 0.92) 0 0.7px, transparent 2.3px),
+    radial-gradient(circle at 70% 32%, rgba(255, 138, 64, 0.9) 0 0.78px, transparent 2.5px),
+    radial-gradient(circle at 84% 58%, rgba(255, 223, 147, 0.92) 0 0.72px, transparent 2.4px);
+  filter:
+    blur(0.12px)
+    drop-shadow(0 0 6px rgba(255, 255, 255, 0.16))
+    drop-shadow(0 0 8px rgba(255, 122, 47, 0.18));
+  animation: insane-pill-sparkle 4s ease-in-out infinite;
 }
 
 .cards-grid {
@@ -269,6 +321,50 @@
   text-align: center;
   color: var(--text-tertiary);
   font-size: 13px;
+}
+
+@keyframes insane-pill-flow {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(0.98);
+  }
+
+  30% {
+    transform: rotate(92deg) scale(1.03);
+  }
+
+  62% {
+    transform: rotate(176deg) scale(1.01);
+  }
+
+  82% {
+    transform: rotate(252deg) scale(1.04);
+  }
+}
+
+@keyframes insane-pill-sparkle {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.98);
+  }
+
+  30% {
+    opacity: 0.76;
+    transform: scale(1.02);
+  }
+
+  65% {
+    opacity: 0.52;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill--ultra-hard.pill--active::before,
+  .pill--ultra-hard.pill--active::after {
+    animation: none;
+  }
 }
 
 @media (max-width: 1100px) {
