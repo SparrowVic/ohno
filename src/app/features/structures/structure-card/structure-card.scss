@@ -151,23 +151,12 @@
   pointer-events: none;
 }
 
-.card__preview-orbit {
+.card__preview-art {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-end;
-  gap: 7px;
-  height: 58px;
-}
-
-.card__preview-node {
   flex: 1;
-  min-width: 0;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(212, 181, 109, 0.86), rgba(212, 181, 109, 0.16));
-  box-shadow:
-    0 10px 16px rgba(212, 181, 109, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  min-height: 64px;
 }
 
 .card__preview-meta {

@@ -21,11 +21,7 @@
   </div>
 
   <div class="card__preview" aria-hidden="true">
-    <div class="card__preview-orbit">
-      @for (node of previewOrbit(); track $index) {
-        <span class="card__preview-node" [style.height.%]="node"></span>
-      }
-    </div>
+    <app-structure-card-preview class="card__preview-art" [structure]="structure()" />
 
     <div class="card__preview-meta">
       <span class="card__preview-chip">{{ statusLabel() }}</span>

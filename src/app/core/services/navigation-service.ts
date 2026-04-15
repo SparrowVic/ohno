@@ -426,6 +426,18 @@ const STRUCTURES_SIDEBAR: readonly SidebarGroupDefinition[] = [
         sectionTitle: 'Ordered randomized structures',
         filter: { category: 'specialized', subcategory: 'ordered' },
       },
+      {
+        id: 'set-union',
+        label: 'Set union',
+        sectionTitle: 'Disjoint set structures',
+        filter: { category: 'specialized', subcategory: 'set-union' },
+      },
+      {
+        id: 'spatial',
+        label: 'Spatial',
+        sectionTitle: 'Spatial indexing structures',
+        filter: { category: 'specialized', subcategory: 'spatial' },
+      },
     ],
   },
 ];

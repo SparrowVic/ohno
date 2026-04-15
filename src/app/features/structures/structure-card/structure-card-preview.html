@@ -1,0 +1,56 @@
+<svg class="preview-art" viewBox="0 0 320 84" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  @for (shape of spec().paths; track $index) {
+    <path
+      class="preview-art__shape preview-art__path"
+      [attr.d]="shape.d"
+      [attr.fill]="shape.fill ?? 'none'"
+      [attr.stroke]="shape.stroke ?? 'none'"
+      [attr.stroke-width]="shape.strokeWidth ?? null"
+      [attr.opacity]="shape.opacity ?? null"
+      [attr.stroke-dasharray]="shape.dasharray ?? null"
+    />
+  }
+
+  @for (shape of spec().lines; track $index) {
+    <line
+      class="preview-art__shape preview-art__line"
+      [attr.x1]="shape.x1"
+      [attr.y1]="shape.y1"
+      [attr.x2]="shape.x2"
+      [attr.y2]="shape.y2"
+      [attr.stroke]="shape.stroke"
+      [attr.stroke-width]="shape.strokeWidth ?? null"
+      [attr.opacity]="shape.opacity ?? null"
+      [attr.stroke-dasharray]="shape.dasharray ?? null"
+    />
+  }
+
+  @for (shape of spec().rects; track $index) {
+    <rect
+      class="preview-art__shape preview-art__rect"
+      [attr.x]="shape.x"
+      [attr.y]="shape.y"
+      [attr.width]="shape.width"
+      [attr.height]="shape.height"
+      [attr.rx]="shape.rx ?? null"
+      [attr.fill]="shape.fill ?? 'none'"
+      [attr.stroke]="shape.stroke ?? 'none'"
+      [attr.stroke-width]="shape.strokeWidth ?? null"
+      [attr.opacity]="shape.opacity ?? null"
+      [attr.stroke-dasharray]="shape.dasharray ?? null"
+    />
+  }
+
+  @for (shape of spec().circles; track $index) {
+    <circle
+      class="preview-art__shape preview-art__circle"
+      [attr.cx]="shape.cx"
+      [attr.cy]="shape.cy"
+      [attr.r]="shape.r"
+      [attr.fill]="shape.fill ?? 'none'"
+      [attr.stroke]="shape.stroke ?? 'none'"
+      [attr.stroke-width]="shape.strokeWidth ?? null"
+      [attr.opacity]="shape.opacity ?? null"
+    />
+  }
+</svg>

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { StructureCardPreview } from './structure-card-preview';
 import { StructureItem } from '../models/structure';
 
 function formatFacetLabel(value: string): string {
@@ -12,18 +13,9 @@ function formatFacetLabel(value: string): string {
     .join(' ');
 }
 
-function createPreviewOrbit(seed: string): readonly number[] {
-  const source = seed.replace(/-/g, '') || 'nodes';
-
-  return Array.from({ length: 5 }, (_, index) => {
-    const code = source.charCodeAt(index % source.length);
-    return 20 + (code % 56);
-  });
-}
-
 @Component({
   selector: 'app-structure-card',
-  imports: [],
+  imports: [StructureCardPreview],
   templateUrl: './structure-card.html',
   styleUrl: './structure-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,5 +61,4 @@ export class StructureCard {
   readonly hiddenTagsCount = computed(
     () => this.structure().tags.length - this.displayTags().length,
   );
-  readonly previewOrbit = computed(() => createPreviewOrbit(this.structure().id));
 }
