@@ -1,15 +1,35 @@
-<div class="code-view">
-  @for (line of lines(); track line.number) {
-    <div
-      class="code-line"
-      [class.code-line--highlight]="line.number === activeLineNumber()"
-    >
-      <span class="line-num">{{ line.number }}</span>
-      <span class="line-code">
-        @for (token of line.tokens; track $index) {
-          <span [class]="tokenClass(token.kind)">{{ token.text }}</span>
+<div class="code-shell">
+  @if (hasLines()) {
+    <div class="code-toolbar">
+      <div class="code-language-switcher">
+        @for (option of availableLanguages(); track option.language) {
+          <button
+            type="button"
+            class="code-language-switcher__button"
+            [class.code-language-switcher__button--active]="option.language === selectedLanguage()"
+            (click)="selectLanguage(option.language)"
+          >
+            <fa-icon [icon]="option.icon" />
+            <span>{{ option.label }}</span>
+          </button>
         }
-      </span>
+      </div>
+
+      <button type="button" class="code-copy-button" (click)="copyCurrentCode()">
+        <fa-icon [icon]="copied() ? icons.check : icons.copy" />
+        <span>{{ copied() ? 'Copied' : 'Copy code' }}</span>
+      </button>
     </div>
+
+    <div class="code-scroll">
+      <div
+        #renderRoot
+        class="code-render"
+        (click)="onRenderClick($event)"
+        [innerHTML]="highlightedHtml()"
+      ></div>
+    </div>
+  } @else {
+    <div class="code-empty">No code available.</div>
   }
 </div>

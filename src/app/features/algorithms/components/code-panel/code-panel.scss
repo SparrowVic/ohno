@@ -2,64 +2,195 @@
   display: block;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
-.code-view {
-  padding: 10px;
-  font-family: var(--font-mono);
+.code-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 10px 8px;
+}
+
+.code-language-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.code-language-switcher__button,
+.code-copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  padding: 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.code-language-switcher__button:hover,
+.code-copy-button:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.code-language-switcher__button--active {
+  border-color: rgba(184, 213, 110, 0.24);
+  background:
+    linear-gradient(180deg, rgba(184, 213, 110, 0.16), rgba(184, 213, 110, 0.06)),
+    rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 1px rgba(184, 213, 110, 0.08) inset;
+}
+
+.code-copy-button {
+  flex-shrink: 0;
+}
+
+.code-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 10px 10px;
+}
+
+.code-render {
+  min-width: 100%;
+}
+
+.code-empty {
+  padding: 14px 12px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+:host ::ng-deep .code-panel__shiki {
+  min-width: max-content;
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  font-family: var(--font-mono) !important;
   font-size: 11px;
   line-height: 1.45;
 }
 
-.code-line {
-  display: flex;
-  gap: 10px;
-  padding: 5px 10px;
+:host ::ng-deep .code-panel__code {
+  display: block;
+  min-width: max-content;
+}
+
+:host ::ng-deep .code-panel__render-line {
+  position: relative;
+  display: block;
+  min-width: max-content;
+  padding: 5px 10px 5px 64px;
   border-radius: 12px;
   border: 0.5px solid transparent;
+  white-space: pre;
   transition:
     background 160ms ease,
     border-color 160ms ease,
     transform 160ms ease;
-
-  &--highlight {
-    background:
-      linear-gradient(180deg, rgba(184, 213, 110, 0.12), rgba(184, 213, 110, 0.04)),
-      rgba(255, 255, 255, 0.02);
-    border-color: rgba(184, 213, 110, 0.12);
-    transform: translateX(3px);
-  }
 }
 
-.line-num {
+:host ::ng-deep .code-panel__render-line::before {
+  content: attr(data-line);
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  width: 22px;
   color: var(--text-tertiary);
-  min-width: 26px;
+  text-align: right;
   user-select: none;
   opacity: 0.7;
 }
 
-.line-code {
-  color: var(--text-secondary);
-  white-space: pre;
-  overflow-x: auto;
+:host ::ng-deep .code-panel__render-line--hidden {
+  display: none;
 }
 
-.kw {
-  color: var(--viz-window-ink);
+:host ::ng-deep .code-panel__render-line--foldable {
+  cursor: default;
 }
-.fn {
-  color: var(--viz-accent-ink);
-}
-.str {
-  color: var(--viz-success-ink);
-}
-.num {
-  color: var(--viz-ember-ink);
-}
-.cm {
+
+:host ::ng-deep .code-panel__fold-toggle {
+  position: absolute;
+  top: 3px;
+  left: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 6px;
+  padding: 0;
+  background: transparent;
   color: var(--text-tertiary);
+  transition:
+    color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
 }
-.op {
-  color: var(--viz-route-ink);
+
+:host ::ng-deep .code-panel__fold-toggle:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+:host ::ng-deep .code-panel__fold-toggle svg {
+  width: 10px;
+  height: 10px;
+  transform: rotate(90deg);
+  transition: transform 140ms ease;
+}
+
+:host ::ng-deep .code-panel__render-line--collapsed .code-panel__fold-toggle svg {
+  transform: rotate(0deg);
+}
+
+:host ::ng-deep .code-panel__fold-summary {
+  margin-left: 10px;
+  color: var(--text-tertiary);
+  opacity: 0.82;
+  font-size: 10px;
+}
+
+:host ::ng-deep .code-panel__render-line--active {
+  background:
+    linear-gradient(180deg, rgba(184, 213, 110, 0.12), rgba(184, 213, 110, 0.04)),
+    rgba(255, 255, 255, 0.02);
+  border-color: rgba(184, 213, 110, 0.12);
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-language-switcher__button,
+  .code-copy-button,
+  :host ::ng-deep .code-panel__render-line,
+  :host ::ng-deep .code-panel__fold-toggle,
+  :host ::ng-deep .code-panel__fold-toggle svg {
+    transition: none;
+  }
 }

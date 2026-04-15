@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 
 import { AlgorithmItem } from '../../models/algorithm';
-import { CodeLine, LogEntry } from '../../models/detail';
+import { CodeLine, CodeRegion, CodeVariantMap, LogEntry } from '../../models/detail';
 import { DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
 import {
@@ -126,6 +126,8 @@ function humanizeKey(value: string): string {
 export class SidePanel implements OnInit, OnDestroy {
   readonly algorithm = input.required<AlgorithmItem>();
   readonly codeLines = input.required<readonly CodeLine[]>();
+  readonly codeRegions = input<readonly CodeRegion[]>([]);
+  readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);

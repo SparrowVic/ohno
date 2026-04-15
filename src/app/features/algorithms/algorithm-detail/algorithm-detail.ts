@@ -115,7 +115,12 @@ import { BUCKET_SORT_CODE } from '../data/bucket-sort-code';
 import { BUBBLE_SORT_CODE } from '../data/bubble-sort-code';
 import { CLIMBING_STAIRS_CODE } from '../data/climbing-stairs-code';
 import { CHROMATIC_NUMBER_CODE } from '../data/chromatic-number-code';
-import { CLOSEST_PAIR_OF_POINTS_CODE } from '../data/closest-pair-of-points-code';
+import {
+  CLOSEST_PAIR_OF_POINTS_CODE,
+  CLOSEST_PAIR_OF_POINTS_CODE_HIGHLIGHT_MAP,
+  CLOSEST_PAIR_OF_POINTS_CODE_REGIONS,
+  CLOSEST_PAIR_OF_POINTS_CODE_VARIANTS,
+} from '../data/closest-pair-of-points-code';
 import { COIN_CHANGE_CODE } from '../data/coin-change-code';
 import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
@@ -134,14 +139,24 @@ import { EULER_PATH_CIRCUIT_CODE } from '../data/euler-path-circuit-code';
 import { FIBONACCI_DP_CODE } from '../data/fibonacci-dp-code';
 import { FLOYD_WARSHALL_CODE } from '../data/floyd-warshall-code';
 import { FLOOD_FILL_CODE } from '../data/flood-fill-code';
-import { HALF_PLANE_INTERSECTION_CODE } from '../data/half-plane-intersection-code';
+import {
+  HALF_PLANE_INTERSECTION_CODE,
+  HALF_PLANE_INTERSECTION_CODE_HIGHLIGHT_MAP,
+  HALF_PLANE_INTERSECTION_CODE_REGIONS,
+  HALF_PLANE_INTERSECTION_CODE_VARIANTS,
+} from '../data/half-plane-intersection-code';
 import { HEAP_SORT_CODE } from '../data/heap-sort-code';
 import { INSERTION_SORT_CODE } from '../data/insertion-sort-code';
 import { KNAPSACK_01_CODE } from '../data/knapsack-01-code';
 import { KNUTH_DP_OPTIMIZATION_CODE } from '../data/knuth-dp-optimization-code';
 import { KRUSKALS_MST_CODE } from '../data/kruskals-mst-code';
 import { LINEAR_SEARCH_CODE } from '../data/linear-search-code';
-import { LINE_INTERSECTION_CODE } from '../data/line-intersection-code';
+import {
+  LINE_INTERSECTION_CODE,
+  LINE_INTERSECTION_CODE_HIGHLIGHT_MAP,
+  LINE_INTERSECTION_CODE_REGIONS,
+  LINE_INTERSECTION_CODE_VARIANTS,
+} from '../data/line-intersection-code';
 import { LONGEST_COMMON_SUBSEQUENCE_CODE } from '../data/longest-common-subsequence-code';
 import { LONGEST_INCREASING_SUBSEQUENCE_CODE } from '../data/longest-increasing-subsequence-code';
 import { LONGEST_PALINDROMIC_SUBSEQUENCE_CODE } from '../data/longest-palindromic-subsequence-code';
@@ -149,7 +164,12 @@ import { MANACHER_CODE } from '../data/manacher-code';
 import { MATRIX_CHAIN_MULTIPLICATION_CODE } from '../data/matrix-chain-multiplication-code';
 import { MERGE_SORT_CODE } from '../data/merge-sort-code';
 import { MIN_COST_MAX_FLOW_CODE } from '../data/min-cost-max-flow-code';
-import { MINKOWSKI_SUM_CODE } from '../data/minkowski-sum-code';
+import {
+  MINKOWSKI_SUM_CODE,
+  MINKOWSKI_SUM_CODE_HIGHLIGHT_MAP,
+  MINKOWSKI_SUM_CODE_REGIONS,
+  MINKOWSKI_SUM_CODE_VARIANTS,
+} from '../data/minkowski-sum-code';
 import { KMP_PATTERN_MATCHING_CODE } from '../data/kmp-pattern-matching-code';
 import { PROFILE_DP_CODE } from '../data/profile-dp-code';
 import { PRIMS_MST_CODE } from '../data/prims-mst-code';
@@ -162,13 +182,23 @@ import { SHELL_SORT_CODE } from '../data/shell-sort-code';
 import { SOS_DP_CODE } from '../data/sos-dp-code';
 import { SUBSET_SUM_CODE } from '../data/subset-sum-code';
 import { STEINER_TREE_CODE } from '../data/steiner-tree-code';
-import { SWEEP_LINE_CODE } from '../data/sweep-line-code';
+import {
+  SWEEP_LINE_CODE,
+  SWEEP_LINE_CODE_HIGHLIGHT_MAP,
+  SWEEP_LINE_CODE_REGIONS,
+  SWEEP_LINE_CODE_VARIANTS,
+} from '../data/sweep-line-code';
 import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
 import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
 import { TRAVELING_SALESMAN_DP_CODE } from '../data/traveling-salesman-dp-code';
 import { UNION_FIND_CODE } from '../data/union-find-code';
-import { VORONOI_DIAGRAM_CODE } from '../data/voronoi-diagram-code';
+import {
+  VORONOI_DIAGRAM_CODE,
+  VORONOI_DIAGRAM_CODE_HIGHLIGHT_MAP,
+  VORONOI_DIAGRAM_CODE_REGIONS,
+  VORONOI_DIAGRAM_CODE_VARIANTS,
+} from '../data/voronoi-diagram-code';
 import { WILDCARD_MATCHING_CODE } from '../data/wildcard-matching-code';
 import { Z_ALGORITHM_CODE } from '../data/z-algorithm-code';
 import { BURROWS_WHEELER_TRANSFORM_CODE } from '../data/burrows-wheeler-transform-code';
@@ -182,12 +212,22 @@ import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
 import { StringPresetOption, StringTraceState } from '../models/string';
 import { AlgorithmItem } from '../models/algorithm';
-import { CodeLine, LegendItem, LogEntry } from '../models/detail';
+import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../models/detail';
 import { HOPCROFT_KARP_CODE } from '../data/hopcroft-karp-code';
 import { HUFFMAN_CODE } from '../data/huffman-coding-code';
-import { CONVEX_HULL_CODE } from '../data/convex-hull-code';
+import {
+  CONVEX_HULL_CODE,
+  CONVEX_HULL_CODE_HIGHLIGHT_MAP,
+  CONVEX_HULL_CODE_REGIONS,
+  CONVEX_HULL_CODE_VARIANTS,
+} from '../data/convex-hull-code';
 import { KOSARAJU_SCC_CODE } from '../data/kosaraju-scc-code';
-import { DELAUNAY_TRIANGULATION_CODE } from '../data/delaunay-triangulation-code';
+import {
+  DELAUNAY_TRIANGULATION_CODE,
+  DELAUNAY_TRIANGULATION_CODE_HIGHLIGHT_MAP,
+  DELAUNAY_TRIANGULATION_CODE_REGIONS,
+  DELAUNAY_TRIANGULATION_CODE_VARIANTS,
+} from '../data/delaunay-triangulation-code';
 import { RLE_CODE } from '../data/run-length-encoding-code';
 import { SortStep } from '../models/sort-step';
 import { VisualizationOption } from '../models/visualization-option';
@@ -1000,6 +1040,9 @@ interface RandomRange {
 
 interface BaseAlgorithmViewConfig {
   readonly codeLines: readonly CodeLine[];
+  readonly codeRegions?: readonly CodeRegion[];
+  readonly codeHighlightMap?: Readonly<Record<number, number>>;
+  readonly codeVariants?: CodeVariantMap;
   readonly variantOptions: readonly VisualizationOption[];
   readonly defaultVariant: VisualizationVariant;
   readonly sizeOptions: readonly number[];
@@ -2088,6 +2131,9 @@ const MIN_COST_MAX_FLOW_VIEW_CONFIG = createNetworkViewConfig<MinCostMaxFlowScen
 const CONVEX_HULL_VIEW_CONFIG: GeometryAlgorithmViewConfig<ConvexHullScenario> = {
   kind: 'geometry',
   codeLines: CONVEX_HULL_CODE,
+  codeRegions: CONVEX_HULL_CODE_REGIONS,
+  codeHighlightMap: CONVEX_HULL_CODE_HIGHLIGHT_MAP,
+  codeVariants: CONVEX_HULL_CODE_VARIANTS,
   variantOptions: CONVEX_HULL_VARIANT_OPTIONS,
   defaultVariant: 'convex-hull',
   sizeOptions: [10, 16, 24],
@@ -2102,6 +2148,9 @@ const CONVEX_HULL_VIEW_CONFIG: GeometryAlgorithmViewConfig<ConvexHullScenario> =
 const CLOSEST_PAIR_VIEW_CONFIG: GeometryAlgorithmViewConfig<ClosestPairScenario> = {
   kind: 'geometry',
   codeLines: CLOSEST_PAIR_OF_POINTS_CODE,
+  codeRegions: CLOSEST_PAIR_OF_POINTS_CODE_REGIONS,
+  codeHighlightMap: CLOSEST_PAIR_OF_POINTS_CODE_HIGHLIGHT_MAP,
+  codeVariants: CLOSEST_PAIR_OF_POINTS_CODE_VARIANTS,
   variantOptions: CLOSEST_PAIR_VARIANT_OPTIONS,
   defaultVariant: 'closest-pair',
   sizeOptions: [10, 14, 18],
@@ -2116,6 +2165,9 @@ const CLOSEST_PAIR_VIEW_CONFIG: GeometryAlgorithmViewConfig<ClosestPairScenario>
 const LINE_INTERSECTION_VIEW_CONFIG: GeometryAlgorithmViewConfig<LineIntersectionScenario> = {
   kind: 'geometry',
   codeLines: LINE_INTERSECTION_CODE,
+  codeRegions: LINE_INTERSECTION_CODE_REGIONS,
+  codeHighlightMap: LINE_INTERSECTION_CODE_HIGHLIGHT_MAP,
+  codeVariants: LINE_INTERSECTION_CODE_VARIANTS,
   variantOptions: LINE_INTERSECTION_VARIANT_OPTIONS,
   defaultVariant: 'line-intersection',
   sizeOptions: [5, 6, 7],
@@ -2130,6 +2182,9 @@ const LINE_INTERSECTION_VIEW_CONFIG: GeometryAlgorithmViewConfig<LineIntersectio
 const HALF_PLANE_VIEW_CONFIG: GeometryAlgorithmViewConfig<HalfPlaneIntersectionScenario> = {
   kind: 'geometry',
   codeLines: HALF_PLANE_INTERSECTION_CODE,
+  codeRegions: HALF_PLANE_INTERSECTION_CODE_REGIONS,
+  codeHighlightMap: HALF_PLANE_INTERSECTION_CODE_HIGHLIGHT_MAP,
+  codeVariants: HALF_PLANE_INTERSECTION_CODE_VARIANTS,
   variantOptions: HALF_PLANE_VARIANT_OPTIONS,
   defaultVariant: 'half-plane',
   sizeOptions: [4, 5, 6],
@@ -2144,6 +2199,9 @@ const HALF_PLANE_VIEW_CONFIG: GeometryAlgorithmViewConfig<HalfPlaneIntersectionS
 const MINKOWSKI_SUM_VIEW_CONFIG: GeometryAlgorithmViewConfig<MinkowskiSumScenario> = {
   kind: 'geometry',
   codeLines: MINKOWSKI_SUM_CODE,
+  codeRegions: MINKOWSKI_SUM_CODE_REGIONS,
+  codeHighlightMap: MINKOWSKI_SUM_CODE_HIGHLIGHT_MAP,
+  codeVariants: MINKOWSKI_SUM_CODE_VARIANTS,
   variantOptions: MINKOWSKI_SUM_VARIANT_OPTIONS,
   defaultVariant: 'minkowski-sum',
   sizeOptions: [4, 5, 6],
@@ -2158,6 +2216,9 @@ const MINKOWSKI_SUM_VIEW_CONFIG: GeometryAlgorithmViewConfig<MinkowskiSumScenari
 const SWEEP_LINE_VIEW_CONFIG: GeometryAlgorithmViewConfig<SweepLineScenario> = {
   kind: 'geometry',
   codeLines: SWEEP_LINE_CODE,
+  codeRegions: SWEEP_LINE_CODE_REGIONS,
+  codeHighlightMap: SWEEP_LINE_CODE_HIGHLIGHT_MAP,
+  codeVariants: SWEEP_LINE_CODE_VARIANTS,
   variantOptions: SWEEP_LINE_VARIANT_OPTIONS,
   defaultVariant: 'sweep-line',
   sizeOptions: [5, 7, 9],
@@ -2172,6 +2233,9 @@ const SWEEP_LINE_VIEW_CONFIG: GeometryAlgorithmViewConfig<SweepLineScenario> = {
 const VORONOI_VIEW_CONFIG: GeometryAlgorithmViewConfig<VoronoiDiagramScenario> = {
   kind: 'geometry',
   codeLines: VORONOI_DIAGRAM_CODE,
+  codeRegions: VORONOI_DIAGRAM_CODE_REGIONS,
+  codeHighlightMap: VORONOI_DIAGRAM_CODE_HIGHLIGHT_MAP,
+  codeVariants: VORONOI_DIAGRAM_CODE_VARIANTS,
   variantOptions: VORONOI_VARIANT_OPTIONS,
   defaultVariant: 'voronoi',
   sizeOptions: [6, 8, 10],
@@ -2186,6 +2250,9 @@ const VORONOI_VIEW_CONFIG: GeometryAlgorithmViewConfig<VoronoiDiagramScenario> =
 const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationScenario> = {
   kind: 'geometry',
   codeLines: DELAUNAY_TRIANGULATION_CODE,
+  codeRegions: DELAUNAY_TRIANGULATION_CODE_REGIONS,
+  codeHighlightMap: DELAUNAY_TRIANGULATION_CODE_HIGHLIGHT_MAP,
+  codeVariants: DELAUNAY_TRIANGULATION_CODE_VARIANTS,
   variantOptions: DELAUNAY_VARIANT_OPTIONS,
   defaultVariant: 'delaunay',
   sizeOptions: [6, 8, 10],
@@ -2598,7 +2665,11 @@ export class AlgorithmDetail {
 
   readonly activeLineNumber = computed<number | null>(() => {
     const snap = this.currentSnapshot();
-    return snap ? snap.activeCodeLine : null;
+    if (!snap) {
+      return null;
+    }
+
+    return snap.activeCodeLine;
   });
 
   readonly legendItems = computed<readonly LegendItem[]>(() => {
@@ -2606,6 +2677,27 @@ export class AlgorithmDetail {
   });
 
   readonly codeLines = computed(() => this.config()?.codeLines ?? []);
+  readonly codeRegions = computed(() => this.config()?.codeRegions ?? []);
+  readonly codeVariants = computed<CodeVariantMap>(() => {
+    const config = this.config();
+    if (!config) {
+      return {};
+    }
+
+    if (config.codeVariants) {
+      return config.codeVariants;
+    }
+
+    return {
+      typescript: {
+        language: 'typescript',
+        lines: config.codeLines,
+        regions: config.codeRegions ?? [],
+        highlightMap: config.codeHighlightMap,
+        source: config.codeLines.map((line) => line.tokens.map((token) => token.text).join('')).join('\n'),
+      },
+    };
+  });
 
   constructor() {
     effect(() => {

@@ -75,7 +75,12 @@
       }
     }
     @case ('code') {
-      <app-code-panel [lines]="codeLines()" [activeLineNumber]="activeLineNumber()" />
+      <app-code-panel
+        [lines]="codeLines()"
+        [regions]="codeRegions()"
+        [codeVariants]="codeVariants()"
+        [activeLineNumber]="activeLineNumber()"
+      />
     }
     @case ('info') {
       <app-info-panel [algorithm]="algorithm()" />
