@@ -4,17 +4,14 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { NavigationService } from '../../../core/services/navigation-service';
-import { Difficulty } from '../../algorithms/models/algorithm';
+import {
+  DifficultyFilter,
+  DifficultyFilterValue,
+  buildDifficultyFilterOptions,
+} from '../../../shared/difficulty-filter/difficulty-filter';
 import { StructureCard } from '../structure-card/structure-card';
 import { StructureItem } from '../models/structure';
 import { StructureRegistry } from '../registry/structure-registry';
-
-type DifficultyFilter = 'all' | Difficulty;
-
-interface PillOption {
-  readonly value: DifficultyFilter;
-  readonly label: string;
-}
 
 interface PageStat {
   readonly value: string;
@@ -24,7 +21,7 @@ interface PageStat {
 
 @Component({
   selector: 'app-structures-page',
-  imports: [StructureCard],
+  imports: [StructureCard, DifficultyFilter],
   templateUrl: './structures-page.html',
   styleUrl: './structures-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,18 +31,9 @@ export class StructuresPage {
   private readonly navigation = inject(NavigationService);
   private readonly language = inject(AppLanguageService);
 
-  readonly pills = computed<readonly PillOption[]>(() => {
-    const lang = this.language.activeLang();
-    return [
-      { value: 'all', label: lang === APP_LANG.EN ? 'All' : 'Wszystkie' },
-      { value: Difficulty.Easy, label: getDifficultyLabel(Difficulty.Easy, lang) },
-      { value: Difficulty.Medium, label: getDifficultyLabel(Difficulty.Medium, lang) },
-      { value: Difficulty.Hard, label: getDifficultyLabel(Difficulty.Hard, lang) },
-      { value: Difficulty.UltraHard, label: getDifficultyLabel(Difficulty.UltraHard, lang) },
-    ];
-  });
+  readonly difficultyOptions = computed(() => buildDifficultyFilterOptions(this.language.activeLang()));
 
-  private readonly difficultyFilter = signal<DifficultyFilter>('all');
+  private readonly difficultyFilter = signal<DifficultyFilterValue>('all');
   readonly activeDifficulty = this.difficultyFilter.asReadonly();
   readonly title = computed(() => this.navigation.activeItem()?.sectionTitle ?? 'Structures');
 
@@ -105,6 +93,9 @@ export class StructuresPage {
       ? 'Use the difficulty pills to rebalance the library while staying inside the current topic.'
       : 'Zmieniaj poziom trudności, pozostając w obrębie aktualnego obszaru biblioteki.',
   );
+  readonly difficultyGroupLabel = computed(() =>
+    this.language.activeLang() === APP_LANG.EN ? 'Difficulty filter' : 'Filtr trudności',
+  );
   readonly stats = computed<readonly PageStat[]>(() => {
     const lang = this.language.activeLang();
     return [
@@ -126,7 +117,7 @@ export class StructuresPage {
     ];
   });
 
-  selectDifficulty(value: DifficultyFilter): void {
+  selectDifficulty(value: DifficultyFilterValue): void {
     this.difficultyFilter.set(value);
   }
 }

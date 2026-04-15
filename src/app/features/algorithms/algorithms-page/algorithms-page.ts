@@ -14,7 +14,11 @@ import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { NavigationService } from '../../../core/services/navigation-service';
 import { buildCategoryThemeVars } from '../../../shared/category-theme';
-import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
+import {
+  DifficultyFilter,
+  DifficultyFilterValue,
+  buildDifficultyFilterOptions,
+} from '../../../shared/difficulty-filter/difficulty-filter';
 import {
   ALGORITHM_TRAIT_GROUPS,
   ALGORITHM_TRAITS,
@@ -23,16 +27,8 @@ import {
   deriveAlgorithmTraits,
 } from '../algorithm-traits';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
-import { AlgorithmItem, Difficulty } from '../models/algorithm';
+import { AlgorithmItem } from '../models/algorithm';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
-
-type DifficultyFilter = 'all' | Difficulty;
-
-interface PillOption {
-  readonly value: DifficultyFilter;
-  readonly label: string;
-  readonly tone: DifficultyFilter;
-}
 
 interface PageStat {
   readonly value: string;
@@ -57,7 +53,7 @@ const TRAIT_DEFINITION_BY_ID = new Map(ALGORITHM_TRAITS.map((trait) => [trait.id
 
 @Component({
   selector: 'app-algorithms-page',
-  imports: [AlgorithmCard, NgStyle, ShaderCardEffect],
+  imports: [AlgorithmCard, NgStyle, DifficultyFilter],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,34 +64,9 @@ export class AlgorithmsPage {
   private readonly language = inject(AppLanguageService);
   private readonly host = inject(ElementRef<HTMLElement>);
 
-  readonly pills = computed<readonly PillOption[]>(() => {
-    const lang = this.language.activeLang();
-    return [
-      { value: 'all', label: lang === APP_LANG.EN ? 'All' : 'Wszystkie', tone: 'all' },
-      {
-        value: Difficulty.Easy,
-        label: getDifficultyLabel(Difficulty.Easy, lang),
-        tone: Difficulty.Easy,
-      },
-      {
-        value: Difficulty.Medium,
-        label: getDifficultyLabel(Difficulty.Medium, lang),
-        tone: Difficulty.Medium,
-      },
-      {
-        value: Difficulty.Hard,
-        label: getDifficultyLabel(Difficulty.Hard, lang),
-        tone: Difficulty.Hard,
-      },
-      {
-        value: Difficulty.UltraHard,
-        label: getDifficultyLabel(Difficulty.UltraHard, lang),
-        tone: Difficulty.UltraHard,
-      },
-    ];
-  });
+  readonly difficultyOptions = computed(() => buildDifficultyFilterOptions(this.language.activeLang()));
 
-  private readonly difficultyFilter = signal<DifficultyFilter>('all');
+  private readonly difficultyFilter = signal<DifficultyFilterValue>('all');
   private readonly selectedTraitsState = signal<readonly AlgorithmTraitId[]>([]);
   private readonly traitsOpenState = signal(false);
   readonly activeDifficulty = this.difficultyFilter.asReadonly();
@@ -323,7 +294,7 @@ export class AlgorithmsPage {
     ];
   });
 
-  selectDifficulty(value: DifficultyFilter): void {
+  selectDifficulty(value: DifficultyFilterValue): void {
     this.difficultyFilter.set(value);
   }
 

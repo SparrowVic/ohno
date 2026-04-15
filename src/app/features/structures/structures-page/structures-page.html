@@ -26,17 +26,13 @@
       <p class="page__results-subtitle">{{ resultsSubtitle() }}</p>
     </div>
 
-    <div class="filter-pills">
-      @for (pill of pills(); track pill.value) {
-        <button
-          type="button"
-          class="pill"
-          [class.pill--active]="activeDifficulty() === pill.value"
-          (click)="selectDifficulty(pill.value)"
-        >
-          {{ pill.label }}
-        </button>
-      }
+    <div class="page__filter-stack">
+      <app-difficulty-filter
+        [options]="difficultyOptions()"
+        [value]="activeDifficulty()"
+        [ariaLabel]="difficultyGroupLabel()"
+        (valueChange)="selectDifficulty($event)"
+      />
     </div>
   </section>
 
