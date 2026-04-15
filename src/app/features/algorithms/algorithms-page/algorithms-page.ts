@@ -157,19 +157,6 @@ export class AlgorithmsPage {
     }).filter((group) => group.options.length > 0);
   });
 
-  readonly activeTraitOptions = computed<readonly TraitOptionView[]>(() => {
-    const lang = this.language.activeLang();
-    return this.selectedTraitsState()
-      .map((id) => TRAIT_DEFINITION_BY_ID.get(id))
-      .filter((trait): trait is NonNullable<typeof trait> => Boolean(trait))
-      .map((trait) => ({
-        id: trait.id,
-        label: lang === APP_LANG.EN ? trait.label : trait.labelPl,
-        count: this.traitCounts().get(trait.id) ?? 0,
-        selected: true,
-      }));
-  });
-
   private readonly selectedTraitsByGroup = computed<
     ReadonlyMap<AlgorithmTraitGroupId, ReadonlySet<AlgorithmTraitId>>
   >(() => {
@@ -279,6 +266,18 @@ export class AlgorithmsPage {
   readonly traitsTriggerLabel = computed(() =>
     this.language.activeLang() === APP_LANG.EN ? 'Traits' : 'Cechy',
   );
+  readonly traitsTriggerAriaLabel = computed(() => {
+    const count = this.activeTraits().length;
+    const lang = this.language.activeLang();
+
+    if (count === 0) {
+      return lang === APP_LANG.EN ? 'Traits filter' : 'Filtr cech';
+    }
+
+    return lang === APP_LANG.EN
+      ? `Traits filter, ${count} selected`
+      : `Filtr cech, wybrano ${count}`;
+  });
   readonly traitsPopoverTitle = computed(() =>
     this.language.activeLang() === APP_LANG.EN ? 'Semantic filters' : 'Filtry semantyczne',
   );
@@ -294,6 +293,9 @@ export class AlgorithmsPage {
   );
   readonly clearTraitsLabel = computed(() =>
     this.language.activeLang() === APP_LANG.EN ? 'Clear all' : 'Wyczyść wszystko',
+  );
+  readonly difficultyGroupLabel = computed(() =>
+    this.language.activeLang() === APP_LANG.EN ? 'Difficulty filter' : 'Filtr trudności',
   );
   readonly emptyLabel = computed(() =>
     this.language.activeLang() === APP_LANG.EN
