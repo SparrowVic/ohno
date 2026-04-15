@@ -104,12 +104,32 @@ import { hopcroftKarpGenerator } from '../algorithms/hopcroft-karp';
 import { hungarianAlgorithmGenerator } from '../algorithms/hungarian-algorithm';
 import { kosarajuSccGenerator } from '../algorithms/kosaraju-scc';
 import { A_STAR_PATHFINDING_CODE } from '../data/a-star-pathfinding-code';
-import { BELLMAN_FORD_CODE } from '../data/bellman-ford-code';
-import { BFS_CODE } from '../data/bfs-code';
+import {
+  BELLMAN_FORD_CODE,
+  BELLMAN_FORD_CODE_HIGHLIGHT_MAP,
+  BELLMAN_FORD_CODE_REGIONS,
+  BELLMAN_FORD_CODE_VARIANTS,
+} from '../data/bellman-ford-code';
+import {
+  BFS_CODE,
+  BFS_CODE_HIGHLIGHT_MAP,
+  BFS_CODE_REGIONS,
+  BFS_CODE_VARIANTS,
+} from '../data/bfs-code';
 import { BINARY_SEARCH_CODE } from '../data/binary-search-code';
 import { BINARY_SEARCH_VARIANTS_CODE } from '../data/binary-search-variants-code';
-import { BIPARTITE_CHECK_CODE } from '../data/bipartite-check-code';
-import { BRIDGES_ARTICULATION_POINTS_CODE } from '../data/bridges-articulation-points-code';
+import {
+  BIPARTITE_CHECK_CODE,
+  BIPARTITE_CHECK_CODE_HIGHLIGHT_MAP,
+  BIPARTITE_CHECK_CODE_REGIONS,
+  BIPARTITE_CHECK_CODE_VARIANTS,
+} from '../data/bipartite-check-code';
+import {
+  BRIDGES_ARTICULATION_POINTS_CODE,
+  BRIDGES_ARTICULATION_POINTS_CODE_HIGHLIGHT_MAP,
+  BRIDGES_ARTICULATION_POINTS_CODE_REGIONS,
+  BRIDGES_ARTICULATION_POINTS_CODE_VARIANTS,
+} from '../data/bridges-articulation-points-code';
 import {
   BURST_BALLOONS_CODE,
   BURST_BALLOONS_CODE_HIGHLIGHT_MAP,
@@ -124,7 +144,12 @@ import {
   CLIMBING_STAIRS_CODE_REGIONS,
   CLIMBING_STAIRS_CODE_VARIANTS,
 } from '../data/climbing-stairs-code';
-import { CHROMATIC_NUMBER_CODE } from '../data/chromatic-number-code';
+import {
+  CHROMATIC_NUMBER_CODE,
+  CHROMATIC_NUMBER_CODE_HIGHLIGHT_MAP,
+  CHROMATIC_NUMBER_CODE_REGIONS,
+  CHROMATIC_NUMBER_CODE_VARIANTS,
+} from '../data/chromatic-number-code';
 import {
   CLOSEST_PAIR_OF_POINTS_CODE,
   CLOSEST_PAIR_OF_POINTS_CODE_HIGHLIGHT_MAP,
@@ -137,13 +162,38 @@ import {
   COIN_CHANGE_CODE_REGIONS,
   COIN_CHANGE_CODE_VARIANTS,
 } from '../data/coin-change-code';
-import { CONNECTED_COMPONENTS_CODE } from '../data/connected-components-code';
+import {
+  CONNECTED_COMPONENTS_CODE,
+  CONNECTED_COMPONENTS_CODE_HIGHLIGHT_MAP,
+  CONNECTED_COMPONENTS_CODE_REGIONS,
+  CONNECTED_COMPONENTS_CODE_VARIANTS,
+} from '../data/connected-components-code';
 import { COUNTING_SORT_CODE } from '../data/counting-sort-code';
-import { CYCLE_DETECTION_CODE } from '../data/cycle-detection-code';
-import { DFS_CODE } from '../data/dfs-code';
-import { DIJKSTRA_CODE } from '../data/dijkstra-code';
+import {
+  CYCLE_DETECTION_CODE,
+  CYCLE_DETECTION_CODE_HIGHLIGHT_MAP,
+  CYCLE_DETECTION_CODE_REGIONS,
+  CYCLE_DETECTION_CODE_VARIANTS,
+} from '../data/cycle-detection-code';
+import {
+  DFS_CODE,
+  DFS_CODE_HIGHLIGHT_MAP,
+  DFS_CODE_REGIONS,
+  DFS_CODE_VARIANTS,
+} from '../data/dfs-code';
+import {
+  DIJKSTRA_CODE,
+  DIJKSTRA_CODE_HIGHLIGHT_MAP,
+  DIJKSTRA_CODE_REGIONS,
+  DIJKSTRA_CODE_VARIANTS,
+} from '../data/dijkstra-code';
 import { DINIC_MAX_FLOW_CODE } from '../data/dinic-max-flow-code';
-import { DOMINATOR_TREE_CODE } from '../data/dominator-tree-code';
+import {
+  DOMINATOR_TREE_CODE,
+  DOMINATOR_TREE_CODE_HIGHLIGHT_MAP,
+  DOMINATOR_TREE_CODE_REGIONS,
+  DOMINATOR_TREE_CODE_VARIANTS,
+} from '../data/dominator-tree-code';
 import {
   DP_CONVEX_HULL_TRICK_CODE,
   DP_CONVEX_HULL_TRICK_CODE_HIGHLIGHT_MAP,
@@ -175,7 +225,12 @@ import {
   EDIT_DISTANCE_CODE_REGIONS,
   EDIT_DISTANCE_CODE_VARIANTS,
 } from '../data/edit-distance-code';
-import { EULER_PATH_CIRCUIT_CODE } from '../data/euler-path-circuit-code';
+import {
+  EULER_PATH_CIRCUIT_CODE,
+  EULER_PATH_CIRCUIT_CODE_HIGHLIGHT_MAP,
+  EULER_PATH_CIRCUIT_CODE_REGIONS,
+  EULER_PATH_CIRCUIT_CODE_VARIANTS,
+} from '../data/euler-path-circuit-code';
 import {
   FIBONACCI_DP_CODE,
   FIBONACCI_DP_CODE_HIGHLIGHT_MAP,
@@ -262,7 +317,12 @@ import {
   PROFILE_DP_CODE_REGIONS,
   PROFILE_DP_CODE_VARIANTS,
 } from '../data/profile-dp-code';
-import { PRIMS_MST_CODE } from '../data/prims-mst-code';
+import {
+  PRIMS_MST_CODE,
+  PRIMS_MST_CODE_HIGHLIGHT_MAP,
+  PRIMS_MST_CODE_REGIONS,
+  PRIMS_MST_CODE_VARIANTS,
+} from '../data/prims-mst-code';
 import { QUICK_SORT_CODE } from '../data/quick-sort-code';
 import { RADIX_SORT_CODE } from '../data/radix-sort-code';
 import {
@@ -291,16 +351,31 @@ import {
   SUBSET_SUM_CODE_REGIONS,
   SUBSET_SUM_CODE_VARIANTS,
 } from '../data/subset-sum-code';
-import { STEINER_TREE_CODE } from '../data/steiner-tree-code';
+import {
+  STEINER_TREE_CODE,
+  STEINER_TREE_CODE_HIGHLIGHT_MAP,
+  STEINER_TREE_CODE_REGIONS,
+  STEINER_TREE_CODE_VARIANTS,
+} from '../data/steiner-tree-code';
 import {
   SWEEP_LINE_CODE,
   SWEEP_LINE_CODE_HIGHLIGHT_MAP,
   SWEEP_LINE_CODE_REGIONS,
   SWEEP_LINE_CODE_VARIANTS,
 } from '../data/sweep-line-code';
-import { TARJAN_SCC_CODE } from '../data/tarjan-scc-code';
+import {
+  TARJAN_SCC_CODE,
+  TARJAN_SCC_CODE_HIGHLIGHT_MAP,
+  TARJAN_SCC_CODE_REGIONS,
+  TARJAN_SCC_CODE_VARIANTS,
+} from '../data/tarjan-scc-code';
 import { TIM_SORT_CODE } from '../data/tim-sort-code';
-import { TOPOLOGICAL_SORT_KAHN_CODE } from '../data/topological-sort-kahn-code';
+import {
+  TOPOLOGICAL_SORT_KAHN_CODE,
+  TOPOLOGICAL_SORT_KAHN_CODE_HIGHLIGHT_MAP,
+  TOPOLOGICAL_SORT_KAHN_CODE_REGIONS,
+  TOPOLOGICAL_SORT_KAHN_CODE_VARIANTS,
+} from '../data/topological-sort-kahn-code';
 import {
   TRAVELING_SALESMAN_DP_CODE,
   TRAVELING_SALESMAN_DP_CODE_HIGHLIGHT_MAP,
@@ -356,7 +431,12 @@ import {
   CONVEX_HULL_CODE_REGIONS,
   CONVEX_HULL_CODE_VARIANTS,
 } from '../data/convex-hull-code';
-import { KOSARAJU_SCC_CODE } from '../data/kosaraju-scc-code';
+import {
+  KOSARAJU_SCC_CODE,
+  KOSARAJU_SCC_CODE_HIGHLIGHT_MAP,
+  KOSARAJU_SCC_CODE_REGIONS,
+  KOSARAJU_SCC_CODE_VARIANTS,
+} from '../data/kosaraju-scc-code';
 import {
   DELAUNAY_TRIANGULATION_CODE,
   DELAUNAY_TRIANGULATION_CODE_HIGHLIGHT_MAP,
@@ -1716,6 +1796,9 @@ const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: DIJKSTRA_CODE,
+  codeRegions: DIJKSTRA_CODE_REGIONS,
+  codeHighlightMap: DIJKSTRA_CODE_HIGHLIGHT_MAP,
+  codeVariants: DIJKSTRA_CODE_VARIANTS,
   variantOptions: DIJKSTRA_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1730,6 +1813,9 @@ const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
 const BFS_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: BFS_CODE,
+  codeRegions: BFS_CODE_REGIONS,
+  codeHighlightMap: BFS_CODE_HIGHLIGHT_MAP,
+  codeVariants: BFS_CODE_VARIANTS,
   variantOptions: BFS_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1744,6 +1830,9 @@ const BFS_VIEW_CONFIG: AlgorithmViewConfig = {
 const DFS_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: DFS_CODE,
+  codeRegions: DFS_CODE_REGIONS,
+  codeHighlightMap: DFS_CODE_HIGHLIGHT_MAP,
+  codeVariants: DFS_CODE_VARIANTS,
   variantOptions: DFS_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1758,6 +1847,9 @@ const DFS_VIEW_CONFIG: AlgorithmViewConfig = {
 const TOPOLOGICAL_SORT_KAHN_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: TOPOLOGICAL_SORT_KAHN_CODE,
+  codeRegions: TOPOLOGICAL_SORT_KAHN_CODE_REGIONS,
+  codeHighlightMap: TOPOLOGICAL_SORT_KAHN_CODE_HIGHLIGHT_MAP,
+  codeVariants: TOPOLOGICAL_SORT_KAHN_CODE_VARIANTS,
   variantOptions: TOPOLOGICAL_SORT_KAHN_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1772,6 +1864,9 @@ const TOPOLOGICAL_SORT_KAHN_VIEW_CONFIG: AlgorithmViewConfig = {
 const CYCLE_DETECTION_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: CYCLE_DETECTION_CODE,
+  codeRegions: CYCLE_DETECTION_CODE_REGIONS,
+  codeHighlightMap: CYCLE_DETECTION_CODE_HIGHLIGHT_MAP,
+  codeVariants: CYCLE_DETECTION_CODE_VARIANTS,
   variantOptions: CYCLE_DETECTION_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1786,6 +1881,9 @@ const CYCLE_DETECTION_VIEW_CONFIG: AlgorithmViewConfig = {
 const CONNECTED_COMPONENTS_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: CONNECTED_COMPONENTS_CODE,
+  codeRegions: CONNECTED_COMPONENTS_CODE_REGIONS,
+  codeHighlightMap: CONNECTED_COMPONENTS_CODE_HIGHLIGHT_MAP,
+  codeVariants: CONNECTED_COMPONENTS_CODE_VARIANTS,
   variantOptions: CONNECTED_COMPONENTS_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1800,6 +1898,9 @@ const CONNECTED_COMPONENTS_VIEW_CONFIG: AlgorithmViewConfig = {
 const BIPARTITE_CHECK_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: BIPARTITE_CHECK_CODE,
+  codeRegions: BIPARTITE_CHECK_CODE_REGIONS,
+  codeHighlightMap: BIPARTITE_CHECK_CODE_HIGHLIGHT_MAP,
+  codeVariants: BIPARTITE_CHECK_CODE_VARIANTS,
   variantOptions: BIPARTITE_CHECK_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1814,6 +1915,9 @@ const BIPARTITE_CHECK_VIEW_CONFIG: AlgorithmViewConfig = {
 const BELLMAN_FORD_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: BELLMAN_FORD_CODE,
+  codeRegions: BELLMAN_FORD_CODE_REGIONS,
+  codeHighlightMap: BELLMAN_FORD_CODE_HIGHLIGHT_MAP,
+  codeVariants: BELLMAN_FORD_CODE_VARIANTS,
   variantOptions: BELLMAN_FORD_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1828,6 +1932,9 @@ const BELLMAN_FORD_VIEW_CONFIG: AlgorithmViewConfig = {
 const PRIMS_MST_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: PRIMS_MST_CODE,
+  codeRegions: PRIMS_MST_CODE_REGIONS,
+  codeHighlightMap: PRIMS_MST_CODE_HIGHLIGHT_MAP,
+  codeVariants: PRIMS_MST_CODE_VARIANTS,
   variantOptions: PRIMS_MST_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1842,6 +1949,9 @@ const PRIMS_MST_VIEW_CONFIG: AlgorithmViewConfig = {
 const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: BRIDGES_ARTICULATION_POINTS_CODE,
+  codeRegions: BRIDGES_ARTICULATION_POINTS_CODE_REGIONS,
+  codeHighlightMap: BRIDGES_ARTICULATION_POINTS_CODE_HIGHLIGHT_MAP,
+  codeVariants: BRIDGES_ARTICULATION_POINTS_CODE_VARIANTS,
   variantOptions: BRIDGES_ARTICULATION_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1856,6 +1966,9 @@ const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
 const TARJAN_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: TARJAN_SCC_CODE,
+  codeRegions: TARJAN_SCC_CODE_REGIONS,
+  codeHighlightMap: TARJAN_SCC_CODE_HIGHLIGHT_MAP,
+  codeVariants: TARJAN_SCC_CODE_VARIANTS,
   variantOptions: TARJAN_SCC_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1870,6 +1983,9 @@ const TARJAN_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
 const KOSARAJU_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: KOSARAJU_SCC_CODE,
+  codeRegions: KOSARAJU_SCC_CODE_REGIONS,
+  codeHighlightMap: KOSARAJU_SCC_CODE_HIGHLIGHT_MAP,
+  codeVariants: KOSARAJU_SCC_CODE_VARIANTS,
   variantOptions: KOSARAJU_SCC_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1884,6 +2000,9 @@ const KOSARAJU_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
 const EULER_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: EULER_PATH_CIRCUIT_CODE,
+  codeRegions: EULER_PATH_CIRCUIT_CODE_REGIONS,
+  codeHighlightMap: EULER_PATH_CIRCUIT_CODE_HIGHLIGHT_MAP,
+  codeVariants: EULER_PATH_CIRCUIT_CODE_VARIANTS,
   variantOptions: EULER_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1898,6 +2017,9 @@ const EULER_VIEW_CONFIG: AlgorithmViewConfig = {
 const CHROMATIC_NUMBER_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: CHROMATIC_NUMBER_CODE,
+  codeRegions: CHROMATIC_NUMBER_CODE_REGIONS,
+  codeHighlightMap: CHROMATIC_NUMBER_CODE_HIGHLIGHT_MAP,
+  codeVariants: CHROMATIC_NUMBER_CODE_VARIANTS,
   variantOptions: CHROMATIC_NUMBER_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1912,6 +2034,9 @@ const CHROMATIC_NUMBER_VIEW_CONFIG: AlgorithmViewConfig = {
 const STEINER_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: STEINER_TREE_CODE,
+  codeRegions: STEINER_TREE_CODE_REGIONS,
+  codeHighlightMap: STEINER_TREE_CODE_HIGHLIGHT_MAP,
+  codeVariants: STEINER_TREE_CODE_VARIANTS,
   variantOptions: STEINER_TREE_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
@@ -1926,6 +2051,9 @@ const STEINER_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
 const DOMINATOR_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
   codeLines: DOMINATOR_TREE_CODE,
+  codeRegions: DOMINATOR_TREE_CODE_REGIONS,
+  codeHighlightMap: DOMINATOR_TREE_CODE_HIGHLIGHT_MAP,
+  codeVariants: DOMINATOR_TREE_CODE_VARIANTS,
   variantOptions: DOMINATOR_TREE_VARIANT_OPTIONS,
   defaultVariant: 'dijkstra-graph',
   sizeOptions: DIJKSTRA_SIZE_OPTIONS,
