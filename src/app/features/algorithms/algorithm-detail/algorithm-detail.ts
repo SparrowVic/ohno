@@ -2724,7 +2724,9 @@ export class AlgorithmDetail {
   }
 
   back(): void {
-    this.router.navigate(['/algorithms']);
+    void this.router.navigate(['/algorithms'], {
+      queryParams: this.route.snapshot.queryParams,
+    });
   }
 
   toggleInspectorCollapse(): void {

@@ -5,11 +5,7 @@
 }
 
 .grid-viz {
-  display: flex;
-  flex: 1;
   min-height: 0;
-  flex-direction: column;
-  gap: 14px;
   width: 100%;
 }
 
@@ -62,7 +58,7 @@
 
 .grid-viz__status-band {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
   padding: 10px;
 }
@@ -226,12 +222,12 @@
   background-color: rgb(var(--viz-danger-rgb) / 0.14);
 }
 
-@media (max-width: 960px) {
-  .grid-viz__hero {
-    grid-template-columns: 1fr;
+@container (max-width: 420px) {
+  .grid-viz__focus-card {
+    padding: 14px 16px;
   }
 
-  .grid-viz__status-band {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .grid-viz__focus-value {
+    font-size: 22px;
   }
 }

@@ -19,19 +19,8 @@
   --sc: var(--viz-success);
   --cell-size: 34px;
   --track-gap: 6px;
-  display: flex;
-  flex: 1;
   min-height: 0;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border-radius: 28px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at top left, rgb(var(--w) / 0.08), transparent 28%),
-    radial-gradient(circle at top right, rgb(var(--a) / 0.06), transparent 32%),
-    linear-gradient(180deg, rgba(24, 25, 27, 0.96), rgba(12, 12, 13, 0.98));
-  overflow: hidden;
+  width: 100%;
 }
 
 .string-lab--huffman {
@@ -155,8 +144,12 @@
 
 .string-lab__hud {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.45fr);
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 8px;
+}
+
+.hud-card--wide {
+  grid-column: span 2;
 }
 
 .hud-card,
@@ -199,7 +192,7 @@
 
 .string-lab__insights {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 8px;
 }
 
@@ -401,7 +394,7 @@
 
 .hash-strip,
 .bwt-summary {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
 }
 
 .hash-card--alert {
@@ -431,6 +424,20 @@
 .meta-pill--soft {
   background: rgb(var(--w) / 0.1);
   color: var(--wi);
+}
+
+@container (max-width: 460px) {
+  .playground-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .playground-bar__presets {
+    justify-content: flex-start;
+  }
+
+  .hud-card--wide {
+    grid-column: auto;
+  }
 }
 
 .z-landscape {

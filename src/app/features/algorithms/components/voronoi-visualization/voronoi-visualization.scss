@@ -5,12 +5,7 @@
 }
 
 .vrv {
-  display: flex;
-  flex: 1;
   min-height: 0;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px 16px 12px;
 }
 
 .vrv__stage {
@@ -79,7 +74,7 @@
   left: 10px;
   right: 10px;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 8px;
   pointer-events: none;
 }
@@ -148,11 +143,5 @@
   &--done {
     color: #bae6fd;
     background: rgba(186, 230, 253, 0.08);
-  }
-}
-
-@media (max-width: 900px) {
-  .vrv__hud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

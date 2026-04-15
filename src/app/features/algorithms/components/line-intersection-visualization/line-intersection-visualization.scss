@@ -5,13 +5,7 @@
 }
 
 .liv {
-  display: flex;
-  flex: 1;
   min-height: 0;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px 16px 12px;
-  overflow: hidden;
 }
 
 .liv__stage {
@@ -94,7 +88,7 @@
   left: 10px;
   right: 10px;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
   pointer-events: none;
 }
@@ -207,10 +201,6 @@
 }
 
 @media (max-width: 900px) {
-  .liv__hud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .liv__events {
     max-width: 78%;
   }

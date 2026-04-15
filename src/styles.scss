@@ -183,9 +183,9 @@ a {
   flex: 1;
   min-height: 0;
   width: 100%;
-  grid-template-columns: minmax(276px, 312px) minmax(0, 1fr);
+  grid-template-columns: minmax(244px, 286px) minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 10px;
+  gap: 8px;
   padding: 0;
   border: none;
   border-radius: 0;
@@ -193,11 +193,59 @@ a {
   overflow: visible;
 }
 
+@container (max-width: 1320px) {
+  .viz-flow.search-viz,
+  .viz-flow.grid-viz,
+  .viz-flow.matrix-shell,
+  .viz-flow.graph-shell,
+  .viz-flow.network-shell,
+  .viz-flow.dsu-viz,
+  .viz-flow.string-lab,
+  .viz-flow.dp-shell:not(.dp-shell--knapsack),
+  .viz-flow.chv,
+  .viz-flow.cpv,
+  .viz-flow.liv,
+  .viz-flow.hpv,
+  .viz-flow.mkv,
+  .viz-flow.slv,
+  .viz-flow.vrv,
+  .viz-flow.dlv {
+    grid-template-columns: minmax(216px, 252px) minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 1020px) {
+  .viz-flow.search-viz,
+  .viz-flow.grid-viz,
+  .viz-flow.matrix-shell,
+  .viz-flow.graph-shell,
+  .viz-flow.network-shell,
+  .viz-flow.dsu-viz,
+  .viz-flow.string-lab,
+  .viz-flow.dp-shell:not(.dp-shell--knapsack),
+  .viz-flow.chv,
+  .viz-flow.cpv,
+  .viz-flow.liv,
+  .viz-flow.hpv,
+  .viz-flow.mkv,
+  .viz-flow.slv,
+  .viz-flow.vrv,
+  .viz-flow.dlv {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .viz-flow__guide {
+    grid-row: auto;
+  }
+}
+
 .viz-flow__guide,
 .viz-flow__brief,
 .viz-flow__stage {
   min-width: 0;
   min-height: 0;
+  container-type: inline-size;
   border-radius: 18px;
   border: 0.5px solid rgba(255, 255, 255, 0.08);
   box-shadow:
@@ -209,8 +257,8 @@ a {
   grid-row: 1 / span 2;
   display: grid;
   align-content: start;
-  gap: 10px;
-  padding: 12px;
+  gap: 9px;
+  padding: 11px;
   overflow: auto;
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
@@ -223,8 +271,8 @@ a {
 .viz-flow__brief {
   display: grid;
   align-content: start;
-  gap: 10px;
-  padding: 11px 12px;
+  gap: 9px;
+  padding: 10px 11px;
   overflow: auto;
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
@@ -237,8 +285,8 @@ a {
 .viz-flow__stage {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+  gap: 9px;
+  padding: 11px;
   overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(103, 208, 193, 0.26), transparent 34%),
@@ -358,7 +406,28 @@ a {
   color: var(--text-secondary);
 }
 
-@media (max-width: 1260px) {
+@media (max-width: 1360px) {
+  .viz-flow.search-viz,
+  .viz-flow.grid-viz,
+  .viz-flow.matrix-shell,
+  .viz-flow.graph-shell,
+  .viz-flow.network-shell,
+  .viz-flow.dsu-viz,
+  .viz-flow.string-lab,
+  .viz-flow.dp-shell:not(.dp-shell--knapsack),
+  .viz-flow.chv,
+  .viz-flow.cpv,
+  .viz-flow.liv,
+  .viz-flow.hpv,
+  .viz-flow.mkv,
+  .viz-flow.slv,
+  .viz-flow.vrv,
+  .viz-flow.dlv {
+    grid-template-columns: minmax(220px, 258px) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1040px) {
   .viz-flow.search-viz,
   .viz-flow.grid-viz,
   .viz-flow.matrix-shell,

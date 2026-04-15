@@ -5,18 +5,13 @@
 }
 
 .dsu-viz {
-  display: flex;
-  flex: 1;
   min-height: 0;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  overflow: auto;
+  width: 100%;
 }
 
 .dsu-viz__hud {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
   gap: 8px;
 }
 
@@ -83,7 +78,7 @@
 
 .dsu-viz__groups {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
   gap: 8px;
 }
 
@@ -192,7 +187,7 @@
 
 .dsu-edge-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(144px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(144px, 1fr));
 }
 
 .dsu-edge {
@@ -233,7 +228,7 @@
 
 .dsu-links {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(122px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
 }
 
 .dsu-link {
@@ -263,8 +258,8 @@
   }
 }
 
-@media (max-width: 760px) {
-  .dsu-viz__hud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@container (max-width: 420px) {
+  .dsu-viz__groups {
+    grid-template-columns: 1fr;
   }
 }

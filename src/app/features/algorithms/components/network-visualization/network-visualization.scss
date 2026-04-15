@@ -5,29 +5,27 @@
 }
 
 .network-shell {
-  display: flex;
-  flex: 1;
   min-height: 0;
-  flex-direction: column;
-  border-radius: 28px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at top left, rgb(var(--viz-accent-rgb) / 0.08), transparent 26%),
-    radial-gradient(circle at top right, rgb(var(--viz-window-rgb) / 0.1), transparent 32%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)), #12151e;
-  overflow: hidden;
+  width: 100%;
 }
 
 .network-shell__hud,
 .network-shell__focus {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 8px;
-  padding: 12px 14px 0;
+}
+
+.network-shell__hud {
+  grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
+  padding: 10px 12px 0;
 }
 
 .network-shell__focus {
-  padding-top: 8px;
+  grid-template-columns: minmax(150px, 0.9fr) minmax(0, 1.1fr);
+  grid-template-areas:
+    'status decision'
+    'status chips';
+  padding: 6px 12px 0;
 }
 
 .hud-card,
@@ -38,14 +36,6 @@
   border: 0.5px solid rgba(255, 255, 255, 0.06);
   background: rgba(255, 255, 255, 0.025);
   backdrop-filter: blur(12px);
-}
-
-.hud-card {
-  grid-column: span 2;
-}
-
-.hud-card--wide {
-  grid-column: span 4;
 }
 
 .hud-card__label,
@@ -79,21 +69,29 @@
 }
 
 .focus-pill--status {
-  grid-column: span 3;
+  grid-area: status;
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-height: 100%;
 }
 
 .focus-pill--decision {
-  grid-column: span 4;
+  grid-area: decision;
 }
 
 .focus-pill--chips {
-  grid-column: span 5;
+  grid-area: chips;
 }
 
 .focus-pill__chips {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+.focus-pill--decision .focus-pill__value {
+  white-space: normal;
 }
 
 .focus-pill__chip {
@@ -258,18 +256,12 @@
   color: var(--text-secondary);
 }
 
-@media (max-width: 1080px) {
-  .hud-card {
-    grid-column: span 3;
-  }
-
-  .hud-card--wide {
-    grid-column: span 6;
-  }
-
-  .focus-pill--status,
-  .focus-pill--decision,
-  .focus-pill--chips {
-    grid-column: span 12;
+@container (max-width: 420px) {
+  .network-shell__focus {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'status'
+      'decision'
+      'chips';
   }
 }

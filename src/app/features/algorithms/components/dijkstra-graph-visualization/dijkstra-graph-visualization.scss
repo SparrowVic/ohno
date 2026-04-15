@@ -5,31 +5,24 @@
 }
 
 .graph-shell {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
   min-height: 0;
-  border-radius: 28px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at top left, rgb(var(--viz-route-rgb) / 0.08), transparent 28%),
-    radial-gradient(circle at top right, rgb(var(--viz-window-rgb) / 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)), #12151e;
-  overflow: hidden;
 }
 
 .graph-shell__hud {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 8px;
-  padding: 12px 14px 0;
+  padding: 10px 12px 0;
 }
 
 .graph-shell__focus {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: minmax(168px, 1.08fr) repeat(2, minmax(96px, 1fr));
+  grid-template-areas:
+    'detail view phase'
+    'detail edge edge';
   gap: 8px;
-  padding: 8px 14px 0;
+  padding: 6px 12px 0;
 }
 
 .hud-card {
@@ -51,17 +44,6 @@
 
 .hud-card--compact {
   min-width: 0;
-}
-
-.hud-card--source,
-.hud-card--focus,
-.hud-card--current {
-  grid-column: span 2;
-}
-
-.hud-card--frontier,
-.hud-card--progress {
-  grid-column: span 3;
 }
 
 .hud-card__label {
@@ -98,8 +80,8 @@
 
 .hud-card__pair {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 6px;
   min-width: 0;
 }
 
@@ -126,14 +108,24 @@
   }
 }
 
-.focus-pill--view,
-.focus-pill--phase,
-.focus-pill--edge {
-  grid-column: span 2;
+.focus-pill--detail {
+  grid-area: detail;
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-height: 100%;
 }
 
-.focus-pill--detail {
-  grid-column: span 6;
+.focus-pill--view {
+  grid-area: view;
+}
+
+.focus-pill--phase {
+  grid-area: phase;
+}
+
+.focus-pill--edge {
+  grid-area: edge;
 }
 
 .focus-pill__label {
@@ -497,25 +489,17 @@
 @media (max-width: 1180px) {
   .graph-shell__hud,
   .graph-shell__focus {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
   }
+}
 
-  .hud-card--source,
-  .hud-card--focus,
-  .hud-card--current,
-  .focus-pill--view,
-  .focus-pill--phase,
-  .focus-pill--edge {
-    grid-column: span 2;
-  }
-
-  .hud-card--frontier,
-  .hud-card--progress {
-    grid-column: span 3;
-  }
-
-  .focus-pill--detail {
-    grid-column: span 6;
+@container (max-width: 400px) {
+  .graph-shell__focus {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'detail detail'
+      'view phase'
+      'edge edge';
   }
 }
 
