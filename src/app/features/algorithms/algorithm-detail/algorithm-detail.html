@@ -47,7 +47,6 @@
             [variantOptions]="variantOptions()"
             [sizeUnit]="sizeUnit()"
             [randomizeLabel]="randomizeLabel()"
-            [muted]="muted()"
             (resetClick)="onReset()"
             (stepBackClick)="onStepBack()"
             (playToggle)="onPlayToggle()"
@@ -56,7 +55,6 @@
             (sizeChange)="onSizeChange($event)"
             (randomizeClick)="onRandomize()"
             (variantChange)="onVariantChange($event)"
-            (muteToggle)="onMuteToggle()"
           />
           <app-visualization-canvas
             [variant]="variant()"
@@ -64,7 +62,6 @@
             [graph]="graph()"
             [step]="step()"
             [speed]="speed()"
-            [muted]="muted()"
             [graphFocusTargetId]="graphFocusTargetId()"
             [dpPresetOptions]="dpPresetOptions()"
             [dpPresetId]="dpPresetId()"

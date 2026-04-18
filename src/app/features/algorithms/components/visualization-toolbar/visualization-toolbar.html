@@ -94,27 +94,6 @@
   </div>
 
   <div class="toolbar__actions">
-    @if (variant() === 'sound') {
-      <button
-        type="button"
-        class="ctrl-btn"
-        [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
-        [attr.title]="muted() ? 'Unmute audio' : 'Mute audio'"
-        (click)="muteToggle.emit()"
-      >
-        @if (muted()) {
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M2 6h3l4-3v10l-4-3H2V6z" />
-            <path d="M13 5l-4 4M9 5l4 4" />
-          </svg>
-        } @else {
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M2 6h3l4-3v10l-4-3H2V6z" />
-            <path d="M12 6a3 3 0 010 4" />
-          </svg>
-        }
-      </button>
-    }
     <button type="button" class="generate-btn" (click)="randomizeClick.emit()">
       {{ randomizeLabel() }}
     </button>

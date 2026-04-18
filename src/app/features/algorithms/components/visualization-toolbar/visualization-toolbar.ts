@@ -29,7 +29,6 @@ export class VisualizationToolbar {
   readonly totalSteps = input.required<number>();
   readonly size = input.required<number>();
   readonly variant = input.required<VisualizationVariant>();
-  readonly muted = input<boolean>(true);
   readonly sizeOptions = input<readonly number[]>([]);
   readonly variantOptions = input<readonly VisualizationOption[]>([]);
   readonly sizeUnit = input<string>('elements');
@@ -68,7 +67,6 @@ export class VisualizationToolbar {
   readonly sizeChange = output<number>();
   readonly randomizeClick = output<void>();
   readonly variantChange = output<VisualizationVariant>();
-  readonly muteToggle = output<void>();
 
   constructor() {
     effect(() => {

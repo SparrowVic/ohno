@@ -6,15 +6,6 @@
     @case ('block') {
       <app-block-swap-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
-    @case ('gradient') {
-      <app-color-gradient-visualization [array]="array()" [step]="step()" [speed]="speed()" />
-    }
-    @case ('dot') {
-      <app-dot-plot-visualization [array]="array()" [step]="step()" [speed]="speed()" />
-    }
-    @case ('radial') {
-      <app-radial-visualization [array]="array()" [step]="step()" [speed]="speed()" />
-    }
     @case ('radix') {
       <app-radix-bucket-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
@@ -44,14 +35,6 @@
     }
     @case ('matrix') {
       <app-matrix-visualization [array]="array()" [step]="step()" [speed]="speed()" />
-    }
-    @case ('sound') {
-      <app-sound-bars-visualization
-        [array]="array()"
-        [step]="step()"
-        [speed]="speed()"
-        [muted]="muted()"
-      />
     }
     @case ('search') {
       <app-search-visualization [array]="array()" [step]="step()" [speed]="speed()" />

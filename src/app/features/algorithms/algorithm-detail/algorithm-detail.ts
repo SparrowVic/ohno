@@ -676,14 +676,6 @@ const BLOCK_LEGEND: readonly LegendItem[] = [
   { label: 'Boundary', color: 'var(--accent)' },
 ];
 
-const SOUND_LEGEND: readonly LegendItem[] = [
-  { label: 'Unsorted', color: 'var(--accent)', opacity: 0.5 },
-  { label: 'Comparing', color: 'var(--compare-color)' },
-  { label: 'Swapping', color: 'var(--swap-color)' },
-  { label: 'Sorted', color: 'var(--sorted-color)' },
-  { label: 'Audio on compare/swap', color: 'var(--text-secondary)', opacity: 0.6 },
-];
-
 const VIZ_ACCENT = VIZ_COLOR.accent;
 const VIZ_WINDOW = VIZ_COLOR.window;
 const VIZ_WARNING = VIZ_COLOR.warning;
@@ -1195,10 +1187,6 @@ const DELAUNAY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'bar', label: 'Bar Chart' },
   { value: 'block', label: 'Block Swap' },
-  { value: 'gradient', label: 'Color Gradient' },
-  { value: 'dot', label: 'Dot Plot' },
-  { value: 'radial', label: 'Radial Circle' },
-  { value: 'sound', label: 'Sound Bars' },
 ];
 
 const SORT_BAR_BLOCK_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -1437,7 +1425,6 @@ const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: bubbleSortGenerator,
   legendItems: (variant) => {
     if (variant === 'block') return BLOCK_LEGEND;
-    if (variant === 'sound') return SOUND_LEGEND;
     return BAR_LEGEND;
   },
   sizeUnit: 'elements',
@@ -3039,7 +3026,6 @@ export class AlgorithmDetail {
 
   private readonly sizeSig = signal(16);
   private readonly variantSig = signal<VisualizationVariant>('bar');
-  private readonly mutedSig = signal(true);
   private readonly arraySig = signal<readonly number[]>(
     this.generateArray(16, { min: 1, max: 99 }),
   );
@@ -3055,7 +3041,6 @@ export class AlgorithmDetail {
 
   readonly size = this.sizeSig.asReadonly();
   readonly variant = this.variantSig.asReadonly();
-  readonly muted = this.mutedSig.asReadonly();
   readonly array = this.arraySig.asReadonly();
   readonly graph = this.graphSig.asReadonly();
   readonly dpPresetId = this.dpPresetSig.asReadonly();
@@ -3218,7 +3203,6 @@ export class AlgorithmDetail {
 
         this.sizeSig.set(config.defaultSize);
         this.variantSig.set(config.defaultVariant);
-        this.mutedSig.set(true);
         this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
         this.stringPresetSig.set(config.kind === 'string' ? config.defaultPresetId : null);
         this.graphFocusTargetIdSig.set(null);
@@ -3524,10 +3508,6 @@ export class AlgorithmDetail {
     this.logEntriesSig.set([]);
     this.lastLoggedStep = -1;
     this.engine.reset();
-  }
-
-  onMuteToggle(): void {
-    this.mutedSig.update((muted) => !muted);
   }
 
   onGraphFocusTargetChange(value: string | null): void {

@@ -9,10 +9,6 @@ export interface VisualizationRenderer {
 export type VisualizationVariant =
   | 'bar'
   | 'block'
-  | 'gradient'
-  | 'dot'
-  | 'radial'
-  | 'sound'
   | 'search'
   | 'string'
   | 'dp'
