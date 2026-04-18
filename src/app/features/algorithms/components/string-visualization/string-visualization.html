@@ -480,7 +480,7 @@
                       @if (f.isActive) {
                         <span class="freq-count">{{ f.freq }}</span>
                       }
-                      <div class="freq-bar" [style.height]="freqBarHeight(huffman, f.freq)"></div>
+                      <div class="freq-bar" [style.height]="freqBarHeight(f.freq)"></div>
                     </div>
                     <div class="freq-char">'{{ f.char }}'</div>
                   </div>
@@ -491,13 +491,13 @@
                 <div class="huff-tree-wrap">
                   <svg
                     class="huff-tree-svg"
-                    [attr.width]="huffmanSvgWidth(huffman)"
-                    [attr.height]="huffmanSvgHeight(huffman)"
-                    [attr.viewBox]="'0 0 ' + huffmanSvgWidth(huffman) + ' ' + huffmanSvgHeight(huffman)"
+                    [attr.width]="huffmanSvgWidth()"
+                    [attr.height]="huffmanSvgHeight()"
+                    [attr.viewBox]="'0 0 ' + huffmanSvgWidth() + ' ' + huffmanSvgHeight()"
                   >
-                    @for (edge of huffmanVisibleEdges(huffman); track edge.fromId + edge.toId) {
-                      @if (huffNodeById(huffman, edge.fromId); as fromNode) {
-                        @if (huffNodeById(huffman, edge.toId); as toNode) {
+                    @for (edge of huffmanVisibleEdges(); track edge.fromId + edge.toId) {
+                      @if (huffNodeById(edge.fromId); as fromNode) {
+                        @if (huffNodeById(edge.toId); as toNode) {
                           <line
                             class="huff-edge"
                             [attr.x1]="fromNode.x"
@@ -514,7 +514,7 @@
                         }
                       }
                     }
-                    @for (node of huffmanVisibleNodes(huffman); track node.id) {
+                    @for (node of huffmanVisibleNodes(); track node.id) {
                       <g class="huff-node-g huff-node-g--{{ node.tone }}" [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
                         <circle class="huff-node" r="22" />
                         <text class="huff-node__freq" text-anchor="middle" dy="-3">{{ node.freq }}</text>

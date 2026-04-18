@@ -21,24 +21,21 @@ import {
 } from '../../../../shared/code-language-dial/code-language-dial';
 import { CopyCodeButton } from '../../../../shared/ui/copy-code-button/copy-code-button';
 import { CodeLanguage, CodeLine, CodeRegion, CodeVariant, CodeVariantMap } from '../../models/detail';
-
-const LANGUAGE_LABELS: Record<CodeLanguage, string> = {
-  typescript: 'TypeScript',
-  python: 'Python',
-  csharp: 'C#',
-  java: 'Java',
-  cpp: 'C/C++',
-  plaintext: 'Text',
-};
-
-const SUGGESTED_LANGUAGE_OPTIONS: readonly CodeLanguageDialOption[] = [
-  { id: 'javascript', label: 'JavaScript', disabled: true, hint: 'Coming soon' },
-  { id: 'go', label: 'Go', disabled: true, hint: 'Coming soon' },
-  { id: 'rust', label: 'Rust', disabled: true, hint: 'Coming soon' },
-  { id: 'swift', label: 'Swift', disabled: true, hint: 'Coming soon' },
-  { id: 'php', label: 'PHP', disabled: true, hint: 'Coming soon' },
-  { id: 'kotlin', label: 'Kotlin', disabled: true, hint: 'Coming soon' },
-];
+import {
+  applyActiveLineHighlight,
+  findClickedRegionId,
+  syncCodeRegionState,
+} from './code-panel.dom';
+import {
+  EMPTY_CODE_PANEL_HTML,
+  buildAvailableLanguageOptions,
+  buildVariantIdentity,
+  buildVariantMap,
+  buildVariantSource,
+  copyTextToClipboard,
+  resolveActiveCodeLine,
+  resolveActiveVariant,
+} from './code-panel.utils';
 
 @Component({
   selector: 'app-code-panel',
@@ -59,25 +56,16 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   readonly activeLineNumber = input<number | null>(null);
   protected readonly renderRoot = viewChild<ElementRef<HTMLElement>>('renderRoot');
   protected readonly highlightedHtml = signal<SafeHtml>(
-    this.sanitizer.bypassSecurityTrustHtml('<pre class="code-panel__shiki"><code></code></pre>'),
+    this.sanitizer.bypassSecurityTrustHtml(EMPTY_CODE_PANEL_HTML),
   );
   protected readonly hasLines = signal(false);
   protected readonly copied = signal(false);
   protected readonly selectedLanguage = signal<CodeLanguage>('typescript');
   protected readonly availableLanguages = computed<readonly CodeLanguageDialOption[]>(() => {
-    return [
-      ...Object.values(this.variantMap()).map((variant) => ({
-        id: variant.language,
-        language: variant.language,
-        label: LANGUAGE_LABELS[variant.language],
-      })),
-      ...SUGGESTED_LANGUAGE_OPTIONS,
-    ];
+    return buildAvailableLanguageOptions(this.variantMap());
   });
   protected readonly activeVariant = computed<CodeVariant>(() => {
-    const variants = this.variantMap();
-    const selected = this.selectedLanguage();
-    return variants[selected] ?? Object.values(variants)[0]!;
+    return resolveActiveVariant(this.variantMap(), this.selectedLanguage());
   });
 
   private renderVersion = 0;
@@ -89,26 +77,12 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   private copyResetTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly variantMap = computed<Record<CodeLanguage, CodeVariant>>(() => {
-    const inputVariants = this.codeVariants();
-    const presentEntries = Object.entries(inputVariants).filter((entry): entry is [CodeLanguage, CodeVariant] =>
-      Boolean(entry[1]),
-    );
-
-    if (presentEntries.length > 0) {
-      return Object.fromEntries(presentEntries) as Record<CodeLanguage, CodeVariant>;
-    }
-
-    return {
-      [this.language()]: {
-        language: this.language(),
-        lines: this.lines(),
-        regions: this.regions(),
-        highlightMap: undefined,
-        source: this.lines()
-          .map((line) => line.tokens.map((token) => token.text).join(''))
-          .join('\n'),
-      },
-    } as Record<CodeLanguage, CodeVariant>;
+    return buildVariantMap({
+      inputVariants: this.codeVariants(),
+      fallbackLanguage: this.language(),
+      fallbackLines: this.lines(),
+      fallbackRegions: this.regions(),
+    });
   });
 
   constructor() {
@@ -160,26 +134,8 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   }
 
   protected async copyCurrentCode(): Promise<void> {
-    const source = this.activeVariant().source ?? this.variantSource(this.activeVariant());
-    const clipboard = this.document.defaultView?.navigator.clipboard;
-
-    try {
-      if (!clipboard) {
-        throw new Error('Clipboard API unavailable');
-      }
-
-      await clipboard.writeText(source);
-    } catch {
-      const textarea = this.document.createElement('textarea');
-      textarea.value = source;
-      textarea.setAttribute('readonly', 'true');
-      textarea.style.position = 'absolute';
-      textarea.style.left = '-9999px';
-      this.document.body.append(textarea);
-      textarea.select();
-      this.document.execCommand('copy');
-      textarea.remove();
-    }
+    const source = this.activeVariant().source ?? buildVariantSource(this.activeVariant().lines);
+    await copyTextToClipboard(this.document, source);
 
     this.copied.set(true);
     if (this.copyResetTimer !== null) {
@@ -189,9 +145,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   }
 
   protected onRenderClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement | null;
-    const toggle = target?.closest<HTMLButtonElement>('.code-panel__fold-toggle');
-    const regionId = toggle?.dataset['regionId'];
+    const regionId = findClickedRegionId(event);
     if (!regionId) {
       return;
     }
@@ -227,31 +181,16 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
       return;
     }
 
-    if (this.lastAppliedActiveLine !== null) {
-      root
-        .querySelector<HTMLElement>(`.code-panel__render-line[data-line="${this.lastAppliedActiveLine}"]`)
-        ?.classList.remove('code-panel__render-line--active');
-    }
-
-    const nextLine = this.resolveActiveLine();
-    if (nextLine !== null) {
-      const nextElement = root.querySelector<HTMLElement>(
-        `.code-panel__render-line[data-line="${nextLine}"]`,
-      );
-      nextElement?.classList.add('code-panel__render-line--active');
-      nextElement?.scrollIntoView({ block: 'nearest' });
-    }
-
-    this.lastAppliedActiveLine = nextLine;
+    this.lastAppliedActiveLine = applyActiveLineHighlight(
+      root,
+      this.lastAppliedActiveLine,
+      this.resolveActiveLine(),
+    );
   }
 
   private syncRegionDefaults(variant: CodeVariant): void {
     const regions = variant.regions ?? [];
-    const identity = [
-      variant.language,
-      variant.source ?? this.variantSource(variant),
-      ...regions.map((region) => `${region.id}:${region.startLine}:${region.endLine}:${region.collapsedByDefault ? 1 : 0}`),
-    ].join('\u0001');
+    const identity = buildVariantIdentity(variant);
     if (identity === this.lastVariantIdentity) {
       return;
     }
@@ -291,79 +230,11 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
       return;
     }
 
-    const document = root.ownerDocument;
-    const lines = [...root.querySelectorAll<HTMLElement>('.code-panel__render-line')];
-    const lineMap = new Map<number, HTMLElement>();
-
-    for (const line of lines) {
-      const number = Number(line.dataset['line']);
-      lineMap.set(number, line);
-      line.classList.remove(
-        'code-panel__render-line--foldable',
-        'code-panel__render-line--collapsed',
-        'code-panel__render-line--hidden',
-      );
-      line.querySelectorAll('.code-panel__fold-toggle, .code-panel__fold-summary').forEach((node) => node.remove());
-    }
-
-    const hiddenLines = new Set<number>();
-    for (const region of this.activeVariant().regions ?? []) {
-      if (!this.collapsedRegionIds.has(region.id)) {
-        continue;
-      }
-
-      for (let line = region.startLine + 1; line <= region.endLine; line += 1) {
-        hiddenLines.add(line);
-      }
-    }
-
-    for (const lineNumber of hiddenLines) {
-      lineMap.get(lineNumber)?.classList.add('code-panel__render-line--hidden');
-    }
-
-    for (const region of this.activeVariant().regions ?? []) {
-      if (region.endLine <= region.startLine) {
-        continue;
-      }
-
-      const header = lineMap.get(region.startLine);
-      if (!header) {
-        continue;
-      }
-
-      const collapsed = this.collapsedRegionIds.has(region.id);
-      header.classList.add('code-panel__render-line--foldable');
-      if (collapsed) {
-        header.classList.add('code-panel__render-line--collapsed');
-      }
-
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'code-panel__fold-toggle';
-      toggle.dataset['regionId'] = region.id;
-      toggle.setAttribute('aria-label', collapsed ? 'Expand code region' : 'Collapse code region');
-      toggle.setAttribute('aria-expanded', String(!collapsed));
-      toggle.innerHTML =
-        '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5L8 6 4 9.5"/></svg>';
-      header.prepend(toggle);
-
-      if (collapsed) {
-        const summary = document.createElement('span');
-        summary.className = 'code-panel__fold-summary';
-        summary.textContent = `… ${region.endLine - region.startLine} lines`;
-        header.append(summary);
-      }
-    }
+    syncCodeRegionState(root, this.activeVariant().regions ?? [], this.collapsedRegionIds);
   }
 
   private resolveActiveLine(): number | null {
-    const activeStep = this.activeLineNumber();
-    if (activeStep === null) {
-      return null;
-    }
-
-    const map = this.activeVariant().highlightMap;
-    return map?.[activeStep] ?? activeStep;
+    return resolveActiveCodeLine(this.activeLineNumber(), this.activeVariant());
   }
 
   private requestDomSync(): void {
@@ -385,9 +256,5 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
         this.domSyncFrame = null;
       });
     });
-  }
-
-  private variantSource(variant: CodeVariant): string {
-    return variant.lines.map((line) => line.tokens.map((token) => token.text).join('')).join('\n');
   }
 }
