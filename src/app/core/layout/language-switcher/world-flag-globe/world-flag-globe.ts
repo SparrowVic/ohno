@@ -103,15 +103,8 @@ const COUNTRY_PALETTE = [
 })
 export class WorldFlagGlobe implements AfterViewInit {
   readonly hoveredCountry = signal<CountryMarker | null>(null);
-  readonly visibleCount = signal(0);
-  readonly markerCount = signal(0);
-  readonly surfaceDotCount = signal(0);
-  readonly boundaryDotCount = signal(0);
   readonly loading = signal(true);
   readonly loadError = signal<string | null>(null);
-  readonly markerLabel = computed(() => formatCompactNumber(this.markerCount()));
-  readonly surfaceDotLabel = computed(() => formatCompactNumber(this.surfaceDotCount()));
-  readonly boundaryDotLabel = computed(() => formatCompactNumber(this.boundaryDotCount()));
   readonly hoverHeadline = computed(() => this.hoveredCountry()?.name ?? 'Sweep across the planet');
   readonly hoverFlag = computed(() => this.hoveredCountry()?.flag ?? '🌍');
   readonly hoverNote = computed(() =>
@@ -166,7 +159,6 @@ export class WorldFlagGlobe implements AfterViewInit {
   private surfacePositionsByCountry = new Map<number, Float32Array>();
   private surfaceColorsByCountry = new Map<number, Float32Array>();
   private hoveredMarker: GlobeMarker | null = null;
-  private lastVisibleCount = -1;
   private disposed = false;
 
   private readonly handlePointerMove = (event: PointerEvent): void => {
@@ -270,7 +262,6 @@ export class WorldFlagGlobe implements AfterViewInit {
         surfaceDots,
         boundaryDots,
       );
-      this.markerCount.set(countries.length);
       this.loading.set(false);
       this.playIntro();
       this.playHudIntro();
@@ -412,7 +403,6 @@ export class WorldFlagGlobe implements AfterViewInit {
     this.ringMeshes = [];
     this.ringMaterials = [];
     this.hoveredMarker = null;
-    this.lastVisibleCount = -1;
     this.zone.runOutsideAngular(() => this.startLoop());
   }
 
@@ -633,8 +623,6 @@ export class WorldFlagGlobe implements AfterViewInit {
         new Float32Array(cs),
       ]),
     );
-    this.surfaceDotCount.set(surfacePositions.length / 3);
-    this.boundaryDotCount.set(boundaryPositions.length / 3);
   }
 
   private createDotTexture(THREE: ThreeModule): Texture {
@@ -812,21 +800,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       return;
     }
 
-    const cameraDirection = camera.position.clone().normalize();
-    const intro = this.introState.progress;
-    const nextVisibleCount = this.markers.reduce((count, marker) => {
-      const facing = this.getMarkerWorldNormal(marker).dot(cameraDirection);
-      return count + (facing > 0.06 ? 1 : 0);
-    }, 0);
-
-    this.updateHoveredCountryVisuals(camera, renderer, intro, sizeScale);
-
-    if (nextVisibleCount !== this.lastVisibleCount) {
-      this.lastVisibleCount = nextVisibleCount;
-      this.zone.run(() => {
-        this.visibleCount.set(nextVisibleCount);
-      });
-    }
+    this.updateHoveredCountryVisuals(camera, renderer, this.introState.progress, sizeScale);
   }
 
   private getSizeScale(): number {
@@ -1121,17 +1095,6 @@ function latLonToVector(THREE: ThreeModule, lat: number, lon: number): Vector3 {
     Math.cos(phi),
     Math.sin(phi) * Math.sin(theta),
   ).normalize();
-}
-
-function formatCompactNumber(value: number): string {
-  if (value >= 1000) {
-    return new Intl.NumberFormat('en', {
-      notation: 'compact',
-      maximumFractionDigits: value >= 100000 ? 0 : 1,
-    }).format(value);
-  }
-
-  return String(value);
 }
 
 function createSurfaceCluster(seed: number): readonly (readonly [number, number])[] {
