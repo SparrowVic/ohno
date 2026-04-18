@@ -13,14 +13,13 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faCheck, faCopy } from '@fortawesome/pro-solid-svg-icons';
 
 import { CodeHighlightService } from '../../../../shared/code-highlight.service';
 import {
   CodeLanguageDial,
   CodeLanguageDialOption,
 } from '../../../../shared/code-language-dial/code-language-dial';
+import { CopyCodeButton } from '../../../../shared/ui/copy-code-button/copy-code-button';
 import { CodeLanguage, CodeLine, CodeRegion, CodeVariant, CodeVariantMap } from '../../models/detail';
 
 const LANGUAGE_LABELS: Record<CodeLanguage, string> = {
@@ -43,7 +42,7 @@ const SUGGESTED_LANGUAGE_OPTIONS: readonly CodeLanguageDialOption[] = [
 
 @Component({
   selector: 'app-code-panel',
-  imports: [FaIconComponent, CodeLanguageDial],
+  imports: [CodeLanguageDial, CopyCodeButton],
   templateUrl: './code-panel.html',
   styleUrl: './code-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,10 +64,6 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   protected readonly hasLines = signal(false);
   protected readonly copied = signal(false);
   protected readonly selectedLanguage = signal<CodeLanguage>('typescript');
-  protected readonly icons = {
-    copy: faCopy,
-    check: faCheck,
-  };
   protected readonly availableLanguages = computed<readonly CodeLanguageDialOption[]>(() => {
     return [
       ...Object.values(this.variantMap()).map((variant) => ({

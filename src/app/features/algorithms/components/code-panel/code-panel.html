@@ -9,10 +9,7 @@
         (valueChange)="selectLanguage($event)"
       />
 
-      <button type="button" class="code-copy-button code-toolbar__copy" (click)="copyCurrentCode()">
-        <fa-icon [icon]="copied() ? icons.check : icons.copy" />
-        <span>{{ copied() ? 'Copied' : 'Copy code' }}</span>
-      </button>
+      <app-copy-code-button class="code-toolbar__copy" [copied]="copied()" (pressed)="copyCurrentCode()" />
     </div>
 
     <div class="code-scroll">

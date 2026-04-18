@@ -1,0 +1,27 @@
+<button
+  type="button"
+  class="copy-code-button"
+  [class.copy-code-button--pressed]="pressPulse()"
+  [class.copy-code-button--copied]="copied()"
+  [class.copy-code-button--success-pulse]="successPulse()"
+  [class.copy-code-button--icon-pulse]="iconPulse()"
+  [attr.aria-label]="copied() ? copiedAriaLabel() : ariaLabel()"
+  (click)="handleClick()"
+>
+  <span class="copy-code-button__icon-bay" aria-hidden="true">
+    <span class="copy-code-button__icon-ring"></span>
+    <fa-icon class="copy-code-button__icon copy-code-button__icon--copy-back" [icon]="icons.copy" />
+    <fa-icon class="copy-code-button__icon copy-code-button__icon--copy-front" [icon]="icons.copy" />
+    <fa-icon class="copy-code-button__icon copy-code-button__icon--check" [icon]="icons.check" />
+    <fa-icon class="copy-code-button__spark copy-code-button__spark--primary" [icon]="icons.sparkle" />
+  </span>
+
+  <span class="copy-code-button__label-shell" aria-hidden="true">
+    <span class="copy-code-button__label copy-code-button__label--copy">{{ label() }}</span>
+    <span class="copy-code-button__label copy-code-button__label--copied">{{ copiedLabel() }}</span>
+  </span>
+
+  <span class="copy-code-button__sr" aria-live="polite" aria-atomic="true">
+    {{ copied() ? copiedAriaLabel() : label() }}
+  </span>
+</button>
