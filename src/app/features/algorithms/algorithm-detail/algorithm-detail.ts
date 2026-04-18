@@ -27,7 +27,7 @@ import {
   INSPECTOR_COLLAPSED_KEY,
   INSPECTOR_LAYOUT_KEY,
   RandomRange,
-} from './algorithm-detail-config';
+} from './algorithm-detail-config/algorithm-detail-config';
 import { AlgorithmItem } from '../models/algorithm';
 import { CodeVariantMap, LogEntry } from '../models/detail';
 import { DpPresetOption, DpTraceState } from '../models/dp';
@@ -41,8 +41,8 @@ import { SearchTraceState } from '../models/search';
 import { SortStep } from '../models/sort-step';
 import { StringPresetOption, StringTraceState } from '../models/string';
 import { VisualizationVariant } from '../models/visualization-renderer';
-import { AlgorithmRegistry } from '../registry/algorithm-registry';
-import { VisualizationEngine } from '../services/visualization-engine';
+import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
+import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
 
 interface RebuildOptions {
   readonly dpPresetId?: string | null;

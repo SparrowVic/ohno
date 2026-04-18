@@ -1,7 +1,7 @@
 import { createStringStep } from './string-step';
 import { SortStep } from '../models/sort-step';
 import { RabinKarpTraceState } from '../models/string';
-import { RabinKarpScenario } from '../utils/string-scenarios';
+import { RabinKarpScenario } from '../utils/string-scenarios/string-scenarios';
 
 function hashOf(source: string, base: number, mod: number): number {
   let value = 0;

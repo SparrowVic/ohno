@@ -21,7 +21,7 @@ import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/di
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
 import { Difficulty } from '../../algorithms/models/algorithm';
-import { StructureCardPreview } from './structure-card-preview';
+import { StructureCardPreview } from './structure-card-preview/structure-card-preview';
 import { StructureItem } from '../models/structure';
 
 function formatFacetLabel(value: string): string {

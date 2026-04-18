@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { DivideConquerDpScenario } from '../utils/dp-scenarios';
+import { DivideConquerDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* divideConquerDpOptimizationGenerator(scenario: DivideConquerDpScenario): Generator<SortStep> {
   const n = scenario.values.length;

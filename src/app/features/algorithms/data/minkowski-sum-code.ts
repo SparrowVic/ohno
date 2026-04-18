@@ -1,5 +1,5 @@
 import { CodeVariantMap } from '../models/detail';
-import { buildStructuredCode } from './code-line-builder';
+import { buildStructuredCode } from './code-line-builder/code-line-builder';
 
 const MINKOWSKI_SUM_TS = buildStructuredCode(`
   //#region point interface collapsed

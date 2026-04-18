@@ -1,7 +1,7 @@
 import { createStringStep } from './string-step';
 import { SortStep } from '../models/sort-step';
 import { ManacherTraceState } from '../models/string';
-import { ManacherScenario } from '../utils/string-scenarios';
+import { ManacherScenario } from '../utils/string-scenarios/string-scenarios';
 
 function transform(source: string): string {
   return `#${source.split('').join('#')}#`;

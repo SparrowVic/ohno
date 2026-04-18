@@ -8,7 +8,7 @@ import {
   HuffmanTraceState,
   HuffmanTreeNode,
 } from '../models/string';
-import { HuffmanScenario } from '../utils/string-scenarios';
+import { HuffmanScenario } from '../utils/string-scenarios/string-scenarios';
 
 interface MutableNode {
   id: string;

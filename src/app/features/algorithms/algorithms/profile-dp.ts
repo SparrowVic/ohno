@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { ProfileDpScenario } from '../utils/dp-scenarios';
+import { ProfileDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 type ProfileTransition = { readonly nextMask: number; readonly label: string };
 

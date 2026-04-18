@@ -1,7 +1,7 @@
 import { createStringStep } from './string-step';
 import { SortStep } from '../models/sort-step';
 import { KmpTraceState } from '../models/string';
-import { KmpScenario } from '../utils/string-scenarios';
+import { KmpScenario } from '../utils/string-scenarios/string-scenarios';
 
 function makeState(args: {
   readonly scenario: KmpScenario;

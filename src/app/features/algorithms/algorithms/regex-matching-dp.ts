@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { RegexMatchingScenario } from '../utils/dp-scenarios';
+import { RegexMatchingScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Generator<SortStep> {
   const text = scenario.source.split('');

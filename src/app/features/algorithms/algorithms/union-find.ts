@@ -1,6 +1,6 @@
 import { DsuEdgeTrace } from '../models/dsu';
 import { SortStep } from '../models/sort-step';
-import { UnionFindOperation, UnionFindScenario } from '../utils/dsu-scenarios';
+import { UnionFindOperation, UnionFindScenario } from '../utils/dsu-scenarios/dsu-scenarios';
 import { createDsuStep, DsuBaseNode } from './dsu-step';
 
 export function* unionFindGenerator(scenario: UnionFindScenario): Generator<SortStep> {

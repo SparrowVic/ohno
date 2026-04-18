@@ -4,7 +4,7 @@ import {
   NetworkTraceTag,
 } from '../models/network';
 import { SortStep } from '../models/sort-step';
-import { HopcroftKarpScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/network-scenarios';
+import { HopcroftKarpScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/network-scenarios/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
 
 const INF = Number.MAX_SAFE_INTEGER;

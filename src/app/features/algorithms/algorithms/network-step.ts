@@ -9,7 +9,7 @@ import {
   NetworkTraceTag,
 } from '../models/network';
 import { SortPhase, SortStep } from '../models/sort-step';
-import { LayeredNetworkNode } from '../utils/network-scenarios';
+import { LayeredNetworkNode } from '../utils/network-scenarios/network-scenarios';
 
 export interface NetworkStepNodeState {
   readonly level: number | null;

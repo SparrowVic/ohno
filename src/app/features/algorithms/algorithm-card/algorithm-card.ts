@@ -29,7 +29,7 @@ import {
   createPrimaryBlobStyle,
   createWashStyle,
   formatFacetLabel,
-} from './algorithm-card.utils';
+} from './algorithm-card.utils/algorithm-card.utils';
 
 @Component({
   selector: 'app-algorithm-card',

@@ -1,5 +1,5 @@
 import { CodeVariantMap } from '../models/detail';
-import { buildStructuredCode } from './code-line-builder';
+import { buildStructuredCode } from './code-line-builder/code-line-builder';
 
 const RADIX_SORT_TS = buildStructuredCode(`
   /**

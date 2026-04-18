@@ -1,6 +1,6 @@
 import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../models/matrix';
 import { SortStep } from '../models/sort-step';
-import { HungarianScenario } from '../utils/matrix-scenarios';
+import { HungarianScenario } from '../utils/matrix-scenarios/matrix-scenarios';
 import { cellId, createMatrixStep } from './matrix-step';
 
 export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Generator<SortStep> {

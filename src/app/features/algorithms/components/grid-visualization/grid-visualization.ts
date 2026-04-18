@@ -13,7 +13,7 @@ import {
 import { GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion';
+import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-grid-visualization',

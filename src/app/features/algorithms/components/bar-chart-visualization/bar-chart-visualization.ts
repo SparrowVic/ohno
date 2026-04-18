@@ -20,7 +20,7 @@ import {
   findNewSorted,
   pulseSvgElement,
   samePair,
-} from '../../utils/visualization-motion';
+} from '../../utils/visualization-motion/visualization-motion';
 
 interface Bar {
   id: string;

@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { TravelingSalesmanScenario } from '../utils/dp-scenarios';
+import { TravelingSalesmanScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenario): Generator<SortStep> {
   const cityCount = scenario.labels.length;

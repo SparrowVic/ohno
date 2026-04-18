@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { SubsetSumScenario } from '../utils/dp-scenarios';
+import { SubsetSumScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* subsetSumGenerator(scenario: SubsetSumScenario): Generator<SortStep> {
   const count = scenario.numbers.length;

@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { WildcardMatchingScenario } from '../utils/dp-scenarios';
+import { WildcardMatchingScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): Generator<SortStep> {
   const text = scenario.source.split('');

@@ -1,7 +1,7 @@
 import { createStringStep } from './string-step';
 import { SortStep } from '../models/sort-step';
 import { ZAlgorithmTraceState } from '../models/string';
-import { ZAlgorithmScenario } from '../utils/string-scenarios';
+import { ZAlgorithmScenario } from '../utils/string-scenarios/string-scenarios';
 
 function makeState(args: {
   readonly scenario: ZAlgorithmScenario;

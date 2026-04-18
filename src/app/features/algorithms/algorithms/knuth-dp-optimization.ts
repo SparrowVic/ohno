@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { KnuthDpScenario } from '../utils/dp-scenarios';
+import { KnuthDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Generator<SortStep> {
   const files = scenario.files;

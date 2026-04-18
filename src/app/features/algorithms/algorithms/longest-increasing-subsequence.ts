@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { LisScenario } from '../utils/dp-scenarios';
+import { LisScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): Generator<SortStep> {
   const values = scenario.values;

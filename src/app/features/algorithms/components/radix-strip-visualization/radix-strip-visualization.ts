@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { SortItemSnapshot, SortStep } from '../../models/sort-step';
-import { createMotionProfile } from '../../utils/visualization-motion';
-import { VIZ_BUCKET_COLORS } from '../../utils/visualization-palette';
+import { createMotionProfile } from '../../utils/visualization-motion/visualization-motion';
+import { VIZ_BUCKET_COLORS } from '../../utils/visualization-palette/visualization-palette';
 import {
   RadixDigitBadge,
   RadixViewState,
@@ -12,7 +12,7 @@ import {
   digitsForValue,
   findActiveValue,
   phaseLabel,
-} from '../../utils/radix-visualization';
+} from '../../utils/radix-visualization/radix-visualization';
 
 interface StripDigitCell {
   readonly value: string;

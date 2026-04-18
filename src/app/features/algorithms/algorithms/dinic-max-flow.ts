@@ -4,7 +4,7 @@ import {
   NetworkTraceTag,
 } from '../models/network';
 import { SortStep } from '../models/sort-step';
-import { DinicScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/network-scenarios';
+import { DinicScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/network-scenarios/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
 
 export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortStep> {

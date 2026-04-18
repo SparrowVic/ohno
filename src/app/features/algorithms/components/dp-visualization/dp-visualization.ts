@@ -15,7 +15,7 @@ import {
 import { DpCell, DpPresetOption, DpTraceState } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion';
+import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
 
 interface KnapsackItemCard {
   readonly row: number;

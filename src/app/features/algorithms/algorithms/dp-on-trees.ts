@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { TreeDpScenario } from '../utils/dp-scenarios';
+import { TreeDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortStep> {
   const nodes = scenario.nodes;

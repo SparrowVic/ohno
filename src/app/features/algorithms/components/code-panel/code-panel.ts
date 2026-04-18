@@ -25,7 +25,7 @@ import {
   applyActiveLineHighlight,
   findClickedRegionId,
   syncCodeRegionState,
-} from './code-panel.dom';
+} from './code-panel.dom/code-panel.dom';
 import {
   EMPTY_CODE_PANEL_HTML,
   buildAvailableLanguageOptions,
@@ -35,7 +35,7 @@ import {
   copyTextToClipboard,
   resolveActiveCodeLine,
   resolveActiveVariant,
-} from './code-panel.utils';
+} from './code-panel.utils/code-panel.utils';
 
 @Component({
   selector: 'app-code-panel',

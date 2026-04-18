@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { BitmaskDpScenario } from '../utils/dp-scenarios';
+import { BitmaskDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<SortStep> {
   const workerCount = scenario.workers.length;

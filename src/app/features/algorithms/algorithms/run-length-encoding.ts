@@ -1,7 +1,7 @@
 import { createStringStep } from './string-step';
 import { SortStep } from '../models/sort-step';
 import { RleRun, RleTraceState } from '../models/string';
-import { RleScenario } from '../utils/string-scenarios';
+import { RleScenario } from '../utils/string-scenarios/string-scenarios';
 
 function makeState(args: {
   readonly scenario: RleScenario;

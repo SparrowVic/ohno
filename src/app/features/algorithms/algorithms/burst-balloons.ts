@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { BurstBalloonsScenario } from '../utils/dp-scenarios';
+import { BurstBalloonsScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Generator<SortStep> {
   const balloons = scenario.balloons;

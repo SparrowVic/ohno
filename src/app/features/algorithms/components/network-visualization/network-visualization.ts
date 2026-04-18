@@ -14,7 +14,7 @@ import {
 import { NetworkEdgeSnapshot, NetworkNodeSnapshot, NetworkTraceState } from '../../models/network';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseSvgElement } from '../../utils/visualization-motion';
+import { createMotionProfile, pulseSvgElement } from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-network-visualization',

@@ -1,5 +1,5 @@
 import { CodeVariantMap } from '../models/detail';
-import { buildStructuredCode } from './code-line-builder';
+import { buildStructuredCode } from './code-line-builder/code-line-builder';
 
 const HALF_PLANE_TS = buildStructuredCode(`
   //#region point interface collapsed

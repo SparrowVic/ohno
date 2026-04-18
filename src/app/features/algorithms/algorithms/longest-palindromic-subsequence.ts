@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { LpsScenario } from '../utils/dp-scenarios';
+import { LpsScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* longestPalindromicSubsequenceGenerator(scenario: LpsScenario): Generator<SortStep> {
   const chars = scenario.source.split('');

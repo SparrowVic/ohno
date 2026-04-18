@@ -10,7 +10,7 @@ import {
   SidebarGroup,
   SidebarItem,
 } from '../models/navigation';
-import { AlgorithmRegistry } from '../../features/algorithms/registry/algorithm-registry';
+import { AlgorithmRegistry } from '../../features/algorithms/registry/algorithm-registry/algorithm-registry';
 import { StructureRegistry } from '../../features/structures/registry/structure-registry';
 
 const NAV_TABS: readonly NavTab[] = [

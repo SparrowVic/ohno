@@ -1,6 +1,6 @@
 import { DsuEdgeTrace } from '../models/dsu';
 import { SortStep } from '../models/sort-step';
-import { KruskalScenario } from '../utils/dsu-scenarios';
+import { KruskalScenario } from '../utils/dsu-scenarios/dsu-scenarios';
 import { createDsuStep, DsuBaseNode } from './dsu-step';
 
 export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<SortStep> {

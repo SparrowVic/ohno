@@ -21,10 +21,10 @@ import {
 } from '../../../shared/difficulty-filter/difficulty-filter';
 import {
   AlgorithmTraitId,
-} from '../algorithm-traits';
+} from '../algorithm-traits/algorithm-traits';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem } from '../models/algorithm';
-import { AlgorithmRegistry } from '../registry/algorithm-registry';
+import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import {
   buildPageStats,
   buildTraitCounts,
@@ -33,7 +33,7 @@ import {
   groupSelectedTraits,
   PageStat,
   TraitGroupView,
-} from './algorithms-page.utils';
+} from './algorithms-page.utils/algorithms-page.utils';
 
 @Component({
   selector: 'app-algorithms-page',

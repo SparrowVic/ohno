@@ -1,5 +1,5 @@
 import { CodeVariantMap } from '../models/detail';
-import { buildStructuredCode } from './code-line-builder';
+import { buildStructuredCode } from './code-line-builder/code-line-builder';
 
 const LIS_TS = buildStructuredCode(`
   //#region lis-result interface collapsed

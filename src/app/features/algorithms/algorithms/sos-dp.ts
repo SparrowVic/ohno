@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { SosDpScenario } from '../utils/dp-scenarios';
+import { SosDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
   const stages = scenario.bitCount + 1;

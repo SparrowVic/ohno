@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { MatrixChainScenario } from '../utils/dp-scenarios';
+import { MatrixChainScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenario): Generator<SortStep> {
   const matrixCount = scenario.dimensions.length - 1;

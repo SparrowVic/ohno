@@ -60,7 +60,7 @@ import {
   zBarClass,
   zBarHeight,
   zCharClass,
-} from './string-visualization.utils';
+} from './string-visualization.utils/string-visualization.utils';
 
 @Component({
   selector: 'app-string-visualization',

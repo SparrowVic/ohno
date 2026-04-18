@@ -5,7 +5,7 @@ import {
   StringRotationRow,
   StringRunGroup,
 } from '../models/string';
-import { BurrowsWheelerScenario } from '../utils/string-scenarios';
+import { BurrowsWheelerScenario } from '../utils/string-scenarios/string-scenarios';
 
 interface RawRotationRow {
   readonly id: string;

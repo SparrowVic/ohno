@@ -1,0 +1,43 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/app/features/algorithms/**/*.spec.ts'],
+    restoreMocks: true,
+    clearMocks: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      reportsDirectory: './coverage/algorithms',
+      include: [
+        'src/app/features/algorithms/algorithm-card/algorithm-card.utils/**/*.ts',
+        'src/app/features/algorithms/algorithm-card/algorithm-card-preview/algorithm-card-preview-spec/**/*.ts',
+        'src/app/features/algorithms/algorithm-detail/algorithm-detail-config/**/*.ts',
+        'src/app/features/algorithms/algorithm-traits/**/*.ts',
+        'src/app/features/algorithms/algorithms-page/algorithms-page.utils/**/*.ts',
+        'src/app/features/algorithms/algorithms/climbing-stairs/**/*.ts',
+        'src/app/features/algorithms/algorithms/coin-change/**/*.ts',
+        'src/app/features/algorithms/algorithms/edit-distance/**/*.ts',
+        'src/app/features/algorithms/algorithms/fibonacci-dp/**/*.ts',
+        'src/app/features/algorithms/algorithms/knapsack-01/**/*.ts',
+        'src/app/features/algorithms/algorithms/longest-common-subsequence/**/*.ts',
+        'src/app/features/algorithms/components/code-panel/code-panel.dom/**/*.ts',
+        'src/app/features/algorithms/components/code-panel/code-panel.utils/**/*.ts',
+        'src/app/features/algorithms/components/string-visualization/string-visualization.utils/**/*.ts',
+        'src/app/features/algorithms/data/**/*.ts',
+        'src/app/features/algorithms/registry/algorithm-registry/**/*.ts',
+        'src/app/features/algorithms/services/visualization-engine/**/*.ts',
+        'src/app/features/algorithms/utils/**/*.ts',
+      ],
+      exclude: [
+        '**/*.spec.ts',
+      ],
+      thresholds: {
+        lines: 70,
+        statements: 70,
+      },
+    },
+  },
+});

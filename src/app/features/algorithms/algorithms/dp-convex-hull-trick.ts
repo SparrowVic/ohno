@@ -1,7 +1,7 @@
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { ChtDpScenario } from '../utils/dp-scenarios';
+import { ChtDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
 interface HullLine {
   readonly index: number;

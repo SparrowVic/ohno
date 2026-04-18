@@ -13,7 +13,7 @@ import {
 import { SearchTraceState } from '../../models/search';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion';
+import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-search-visualization',
