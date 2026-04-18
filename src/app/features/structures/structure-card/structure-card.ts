@@ -19,7 +19,7 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
-import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
+import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
 import { Difficulty } from '../../algorithms/models/algorithm';
 import { StructureCardPreview } from './structure-card-preview/structure-card-preview';
 import { StructureItem } from '../models/structure';

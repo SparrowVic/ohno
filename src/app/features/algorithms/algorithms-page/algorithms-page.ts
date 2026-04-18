@@ -18,7 +18,7 @@ import {
   DifficultyFilter,
   DifficultyFilterValue,
   buildDifficultyFilterOptions,
-} from '../../../shared/difficulty-filter/difficulty-filter';
+} from '../../../shared/components/difficulty-filter/difficulty-filter';
 import {
   AlgorithmTraitId,
 } from '../algorithm-traits/algorithm-traits';

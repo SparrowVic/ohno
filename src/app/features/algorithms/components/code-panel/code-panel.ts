@@ -18,8 +18,8 @@ import { CodeHighlightService } from '../../../../shared/code-highlight.service'
 import {
   CodeLanguageDial,
   CodeLanguageDialOption,
-} from '../../../../shared/code-language-dial/code-language-dial';
-import { CopyCodeButton } from '../../../../shared/ui/copy-code-button/copy-code-button';
+} from '../../../../shared/components/code-language-dial/code-language-dial';
+import { CopyCodeButton } from '../../../../shared/components/copy-code-button/copy-code-button';
 import { CodeLanguage, CodeLine, CodeRegion, CodeVariant, CodeVariantMap } from '../../models/detail';
 import {
   applyActiveLineHighlight,

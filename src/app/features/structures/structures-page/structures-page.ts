@@ -8,7 +8,7 @@ import {
   DifficultyFilter,
   DifficultyFilterValue,
   buildDifficultyFilterOptions,
-} from '../../../shared/difficulty-filter/difficulty-filter';
+} from '../../../shared/components/difficulty-filter/difficulty-filter';
 import { StructureCard } from '../structure-card/structure-card';
 import { StructureItem } from '../models/structure';
 import { StructureRegistry } from '../registry/structure-registry';

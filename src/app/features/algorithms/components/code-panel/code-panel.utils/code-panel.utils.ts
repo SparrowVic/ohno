@@ -1,4 +1,4 @@
-import { CodeLanguageDialOption } from '../../../../../shared/code-language-dial/code-language-dial';
+import { CodeLanguageDialOption } from '../../../../../shared/components/code-language-dial/code-language-dial';
 import {
   CodeLanguage,
   CodeLine,

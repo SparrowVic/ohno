@@ -12,8 +12,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { LabSlider } from '../../../../shared/ui/lab-slider/lab-slider';
-import { LabSelect, LabSelectOption } from '../../../../shared/ui/lab-select/lab-select';
+import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
+import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-select/lab-select';
 
 @Component({
   selector: 'app-visualization-toolbar',

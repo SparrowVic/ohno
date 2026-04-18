@@ -1,0 +1,49 @@
+<div
+  class="code-language-dial"
+  [class.code-language-dial--open]="open()"
+  [attr.aria-label]="ariaLabel()"
+>
+  <div class="code-language-dial__fan" [attr.aria-hidden]="!open()">
+    @for (item of radialItems(); track item.id) {
+      <button
+        type="button"
+        class="code-language-dial__item"
+        [class.code-language-dial__item--disabled]="item.disabled"
+        [style.--dial-x.px]="item.x"
+        [style.--dial-y.px]="item.y"
+        [style.--dial-via-x.px]="item.viaX"
+        [style.--dial-via-y.px]="item.viaY"
+        [style.--dial-accent]="item.accent"
+        [style.transition-delay]="open() ? item.delayMs + 'ms' : '0ms'"
+        [attr.aria-label]="item.disabled ? item.label + ' coming soon' : 'Switch code to ' + item.label"
+        [title]="item.disabled ? item.label + ' · ' + (item.hint ?? 'Coming soon') : item.label"
+        [disabled]="item.disabled"
+        (click)="item.language && select(item.language)"
+      >
+        @if (item.icon) {
+          <fa-icon [icon]="item.icon" />
+        } @else {
+          <span>{{ item.shortLabel }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <button
+    type="button"
+    class="code-language-dial__trigger"
+    [class.code-language-dial__trigger--open]="open()"
+    [class.code-language-dial__trigger--pulse]="selectionPulse()"
+    [style.--dial-accent]="activeOption().accent"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="ariaLabel()"
+    [title]="activeOption().label"
+    (click)="toggle()"
+  >
+    @if (activeOption().icon) {
+      <fa-icon class="code-language-dial__trigger-icon" [icon]="activeOption().icon" />
+    }
+    <span class="code-language-dial__trigger-label">{{ activeOption().shortLabel }}</span>
+    <span class="code-language-dial__trigger-glyph" aria-hidden="true">{{ open() ? '×' : '+' }}</span>
+  </button>
+</div>
