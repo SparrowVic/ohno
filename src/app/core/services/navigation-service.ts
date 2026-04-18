@@ -16,7 +16,6 @@ import { StructureRegistry } from '../../features/structures/registry/structure-
 const NAV_TABS: readonly NavTab[] = [
   { id: 'algorithms', label: 'Algorithms', path: '/algorithms' },
   { id: 'structures', label: 'Structures', path: '/structures' },
-  { id: 'playground', label: 'Playground', path: '/playground' },
 ];
 
 interface SidebarItemDefinition {
@@ -32,7 +31,7 @@ interface SidebarGroupDefinition {
   readonly items: readonly SidebarItemDefinition[];
 }
 
-type SidebarTabId = Exclude<NavTabId, 'playground'>;
+type SidebarTabId = NavTabId;
 
 const ALGORITHMS_SIDEBAR: readonly SidebarGroupDefinition[] = [
   {
@@ -471,7 +470,6 @@ export class NavigationService {
   readonly activeTabId: Signal<NavTabId> = computed(() => {
     const url = this.currentUrl();
     if (url.startsWith('/structures')) return 'structures';
-    if (url.startsWith('/playground')) return 'playground';
     return 'algorithms';
   });
 
@@ -485,8 +483,6 @@ export class NavigationService {
         return this.buildSidebarGroups(STRUCTURES_SIDEBAR, (filterValue) =>
           this.structures.count(filterValue),
         );
-      case 'playground':
-        return [];
     }
   });
 
@@ -494,13 +490,7 @@ export class NavigationService {
   readonly collapsed: Signal<boolean> = this.collapsedState.asReadonly();
 
   private readonly activeItemState = signal<Record<SidebarTabId, string>>(DEFAULT_ACTIVE_ITEM_KEY);
-  readonly activeItemKey: Signal<string> = computed(() => {
-    const tabId = this.activeTabId();
-    if (tabId === 'playground') {
-      return '';
-    }
-    return this.activeItemState()[tabId];
-  });
+  readonly activeItemKey: Signal<string> = computed(() => this.activeItemState()[this.activeTabId()]);
 
   readonly activeItem: Signal<SidebarItem | null> = computed(() => {
     const key = this.activeItemKey();
@@ -517,8 +507,6 @@ export class NavigationService {
   constructor() {
     effect(() => {
       const tabId = this.activeTabId();
-      if (tabId === 'playground') return;
-
       const groups = this.sidebarGroups();
       const routedKey = this.findItemKeyByRoute(tabId, groups, this.currentUrl());
       if (routedKey) {
@@ -554,8 +542,6 @@ export class NavigationService {
 
   setActiveItem(groupId: string, itemId: string): void {
     const tabId = this.activeTabId();
-    if (tabId === 'playground') return;
-
     const key = `${groupId}:${itemId}`;
     const item = this.getItemByKey(this.sidebarGroups(), key);
     if (!item) return;

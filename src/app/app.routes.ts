@@ -25,11 +25,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/structures/structures.routes').then((m) => m.STRUCTURES_ROUTES),
       },
-      {
-        path: 'playground',
-        loadChildren: () =>
-          import('./features/playground/playground.routes').then((m) => m.PLAYGROUND_ROUTES),
-      },
     ],
   },
   { path: '**', redirectTo: '' },

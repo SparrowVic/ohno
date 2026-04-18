@@ -1,4 +1,4 @@
-export type NavTabId = 'algorithms' | 'structures' | 'playground';
+export type NavTabId = 'algorithms' | 'structures';
 
 export interface NavTab {
   readonly id: NavTabId;
