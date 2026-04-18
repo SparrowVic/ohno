@@ -19,7 +19,7 @@ The project focuses on:
 
 ## Requirements
 
-- Node.js `22.14.0` or compatible Node 22 runtime
+- Node.js `22.x` or another Angular 21 compatible runtime such as `20.19+`
 - npm `10.9.2` or newer npm 10 release
 - a valid Font Awesome Pro npm token
 
