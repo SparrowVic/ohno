@@ -20,36 +20,20 @@ import {
   buildDifficultyFilterOptions,
 } from '../../../shared/difficulty-filter/difficulty-filter';
 import {
-  ALGORITHM_TRAIT_GROUPS,
-  ALGORITHM_TRAITS,
-  AlgorithmTraitGroupId,
   AlgorithmTraitId,
-  deriveAlgorithmTraits,
 } from '../algorithm-traits';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem } from '../models/algorithm';
 import { AlgorithmRegistry } from '../registry/algorithm-registry';
-
-interface PageStat {
-  readonly value: string;
-  readonly label: string;
-  readonly tone: 'accent' | 'success' | 'neutral';
-}
-
-interface TraitOptionView {
-  readonly id: AlgorithmTraitId;
-  readonly label: string;
-  readonly count: number;
-  readonly selected: boolean;
-}
-
-interface TraitGroupView {
-  readonly id: AlgorithmTraitGroupId;
-  readonly label: string;
-  readonly options: readonly TraitOptionView[];
-}
-
-const TRAIT_DEFINITION_BY_ID = new Map(ALGORITHM_TRAITS.map((trait) => [trait.id, trait] as const));
+import {
+  buildPageStats,
+  buildTraitCounts,
+  buildTraitGroupsView,
+  filterItemsByTraits,
+  groupSelectedTraits,
+  PageStat,
+  TraitGroupView,
+} from './algorithms-page.utils';
 
 @Component({
   selector: 'app-algorithms-page',
@@ -94,85 +78,21 @@ export class AlgorithmsPage {
   });
 
   readonly traitCounts = computed<ReadonlyMap<AlgorithmTraitId, number>>(() => {
-    const counts = new Map<AlgorithmTraitId, number>();
-
-    for (const item of this.difficultyScopedItems()) {
-      for (const trait of deriveAlgorithmTraits(item)) {
-        counts.set(trait, (counts.get(trait) ?? 0) + 1);
-      }
-    }
-
-    return counts;
+    return buildTraitCounts(this.difficultyScopedItems());
   });
 
   readonly traitGroups = computed<readonly TraitGroupView[]>(() => {
-    const lang = this.language.activeLang();
-    const selectedTraits = new Set(this.selectedTraitsState());
-    const counts = this.traitCounts();
-
-    return ALGORITHM_TRAIT_GROUPS.map((group) => {
-      const options = ALGORITHM_TRAITS.filter((trait) => trait.group === group.id)
-        .map<TraitOptionView>((trait) => ({
-          id: trait.id,
-          label: lang === APP_LANG.EN ? trait.label : trait.labelPl,
-          count: counts.get(trait.id) ?? 0,
-          selected: selectedTraits.has(trait.id),
-        }))
-        .filter((option) => option.count > 0 || option.selected);
-
-      return {
-        id: group.id,
-        label: lang === APP_LANG.EN ? group.label : group.labelPl,
-        options,
-      };
-    }).filter((group) => group.options.length > 0);
+    return buildTraitGroupsView(
+      this.language.activeLang(),
+      this.selectedTraitsState(),
+      this.traitCounts(),
+    );
   });
 
-  private readonly selectedTraitsByGroup = computed<
-    ReadonlyMap<AlgorithmTraitGroupId, ReadonlySet<AlgorithmTraitId>>
-  >(() => {
-    const grouped = new Map<AlgorithmTraitGroupId, Set<AlgorithmTraitId>>();
-
-    for (const traitId of this.selectedTraitsState()) {
-      const definition = TRAIT_DEFINITION_BY_ID.get(traitId);
-      if (!definition) {
-        continue;
-      }
-      const bucket = grouped.get(definition.group) ?? new Set<AlgorithmTraitId>();
-      bucket.add(traitId);
-      grouped.set(definition.group, bucket);
-    }
-
-    return grouped;
-  });
+  private readonly selectedTraitsByGroup = computed(() => groupSelectedTraits(this.selectedTraitsState()));
 
   readonly filteredItems = computed<readonly AlgorithmItem[]>(() => {
-    const groupedTraits = this.selectedTraitsByGroup();
-
-    if (groupedTraits.size === 0) {
-      return this.difficultyScopedItems();
-    }
-
-    return this.difficultyScopedItems().filter((item) => {
-      const itemTraits = new Set(deriveAlgorithmTraits(item));
-
-      for (const traitIds of groupedTraits.values()) {
-        let matchedGroup = false;
-
-        for (const traitId of traitIds) {
-          if (itemTraits.has(traitId)) {
-            matchedGroup = true;
-            break;
-          }
-        }
-
-        if (!matchedGroup) {
-          return false;
-        }
-      }
-
-      return true;
-    });
+    return filterItemsByTraits(this.difficultyScopedItems(), this.selectedTraitsByGroup());
   });
 
   readonly totalItems = computed(() => this.filteredItems().length);
@@ -274,24 +194,12 @@ export class AlgorithmsPage {
       : 'Żaden algorytm nie pasuje do bieżących filtrów.',
   );
   readonly stats = computed<readonly PageStat[]>(() => {
-    const lang = this.language.activeLang();
-    return [
-      {
-        value: String(this.totalItems()),
-        label: lang === APP_LANG.EN ? 'Visible now' : 'Widoczne teraz',
-        tone: 'accent',
-      },
-      {
-        value: String(this.implementedCount()),
-        label: lang === APP_LANG.EN ? 'Interactive' : 'Interaktywne',
-        tone: 'success',
-      },
-      {
-        value: String(this.trackCount()),
-        label: lang === APP_LANG.EN ? 'Tracks' : 'Ścieżki',
-        tone: 'neutral',
-      },
-    ];
+    return buildPageStats(
+      this.language.activeLang(),
+      this.totalItems(),
+      this.implementedCount(),
+      this.trackCount(),
+    );
   });
 
   selectDifficulty(value: DifficultyFilterValue): void {

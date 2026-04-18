@@ -1,4 +1,4 @@
-import { NgStyle, isPlatformBrowser } from '@angular/common';
+import { NgStyle, NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -18,133 +18,22 @@ import { RouterLink } from '@angular/router';
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
-import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
 import { AlgorithmCardPreview } from './algorithm-card-preview';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
-
-interface CardMetric {
-  readonly label: string;
-  readonly value: string;
-}
-
-function normalizeCardValue(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[–—]/g, '-')
-    .replace(/\s+/g, '')
-    .trim();
-}
-
-function isComplexityNotation(value: string): boolean {
-  return /(?:^|[^a-z])(o|θ|ω)\s*\(/iu.test(value);
-}
-
-function buildSemanticTags(algorithm: AlgorithmItem): readonly string[] {
-  const complexityValues = new Set(
-    [
-      algorithm.complexity.timeBest,
-      algorithm.complexity.timeAverage,
-      algorithm.complexity.timeWorst,
-      algorithm.complexity.space,
-    ].map(normalizeCardValue),
-  );
-
-  const seen = new Set<string>();
-
-  return algorithm.tags.filter((tag) => {
-    const normalized = normalizeCardValue(tag);
-
-    if (!normalized) {
-      return false;
-    }
-
-    if (isComplexityNotation(tag) || complexityValues.has(normalized)) {
-      return false;
-    }
-
-    if (seen.has(normalized)) {
-      return false;
-    }
-
-    seen.add(normalized);
-    return true;
-  });
-}
-
-function formatFacetLabel(value: string): string {
-  return value
-    .split('-')
-    .map((chunk) => {
-      if (chunk === 'dp') return 'DP';
-      if (chunk === 'mst') return 'MST';
-      return chunk.charAt(0).toUpperCase() + chunk.slice(1);
-    })
-    .join(' ');
-}
-
-function rgbToComma(spaceSep: string): string {
-  return spaceSep.trim().replace(/\s+/g, ', ');
-}
-
-function createPrimaryBlobStyle(seed: string, difficulty: Difficulty): Record<string, string> {
-  const theme = getDifficultyTheme(difficulty);
-  const rgb = rgbToComma(theme.accentRgb);
-  const fromRight = hashSeed(seed, 31) % 2 === 0;
-  return {
-    top: `${numberFromSeed(seed, 12, 18, 82).toFixed(1)}%`,
-    left: fromRight
-      ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
-      : `${numberFromSeed(seed, 11, -8, 10).toFixed(1)}%`,
-    width: `${numberFromSeed(seed, 13, 228, 320).toFixed(0)}px`,
-    height: `${numberFromSeed(seed, 14, 196, 286).toFixed(0)}px`,
-    background: `radial-gradient(ellipse at center, rgba(${rgb}, 0.24) 0%, rgba(${rgb}, 0.13) 36%, rgba(${rgb}, 0.05) 58%, transparent 76%)`,
-  };
-}
-
-function createWashStyle(difficulty: Difficulty): Record<string, string> {
-  const theme = getDifficultyTheme(difficulty);
-  const rgb1 = rgbToComma(theme.accentRgb);
-  return {
-    background: `linear-gradient(145deg, rgba(${rgb1}, 0.06) 0%, rgba(${rgb1}, 0.03) 32%, transparent 58%, rgba(${rgb1}, 0.015) 100%)`,
-  };
-}
-
-function hashSeed(value: string, salt: number): number {
-  let hash = 2166136261 ^ salt;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  return hash >>> 0;
-}
-
-function numberFromSeed(seed: string, salt: number, min: number, max: number): number {
-  const ratio = hashSeed(seed, salt) / 4294967295;
-  return min + ratio * (max - min);
-}
-
-function createCardStyleVars(seed: string, difficulty: Difficulty): Record<string, string> {
-  const fromRight = hashSeed(seed, 31) % 2 === 0;
-  return {
-    ...buildDifficultyThemeVars(difficulty, 'card'),
-    '--card-blob-1-x': fromRight
-      ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
-      : `${numberFromSeed(seed, 11, -8, 10).toFixed(1)}%`,
-    '--card-blob-1-y': `${numberFromSeed(seed, 12, 18, 82).toFixed(1)}%`,
-    '--card-blob-1-width': `${numberFromSeed(seed, 13, 228, 320).toFixed(0)}px`,
-    '--card-blob-1-height': `${numberFromSeed(seed, 14, 196, 286).toFixed(0)}px`,
-    '--card-grid-size': `${numberFromSeed(seed, 19, 18, 25).toFixed(0)}px`,
-    '--card-preview-angle': `${numberFromSeed(seed, 20, 144, 196).toFixed(0)}deg`,
-  };
-}
+import {
+  buildSemanticTags,
+  CardMetric,
+  createCardStyleVars,
+  createPrimaryBlobStyle,
+  createWashStyle,
+  formatFacetLabel,
+} from './algorithm-card.utils';
 
 @Component({
   selector: 'app-algorithm-card',
-  imports: [NgStyle, RouterLink, ShaderCardEffect, AlgorithmCardPreview],
+  imports: [NgStyle, NgTemplateOutlet, RouterLink, ShaderCardEffect, AlgorithmCardPreview],
   templateUrl: './algorithm-card.html',
   styleUrl: './algorithm-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -160,7 +49,9 @@ export class AlgorithmCard implements AfterViewInit {
   private intersectionObserver: IntersectionObserver | null = null;
 
   readonly algorithm = input.required<AlgorithmItem>();
+  readonly cardLink = computed(() => ['/algorithms', this.algorithm().id]);
   readonly isInsane = computed(() => this.algorithm().difficulty === Difficulty.UltraHard);
+  readonly isImplemented = computed(() => this.algorithm().implemented);
   readonly showShader = computed(
     () =>
       this.isInsane() &&
@@ -215,9 +106,9 @@ export class AlgorithmCard implements AfterViewInit {
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
   );
-  readonly insaneShaderColor = computed(() => '#ff7a2f');
-  readonly insaneShaderPositionX = computed(() => 0.5);
-  readonly insaneShaderPositionY = computed(() => 0.052);
+  readonly insaneShaderColor = '#ff7a2f';
+  readonly insaneShaderPositionX = 0.5;
+  readonly insaneShaderPositionY = 0.052;
   readonly primaryBlobStyle = computed(() =>
     createPrimaryBlobStyle(this.algorithm().id, this.algorithm().difficulty),
   );
