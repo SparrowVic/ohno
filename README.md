@@ -61,7 +61,7 @@ Without that secret, dependency installation for the workflow will fail because 
 
 The repository includes [netlify.toml](./netlify.toml) with:
 - `npm run build` as the build command
-- `dist/ohno` as the publish directory
+- `dist/ohno/browser` as the publish directory
 - an SPA fallback redirect for Angular routes
 - a small set of CDN response headers
 
