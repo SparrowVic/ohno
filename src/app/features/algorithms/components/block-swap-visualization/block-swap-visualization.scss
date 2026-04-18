@@ -5,15 +5,46 @@
   width: 100%;
 }
 
-.container {
+.stage {
+  position: relative;
   flex: 1;
   min-height: 0;
-  width: 100%;
-  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 18% 18%, rgb(var(--viz-route-rgb) / 0.16), transparent 28%),
+    radial-gradient(circle at 82% 10%, rgb(var(--viz-window-rgb) / 0.18), transparent 24%),
+    linear-gradient(160deg, rgba(16, 18, 25, 0.98), rgba(8, 9, 12, 0.99));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -28px 64px rgba(2, 6, 23, 0.28),
+    0 24px 44px rgba(2, 6, 23, 0.24);
 
-  svg {
-    display: block;
-    width: 100%;
-    height: 100%;
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
+
+  &::before {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 22%),
+      linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.025) 48%, transparent 100%);
+  }
+
+  &::after {
+    inset: 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 26%);
+  }
+}
+
+.container {
+  position: absolute;
+  inset: 0;
 }
