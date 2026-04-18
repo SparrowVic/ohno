@@ -1,11 +1,11 @@
 import { aStarPathfindingGenerator } from '../../algorithms/a-star-pathfinding';
-import { bfsGenerator } from '../../algorithms/bfs';
+import { bfsGenerator } from '../../algorithms/bfs/bfs';
 import { bellmanFordGenerator } from '../../algorithms/bellman-ford';
-import { binarySearchGenerator } from '../../algorithms/binary-search';
-import { binarySearchVariantsGenerator } from '../../algorithms/binary-search-variants';
-import { bipartiteCheckGenerator } from '../../algorithms/bipartite-check';
+import { binarySearchGenerator } from '../../algorithms/binary-search/binary-search';
+import { binarySearchVariantsGenerator } from '../../algorithms/binary-search-variants/binary-search-variants';
+import { bipartiteCheckGenerator } from '../../algorithms/bipartite-check/bipartite-check';
 import { bridgesArticulationPointsGenerator } from '../../algorithms/bridges-articulation-points';
-import { burstBalloonsGenerator } from '../../algorithms/burst-balloons';
+import { burstBalloonsGenerator } from '../../algorithms/burst-balloons/burst-balloons';
 import { bucketSortGenerator } from '../../algorithms/bucket-sort';
 import { bubbleSortGenerator } from '../../algorithms/bubble-sort';
 import { climbingStairsGenerator } from '../../algorithms/climbing-stairs/climbing-stairs';
@@ -15,9 +15,9 @@ import {
   ClosestPairScenario,
 } from '../../algorithms/closest-pair-of-points';
 import { coinChangeGenerator } from '../../algorithms/coin-change/coin-change';
-import { connectedComponentsGenerator } from '../../algorithms/connected-components';
+import { connectedComponentsGenerator } from '../../algorithms/connected-components/connected-components';
 import { countingSortGenerator } from '../../algorithms/counting-sort';
-import { cycleDetectionGenerator } from '../../algorithms/cycle-detection';
+import { cycleDetectionGenerator } from '../../algorithms/cycle-detection/cycle-detection';
 import { dpConvexHullTrickGenerator } from '../../algorithms/dp-convex-hull-trick';
 import { dpOnTreesGenerator } from '../../algorithms/dp-on-trees';
 import { dpWithBitmaskGenerator } from '../../algorithms/dp-with-bitmask';
@@ -25,14 +25,14 @@ import { dijkstraGenerator } from '../../algorithms/dijkstra';
 import { dinicMaxFlowGenerator } from '../../algorithms/dinic-max-flow';
 import { divideConquerDpOptimizationGenerator } from '../../algorithms/divide-conquer-dp-optimization';
 import { edmondsKarpGenerator } from '../../algorithms/edmonds-karp';
-import { dfsGenerator } from '../../algorithms/dfs';
+import { dfsGenerator } from '../../algorithms/dfs/dfs';
 import { dominatorTreeGenerator } from '../../algorithms/dominator-tree';
 import { editDistanceGenerator } from '../../algorithms/edit-distance/edit-distance';
 import { eulerPathCircuitGenerator } from '../../algorithms/euler-path-circuit';
 import { fibonacciDpGenerator } from '../../algorithms/fibonacci-dp/fibonacci-dp';
 import { floydWarshallGenerator } from '../../algorithms/floyd-warshall';
 import { floodFillGenerator } from '../../algorithms/flood-fill';
-import { huffmanCodingGenerator } from '../../algorithms/huffman-coding';
+import { huffmanCodingGenerator } from '../../algorithms/huffman-coding/huffman-coding';
 import {
   halfPlaneIntersectionGenerator,
   HalfPlaneIntersectionScenario,
@@ -42,42 +42,42 @@ import { insertionSortGenerator } from '../../algorithms/insertion-sort';
 import { knapsack01Generator } from '../../algorithms/knapsack-01/knapsack-01';
 import { knuthDpOptimizationGenerator } from '../../algorithms/knuth-dp-optimization';
 import { kruskalsMstGenerator } from '../../algorithms/kruskals-mst';
-import { linearSearchGenerator } from '../../algorithms/linear-search';
+import { linearSearchGenerator } from '../../algorithms/linear-search/linear-search';
 import {
   lineIntersectionGenerator,
   LineIntersectionScenario,
 } from '../../algorithms/line-intersection';
 import { longestCommonSubsequenceGenerator } from '../../algorithms/longest-common-subsequence/longest-common-subsequence';
-import { longestIncreasingSubsequenceGenerator } from '../../algorithms/longest-increasing-subsequence';
-import { longestPalindromicSubsequenceGenerator } from '../../algorithms/longest-palindromic-subsequence';
-import { manacherGenerator } from '../../algorithms/manacher';
-import { matrixChainMultiplicationGenerator } from '../../algorithms/matrix-chain-multiplication';
+import { longestIncreasingSubsequenceGenerator } from '../../algorithms/longest-increasing-subsequence/longest-increasing-subsequence';
+import { longestPalindromicSubsequenceGenerator } from '../../algorithms/longest-palindromic-subsequence/longest-palindromic-subsequence';
+import { manacherGenerator } from '../../algorithms/manacher/manacher';
+import { matrixChainMultiplicationGenerator } from '../../algorithms/matrix-chain-multiplication/matrix-chain-multiplication';
 import { mergeSortGenerator } from '../../algorithms/merge-sort';
 import { minCostMaxFlowGenerator } from '../../algorithms/min-cost-max-flow';
 import { minkowskiSumGenerator, MinkowskiSumScenario } from '../../algorithms/minkowski-sum';
-import { kmpPatternMatchingGenerator } from '../../algorithms/kmp-pattern-matching';
+import { kmpPatternMatchingGenerator } from '../../algorithms/kmp-pattern-matching/kmp-pattern-matching';
 import { quickSortGenerator } from '../../algorithms/quick-sort';
 import { radixSortGenerator } from '../../algorithms/radix-sort';
 import { primsMstGenerator } from '../../algorithms/prims-mst';
 import { profileDpGenerator } from '../../algorithms/profile-dp';
-import { rabinKarpGenerator } from '../../algorithms/rabin-karp';
-import { runLengthEncodingGenerator } from '../../algorithms/run-length-encoding';
-import { regexMatchingDpGenerator } from '../../algorithms/regex-matching-dp';
+import { rabinKarpGenerator } from '../../algorithms/rabin-karp/rabin-karp';
+import { runLengthEncodingGenerator } from '../../algorithms/run-length-encoding/run-length-encoding';
+import { regexMatchingDpGenerator } from '../../algorithms/regex-matching-dp/regex-matching-dp';
 import { selectionSortGenerator } from '../../algorithms/selection-sort';
 import { shellSortGenerator } from '../../algorithms/shell-sort';
 import { sosDpGenerator } from '../../algorithms/sos-dp';
-import { subsetSumGenerator } from '../../algorithms/subset-sum';
+import { subsetSumGenerator } from '../../algorithms/subset-sum/subset-sum';
 import { steinerTreeGenerator } from '../../algorithms/steiner-tree';
 import { sweepLineGenerator, SweepLineScenario } from '../../algorithms/sweep-line';
 import { tarjanSccGenerator } from '../../algorithms/tarjan-scc';
 import { timSortGenerator } from '../../algorithms/tim-sort';
-import { topologicalSortKahnGenerator } from '../../algorithms/topological-sort-kahn';
+import { topologicalSortKahnGenerator } from '../../algorithms/topological-sort-kahn/topological-sort-kahn';
 import { travelingSalesmanDpGenerator } from '../../algorithms/traveling-salesman-dp';
 import { unionFindGenerator } from '../../algorithms/union-find';
 import { voronoiDiagramGenerator, VoronoiDiagramScenario } from '../../algorithms/voronoi-diagram';
-import { wildcardMatchingGenerator } from '../../algorithms/wildcard-matching';
-import { zAlgorithmGenerator } from '../../algorithms/z-algorithm';
-import { burrowsWheelerTransformGenerator } from '../../algorithms/burrows-wheeler-transform';
+import { wildcardMatchingGenerator } from '../../algorithms/wildcard-matching/wildcard-matching';
+import { zAlgorithmGenerator } from '../../algorithms/z-algorithm/z-algorithm';
+import { burrowsWheelerTransformGenerator } from '../../algorithms/burrows-wheeler-transform/burrows-wheeler-transform';
 import { convexHullGenerator, ConvexHullScenario } from '../../algorithms/convex-hull';
 import {
   delaunayTriangulationGenerator,
