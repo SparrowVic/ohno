@@ -11,6 +11,7 @@
 npm-debug.log
 yarn-error.log
 .npmrc
+!.npmrc
 .env
 .env.*
 !.env.example

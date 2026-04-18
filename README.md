@@ -27,15 +27,14 @@ This repository currently depends on Font Awesome Pro packages. A fresh `npm ins
 
 ## Getting Started
 
-1. Install dependencies for the first time by creating a local `.npmrc` from [.npmrc.example](./.npmrc.example).
-2. Replace `${FONTAWESOME_NPM_AUTH_TOKEN}` with your own Font Awesome Pro npm token or export it as an environment variable before running npm.
-3. Install dependencies:
+1. Export `FONTAWESOME_PACKAGE_TOKEN` in your shell with your Font Awesome Package Manager token.
+2. Install dependencies:
 
 ```bash
 npm ci
 ```
 
-4. Start the app:
+3. Start the app:
 
 ```bash
 npm start
@@ -54,7 +53,7 @@ The dev server runs on `http://localhost:4200/`.
 
 ## CI
 
-GitHub Actions expects a repository secret named `FONTAWESOME_NPM_AUTH_TOKEN`.
+GitHub Actions expects a repository secret named `FONTAWESOME_PACKAGE_TOKEN`.
 
 Without that secret, dependency installation for the workflow will fail because the project imports private Font Awesome packages.
 
@@ -66,14 +65,9 @@ The repository includes [netlify.toml](./netlify.toml) with:
 - an SPA fallback redirect for Angular routes
 - a small set of CDN response headers
 
-Before the first Netlify deploy, add a site environment variable named `NPM_RC` with this content:
+Before the first Netlify deploy, add a site environment variable named `FONTAWESOME_PACKAGE_TOKEN`.
 
-```ini
-@fortawesome:registry=https://npm.fontawesome.com/
-//npm.fontawesome.com/:_authToken=YOUR_FONTAWESOME_TOKEN
-```
-
-This is required because the project depends on private Font Awesome Pro packages and no longer stores a real `.npmrc` in the repository.
+The repository now includes a checked-in `.npmrc` that safely references `${FONTAWESOME_PACKAGE_TOKEN}`. npm replaces that placeholder at install time, so you do not need a separate `NPM_RC` variable on Netlify.
 
 ## Notes Before Publishing
 
