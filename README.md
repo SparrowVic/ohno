@@ -58,6 +58,23 @@ GitHub Actions expects a repository secret named `FONTAWESOME_NPM_AUTH_TOKEN`.
 
 Without that secret, dependency installation for the workflow will fail because the project imports private Font Awesome packages.
 
+## Netlify Deploy
+
+The repository includes [netlify.toml](./netlify.toml) with:
+- `npm run build` as the build command
+- `dist/ohno` as the publish directory
+- an SPA fallback redirect for Angular routes
+- a small set of CDN response headers
+
+Before the first Netlify deploy, add a site environment variable named `NPM_RC` with this content:
+
+```ini
+@fortawesome:registry=https://npm.fontawesome.com/
+//npm.fontawesome.com/:_authToken=YOUR_FONTAWESOME_TOKEN
+```
+
+This is required because the project depends on private Font Awesome Pro packages and no longer stores a real `.npmrc` in the repository.
+
 ## Notes Before Publishing
 
 - The old tracked `.npmrc` with a live token has been removed from the repository.
