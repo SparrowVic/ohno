@@ -164,6 +164,7 @@ export class WorldFlagGlobe implements AfterViewInit {
   private readonly flagRasters = new Map<string, FlagRaster>();
   private surfaceCountryIndices: Uint16Array | null = null;
   private surfacePositionsByCountry = new Map<number, Float32Array>();
+  private surfaceColorsByCountry = new Map<number, Float32Array>();
   private hoveredMarker: GlobeMarker | null = null;
   private lastVisibleCount = -1;
   private disposed = false;
@@ -463,16 +464,19 @@ export class WorldFlagGlobe implements AfterViewInit {
     const surfaceColorList: number[] = [];
     const surfaceCountryIndexList: number[] = [];
     const countryPositions = new Map<number, number[]>();
+    const countryColors = new Map<number, number[]>();
 
     surfaceDots.forEach(([lat, lon, , countryIndex], seed) => {
       const normal = latLonToVector(THREE, lat, lon);
       const frame = projectionFrames[countryIndex];
       const flagRaster = flagRasters[countryIndex];
-      const coords = countryPositions.get(countryIndex) ?? [];
 
       if (!frame || !flagRaster) {
         return;
       }
+
+      const coords = countryPositions.get(countryIndex) ?? [];
+      const cColors = countryColors.get(countryIndex) ?? [];
 
       createSurfaceCluster(seed).forEach(([offsetX, offsetY], variantIndex) => {
         const point = offsetPointOnSphere(THREE, normal, offsetX, offsetY, 1.606);
@@ -483,17 +487,18 @@ export class WorldFlagGlobe implements AfterViewInit {
           1 - normalizeToUnit(v, frame.minV, frame.maxV),
         );
         const luminanceBoost = variantIndex === 0 ? 0.08 : variantIndex < 4 ? 0.03 : -0.03;
+        const r = clamp01(color[0] + luminanceBoost);
+        const g = clamp01(color[1] + luminanceBoost);
+        const b = clamp01(color[2] + luminanceBoost);
         surfacePositionList.push(point.x, point.y, point.z);
-        surfaceColorList.push(
-          clamp01(color[0] + luminanceBoost),
-          clamp01(color[1] + luminanceBoost),
-          clamp01(color[2] + luminanceBoost),
-        );
+        surfaceColorList.push(r, g, b);
         surfaceCountryIndexList.push(countryIndex);
         coords.push(point.x, point.y, point.z);
+        cColors.push(r, g, b);
       });
 
       countryPositions.set(countryIndex, coords);
+      countryColors.set(countryIndex, cColors);
     });
 
     const surfacePositions = new Float32Array(surfacePositionList);
@@ -506,8 +511,8 @@ export class WorldFlagGlobe implements AfterViewInit {
 
     const surfaceMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.12,
-      size: 0.0074,
+      alphaTest: 0.35,
+      size: 0.0088,
       vertexColors: true,
       transparent: true,
       opacity: 0,
@@ -519,8 +524,8 @@ export class WorldFlagGlobe implements AfterViewInit {
 
     const surfaceGlowMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.08,
-      size: 0.0114,
+      alphaTest: 0.05,
+      size: 0.0128,
       vertexColors: true,
       transparent: true,
       opacity: 0,
@@ -547,9 +552,9 @@ export class WorldFlagGlobe implements AfterViewInit {
 
     const boundaryMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.14,
-      color: 0x8fd8ff,
-      size: 0.0029,
+      alphaTest: 0.32,
+      color: 0xb8e8ff,
+      size: 0.0032,
       transparent: true,
       opacity: 0,
       sizeAttenuation: true,
@@ -560,9 +565,9 @@ export class WorldFlagGlobe implements AfterViewInit {
 
     const boundaryGlowMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.08,
+      alphaTest: 0.05,
       color: 0x2fe8ff,
-      size: 0.0046,
+      size: 0.005,
       transparent: true,
       opacity: 0,
       sizeAttenuation: true,
@@ -577,11 +582,15 @@ export class WorldFlagGlobe implements AfterViewInit {
       'position',
       new THREE.BufferAttribute(new Float32Array(0), 3),
     );
+    hoverCountryGeometry.setAttribute(
+      'color',
+      new THREE.BufferAttribute(new Float32Array(0), 3),
+    );
     const hoverCountryMaterial = new THREE.PointsMaterial({
       map: dotTexture,
-      alphaTest: 0.08,
-      color: 0xfff2bf,
-      size: 0.0108,
+      alphaTest: 0.18,
+      vertexColors: true,
+      size: 0.015,
       transparent: true,
       opacity: 0,
       sizeAttenuation: true,
@@ -618,43 +627,38 @@ export class WorldFlagGlobe implements AfterViewInit {
         new Float32Array(coords),
       ]),
     );
+    this.surfaceColorsByCountry = new Map(
+      [...countryColors.entries()].map(([countryIndex, cs]) => [
+        countryIndex,
+        new Float32Array(cs),
+      ]),
+    );
     this.surfaceDotCount.set(surfacePositions.length / 3);
     this.boundaryDotCount.set(boundaryPositions.length / 3);
   }
 
   private createDotTexture(THREE: ThreeModule): Texture {
     const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
+    canvas.width = 128;
+    canvas.height = 128;
     const context = canvas.getContext('2d');
     if (!context) {
       return new THREE.CanvasTexture(canvas);
     }
 
-    const gradient = context.createRadialGradient(128, 128, 8, 128, 128, 128);
+    const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
     gradient.addColorStop(0, 'rgba(255,255,255,1)');
-    gradient.addColorStop(0.12, 'rgba(255,255,255,0.98)');
-    gradient.addColorStop(0.24, 'rgba(223,248,255,0.94)');
-    gradient.addColorStop(0.44, 'rgba(184,240,255,0.48)');
-    gradient.addColorStop(0.7, 'rgba(86,191,255,0.14)');
-    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    gradient.addColorStop(0.56, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0.72, 'rgba(255,255,255,0.88)');
+    gradient.addColorStop(0.86, 'rgba(255,255,255,0.4)');
+    gradient.addColorStop(0.95, 'rgba(255,255,255,0.12)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
 
     context.fillStyle = gradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    context.save();
-    context.globalCompositeOperation = 'screen';
-    context.strokeStyle = 'rgba(255,255,255,0.1)';
-    context.lineWidth = 7;
-    context.beginPath();
-    context.moveTo(72, 128);
-    context.lineTo(184, 128);
-    context.moveTo(128, 72);
-    context.lineTo(128, 184);
-    context.stroke();
-    context.restore();
-
     const texture = new THREE.CanvasTexture(canvas);
+    texture.anisotropy = 4;
     texture.needsUpdate = true;
     return texture;
   }
@@ -747,7 +751,9 @@ export class WorldFlagGlobe implements AfterViewInit {
       }
 
       this.controls?.update();
-      this.updateMarkerVisibility();
+
+      const sizeScale = this.getSizeScale();
+      this.updateMarkerVisibility(sizeScale);
 
       if (this.starField) {
         this.starField.rotation.y += 0.00018;
@@ -771,21 +777,25 @@ export class WorldFlagGlobe implements AfterViewInit {
       }
 
       if (this.surfaceMaterial) {
-        this.surfaceMaterial.opacity = 0.4 + this.introState.progress * 0.6;
+        this.surfaceMaterial.opacity = 0.55 + this.introState.progress * 0.45;
+        this.surfaceMaterial.size = 0.0088 * sizeScale;
       }
 
       if (this.surfaceGlowMaterial) {
         this.surfaceGlowMaterial.opacity =
-          0.01 + this.introState.progress * (0.05 + shimmer * 0.018);
+          0.03 + this.introState.progress * (0.1 + shimmer * 0.03);
+        this.surfaceGlowMaterial.size = 0.0128 * sizeScale;
       }
 
       if (this.boundaryMaterial) {
-        this.boundaryMaterial.opacity = 0.12 + this.introState.progress * 0.22;
+        this.boundaryMaterial.opacity = 0.18 + this.introState.progress * 0.32;
+        this.boundaryMaterial.size = 0.0032 * sizeScale;
       }
 
       if (this.boundaryGlowMaterial) {
         this.boundaryGlowMaterial.opacity =
-          0.006 + this.introState.progress * (0.02 + shimmer * 0.01);
+          0.01 + this.introState.progress * (0.026 + shimmer * 0.012);
+        this.boundaryGlowMaterial.size = 0.005 * sizeScale;
       }
 
       this.renderer.render(this.scene, this.camera);
@@ -795,7 +805,7 @@ export class WorldFlagGlobe implements AfterViewInit {
     frame();
   }
 
-  private updateMarkerVisibility(): void {
+  private updateMarkerVisibility(sizeScale: number): void {
     const camera = this.camera;
     const renderer = this.renderer;
     if (!camera || !renderer) {
@@ -809,7 +819,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       return count + (facing > 0.06 ? 1 : 0);
     }, 0);
 
-    this.updateHoveredCountryVisuals(camera, renderer, intro);
+    this.updateHoveredCountryVisuals(camera, renderer, intro, sizeScale);
 
     if (nextVisibleCount !== this.lastVisibleCount) {
       this.lastVisibleCount = nextVisibleCount;
@@ -817,6 +827,16 @@ export class WorldFlagGlobe implements AfterViewInit {
         this.visibleCount.set(nextVisibleCount);
       });
     }
+  }
+
+  private getSizeScale(): number {
+    const camera = this.camera;
+    if (!camera) {
+      return 1;
+    }
+    const baseDistance = 5.58;
+    const distance = Math.max(camera.position.length(), 0.001);
+    return Math.pow(distance / baseDistance, 0.72);
   }
 
   private setHoveredMarker(marker: GlobeMarker | null): void {
@@ -855,15 +875,20 @@ export class WorldFlagGlobe implements AfterViewInit {
     const positions = marker
       ? (this.surfacePositionsByCountry.get(marker.countryIndex) ?? null)
       : null;
+    const colors = marker
+      ? (this.surfaceColorsByCountry.get(marker.countryIndex) ?? null)
+      : null;
 
-    if (!positions || positions.length === 0) {
+    if (!positions || positions.length === 0 || !colors || colors.length === 0) {
       geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(0), 3));
       geometry.setDrawRange(0, 0);
       hoverCountryField.visible = false;
       return;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     geometry.setDrawRange(0, positions.length / 3);
     hoverCountryField.visible = true;
   }
@@ -880,6 +905,7 @@ export class WorldFlagGlobe implements AfterViewInit {
     camera: PerspectiveCamera,
     renderer: WebGLRenderer,
     intro: number,
+    sizeScale: number,
   ): void {
     const overlay = this.hoverFlagCardRef()?.nativeElement;
     const hovered = this.hoveredMarker;
@@ -907,8 +933,8 @@ export class WorldFlagGlobe implements AfterViewInit {
     if (this.hoverCountryField) {
       this.hoverCountryField.visible = opacity > 0.02;
     }
-    hoverCountryMaterial.opacity = Math.min(0.22 + opacity * 0.58 + boost * 0.16, 0.92);
-    hoverCountryMaterial.size = 0.011 + opacity * 0.004 + boost * 0.003;
+    hoverCountryMaterial.opacity = Math.min(0.35 + opacity * 0.55 + boost * 0.18, 1);
+    hoverCountryMaterial.size = (0.0148 + opacity * 0.0052 + boost * 0.005) * sizeScale;
 
     if (!overlay) {
       return;
@@ -1024,6 +1050,7 @@ export class WorldFlagGlobe implements AfterViewInit {
     this.flagRasters.clear();
     this.surfaceCountryIndices = null;
     this.surfacePositionsByCountry = new Map();
+    this.surfaceColorsByCountry = new Map();
   }
 
   private disposeMaterial(material: Material | Material[]): void {
