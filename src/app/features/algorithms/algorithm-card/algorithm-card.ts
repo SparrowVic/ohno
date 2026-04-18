@@ -19,6 +19,7 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
+import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
 import { AlgorithmCardPreview } from './algorithm-card-preview/algorithm-card-preview';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
@@ -33,7 +34,7 @@ import {
 
 @Component({
   selector: 'app-algorithm-card',
-  imports: [NgStyle, NgTemplateOutlet, RouterLink, ShaderCardEffect, AlgorithmCardPreview],
+  imports: [NgStyle, NgTemplateOutlet, RouterLink, ShaderCardEffect, AlgorithmCardPreview, RoadmapOverlayDirective],
   templateUrl: './algorithm-card.html',
   styleUrl: './algorithm-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -97,6 +98,19 @@ export class AlgorithmCard implements AfterViewInit {
       : this.language.activeLang() === APP_LANG.EN
         ? 'Interactive walkthrough planned'
         : 'Planowana interaktywna wizualizacja',
+  );
+  readonly roadmapChipLabel = computed(() =>
+    this.language.activeLang() === APP_LANG.EN ? 'Roadmap' : 'Roadmap',
+  );
+  readonly roadmapTitle = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'Implementation planned'
+      : 'Implementacja planowana',
+  );
+  readonly roadmapHint = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'This visualization is already on the roadmap, but the interactive build is still locked.'
+      : 'Ta wizualizacja jest już na roadmapie, ale interaktywna implementacja jest jeszcze zablokowana.',
   );
   readonly semanticTags = computed(() => buildSemanticTags(this.algorithm()));
   readonly displayTags = computed(() => this.semanticTags().slice(0, 3));

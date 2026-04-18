@@ -5,6 +5,10 @@
   [class.card--disabled]="!structure().implemented"
   [attr.aria-disabled]="!structure().implemented"
   [ngStyle]="cardStyle()"
+  [appRoadmapOverlay]="!structure().implemented"
+  [roadmapOverlayChip]="roadmapChipLabel()"
+  [roadmapOverlayTitle]="roadmapTitle()"
+  [roadmapOverlayHint]="roadmapHint()"
 >
   <span class="card__wash" [ngStyle]="washStyle()" aria-hidden="true"></span>
   <span class="card__blob card__blob--primary" [ngStyle]="primaryBlobStyle()" aria-hidden="true"></span>

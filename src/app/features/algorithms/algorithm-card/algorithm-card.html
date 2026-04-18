@@ -87,6 +87,10 @@
     [ngStyle]="cardStyle()"
     [routerLink]="cardLink()"
     queryParamsHandling="preserve"
+    [appRoadmapOverlay]="!isImplemented()"
+    [roadmapOverlayChip]="roadmapChipLabel()"
+    [roadmapOverlayTitle]="roadmapTitle()"
+    [roadmapOverlayHint]="roadmapHint()"
   >
     <ng-container [ngTemplateOutlet]="cardContent"></ng-container>
   </a>
@@ -97,6 +101,10 @@
     [class.card--insane-active]="showShader()"
     [ngStyle]="cardStyle()"
     aria-disabled="true"
+    [appRoadmapOverlay]="!isImplemented()"
+    [roadmapOverlayChip]="roadmapChipLabel()"
+    [roadmapOverlayTitle]="roadmapTitle()"
+    [roadmapOverlayHint]="roadmapHint()"
   >
     <ng-container [ngTemplateOutlet]="cardContent"></ng-container>
   </article>

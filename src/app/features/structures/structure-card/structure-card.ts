@@ -19,6 +19,7 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
+import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
 import { Difficulty } from '../../algorithms/models/algorithm';
 import { StructureCardPreview } from './structure-card-preview/structure-card-preview';
@@ -91,7 +92,7 @@ function createCardStyleVars(seed: string, difficulty: Difficulty): Record<strin
 
 @Component({
   selector: 'app-structure-card',
-  imports: [StructureCardPreview, NgStyle, ShaderCardEffect],
+  imports: [StructureCardPreview, NgStyle, ShaderCardEffect, RoadmapOverlayDirective],
   templateUrl: './structure-card.html',
   styleUrl: './structure-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -147,6 +148,19 @@ export class StructureCard implements AfterViewInit {
       : this.structure().implemented
         ? 'Interaktywny model gotowy'
         : 'Planowany moduł deep-dive',
+  );
+  readonly roadmapChipLabel = computed(() =>
+    this.language.activeLang() === APP_LANG.EN ? 'Roadmap' : 'Roadmap',
+  );
+  readonly roadmapTitle = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'Module locked for now'
+      : 'Moduł chwilowo zablokowany',
+  );
+  readonly roadmapHint = computed(() =>
+    this.language.activeLang() === APP_LANG.EN
+      ? 'This structure is planned and visible in the roadmap, but its interactive module is not ready yet.'
+      : 'Ta struktura jest już widoczna na roadmapie, ale jej interaktywny moduł nie jest jeszcze gotowy.',
   );
   readonly displayTags = computed(() => this.structure().tags.slice(0, 3));
   readonly hiddenTagsCount = computed(
