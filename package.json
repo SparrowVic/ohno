@@ -1,6 +1,8 @@
 {
   "name": "ohno",
   "version": "0.0.0",
+  "description": "Interactive Angular playground for learning algorithms and data structures.",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -27,6 +29,10 @@
   },
   "private": true,
   "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": "22.x",
+    "npm": ">=10"
+  },
   "dependencies": {
     "@angular/common": "^21.1.0",
     "@angular/compiler": "^21.1.0",

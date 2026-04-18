@@ -1,59 +1,69 @@
 # Ohno
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
+Ohno is an Angular playground for learning algorithms and data structures through interactive, animated visualizations.
 
-## Development server
+The project focuses on:
+- algorithm walkthroughs with step-by-step state
+- rich visual scenes for sorting, graph, DP, string, grid, geometry, and network problems
+- multilingual UI with Polish and English translations
+- a growing unit-test suite around the algorithm layer
 
-To start a local development server, run:
+## Stack
 
-```bash
-ng serve
-```
+- Angular 21
+- TypeScript
+- Vitest
+- D3, Anime.js, Three.js
+- Transloco
+- Font Awesome
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Requirements
 
-## Code scaffolding
+- Node.js `22.14.0` or compatible Node 22 runtime
+- npm `10.9.2` or newer npm 10 release
+- a valid Font Awesome Pro npm token
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+This repository currently depends on Font Awesome Pro packages. A fresh `npm install` will fail until you provide your own token.
 
-```bash
-ng generate component component-name
-```
+## Getting Started
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+1. Install dependencies for the first time by creating a local `.npmrc` from [.npmrc.example](./.npmrc.example).
+2. Replace `${FONTAWESOME_NPM_AUTH_TOKEN}` with your own Font Awesome Pro npm token or export it as an environment variable before running npm.
+3. Install dependencies:
 
 ```bash
-ng test
+npm ci
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+4. Start the app:
 
 ```bash
-ng e2e
+npm start
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The dev server runs on `http://localhost:4200/`.
 
-## Additional Resources
+## Scripts
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `npm start` runs the Angular dev server
+- `npm run build` creates a production build
+- `npm run test:algorithms` runs the Vitest suite for the algorithms feature
+- `npm run test:algorithms:coverage` runs the same suite with coverage output
+- `npm run i18n:extract` extracts translation keys
+- `npm run i18n:find` finds translation key usage
+
+## CI
+
+GitHub Actions expects a repository secret named `FONTAWESOME_NPM_AUTH_TOKEN`.
+
+Without that secret, dependency installation for the workflow will fail because the project imports private Font Awesome packages.
+
+## Notes Before Publishing
+
+- The old tracked `.npmrc` with a live token has been removed from the repository.
+- If that token was ever pushed to any remote, rotate or revoke it in Font Awesome immediately.
+- The app currently builds with a few Angular budget warnings. They do not block the build, but they are known technical debt.
+
+## License
+
+This project is available under the MIT License. See [LICENSE](./LICENSE).
