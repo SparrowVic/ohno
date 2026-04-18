@@ -20,7 +20,7 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { ShaderCardEffect } from '../../../shared/shader-card-effect/shader-card-effect';
-import { AlgorithmCardPreview } from './algorithm-card-preview';
+import { AlgorithmCardPreview } from './algorithm-card-preview/algorithm-card-preview';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 import {
   buildSemanticTags,

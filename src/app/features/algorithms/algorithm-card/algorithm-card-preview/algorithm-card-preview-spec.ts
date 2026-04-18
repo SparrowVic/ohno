@@ -1,4 +1,4 @@
-import { AlgorithmItem } from '../models/algorithm';
+import { AlgorithmItem } from '../../models/algorithm';
 import {
   BIPARTITE_EDGES,
   BIPARTITE_NODES,

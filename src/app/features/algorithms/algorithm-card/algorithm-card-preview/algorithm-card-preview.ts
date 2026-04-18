@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-import { AlgorithmItem } from '../models/algorithm';
+import { AlgorithmItem } from '../../models/algorithm';
 import { resolvePreviewSpec } from './algorithm-card-preview-spec';
 
 @Component({
