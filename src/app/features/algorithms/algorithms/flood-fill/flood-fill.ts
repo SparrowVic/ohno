@@ -1,6 +1,6 @@
-import { GridTraceCell, GridTraceState } from '../models/grid';
-import { SortStep } from '../models/sort-step';
-import { cellId, FloodFillScenario, labelForCell, neighbors } from '../utils/grid-scenarios/grid-scenarios';
+import { GridTraceCell, GridTraceState } from '../../models/grid';
+import { SortStep } from '../../models/sort-step';
+import { cellId, FloodFillScenario, labelForCell, neighbors } from '../../utils/grid-scenarios/grid-scenarios';
 
 export function* floodFillGenerator(scenario: FloodFillScenario): Generator<SortStep> {
   const filled = new Set<string>();

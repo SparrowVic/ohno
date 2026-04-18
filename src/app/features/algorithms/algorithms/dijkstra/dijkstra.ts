@@ -6,8 +6,8 @@ import {
   GraphStepState,
   GraphTraceRow,
   WeightedGraphData,
-} from '../models/graph';
-import { SortStep } from '../models/sort-step';
+} from '../../models/graph';
+import { SortStep } from '../../models/sort-step';
 
 export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));

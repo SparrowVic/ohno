@@ -1,6 +1,6 @@
-import { GridTraceCell, GridTraceState } from '../models/grid';
-import { SortStep } from '../models/sort-step';
-import { AStarScenario, cellId, labelForCell, neighbors } from '../utils/grid-scenarios/grid-scenarios';
+import { GridTraceCell, GridTraceState } from '../../models/grid';
+import { SortStep } from '../../models/sort-step';
+import { AStarScenario, cellId, labelForCell, neighbors } from '../../utils/grid-scenarios/grid-scenarios';
 
 export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<SortStep> {
   const startId = cellId(scenario.startRow, scenario.startCol);

@@ -1,6 +1,6 @@
-import { aStarPathfindingGenerator } from '../../algorithms/a-star-pathfinding';
+import { aStarPathfindingGenerator } from '../../algorithms/a-star-pathfinding/a-star-pathfinding';
 import { bfsGenerator } from '../../algorithms/bfs/bfs';
-import { bellmanFordGenerator } from '../../algorithms/bellman-ford';
+import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { binarySearchGenerator } from '../../algorithms/binary-search/binary-search';
 import { binarySearchVariantsGenerator } from '../../algorithms/binary-search-variants/binary-search-variants';
 import { bipartiteCheckGenerator } from '../../algorithms/bipartite-check/bipartite-check';
@@ -21,7 +21,7 @@ import { cycleDetectionGenerator } from '../../algorithms/cycle-detection/cycle-
 import { dpConvexHullTrickGenerator } from '../../algorithms/dp-convex-hull-trick';
 import { dpOnTreesGenerator } from '../../algorithms/dp-on-trees';
 import { dpWithBitmaskGenerator } from '../../algorithms/dp-with-bitmask';
-import { dijkstraGenerator } from '../../algorithms/dijkstra';
+import { dijkstraGenerator } from '../../algorithms/dijkstra/dijkstra';
 import { dinicMaxFlowGenerator } from '../../algorithms/dinic-max-flow';
 import { divideConquerDpOptimizationGenerator } from '../../algorithms/divide-conquer-dp-optimization';
 import { edmondsKarpGenerator } from '../../algorithms/edmonds-karp';
@@ -30,8 +30,8 @@ import { dominatorTreeGenerator } from '../../algorithms/dominator-tree';
 import { editDistanceGenerator } from '../../algorithms/edit-distance/edit-distance';
 import { eulerPathCircuitGenerator } from '../../algorithms/euler-path-circuit';
 import { fibonacciDpGenerator } from '../../algorithms/fibonacci-dp/fibonacci-dp';
-import { floydWarshallGenerator } from '../../algorithms/floyd-warshall';
-import { floodFillGenerator } from '../../algorithms/flood-fill';
+import { floydWarshallGenerator } from '../../algorithms/floyd-warshall/floyd-warshall';
+import { floodFillGenerator } from '../../algorithms/flood-fill/flood-fill';
 import { huffmanCodingGenerator } from '../../algorithms/huffman-coding/huffman-coding';
 import {
   halfPlaneIntersectionGenerator,

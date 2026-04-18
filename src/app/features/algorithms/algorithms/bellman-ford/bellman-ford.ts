@@ -5,8 +5,8 @@ import {
   GraphQueueEntry,
   GraphTraceRow,
   WeightedGraphData,
-} from '../models/graph';
-import { SortStep } from '../models/sort-step';
+} from '../../models/graph';
+import { SortStep } from '../../models/sort-step';
 
 export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));

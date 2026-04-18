@@ -1,7 +1,7 @@
-import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../models/matrix';
-import { SortStep } from '../models/sort-step';
-import { FloydWarshallScenario } from '../utils/matrix-scenarios/matrix-scenarios';
-import { cellId, createMatrixStep } from './matrix-step';
+import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../../models/matrix';
+import { SortStep } from '../../models/sort-step';
+import { FloydWarshallScenario } from '../../utils/matrix-scenarios/matrix-scenarios';
+import { cellId, createMatrixStep } from '../matrix-step';
 
 export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Generator<SortStep> {
   const dist = scenario.matrix.map((row) => [...row]);
