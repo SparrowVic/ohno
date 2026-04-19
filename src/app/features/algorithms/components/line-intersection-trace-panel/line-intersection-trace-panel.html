@@ -1,77 +1,87 @@
-<div class="litp">
+<div class="trace">
   @if (state(); as geo) {
-    <div class="litp__phase litp__phase--{{ geo.phase }}">
-      <div class="litp__phase-copy">
-        <span class="litp__eyebrow">Phase</span>
-        <span class="litp__title">{{ phaseLabel(geo.phase) }}</span>
-      </div>
-      <div class="litp__stats">
-        <div class="litp__stat">
-          <span class="litp__stat-value">{{ geo.foundCount }}</span>
-          <span class="litp__stat-label">hits</span>
-        </div>
-        <div class="litp__stat">
-          <span class="litp__stat-value">{{ geo.activeOrder.length }}</span>
-          <span class="litp__stat-label">active</span>
-        </div>
-        <div class="litp__stat">
-          <span class="litp__stat-value">{{ geo.sweepX !== null ? geo.sweepX.toFixed(1) : '—' }}</span>
-          <span class="litp__stat-label">x</span>
-        </div>
-      </div>
-    </div>
+    <div class="trace__header">
+      <app-segmented-panel class="trace__summary" aria-label="Line intersection summary">
+        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel(geo.phase)" />
+        <app-segmented-panel-section
+          eyebrow="Sweep x"
+          [value]="geo.sweepX !== null ? geo.sweepX.toFixed(1) : '—'"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section eyebrow="Hits" [value]="geo.foundCount" [valueMono]="true" />
+        <app-segmented-panel-section
+          eyebrow="Active"
+          [value]="geo.activeOrder.length"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-    <div class="litp__card">
-      <span class="litp__card-key">Current event</span>
-      @if (currentEvent(); as event) {
-        <div class="litp__event-row">
-          <span class="litp__event-pill litp__event-pill--{{ event.kind }}">{{ event.label }}</span>
-          <span class="litp__event-x">x = {{ event.x.toFixed(1) }}</span>
-        </div>
-      } @else {
-        <div class="litp__placeholder">Sweep is between event checkpoints.</div>
-      }
-    </div>
+      <app-segmented-panel class="trace__streams" aria-label="Line intersection streams">
+        <app-segmented-panel-section eyebrow="Current event">
+          <div class="trace__event-wrap" [class.trace__event-wrap--ghost]="!currentEvent()">
+            @if (currentEvent(); as event) {
+              <span class="trace__event-pill trace__event-pill--{{ event.kind }}">{{
+                event.label
+              }}</span>
+              <span class="trace__event-meta">x = {{ event.x.toFixed(1) }}</span>
+            } @else {
+              <span class="trace__event-pill trace__event-pill--ghost">between checkpoints</span>
+              <span class="trace__event-meta">x = —</span>
+            }
+          </div>
+        </app-segmented-panel-section>
 
-    <div class="litp__card">
-      <span class="litp__card-key">Active ordering on sweep line</span>
-      <div class="litp__chips">
-        @if (geo.activeOrder.length === 0) {
-          <span class="litp__placeholder">No segment currently intersects the sweep line.</span>
-        }
-        @for (label of geo.activeOrder; track label) {
-          <span class="litp__chip">{{ label }}</span>
-        }
-      </div>
-    </div>
+        <app-segmented-panel-section eyebrow="Active ordering" [badge]="geo.activeOrder.length">
+          <div class="trace__chips">
+            @if (geo.activeOrder.length === 0) {
+              <span class="trace__placeholder">No active segments on the sweep line yet.</span>
+            } @else {
+              @for (label of geo.activeOrder; track label) {
+                <span class="trace__chip">{{ label }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
 
-    <div class="litp__card">
-      <span class="litp__card-key">Upcoming queue</span>
-      <div class="litp__chips">
-        @for (event of upcomingEvents(); track event.id) {
-          <span class="litp__queue-item litp__queue-item--{{ event.kind }} litp__queue-item--{{ event.tone }}">
-            {{ event.label }}
-          </span>
-        }
-      </div>
-    </div>
+      <app-segmented-panel class="trace__streams" aria-label="Line intersection details">
+        <app-segmented-panel-section eyebrow="Upcoming queue" [badge]="upcomingEvents().length">
+          <div class="trace__chips">
+            @if (upcomingEvents().length === 0) {
+              <span class="trace__placeholder">No queued events remain.</span>
+            } @else {
+              @for (event of upcomingEvents(); track event.id) {
+                <span
+                  class="trace__queue-item trace__queue-item--{{ event.kind }} trace__queue-item--{{
+                    event.tone
+                  }}"
+                >
+                  {{ event.label }}
+                </span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
 
-    <div class="litp__card">
-      <span class="litp__card-key">Found intersections</span>
-      @if (geo.intersections.length === 0) {
-        <div class="litp__placeholder">No crossing has been confirmed yet.</div>
-      } @else {
-        <div class="litp__table">
-          @for (marker of geo.intersections; track marker.id) {
-            <div class="litp__row">
-              <span class="litp__row-label">{{ marker.label }}</span>
-              <span class="litp__row-value">({{ marker.x.toFixed(1) }}, {{ marker.y.toFixed(1) }})</span>
-            </div>
+        <app-segmented-panel-section
+          eyebrow="Found intersections"
+          [badge]="geo.intersections.length"
+        >
+          @if (geo.intersections.length === 0) {
+            <div class="trace__placeholder">No confirmed intersections yet.</div>
+          } @else {
+            <app-table
+              class="trace__table"
+              [columns]="intersectionColumns"
+              [rows]="intersectionRows()"
+              [showHeader]="false"
+              density="compact"
+            />
           }
-        </div>
-      }
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
   } @else {
-    <div class="litp__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">No trace data for this geometry step.</div>
   }
 </div>

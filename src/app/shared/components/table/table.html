@@ -1,0 +1,148 @@
+<div class="table-shell">
+  @if (rows().length === 0) {
+    <div class="table__empty">{{ emptyLabel() }}</div>
+  } @else {
+    <table
+      class="table"
+      [class.table--headerless]="!showHeader()"
+      [class.table--compact]="density() === 'compact'"
+      [class.table--sticky]="stickyHeader() && showHeader()"
+    >
+      <colgroup>
+        @for (column of columns(); track column.id) {
+          <col [style.width]="column.width ?? null" />
+        }
+      </colgroup>
+
+      @if (showHeader()) {
+        <thead>
+          <tr>
+            @for (column of columns(); track column.id) {
+              <th [class.table__head--center]="cellAlign(column) === 'center'" [class.table__head--end]="cellAlign(column) === 'end'">
+                {{ column.header ?? column.id }}
+              </th>
+            }
+          </tr>
+        </thead>
+      }
+
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr
+            class="table__row"
+            [class.table__row--active]="row.tone === 'active' || row.tone === 'warning'"
+            [class.table__row--success]="row.tone === 'success'"
+            [class.table__row--danger]="row.tone === 'danger'"
+            [class.table__row--ghost]="row.ghost === true"
+          >
+            @for (column of columns(); track column.id) {
+              <td
+                class="table__cell"
+                [class.table__cell--mono]="cellKind(column) === 'mono' || cellKind(column) === 'number'"
+                [class.table__cell--center]="cellAlign(column) === 'center'"
+                [class.table__cell--end]="cellAlign(column) === 'end'"
+              >
+                @switch (cellKind(column)) {
+                  @case ('tag') {
+                    @if (tagValue(row, column); as tag) {
+                      <app-ui-tag
+                        [label]="tag.label ?? null"
+                        [icon]="tag.icon ?? null"
+                        [title]="tag.title ?? null"
+                        [ariaLabel]="tag.ariaLabel ?? null"
+                        [tone]="tag.tone ?? 'neutral'"
+                        [appearance]="tag.appearance ?? 'soft'"
+                        [size]="tag.size ?? 'sm'"
+                        [shape]="tag.shape ?? 'pill'"
+                        [mono]="tag.mono ?? false"
+                        [uppercase]="tag.uppercase ?? false"
+                        [ghost]="tag.ghost ?? false"
+                      />
+                    } @else {
+                      <span class="table__placeholder">{{ column.placeholder ?? '—' }}</span>
+                    }
+                  }
+                  @case ('tags') {
+                    @if (tagsValue(row, column).length === 0) {
+                      <span class="table__placeholder">{{ column.placeholder ?? '—' }}</span>
+                    } @else {
+                      <div class="table__tags">
+                        @for (tag of tagsValue(row, column); track trackTag($index, tag)) {
+                          <app-ui-tag
+                            [label]="tag.label ?? null"
+                            [icon]="tag.icon ?? null"
+                            [title]="tag.title ?? null"
+                            [ariaLabel]="tag.ariaLabel ?? null"
+                            [tone]="tag.tone ?? 'neutral'"
+                            [appearance]="tag.appearance ?? 'soft'"
+                            [size]="tag.size ?? 'sm'"
+                            [shape]="tag.shape ?? 'pill'"
+                            [mono]="tag.mono ?? false"
+                            [uppercase]="tag.uppercase ?? false"
+                            [ghost]="tag.ghost ?? false"
+                          />
+                        }
+                      </div>
+                    }
+                  }
+                  @default {
+                    <span>{{ textValue(row, column) }}</span>
+                  }
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (legendItems().length > 0) {
+    <div class="table__legend" [class.table__legend--open]="legendOpen()">
+      <div class="table__legend-panel">
+        <div class="table__legend-grid">
+          @for (item of legendItems(); track item.id) {
+            <div class="table__legend-item">
+              @if (item.tag; as tag) {
+                <app-ui-tag
+                  [label]="tag.label ?? null"
+                  [icon]="tag.icon ?? null"
+                  [title]="tag.title ?? null"
+                  [ariaLabel]="tag.ariaLabel ?? null"
+                  [tone]="tag.tone ?? 'neutral'"
+                  [appearance]="tag.appearance ?? 'soft'"
+                  [size]="tag.size ?? 'sm'"
+                  [shape]="tag.shape ?? 'pill'"
+                  [mono]="tag.mono ?? false"
+                  [uppercase]="tag.uppercase ?? false"
+                  [ghost]="tag.ghost ?? false"
+                />
+              }
+
+              <div class="table__legend-copy">
+                <span class="table__legend-label">{{ item.label }}</span>
+                @if (item.description) {
+                  <span class="table__legend-description">{{ item.description }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="table__legend-toggle"
+        [attr.aria-expanded]="legendOpen()"
+        (click)="toggleLegend()"
+      >
+        <span class="table__legend-toggle-copy">{{ legendLabel() }}</span>
+        <span class="table__legend-toggle-icon" aria-hidden="true">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M2.5 7.5L6 4l3.5 3.5" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  }
+</div>

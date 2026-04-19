@@ -3,21 +3,38 @@
 }
 
 .toolbar {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(320px, 1fr) auto;
   gap: 8px;
-  padding: 8px 10px;
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-    rgba(14, 15, 16, 0.92);
+  min-height: var(--panel-topbar-height);
+  padding: 8px var(--panel-topbar-padding-inline);
+  border-bottom: 0.5px solid var(--panel-topbar-divider);
+  background: var(--panel-topbar-bg);
+  overflow: visible;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(184, 213, 110, 0),
+      rgba(184, 213, 110, 0.2),
+      rgba(184, 213, 110, 0)
+    );
+    pointer-events: none;
+  }
 }
 
 .toolbar__transport,
 .toolbar__group,
 .toolbar__actions {
   display: flex;
-  align-items: center;
+  align-items: stretch;
 }
 
 .toolbar__transport {
@@ -32,12 +49,17 @@
 
 .toolbar__progress {
   min-width: 146px;
-  padding: 6px 9px;
-  border-radius: 13px;
+  min-height: var(--control-height);
+  padding: 5px 9px;
+  border-radius: var(--control-radius);
   border: 0.5px solid var(--border);
   background: rgba(19, 20, 21, 0.9);
   display: grid;
-  gap: 5px;
+  align-content: center;
+  gap: 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 8px 18px rgba(0, 0, 0, 0.1);
 }
 
 .toolbar__progress-copy {
@@ -49,6 +71,7 @@
 
 .toolbar__eyebrow {
   font-size: 8px;
+  line-height: 1.05;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -57,6 +80,7 @@
 .toolbar__counter {
   font-family: var(--font-mono);
   font-size: 10px;
+  line-height: 1.1;
   color: var(--text-primary);
 }
 
@@ -80,12 +104,13 @@
   gap: 8px;
   min-width: 0;
   align-items: stretch;
+  overflow: visible;
 }
 
 .ctrl-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
+  width: var(--control-icon-size);
+  height: var(--control-icon-size);
+  border-radius: var(--control-radius);
   border: 0.5px solid var(--border);
   background: rgba(24, 25, 27, 0.92);
   display: inline-flex;
@@ -132,14 +157,14 @@
 }
 
 .generate-btn {
-  min-height: 34px;
-  padding: 0 12px;
+  min-height: var(--control-height);
+  padding: 0 var(--control-padding-inline);
   font-size: 11px;
   font-weight: 700;
   color: var(--accent-strong);
   background: rgba(184, 213, 110, 0.12);
   border: 0.5px solid rgba(184, 213, 110, 0.16);
-  border-radius: 12px;
+  border-radius: var(--control-radius);
   font-family: inherit;
   transition:
     background 160ms ease,

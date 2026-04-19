@@ -1,0 +1,15 @@
+:host {
+  display: grid;
+  min-width: 0;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.024), rgba(255, 255, 255, 0.008)),
+    rgba(255, 255, 255, 0.012);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
+
+:host(.segmented-panel--vertical) {
+  grid-template-columns: 1fr;
+}

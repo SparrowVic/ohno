@@ -1,122 +1,69 @@
 <div class="trace">
   @if (state(); as searchState) {
     <div class="trace__header">
-      <div class="trace__summary">
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Target</span>
-          <span class="trace__summary-value">{{ searchState.target }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Probe</span>
-          <span class="trace__summary-value">{{ probeLabel() }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Window</span>
-          <span class="trace__summary-value">{{ windowLabel() }}</span>
-        </div>
-      </div>
-
-      <div class="trace__calculation trace__calculation--{{ resultTone() }}">
-        <div class="trace__calc-strip">
-          <div class="trace__calc-pill">
-            <span class="trace__calc-label">Mode</span>
-            <span class="trace__calc-value">{{ searchState.modeLabel }}</span>
-          </div>
-          <div class="trace__calc-pill">
-            <span class="trace__calc-label">Status</span>
-            <span class="trace__calc-value">{{ searchState.statusLabel }}</span>
-          </div>
-          <div class="trace__calc-pill">
-            <span class="trace__calc-label">Hits</span>
-            <span class="trace__calc-value trace__calc-value--accent">{{ hitLabel() }}</span>
-          </div>
-        </div>
-        <div class="trace__calc-decision">{{ searchState.decision ?? 'waiting for next move' }}</div>
-      </div>
-
-      <div class="trace__queue">
-        <div class="trace__queue-label">Visited order</div>
-        <div class="trace__queue-items">
-          @if (searchState.visitedOrder.length === 0) {
-            <span class="trace__queue-empty">not started</span>
-          } @else {
-            @for (index of searchState.visitedOrder; track $index) {
-              <span class="trace__queue-chip">{{ index }}</span>
-            }
-          }
-        </div>
-      </div>
-
-      <div class="trace__queue">
-        <div class="trace__queue-label">Match span</div>
-        <div class="trace__queue-items">
-          @if (searchState.resultIndices.length === 0) {
-            <span class="trace__queue-empty">no confirmed hits</span>
-          } @else {
-            @for (index of searchState.resultIndices; track index) {
-              <span class="trace__queue-chip trace__queue-chip--done">{{ index }}</span>
-            }
-          }
-        </div>
-      </div>
-
-      <div class="trace__legend">
-        <div class="trace__queue-label">Tag legend</div>
-        <div class="trace__legend-grid">
-          @for (item of legend; track item.id) {
-            <div class="trace__legend-item">
-              <span class="trace__tag trace__tag--{{ item.id }}" [attr.title]="item.label" [attr.aria-label]="item.label">
-                <fa-icon [icon]="item.icon" />
-              </span>
-              <span class="trace__legend-text">{{ item.label }}</span>
+      <app-segmented-panel class="trace__summary" aria-label="Search summary">
+        <app-segmented-panel-section eyebrow="Target" [value]="searchState.target" />
+        <app-segmented-panel-section class="trace__summary-metrics">
+          <div class="trace__summary-inline">
+            <div class="trace__summary-item">
+              <span class="trace__summary-item-label">Probe</span>
+              <span class="trace__summary-item-value">{{ probeLabel() }}</span>
             </div>
-          }
-        </div>
-      </div>
+            <span class="trace__summary-divider" aria-hidden="true"></span>
+            <div class="trace__summary-item">
+              <span class="trace__summary-item-label">Window</span>
+              <span class="trace__summary-item-value">{{ windowLabel() }}</span>
+            </div>
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+
+      <app-segmented-panel
+        class="trace__calculation trace__calculation--{{ resultTone() }}"
+        aria-label="Search calculation summary"
+      >
+        <app-segmented-panel-section eyebrow="Mode" [value]="searchState.modeLabel" />
+        <app-segmented-panel-section eyebrow="Status" [value]="searchState.statusLabel" />
+        <app-segmented-panel-section class="trace__calc-item--accent" eyebrow="Hits" [value]="hitLabel()" />
+        <app-segmented-panel-section class="trace__calc-decision-section">
+          <div class="trace__calc-decision">{{ searchState.decision ?? 'waiting for next move' }}</div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__feeds" orientation="vertical">
+        <app-segmented-panel-section eyebrow="Visited order" [badge]="searchState.visitedOrder.length">
+          <div class="trace__queue-items">
+            @if (searchState.visitedOrder.length === 0) {
+              <span class="trace__queue-empty">not started</span>
+            } @else {
+              @for (index of searchState.visitedOrder; track $index) {
+                <span class="trace__queue-chip">{{ index }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Match span" [badge]="searchState.resultIndices.length">
+          <div class="trace__queue-items">
+            @if (searchState.resultIndices.length === 0) {
+              <span class="trace__queue-empty">no confirmed hits</span>
+            } @else {
+              @for (index of searchState.resultIndices; track index) {
+                <span class="trace__queue-chip trace__queue-chip--done">{{ index }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <colgroup>
-          <col class="trace__col trace__col--index" />
-          <col class="trace__col trace__col--value" />
-          <col class="trace__col trace__col--status" />
-          <col class="trace__col trace__col--tags" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Index</th>
-            <th>Value</th>
-            <th>Status</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of searchState.rows; track row.index) {
-            <tr
-              [class.trace__row--probe]="row.status === 'probe'"
-              [class.trace__row--found]="row.status === 'found'"
-            >
-              <td>{{ row.index }}</td>
-              <td>{{ row.value }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ statusClass(row) }}">
-                  {{ row.status }}
-                </span>
-              </td>
-              <td>
-                <div class="trace__tags">
-                  @for (tag of row.tags; track tag) {
-                    <span class="trace__tag trace__tag--{{ tag }}" [attr.title]="tagLabel(tag)" [attr.aria-label]="tagLabel(tag)">
-                      <fa-icon [icon]="tagIcon(tag)" />
-                    </span>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [legendItems]="tableLegendItems()"
+        emptyLabel="No search rows yet"
+      />
     </div>
   } @else {
     <div class="trace__empty">No search trace available for this step.</div>

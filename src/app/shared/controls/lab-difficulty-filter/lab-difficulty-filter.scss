@@ -1,0 +1,104 @@
+@use '../control-chrome' as chrome;
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.difficulty {
+  display: grid;
+  gap: 6px;
+
+  &--disabled {
+    opacity: 0.56;
+  }
+}
+
+.difficulty__label {
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.difficulty__options {
+  @include chrome.control-field(18px);
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+}
+
+.difficulty__option {
+  @include chrome.option-surface(999px);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--control-height) - 8px);
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.015);
+  color: var(--text-secondary);
+  overflow: hidden;
+
+  &:hover:not(:disabled) {
+    @include chrome.option-surface-hover;
+
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    @include chrome.control-field-focus;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &--active {
+    border-color: rgba(var(--chrome-accent-rgb), 0.24);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(var(--chrome-accent-rgb), 0.15),
+        rgba(var(--chrome-accent-alt-rgb), 0.1)
+      ),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.02)),
+      rgba(24, 27, 32, 0.98);
+    color: var(--text-primary);
+    box-shadow:
+      0 12px 24px rgba(0, 0, 0, 0.22),
+      0 0 0 1px rgba(var(--chrome-accent-rgb), 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+.difficulty__option-label {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 720px) {
+  .difficulty__options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .difficulty__option {
+    transition: none;
+  }
+}

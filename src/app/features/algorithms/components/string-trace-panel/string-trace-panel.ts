@@ -1,18 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faArrowTurnDownRight,
-  faBarsProgress,
-  faCheckDouble,
-  faCircleDot,
-  faCode,
-  faCrosshairs,
-  faLink,
-  faRoute,
-  faTree,
-  faWandMagicSparkles,
-} from '@fortawesome/pro-solid-svg-icons';
+import { faCheckDouble, faCrosshairs, faLink } from '@fortawesome/pro-solid-svg-icons';
 
 import {
   BurrowsWheelerTraceState,
@@ -31,10 +19,12 @@ import {
   isRleState,
   isZAlgorithmState,
 } from '../../models/string';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-string-trace-panel',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection],
   templateUrl: './string-trace-panel.html',
   styleUrl: './string-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,48 +59,6 @@ export class StringTracePanel {
   readonly huffmanState = computed<HuffmanTraceState | null>(() => {
     const state = this.state();
     return isHuffmanState(state) ? state : null;
-  });
-
-  readonly modeIcon = computed<IconDefinition>(() => {
-    const state = this.state();
-    if (!state) return faCircleDot;
-    switch (state.mode) {
-      case 'kmp':
-        return faArrowTurnDownRight;
-      case 'rabin-karp':
-        return faWandMagicSparkles;
-      case 'z-algorithm':
-        return faBarsProgress;
-      case 'manacher':
-        return faRoute;
-      case 'burrows-wheeler-transform':
-        return faLink;
-      case 'rle':
-        return faCode;
-      case 'huffman':
-        return faTree;
-    }
-  });
-
-  readonly modeTone = computed(() => {
-    const state = this.state();
-    if (!state) return 'info';
-    switch (state.mode) {
-      case 'kmp':
-        return 'accent';
-      case 'rabin-karp':
-        return 'warning';
-      case 'z-algorithm':
-        return 'info';
-      case 'manacher':
-        return 'success';
-      case 'burrows-wheeler-transform':
-        return 'accent';
-      case 'rle':
-        return 'success';
-      case 'huffman':
-        return 'warning';
-    }
   });
 
   readonly legend = [

@@ -1,113 +1,151 @@
-<div class="cpt">
+<div class="trace">
   @if (state(); as geo) {
-    <div class="cpt__phase cpt__phase--{{ geo.phase }}">
-      <div class="cpt__phase-copy">
-        <span class="cpt__eyebrow">Phase</span>
-        <span class="cpt__title">{{ phaseLabel() }}</span>
-      </div>
-      <div class="cpt__phase-stats">
-        <div class="cpt__stat">
-          <span class="cpt__stat-value">{{ formatDistance(geo.bestDistance) }}</span>
-          <span class="cpt__stat-label">best</span>
-        </div>
-        <div class="cpt__stat">
-          <span class="cpt__stat-value">{{ geo.checkedPairs }}</span>
-          <span class="cpt__stat-label">checks</span>
-        </div>
-        <div class="cpt__stat">
-          <span class="cpt__stat-value">{{ geo.depth }}</span>
-          <span class="cpt__stat-label">depth</span>
-        </div>
-      </div>
-    </div>
+    <div class="trace__header">
+      <app-segmented-panel
+        class="trace__summary trace__summary--{{ geo.phase }}"
+        aria-label="Closest pair summary"
+      >
+        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel()" />
+        <app-segmented-panel-section
+          eyebrow="Best"
+          [value]="formatDistance(geo.bestDistance)"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          eyebrow="Checks"
+          [value]="geo.checkedPairs"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section eyebrow="Depth" [value]="geo.depth" [valueMono]="true" />
+      </app-segmented-panel>
 
-    <div class="cpt__summary">
-      <div class="cpt__card">
-        <span class="cpt__card-key">Region</span>
-        <span class="cpt__card-value">{{ geo.regionLabel }}</span>
-      </div>
-      <div class="cpt__card">
-        <span class="cpt__card-key">Strip corridor</span>
-        <span class="cpt__card-value">
-          {{ geo.stripWidth !== null ? ('±' + geo.stripWidth.toFixed(2)) : 'inactive' }}
-        </span>
-      </div>
-      <div class="cpt__card">
-        <span class="cpt__card-key">Strip points</span>
-        <span class="cpt__card-value">{{ stripCount() }}</span>
-      </div>
-      <div class="cpt__card">
-        <span class="cpt__card-key">Split x</span>
-        <span class="cpt__card-value">{{ geo.midX !== null ? geo.midX.toFixed(1) : '—' }}</span>
-      </div>
-    </div>
+      <app-segmented-panel class="trace__facts" aria-label="Closest pair region">
+        <app-segmented-panel-section eyebrow="Region" [value]="geo.regionLabel" />
+        <app-segmented-panel-section
+          eyebrow="Strip corridor"
+          [value]="geo.stripWidth !== null ? '±' + geo.stripWidth.toFixed(2) : 'inactive'"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          eyebrow="Strip points"
+          [value]="stripCount()"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          eyebrow="Split x"
+          [value]="geo.midX !== null ? geo.midX.toFixed(1) : '—'"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-    <div class="cpt__compare" [class.cpt__compare--muted]="!geo.currentPair">
-      <div class="cpt__compare-block">
-        <span class="cpt__compare-key">Current pair</span>
-        @if (currentPairPoints(); as pair) {
-          <div class="cpt__pair-row">
-            <span class="cpt__pair-pill cpt__pair-pill--current">P{{ pair.left?.id }} · P{{ pair.right?.id }}</span>
-            <span class="cpt__pair-distance">{{ formatDistance(geo.candidateDistance) }}</span>
+      <app-segmented-panel class="trace__compare" aria-label="Closest pair comparison">
+        <app-segmented-panel-section eyebrow="Current pair">
+          <div class="trace__pair-block" [class.trace__pair-block--ghost]="!hasCurrentPair()">
+            <div class="trace__pair-row">
+              <span
+                class="trace__pair-pill trace__pair-pill--current"
+                [class.trace__pair-pill--ghost]="!hasCurrentPair()"
+              >
+                {{ formatPairLabel(currentPairSlot()) }}
+              </span>
+              <span
+                class="trace__pair-distance"
+                [class.trace__pair-distance--ghost]="!hasCurrentPair()"
+              >
+                {{ formatDistance(geo.candidateDistance) }}
+              </span>
+            </div>
+            <div class="trace__coords">
+              <span>{{ formatCoord(currentPairSlot().left) }}</span>
+              <span>{{ formatCoord(currentPairSlot().right) }}</span>
+            </div>
+            <span class="trace__pair-note">
+              {{ hasCurrentPair() ? 'Active comparison' : 'Waiting for next comparison' }}
+            </span>
           </div>
-          <div class="cpt__coords">
-            <span>{{ formatCoord(pair.left) }}</span>
-            <span>{{ formatCoord(pair.right) }}</span>
-          </div>
-        } @else {
-          <div class="cpt__placeholder">No active distance comparison in this step.</div>
-        }
-      </div>
+        </app-segmented-panel-section>
 
-      <div class="cpt__compare-block">
-        <span class="cpt__compare-key">Best so far</span>
-        @if (bestPairPoints(); as pair) {
-          <div class="cpt__pair-row">
-            <span class="cpt__pair-pill cpt__pair-pill--best">P{{ pair.left?.id }} · P{{ pair.right?.id }}</span>
-            <span class="cpt__pair-distance cpt__pair-distance--best">{{ formatDistance(geo.bestDistance) }}</span>
+        <app-segmented-panel-section eyebrow="Best so far">
+          <div class="trace__pair-block" [class.trace__pair-block--ghost]="!hasBestPair()">
+            <div class="trace__pair-row">
+              <span
+                class="trace__pair-pill trace__pair-pill--best"
+                [class.trace__pair-pill--ghost]="!hasBestPair()"
+              >
+                {{ formatPairLabel(bestPairSlot()) }}
+              </span>
+              <span
+                class="trace__pair-distance trace__pair-distance--best"
+                [class.trace__pair-distance--ghost]="!hasBestPair()"
+              >
+                {{ formatDistance(geo.bestDistance) }}
+              </span>
+            </div>
+            <div class="trace__coords">
+              <span>{{ formatCoord(bestPairSlot().left) }}</span>
+              <span>{{ formatCoord(bestPairSlot().right) }}</span>
+            </div>
+            <span class="trace__pair-note">
+              {{ hasBestPair() ? 'Current champion pair' : 'No winning pair yet' }}
+            </span>
           </div>
-          <div class="cpt__coords">
-            <span>{{ formatCoord(pair.left) }}</span>
-            <span>{{ formatCoord(pair.right) }}</span>
-          </div>
-        } @else {
-          <div class="cpt__placeholder">The first winning pair has not been established yet.</div>
-        }
-      </div>
-    </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
 
-    <div class="cpt__trail">
-      <span class="cpt__trail-key">Recursion trail</span>
-      <div class="cpt__trail-list">
-        @for (part of geo.trail; track part) {
-          <span class="cpt__trail-chip">{{ part }}</span>
-        }
-      </div>
-    </div>
+      <div class="trace__detail-panels">
+        <app-segmented-panel
+          class="trace__detail"
+          orientation="vertical"
+          aria-label="Closest pair recursion"
+        >
+          <app-segmented-panel-section eyebrow="Recursion trail" [badge]="geo.trail.length">
+            <div class="trace__trail-list">
+              @if (geo.trail.length === 0) {
+                <span class="trace__placeholder"
+                  >Recursion trail will appear once the split starts.</span
+                >
+              } @else {
+                @for (part of geo.trail; track part) {
+                  <span class="trace__trail-chip">{{ part }}</span>
+                }
+              }
+            </div>
+          </app-segmented-panel-section>
+        </app-segmented-panel>
 
-    <div class="cpt__legend">
-      <div class="cpt__legend-item">
-        <span class="cpt__dot cpt__dot--left"></span>
-        <span>Left half</span>
-      </div>
-      <div class="cpt__legend-item">
-        <span class="cpt__dot cpt__dot--right"></span>
-        <span>Right half</span>
-      </div>
-      <div class="cpt__legend-item">
-        <span class="cpt__dot cpt__dot--strip"></span>
-        <span>Strip candidate</span>
-      </div>
-      <div class="cpt__legend-item">
-        <span class="cpt__dot cpt__dot--current"></span>
-        <span>Current comparison</span>
-      </div>
-      <div class="cpt__legend-item">
-        <span class="cpt__dot cpt__dot--best"></span>
-        <span>Best pair</span>
+        <app-segmented-panel
+          class="trace__detail"
+          orientation="vertical"
+          aria-label="Closest pair legend"
+        >
+          <app-segmented-panel-section eyebrow="Point status">
+            <div class="trace__legend-grid">
+              <div class="trace__legend-item">
+                <span class="trace__dot trace__dot--left"></span>
+                <span>Left half</span>
+              </div>
+              <div class="trace__legend-item">
+                <span class="trace__dot trace__dot--right"></span>
+                <span>Right half</span>
+              </div>
+              <div class="trace__legend-item">
+                <span class="trace__dot trace__dot--strip"></span>
+                <span>Strip candidate</span>
+              </div>
+              <div class="trace__legend-item">
+                <span class="trace__dot trace__dot--current"></span>
+                <span>Current comparison</span>
+              </div>
+              <div class="trace__legend-item">
+                <span class="trace__dot trace__dot--best"></span>
+                <span>Best pair</span>
+              </div>
+            </div>
+          </app-segmented-panel-section>
+        </app-segmented-panel>
       </div>
     </div>
   } @else {
-    <div class="cpt__empty">No geometry trace for this step.</div>
+    <div class="trace__empty">No geometry trace for this step.</div>
   }
 </div>

@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { ConvexHullStepState, GeometryPoint } from '../../models/geometry';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-geometry-trace-panel',
-  imports: [],
+  imports: [SegmentedPanel, SegmentedPanelSection],
   templateUrl: './geometry-trace-panel.html',
   styleUrl: './geometry-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +30,14 @@ export class GeometryTracePanel {
       c: s.points.find((p) => p.id === c),
     };
   });
+  readonly turnSlots = computed(() => {
+    const turn = this.turnPoints();
+    return [
+      { key: 'A', role: '2nd from top', point: turn?.a, tone: 'A' as const },
+      { key: 'B', role: 'stack top', point: turn?.b, tone: 'B' as const },
+      { key: 'C', role: 'candidate', point: turn?.c, tone: 'C' as const },
+    ];
+  });
 
   readonly turnVerdict = computed(() => {
     const cp = this.state()?.crossProduct;
@@ -35,6 +45,17 @@ export class GeometryTracePanel {
     if (cp > 0) return { text: 'Left turn (CCW)', action: 'PUSH', tone: 'good' as const };
     if (cp === 0) return { text: 'Collinear', action: 'POP', tone: 'bad' as const };
     return { text: 'Right turn (CW)', action: 'POP', tone: 'bad' as const };
+  });
+  readonly showTurnDetails = computed(() => {
+    switch (this.state()?.phase ?? '') {
+      case 'checking':
+      case 'pop':
+      case 'push':
+      case 'complete':
+        return true;
+      default:
+        return false;
+    }
   });
 
   readonly pointCount = computed(() => this.state()?.points.length ?? 0);
@@ -45,15 +66,24 @@ export class GeometryTracePanel {
 
   readonly phaseLabel = computed(() => {
     switch (this.state()?.phase ?? '') {
-      case 'init': return 'Initializing';
-      case 'pivot': return 'Finding Pivot';
-      case 'sort': return 'Polar Sorting';
-      case 'init-stack': return 'Stack Init';
-      case 'checking': return 'Cross Product Check';
-      case 'pop': return 'Popping Non-left Turn';
-      case 'push': return 'Pushing to Stack';
-      case 'complete': return 'Hull Complete!';
-      default: return this.state()?.phase ?? '';
+      case 'init':
+        return 'Initializing';
+      case 'pivot':
+        return 'Finding Pivot';
+      case 'sort':
+        return 'Polar Sorting';
+      case 'init-stack':
+        return 'Stack Init';
+      case 'checking':
+        return 'Cross Product Check';
+      case 'pop':
+        return 'Popping Non-left Turn';
+      case 'push':
+        return 'Pushing to Stack';
+      case 'complete':
+        return 'Hull Complete!';
+      default:
+        return this.state()?.phase ?? '';
     }
   });
 

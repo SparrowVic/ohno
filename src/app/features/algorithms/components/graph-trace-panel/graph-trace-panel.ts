@@ -1,10 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { GraphStepState, GraphTraceRow } from '../../models/graph';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
+import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 
 @Component({
   selector: 'app-graph-trace-panel',
-  imports: [],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table],
   templateUrl: './graph-trace-panel.html',
   styleUrl: './graph-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +62,12 @@ export class GraphTracePanel {
   readonly frontierLabel = computed(() => this.state()?.frontierLabel ?? 'Queue');
   readonly metricLabel = computed(() => this.state()?.metricLabel ?? 'Distance');
   readonly secondaryLabel = computed(() => this.state()?.secondaryLabel ?? 'Prev');
+  readonly tableColumns = computed<readonly TableColumn[]>(() => [
+    { id: 'node', header: 'Node' },
+    { id: 'metric', header: this.metricLabel(), kind: 'mono' },
+    { id: 'secondary', header: this.secondaryLabel(), kind: 'mono' },
+    { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
+  ]);
   readonly visitOrderLabel = computed(() => this.state()?.visitOrderLabel ?? 'Visit order');
   readonly hasFocusedRoute = computed(() => this.focusTargetLabel() !== null && this.focusPathLabel() !== null);
   readonly focusSummaryLabel = computed(() => (this.hasFocusedRoute() ? 'Focused target' : 'Context'));
@@ -75,10 +85,6 @@ export class GraphTracePanel {
     }
     return 'This algorithm is explained as a whole graph structure, not as one selected route.';
   });
-  readonly focusCardLabelResolved = computed(() => {
-    if (this.hasFocusedRoute()) return this.focusModeLabel() ?? 'Focused route';
-    return this.state()?.detailLabel ?? 'Detail';
-  });
   readonly focusCardBadge = computed(() => (this.hasFocusedRoute() ? 'UI lens' : 'Graph state'));
   readonly focusCardMuted = computed(() => {
     if (this.hasFocusedRoute()) return false;
@@ -90,6 +96,28 @@ export class GraphTracePanel {
   readonly computationDecision = computed(() => {
     return this.state()?.computation?.decision ?? 'Waiting for a compare/relax/decision step.';
   });
+  readonly decisionBadge = computed(() => {
+    switch (this.decisionTone()) {
+      case 'improve':
+        return 'Relax';
+      case 'keep':
+        return 'Keep';
+      default:
+        return 'Idle';
+    }
+  });
+  readonly tableRows = computed<readonly TableRow[]>(() =>
+    (this.state()?.traceRows ?? []).map((row) => ({
+      id: row.nodeId,
+      tone: row.isCurrent ? 'active' : row.isSettled ? 'success' : 'default',
+      cells: {
+        node: row.label,
+        metric: this.formatDistance(row.distance),
+        secondary: this.formatSecondary(row.secondaryText),
+        status: this.statusTag(row),
+      },
+    })),
+  );
 
   statusLabel(row: GraphTraceRow): string {
     if (row.isCurrent) return 'current';
@@ -115,5 +143,23 @@ export class GraphTracePanel {
     if (!decision) return 'idle';
     if (decision.startsWith('keep')) return 'keep';
     return 'improve';
+  }
+
+  private statusTag(row: GraphTraceRow): UiTagModel {
+    return {
+      label: this.statusLabel(row),
+      tone: row.isCurrent
+        ? 'warning'
+        : row.isSettled
+          ? 'success'
+          : row.isSource
+            ? 'accent'
+            : row.isFrontier
+              ? 'window'
+              : 'neutral',
+      appearance: 'soft',
+      size: 'sm',
+      uppercase: true,
+    };
   }
 }

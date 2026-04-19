@@ -28,17 +28,25 @@
 
   <div class="card__eyebrow">
     <span class="card__section">{{ facetLabel() }}</span>
-    <span class="card__availability" [class.card__availability--live]="isImplemented()" [class.card__availability--planned]="!isImplemented()">
-      {{ statusLabel() }}
-    </span>
+    <app-ui-tag
+      [label]="statusLabel()"
+      [tone]="isImplemented() ? 'easy' : 'medium'"
+      appearance="soft"
+      size="md"
+      [uppercase]="true"
+    />
   </div>
 
   <div class="card__title-block">
     <div class="card__title-row">
       <h2 class="card__name">{{ algorithm().name }}</h2>
-      <span class="badge badge--{{ algorithm().difficulty }}">
-        {{ difficultyLabel() }}
-      </span>
+      <app-ui-tag
+        [label]="difficultyLabel()"
+        [tone]="algorithm().difficulty"
+        appearance="soft"
+        size="md"
+        [uppercase]="true"
+      />
     </div>
     <p class="card__desc">{{ algorithm().description }}</p>
   </div>
@@ -47,7 +55,7 @@
     <app-algorithm-card-preview class="card__preview-art" [algorithm]="algorithm()" />
 
     <div class="card__preview-meta">
-      <span class="card__preview-chip">{{ previewLabel() }}</span>
+      <app-ui-tag [label]="previewLabel()" appearance="outline" size="md" />
       @if (previewHint(); as hint) {
         <span class="card__preview-hint">{{ hint }}</span>
       }
@@ -67,10 +75,15 @@
     @if (displayTags().length > 0 || hiddenTagsCount() > 0) {
       <div class="card__tags">
         @for (tag of displayTags(); track tag) {
-          <span class="tag">{{ tag }}</span>
+          <app-ui-tag [label]="tag" appearance="soft" size="sm" [uppercase]="true" />
         }
         @if (hiddenTagsCount() > 0) {
-          <span class="tag tag--ghost">+{{ hiddenTagsCount() }}</span>
+          <app-ui-tag
+            [label]="'+' + hiddenTagsCount()"
+            appearance="ghost"
+            size="sm"
+            [uppercase]="true"
+          />
         }
       </div>
     }

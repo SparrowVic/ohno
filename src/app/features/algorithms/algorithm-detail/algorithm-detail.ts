@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,7 +15,7 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { LegendBar } from '../components/legend-bar/legend-bar';
-import { SidePanel, SideTabLayout } from '../components/side-panel/side-panel';
+import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
 import { VisualizationToolbar } from '../components/visualization-toolbar/visualization-toolbar';
 import {
@@ -24,8 +23,6 @@ import {
   describeGraphPath,
   getAlgorithmViewConfig,
   humanizeLabel,
-  INSPECTOR_COLLAPSED_KEY,
-  INSPECTOR_LAYOUT_KEY,
   RandomRange,
 } from './algorithm-detail-config/algorithm-detail-config';
 import { AlgorithmItem } from '../models/algorithm';
@@ -63,7 +60,6 @@ export class AlgorithmDetail {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly engine = inject(VisualizationEngine);
   private readonly language = inject(AppLanguageService);
-  private readonly doc = inject(DOCUMENT);
 
   private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
     initialValue: this.route.snapshot.paramMap.get('id'),
@@ -78,8 +74,6 @@ export class AlgorithmDetail {
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
-  private readonly inspectorCollapsedSig = signal(this.readStoredBoolean(INSPECTOR_COLLAPSED_KEY));
-  private readonly inspectorLayoutSig = signal<SideTabLayout>(this.readStoredLayout());
   private lastLoggedStep = -1;
 
   readonly algorithm = computed<AlgorithmItem | undefined>(() => {
@@ -119,8 +113,6 @@ export class AlgorithmDetail {
   readonly speed = this.engine.speed;
   readonly step = this.currentSnapshot.asReadonly();
   readonly logEntries = this.logEntriesSig.asReadonly();
-  readonly inspectorCollapsed = this.inspectorCollapsedSig.asReadonly();
-  readonly inspectorLayout = this.inspectorLayoutSig.asReadonly();
 
   readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
   readonly variantOptions = computed(() => this.config()?.variantOptions ?? []);
@@ -140,12 +132,6 @@ export class AlgorithmDetail {
   });
   readonly sizeSummaryLabel = computed(() => `${this.sizeSig()} ${this.sizeUnit()}`);
   readonly stepSummaryLabel = computed(() => `Step ${this.currentStep()} / ${this.totalSteps()}`);
-  readonly inspectorToggleLabel = computed(() =>
-    this.inspectorCollapsed() ? 'Show inspector' : 'Hide inspector',
-  );
-  readonly inspectorLayoutLabel = computed(() =>
-    this.inspectorLayout() === 'vertical' ? 'Side rail' : 'Top tabs',
-  );
 
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
@@ -221,17 +207,6 @@ export class AlgorithmDetail {
 
   constructor() {
     effect(() => {
-      this.doc.defaultView?.localStorage.setItem(
-        INSPECTOR_COLLAPSED_KEY,
-        this.inspectorCollapsed() ? '1' : '0',
-      );
-    });
-
-    effect(() => {
-      this.doc.defaultView?.localStorage.setItem(INSPECTOR_LAYOUT_KEY, this.inspectorLayout());
-    });
-
-    effect(() => {
       const config = this.config();
       const algorithm = this.algorithm();
 
@@ -257,14 +232,6 @@ export class AlgorithmDetail {
     void this.router.navigate(['/algorithms'], {
       queryParams: this.route.snapshot.queryParams,
     });
-  }
-
-  toggleInspectorCollapse(): void {
-    this.inspectorCollapsedSig.update((collapsed) => !collapsed);
-  }
-
-  toggleInspectorLayout(): void {
-    this.inspectorLayoutSig.update((layout) => (layout === 'vertical' ? 'horizontal' : 'vertical'));
   }
 
   onReset(): void {
@@ -335,10 +302,6 @@ export class AlgorithmDetail {
 
     this.stringPresetSig.set(value);
     this.rebuildVisualization(config, this.sizeSig(), { stringPresetId: value });
-  }
-
-  onInspectorLayoutChange(value: SideTabLayout): void {
-    this.inspectorLayoutSig.set(value);
   }
 
   private resetUnavailableState(): void {
@@ -446,16 +409,6 @@ export class AlgorithmDetail {
   private createRandomArray(size: number, range: RandomRange): readonly number[] {
     const span = range.max - range.min + 1;
     return Array.from({ length: size }, () => Math.floor(Math.random() * span) + range.min);
-  }
-
-  private readStoredBoolean(key: string): boolean {
-    return this.doc.defaultView?.localStorage.getItem(key) === '1';
-  }
-
-  private readStoredLayout(): SideTabLayout {
-    return this.doc.defaultView?.localStorage.getItem(INSPECTOR_LAYOUT_KEY) === 'horizontal'
-      ? 'horizontal'
-      : 'vertical';
   }
 
   private resolvedGraphFocusTargetId(): string | null {

@@ -78,65 +78,15 @@
           }
         </div>
       </div>
-
-      <div class="trace__legend">
-        <div class="trace__section-label">Tag legend</div>
-        <div class="trace__legend-grid">
-          @for (item of legend; track item.id) {
-            <div class="trace__legend-item">
-              <span class="trace__tag trace__tag--{{ item.id }}" [attr.title]="item.label" [attr.aria-label]="item.label">
-                <fa-icon [icon]="item.icon" />
-              </span>
-              <span class="trace__legend-text">{{ item.label }}</span>
-            </div>
-          }
-        </div>
-      </div>
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <colgroup>
-          <col class="trace__col trace__col--coord" />
-          <col class="trace__col trace__col--value" />
-          <col class="trace__col trace__col--meta" />
-          <col class="trace__col trace__col--status" />
-          <col class="trace__col trace__col--tags" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Cell</th>
-            <th>Value</th>
-            <th>Meta</th>
-            <th>Status</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (cell of visibleRows(); track cell.id) {
-            <tr
-              [class.trace__row--active]="cell.status === 'active' || cell.status === 'candidate'"
-              [class.trace__row--done]="cell.status === 'improved' || cell.status === 'assignment'"
-            >
-              <td>{{ cell.rowLabel }}→{{ cell.colLabel }}</td>
-              <td>{{ cell.valueLabel }}</td>
-              <td>{{ cell.metaLabel ?? '—' }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ cell.status }}">{{ cell.status }}</span>
-              </td>
-              <td>
-                <div class="trace__tags">
-                  @for (tag of cell.tags; track tag) {
-                    <span class="trace__tag trace__tag--{{ tag }}" [attr.title]="tagLabel(tag)" [attr.aria-label]="tagLabel(tag)">
-                      <fa-icon [icon]="tagIcon(tag)" />
-                    </span>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [legendItems]="tableLegendItems()"
+        emptyLabel="No active matrix cells yet"
+      />
     </div>
   } @else {
     <div class="trace__empty">No matrix trace available for this step.</div>

@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { ClosestPairStepState, GeometryPoint } from '../../models/geometry';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-closest-pair-trace-panel',
-  imports: [],
+  imports: [SegmentedPanel, SegmentedPanelSection],
   templateUrl: './closest-pair-trace-panel.html',
   styleUrl: './closest-pair-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,25 +14,45 @@ import { ClosestPairStepState, GeometryPoint } from '../../models/geometry';
 export class ClosestPairTracePanel {
   readonly state = input<ClosestPairStepState | null>(null);
 
-  readonly currentPairPoints = computed(() => this.resolvePair(this.state()?.currentPair ?? null));
-  readonly bestPairPoints = computed(() => this.resolvePair(this.state()?.bestPair ?? null));
+  private readonly emptyPair = {
+    left: undefined,
+    right: undefined,
+  } as const;
+
+  readonly hasCurrentPair = computed(() => !!this.state()?.currentPair);
+  readonly currentPairSlot = computed(
+    () => this.resolvePair(this.state()?.currentPair ?? null) ?? this.emptyPair,
+  );
+  readonly hasBestPair = computed(() => !!this.state()?.bestPair);
+  readonly bestPairSlot = computed(
+    () => this.resolvePair(this.state()?.bestPair ?? null) ?? this.emptyPair,
+  );
   readonly stripCount = computed(
     () => this.state()?.points.filter((point) => point.status === 'strip').length ?? 0,
   );
   readonly phaseLabel = computed(() => {
     switch (this.state()?.phase ?? '') {
-      case 'init': return 'Point Field';
-      case 'sort': return 'Dual Sorting';
-      case 'divide': return 'Divide';
-      case 'base': return 'Base Case';
-      case 'merge': return 'Merge';
-      case 'strip': return 'Strip Window';
+      case 'init':
+        return 'Point Field';
+      case 'sort':
+        return 'Dual Sorting';
+      case 'divide':
+        return 'Divide';
+      case 'base':
+        return 'Base Case';
+      case 'merge':
+        return 'Merge';
+      case 'strip':
+        return 'Strip Window';
       case 'compare':
       case 'compare-strip':
         return 'Distance Check';
-      case 'update': return 'Best Update';
-      case 'complete': return 'Closest Pair';
-      default: return this.state()?.phase ?? '';
+      case 'update':
+        return 'Best Update';
+      case 'complete':
+        return 'Closest Pair';
+      default:
+        return this.state()?.phase ?? '';
     }
   });
 
@@ -39,8 +61,15 @@ export class ClosestPairTracePanel {
   }
 
   formatCoord(point: GeometryPoint | undefined): string {
-    if (!point) return '—';
+    if (!point) return '(—, —)';
     return `(${point.x.toFixed(1)}, ${point.y.toFixed(1)})`;
+  }
+
+  formatPairLabel(pair: {
+    readonly left: GeometryPoint | undefined;
+    readonly right: GeometryPoint | undefined;
+  }): string {
+    return `P${pair.left?.id ?? '—'} · P${pair.right?.id ?? '—'}`;
   }
 
   private resolvePair(pair: readonly [number, number] | null): {

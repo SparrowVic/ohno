@@ -9,7 +9,6 @@ import {
   effect,
   inject,
   input,
-  output,
   signal,
 } from '@angular/core';
 
@@ -63,37 +62,27 @@ import { SweepLineTracePanel } from '../sweep-line-trace-panel/sweep-line-trace-
 import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
-export type SideTabLayout = 'vertical' | 'horizontal';
 
 interface SideTab {
   readonly id: SideTabId;
   readonly label: string;
-  readonly description: string;
 }
 
 const BASE_SIDE_TABS: readonly SideTab[] = [
-  { id: 'code', label: 'Code', description: 'Reference implementation with live line focus.' },
-  { id: 'info', label: 'Info', description: 'Complexity, tags and problem profile.' },
-  { id: 'log', label: 'Log', description: 'Chronological run feed for the current scenario.' },
+  { id: 'code', label: 'Code' },
+  { id: 'info', label: 'Info' },
+  { id: 'log', label: 'Log' },
 ];
 
 const TRACE_TAB: SideTab = {
   id: 'trace',
   label: 'Trace',
-  description: 'Current state, invariants and why this step matters.',
 };
 
 const LS_KEY = 'ohno:side-panel-width';
 const DEFAULT_WIDTH = 340;
 const MIN_WIDTH = 260;
 const MAX_WIDTH = 680;
-
-function humanizeKey(value: string): string {
-  return value
-    .split('-')
-    .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
-    .join(' ');
-}
 
 @Component({
   selector: 'app-side-panel',
@@ -143,10 +132,6 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusPathLabel = input<string | null>(null);
   readonly graphFocusModeLabel = input<string | null>(null);
   readonly graphFocusHint = input<string | null>(null);
-  readonly tabLayout = input<SideTabLayout>('vertical');
-
-  readonly tabLayoutChange = output<SideTabLayout>();
-  readonly collapseToggle = output<void>();
 
   readonly tabs = computed<readonly SideTab[]>(() =>
     this.traceState() ||
@@ -161,15 +146,7 @@ export class SidePanel implements OnInit, OnDestroy {
       ? [TRACE_TAB, ...BASE_SIDE_TABS]
       : BASE_SIDE_TABS,
   );
-  readonly activeTabMeta = computed<SideTab>(
-    () => this.tabs().find((tab) => tab.id === this.activeTab()) ?? BASE_SIDE_TABS[0]!,
-  );
-  readonly categoryChip = computed(() => humanizeKey(this.algorithm().category));
-  readonly subcategoryChip = computed(() => humanizeKey(this.algorithm().subcategory));
-  readonly runLogCount = computed(
-    () => `${this.logEntries().length} log item${this.logEntries().length === 1 ? '' : 's'}`,
-  );
-  readonly isVerticalLayout = computed(() => this.tabLayout() === 'vertical');
+  readonly logEntryCount = computed(() => this.logEntries().length);
   readonly convexHullGeometryState = computed<ConvexHullStepState | null>(() => {
     const state = this.geometryState();
     return isConvexHullState(state) ? state : null;
@@ -204,7 +181,6 @@ export class SidePanel implements OnInit, OnDestroy {
   });
 
   private readonly activeTabState = signal<SideTabId>('code');
-  private readonly expandedAccordionState = signal<readonly SideTabId[]>(['code']);
   readonly activeTab = this.activeTabState.asReadonly();
 
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
@@ -233,34 +209,6 @@ export class SidePanel implements OnInit, OnDestroy {
         this.activeTabState.set('code');
       }
     });
-
-    effect(() => {
-      const availableTabs = new Set(this.tabs().map((tab) => tab.id));
-      const currentExpanded = this.expandedAccordionState();
-      const nextExpanded = currentExpanded.filter((id) => availableTabs.has(id));
-      const fallback = availableTabs.has(this.activeTabState())
-        ? this.activeTabState()
-        : this.tabs()[0]?.id;
-
-      if (nextExpanded.length === 0 && fallback) {
-        nextExpanded.push(fallback);
-      }
-
-      if (
-        nextExpanded.length !== currentExpanded.length ||
-        nextExpanded.some((id, index) => id !== currentExpanded[index])
-      ) {
-        this.expandedAccordionState.set(nextExpanded);
-      }
-    });
-
-    effect(() => {
-      if (!this.isVerticalLayout()) {
-        return;
-      }
-
-      this.ensureAccordionSectionOpen(this.activeTabState());
-    });
   }
 
   ngOnInit(): void {
@@ -276,35 +224,6 @@ export class SidePanel implements OnInit, OnDestroy {
 
   selectTab(id: SideTabId): void {
     this.activeTabState.set(id);
-
-    if (this.isVerticalLayout()) {
-      this.ensureAccordionSectionOpen(id);
-    }
-  }
-
-  toggleTabLayout(): void {
-    this.tabLayoutChange.emit(this.isVerticalLayout() ? 'horizontal' : 'vertical');
-  }
-
-  toggleAccordionSection(id: SideTabId): void {
-    this.activeTabState.set(id);
-
-    const expanded = this.expandedAccordionState();
-
-    if (expanded.includes(id)) {
-      if (expanded.length === 1) {
-        return;
-      }
-
-      this.expandedAccordionState.set(expanded.filter((entry) => entry !== id));
-      return;
-    }
-
-    this.expandedAccordionState.set([...expanded, id]);
-  }
-
-  isAccordionSectionExpanded(id: SideTabId): boolean {
-    return this.expandedAccordionState().includes(id);
   }
 
   onHandleMousedown(event: MouseEvent): void {
@@ -338,13 +257,5 @@ export class SidePanel implements OnInit, OnDestroy {
 
   private applyWidth(width: number): void {
     this.hostEl.style.width = `${width}px`;
-  }
-
-  private ensureAccordionSectionOpen(id: SideTabId): void {
-    if (this.expandedAccordionState().includes(id)) {
-      return;
-    }
-
-    this.expandedAccordionState.set([...this.expandedAccordionState(), id]);
   }
 }

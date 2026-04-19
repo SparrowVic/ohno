@@ -1,0 +1,57 @@
+:host {
+  display: grid;
+  min-width: 0;
+  gap: var(--segmented-panel-section-gap, 8px);
+  padding: var(--segmented-panel-section-padding, 12px);
+}
+
+.segmented-panel-section__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.segmented-panel-section__eyebrow {
+  display: block;
+  min-width: 0;
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.segmented-panel-section__badge {
+  flex-shrink: 0;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.segmented-panel-section__value {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  color: var(--segmented-panel-section-value-color, var(--text-primary));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.segmented-panel-section__value--mono {
+  font-family: var(--font-mono);
+}

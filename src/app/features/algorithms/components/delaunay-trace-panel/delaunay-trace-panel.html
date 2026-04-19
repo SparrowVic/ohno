@@ -1,40 +1,40 @@
-<div class="dltp">
+<div class="trace">
   @if (state(); as geo) {
-    <div class="dltp__header">
-      <div>
-        <div class="dltp__eyebrow">Delaunay</div>
-        <div class="dltp__title">{{ geo.activeTriangleLabel }}</div>
-      </div>
-      <div class="dltp__stats">
-        <span>{{ geo.triangleCount }} committed</span>
-      </div>
-    </div>
+    <div class="trace__header">
+      <app-segmented-panel class="trace__summary" aria-label="Delaunay summary">
+        <app-segmented-panel-section eyebrow="Triangle" [value]="geo.activeTriangleLabel" />
+        <app-segmented-panel-section
+          eyebrow="Committed"
+          [value]="geo.triangleCount"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-    <div class="dltp__card">
-      <span class="dltp__label">Circumcircle</span>
-      @if (currentCircle(); as circle) {
-        <div class="dltp__row">
-          <span>center</span>
-          <span>({{ circle.cx.toFixed(1) }}, {{ circle.cy.toFixed(1) }})</span>
-        </div>
-        <div class="dltp__row">
-          <span>radius</span>
-          <span>{{ circle.r.toFixed(1) }}</span>
-        </div>
-      } @else {
-        <div class="dltp__placeholder">No active circumcircle in this step.</div>
-      }
-    </div>
+      <app-segmented-panel class="trace__streams" aria-label="Delaunay details">
+        <app-segmented-panel-section eyebrow="Circumcircle">
+          <app-table
+            class="trace__table"
+            [columns]="circleColumns"
+            [rows]="circleRows()"
+            [showHeader]="false"
+            density="compact"
+          />
+        </app-segmented-panel-section>
 
-    <div class="dltp__card">
-      <span class="dltp__label">Triangle rail</span>
-      <div class="dltp__chips">
-        @for (event of geo.events; track event.id) {
-          <span class="dltp__chip dltp__chip--{{ event.tone }}">{{ event.label }}</span>
-        }
-      </div>
+        <app-segmented-panel-section eyebrow="Triangle rail" [badge]="geo.events.length">
+          <div class="trace__chips">
+            @if (geo.events.length === 0) {
+              <span class="trace__placeholder">No queued triangles yet.</span>
+            } @else {
+              @for (event of geo.events; track event.id) {
+                <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
   } @else {
-    <div class="dltp__placeholder">No trace data for this geometry step.</div>
+    <div class="trace__empty">No trace data for this geometry step.</div>
   }
 </div>

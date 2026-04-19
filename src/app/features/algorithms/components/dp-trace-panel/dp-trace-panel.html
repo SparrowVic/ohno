@@ -1,38 +1,35 @@
 <div class="trace">
   @if (state(); as dpState) {
     <div class="trace__header">
-      <div class="trace__summary">
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Mode</span>
-          <span class="trace__summary-value">{{ dpState.modeLabel }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Preset</span>
-          <span class="trace__summary-value">{{ dpState.presetLabel }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Phase</span>
-          <span class="trace__summary-value">{{ dpState.phaseLabel }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Active</span>
-          <span class="trace__summary-value">{{ dpState.activeLabel ?? '—' }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Result</span>
-          <span class="trace__summary-value">{{ dpState.resultLabel }}</span>
-        </div>
-      </div>
+      <app-segmented-panel class="trace__summary" orientation="vertical" aria-label="DP summary">
+        <app-segmented-panel-section class="trace__summary-mode" eyebrow="Mode">
+          <div class="trace__summary-combo">
+            <span class="trace__summary-mode-value">{{ dpState.modeLabel }}</span>
 
-      <div class="trace__calc-grid">
-        <div class="trace__calculation trace__calculation--preset">
-          <div class="trace__calc-label">Preset note</div>
+            @if (dpState.presetLabel) {
+              <span class="trace__summary-preset">
+                <span class="trace__summary-preset-label">Preset</span>
+                <span class="trace__summary-preset-value">{{ dpState.presetLabel }}</span>
+              </span>
+            }
+          </div>
+        </app-segmented-panel-section>
+        <app-segmented-panel-section eyebrow="Phase" [value]="dpState.phaseLabel" />
+        <app-segmented-panel-section eyebrow="Active" [value]="dpState.activeLabel ?? '—'" />
+        <app-segmented-panel-section eyebrow="Result" [value]="dpState.resultLabel" />
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__calc-grid" aria-label="DP calculation summary">
+        <app-segmented-panel-section class="trace__calc-section trace__calc-section--preset" eyebrow="Preset note">
           <div class="trace__calc-expression">{{ dpState.presetDescription }}</div>
           <div class="trace__calc-decision">{{ dpState.pathLabel }}</div>
-        </div>
+        </app-segmented-panel-section>
 
-        <div class="trace__calculation" [class.trace__calculation--muted]="!dpState.computation">
-          <div class="trace__calc-label">{{ dpState.computation?.label ?? 'Current transition' }}</div>
+        <app-segmented-panel-section
+          class="trace__calc-section"
+          [class.trace__calc-section--muted]="!dpState.computation"
+          [eyebrow]="dpState.computation?.label ?? 'Current transition'"
+        >
           <div class="trace__calc-expression">{{ dpState.computation?.expression ?? 'Waiting for next state transition.' }}</div>
           <div class="trace__calc-result">
             @if (dpState.computation?.result; as result) {
@@ -42,71 +39,43 @@
             }
           </div>
           <div class="trace__calc-decision">{{ dpState.computation?.decision ?? 'No active transition in this step.' }}</div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
 
-      <div class="trace__rails">
-        <div class="trace__rail">
-          <div class="trace__rail-label">{{ dpState.primaryItemsLabel }}</div>
+      <app-segmented-panel class="trace__rails" aria-label="DP item rails">
+        <app-segmented-panel-section [eyebrow]="dpState.primaryItemsLabel" [badge]="dpState.primaryItems.length">
           <div class="trace__rail-items">
-            @for (item of dpState.primaryItems; track item) {
-              <span class="trace__chip">{{ item }}</span>
+            @if (dpState.primaryItems.length === 0) {
+              <span class="trace__rail-empty">none</span>
+            } @else {
+              @for (item of dpState.primaryItems; track item) {
+                <span class="trace__chip">{{ item }}</span>
+              }
             }
           </div>
-        </div>
-        <div class="trace__rail">
-          <div class="trace__rail-label">{{ dpState.secondaryItemsLabel }}</div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section [eyebrow]="dpState.secondaryItemsLabel" [badge]="dpState.secondaryItems.length">
           <div class="trace__rail-items">
-            @for (item of dpState.secondaryItems; track item) {
-              <span class="trace__chip trace__chip--soft">{{ item }}</span>
+            @if (dpState.secondaryItems.length === 0) {
+              <span class="trace__rail-empty">none</span>
+            } @else {
+              @for (item of dpState.secondaryItems; track item) {
+                <span class="trace__chip trace__chip--soft">{{ item }}</span>
+              }
             }
           </div>
-        </div>
-      </div>
-
-      <div class="trace__legend">
-        @for (item of legend; track item.id) {
-          <span class="trace__legend-chip">
-            <fa-icon [icon]="item.icon" />
-            {{ item.label }}
-          </span>
-        }
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <thead>
-          <tr>
-            <th>Cell</th>
-            <th>Value</th>
-            <th>Meta</th>
-            <th>Status</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (cell of visibleRows(); track cell.id) {
-            <tr>
-              <td>{{ cell.rowLabel }} × {{ cell.colLabel }}</td>
-              <td>{{ cell.valueLabel }}</td>
-              <td>{{ cell.metaLabel ?? '—' }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ cell.status }}">{{ cell.status }}</span>
-              </td>
-              <td>
-                <div class="trace__tags">
-                  @for (tag of cell.tags; track tag) {
-                    <span class="trace__tag" [attr.title]="tagLabel(tag)">
-                      <fa-icon [icon]="tagIcon(tag)" />
-                    </span>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [legendItems]="tableLegendItems()"
+        emptyLabel="No DP cells yet"
+      />
     </div>
   } @else {
     <div class="trace__empty">No DP trace available for this step.</div>

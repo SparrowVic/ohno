@@ -116,25 +116,6 @@
   color: var(--text-tertiary);
 }
 
-.card__availability {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 8px;
-  border-radius: 999px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--medium);
-  background: var(--medium-bg);
-}
-
-.card__availability--live {
-  color: var(--easy);
-  background: var(--easy-bg);
-}
-
 .card__title-block {
   display: flex;
   flex-direction: column;
@@ -151,39 +132,6 @@
   line-height: 1.08;
   letter-spacing: -0.06em;
   color: var(--text-primary);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 8px;
-  border-radius: 999px;
-  font-size: 9px;
-  font-weight: 700;
-  white-space: nowrap;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-
-  &--easy {
-    color: var(--easy);
-    background: var(--easy-bg);
-  }
-
-  &--medium {
-    color: var(--medium);
-    background: var(--medium-bg);
-  }
-
-  &--hard {
-    color: var(--hard);
-    background: var(--hard-bg);
-  }
-
-  &--ultra-hard {
-    color: var(--ultra-hard);
-    background: var(--ultra-hard-bg);
-  }
 }
 
 .card__desc {
@@ -255,18 +203,6 @@
   z-index: 1;
 }
 
-.card__preview-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-  font-size: 10px;
-  font-weight: 600;
-}
-
 .card__preview-hint {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -321,22 +257,11 @@
   gap: 6px;
 }
 
-.tag {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.tag--ghost {
-  color: var(--text-tertiary);
+.card__eyebrow app-ui-tag,
+.card__title-row app-ui-tag,
+.card__preview-meta app-ui-tag,
+.card__tags app-ui-tag {
+  flex-shrink: 0;
 }
 
 .card__cta {
