@@ -27,7 +27,8 @@
     </div>
 
     <div class="page__filter-stack">
-      <app-difficulty-filter
+      <app-lab-difficulty-filter
+        [label]="difficultyGroupLabel()"
         [options]="difficultyOptions()"
         [value]="activeDifficulty()"
         [ariaLabel]="difficultyGroupLabel()"

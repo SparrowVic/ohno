@@ -1,0 +1,391 @@
+@use '../control-chrome' as chrome;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.multi-select {
+  position: relative;
+  min-width: 0;
+  z-index: 0;
+
+  &--disabled {
+    opacity: 0.56;
+  }
+
+  &--open {
+    z-index: 42;
+  }
+
+  &--open .multi-select__trigger {
+    border-color: rgba(var(--chrome-accent-rgb), 0.28);
+    background:
+      linear-gradient(
+        90deg,
+        rgba(var(--chrome-accent-rgb), 0.085),
+        rgba(var(--chrome-accent-alt-rgb), 0.05)
+      ),
+      rgba(21, 24, 29, 0.97);
+    box-shadow:
+      0 0 0 1px rgba(var(--chrome-accent-rgb), 0.1),
+      0 14px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  &--open .multi-select__chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.multi-select__trigger {
+  @include chrome.control-field;
+
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 4px var(--control-padding-inline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover:not(:disabled) {
+    @include chrome.control-field-hover;
+
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    @include chrome.control-field-focus;
+  }
+}
+
+.multi-select__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.multi-select__label {
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.multi-select__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.multi-select__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.multi-select__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--chrome-accent-rgb), 0.14),
+      rgba(var(--chrome-accent-alt-rgb), 0.1)
+    ),
+    rgba(255, 255, 255, 0.035);
+  color: var(--text-primary);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.multi-select__chevron {
+  flex-shrink: 0;
+  color: rgba(var(--chrome-accent-rgb), 0.82);
+  transition: transform 160ms ease;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
+}
+
+.multi-select__menu {
+  @include chrome.floating-panel(20px);
+
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 41;
+  min-width: 100%;
+  width: min(560px, calc(100vw - 56px));
+  padding: 14px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.multi-select__menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(17, 19, 24, 0.985), rgba(13, 15, 19, 0.995)),
+    rgba(14, 16, 20, 0.992);
+}
+
+.multi-select__menu > * {
+  position: relative;
+  z-index: 1;
+}
+
+.multi-select__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.multi-select__header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.multi-select__eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--chrome-accent-rgb), 0.72);
+}
+
+.multi-select__title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+}
+
+.multi-select__subtitle,
+.multi-select__empty {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  max-width: 42ch;
+}
+
+.multi-select__clear {
+  @include chrome.option-surface(999px);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 12px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  &:hover {
+    @include chrome.option-surface-hover;
+
+    color: var(--text-primary);
+  }
+}
+
+.multi-select__groups {
+  display: grid;
+  grid-template-columns: repeat(var(--lab-multi-select-columns), minmax(0, 1fr));
+  gap: 14px;
+}
+
+.multi-select__group {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022), rgba(255, 255, 255, 0.008)),
+    rgba(255, 255, 255, 0.015);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.multi-select__group-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--chrome-accent-rgb), 0.72);
+}
+
+.multi-select__group-options {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.multi-select__option {
+  @include chrome.option-surface(16px);
+
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-color: rgba(255, 255, 255, 0.045);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+    rgba(255, 255, 255, 0.018);
+  color: var(--text-secondary);
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    @include chrome.option-surface-hover;
+
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    @include chrome.control-field-focus;
+  }
+
+  &--selected {
+    border-color: rgba(var(--chrome-accent-rgb), 0.24);
+    background:
+      linear-gradient(
+        90deg,
+        rgba(var(--chrome-accent-rgb), 0.11),
+        rgba(var(--chrome-accent-alt-rgb), 0.06)
+      ),
+      rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    box-shadow:
+      0 12px 22px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
+
+.multi-select__check {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(var(--chrome-accent-rgb), 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.multi-select__check::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, var(--accent-strong), var(--chrome-accent-alt-strong));
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+.multi-select__option--selected .multi-select__check {
+  border-color: rgba(var(--chrome-accent-rgb), 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 12px rgba(var(--chrome-accent-rgb), 0.08);
+}
+
+.multi-select__option--selected .multi-select__check::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.multi-select__option-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.multi-select__option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.multi-select__option-hint {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.multi-select__option-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--text-tertiary);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .multi-select__menu {
+    width: min(100%, 560px);
+  }
+
+  .multi-select__groups {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .multi-select__trigger,
+  .multi-select__chevron,
+  .multi-select__clear,
+  .multi-select__option,
+  .multi-select__check::after {
+    transition: none;
+  }
+}

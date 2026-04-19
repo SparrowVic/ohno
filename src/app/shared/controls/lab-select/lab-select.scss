@@ -1,3 +1,5 @@
+@use '../control-chrome' as chrome;
+
 :host {
   display: block;
   min-width: 0;
@@ -115,14 +117,11 @@
 }
 
 .select__trigger {
+  @include chrome.control-field;
+
   width: 100%;
   min-height: var(--control-height);
   padding: 4px var(--control-padding-inline);
-  border-radius: var(--control-radius);
-  border: 0.5px solid var(--border);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
-    rgba(18, 19, 20, 0.92);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -135,13 +134,17 @@
     box-shadow 160ms ease;
 
   &:hover:not(:disabled) {
-    border-color: var(--border-hover);
-    background: rgba(24, 25, 27, 0.96);
+    @include chrome.control-field-hover;
+
     transform: translateY(-1px);
   }
 
   &:disabled {
     cursor: default;
+  }
+
+  &:focus-visible {
+    @include chrome.control-field-focus;
   }
 }
 
@@ -190,6 +193,8 @@
 }
 
 .select__menu {
+  @include chrome.floating-panel;
+
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
@@ -199,56 +204,25 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px;
-  border-radius: 18px;
-  border: 0.5px solid rgba(255, 255, 255, 0.09);
-  background:
-    radial-gradient(circle at 14% 0%, rgba(var(--chrome-accent-rgb), 0.09), transparent 34%),
-    radial-gradient(circle at 100% 0%, rgba(var(--chrome-accent-alt-rgb), 0.07), transparent 28%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.012)),
-    rgba(15, 17, 21, 0.98);
-  box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.24),
-    0 0 0 1px rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(18px) saturate(112%);
 }
 
 .select__option {
+  @include chrome.option-surface;
+
   width: 100%;
   padding: 10px 12px;
-  border-radius: 13px;
-  border: 0.5px solid transparent;
-  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
   text-align: left;
-  transition:
-    border-color 150ms ease,
-    background 150ms ease,
-    transform 150ms ease;
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.08);
-    background:
-      linear-gradient(
-        90deg,
-        rgba(var(--chrome-accent-rgb), 0.05),
-        rgba(var(--chrome-accent-alt-rgb), 0.025)
-      ),
-      rgba(255, 255, 255, 0.018);
-    transform: translateY(-1px);
+    @include chrome.option-surface-hover;
   }
 
   &--active {
-    border-color: rgba(var(--chrome-accent-rgb), 0.2);
-    background:
-      linear-gradient(
-        90deg,
-        rgba(var(--chrome-accent-rgb), 0.09),
-        rgba(var(--chrome-accent-alt-rgb), 0.045)
-      ),
-      rgba(255, 255, 255, 0.024);
+    @include chrome.option-surface-active;
   }
 }
 

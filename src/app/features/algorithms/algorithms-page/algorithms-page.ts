@@ -2,8 +2,6 @@ import { NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
   computed,
   inject,
   signal,
@@ -15,13 +13,15 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { NavigationService } from '../../../core/services/navigation-service';
 import { buildCategoryThemeVars } from '../../../shared/category-theme';
 import {
-  DifficultyFilter,
   DifficultyFilterValue,
+  LabDifficultyFilter,
   buildDifficultyFilterOptions,
-} from '../../../shared/components/difficulty-filter/difficulty-filter';
+} from '../../../shared/controls/lab-difficulty-filter/lab-difficulty-filter';
 import {
-  AlgorithmTraitId,
-} from '../algorithm-traits/algorithm-traits';
+  LabMultiSelect,
+  LabMultiSelectGroup,
+} from '../../../shared/controls/lab-multi-select/lab-multi-select';
+import { AlgorithmTraitId } from '../algorithm-traits/algorithm-traits';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem } from '../models/algorithm';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
@@ -37,7 +37,7 @@ import {
 
 @Component({
   selector: 'app-algorithms-page',
-  imports: [AlgorithmCard, NgStyle, DifficultyFilter],
+  imports: [AlgorithmCard, NgStyle, LabDifficultyFilter, LabMultiSelect],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,16 +46,13 @@ export class AlgorithmsPage {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly navigation = inject(NavigationService);
   private readonly language = inject(AppLanguageService);
-  private readonly host = inject(ElementRef<HTMLElement>);
 
   readonly difficultyOptions = computed(() => buildDifficultyFilterOptions(this.language.activeLang()));
 
   private readonly difficultyFilter = signal<DifficultyFilterValue>('all');
   private readonly selectedTraitsState = signal<readonly AlgorithmTraitId[]>([]);
-  private readonly traitsOpenState = signal(false);
   readonly activeDifficulty = this.difficultyFilter.asReadonly();
   readonly activeTraits = this.selectedTraitsState.asReadonly();
-  readonly traitsOpen = this.traitsOpenState.asReadonly();
   readonly activeCategory = computed(
     () => this.navigation.activeItem()?.filter.category ?? 'overview',
   );
@@ -87,6 +84,17 @@ export class AlgorithmsPage {
       this.selectedTraitsState(),
       this.traitCounts(),
     );
+  });
+  readonly traitSelectGroups = computed<readonly LabMultiSelectGroup<AlgorithmTraitId>[]>(() => {
+    return this.traitGroups().map((group) => ({
+      id: group.id,
+      label: group.label,
+      options: group.options.map((option) => ({
+        value: option.id,
+        label: option.label,
+        count: option.count,
+      })),
+    }));
   });
 
   private readonly selectedTraitsByGroup = computed(() => groupSelectedTraits(this.selectedTraitsState()));
@@ -157,6 +165,16 @@ export class AlgorithmsPage {
   readonly traitsTriggerLabel = computed(() =>
     this.language.activeLang() === APP_LANG.EN ? 'Traits' : 'Cechy',
   );
+  readonly traitsSummary = computed(() => {
+    const count = this.activeTraits().length;
+    const lang = this.language.activeLang();
+
+    if (count === 0) {
+      return lang === APP_LANG.EN ? 'Pick semantic filters' : 'Wybierz filtry semantyczne';
+    }
+
+    return lang === APP_LANG.EN ? `${count} selected` : `${count} wybrano`;
+  });
   readonly traitsTriggerAriaLabel = computed(() => {
     const count = this.activeTraits().length;
     const lang = this.language.activeLang();
@@ -206,35 +224,7 @@ export class AlgorithmsPage {
     this.difficultyFilter.set(value);
   }
 
-  toggleTraitsOpen(): void {
-    this.traitsOpenState.update((value) => !value);
-  }
-
-  toggleTrait(id: AlgorithmTraitId): void {
-    this.selectedTraitsState.update((selected) =>
-      selected.includes(id) ? selected.filter((traitId) => traitId !== id) : [...selected, id],
-    );
-  }
-
-  clearTraits(): void {
-    this.selectedTraitsState.set([]);
-    this.traitsOpenState.set(false);
-  }
-
-  @HostListener('document:click', ['$event'])
-  handleDocumentClick(event: MouseEvent): void {
-    if (!this.traitsOpenState()) {
-      return;
-    }
-
-    const target = event.target;
-    if (target instanceof Node && !this.host.nativeElement.contains(target)) {
-      this.traitsOpenState.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  handleEscapeKey(): void {
-    this.traitsOpenState.set(false);
+  selectTraits(value: readonly AlgorithmTraitId[]): void {
+    this.selectedTraitsState.set([...value]);
   }
 }

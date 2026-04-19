@@ -5,10 +5,10 @@ import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { NavigationService } from '../../../core/services/navigation-service';
 import {
-  DifficultyFilter,
   DifficultyFilterValue,
+  LabDifficultyFilter,
   buildDifficultyFilterOptions,
-} from '../../../shared/components/difficulty-filter/difficulty-filter';
+} from '../../../shared/controls/lab-difficulty-filter/lab-difficulty-filter';
 import { StructureCard } from '../structure-card/structure-card';
 import { StructureItem } from '../models/structure';
 import { StructureRegistry } from '../registry/structure-registry';
@@ -21,7 +21,7 @@ interface PageStat {
 
 @Component({
   selector: 'app-structures-page',
-  imports: [StructureCard, DifficultyFilter],
+  imports: [StructureCard, LabDifficultyFilter],
   templateUrl: './structures-page.html',
   styleUrl: './structures-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,9 +1,18 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  forwardRef,
+  input,
+  output,
+} from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { APP_LANG, AppLang } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { Difficulty } from '../../../features/algorithms/models/algorithm';
-import { ShaderCardEffect } from '../shader-card-effect/shader-card-effect';
+import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
 export type DifficultyFilterValue = 'all' | Difficulty;
 
@@ -40,23 +49,54 @@ export function buildDifficultyFilterOptions(lang: AppLang): readonly Difficulty
 }
 
 @Component({
-  selector: 'app-difficulty-filter',
-  imports: [ShaderCardEffect],
-  templateUrl: './difficulty-filter.html',
-  styleUrl: './difficulty-filter.scss',
+  selector: 'app-lab-difficulty-filter',
+  imports: [],
+  templateUrl: './lab-difficulty-filter.html',
+  styleUrl: './lab-difficulty-filter.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => LabDifficultyFilter),
+      multi: true,
+    },
+  ],
 })
-export class DifficultyFilter {
+export class LabDifficultyFilter extends BaseControlValueAccessor<DifficultyFilterValue> {
   readonly options = input.required<readonly DifficultyFilterOption[]>();
-  readonly value = input.required<DifficultyFilterValue>();
+  readonly label = input<string>('');
   readonly ariaLabel = input('Difficulty filter');
+  readonly valueInput = input<DifficultyFilterValue>('all', { alias: 'value' });
   readonly valueChange = output<DifficultyFilterValue>();
 
+  readonly activeValue = computed(() => this.value() ?? 'all');
+
+  constructor() {
+    super();
+
+    effect(
+      () => {
+        this.writeValue(this.valueInput());
+      },
+      { allowSignalWrites: true },
+    );
+  }
+
+  protected override coerceValue(value: DifficultyFilterValue | null): DifficultyFilterValue {
+    if (value === null) {
+      return 'all';
+    }
+
+    return this.options().find((option) => option.value === value)?.value ?? 'all';
+  }
+
   select(value: DifficultyFilterValue): void {
-    if (value === this.value()) {
+    if (this.disabled() || value === this.activeValue()) {
       return;
     }
 
+    this.setValue(value);
     this.valueChange.emit(value);
+    this.markAsTouched();
   }
 }
