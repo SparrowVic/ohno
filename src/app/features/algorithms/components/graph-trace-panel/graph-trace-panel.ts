@@ -75,10 +75,6 @@ export class GraphTracePanel {
     }
     return 'This algorithm is explained as a whole graph structure, not as one selected route.';
   });
-  readonly focusCardLabelResolved = computed(() => {
-    if (this.hasFocusedRoute()) return this.focusModeLabel() ?? 'Focused route';
-    return this.state()?.detailLabel ?? 'Detail';
-  });
   readonly focusCardBadge = computed(() => (this.hasFocusedRoute() ? 'UI lens' : 'Graph state'));
   readonly focusCardMuted = computed(() => {
     if (this.hasFocusedRoute()) return false;
@@ -89,6 +85,16 @@ export class GraphTracePanel {
   readonly computationResult = computed(() => this.state()?.computation?.result ?? null);
   readonly computationDecision = computed(() => {
     return this.state()?.computation?.decision ?? 'Waiting for a compare/relax/decision step.';
+  });
+  readonly decisionBadge = computed(() => {
+    switch (this.decisionTone()) {
+      case 'improve':
+        return 'Relax';
+      case 'keep':
+        return 'Keep';
+      default:
+        return 'Idle';
+    }
   });
 
   statusLabel(row: GraphTraceRow): string {

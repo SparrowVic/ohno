@@ -1,77 +1,99 @@
 <div class="trace">
   @if (state(); as graphState) {
     <div class="trace__header">
-      <div class="trace__summary">
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{ sourceCardLabel() }}</span>
-          <span class="trace__summary-value">{{ sourceLabel() }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{ focusSummaryLabel() }}</span>
-          <span class="trace__summary-value">{{ focusSummaryValue() }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">Current</span>
-          <span class="trace__summary-value">{{ currentLabel() }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{ completionLabel() }}</span>
-          <span class="trace__summary-value">{{ settledCount() }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{ frontierLabel() }}</span>
-          <span class="trace__summary-value">{{ queueLength() }}</span>
-        </div>
-      </div>
-
-      <div class="trace__calc-grid">
-        <div class="trace__calculation trace__calculation--focus" [class.trace__calculation--muted]="focusCardMuted()">
-          <div class="trace__calc-topline">
-            <div class="trace__calc-label">{{ focusCardLabelResolved() }}</div>
-            <span class="trace__calc-badge">{{ focusCardBadge() }}</span>
+      <section
+        class="trace__decision trace__decision--{{ decisionTone() }}"
+        [class.trace__decision--muted]="!hasComputation()"
+      >
+        <div class="trace__decision-head">
+          <div class="trace__decision-copy">
+            <span class="trace__eyebrow">Current decision</span>
+            <div class="trace__decision-title">{{ computationLabel() }}</div>
           </div>
-          <div class="trace__calc-expression">{{ focusCardPath() }}</div>
-          <div class="trace__calc-decision">{{ focusCardHint() }}</div>
+          <span class="trace__decision-pill">{{ decisionBadge() }}</span>
         </div>
 
-        <div class="trace__calculation trace__calculation--{{ decisionTone() }}" [class.trace__calculation--muted]="!hasComputation()">
-          <div class="trace__calc-label">{{ computationLabel() }}</div>
-          <div class="trace__calc-expression">{{ computationExpression() }}</div>
-          @if (computationResult(); as result) {
-            <div class="trace__calc-result">= {{ result }}</div>
-          } @else {
-            <div class="trace__calc-result trace__calc-result--muted">—</div>
-          }
-          <div class="trace__calc-decision">{{ computationDecision() }}</div>
-        </div>
-      </div>
+        <div class="trace__decision-expression">{{ computationExpression() }}</div>
 
-      <div class="trace__meta-grid">
-        <div class="trace__queue">
-          <div class="trace__queue-label">{{ frontierLabel() }}</div>
-          <div class="trace__queue-items">
+        <div class="trace__decision-grid">
+          <div class="trace__decision-block">
+            <span class="trace__eyebrow">Result</span>
+            @if (computationResult(); as result) {
+              <span class="trace__decision-result">= {{ result }}</span>
+            } @else {
+              <span class="trace__decision-result trace__decision-result--muted">—</span>
+            }
+          </div>
+
+          <div class="trace__decision-block">
+            <span class="trace__eyebrow">{{ focusSummaryLabel() }}</span>
+            <span class="trace__decision-focus">{{ focusSummaryValue() }}</span>
+          </div>
+        </div>
+
+        <div class="trace__decision-note">{{ computationDecision() }}</div>
+
+        <div class="trace__context-line" [class.trace__context-line--muted]="focusCardMuted()">
+          <span class="trace__context-badge">{{ focusCardBadge() }}</span>
+          <span class="trace__context-path">{{ focusCardPath() }}</span>
+          <span class="trace__context-hint">{{ focusCardHint() }}</span>
+        </div>
+      </section>
+
+      <dl class="trace__facts" aria-label="Trace summary">
+        <div class="trace__fact">
+          <dt class="trace__fact-label">{{ sourceCardLabel() }}</dt>
+          <dd class="trace__fact-value">{{ sourceLabel() }}</dd>
+        </div>
+
+        <div class="trace__fact">
+          <dt class="trace__fact-label">Current</dt>
+          <dd class="trace__fact-value">{{ currentLabel() }}</dd>
+        </div>
+
+        <div class="trace__fact">
+          <dt class="trace__fact-label">{{ completionLabel() }}</dt>
+          <dd class="trace__fact-value trace__fact-value--mono">{{ settledCount() }}</dd>
+        </div>
+
+        <div class="trace__fact">
+          <dt class="trace__fact-label">{{ frontierLabel() }}</dt>
+          <dd class="trace__fact-value trace__fact-value--mono">{{ queueLength() }}</dd>
+        </div>
+      </dl>
+
+      <div class="trace__streams">
+        <section class="trace__stream">
+          <div class="trace__stream-head">
+            <div class="trace__stream-label">{{ frontierLabel() }}</div>
+            <span class="trace__stream-count">{{ graphState.queue.length }}</span>
+          </div>
+          <div class="trace__stream-items">
             @if (graphState.queue.length === 0) {
-              <span class="trace__queue-empty">empty</span>
+              <span class="trace__stream-empty">empty</span>
             } @else {
               @for (entry of graphState.queue; track entry.nodeId) {
-                <span class="trace__queue-chip">{{ entry.label }} · {{ formatDistance(entry.distance) }}</span>
+                <span class="trace__stream-chip">{{ entry.label }} · {{ formatDistance(entry.distance) }}</span>
               }
             }
           </div>
-        </div>
+        </section>
 
-        <div class="trace__queue">
-          <div class="trace__queue-label">{{ visitOrderLabel() }}</div>
-          <div class="trace__queue-items">
+        <section class="trace__stream">
+          <div class="trace__stream-head">
+            <div class="trace__stream-label">{{ visitOrderLabel() }}</div>
+            <span class="trace__stream-count">{{ graphState.visitOrder.length }}</span>
+          </div>
+          <div class="trace__stream-items">
             @if (graphState.visitOrder.length === 0) {
-              <span class="trace__queue-empty">not started</span>
+              <span class="trace__stream-empty">not started</span>
             } @else {
               @for (label of graphState.visitOrder; track label) {
-                <span class="trace__queue-chip trace__queue-chip--done">{{ label }}</span>
+                <span class="trace__stream-chip trace__stream-chip--done">{{ label }}</span>
               }
             }
           </div>
-        </div>
+        </section>
       </div>
     </div>
 
