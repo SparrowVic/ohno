@@ -226,6 +226,7 @@
 }
 
 .viz-panel {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -236,6 +237,15 @@
   border-radius: var(--panel-shell-radius);
   background: var(--panel-shell-bg);
   box-shadow: var(--panel-shell-shadow);
+  backdrop-filter: blur(16px) saturate(120%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.024), transparent 22%);
+    pointer-events: none;
+  }
 }
 
 .unavailable {
