@@ -75,6 +75,7 @@ export class RoadmapOverlayDirective {
       padding: '18px',
       borderRadius: 'inherit',
       overflow: 'hidden',
+      animation: 'ohno-fade-scale 420ms var(--ease-out-expo) both',
     });
     this.renderer.setAttribute(overlay, 'aria-hidden', 'true');
 
@@ -83,11 +84,11 @@ export class RoadmapOverlayDirective {
       inset: '0',
       borderRadius: 'inherit',
       background:
-        'linear-gradient(180deg, rgb(10 12 16 / 0.16), rgb(10 12 16 / 0.34)), linear-gradient(135deg, rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.04) 42%, rgb(255 255 255 / 0.09))',
-      backdropFilter: 'blur(10px) saturate(0.74)',
-      WebkitBackdropFilter: 'blur(10px) saturate(0.74)',
+        'linear-gradient(180deg, rgb(8 10 16 / 0.22), rgb(8 10 16 / 0.42)), linear-gradient(135deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.02) 42%, rgb(255 255 255 / 0.06))',
+      backdropFilter: 'blur(12px) saturate(0.82)',
+      WebkitBackdropFilter: 'blur(12px) saturate(0.82)',
       boxShadow:
-        'inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -18px 40px rgb(0 0 0 / 0.18)',
+        'inset 0 1px 0 rgb(255 255 255 / 0.14), inset 0 -18px 40px rgb(0 0 0 / 0.22)',
     });
 
     const glow = this.createElement('div', {
@@ -95,8 +96,8 @@ export class RoadmapOverlayDirective {
       inset: '0',
       borderRadius: 'inherit',
       background:
-        'radial-gradient(circle at 50% 30%, rgb(255 255 255 / 0.16), transparent 30%), radial-gradient(circle at 50% 52%, rgb(var(--card-accent-rgb, 184 213 110) / 0.18), transparent 42%)',
-      opacity: '0.92',
+        'radial-gradient(circle at 50% 30%, rgb(255 255 255 / 0.14), transparent 32%), radial-gradient(circle at 50% 52%, rgb(var(--card-accent-rgb, 199 229 106) / 0.22), transparent 46%), radial-gradient(circle at 18% 88%, rgb(var(--chrome-accent-alt-rgb) / 0.1), transparent 40%)',
+      opacity: '0.94',
     });
 
     const content = this.createElement('div', {
@@ -116,18 +117,19 @@ export class RoadmapOverlayDirective {
       height: '96px',
       borderRadius: '50%',
       background:
-        'linear-gradient(180deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.05)), rgb(12 15 20 / 0.42)',
-      border: '1px solid rgb(255 255 255 / 0.18)',
+        'conic-gradient(from 180deg, rgb(var(--card-accent-rgb, 199 229 106) / 0.14), rgb(var(--chrome-accent-alt-rgb) / 0.14), rgb(var(--chrome-accent-rgb) / 0.18), rgb(var(--card-accent-rgb, 199 229 106) / 0.14)), linear-gradient(180deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.05)), rgb(14 17 24 / 0.5)',
+      border: '0.5px solid rgb(255 255 255 / 0.2)',
       boxShadow:
-        '0 18px 34px rgb(0 0 0 / 0.22), 0 0 0 1px rgb(var(--card-accent-rgb, 184 213 110) / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.2)',
+        '0 20px 40px rgb(0 0 0 / 0.3), 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.1), 0 0 32px rgb(var(--card-accent-rgb, 199 229 106) / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.22)',
     });
 
     const sealRing = this.createElement('div', {
       position: 'absolute',
       inset: '8px',
       borderRadius: '50%',
-      border: '1px solid rgb(var(--card-accent-rgb, 184 213 110) / 0.22)',
-      boxShadow: 'inset 0 0 22px rgb(var(--card-accent-rgb, 184 213 110) / 0.08)',
+      border: '1px dashed rgb(var(--card-accent-rgb, 199 229 106) / 0.28)',
+      boxShadow: 'inset 0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.1)',
+      animation: 'roadmap-seal-rotate 18s linear infinite',
     });
 
     const iconWrapper = this.createElement('span', {
@@ -158,15 +160,17 @@ export class RoadmapOverlayDirective {
       display: 'inline-flex',
       alignItems: 'center',
       minHeight: '24px',
-      padding: '0 10px',
+      padding: '0 11px',
       borderRadius: '999px',
-      background: 'rgb(255 255 255 / 0.14)',
-      border: '1px solid rgb(255 255 255 / 0.12)',
-      color: 'rgb(255 255 255 / 0.9)',
+      background:
+        'linear-gradient(135deg, rgb(var(--chrome-accent-rgb) / 0.2), rgb(var(--chrome-accent-alt-rgb) / 0.14)), rgb(255 255 255 / 0.04)',
+      border: '0.5px solid rgb(var(--chrome-accent-rgb) / 0.36)',
+      color: 'rgb(var(--chrome-accent-strong))',
       fontSize: '10px',
       fontWeight: '700',
-      letterSpacing: '0.14em',
+      letterSpacing: '0.16em',
       textTransform: 'uppercase',
+      boxShadow: 'inset 0 1px 0 rgb(255 255 255 / 0.08), 0 0 14px rgb(var(--chrome-accent-rgb) / 0.18)',
     });
 
     const title = this.createElement('strong', {

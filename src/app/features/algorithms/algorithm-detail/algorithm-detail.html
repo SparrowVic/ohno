@@ -10,7 +10,14 @@
       </a>
       <div class="topbar__identity">
         <div class="topbar__copy">
-          <div class="topbar__eyebrow">{{ labEyebrow() }}</div>
+          <nav class="topbar__crumbs" aria-label="Category breadcrumb">
+            @for (crumb of breadcrumbs(); track crumb; let last = $last) {
+              <span class="topbar__crumb">{{ crumb }}</span>
+              @if (!last) {
+                <span class="topbar__crumb-sep" aria-hidden="true">›</span>
+              }
+            }
+          </nav>
           <div class="topbar__title-row">
             <h1 class="topbar__title">{{ algo.name }}</h1>
             <span class="topbar__badge topbar__badge--{{ algo.difficulty }}">
@@ -29,7 +36,15 @@
         </button>
         <span class="topbar__pill">{{ currentVariantLabel() }}</span>
         <span class="topbar__pill">{{ sizeSummaryLabel() }}</span>
-        <span class="topbar__pill topbar__pill--strong">{{ stepSummaryLabel() }}</span>
+        <span
+          class="topbar__pill topbar__pill--strong"
+          [class.topbar__pill--live]="isPlaying()"
+        >
+          @if (isPlaying()) {
+            <span class="topbar__pill-live-dot" aria-hidden="true"></span>
+          }
+          {{ stepSummaryLabel() }}
+        </span>
       </div>
     </header>
 

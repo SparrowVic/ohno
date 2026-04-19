@@ -14,29 +14,57 @@
 }
 
 .table thead th {
-  padding: 9px 10px;
+  padding: 10px 11px;
   text-align: left;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
-  background: var(--surface);
-  border-bottom: 0.5px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.008)),
+    rgba(18, 22, 30, 0.94);
+  border-bottom: 0.5px solid var(--border-hover);
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+.table thead th::after {
+  content: '';
+  display: block;
+  margin-top: 6px;
+  height: 1px;
+  width: 16px;
+  background: var(--brand-gradient);
+  opacity: 0.6;
+  border-radius: 999px;
 }
 
 .table--sticky thead th {
   position: sticky;
   top: 0;
   z-index: 1;
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+
+.table tbody tr {
+  transition: background var(--duration-fast) var(--ease-soft);
+}
+
+.table tbody tr:hover td {
+  background: rgba(var(--chrome-accent-rgb), 0.045);
+  color: var(--text-primary);
 }
 
 .table tbody td {
-  padding: 8px 10px;
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.04);
-  font-size: 10px;
+  padding: 9px 11px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+  font-size: 10.5px;
   color: var(--text-secondary);
   vertical-align: middle;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
 }
 
 .table--compact tbody td {
@@ -54,6 +82,13 @@
   text-align: center;
 }
 
+.table__head--center::after,
+.table--compact thead th::after,
+.table--headerless thead th::after {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .table__head--end,
 .table__cell--end {
   text-align: end;
@@ -61,19 +96,26 @@
 
 .table__cell--mono {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .table__row--active td {
-  background: rgb(var(--viz-warning-rgb) / 0.07);
+  background:
+    linear-gradient(90deg, rgba(var(--viz-warning-rgb), 0.11), rgba(var(--viz-warning-rgb), 0.04));
   color: var(--text-primary);
+  box-shadow: inset 2px 0 0 rgb(var(--viz-warning-rgb) / 0.7);
 }
 
 .table__row--success td {
-  background: rgb(var(--viz-success-rgb) / 0.05);
+  background:
+    linear-gradient(90deg, rgba(var(--viz-success-rgb), 0.085), rgba(var(--viz-success-rgb), 0.03));
+  box-shadow: inset 2px 0 0 rgb(var(--viz-success-rgb) / 0.55);
 }
 
 .table__row--danger td {
-  background: rgb(var(--viz-danger-rgb) / 0.05);
+  background:
+    linear-gradient(90deg, rgba(var(--viz-danger-rgb), 0.085), rgba(var(--viz-danger-rgb), 0.03));
+  box-shadow: inset 2px 0 0 rgb(var(--viz-danger-rgb) / 0.55);
 }
 
 .table__row--ghost td {
@@ -89,7 +131,7 @@
 .table__placeholder,
 .table__empty {
   font-size: 10px;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--text-tertiary);
 }
 
@@ -109,28 +151,42 @@
   align-items: center;
   gap: 8px;
   min-height: 26px;
-  padding: 0 10px;
+  padding: 0 11px;
   border-radius: 999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
-    rgba(18, 19, 22, 0.96);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+    rgba(20, 24, 32, 0.92);
   box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    var(--elevation-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px) saturate(118%);
+  transition:
+    color var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    transform var(--duration-fast) var(--ease-out-quart);
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: rgba(var(--chrome-accent-rgb), 0.28);
+    background:
+      linear-gradient(135deg, rgba(var(--chrome-accent-rgb), 0.1), rgba(var(--chrome-accent-alt-rgb), 0.06)),
+      rgba(22, 26, 34, 0.94);
+    transform: translateY(-1px);
+  }
 }
 
 .table__legend-toggle-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 160ms ease;
+  transition: transform var(--duration-base) var(--ease-spring);
 }
 
 .table__legend-toggle-icon svg {
@@ -150,25 +206,25 @@
   width: min(100%, 420px);
   max-height: 0;
   overflow: hidden;
-  border-radius: 14px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-    rgba(15, 17, 20, 0.98);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(17, 20, 28, 0.98);
   box-shadow:
-    0 16px 30px rgba(0, 0, 0, 0.24),
-    0 0 0 1px rgba(255, 255, 255, 0.03);
+    var(--elevation-3),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
   opacity: 0;
   transform: translateY(6px);
   transition:
-    max-height 180ms ease,
-    opacity 160ms ease,
-    transform 160ms ease;
+    max-height var(--duration-base) var(--ease-out-expo),
+    opacity var(--duration-base) var(--ease-soft),
+    transform var(--duration-base) var(--ease-out-expo);
   pointer-events: none;
 }
 
 .table__legend--open .table__legend-panel {
-  max-height: 280px;
+  max-height: 320px;
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
@@ -196,13 +252,13 @@
 
 .table__legend-label {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.25;
   color: var(--text-primary);
 }
 
 .table__legend-description {
   font-size: 9px;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--text-tertiary);
 }

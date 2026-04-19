@@ -16,33 +16,72 @@
   isolation: isolate;
 }
 
+/* ---- Ambient atmosphere (slow-drifting brand blobs) -----------------------
+   These decorate the outer viewport behind everything — they give the shell
+   a sense of depth without adding contrast noise. Fixed positioning ensures
+   they don't scroll with content. */
+
 .shell::before {
   content: '';
   position: fixed;
-  inset: -24vh -11vw auto auto;
-  width: min(28vw, 360px);
+  inset: -28vh -14vw auto auto;
+  width: min(32vw, 420px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--chrome-accent-rgb), 0.09) 0%, transparent 72%);
-  filter: blur(24px);
+  background:
+    radial-gradient(circle at 38% 44%, rgba(var(--chrome-accent-rgb), 0.14) 0%, transparent 64%),
+    radial-gradient(circle at 68% 56%, rgba(var(--chrome-accent-alt-rgb), 0.1) 0%, transparent 68%);
+  filter: blur(32px);
   pointer-events: none;
   z-index: -1;
+  animation: shell-drift-a 24s ease-in-out infinite alternate;
 }
 
 .shell::after {
   content: '';
   position: fixed;
-  inset: 12vh auto 12vh -11vw;
-  width: min(22vw, 280px);
+  inset: 8vh auto 8vh -14vw;
+  width: min(26vw, 340px);
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--chrome-accent-rgb), 0.05) 0%, transparent 72%);
-  filter: blur(30px);
+  background:
+    radial-gradient(circle at 42% 50%, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%),
+    radial-gradient(circle at 72% 42%, rgba(var(--chrome-accent-warm-rgb), 0.06) 0%, transparent 72%);
+  filter: blur(40px);
   pointer-events: none;
   z-index: -1;
+  animation: shell-drift-b 30s ease-in-out infinite alternate;
+}
+
+@keyframes shell-drift-a {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-4vw, 3vh) scale(1.08); }
+}
+
+@keyframes shell-drift-b {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(3vw, -2vh) scale(1.06); }
 }
 
 .shell__navbar {
   flex-shrink: 0;
+  position: relative;
+}
+
+.shell__navbar::after {
+  content: '';
+  position: absolute;
+  inset: auto 8% -2px 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--chrome-accent-rgb), 0.22) 30%,
+    rgba(var(--chrome-accent-alt-rgb), 0.2) 60%,
+    transparent 100%
+  );
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .shell__body {
@@ -63,9 +102,10 @@
   min-width: 0;
   min-height: 0;
   padding: 2px 2px 22px 0;
-  background: var(--app-bg);
   overflow: auto;
   background: transparent;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
 }
 
 @media (max-width: 1080px) {
@@ -90,5 +130,12 @@
 
   .shell__body {
     gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell::before,
+  .shell::after {
+    animation: none;
   }
 }

@@ -3,109 +3,244 @@
 :root {
   color-scheme: dark;
 
-  --app-bg: #090909;
-  --app-bg-rgb: 9 9 9;
-  --surface: rgba(18, 18, 18, 0.86);
-  --surface-raised: rgba(24, 24, 25, 0.94);
-  --surface-hover: rgba(30, 31, 33, 0.98);
-  --surface-strong: #202124;
+  /* ======================================================================
+     SURFACE SYSTEM — subtle but clear elevation ladder.
+     Each step is ~4–6% lighter than the previous one so the eye can read
+     depth without high-contrast banding.
+     ====================================================================== */
+  --app-bg: #0a0c12;
+  --app-bg-rgb: 10 12 18;
+  --surface-0: #0a0c12;                         /* page / outermost */
+  --surface-1: rgba(20, 23, 31, 0.88);          /* panels */
+  --surface-2: rgba(26, 30, 39, 0.92);          /* cards / raised */
+  --surface-3: rgba(32, 37, 48, 0.96);          /* hover / strong */
+  --surface-4: rgba(38, 44, 57, 0.98);          /* floating / menus */
+  --surface-inset: rgba(6, 8, 12, 0.7);         /* recessed (code, track) */
+
+  /* legacy aliases — retained so existing selectors keep working */
+  --surface: var(--surface-1);
+  --surface-raised: var(--surface-2);
+  --surface-hover: var(--surface-3);
+  --surface-strong: #202536;
   --surface-soft: rgba(191, 215, 128, 0.08);
-  --chrome-navbar-bg: rgba(8, 11, 18, 0.62);
-  --chrome-sidebar-bg: rgba(8, 11, 18, 0.28);
-  --chrome-veil: rgba(255, 255, 255, 0.028);
-  --chrome-veil-strong: rgba(255, 255, 255, 0.05);
-  --chrome-line: rgba(255, 255, 255, 0.08);
-  --chrome-line-strong: rgba(255, 255, 255, 0.14);
-  --panel-bg: rgba(22, 23, 25, 0.88);
-  --panel-bg-strong: rgba(26, 27, 30, 0.94);
-  --card-bg: rgba(24, 25, 27, 0.9);
-  --border: rgba(255, 255, 255, 0.08);
+  --panel-bg: var(--surface-1);
+  --panel-bg-strong: var(--surface-2);
+  --card-bg: var(--surface-2);
+
+  /* chrome layers (navbar / sidebar / veils) */
+  --chrome-navbar-bg: rgba(12, 15, 22, 0.62);
+  --chrome-sidebar-bg: rgba(12, 15, 22, 0.28);
+  --chrome-veil: rgba(255, 255, 255, 0.032);
+  --chrome-veil-strong: rgba(255, 255, 255, 0.06);
+  --chrome-line: rgba(255, 255, 255, 0.09);
+  --chrome-line-strong: rgba(255, 255, 255, 0.16);
+
+  /* ======================================================================
+     BORDERS — three tiers tuned for dark bg.
+     ====================================================================== */
+  --border: rgba(255, 255, 255, 0.07);
   --border-hover: rgba(255, 255, 255, 0.16);
   --border-strong: rgba(255, 255, 255, 0.22);
-  --text-primary: #f4f3ee;
-  --text-secondary: #b6b5ad;
-  --text-tertiary: #84837d;
-  --text-quaternary: #5d5d58;
-  --accent: #b8d56e;
-  --accent-strong: #d7eaa3;
-  --accent-dim: rgba(184, 213, 110, 0.14);
-  --accent-glow: rgba(184, 213, 110, 0.24);
-  --accent-soft: rgba(184, 213, 110, 0.1);
-  --chrome-accent: #8d7bff;
-  --chrome-accent-rgb: 141 123 255;
-  --chrome-accent-strong: #ddd7ff;
-  --chrome-accent-ink: #f4f2ff;
-  --chrome-accent-alt: #32d9ff;
-  --chrome-accent-alt-rgb: 50 217 255;
-  --chrome-accent-alt-strong: #d3f7ff;
-  --viz-accent: #95a9bf;
-  --viz-accent-rgb: 149 169 191;
-  --viz-accent-ink: #d8e0e8;
-  --viz-window: #8d7fae;
-  --viz-window-rgb: 141 127 174;
-  --viz-window-ink: #d4cde8;
-  --viz-warning: #c5a26a;
-  --viz-warning-rgb: 197 162 106;
-  --viz-warning-ink: #ebd8b3;
-  --viz-success: #8eb788;
-  --viz-success-rgb: 142 183 136;
-  --viz-success-ink: #d9ead4;
-  --viz-route: #6fa19a;
-  --viz-route-rgb: 111 161 154;
-  --viz-route-ink: #c6dfdb;
-  --viz-danger: #cf8590;
-  --viz-danger-rgb: 207 133 144;
-  --viz-danger-ink: #efc7cf;
-  --viz-hit: #d6c48b;
-  --viz-hit-rgb: 214 196 139;
-  --viz-hit-ink: #f1e7c3;
-  --viz-ember: #c98d65;
-  --viz-ember-rgb: 201 141 101;
-  --viz-ember-ink: #ebc6af;
-  --easy: #78d89f;
-  --easy-rgb: 120 216 159;
-  --easy-bg: rgba(120, 216, 159, 0.12);
-  --medium: #d4b56d;
-  --medium-rgb: 212 181 109;
-  --medium-bg: rgba(212, 181, 109, 0.12);
-  --hard: #ef8c8c;
-  --hard-rgb: 239 140 140;
-  --hard-bg: rgba(239, 140, 140, 0.12);
-  --ultra-hard: #ff7a2f;
-  --ultra-hard-rgb: 255 122 47;
-  --ultra-hard-bg: rgba(255, 122, 47, 0.14);
-  --code-bg: rgba(13, 13, 14, 0.96);
-  --line-highlight: rgba(184, 213, 110, 0.08);
-  --swap-color: #ff7a7a;
-  --sorted-color: #78d89f;
-  --compare-color: #d4b56d;
-  --panel-shadow: 0 22px 54px rgba(0, 0, 0, 0.34);
-  --panel-shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.22);
+  --border-brand: rgba(var(--chrome-accent-rgb), 0.34);
+
+  /* ======================================================================
+     TEXT — ink ramp, slightly cooler primary for crisp feel.
+     ====================================================================== */
+  --text-primary: #f5f6fb;
+  --text-secondary: #bdbecb;
+  --text-tertiary: #858793;
+  --text-quaternary: #5a5c68;
+
+  /* ======================================================================
+     BRAND PALETTE — lime / cyan / violet triad.
+     Bolder saturation than before, still harmonious in dark bg.
+     ====================================================================== */
+  --accent: #c7e56a;
+  --accent-rgb: 199 229 106;
+  --accent-strong: #e1f2a3;
+  --accent-dim: rgba(199, 229, 106, 0.16);
+  --accent-glow: rgba(199, 229, 106, 0.28);
+  --accent-soft: rgba(199, 229, 106, 0.1);
+
+  --chrome-accent: #9a8cff;                     /* violet */
+  --chrome-accent-rgb: 154 140 255;
+  --chrome-accent-strong: #e0d9ff;
+  --chrome-accent-ink: #f6f2ff;
+
+  --chrome-accent-alt: #4ce3ff;                 /* cyan */
+  --chrome-accent-alt-rgb: 76 227 255;
+  --chrome-accent-alt-strong: #d8f8ff;
+
+  --chrome-accent-warm: #ff88b8;                /* pink — accent 4, used sparingly */
+  --chrome-accent-warm-rgb: 255 136 184;
+
+  /* Brand gradients — reusable, signature mark. */
+  --brand-gradient:
+    linear-gradient(
+      135deg,
+      rgba(var(--chrome-accent-rgb), 1) 0%,
+      rgba(var(--chrome-accent-alt-rgb), 1) 55%,
+      rgba(var(--accent-rgb), 1) 100%
+    );
+  --brand-gradient-soft:
+    linear-gradient(
+      135deg,
+      rgba(var(--chrome-accent-rgb), 0.22) 0%,
+      rgba(var(--chrome-accent-alt-rgb), 0.2) 55%,
+      rgba(var(--accent-rgb), 0.22) 100%
+    );
+  --brand-gradient-faint:
+    linear-gradient(
+      135deg,
+      rgba(var(--chrome-accent-rgb), 0.1) 0%,
+      rgba(var(--chrome-accent-alt-rgb), 0.08) 55%,
+      rgba(var(--accent-rgb), 0.1) 100%
+    );
+  --brand-aurora:
+    radial-gradient(ellipse 80% 60% at 12% -10%, rgba(var(--chrome-accent-rgb), 0.22), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 88% -4%, rgba(var(--chrome-accent-alt-rgb), 0.16), transparent 58%),
+    radial-gradient(ellipse 90% 65% at 48% 120%, rgba(var(--accent-rgb), 0.12), transparent 62%);
+
+  /* ======================================================================
+     VISUALIZATION PALETTE — unchanged pairs, slightly richer ink.
+     ====================================================================== */
+  --viz-accent: #a1b4cc;
+  --viz-accent-rgb: 161 180 204;
+  --viz-accent-ink: #dbe4ef;
+  --viz-window: #9a8dbe;
+  --viz-window-rgb: 154 141 190;
+  --viz-window-ink: #ddd6f0;
+  --viz-warning: #d2ae74;
+  --viz-warning-rgb: 210 174 116;
+  --viz-warning-ink: #efdeba;
+  --viz-success: #97c490;
+  --viz-success-rgb: 151 196 144;
+  --viz-success-ink: #ddeed8;
+  --viz-route: #77aea6;
+  --viz-route-rgb: 119 174 166;
+  --viz-route-ink: #cfe5e1;
+  --viz-danger: #d88f9a;
+  --viz-danger-rgb: 216 143 154;
+  --viz-danger-ink: #f3ced6;
+  --viz-hit: #dbc88e;
+  --viz-hit-rgb: 219 200 142;
+  --viz-hit-ink: #f3ebca;
+  --viz-ember: #d39368;
+  --viz-ember-rgb: 211 147 104;
+  --viz-ember-ink: #eeccb5;
+
+  /* ======================================================================
+     DIFFICULTY PALETTE — slightly more saturated, readable.
+     ====================================================================== */
+  --easy: #7ce0a4;
+  --easy-rgb: 124 224 164;
+  --easy-bg: rgba(124, 224, 164, 0.13);
+  --medium: #dcbd73;
+  --medium-rgb: 220 189 115;
+  --medium-bg: rgba(220, 189, 115, 0.13);
+  --hard: #f09494;
+  --hard-rgb: 240 148 148;
+  --hard-bg: rgba(240, 148, 148, 0.13);
+  --ultra-hard: #ff8a42;
+  --ultra-hard-rgb: 255 138 66;
+  --ultra-hard-bg: rgba(255, 138, 66, 0.15);
+
+  /* ======================================================================
+     CODE / VIZ STATE.
+     ====================================================================== */
+  --code-bg: rgba(11, 13, 18, 0.96);
+  --line-highlight: rgba(var(--accent-rgb), 0.09);
+  --swap-color: #ff8585;
+  --sorted-color: #7ce0a4;
+  --compare-color: #dcbd73;
+
+  /* ======================================================================
+     ELEVATION — single, composable ladder. Avoid ad-hoc shadows.
+     ====================================================================== */
+  --elevation-0: 0 1px 0 rgba(255, 255, 255, 0.02);
+  --elevation-1:
+    0 1px 0 rgba(255, 255, 255, 0.03),
+    0 6px 14px rgba(0, 0, 0, 0.18);
+  --elevation-2:
+    0 1px 0 rgba(255, 255, 255, 0.035),
+    0 12px 24px rgba(0, 0, 0, 0.24);
+  --elevation-3:
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 40px rgba(0, 0, 0, 0.34);
+  --elevation-4:
+    0 1px 0 rgba(255, 255, 255, 0.045),
+    0 28px 56px rgba(0, 0, 0, 0.46);
+
+  /* legacy aliases */
+  --panel-shadow: var(--elevation-3);
+  --panel-shadow-soft: var(--elevation-2);
+
+  /* ======================================================================
+     FOCUS RING — one ring to rule them all (used everywhere).
+     ====================================================================== */
+  --ring-focus:
+    0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.5),
+    0 0 0 4px rgba(var(--chrome-accent-alt-rgb), 0.14),
+    0 0 28px rgba(var(--chrome-accent-alt-rgb), 0.18);
+  --ring-focus-soft:
+    0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.3),
+    0 0 0 3px rgba(var(--chrome-accent-alt-rgb), 0.1);
+
+  /* ======================================================================
+     PANEL SHELL (detail viz frame).
+     ====================================================================== */
   --panel-shell-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)), var(--panel-bg);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+    var(--surface-1);
   --panel-shell-border: var(--border-strong);
-  --panel-shell-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-  --panel-shell-radius: 24px;
+  --panel-shell-shadow: var(--elevation-2);
+  --panel-shell-radius: 22px;
   --panel-topbar-height: 56px;
   --panel-topbar-padding-inline: 10px;
-  --panel-topbar-divider: rgba(255, 255, 255, 0.05);
+  --panel-topbar-divider: rgba(255, 255, 255, 0.06);
   --panel-topbar-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.008) 78%),
-    rgba(20, 22, 26, 0.34);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008) 78%),
+    rgba(22, 26, 34, 0.38);
 
+  /* ======================================================================
+     CONTROL SIZING — compact and consistent.
+     ====================================================================== */
   --control-height: 40px;
+  --control-height-sm: 32px;
   --control-icon-size: 40px;
   --control-radius: 12px;
-  --control-padding-inline: 11px;
+  --control-radius-sm: 10px;
+  --control-padding-inline: 12px;
 
+  /* ======================================================================
+     TYPOGRAPHY.
+     ====================================================================== */
   --font-sans: 'Sora', 'Inter', 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, monospace;
 
+  /* ======================================================================
+     RADII.
+     ====================================================================== */
   --radius-sm: 7px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
   --radius-2xl: 22px;
+  --radius-3xl: 28px;
+
+  /* ======================================================================
+     MOTION — a language for interactions.
+     Fast = taps/toggles. Base = hovers. Slow = entrance. Spring = playful.
+     ====================================================================== */
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-soft: cubic-bezier(0.4, 0.2, 0.2, 1);
+  --duration-instant: 90ms;
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+  --duration-entrance: 520ms;
 }
 
 *,
@@ -122,6 +257,7 @@ body {
 }
 
 body {
+  position: relative;
   background: var(--app-bg);
   color: var(--text-primary);
   font-family: var(--font-sans);
@@ -130,10 +266,54 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image:
-    radial-gradient(circle at top left, rgba(var(--chrome-accent-rgb), 0.1), transparent 22%),
-    radial-gradient(circle at 84% 8%, rgba(var(--chrome-accent-alt-rgb), 0.07), transparent 24%),
-    radial-gradient(circle at 50% 120%, rgba(61, 68, 96, 0.14), transparent 30%),
-    linear-gradient(180deg, #11141b 0%, #090909 100%);
+    radial-gradient(ellipse 42% 30% at 8% -4%, rgba(var(--chrome-accent-rgb), 0.2), transparent 60%),
+    radial-gradient(ellipse 38% 28% at 94% 2%, rgba(var(--chrome-accent-alt-rgb), 0.15), transparent 62%),
+    radial-gradient(ellipse 60% 40% at 50% 128%, rgba(var(--chrome-accent-warm-rgb), 0.09), transparent 60%),
+    linear-gradient(180deg, #121829 0%, #0a0c14 48%, #090b10 100%);
+  background-attachment: fixed;
+}
+
+/* Brand rail — a hairline signature line riding the top edge of the
+   viewport. Always visible, slowly flows, reinforces the identity. */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  z-index: 1001;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--chrome-accent-rgb), 0.8) 18%,
+    rgba(var(--chrome-accent-alt-rgb), 0.95) 42%,
+    rgba(var(--accent-rgb), 0.85) 66%,
+    rgba(var(--chrome-accent-warm-rgb), 0.5) 84%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  animation: brand-text-flow 16s linear infinite;
+  opacity: 0.82;
+  filter: blur(0.3px) drop-shadow(0 0 8px rgba(var(--chrome-accent-rgb), 0.45));
+}
+
+/* ======================================================================
+   FILM GRAIN — subtle noise texture layered over the entire viewport.
+   Gives the dark surfaces a premium, photographic quality.
+   Base64 SVG is ~1KB, inlined so it's cached with styles.css.
+   ====================================================================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.042;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
 }
 
 button {
@@ -148,19 +328,19 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid rgba(var(--chrome-accent-rgb), 0.86);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: var(--ring-focus);
   border-radius: var(--radius-sm);
 }
 
 ::selection {
-  background: rgba(var(--chrome-accent-rgb), 0.28);
+  background: rgba(var(--chrome-accent-rgb), 0.32);
   color: #f7f4ff;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -170,15 +350,99 @@ a {
 ::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
   background-clip: padding-box;
+  transition: background 160ms ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(var(--chrome-accent-rgb), 0.36);
   background-clip: padding-box;
 }
 
+/* ======================================================================
+   GLOBAL UTILITY KEYFRAMES — used by components for entrance choreography.
+   ====================================================================== */
+@keyframes ohno-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ohno-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ohno-fade-scale {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ohno-ring-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--chrome-accent-alt-rgb), 0.38); }
+  100% { box-shadow: 0 0 0 14px rgba(var(--chrome-accent-alt-rgb), 0); }
+}
+
+@keyframes ohno-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes roadmap-seal-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ======================================================================
+   @PROPERTY registrations — enables interpolated animation of angles
+   and colours on conic/linear gradients.
+   ====================================================================== */
+@property --brand-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --shimmer-pos {
+  syntax: '<percentage>';
+  initial-value: -50%;
+  inherits: false;
+}
+
+@keyframes brand-angle-spin {
+  from { --brand-angle: 0deg; }
+  to   { --brand-angle: 360deg; }
+}
+
+@keyframes brand-shimmer-slide {
+  from { --shimmer-pos: -50%; }
+  to   { --shimmer-pos: 150%; }
+}
+
+@keyframes brand-text-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes hero-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(4px, -6px); }
+}
+
+@keyframes live-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.6), 0 0 10px rgba(var(--accent-rgb), 0.6); }
+  100% { box-shadow: 0 0 0 10px rgba(var(--accent-rgb), 0), 0 0 10px rgba(var(--accent-rgb), 0.3); }
+}
+
+/* ======================================================================
+   VIZ FLOW CONTAINERS — frame the d3/anime stages. Inner content untouched.
+   ====================================================================== */
 .viz-flow.search-viz,
 .viz-flow.grid-viz,
 .viz-flow.matrix-shell,
@@ -263,10 +527,10 @@ a {
   min-height: 0;
   container-type: inline-size;
   border-radius: 18px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.09);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.025),
-    0 14px 28px rgba(0, 0, 0, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    var(--elevation-2);
 }
 
 .viz-flow__guide {
@@ -279,9 +543,9 @@ a {
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
   background:
-    radial-gradient(circle at top left, rgba(194, 223, 96, 0.24), transparent 36%),
-    linear-gradient(180deg, rgba(39, 49, 24, 0.98), rgba(16, 20, 10, 0.99));
-  border-color: rgba(188, 219, 96, 0.22);
+    radial-gradient(circle at top left, rgba(199, 229, 106, 0.22), transparent 40%),
+    linear-gradient(180deg, rgba(42, 56, 28, 0.96), rgba(20, 28, 14, 0.98));
+  border-color: rgba(199, 229, 106, 0.22);
 }
 
 .viz-flow__brief {
@@ -293,9 +557,9 @@ a {
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
   background:
-    radial-gradient(circle at top left, rgba(220, 130, 226, 0.26), transparent 36%),
-    linear-gradient(180deg, rgba(62, 42, 74, 0.98), rgba(27, 20, 35, 0.99));
-  border-color: rgba(214, 151, 224, 0.22);
+    radial-gradient(circle at top left, rgba(222, 142, 232, 0.26), transparent 40%),
+    linear-gradient(180deg, rgba(68, 44, 82, 0.96), rgba(30, 22, 40, 0.98));
+  border-color: rgba(222, 160, 232, 0.22);
 }
 
 .viz-flow__stage {
@@ -305,9 +569,9 @@ a {
   padding: 11px;
   overflow: hidden;
   background:
-    radial-gradient(circle at top right, rgba(103, 208, 193, 0.26), transparent 34%),
-    linear-gradient(180deg, rgba(16, 39, 42, 0.98), rgba(8, 15, 17, 0.99));
-  border-color: rgba(103, 208, 193, 0.24);
+    radial-gradient(circle at top right, rgba(110, 220, 204, 0.26), transparent 38%),
+    linear-gradient(180deg, rgba(18, 44, 48, 0.96), rgba(10, 18, 22, 0.98));
+  border-color: rgba(110, 220, 204, 0.24);
 }
 
 .viz-flow__section-head {
@@ -368,7 +632,7 @@ a {
   min-width: 0;
   padding: 9px 10px;
   border-radius: 12px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.07);
   background: rgba(255, 255, 255, 0.05);
 }
 
