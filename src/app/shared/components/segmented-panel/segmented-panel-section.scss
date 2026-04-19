@@ -46,7 +46,7 @@
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.04em;
-  color: var(--text-primary);
+  color: var(--segmented-panel-section-value-color, var(--text-primary));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

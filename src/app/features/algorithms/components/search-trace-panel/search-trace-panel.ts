@@ -12,6 +12,8 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 
 import { SearchTraceRow, SearchTraceState, SearchTraceTag } from '../../models/search';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 interface SearchTagLegendItem {
   readonly id: SearchTraceTag;
@@ -31,7 +33,7 @@ const TAG_LEGEND: readonly SearchTagLegendItem[] = [
 
 @Component({
   selector: 'app-search-trace-panel',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection],
   templateUrl: './search-trace-panel.html',
   styleUrl: './search-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
