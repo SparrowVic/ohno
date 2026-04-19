@@ -88,13 +88,6 @@ const DEFAULT_WIDTH = 340;
 const MIN_WIDTH = 260;
 const MAX_WIDTH = 680;
 
-function humanizeKey(value: string): string {
-  return value
-    .split('-')
-    .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
-    .join(' ');
-}
-
 @Component({
   selector: 'app-side-panel',
   imports: [
@@ -164,11 +157,7 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly activeTabMeta = computed<SideTab>(
     () => this.tabs().find((tab) => tab.id === this.activeTab()) ?? BASE_SIDE_TABS[0]!,
   );
-  readonly categoryChip = computed(() => humanizeKey(this.algorithm().category));
-  readonly subcategoryChip = computed(() => humanizeKey(this.algorithm().subcategory));
-  readonly runLogCount = computed(
-    () => `${this.logEntries().length} log item${this.logEntries().length === 1 ? '' : 's'}`,
-  );
+  readonly logEntryCount = computed(() => this.logEntries().length);
   readonly isVerticalLayout = computed(() => this.tabLayout() === 'vertical');
   readonly convexHullGeometryState = computed<ConvexHullStepState | null>(() => {
     const state = this.geometryState();

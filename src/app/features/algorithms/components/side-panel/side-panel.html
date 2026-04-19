@@ -136,12 +136,6 @@
     </div>
   </header>
 
-  <div class="side-panel__meta">
-    <span class="side-panel__chip">{{ categoryChip() }}</span>
-    <span class="side-panel__chip">{{ subcategoryChip() }}</span>
-    <span class="side-panel__chip side-panel__chip--soft">{{ runLogCount() }}</span>
-  </div>
-
   <div class="side-shell" [class.side-shell--vertical]="isVerticalLayout()">
     @if (isVerticalLayout()) {
       <div class="side-accordion">
@@ -161,7 +155,12 @@
                 <ng-container *ngTemplateOutlet="tabIcon; context: { id: tab.id }" />
               </span>
               <span class="side-accordion__copy">
-                <span class="side-accordion__label">{{ tab.label }}</span>
+                <span class="side-accordion__label">
+                  <span>{{ tab.label }}</span>
+                  @if (tab.id === 'log' && logEntryCount() > 0) {
+                    <span class="side-accordion__badge">{{ logEntryCount() }}</span>
+                  }
+                </span>
                 <span class="side-accordion__hint">{{ tab.description }}</span>
               </span>
               <span class="side-accordion__chevron" aria-hidden="true">
@@ -194,7 +193,12 @@
               <ng-container *ngTemplateOutlet="tabIcon; context: { id: tab.id }" />
             </span>
             <span class="side-tab__copy">
-              <span class="side-tab__label">{{ tab.label }}</span>
+              <span class="side-tab__label">
+                <span>{{ tab.label }}</span>
+                @if (tab.id === 'log' && logEntryCount() > 0) {
+                  <span class="side-tab__badge">{{ logEntryCount() }}</span>
+                }
+              </span>
             </span>
           </button>
         }
