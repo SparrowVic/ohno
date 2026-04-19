@@ -18,16 +18,17 @@
 
       <app-segmented-panel class="trace__streams" aria-label="Line intersection streams">
         <app-segmented-panel-section eyebrow="Current event">
-          @if (currentEvent(); as event) {
-            <div class="trace__event-wrap">
+          <div class="trace__event-wrap" [class.trace__event-wrap--ghost]="!currentEvent()">
+            @if (currentEvent(); as event) {
               <span class="trace__event-pill trace__event-pill--{{ event.kind }}">{{
                 event.label
               }}</span>
               <span class="trace__event-meta">x = {{ event.x.toFixed(1) }}</span>
-            </div>
-          } @else {
-            <div class="trace__placeholder">Sweep is between event checkpoints.</div>
-          }
+            } @else {
+              <span class="trace__event-pill trace__event-pill--ghost">between checkpoints</span>
+              <span class="trace__event-meta">x = —</span>
+            }
+          </div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section eyebrow="Active ordering" [badge]="geo.activeOrder.length">

@@ -14,8 +14,19 @@ import { SegmentedPanelSection } from '../../../../shared/components/segmented-p
 export class ClosestPairTracePanel {
   readonly state = input<ClosestPairStepState | null>(null);
 
-  readonly currentPairPoints = computed(() => this.resolvePair(this.state()?.currentPair ?? null));
-  readonly bestPairPoints = computed(() => this.resolvePair(this.state()?.bestPair ?? null));
+  private readonly emptyPair = {
+    left: undefined,
+    right: undefined,
+  } as const;
+
+  readonly hasCurrentPair = computed(() => !!this.state()?.currentPair);
+  readonly currentPairSlot = computed(
+    () => this.resolvePair(this.state()?.currentPair ?? null) ?? this.emptyPair,
+  );
+  readonly hasBestPair = computed(() => !!this.state()?.bestPair);
+  readonly bestPairSlot = computed(
+    () => this.resolvePair(this.state()?.bestPair ?? null) ?? this.emptyPair,
+  );
   readonly stripCount = computed(
     () => this.state()?.points.filter((point) => point.status === 'strip').length ?? 0,
   );
@@ -50,8 +61,15 @@ export class ClosestPairTracePanel {
   }
 
   formatCoord(point: GeometryPoint | undefined): string {
-    if (!point) return '—';
+    if (!point) return '(—, —)';
     return `(${point.x.toFixed(1)}, ${point.y.toFixed(1)})`;
+  }
+
+  formatPairLabel(pair: {
+    readonly left: GeometryPoint | undefined;
+    readonly right: GeometryPoint | undefined;
+  }): string {
+    return `P${pair.left?.id ?? '—'} · P${pair.right?.id ?? '—'}`;
   }
 
   private resolvePair(pair: readonly [number, number] | null): {

@@ -15,4 +15,9 @@ export class DelaunayTracePanel {
   readonly state = input<DelaunayTriangulationStepState | null>(null);
 
   readonly currentCircle = computed(() => this.state()?.circles[0] ?? null);
+  readonly showCircleDetails = computed(() => (this.state()?.phase ?? '') !== 'init');
+
+  formatCoord(value: number | undefined): string {
+    return value !== undefined ? value.toFixed(1) : '—';
+  }
 }

@@ -19,57 +19,58 @@
         />
       </app-segmented-panel>
 
-      @if (turnPoints(); as turn) {
-        <div class="trace__check">
-          <div class="trace__check-header">Cross Product Check</div>
-          <div class="trace__check-formula">cross(A, B, C) = (B−A) × (C−A)</div>
+      <div class="trace__check" [class.trace__check--idle]="!turnPoints()">
+        <div class="trace__check-header">Cross Product Check</div>
+        <div class="trace__check-formula">cross(A, B, C) = (B−A) × (C−A)</div>
 
+        @if (showTurnDetails()) {
           <div class="trace__check-trio">
-            <div class="trace__check-pt trace__check-pt--A">
-              <span class="trace__badge trace__badge--A">A</span>
-              <div class="trace__check-info">
-                <span class="trace__check-pid">P{{ turn.a?.id }}</span>
-                <span class="trace__check-role">2nd from top</span>
-                <span class="trace__check-coord">({{ fmt(turn.a?.x) }}, {{ fmt(turn.a?.y) }})</span>
+            @for (slot of turnSlots(); track slot.key) {
+              <div
+                class="trace__check-pt trace__check-pt--{{ slot.tone }}"
+                [class.trace__check-pt--ghost]="!slot.point"
+              >
+                <span class="trace__badge trace__badge--{{ slot.tone }}">{{ slot.key }}</span>
+                <div class="trace__check-info">
+                  <span class="trace__check-pid">P{{ slot.point?.id ?? '—' }}</span>
+                  <span class="trace__check-role">{{ slot.role }}</span>
+                  <span class="trace__check-coord"
+                    >({{ fmt(slot.point?.x) }}, {{ fmt(slot.point?.y) }})</span
+                  >
+                </div>
               </div>
-            </div>
-            <div class="trace__check-pt trace__check-pt--B">
-              <span class="trace__badge trace__badge--B">B</span>
-              <div class="trace__check-info">
-                <span class="trace__check-pid">P{{ turn.b?.id }}</span>
-                <span class="trace__check-role">stack top</span>
-                <span class="trace__check-coord">({{ fmt(turn.b?.x) }}, {{ fmt(turn.b?.y) }})</span>
-              </div>
-            </div>
-            <div class="trace__check-pt trace__check-pt--C">
-              <span class="trace__badge trace__badge--C">C</span>
-              <div class="trace__check-info">
-                <span class="trace__check-pid">P{{ turn.c?.id }}</span>
-                <span class="trace__check-role">candidate</span>
-                <span class="trace__check-coord">({{ fmt(turn.c?.x) }}, {{ fmt(turn.c?.y) }})</span>
-              </div>
-            </div>
+            }
           </div>
 
-          @if (geo.crossProduct !== null) {
-            <div
-              class="trace__check-result"
-              [class.trace__check-result--good]="geo.crossProduct > 0"
-              [class.trace__check-result--bad]="geo.crossProduct <= 0"
-            >
-              <span class="trace__check-cp">
+          <div
+            class="trace__check-result"
+            [class.trace__check-result--good]="geo.crossProduct !== null && geo.crossProduct > 0"
+            [class.trace__check-result--bad]="geo.crossProduct !== null && geo.crossProduct <= 0"
+            [class.trace__check-result--idle]="geo.crossProduct === null"
+          >
+            <span class="trace__check-cp">
+              @if (geo.crossProduct !== null) {
                 cross = {{ geo.crossProduct >= 0 ? '+' : '' }}{{ geo.crossProduct.toFixed(2) }}
-              </span>
-              @if (turnVerdict(); as verdict) {
-                <span class="trace__check-verdict">{{ verdict.text }}</span>
-                <span class="trace__check-action trace__check-action--{{ verdict.tone }}">
-                  → {{ verdict.action }}
-                </span>
+              } @else {
+                cross = —
               }
-            </div>
-          }
-        </div>
-      }
+            </span>
+            @if (turnVerdict(); as verdict) {
+              <span class="trace__check-verdict">{{ verdict.text }}</span>
+              <span class="trace__check-action trace__check-action--{{ verdict.tone }}">
+                → {{ verdict.action }}
+              </span>
+            } @else {
+              <span class="trace__check-verdict">Waiting for next turn test</span>
+              <span class="trace__check-action trace__check-action--idle">stand by</span>
+            }
+          </div>
+        } @else {
+          <div class="trace__status-note">
+            Turn test appears once the stack reaches the first orientation check.
+          </div>
+        }
+      </div>
 
       <div class="trace__detail-panels">
         <app-segmented-panel

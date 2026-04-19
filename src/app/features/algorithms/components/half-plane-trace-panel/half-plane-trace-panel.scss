@@ -96,11 +96,19 @@
   gap: 7px;
 }
 
+.trace__table--stable {
+  min-height: 160px;
+}
+
 .trace__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
   align-items: start;
+}
+
+.trace__row--ghost {
+  opacity: 0.54;
 }
 
 .trace__row-label {
@@ -113,6 +121,15 @@
   font-size: 11px;
   color: var(--text-secondary);
   font-family: ui-monospace, monospace;
+}
+
+.trace__status-note {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.trace__status-note--ghost {
+  color: rgba(226, 232, 240, 0.6);
 }
 
 .trace__placeholder,

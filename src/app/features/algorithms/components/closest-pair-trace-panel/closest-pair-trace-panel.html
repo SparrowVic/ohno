@@ -40,41 +40,55 @@
 
       <app-segmented-panel class="trace__compare" aria-label="Closest pair comparison">
         <app-segmented-panel-section eyebrow="Current pair">
-          @if (currentPairPoints(); as pair) {
+          <div class="trace__pair-block" [class.trace__pair-block--ghost]="!hasCurrentPair()">
             <div class="trace__pair-row">
-              <span class="trace__pair-pill trace__pair-pill--current"
-                >P{{ pair.left?.id }} · P{{ pair.right?.id }}</span
+              <span
+                class="trace__pair-pill trace__pair-pill--current"
+                [class.trace__pair-pill--ghost]="!hasCurrentPair()"
               >
-              <span class="trace__pair-distance">{{ formatDistance(geo.candidateDistance) }}</span>
+                {{ formatPairLabel(currentPairSlot()) }}
+              </span>
+              <span
+                class="trace__pair-distance"
+                [class.trace__pair-distance--ghost]="!hasCurrentPair()"
+              >
+                {{ formatDistance(geo.candidateDistance) }}
+              </span>
             </div>
             <div class="trace__coords">
-              <span>{{ formatCoord(pair.left) }}</span>
-              <span>{{ formatCoord(pair.right) }}</span>
+              <span>{{ formatCoord(currentPairSlot().left) }}</span>
+              <span>{{ formatCoord(currentPairSlot().right) }}</span>
             </div>
-          } @else {
-            <div class="trace__placeholder">No active distance comparison in this step.</div>
-          }
+            <span class="trace__pair-note">
+              {{ hasCurrentPair() ? 'Active comparison' : 'Waiting for next comparison' }}
+            </span>
+          </div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section eyebrow="Best so far">
-          @if (bestPairPoints(); as pair) {
+          <div class="trace__pair-block" [class.trace__pair-block--ghost]="!hasBestPair()">
             <div class="trace__pair-row">
-              <span class="trace__pair-pill trace__pair-pill--best"
-                >P{{ pair.left?.id }} · P{{ pair.right?.id }}</span
+              <span
+                class="trace__pair-pill trace__pair-pill--best"
+                [class.trace__pair-pill--ghost]="!hasBestPair()"
               >
-              <span class="trace__pair-distance trace__pair-distance--best">{{
-                formatDistance(geo.bestDistance)
-              }}</span>
+                {{ formatPairLabel(bestPairSlot()) }}
+              </span>
+              <span
+                class="trace__pair-distance trace__pair-distance--best"
+                [class.trace__pair-distance--ghost]="!hasBestPair()"
+              >
+                {{ formatDistance(geo.bestDistance) }}
+              </span>
             </div>
             <div class="trace__coords">
-              <span>{{ formatCoord(pair.left) }}</span>
-              <span>{{ formatCoord(pair.right) }}</span>
+              <span>{{ formatCoord(bestPairSlot().left) }}</span>
+              <span>{{ formatCoord(bestPairSlot().right) }}</span>
             </div>
-          } @else {
-            <div class="trace__placeholder">
-              The first winning pair has not been established yet.
-            </div>
-          }
+            <span class="trace__pair-note">
+              {{ hasBestPair() ? 'Current champion pair' : 'No winning pair yet' }}
+            </span>
+          </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
 

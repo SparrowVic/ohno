@@ -51,6 +51,11 @@
   display: flex;
   flex-direction: column;
   gap: 7px;
+  min-height: 48px;
+}
+
+.trace__table--ghost {
+  opacity: 0.62;
 }
 
 .trace__row {

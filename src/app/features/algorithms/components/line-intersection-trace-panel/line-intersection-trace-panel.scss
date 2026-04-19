@@ -50,6 +50,11 @@
 .trace__event-wrap {
   display: grid;
   gap: 8px;
+  min-height: 42px;
+}
+
+.trace__event-wrap--ghost {
+  opacity: 0.7;
 }
 
 .trace__event-pill,
@@ -82,6 +87,12 @@
   color: var(--viz-warning);
   background: rgb(var(--viz-warning-rgb) / 0.08);
   border: 0.5px solid rgb(var(--viz-warning-rgb) / 0.18);
+}
+
+.trace__event-pill--ghost {
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 0.5px dashed rgba(255, 255, 255, 0.12);
 }
 
 .trace__event-meta,

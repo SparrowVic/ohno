@@ -79,6 +79,16 @@
   gap: 8px;
 }
 
+.trace__pair-block {
+  display: grid;
+  gap: 8px;
+  min-height: 72px;
+}
+
+.trace__pair-block--ghost {
+  opacity: 0.74;
+}
+
 .trace__pair-pill {
   display: inline-flex;
   align-items: center;
@@ -102,6 +112,12 @@
   }
 }
 
+.trace__pair-pill--ghost {
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 0.5px dashed rgba(255, 255, 255, 0.12);
+}
+
 .trace__pair-distance {
   font-size: 12px;
   font-weight: 700;
@@ -111,6 +127,10 @@
   &--best {
     color: var(--viz-hit);
   }
+}
+
+.trace__pair-distance--ghost {
+  color: var(--text-tertiary);
 }
 
 .trace__coords {
@@ -125,6 +145,11 @@
 .trace__coords span {
   min-width: 0;
   text-align: left;
+}
+
+.trace__pair-note {
+  font-size: 10px;
+  color: var(--text-tertiary);
 }
 
 .trace__trail-list {

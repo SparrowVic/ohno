@@ -39,20 +39,21 @@
           eyebrow="Feasible polygon vertices"
           [badge]="feasiblePolygon()?.vertices?.length ?? 0"
         >
-          @if (feasiblePolygon(); as polygon) {
-            <div class="trace__table">
-              @for (vertex of polygon.vertices; track $index) {
-                <div class="trace__row">
-                  <span class="trace__row-label">V{{ $index }}</span>
-                  <span class="trace__row-value"
-                    >({{ vertex.x.toFixed(1) }}, {{ vertex.y.toFixed(1) }})</span
-                  >
-                </div>
-              }
-            </div>
-          } @else {
-            <div class="trace__placeholder">No feasible polygon remains.</div>
-          }
+          <div class="trace__table trace__table--stable">
+            @for (slot of vertexSlots(); track slot.label) {
+              <div class="trace__row" [class.trace__row--ghost]="!slot.vertex">
+                <span class="trace__row-label">{{ slot.label }}</span>
+                <span class="trace__row-value">{{ formatVertex(slot.vertex) }}</span>
+              </div>
+            }
+          </div>
+          <div class="trace__status-note" [class.trace__status-note--ghost]="!feasiblePolygon()">
+            @if (feasiblePolygon()) {
+              Vertices update as each constraint clips the feasible region.
+            } @else {
+              No feasible polygon remains in this step.
+            }
+          </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
     </div>

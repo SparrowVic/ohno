@@ -52,6 +52,11 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
   align-items: start;
+  min-height: 34px;
+}
+
+.trace__row--ghost {
+  opacity: 0.62;
 }
 
 .trace__row-label,

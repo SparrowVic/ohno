@@ -17,4 +17,9 @@ export class VoronoiTracePanel {
   readonly activeSite = computed(
     () => this.state()?.points.find((point) => point.id === this.state()?.activeSiteId) ?? null,
   );
+  readonly showActiveSiteDetails = computed(() => (this.state()?.phase ?? '') !== 'init');
+
+  formatCoord(value: number | undefined): string {
+    return value !== undefined ? value.toFixed(1) : '—';
+  }
 }

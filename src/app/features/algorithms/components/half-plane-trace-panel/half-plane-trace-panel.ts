@@ -20,6 +20,14 @@ export class HalfPlaneTracePanel {
         (polygon) => polygon.tone === 'feasible' || polygon.tone === 'result',
       ) ?? null,
   );
+  readonly vertexSlots = computed(() => {
+    const vertices = this.feasiblePolygon()?.vertices ?? [];
+    const slotCount = Math.max(vertices.length, 6);
+    return Array.from({ length: slotCount }, (_, index) => ({
+      label: `V${index + 1}`,
+      vertex: vertices[index] ?? null,
+    }));
+  });
 
   phaseLabel(phase: string): string {
     switch (phase) {
@@ -36,5 +44,13 @@ export class HalfPlaneTracePanel {
       default:
         return phase;
     }
+  }
+
+  formatCoord(value: number | undefined): string {
+    return value !== undefined ? value.toFixed(1) : '—';
+  }
+
+  formatVertex(vertex: { readonly x: number; readonly y: number } | null): string {
+    return vertex ? `(${vertex.x.toFixed(1)}, ${vertex.y.toFixed(1)})` : '(—, —)';
   }
 }

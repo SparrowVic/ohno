@@ -17,15 +17,15 @@
 
       <app-segmented-panel class="trace__streams" aria-label="Voronoi details">
         <app-segmented-panel-section eyebrow="Active site">
-          @if (activeSite(); as site) {
-            <div class="trace__row">
-              <span class="trace__row-label">P{{ site.id }}</span>
+          @if (showActiveSiteDetails()) {
+            <div class="trace__row" [class.trace__row--ghost]="!activeSite()">
+              <span class="trace__row-label">P{{ activeSite()?.id ?? '—' }}</span>
               <span class="trace__row-value"
-                >({{ site.x.toFixed(1) }}, {{ site.y.toFixed(1) }})</span
+                >({{ formatCoord(activeSite()?.x) }}, {{ formatCoord(activeSite()?.y) }})</span
               >
             </div>
           } @else {
-            <div class="trace__placeholder">No active site in this frame.</div>
+            <div class="trace__placeholder">Sweep has not activated a site yet.</div>
           }
         </app-segmented-panel-section>
 
