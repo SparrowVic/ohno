@@ -2716,8 +2716,6 @@ const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationSce
   randomizeLabel: 'New star mesh',
 };
 
-export const INSPECTOR_COLLAPSED_KEY = 'ohno:algorithm-detail:inspector-collapsed';
-
 export function humanizeLabel(value: string): string {
   return value
     .split('-')

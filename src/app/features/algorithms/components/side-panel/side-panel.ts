@@ -9,7 +9,6 @@ import {
   effect,
   inject,
   input,
-  output,
   signal,
 } from '@angular/core';
 
@@ -67,19 +66,17 @@ type SideTabId = 'trace' | 'code' | 'info' | 'log';
 interface SideTab {
   readonly id: SideTabId;
   readonly label: string;
-  readonly description: string;
 }
 
 const BASE_SIDE_TABS: readonly SideTab[] = [
-  { id: 'code', label: 'Code', description: 'Reference implementation with live line focus.' },
-  { id: 'info', label: 'Info', description: 'Complexity, tags and problem profile.' },
-  { id: 'log', label: 'Log', description: 'Chronological run feed for the current scenario.' },
+  { id: 'code', label: 'Code' },
+  { id: 'info', label: 'Info' },
+  { id: 'log', label: 'Log' },
 ];
 
 const TRACE_TAB: SideTab = {
   id: 'trace',
   label: 'Trace',
-  description: 'Current state, invariants and why this step matters.',
 };
 
 const LS_KEY = 'ohno:side-panel-width';
@@ -136,8 +133,6 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusModeLabel = input<string | null>(null);
   readonly graphFocusHint = input<string | null>(null);
 
-  readonly collapseToggle = output<void>();
-
   readonly tabs = computed<readonly SideTab[]>(() =>
     this.traceState() ||
     this.dpState() ||
@@ -150,9 +145,6 @@ export class SidePanel implements OnInit, OnDestroy {
     this.stringState()
       ? [TRACE_TAB, ...BASE_SIDE_TABS]
       : BASE_SIDE_TABS,
-  );
-  readonly activeTabMeta = computed<SideTab>(
-    () => this.tabs().find((tab) => tab.id === this.activeTab()) ?? BASE_SIDE_TABS[0]!,
   );
   readonly logEntryCount = computed(() => this.logEntries().length);
   readonly convexHullGeometryState = computed<ConvexHullStepState | null>(() => {

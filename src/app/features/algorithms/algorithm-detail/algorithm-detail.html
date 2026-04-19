@@ -74,30 +74,27 @@
           <app-legend-bar [items]="legendItems()" />
         </div>
 
-        @if (!inspectorCollapsed()) {
-          <app-side-panel
-            [algorithm]="algo"
-            [codeLines]="codeLines()"
-            [codeRegions]="codeRegions()"
-            [codeVariants]="codeVariants()"
-            [activeLineNumber]="activeLineNumber()"
-            [logEntries]="logEntries()"
-            [traceState]="graphTrace()"
-            [dpState]="dpTrace()"
-            [dsuState]="dsuTrace()"
-            [gridState]="gridTrace()"
-            [matrixState]="matrixTrace()"
-            [networkState]="networkTrace()"
-            [searchState]="searchTrace()"
-            [stringState]="stringTrace()"
-            [geometryState]="geometryTrace()"
-            [graphFocusTargetLabel]="graphFocusTargetLabel()"
-            [graphFocusPathLabel]="graphFocusPathLabel()"
-            [graphFocusModeLabel]="graphRouteModeLabel()"
-            [graphFocusHint]="graphFocusHint()"
-            (collapseToggle)="toggleInspectorCollapse()"
-          />
-        }
+        <app-side-panel
+          [algorithm]="algo"
+          [codeLines]="codeLines()"
+          [codeRegions]="codeRegions()"
+          [codeVariants]="codeVariants()"
+          [activeLineNumber]="activeLineNumber()"
+          [logEntries]="logEntries()"
+          [traceState]="graphTrace()"
+          [dpState]="dpTrace()"
+          [dsuState]="dsuTrace()"
+          [gridState]="gridTrace()"
+          [matrixState]="matrixTrace()"
+          [networkState]="networkTrace()"
+          [searchState]="searchTrace()"
+          [stringState]="stringTrace()"
+          [geometryState]="geometryTrace()"
+          [graphFocusTargetLabel]="graphFocusTargetLabel()"
+          [graphFocusPathLabel]="graphFocusPathLabel()"
+          [graphFocusModeLabel]="graphRouteModeLabel()"
+          [graphFocusHint]="graphFocusHint()"
+        />
       </div>
     } @else {
       <div class="unavailable">

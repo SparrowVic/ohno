@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +23,6 @@ import {
   describeGraphPath,
   getAlgorithmViewConfig,
   humanizeLabel,
-  INSPECTOR_COLLAPSED_KEY,
   RandomRange,
 } from './algorithm-detail-config/algorithm-detail-config';
 import { AlgorithmItem } from '../models/algorithm';
@@ -62,7 +60,6 @@ export class AlgorithmDetail {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly engine = inject(VisualizationEngine);
   private readonly language = inject(AppLanguageService);
-  private readonly doc = inject(DOCUMENT);
 
   private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
     initialValue: this.route.snapshot.paramMap.get('id'),
@@ -77,7 +74,6 @@ export class AlgorithmDetail {
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
-  private readonly inspectorCollapsedSig = signal(this.readStoredBoolean(INSPECTOR_COLLAPSED_KEY));
   private lastLoggedStep = -1;
 
   readonly algorithm = computed<AlgorithmItem | undefined>(() => {
@@ -117,7 +113,6 @@ export class AlgorithmDetail {
   readonly speed = this.engine.speed;
   readonly step = this.currentSnapshot.asReadonly();
   readonly logEntries = this.logEntriesSig.asReadonly();
-  readonly inspectorCollapsed = this.inspectorCollapsedSig.asReadonly();
 
   readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
   readonly variantOptions = computed(() => this.config()?.variantOptions ?? []);
@@ -137,9 +132,6 @@ export class AlgorithmDetail {
   });
   readonly sizeSummaryLabel = computed(() => `${this.sizeSig()} ${this.sizeUnit()}`);
   readonly stepSummaryLabel = computed(() => `Step ${this.currentStep()} / ${this.totalSteps()}`);
-  readonly inspectorToggleLabel = computed(() =>
-    this.inspectorCollapsed() ? 'Show inspector' : 'Hide inspector',
-  );
 
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
@@ -215,13 +207,6 @@ export class AlgorithmDetail {
 
   constructor() {
     effect(() => {
-      this.doc.defaultView?.localStorage.setItem(
-        INSPECTOR_COLLAPSED_KEY,
-        this.inspectorCollapsed() ? '1' : '0',
-      );
-    });
-
-    effect(() => {
       const config = this.config();
       const algorithm = this.algorithm();
 
@@ -247,10 +232,6 @@ export class AlgorithmDetail {
     void this.router.navigate(['/algorithms'], {
       queryParams: this.route.snapshot.queryParams,
     });
-  }
-
-  toggleInspectorCollapse(): void {
-    this.inspectorCollapsedSig.update((collapsed) => !collapsed);
   }
 
   onReset(): void {
@@ -428,10 +409,6 @@ export class AlgorithmDetail {
   private createRandomArray(size: number, range: RandomRange): readonly number[] {
     const span = range.max - range.min + 1;
     return Array.from({ length: size }, () => Math.floor(Math.random() * span) + range.min);
-  }
-
-  private readStoredBoolean(key: string): boolean {
-    return this.doc.defaultView?.localStorage.getItem(key) === '1';
   }
 
   private resolvedGraphFocusTargetId(): string | null {

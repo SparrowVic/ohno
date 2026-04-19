@@ -91,37 +91,18 @@
   }
 </ng-template>
 
-<div class="side-panel">
-  <header class="side-panel__header">
-    <div class="side-panel__intro">
-      <div class="side-panel__eyebrow">Inspector</div>
-      <div class="side-panel__title">{{ activeTabMeta().label }}</div>
-      <p class="side-panel__desc">{{ activeTabMeta().description }}</p>
-    </div>
-
-    <div class="side-panel__actions">
-      <button
-        type="button"
-        class="side-panel__action"
-        aria-label="Collapse inspector"
-        title="Collapse inspector"
-        (click)="collapseToggle.emit()"
-      >
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M4.5 3.5L10 8l-5.5 4.5" />
-          <path d="M12 3.5v9" />
-        </svg>
-      </button>
-    </div>
-  </header>
-
-  <div class="side-shell">
-    <div class="side-tabs">
+<div class="side-panel" [attr.data-active-tab]="activeTab()">
+  <div class="side-tabs-bar">
+    <div class="side-tabs" role="tablist" aria-label="Inspector tabs">
       @for (tab of tabs(); track tab.id) {
         <button
           type="button"
           class="side-tab"
           [class.side-tab--active]="activeTab() === tab.id"
+          [attr.id]="'inspector-tab-' + tab.id"
+          role="tab"
+          [attr.aria-selected]="activeTab() === tab.id"
+          [attr.aria-controls]="'inspector-panel-' + tab.id"
           (click)="selectTab(tab.id)"
         >
           <span class="side-tab__icon" aria-hidden="true">
@@ -138,9 +119,56 @@
         </button>
       }
     </div>
+  </div>
 
+  <div class="side-shell">
     <div class="side-content" [class.side-content--code]="activeTab() === 'code'">
-      <ng-container *ngTemplateOutlet="tabPanel; context: { id: activeTab() }" />
+      @switch (activeTab()) {
+        @case ('trace') {
+          <section
+            class="side-panel__panel-frame"
+            id="inspector-panel-trace"
+            role="tabpanel"
+            aria-labelledby="inspector-tab-trace"
+            data-panel="trace"
+          >
+            <ng-container *ngTemplateOutlet="tabPanel; context: { id: 'trace' }" />
+          </section>
+        }
+        @case ('code') {
+          <section
+            class="side-panel__panel-frame side-panel__panel-frame--code"
+            id="inspector-panel-code"
+            role="tabpanel"
+            aria-labelledby="inspector-tab-code"
+            data-panel="code"
+          >
+            <ng-container *ngTemplateOutlet="tabPanel; context: { id: 'code' }" />
+          </section>
+        }
+        @case ('info') {
+          <section
+            class="side-panel__panel-frame"
+            id="inspector-panel-info"
+            role="tabpanel"
+            aria-labelledby="inspector-tab-info"
+            data-panel="info"
+          >
+            <ng-container *ngTemplateOutlet="tabPanel; context: { id: 'info' }" />
+          </section>
+        }
+        @case ('log') {
+          <section
+            class="side-panel__panel-frame"
+            id="inspector-panel-log"
+            role="tabpanel"
+            aria-labelledby="inspector-tab-log"
+            data-panel="log"
+          >
+            <ng-container *ngTemplateOutlet="tabPanel; context: { id: 'log' }" />
+          </section>
+        }
+      }
     </div>
   </div>
 </div>
