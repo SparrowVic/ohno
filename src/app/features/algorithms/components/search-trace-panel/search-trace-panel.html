@@ -1,10 +1,21 @@
 <div class="trace">
   @if (state(); as searchState) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" orientation="vertical" aria-label="Search summary">
+      <app-segmented-panel class="trace__summary" aria-label="Search summary">
         <app-segmented-panel-section eyebrow="Target" [value]="searchState.target" />
-        <app-segmented-panel-section eyebrow="Probe" [value]="probeLabel()" />
-        <app-segmented-panel-section eyebrow="Window" [value]="windowLabel()" />
+        <app-segmented-panel-section class="trace__summary-metrics">
+          <div class="trace__summary-inline">
+            <div class="trace__summary-item">
+              <span class="trace__summary-item-label">Probe</span>
+              <span class="trace__summary-item-value">{{ probeLabel() }}</span>
+            </div>
+            <span class="trace__summary-divider" aria-hidden="true"></span>
+            <div class="trace__summary-item">
+              <span class="trace__summary-item-label">Window</span>
+              <span class="trace__summary-item-value">{{ windowLabel() }}</span>
+            </div>
+          </div>
+        </app-segmented-panel-section>
       </app-segmented-panel>
 
       <app-segmented-panel

@@ -22,7 +22,7 @@
 
 .trace__summary {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   --segmented-panel-section-gap: 6px;
   --segmented-panel-section-padding: 10px 12px 12px;
 }
@@ -40,7 +40,10 @@
   position: relative;
 }
 
-.trace__summary app-segmented-panel-section:not(:first-child),
+.trace__summary app-segmented-panel-section:not(:first-child) {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .trace__feeds app-segmented-panel-section:not(:first-child) {
   &::before {
     content: '';
@@ -51,6 +54,47 @@
     height: 1px;
     background: rgba(255, 255, 255, 0.05);
   }
+}
+
+.trace__summary-metrics {
+  --segmented-panel-section-gap: 0;
+  --segmented-panel-section-padding: 10px 12px;
+}
+
+.trace__summary-inline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.trace__summary-item {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.trace__summary-item-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.trace__summary-item-value {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trace__summary-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .trace__calculation app-segmented-panel-section {
@@ -364,8 +408,35 @@
 }
 
 @container (max-width: 620px) {
+  .trace__summary,
   .trace__calculation {
     grid-template-columns: 1fr;
+  }
+
+  .trace__summary app-segmented-panel-section:not(:first-child) {
+    border-left: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .trace__summary-inline {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .trace__summary-divider {
+    display: none;
+  }
+
+  .trace__calculation {
     grid-template-areas:
       'mode'
       'status'
