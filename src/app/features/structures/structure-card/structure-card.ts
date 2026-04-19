@@ -21,6 +21,7 @@ import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/di
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
+import { UiTag } from '../../../shared/components/ui-tag/ui-tag';
 import { Difficulty } from '../../algorithms/models/algorithm';
 import { StructureCardPreview } from './structure-card-preview/structure-card-preview';
 import { StructureItem } from '../models/structure';
@@ -92,7 +93,7 @@ function createCardStyleVars(seed: string, difficulty: Difficulty): Record<strin
 
 @Component({
   selector: 'app-structure-card',
-  imports: [StructureCardPreview, NgStyle, ShaderCardEffect, RoadmapOverlayDirective],
+  imports: [StructureCardPreview, NgStyle, ShaderCardEffect, RoadmapOverlayDirective, UiTag],
   templateUrl: './structure-card.html',
   styleUrl: './structure-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

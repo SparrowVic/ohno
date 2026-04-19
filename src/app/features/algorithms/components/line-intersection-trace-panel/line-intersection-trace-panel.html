@@ -70,16 +70,13 @@
           @if (geo.intersections.length === 0) {
             <div class="trace__placeholder">No confirmed intersections yet.</div>
           } @else {
-            <div class="trace__table">
-              @for (marker of geo.intersections; track marker.id) {
-                <div class="trace__row">
-                  <span class="trace__row-label">{{ marker.label }}</span>
-                  <span class="trace__row-value"
-                    >({{ marker.x.toFixed(1) }}, {{ marker.y.toFixed(1) }})</span
-                  >
-                </div>
-              }
-            </div>
+            <app-table
+              class="trace__table"
+              [columns]="intersectionColumns"
+              [rows]="intersectionRows()"
+              [showHeader]="false"
+              density="compact"
+            />
           }
         </app-segmented-panel-section>
       </app-segmented-panel>

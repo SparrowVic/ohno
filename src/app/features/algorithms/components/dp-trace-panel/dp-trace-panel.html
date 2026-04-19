@@ -67,50 +67,15 @@
           </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
-
-      <div class="trace__legend">
-        @for (item of legend; track item.id) {
-          <span class="trace__legend-chip">
-            <fa-icon [icon]="item.icon" />
-            {{ item.label }}
-          </span>
-        }
-      </div>
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <thead>
-          <tr>
-            <th>Cell</th>
-            <th>Value</th>
-            <th>Meta</th>
-            <th>Status</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (cell of visibleRows(); track cell.id) {
-            <tr>
-              <td>{{ cell.rowLabel }} × {{ cell.colLabel }}</td>
-              <td>{{ cell.valueLabel }}</td>
-              <td>{{ cell.metaLabel ?? '—' }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ cell.status }}">{{ cell.status }}</span>
-              </td>
-              <td>
-                <div class="trace__tags">
-                  @for (tag of cell.tags; track tag) {
-                    <span class="trace__tag" [attr.title]="tagLabel(tag)">
-                      <fa-icon [icon]="tagIcon(tag)" />
-                    </span>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [legendItems]="tableLegendItems()"
+        emptyLabel="No DP cells yet"
+      />
     </div>
   } @else {
     <div class="trace__empty">No DP trace available for this step.</div>

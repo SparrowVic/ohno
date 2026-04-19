@@ -83,30 +83,7 @@
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <thead>
-          <tr>
-            <th>Node</th>
-            <th>{{ metricLabel() }}</th>
-            <th>{{ secondaryLabel() }}</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of graphState.traceRows; track row.nodeId) {
-            <tr [class.trace__row--current]="row.isCurrent" [class.trace__row--settled]="row.isSettled">
-              <td>{{ row.label }}</td>
-              <td>{{ formatDistance(row.distance) }}</td>
-              <td>{{ formatSecondary(row.secondaryText) }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ statusLabel(row) }}">
-                  {{ statusLabel(row) }}
-                </span>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table [columns]="tableColumns()" [rows]="tableRows()" emptyLabel="No graph rows yet" />
     </div>
   } @else {
     <div class="trace__empty">No trace available for this step.</div>

@@ -62,71 +62,15 @@
           }
         </div>
       </div>
-
-      <div class="trace__legend">
-        <div class="trace__section-label">Tag legend</div>
-        <div class="trace__legend-grid">
-          @for (item of legend; track item.id) {
-            <div class="trace__legend-item">
-              <span class="trace__tag trace__tag--{{ item.id }}" [attr.title]="item.label" [attr.aria-label]="item.label">
-                <fa-icon [icon]="item.icon" />
-              </span>
-              <span class="trace__legend-text">{{ item.label }}</span>
-            </div>
-          }
-        </div>
-      </div>
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <colgroup>
-          <col class="trace__col trace__col--node" />
-          <col class="trace__col trace__col--parent" />
-          <col class="trace__col trace__col--root" />
-          <col class="trace__col trace__col--rank" />
-          <col class="trace__col trace__col--size" />
-          <col class="trace__col trace__col--status" />
-          <col class="trace__col trace__col--tags" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Node</th>
-            <th>Parent</th>
-            <th>Root</th>
-            <th>Rank</th>
-            <th>Size</th>
-            <th>Status</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (node of visibleNodes(); track node.id) {
-            <tr
-              [class.trace__row--active]="node.status === 'active' || node.status === 'query'"
-              [class.trace__row--done]="node.status === 'merged' || node.status === 'compressed'"
-            >
-              <td>{{ node.label }}</td>
-              <td>{{ node.parentLabel }}</td>
-              <td>{{ node.rootLabel }}</td>
-              <td>{{ node.rank }}</td>
-              <td>{{ node.size }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ node.status }}">{{ node.status }}</span>
-              </td>
-              <td>
-                <div class="trace__tags">
-                  @for (tag of node.tags; track tag) {
-                    <span class="trace__tag trace__tag--{{ tag }}" [attr.title]="tagLabel(tag)" [attr.aria-label]="tagLabel(tag)">
-                      <fa-icon [icon]="tagIcon(tag)" />
-                    </span>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [legendItems]="tableLegendItems()"
+        emptyLabel="No DSU nodes yet"
+      />
     </div>
   } @else {
     <div class="trace__empty">No DSU trace available for this step.</div>

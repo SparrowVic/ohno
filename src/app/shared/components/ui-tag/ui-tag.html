@@ -1,0 +1,36 @@
+<span
+  class="ui-tag"
+  [class.ui-tag--tone-neutral]="tone() === 'neutral'"
+  [class.ui-tag--tone-easy]="tone() === 'easy'"
+  [class.ui-tag--tone-medium]="tone() === 'medium'"
+  [class.ui-tag--tone-hard]="tone() === 'hard'"
+  [class.ui-tag--tone-ultra-hard]="tone() === 'ultra-hard'"
+  [class.ui-tag--tone-accent]="tone() === 'accent'"
+  [class.ui-tag--tone-window]="tone() === 'window'"
+  [class.ui-tag--tone-route]="tone() === 'route'"
+  [class.ui-tag--tone-warning]="tone() === 'warning'"
+  [class.ui-tag--tone-danger]="tone() === 'danger'"
+  [class.ui-tag--tone-success]="tone() === 'success'"
+  [class.ui-tag--tone-hit]="tone() === 'hit'"
+  [class.ui-tag--appearance-soft]="appearance() === 'soft'"
+  [class.ui-tag--appearance-outline]="appearance() === 'outline'"
+  [class.ui-tag--appearance-solid]="appearance() === 'solid'"
+  [class.ui-tag--appearance-ghost]="appearance() === 'ghost'"
+  [class.ui-tag--size-sm]="size() === 'sm'"
+  [class.ui-tag--size-md]="size() === 'md'"
+  [class.ui-tag--shape-pill]="shape() === 'pill'"
+  [class.ui-tag--shape-icon]="shape() === 'icon'"
+  [class.ui-tag--mono]="mono()"
+  [class.ui-tag--uppercase]="uppercase()"
+  [class.ui-tag--ghost]="ghost()"
+  [attr.title]="title()"
+  [attr.aria-label]="resolvedAriaLabel()"
+>
+  @if (icon(); as icon) {
+    <fa-icon class="ui-tag__icon" [icon]="icon" />
+  }
+
+  @if (hasLabel()) {
+    <span class="ui-tag__label">{{ label() }}</span>
+  }
+</span>

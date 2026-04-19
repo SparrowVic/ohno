@@ -11,7 +11,7 @@
   padding: 8px var(--panel-topbar-padding-inline);
   border-bottom: 0.5px solid var(--panel-topbar-divider);
   background: var(--panel-topbar-bg);
-  overflow: hidden;
+  overflow: visible;
 
   &::after {
     content: '';
@@ -104,6 +104,7 @@
   gap: 8px;
   min-width: 0;
   align-items: stretch;
+  overflow: visible;
 }
 
 .ctrl-btn {

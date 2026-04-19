@@ -42,16 +42,13 @@
           @if (currentVectors().length === 0) {
             <div class="trace__placeholder">Waiting for active edge vectors.</div>
           } @else {
-            <div class="trace__table">
-              @for (vector of currentVectors(); track vector.id) {
-                <div class="trace__row">
-                  <span class="trace__row-label">{{ vector.label }}</span>
-                  <span class="trace__row-value"
-                    >({{ vector.dx.toFixed(1) }}, {{ vector.dy.toFixed(1) }})</span
-                  >
-                </div>
-              }
-            </div>
+            <app-table
+              class="trace__table"
+              [columns]="vectorColumns"
+              [rows]="vectorRows()"
+              [showHeader]="false"
+              density="compact"
+            />
           }
         </app-segmented-panel-section>
       </app-segmented-panel>

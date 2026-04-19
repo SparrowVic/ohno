@@ -20,16 +20,13 @@
           @if (geo.spans.length === 0) {
             <div class="trace__placeholder">No active spans on this scanline.</div>
           } @else {
-            <div class="trace__table">
-              @for (span of geo.spans; track span.id) {
-                <div class="trace__row">
-                  <span class="trace__row-label">{{ span.id }}</span>
-                  <span class="trace__row-value"
-                    >[{{ span.y0.toFixed(1) }}, {{ span.y1.toFixed(1) }}]</span
-                  >
-                </div>
-              }
-            </div>
+            <app-table
+              class="trace__table"
+              [columns]="spanColumns"
+              [rows]="spanRows()"
+              [showHeader]="false"
+              density="compact"
+            />
           }
         </app-segmented-panel-section>
 

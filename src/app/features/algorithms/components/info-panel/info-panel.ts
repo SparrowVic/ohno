@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { AlgorithmItem } from '../../models/algorithm';
+import { UiTag } from '../../../../shared/components/ui-tag/ui-tag';
 
 interface ComplexityCard {
   readonly label: string;
@@ -16,7 +17,7 @@ function humanize(value: string): string {
 
 @Component({
   selector: 'app-info-panel',
-  imports: [],
+  imports: [UiTag],
   templateUrl: './info-panel.html',
   styleUrl: './info-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -21,6 +21,7 @@ import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
+import { UiTag } from '../../../shared/components/ui-tag/ui-tag';
 import { AlgorithmCardPreview } from './algorithm-card-preview/algorithm-card-preview';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 import {
@@ -34,7 +35,15 @@ import {
 
 @Component({
   selector: 'app-algorithm-card',
-  imports: [NgStyle, NgTemplateOutlet, RouterLink, ShaderCardEffect, AlgorithmCardPreview, RoadmapOverlayDirective],
+  imports: [
+    NgStyle,
+    NgTemplateOutlet,
+    RouterLink,
+    ShaderCardEffect,
+    AlgorithmCardPreview,
+    RoadmapOverlayDirective,
+    UiTag,
+  ],
   templateUrl: './algorithm-card.html',
   styleUrl: './algorithm-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -17,16 +17,13 @@
 
       <app-segmented-panel class="trace__streams" aria-label="Voronoi details">
         <app-segmented-panel-section eyebrow="Active site">
-          @if (showActiveSiteDetails()) {
-            <div class="trace__row" [class.trace__row--ghost]="!activeSite()">
-              <span class="trace__row-label">P{{ activeSite()?.id ?? '—' }}</span>
-              <span class="trace__row-value"
-                >({{ formatCoord(activeSite()?.x) }}, {{ formatCoord(activeSite()?.y) }})</span
-              >
-            </div>
-          } @else {
-            <div class="trace__placeholder">Waiting for the first active site.</div>
-          }
+          <app-table
+            class="trace__table"
+            [columns]="siteColumns"
+            [rows]="siteRows()"
+            [showHeader]="false"
+            density="compact"
+          />
         </app-segmented-panel-section>
 
         <app-segmented-panel-section eyebrow="Site event rail" [badge]="geo.events.length">

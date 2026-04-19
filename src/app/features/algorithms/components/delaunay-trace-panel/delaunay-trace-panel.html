@@ -12,23 +12,13 @@
 
       <app-segmented-panel class="trace__streams" aria-label="Delaunay details">
         <app-segmented-panel-section eyebrow="Circumcircle">
-          @if (showCircleDetails()) {
-            <div class="trace__table" [class.trace__table--ghost]="!currentCircle()">
-              <div class="trace__row">
-                <span class="trace__row-label">center</span>
-                <span class="trace__row-value"
-                  >({{ formatCoord(currentCircle()?.cx) }},
-                  {{ formatCoord(currentCircle()?.cy) }})</span
-                >
-              </div>
-              <div class="trace__row">
-                <span class="trace__row-label">radius</span>
-                <span class="trace__row-value">{{ formatCoord(currentCircle()?.r) }}</span>
-              </div>
-            </div>
-          } @else {
-            <div class="trace__placeholder">Waiting for the first active circumcircle.</div>
-          }
+          <app-table
+            class="trace__table"
+            [columns]="circleColumns"
+            [rows]="circleRows()"
+            [showHeader]="false"
+            density="compact"
+          />
         </app-segmented-panel-section>
 
         <app-segmented-panel-section eyebrow="Triangle rail" [badge]="geo.events.length">

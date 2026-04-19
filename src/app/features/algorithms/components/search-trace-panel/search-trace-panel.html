@@ -44,68 +44,15 @@
           </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
-
-      <div class="trace__legend">
-        <div class="trace__queue-label">Tag legend</div>
-        <div class="trace__legend-list">
-          @for (item of legend; track item.id) {
-            <div class="trace__legend-chip">
-              <span
-                class="trace__tag trace__tag--{{ item.id }} trace__legend-icon"
-                [attr.title]="item.label"
-                [attr.aria-label]="item.label"
-              >
-                <fa-icon [icon]="item.icon" />
-              </span>
-              <span class="trace__legend-text">{{ item.label }}</span>
-            </div>
-          }
-        </div>
-      </div>
     </div>
 
     <div class="trace__table-wrap">
-      <table class="trace__table">
-        <colgroup>
-          <col class="trace__col trace__col--index" />
-          <col class="trace__col trace__col--value" />
-          <col class="trace__col trace__col--status" />
-          <col class="trace__col trace__col--tags" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Index</th>
-            <th>Value</th>
-            <th>Status</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of searchState.rows; track row.index) {
-            <tr
-              [class.trace__row--probe]="row.status === 'probe'"
-              [class.trace__row--found]="row.status === 'found'"
-            >
-              <td>{{ row.index }}</td>
-              <td>{{ row.value }}</td>
-              <td>
-                <span class="trace__status trace__status--{{ statusClass(row) }}">
-                  {{ row.status }}
-                </span>
-              </td>
-              <td>
-                <div class="trace__tags">
-                  @for (tag of row.tags; track tag) {
-                    <span class="trace__tag trace__tag--{{ tag }}" [attr.title]="tagLabel(tag)" [attr.aria-label]="tagLabel(tag)">
-                      <fa-icon [icon]="tagIcon(tag)" />
-                    </span>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <app-table
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [legendItems]="tableLegendItems()"
+        emptyLabel="No search rows yet"
+      />
     </div>
   } @else {
     <div class="trace__empty">No search trace available for this step.</div>
