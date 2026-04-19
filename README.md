@@ -63,6 +63,12 @@ GitHub Actions expects a repository secret named `FONTAWESOME_PACKAGE_TOKEN`.
 
 Without that secret, dependency installation for the workflow will fail because the project imports private Font Awesome packages.
 
+The repository also includes:
+- a CI workflow for pushes and pull requests
+- a manual `Release Production` workflow for promoting a chosen ref to `production`
+- weekly Dependabot updates for npm packages and GitHub Actions
+- a CodeQL workflow for JavaScript and TypeScript security scanning
+
 ## Netlify Deploy
 
 The repository includes [netlify.toml](./netlify.toml) with:
@@ -85,6 +91,7 @@ Recommended branch model:
 With Netlify configured to deploy from `production`:
 - pushes to `main` do not update the live site
 - production deploys happen only when `production` is updated
+- pull requests targeting `main` or `production` run CI in GitHub Actions
 
 To promote the current `main` state to production:
 
@@ -97,6 +104,13 @@ To verify before promoting:
 ```bash
 npm run release:production
 ```
+
+You can also trigger the `Release Production` workflow in GitHub Actions and choose which ref should be promoted to the `production` branch. If you later add a GitHub Environment named `production` with required reviewers, this workflow will wait for approval before promoting the release.
+
+## Security
+
+- `SECURITY.md` documents the reporting policy for vulnerabilities.
+- Dependabot and CodeQL are configured in `.github/` so the repository can surface basic dependency and code scanning issues automatically.
 
 ## Notes Before Publishing
 

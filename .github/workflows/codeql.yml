@@ -1,23 +1,29 @@
-name: CI
+name: CodeQL
 
 on:
   push:
+    branches:
+      - main
+      - production
   pull_request:
     branches:
       - main
       - production
+  schedule:
+    - cron: '31 4 * * 1'
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
+  security-events: write
 
 jobs:
-  verify:
+  analyze:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    name: Analyze JavaScript and TypeScript
     runs-on: ubuntu-latest
-    concurrency:
-      group: ci-${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
+    timeout-minutes: 30
     env:
       FONTAWESOME_PACKAGE_TOKEN: ${{ secrets.FONTAWESOME_PACKAGE_TOKEN || secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
 
@@ -38,11 +44,18 @@ jobs:
             exit 1
           fi
 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          build-mode: manual
+          queries: security-and-quality
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Run algorithm unit tests
-        run: npm run test:algorithms
+      - name: Build application for analysis
+        run: npm run build:dev
 
-      - name: Build application
-        run: npm run build
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3

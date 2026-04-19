@@ -1,0 +1,65 @@
+name: Release Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Branch or commit to promote to production
+        required: true
+        default: main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      FONTAWESOME_PACKAGE_TOKEN: ${{ secrets.FONTAWESOME_PACKAGE_TOKEN || secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Verify Font Awesome token
+        run: |
+          if [ -z "$FONTAWESOME_PACKAGE_TOKEN" ]; then
+            echo "Missing repository secret: FONTAWESOME_PACKAGE_TOKEN or FONTAWESOME_NPM_AUTH_TOKEN"
+            exit 1
+          fi
+
+      - name: Verify release candidate
+        run: npm run verify
+
+  promote:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Promote source to production branch
+        run: git push origin HEAD:refs/heads/production
