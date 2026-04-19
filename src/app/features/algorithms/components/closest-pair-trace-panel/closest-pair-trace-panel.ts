@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { ClosestPairStepState, GeometryPoint } from '../../models/geometry';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-closest-pair-trace-panel',
-  imports: [],
+  imports: [SegmentedPanel, SegmentedPanelSection],
   templateUrl: './closest-pair-trace-panel.html',
   styleUrl: './closest-pair-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,18 +21,27 @@ export class ClosestPairTracePanel {
   );
   readonly phaseLabel = computed(() => {
     switch (this.state()?.phase ?? '') {
-      case 'init': return 'Point Field';
-      case 'sort': return 'Dual Sorting';
-      case 'divide': return 'Divide';
-      case 'base': return 'Base Case';
-      case 'merge': return 'Merge';
-      case 'strip': return 'Strip Window';
+      case 'init':
+        return 'Point Field';
+      case 'sort':
+        return 'Dual Sorting';
+      case 'divide':
+        return 'Divide';
+      case 'base':
+        return 'Base Case';
+      case 'merge':
+        return 'Merge';
+      case 'strip':
+        return 'Strip Window';
       case 'compare':
       case 'compare-strip':
         return 'Distance Check';
-      case 'update': return 'Best Update';
-      case 'complete': return 'Closest Pair';
-      default: return this.state()?.phase ?? '';
+      case 'update':
+        return 'Best Update';
+      case 'complete':
+        return 'Closest Pair';
+      default:
+        return this.state()?.phase ?? '';
     }
   });
 

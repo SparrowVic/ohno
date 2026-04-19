@@ -1,59 +1,62 @@
-<div class="mstp">
+<div class="trace">
   @if (state(); as geo) {
-    <div class="mstp__phase mstp__phase--{{ geo.phase }}">
-      <div class="mstp__phase-copy">
-        <span class="mstp__eyebrow">Phase</span>
-        <span class="mstp__title">{{ phaseLabel(geo.phase) }}</span>
-      </div>
-      <div class="mstp__stats">
-        <div class="mstp__stat">
-          <span class="mstp__stat-value">{{ geo.mergedEdgeCount }}</span>
-          <span class="mstp__stat-label">merged</span>
-        </div>
-        <div class="mstp__stat">
-          <span class="mstp__stat-value">{{ geo.totalEdges }}</span>
-          <span class="mstp__stat-label">total</span>
-        </div>
-        <div class="mstp__stat">
-          <span class="mstp__stat-value">{{ geo.resultArea !== null ? geo.resultArea.toFixed(1) : '—' }}</span>
-          <span class="mstp__stat-label">area</span>
-        </div>
-      </div>
-    </div>
+    <div class="trace__header">
+      <app-segmented-panel class="trace__summary" aria-label="Minkowski summary">
+        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel(geo.phase)" />
+        <app-segmented-panel-section
+          eyebrow="Merged"
+          [value]="geo.mergedEdgeCount"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section eyebrow="Total" [value]="geo.totalEdges" [valueMono]="true" />
+        <app-segmented-panel-section
+          eyebrow="Area"
+          [value]="geo.resultArea !== null ? geo.resultArea.toFixed(1) : '—'"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-    <div class="mstp__card">
-      <span class="mstp__card-key">Current merge source</span>
-      <span class="mstp__focus">{{ geo.activeSource ?? '—' }}</span>
-      @if (geo.currentVectorLabel) {
-        <span class="mstp__subtle">{{ geo.currentVectorLabel }}</span>
-      }
-    </div>
+      <app-segmented-panel class="trace__streams" aria-label="Minkowski streams">
+        <app-segmented-panel-section eyebrow="Current merge source">
+          <span class="trace__focus">{{ geo.activeSource ?? '—' }}</span>
+          @if (geo.currentVectorLabel) {
+            <span class="trace__subtle">{{ geo.currentVectorLabel }}</span>
+          }
+        </app-segmented-panel-section>
 
-    <div class="mstp__card">
-      <span class="mstp__card-key">Merge rail</span>
-      <div class="mstp__chips">
-        @for (event of geo.events; track event.id) {
-          <span class="mstp__chip mstp__chip--{{ event.tone }}">{{ event.label }}</span>
-        }
-      </div>
-    </div>
+        <app-segmented-panel-section eyebrow="Merge rail" [badge]="geo.events.length">
+          <div class="trace__chips">
+            @if (geo.events.length === 0) {
+              <span class="trace__placeholder">No merge events yet.</span>
+            } @else {
+              @for (event of geo.events; track event.id) {
+                <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
 
-    <div class="mstp__card">
-      <span class="mstp__card-key">Active vectors</span>
-      @if (currentVectors().length === 0) {
-        <div class="mstp__placeholder">No edge vector is active in this step.</div>
-      } @else {
-        <div class="mstp__table">
-          @for (vector of currentVectors(); track vector.id) {
-            <div class="mstp__row">
-              <span class="mstp__row-label">{{ vector.label }}</span>
-              <span class="mstp__row-value">({{ vector.dx.toFixed(1) }}, {{ vector.dy.toFixed(1) }})</span>
+      <app-segmented-panel class="trace__detail" orientation="vertical" aria-label="Active vectors">
+        <app-segmented-panel-section eyebrow="Active vectors" [badge]="currentVectors().length">
+          @if (currentVectors().length === 0) {
+            <div class="trace__placeholder">No edge vector is active in this step.</div>
+          } @else {
+            <div class="trace__table">
+              @for (vector of currentVectors(); track vector.id) {
+                <div class="trace__row">
+                  <span class="trace__row-label">{{ vector.label }}</span>
+                  <span class="trace__row-value"
+                    >({{ vector.dx.toFixed(1) }}, {{ vector.dy.toFixed(1) }})</span
+                  >
+                </div>
+              }
             </div>
           }
-        </div>
-      }
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
   } @else {
-    <div class="mstp__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">No trace data for this geometry step.</div>
   }
 </div>

@@ -1,37 +1,48 @@
-<div class="vrtp">
+<div class="trace">
   @if (state(); as geo) {
-    <div class="vrtp__header">
-      <div>
-        <div class="vrtp__eyebrow">Voronoi</div>
-        <div class="vrtp__title">{{ geo.currentCellLabel }}</div>
-      </div>
-      <div class="vrtp__stats">
-        <span>{{ geo.closedCells }} cells</span>
-        <span>{{ geo.sweepY !== null ? geo.sweepY.toFixed(1) : 'done' }} y</span>
-      </div>
-    </div>
+    <div class="trace__header">
+      <app-segmented-panel class="trace__summary" aria-label="Voronoi summary">
+        <app-segmented-panel-section eyebrow="Cell" [value]="geo.currentCellLabel" />
+        <app-segmented-panel-section
+          eyebrow="Closed cells"
+          [value]="geo.closedCells"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          eyebrow="Sweep y"
+          [value]="geo.sweepY !== null ? geo.sweepY.toFixed(1) : 'done'"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-    <div class="vrtp__card">
-      <span class="vrtp__label">Active site</span>
-      @if (activeSite(); as site) {
-        <div class="vrtp__row">
-          <span>P{{ site.id }}</span>
-          <span>({{ site.x.toFixed(1) }}, {{ site.y.toFixed(1) }})</span>
-        </div>
-      } @else {
-        <div class="vrtp__placeholder">No active site in this frame.</div>
-      }
-    </div>
+      <app-segmented-panel class="trace__streams" aria-label="Voronoi details">
+        <app-segmented-panel-section eyebrow="Active site">
+          @if (activeSite(); as site) {
+            <div class="trace__row">
+              <span class="trace__row-label">P{{ site.id }}</span>
+              <span class="trace__row-value"
+                >({{ site.x.toFixed(1) }}, {{ site.y.toFixed(1) }})</span
+              >
+            </div>
+          } @else {
+            <div class="trace__placeholder">No active site in this frame.</div>
+          }
+        </app-segmented-panel-section>
 
-    <div class="vrtp__card">
-      <span class="vrtp__label">Site event rail</span>
-      <div class="vrtp__chips">
-        @for (event of geo.events; track event.id) {
-          <span class="vrtp__chip vrtp__chip--{{ event.tone }}">{{ event.label }}</span>
-        }
-      </div>
+        <app-segmented-panel-section eyebrow="Site event rail" [badge]="geo.events.length">
+          <div class="trace__chips">
+            @if (geo.events.length === 0) {
+              <span class="trace__placeholder">No site events queued.</span>
+            } @else {
+              @for (event of geo.events; track event.id) {
+                <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
   } @else {
-    <div class="vrtp__placeholder">No trace data for this geometry step.</div>
+    <div class="trace__empty">No trace data for this geometry step.</div>
   }
 </div>

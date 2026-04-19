@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { ConvexHullStepState, GeometryPoint } from '../../models/geometry';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-geometry-trace-panel',
-  imports: [],
+  imports: [SegmentedPanel, SegmentedPanelSection],
   templateUrl: './geometry-trace-panel.html',
   styleUrl: './geometry-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,15 +47,24 @@ export class GeometryTracePanel {
 
   readonly phaseLabel = computed(() => {
     switch (this.state()?.phase ?? '') {
-      case 'init': return 'Initializing';
-      case 'pivot': return 'Finding Pivot';
-      case 'sort': return 'Polar Sorting';
-      case 'init-stack': return 'Stack Init';
-      case 'checking': return 'Cross Product Check';
-      case 'pop': return 'Popping Non-left Turn';
-      case 'push': return 'Pushing to Stack';
-      case 'complete': return 'Hull Complete!';
-      default: return this.state()?.phase ?? '';
+      case 'init':
+        return 'Initializing';
+      case 'pivot':
+        return 'Finding Pivot';
+      case 'sort':
+        return 'Polar Sorting';
+      case 'init-stack':
+        return 'Stack Init';
+      case 'checking':
+        return 'Cross Product Check';
+      case 'pop':
+        return 'Popping Non-left Turn';
+      case 'push':
+        return 'Pushing to Stack';
+      case 'complete':
+        return 'Hull Complete!';
+      default:
+        return this.state()?.phase ?? '';
     }
   });
 

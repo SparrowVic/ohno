@@ -1,41 +1,52 @@
-<div class="sltp">
+<div class="trace">
   @if (state(); as geo) {
-    <div class="sltp__header">
-      <div>
-        <div class="sltp__eyebrow">Scanline</div>
-        <div class="sltp__title">{{ geo.currentEventLabel }}</div>
-      </div>
-      <div class="sltp__stats">
-        <span>{{ geo.coveredArea.toFixed(1) }} area</span>
-        <span>{{ geo.spans.length }} spans</span>
-      </div>
-    </div>
+    <div class="trace__header">
+      <app-segmented-panel class="trace__summary" aria-label="Sweep line summary">
+        <app-segmented-panel-section eyebrow="Scanline" [value]="geo.currentEventLabel" />
+        <app-segmented-panel-section
+          eyebrow="Area"
+          [value]="geo.coveredArea.toFixed(1)"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          eyebrow="Spans"
+          [value]="geo.spans.length"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-    <div class="sltp__card">
-      <span class="sltp__label">Active merged spans</span>
-      @if (geo.spans.length === 0) {
-        <div class="sltp__placeholder">No vertical coverage on the current sweep line.</div>
-      } @else {
-        <div class="sltp__table">
-          @for (span of geo.spans; track span.id) {
-            <div class="sltp__row">
-              <span>{{ span.id }}</span>
-              <span>[{{ span.y0.toFixed(1) }}, {{ span.y1.toFixed(1) }}]</span>
+      <app-segmented-panel class="trace__streams" aria-label="Sweep line details">
+        <app-segmented-panel-section eyebrow="Active merged spans" [badge]="geo.spans.length">
+          @if (geo.spans.length === 0) {
+            <div class="trace__placeholder">No vertical coverage on the current sweep line.</div>
+          } @else {
+            <div class="trace__table">
+              @for (span of geo.spans; track span.id) {
+                <div class="trace__row">
+                  <span class="trace__row-label">{{ span.id }}</span>
+                  <span class="trace__row-value"
+                    >[{{ span.y0.toFixed(1) }}, {{ span.y1.toFixed(1) }}]</span
+                  >
+                </div>
+              }
             </div>
           }
-        </div>
-      }
-    </div>
+        </app-segmented-panel-section>
 
-    <div class="sltp__card">
-      <span class="sltp__label">Event queue</span>
-      <div class="sltp__chips">
-        @for (event of geo.events; track event.id) {
-          <span class="sltp__chip sltp__chip--{{ event.tone }}">{{ event.label }}</span>
-        }
-      </div>
+        <app-segmented-panel-section eyebrow="Event queue" [badge]="geo.events.length">
+          <div class="trace__chips">
+            @if (geo.events.length === 0) {
+              <span class="trace__placeholder">Event queue is empty.</span>
+            } @else {
+              @for (event of geo.events; track event.id) {
+                <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
   } @else {
-    <div class="sltp__placeholder">No trace data for this geometry step.</div>
+    <div class="trace__empty">No trace data for this geometry step.</div>
   }
 </div>
