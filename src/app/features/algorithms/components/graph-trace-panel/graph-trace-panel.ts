@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { GraphStepState, GraphTraceRow } from '../../models/graph';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-graph-trace-panel',
-  imports: [],
+  imports: [SegmentedPanel, SegmentedPanelSection],
   templateUrl: './graph-trace-panel.html',
   styleUrl: './graph-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

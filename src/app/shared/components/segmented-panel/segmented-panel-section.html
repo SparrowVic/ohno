@@ -1,0 +1,19 @@
+@if (eyebrow() !== null || badge() !== null) {
+  <div class="segmented-panel-section__head">
+    @if (eyebrow() !== null) {
+      <span class="segmented-panel-section__eyebrow">{{ eyebrow() }}</span>
+    }
+
+    @if (badge() !== null) {
+      <span class="segmented-panel-section__badge">{{ badge() }}</span>
+    }
+  </div>
+}
+
+@if (value() !== null) {
+  <div class="segmented-panel-section__value" [class.segmented-panel-section__value--mono]="valueMono()">
+    {{ value() }}
+  </div>
+}
+
+<ng-content />

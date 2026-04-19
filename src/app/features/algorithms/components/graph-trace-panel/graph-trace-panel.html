@@ -40,34 +40,23 @@
         </div>
       </section>
 
-      <dl class="trace__facts" aria-label="Trace summary">
-        <div class="trace__fact">
-          <dt class="trace__fact-label">{{ sourceCardLabel() }}</dt>
-          <dd class="trace__fact-value">{{ sourceLabel() }}</dd>
-        </div>
+      <app-segmented-panel class="trace__facts" aria-label="Trace summary">
+        <app-segmented-panel-section [eyebrow]="sourceCardLabel()" [value]="sourceLabel()" />
+        <app-segmented-panel-section eyebrow="Current" [value]="currentLabel()" />
+        <app-segmented-panel-section
+          [eyebrow]="completionLabel()"
+          [value]="settledCount()"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="frontierLabel()"
+          [value]="queueLength()"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
 
-        <div class="trace__fact">
-          <dt class="trace__fact-label">Current</dt>
-          <dd class="trace__fact-value">{{ currentLabel() }}</dd>
-        </div>
-
-        <div class="trace__fact">
-          <dt class="trace__fact-label">{{ completionLabel() }}</dt>
-          <dd class="trace__fact-value trace__fact-value--mono">{{ settledCount() }}</dd>
-        </div>
-
-        <div class="trace__fact">
-          <dt class="trace__fact-label">{{ frontierLabel() }}</dt>
-          <dd class="trace__fact-value trace__fact-value--mono">{{ queueLength() }}</dd>
-        </div>
-      </dl>
-
-      <div class="trace__streams">
-        <section class="trace__stream">
-          <div class="trace__stream-head">
-            <div class="trace__stream-label">{{ frontierLabel() }}</div>
-            <span class="trace__stream-count">{{ graphState.queue.length }}</span>
-          </div>
+      <app-segmented-panel class="trace__streams">
+        <app-segmented-panel-section [eyebrow]="frontierLabel()" [badge]="graphState.queue.length">
           <div class="trace__stream-items">
             @if (graphState.queue.length === 0) {
               <span class="trace__stream-empty">empty</span>
@@ -77,13 +66,9 @@
               }
             }
           </div>
-        </section>
+        </app-segmented-panel-section>
 
-        <section class="trace__stream">
-          <div class="trace__stream-head">
-            <div class="trace__stream-label">{{ visitOrderLabel() }}</div>
-            <span class="trace__stream-count">{{ graphState.visitOrder.length }}</span>
-          </div>
+        <app-segmented-panel-section [eyebrow]="visitOrderLabel()" [badge]="graphState.visitOrder.length">
           <div class="trace__stream-items">
             @if (graphState.visitOrder.length === 0) {
               <span class="trace__stream-empty">not started</span>
@@ -93,8 +78,8 @@
               }
             }
           </div>
-        </section>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
 
     <div class="trace__table-wrap">
