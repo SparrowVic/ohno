@@ -45,9 +45,15 @@ The dev server runs on `http://localhost:4200/`.
 ## Scripts
 
 - `npm start` runs the Angular dev server
+- `npm run dev` is an alias for the Angular dev server
 - `npm run build` creates a production build
+- `npm run build:dev` creates a development build
 - `npm run test:algorithms` runs the Vitest suite for the algorithms feature
 - `npm run test:algorithms:coverage` runs the same suite with coverage output
+- `npm run verify` runs the algorithm tests and the production build
+- `npm run verify:quick` runs only the production build
+- `npm run deploy:production` promotes `main` to the `production` branch
+- `npm run release:production` verifies the app and then promotes `main` to `production`
 - `npm run i18n:extract` extracts translation keys
 - `npm run i18n:find` finds translation key usage
 
@@ -68,6 +74,29 @@ The repository includes [netlify.toml](./netlify.toml) with:
 Before the first Netlify deploy, add a site environment variable named `FONTAWESOME_PACKAGE_TOKEN`.
 
 The repository now includes a checked-in `.npmrc` that safely references `${FONTAWESOME_PACKAGE_TOKEN}`. npm replaces that placeholder at install time, so you do not need a separate `NPM_RC` variable on Netlify.
+
+## Branch Workflow
+
+Recommended branch model:
+- `feature/*` for in-progress work
+- `main` as the integration branch
+- `production` as the Netlify production branch
+
+With Netlify configured to deploy from `production`:
+- pushes to `main` do not update the live site
+- production deploys happen only when `production` is updated
+
+To promote the current `main` state to production:
+
+```bash
+npm run deploy:production
+```
+
+To verify before promoting:
+
+```bash
+npm run release:production
+```
 
 ## Notes Before Publishing
 

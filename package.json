@@ -6,12 +6,18 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "ng serve",
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:algorithms": "vitest run --config vitest.config.ts",
     "test:algorithms:coverage": "vitest run --config vitest.config.ts --coverage",
     "test:algorithms:watch": "vitest --config vitest.config.ts",
+    "verify": "npm run test:algorithms && npm run build",
+    "verify:quick": "npm run build",
+    "deploy:production": "git push origin main:production",
+    "release:production": "npm run verify && npm run deploy:production",
     "i18n:extract": "transloco-keys-manager extract",
     "i18n:find": "transloco-keys-manager find"
   },
