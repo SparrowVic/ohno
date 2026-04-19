@@ -23,12 +23,12 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.source_ref }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -39,6 +39,9 @@ jobs:
             echo "Missing repository secret: FONTAWESOME_PACKAGE_TOKEN or FONTAWESOME_NPM_AUTH_TOKEN"
             exit 1
           fi
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Verify release candidate
         run: npm run verify
@@ -51,7 +54,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.source_ref }}
           fetch-depth: 0
