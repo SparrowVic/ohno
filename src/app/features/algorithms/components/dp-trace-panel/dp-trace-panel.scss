@@ -10,69 +10,120 @@
   min-height: 0;
   flex-direction: column;
   overflow: hidden;
+  container-type: inline-size;
+  gap: 10px;
 }
 
 .trace__header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  border-bottom: 0.5px solid var(--border);
+  gap: 10px;
 }
 
 .trace__summary,
 .trace__calc-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
+}
+
+.trace__summary {
+  --segmented-panel-section-gap: 6px;
+  --segmented-panel-section-padding: 10px 12px 12px;
 }
 
 .trace__calc-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  --segmented-panel-section-gap: 6px;
+  --segmented-panel-section-padding: 10px 12px 12px;
 }
 
-.trace__summary-card,
-.trace__calculation,
-.trace__rail {
-  min-width: 0;
-  padding: 8px 9px;
-  border-radius: 10px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.025);
+.trace__summary app-segmented-panel-section,
+.trace__calc-grid app-segmented-panel-section,
+.trace__rails app-segmented-panel-section {
+  position: relative;
 }
 
-.trace__summary-label,
-.trace__calc-label,
-.trace__rail-label {
-  display: block;
-  margin-bottom: 3px;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+.trace__summary app-segmented-panel-section:not(:first-child) {
+  &::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 0;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+    z-index: 1;
+  }
 }
 
-.trace__summary-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.trace__calc-grid app-segmented-panel-section:not(:first-child),
+.trace__rails app-segmented-panel-section:not(:first-child) {
+  &::before {
+    display: none;
+  }
+
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.trace__calculation {
+.trace__calc-section {
   min-height: 94px;
 
   &--preset {
     background: rgb(var(--viz-accent-rgb) / 0.06);
-    border-color: rgb(var(--viz-accent-rgb) / 0.14);
   }
 
   &--muted {
     opacity: 0.82;
   }
+}
+
+.trace__summary-combo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.trace__summary-mode-value {
+  min-width: 0;
+  align-self: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trace__summary-preset {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.trace__summary-preset-label {
+  display: block;
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.trace__summary-preset-value {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trace__calc-expression {
@@ -100,13 +151,19 @@
 .trace__rails {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  --segmented-panel-section-gap: 8px;
+  --segmented-panel-section-padding: 10px 12px 11px;
 }
 
 .trace__rail-items {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+.trace__rail-empty {
+  color: var(--text-tertiary);
+  font-size: 11px;
 }
 
 .trace__chip,
@@ -237,16 +294,36 @@
   color: var(--text-tertiary);
 }
 
-@media (max-width: 980px) {
-  .trace__summary {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 760px) {
-  .trace__summary,
+@container (max-width: 760px) {
   .trace__calc-grid,
   .trace__rails {
     grid-template-columns: 1fr;
+  }
+
+  .trace__calc-grid app-segmented-panel-section,
+  .trace__rails app-segmented-panel-section {
+    &::after {
+      display: none !important;
+    }
+
+    &::before {
+      display: none;
+    }
+
+    &:not(:first-child)::after {
+      border-left: 0;
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .trace__calc-grid app-segmented-panel-section:not(:first-child),
+  .trace__rails app-segmented-panel-section:not(:first-child) {
+    border-left: 0;
   }
 }

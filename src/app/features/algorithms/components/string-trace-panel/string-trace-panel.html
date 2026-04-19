@@ -1,217 +1,368 @@
-@if (state(); as stringState) {
-  <section class="string-trace">
-    <div class="trace-head trace-head--{{ modeTone() }}">
-      <div class="trace-head__icon">
-        <fa-icon [icon]="modeIcon()"></fa-icon>
-      </div>
-      <div class="trace-head__copy">
-        <span class="trace-head__eyebrow">Trace</span>
-        <span class="trace-head__title">{{ stringState.modeLabel }}</span>
-        <span class="trace-head__desc">{{ stringState.presetDescription }}</span>
-      </div>
-    </div>
+<div class="trace">
+  @if (state(); as stringState) {
+    <div class="trace__header">
+      <app-segmented-panel
+        class="trace__summary"
+        orientation="vertical"
+        aria-label="String summary"
+      >
+        <app-segmented-panel-section class="trace__summary-mode" eyebrow="Mode">
+          <div class="trace__summary-combo">
+            <span class="trace__summary-mode-value">{{ stringState.modeLabel }}</span>
+            <span class="trace__summary-preset">
+              <span class="trace__summary-preset-label">Preset</span>
+              <span class="trace__summary-preset-value">{{ stringState.presetLabel }}</span>
+            </span>
+          </div>
+        </app-segmented-panel-section>
+        <app-segmented-panel-section eyebrow="Phase" [value]="stringState.phaseLabel" />
+        <app-segmented-panel-section eyebrow="Active" [value]="stringState.activeLabel || '—'" />
+        <app-segmented-panel-section eyebrow="Result" [value]="stringState.resultLabel" />
+      </app-segmented-panel>
 
-    <div class="trace-metrics">
-      <div class="trace-card">
-        <span class="trace-card__label">Phase</span>
-        <span class="trace-card__value">{{ stringState.phaseLabel }}</span>
-      </div>
-      <div class="trace-card">
-        <span class="trace-card__label">Active</span>
-        <span class="trace-card__value">{{ stringState.activeLabel }}</span>
-      </div>
-      <div class="trace-card">
-        <span class="trace-card__label">Result</span>
-        <span class="trace-card__value">{{ stringState.resultLabel }}</span>
-      </div>
-    </div>
+      <app-segmented-panel class="trace__calculation" aria-label="String calculation summary">
+        <app-segmented-panel-section
+          class="trace__calc-section trace__calc-section--preset"
+          eyebrow="Preset note"
+        >
+          <div class="trace__calc-expression">{{ stringState.presetDescription }}</div>
+        </app-segmented-panel-section>
 
-    <div class="trace-calc">
-      @if (stringState.computation; as computation) {
-        <span class="trace-calc__label">{{ computation.label }}</span>
-        <span class="trace-calc__expression">{{ computation.expression }}</span>
-        @if (computation.result) {
-          <span class="trace-calc__result">{{ computation.result }}</span>
-        }
-        <span class="trace-calc__note">{{ computation.note }}</span>
-      } @else {
-        <span class="trace-calc__label">Computation</span>
-        <span class="trace-calc__note">No extra formula on this step.</span>
-      }
-    </div>
+        <app-segmented-panel-section
+          class="trace__calc-section"
+          [class.trace__calc-section--muted]="!stringState.computation"
+          [eyebrow]="stringState.computation?.label ?? 'Current transition'"
+        >
+          <div class="trace__calc-expression">
+            {{ stringState.computation?.expression ?? 'Waiting for next string event.' }}
+          </div>
+          @if (stringState.computation?.result; as result) {
+            <div class="trace__calc-result">{{ result }}</div>
+          } @else {
+            <div class="trace__calc-result trace__calc-result--muted">—</div>
+          }
+          <div class="trace__calc-note">
+            {{ stringState.computation?.note ?? 'No extra formula on this step.' }}
+          </div>
+        </app-segmented-panel-section>
 
-    <div class="trace-legend">
-      @for (item of legend; track item.label) {
-        <span class="trace-chip">
-          <fa-icon [icon]="item.icon"></fa-icon>
-          {{ item.label }}
-        </span>
-      }
+        <app-segmented-panel-section
+          class="trace__calc-section trace__calc-section--decision"
+          eyebrow="Decision"
+        >
+          <div class="trace__calc-note">{{ stringState.decisionLabel }}</div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+
+      <app-segmented-panel
+        class="trace__feeds"
+        orientation="vertical"
+        aria-label="String trace context"
+      >
+        <app-segmented-panel-section eyebrow="Insights" [badge]="stringState.insights.length">
+          <div class="trace__insight-list">
+            @for (insight of stringState.insights; track insight.label) {
+              <span class="trace__insight-chip trace__insight-chip--{{ insight.tone }}">
+                <span class="trace__insight-label">{{ insight.label }}</span>
+                <span class="trace__insight-value">{{ insight.value }}</span>
+              </span>
+            }
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Legend" [badge]="legend.length">
+          <div class="trace__legend-list">
+            @for (item of legend; track item.label) {
+              <span class="trace__legend-chip">
+                <fa-icon [icon]="item.icon" />
+                <span class="trace__legend-text">{{ item.label }}</span>
+              </span>
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
 
     @if (kmpState(); as kmp) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Failure table</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="KMP details">
+        <app-segmented-panel-section eyebrow="Failure table" [badge]="kmp.failure.length">
           <div class="value-strip">
             @for (value of failurePreview(kmp); track $index; let index = $index) {
-              <span class="value-chip" [class.value-chip--active]="index === kmp.patternIndex || index === kmp.comparePatternIndex">
+              <span
+                class="value-chip"
+                [class.value-chip--active]="
+                  index === kmp.patternIndex || index === kmp.comparePatternIndex
+                "
+              >
                 {{ index }}:{{ value }}
               </span>
             }
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Scan state</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Scan state">
           <div class="kv-list">
-            <div><span>Alignment</span><strong>{{ kmp.alignment }}</strong></div>
-            <div><span>Text index</span><strong>{{ kmp.textIndex ?? '—' }}</strong></div>
-            <div><span>Pattern index</span><strong>{{ kmp.patternIndex ?? '—' }}</strong></div>
-            <div><span>Jump</span><strong>{{ kmp.fallbackFrom !== null ? kmp.fallbackFrom + ' → ' + kmp.fallbackTo : 'none' }}</strong></div>
+            <div>
+              <span>Alignment</span><strong>{{ kmp.alignment }}</strong>
+            </div>
+            <div>
+              <span>Text index</span><strong>{{ kmp.textIndex ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Pattern index</span><strong>{{ kmp.patternIndex ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Jump</span
+              ><strong>{{
+                kmp.fallbackFrom !== null ? kmp.fallbackFrom + ' → ' + kmp.fallbackTo : 'none'
+              }}</strong>
+            </div>
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
 
     @if (rabinState(); as rabin) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Hashes</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="Rabin-Karp details">
+        <app-segmented-panel-section eyebrow="Hashes">
           <div class="kv-list">
-            <div><span>Pattern</span><strong>{{ rabin.patternHash }}</strong></div>
-            <div><span>Window</span><strong>{{ rabin.windowHash }}</strong></div>
-            <div><span>Base / mod</span><strong>{{ rabin.base }} / {{ rabin.mod }}</strong></div>
-            <div><span>Verify step</span><strong>{{ rabin.verificationIndex ?? '—' }}</strong></div>
+            <div>
+              <span>Pattern</span><strong>{{ rabin.patternHash }}</strong>
+            </div>
+            <div>
+              <span>Window</span><strong>{{ rabin.windowHash }}</strong>
+            </div>
+            <div>
+              <span>Base / mod</span><strong>{{ rabin.base }} / {{ rabin.mod }}</strong>
+            </div>
+            <div>
+              <span>Verify step</span><strong>{{ rabin.verificationIndex ?? '—' }}</strong>
+            </div>
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Rolling window</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Rolling window">
           <div class="kv-list">
-            <div><span>Start</span><strong>{{ rabin.windowStart }}</strong></div>
-            <div><span>Outgoing</span><strong>{{ rabin.outgoingChar ?? '—' }}</strong></div>
-            <div><span>Incoming</span><strong>{{ rabin.incomingChar ?? '—' }}</strong></div>
-            <div><span>Status</span><strong>{{ rabin.collision ? 'collision' : rabin.verifying ? 'verify' : 'hash only' }}</strong></div>
+            <div>
+              <span>Start</span><strong>{{ rabin.windowStart }}</strong>
+            </div>
+            <div>
+              <span>Outgoing</span><strong>{{ rabin.outgoingChar ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Incoming</span><strong>{{ rabin.incomingChar ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Status</span
+              ><strong>{{
+                rabin.collision ? 'collision' : rabin.verifying ? 'verify' : 'hash only'
+              }}</strong>
+            </div>
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
 
     @if (zState(); as zStateValue) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Z skyline</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="Z algorithm details">
+        <app-segmented-panel-section eyebrow="Z skyline" [badge]="zStateValue.zValues.length">
           <div class="value-strip">
             @for (value of zPreview(zStateValue); track $index; let index = $index) {
-              <span class="value-chip" [class.value-chip--active]="index === zStateValue.activeIndex">
+              <span
+                class="value-chip"
+                [class.value-chip--active]="index === zStateValue.activeIndex"
+              >
                 {{ index }}:{{ value }}
               </span>
             }
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Z-box</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Z-box">
           <div class="kv-list">
-            <div><span>L</span><strong>{{ zStateValue.boxLeft ?? '—' }}</strong></div>
-            <div><span>R</span><strong>{{ zStateValue.boxRight ?? '—' }}</strong></div>
-            <div><span>Prefix compare</span><strong>{{ zStateValue.comparePrefixIndex ?? '—' }}</strong></div>
-            <div><span>Text compare</span><strong>{{ zStateValue.compareMatchIndex ?? '—' }}</strong></div>
+            <div>
+              <span>L</span><strong>{{ zStateValue.boxLeft ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>R</span><strong>{{ zStateValue.boxRight ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Prefix compare</span
+              ><strong>{{ zStateValue.comparePrefixIndex ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Text compare</span><strong>{{ zStateValue.compareMatchIndex ?? '—' }}</strong>
+            </div>
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
 
     @if (manacherState(); as manacher) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Radius array</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="Manacher details">
+        <app-segmented-panel-section eyebrow="Radius array" [badge]="manacher.radii.length">
           <div class="value-strip">
             @for (value of radiiPreview(manacher); track $index; let index = $index) {
-              <span class="value-chip" [class.value-chip--active]="index === manacher.currentCenter || index === manacher.longestCenter">
+              <span
+                class="value-chip"
+                [class.value-chip--active]="
+                  index === manacher.currentCenter || index === manacher.longestCenter
+                "
+              >
                 {{ index }}:{{ value }}
               </span>
             }
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Mirror window</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Mirror window">
           <div class="kv-list">
-            <div><span>Center</span><strong>{{ manacher.currentCenter ?? '—' }}</strong></div>
-            <div><span>Mirror</span><strong>{{ manacher.mirrorIndex ?? '—' }}</strong></div>
-            <div><span>Bounds</span><strong>{{ manacher.leftBoundary ?? '—' }}..{{ manacher.rightBoundary ?? '—' }}</strong></div>
-            <div><span>Longest</span><strong>{{ manacher.longestPalindrome || '—' }}</strong></div>
+            <div>
+              <span>Center</span><strong>{{ manacher.currentCenter ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Mirror</span><strong>{{ manacher.mirrorIndex ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Bounds</span
+              ><strong
+                >{{ manacher.leftBoundary ?? '—' }}..{{ manacher.rightBoundary ?? '—' }}</strong
+              >
+            </div>
+            <div>
+              <span>Longest</span><strong>{{ manacher.longestPalindrome || '—' }}</strong>
+            </div>
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
 
     @if (bwtState(); as bwt) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Columns</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="Burrows-Wheeler details">
+        <app-segmented-panel-section eyebrow="Columns">
           <div class="kv-list">
-            <div><span>Input</span><strong>{{ bwt.source }}</strong></div>
-            <div><span>F</span><strong>{{ bwt.firstColumn || '—' }}</strong></div>
-            <div><span>L</span><strong>{{ bwt.lastColumn || '—' }}</strong></div>
-            <div><span>Gain</span><strong>{{ formatRatio(bwt.compressionRatio) }}</strong></div>
+            <div>
+              <span>Input</span><strong>{{ bwt.source }}</strong>
+            </div>
+            <div>
+              <span>F</span><strong>{{ bwt.firstColumn || '—' }}</strong>
+            </div>
+            <div>
+              <span>L</span><strong>{{ bwt.lastColumn || '—' }}</strong>
+            </div>
+            <div>
+              <span>Gain</span><strong>{{ formatRatio(bwt.compressionRatio) }}</strong>
+            </div>
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Output runs</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Output runs" [badge]="bwt.runGroups.length">
           <div class="value-strip">
-            @for (group of groupPreview(bwt); track group) {
-              <span class="value-chip value-chip--soft">{{ group }}</span>
+            @if (groupPreview(bwt).length === 0) {
+              <span class="trace__detail-empty">none yet</span>
+            } @else {
+              @for (group of groupPreview(bwt); track group) {
+                <span class="value-chip value-chip--soft">{{ group }}</span>
+              }
             }
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
 
     @if (rleState(); as rle) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Scanner</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="RLE details">
+        <app-segmented-panel-section eyebrow="Scanner">
           <div class="kv-list">
-            <div><span>Position</span><strong>{{ rle.scanIndex ?? '—' }}</strong></div>
-            <div><span>Char</span><strong>'{{ rle.groupChar || '—' }}'</strong></div>
-            <div><span>Count</span><strong>{{ rle.groupCount }}</strong></div>
-            <div><span>Phase</span><strong>{{ rle.phase }}</strong></div>
+            <div>
+              <span>Position</span><strong>{{ rle.scanIndex ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>Char</span><strong>'{{ rle.groupChar || '—' }}'</strong>
+            </div>
+            <div>
+              <span>Count</span><strong>{{ rle.groupCount }}</strong>
+            </div>
+            <div>
+              <span>Phase</span><strong>{{ rle.phase }}</strong>
+            </div>
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Result</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Result" [badge]="rle.completedRuns.length">
           <div class="kv-list">
-            <div><span>Runs done</span><strong>{{ rle.completedRuns.length }}</strong></div>
-            <div><span>Output</span><strong>{{ rle.output || '—' }}</strong></div>
-            <div><span>Ratio</span><strong>{{ rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—' }}</strong></div>
-            <div><span>Original</span><strong>{{ rle.source.length }} chars</strong></div>
+            <div>
+              <span>Runs done</span><strong>{{ rle.completedRuns.length }}</strong>
+            </div>
+            <div>
+              <span>Output</span><strong>{{ rle.output || '—' }}</strong>
+            </div>
+            <div>
+              <span>Ratio</span
+              ><strong>{{
+                rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—'
+              }}</strong>
+            </div>
+            <div>
+              <span>Original</span><strong>{{ rle.source.length }} chars</strong>
+            </div>
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
 
     @if (huffmanState(); as huffman) {
-      <div class="trace-grid">
-        <div class="trace-panel">
-          <span class="trace-panel__label">Heap</span>
+      <app-segmented-panel class="trace__detail-grid" aria-label="Huffman details">
+        <app-segmented-panel-section eyebrow="Heap" [badge]="huffman.heapItems.length">
           <div class="kv-list">
-            <div><span>Size</span><strong>{{ huffman.heapItems.length }}</strong></div>
-            <div><span>Phase</span><strong>{{ huffman.phase }}</strong></div>
-            <div><span>Unique chars</span><strong>{{ huffman.charFreqs.length }}</strong></div>
-            <div><span>Codes assigned</span><strong>{{ huffman.codeTable.length }}</strong></div>
+            <div>
+              <span>Size</span><strong>{{ huffman.heapItems.length }}</strong>
+            </div>
+            <div>
+              <span>Phase</span><strong>{{ huffman.phase }}</strong>
+            </div>
+            <div>
+              <span>Unique chars</span><strong>{{ huffman.charFreqs.length }}</strong>
+            </div>
+            <div>
+              <span>Codes assigned</span><strong>{{ huffman.codeTable.length }}</strong>
+            </div>
           </div>
-        </div>
-        <div class="trace-panel">
-          <span class="trace-panel__label">Compression</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section eyebrow="Compression">
           <div class="kv-list">
-            <div><span>Original</span><strong>{{ huffman.totalOriginalBits }} bits</strong></div>
-            <div><span>Compressed</span><strong>{{ huffman.totalCompressedBits }} bits</strong></div>
-            <div><span>Savings</span><strong>{{ huffman.totalOriginalBits > 0 ? ((1 - huffman.totalCompressedBits / huffman.totalOriginalBits) * 100).toFixed(0) + '%' : '—' }}</strong></div>
-            <div><span>Ratio</span><strong>{{ formatRatio(huffman.totalOriginalBits > 0 ? huffman.totalCompressedBits / huffman.totalOriginalBits : null) }}</strong></div>
+            <div>
+              <span>Original</span><strong>{{ huffman.totalOriginalBits }} bits</strong>
+            </div>
+            <div>
+              <span>Compressed</span><strong>{{ huffman.totalCompressedBits }} bits</strong>
+            </div>
+            <div>
+              <span>Savings</span
+              ><strong>{{
+                huffman.totalOriginalBits > 0
+                  ? ((1 - huffman.totalCompressedBits / huffman.totalOriginalBits) * 100).toFixed(
+                      0
+                    ) + '%'
+                  : '—'
+              }}</strong>
+            </div>
+            <div>
+              <span>Ratio</span
+              ><strong>{{
+                formatRatio(
+                  huffman.totalOriginalBits > 0
+                    ? huffman.totalCompressedBits / huffman.totalOriginalBits
+                    : null
+                )
+              }}</strong>
+            </div>
           </div>
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     }
-  </section>
-} @else {
-  <section class="string-trace string-trace--empty">No string trace available.</section>
-}
+  } @else {
+    <div class="trace__empty">No string trace available.</div>
+  }
+</div>

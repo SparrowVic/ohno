@@ -18,6 +18,8 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 
 import { DpCell, DpTraceState, DpTraceTag } from '../../models/dp';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 interface DpTagLegend {
   readonly id: DpTraceTag;
@@ -42,7 +44,7 @@ const TAG_LEGEND: readonly DpTagLegend[] = [
 
 @Component({
   selector: 'app-dp-trace-panel',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection],
   templateUrl: './dp-trace-panel.html',
   styleUrl: './dp-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
