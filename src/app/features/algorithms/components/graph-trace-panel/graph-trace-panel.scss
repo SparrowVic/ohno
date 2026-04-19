@@ -233,13 +233,22 @@
 }
 
 .trace__fact {
+  position: relative;
   min-width: 0;
   padding: 11px 12px 12px;
   display: grid;
   gap: 7px;
 
   &:not(:first-child) {
-    border-left: 0.5px solid rgba(255, 255, 255, 0.05);
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
   }
 }
 
@@ -265,13 +274,22 @@
 }
 
 .trace__stream {
+  position: relative;
   min-width: 0;
   padding: 10px 12px 11px;
   display: grid;
   gap: 8px;
 
   &:not(:first-child) {
-    border-left: 0.5px solid rgba(255, 255, 255, 0.05);
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
   }
 }
 
@@ -462,8 +480,19 @@
   }
 
   .trace__stream:not(:first-child) {
-    border-left: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.05);
+    &::before {
+      display: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
   }
 }
 
@@ -473,14 +502,34 @@
   }
 
   .trace__fact {
-    border-left: none !important;
+    &::before {
+      display: none;
+    }
 
     &:nth-child(odd) {
-      border-right: 0.5px solid rgba(255, 255, 255, 0.05);
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 10px;
+        bottom: 10px;
+        width: 1px;
+        background: rgba(255, 255, 255, 0.05);
+      }
     }
 
     &:nth-child(n + 3) {
-      border-top: 0.5px solid rgba(255, 255, 255, 0.05);
+      &::before {
+        display: block;
+        content: '';
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        top: 0;
+        height: 1px;
+        width: auto;
+        background: rgba(255, 255, 255, 0.05);
+      }
     }
   }
 }
@@ -495,10 +544,22 @@
   }
 
   .trace__fact {
-    border-right: none !important;
+    &::after {
+      display: none !important;
+    }
 
     &:nth-child(n + 2) {
-      border-top: 0.5px solid rgba(255, 255, 255, 0.05);
+      &::before {
+        display: block;
+        content: '';
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        top: 0;
+        height: 1px;
+        width: auto;
+        background: rgba(255, 255, 255, 0.05);
+      }
     }
   }
 
