@@ -103,27 +103,6 @@
       <button
         type="button"
         class="side-panel__action"
-        [attr.aria-label]="isVerticalLayout() ? 'Use top tabs' : 'Use accordion'"
-        [attr.title]="isVerticalLayout() ? 'Use top tabs' : 'Use accordion'"
-        (click)="toggleTabLayout()"
-      >
-        @if (isVerticalLayout()) {
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
-          </svg>
-        } @else {
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3.5 4.5h9" />
-            <path d="M3.5 8h9" />
-            <path d="M3.5 11.5h9" />
-            <path d="M10.5 3l2 1.5-2 1.5" />
-            <path d="M10.5 6.5l2 1.5-2 1.5" />
-          </svg>
-        }
-      </button>
-      <button
-        type="button"
-        class="side-panel__action"
         aria-label="Collapse inspector"
         title="Collapse inspector"
         (click)="collapseToggle.emit()"
@@ -136,77 +115,32 @@
     </div>
   </header>
 
-  <div class="side-shell" [class.side-shell--vertical]="isVerticalLayout()">
-    @if (isVerticalLayout()) {
-      <div class="side-accordion">
-        @for (tab of tabs(); track tab.id) {
-          <section
-            class="side-accordion__item"
-            [class.side-accordion__item--open]="isAccordionSectionExpanded(tab.id)"
-          >
-            <button
-              type="button"
-              class="side-accordion__trigger"
-              [attr.aria-expanded]="isAccordionSectionExpanded(tab.id)"
-              [attr.aria-controls]="'accordion-panel-' + tab.id"
-              (click)="toggleAccordionSection(tab.id)"
-            >
-              <span class="side-accordion__icon" aria-hidden="true">
-                <ng-container *ngTemplateOutlet="tabIcon; context: { id: tab.id }" />
-              </span>
-              <span class="side-accordion__copy">
-                <span class="side-accordion__label">
-                  <span>{{ tab.label }}</span>
-                  @if (tab.id === 'log' && logEntryCount() > 0) {
-                    <span class="side-accordion__badge">{{ logEntryCount() }}</span>
-                  }
-                </span>
-                <span class="side-accordion__hint">{{ tab.description }}</span>
-              </span>
-              <span class="side-accordion__chevron" aria-hidden="true">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M4.5 6.5L8 10l3.5-3.5" />
-                </svg>
-              </span>
-            </button>
-
-            @if (isAccordionSectionExpanded(tab.id)) {
-              <div class="side-accordion__body" [id]="'accordion-panel-' + tab.id">
-                <div class="side-accordion__panel" [class.side-accordion__panel--code]="tab.id === 'code'">
-                  <ng-container *ngTemplateOutlet="tabPanel; context: { id: tab.id }" />
-                </div>
-              </div>
-            }
-          </section>
-        }
-      </div>
-    } @else {
-      <div class="side-tabs">
-        @for (tab of tabs(); track tab.id) {
-          <button
-            type="button"
-            class="side-tab"
-            [class.side-tab--active]="activeTab() === tab.id"
-            (click)="selectTab(tab.id)"
-          >
-            <span class="side-tab__icon" aria-hidden="true">
-              <ng-container *ngTemplateOutlet="tabIcon; context: { id: tab.id }" />
+  <div class="side-shell">
+    <div class="side-tabs">
+      @for (tab of tabs(); track tab.id) {
+        <button
+          type="button"
+          class="side-tab"
+          [class.side-tab--active]="activeTab() === tab.id"
+          (click)="selectTab(tab.id)"
+        >
+          <span class="side-tab__icon" aria-hidden="true">
+            <ng-container *ngTemplateOutlet="tabIcon; context: { id: tab.id }" />
+          </span>
+          <span class="side-tab__copy">
+            <span class="side-tab__label">
+              <span>{{ tab.label }}</span>
+              @if (tab.id === 'log' && logEntryCount() > 0) {
+                <span class="side-tab__badge">{{ logEntryCount() }}</span>
+              }
             </span>
-            <span class="side-tab__copy">
-              <span class="side-tab__label">
-                <span>{{ tab.label }}</span>
-                @if (tab.id === 'log' && logEntryCount() > 0) {
-                  <span class="side-tab__badge">{{ logEntryCount() }}</span>
-                }
-              </span>
-            </span>
-          </button>
-        }
-      </div>
+          </span>
+        </button>
+      }
+    </div>
 
-      <div class="side-content" [class.side-content--code]="activeTab() === 'code'">
-        <ng-container *ngTemplateOutlet="tabPanel; context: { id: activeTab() }" />
-      </div>
-    }
+    <div class="side-content" [class.side-content--code]="activeTab() === 'code'">
+      <ng-container *ngTemplateOutlet="tabPanel; context: { id: activeTab() }" />
+    </div>
   </div>
 </div>

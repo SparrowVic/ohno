@@ -16,7 +16,7 @@ import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { APP_LANG } from '../../../core/i18n/app-lang';
 import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
 import { LegendBar } from '../components/legend-bar/legend-bar';
-import { SidePanel, SideTabLayout } from '../components/side-panel/side-panel';
+import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
 import { VisualizationToolbar } from '../components/visualization-toolbar/visualization-toolbar';
 import {
@@ -25,7 +25,6 @@ import {
   getAlgorithmViewConfig,
   humanizeLabel,
   INSPECTOR_COLLAPSED_KEY,
-  INSPECTOR_LAYOUT_KEY,
   RandomRange,
 } from './algorithm-detail-config/algorithm-detail-config';
 import { AlgorithmItem } from '../models/algorithm';
@@ -79,7 +78,6 @@ export class AlgorithmDetail {
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
   private readonly inspectorCollapsedSig = signal(this.readStoredBoolean(INSPECTOR_COLLAPSED_KEY));
-  private readonly inspectorLayoutSig = signal<SideTabLayout>(this.readStoredLayout());
   private lastLoggedStep = -1;
 
   readonly algorithm = computed<AlgorithmItem | undefined>(() => {
@@ -120,7 +118,6 @@ export class AlgorithmDetail {
   readonly step = this.currentSnapshot.asReadonly();
   readonly logEntries = this.logEntriesSig.asReadonly();
   readonly inspectorCollapsed = this.inspectorCollapsedSig.asReadonly();
-  readonly inspectorLayout = this.inspectorLayoutSig.asReadonly();
 
   readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
   readonly variantOptions = computed(() => this.config()?.variantOptions ?? []);
@@ -142,9 +139,6 @@ export class AlgorithmDetail {
   readonly stepSummaryLabel = computed(() => `Step ${this.currentStep()} / ${this.totalSteps()}`);
   readonly inspectorToggleLabel = computed(() =>
     this.inspectorCollapsed() ? 'Show inspector' : 'Hide inspector',
-  );
-  readonly inspectorLayoutLabel = computed(() =>
-    this.inspectorLayout() === 'vertical' ? 'Side rail' : 'Top tabs',
   );
 
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
@@ -228,10 +222,6 @@ export class AlgorithmDetail {
     });
 
     effect(() => {
-      this.doc.defaultView?.localStorage.setItem(INSPECTOR_LAYOUT_KEY, this.inspectorLayout());
-    });
-
-    effect(() => {
       const config = this.config();
       const algorithm = this.algorithm();
 
@@ -261,10 +251,6 @@ export class AlgorithmDetail {
 
   toggleInspectorCollapse(): void {
     this.inspectorCollapsedSig.update((collapsed) => !collapsed);
-  }
-
-  toggleInspectorLayout(): void {
-    this.inspectorLayoutSig.update((layout) => (layout === 'vertical' ? 'horizontal' : 'vertical'));
   }
 
   onReset(): void {
@@ -335,10 +321,6 @@ export class AlgorithmDetail {
 
     this.stringPresetSig.set(value);
     this.rebuildVisualization(config, this.sizeSig(), { stringPresetId: value });
-  }
-
-  onInspectorLayoutChange(value: SideTabLayout): void {
-    this.inspectorLayoutSig.set(value);
   }
 
   private resetUnavailableState(): void {
@@ -450,12 +432,6 @@ export class AlgorithmDetail {
 
   private readStoredBoolean(key: string): boolean {
     return this.doc.defaultView?.localStorage.getItem(key) === '1';
-  }
-
-  private readStoredLayout(): SideTabLayout {
-    return this.doc.defaultView?.localStorage.getItem(INSPECTOR_LAYOUT_KEY) === 'horizontal'
-      ? 'horizontal'
-      : 'vertical';
   }
 
   private resolvedGraphFocusTargetId(): string | null {

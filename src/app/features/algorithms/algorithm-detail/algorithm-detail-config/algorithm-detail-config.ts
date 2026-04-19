@@ -2717,7 +2717,6 @@ const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationSce
 };
 
 export const INSPECTOR_COLLAPSED_KEY = 'ohno:algorithm-detail:inspector-collapsed';
-export const INSPECTOR_LAYOUT_KEY = 'ohno:algorithm-detail:inspector-layout';
 
 export function humanizeLabel(value: string): string {
   return value
