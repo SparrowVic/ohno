@@ -1288,6 +1288,9 @@ const COUNTING_SIZE_OPTIONS: readonly number[] = [12, 24, 36];
 const RADIX_SIZE_OPTIONS: readonly number[] = [12, 18, 24];
 const DIJKSTRA_SIZE_OPTIONS: readonly number[] = [6, 8, 10];
 
+export const INSPECTOR_COLLAPSED_KEY = 'ohno:algorithm-detail:inspector-collapsed';
+export const INSPECTOR_LAYOUT_KEY = 'ohno:algorithm-detail:inspector-layout';
+
 export interface RandomRange {
   readonly min: number;
   readonly max: number;
