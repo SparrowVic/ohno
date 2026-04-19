@@ -5,19 +5,37 @@
 
 .slider {
   min-width: 0;
-  min-height: 44px;
-  padding: 6px 11px;
-  border-radius: 14px;
+  min-height: var(--control-height);
+  padding: 4px var(--control-padding-inline) 5px;
+  border-radius: var(--control-radius);
   border: 0.5px solid var(--border);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
     rgba(18, 19, 20, 0.92);
   display: grid;
   align-content: center;
-  gap: 5px;
+  gap: 4px;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 
   &--disabled {
     opacity: 0.5;
+  }
+
+  &:hover:not(.slider--disabled) {
+    border-color: var(--border-hover);
+    background: rgba(24, 25, 27, 0.96);
+    transform: translateY(-1px);
+  }
+
+  &:focus-within {
+    border-color: rgba(184, 213, 110, 0.24);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.035),
+      0 0 0 1px rgba(184, 213, 110, 0.08);
   }
 }
 
@@ -30,6 +48,7 @@
 
 .slider__label {
   font-size: 8px;
+  line-height: 1.05;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -38,6 +57,7 @@
 .slider__value {
   font-family: var(--font-mono);
   font-size: 11px;
+  line-height: 1.1;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -45,7 +65,7 @@
 .slider__track {
   position: relative;
   display: block;
-  height: 12px;
+  height: 10px;
 }
 
 .slider__rail,
@@ -53,7 +73,7 @@
   position: absolute;
   top: 50%;
   left: 0;
-  height: 4px;
+  height: 3px;
   border-radius: 999px;
   transform: translateY(-50%);
 }
@@ -72,14 +92,23 @@
   position: absolute;
   top: 50%;
   left: var(--pct);
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: var(--accent-strong);
   border: 2px solid rgba(11, 11, 12, 0.94);
   transform: translate(-50%, -50%);
   box-shadow: 0 6px 18px rgba(184, 213, 110, 0.26);
   pointer-events: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.slider:hover:not(.slider--disabled) .slider__thumb,
+.slider:focus-within .slider__thumb {
+  transform: translate(-50%, -50%) scale(1.04);
+  box-shadow: 0 8px 22px rgba(184, 213, 110, 0.34);
 }
 
 .slider input {

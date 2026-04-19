@@ -21,8 +21,8 @@
   }
 
   &--compact .select__trigger {
-    min-height: 38px;
-    padding: 0 11px;
+    min-height: calc(var(--control-height) - 2px);
+    padding: 0 var(--control-padding-inline);
     border-radius: 999px;
   }
 
@@ -111,9 +111,9 @@
 
 .select__trigger {
   width: 100%;
-  min-height: 44px;
-  padding: 6px 11px;
-  border-radius: 14px;
+  min-height: var(--control-height);
+  padding: 4px var(--control-padding-inline);
+  border-radius: var(--control-radius);
   border: 0.5px solid var(--border);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
@@ -150,6 +150,7 @@
 
 .select__label {
   font-size: 8px;
+  line-height: 1.05;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -161,6 +162,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12px;
+  line-height: 1.15;
   font-weight: 700;
   color: var(--text-primary);
 }

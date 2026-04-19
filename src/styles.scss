@@ -81,6 +81,21 @@
   --compare-color: #d4b56d;
   --panel-shadow: 0 22px 54px rgba(0, 0, 0, 0.34);
   --panel-shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.22);
+  --panel-shell-bg: rgba(17, 18, 20, 0.78);
+  --panel-shell-border: rgba(255, 255, 255, 0.08);
+  --panel-shell-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  --panel-shell-radius: 24px;
+  --panel-topbar-height: 56px;
+  --panel-topbar-padding-inline: 10px;
+  --panel-topbar-divider: rgba(255, 255, 255, 0.05);
+  --panel-topbar-bg:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.024), rgba(255, 255, 255, 0) 78%),
+    rgba(14, 15, 17, 0.18);
+
+  --control-height: 40px;
+  --control-icon-size: 40px;
+  --control-radius: 12px;
+  --control-padding-inline: 11px;
 
   --font-sans: 'Sora', 'Inter', 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, monospace;
