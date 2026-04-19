@@ -27,16 +27,14 @@
               </div>
             </div>
           } @else {
-            <div class="trace__placeholder">
-              Circumcircle details appear when the first triangle enters the test phase.
-            </div>
+            <div class="trace__placeholder">Waiting for the first active circumcircle.</div>
           }
         </app-segmented-panel-section>
 
         <app-segmented-panel-section eyebrow="Triangle rail" [badge]="geo.events.length">
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No triangle events queued.</span>
+              <span class="trace__placeholder">No queued triangles yet.</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>

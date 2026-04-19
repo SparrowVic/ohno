@@ -34,9 +34,7 @@
         <app-segmented-panel-section eyebrow="Active ordering" [badge]="geo.activeOrder.length">
           <div class="trace__chips">
             @if (geo.activeOrder.length === 0) {
-              <span class="trace__placeholder"
-                >No segment currently intersects the sweep line.</span
-              >
+              <span class="trace__placeholder">No active segments on the sweep line yet.</span>
             } @else {
               @for (label of geo.activeOrder; track label) {
                 <span class="trace__chip">{{ label }}</span>
@@ -50,7 +48,7 @@
         <app-segmented-panel-section eyebrow="Upcoming queue" [badge]="upcomingEvents().length">
           <div class="trace__chips">
             @if (upcomingEvents().length === 0) {
-              <span class="trace__placeholder">Queue is empty.</span>
+              <span class="trace__placeholder">No queued events remain.</span>
             } @else {
               @for (event of upcomingEvents(); track event.id) {
                 <span
@@ -70,7 +68,7 @@
           [badge]="geo.intersections.length"
         >
           @if (geo.intersections.length === 0) {
-            <div class="trace__placeholder">No crossing has been confirmed yet.</div>
+            <div class="trace__placeholder">No confirmed intersections yet.</div>
           } @else {
             <div class="trace__table">
               @for (marker of geo.intersections; track marker.id) {

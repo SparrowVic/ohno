@@ -25,14 +25,14 @@
               >
             </div>
           } @else {
-            <div class="trace__placeholder">Sweep has not activated a site yet.</div>
+            <div class="trace__placeholder">Waiting for the first active site.</div>
           }
         </app-segmented-panel-section>
 
         <app-segmented-panel-section eyebrow="Site event rail" [badge]="geo.events.length">
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No site events queued.</span>
+              <span class="trace__placeholder">No queued sites yet.</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>

@@ -132,7 +132,14 @@
   color: rgba(226, 232, 240, 0.6);
 }
 
-.trace__placeholder,
+.trace__placeholder {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
 .trace__empty {
   font-size: 11px;
   color: var(--text-tertiary);

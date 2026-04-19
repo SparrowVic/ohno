@@ -18,7 +18,7 @@
       <app-segmented-panel class="trace__streams" aria-label="Sweep line details">
         <app-segmented-panel-section eyebrow="Active merged spans" [badge]="geo.spans.length">
           @if (geo.spans.length === 0) {
-            <div class="trace__placeholder">No vertical coverage on the current sweep line.</div>
+            <div class="trace__placeholder">No active spans on this scanline.</div>
           } @else {
             <div class="trace__table">
               @for (span of geo.spans; track span.id) {
@@ -36,7 +36,7 @@
         <app-segmented-panel-section eyebrow="Event queue" [badge]="geo.events.length">
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">Event queue is empty.</span>
+              <span class="trace__placeholder">No queued events remain.</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>

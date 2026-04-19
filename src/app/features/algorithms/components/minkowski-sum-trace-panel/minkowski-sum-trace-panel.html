@@ -27,7 +27,7 @@
         <app-segmented-panel-section eyebrow="Merge rail" [badge]="geo.events.length">
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No merge events yet.</span>
+              <span class="trace__placeholder">No queued merge steps yet.</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
@@ -40,7 +40,7 @@
       <app-segmented-panel class="trace__detail" orientation="vertical" aria-label="Active vectors">
         <app-segmented-panel-section eyebrow="Active vectors" [badge]="currentVectors().length">
           @if (currentVectors().length === 0) {
-            <div class="trace__placeholder">No edge vector is active in this step.</div>
+            <div class="trace__placeholder">Waiting for active edge vectors.</div>
           } @else {
             <div class="trace__table">
               @for (vector of currentVectors(); track vector.id) {
