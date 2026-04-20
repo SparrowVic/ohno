@@ -182,6 +182,11 @@ export class SidePanel implements OnInit, OnDestroy {
 
   private readonly activeTabState = signal<SideTabId>('code');
   readonly activeTab = this.activeTabState.asReadonly();
+  readonly activeTabIndex = computed(() => {
+    const current = this.activeTab();
+    const idx = this.tabs().findIndex((tab) => tab.id === current);
+    return idx < 0 ? 0 : idx;
+  });
 
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly doc = inject(DOCUMENT);

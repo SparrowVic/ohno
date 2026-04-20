@@ -70,6 +70,11 @@ export class LabDifficultyFilter extends BaseControlValueAccessor<DifficultyFilt
   readonly valueChange = output<DifficultyFilterValue>();
 
   readonly activeValue = computed(() => this.value() ?? 'all');
+  readonly activeIndex = computed(() => {
+    const current = this.activeValue();
+    const idx = this.options().findIndex((option) => option.value === current);
+    return idx < 0 ? 0 : idx;
+  });
 
   constructor() {
     super();

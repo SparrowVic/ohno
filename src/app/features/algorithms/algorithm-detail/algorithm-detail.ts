@@ -99,6 +99,14 @@ export class AlgorithmDetail {
     const algorithm = this.algorithm();
     return algorithm ? `${humanizeLabel(algorithm.category)} / ${humanizeLabel(algorithm.subcategory)}` : '';
   });
+  readonly breadcrumbs = computed(() => {
+    const algorithm = this.algorithm();
+    if (!algorithm) return [];
+    return [
+      humanizeLabel(algorithm.category),
+      humanizeLabel(algorithm.subcategory),
+    ].filter(Boolean);
+  });
 
   readonly size = this.sizeSig.asReadonly();
   readonly variant = this.variantSig.asReadonly();

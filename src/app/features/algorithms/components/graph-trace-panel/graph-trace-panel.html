@@ -1,45 +1,9 @@
-<div class="trace">
+<div class="trace" [attr.data-tone]="decisionTone()">
   @if (state(); as graphState) {
     <div class="trace__header">
-      <section
-        class="trace__decision trace__decision--{{ decisionTone() }}"
-        [class.trace__decision--muted]="!hasComputation()"
-      >
-        <div class="trace__decision-head">
-          <div class="trace__decision-copy">
-            <span class="trace__eyebrow">Current decision</span>
-            <div class="trace__decision-title">{{ computationLabel() }}</div>
-          </div>
-          <span class="trace__decision-pill">{{ decisionBadge() }}</span>
-        </div>
-
-        <div class="trace__decision-expression">{{ computationExpression() }}</div>
-
-        <div class="trace__decision-grid">
-          <div class="trace__decision-block">
-            <span class="trace__eyebrow">Result</span>
-            @if (computationResult(); as result) {
-              <span class="trace__decision-result">= {{ result }}</span>
-            } @else {
-              <span class="trace__decision-result trace__decision-result--muted">—</span>
-            }
-          </div>
-
-          <div class="trace__decision-block">
-            <span class="trace__eyebrow">{{ focusSummaryLabel() }}</span>
-            <span class="trace__decision-focus">{{ focusSummaryValue() }}</span>
-          </div>
-        </div>
-
-        <div class="trace__decision-note">{{ computationDecision() }}</div>
-
-        <div class="trace__context-line" [class.trace__context-line--muted]="focusCardMuted()">
-          <span class="trace__context-badge">{{ focusCardBadge() }}</span>
-          <span class="trace__context-path">{{ focusCardPath() }}</span>
-          <span class="trace__context-hint">{{ focusCardHint() }}</span>
-        </div>
-      </section>
-
+      <!-- ======================================================== -->
+      <!-- PANEL 1 — Facts / summary metrics                         -->
+      <!-- ======================================================== -->
       <app-segmented-panel class="trace__facts" aria-label="Trace summary">
         <app-segmented-panel-section [eyebrow]="sourceCardLabel()" [value]="sourceLabel()" />
         <app-segmented-panel-section eyebrow="Current" [value]="currentLabel()" />
@@ -55,6 +19,37 @@
         />
       </app-segmented-panel>
 
+      <!-- ======================================================== -->
+      <!-- PANEL 2 — Calculation / current decision                  -->
+      <!-- ======================================================== -->
+      <app-segmented-panel class="trace__calc" aria-label="Current calculation">
+        <app-segmented-panel-section
+          [eyebrow]="'Current decision'"
+          [value]="computationLabel()"
+          [badge]="decisionBadge()"
+        >
+          <code class="trace__calc-expression">{{ computationExpression() }}</code>
+          <p class="trace__calc-note">{{ computationDecision() }}</p>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          eyebrow="Result"
+          [value]="computationResult() ?? '—'"
+          [valueMono]="true"
+        />
+
+        <app-segmented-panel-section [eyebrow]="focusSummaryLabel()" [value]="focusSummaryValue()">
+          <div class="trace__context-line" [class.trace__context-line--muted]="focusCardMuted()">
+            <span class="trace__context-badge">{{ focusCardBadge() }}</span>
+            <span class="trace__context-path">{{ focusCardPath() }}</span>
+            <span class="trace__context-hint">{{ focusCardHint() }}</span>
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+
+      <!-- ======================================================== -->
+      <!-- PANEL 3 — Streams: frontier queue + visit order           -->
+      <!-- ======================================================== -->
       <app-segmented-panel class="trace__streams">
         <app-segmented-panel-section [eyebrow]="frontierLabel()" [badge]="graphState.queue.length">
           <div class="trace__stream-items">
@@ -62,13 +57,18 @@
               <span class="trace__stream-empty">empty</span>
             } @else {
               @for (entry of graphState.queue; track entry.nodeId) {
-                <span class="trace__stream-chip">{{ entry.label }} · {{ formatDistance(entry.distance) }}</span>
+                <span class="trace__stream-chip"
+                  >{{ entry.label }} · {{ formatDistance(entry.distance) }}</span
+                >
               }
             }
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section [eyebrow]="visitOrderLabel()" [badge]="graphState.visitOrder.length">
+        <app-segmented-panel-section
+          [eyebrow]="visitOrderLabel()"
+          [badge]="graphState.visitOrder.length"
+        >
           <div class="trace__stream-items">
             @if (graphState.visitOrder.length === 0) {
               <span class="trace__stream-empty">not started</span>
@@ -82,10 +82,16 @@
       </app-segmented-panel>
     </div>
 
+    <!-- ======================================================== -->
+    <!-- NODE TABLE                                                -->
+    <!-- ======================================================== -->
     <div class="trace__table-wrap">
       <app-table [columns]="tableColumns()" [rows]="tableRows()" emptyLabel="No graph rows yet" />
     </div>
   } @else {
-    <div class="trace__empty">No trace available for this step.</div>
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      No trace available for this step.
+    </div>
   }
 </div>

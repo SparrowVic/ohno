@@ -93,11 +93,18 @@
 
 <div class="side-panel" [attr.data-active-tab]="activeTab()">
   <div class="side-tabs-bar">
-    <div class="side-tabs" role="tablist" aria-label="Inspector tabs">
+    <div
+      class="side-tabs"
+      role="tablist"
+      aria-label="Inspector tabs"
+      [style.--side-tabs-count]="tabs().length"
+      [style.--side-tabs-index]="activeTabIndex()"
+    >
+      <span class="side-tabs__indicator" aria-hidden="true"></span>
       @for (tab of tabs(); track tab.id) {
         <button
           type="button"
-          class="side-tab"
+          class="side-tab side-tab--{{ tab.id }}"
           [class.side-tab--active]="activeTab() === tab.id"
           [attr.id]="'inspector-tab-' + tab.id"
           role="tab"

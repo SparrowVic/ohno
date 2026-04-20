@@ -9,7 +9,7 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-height: 58px;
   padding: 0;
 }
@@ -17,15 +17,17 @@
 .navbar::before {
   content: '';
   position: absolute;
-  inset: -10px 24% auto;
-  height: 28px;
+  inset: -12px 18% auto;
+  height: 36px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 30% 50%, rgba(var(--chrome-accent-rgb), 0.14), transparent 52%),
-    radial-gradient(circle at 72% 50%, rgba(var(--chrome-accent-alt-rgb), 0.12), transparent 52%);
-  filter: blur(20px);
+    radial-gradient(circle at 26% 50%, rgba(var(--chrome-accent-rgb), 0.22), transparent 56%),
+    radial-gradient(circle at 58% 50%, rgba(var(--chrome-accent-alt-rgb), 0.18), transparent 56%),
+    radial-gradient(circle at 82% 50%, rgba(var(--accent-rgb), 0.12), transparent 58%);
+  filter: blur(24px);
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0.7;
+  animation: ohno-fade-in var(--duration-entrance) var(--ease-soft) both;
 }
 
 .navbar__left,
@@ -55,14 +57,14 @@
   content: '';
   position: absolute;
   inset: 50% auto auto 50%;
-  width: min(46vw, 360px);
-  height: 34px;
+  width: min(46vw, 380px);
+  height: 38px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 34% 50%, rgba(var(--chrome-accent-rgb), 0.11), transparent 54%),
-    radial-gradient(circle at 68% 50%, rgba(var(--chrome-accent-alt-rgb), 0.08), transparent 56%);
+    radial-gradient(circle at 32% 50%, rgba(var(--chrome-accent-rgb), 0.16), transparent 58%),
+    radial-gradient(circle at 68% 50%, rgba(var(--chrome-accent-alt-rgb), 0.12), transparent 58%);
   transform: translate(-50%, -50%);
-  filter: blur(20px);
+  filter: blur(22px);
   pointer-events: none;
 }
 
@@ -77,7 +79,11 @@
   width: 100%;
   padding: 2px 4px 2px 0;
   min-width: 0;
-  transition: filter 0.22s ease, opacity 0.22s ease;
+  transition: transform var(--duration-base) var(--ease-out-quart);
+}
+
+.navbar__brand:hover {
+  transform: translateY(-1px);
 }
 
 .navbar__brand-logo {
@@ -86,20 +92,17 @@
   max-width: 248px;
   height: auto;
   filter:
-    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.18))
-    drop-shadow(0 0 16px rgba(var(--chrome-accent-rgb), 0.08))
-    drop-shadow(0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.05));
-  transition:
-    filter 0.22s ease,
-    opacity 0.22s ease;
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.22))
+    drop-shadow(0 0 18px rgba(var(--chrome-accent-rgb), 0.12))
+    drop-shadow(0 0 20px rgba(var(--chrome-accent-alt-rgb), 0.08));
+  transition: filter var(--duration-base) var(--ease-soft);
 }
 
 .navbar__brand:hover .navbar__brand-logo {
-  opacity: 0.985;
   filter:
-    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.18))
-    drop-shadow(0 0 18px rgba(var(--chrome-accent-rgb), 0.1))
-    drop-shadow(0 0 24px rgba(var(--chrome-accent-alt-rgb), 0.08));
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.22))
+    drop-shadow(0 0 22px rgba(var(--chrome-accent-rgb), 0.18))
+    drop-shadow(0 0 26px rgba(var(--chrome-accent-alt-rgb), 0.14));
 }
 
 .navbar__actions {
@@ -114,60 +117,96 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-width: 190px;
+  min-width: 210px;
   min-height: 38px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid var(--chrome-line);
+  border: 0.5px solid var(--chrome-line);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
-    rgba(9, 12, 18, 0.58);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(14, 17, 24, 0.62);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 8px 18px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    var(--elevation-1),
     0 0 0 1px rgba(var(--chrome-accent-rgb), 0.04);
-  backdrop-filter: blur(14px) saturate(112%);
+  backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
   transition:
-    border-color 0.22s ease,
-    background 0.22s ease,
-    box-shadow 0.24s ease,
-    transform 0.22s ease;
+    border-color var(--duration-base) var(--ease-soft),
+    background var(--duration-base) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart),
+    transform var(--duration-base) var(--ease-out-quart);
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+}
+
+.command-trigger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--brand-gradient);
+  -webkit-mask:
+    linear-gradient(#000, #000) content-box,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-soft);
+  pointer-events: none;
 }
 
 .command-trigger:hover {
-  border-color: rgba(var(--chrome-accent-rgb), 0.18);
+  border-color: transparent;
   background:
     linear-gradient(
       90deg,
-      rgba(var(--chrome-accent-rgb), 0.08),
-      rgba(var(--chrome-accent-alt-rgb), 0.06) 72%,
-      rgba(255, 255, 255, 0.01)
+      rgba(var(--chrome-accent-rgb), 0.1),
+      rgba(var(--chrome-accent-alt-rgb), 0.07) 68%,
+      rgba(var(--accent-rgb), 0.04)
     ),
-    rgba(9, 12, 18, 0.64);
+    rgba(14, 17, 24, 0.74);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 10px 20px rgba(0, 0, 0, 0.16),
-    0 0 0 1px rgba(var(--chrome-accent-rgb), 0.08),
-    0 0 18px rgba(var(--chrome-accent-rgb), 0.06),
-    0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.04);
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    var(--elevation-2),
+    0 0 22px rgba(var(--chrome-accent-rgb), 0.1),
+    0 0 22px rgba(var(--chrome-accent-alt-rgb), 0.06);
   transform: translateY(-1px);
+}
+
+.command-trigger:hover::before {
+  opacity: 0.5;
 }
 
 .command-trigger:focus-visible {
   outline: none;
-  border-color: rgba(var(--chrome-accent-alt-rgb), 0.38);
+  border-color: transparent;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.14),
-    0 0 22px rgba(var(--chrome-accent-alt-rgb), 0.12),
-    0 10px 20px rgba(0, 0, 0, 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    var(--ring-focus),
+    var(--elevation-1);
+}
+
+.command-trigger:focus-visible::before {
+  opacity: 0.8;
+}
+
+.command-trigger:active {
+  transform: translateY(0) scale(0.99);
 }
 
 .command-trigger__icon {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  color: rgba(var(--chrome-accent-alt-rgb), 0.84);
+  color: rgba(var(--chrome-accent-alt-rgb), 0.9);
+  transition: color var(--duration-base) var(--ease-soft);
+}
+
+.command-trigger:hover .command-trigger__icon {
+  color: var(--chrome-accent-alt-strong);
 }
 
 .command-trigger__copy {
@@ -186,9 +225,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+.command-trigger:hover .command-trigger__label {
+  color: var(--text-primary);
 }
 
 .command-trigger__hint {
@@ -206,20 +250,25 @@
   height: 18px;
   padding: 0 4px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
-    rgba(0, 0, 0, 0.2);
-  color: rgba(var(--chrome-accent-rgb), 0.72);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+    rgba(0, 0, 0, 0.28);
+  color: rgba(var(--chrome-accent-rgb), 0.82);
   font-family: var(--font-mono);
   font-size: 9px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart);
 }
 
 .command-trigger:hover .command-trigger__kbd {
-  border-color: rgba(var(--chrome-accent-alt-rgb), 0.18);
-  color: rgba(var(--chrome-accent-alt-rgb), 0.88);
+  border-color: rgba(var(--chrome-accent-alt-rgb), 0.26);
+  color: var(--chrome-accent-alt-strong);
+  box-shadow: 0 0 14px rgba(var(--chrome-accent-alt-rgb), 0.2);
 }
 
 @media (max-width: 1080px) {
@@ -310,5 +359,14 @@
   .navbar__lang,
   .command-trigger {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar::before,
+  .command-trigger,
+  .command-trigger::before {
+    animation: none !important;
+    transition: none;
   }
 }

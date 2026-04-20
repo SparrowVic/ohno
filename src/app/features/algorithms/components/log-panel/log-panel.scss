@@ -4,65 +4,236 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  container-type: inline-size;
 }
 
+/* ============================================================================
+   LOG — terminal/stream aesthetic. Each entry is a row on a rail with a
+   pulsing glow marker on the latest entry.
+   ============================================================================ */
+
 .log {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 10px 12px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
+  overflow-x: hidden;
+  padding: 0 4px 12px;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
 }
 
 .log__empty {
-  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.008)),
+    rgba(14, 18, 24, 0.55);
+  color: var(--text-tertiary);
   font-size: 12px;
-  text-align: left;
-  padding: 10px 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
-.log__entry {
-  display: grid;
-  grid-template-columns: 8px 74px minmax(0, 1fr);
-  align-items: start;
-  column-gap: 10px;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  line-height: 1.35;
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.log__marker {
-  width: 6px;
-  height: 6px;
-  margin-top: 5px;
-  border-radius: 50%;
-  background: rgb(var(--viz-route-rgb) / 0.92);
-  box-shadow: 0 0 0 3px rgb(var(--viz-route-rgb) / 0.12);
+.log__empty-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(var(--viz-warning-rgb), 0.6);
+  box-shadow: 0 0 10px rgba(var(--viz-warning-rgb), 0.4);
   flex-shrink: 0;
 }
 
-.log__step {
+/* Sticky column header */
+.log__head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 20px 74px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  padding: 8px 10px 7px;
+  margin: 0 -4px 8px -4px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.09), rgba(255, 255, 255, 0.012) 80%),
+    rgba(12, 15, 20, 0.92);
   color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.log__head::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--viz-warning-rgb), 0.32) 50%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.log__head-kind {
+  text-align: center;
+  color: var(--text-quaternary);
+}
+
+.log__head-step {
+  padding-left: 2px;
+  color: var(--viz-warning-ink);
+}
+
+.log__head-desc {
+  padding-left: 2px;
+}
+
+/* Each entry */
+.log__entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px 74px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 10px;
+  padding: 8px 10px;
+  margin-bottom: 1px;
+  border-radius: 10px;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.log__entry:hover {
+  background:
+    linear-gradient(90deg, rgba(var(--viz-warning-rgb), 0.08), rgba(var(--viz-warning-rgb), 0.02) 60%, transparent);
+}
+
+.log__entry--last {
+  background:
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.1), rgba(var(--accent-rgb), 0.02) 60%, transparent);
+  box-shadow: inset 2px 0 0 rgba(var(--accent-rgb), 0.65);
+}
+
+/* Vertical rail connecting markers */
+.log__rail {
+  position: absolute;
+  left: 19px;
+  top: 16px;
+  bottom: -1px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--viz-warning-rgb), 0.36),
+    rgba(var(--viz-warning-rgb), 0.08)
+  );
+  pointer-events: none;
+}
+
+.log__entry--last .log__rail {
+  display: none;
+}
+
+.log__entry:first-of-type .log__rail {
+  top: 10px;
+}
+
+.log__marker {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, #ffffff 0%, rgba(255, 255, 255, 0.8) 30%, rgb(var(--viz-warning-rgb)) 100%);
+  box-shadow:
+    0 0 0 3px rgba(var(--viz-warning-rgb), 0.14),
+    0 0 10px rgba(var(--viz-warning-rgb), 0.42);
+  flex-shrink: 0;
+  justify-self: center;
+  z-index: 1;
+}
+
+.log__entry--last .log__marker {
+  background:
+    radial-gradient(circle at 32% 28%, #ffffff 0%, rgba(255, 255, 255, 0.88) 30%, rgb(var(--accent-rgb)) 100%);
+  box-shadow:
+    0 0 0 3px rgba(var(--accent-rgb), 0.18),
+    0 0 12px rgba(var(--accent-rgb), 0.58);
+}
+
+.log__marker-pulse {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--accent-rgb), 0.7);
+  pointer-events: none;
+  animation: log-marker-pulse 1.6s var(--ease-out-expo) infinite;
+}
+
+@keyframes log-marker-pulse {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.log__step {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding-top: 1px;
+  font-family: var(--font-mono);
   font-size: 10px;
-  line-height: 1.45;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.log__step-key {
+  color: var(--text-quaternary);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+}
+
+.log__step-value {
+  color: var(--viz-warning-ink);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-size: 11px;
+}
+
+.log__entry--last .log__step-value {
+  color: var(--accent-strong);
 }
 
 .log__desc {
   color: var(--text-primary);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
   min-width: 0;
   overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+@container (max-width: 420px) {
+  .log__head,
+  .log__entry {
+    grid-template-columns: 16px 58px minmax(0, 1fr);
+  }
+
+  .log__rail { left: 15px; }
 }

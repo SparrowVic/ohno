@@ -3,7 +3,30 @@
   [class.code-language-dial--open]="open()"
   [attr.aria-label]="ariaLabel()"
 >
-  <div class="code-language-dial__fan" [attr.aria-hidden]="!open()">
+  <div
+    #fan
+    class="code-language-dial__fan"
+    [class.code-language-dial__fan--open]="open()"
+    [class.code-language-dial__fan--pulse]="selectionPulse()"
+    [style.top.px]="triggerRect().y"
+    [style.left.px]="triggerRect().x"
+    [style.--trigger-w.px]="triggerRect().width"
+    [style.--trigger-h.px]="triggerRect().height"
+    [style.--dial-accent]="activeOption().accent"
+    [attr.aria-hidden]="!open()"
+  >
+    <span class="code-language-dial__backdrop" aria-hidden="true"></span>
+    <span class="code-language-dial__halo" aria-hidden="true"></span>
+    <span class="code-language-dial__burst" aria-hidden="true"></span>
+
+    <span class="code-language-dial__center-logo" aria-hidden="true">
+      @if (activeOption().icon) {
+        <fa-icon [icon]="activeOption().icon" />
+      } @else {
+        <span class="code-language-dial__center-logo-text">{{ activeOption().shortLabel }}</span>
+      }
+    </span>
+
     @for (item of radialItems(); track item.id) {
       <button
         type="button"
@@ -11,10 +34,9 @@
         [class.code-language-dial__item--disabled]="item.disabled"
         [style.--dial-x.px]="item.x"
         [style.--dial-y.px]="item.y"
-        [style.--dial-via-x.px]="item.viaX"
-        [style.--dial-via-y.px]="item.viaY"
+        [style.--dial-spin]="item.launchSpinDeg + 'deg'"
         [style.--dial-accent]="item.accent"
-        [style.transition-delay]="open() ? item.delayMs + 'ms' : '0ms'"
+        [style.--dial-delay]="item.delayMs + 'ms'"
         [attr.aria-label]="item.disabled ? item.label + ' coming soon' : 'Switch code to ' + item.label"
         [title]="item.disabled ? item.label + ' · ' + (item.hint ?? 'Coming soon') : item.label"
         [disabled]="item.disabled"
@@ -30,20 +52,23 @@
   </div>
 
   <button
+    #triggerBtn
     type="button"
     class="code-language-dial__trigger"
     [class.code-language-dial__trigger--open]="open()"
     [class.code-language-dial__trigger--pulse]="selectionPulse()"
+    [class.code-language-dial__trigger--text]="!activeOption().icon"
     [style.--dial-accent]="activeOption().accent"
     [attr.aria-expanded]="open()"
     [attr.aria-label]="ariaLabel()"
     [title]="activeOption().label"
     (click)="toggle()"
   >
+    <span class="code-language-dial__trigger-bloom" aria-hidden="true"></span>
     @if (activeOption().icon) {
       <fa-icon class="code-language-dial__trigger-icon" [icon]="activeOption().icon" />
+    } @else {
+      <span class="code-language-dial__trigger-label">{{ activeOption().shortLabel }}</span>
     }
-    <span class="code-language-dial__trigger-label">{{ activeOption().shortLabel }}</span>
-    <span class="code-language-dial__trigger-glyph" aria-hidden="true">{{ open() ? '×' : '+' }}</span>
   </button>
 </div>

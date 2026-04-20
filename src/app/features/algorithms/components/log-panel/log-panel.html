@@ -1,13 +1,29 @@
 <div #scroll class="log">
   @if (entries().length === 0) {
-    <div class="log__empty">Run the scenario to start a chronological trace.</div>
+    <div class="log__empty">
+      <span class="log__empty-dot" aria-hidden="true"></span>
+      <span>Run the scenario to start a chronological trace.</span>
+    </div>
   } @else {
-    @for (entry of entries(); track entry.timestamp) {
-      <div class="log__entry">
-        <span class="log__marker" aria-hidden="true"></span>
-        <span class="log__step">STEP {{ entry.step }}</span>
+    <header class="log__head" aria-hidden="true">
+      <span class="log__head-kind">time ·</span>
+      <span class="log__head-step">step</span>
+      <span class="log__head-desc">event</span>
+    </header>
+    @for (entry of entries(); track entry.timestamp; let i = $index; let last = $last) {
+      <article class="log__entry" [class.log__entry--last]="last">
+        <span class="log__rail" aria-hidden="true"></span>
+        <span class="log__marker" aria-hidden="true">
+          @if (last) {
+            <span class="log__marker-pulse"></span>
+          }
+        </span>
+        <span class="log__step">
+          <span class="log__step-key">STEP</span>
+          <span class="log__step-value">{{ entry.step }}</span>
+        </span>
         <span class="log__desc">{{ entry.description }}</span>
-      </div>
+      </article>
     }
   }
 </div>
