@@ -26,7 +26,6 @@
 
   &:hover:not(.slider--disabled) {
     @include chrome.control-field-hover;
-    transform: translateY(-1px);
   }
 
   &:focus-within {
@@ -102,20 +101,29 @@
   transition: width 120ms var(--ease-out-quart);
 }
 
+/* Clean glowing-dot thumb — no dark border, uses layered accent box-shadow
+   for definition. Reads as a tiny "bulb of light" sitting on the rail. */
 .slider__thumb {
   position: absolute;
   top: 50%;
   left: var(--pct);
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
+  border: none;
   background:
-    radial-gradient(circle at 32% 32%, #ffffff 0%, rgba(255, 255, 255, 0.88) 42%, rgba(var(--chrome-accent-rgb), 0.84) 100%);
-  border: 2px solid rgba(10, 12, 18, 0.94);
+    radial-gradient(
+      circle at 34% 32%,
+      #ffffff 0%,
+      rgba(255, 255, 255, 0.92) 36%,
+      color-mix(in srgb, var(--accent) 68%, #ffffff) 100%
+    );
   transform: translate(-50%, -50%);
   box-shadow:
-    0 6px 18px rgba(var(--chrome-accent-rgb), 0.32),
-    0 0 0 6px rgba(var(--chrome-accent-rgb), 0);
+    0 0 0 0.5px rgba(var(--accent-rgb), 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(var(--accent-rgb), 0.42),
+    0 0 0 0 rgba(var(--accent-rgb), 0);
   pointer-events: none;
   transition:
     transform var(--duration-base) var(--ease-spring),
@@ -126,18 +134,27 @@
 .slider:hover:not(.slider--disabled) .slider__thumb {
   transform: translate(-50%, -50%) scale(1.08);
   box-shadow:
-    0 8px 22px rgba(var(--chrome-accent-rgb), 0.4),
-    0 0 0 6px rgba(var(--chrome-accent-rgb), 0.08);
+    0 0 0 0.5px rgba(var(--accent-rgb), 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.32),
+    0 0 14px rgba(var(--accent-rgb), 0.52),
+    0 0 0 5px rgba(var(--accent-rgb), 0.08);
 }
 
 .slider:focus-within .slider__thumb,
 .slider:active:not(.slider--disabled) .slider__thumb {
   transform: translate(-50%, -50%) scale(1.14);
   background:
-    radial-gradient(circle at 32% 32%, #ffffff 0%, rgba(255, 255, 255, 0.92) 38%, rgba(var(--chrome-accent-alt-rgb), 0.9) 100%);
+    radial-gradient(
+      circle at 34% 32%,
+      #ffffff 0%,
+      rgba(255, 255, 255, 0.94) 34%,
+      color-mix(in srgb, var(--chrome-accent-alt) 70%, #ffffff) 100%
+    );
   box-shadow:
-    0 8px 24px rgba(var(--chrome-accent-alt-rgb), 0.42),
-    0 0 0 8px rgba(var(--chrome-accent-alt-rgb), 0.12);
+    0 0 0 0.5px rgba(var(--chrome-accent-alt-rgb), 0.6),
+    0 2px 10px rgba(0, 0, 0, 0.34),
+    0 0 16px rgba(var(--chrome-accent-alt-rgb), 0.6),
+    0 0 0 6px rgba(var(--chrome-accent-alt-rgb), 0.12);
 }
 
 .slider input {

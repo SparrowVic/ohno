@@ -486,27 +486,31 @@
 
 .page__filter-stack {
   display: flex;
-  flex: 1 1 620px;
-  min-width: min(100%, 420px);
-  flex-direction: column;
-  align-items: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .page__filters {
-  display: grid;
-  width: 100%;
-  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 10px;
+  width: auto;
+  min-width: 0;
 }
 
-.page__filters > app-lab-multi-select,
-.page__filters > app-lab-difficulty-filter {
-  width: 100%;
+.page__filters > app-lab-multi-select {
+  /* Hard-locked width — the results label on the other side of the
+     filter bar changes text length when filters are applied, which
+     would otherwise cause this control to shrink/grow. */
+  flex: 0 0 240px;
 }
 
 .page__filters > app-lab-difficulty-filter {
-  margin-left: auto;
+  flex: 0 0 auto;
 }
 
 /* ============================================================================
@@ -566,16 +570,18 @@
   }
 
   .page__filter-stack {
-    min-width: 100%;
+    justify-content: flex-start;
+    width: 100%;
   }
 
   .page__filters {
-    grid-template-columns: 1fr;
-    align-items: stretch;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
   }
 
-  .page__filters > app-lab-difficulty-filter {
-    margin-left: 0;
+  .page__filters > app-lab-multi-select {
+    flex: 1 1 auto;
   }
 
   .page__stats {

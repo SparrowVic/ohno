@@ -1,14 +1,16 @@
 @use '../control-chrome' as chrome;
 
 :host {
-  display: block;
-  width: 100%;
+  display: inline-block;
   min-width: 0;
+  max-width: 100%;
 }
 
 .difficulty {
-  display: grid;
+  display: inline-grid;
   gap: 6px;
+  width: max-content;
+  max-width: 100%;
 
   &--disabled {
     opacity: 0.56;
@@ -24,14 +26,19 @@
 }
 
 .difficulty__options {
-  @include chrome.control-field(var(--radius-xl));
+  @include chrome.control-field(var(--control-radius));
 
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: repeat(var(--difficulty-count, 5), minmax(0, 1fr));
+  /* Each option is sized to accommodate the longest label comfortably —
+     all columns are equal width, but the group overall stays content-sized
+     (never stretches to fill the parent layout cell). */
+  grid-template-columns: repeat(var(--difficulty-count, 5), minmax(62px, auto));
   gap: 4px;
   padding: 4px;
+  width: max-content;
+  max-width: 100%;
 
   /* Magic indicator — slides under the active option. Tone comes from
      data-tone attribute so each difficulty animates to its own color. */
@@ -68,7 +75,7 @@
   transform: translateX(
     calc(var(--difficulty-index, 0) * (100% + 4px))
   );
-  border-radius: 999px;
+  border-radius: 8px;
   border: 0.5px solid rgba(var(--difficulty-tone-rgb), 0.3);
   background:
     linear-gradient(
@@ -81,8 +88,8 @@
     rgba(28, 32, 42, 0.98);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 10px 22px rgba(0, 0, 0, 0.24),
-    0 0 22px rgba(var(--difficulty-tone-rgb), 0.24);
+    0 6px 14px rgba(0, 0, 0, 0.2),
+    0 0 18px rgba(var(--difficulty-tone-rgb), 0.22);
   transition:
     transform 320ms var(--ease-spring),
     border-color 280ms var(--ease-soft),
@@ -93,7 +100,7 @@
 }
 
 .difficulty__option {
-  @include chrome.option-surface(999px);
+  @include chrome.option-surface(8px);
 
   position: relative;
   z-index: 1;
@@ -104,7 +111,7 @@
   padding: 0 12px;
   background: transparent;
   border-color: transparent;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   overflow: hidden;
 
   &:hover:not(:disabled):not(.difficulty__option--active) {
@@ -146,9 +153,19 @@
   letter-spacing: 0.04em;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 560px) {
+  /* On very small screens, allow the group to wrap into the line and shrink
+     slightly so it stays usable next to the results label. */
   .difficulty__options {
-    grid-template-columns: repeat(var(--difficulty-count, 5), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--difficulty-count, 5), minmax(54px, auto));
+  }
+
+  .difficulty__option {
+    padding: 0 9px;
+  }
+
+  .difficulty__option-label {
+    font-size: 10.5px;
   }
 }
 
