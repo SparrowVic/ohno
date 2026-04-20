@@ -107,15 +107,21 @@
   height: 22px;
   padding: 0 6px;
   border-radius: 999px;
-  border: 0.5px solid rgba(var(--chrome-accent-rgb), 0.26);
-  background: var(--brand-gradient-soft);
-  color: var(--chrome-accent-ink);
+  /* Lime badge — same semantic language as the dropdown checkboxes, so
+     "how many I've picked" is spoken in the same color everywhere. */
+  border: 0.5px solid rgba(var(--accent-rgb), 0.5);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, rgb(var(--accent-rgb)) 82%, #ffffff),
+    rgb(var(--accent-rgb))
+  );
+  color: #1a1f10;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.02em;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 0 14px rgba(var(--chrome-accent-rgb), 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 14px rgba(var(--accent-rgb), 0.42);
 }
 
 .multi-select__chevron {
@@ -456,11 +462,20 @@
     border-color var(--duration-fast) var(--ease-soft);
 }
 
-.multi-select__option--selected .multi-select__option-count,
+/* Hover: the row is being considered — use the chrome accent so
+   hover and selected read as distinct states. */
 .multi-select__option:hover .multi-select__option-count {
   border-color: rgba(var(--chrome-accent-rgb), 0.26);
   background: rgba(var(--chrome-accent-rgb), 0.14);
   color: var(--chrome-accent-strong);
+}
+
+/* Selected: lime wins — "picked" speaks the same color as the check
+   and the trigger count badge. Overrides hover when both apply. */
+.multi-select__option--selected .multi-select__option-count {
+  border-color: rgba(var(--accent-rgb), 0.42);
+  background: rgba(var(--accent-rgb), 0.16);
+  color: var(--accent-strong);
 }
 
 @keyframes multi-select-group-in {

@@ -65,7 +65,7 @@
 }
 
 .slider:focus-within .slider__value {
-  color: var(--chrome-accent-alt-strong);
+  color: var(--accent-strong);
 }
 
 .slider__track {
@@ -94,10 +94,18 @@
 
 .slider__fill {
   width: var(--pct);
-  background: var(--brand-gradient);
+  /* Lime accent matches the thumb — the filled portion of the track
+     represents the current value, so it should share the semantic
+     "this is the selected amount" color used elsewhere in controls. */
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, rgb(var(--accent-rgb)) 78%, #ffffff),
+    rgb(var(--accent-rgb)) 48%,
+    color-mix(in srgb, rgb(var(--accent-rgb)) 82%, rgb(var(--chrome-accent-alt-rgb)))
+  );
   box-shadow:
-    0 0 10px rgba(var(--chrome-accent-rgb), 0.44),
-    0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.22);
+    0 0 10px rgba(var(--accent-rgb), 0.5),
+    0 0 18px rgba(var(--accent-rgb), 0.22);
   transition: width 120ms var(--ease-out-quart);
 }
 
@@ -143,18 +151,11 @@
 .slider:focus-within .slider__thumb,
 .slider:active:not(.slider--disabled) .slider__thumb {
   transform: translate(-50%, -50%) scale(1.14);
-  background:
-    radial-gradient(
-      circle at 34% 32%,
-      #ffffff 0%,
-      rgba(255, 255, 255, 0.94) 34%,
-      color-mix(in srgb, var(--chrome-accent-alt) 70%, #ffffff) 100%
-    );
   box-shadow:
-    0 0 0 0.5px rgba(var(--chrome-accent-alt-rgb), 0.6),
+    0 0 0 0.5px rgba(var(--accent-rgb), 0.65),
     0 2px 10px rgba(0, 0, 0, 0.34),
-    0 0 16px rgba(var(--chrome-accent-alt-rgb), 0.6),
-    0 0 0 6px rgba(var(--chrome-accent-alt-rgb), 0.12);
+    0 0 18px rgba(var(--accent-rgb), 0.7),
+    0 0 0 6px rgba(var(--accent-rgb), 0.14);
 }
 
 .slider input {
