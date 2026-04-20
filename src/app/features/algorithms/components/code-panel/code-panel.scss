@@ -17,7 +17,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 10px;
   min-height: 30px;
   padding: 10px 10px 8px;
@@ -26,12 +26,9 @@
 }
 
 .code-toolbar__dial {
-  // TODO: move the language dial into a dedicated overlay/portal layer so it never risks clipping
-  // against inspector bounds on narrower layouts and doesn't need local stacking workarounds here.
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 4;
+  /* Dial escapes clipping via its own fixed-positioned fan layer, so
+     there's no need for absolute/z-index workarounds here. */
+  flex-shrink: 0;
 }
 
 .code-toolbar__copy {

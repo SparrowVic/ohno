@@ -3,6 +3,8 @@
   width: max-content;
   height: 30px;
   overflow: visible;
+  position: relative;
+  z-index: 0;
 }
 
 .code-language-dial {
@@ -12,49 +14,169 @@
   overflow: visible;
 }
 
+/* ============================================================================
+   FAN — portaled to <body> in ngAfterViewInit so it escapes all ancestor
+   containing blocks (side-panel backdrop-filter, algorithm-detail blur, etc).
+   Positioned as `fixed` at the trigger's viewport coords via JS on open.
+
+   Because the fan lives outside the component's view tree, we can't rely on
+   descendant selectors from `.code-language-dial`. Instead the fan carries
+   its own state class `.code-language-dial__fan--open`.
+   ============================================================================ */
+
 .code-language-dial__fan {
-  position: absolute;
-  inset: 0 auto auto 0;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 0;
   height: 0;
   pointer-events: none;
-  z-index: 2;
+  z-index: 2147483000;
+
+  /* Trigger geometry defaults — matched to the TS virtual dims */
+  --trigger-w: 64px;
+  --trigger-h: 30px;
+  --trigger-cx: calc(var(--trigger-w, 64px) / 2);
+  --trigger-cy: calc(var(--trigger-h, 30px) / 2);
 }
 
-.code-language-dial__trigger,
-.code-language-dial__item {
+/* ---------- Backdrop: frosted glass disc under the orbiting items ---------- */
+
+.code-language-dial__backdrop {
   position: absolute;
-  top: 0;
-  left: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  overflow: hidden;
-  isolation: isolate;
-  user-select: none;
+  top: var(--trigger-cy);
+  left: var(--trigger-cx);
+  width: 280px;
+  height: 280px;
+  transform: translate(-50%, -50%) scale(0.66);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(18, 22, 32, 0.52) 0%,
+      rgba(18, 22, 32, 0.32) 40%,
+      rgba(18, 22, 32, 0.1) 64%,
+      transparent 78%
+    );
+  backdrop-filter: blur(18px) saturate(122%);
+  -webkit-backdrop-filter: blur(18px) saturate(122%);
+  border: 0.5px solid rgba(255, 255, 255, 0.055);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 22px 44px rgba(0, 0, 0, 0.36);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.code-language-dial__fan--open .code-language-dial__backdrop {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ---------- Halo: dashed accent ring, rotates gently when open ------------- */
+
+.code-language-dial__halo {
+  position: absolute;
+  top: var(--trigger-cy);
+  left: var(--trigger-cx);
+  width: 210px;
+  height: 210px;
+  transform: translate(-50%, -50%) scale(0.6);
+  border-radius: 50%;
+  border: 1px dashed rgba(var(--chrome-accent-rgb, 154 140 255), 0.28);
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--chrome-accent-rgb, 154 140 255), 0.1) 0%,
+    transparent 62%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-language-dial__fan--open .code-language-dial__halo {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  animation: code-language-dial-halo-spin 14s linear infinite;
+}
+
+@keyframes code-language-dial-halo-spin {
+  from { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
+}
+
+/* ---------- Burst: bright ring that expands from the trigger ---------- */
+/* Plays once when the dial opens, like a flash of released energy as the
+   first card leaves the deck. */
+
+.code-language-dial__burst {
+  position: absolute;
+  top: var(--trigger-cy);
+  left: var(--trigger-cx);
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--chrome-accent, #9a8cff) 70%, #ffffff);
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--chrome-accent-alt-rgb, 76 227 255), 0.22) 0%,
+    rgba(var(--chrome-accent-rgb, 154 140 255), 0.12) 45%,
+    transparent 80%
+  );
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(0.4px);
+}
+
+.code-language-dial__fan--open .code-language-dial__burst {
+  animation: code-language-dial-burst 640ms cubic-bezier(0.18, 0.82, 0.28, 1) forwards;
+}
+
+@keyframes code-language-dial-burst {
+  0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; border-width: 2px; }
+  14%  { opacity: 0.95; }
+  40%  { opacity: 0.6; border-width: 1.2px; }
+  100% { transform: translate(-50%, -50%) scale(6.2); opacity: 0; border-width: 0.5px; }
+}
+
+/* ============================================================================
+   TRIGGER — pill in the toolbar
+   ============================================================================ */
 
 .code-language-dial__trigger {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 64px;
   height: 30px;
   padding: 0 12px;
+  border-radius: 999px;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  isolation: isolate;
+  user-select: none;
   background:
     radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.08), transparent 34%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.016)),
     rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.08);
   color: var(--text-secondary);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 0 0 1px rgba(255, 255, 255, 0.015);
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 180ms ease,
     box-shadow 220ms ease,
     background 220ms ease;
+  z-index: 2;
 }
 
 .code-language-dial__trigger::before {
@@ -88,12 +210,21 @@
 .code-language-dial__trigger:hover,
 .code-language-dial__trigger--open {
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--dial-accent, #54b7ff) 32%, rgba(255, 255, 255, 0.08));
+  border-color: color-mix(in srgb, var(--dial-accent, #54b7ff) 38%, rgba(255, 255, 255, 0.1));
   color: var(--text-primary);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 14%, transparent),
-    0 0 18px color-mix(in srgb, var(--dial-accent, #54b7ff) 16%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 18%, transparent),
+    0 0 22px color-mix(in srgb, var(--dial-accent, #54b7ff) 22%, transparent);
+}
+
+.code-language-dial__trigger--open {
+  transform: translateY(-1px) scale(0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 26%, transparent),
+    0 0 26px color-mix(in srgb, var(--dial-accent, #54b7ff) 34%, transparent),
+    0 0 0 6px rgba(255, 255, 255, 0.02);
 }
 
 .code-language-dial__trigger--pulse {
@@ -106,13 +237,12 @@
   transform: translateX(110%);
 }
 
-.code-language-dial__trigger:focus-visible,
-.code-language-dial__item:focus-visible {
+.code-language-dial__trigger:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 30%, transparent),
     0 0 0 4px rgba(255, 255, 255, 0.03),
-    0 0 22px color-mix(in srgb, var(--dial-accent, #54b7ff) 24%, transparent);
+    0 0 24px color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent);
 }
 
 .code-language-dial__trigger-label {
@@ -135,40 +265,62 @@
   z-index: 1;
   transform: translateY(-50%);
   color: color-mix(in srgb, var(--dial-accent, #54b7ff) 68%, white);
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 0.92;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.code-language-dial__trigger--open .code-language-dial__trigger-glyph {
+  transform: translateY(-50%) rotate(135deg);
+}
+
+/* ============================================================================
+   ITEMS — orbit around the trigger. Closed = crushed/hidden at center.
+   Open = slingshot out through a mid-waypoint, overshoots then settles.
+   ============================================================================ */
+
 .code-language-dial__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 44px;
   height: 44px;
   padding: 0;
+  border-radius: 999px;
+  border: none;
+  overflow: hidden;
+  isolation: isolate;
+  user-select: none;
   background:
-    radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.72), transparent 34%),
+    radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.7), transparent 34%),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 20%, rgba(245, 248, 255, 0.92)),
-      rgba(225, 232, 244, 0.9)
+      color-mix(in srgb, var(--dial-accent, #54b7ff) 22%, rgba(245, 248, 255, 0.94)),
+      rgba(226, 234, 248, 0.92)
     ),
     rgba(228, 234, 244, 0.92);
-  border-color: rgba(255, 255, 255, 0.34);
-  color: rgba(13, 18, 30, 0.94);
+  color: rgba(12, 16, 28, 0.95);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.62),
-    0 10px 24px rgba(0, 0, 0, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 18px color-mix(in srgb, var(--dial-accent, #54b7ff) 14%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.66),
+    0 12px 26px rgba(0, 0, 0, 0.22),
+    0 0 22px color-mix(in srgb, var(--dial-accent, #54b7ff) 18%, transparent);
   opacity: 0;
-  transform: translate(0, 0) scale(0.38);
+  transform: translate(0, 0) scale(0.22) rotate(var(--dial-spin, -180deg));
   pointer-events: none;
+  cursor: pointer;
+  transform-origin: center;
+  backface-visibility: hidden;
   transition:
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 220ms ease,
-    border-color 180ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease,
     box-shadow 220ms ease,
-    background 220ms ease;
+    background 220ms ease,
+    filter 220ms ease;
 }
 
 .code-language-dial__item::before {
@@ -180,11 +332,11 @@
     linear-gradient(
       150deg,
       transparent 10%,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 24%, transparent) 40%,
-      rgba(255, 255, 255, 0.3) 56%,
+      color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent) 40%,
+      rgba(255, 255, 255, 0.32) 56%,
       transparent 78%
     );
-  opacity: 0.58;
+  opacity: 0.6;
   transform: translateX(-110%);
   transition:
     transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -205,72 +357,115 @@
 }
 
 .code-language-dial__item:hover {
-  border-color: color-mix(in srgb, var(--dial-accent, #54b7ff) 34%, rgba(255, 255, 255, 0.08));
   background:
     radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.9), transparent 36%),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, rgba(248, 250, 255, 0.96)),
+      color-mix(in srgb, var(--dial-accent, #54b7ff) 30%, rgba(248, 250, 255, 0.97)),
       rgba(232, 238, 248, 0.94)
     ),
     rgba(236, 241, 249, 0.96);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 14px 28px rgba(0, 0, 0, 0.2),
-    0 0 26px color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent);
-  transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.08);
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 18px 34px rgba(0, 0, 0, 0.26),
+    0 0 28px color-mix(in srgb, var(--dial-accent, #54b7ff) 34%, transparent);
+  transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.1);
 }
 
 .code-language-dial__item:hover::before {
-  opacity: 0.72;
-  transform: translateX(96%);
+  opacity: 0.84;
+  transform: translateX(100%);
 }
 
-.code-language-dial--open .code-language-dial__item {
-  opacity: 1;
-  transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1);
+.code-language-dial__item:active:not(.code-language-dial__item--disabled) {
+  transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.02);
+}
+
+.code-language-dial__item:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 30%, transparent),
+    0 0 0 4px rgba(255, 255, 255, 0.03),
+    0 0 24px color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent);
+}
+
+.code-language-dial__fan--open .code-language-dial__item {
   pointer-events: auto;
-  animation: code-language-dial-deploy 520ms cubic-bezier(0.18, 0.88, 0.24, 1) both;
+  will-change: transform, filter, opacity;
+  animation: code-language-dial-deal 520ms cubic-bezier(0.16, 0.84, 0.22, 1) both;
+  animation-delay: var(--dial-delay, 0ms);
 }
 
 .code-language-dial__item--disabled {
   color: rgba(78, 88, 108, 0.88);
-  border-color: rgba(255, 255, 255, 0.22);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.42),
     0 6px 16px rgba(0, 0, 0, 0.14);
-  opacity: 0;
+  cursor: not-allowed;
+  filter: saturate(0.78);
 }
 
 .code-language-dial__item--disabled:hover {
-  border-color: rgba(255, 255, 255, 0.28);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.48),
     0 8px 18px rgba(0, 0, 0, 0.16);
-  transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.04);
+  transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.02);
 }
 
 .code-language-dial__item--disabled::before {
-  opacity: 0.2;
+  opacity: 0.22;
 }
 
-@keyframes code-language-dial-deploy {
+/* Deal — a single continuous fling from the trigger to the orbit slot.
+   No intermediate translate keyframe (hence no mid-pause). Motion blur
+   fades out as the card slows down. After landing it micro-bounces into
+   place for tactile weight.
+   Segments are tuned to keep velocity continuous so the eye reads ONE
+   smooth throw, like a dealer flicking a card from the deck.            */
+@keyframes code-language-dial-deal {
+  /* 0%  Crushed at the deck, flung backwards with heavy spin and blur.
+          Opacity 0 — card hasn't been "released" yet.                    */
   0% {
-    transform: translate(0, 0) scale(0.3);
+    transform: translate(0, 0) scale(0.2) rotate(var(--dial-spin, -180deg));
     opacity: 0;
+    filter: blur(1.6px);
   }
 
-  42% {
-    transform: translate(var(--dial-via-x, 0), var(--dial-via-y, 0)) scale(1.03);
+  /* 9%  Card leaves the dealer's hand — snaps into view.                 */
+  9% {
+    opacity: 1;
+    filter: blur(1.2px);
+  }
+
+  /* 38% Peak flight. Translate is already past halfway because of the
+          ease-out curve (cubic-bezier 0.16 0.84 …). Blur resolves.       */
+  38% {
+    filter: blur(0.3px);
+  }
+
+  /* 70% Lands at the orbit slot with a tiny overshoot — card smacks the
+          table then rebounds a hair. Rotation passes through 0 with a
+          small counter-flick.                                            */
+  70% {
+    transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.12) rotate(10deg);
+    filter: blur(0);
     opacity: 1;
   }
 
+  /* 84% Rebound: tiny counter-spin & shrink — the "thump" beat.          */
+  84% {
+    transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(0.97) rotate(-4deg);
+  }
+
+  /* 100% Settle to the resting slot.                                     */
   100% {
-    transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1);
+    transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1) rotate(0);
     opacity: 1;
+    filter: blur(0);
   }
 }
 
+/* Trigger highlight pulse on selection */
 @keyframes code-language-dial-pulse {
   0% {
     box-shadow:
@@ -280,9 +475,9 @@
 
   45% {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 24%, transparent),
-      0 0 24px color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent);
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 30%, transparent),
+      0 0 28px color-mix(in srgb, var(--dial-accent, #54b7ff) 36%, transparent);
   }
 
   100% {
@@ -295,9 +490,19 @@
 @media (prefers-reduced-motion: reduce) {
   .code-language-dial__trigger,
   .code-language-dial__trigger::before,
-  .code-language-dial__item {
-    transition: none;
+  .code-language-dial__item,
+  .code-language-dial__item::before,
+  .code-language-dial__backdrop,
+  .code-language-dial__halo,
+  .code-language-dial__burst {
     animation: none !important;
+    transition: opacity 120ms linear !important;
+  }
+
+  .code-language-dial__fan--open .code-language-dial__item {
+    opacity: 1;
+    filter: none;
+    transform: translate(var(--dial-x, 0), var(--dial-y, 0));
   }
 }
 
@@ -313,7 +518,17 @@
   }
 
   .code-language-dial__item {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .code-language-dial__backdrop {
+    width: 240px;
+    height: 240px;
+  }
+
+  .code-language-dial__halo {
+    width: 180px;
+    height: 180px;
   }
 }
