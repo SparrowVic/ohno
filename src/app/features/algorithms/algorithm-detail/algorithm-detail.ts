@@ -188,7 +188,15 @@ export class AlgorithmDetail {
     return null;
   });
 
-  readonly activeLineNumber = computed<number | null>(() => this.currentSnapshot()?.activeCodeLine ?? null);
+  readonly activeLineNumber = computed<number | null>(() => {
+    // Don't preselect a code line before the user has stepped — the
+    // engine emits an initial snapshot at step 0 which would otherwise
+    // leave a line highlighted as if it were already executing.
+    if (this.currentStep() === 0) {
+      return null;
+    }
+    return this.currentSnapshot()?.activeCodeLine ?? null;
+  });
   readonly legendItems = computed(() => this.config()?.legendItems(this.variantSig()) ?? []);
   readonly codeLines = computed(() => this.config()?.codeLines ?? []);
   readonly codeRegions = computed(() => this.config()?.codeRegions ?? []);

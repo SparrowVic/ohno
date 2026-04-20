@@ -114,6 +114,22 @@
   z-index: 1;
 }
 
+/* Vertical separator between the line-number gutter (line numbers + fold
+   toggles) and the code content — mirrors the gutter/body divider used
+   in VS Code and JetBrains editors. Sits just inside the 66px padding
+   where code actually starts. */
+.code-render::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .code-empty {
   padding: 20px 16px;
   text-align: center;
@@ -203,10 +219,25 @@
   background: transparent;
   color: var(--text-tertiary);
   transform: translateY(-50%);
+  /* Hidden by default — IDE-style: the toggle only reveals on hover
+     of the line (or keyboard focus), unless the region is currently
+     collapsed, in which case it stays visible to signal there's
+     folded code to expand. */
+  opacity: 0;
+  pointer-events: none;
   transition:
+    opacity 140ms ease,
     color 140ms ease,
     background 140ms ease,
     transform 140ms ease;
+}
+
+:host ::ng-deep .code-panel__render-line:hover .code-panel__fold-toggle,
+:host ::ng-deep .code-panel__render-line--collapsed .code-panel__fold-toggle,
+:host ::ng-deep .code-render--gutter-hover .code-panel__fold-toggle,
+:host ::ng-deep .code-panel__fold-toggle:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 :host ::ng-deep .code-panel__fold-toggle:hover {

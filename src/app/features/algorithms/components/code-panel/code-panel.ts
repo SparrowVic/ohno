@@ -60,6 +60,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   );
   protected readonly hasLines = signal(false);
   protected readonly copied = signal(false);
+  protected readonly gutterHover = signal(false);
   protected readonly selectedLanguage = signal<CodeLanguage>('typescript');
   protected readonly availableLanguages = computed<readonly CodeLanguageDialOption[]>(() => {
     return buildAvailableLanguageOptions(this.variantMap());
@@ -67,6 +68,12 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   protected readonly activeVariant = computed<CodeVariant>(() => {
     return resolveActiveVariant(this.variantMap(), this.selectedLanguage());
   });
+
+  // Width of the line-number + fold-toggle gutter column in pixels.
+  // Matches the `left: 60px` separator and the 66px content padding in
+  // code-panel.scss. When the cursor sits inside this strip, we reveal
+  // every available fold toggle at once.
+  private static readonly GUTTER_WIDTH_PX = 60;
 
   private renderVersion = 0;
   private lastAppliedActiveLine: number | null = null;
@@ -142,6 +149,26 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
       clearTimeout(this.copyResetTimer);
     }
     this.copyResetTimer = setTimeout(() => this.copied.set(false), 1400);
+  }
+
+  protected onRenderMouseMove(event: MouseEvent): void {
+    const root = this.renderRoot()?.nativeElement;
+    if (!root) {
+      return;
+    }
+    const rect = root.getBoundingClientRect();
+    const xWithinRender = event.clientX - rect.left;
+    const inGutter =
+      xWithinRender >= 0 && xWithinRender < CodePanel.GUTTER_WIDTH_PX;
+    if (inGutter !== this.gutterHover()) {
+      this.gutterHover.set(inGutter);
+    }
+  }
+
+  protected onRenderMouseLeave(): void {
+    if (this.gutterHover()) {
+      this.gutterHover.set(false);
+    }
   }
 
   protected onRenderClick(event: MouseEvent): void {

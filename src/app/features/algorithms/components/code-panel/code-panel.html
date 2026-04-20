@@ -16,7 +16,10 @@
       <div
         #renderRoot
         class="code-render"
+        [class.code-render--gutter-hover]="gutterHover()"
         (click)="onRenderClick($event)"
+        (mousemove)="onRenderMouseMove($event)"
+        (mouseleave)="onRenderMouseLeave()"
         [innerHTML]="highlightedHtml()"
       ></div>
     </div>
