@@ -4,7 +4,19 @@ export interface LegendItem {
   readonly opacity?: number;
 }
 
-export type CodeLanguage = 'typescript' | 'python' | 'csharp' | 'java' | 'cpp' | 'plaintext';
+export type CodeLanguage =
+  | 'typescript'
+  | 'javascript'
+  | 'python'
+  | 'csharp'
+  | 'java'
+  | 'cpp'
+  | 'go'
+  | 'rust'
+  | 'swift'
+  | 'php'
+  | 'kotlin'
+  | 'plaintext';
 export type CodeRegionKind = 'type' | 'interface' | 'function' | 'method' | 'helper' | 'block';
 
 export type CodeTokenKind = 'text' | 'kw' | 'fn' | 'str' | 'num' | 'cm' | 'op';

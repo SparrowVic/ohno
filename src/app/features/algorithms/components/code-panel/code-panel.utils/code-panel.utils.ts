@@ -9,10 +9,16 @@ import {
 
 const LANGUAGE_LABELS: Record<CodeLanguage, string> = {
   typescript: 'TypeScript',
+  javascript: 'JavaScript',
   python: 'Python',
   csharp: 'C#',
   java: 'Java',
   cpp: 'C/C++',
+  go: 'Go',
+  rust: 'Rust',
+  swift: 'Swift',
+  php: 'PHP',
+  kotlin: 'Kotlin',
   plaintext: 'Text',
 };
 
@@ -59,13 +65,17 @@ export function buildVariantMap(options: {
 export function buildAvailableLanguageOptions(
   variants: Record<CodeLanguage, CodeVariant>,
 ): readonly CodeLanguageDialOption[] {
+  const implementedLanguages = new Set<CodeLanguage>(
+    Object.values(variants).map((variant) => variant.language),
+  );
+
   return [
     ...Object.values(variants).map((variant) => ({
       id: variant.language,
       language: variant.language,
       label: LANGUAGE_LABELS[variant.language],
     })),
-    ...SUGGESTED_LANGUAGE_OPTIONS,
+    ...SUGGESTED_LANGUAGE_OPTIONS.filter((option) => !implementedLanguages.has(option.id as CodeLanguage)),
   ];
 }
 

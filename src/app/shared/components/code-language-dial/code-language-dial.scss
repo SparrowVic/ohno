@@ -34,10 +34,10 @@
   z-index: 2147483000;
 
   /* Trigger geometry defaults — matched to the TS virtual dims */
-  --trigger-w: 64px;
-  --trigger-h: 30px;
-  --trigger-cx: calc(var(--trigger-w, 64px) / 2);
-  --trigger-cy: calc(var(--trigger-h, 30px) / 2);
+  --trigger-w: 32px;
+  --trigger-h: 32px;
+  --trigger-cx: calc(var(--trigger-w, 32px) / 2);
+  --trigger-cy: calc(var(--trigger-h, 32px) / 2);
 }
 
 /* ---------- Backdrop: frosted glass disc under the orbiting items ---------- */

@@ -61,6 +61,32 @@ describe('code-panel.utils', () => {
     });
   });
 
+  it('buildAvailableLanguageOptions omits coming-soon duplicates for implemented languages', () => {
+    const variants = buildVariantMap({
+      inputVariants: {
+        javascript: {
+          language: 'javascript',
+          lines: sampleLines,
+          regions: [],
+          source: 'function answer() { return 42; }',
+        },
+      },
+      fallbackLanguage: 'typescript',
+      fallbackLines: sampleLines,
+      fallbackRegions: [],
+    });
+
+    const options = buildAvailableLanguageOptions(variants);
+    const javascriptOptions = options.filter((option) => option.id === 'javascript');
+
+    expect(javascriptOptions).toHaveLength(1);
+    expect(javascriptOptions[0]).toMatchObject({
+      id: 'javascript',
+      language: 'javascript',
+      label: 'JavaScript',
+    });
+  });
+
   it('buildVariantIdentity and resolveActiveCodeLine respect regions and highlight maps', () => {
     const variant = {
       language: 'typescript' as const,

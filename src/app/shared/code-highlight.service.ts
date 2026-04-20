@@ -2,8 +2,14 @@ import { Injectable } from '@angular/core';
 import { transformerRemoveLineBreak } from '@shikijs/transformers';
 import csharp from '@shikijs/langs/csharp';
 import cpp from '@shikijs/langs/cpp';
+import go from '@shikijs/langs/go';
+import javascript from '@shikijs/langs/javascript';
 import java from '@shikijs/langs/java';
+import kotlin from '@shikijs/langs/kotlin';
+import php from '@shikijs/langs/php';
 import python from '@shikijs/langs/python';
+import rust from '@shikijs/langs/rust';
+import swift from '@shikijs/langs/swift';
 import typescript from '@shikijs/langs/typescript';
 import vitesseDark from '@shikijs/themes/vitesse-dark';
 import { createHighlighterCore, type ShikiTransformer } from 'shiki/core';
@@ -56,7 +62,7 @@ export class CodeHighlightService {
     this.highlighterPromise ??= createHighlighterCore({
       engine: createJavaScriptRegexEngine(),
       themes: [vitesseDark],
-      langs: [typescript, python, csharp, java, cpp],
+      langs: [typescript, javascript, python, csharp, java, cpp, go, rust, swift, php, kotlin],
       warnings: false,
     });
 

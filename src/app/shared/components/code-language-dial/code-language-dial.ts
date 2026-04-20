@@ -86,8 +86,8 @@ const LANGUAGE_DIAL_META: Record<
 // Fan dimensions (kept in sync with CSS). The items orbit these virtual
 // trigger dimensions — when the real trigger shrinks at small widths the
 // SCSS falls back to the same defaults so the math stays predictable.
-const TRIGGER_VIRTUAL_WIDTH = 64;
-const TRIGGER_VIRTUAL_HEIGHT = 30;
+const TRIGGER_VIRTUAL_WIDTH = 32;
+const TRIGGER_VIRTUAL_HEIGHT = 32;
 const ITEM_SIZE = 44;
 const DIAL_RADIUS = 96;
 // Dealer-throw cadence: first card flicks out almost immediately, each
