@@ -12,8 +12,6 @@
 >
   <span class="card__wash" [ngStyle]="washStyle()" aria-hidden="true"></span>
   <span class="card__blob card__blob--primary" [ngStyle]="primaryBlobStyle()" aria-hidden="true"></span>
-  <span class="card__corner card__corner--tl" aria-hidden="true"></span>
-  <span class="card__corner card__corner--br" aria-hidden="true"></span>
   @if (showShader()) {
     <app-shader-card-effect
       class="card__shader"

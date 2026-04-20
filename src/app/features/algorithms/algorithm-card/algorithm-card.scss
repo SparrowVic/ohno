@@ -3,13 +3,10 @@
 }
 
 /* ============================================================================
-   ALGORITHM CARD — bold, cinematic. Layered effects:
-   - Conic animated gradient border (spinning brand loop on hover)
-   - Corner brackets (IDE/terminal flavour) that snap inward on hover
-   - Mouse-tracked shine via CSS radial gradient (static but rich)
-   - Dramatic -6px lift with double-layer glow
-   - Gradient-text title that morphs on hover
-   - CTA arrow that slides out
+   ALGORITHM CARD — cinematic but restrained. A single radial accent-wash
+   anchored to the top-right gives each card a "mood corner" that matches
+   its category color; hovering intensifies the corner and adds a soft
+   outer glow. No conic border spin, no corner brackets — quiet depth.
    ============================================================================ */
 
 .card {
@@ -19,61 +16,40 @@
   gap: 13px;
   min-height: 100%;
   padding: 18px 18px 16px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
   background:
-    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(var(--card-accent-rgb, 199 229 106) / 0.08), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012)),
+    /* Subtle accent glow anchored to top-right corner (the "mood corner") */
+    radial-gradient(
+      ellipse 80% 70% at 100% 0%,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.1),
+      transparent 58%
+    ),
+    /* Gentle top highlight */
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.006) 40%, transparent 80%),
     var(--surface-2);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
     var(--elevation-1);
   overflow: hidden;
   isolation: isolate;
-  transform-style: preserve-3d;
   transition:
-    transform 380ms var(--ease-out-expo),
+    transform 360ms var(--ease-out-expo),
     border-color var(--duration-base) var(--ease-soft),
     background var(--duration-base) var(--ease-soft),
     box-shadow var(--duration-slow) var(--ease-out-expo);
 }
 
-/* Conic rotating brand border — animated via @property --brand-angle */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: conic-gradient(
-    from var(--brand-angle, 0deg),
-    transparent 0%,
-    rgba(var(--chrome-accent-rgb), 0.6) 14%,
-    rgba(var(--chrome-accent-alt-rgb), 0.85) 28%,
-    rgba(var(--accent-rgb), 0.7) 42%,
-    transparent 56%,
-    transparent 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000, #000) content-box,
-    linear-gradient(#000, #000);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-soft);
-  pointer-events: none;
-  z-index: 3;
-}
-
-/* Mouse-tracked shine (uses static radial — looks like rich glass) */
+/* Top-center mouse shine — kept as the only hover ornament. It fades in
+   softly to signal the card is alive without competing with the accent. */
 .card::after {
   content: '';
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse 60% 50% at 50% -10%,
-    rgba(255, 255, 255, 0.09),
-    transparent 50%
+    ellipse 70% 40% at 50% -10%,
+    rgba(255, 255, 255, 0.08),
+    transparent 60%
   );
   opacity: 0;
   transition: opacity var(--duration-base) var(--ease-soft);
@@ -81,34 +57,7 @@
   z-index: 1;
 }
 
-/* Corner brackets — subtle IDE-style accents */
-.card__corner {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  z-index: 2;
-  transition:
-    inset var(--duration-base) var(--ease-out-expo),
-    border-color var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart);
-}
-
-.card__corner--tl {
-  inset: 10px auto auto 10px;
-  border-top: 1.5px solid rgba(var(--card-accent-rgb, 199 229 106), 0.5);
-  border-left: 1.5px solid rgba(var(--card-accent-rgb, 199 229 106), 0.5);
-  border-top-left-radius: 7px;
-}
-
-.card__corner--br {
-  inset: auto 10px 10px auto;
-  border-bottom: 1.5px solid rgba(var(--chrome-accent-alt-rgb), 0.5);
-  border-right: 1.5px solid rgba(var(--chrome-accent-alt-rgb), 0.5);
-  border-bottom-right-radius: 7px;
-}
-
-.card > :not(.card__wash):not(.card__blob):not(.card__shader):not(.card__corner) {
+.card > :not(.card__wash):not(.card__blob):not(.card__shader) {
   position: relative;
   z-index: 2;
 }
@@ -125,30 +74,31 @@
   inset: 0;
   overflow: hidden;
   border-radius: inherit;
-  clip-path: inset(0 round 20px);
+  clip-path: inset(0 round 18px);
 }
 
+/* Category-colored wash — diagonal tint sweep, very subtle */
 .card__wash {
   inset: 0;
   background:
     linear-gradient(
       145deg,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.09),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 34%,
-      transparent 58%,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.03) 100%
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.08),
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.03) 36%,
+      transparent 62%
     );
   opacity: 1;
   transition: opacity var(--duration-base) var(--ease-soft);
 }
 
+/* Soft blob — the "ambient mood" of the card, in the category color */
 .card__blob {
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  filter: blur(26px);
-  opacity: 0.95;
+  filter: blur(28px);
+  opacity: 0.85;
   transition:
-    transform 540ms var(--ease-out-expo),
+    transform 520ms var(--ease-out-expo),
     opacity var(--duration-base) var(--ease-soft);
 }
 
@@ -159,32 +109,30 @@
   height: var(--card-blob-1-height, 180px);
   background: radial-gradient(
     ellipse at center,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.34) 0%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.16) 36%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.06) 58%,
-    transparent 80%
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.26) 0%,
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.12) 36%,
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 60%,
+    transparent 82%
   );
 }
 
-/* ---- HOVER — full spectacle ---- */
+/* ---- HOVER ---- */
 
 .card:hover {
-  transform: translateY(-6px);
-  border-color: transparent;
+  transform: translateY(-5px);
+  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.32);
   background:
-    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(var(--card-accent-rgb, 199 229 106) / 0.16), transparent 62%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.018)),
+    radial-gradient(
+      ellipse 90% 75% at 100% 0%,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.22),
+      transparent 62%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012) 40%, transparent 80%),
     var(--surface-3);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 28px 56px rgba(0, 0, 0, 0.44),
-    0 0 36px rgb(var(--card-accent-rgb, 199 229 106) / 0.2),
-    0 0 24px rgba(var(--chrome-accent-alt-rgb), 0.12);
-}
-
-.card:hover::before {
-  opacity: 1;
-  animation: brand-angle-spin 4s linear infinite;
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 22px 44px rgba(0, 0, 0, 0.38),
+    0 0 28px rgb(var(--card-accent-rgb, 199 229 106) / 0.18);
 }
 
 .card:hover::after {
@@ -192,51 +140,34 @@
 }
 
 .card:hover .card__wash {
-  opacity: 1;
+  opacity: 1.1;
 }
 
 .card:hover .card__blob--primary {
-  transform: translate(calc(-50% + 14px), calc(-50% + 8px)) scale(1.14);
+  transform: translate(calc(-50% + 10px), calc(-50% + 6px)) scale(1.1);
   opacity: 1;
-}
-
-.card:hover .card__corner--tl {
-  inset: 7px auto auto 7px;
-  border-color: rgb(var(--card-accent-rgb, 199 229 106));
-  box-shadow: 0 0 10px rgb(var(--card-accent-rgb, 199 229 106) / 0.7);
-}
-
-.card:hover .card__corner--br {
-  inset: auto 7px 7px auto;
-  border-color: var(--chrome-accent-alt-strong);
-  box-shadow: 0 0 10px rgba(var(--chrome-accent-alt-rgb), 0.7);
 }
 
 .card:focus-visible {
   outline: none;
   border-color: transparent;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
     var(--ring-focus),
     var(--elevation-2);
 }
 
-.card:focus-visible::before {
-  opacity: 1;
-  animation: brand-angle-spin 3s linear infinite;
-}
-
 .card:active {
-  transform: translateY(-3px) scale(0.996);
+  transform: translateY(-2px) scale(0.997);
 }
 
 .card--disabled {
-  filter: saturate(0.78);
+  filter: saturate(0.8);
   opacity: 0.88;
 }
 
 .card--disabled:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
 /* ---- EYEBROW ---- */
@@ -251,16 +182,10 @@
   gap: 10px;
 }
 
-.card__eyebrow {
-  position: relative;
-  padding-left: 20px;
-  margin-top: 2px;
-}
-
 .card__section {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -276,8 +201,8 @@
   border-radius: 999px;
   background: rgb(var(--card-accent-rgb, 199 229 106));
   box-shadow:
-    0 0 8px rgb(var(--card-accent-rgb, 199 229 106) / 0.7),
-    0 0 14px rgb(var(--card-accent-rgb, 199 229 106) / 0.35);
+    0 0 6px rgb(var(--card-accent-rgb, 199 229 106) / 0.6),
+    0 0 12px rgb(var(--card-accent-rgb, 199 229 106) / 0.28);
   transition:
     box-shadow var(--duration-base) var(--ease-out-quart),
     transform var(--duration-base) var(--ease-spring);
@@ -289,9 +214,9 @@
 
 .card:hover .card__section::before {
   box-shadow:
-    0 0 14px rgb(var(--card-accent-rgb, 199 229 106)),
-    0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.5);
-  transform: scale(1.4);
+    0 0 10px rgb(var(--card-accent-rgb, 199 229 106) / 0.9),
+    0 0 18px rgb(var(--card-accent-rgb, 199 229 106) / 0.4);
+  transform: scale(1.25);
 }
 
 /* ---- TITLE ---- */
@@ -300,8 +225,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-left: 6px;
-  padding-right: 6px;
 }
 
 .card__title-row {
@@ -316,7 +239,9 @@
   color: var(--text-primary);
   font-weight: 700;
   text-wrap: balance;
-  transition: transform var(--duration-base) var(--ease-out-quart);
+  transition:
+    color var(--duration-base) var(--ease-soft),
+    transform var(--duration-base) var(--ease-out-quart);
 }
 
 .card:hover .card__name {
@@ -325,15 +250,12 @@
       100deg,
       var(--text-primary) 0%,
       var(--text-primary) 56%,
-      rgb(var(--card-accent-rgb, 199 229 106)) 92%,
-      var(--chrome-accent-alt-strong) 108%
+      rgb(var(--card-accent-rgb, 199 229 106)) 110%
     );
-  background-size: 180% 100%;
+  background-size: 160% 100%;
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
-  animation: brand-text-flow 6s linear infinite;
-  transform: translateX(1px);
 }
 
 .card__desc {
@@ -353,19 +275,17 @@
   gap: 14px;
   min-height: 120px;
   padding: 14px;
-  border-radius: 16px;
-  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.22);
+  border-radius: 14px;
+  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.18);
   background:
     linear-gradient(
       var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.16),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.07) 60%,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.14),
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.06) 58%,
       rgba(255, 255, 255, 0.02)
     ),
-    rgba(255, 255, 255, 0.03);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   overflow: hidden;
   transition:
     border-color var(--duration-base) var(--ease-soft),
@@ -373,11 +293,10 @@
 }
 
 .card:hover .card__preview {
-  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.42);
+  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.36);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 0 26px rgb(var(--card-accent-rgb, 199 229 106) / 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.12);
 }
 
 .card__preview-art {
@@ -398,7 +317,7 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(
     circle,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.14),
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
     transparent 72%
   );
   pointer-events: none;
@@ -406,7 +325,7 @@
 }
 
 .card:hover .card__preview::before {
-  transform: translate(calc(-50% - 14px), -50%);
+  transform: translate(calc(-50% - 12px), -50%);
 }
 
 .card__preview::after {
@@ -414,8 +333,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: var(--card-grid-size, 20px) var(--card-grid-size, 20px);
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 100%);
@@ -426,8 +345,8 @@
   background:
     linear-gradient(
       var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.08),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 62%,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.06),
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.03) 62%,
       rgba(255, 255, 255, 0.02)
     ),
     rgba(255, 255, 255, 0.02);
@@ -436,71 +355,41 @@
 /* ---- INSANE VARIANT ---- */
 
 .card--insane .card__preview {
-  border-color: rgb(var(--card-accent-rgb, 255 138 66) / 0.26);
+  border-color: rgb(255 138 66 / 0.22);
   background:
     linear-gradient(
       var(--card-preview-angle, 168deg),
-      rgb(255 138 66 / 0.14),
-      rgb(255 168 74 / 0.1) 34%,
-      rgb(255 214 120 / 0.07) 64%,
+      rgb(255 138 66 / 0.12),
+      rgb(255 168 74 / 0.08) 34%,
+      rgb(255 214 120 / 0.06) 64%,
       rgba(255, 255, 255, 0.02)
     ),
-    rgba(255, 255, 255, 0.03);
+    rgba(255, 255, 255, 0.025);
 }
 
 .card--insane .card__preview::before {
   background: radial-gradient(
     circle,
-    rgb(255 244 196 / 0.2),
-    rgb(255 148 66 / 0.12) 42%,
+    rgb(255 244 196 / 0.18),
+    rgb(255 148 66 / 0.1) 42%,
     transparent 72%
   );
 }
 
 .card--insane:hover {
+  border-color: rgb(255 138 66 / 0.34);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 28px 56px rgba(0, 0, 0, 0.48),
-    0 0 36px rgb(255 138 66 / 0.26),
-    0 0 24px rgb(255 180 90 / 0.12);
-}
-
-.card--insane::before {
-  background: conic-gradient(
-    from var(--brand-angle, 0deg),
-    transparent 0%,
-    rgba(255 138 66 / 0.8) 14%,
-    rgba(255 180 90 / 0.9) 28%,
-    rgba(255 214 120 / 0.7) 42%,
-    transparent 56%,
-    transparent 100%
-  );
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 22px 44px rgba(0, 0, 0, 0.42),
+    0 0 30px rgb(255 138 66 / 0.22);
 }
 
 .card--insane .card__blob--primary {
-  opacity: 0.2;
+  opacity: 0.22;
 }
 
 .card--insane:not(.card--insane-active) .card__blob--primary {
   opacity: 0.14;
-}
-
-.card--insane .card__corner--tl {
-  border-color: rgba(255 138 66 / 0.6);
-}
-
-.card--insane .card__corner--br {
-  border-color: rgba(255 214 120 / 0.6);
-}
-
-.card--insane:hover .card__corner--tl {
-  border-color: rgb(255 174 88);
-  box-shadow: 0 0 10px rgb(255 138 66 / 0.7);
-}
-
-.card--insane:hover .card__corner--br {
-  border-color: rgb(255 224 170);
-  box-shadow: 0 0 10px rgb(255 214 120 / 0.7);
 }
 
 .card__preview-meta {
@@ -528,17 +417,16 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding: 11px 13px;
-  border-radius: 14px;
-  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.14);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.008)),
-    rgba(255, 255, 255, 0.022);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.006)),
+    rgba(255, 255, 255, 0.018);
   overflow: hidden;
   transition:
     border-color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
-    transform var(--duration-base) var(--ease-out-quart);
+    background var(--duration-base) var(--ease-soft);
 }
 
 .card__metric::before {
@@ -549,7 +437,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.55) 50%,
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.5) 50%,
     transparent
   );
   opacity: 0;
@@ -561,14 +449,14 @@
 }
 
 .card:hover .card__metric {
-  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.26);
+  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.22);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
-    rgba(255, 255, 255, 0.028);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    rgba(255, 255, 255, 0.024);
 }
 
 .card:hover .card__metric::before {
-  opacity: 0.8;
+  opacity: 0.75;
   transform: scaleX(1);
 }
 
@@ -612,48 +500,30 @@
 .card__cta {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px 6px 14px;
-  border-radius: 999px;
-  border: 0.5px solid rgba(var(--accent-rgb), 0.26);
-  background:
-    linear-gradient(135deg, rgba(var(--accent-rgb), 0.16), rgba(var(--chrome-accent-alt-rgb), 0.08)),
-    rgba(255, 255, 255, 0.02);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  gap: 5px;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent-strong);
   white-space: nowrap;
   transition:
     color var(--duration-base) var(--ease-soft),
-    border-color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
     letter-spacing var(--duration-base) var(--ease-out-expo),
-    box-shadow var(--duration-base) var(--ease-out-quart),
     transform var(--duration-base) var(--ease-out-quart);
 }
 
 .card__cta::after {
   content: '→';
   display: inline-block;
-  font-size: 13px;
+  font-size: 12px;
   transform: translateX(0);
   transition: transform var(--duration-base) var(--ease-out-expo);
 }
 
 .card:hover .card__cta {
   color: var(--chrome-accent-alt-strong);
-  border-color: rgba(var(--chrome-accent-alt-rgb), 0.4);
-  background:
-    linear-gradient(135deg, rgba(var(--chrome-accent-alt-rgb), 0.2), rgba(var(--chrome-accent-rgb), 0.12)),
-    rgba(255, 255, 255, 0.035);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 22px rgba(var(--chrome-accent-alt-rgb), 0.2);
-  letter-spacing: 0.2em;
-  transform: translateY(-1px);
+  letter-spacing: 0.18em;
 }
 
 .card:hover .card__cta::after {
@@ -662,21 +532,10 @@
 
 .card--insane .card__cta {
   color: rgb(255 220 180);
-  border-color: rgba(255 138 66 / 0.32);
-  background:
-    linear-gradient(135deg, rgba(255 138 66 / 0.2), rgba(255 214 120 / 0.1)),
-    rgba(255, 255, 255, 0.03);
 }
 
 .card--insane:hover .card__cta {
   color: rgb(255 240 220);
-  border-color: rgba(255 138 66 / 0.52);
-  background:
-    linear-gradient(135deg, rgba(255 180 90 / 0.26), rgba(255 214 120 / 0.16)),
-    rgba(255, 255, 255, 0.04);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 22px rgba(255 138 66 / 0.28);
 }
 
 @media (max-width: 720px) {
@@ -698,14 +557,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .card,
-  .card::before,
   .card::after,
   .card__blob,
   .card__preview::before,
   .card__cta,
   .card__cta::after,
   .card__name,
-  .card__corner,
   .card__section::before,
   .card__metric,
   .card__metric::before {
