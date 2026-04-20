@@ -410,13 +410,16 @@
 
 .page__filter-stack {
   display: flex;
-  flex: 1 1 320px;
-  min-width: min(100%, 280px);
+  flex: 0 1 auto;
+  min-width: 0;
   justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .page__filter-stack > app-lab-difficulty-filter {
-  width: 100%;
+  flex: 0 0 auto;
 }
 
 .cards-grid {
@@ -468,7 +471,8 @@
   }
 
   .page__filter-stack {
-    min-width: 100%;
+    justify-content: flex-start;
+    width: 100%;
   }
 
   .page__stats {

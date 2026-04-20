@@ -8,10 +8,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   width: 100%;
   height: 100%;
-  padding: 0 14px 8px 0;
+  padding: 2px 14px 10px 4px;
   background: transparent;
   overflow-y: auto;
   overflow-x: hidden;
@@ -19,6 +19,7 @@
   overscroll-behavior: contain;
 }
 
+/* Divider rail on the outer edge — signature brand flow */
 .sidebar::before {
   content: '';
   position: absolute;
@@ -36,6 +37,7 @@
   pointer-events: none;
 }
 
+/* Soft atmospheric blob at the top */
 .sidebar::after {
   content: '';
   position: absolute;
@@ -44,19 +46,24 @@
   height: 72px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 28% 50%, rgba(var(--chrome-accent-rgb), 0.2), transparent 62%),
-    radial-gradient(circle at 74% 50%, rgba(var(--chrome-accent-alt-rgb), 0.16), transparent 64%);
-  filter: blur(26px);
+    radial-gradient(circle at 28% 50%, rgba(var(--chrome-accent-rgb), 0.16), transparent 62%),
+    radial-gradient(circle at 74% 50%, rgba(var(--chrome-accent-alt-rgb), 0.12), transparent 64%);
+  filter: blur(28px);
   pointer-events: none;
+  opacity: 0.85;
 }
 
 .sidebar__stack {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding-top: 2px;
+  gap: 1px;
+  padding-top: 4px;
   padding-right: 2px;
 }
+
+/* ============================================================================
+   ACCENT TOKENS — each group defines its own accent via buildCategoryThemeVars
+   ============================================================================ */
 
 .sidebar__solo,
 .sidebar__group {
@@ -65,7 +72,16 @@
   --group-accent-strong: var(--chrome-accent-strong);
   --group-accent-alt-strong: var(--chrome-accent-alt-strong);
   --group-accent-ink: var(--chrome-accent-ink);
+
+  position: relative;
 }
+
+/* ============================================================================
+   ROW — base for solo button, group header and nested item.
+   No border, no background, no shadow in idle. Feedback is purely
+   color + icon halo (same language as side-panel tabs and toolbar pills).
+   Nothing translates on hover, so labels never appear to "jump".
+   ============================================================================ */
 
 .sidebar__solo-btn,
 .sidebar__group-header,
@@ -73,81 +89,229 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   width: 100%;
   border: 0;
   background: transparent;
-  border-radius: 14px;
+  border-radius: 10px;
   text-align: left;
   color: var(--text-secondary);
+  cursor: pointer;
   transition:
-    color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
-    transform var(--duration-base) var(--ease-out-quart),
-    box-shadow var(--duration-base) var(--ease-out-quart);
+    color 220ms var(--ease-soft),
+    background 260ms var(--ease-soft),
+    transform 140ms var(--ease-out-quart);
 }
 
 .sidebar__solo-btn,
 .sidebar__group-header {
-  padding: 8px 10px 8px 11px;
+  min-height: 34px;
+  padding: 6px 10px 6px 14px;
 }
 
+/* Idle hover — only color + background breathe (no shift) */
+.sidebar__solo-btn:hover,
+.sidebar__group-header:hover,
+.sidebar__item:hover {
+  color: var(--text-primary);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--group-accent-rgb), 0.08) 0%,
+    rgba(var(--group-accent-rgb), 0.02) 60%,
+    transparent
+  );
+}
+
+/* Press feedback — short, no vertical movement */
+.sidebar__solo-btn:active,
+.sidebar__group-header:active,
+.sidebar__item:active {
+  transform: scale(0.995);
+}
+
+.sidebar__solo-btn:focus-visible,
+.sidebar__group-header:focus-visible,
+.sidebar__item:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--group-accent-alt-rgb), 0.38),
+    0 0 0 3px rgba(var(--group-accent-alt-rgb), 0.12);
+}
+
+/* ============================================================================
+   ACTIVE INDICATOR — 3 synchronised layers:
+     1. Left accent rail (vertical gradient bar)
+     2. Soft bg tint (gradient from left to right)
+     3. Icon halo bloom behind the icon (see below)
+   Nothing moves horizontally — the indicator simply fades in.
+   ============================================================================ */
+
+.sidebar__solo--active .sidebar__solo-btn,
+.sidebar__group--active .sidebar__group-header,
+.sidebar__item--active {
+  color: var(--group-accent-ink);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--group-accent-rgb), 0.16) 0%,
+    rgba(var(--group-accent-rgb), 0.04) 62%,
+    transparent
+  );
+}
+
+/* Left rail — the main "you are here" indicator. Bright at top, fading
+   down. Pulsing drop-shadow gives it gentle life. Sticks just outside
+   the row's padding so it reads as a separate edge marker. */
+.sidebar__solo--active .sidebar__solo-btn::before,
+.sidebar__group--active .sidebar__group-header::before,
+.sidebar__item--active::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 3px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--group-accent-rgb)) 0%,
+    rgba(var(--group-accent-alt-rgb), 0.6) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(var(--group-accent-rgb), 0.6),
+    0 0 16px rgba(var(--group-accent-rgb), 0.28);
+  pointer-events: none;
+  animation: sidebar-rail-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes sidebar-rail-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 8px rgba(var(--group-accent-rgb), 0.6),
+      0 0 16px rgba(var(--group-accent-rgb), 0.28);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(var(--group-accent-rgb), 0.72),
+      0 0 22px rgba(var(--group-accent-rgb), 0.4);
+  }
+}
+
+/* Faint hover-only rail preview — a tiny taste of the active rail so
+   the hit area reads as "clickable into an accent state". */
+.sidebar__solo-btn:hover::before,
+.sidebar__group-header:hover::before,
+.sidebar__item:hover::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 3px;
+  width: 2px;
+  border-radius: 999px;
+  background: rgba(var(--group-accent-rgb), 0.34);
+  pointer-events: none;
+}
+
+/* When a row is BOTH hovered and active, only the active rail shows */
+.sidebar__solo--active .sidebar__solo-btn:hover::before,
+.sidebar__group--active .sidebar__group-header:hover::before,
+.sidebar__item--active:hover::before {
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--group-accent-rgb)) 0%,
+    rgba(var(--group-accent-alt-rgb), 0.6) 100%
+  );
+}
+
+/* ============================================================================
+   ICON — lives naked, no shell, no border. Halo pseudo fades in behind
+   the glyph on hover / active.
+   ============================================================================ */
+
 .sidebar__icon-shell {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
-  border-radius: 10px;
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
-    rgba(14, 17, 24, 0.48);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 6px 12px rgba(0, 0, 0, 0.12);
-  transition:
-    border-color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart),
-    transform var(--duration-base) var(--ease-spring),
-    color var(--duration-base) var(--ease-soft);
+  color: var(--text-tertiary);
+  transition: color 220ms var(--ease-soft);
 }
 
-.sidebar__solo--active .sidebar__icon-shell,
-.sidebar__group--active .sidebar__icon-shell {
-  border-color: rgba(var(--group-accent-rgb), 0.56);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(var(--group-accent-rgb), 0.5),
-      rgba(var(--group-accent-alt-rgb), 0.22)
-    ),
-    rgba(14, 17, 24, 0.52);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 0 22px rgba(var(--group-accent-rgb), 0.48),
-    0 0 14px rgba(var(--group-accent-alt-rgb), 0.2),
-    0 6px 14px rgba(0, 0, 0, 0.22);
-  color: var(--group-accent-strong);
-  transform: scale(1.02);
+.sidebar__icon-shell::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--group-accent-rgb), 0.3) 0%,
+    rgba(var(--group-accent-rgb), 0.08) 52%,
+    transparent 78%
+  );
+  opacity: 0;
+  transform: scale(0.62);
+  transition:
+    opacity 220ms var(--ease-soft),
+    transform 280ms var(--ease-out-quart),
+    background 220ms var(--ease-soft);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .sidebar__icon {
+  position: relative;
+  z-index: 1;
   color: inherit;
-  opacity: 0.9;
+  font-size: 14px;
   transition:
-    color var(--duration-base) var(--ease-soft),
-    opacity var(--duration-base) var(--ease-soft),
-    transform var(--duration-base) var(--ease-spring);
+    color 220ms var(--ease-soft),
+    filter 240ms var(--ease-out-quart);
+}
+
+/* HOVER — icon lifts to accent color, halo blooms in */
+.sidebar__solo-btn:hover .sidebar__icon-shell,
+.sidebar__group-header:hover .sidebar__icon-shell {
+  color: rgb(var(--group-accent-rgb));
+}
+
+.sidebar__solo-btn:hover .sidebar__icon-shell::before,
+.sidebar__group-header:hover .sidebar__icon-shell::before {
+  opacity: 0.85;
+  transform: scale(1);
+}
+
+/* ACTIVE — halo locks on at stronger accent, icon glows */
+.sidebar__solo--active .sidebar__icon-shell,
+.sidebar__group--active .sidebar__icon-shell {
+  color: rgb(var(--group-accent-rgb));
+}
+
+.sidebar__solo--active .sidebar__icon-shell::before,
+.sidebar__group--active .sidebar__icon-shell::before {
+  opacity: 1;
+  transform: scale(1);
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--group-accent-rgb), 0.44) 0%,
+    rgba(var(--group-accent-rgb), 0.14) 52%,
+    transparent 82%
+  );
 }
 
 .sidebar__solo--active .sidebar__icon,
 .sidebar__group--active .sidebar__icon {
-  color: var(--group-accent-strong);
-  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(var(--group-accent-rgb), 0.48));
 }
+
+/* ============================================================================
+   LABELS — breathe on active via letter-spacing + color. Never translate.
+   ============================================================================ */
 
 .sidebar__solo-label,
 .sidebar__group-label {
@@ -159,79 +323,94 @@
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: inherit;
+  transition:
+    letter-spacing 240ms var(--ease-out-quart),
+    color 220ms var(--ease-soft);
 }
 
-.sidebar__solo-btn:focus-visible,
-.sidebar__group-header:focus-visible,
-.sidebar__item:focus-visible {
-  outline: none;
-  box-shadow:
-    inset 2px 0 0 rgba(var(--group-accent-alt-rgb), 0.95),
-    var(--ring-focus-soft);
+.sidebar__solo--active .sidebar__solo-label,
+.sidebar__group--active .sidebar__group-label {
+  color: #ffffff;
+  letter-spacing: 0.005em;
+  text-shadow: 0 0 10px rgba(var(--group-accent-rgb), 0.22);
 }
+
+/* ============================================================================
+   COUNT BADGE — quiet in idle, lit up when active / hovered
+   ============================================================================ */
 
 .sidebar__count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 26px;
-  height: 20px;
+  min-width: 24px;
+  height: 18px;
   padding: 0 6px;
   border-radius: 999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.07);
   background: rgba(255, 255, 255, 0.035);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.04em;
   transition:
-    border-color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart),
-    color var(--duration-base) var(--ease-soft);
+    background 240ms var(--ease-soft),
+    color 220ms var(--ease-soft),
+    box-shadow 260ms var(--ease-out-quart);
+}
+
+.sidebar__solo-btn:hover .sidebar__count,
+.sidebar__group-header:hover .sidebar__count {
+  background: rgba(var(--group-accent-rgb), 0.12);
+  color: var(--text-secondary);
 }
 
 .sidebar__solo--active .sidebar__count,
 .sidebar__group--active .sidebar__count,
 .sidebar__item--active .sidebar__count {
-  border-color: rgba(var(--group-accent-alt-rgb), 0.42);
-  background:
-    linear-gradient(135deg, rgba(var(--group-accent-rgb), 0.22), rgba(var(--group-accent-alt-rgb), 0.26)),
-    rgba(255, 255, 255, 0.03);
+  background: rgba(var(--group-accent-rgb), 0.2);
+  color: #ffffff;
   box-shadow:
-    0 0 14px rgba(var(--group-accent-alt-rgb), 0.26),
-    0 0 6px rgba(var(--group-accent-rgb), 0.18);
-  color: var(--group-accent-alt-strong);
+    inset 0 0 0 0.5px rgba(var(--group-accent-rgb), 0.4),
+    0 0 10px rgba(var(--group-accent-rgb), 0.22);
 }
+
+/* ============================================================================
+   CHEVRON — rotates on expand, tinted on hover / active
+   ============================================================================ */
 
 .sidebar__chevron {
   width: 11px;
   height: 11px;
   flex-shrink: 0;
-  opacity: 0.58;
+  opacity: 0.45;
+  color: var(--text-tertiary);
   transition:
-    transform var(--duration-slow) var(--ease-spring),
-    opacity var(--duration-base) var(--ease-soft),
-    color var(--duration-base) var(--ease-soft);
+    transform 340ms var(--ease-out-expo),
+    opacity 220ms var(--ease-soft),
+    color 220ms var(--ease-soft);
+}
+
+.sidebar__group-header:hover .sidebar__chevron,
+.sidebar__group--active .sidebar__chevron {
+  opacity: 1;
+  color: rgba(var(--group-accent-alt-rgb), 0.88);
 }
 
 .sidebar__group--expanded .sidebar__chevron {
   transform: rotate(180deg);
-  opacity: 0.92;
+  opacity: 0.9;
 }
 
-.sidebar__group-header:hover .sidebar__chevron,
-.sidebar__solo-btn:hover .sidebar__chevron,
-.sidebar__group--active .sidebar__chevron {
-  color: rgba(var(--group-accent-alt-rgb), 0.88);
-}
+/* ============================================================================
+   NESTED ITEMS — expand animation + their own active/hover polish
+   ============================================================================ */
 
 .sidebar__items {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows var(--duration-slow) var(--ease-out-expo);
+  transition: grid-template-rows 340ms var(--ease-out-expo);
 }
 
 .sidebar__group--expanded .sidebar__items {
@@ -244,118 +423,66 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  margin: 0 0 5px 25px;
+  margin: 2px 0 4px 27px;
   padding: 2px 0 0 10px;
-  border-left: 1px solid rgba(var(--group-accent-rgb), 0.16);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--group-accent-rgb), 0.04) 0%,
-      transparent 30%
-    );
+  position: relative;
+}
+
+/* Connector line on the left — gradient that lights up when the group
+   contains the active item. */
+.sidebar__items-inner::before {
+  content: '';
+  position: absolute;
+  inset: 2px auto 2px 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--group-accent-rgb), 0.12),
+    rgba(var(--group-accent-rgb), 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+.sidebar__group--active .sidebar__items-inner::before {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--group-accent-rgb), 0.46) 0%,
+    rgba(var(--group-accent-rgb), 0.1) 100%
+  );
 }
 
 .sidebar__item {
   gap: 10px;
-  padding: 6px 10px;
-  min-height: 30px;
+  padding: 5px 10px 5px 14px;
+  min-height: 28px;
 }
 
-.sidebar__solo-btn:hover,
-.sidebar__group-header:hover,
-.sidebar__item:hover {
-  color: var(--text-primary);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--group-accent-rgb), 0.14),
-      rgba(var(--group-accent-alt-rgb), 0.07) 72%,
-      transparent
-    ),
-    rgba(255, 255, 255, 0.025);
-  transform: translateX(2px);
-  box-shadow:
-    inset 2px 0 0 rgba(var(--group-accent-rgb), 0.58),
-    0 0 22px rgba(var(--group-accent-rgb), 0.08),
-    0 0 18px rgba(var(--group-accent-alt-rgb), 0.05);
-}
-
-.sidebar__solo-btn:hover .sidebar__icon-shell,
-.sidebar__group-header:hover .sidebar__icon-shell {
-  border-color: rgba(var(--group-accent-rgb), 0.32);
-  background:
-    linear-gradient(135deg, rgba(var(--group-accent-rgb), 0.22), rgba(var(--group-accent-rgb), 0.08)),
-    rgba(14, 17, 24, 0.54);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 0 16px rgba(var(--group-accent-rgb), 0.22);
-  transform: scale(1.04);
+/* Bullet — becomes a glowing pill dot on active */
+.sidebar__item-bullet {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  transition:
+    background 240ms var(--ease-soft),
+    transform 280ms var(--ease-out-quart),
+    box-shadow 300ms var(--ease-out-quart);
 }
 
 .sidebar__item:hover .sidebar__item-bullet {
-  background: rgba(var(--group-accent-rgb), 0.78);
-  box-shadow:
-    0 0 0 3px rgba(var(--group-accent-rgb), 0.14),
-    0 0 10px rgba(var(--group-accent-rgb), 0.48);
-}
-
-.sidebar__solo--active .sidebar__solo-btn,
-.sidebar__group--active .sidebar__group-header {
-  color: var(--group-accent-ink);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--group-accent-rgb), 0.28),
-      rgba(var(--group-accent-alt-rgb), 0.12) 60%,
-      transparent
-    ),
-    rgba(255, 255, 255, 0.02);
-  box-shadow:
-    inset 4px 0 0 rgba(var(--group-accent-rgb), 0.95),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 0 30px rgba(var(--group-accent-rgb), 0.2),
-    0 0 40px rgba(var(--group-accent-rgb), 0.08);
-}
-
-.sidebar__item--active {
-  color: var(--group-accent-ink);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--group-accent-rgb), 0.26),
-      rgba(var(--group-accent-alt-rgb), 0.1) 60%,
-      transparent
-    ),
-    rgba(255, 255, 255, 0.02);
-  box-shadow:
-    inset 3px 0 0 rgba(var(--group-accent-rgb), 0.92),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 0 24px rgba(var(--group-accent-rgb), 0.18),
-    0 0 32px rgba(var(--group-accent-rgb), 0.06);
-}
-
-.sidebar__item-bullet {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.24);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.02);
-  transition:
-    background var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart),
-    width var(--duration-base) var(--ease-spring),
-    height var(--duration-base) var(--ease-spring);
+  background: rgba(var(--group-accent-rgb), 0.72);
+  box-shadow: 0 0 6px rgba(var(--group-accent-rgb), 0.4);
 }
 
 .sidebar__item--active .sidebar__item-bullet {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   background: rgb(var(--group-accent-rgb));
   box-shadow:
-    0 0 0 3px rgba(var(--group-accent-rgb), 0.22),
-    0 0 16px rgba(var(--group-accent-rgb), 0.78),
-    0 0 8px rgba(var(--group-accent-alt-rgb), 0.28);
+    0 0 0 2px rgba(var(--group-accent-rgb), 0.22),
+    0 0 10px rgba(var(--group-accent-rgb), 0.72);
 }
 
 .sidebar__item-label {
@@ -366,7 +493,37 @@
   white-space: nowrap;
   font-size: 11.5px;
   font-weight: 600;
+  letter-spacing: -0.01em;
+  color: inherit;
+  transition:
+    letter-spacing 240ms var(--ease-out-quart),
+    color 220ms var(--ease-soft);
 }
+
+.sidebar__item--active .sidebar__item-label {
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(var(--group-accent-rgb), 0.24);
+}
+
+/* Sub-items: rail is inset further to respect the connector line */
+.sidebar__item--active::before {
+  left: -2px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+}
+
+.sidebar__item:hover::before {
+  left: -2px;
+  top: 6px;
+  bottom: 6px;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
 
 @media (max-width: 1080px) {
   :host {
@@ -385,9 +542,21 @@
   .sidebar__group-header,
   .sidebar__item,
   .sidebar__icon-shell,
-  .sidebar__item-bullet,
+  .sidebar__icon-shell::before,
   .sidebar__chevron,
-  .sidebar__items {
+  .sidebar__items,
+  .sidebar__item-bullet,
+  .sidebar__solo-label,
+  .sidebar__group-label,
+  .sidebar__item-label,
+  .sidebar__count {
+    animation: none !important;
     transition: none;
+  }
+
+  .sidebar__solo--active .sidebar__solo-btn::before,
+  .sidebar__group--active .sidebar__group-header::before,
+  .sidebar__item--active::before {
+    animation: none !important;
   }
 }

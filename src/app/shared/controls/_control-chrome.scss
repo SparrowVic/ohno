@@ -61,22 +61,32 @@
 }
 
 // --- FLOATING PANEL (dropdown menus, popovers) ------------------------------
+// Opaque dark pane. We don't use backdrop-filter here because most hosts
+// in this app (filter bars, side panels) already set backdrop-filter +
+// isolation: isolate on ancestors, which creates a backdrop-root and
+// disables any child backdrop-filter anyway. A solid floor + radial
+// accent tints + fractal-noise grain gives the same premium feel
+// without the compositing pitfalls.
 
-@mixin floating-panel($radius: 18px) {
+@mixin floating-panel($radius: 16px) {
   border: 0.5px solid rgba(255, 255, 255, 0.14);
   border-radius: $radius;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(var(--chrome-accent-rgb), 0.09), transparent 44%),
-    radial-gradient(circle at 96% 4%, rgba(var(--chrome-accent-alt-rgb), 0.06), transparent 38%),
-    radial-gradient(circle at 50% 140%, rgba(var(--accent-rgb), 0.04), transparent 50%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008)),
-    rgba(14, 17, 24, 0.99);
+  /* FULLY OPAQUE floor. Ancestors in this app (e.g. .page__controls)
+     use backdrop-filter + isolation: isolate, which establishes a
+     backdrop-root and disables any child backdrop-filter — so we
+     don't even try the glass trick here. Solid color prevents page
+     bleed-through; radial accent tints on top add depth character. */
+  background-color: #0c0f16;
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(var(--chrome-accent-rgb), 0.16), transparent 44%),
+    radial-gradient(circle at 96% 4%, rgba(var(--chrome-accent-alt-rgb), 0.12), transparent 38%),
+    radial-gradient(circle at 50% 140%, rgba(var(--accent-rgb), 0.08), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012));
   box-shadow:
-    var(--elevation-4),
-    0 0 0 1px rgba(255, 255, 255, 0.045),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(28px) saturate(130%);
-  -webkit-backdrop-filter: blur(28px) saturate(130%);
+    0 28px 64px rgba(0, 0, 0, 0.56),
+    0 12px 24px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065);
   animation: floating-panel-in 260ms var(--ease-out-expo) both;
 }
 
@@ -85,8 +95,15 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    linear-gradient(180deg, rgba(16, 19, 26, 0.985), rgba(10, 12, 18, 0.996));
+  /* Pure texture overlay — the panel floor is already opaque so this
+     is just grain character, no darkening. Soft-light blend mode keeps
+     the noise subtle without washing out dark surfaces. */
+  background-image:
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.75;
   pointer-events: none;
   border-radius: inherit;
 }
@@ -120,8 +137,7 @@
     rgba(255, 255, 255, 0.02);
   box-shadow:
     inset 2px 0 0 rgba(var(--chrome-accent-rgb), 0.55),
-    0 8px 16px rgba(0, 0, 0, 0.16);
-  transform: translateX(1px);
+    0 4px 10px rgba(0, 0, 0, 0.14);
 }
 
 @mixin option-surface-active {
@@ -171,7 +187,6 @@
     0 0 0 1px rgba(var(--chrome-accent-rgb), 0.1),
     0 0 22px rgba(var(--chrome-accent-rgb), 0.1),
     var(--elevation-2);
-  transform: translateY(-1px);
 }
 
 // --- ENTRANCE KEYFRAMES -----------------------------------------------------
