@@ -84,6 +84,81 @@ const MERGE_SORT_TS = buildStructuredCode(`
   //#endregion merge-ranges
 `);
 
+const MERGE_SORT_JS = buildStructuredCode(
+  `
+  /**
+   * Sort the array in ascending order with merge sort.
+   * Input: mutable array of numbers.
+   * Returns: the same array after in-place sorting.
+   */
+  //#region merge-sort function open
+  //@step 1
+  function mergeSort(values) {
+      const temp = Array.from({ length: values.length }, () => 0);
+
+      if (values.length > 0) {
+          sortRange(values, temp, 0, values.length - 1);
+      }
+
+      //@step 4
+      return values;
+  }
+  //#endregion merge-sort
+
+  //#region sort-range helper collapsed
+  function sortRange(values, temp, left, right) {
+      if (left >= right) {
+          return;
+      }
+
+      //@step 7
+      const middle = Math.floor((left + right) / 2);
+      sortRange(values, temp, left, middle);
+      sortRange(values, temp, middle + 1, right);
+      mergeRanges(values, temp, left, middle, right);
+  }
+  //#endregion sort-range
+
+  //#region merge-ranges helper collapsed
+  function mergeRanges(values, temp, left, middle, right) {
+      let leftIndex = left;
+      let rightIndex = middle + 1;
+      let writeIndex = left;
+
+      while (leftIndex <= middle && rightIndex <= right) {
+          //@step 15
+          if (values[leftIndex] <= values[rightIndex]) {
+              temp[writeIndex] = values[leftIndex];
+              leftIndex += 1;
+          } else {
+              temp[writeIndex] = values[rightIndex];
+              rightIndex += 1;
+          }
+          writeIndex += 1;
+      }
+
+      while (leftIndex <= middle) {
+          temp[writeIndex] = values[leftIndex];
+          leftIndex += 1;
+          writeIndex += 1;
+      }
+
+      while (rightIndex <= right) {
+          temp[writeIndex] = values[rightIndex];
+          rightIndex += 1;
+          writeIndex += 1;
+      }
+
+      for (let index = left; index <= right; index += 1) {
+          //@step 19
+          values[index] = temp[index];
+      }
+  }
+  //#endregion merge-ranges
+  `,
+  'javascript',
+);
+
 const MERGE_SORT_PY = buildStructuredCode(
   `
   """
@@ -410,6 +485,391 @@ const MERGE_SORT_CPP = buildStructuredCode(
   'cpp',
 );
 
+const MERGE_SORT_GO = buildStructuredCode(
+  `
+  package sorting
+
+  /**
+   * Sorts the array in ascending order with merge sort.
+   * Input: mutable slice of integers.
+   * Returns: the same slice after in-place sorting.
+   */
+  //#region merge-sort function open
+  //@step 1
+  func MergeSort(values []int) []int {
+      temp := make([]int, len(values))
+
+      if len(values) > 0 {
+          sortRange(values, temp, 0, len(values)-1)
+      }
+
+      //@step 4
+      return values
+  }
+  //#endregion merge-sort
+
+  //#region sort-range helper collapsed
+  func sortRange(values []int, temp []int, left int, right int) {
+      if left >= right {
+          return
+      }
+
+      //@step 7
+      middle := (left + right) / 2
+      sortRange(values, temp, left, middle)
+      sortRange(values, temp, middle+1, right)
+      mergeRanges(values, temp, left, middle, right)
+  }
+  //#endregion sort-range
+
+  //#region merge-ranges helper collapsed
+  func mergeRanges(values []int, temp []int, left int, middle int, right int) {
+      leftIndex := left
+      rightIndex := middle + 1
+      writeIndex := left
+
+      for leftIndex <= middle && rightIndex <= right {
+          //@step 15
+          if values[leftIndex] <= values[rightIndex] {
+              temp[writeIndex] = values[leftIndex]
+              leftIndex += 1
+          } else {
+              temp[writeIndex] = values[rightIndex]
+              rightIndex += 1
+          }
+          writeIndex += 1
+      }
+
+      for leftIndex <= middle {
+          temp[writeIndex] = values[leftIndex]
+          leftIndex += 1
+          writeIndex += 1
+      }
+
+      for rightIndex <= right {
+          temp[writeIndex] = values[rightIndex]
+          rightIndex += 1
+          writeIndex += 1
+      }
+
+      for index := left; index <= right; index += 1 {
+          //@step 19
+          values[index] = temp[index]
+      }
+  }
+  //#endregion merge-ranges
+  `,
+  'go',
+);
+
+const MERGE_SORT_RUST = buildStructuredCode(
+  `
+  /**
+   * Sorts the array in ascending order with merge sort.
+   * Input: mutable vector of integers.
+   * Returns: the same vector after in-place sorting.
+   */
+  //#region merge-sort function open
+  //@step 1
+  fn merge_sort(mut values: Vec<i32>) -> Vec<i32> {
+      let mut temp = vec![0; values.len()];
+
+      if !values.is_empty() {
+          sort_range(&mut values, &mut temp, 0, values.len() as isize - 1);
+      }
+
+      //@step 4
+      values
+  }
+  //#endregion merge-sort
+
+  //#region sort-range helper collapsed
+  fn sort_range(values: &mut [i32], temp: &mut [i32], left: isize, right: isize) {
+      if left >= right {
+          return;
+      }
+
+      //@step 7
+      let middle = (left + right) / 2;
+      sort_range(values, temp, left, middle);
+      sort_range(values, temp, middle + 1, right);
+      merge_ranges(values, temp, left, middle, right);
+  }
+  //#endregion sort-range
+
+  //#region merge-ranges helper collapsed
+  fn merge_ranges(values: &mut [i32], temp: &mut [i32], left: isize, middle: isize, right: isize) {
+      let mut left_index = left;
+      let mut right_index = middle + 1;
+      let mut write_index = left;
+
+      while left_index <= middle && right_index <= right {
+          //@step 15
+          if values[left_index as usize] <= values[right_index as usize] {
+              temp[write_index as usize] = values[left_index as usize];
+              left_index += 1;
+          } else {
+              temp[write_index as usize] = values[right_index as usize];
+              right_index += 1;
+          }
+          write_index += 1;
+      }
+
+      while left_index <= middle {
+          temp[write_index as usize] = values[left_index as usize];
+          left_index += 1;
+          write_index += 1;
+      }
+
+      while right_index <= right {
+          temp[write_index as usize] = values[right_index as usize];
+          right_index += 1;
+          write_index += 1;
+      }
+
+      for index in left..=right {
+          //@step 19
+          values[index as usize] = temp[index as usize];
+      }
+  }
+  //#endregion merge-ranges
+  `,
+  'rust',
+);
+
+const MERGE_SORT_SWIFT = buildStructuredCode(
+  `
+  /**
+   * Sorts the array in ascending order with merge sort.
+   * Input: mutable array of integers.
+   * Returns: the same array after in-place sorting.
+   */
+  //#region merge-sort function open
+  //@step 1
+  func mergeSort(_ values: inout [Int]) -> [Int] {
+      var temp = Array(repeating: 0, count: values.count)
+
+      if !values.isEmpty {
+          sortRange(&values, &temp, 0, values.count - 1)
+      }
+
+      //@step 4
+      return values
+  }
+  //#endregion merge-sort
+
+  //#region sort-range helper collapsed
+  func sortRange(_ values: inout [Int], _ temp: inout [Int], _ left: Int, _ right: Int) {
+      if left >= right {
+          return
+      }
+
+      //@step 7
+      let middle = (left + right) / 2
+      sortRange(&values, &temp, left, middle)
+      sortRange(&values, &temp, middle + 1, right)
+      mergeRanges(&values, &temp, left, middle, right)
+  }
+  //#endregion sort-range
+
+  //#region merge-ranges helper collapsed
+  func mergeRanges(_ values: inout [Int], _ temp: inout [Int], _ left: Int, _ middle: Int, _ right: Int) {
+      var leftIndex = left
+      var rightIndex = middle + 1
+      var writeIndex = left
+
+      while leftIndex <= middle && rightIndex <= right {
+          //@step 15
+          if values[leftIndex] <= values[rightIndex] {
+              temp[writeIndex] = values[leftIndex]
+              leftIndex += 1
+          } else {
+              temp[writeIndex] = values[rightIndex]
+              rightIndex += 1
+          }
+          writeIndex += 1
+      }
+
+      while leftIndex <= middle {
+          temp[writeIndex] = values[leftIndex]
+          leftIndex += 1
+          writeIndex += 1
+      }
+
+      while rightIndex <= right {
+          temp[writeIndex] = values[rightIndex]
+          rightIndex += 1
+          writeIndex += 1
+      }
+
+      for index in left...right {
+          //@step 19
+          values[index] = temp[index]
+      }
+  }
+  //#endregion merge-ranges
+  `,
+  'swift',
+);
+
+const MERGE_SORT_PHP = buildStructuredCode(
+  `
+  <?php
+
+  /**
+   * Sorts the array in ascending order with merge sort.
+   * Input: mutable array of integers.
+   * Returns: the same array after in-place sorting.
+   *
+   * @param array<int, int> $values
+   * @return array<int, int>
+   */
+  //#region merge-sort function open
+  //@step 1
+  function mergeSort(array &$values): array
+  {
+      $temp = array_fill(0, count($values), 0);
+
+      if ($values !== []) {
+          sortRange($values, $temp, 0, count($values) - 1);
+      }
+
+      //@step 4
+      return $values;
+  }
+  //#endregion merge-sort
+
+  //#region sort-range helper collapsed
+  function sortRange(array &$values, array &$temp, int $left, int $right): void
+  {
+      if ($left >= $right) {
+          return;
+      }
+
+      //@step 7
+      $middle = intdiv($left + $right, 2);
+      sortRange($values, $temp, $left, $middle);
+      sortRange($values, $temp, $middle + 1, $right);
+      mergeRanges($values, $temp, $left, $middle, $right);
+  }
+  //#endregion sort-range
+
+  //#region merge-ranges helper collapsed
+  function mergeRanges(array &$values, array &$temp, int $left, int $middle, int $right): void
+  {
+      $leftIndex = $left;
+      $rightIndex = $middle + 1;
+      $writeIndex = $left;
+
+      while ($leftIndex <= $middle && $rightIndex <= $right) {
+          //@step 15
+          if ($values[$leftIndex] <= $values[$rightIndex]) {
+              $temp[$writeIndex] = $values[$leftIndex];
+              $leftIndex += 1;
+          } else {
+              $temp[$writeIndex] = $values[$rightIndex];
+              $rightIndex += 1;
+          }
+          $writeIndex += 1;
+      }
+
+      while ($leftIndex <= $middle) {
+          $temp[$writeIndex] = $values[$leftIndex];
+          $leftIndex += 1;
+          $writeIndex += 1;
+      }
+
+      while ($rightIndex <= $right) {
+          $temp[$writeIndex] = $values[$rightIndex];
+          $rightIndex += 1;
+          $writeIndex += 1;
+      }
+
+      for ($index = $left; $index <= $right; $index += 1) {
+          //@step 19
+          $values[$index] = $temp[$index];
+      }
+  }
+  //#endregion merge-ranges
+  `,
+  'php',
+);
+
+const MERGE_SORT_KOTLIN = buildStructuredCode(
+  `
+  /**
+   * Sorts the array in ascending order with merge sort.
+   * Input: mutable array of integers.
+   * Returns: the same array after in-place sorting.
+   */
+  //#region merge-sort function open
+  //@step 1
+  fun mergeSort(values: IntArray): IntArray {
+      val temp = IntArray(values.size)
+
+      if (values.isNotEmpty()) {
+          sortRange(values, temp, 0, values.size - 1)
+      }
+
+      //@step 4
+      return values
+  }
+  //#endregion merge-sort
+
+  //#region sort-range helper collapsed
+  fun sortRange(values: IntArray, temp: IntArray, left: Int, right: Int) {
+      if (left >= right) {
+          return
+      }
+
+      //@step 7
+      val middle = (left + right) / 2
+      sortRange(values, temp, left, middle)
+      sortRange(values, temp, middle + 1, right)
+      mergeRanges(values, temp, left, middle, right)
+  }
+  //#endregion sort-range
+
+  //#region merge-ranges helper collapsed
+  fun mergeRanges(values: IntArray, temp: IntArray, left: Int, middle: Int, right: Int) {
+      var leftIndex = left
+      var rightIndex = middle + 1
+      var writeIndex = left
+
+      while (leftIndex <= middle && rightIndex <= right) {
+          //@step 15
+          if (values[leftIndex] <= values[rightIndex]) {
+              temp[writeIndex] = values[leftIndex]
+              leftIndex += 1
+          } else {
+              temp[writeIndex] = values[rightIndex]
+              rightIndex += 1
+          }
+          writeIndex += 1
+      }
+
+      while (leftIndex <= middle) {
+          temp[writeIndex] = values[leftIndex]
+          leftIndex += 1
+          writeIndex += 1
+      }
+
+      while (rightIndex <= right) {
+          temp[writeIndex] = values[rightIndex]
+          rightIndex += 1
+          writeIndex += 1
+      }
+
+      for (index in left..right) {
+          //@step 19
+          values[index] = temp[index]
+      }
+  }
+  //#endregion merge-ranges
+  `,
+  'kotlin',
+);
+
 export const MERGE_SORT_CODE = MERGE_SORT_TS.lines;
 export const MERGE_SORT_CODE_REGIONS = MERGE_SORT_TS.regions;
 export const MERGE_SORT_CODE_HIGHLIGHT_MAP = MERGE_SORT_TS.highlightMap;
@@ -420,6 +880,13 @@ export const MERGE_SORT_CODE_VARIANTS: CodeVariantMap = {
     regions: MERGE_SORT_TS.regions,
     highlightMap: MERGE_SORT_TS.highlightMap,
     source: MERGE_SORT_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: MERGE_SORT_JS.lines,
+    regions: MERGE_SORT_JS.regions,
+    highlightMap: MERGE_SORT_JS.highlightMap,
+    source: MERGE_SORT_JS.source,
   },
   python: {
     language: 'python',
@@ -448,5 +915,40 @@ export const MERGE_SORT_CODE_VARIANTS: CodeVariantMap = {
     regions: MERGE_SORT_CPP.regions,
     highlightMap: MERGE_SORT_CPP.highlightMap,
     source: MERGE_SORT_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: MERGE_SORT_GO.lines,
+    regions: MERGE_SORT_GO.regions,
+    highlightMap: MERGE_SORT_GO.highlightMap,
+    source: MERGE_SORT_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: MERGE_SORT_RUST.lines,
+    regions: MERGE_SORT_RUST.regions,
+    highlightMap: MERGE_SORT_RUST.highlightMap,
+    source: MERGE_SORT_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: MERGE_SORT_SWIFT.lines,
+    regions: MERGE_SORT_SWIFT.regions,
+    highlightMap: MERGE_SORT_SWIFT.highlightMap,
+    source: MERGE_SORT_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: MERGE_SORT_PHP.lines,
+    regions: MERGE_SORT_PHP.regions,
+    highlightMap: MERGE_SORT_PHP.highlightMap,
+    source: MERGE_SORT_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: MERGE_SORT_KOTLIN.lines,
+    regions: MERGE_SORT_KOTLIN.regions,
+    highlightMap: MERGE_SORT_KOTLIN.highlightMap,
+    source: MERGE_SORT_KOTLIN.source,
   },
 };
