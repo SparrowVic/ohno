@@ -65,10 +65,13 @@
   /* Mask fades continuously from center → rim. Every stop steps the
      opacity down a notch so there's no perceivable terminator where the
      disc "ends" — it dissolves into the page. */
+  /* A gentle "hole" around the trigger keeps the current-language pill
+     clearly visible in the middle; the ring-out still fades smoothly. */
   mask-image: radial-gradient(
     circle at center,
-    #000 0%,
-    rgba(0, 0, 0, 0.94) 18%,
+    rgba(0, 0, 0, 0.34) 0%,
+    rgba(0, 0, 0, 0.52) 9%,
+    rgba(0, 0, 0, 0.84) 20%,
     rgba(0, 0, 0, 0.72) 38%,
     rgba(0, 0, 0, 0.46) 56%,
     rgba(0, 0, 0, 0.22) 74%,
@@ -77,8 +80,9 @@
   );
   -webkit-mask-image: radial-gradient(
     circle at center,
-    #000 0%,
-    rgba(0, 0, 0, 0.94) 18%,
+    rgba(0, 0, 0, 0.34) 0%,
+    rgba(0, 0, 0, 0.52) 9%,
+    rgba(0, 0, 0, 0.84) 20%,
     rgba(0, 0, 0, 0.72) 38%,
     rgba(0, 0, 0, 0.46) 56%,
     rgba(0, 0, 0, 0.22) 74%,
@@ -175,76 +179,116 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 64px;
+  gap: 7px;
+  min-width: 74px;
   height: 30px;
-  padding: 0 12px;
+  padding: 0 28px 0 12px;
   border-radius: 999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   isolation: isolate;
   user-select: none;
   background:
-    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.08), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.016)),
-    rgba(255, 255, 255, 0.03);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
+    rgba(14, 17, 24, 0.68);
   color: var(--text-secondary);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 0 1px rgba(255, 255, 255, 0.02);
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(12px) saturate(116%);
+  -webkit-backdrop-filter: blur(12px) saturate(116%);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 180ms ease,
     box-shadow 220ms ease,
-    background 220ms ease;
+    background 220ms ease,
+    color 180ms ease;
   z-index: 2;
 }
 
+/* Sheen sweep on hover */
 .code-language-dial__trigger::before {
   content: '';
   position: absolute;
-  inset: 1px;
+  inset: 0;
   border-radius: inherit;
-  background:
-    linear-gradient(
-      132deg,
-      transparent 12%,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 16%, transparent) 42%,
-      rgba(255, 255, 255, 0.12) 54%,
-      transparent 74%
-    );
-  opacity: 0.42;
+  background: linear-gradient(
+    120deg,
+    transparent 32%,
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 24%, transparent) 48%,
+    rgba(255, 255, 255, 0.14) 56%,
+    transparent 72%
+  );
+  opacity: 0;
   transform: translateX(-120%);
   transition:
     transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 220ms ease;
+  pointer-events: none;
 }
 
+/* Inner accent-dot — leading indicator of the current language color */
 .code-language-dial__trigger-icon {
   position: relative;
   z-index: 1;
   font-size: 11px;
-  color: var(--text-primary);
-  opacity: 0.92;
+  color: color-mix(in srgb, var(--dial-accent, #9a8cff) 80%, #ffffff);
+  opacity: 0.96;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--dial-accent, #9a8cff) 50%, transparent));
+  transition: filter 220ms ease, color 180ms ease;
 }
 
 .code-language-dial__trigger:hover,
 .code-language-dial__trigger--open {
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--dial-accent, #54b7ff) 38%, rgba(255, 255, 255, 0.1));
+  border-color: color-mix(in srgb, var(--dial-accent, #9a8cff) 42%, rgba(255, 255, 255, 0.1));
   color: var(--text-primary);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--dial-accent, #9a8cff) 14%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(16, 20, 28, 0.74);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 18%, transparent),
-    0 0 22px color-mix(in srgb, var(--dial-accent, #54b7ff) 22%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 3px 10px rgba(0, 0, 0, 0.18),
+    0 0 14px color-mix(in srgb, var(--dial-accent, #9a8cff) 24%, transparent);
 }
 
+.code-language-dial__trigger:hover::before,
+.code-language-dial__trigger--open::before {
+  opacity: 0.9;
+  transform: translateX(120%);
+}
+
+.code-language-dial__trigger:hover .code-language-dial__trigger-icon,
+.code-language-dial__trigger--open .code-language-dial__trigger-icon {
+  color: #ffffff;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--dial-accent, #9a8cff) 72%, transparent));
+}
+
+/* When the dial opens, the trigger becomes the hero of the center —
+   the "you are here" indicator for the current language. It scales up
+   slightly, gets a bright accent ring and glows with the active language
+   colour so it's readable even through the frosted backdrop. */
 .code-language-dial__trigger--open {
-  transform: translateY(-1px) scale(0.94);
+  transform: translateY(-1px) scale(1.04);
+  border-color: color-mix(in srgb, var(--dial-accent, #9a8cff) 58%, rgba(255, 255, 255, 0.16));
+  color: #ffffff;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, var(--dial-accent, #9a8cff) 28%, transparent) 0%,
+      transparent 78%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(16, 20, 28, 0.88);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 26%, transparent),
-    0 0 26px color-mix(in srgb, var(--dial-accent, #54b7ff) 34%, transparent),
-    0 0 0 6px rgba(255, 255, 255, 0.02);
+    0 0 0 1px color-mix(in srgb, var(--dial-accent, #9a8cff) 44%, transparent),
+    0 0 18px color-mix(in srgb, var(--dial-accent, #9a8cff) 46%, transparent);
 }
 
 .code-language-dial__trigger--pulse {
@@ -268,32 +312,51 @@
 .code-language-dial__trigger-label {
   position: relative;
   z-index: 1;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: inherit;
 }
 
 .code-language-dial__trigger-icon + .code-language-dial__trigger-label {
-  margin-left: 7px;
+  margin-left: 0;
 }
 
 .code-language-dial__trigger-glyph {
   position: absolute;
-  right: 10px;
+  right: 9px;
   top: 50%;
   z-index: 1;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
   transform: translateY(-50%);
-  color: color-mix(in srgb, var(--dial-accent, #54b7ff) 68%, white);
-  font-size: 11px;
+  color: color-mix(in srgb, var(--dial-accent, #9a8cff) 60%, #ffffff);
+  font-size: 10px;
   font-weight: 800;
   line-height: 1;
-  opacity: 0.92;
-  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.85;
+  background: color-mix(in srgb, var(--dial-accent, #9a8cff) 16%, transparent);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 220ms ease,
+    opacity 220ms ease;
+}
+
+.code-language-dial__trigger:hover .code-language-dial__trigger-glyph {
+  opacity: 1;
+  background: color-mix(in srgb, var(--dial-accent, #9a8cff) 26%, transparent);
 }
 
 .code-language-dial__trigger--open .code-language-dial__trigger-glyph {
   transform: translateY(-50%) rotate(135deg);
+  opacity: 1;
+  background: color-mix(in srgb, var(--dial-accent, #9a8cff) 34%, transparent);
+  color: #ffffff;
 }
 
 /* ============================================================================
@@ -308,27 +371,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   padding: 0;
   border-radius: 999px;
   border: none;
   overflow: hidden;
   isolation: isolate;
   user-select: none;
+  /* Dark glass token — each item inherits the language's accent via
+     --dial-accent, which tints the radial glow + conic ring + text hue. */
   background:
-    radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.7), transparent 34%),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 22%, rgba(245, 248, 255, 0.94)),
-      rgba(226, 234, 248, 0.92)
+    radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, var(--dial-accent, #9a8cff) 24%, transparent) 0%,
+      color-mix(in srgb, var(--dial-accent, #9a8cff) 8%, transparent) 48%,
+      transparent 78%
     ),
-    rgba(228, 234, 244, 0.92);
-  color: rgba(12, 16, 28, 0.95);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01)),
+    rgba(14, 17, 24, 0.88);
+  color: color-mix(in srgb, var(--dial-accent, #9a8cff) 52%, #ffffff);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.66),
-    0 12px 26px rgba(0, 0, 0, 0.22),
-    0 0 22px color-mix(in srgb, var(--dial-accent, #54b7ff) 18%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--dial-accent, #9a8cff) 24%, transparent),
+    0 10px 22px rgba(0, 0, 0, 0.32),
+    0 0 18px color-mix(in srgb, var(--dial-accent, #9a8cff) 22%, transparent);
   opacity: 0;
   transform: translate(0, 0) scale(0.22) rotate(var(--dial-spin, -180deg));
   pointer-events: none;
@@ -340,61 +407,104 @@
     opacity 200ms ease,
     box-shadow 220ms ease,
     background 220ms ease,
+    color 180ms ease,
     filter 220ms ease;
 }
 
+/* Sheen sweep across the item on hover */
 .code-language-dial__item::before {
   content: '';
   position: absolute;
-  inset: 2px;
+  inset: 0;
   border-radius: inherit;
-  background:
-    linear-gradient(
-      150deg,
-      transparent 10%,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent) 40%,
-      rgba(255, 255, 255, 0.32) 56%,
-      transparent 78%
-    );
-  opacity: 0.6;
-  transform: translateX(-110%);
+  background: linear-gradient(
+    125deg,
+    transparent 34%,
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 28%, transparent) 48%,
+    rgba(255, 255, 255, 0.2) 54%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: translateX(-120%);
   transition:
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 220ms ease;
+  pointer-events: none;
+}
+
+/* Faint outer conic ring that sharpens on hover — like a chip bezel */
+.code-language-dial__item::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 140deg,
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 48%, transparent),
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 10%, transparent) 28%,
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 64%, transparent) 52%,
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 16%, transparent) 80%,
+    color-mix(in srgb, var(--dial-accent, #9a8cff) 48%, transparent)
+  );
+  -webkit-mask:
+    linear-gradient(#000, #000) content-box,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0.36;
+  transition: opacity 220ms ease;
+  pointer-events: none;
 }
 
 .code-language-dial__item span,
 .code-language-dial__item fa-icon {
   position: relative;
   z-index: 1;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   letter-spacing: 0.04em;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--dial-accent, #9a8cff) 48%, transparent));
+  transition: filter 220ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .code-language-dial__item span {
-  font-size: 11px;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
 }
 
 .code-language-dial__item:hover {
+  color: #ffffff;
   background:
-    radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.9), transparent 36%),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--dial-accent, #54b7ff) 30%, rgba(248, 250, 255, 0.97)),
-      rgba(232, 238, 248, 0.94)
+    radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, var(--dial-accent, #9a8cff) 44%, transparent) 0%,
+      color-mix(in srgb, var(--dial-accent, #9a8cff) 18%, transparent) 48%,
+      transparent 82%
     ),
-    rgba(236, 241, 249, 0.96);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+    rgba(18, 22, 30, 0.92);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    0 18px 34px rgba(0, 0, 0, 0.26),
-    0 0 28px color-mix(in srgb, var(--dial-accent, #54b7ff) 34%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--dial-accent, #9a8cff) 46%, transparent),
+    0 18px 34px rgba(0, 0, 0, 0.4),
+    0 0 28px color-mix(in srgb, var(--dial-accent, #9a8cff) 48%, transparent);
   transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.1);
 }
 
 .code-language-dial__item:hover::before {
-  opacity: 0.84;
-  transform: translateX(100%);
+  opacity: 0.9;
+  transform: translateX(120%);
+}
+
+.code-language-dial__item:hover::after {
+  opacity: 0.72;
+}
+
+.code-language-dial__item:hover span,
+.code-language-dial__item:hover fa-icon {
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--dial-accent, #9a8cff) 86%, transparent));
+  transform: scale(1.06);
 }
 
 .code-language-dial__item:active:not(.code-language-dial__item--disabled) {
@@ -404,9 +514,11 @@
 .code-language-dial__item:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--dial-accent, #54b7ff) 30%, transparent),
-    0 0 0 4px rgba(255, 255, 255, 0.03),
-    0 0 24px color-mix(in srgb, var(--dial-accent, #54b7ff) 28%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--dial-accent, #9a8cff) 56%, transparent),
+    0 0 0 2px rgba(0, 0, 0, 0.48),
+    0 0 0 4px color-mix(in srgb, var(--dial-accent, #9a8cff) 38%, transparent),
+    0 0 22px color-mix(in srgb, var(--dial-accent, #9a8cff) 56%, transparent);
 }
 
 .code-language-dial__fan--open .code-language-dial__item {
@@ -417,23 +529,38 @@
 }
 
 .code-language-dial__item--disabled {
-  color: rgba(78, 88, 108, 0.88);
+  color: rgba(180, 188, 208, 0.54);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+    rgba(14, 17, 24, 0.78);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    0 6px 16px rgba(0, 0, 0, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.05),
+    0 8px 18px rgba(0, 0, 0, 0.22);
   cursor: not-allowed;
-  filter: saturate(0.78);
+  filter: saturate(0.55);
+}
+
+.code-language-dial__item--disabled::after {
+  opacity: 0.14;
+}
+
+.code-language-dial__item--disabled span,
+.code-language-dial__item--disabled fa-icon {
+  filter: none;
 }
 
 .code-language-dial__item--disabled:hover {
+  color: rgba(200, 208, 226, 0.7);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.48),
-    0 8px 18px rgba(0, 0, 0, 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.07),
+    0 10px 20px rgba(0, 0, 0, 0.26);
   transform: translate(var(--dial-x, 0), var(--dial-y, 0)) scale(1.02);
 }
 
 .code-language-dial__item--disabled::before {
-  opacity: 0.22;
+  opacity: 0.1;
 }
 
 /* Deal — a single continuous fling from the trigger to the orbit slot.

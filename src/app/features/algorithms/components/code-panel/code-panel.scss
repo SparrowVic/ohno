@@ -1,17 +1,38 @@
 :host {
   display: block;
   flex: 1;
+  min-width: 0;
   min-height: 0;
   overflow: visible;
 }
 
 .code-shell {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-width: 0;
   min-height: 0;
-  overflow: visible;
+  overflow: hidden;
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      ellipse 100% 80% at 50% -20%,
+      rgba(var(--chrome-accent-alt-rgb), 0.08),
+      transparent 58%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.004)),
+    rgba(10, 13, 18, 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.05);
+  isolation: isolate;
 }
+
+/* ============================================================================
+   TOOLBAR — IDE-ish header: traffic dot, language dial (left),
+   copy button (right), gradient divider below.
+   ============================================================================ */
 
 .code-toolbar {
   position: relative;
@@ -19,10 +40,35 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  min-height: 30px;
-  padding: 10px 10px 8px;
+  min-height: 38px;
+  padding: 10px 12px 10px 14px;
   overflow: visible;
   z-index: 3;
+}
+
+.code-toolbar::before {
+  content: '';
+  position: absolute;
+  inset: auto 12px 0 12px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--chrome-accent-alt-rgb), 0.32) 24%,
+    rgba(var(--chrome-accent-rgb), 0.28) 62%,
+    transparent 100%
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.code-toolbar::after {
+  content: '';
+  position: absolute;
+  inset: auto 12px -1px 12px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
 }
 
 .code-toolbar__dial {
@@ -35,22 +81,50 @@
   flex-shrink: 0;
 }
 
+/* ============================================================================
+   SCROLL AREA
+   ============================================================================ */
+
 .code-scroll {
+  position: relative;
   flex: 1;
+  min-width: 0;
   min-height: 0;
   overflow: auto;
-  padding: 0 10px 10px;
+  padding: 8px 10px 10px;
+}
+
+.code-scroll::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 32px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--chrome-accent-alt-rgb), 0.04) 0%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
 }
 
 .code-render {
   min-width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .code-empty {
-  padding: 14px 12px;
+  padding: 20px 16px;
+  text-align: center;
   color: var(--text-tertiary);
   font-size: 12px;
+  font-style: italic;
 }
+
+/* ============================================================================
+   SHIKI RENDERED LINES
+   ============================================================================ */
 
 :host ::ng-deep .code-panel__shiki {
   min-width: max-content;
@@ -58,8 +132,8 @@
   padding: 0;
   background: transparent !important;
   font-family: var(--font-mono) !important;
-  font-size: 11px;
-  line-height: 1.28;
+  font-size: 11.5px;
+  line-height: 1.32;
 }
 
 :host ::ng-deep .code-panel__code {
@@ -71,17 +145,18 @@
   position: relative;
   display: block;
   min-width: max-content;
-  min-height: 19px;
+  min-height: 20px;
   box-sizing: border-box;
-  padding: 2px 10px 2px 64px;
-  border-radius: 12px;
+  padding: 2px 12px 2px 66px;
+  border-radius: 10px;
   border: 0.5px solid transparent;
   white-space: pre;
-  line-height: 1.28;
+  line-height: 1.32;
   transition:
-    background 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease;
+    background 180ms var(--ease-soft, cubic-bezier(0.4, 0.2, 0.2, 1)),
+    border-color 180ms var(--ease-soft, cubic-bezier(0.4, 0.2, 0.2, 1)),
+    transform 220ms var(--ease-out-quart, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow 220ms var(--ease-out-quart, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
 :host ::ng-deep .code-panel__render-line::before {
@@ -89,12 +164,20 @@
   position: absolute;
   top: 50%;
   left: 10px;
-  width: 22px;
+  width: 24px;
   color: var(--text-tertiary);
   text-align: right;
   user-select: none;
-  opacity: 0.7;
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
   transform: translateY(-50%);
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+:host ::ng-deep .code-panel__render-line:hover::before {
+  opacity: 0.78;
+  color: var(--text-secondary);
 }
 
 :host ::ng-deep .code-panel__render-line--hidden {
@@ -108,7 +191,7 @@
 :host ::ng-deep .code-panel__fold-toggle {
   position: absolute;
   top: 50%;
-  left: 34px;
+  left: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -127,15 +210,15 @@
 }
 
 :host ::ng-deep .code-panel__fold-toggle:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-secondary);
+  background: rgba(var(--chrome-accent-alt-rgb), 0.1);
+  color: var(--chrome-accent-alt-strong);
 }
 
 :host ::ng-deep .code-panel__fold-toggle svg {
   width: 10px;
   height: 10px;
   transform: rotate(90deg);
-  transition: transform 140ms ease;
+  transition: transform 160ms ease;
 }
 
 :host ::ng-deep .code-panel__render-line--collapsed .code-panel__fold-toggle svg {
@@ -145,20 +228,38 @@
 :host ::ng-deep .code-panel__fold-summary {
   margin-left: 10px;
   color: var(--text-tertiary);
-  opacity: 0.82;
+  opacity: 0.72;
   font-size: 10px;
+  font-style: italic;
 }
 
+/* Active (currently-executed) line — glows with the brand accent */
 :host ::ng-deep .code-panel__render-line--active {
   background:
-    linear-gradient(180deg, rgba(184, 213, 110, 0.12), rgba(184, 213, 110, 0.04)),
-    rgba(255, 255, 255, 0.02);
-  border-color: rgba(184, 213, 110, 0.12);
+    linear-gradient(
+      90deg,
+      rgba(var(--accent-rgb), 0.2) 0%,
+      rgba(var(--accent-rgb), 0.09) 34%,
+      rgba(var(--accent-rgb), 0.02) 72%,
+      transparent
+    );
+  border-color: rgba(var(--accent-rgb), 0.22);
+  box-shadow:
+    inset 2px 0 0 rgba(var(--accent-rgb), 0.95),
+    0 0 16px rgba(var(--accent-rgb), 0.14);
   transform: translateX(3px);
+}
+
+:host ::ng-deep .code-panel__render-line--active::before {
+  color: var(--accent-strong);
+  opacity: 1;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :host ::ng-deep .code-panel__render-line,
+  :host ::ng-deep .code-panel__render-line::before,
   :host ::ng-deep .code-panel__fold-toggle,
   :host ::ng-deep .code-panel__fold-toggle svg {
     transition: none;
@@ -167,6 +268,14 @@
 
 @media (max-width: 760px) {
   .code-toolbar {
-    padding-bottom: 6px;
+    padding: 8px 10px;
+  }
+
+  .code-scroll {
+    padding: 6px 8px 8px;
+  }
+
+  :host ::ng-deep .code-panel__render-line {
+    padding-left: 58px;
   }
 }
