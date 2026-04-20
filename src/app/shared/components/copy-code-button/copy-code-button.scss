@@ -4,133 +4,161 @@
   flex-shrink: 0;
 }
 
+/* ============================================================================
+   COPY CODE BUTTON — sibling to the code-language dial trigger in the code
+   panel toolbar. The outer pill chrome (size / border / background / shadow /
+   hover / focus / active / sheen) is deliberately identical to the dial so
+   both pills read as one harmonious pair; only the --pill-accent differs
+   (lime for "copy", per-language color for the dial).
+   ============================================================================ */
+
 .copy-code-button {
+  --pill-accent: var(--accent);
+  --pill-accent-rgb: var(--accent-rgb);
+
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   height: 30px;
-  padding: 0 13px 0 12px;
+  padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.014)),
-    rgba(10, 13, 18, 0.72);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
+    rgba(14, 17, 24, 0.7);
+  color: var(--text-secondary);
+  /* Hairline-only shadow: 1px offset, 2px blur. Tight enough to sit next
+     to other bordered surfaces without visibly clipping. */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.012),
-    0 10px 20px rgba(0, 0, 0, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(12px) saturate(116%);
+  -webkit-backdrop-filter: blur(12px) saturate(116%);
   isolation: isolate;
   overflow: hidden;
-  color: var(--text-secondary);
-  backdrop-filter: blur(14px) saturate(114%);
   transition:
-    color 180ms ease,
-    border-color 220ms ease,
-    background 220ms ease,
-    box-shadow 260ms ease,
-    filter 240ms ease,
-    transform 180ms ease;
+    color 180ms cubic-bezier(0.4, 0.2, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0.2, 0.2, 1),
+    background 220ms cubic-bezier(0.4, 0.2, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.copy-code-button::before,
-.copy-code-button::after {
+/* ---- Sheen sweep on hover (same curve + timing as the dial) ---- */
+.copy-code-button::before {
   content: '';
   position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 32%,
+    color-mix(in srgb, var(--pill-accent) 24%, transparent) 48%,
+    rgba(255, 255, 255, 0.14) 56%,
+    transparent 72%
+  );
+  opacity: 0;
+  transform: translateX(-120%);
+  transition:
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
   pointer-events: none;
 }
 
-.copy-code-button::before {
-  inset: 1px;
-  border-radius: inherit;
+/* HOVER — color carries the feedback. Border picks up the accent, text
+   brightens, background gets a whisper of accent tint. Shadow stays the
+   same hairline size; only a 0.5px spread ring is added to echo the
+   border in the accent. No auras, no clipping issues with neighbors. */
+.copy-code-button:hover {
+  border-color: color-mix(in srgb, var(--pill-accent) 56%, rgba(255, 255, 255, 0.14));
+  color: #ffffff;
   background:
     linear-gradient(
-      120deg,
-      transparent 16%,
-      rgba(255, 255, 255, 0.025) 34%,
-      rgba(var(--chrome-accent-rgb), 0.08) 48%,
-      rgba(255, 255, 255, 0.11) 56%,
-      transparent 74%
-    );
-  opacity: 0.34;
-}
-
-.copy-code-button::after {
-  top: -28%;
-  bottom: -28%;
-  left: -22%;
-  width: 36%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(var(--chrome-accent-rgb), 0.08) 36%,
-    rgba(255, 255, 255, 0.42) 50%,
-    rgba(var(--page-accent-rgb, 184 213 110), 0.16) 64%,
-    transparent
-  );
-  opacity: 0;
-  transform: translateX(-180%) skewX(-18deg);
-}
-
-.copy-code-button:hover {
-  border-color: rgba(var(--chrome-accent-rgb), 0.16);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
-    rgba(12, 16, 22, 0.76);
+      135deg,
+      color-mix(in srgb, var(--pill-accent) 10%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
+    rgba(16, 20, 28, 0.74);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.016),
-    0 12px 22px rgba(0, 0, 0, 0.16);
-  color: var(--text-primary);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0 0 0.5px color-mix(in srgb, var(--pill-accent) 24%, transparent);
 }
 
-.copy-code-button:hover::after {
-  opacity: 0.74;
-  animation: copy-code-button-hover-glide 940ms cubic-bezier(0.22, 1, 0.36, 1);
+.copy-code-button:hover::before {
+  opacity: 0.9;
+  transform: translateX(120%);
 }
 
+/* FOCUS-VISIBLE — same language, just a touch stronger ring so it's
+   unambiguously keyboard-reachable without adding an outline. */
 .copy-code-button:focus-visible {
   outline: none;
-  border-color: rgba(var(--chrome-accent-rgb), 0.28);
+  border-color: color-mix(in srgb, var(--pill-accent) 60%, rgba(255, 255, 255, 0.16));
+  color: #ffffff;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 0 4px rgba(255, 255, 255, 0.025),
-    0 0 18px rgba(var(--chrome-accent-rgb), 0.12);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0 0 1px color-mix(in srgb, var(--pill-accent) 40%, transparent);
 }
 
+/* ACTIVE — micro-squish only. No dark shadow, thin accent ring confirms
+   the press without bleeding outward. */
 .copy-code-button:active {
-  transform: scale(0.972);
+  transform: scale(0.985);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 0.5px color-mix(in srgb, var(--pill-accent) 36%, transparent);
 }
 
 .copy-code-button--pressed {
   animation: copy-code-button-press 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ---- COPIED state — hero of the center, matches dial's --open treatment ---- */
+
+/* COPIED — hero state. Still minimal: accent border + subtle accent tint
+   in the background + 1px ring. No big glow. Twin of dial--open. */
 .copy-code-button--copied {
-  border-color: rgba(var(--page-accent-rgb, 184 213 110), 0.24);
+  transform: scale(1.01);
+  border-color: color-mix(in srgb, var(--pill-accent) 64%, rgba(255, 255, 255, 0.18));
+  color: #ffffff;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
-    rgba(12, 16, 18, 0.78);
-  color: var(--text-primary);
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--pill-accent) 14%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(16, 20, 28, 0.84);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.014),
-    0 10px 22px rgba(var(--page-accent-rgb, 184 213 110), 0.08);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0 0 1px color-mix(in srgb, var(--pill-accent) 44%, transparent);
 }
 
 .copy-code-button--success-pulse {
   animation: copy-code-button-success 920ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.copy-code-button--success-pulse::after {
-  opacity: 0.92;
-  animation: copy-code-button-success-glide 980ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.copy-code-button--success-pulse::before {
+  opacity: 0.95;
+  transform: translateX(120%);
+  transition:
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms ease;
 }
+
+/* ============================================================================
+   ICON BAY
+   ============================================================================ */
 
 .copy-code-button__icon-bay {
   position: relative;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
@@ -138,7 +166,11 @@
   position: absolute;
   inset: -5px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(var(--chrome-accent-rgb), 0.18), transparent 72%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--pill-accent) 28%, transparent),
+    transparent 72%
+  );
   opacity: 0;
   transform: scale(0.58);
   transition:
@@ -148,7 +180,7 @@
 }
 
 .copy-code-button:hover .copy-code-button__icon-ring {
-  opacity: 0.88;
+  opacity: 0.78;
   transform: scale(1);
 }
 
@@ -167,24 +199,26 @@
 }
 
 .copy-code-button__icon {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .copy-code-button__icon--copy-back {
   opacity: 0.24;
   color: rgba(255, 255, 255, 0.28);
-  transform: translate(-2.8px, 1.8px) scale(0.88);
+  transform: translate(-2.8px, 1.8px) scale(0.86);
 }
 
 .copy-code-button__icon--copy-front {
   opacity: 0.96;
+  color: color-mix(in srgb, var(--pill-accent) 48%, #ffffff);
   transform: translate(0, 0) scale(1);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pill-accent) 34%, transparent));
 }
 
 .copy-code-button__icon--check {
   opacity: 0;
-  color: var(--accent-strong);
-  filter: drop-shadow(0 0 10px rgba(var(--page-accent-rgb, 184 213 110), 0.24));
+  color: color-mix(in srgb, var(--pill-accent) 68%, #ffffff);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pill-accent) 44%, transparent));
   transform: translate(0, 1px) scale(0.52) rotate(-18deg);
 }
 
@@ -192,7 +226,7 @@
   width: 9px;
   height: 9px;
   font-size: 8px;
-  color: rgba(var(--chrome-accent-rgb), 0.9);
+  color: color-mix(in srgb, var(--pill-accent) 70%, #ffffff);
   opacity: 0;
 }
 
@@ -203,13 +237,14 @@
 
 .copy-code-button:hover:not(.copy-code-button--copied) .copy-code-button__icon--copy-back {
   opacity: 0.42;
-  color: rgba(var(--chrome-accent-rgb), 0.72);
-  transform: translate(-4.2px, 2.3px) scale(0.92) rotate(-10deg);
+  color: color-mix(in srgb, var(--pill-accent) 56%, rgba(255, 255, 255, 0.4));
+  transform: translate(-4.2px, 2.3px) scale(0.9) rotate(-10deg);
 }
 
 .copy-code-button:hover:not(.copy-code-button--copied) .copy-code-button__icon--copy-front {
   transform: translate(1.2px, -0.9px) scale(1.03) rotate(8deg);
-  filter: drop-shadow(0 0 10px rgba(var(--chrome-accent-rgb), 0.12));
+  color: #ffffff;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pill-accent) 52%, transparent));
 }
 
 .copy-code-button:hover:not(.copy-code-button--copied) .copy-code-button__spark--primary {
@@ -218,7 +253,13 @@
 }
 
 .copy-code-button--copied .copy-code-button__icon-ring {
-  background: radial-gradient(circle, rgba(var(--page-accent-rgb, 184 213 110), 0.2), transparent 72%);
+  opacity: 0.56;
+  transform: scale(1);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--pill-accent) 32%, transparent),
+    transparent 72%
+  );
 }
 
 .copy-code-button--copied .copy-code-button__icon--copy-back {
@@ -233,6 +274,8 @@
 
 .copy-code-button--copied .copy-code-button__icon--check {
   opacity: 1;
+  color: #ffffff;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--pill-accent) 72%, transparent));
   transform: translate(0, 0) scale(1) rotate(0);
 }
 
@@ -249,6 +292,10 @@
   animation: copy-code-button-spark-primary 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* ============================================================================
+   LABEL — same typography as the dial trigger-label for visual rhyme
+   ============================================================================ */
+
 .copy-code-button__label-shell {
   display: grid;
   min-width: max-content;
@@ -259,12 +306,13 @@
 .copy-code-button__label {
   grid-area: 1 / 1;
   display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.075em;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
   line-height: 12px;
   text-transform: uppercase;
   white-space: nowrap;
+  color: inherit;
   transition:
     opacity 200ms ease,
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -302,130 +350,60 @@
   border: 0;
 }
 
+/* ============================================================================
+   KEYFRAMES
+   ============================================================================ */
+
 @keyframes copy-code-button-press {
-  0% {
-    transform: scale(0.972);
-  }
-
-  40% {
-    transform: scale(0.936);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0%   { transform: scale(0.985); }
+  40%  { transform: scale(0.96); }
+  100% { transform: scale(1.01); }
 }
 
 @keyframes copy-code-button-success {
   0% {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.014),
-      0 10px 22px rgba(var(--page-accent-rgb, 184 213 110), 0.08);
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 1px 2px rgba(0, 0, 0, 0.12),
+      0 0 0 1px color-mix(in srgb, var(--pill-accent) 44%, transparent);
   }
 
   36% {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.018),
-      0 12px 26px rgba(var(--page-accent-rgb, 184 213 110), 0.14),
-      0 0 28px rgba(var(--chrome-accent-rgb), 0.1);
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 1px 2px rgba(0, 0, 0, 0.12),
+      0 0 0 1px color-mix(in srgb, var(--pill-accent) 78%, transparent);
   }
 
   100% {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.014),
-      0 10px 22px rgba(var(--page-accent-rgb, 184 213 110), 0.08);
-  }
-}
-
-@keyframes copy-code-button-hover-glide {
-  0% {
-    opacity: 0;
-    transform: translateX(-180%) skewX(-18deg);
-  }
-
-  24% {
-    opacity: 0.68;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateX(310%) skewX(-18deg);
-  }
-}
-
-@keyframes copy-code-button-success-glide {
-  0% {
-    opacity: 0;
-    transform: translateX(-190%) skewX(-18deg);
-  }
-
-  20% {
-    opacity: 0.94;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateX(340%) skewX(-18deg);
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 1px 2px rgba(0, 0, 0, 0.12),
+      0 0 0 1px color-mix(in srgb, var(--pill-accent) 44%, transparent);
   }
 }
 
 @keyframes copy-code-button-check-land {
-  0% {
-    opacity: 0;
-    transform: translate(0, 1px) scale(0.52) rotate(-18deg);
-  }
-
-  54% {
-    opacity: 1;
-    transform: translate(0, -1px) scale(1.14) rotate(2deg);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1) rotate(0);
-  }
+  0%   { opacity: 0; transform: translate(0, 1px) scale(0.52) rotate(-18deg); }
+  54%  { opacity: 1; transform: translate(0, -1px) scale(1.14) rotate(2deg); }
+  100% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); }
 }
 
 @keyframes copy-code-button-ring-bloom {
-  0% {
-    opacity: 0.12;
-    transform: scale(0.52);
-  }
-
-  34% {
-    opacity: 0.92;
-    transform: scale(1.18);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(1.84);
-  }
+  0%   { opacity: 0.12; transform: scale(0.52); }
+  34%  { opacity: 0.92; transform: scale(1.18); }
+  100% { opacity: 0; transform: scale(1.84); }
 }
 
 @keyframes copy-code-button-spark-primary {
-  0% {
-    opacity: 0;
-    transform: translate(-2px, 4px) scale(0.34) rotate(-16deg);
-  }
-
-  34% {
-    opacity: 0.95;
-    transform: translate(0, -1px) scale(0.96) rotate(4deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(8px, -10px) scale(0.52) rotate(18deg);
-  }
+  0%   { opacity: 0;    transform: translate(-2px, 4px) scale(0.34) rotate(-16deg); }
+  34%  { opacity: 0.95; transform: translate(0, -1px) scale(0.96) rotate(4deg); }
+  100% { opacity: 0;    transform: translate(8px, -10px) scale(0.52) rotate(18deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .copy-code-button,
-  .copy-code-button::after,
+  .copy-code-button::before,
   .copy-code-button__icon-ring,
   .copy-code-button__icon,
   .copy-code-button__spark,
@@ -438,17 +416,17 @@
 @media (max-width: 760px) {
   .copy-code-button {
     height: 28px;
-    padding: 0 10px;
-    gap: 6px;
+    padding: 0 12px;
+    gap: 7px;
   }
 
   .copy-code-button__icon-bay {
-    width: 15px;
-    height: 15px;
+    width: 13px;
+    height: 13px;
   }
 
   .copy-code-button__label {
     font-size: 10px;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.12em;
   }
 }
