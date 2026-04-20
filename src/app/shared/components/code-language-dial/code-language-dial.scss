@@ -46,38 +46,43 @@
   position: absolute;
   top: var(--trigger-cy);
   left: var(--trigger-cx);
-  width: 280px;
-  height: 280px;
+  width: 320px;
+  height: 320px;
   transform: translate(-50%, -50%) scale(0.66);
   border-radius: 50%;
+  /* Faint tint — mostly just enough to anchor the blur visually. Any
+     remaining sense of "darkness" comes from the blurred page behind. */
   background:
     radial-gradient(
       circle at center,
-      rgba(18, 22, 32, 0.54) 0%,
-      rgba(18, 22, 32, 0.36) 38%,
-      rgba(18, 22, 32, 0.14) 64%,
-      transparent 82%
+      rgba(18, 22, 32, 0.22) 0%,
+      rgba(18, 22, 32, 0.09) 34%,
+      rgba(18, 22, 32, 0.03) 60%,
+      transparent 78%
     );
-  backdrop-filter: blur(20px) saturate(122%);
-  -webkit-backdrop-filter: blur(20px) saturate(122%);
-  /* Radial mask clips the blur + tint so both radiate out of the center
-     and dissolve toward the rim — no hard border, no visible edge. */
+  backdrop-filter: blur(6px) saturate(108%);
+  -webkit-backdrop-filter: blur(6px) saturate(108%);
+  /* Mask fades continuously from center → rim. Every stop steps the
+     opacity down a notch so there's no perceivable terminator where the
+     disc "ends" — it dissolves into the page. */
   mask-image: radial-gradient(
     circle at center,
     #000 0%,
-    #000 32%,
-    rgba(0, 0, 0, 0.82) 54%,
-    rgba(0, 0, 0, 0.42) 74%,
-    rgba(0, 0, 0, 0.14) 88%,
+    rgba(0, 0, 0, 0.94) 18%,
+    rgba(0, 0, 0, 0.72) 38%,
+    rgba(0, 0, 0, 0.46) 56%,
+    rgba(0, 0, 0, 0.22) 74%,
+    rgba(0, 0, 0, 0.08) 90%,
     transparent 100%
   );
   -webkit-mask-image: radial-gradient(
     circle at center,
     #000 0%,
-    #000 32%,
-    rgba(0, 0, 0, 0.82) 54%,
-    rgba(0, 0, 0, 0.42) 74%,
-    rgba(0, 0, 0, 0.14) 88%,
+    rgba(0, 0, 0, 0.94) 18%,
+    rgba(0, 0, 0, 0.72) 38%,
+    rgba(0, 0, 0, 0.46) 56%,
+    rgba(0, 0, 0, 0.22) 74%,
+    rgba(0, 0, 0, 0.08) 90%,
     transparent 100%
   );
   opacity: 0;
@@ -538,8 +543,8 @@
   }
 
   .code-language-dial__backdrop {
-    width: 240px;
-    height: 240px;
+    width: 270px;
+    height: 270px;
   }
 
   .code-language-dial__halo {
