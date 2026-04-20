@@ -210,6 +210,144 @@ function detectBraceRegions(emittedLines: readonly string[]): readonly BraceRegi
 }
 
 /**
+ * Detect multi-line comments / docstrings that span more than one line
+ * and expose them as fold regions. Language-aware:
+ *
+ *   - C-style languages (TS/JS/Java/Go/C/C++/Rust, etc.): `/* ... *\/`
+ *   - Python: triple-quoted strings (`"""` or `'''`), which double as
+ *     docstrings and are canonically foldable in Python editors.
+ *
+ * Single-line comments/docstrings are ignored — only multi-line spans
+ * produce a region.
+ */
+function detectCommentRegions(
+  emittedLines: readonly string[],
+  language: CodeLanguage,
+): readonly BraceRegion[] {
+  if (language === 'python') {
+    return detectPythonDocstringRegions(emittedLines);
+  }
+  return detectCStyleBlockComments(emittedLines);
+}
+
+function detectCStyleBlockComments(lines: readonly string[]): readonly BraceRegion[] {
+  const regions: BraceRegion[] = [];
+  let commentStartLine: number | null = null;
+  let inBlockComment = false;
+
+  for (let lineIdx = 0; lineIdx < lines.length; lineIdx += 1) {
+    const line = lines[lineIdx]!;
+    const lineNum = lineIdx + 1;
+    let inString: string | null = null;
+    let i = 0;
+
+    while (i < line.length) {
+      const ch = line[i]!;
+      const next = line[i + 1];
+
+      if (inBlockComment) {
+        if (ch === '*' && next === '/') {
+          if (commentStartLine !== null && commentStartLine < lineNum) {
+            regions.push({ startLine: commentStartLine, endLine: lineNum });
+          }
+          commentStartLine = null;
+          inBlockComment = false;
+          i += 2;
+        } else {
+          i += 1;
+        }
+        continue;
+      }
+
+      if (inString !== null) {
+        if (ch === '\\') { i += 2; continue; }
+        if (ch === inString) inString = null;
+        i += 1;
+        continue;
+      }
+
+      if (ch === '/' && next === '/') break;
+      if (ch === '/' && next === '*') {
+        inBlockComment = true;
+        commentStartLine = lineNum;
+        i += 2;
+        continue;
+      }
+      if (ch === '"' || ch === "'" || ch === '`') {
+        inString = ch;
+        i += 1;
+        continue;
+      }
+
+      i += 1;
+    }
+  }
+
+  return regions;
+}
+
+function detectPythonDocstringRegions(lines: readonly string[]): readonly BraceRegion[] {
+  const regions: BraceRegion[] = [];
+  let tripleStartLine: number | null = null;
+  let tripleQuote: '"""' | "'''" | null = null;
+
+  for (let lineIdx = 0; lineIdx < lines.length; lineIdx += 1) {
+    const line = lines[lineIdx]!;
+    const lineNum = lineIdx + 1;
+    let i = 0;
+
+    while (i < line.length) {
+      if (tripleQuote !== null) {
+        if (line.substring(i, i + 3) === tripleQuote) {
+          if (tripleStartLine !== null && tripleStartLine < lineNum) {
+            regions.push({ startLine: tripleStartLine, endLine: lineNum });
+          }
+          tripleStartLine = null;
+          tripleQuote = null;
+          i += 3;
+          continue;
+        }
+        if (line[i] === '\\') {
+          i += 2;
+        } else {
+          i += 1;
+        }
+        continue;
+      }
+
+      if (line[i] === '#') break;
+
+      if (line.substring(i, i + 3) === '"""') {
+        tripleQuote = '"""';
+        tripleStartLine = lineNum;
+        i += 3;
+        continue;
+      }
+      if (line.substring(i, i + 3) === "'''") {
+        tripleQuote = "'''";
+        tripleStartLine = lineNum;
+        i += 3;
+        continue;
+      }
+
+      if (line[i] === '"' || line[i] === "'") {
+        const quote = line[i]!;
+        i += 1;
+        while (i < line.length && line[i] !== quote) {
+          if (line[i] === '\\') { i += 2; } else { i += 1; }
+        }
+        if (i < line.length) i += 1;
+        continue;
+      }
+
+      i += 1;
+    }
+  }
+
+  return regions;
+}
+
+/**
  * An auto-detected brace region inherits `collapsedByDefault` from the
  * innermost enclosing explicit `//#region` — but only if it's the
  * OUTERMOST auto-region inside that explicit scope. Nested blocks (a
@@ -315,27 +453,38 @@ export function buildStructuredCode(source: string, language: CodeLanguage = 'ty
   }
 
   const braceRegions = detectBraceRegions(emittedLines);
+  const commentRegions = detectCommentRegions(emittedLines, language);
+  // Filter out any comment region that collides with a brace region's
+  // declaration line — should essentially never happen, but defensively
+  // avoids two fold toggles fighting over the same gutter slot.
+  const commentRegionsSafe = commentRegions.filter(
+    (cr) => !braceRegions.some((br) => br.startLine === cr.startLine),
+  );
+  const autoFoldRegions = [...braceRegions, ...commentRegionsSafe];
+
   let regions: CodeRegion[];
 
-  if (braceRegions.length === 0) {
-    // Brace-less language (e.g. Python): fall back to explicit regions.
+  if (autoFoldRegions.length === 0) {
+    // Nothing auto-detected (e.g. Python file with no docstrings and no
+    // brace blocks): fall back to explicit `//#region` markers.
     regions = explicitRegions;
   } else {
-    // Brace-detected languages: each `{...}` block is its own fold region.
-    // Explicit `//#region` markers that cleanly wrap a single top-level
-    // brace block are "promoted" — the brace region adopts the explicit's
-    // id/kind/collapsedByDefault so named regions keep their metadata.
-    // Explicit markers that wrap multiple top-level blocks (pure grouping)
-    // are dropped so each inner block folds independently.
-    const braceToPromoted = new Map<BraceRegion, CodeRegion>();
+    // Auto-detected languages: every brace block and every multi-line
+    // comment/docstring is its own fold region. Explicit `//#region`
+    // markers that cleanly wrap a single top-level block are "promoted"
+    // — the auto region adopts the explicit's id/kind/collapsedByDefault
+    // so named regions keep their metadata. Explicit markers that wrap
+    // multiple top-level blocks (pure grouping) are dropped so each
+    // inner block folds independently.
+    const autoToPromoted = new Map<BraceRegion, CodeRegion>();
     const promotedExplicits = new Set<CodeRegion>();
 
     for (const ex of explicitRegions) {
-      const topLevelBracesInEx = braceRegions.filter((br) => {
+      const topLevelAutosInEx = autoFoldRegions.filter((br) => {
         if (br.startLine < ex.startLine || br.endLine > ex.endLine) {
           return false;
         }
-        return !braceRegions.some(
+        return !autoFoldRegions.some(
           (other) =>
             other !== br &&
             other.startLine >= ex.startLine &&
@@ -346,14 +495,16 @@ export function buildStructuredCode(source: string, language: CodeLanguage = 'ty
         );
       });
 
-      if (topLevelBracesInEx.length === 1) {
-        braceToPromoted.set(topLevelBracesInEx[0]!, ex);
+      if (topLevelAutosInEx.length === 1) {
+        autoToPromoted.set(topLevelAutosInEx[0]!, ex);
         promotedExplicits.add(ex);
       }
     }
 
-    const autoAsCode: CodeRegion[] = braceRegions.map((br) => {
-      const promoted = braceToPromoted.get(br);
+    const commentRegionSet = new Set<BraceRegion>(commentRegionsSafe);
+
+    const autoAsCode: CodeRegion[] = autoFoldRegions.map((auto) => {
+      const promoted = autoToPromoted.get(auto);
       if (promoted) {
         return {
           id: promoted.id,
@@ -363,21 +514,22 @@ export function buildStructuredCode(source: string, language: CodeLanguage = 'ty
           collapsedByDefault: promoted.collapsedByDefault,
         };
       }
+      const isComment = commentRegionSet.has(auto);
       return {
-        id: `auto-${br.startLine}-${br.endLine}`,
-        kind: 'block',
-        startLine: br.startLine,
-        endLine: br.endLine,
-        collapsedByDefault: inheritsCollapsedDefault(br, explicitRegions, braceRegions),
+        id: `${isComment ? 'comment' : 'auto'}-${auto.startLine}-${auto.endLine}`,
+        kind: isComment ? 'helper' : 'block',
+        startLine: auto.startLine,
+        endLine: auto.endLine,
+        collapsedByDefault: inheritsCollapsedDefault(auto, explicitRegions, autoFoldRegions),
       };
     });
 
     // Keep explicit regions that weren't promoted and don't contain any
-    // brace blocks (e.g., a `//#region` wrapping plain declarations).
+    // auto-detected blocks (e.g., a `//#region` wrapping plain declarations).
     const explicitKeep = explicitRegions.filter(
       (ex) =>
         !promotedExplicits.has(ex) &&
-        !braceRegions.some(
+        !autoFoldRegions.some(
           (br) => br.startLine >= ex.startLine && br.endLine <= ex.endLine,
         ),
     );
