@@ -47,16 +47,18 @@
     class="code-language-dial__trigger"
     [class.code-language-dial__trigger--open]="open()"
     [class.code-language-dial__trigger--pulse]="selectionPulse()"
+    [class.code-language-dial__trigger--text]="!activeOption().icon"
     [style.--dial-accent]="activeOption().accent"
     [attr.aria-expanded]="open()"
     [attr.aria-label]="ariaLabel()"
     [title]="activeOption().label"
     (click)="toggle()"
   >
+    <span class="code-language-dial__trigger-bloom" aria-hidden="true"></span>
     @if (activeOption().icon) {
       <fa-icon class="code-language-dial__trigger-icon" [icon]="activeOption().icon" />
+    } @else {
+      <span class="code-language-dial__trigger-label">{{ activeOption().shortLabel }}</span>
     }
-    <span class="code-language-dial__trigger-label">{{ activeOption().shortLabel }}</span>
-    <span class="code-language-dial__trigger-glyph" aria-hidden="true">{{ open() ? '×' : '+' }}</span>
   </button>
 </div>

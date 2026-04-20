@@ -171,201 +171,142 @@
 }
 
 /* ============================================================================
-   TRIGGER — pill in the toolbar
+   TRIGGER — icon-only concept. 32×32 click area, no border, no pill bg.
+   A soft accent bloom appears on hover / focus / open. Twin of the
+   copy-code-button so the toolbar reads as a coherent pair.
    ============================================================================ */
 
 .code-language-dial__trigger {
-  /* Aliased so the shared sheen/hover logic below speaks a common language
-     with the copy-code-button (--pill-accent). Only this color differs. */
   --pill-accent: var(--dial-accent, #9a8cff);
 
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 74px;
-  height: 30px;
-  padding: 0 28px 0 14px;
-  border-radius: 999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: color-mix(in srgb, var(--pill-accent) 70%, #ffffff);
   isolation: isolate;
+  cursor: pointer;
   user-select: none;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
-    rgba(14, 17, 24, 0.7);
-  color: var(--text-secondary);
-  /* Same hairline shadow as copy-code-button */
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 1px 2px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(12px) saturate(116%);
-  -webkit-backdrop-filter: blur(12px) saturate(116%);
   transition:
     color 180ms cubic-bezier(0.4, 0.2, 0.2, 1),
-    border-color 200ms cubic-bezier(0.4, 0.2, 0.2, 1),
-    background 220ms cubic-bezier(0.4, 0.2, 0.2, 1),
-    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 2;
 }
 
-/* Sheen sweep on hover — identical timing/curve to copy-code-button */
-.code-language-dial__trigger::before {
-  content: '';
+/* Accent bloom — soft radial spot that blooms from center. */
+.code-language-dial__trigger-bloom {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    120deg,
-    transparent 32%,
-    color-mix(in srgb, var(--pill-accent) 24%, transparent) 48%,
-    rgba(255, 255, 255, 0.14) 56%,
-    transparent 72%
-  );
+  background:
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--pill-accent) 22%, transparent) 0%,
+      color-mix(in srgb, var(--pill-accent) 6%, transparent) 50%,
+      transparent 78%
+    );
   opacity: 0;
-  transform: translateX(-120%);
+  transform: scale(0.64);
   transition:
-    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 220ms ease;
+    opacity 220ms cubic-bezier(0.4, 0.2, 0.2, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 220ms cubic-bezier(0.4, 0.2, 0.2, 1);
   pointer-events: none;
+  z-index: 0;
 }
 
-/* Inner accent-dot — leading indicator of the current language color */
-.code-language-dial__trigger-icon {
+.code-language-dial__trigger-icon,
+.code-language-dial__trigger-label {
   position: relative;
   z-index: 1;
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms ease,
+    filter 220ms ease;
+}
+
+.code-language-dial__trigger-icon {
+  font-size: 15px;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pill-accent) 36%, transparent));
+}
+
+.code-language-dial__trigger-label {
+  font-family: var(--font-sans);
   font-size: 11px;
-  color: color-mix(in srgb, var(--pill-accent) 80%, #ffffff);
-  opacity: 0.96;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pill-accent) 50%, transparent));
-  transition: filter 220ms ease, color 180ms ease;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: inherit;
 }
 
-/* HOVER — color does the heavy lifting. Hairline shadow stays, plus a
-   0.5px accent ring that hugs the border. No auras that could clip on
-   neighboring surfaces. */
 .code-language-dial__trigger:hover {
-  border-color: color-mix(in srgb, var(--pill-accent) 56%, rgba(255, 255, 255, 0.14));
   color: #ffffff;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--pill-accent) 10%, transparent),
-      transparent 62%
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
-    rgba(16, 20, 28, 0.74);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.12),
-    0 0 0 0.5px color-mix(in srgb, var(--pill-accent) 24%, transparent);
 }
 
-.code-language-dial__trigger:hover::before,
-.code-language-dial__trigger--open::before {
-  opacity: 0.9;
-  transform: translateX(120%);
+.code-language-dial__trigger:hover .code-language-dial__trigger-bloom {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .code-language-dial__trigger:hover .code-language-dial__trigger-icon,
-.code-language-dial__trigger--open .code-language-dial__trigger-icon {
-  color: #ffffff;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--pill-accent) 56%, transparent));
+.code-language-dial__trigger:hover .code-language-dial__trigger-label {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--pill-accent) 56%, transparent));
 }
 
-/* OPEN — hero state, twin of copy-code-button--copied. */
-.code-language-dial__trigger--open {
-  transform: scale(1.01);
-  border-color: color-mix(in srgb, var(--pill-accent) 64%, rgba(255, 255, 255, 0.18));
+.code-language-dial__trigger:focus-visible {
+  outline: none;
   color: #ffffff;
+}
+
+.code-language-dial__trigger:focus-visible .code-language-dial__trigger-bloom {
+  opacity: 1;
+  transform: scale(1);
   background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--pill-accent) 14%, transparent),
-      transparent 62%
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-    rgba(16, 20, 28, 0.84);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 1px 2px rgba(0, 0, 0, 0.12),
-    0 0 0 1px color-mix(in srgb, var(--pill-accent) 44%, transparent);
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--pill-accent) 30%, transparent) 0%,
+      color-mix(in srgb, var(--pill-accent) 10%, transparent) 52%,
+      transparent 80%
+    );
+}
+
+.code-language-dial__trigger:active {
+  transform: scale(0.92);
 }
 
 .code-language-dial__trigger--pulse {
   animation: code-language-dial-pulse 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* FOCUS-VISIBLE — slightly stronger ring so keyboard focus is obvious. */
-.code-language-dial__trigger:focus-visible {
-  outline: none;
-  border-color: color-mix(in srgb, var(--pill-accent) 60%, rgba(255, 255, 255, 0.16));
+/* OPEN — hero / current-language state. Bloom locked on with stronger
+   accent, icon settles at scale 1.06, brighter drop-shadow. This is the
+   "you are here" indicator in the middle of the radial fan. */
+.code-language-dial__trigger--open {
   color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.12),
-    0 0 0 1px color-mix(in srgb, var(--pill-accent) 40%, transparent);
 }
 
-/* ACTIVE — micro press. No dark blur, thin accent ring. */
-.code-language-dial__trigger:active {
-  transform: scale(0.985);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 0 0 0.5px color-mix(in srgb, var(--pill-accent) 36%, transparent);
-}
-
-.code-language-dial__trigger-label {
-  position: relative;
-  z-index: 1;
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: inherit;
-}
-
-.code-language-dial__trigger-icon + .code-language-dial__trigger-label {
-  margin-left: 0;
-}
-
-.code-language-dial__trigger-glyph {
-  position: absolute;
-  right: 9px;
-  top: 50%;
-  z-index: 1;
-  width: 14px;
-  height: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  transform: translateY(-50%);
-  color: color-mix(in srgb, var(--pill-accent) 60%, #ffffff);
-  font-size: 10px;
-  font-weight: 800;
-  line-height: 1;
-  opacity: 0.85;
-  background: color-mix(in srgb, var(--pill-accent) 16%, transparent);
-  transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    background 220ms ease,
-    opacity 220ms ease,
-    color 180ms ease;
-}
-
-.code-language-dial__trigger:hover .code-language-dial__trigger-glyph {
+.code-language-dial__trigger--open .code-language-dial__trigger-bloom {
   opacity: 1;
-  background: color-mix(in srgb, var(--pill-accent) 26%, transparent);
+  transform: scale(1);
+  background:
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--pill-accent) 38%, transparent) 0%,
+      color-mix(in srgb, var(--pill-accent) 14%, transparent) 54%,
+      transparent 82%
+    );
 }
 
-.code-language-dial__trigger--open .code-language-dial__trigger-glyph {
-  transform: translateY(-50%) rotate(135deg);
-  opacity: 1;
-  background: color-mix(in srgb, var(--pill-accent) 34%, transparent);
-  color: #ffffff;
+.code-language-dial__trigger--open .code-language-dial__trigger-icon,
+.code-language-dial__trigger--open .code-language-dial__trigger-label {
+  transform: scale(1.06);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pill-accent) 72%, transparent));
 }
 
 /* ============================================================================
@@ -622,30 +563,28 @@
 }
 
 /* Trigger highlight pulse on selection */
+/* Pulse — bloom briefly flares after a language is chosen, then settles. */
+.code-language-dial__trigger--pulse .code-language-dial__trigger-bloom {
+  animation: code-language-dial-pulse-bloom 640ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 @keyframes code-language-dial-pulse {
-  0% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.1);
-  }
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.94); }
+  100% { transform: scale(1); }
+}
 
-  45% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      0 0 0 1px color-mix(in srgb, var(--pill-accent) 72%, transparent);
-  }
-
-  100% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.1);
-  }
+@keyframes code-language-dial-pulse-bloom {
+  0%   { opacity: 1; transform: scale(1); }
+  34%  { opacity: 1; transform: scale(1.32); }
+  100% { opacity: 0; transform: scale(0.64); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .code-language-dial__trigger,
-  .code-language-dial__trigger::before,
+  .code-language-dial__trigger-bloom,
+  .code-language-dial__trigger-icon,
+  .code-language-dial__trigger-label,
   .code-language-dial__item,
   .code-language-dial__item::before,
   .code-language-dial__backdrop,
@@ -664,13 +603,16 @@
 
 @media (max-width: 760px) {
   :host {
-    height: 28px;
+    height: 30px;
   }
 
   .code-language-dial__trigger {
-    min-width: 52px;
-    height: 28px;
-    padding-inline: 10px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .code-language-dial__trigger-icon {
+    font-size: 14px;
   }
 
   .code-language-dial__item {
