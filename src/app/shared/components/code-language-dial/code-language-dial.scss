@@ -135,6 +135,100 @@
   to   { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
 }
 
+/* ---------- Center logo: big ghost of the active language that emerges
+   from under the trigger when the fan opens. Sits above the backdrop
+   but below the orbiting items so the cards can overlap it when they land.
+   On select, it does a "pop" burst and fades out as the fan closes.       */
+
+.code-language-dial__center-logo {
+  position: absolute;
+  top: var(--trigger-cy);
+  left: var(--trigger-cx);
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--dial-accent, #9a8cff) 42%, #ffffff);
+  font-size: 44px;
+  line-height: 1;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.18);
+  filter: blur(4px) drop-shadow(0 0 16px color-mix(in srgb, var(--dial-accent, #9a8cff) 48%, transparent));
+  pointer-events: none;
+  z-index: 1;
+  transition:
+    opacity 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-language-dial__center-logo fa-icon {
+  display: inline-grid;
+  place-items: center;
+  font-size: inherit;
+}
+
+.code-language-dial__center-logo-text {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: inherit;
+}
+
+/* Emerge — icon rises out of the trigger, blur clears, settles slightly
+   under 1x scale so it reads as a soft "backdrop watermark" of the
+   selected language while items orbit around it. */
+.code-language-dial__fan--open .code-language-dial__center-logo {
+  animation: code-language-dial-center-emerge 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes code-language-dial-center-emerge {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.18);
+    filter: blur(5px) drop-shadow(0 0 12px color-mix(in srgb, var(--dial-accent, #9a8cff) 32%, transparent));
+  }
+  32% {
+    opacity: 1;
+    filter: blur(1px) drop-shadow(0 0 22px color-mix(in srgb, var(--dial-accent, #9a8cff) 72%, transparent));
+  }
+  62% {
+    transform: translate(-50%, -50%) scale(1.16);
+  }
+  100% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0) drop-shadow(0 0 20px color-mix(in srgb, var(--dial-accent, #9a8cff) 58%, transparent));
+  }
+}
+
+/* Pop — after the user picks a language, the center logo swells brightly
+   and dissolves outward, confirming the choice. Wins over the emerge
+   keyframe via source-order specificity (pulse rule below). */
+.code-language-dial__fan--pulse .code-language-dial__center-logo {
+  animation: code-language-dial-center-pop 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes code-language-dial-center-pop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0) drop-shadow(0 0 22px color-mix(in srgb, var(--dial-accent, #9a8cff) 72%, transparent));
+  }
+  36% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.48);
+    filter: blur(0) drop-shadow(0 0 32px color-mix(in srgb, var(--dial-accent, #9a8cff) 94%, transparent));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.18);
+    filter: blur(6px) drop-shadow(0 0 10px color-mix(in srgb, var(--dial-accent, #9a8cff) 30%, transparent));
+  }
+}
+
 /* ---------- Burst: bright ring that expands from the trigger ---------- */
 /* Plays once when the dial opens, like a flash of released energy as the
    first card leaves the deck. */
@@ -226,6 +320,7 @@
   position: relative;
   z-index: 1;
   transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     color 180ms ease,
     filter 220ms ease;
@@ -303,10 +398,14 @@
     );
 }
 
+/* When the fan is open, the trigger's little icon/label is "absorbed"
+   into the emerging center logo — fade + shrink so it doesn't show
+   through the big version above. */
 .code-language-dial__trigger--open .code-language-dial__trigger-icon,
 .code-language-dial__trigger--open .code-language-dial__trigger-label {
-  transform: scale(1.06);
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pill-accent) 72%, transparent));
+  opacity: 0;
+  transform: scale(0.35);
+  filter: blur(3px);
 }
 
 /* ============================================================================
@@ -589,9 +688,16 @@
   .code-language-dial__item::before,
   .code-language-dial__backdrop,
   .code-language-dial__halo,
-  .code-language-dial__burst {
+  .code-language-dial__burst,
+  .code-language-dial__center-logo {
     animation: none !important;
     transition: opacity 120ms linear !important;
+  }
+
+  .code-language-dial__fan--open .code-language-dial__center-logo {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1);
+    filter: none;
   }
 
   .code-language-dial__fan--open .code-language-dial__item {

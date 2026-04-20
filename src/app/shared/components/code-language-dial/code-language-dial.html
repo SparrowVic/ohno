@@ -7,15 +7,25 @@
     #fan
     class="code-language-dial__fan"
     [class.code-language-dial__fan--open]="open()"
+    [class.code-language-dial__fan--pulse]="selectionPulse()"
     [style.top.px]="triggerRect().y"
     [style.left.px]="triggerRect().x"
     [style.--trigger-w.px]="triggerRect().width"
     [style.--trigger-h.px]="triggerRect().height"
+    [style.--dial-accent]="activeOption().accent"
     [attr.aria-hidden]="!open()"
   >
     <span class="code-language-dial__backdrop" aria-hidden="true"></span>
     <span class="code-language-dial__halo" aria-hidden="true"></span>
     <span class="code-language-dial__burst" aria-hidden="true"></span>
+
+    <span class="code-language-dial__center-logo" aria-hidden="true">
+      @if (activeOption().icon) {
+        <fa-icon [icon]="activeOption().icon" />
+      } @else {
+        <span class="code-language-dial__center-logo-text">{{ activeOption().shortLabel }}</span>
+      }
+    </span>
 
     @for (item of radialItems(); track item.id) {
       <button
