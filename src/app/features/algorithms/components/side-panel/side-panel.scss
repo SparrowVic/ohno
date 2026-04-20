@@ -222,13 +222,15 @@
   color: var(--text-tertiary);
   font-family: inherit;
   z-index: 1;
+  cursor: pointer;
+  /* Hover/active no longer translate — feedback comes from color + icon halo,
+     so the label doesn't visibly shift. Only :active keeps a tiny press. */
   transition:
-    color 200ms var(--ease-soft),
-    transform 220ms var(--ease-out-quart);
+    color 220ms var(--ease-soft),
+    transform 140ms var(--ease-out-quart);
 
   &:hover {
     color: var(--text-secondary);
-    transform: translateY(-0.5px);
   }
 
   &:focus-visible {
@@ -237,7 +239,7 @@
   }
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.985);
   }
 
   &--active {
@@ -247,12 +249,13 @@
   &--active .side-tab__icon {
     color: rgb(var(--inspector-accent, 199 229 106));
     filter:
-      drop-shadow(0 0 8px rgba(var(--inspector-accent, 199 229 106), 0.55))
-      drop-shadow(0 0 14px rgba(var(--inspector-accent, 199 229 106), 0.25));
+      drop-shadow(0 0 6px rgba(var(--inspector-accent, 199 229 106), 0.48))
+      drop-shadow(0 0 12px rgba(var(--inspector-accent, 199 229 106), 0.22));
   }
 }
 
 .side-tab__icon {
+  position: relative;
   width: 16px;
   height: 16px;
   display: inline-flex;
@@ -260,23 +263,56 @@
   justify-content: center;
   color: currentColor;
   transition:
-    color 200ms var(--ease-soft),
-    transform 260ms var(--ease-spring),
+    color 220ms var(--ease-soft),
     filter 260ms var(--ease-out-quart);
 
   svg {
     width: 16px;
     height: 16px;
     display: block;
+    position: relative;
+    z-index: 1;
   }
 }
 
-.side-tab:hover .side-tab__icon {
-  transform: scale(1.08);
+/* Soft halo behind the icon — the only hover decoration. No scale, no
+   translate, so labels stay still. A radial accent spot blooms from the
+   icon center on hover; it locks on (brighter) when the tab is active. */
+.side-tab__icon::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--inspector-accent, 199 229 106), 0.28) 0%,
+    rgba(var(--inspector-accent, 199 229 106), 0.08) 52%,
+    transparent 78%
+  );
+  opacity: 0;
+  transform: scale(0.62);
+  transition:
+    opacity 220ms var(--ease-soft),
+    transform 280ms var(--ease-out-quart),
+    background 220ms var(--ease-soft);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.side-tab--active .side-tab__icon {
-  transform: scale(1.12);
+.side-tab:hover .side-tab__icon::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.side-tab--active .side-tab__icon::before {
+  opacity: 1;
+  transform: scale(1);
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--inspector-accent, 199 229 106), 0.38) 0%,
+    rgba(var(--inspector-accent, 199 229 106), 0.14) 52%,
+    transparent 80%
+  );
 }
 
 .side-tab__copy {
@@ -295,10 +331,16 @@
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.05;
+  transition:
+    letter-spacing 240ms var(--ease-out-quart),
+    text-shadow 240ms var(--ease-soft);
 }
 
 .side-tab--active .side-tab__label {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(var(--inspector-accent, 199 229 106), 0.2);
 }
 
 .side-tab__badge {
@@ -321,22 +363,22 @@
   letter-spacing: 0.02em;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition:
-    background 220ms var(--ease-soft),
-    border-color 220ms var(--ease-soft),
-    box-shadow 220ms var(--ease-out-quart),
-    transform 220ms var(--ease-spring);
+    background 240ms var(--ease-soft),
+    border-color 240ms var(--ease-soft),
+    box-shadow 260ms var(--ease-out-quart),
+    color 220ms var(--ease-soft);
 }
 
 .side-tab:hover .side-tab__badge,
 .side-tab--active .side-tab__badge {
+  color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(var(--inspector-accent, 199 229 106), 0.32), rgba(var(--inspector-accent-alt, 76 227 255), 0.22)),
+    linear-gradient(135deg, rgba(var(--inspector-accent, 199 229 106), 0.36), rgba(var(--inspector-accent-alt, 76 227 255), 0.24)),
     rgba(255, 255, 255, 0.05);
-  border-color: rgba(var(--inspector-accent, 199 229 106), 0.48);
+  border-color: rgba(var(--inspector-accent, 199 229 106), 0.5);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 0 14px rgba(var(--inspector-accent, 199 229 106), 0.3);
-  transform: scale(1.06);
+    0 0 12px rgba(var(--inspector-accent, 199 229 106), 0.28);
 }
 
 /* ============================================================================
