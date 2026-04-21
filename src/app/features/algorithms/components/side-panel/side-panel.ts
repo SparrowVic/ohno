@@ -11,7 +11,9 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LogEntry } from '../../models/detail';
 import { DpTraceState } from '../../models/dp';
@@ -67,19 +69,10 @@ type SideTabId = 'trace' | 'code' | 'info' | 'log';
 
 interface SideTab {
   readonly id: SideTabId;
-  readonly label: string;
+  readonly labelKey: I18nKey;
 }
 
-const BASE_SIDE_TABS: readonly SideTab[] = [
-  { id: 'code', label: 'Code' },
-  { id: 'info', label: 'Info' },
-  { id: 'log', label: 'Log' },
-];
-
-const TRACE_TAB: SideTab = {
-  id: 'trace',
-  label: 'Trace',
-};
+const BASE_SIDE_TAB_IDS: readonly SideTabId[] = ['code', 'info', 'log'];
 
 const LS_KEY = 'ohno:side-panel-width';
 const DEFAULT_WIDTH = 340;
@@ -108,6 +101,7 @@ const MAX_WIDTH = 680;
     SortTracePanel,
     StringTracePanel,
     SweepLineTracePanel,
+    TranslocoPipe,
     NgTemplateOutlet,
     VoronoiTracePanel,
   ],
@@ -116,6 +110,7 @@ const MAX_WIDTH = 680;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidePanel implements OnInit, OnDestroy {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly algorithm = input.required<AlgorithmItem>();
   readonly codeLines = input.required<readonly CodeLine[]>();
   readonly codeRegions = input<readonly CodeRegion[]>([]);
@@ -137,20 +132,26 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusModeLabel = input<string | null>(null);
   readonly graphFocusHint = input<string | null>(null);
 
-  readonly tabs = computed<readonly SideTab[]>(() =>
-    this.traceState() ||
-    this.dpState() ||
-    this.dsuState() ||
-    this.gridState() ||
-    this.matrixState() ||
-    this.networkState() ||
-    this.searchState() ||
-    this.sortState() ||
-    this.geometryState() ||
-    this.stringState()
-      ? [TRACE_TAB, ...BASE_SIDE_TABS]
-      : BASE_SIDE_TABS,
-  );
+  readonly tabs = computed<readonly SideTab[]>(() => {
+    const ids =
+      this.traceState() ||
+      this.dpState() ||
+      this.dsuState() ||
+      this.gridState() ||
+      this.matrixState() ||
+      this.networkState() ||
+      this.searchState() ||
+      this.sortState() ||
+      this.geometryState() ||
+      this.stringState()
+        ? (['trace', ...BASE_SIDE_TAB_IDS] as const)
+        : BASE_SIDE_TAB_IDS;
+
+    return ids.map((id) => ({
+      id,
+      labelKey: this.getTabLabelKey(id),
+    }));
+  });
   readonly logEntryCount = computed(() => this.logEntries().length);
   readonly convexHullGeometryState = computed<ConvexHullStepState | null>(() => {
     const state = this.geometryState();
@@ -268,5 +269,18 @@ export class SidePanel implements OnInit, OnDestroy {
 
   private applyWidth(width: number): void {
     this.hostEl.style.width = `${width}px`;
+  }
+
+  private getTabLabelKey(id: SideTabId): I18nKey {
+    switch (id) {
+      case 'trace':
+        return I18N_KEY.features.algorithms.sidePanel.tabs.trace;
+      case 'code':
+        return I18N_KEY.features.algorithms.sidePanel.tabs.code;
+      case 'info':
+        return I18N_KEY.features.algorithms.sidePanel.tabs.info;
+      case 'log':
+        return I18N_KEY.features.algorithms.sidePanel.tabs.log;
+    }
   }
 }

@@ -5,11 +5,15 @@
 
       <div class="trace__summary">
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Mode</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco
+          }}</span>
           <span class="trace__summary-value">{{ networkState.modeLabel }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Phase</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco
+          }}</span>
           <span class="trace__summary-value">{{ networkState.phaseLabel }}</span>
         </div>
         <div class="trace__summary-card">
@@ -17,7 +21,9 @@
           <span class="trace__summary-value">{{ networkState.frontierCount }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Result</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco
+          }}</span>
           <span class="trace__summary-value">{{ networkState.resultLabel }}</span>
         </div>
       </div>
@@ -25,11 +31,15 @@
       <div class="trace__calc">
         <div class="trace__calc-strip">
           <div class="trace__calc-pill">
-            <span class="trace__summary-label">Status</span>
+            <span class="trace__summary-label">{{
+              I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco
+            }}</span>
             <span class="trace__calc-value">{{ networkState.statusLabel }}</span>
           </div>
           <div class="trace__calc-pill">
-            <span class="trace__summary-label">Route</span>
+            <span class="trace__summary-label">{{
+              I18N_KEY.features.algorithms.tracePanels.common.routeLabel | transloco
+            }}</span>
             <span class="trace__calc-value">{{ networkState.activeRouteLabel ?? '—' }}</span>
           </div>
         </div>
@@ -42,7 +52,9 @@
             }
             <span> · {{ networkState.computation.decision }}</span>
           } @else {
-            <span>Waiting for the next BFS / DFS / augment step.</span>
+            <span>{{
+              I18N_KEY.features.algorithms.tracePanels.network.waitingStepLabel | transloco
+            }}</span>
           }
         </div>
       </div>
@@ -50,8 +62,14 @@
       <div class="trace__queue">
         <div class="trace__section-label">{{ networkState.queueLabel }}</div>
         <div class="trace__queue-items">
-          @for (item of queuePreview(); track item) {
-            <span class="trace__queue-chip">{{ item }}</span>
+          @if (queuePreview().length === 0) {
+            <span class="trace__queue-empty">{{
+              I18N_KEY.features.algorithms.tracePanels.network.queueEmptyLabel | transloco
+            }}</span>
+          } @else {
+            @for (item of queuePreview(); track item) {
+              <span class="trace__queue-chip">{{ item }}</span>
+            }
           }
         </div>
       </div>
@@ -60,7 +78,9 @@
         <div class="trace__section-label">{{ networkState.focusItemsLabel }}</div>
         <div class="trace__queue-items">
           @if (networkState.focusItems.length === 0) {
-            <span class="trace__queue-empty">none yet</span>
+            <span class="trace__queue-empty">{{
+              I18N_KEY.features.algorithms.tracePanels.common.noneYetLabel | transloco
+            }}</span>
           } @else {
             @for (item of networkState.focusItems; track item) {
               <span class="trace__queue-chip trace__queue-chip--done">{{ item }}</span>
@@ -75,10 +95,12 @@
         [columns]="tableColumns()"
         [rows]="tableRows()"
         [legendItems]="tableLegendItems()"
-        emptyLabel="No network rows yet"
+        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.network.tableEmptyLabel"
       />
     </div>
   } @else {
-    <div class="trace__empty">No network trace available for this step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.network.emptyLabel | transloco }}
+    </div>
   }
 </div>

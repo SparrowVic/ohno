@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faLightbulb } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
@@ -19,12 +22,14 @@ import { SegmentedPanelSection } from '../../../../shared/components/segmented-p
  */
 @Component({
   selector: 'app-trace-hint',
-  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection],
+  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './trace-hint.html',
   styleUrl: './trace-hint.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TraceHint {
+  protected readonly I18N_KEY = I18N_KEY;
+  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly keyIdea = input<string | null>(null);
   readonly watch = input<string | null>(null);
   readonly lightbulbIcon = faLightbulb;

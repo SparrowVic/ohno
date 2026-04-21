@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { fibonacciDpGenerator } from './fibonacci-dp';
 import type { SortStep } from '../../models/sort-step';
 import type { FibonacciScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: FibonacciScenario): SortStep[] {
   return [...fibonacciDpGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('fibonacci-dp', () => {
@@ -22,9 +32,18 @@ describe('fibonacci-dp', () => {
     expect(steps[0]?.phase).toBe('init');
     expect(steps[1]?.phase).toBe('compare');
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('F(6) = 8');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Sequence: 0 · 1 · 1 · 2 · 3 · 5 · 8');
-    expect(steps.at(-1)?.dp?.activeLabel).toBe('term 6');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.fibonacci.labels.resultValue',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)).toEqual({ index: 6, value: 8 });
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.fibonacci.labels.pathValue',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.sequence).toBe('0 · 1 · 1 · 2 · 3 · 5 · 8');
+    expect(keyOf(steps.at(-1)?.dp?.activeLabel)).toBe(
+      'features.algorithms.runtime.dp.fibonacci.labels.activeTerm',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.activeLabel)?.index).toBe(6);
     expect(steps[1]?.dp?.computation?.expression).toBe('1 + 0');
   });
 
@@ -38,7 +57,7 @@ describe('fibonacci-dp', () => {
     });
 
     expect(steps.map((step) => step.phase)).toEqual(['init', 'complete']);
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('F(1) = 1');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Sequence: 0 · 1');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)).toEqual({ index: 1, value: 1 });
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.sequence).toBe('0 · 1');
   });
 });

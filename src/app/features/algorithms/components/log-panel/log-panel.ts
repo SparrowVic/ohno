@@ -7,17 +7,21 @@ import {
   input,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { LogEntry } from '../../models/detail';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-log-panel',
-  imports: [],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './log-panel.html',
   styleUrl: './log-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogPanel implements AfterViewChecked, OnDestroy {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly entries = input.required<readonly LogEntry[]>();
 
   private readonly scrollRef = viewChild<ElementRef<HTMLDivElement>>('scroll');

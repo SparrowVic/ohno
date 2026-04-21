@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY, I18nKey } from '../../../core/i18n/i18n-keys';
 import { UiTag, UiTagModel } from '../ui-tag/ui-tag';
 
 export type TableColumnKind = 'text' | 'mono' | 'number' | 'tag' | 'tags';
@@ -7,21 +9,17 @@ export type TableColumnAlign = 'start' | 'center' | 'end';
 export type TableRowTone = 'default' | 'active' | 'success' | 'warning' | 'danger';
 export type TableTagValue = UiTagModel | string | number | null | undefined;
 export type TableTagsValue = readonly (UiTagModel | string | number)[];
-export type TableCellValue =
-  | string
-  | number
-  | TableTagValue
-  | TableTagsValue
-  | null
-  | undefined;
+export type TableCellValue = string | number | TableTagValue | TableTagsValue | null | undefined;
 
 export interface TableColumn {
   readonly id: string;
   readonly header?: string;
+  readonly headerKey?: I18nKey;
   readonly kind?: TableColumnKind;
   readonly width?: string;
   readonly align?: TableColumnAlign;
   readonly placeholder?: string;
+  readonly placeholderKey?: I18nKey;
 }
 
 export interface TableRow {
@@ -35,25 +33,30 @@ export interface TableLegendItem {
   readonly id: string | number;
   readonly tag?: UiTagModel | null;
   readonly label: string;
+  readonly labelKey?: I18nKey;
   readonly description?: string | null;
+  readonly descriptionKey?: I18nKey | null;
 }
 
 @Component({
   selector: 'app-table',
-  imports: [UiTag],
+  imports: [UiTag, TranslocoPipe],
   templateUrl: './table.html',
   styleUrl: './table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Table {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly columns = input.required<readonly TableColumn[]>();
   readonly rows = input.required<readonly TableRow[]>();
   readonly showHeader = input(true);
   readonly stickyHeader = input(true);
   readonly density = input<'default' | 'compact'>('default');
-  readonly emptyLabel = input('No rows');
+  readonly emptyLabel = input<string | null>(null);
+  readonly emptyLabelKey = input<I18nKey | null>(null);
   readonly legendItems = input<readonly TableLegendItem[]>([]);
-  readonly legendLabel = input('Legend');
+  readonly legendLabel = input<string | null>(null);
+  readonly legendLabelKey = input<I18nKey | null>(null);
 
   readonly legendOpen = signal(false);
 
@@ -79,7 +82,7 @@ export class Table {
     if (this.isTagModel(value)) {
       const label = value.label;
       return label === null || label === undefined || label === ''
-        ? column.placeholder ?? '—'
+        ? (column.placeholder ?? '—')
         : String(label);
     }
 

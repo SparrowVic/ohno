@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export interface StringPresetOption {
   readonly id: string;
   readonly label: string;
@@ -5,26 +7,26 @@ export interface StringPresetOption {
 }
 
 export interface StringInsight {
-  readonly label: string;
-  readonly value: string;
+  readonly label: TranslatableText;
+  readonly value: TranslatableText;
   readonly tone: 'info' | 'accent' | 'success' | 'warning';
 }
 
 export interface StringComputation {
-  readonly label: string;
-  readonly expression: string;
-  readonly result: string | null;
-  readonly note: string;
+  readonly label: TranslatableText;
+  readonly expression: TranslatableText;
+  readonly result: TranslatableText | null;
+  readonly note: TranslatableText;
 }
 
 interface StringTraceBase {
-  readonly modeLabel: string;
-  readonly phaseLabel: string;
-  readonly presetLabel: string;
-  readonly presetDescription: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly modeLabel: TranslatableText;
+  readonly phaseLabel: TranslatableText;
+  readonly presetLabel: TranslatableText;
+  readonly presetDescription: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly insights: readonly StringInsight[];
   readonly computation: StringComputation | null;
 }

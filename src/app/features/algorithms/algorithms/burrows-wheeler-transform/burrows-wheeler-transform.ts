@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import {
@@ -6,6 +9,133 @@ import {
   StringRunGroup,
 } from '../../models/string';
 import { BurrowsWheelerScenario } from '../../utils/string-scenarios/string-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.burrowsWheelerTransform.modeLabel'),
+  phases: {
+    rotate: t('features.algorithms.runtime.string.burrowsWheelerTransform.phases.rotate'),
+    sortRows: t('features.algorithms.runtime.string.burrowsWheelerTransform.phases.sortRows'),
+    rowCommitted: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.phases.rowCommitted',
+    ),
+    collectColumns: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.phases.collectColumns',
+    ),
+    complete: t('features.algorithms.runtime.string.burrowsWheelerTransform.phases.complete'),
+  },
+  insights: {
+    lengthLabel: t('features.algorithms.runtime.string.burrowsWheelerTransform.insights.lengthLabel'),
+    firstColumnLabel: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.insights.firstColumnLabel',
+    ),
+    lastColumnLabel: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.insights.lastColumnLabel',
+    ),
+    runGainLabel: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.insights.runGainLabel',
+    ),
+    rowsValue: t('features.algorithms.runtime.string.burrowsWheelerTransform.insights.rowsValue'),
+    noneValue: t('features.algorithms.runtime.string.burrowsWheelerTransform.insights.noneValue'),
+    gainValue: t('features.algorithms.runtime.string.burrowsWheelerTransform.insights.gainValue'),
+  },
+  descriptions: {
+    generateRotations: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.descriptions.generateRotations',
+    ),
+    compareRows: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.descriptions.compareRows',
+    ),
+    rowPlaced: t('features.algorithms.runtime.string.burrowsWheelerTransform.descriptions.rowPlaced'),
+    collectLastColumn: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.descriptions.collectLastColumn',
+    ),
+    complete: t('features.algorithms.runtime.string.burrowsWheelerTransform.descriptions.complete'),
+  },
+  decisions: {
+    differentStartingPoints: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.decisions.differentStartingPoints',
+    ),
+    lexicographicClusters: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.decisions.lexicographicClusters',
+    ),
+    upperMatrixSorted: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.decisions.upperMatrixSorted',
+    ),
+    lastColumnOutput: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.decisions.lastColumnOutput',
+    ),
+    transformPreparesCompression: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.decisions.transformPreparesCompression',
+    ),
+  },
+  computation: {
+    labels: {
+      rotationMatrix: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.labels.rotationMatrix',
+      ),
+      rowCompare: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.labels.rowCompare',
+      ),
+      insertionPoint: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.labels.insertionPoint',
+      ),
+      bwtOutput: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.labels.bwtOutput',
+      ),
+      runComparison: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.labels.runComparison',
+      ),
+    },
+    expressions: {
+      rowPosition: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.expressions.rowPosition',
+      ),
+      bwtOutput: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.expressions.bwtOutput',
+      ),
+      runComparison: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.expressions.runComparison',
+      ),
+    },
+    notes: {
+      rotationMatrix: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.notes.rotationMatrix',
+      ),
+      rowCompare: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.notes.rowCompare',
+      ),
+      insertionPoint: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.notes.insertionPoint',
+      ),
+      bwtOutput: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.notes.bwtOutput',
+      ),
+      runComparison: t(
+        'features.algorithms.runtime.string.burrowsWheelerTransform.computation.notes.runComparison',
+      ),
+    },
+  },
+  labels: {
+    matrixUnsorted: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.labels.matrixUnsorted',
+    ),
+    rotationsCount: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.labels.rotationsCount',
+    ),
+    insertRow: t('features.algorithms.runtime.string.burrowsWheelerTransform.labels.insertRow'),
+    sortedPrefix: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.labels.sortedPrefix',
+    ),
+    sortedPrefixCount: t(
+      'features.algorithms.runtime.string.burrowsWheelerTransform.labels.sortedPrefixCount',
+    ),
+    rowsOrdered: t('features.algorithms.runtime.string.burrowsWheelerTransform.labels.rowsOrdered'),
+    readColumns: t('features.algorithms.runtime.string.burrowsWheelerTransform.labels.readColumns'),
+    bwtReady: t('features.algorithms.runtime.string.burrowsWheelerTransform.labels.bwtReady'),
+    shiftUpward: t('features.algorithms.runtime.string.burrowsWheelerTransform.labels.shiftUpward'),
+    densityValue: t('features.algorithms.runtime.string.burrowsWheelerTransform.labels.densityValue'),
+  },
+} as const;
 
 interface RawRotationRow {
   readonly id: string;
@@ -57,10 +187,10 @@ function buildRunGroups(source: string, tone: 'input' | 'output'): readonly Stri
 
 function makeState(args: {
   readonly scenario: BurrowsWheelerScenario;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly rows: readonly StringRotationRow[];
   readonly activeRows: readonly string[];
   readonly firstColumn: string;
@@ -72,7 +202,7 @@ function makeState(args: {
 }): BurrowsWheelerTraceState {
   return {
     mode: 'burrows-wheeler-transform',
-    modeLabel: 'Rotation matrix',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -81,12 +211,27 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Length', value: `${args.scenario.source.length} rows`, tone: 'info' },
-      { label: 'F column', value: args.firstColumn || '—', tone: 'accent' },
-      { label: 'L column', value: args.lastColumn || '—', tone: 'warning' },
       {
-        label: 'Run gain',
-        value: args.compressionRatio === null ? '—' : `${args.compressionRatio.toFixed(2)}x`,
+        label: I18N.insights.lengthLabel,
+        value: i18nText(I18N.insights.rowsValue, { count: args.scenario.source.length }),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.firstColumnLabel,
+        value: args.firstColumn || I18N.insights.noneValue,
+        tone: 'accent',
+      },
+      {
+        label: I18N.insights.lastColumnLabel,
+        value: args.lastColumn || I18N.insights.noneValue,
+        tone: 'warning',
+      },
+      {
+        label: I18N.insights.runGainLabel,
+        value:
+          args.compressionRatio === null
+            ? I18N.insights.noneValue
+            : i18nText(I18N.insights.gainValue, { ratio: args.compressionRatio.toFixed(2) }),
         tone: args.compressionRatio === null ? 'info' : 'success',
       },
     ],
@@ -109,14 +254,17 @@ export function* burrowsWheelerTransformGenerator(
 
   yield createStringStep({
     activeCodeLine: 2,
-    description: `Generate all ${rows.length} cyclic rotations of "${scenario.source}".`,
+    description: i18nText(I18N.descriptions.generateRotations, {
+      count: rows.length,
+      source: scenario.source,
+    }),
     phase: 'init',
     string: makeState({
       scenario,
-      phaseLabel: 'Rotate',
-      activeLabel: `${rows.length} rotations`,
-      resultLabel: 'Matrix unsorted',
-      decisionLabel: 'Every row is the same string viewed from a different starting point.',
+      phaseLabel: I18N.phases.rotate,
+      activeLabel: i18nText(I18N.labels.rotationsCount, { count: rows.length }),
+      resultLabel: I18N.labels.matrixUnsorted,
+      decisionLabel: I18N.decisions.differentStartingPoints,
       rows: decorateRows(rows, [], 0),
       activeRows: [],
       firstColumn: '',
@@ -125,10 +273,10 @@ export function* burrowsWheelerTransformGenerator(
       runGroups: inputRuns,
       compressionRatio: null,
       computation: {
-        label: 'Rotation matrix',
+        label: I18N.computation.labels.rotationMatrix,
         expression: 'rot[i] = s[i..] + s[..i)',
-        result: `${rows.length} rows`,
-        note: 'The BWT sorts cyclic rotations, not suffixes.',
+        result: i18nText(I18N.insights.rowsValue, { count: rows.length }),
+        note: I18N.computation.notes.rotationMatrix,
       },
     }),
   });
@@ -140,14 +288,20 @@ export function* burrowsWheelerTransformGenerator(
     while (insertAt > 0 && rows[insertAt - 1]!.text > current.text) {
       yield createStringStep({
         activeCodeLine: 3,
-        description: `Compare "${current.text}" with "${rows[insertAt - 1]!.text}" to place the next rotation lexicographically.`,
+        description: i18nText(I18N.descriptions.compareRows, {
+          current: current.text,
+          previous: rows[insertAt - 1]!.text,
+        }),
         phase: 'compare',
         string: makeState({
           scenario,
-          phaseLabel: 'Sort rows',
-          activeLabel: `insert row ${index + 1}`,
-          resultLabel: `sorted prefix ${index} / ${rows.length}`,
-          decisionLabel: 'Lexicographic order is what makes the last column cluster similar characters together.',
+          phaseLabel: I18N.phases.sortRows,
+          activeLabel: i18nText(I18N.labels.insertRow, { index: index + 1 }),
+          resultLabel: i18nText(I18N.labels.sortedPrefix, {
+            current: index,
+            total: rows.length,
+          }),
+          decisionLabel: I18N.decisions.lexicographicClusters,
           rows: decorateRows(rows, [current.id, rows[insertAt - 1]!.id], index),
           activeRows: [current.id, rows[insertAt - 1]!.id],
           firstColumn: '',
@@ -156,10 +310,10 @@ export function* burrowsWheelerTransformGenerator(
           runGroups: inputRuns,
           compressionRatio: null,
           computation: {
-            label: 'Row compare',
+            label: I18N.computation.labels.rowCompare,
             expression: `"${current.text}" < "${rows[insertAt - 1]!.text}"`,
-            result: 'shift upward',
-            note: 'We use insertion-sort-like steps here purely to make the matrix movement readable.',
+            result: I18N.labels.shiftUpward,
+            note: I18N.computation.notes.rowCompare,
           },
         }),
       });
@@ -170,14 +324,20 @@ export function* burrowsWheelerTransformGenerator(
 
     yield createStringStep({
       activeCodeLine: 3,
-      description: `Row "${current.text}" is now placed at sorted position ${insertAt}.`,
+      description: i18nText(I18N.descriptions.rowPlaced, {
+        row: current.text,
+        position: insertAt,
+      }),
       phase: 'pass-complete',
       string: makeState({
         scenario,
-        phaseLabel: 'Row committed',
-        activeLabel: `sorted prefix ${index + 1}`,
-        resultLabel: `${index + 1} / ${rows.length} rows ordered`,
-        decisionLabel: 'The upper part of the matrix is already in final lexicographic order.',
+        phaseLabel: I18N.phases.rowCommitted,
+        activeLabel: i18nText(I18N.labels.sortedPrefixCount, { count: index + 1 }),
+        resultLabel: i18nText(I18N.labels.rowsOrdered, {
+          current: index + 1,
+          total: rows.length,
+        }),
+        decisionLabel: I18N.decisions.upperMatrixSorted,
         rows: decorateRows(rows, [current.id], index + 1),
         activeRows: [current.id],
         firstColumn: '',
@@ -186,10 +346,10 @@ export function* burrowsWheelerTransformGenerator(
         runGroups: inputRuns,
         compressionRatio: null,
         computation: {
-          label: 'Insertion point',
-          expression: `row → position ${insertAt}`,
+          label: I18N.computation.labels.insertionPoint,
+          expression: i18nText(I18N.computation.expressions.rowPosition, { position: insertAt }),
           result: String(insertAt),
-          note: 'One more rotation snaps into its final sorted slot.',
+          note: I18N.computation.notes.insertionPoint,
         },
       }),
     });
@@ -203,14 +363,14 @@ export function* burrowsWheelerTransformGenerator(
 
   yield createStringStep({
     activeCodeLine: 5,
-    description: `Read the last column L = "${lastColumn}". Similar characters are now grouped much tighter than in the input.`,
+    description: i18nText(I18N.descriptions.collectLastColumn, { lastColumn }),
     phase: 'complete',
     string: makeState({
       scenario,
-      phaseLabel: 'Collect columns',
-      activeLabel: 'Read F and L',
+      phaseLabel: I18N.phases.collectColumns,
+      activeLabel: I18N.labels.readColumns,
       resultLabel: lastColumn,
-      decisionLabel: 'The last column is the Burrows-Wheeler output; the first column helps explain the sorted matrix structure.',
+      decisionLabel: I18N.decisions.lastColumnOutput,
       rows: decorateRows(rows, rows.map((row) => row.id), rows.length, true),
       activeRows: rows.map((row) => row.id),
       firstColumn,
@@ -219,24 +379,28 @@ export function* burrowsWheelerTransformGenerator(
       runGroups: outputRuns,
       compressionRatio,
       computation: {
-        label: 'BWT output',
-        expression: 'L = last column of sorted rotations',
+        label: I18N.computation.labels.bwtOutput,
+        expression: I18N.computation.expressions.bwtOutput,
         result: lastColumn,
-        note: 'This rearrangement is reversible, but far friendlier to downstream run-length style compression.',
+        note: I18N.computation.notes.bwtOutput,
       },
     }),
   });
 
   yield createStringStep({
     activeCodeLine: 6,
-    description: `BWT finished. Output "${lastColumn}" creates ${outputRuns.length} runs vs ${inputRuns.length} in the original string.`,
+    description: i18nText(I18N.descriptions.complete, {
+      lastColumn,
+      outputRuns: outputRuns.length,
+      inputRuns: inputRuns.length,
+    }),
     phase: 'complete',
     string: makeState({
       scenario,
-      phaseLabel: 'Complete',
-      activeLabel: 'BWT ready',
+      phaseLabel: I18N.phases.complete,
+      activeLabel: I18N.labels.bwtReady,
       resultLabel: lastColumn,
-      decisionLabel: 'The transform did not compress by itself, but it concentrated repeated symbols so later stages can do it better.',
+      decisionLabel: I18N.decisions.transformPreparesCompression,
       rows: decorateRows(rows, [], rows.length, true),
       activeRows: [],
       firstColumn,
@@ -245,10 +409,16 @@ export function* burrowsWheelerTransformGenerator(
       runGroups: outputRuns,
       compressionRatio,
       computation: {
-        label: 'Run comparison',
-        expression: `${inputRuns.length} input runs → ${outputRuns.length} BWT runs`,
-        result: compressionRatio === null ? null : `${compressionRatio.toFixed(2)}x denser`,
-        note: 'Fewer, longer runs are exactly why BWT is so effective before RLE or entropy coding.',
+        label: I18N.computation.labels.runComparison,
+        expression: i18nText(I18N.computation.expressions.runComparison, {
+          inputRuns: inputRuns.length,
+          outputRuns: outputRuns.length,
+        }),
+        result:
+          compressionRatio === null
+            ? null
+            : i18nText(I18N.labels.densityValue, { ratio: compressionRatio.toFixed(2) }),
+        note: I18N.computation.notes.runComparison,
       },
     }),
   });

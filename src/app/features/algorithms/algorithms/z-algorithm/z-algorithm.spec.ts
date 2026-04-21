@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import type { ZAlgorithmScenario } from '../../utils/string-scenarios/string-scenarios';
 import { zAlgorithmGenerator } from './z-algorithm';
 
 function collectSteps(scenario: ZAlgorithmScenario): SortStep[] {
   return [...zAlgorithmGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('z-algorithm', () => {
@@ -19,8 +25,20 @@ describe('z-algorithm', () => {
       text: 'ABACABAABA',
     });
 
-    expect(steps.some((step) => step.string?.phaseLabel === 'Reuse box')).toBe(true);
-    expect(steps.filter((step) => step.string?.phaseLabel === 'Pattern hit')).toHaveLength(3);
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.zAlgorithm.phases.reuseBox',
+      ),
+    ).toBe(true);
+    expect(
+      steps.filter(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.zAlgorithm.phases.patternHit',
+      ),
+    ).toHaveLength(3);
     expect(steps.at(-1)?.string?.resultLabel).toBe('0, 4, 7');
   });
 
@@ -34,7 +52,15 @@ describe('z-algorithm', () => {
       text: 'ABACABA',
     });
 
-    expect(steps.at(-1)?.string?.resultLabel).toBe('No match');
-    expect(steps.some((step) => step.string?.phaseLabel === 'Pattern hit')).toBe(false);
+    expect(keyOf(steps.at(-1)?.string?.resultLabel)).toBe(
+      'features.algorithms.runtime.string.zAlgorithm.labels.noMatch',
+    );
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.zAlgorithm.phases.patternHit',
+      ),
+    ).toBe(false);
   });
 });

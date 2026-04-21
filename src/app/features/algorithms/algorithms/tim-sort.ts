@@ -1,5 +1,23 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.timSort.descriptions.start'),
+    buildRun: t('features.algorithms.runtime.sort.timSort.descriptions.buildRun'),
+    mergeRuns: t('features.algorithms.runtime.sort.timSort.descriptions.mergeRuns'),
+    complete: t('features.algorithms.runtime.sort.timSort.descriptions.complete'),
+    insertWithinRun: t('features.algorithms.runtime.sort.timSort.descriptions.insertWithinRun'),
+    compareWithinRun: t('features.algorithms.runtime.sort.timSort.descriptions.compareWithinRun'),
+    shiftWithinRun: t('features.algorithms.runtime.sort.timSort.descriptions.shiftWithinRun'),
+    placeWithinRun: t('features.algorithms.runtime.sort.timSort.descriptions.placeWithinRun'),
+    compareMerge: t('features.algorithms.runtime.sort.timSort.descriptions.compareMerge'),
+    writeMergedValue: t('features.algorithms.runtime.sort.timSort.descriptions.writeMergedValue'),
+  },
+} as const;
 
 export function* timSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -10,7 +28,7 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start tim sort (n=${size}, minRun=${minRun})`,
+    description: i18nText(I18N.descriptions.start, { size, minRun }),
     boundary: size,
     phase: 'init',
   });
@@ -21,7 +39,7 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
     yield createArrayStep({
       array: arr,
       activeCodeLine: 5,
-      description: `Build run [${start}, ${end}] with insertion sort.`,
+      description: i18nText(I18N.descriptions.buildRun, { start, end }),
       comparing: [start, end],
       boundary: size,
       phase: 'compare',
@@ -42,7 +60,12 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
       yield createArrayStep({
         array: arr,
         activeCodeLine: 9,
-        description: `Merge runs [${left}, ${middle}] and [${middle + 1}, ${right}].`,
+        description: i18nText(I18N.descriptions.mergeRuns, {
+          left,
+          middle,
+          right,
+          nextStart: middle + 1,
+        }),
         comparing: [left, right],
         boundary: size,
         phase: 'compare',
@@ -55,7 +78,7 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
   yield createArrayStep({
     array: arr,
     activeCodeLine: 12,
-    description: 'Tim sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',
@@ -69,7 +92,7 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
       yield createArrayStep({
         array: arr,
         activeCodeLine: 15,
-        description: `Insert ${value} within run [${left}, ${right}].`,
+        description: i18nText(I18N.descriptions.insertWithinRun, { value, left, right }),
         comparing: [scan, index],
         boundary: size,
         phase: 'compare',
@@ -79,7 +102,10 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
         yield createArrayStep({
           array: arr,
           activeCodeLine: 17,
-          description: `Compare ${arr[scan]} with ${value} while extending the run.`,
+          description: i18nText(I18N.descriptions.compareWithinRun, {
+            leftValue: arr[scan] ?? '',
+            value,
+          }),
           comparing: [scan, scan + 1],
           boundary: size,
           phase: 'compare',
@@ -90,7 +116,9 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
         yield createArrayStep({
           array: arr,
           activeCodeLine: 17,
-          description: `Shift ${arr[scan + 1]} one slot to the right inside the run.`,
+          description: i18nText(I18N.descriptions.shiftWithinRun, {
+            value: arr[scan + 1] ?? '',
+          }),
           comparing: [scan, scan + 1],
           boundary: size,
           phase: 'swap',
@@ -104,7 +132,10 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
       yield createArrayStep({
         array: arr,
         activeCodeLine: 17,
-        description: `Place ${value} at index ${scan + 1} inside the run.`,
+        description: i18nText(I18N.descriptions.placeWithinRun, {
+          value,
+          index: scan + 1,
+        }),
         comparing: [scan + 1, scan + 1],
         boundary: size,
         phase: 'pass-complete',
@@ -121,7 +152,10 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
       yield createArrayStep({
         array: arr,
         activeCodeLine: 21,
-        description: `Compare ${arr[leftIndex]} with ${arr[rightIndex]} while merging runs.`,
+        description: i18nText(I18N.descriptions.compareMerge, {
+          leftValue: arr[leftIndex] ?? '',
+          rightValue: arr[rightIndex] ?? '',
+        }),
         comparing: [leftIndex, rightIndex],
         boundary: size,
         phase: 'compare',
@@ -158,7 +192,10 @@ export function* timSortGenerator(input: readonly number[]): Generator<SortStep>
       yield createArrayStep({
         array: arr,
         activeCodeLine: 25,
-        description: `Write merged value ${arr[index]} back to index ${index}.`,
+        description: i18nText(I18N.descriptions.writeMergedValue, {
+          value: arr[index] ?? '',
+          index,
+        }),
         comparing: [index, index],
         sorted: finalMerge ? prefixSorted(index + 1) : [],
         boundary: finalMerge ? index + 1 : size,

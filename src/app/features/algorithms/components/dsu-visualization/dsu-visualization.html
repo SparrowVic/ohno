@@ -2,47 +2,49 @@
   @if (state(); as dsuState) {
     <aside class="viz-flow__guide">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">DSU Guide</span>
-        <h3 class="viz-flow__title">Watch unions and finds</h3>
-        <p class="viz-flow__desc">Start with the active edge or query, then verify how roots and compressed pointers react.</p>
+        <span class="viz-flow__eyebrow">{{ I18N.guideEyebrow | transloco }}</span>
+        <h3 class="viz-flow__title">{{ I18N.guideTitle | transloco }}</h3>
+        <p class="viz-flow__desc">{{ I18N.guideDesc | transloco }}</p>
       </div>
 
       <div class="dsu-viz__hud">
         <div class="dsu-viz__stat">
-          <span class="dsu-viz__label">Mode</span>
-          <span class="dsu-viz__value">{{ dsuState.modeLabel }}</span>
+          <span class="dsu-viz__label">{{ I18N.modeLabel | transloco }}</span>
+          <span class="dsu-viz__value">{{ dsuState.modeLabel | i18nText }}</span>
         </div>
         <div class="dsu-viz__stat">
-          <span class="dsu-viz__label">Components</span>
+          <span class="dsu-viz__label">{{ I18N.componentsLabel | transloco }}</span>
           <span class="dsu-viz__value">{{ dsuState.componentCount }}</span>
         </div>
         <div class="dsu-viz__stat">
-          <span class="dsu-viz__label">Active</span>
-          <span class="dsu-viz__value">{{ activeLabel() }}</span>
+          <span class="dsu-viz__label">{{ I18N.activeLabel | transloco }}</span>
+          <span class="dsu-viz__value">{{ activeLabel() | i18nText }}</span>
         </div>
         <div class="dsu-viz__stat">
-          <span class="dsu-viz__label">Result</span>
-          <span class="dsu-viz__value">{{ dsuState.resultLabel }}</span>
+          <span class="dsu-viz__label">{{ I18N.resultLabel | transloco }}</span>
+          <span class="dsu-viz__value">{{ dsuState.resultLabel | i18nText }}</span>
         </div>
       </div>
 
       <section class="dsu-viz__panel dsu-viz__panel--rail">
         <div class="dsu-viz__panel-head">
           <div>
-            <div class="dsu-viz__panel-label">{{ railLabel() }}</div>
-            <div class="dsu-viz__panel-title">{{ dsuState.decision ?? 'Awaiting next state change.' }}</div>
+            <div class="dsu-viz__panel-label">{{ railLabel() | i18nText }}</div>
+            <div class="dsu-viz__panel-title">
+              {{ (dsuState.decision ?? I18N.awaitingDecisionLabel) | i18nText }}
+            </div>
           </div>
         </div>
 
         <div class="dsu-edge-list">
           @for (edge of edgeRows(); track edge.id) {
             <div class="dsu-edge dsu-edge--{{ edge.status }}" [attr.data-edge-id]="edge.id">
-              <div class="dsu-edge__title">{{ edgeLabel(edge) }}</div>
+              <div class="dsu-edge__title">{{ edgeLabel(edge) | i18nText }}</div>
               <div class="dsu-edge__meta">
                 @if (edge.weight !== null) {
                   <span class="dsu-edge__weight">w={{ edge.weight }}</span>
                 }
-                <span class="dsu-edge__state">{{ edge.status }}</span>
+                <span class="dsu-edge__state">{{ edgeStatus(edge) | i18nText }}</span>
               </div>
             </div>
           }
@@ -52,16 +54,16 @@
 
     <section class="viz-flow__brief">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">Pointer map</h3>
-        <p class="viz-flow__desc">Use this compact rail to verify which root each node currently points to.</p>
+        <span class="viz-flow__eyebrow">{{ I18N.snapshotEyebrow | transloco }}</span>
+        <h3 class="viz-flow__title">{{ I18N.snapshotTitle | transloco }}</h3>
+        <p class="viz-flow__desc">{{ I18N.snapshotDesc | transloco }}</p>
       </div>
 
       <section class="dsu-viz__panel dsu-viz__panel--dense">
         <div class="dsu-viz__panel-head">
           <div>
-            <div class="dsu-viz__panel-label">Parent Map</div>
-            <div class="dsu-viz__panel-title">Compact DSU pointer view</div>
+            <div class="dsu-viz__panel-label">{{ I18N.parentMapLabel | transloco }}</div>
+            <div class="dsu-viz__panel-title">{{ I18N.parentMapTitle | transloco }}</div>
           </div>
         </div>
 
@@ -71,12 +73,14 @@
               <div class="dsu-link__name">{{ node.label }}</div>
               <div class="dsu-link__arrow">
                 @if (node.parentId === node.id) {
-                  <span>root</span>
+                  <span>{{ I18N.rootLabel | transloco }}</span>
                 } @else {
                   <span>→ {{ node.parentLabel }}</span>
                 }
               </div>
-              <div class="dsu-link__meta">rank {{ node.rank }} · size {{ node.size }}</div>
+              <div class="dsu-link__meta">
+                {{ I18N.rankSizeValue | transloco: { rank: node.rank, size: node.size } }}
+              </div>
             </div>
           }
         </div>
@@ -86,20 +90,20 @@
     <section class="viz-flow__stage">
       <div class="viz-flow__stage-head">
         <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Set forest</h3>
+          <span class="viz-flow__eyebrow">{{ I18N.stageEyebrow | transloco }}</span>
+          <h3 class="viz-flow__title">{{ I18N.stageTitle | transloco }}</h3>
         </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ dsuState.statusLabel }}</span>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ dsuState.statusLabel | i18nText }}</span>
       </div>
 
       <div class="viz-flow__stage-body">
         <section class="dsu-viz__panel">
           <div class="dsu-viz__panel-head">
             <div>
-              <div class="dsu-viz__panel-label">Set Forest</div>
-              <div class="dsu-viz__panel-title">{{ dsuState.statusLabel }}</div>
+              <div class="dsu-viz__panel-label">{{ I18N.setForestLabel | transloco }}</div>
+              <div class="dsu-viz__panel-title">{{ dsuState.statusLabel | i18nText }}</div>
             </div>
-            <span class="dsu-viz__panel-pill">{{ modeHint() }}</span>
+            <span class="dsu-viz__panel-pill">{{ modeHint() | i18nText }}</span>
           </div>
 
           <div class="dsu-viz__groups">
@@ -108,16 +112,20 @@
                 <div class="dsu-group__head">
                   <div>
                     <div class="dsu-group__root">{{ group.rootLabel }}</div>
-                    <div class="dsu-group__meta">{{ group.size }} node{{ group.size === 1 ? '' : 's' }}</div>
+                    <div class="dsu-group__meta">
+                      {{ I18N.nodeCount | transloco: { count: group.size } }}
+                    </div>
                   </div>
-                  <span class="dsu-group__badge">root {{ group.rootLabel }}</span>
+                  <span class="dsu-group__badge">
+                    {{ I18N.rootBadge | transloco: { label: group.rootLabel } }}
+                  </span>
                 </div>
 
                 <div class="dsu-group__chips">
                   @for (node of nodesForGroup(group); track node.id) {
                     <div class="dsu-node-chip dsu-node-chip--{{ node.status }}" [attr.data-node-id]="node.id">
                       <span class="dsu-node-chip__label">{{ node.label }}</span>
-                      <span class="dsu-node-chip__meta">{{ nodeSubtitle(node) }}</span>
+                      <span class="dsu-node-chip__meta">{{ nodeSubtitle(node) | i18nText }}</span>
                     </div>
                   }
                 </div>
@@ -128,6 +136,6 @@
       </div>
     </section>
   } @else {
-    <div class="dsu-viz__empty">No DSU trace available for this step.</div>
+    <div class="dsu-viz__empty">{{ I18N.emptyLabel | transloco }}</div>
   }
 </div>

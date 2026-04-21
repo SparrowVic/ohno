@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import { binarySearchGenerator } from './binary-search';
 
@@ -10,6 +11,11 @@ function collectSteps(args: {
   return [...binarySearchGenerator(args)];
 }
 
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
 describe('binary-search', () => {
   it('shrinks the window toward the hit and reports the collapsed index', () => {
     const steps = collectSteps({
@@ -17,7 +23,11 @@ describe('binary-search', () => {
       target: 7,
     });
 
-    const moveRightStep = steps.find((step) => step.search?.statusLabel === 'Move right');
+    const moveRightStep = steps.find(
+      (step) =>
+        keyOf(step.search?.statusLabel) ===
+        'features.algorithms.runtime.search.binarySearch.statuses.moveRight',
+    );
 
     expect(moveRightStep?.search?.eliminated).toEqual([0, 1, 2]);
     expect(steps.at(-1)?.search?.resultIndices).toEqual([3]);
@@ -33,9 +43,25 @@ describe('binary-search', () => {
     });
 
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.search?.statusLabel).toBe('Not found');
-    expect(steps.at(-1)?.search?.decision).toBe('candidate window became empty');
-    expect(steps.some((step) => step.search?.statusLabel === 'Move right')).toBe(true);
-    expect(steps.some((step) => step.search?.statusLabel === 'Move left')).toBe(true);
+    expect(keyOf(steps.at(-1)?.search?.statusLabel)).toBe(
+      'features.algorithms.runtime.search.binarySearch.statuses.notFound',
+    );
+    expect(keyOf(steps.at(-1)?.search?.decision)).toBe(
+      'features.algorithms.runtime.search.binarySearch.decisions.candidateWindowEmpty',
+    );
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.search?.statusLabel) ===
+          'features.algorithms.runtime.search.binarySearch.statuses.moveRight',
+      ),
+    ).toBe(true);
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.search?.statusLabel) ===
+          'features.algorithms.runtime.search.binarySearch.statuses.moveLeft',
+      ),
+    ).toBe(true);
   });
 });

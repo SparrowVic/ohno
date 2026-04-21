@@ -10,14 +10,16 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { animate } from 'animejs';
 
 import { AppLanguageService } from '../../i18n/app-language.service';
+import { I18N_KEY } from '../../i18n/i18n-keys';
 import { WorldFlagGlobe } from './world-flag-globe/world-flag-globe';
 
 @Component({
   selector: 'app-language-switcher',
-  imports: [WorldFlagGlobe],
+  imports: [WorldFlagGlobe, TranslocoPipe],
   templateUrl: './language-switcher.html',
   styleUrl: './language-switcher.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +31,7 @@ export class LanguageSwitcher {
   private readonly panelRef = viewChild<ElementRef<HTMLElement>>('panel');
   private readonly backdropRef = viewChild<ElementRef<HTMLElement>>('backdrop');
 
+  protected readonly I18N_KEY = I18N_KEY;
   readonly activeLang = this.language.activeLang;
   readonly open = signal(false);
   readonly activeLangLabel = computed(

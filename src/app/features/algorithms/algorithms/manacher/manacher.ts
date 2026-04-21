@@ -1,7 +1,81 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { ManacherTraceState } from '../../models/string';
 import { ManacherScenario } from '../../utils/string-scenarios/string-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.manacher.modeLabel'),
+  phases: {
+    setup: t('features.algorithms.runtime.string.manacher.phases.setup'),
+    mirrorReuse: t('features.algorithms.runtime.string.manacher.phases.mirrorReuse'),
+    expandPalindrome: t(
+      'features.algorithms.runtime.string.manacher.phases.expandPalindrome',
+    ),
+    shiftWindow: t('features.algorithms.runtime.string.manacher.phases.shiftWindow'),
+    complete: t('features.algorithms.runtime.string.manacher.phases.complete'),
+  },
+  insights: {
+    sourceLabel: t('features.algorithms.runtime.string.manacher.insights.sourceLabel'),
+    windowLabel: t('features.algorithms.runtime.string.manacher.insights.windowLabel'),
+    centerLabel: t('features.algorithms.runtime.string.manacher.insights.centerLabel'),
+    longestLabel: t('features.algorithms.runtime.string.manacher.insights.longestLabel'),
+    charsValue: t('features.algorithms.runtime.string.manacher.insights.charsValue'),
+    windowValue: t('features.algorithms.runtime.string.manacher.insights.windowValue'),
+    emptyValue: t('features.algorithms.runtime.string.manacher.insights.emptyValue'),
+  },
+  descriptions: {
+    transform: t('features.algorithms.runtime.string.manacher.descriptions.transform'),
+    mirrorReuse: t('features.algorithms.runtime.string.manacher.descriptions.mirrorReuse'),
+    expand: t('features.algorithms.runtime.string.manacher.descriptions.expand'),
+    shiftWindow: t('features.algorithms.runtime.string.manacher.descriptions.shiftWindow'),
+    complete: t('features.algorithms.runtime.string.manacher.descriptions.complete'),
+  },
+  decisions: {
+    addSeparators: t('features.algorithms.runtime.string.manacher.decisions.addSeparators'),
+    reuseMirror: t('features.algorithms.runtime.string.manacher.decisions.reuseMirror'),
+    growOutward: t('features.algorithms.runtime.string.manacher.decisions.growOutward'),
+    defineWindow: t('features.algorithms.runtime.string.manacher.decisions.defineWindow'),
+    allRadiiKnown: t('features.algorithms.runtime.string.manacher.decisions.allRadiiKnown'),
+  },
+  computation: {
+    labels: {
+      transformedString: t(
+        'features.algorithms.runtime.string.manacher.computation.labels.transformedString',
+      ),
+      mirrorSeed: t('features.algorithms.runtime.string.manacher.computation.labels.mirrorSeed'),
+      expansionCompare: t(
+        'features.algorithms.runtime.string.manacher.computation.labels.expansionCompare',
+      ),
+      boundaryUpdate: t(
+        'features.algorithms.runtime.string.manacher.computation.labels.boundaryUpdate',
+      ),
+      longestPalindrome: t(
+        'features.algorithms.runtime.string.manacher.computation.labels.longestPalindrome',
+      ),
+    },
+    notes: {
+      transformedString: t(
+        'features.algorithms.runtime.string.manacher.computation.notes.transformedString',
+      ),
+      mirrorSeed: t('features.algorithms.runtime.string.manacher.computation.notes.mirrorSeed'),
+      expansionCompare: t(
+        'features.algorithms.runtime.string.manacher.computation.notes.expansionCompare',
+      ),
+      boundaryUpdate: t(
+        'features.algorithms.runtime.string.manacher.computation.notes.boundaryUpdate',
+      ),
+      longestPalindrome: t(
+        'features.algorithms.runtime.string.manacher.computation.notes.longestPalindrome',
+      ),
+    },
+  },
+  labels: {
+    noPalindromeYet: t('features.algorithms.runtime.string.manacher.labels.noPalindromeYet'),
+  },
+} as const;
 
 function transform(source: string): string {
   return `#${source.split('').join('#')}#`;
@@ -16,10 +90,10 @@ function extractPalindrome(source: string, center: number, radius: number): stri
 function makeState(args: {
   readonly scenario: ManacherScenario;
   readonly transformed: string;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly radii: readonly number[];
   readonly currentCenter: number | null;
   readonly mirrorIndex: number | null;
@@ -39,7 +113,7 @@ function makeState(args: {
 
   return {
     mode: 'manacher',
-    modeLabel: 'Mirror expansion',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -48,17 +122,32 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Source', value: `${args.scenario.source.length} chars`, tone: 'info' },
       {
-        label: 'Window',
+        label: I18N.insights.sourceLabel,
+        value: i18nText(I18N.insights.charsValue, { count: args.scenario.source.length }),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.windowLabel,
         value:
           args.leftBoundary === null || args.rightBoundary === null
-            ? 'empty'
-            : `[${args.leftBoundary}, ${args.rightBoundary}]`,
+            ? I18N.insights.emptyValue
+            : i18nText(I18N.insights.windowValue, {
+                left: args.leftBoundary,
+                right: args.rightBoundary,
+              }),
         tone: 'warning',
       },
-      { label: 'Center', value: args.currentCenter === null ? '—' : String(args.currentCenter), tone: 'accent' },
-      { label: 'Longest', value: longestPalindrome || '—', tone: longestPalindrome ? 'success' : 'info' },
+      {
+        label: I18N.insights.centerLabel,
+        value: args.currentCenter === null ? '—' : String(args.currentCenter),
+        tone: 'accent',
+      },
+      {
+        label: I18N.insights.longestLabel,
+        value: longestPalindrome || '—',
+        tone: longestPalindrome ? 'success' : 'info',
+      },
     ],
     source: args.scenario.source,
     transformed: args.transformed,
@@ -89,15 +178,18 @@ export function* manacherGenerator(
 
   yield createStringStep({
     activeCodeLine: 1,
-    description: `Transform "${scenario.source}" into "${transformed}" so odd and even palindromes share one unified expansion rule.`,
+    description: i18nText(I18N.descriptions.transform, {
+      source: scenario.source,
+      transformed,
+    }),
     phase: 'init',
     string: makeState({
       scenario,
       transformed,
-      phaseLabel: 'Setup',
+      phaseLabel: I18N.phases.setup,
       activeLabel: 'center = 0',
-      resultLabel: 'No palindrome measured yet',
-      decisionLabel: 'Insert # separators so every palindrome behaves like an odd-length radius around one center.',
+      resultLabel: I18N.labels.noPalindromeYet,
+      decisionLabel: I18N.decisions.addSeparators,
       radii,
       currentCenter: 0,
       mirrorIndex: null,
@@ -109,10 +201,10 @@ export function* manacherGenerator(
       longestCenter,
       longestRadius,
       computation: {
-        label: 'Transformed string',
+        label: I18N.computation.labels.transformedString,
         expression: `#${scenario.source.split('').join('#')}#`,
         result: transformed,
-        note: 'This removes the need to separately handle odd and even palindrome centers.',
+        note: I18N.computation.notes.transformedString,
       },
     }),
   });
@@ -126,15 +218,20 @@ export function* manacherGenerator(
 
       yield createStringStep({
         activeCodeLine: 7,
-        description: `Inside the current right boundary, copy min(right - i, P[mirror]) = ${reused} from mirror ${mirror}.`,
+        description: i18nText(I18N.descriptions.mirrorReuse, {
+          reused,
+          mirror,
+        }),
         phase: 'compare',
         string: makeState({
           scenario,
           transformed,
-          phaseLabel: 'Mirror reuse',
+          phaseLabel: I18N.phases.mirrorReuse,
           activeLabel: `i = ${index}`,
-          resultLabel: extractPalindrome(scenario.source, longestCenter, longestRadius) || '—',
-          decisionLabel: 'Reuse the mirrored radius first; only extra growth needs fresh comparisons.',
+          resultLabel:
+            extractPalindrome(scenario.source, longestCenter, longestRadius) ||
+            I18N.labels.noPalindromeYet,
+          decisionLabel: I18N.decisions.reuseMirror,
           radii,
           currentCenter: index,
           mirrorIndex: mirror,
@@ -146,10 +243,10 @@ export function* manacherGenerator(
           longestCenter,
           longestRadius,
           computation: {
-            label: 'Mirror seed',
+            label: I18N.computation.labels.mirrorSeed,
             expression: `P[${index}] = min(${right - index}, P[${mirror}])`,
             result: String(reused),
-            note: 'Manacher borrows the guaranteed safe part from the mirrored center before expanding.',
+            note: I18N.computation.notes.mirrorSeed,
           },
         }),
       });
@@ -166,15 +263,21 @@ export function* manacherGenerator(
 
       yield createStringStep({
         activeCodeLine: 8,
-        description: `Expand around center ${index}: compare "${transformed[leftIndex]}" and "${transformed[rightIndex]}".`,
+        description: i18nText(I18N.descriptions.expand, {
+          index,
+          leftChar: transformed[leftIndex] ?? '∅',
+          rightChar: transformed[rightIndex] ?? '∅',
+        }),
         phase: 'compare',
         string: makeState({
           scenario,
           transformed,
-          phaseLabel: 'Expand palindrome',
+          phaseLabel: I18N.phases.expandPalindrome,
           activeLabel: `center ${index}`,
-          resultLabel: extractPalindrome(scenario.source, longestCenter, longestRadius) || '—',
-          decisionLabel: 'Matching mirrored characters let the palindrome rainbow grow outward.',
+          resultLabel:
+            extractPalindrome(scenario.source, longestCenter, longestRadius) ||
+            I18N.labels.noPalindromeYet,
+          decisionLabel: I18N.decisions.growOutward,
           radii,
           currentCenter: index,
           mirrorIndex: mirror,
@@ -186,10 +289,10 @@ export function* manacherGenerator(
           longestCenter,
           longestRadius,
           computation: {
-            label: 'Expansion compare',
+            label: I18N.computation.labels.expansionCompare,
             expression: `T[${leftIndex}] = T[${rightIndex}]`,
             result: `"${transformed[leftIndex]}" = "${transformed[rightIndex]}"`,
-            note: 'Each successful compare increases the palindrome radius by one transformed step.',
+            note: I18N.computation.notes.expansionCompare,
           },
         }),
       });
@@ -208,15 +311,17 @@ export function* manacherGenerator(
 
       yield createStringStep({
         activeCodeLine: 11,
-        description: `Update the active palindrome window to center ${center} with right boundary ${right}.`,
+        description: i18nText(I18N.descriptions.shiftWindow, { center, right }),
         phase: 'pass-complete',
         string: makeState({
           scenario,
           transformed,
-          phaseLabel: 'Shift window',
+          phaseLabel: I18N.phases.shiftWindow,
           activeLabel: `center ${center}, right ${right}`,
-          resultLabel: extractPalindrome(scenario.source, longestCenter, longestRadius) || '—',
-          decisionLabel: 'The current palindrome now defines the mirror window for future centers.',
+          resultLabel:
+            extractPalindrome(scenario.source, longestCenter, longestRadius) ||
+            I18N.labels.noPalindromeYet,
+          decisionLabel: I18N.decisions.defineWindow,
           radii,
           currentCenter: center,
           mirrorIndex: mirror,
@@ -228,10 +333,10 @@ export function* manacherGenerator(
           longestCenter,
           longestRadius,
           computation: {
-            label: 'Boundary update',
+            label: I18N.computation.labels.boundaryUpdate,
             expression: `center = ${center}, right = ${right}`,
             result: `[${center - radii[center]}, ${right}]`,
-            note: 'Anything inside this boundary gets a free mirrored lower bound.',
+            note: I18N.computation.notes.boundaryUpdate,
           },
         }),
       });
@@ -240,15 +345,18 @@ export function* manacherGenerator(
 
   yield createStringStep({
     activeCodeLine: 11,
-    description: `Manacher finished. The longest palindrome is "${extractPalindrome(scenario.source, longestCenter, longestRadius)}".`,
+    description: i18nText(I18N.descriptions.complete, {
+      palindrome: extractPalindrome(scenario.source, longestCenter, longestRadius) || '—',
+    }),
     phase: 'complete',
     string: makeState({
       scenario,
       transformed,
-      phaseLabel: 'Complete',
+      phaseLabel: I18N.phases.complete,
       activeLabel: `best center ${longestCenter}`,
-      resultLabel: extractPalindrome(scenario.source, longestCenter, longestRadius) || '—',
-      decisionLabel: 'All palindrome radii are now known, so the final rainbow shows every center at once.',
+      resultLabel:
+        extractPalindrome(scenario.source, longestCenter, longestRadius) || I18N.labels.noPalindromeYet,
+      decisionLabel: I18N.decisions.allRadiiKnown,
       radii,
       currentCenter: null,
       mirrorIndex: null,
@@ -260,10 +368,10 @@ export function* manacherGenerator(
       longestCenter,
       longestRadius,
       computation: {
-        label: 'Longest palindrome',
+        label: I18N.computation.labels.longestPalindrome,
         expression: `P[${longestCenter}] = ${longestRadius}`,
         result: extractPalindrome(scenario.source, longestCenter, longestRadius) || '—',
-        note: 'The longest original palindrome length is exactly the transformed radius.',
+        note: I18N.computation.notes.longestPalindrome,
       },
     }),
   });

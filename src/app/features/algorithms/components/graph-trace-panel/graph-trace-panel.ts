@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { GraphStepState, GraphTraceRow } from '../../models/graph';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
@@ -10,12 +13,16 @@ import { TraceHint } from '../trace-hint/trace-hint';
 
 @Component({
   selector: 'app-graph-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './graph-trace-panel.html',
   styleUrl: './graph-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<GraphStepState | null>(null);
   readonly algorithmId = input<string | null>(null);
   readonly focusTargetLabel = input<string | null>(null);
@@ -25,40 +32,42 @@ export class GraphTracePanel {
 
   readonly hintKeyIdea = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
   });
   readonly hintWatch = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
   });
   readonly sourceLabel = computed(() => {
     const state = this.state();
     if (!state) return '—';
-    const source = state.traceRows.find((item) => item.isSource) ?? state.traceRows.find((item) => item.nodeId === state.sourceId);
+    const source =
+      state.traceRows.find((item) => item.isSource) ??
+      state.traceRows.find((item) => item.nodeId === state.sourceId);
     return source?.label ?? '—';
   });
   readonly sourceCardLabel = computed(() => {
     if (this.state()?.detailLabel.startsWith('Euler')) {
-      return 'Start';
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.startLabel);
     }
     if (this.state()?.detailLabel === 'Steiner tree') {
-      return 'Terminal';
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.terminalLabel);
     }
     if (this.state()?.detailLabel === 'Dominator tree') {
-      return 'Entry';
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.entryLabel);
     }
     switch (this.state()?.detailLabel) {
       case 'MST tree':
-        return 'Start';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.startLabel);
       case 'Component sweep':
       case 'Partition check':
       case 'Critical links':
       case 'Tarjan SCC map':
       case 'Finish stack':
       case 'Kosaraju SCC map':
-        return 'Seed';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.seedLabel);
       default:
-        return 'Source';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.sourceLabel);
     }
   });
 
@@ -67,55 +76,109 @@ export class GraphTracePanel {
     return row?.label ?? '—';
   });
 
-  readonly settledCount = computed(() => this.state()?.traceRows.filter((item) => item.isSettled).length ?? 0);
+  readonly settledCount = computed(
+    () => this.state()?.traceRows.filter((item) => item.isSettled).length ?? 0,
+  );
   readonly queueLength = computed(() => this.state()?.queue.length ?? 0);
   readonly hasComputation = computed(() => this.state()?.computation !== null);
-  readonly completionLabel = computed(() => this.state()?.completionLabel ?? 'Visited');
-  readonly frontierLabel = computed(() => this.state()?.frontierLabel ?? 'Queue');
-  readonly metricLabel = computed(() => this.state()?.metricLabel ?? 'Distance');
-  readonly secondaryLabel = computed(() => this.state()?.secondaryLabel ?? 'Prev');
+  readonly completionLabel = computed(
+    () =>
+      this.state()?.completionLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.completionFallbackLabel),
+  );
+  readonly frontierLabel = computed(
+    () =>
+      this.state()?.frontierLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.frontierFallbackLabel),
+  );
+  readonly metricLabel = computed(
+    () =>
+      this.state()?.metricLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.metricFallbackLabel),
+  );
+  readonly secondaryLabel = computed(
+    () =>
+      this.state()?.secondaryLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.secondaryFallbackLabel),
+  );
   readonly tableColumns = computed<readonly TableColumn[]>(() => [
-    { id: 'node', header: 'Node' },
+    { id: 'node', headerKey: I18N_KEY.features.algorithms.tracePanels.graph.columns.node },
     { id: 'metric', header: this.metricLabel(), kind: 'mono' },
     { id: 'secondary', header: this.secondaryLabel(), kind: 'mono' },
-    { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
+    {
+      id: 'status',
+      headerKey: I18N_KEY.features.algorithms.tracePanels.graph.columns.status,
+      width: '92px',
+      kind: 'tag',
+    },
   ]);
-  readonly visitOrderLabel = computed(() => this.state()?.visitOrderLabel ?? 'Visit order');
-  readonly hasFocusedRoute = computed(() => this.focusTargetLabel() !== null && this.focusPathLabel() !== null);
-  readonly focusSummaryLabel = computed(() => (this.hasFocusedRoute() ? 'Focused target' : 'Context'));
+  readonly visitOrderLabel = computed(
+    () =>
+      this.state()?.visitOrderLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.visitOrderLabel),
+  );
+  readonly hasFocusedRoute = computed(
+    () => this.focusTargetLabel() !== null && this.focusPathLabel() !== null,
+  );
+  readonly focusSummaryLabel = computed(() =>
+    this.hasFocusedRoute()
+      ? this.translate(I18N_KEY.features.algorithms.tracePanels.graph.focusedTargetLabel)
+      : this.translate(I18N_KEY.features.algorithms.tracePanels.graph.contextLabel),
+  );
   readonly focusSummaryValue = computed(() => {
     if (this.hasFocusedRoute()) return this.focusTargetLabel() ?? '—';
     return this.state()?.detailLabel ?? '—';
   });
   readonly focusCardPath = computed(() => {
     if (this.hasFocusedRoute()) return this.focusPathLabel() ?? '—';
-    return this.state()?.detailValue ?? 'No detail';
+    return (
+      this.state()?.detailValue ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.noDetailLabel)
+    );
   });
   readonly focusCardHint = computed(() => {
     if (this.hasFocusedRoute()) {
-      return this.focusHint() ?? 'The route focus is a UI lens, not always an algorithm input.';
+      return (
+        this.focusHint() ??
+        this.translate(I18N_KEY.features.algorithms.tracePanels.graph.focusedRouteHint)
+      );
     }
-    return 'This algorithm is explained as a whole graph structure, not as one selected route.';
+    return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.graphContextHint);
   });
-  readonly focusCardBadge = computed(() => (this.hasFocusedRoute() ? 'UI lens' : 'Graph state'));
+  readonly focusCardBadge = computed(() =>
+    this.hasFocusedRoute()
+      ? this.translate(I18N_KEY.features.algorithms.tracePanels.graph.uiLensBadgeLabel)
+      : this.translate(I18N_KEY.features.algorithms.tracePanels.graph.graphStateBadgeLabel),
+  );
   readonly focusCardMuted = computed(() => {
     if (this.hasFocusedRoute()) return false;
     return !this.state()?.detailValue;
   });
-  readonly computationLabel = computed(() => this.state()?.computation?.candidateLabel ?? 'Step calculation');
-  readonly computationExpression = computed(() => this.state()?.computation?.expression ?? 'No edge update');
+  readonly computationLabel = computed(
+    () =>
+      this.state()?.computation?.candidateLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.stepCalculationLabel),
+  );
+  readonly computationExpression = computed(
+    () =>
+      this.state()?.computation?.expression ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.noEdgeUpdateLabel),
+  );
   readonly computationResult = computed(() => this.state()?.computation?.result ?? null);
   readonly computationDecision = computed(() => {
-    return this.state()?.computation?.decision ?? 'Waiting for a compare/relax/decision step.';
+    return (
+      this.state()?.computation?.decision ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.graph.waitingDecisionLabel)
+    );
   });
   readonly decisionBadge = computed(() => {
     switch (this.decisionTone()) {
       case 'improve':
-        return 'Relax';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.relaxBadgeLabel);
       case 'keep':
-        return 'Keep';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.keepBadgeLabel);
       default:
-        return 'Idle';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.idleBadgeLabel);
     }
   });
   readonly tableRows = computed<readonly TableRow[]>(() =>
@@ -132,11 +195,25 @@ export class GraphTracePanel {
   );
 
   statusLabel(row: GraphTraceRow): string {
-    if (row.isCurrent) return 'current';
-    if (row.isSettled) return this.state()?.completionStatusLabel ?? 'visited';
-    if (row.isSource) return 'source';
-    if (row.isFrontier) return this.state()?.frontierStatusLabel ?? 'queued';
-    return 'unseen';
+    if (row.isCurrent) {
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.statuses.current);
+    }
+    if (row.isSettled) {
+      return (
+        this.state()?.completionStatusLabel ??
+        this.translate(I18N_KEY.features.algorithms.tracePanels.graph.statuses.visited)
+      );
+    }
+    if (row.isSource) {
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.statuses.source);
+    }
+    if (row.isFrontier) {
+      return (
+        this.state()?.frontierStatusLabel ??
+        this.translate(I18N_KEY.features.algorithms.tracePanels.graph.statuses.queued)
+      );
+    }
+    return this.translate(I18N_KEY.features.algorithms.tracePanels.graph.statuses.unseen);
   }
 
   formatDistance(distance: number | null): string {
@@ -173,5 +250,10 @@ export class GraphTracePanel {
       size: 'sm',
       uppercase: true,
     };
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

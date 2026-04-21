@@ -1,5 +1,19 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, suffixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.heapSort.descriptions.start'),
+    extractRoot: t('features.algorithms.runtime.sort.heapSort.descriptions.extractRoot'),
+    complete: t('features.algorithms.runtime.sort.heapSort.descriptions.complete'),
+    compareLeft: t('features.algorithms.runtime.sort.heapSort.descriptions.compareLeft'),
+    compareRight: t('features.algorithms.runtime.sort.heapSort.descriptions.compareRight'),
+    restoreHeap: t('features.algorithms.runtime.sort.heapSort.descriptions.restoreHeap'),
+  },
+} as const;
 
 export function* heapSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -9,7 +23,7 @@ export function* heapSortGenerator(input: readonly number[]): Generator<SortStep
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start heap sort (n=${size})`,
+    description: i18nText(I18N.descriptions.start, { size }),
     boundary: heapSize,
     phase: 'init',
   });
@@ -27,7 +41,11 @@ export function* heapSortGenerator(input: readonly number[]): Generator<SortStep
     yield createArrayStep({
       array: arr,
       activeCodeLine: 15,
-      description: `Swap heap root ${max} with ${tail} to place the next largest value at index ${end}.`,
+      description: i18nText(I18N.descriptions.extractRoot, {
+        max,
+        tail,
+        end,
+      }),
       swapping: [0, end],
       sorted: suffixSorted(end, size),
       boundary: heapSize,
@@ -40,7 +58,7 @@ export function* heapSortGenerator(input: readonly number[]): Generator<SortStep
   yield createArrayStep({
     array: arr,
     activeCodeLine: 18,
-    description: 'Heap sort complete.',
+    description: I18N.descriptions.complete,
     sorted: suffixSorted(0, size),
     boundary: size,
     phase: 'complete',
@@ -55,7 +73,10 @@ export function* heapSortGenerator(input: readonly number[]): Generator<SortStep
       yield createArrayStep({
         array: arr,
         activeCodeLine: 6,
-        description: `Compare left child ${arr[left]} with current largest ${arr[largest]}.`,
+        description: i18nText(I18N.descriptions.compareLeft, {
+          leftChild: arr[left] ?? '',
+          currentLargest: arr[largest] ?? '',
+        }),
         comparing: [left, largest],
         sorted: suffixSorted(currentSize, size),
         boundary: currentSize,
@@ -71,7 +92,10 @@ export function* heapSortGenerator(input: readonly number[]): Generator<SortStep
       yield createArrayStep({
         array: arr,
         activeCodeLine: 7,
-        description: `Compare right child ${arr[right]} with current largest ${arr[largest]}.`,
+        description: i18nText(I18N.descriptions.compareRight, {
+          rightChild: arr[right] ?? '',
+          currentLargest: arr[largest] ?? '',
+        }),
         comparing: [right, largest],
         sorted: suffixSorted(currentSize, size),
         boundary: currentSize,
@@ -91,7 +115,10 @@ export function* heapSortGenerator(input: readonly number[]): Generator<SortStep
       yield createArrayStep({
         array: arr,
         activeCodeLine: 9,
-        description: `Swap ${rootValue} with ${largestValue} to restore the max-heap shape.`,
+        description: i18nText(I18N.descriptions.restoreHeap, {
+          rootValue,
+          largestValue,
+        }),
         swapping: [root, largest],
         sorted: suffixSorted(currentSize, size),
         boundary: currentSize,

@@ -1,23 +1,52 @@
 <div class="trace">
   @if (state(); as geo) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Line intersection summary">
-        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel(geo.phase)" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Sweep x"
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.phaseLabel | transloco
+          "
+          [value]="phaseLabel(geo.phase)"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.sweepXLabel | transloco
+          "
           [value]="geo.sweepX !== null ? geo.sweepX.toFixed(1) : '—'"
           [valueMono]="true"
         />
-        <app-segmented-panel-section eyebrow="Hits" [value]="geo.foundCount" [valueMono]="true" />
         <app-segmented-panel-section
-          eyebrow="Active"
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.hitsLabel | transloco
+          "
+          [value]="geo.foundCount"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.activeLabel | transloco
+          "
           [value]="geo.activeOrder.length"
           [valueMono]="true"
         />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Line intersection streams">
-        <app-segmented-panel-section eyebrow="Current event">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.streamsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.currentEventLabel | transloco
+          "
+        >
           <div class="trace__event-wrap" [class.trace__event-wrap--ghost]="!currentEvent()">
             @if (currentEvent(); as event) {
               <span class="trace__event-pill trace__event-pill--{{ event.kind }}">{{
@@ -25,16 +54,28 @@
               }}</span>
               <span class="trace__event-meta">x = {{ event.x.toFixed(1) }}</span>
             } @else {
-              <span class="trace__event-pill trace__event-pill--ghost">between checkpoints</span>
+              <span class="trace__event-pill trace__event-pill--ghost">{{
+                I18N_KEY.features.algorithms.tracePanels.lineIntersection.betweenCheckpointsLabel
+                  | transloco
+              }}</span>
               <span class="trace__event-meta">x = —</span>
             }
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Active ordering" [badge]="geo.activeOrder.length">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.activeOrderingLabel
+              | transloco
+          "
+          [badge]="geo.activeOrder.length"
+        >
           <div class="trace__chips">
             @if (geo.activeOrder.length === 0) {
-              <span class="trace__placeholder">No active segments on the sweep line yet.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.lineIntersection.noActiveSegmentsLabel
+                  | transloco
+              }}</span>
             } @else {
               @for (label of geo.activeOrder; track label) {
                 <span class="trace__chip">{{ label }}</span>
@@ -44,11 +85,24 @@
         </app-segmented-panel-section>
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Line intersection details">
-        <app-segmented-panel-section eyebrow="Upcoming queue" [badge]="upcomingEvents().length">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.upcomingQueueLabel | transloco
+          "
+          [badge]="upcomingEvents().length"
+        >
           <div class="trace__chips">
             @if (upcomingEvents().length === 0) {
-              <span class="trace__placeholder">No queued events remain.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.lineIntersection.noQueuedEventsLabel
+                  | transloco
+              }}</span>
             } @else {
               @for (event of upcomingEvents(); track event.id) {
                 <span
@@ -64,11 +118,19 @@
         </app-segmented-panel-section>
 
         <app-segmented-panel-section
-          eyebrow="Found intersections"
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.lineIntersection.foundIntersectionsLabel
+              | transloco
+          "
           [badge]="geo.intersections.length"
         >
           @if (geo.intersections.length === 0) {
-            <div class="trace__placeholder">No confirmed intersections yet.</div>
+            <div class="trace__placeholder">
+              {{
+                I18N_KEY.features.algorithms.tracePanels.lineIntersection
+                  .noConfirmedIntersectionsLabel | transloco
+              }}
+            </div>
           } @else {
             <app-table
               class="trace__table"
@@ -82,6 +144,8 @@
       </app-segmented-panel>
     </div>
   } @else {
-    <div class="trace__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.lineIntersection.emptyLabel | transloco }}
+    </div>
   }
 </div>

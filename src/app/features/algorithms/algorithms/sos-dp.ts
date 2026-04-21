@@ -1,7 +1,58 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { SosDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.sosDp.modeLabel'),
+  phases: {
+    initializeBase: t('features.algorithms.runtime.dp.sosDp.phases.initializeBase'),
+    carryMask: t('features.algorithms.runtime.dp.sosDp.phases.carryMask'),
+    mergeSubmask: t('features.algorithms.runtime.dp.sosDp.phases.mergeSubmask'),
+    commitTransition: t('features.algorithms.runtime.dp.sosDp.phases.commitTransition'),
+    traceContributors: t('features.algorithms.runtime.dp.sosDp.phases.traceContributors'),
+    traceBase: t('features.algorithms.runtime.dp.sosDp.phases.traceBase'),
+    complete: t('features.algorithms.runtime.dp.sosDp.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.sosDp.descriptions.initialize'),
+    carryMask: t('features.algorithms.runtime.dp.sosDp.descriptions.carryMask'),
+    mergeSubmask: t('features.algorithms.runtime.dp.sosDp.descriptions.mergeSubmask'),
+    commitTransition: t('features.algorithms.runtime.dp.sosDp.descriptions.commitTransition'),
+    complete: t('features.algorithms.runtime.dp.sosDp.descriptions.complete'),
+    traceBase: t('features.algorithms.runtime.dp.sosDp.descriptions.traceBase'),
+    traceContributors: t('features.algorithms.runtime.dp.sosDp.descriptions.traceContributors'),
+  },
+  insights: {
+    bitsLabel: t('features.algorithms.runtime.dp.sosDp.insights.bitsLabel'),
+    masksLabel: t('features.algorithms.runtime.dp.sosDp.insights.masksLabel'),
+    focusedSumLabel: t('features.algorithms.runtime.dp.sosDp.insights.focusedSumLabel'),
+    contributorsLabel: t('features.algorithms.runtime.dp.sosDp.insights.contributorsLabel'),
+    focusLabel: t('features.algorithms.runtime.dp.sosDp.insights.focusLabel'),
+  },
+  labels: {
+    resultSum: t('features.algorithms.runtime.dp.sosDp.labels.resultSum'),
+    activeState: t('features.algorithms.runtime.dp.sosDp.labels.activeState'),
+    pathValue: t('features.algorithms.runtime.dp.sosDp.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.sosDp.labels.pathPending'),
+    baseValuesLabel: t('features.algorithms.runtime.dp.sosDp.labels.baseValuesLabel'),
+    activeBitsLabel: t('features.algorithms.runtime.dp.sosDp.labels.activeBitsLabel'),
+    carryLabel: t('features.algorithms.runtime.dp.sosDp.labels.carryLabel'),
+    mergeLabel: t('features.algorithms.runtime.dp.sosDp.labels.mergeLabel'),
+    cellLabel: t('features.algorithms.runtime.dp.sosDp.labels.cellLabel'),
+    stageLabel: t('features.algorithms.runtime.dp.sosDp.labels.stageLabel'),
+  },
+  decisions: {
+    noMerge: t('features.algorithms.runtime.dp.sosDp.decisions.noMerge'),
+    aggregateSubmask: t('features.algorithms.runtime.dp.sosDp.decisions.aggregateSubmask'),
+    stageAccumulates: t('features.algorithms.runtime.dp.sosDp.decisions.stageAccumulates'),
+    recordContributor: t('features.algorithms.runtime.dp.sosDp.decisions.recordContributor'),
+    followBranches: t('features.algorithms.runtime.dp.sosDp.decisions.followBranches'),
+  },
+} as const;
 
 export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
   const stages = scenario.bitCount + 1;
@@ -17,9 +68,9 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
     table,
     traced,
     contributingMasks,
-    description: 'Start with the base function values on row 0 before any SOS bit transitions are applied.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize base subset row',
+    phaseLabel: I18N.phases.initializeBase,
     phase: 'init',
   });
 
@@ -35,15 +86,21 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
           contributingMasks,
           activeCell: [bit + 1, mask],
           candidateCells: [[bit, mask]],
-          description: `Mask ${maskLabel(mask, scenario.bitCount)} does not contain bit ${bit}, so the next stage just carries its previous value.`,
+          description: i18nText(I18N.descriptions.carryMask, {
+            mask: maskLabel(mask, scenario.bitCount),
+            bit,
+          }),
           activeCodeLine: 5,
-          phaseLabel: 'Carry untouched mask',
+          phaseLabel: I18N.phases.carryMask,
           phase: 'settle-node',
           computation: {
-            label: `${maskLabel(mask, scenario.bitCount)} @ bit ${bit}`,
+            label: i18nText(I18N.labels.carryLabel, {
+              mask: maskLabel(mask, scenario.bitCount),
+              bit,
+            }),
             expression: `dp[${bit}][${maskLabel(mask, scenario.bitCount)}]`,
             result: String(table[bit + 1]![mask]!),
-            decision: 'bit absent, so no subset merge happens',
+            decision: I18N.decisions.noMerge,
           },
         });
         continue;
@@ -59,15 +116,22 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
         contributingMasks,
         activeCell: [bit + 1, mask],
         candidateCells: [[bit, mask], [bit, submask]],
-        description: `Bit ${bit} is set in mask ${maskLabel(mask, scenario.bitCount)}, so add the submask ${maskLabel(submask, scenario.bitCount)} contribution.`,
+        description: i18nText(I18N.descriptions.mergeSubmask, {
+          bit,
+          mask: maskLabel(mask, scenario.bitCount),
+          submask: maskLabel(submask, scenario.bitCount),
+        }),
         activeCodeLine: 5,
-        phaseLabel: 'Merge submask contribution',
+        phaseLabel: I18N.phases.mergeSubmask,
         phase: 'compare',
         computation: {
-          label: `${maskLabel(mask, scenario.bitCount)} via bit ${bit}`,
+          label: i18nText(I18N.labels.mergeLabel, {
+            mask: maskLabel(mask, scenario.bitCount),
+            bit,
+          }),
           expression: `${table[bit]![mask]!} + ${table[bit]![submask]!}`,
           result: String(candidate),
-          decision: `aggregate all subsets differing only by bit ${bit}`,
+          decision: I18N.decisions.aggregateSubmask,
         },
       });
 
@@ -81,15 +145,21 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
         activeCell: [bit + 1, mask],
         candidateCells: [[bit, mask], [bit, submask]],
         activeStatus: 'improved',
-        description: `Commit the updated sum-over-subsets value for ${maskLabel(mask, scenario.bitCount)} after processing bit ${bit}.`,
+        description: i18nText(I18N.descriptions.commitTransition, {
+          mask: maskLabel(mask, scenario.bitCount),
+          bit,
+        }),
         activeCodeLine: 6,
-        phaseLabel: 'Commit SOS transition',
+        phaseLabel: I18N.phases.commitTransition,
         phase: 'settle-node',
         computation: {
-          label: `dp[${bit + 1}][${maskLabel(mask, scenario.bitCount)}]`,
+          label: i18nText(I18N.labels.cellLabel, {
+            stage: bit + 1,
+            mask: maskLabel(mask, scenario.bitCount),
+          }),
           expression: `${table[bit]![mask]!} + ${table[bit]![submask]!}`,
           result: String(table[bit + 1]![mask]!),
-          decision: 'stage accumulates every relevant submask',
+          decision: I18N.decisions.stageAccumulates,
         },
       });
     }
@@ -102,9 +172,11 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
     table,
     traced,
     contributingMasks,
-    description: `Recovered the base masks that contribute to focused mask ${maskLabel(scenario.focusMask, scenario.bitCount)}.`,
+    description: i18nText(I18N.descriptions.complete, {
+      mask: maskLabel(scenario.focusMask, scenario.bitCount),
+    }),
     activeCodeLine: 8,
-    phaseLabel: 'Contributors ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 
@@ -119,15 +191,17 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
         contributingMasks,
         activeCell: [stage, mask],
         activeStatus: 'backtrack',
-        description: `Base mask ${maskLabel(mask, scenario.bitCount)} contributes directly to the focused SOS result.`,
+        description: i18nText(I18N.descriptions.traceBase, {
+          mask: maskLabel(mask, scenario.bitCount),
+        }),
         activeCodeLine: 7,
-        phaseLabel: 'Trace base contributor',
+        phaseLabel: I18N.phases.traceBase,
         phase: 'relax',
         computation: {
           label: maskLabel(mask, scenario.bitCount),
           expression: `f[${maskLabel(mask, scenario.bitCount)}]`,
           result: contributorsLabel(scenario, contributingMasks),
-          decision: 'record base submask contributor',
+          decision: I18N.decisions.recordContributor,
         },
       });
       return;
@@ -140,15 +214,21 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
       contributingMasks,
       activeCell: [stage, mask],
       activeStatus: 'backtrack',
-      description: `Trace the focused mask through SOS stage ${stage}.`,
+      description: i18nText(I18N.descriptions.traceContributors, { stage }),
       activeCodeLine: 7,
-      phaseLabel: 'Trace SOS contributor path',
+      phaseLabel: I18N.phases.traceContributors,
       phase: 'relax',
       computation: {
-        label: `${maskLabel(mask, scenario.bitCount)} @ stage ${stage}`,
-        expression: (mask & (1 << (stage - 1))) !== 0 ? 'came from mask and submask' : 'came only from the same mask',
+        label: i18nText(I18N.labels.stageLabel, {
+          stage,
+          mask: maskLabel(mask, scenario.bitCount),
+        }),
+        expression:
+          (mask & (1 << (stage - 1))) !== 0
+            ? 'came from mask and submask'
+            : 'came only from the same mask',
         result: contributorsLabel(scenario, contributingMasks),
-        decision: 'follow all contributing branches',
+        decision: I18N.decisions.followBranches,
       },
     });
 
@@ -164,9 +244,9 @@ function createStep(args: {
   readonly table: readonly (readonly number[])[];
   readonly traced: ReadonlySet<string>;
   readonly contributingMasks: ReadonlySet<number>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
@@ -205,7 +285,12 @@ function createStep(args: {
         rowLabel: row === 0 ? 'base' : `bit ${row - 1}`,
         colLabel: maskLabel(col, args.scenario.bitCount),
         valueLabel: String(args.table[row]![col]!),
-        metaLabel: row === 0 && args.contributingMasks.has(col) ? 'src' : col === args.scenario.focusMask ? 'focus' : null,
+        metaLabel:
+          row === 0 && args.contributingMasks.has(col)
+            ? 'src'
+            : col === args.scenario.focusMask
+              ? 'focus'
+              : null,
         status: args.traced.has(id)
           ? 'backtrack'
           : id === activeCellId
@@ -222,26 +307,36 @@ function createStep(args: {
 
   const result = args.table[args.scenario.bitCount]![args.scenario.focusMask]!;
   const insights: DpInsight[] = [
-    { label: 'Bits', value: String(args.scenario.bitCount), tone: 'accent' },
-    { label: 'Masks', value: String(args.table[0]!.length), tone: 'info' },
-    { label: 'Focused sum', value: String(result), tone: 'success' },
-    { label: 'Contributors', value: String(args.contributingMasks.size), tone: 'warning' },
-    { label: 'Focus', value: maskLabel(args.scenario.focusMask, args.scenario.bitCount), tone: 'info' },
+    { label: I18N.insights.bitsLabel, value: String(args.scenario.bitCount), tone: 'accent' },
+    { label: I18N.insights.masksLabel, value: String(args.table[0]!.length), tone: 'info' },
+    { label: I18N.insights.focusedSumLabel, value: String(result), tone: 'success' },
+    { label: I18N.insights.contributorsLabel, value: String(args.contributingMasks.size), tone: 'warning' },
+    {
+      label: I18N.insights.focusLabel,
+      value: maskLabel(args.scenario.focusMask, args.scenario.bitCount),
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'sos-dp',
-    modeLabel: 'SOS DP',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `sum = ${result}`,
+    resultLabel: i18nText(I18N.labels.resultSum, { value: result }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
-    activeLabel: args.activeCell ? `${rowHeaders[args.activeCell[0]]!.label} × ${maskLabel(args.activeCell[1], args.scenario.bitCount)}` : null,
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeState, {
+            row: rowHeaders[args.activeCell[0]]!.label,
+            mask: maskLabel(args.activeCell[1], args.scenario.bitCount),
+          })
+        : null,
     pathLabel: contributorsLabel(args.scenario, args.contributingMasks),
-    primaryItemsLabel: 'Base values',
+    primaryItemsLabel: I18N.labels.baseValuesLabel,
     primaryItems: args.scenario.baseValues.map((value, mask) => `${maskLabel(mask, args.scenario.bitCount)}=${value}`),
-    secondaryItemsLabel: 'Active bits',
+    secondaryItemsLabel: I18N.labels.activeBitsLabel,
     secondaryItems: Array.from({ length: args.scenario.bitCount }, (_, bit) => `bit ${bit}`),
     insights,
     rowHeaders,
@@ -258,7 +353,14 @@ function maskLabel(mask: number, width: number): string {
   return mask.toString(2).padStart(width, '0');
 }
 
-function contributorsLabel(scenario: SosDpScenario, contributingMasks: ReadonlySet<number>): string {
-  const masks = Array.from(contributingMasks).sort((left, right) => left - right).map((mask) => maskLabel(mask, scenario.bitCount));
-  return masks.length > 0 ? `Submasks: ${masks.join(' · ')}` : 'Submasks: pending';
+function contributorsLabel(
+  scenario: SosDpScenario,
+  contributingMasks: ReadonlySet<number>,
+): TranslatableText {
+  const masks = Array.from(contributingMasks)
+    .sort((left, right) => left - right)
+    .map((mask) => maskLabel(mask, scenario.bitCount));
+  return masks.length > 0
+    ? i18nText(I18N.labels.pathValue, { masks: masks.join(' · ') })
+    : I18N.labels.pathPending;
 }

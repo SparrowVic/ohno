@@ -1,7 +1,57 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { TreeDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.dpOnTrees.modeLabel'),
+  phases: {
+    initializeTree: t('features.algorithms.runtime.dp.dpOnTrees.phases.initializeTree'),
+    inspectLeaf: t('features.algorithms.runtime.dp.dpOnTrees.phases.inspectLeaf'),
+    aggregateChild: t('features.algorithms.runtime.dp.dpOnTrees.phases.aggregateChild'),
+    commitStates: t('features.algorithms.runtime.dp.dpOnTrees.phases.commitStates'),
+    backtrackChosen: t('features.algorithms.runtime.dp.dpOnTrees.phases.backtrackChosen'),
+    complete: t('features.algorithms.runtime.dp.dpOnTrees.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.initialize'),
+    inspectLeaf: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.inspectLeaf'),
+    aggregateChild: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.aggregateChild'),
+    commitStates: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.commitStates'),
+    chooseNode: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.chooseNode'),
+    skipParentTaken: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.skipParentTaken'),
+    skipBetterState: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.skipBetterState'),
+    complete: t('features.algorithms.runtime.dp.dpOnTrees.descriptions.complete'),
+  },
+  insights: {
+    nodesLabel: t('features.algorithms.runtime.dp.dpOnTrees.insights.nodesLabel'),
+    rootBestLabel: t('features.algorithms.runtime.dp.dpOnTrees.insights.rootBestLabel'),
+    chosenLabel: t('features.algorithms.runtime.dp.dpOnTrees.insights.chosenLabel'),
+    postorderLabel: t('features.algorithms.runtime.dp.dpOnTrees.insights.postorderLabel'),
+    stripLabel: t('features.algorithms.runtime.dp.dpOnTrees.insights.stripLabel'),
+  },
+  labels: {
+    resultBest: t('features.algorithms.runtime.dp.dpOnTrees.labels.resultBest'),
+    activeNode: t('features.algorithms.runtime.dp.dpOnTrees.labels.activeNode'),
+    pathValue: t('features.algorithms.runtime.dp.dpOnTrees.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.dpOnTrees.labels.pathPending'),
+    treeEdgesLabel: t('features.algorithms.runtime.dp.dpOnTrees.labels.treeEdgesLabel'),
+    postorderNodesLabel: t('features.algorithms.runtime.dp.dpOnTrees.labels.postorderNodesLabel'),
+    pairLabel: t('features.algorithms.runtime.dp.dpOnTrees.labels.pairLabel'),
+    bestLabel: t('features.algorithms.runtime.dp.dpOnTrees.labels.bestLabel'),
+    postorderValue: t('features.algorithms.runtime.dp.dpOnTrees.labels.postorderValue'),
+    stripValue: t('features.algorithms.runtime.dp.dpOnTrees.labels.stripValue'),
+  },
+  decisions: {
+    leafDirect: t('features.algorithms.runtime.dp.dpOnTrees.decisions.leafDirect'),
+    mergeChild: t('features.algorithms.runtime.dp.dpOnTrees.decisions.mergeChild'),
+    takeDominates: t('features.algorithms.runtime.dp.dpOnTrees.decisions.takeDominates'),
+    skipDominates: t('features.algorithms.runtime.dp.dpOnTrees.decisions.skipDominates'),
+  },
+} as const;
 
 export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortStep> {
   const nodes = scenario.nodes;
@@ -34,9 +84,9 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
     children,
     chosen,
     postorder,
-    description: 'Root the tree and prepare a postorder so every child subtree is solved before its parent.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize rooted tree',
+    phaseLabel: I18N.phases.initializeTree,
     phase: 'init',
   });
 
@@ -54,15 +104,18 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
         chosen,
         postorder,
         activeIndex: nodeIndex,
-        description: `Leaf node ${nodes[nodeIndex]!.label} has no children, so its take value is just its own weight.`,
+        description: i18nText(I18N.descriptions.inspectLeaf, {
+          node: nodes[nodeIndex]!.label,
+          weight: nodes[nodeIndex]!.weight,
+        }),
         activeCodeLine: 5,
-        phaseLabel: 'Inspect leaf state',
+        phaseLabel: I18N.phases.inspectLeaf,
         phase: 'compare',
         computation: {
           label: nodes[nodeIndex]!.label,
           expression: `take = ${nodes[nodeIndex]!.weight}, skip = 0`,
           result: String(nodes[nodeIndex]!.weight),
-          decision: 'leaf contributes directly',
+          decision: I18N.decisions.leafDirect,
         },
       });
     }
@@ -78,15 +131,21 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
         postorder,
         activeIndex: nodeIndex,
         candidateIndex: childIndex,
-        description: `Combine child ${nodes[childIndex]!.label}: taking ${nodes[nodeIndex]!.label} forces the child into skip, while skipping the parent may use the child's best state.`,
+        description: i18nText(I18N.descriptions.aggregateChild, {
+          node: nodes[nodeIndex]!.label,
+          child: nodes[childIndex]!.label,
+        }),
         activeCodeLine: 6,
-        phaseLabel: 'Aggregate child subtree',
+        phaseLabel: I18N.phases.aggregateChild,
         phase: 'compare',
         computation: {
-          label: `${nodes[nodeIndex]!.label} + ${nodes[childIndex]!.label}`,
+          label: i18nText(I18N.labels.pairLabel, {
+            node: nodes[nodeIndex]!.label,
+            child: nodes[childIndex]!.label,
+          }),
           expression: `take += skip[${nodes[childIndex]!.label}] (${skip[childIndex]!}), skip += best[${nodes[childIndex]!.label}] (${Math.max(take[childIndex]!, skip[childIndex]!)})`,
           result: `${takeValue + skip[childIndex]!} / ${skipValue + Math.max(take[childIndex]!, skip[childIndex]!)}`,
-          decision: 'merge child contribution into parent state',
+          decision: I18N.decisions.mergeChild,
         },
       });
 
@@ -108,15 +167,17 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
       postorder,
       activeIndex: nodeIndex,
       activeStatus: 'improved',
-      description: `Store take / skip / best for subtree rooted at ${nodes[nodeIndex]!.label}.`,
+      description: i18nText(I18N.descriptions.commitStates, {
+        node: nodes[nodeIndex]!.label,
+      }),
       activeCodeLine: 8,
-      phaseLabel: 'Commit subtree states',
+      phaseLabel: I18N.phases.commitStates,
       phase: 'settle-node',
       computation: {
-        label: `best[${nodes[nodeIndex]!.label}]`,
+        label: i18nText(I18N.labels.bestLabel, { node: nodes[nodeIndex]!.label }),
         expression: `max(${takeValue}, ${skipValue})`,
         result: String(best[nodeIndex]!),
-        decision: takeValue >= skipValue ? 'take state dominates' : 'skip state dominates',
+        decision: takeValue >= skipValue ? I18N.decisions.takeDominates : I18N.decisions.skipDominates,
       },
     });
   }
@@ -131,9 +192,9 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
     children,
     chosen,
     postorder,
-    description: `Recovered one maximum-weight independent set on the tree.`,
+    description: I18N.descriptions.complete,
     activeCodeLine: 12,
-    phaseLabel: 'Chosen nodes ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 
@@ -159,12 +220,18 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
       activeIndex: nodeIndex,
       activeStatus: 'backtrack',
       description: takeNode
-        ? `Choose ${nodes[nodeIndex]!.label} because its take state beats skipping it and its parent is not selected.`
+        ? i18nText(I18N.descriptions.chooseNode, {
+            node: nodes[nodeIndex]!.label,
+          })
         : parentTaken
-          ? `Skip ${nodes[nodeIndex]!.label} because its parent is already chosen.`
-          : `Skip ${nodes[nodeIndex]!.label} because its skip state is better than taking it.`,
+          ? i18nText(I18N.descriptions.skipParentTaken, {
+              node: nodes[nodeIndex]!.label,
+            })
+          : i18nText(I18N.descriptions.skipBetterState, {
+              node: nodes[nodeIndex]!.label,
+            }),
       activeCodeLine: 11,
-      phaseLabel: 'Backtrack chosen set',
+      phaseLabel: I18N.phases.backtrackChosen,
       phase: 'relax',
       computation: {
         label: nodes[nodeIndex]!.label,
@@ -188,9 +255,9 @@ function createStep(args: {
   readonly children: readonly (readonly number[])[];
   readonly chosen: ReadonlySet<number>;
   readonly postorder: readonly number[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeIndex?: number;
   readonly candidateIndex?: number;
@@ -286,28 +353,49 @@ function createStep(args: {
 
   const rootIndex = args.scenario.nodes.findIndex((node) => node.id === args.scenario.rootId);
   const insights: DpInsight[] = [
-    { label: 'Nodes', value: String(args.scenario.nodes.length), tone: 'accent' },
-    { label: 'Root best', value: rootIndex >= 0 ? String(args.best[rootIndex] ?? 0) : '0', tone: 'success' },
-    { label: 'Chosen', value: String(args.chosen.size), tone: 'warning' },
-    { label: 'Postorder', value: args.postorder.map((index) => args.scenario.nodes[index]!.label).join(' → '), tone: 'info' },
-    { label: 'Strip', value: `4 × ${args.scenario.nodes.length}`, tone: 'info' },
+    { label: I18N.insights.nodesLabel, value: String(args.scenario.nodes.length), tone: 'accent' },
+    {
+      label: I18N.insights.rootBestLabel,
+      value: rootIndex >= 0 ? String(args.best[rootIndex] ?? 0) : '0',
+      tone: 'success',
+    },
+    { label: I18N.insights.chosenLabel, value: String(args.chosen.size), tone: 'warning' },
+    {
+      label: I18N.insights.postorderLabel,
+      value: i18nText(I18N.labels.postorderValue, {
+        value: args.postorder.map((index) => args.scenario.nodes[index]!.label).join(' → '),
+      }),
+      tone: 'info',
+    },
+    {
+      label: I18N.insights.stripLabel,
+      value: i18nText(I18N.labels.stripValue, { length: args.scenario.nodes.length }),
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'dp-on-trees',
-    modeLabel: 'DP on Trees',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: rootIndex >= 0 ? `best = ${args.best[rootIndex] ?? 0}` : 'best = 0',
+    resultLabel: i18nText(I18N.labels.resultBest, {
+      value: rootIndex >= 0 ? args.best[rootIndex] ?? 0 : 0,
+    }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `4 × ${args.scenario.nodes.length}`,
-    activeLabel: args.activeIndex === undefined ? null : args.scenario.nodes[args.activeIndex]!.label,
+    activeLabel:
+      args.activeIndex === undefined
+        ? null
+        : i18nText(I18N.labels.activeNode, {
+            node: args.scenario.nodes[args.activeIndex]!.label,
+          }),
     pathLabel: independentSetLabel(args.scenario, args.chosen),
-    primaryItemsLabel: 'Tree edges',
+    primaryItemsLabel: I18N.labels.treeEdgesLabel,
     primaryItems: args.scenario.nodes
       .filter((node) => node.parentId !== null)
       .map((node) => `${node.parentId}→${node.label}`),
-    secondaryItemsLabel: 'Postorder nodes',
+    secondaryItemsLabel: I18N.labels.postorderNodesLabel,
     secondaryItems: args.postorder.map((index) => args.scenario.nodes[index]!.label),
     insights,
     rowHeaders,
@@ -320,7 +408,14 @@ function createStep(args: {
   });
 }
 
-function independentSetLabel(scenario: TreeDpScenario, chosen: ReadonlySet<number>): string {
-  const labels = Array.from(chosen).sort((left, right) => left - right).map((index) => scenario.nodes[index]!.label);
-  return labels.length > 0 ? `Chosen: ${labels.join(' · ')}` : 'Chosen: pending';
+function independentSetLabel(
+  scenario: TreeDpScenario,
+  chosen: ReadonlySet<number>,
+): TranslatableText {
+  const labels = Array.from(chosen)
+    .sort((left, right) => left - right)
+    .map((index) => scenario.nodes[index]!.label);
+  return labels.length > 0
+    ? i18nText(I18N.labels.pathValue, { nodes: labels.join(' · ') })
+    : I18N.labels.pathPending;
 }

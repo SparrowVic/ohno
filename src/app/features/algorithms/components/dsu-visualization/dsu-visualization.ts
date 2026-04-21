@@ -10,20 +10,27 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { DsuEdgeTrace, DsuGroupTrace, DsuNodeTrace, DsuTraceState } from '../../models/dsu';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
 
+const I18N = I18N_KEY.features.algorithms.visualizations.dsu;
+
 @Component({
   selector: 'app-dsu-visualization',
-  imports: [],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './dsu-visualization.html',
   styleUrl: './dsu-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  protected readonly I18N = I18N;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -35,13 +42,10 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
 
   readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
   readonly activeLabel = computed(() => this.state()?.activePairLabel ?? '—');
-  readonly railLabel = computed(() => this.state()?.operationsLabel ?? 'Operation rail');
+  readonly railLabel = computed(() => this.state()?.operationsLabel ?? I18N.railLabel);
   readonly modeHint = computed(() => {
     const state = this.state();
-    if (!state) return '—';
-    return state.mode === 'union-find'
-      ? 'Parent pointers + path compression'
-      : 'Sorted edges + DSU cycle checks';
+    return state?.mode === 'kruskal' ? I18N.modeHints.kruskal : I18N.modeHints.unionFind;
   });
 
   constructor() {
@@ -111,20 +115,33 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
     return this.state()?.edges ?? [];
   }
 
-  edgeLabel(edge: DsuEdgeTrace): string {
+  edgeLabel(edge: DsuEdgeTrace): TranslatableText {
     const state = this.state();
     if (state?.mode === 'union-find') {
       if (edge.toLabel === 'find') {
-        return `find ${edge.fromLabel}`;
+        return i18nText(I18N.edgeLabels.find, { label: edge.fromLabel });
       }
-      return `union ${edge.fromLabel}-${edge.toLabel}`;
+      return i18nText(I18N.edgeLabels.union, { from: edge.fromLabel, to: edge.toLabel });
     }
     return `${edge.fromLabel}-${edge.toLabel}`;
   }
 
-  nodeSubtitle(node: DsuNodeTrace): string {
-    if (node.parentId === node.id) return 'root';
-    return `parent ${node.parentLabel}`;
+  edgeStatus(edge: DsuEdgeTrace): TranslatableText {
+    switch (edge.status) {
+      case 'pending':
+        return I18N.edgeStatuses.pending;
+      case 'active':
+        return I18N.edgeStatuses.active;
+      case 'accepted':
+        return I18N.edgeStatuses.accepted;
+      case 'rejected':
+        return I18N.edgeStatuses.rejected;
+    }
+  }
+
+  nodeSubtitle(node: DsuNodeTrace): TranslatableText {
+    if (node.parentId === node.id) return I18N.nodeSubtitle.root;
+    return i18nText(I18N.nodeSubtitle.parent, { label: node.parentLabel });
   }
 
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {

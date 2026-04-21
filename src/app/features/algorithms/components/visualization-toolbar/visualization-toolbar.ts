@@ -9,7 +9,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
@@ -17,12 +19,13 @@ import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-sele
 
 @Component({
   selector: 'app-visualization-toolbar',
-  imports: [LabSelect, LabSlider, ReactiveFormsModule],
+  imports: [LabSelect, LabSlider, ReactiveFormsModule, TranslocoPipe],
   templateUrl: './visualization-toolbar.html',
   styleUrl: './visualization-toolbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualizationToolbar {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly isPlaying = input.required<boolean>();
   readonly speed = input.required<number>();
   readonly currentStep = input.required<number>();
@@ -109,7 +112,9 @@ export class VisualizationToolbar {
       .subscribe((value) => this.variantChange.emit(value));
   }
 
-  transportLabel(): string {
-    return this.isPlaying() ? 'Pause playback' : 'Start playback';
+  transportLabelKey(): I18nKey {
+    return this.isPlaying()
+      ? I18N_KEY.features.algorithms.toolbar.pausePlaybackLabel
+      : I18N_KEY.features.algorithms.toolbar.startPlaybackLabel;
   }
 }

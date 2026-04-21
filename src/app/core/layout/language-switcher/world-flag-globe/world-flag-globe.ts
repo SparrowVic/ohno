@@ -12,6 +12,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import * as d3Scale from 'd3-scale';
 import { animate } from 'animejs';
 import type {
@@ -31,6 +32,8 @@ import type {
   WebGLRenderer,
 } from 'three';
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+import { I18N_KEY } from '../../../i18n/i18n-keys';
 
 type ThreeModule = typeof import('three');
 type OrbitControlsCtor = new (object: PerspectiveCamera, domElement?: HTMLElement) => OrbitControls;
@@ -96,22 +99,17 @@ const COUNTRY_PALETTE = [
 
 @Component({
   selector: 'app-world-flag-globe',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './world-flag-globe.html',
   styleUrl: './world-flag-globe.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorldFlagGlobe implements AfterViewInit {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly hoveredCountry = signal<CountryMarker | null>(null);
   readonly loading = signal(true);
-  readonly loadError = signal<string | null>(null);
-  readonly hoverHeadline = computed(() => this.hoveredCountry()?.name ?? 'Sweep across the planet');
+  readonly loadError = signal(false);
   readonly hoverFlag = computed(() => this.hoveredCountry()?.flag ?? '🌍');
-  readonly hoverNote = computed(() =>
-    this.hoveredCountry()
-      ? 'Every country is now color-woven from its own flag palette. Hover still locks the country and sharpens its atlas glow.'
-      : 'Drag to orbit. Scroll or pinch to zoom. Country dots are now painted from the flag colors of each individual nation.',
-  );
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
@@ -239,7 +237,7 @@ export class WorldFlagGlobe implements AfterViewInit {
   private async initialize(): Promise<void> {
     const host = this.canvasHostRef().nativeElement;
     this.loading.set(true);
-    this.loadError.set(null);
+    this.loadError.set(false);
 
     try {
       const [THREE, controlsModule, countries, surfaceDots, boundaryDots] = await Promise.all([
@@ -267,7 +265,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       this.playHudIntro();
     } catch (error) {
       console.error(error);
-      this.loadError.set('Unable to initialize the world flag globe.');
+      this.loadError.set(true);
       this.loading.set(false);
     }
   }
@@ -572,10 +570,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       'position',
       new THREE.BufferAttribute(new Float32Array(0), 3),
     );
-    hoverCountryGeometry.setAttribute(
-      'color',
-      new THREE.BufferAttribute(new Float32Array(0), 3),
-    );
+    hoverCountryGeometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(0), 3));
     const hoverCountryMaterial = new THREE.PointsMaterial({
       map: dotTexture,
       alphaTest: 0.18,
@@ -770,8 +765,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       }
 
       if (this.surfaceGlowMaterial) {
-        this.surfaceGlowMaterial.opacity =
-          0.03 + this.introState.progress * (0.1 + shimmer * 0.03);
+        this.surfaceGlowMaterial.opacity = 0.03 + this.introState.progress * (0.1 + shimmer * 0.03);
         this.surfaceGlowMaterial.size = 0.0128 * sizeScale;
       }
 
@@ -849,9 +843,7 @@ export class WorldFlagGlobe implements AfterViewInit {
     const positions = marker
       ? (this.surfacePositionsByCountry.get(marker.countryIndex) ?? null)
       : null;
-    const colors = marker
-      ? (this.surfaceColorsByCountry.get(marker.countryIndex) ?? null)
-      : null;
+    const colors = marker ? (this.surfaceColorsByCountry.get(marker.countryIndex) ?? null) : null;
 
     if (!positions || positions.length === 0 || !colors || colors.length === 0) {
       geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));

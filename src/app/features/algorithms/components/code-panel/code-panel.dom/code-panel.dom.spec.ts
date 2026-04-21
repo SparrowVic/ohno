@@ -4,8 +4,15 @@ import type { CodeRegion } from '../../../models/detail';
 import {
   applyActiveLineHighlight,
   findClickedRegionId,
+  type CodeRegionStateLabels,
   syncCodeRegionState,
 } from './code-panel.dom';
+
+const LABELS: CodeRegionStateLabels = {
+  expandRegionAriaLabel: 'Expand code region',
+  collapseRegionAriaLabel: 'Collapse code region',
+  collapsedRegionSummary: (lineCount) => `… ${lineCount} lines`,
+};
 
 function createRoot(lines = 4): HTMLElement {
   const root = document.createElement('div');
@@ -55,7 +62,7 @@ describe('code-panel.dom', () => {
       { id: 'main', kind: 'function', startLine: 1, endLine: 3, collapsedByDefault: true },
     ];
 
-    syncCodeRegionState(root, regions, new Set(['main']));
+    syncCodeRegionState(root, regions, new Set(['main']), LABELS);
 
     const header = root.querySelector<HTMLElement>('[data-line="1"]')!;
     const hidden = [
@@ -67,6 +74,8 @@ describe('code-panel.dom', () => {
     expect(header.classList.contains('code-panel__render-line--collapsed')).toBe(true);
     expect(header.querySelector('.code-panel__fold-toggle')).not.toBeNull();
     expect(header.textContent).toContain('… 2 lines');
-    expect(hidden.every((line) => line.classList.contains('code-panel__render-line--hidden'))).toBe(true);
+    expect(hidden.every((line) => line.classList.contains('code-panel__render-line--hidden'))).toBe(
+      true,
+    );
   });
 });

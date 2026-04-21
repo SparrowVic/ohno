@@ -1,5 +1,34 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../../core/i18n/translatable-text';
 import { SortStep } from '../../models/sort-step';
 import { createSearchStep } from '../search-step';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.search.linearSearch.modeLabel'),
+  statuses: {
+    ready: t('features.algorithms.runtime.search.linearSearch.statuses.ready'),
+    comparing: t('features.algorithms.runtime.search.linearSearch.statuses.comparing'),
+    found: t('features.algorithms.runtime.search.linearSearch.statuses.found'),
+    advance: t('features.algorithms.runtime.search.linearSearch.statuses.advance'),
+    notFound: t('features.algorithms.runtime.search.linearSearch.statuses.notFound'),
+  },
+  descriptions: {
+    start: t('features.algorithms.runtime.search.linearSearch.descriptions.start'),
+    inspect: t('features.algorithms.runtime.search.linearSearch.descriptions.inspect'),
+    found: t('features.algorithms.runtime.search.linearSearch.descriptions.found'),
+    advance: t('features.algorithms.runtime.search.linearSearch.descriptions.advance'),
+    notFound: t('features.algorithms.runtime.search.linearSearch.descriptions.notFound'),
+  },
+  decisions: {
+    compare: t('features.algorithms.runtime.search.linearSearch.decisions.compare'),
+    stopAtIndex: t('features.algorithms.runtime.search.linearSearch.decisions.stopAtIndex'),
+    discardIndex: t('features.algorithms.runtime.search.linearSearch.decisions.discardIndex'),
+    allSlotsExhausted: t(
+      'features.algorithms.runtime.search.linearSearch.decisions.allSlotsExhausted',
+    ),
+  },
+} as const;
 
 export function* linearSearchGenerator(args: {
   readonly array: readonly number[];
@@ -14,9 +43,9 @@ export function* linearSearchGenerator(args: {
     array: arr,
     target: args.target,
     activeCodeLine: 1,
-    description: `Start linear search for ${args.target} across ${size} items.`,
-    modeLabel: 'Linear scan',
-    statusLabel: 'Ready',
+    description: i18nText(I18N.descriptions.start, { target: args.target, size }),
+    modeLabel: I18N.modeLabel,
+    statusLabel: I18N.statuses.ready,
     low: size > 0 ? 0 : null,
     high: size > 0 ? size - 1 : null,
     phase: 'init',
@@ -27,10 +56,18 @@ export function* linearSearchGenerator(args: {
       array: arr,
       target: args.target,
       activeCodeLine: 2,
-      description: `Inspect index ${index}: compare ${arr[index]} with target ${args.target}.`,
-      modeLabel: 'Linear scan',
-      statusLabel: 'Comparing',
-      decision: `${arr[index]} ${arr[index] === args.target ? '=' : '≠'} ${args.target}`,
+      description: i18nText(I18N.descriptions.inspect, {
+        index,
+        value: arr[index],
+        target: args.target,
+      }),
+      modeLabel: I18N.modeLabel,
+      statusLabel: I18N.statuses.comparing,
+      decision: i18nText(I18N.decisions.compare, {
+        value: arr[index],
+        relation: arr[index] === args.target ? '=' : '≠',
+        target: args.target,
+      }),
       probeIndex: index,
       low: index,
       high: size - 1,
@@ -46,10 +83,10 @@ export function* linearSearchGenerator(args: {
         array: arr,
         target: args.target,
         activeCodeLine: 3,
-        description: `Found target ${args.target} at index ${index}.`,
-        modeLabel: 'Linear scan',
-        statusLabel: 'Found',
-        decision: `stop at index ${index}`,
+        description: i18nText(I18N.descriptions.found, { target: args.target, index }),
+        modeLabel: I18N.modeLabel,
+        statusLabel: I18N.statuses.found,
+        decision: i18nText(I18N.decisions.stopAtIndex, { index }),
         probeIndex: index,
         low: index,
         high: index,
@@ -66,10 +103,13 @@ export function* linearSearchGenerator(args: {
       array: arr,
       target: args.target,
       activeCodeLine: 5,
-      description: `${arr[index]} is not the target, continue to the next slot.`,
-      modeLabel: 'Linear scan',
-      statusLabel: 'Advance',
-      decision: `discard index ${index}`,
+      description: i18nText(I18N.descriptions.advance, {
+        value: arr[index],
+        target: args.target,
+      }),
+      modeLabel: I18N.modeLabel,
+      statusLabel: I18N.statuses.advance,
+      decision: i18nText(I18N.decisions.discardIndex, { index }),
       low: index + 1 < size ? index + 1 : null,
       high: index + 1 < size ? size - 1 : null,
       eliminated,
@@ -82,10 +122,10 @@ export function* linearSearchGenerator(args: {
     array: arr,
     target: args.target,
     activeCodeLine: 7,
-    description: `Target ${args.target} is not present in the array.`,
-    modeLabel: 'Linear scan',
-    statusLabel: 'Not found',
-    decision: 'all slots exhausted',
+    description: i18nText(I18N.descriptions.notFound, { target: args.target }),
+    modeLabel: I18N.modeLabel,
+    statusLabel: I18N.statuses.notFound,
+    decision: I18N.decisions.allSlotsExhausted,
     low: null,
     high: null,
     eliminated,

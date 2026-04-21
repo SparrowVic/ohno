@@ -1,5 +1,22 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.selectionSort.descriptions.start'),
+    scanSuffix: t('features.algorithms.runtime.sort.selectionSort.descriptions.scanSuffix'),
+    compareMinimum: t(
+      'features.algorithms.runtime.sort.selectionSort.descriptions.compareMinimum',
+    ),
+    newMinimum: t('features.algorithms.runtime.sort.selectionSort.descriptions.newMinimum'),
+    swap: t('features.algorithms.runtime.sort.selectionSort.descriptions.swap'),
+    indexFixed: t('features.algorithms.runtime.sort.selectionSort.descriptions.indexFixed'),
+    complete: t('features.algorithms.runtime.sort.selectionSort.descriptions.complete'),
+  },
+} as const;
 
 export function* selectionSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -8,7 +25,7 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start selection sort (n=${size})`,
+    description: i18nText(I18N.descriptions.start, { size }),
     boundary: 0,
     phase: 'init',
   });
@@ -19,7 +36,7 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
     yield createArrayStep({
       array: arr,
       activeCodeLine: 3,
-      description: `Scan the unsorted suffix to find the minimum for slot ${index}.`,
+      description: i18nText(I18N.descriptions.scanSuffix, { index }),
       comparing: [index, index],
       sorted: prefixSorted(index),
       boundary: index,
@@ -30,7 +47,11 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
       yield createArrayStep({
         array: arr,
         activeCodeLine: 5,
-        description: `Compare current minimum ${arr[minIndex]} with ${arr[scan]} at index ${scan}.`,
+        description: i18nText(I18N.descriptions.compareMinimum, {
+          currentMinimum: arr[minIndex] ?? '',
+          candidate: arr[scan] ?? '',
+          scan,
+        }),
         comparing: [minIndex, scan],
         sorted: prefixSorted(index),
         boundary: index,
@@ -42,7 +63,9 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
         yield createArrayStep({
           array: arr,
           activeCodeLine: 6,
-          description: `${arr[minIndex]} becomes the new minimum candidate.`,
+          description: i18nText(I18N.descriptions.newMinimum, {
+            value: arr[minIndex] ?? '',
+          }),
           comparing: [index, minIndex],
           sorted: prefixSorted(index),
           boundary: index,
@@ -59,7 +82,11 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
       yield createArrayStep({
         array: arr,
         activeCodeLine: 10,
-        description: `Swap ${left} with ${right} to lock the next smallest value at index ${index}.`,
+        description: i18nText(I18N.descriptions.swap, {
+          left,
+          right,
+          index,
+        }),
         swapping: [index, minIndex],
         sorted: prefixSorted(index),
         boundary: index,
@@ -70,7 +97,7 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
     yield createArrayStep({
       array: arr,
       activeCodeLine: 12,
-      description: `Index ${index} is now fixed in the sorted prefix.`,
+      description: i18nText(I18N.descriptions.indexFixed, { index }),
       sorted: prefixSorted(index + 1),
       boundary: index + 1,
       phase: 'pass-complete',
@@ -80,7 +107,7 @@ export function* selectionSortGenerator(input: readonly number[]): Generator<Sor
   yield createArrayStep({
     array: arr,
     activeCodeLine: 13,
-    description: 'Selection sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',

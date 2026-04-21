@@ -1,15 +1,16 @@
 import { SearchRowStatus, SearchTraceRow, SearchTraceState, SearchTraceTag } from '../models/search';
 import { SortPhase, SortStep } from '../models/sort-step';
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export interface SearchStepArgs {
   readonly array: readonly number[];
   readonly target: number;
   readonly activeCodeLine: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly phase?: SortPhase;
-  readonly modeLabel: string;
-  readonly statusLabel: string;
-  readonly decision?: string | null;
+  readonly modeLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly decision?: TranslatableText | null;
   readonly probeIndex?: number | null;
   readonly low?: number | null;
   readonly high?: number | null;

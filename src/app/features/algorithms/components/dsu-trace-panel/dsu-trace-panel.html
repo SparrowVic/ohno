@@ -5,39 +5,59 @@
 
       <div class="trace__summary">
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Mode</span>
-          <span class="trace__summary-value">{{ dsuState.modeLabel }}</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco
+          }}</span>
+          <span class="trace__summary-value">{{ dsuState.modeLabel | i18nText }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Components</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.dsu.componentsLabel | transloco
+          }}</span>
           <span class="trace__summary-value">{{ dsuState.componentCount }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Active</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.common.activeLabel | transloco
+          }}</span>
           <span class="trace__summary-value">{{ activeLabel() }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Result</span>
-          <span class="trace__summary-value">{{ dsuState.resultLabel }}</span>
+          <span class="trace__summary-label">{{
+            I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco
+          }}</span>
+          <span class="trace__summary-value">{{ dsuState.resultLabel | i18nText }}</span>
         </div>
       </div>
 
       <div class="trace__calc">
         <div class="trace__calc-strip">
           <div class="trace__calc-pill">
-            <span class="trace__summary-label">Status</span>
-            <span class="trace__calc-value">{{ dsuState.statusLabel }}</span>
+            <span class="trace__summary-label">{{
+              I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco
+            }}</span>
+            <span class="trace__calc-value">{{ dsuState.statusLabel | i18nText }}</span>
           </div>
           <div class="trace__calc-pill">
-            <span class="trace__summary-label">Rail</span>
-            <span class="trace__calc-value">{{ dsuState.operationsLabel }}</span>
+            <span class="trace__summary-label">{{
+              I18N_KEY.features.algorithms.tracePanels.dsu.railLabel | transloco
+            }}</span>
+            <span class="trace__calc-value">{{ dsuState.operationsLabel | i18nText }}</span>
           </div>
         </div>
-        <div class="trace__calc-decision">{{ dsuState.decision ?? 'Awaiting next operation.' }}</div>
+        <div class="trace__calc-decision">
+          @if (dsuState.decision) {
+            {{ dsuState.decision | i18nText }}
+          } @else {
+            {{ I18N_KEY.features.algorithms.tracePanels.dsu.awaitingOperationLabel | transloco }}
+          }
+        </div>
       </div>
 
       <div class="trace__groups">
-        <div class="trace__section-label">Current sets</div>
+        <div class="trace__section-label">
+          {{ I18N_KEY.features.algorithms.tracePanels.dsu.currentSetsLabel | transloco }}
+        </div>
         <div class="trace__group-grid">
           @for (group of compactGroups(); track group.rootId) {
             <div class="trace__group" [class.trace__group--active]="group.active">
@@ -52,7 +72,7 @@
       </div>
 
       <div class="trace__queue">
-        <div class="trace__section-label">{{ dsuState.operationsLabel }}</div>
+        <div class="trace__section-label">{{ dsuState.operationsLabel | i18nText }}</div>
         <div class="trace__queue-items">
           @for (edge of edgeRows(); track edge.id) {
             <span class="trace__queue-chip trace__queue-chip--{{ edge.status }}">
@@ -71,10 +91,12 @@
         [columns]="tableColumns"
         [rows]="tableRows()"
         [legendItems]="tableLegendItems()"
-        emptyLabel="No DSU nodes yet"
+        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.dsu.tableEmptyLabel"
       />
     </div>
   } @else {
-    <div class="trace__empty">No DSU trace available for this step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.dsu.emptyLabel | transloco }}
+    </div>
   }
 </div>

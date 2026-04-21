@@ -9,22 +9,26 @@ import {
 } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheck, faCopy, faSparkles } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe } from '@jsverse/transloco';
+
+import { I18N_KEY } from '../../../core/i18n/i18n-keys';
 
 @Component({
   selector: 'app-copy-code-button',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, TranslocoPipe],
   templateUrl: './copy-code-button.html',
   styleUrl: './copy-code-button.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CopyCodeButton implements OnDestroy {
   readonly copied = input(false);
-  readonly label = input('Copy code');
-  readonly copiedLabel = input('Copied');
-  readonly ariaLabel = input('Copy code to clipboard');
-  readonly copiedAriaLabel = input('Code copied to clipboard');
+  readonly label = input<string | null>(null);
+  readonly copiedLabel = input<string | null>(null);
+  readonly ariaLabel = input<string | null>(null);
+  readonly copiedAriaLabel = input<string | null>(null);
   readonly pressed = output<void>();
 
+  protected readonly I18N_KEY = I18N_KEY;
   protected readonly pressPulse = signal(false);
   protected readonly successPulse = signal(false);
   protected readonly iconPulse = signal(false);

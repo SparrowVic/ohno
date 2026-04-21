@@ -1,10 +1,20 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
 import { DsuEdgeTrace, DsuNodeTrace, DsuTraceState, DsuTraceTag } from '../models/dsu';
 import { SortPhase, SortStep } from '../models/sort-step';
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export interface DsuBaseNode {
   readonly id: string;
   readonly label: string;
 }
+
+const I18N = {
+  modeLabels: {
+    unionFind: t('features.algorithms.runtime.dsu.unionFind.modeLabel'),
+    kruskalsMst: t('features.algorithms.runtime.dsu.kruskalsMst.modeLabel'),
+  },
+} as const;
 
 export interface DsuStepArgs {
   readonly mode: DsuTraceState['mode'];
@@ -13,13 +23,13 @@ export interface DsuStepArgs {
   readonly rank: ReadonlyMap<string, number>;
   readonly size: ReadonlyMap<string, number>;
   readonly edges: readonly DsuEdgeTrace[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortPhase;
-  readonly statusLabel: string;
-  readonly decision: string | null;
-  readonly resultLabel: string;
-  readonly operationsLabel: string;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText | null;
+  readonly resultLabel: TranslatableText;
+  readonly operationsLabel: TranslatableText;
   readonly activeIds?: readonly string[];
   readonly mergedIds?: readonly string[];
   readonly compressedIds?: readonly string[];
@@ -80,7 +90,8 @@ export function createDsuStep(args: DsuStepArgs): SortStep {
           .join(' ↔ ')
       : null;
 
-  const modeLabel = args.mode === 'union-find' ? 'Union-Find' : "Kruskal's MST";
+  const modeLabel =
+    args.mode === 'union-find' ? I18N.modeLabels.unionFind : I18N.modeLabels.kruskalsMst;
 
   return {
     array: [],

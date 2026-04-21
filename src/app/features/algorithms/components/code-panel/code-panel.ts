@@ -13,14 +13,23 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { CodeHighlightService } from '../../../../shared/code-highlight.service';
 import {
   CodeLanguageDial,
   CodeLanguageDialOption,
 } from '../../../../shared/components/code-language-dial/code-language-dial';
 import { CopyCodeButton } from '../../../../shared/components/copy-code-button/copy-code-button';
-import { CodeLanguage, CodeLine, CodeRegion, CodeVariant, CodeVariantMap } from '../../models/detail';
+import {
+  CodeLanguage,
+  CodeLine,
+  CodeRegion,
+  CodeVariant,
+  CodeVariantMap,
+} from '../../models/detail';
 import {
   applyActiveLineHighlight,
   findClickedRegionId,
@@ -39,7 +48,7 @@ import {
 
 @Component({
   selector: 'app-code-panel',
-  imports: [CodeLanguageDial, CopyCodeButton],
+  imports: [CodeLanguageDial, CopyCodeButton, TranslocoPipe],
   templateUrl: './code-panel.html',
   styleUrl: './code-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,12 +57,15 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   private readonly highlighter = inject(CodeHighlightService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly document = inject(DOCUMENT);
+  private readonly languageService = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly lines = input<readonly CodeLine[]>([]);
   readonly language = input<CodeLanguage>('typescript');
   readonly regions = input<readonly CodeRegion[]>([]);
   readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
+  protected readonly I18N_KEY = I18N_KEY;
   protected readonly renderRoot = viewChild<ElementRef<HTMLElement>>('renderRoot');
   protected readonly highlightedHtml = signal<SafeHtml>(
     this.sanitizer.bypassSecurityTrustHtml(EMPTY_CODE_PANEL_HTML),
@@ -68,6 +80,18 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   protected readonly activeVariant = computed<CodeVariant>(() => {
     return resolveActiveVariant(this.variantMap(), this.selectedLanguage());
   });
+  private readonly regionStateLabels = computed(() => ({
+    expandRegionAriaLabel: this.translate(
+      I18N_KEY.features.algorithms.codePanel.expandRegionAriaLabel,
+    ),
+    collapseRegionAriaLabel: this.translate(
+      I18N_KEY.features.algorithms.codePanel.collapseRegionAriaLabel,
+    ),
+    collapsedRegionSummary: (lineCount: number) =>
+      this.translate(I18N_KEY.features.algorithms.codePanel.collapsedRegionSummary, {
+        count: lineCount,
+      }),
+  }));
 
   // Width of the line-number + fold-toggle gutter column in pixels.
   // Matches the `left: 60px` separator and the 66px content padding in
@@ -97,7 +121,9 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
       const variants = this.variantMap();
       const selected = this.selectedLanguage();
       if (!variants[selected]) {
-        this.selectedLanguage.set((Object.keys(variants)[0] as CodeLanguage | undefined) ?? 'typescript');
+        this.selectedLanguage.set(
+          (Object.keys(variants)[0] as CodeLanguage | undefined) ?? 'typescript',
+        );
       }
     });
 
@@ -158,8 +184,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
     }
     const rect = root.getBoundingClientRect();
     const xWithinRender = event.clientX - rect.left;
-    const inGutter =
-      xWithinRender >= 0 && xWithinRender < CodePanel.GUTTER_WIDTH_PX;
+    const inGutter = xWithinRender >= 0 && xWithinRender < CodePanel.GUTTER_WIDTH_PX;
     if (inGutter !== this.gutterHover()) {
       this.gutterHover.set(inGutter);
     }
@@ -257,7 +282,12 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
       return;
     }
 
-    syncCodeRegionState(root, this.activeVariant().regions ?? [], this.collapsedRegionIds);
+    syncCodeRegionState(
+      root,
+      this.activeVariant().regions ?? [],
+      this.collapsedRegionIds,
+      this.regionStateLabels(),
+    );
   }
 
   private resolveActiveLine(): number | null {
@@ -283,5 +313,10 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
         this.domSyncFrame = null;
       });
     });
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.languageService.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type GridTraceMode = 'flood-fill' | 'a-star';
 
 export type GridCellStatus =
@@ -37,9 +39,9 @@ export interface GridTraceCell {
 
 export interface GridTraceState {
   readonly mode: GridTraceMode;
-  readonly modeLabel: string;
-  readonly statusLabel: string;
-  readonly decision: string | null;
+  readonly modeLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText | null;
   readonly rows: number;
   readonly cols: number;
   readonly sourceCellId: string | null;
@@ -48,8 +50,8 @@ export interface GridTraceState {
   readonly frontierCount: number;
   readonly visitedCount: number;
   readonly resultCount: number;
-  readonly sourceLabel: string;
-  readonly targetLabel: string;
+  readonly sourceLabel: TranslatableText;
+  readonly targetLabel: TranslatableText;
   readonly visitOrder: readonly string[];
   readonly cells: readonly GridTraceCell[];
 }

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { VoronoiDiagramStepState } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -12,12 +14,13 @@ const SITE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-voronoi-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './voronoi-trace-panel.html',
   styleUrl: './voronoi-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VoronoiTracePanel {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<VoronoiDiagramStepState | null>(null);
   readonly siteColumns = SITE_COLUMNS;
 

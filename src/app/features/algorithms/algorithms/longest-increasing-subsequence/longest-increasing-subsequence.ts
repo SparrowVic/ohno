@@ -1,7 +1,111 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { LisScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.modeLabel'),
+  phases: {
+    initializeSingletons: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.initializeSingletons',
+    ),
+    inspectPredecessor: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.inspectPredecessor',
+    ),
+    commitPredecessor: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.commitPredecessor',
+    ),
+    lockIndexResult: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.lockIndexResult',
+    ),
+    chooseEndpoint: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.chooseEndpoint',
+    ),
+    backtrackPath: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.backtrackPath',
+    ),
+    complete: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.initialize'),
+    canExtend: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.canExtend'),
+    blocked: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.blocked'),
+    commitPredecessor: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.commitPredecessor',
+    ),
+    lockResult: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.lockResult'),
+    chooseEndpoint: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.chooseEndpoint',
+    ),
+    backtrack: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.backtrack'),
+    complete: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.descriptions.complete'),
+  },
+  insights: {
+    valuesLabel: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.insights.valuesLabel'),
+    bestLengthLabel: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.insights.bestLengthLabel',
+    ),
+    chosenRouteLabel: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.insights.chosenRouteLabel',
+    ),
+    peakValueLabel: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.insights.peakValueLabel',
+    ),
+    stripLabel: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.insights.stripLabel'),
+  },
+  labels: {
+    blocked: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.blocked'),
+    idxValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.idxValue'),
+    inputValuesLabel: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.inputValuesLabel',
+    ),
+    currentLengthsLabel: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.currentLengthsLabel',
+    ),
+    activeIndex: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.activeIndex'),
+    resultLength: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.resultLength'),
+    pathValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.pathPending'),
+    edgeLabel: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.edgeLabel'),
+    lenIndex: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.lenIndex'),
+    finishValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.finishValue'),
+    bestEndpoint: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.bestEndpoint',
+    ),
+    traceValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.traceValue'),
+    prevValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.prevValue'),
+    startValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.startValue'),
+    stripValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.labels.stripValue'),
+  },
+  decisions: {
+    newBestPredecessor: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.newBestPredecessor',
+    ),
+    keepPreviousBest: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.keepPreviousBest',
+    ),
+    skipCandidate: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.skipCandidate',
+    ),
+    routeFlowsThrough: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.routeFlowsThrough',
+    ),
+    singleValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.singleValue'),
+    bestPredecessorKept: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.bestPredecessorKept',
+    ),
+    lengthValue: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.lengthValue'),
+    sequenceOrigin: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.sequenceOrigin',
+    ),
+    jumpToPredecessor: t(
+      'features.algorithms.runtime.dp.longestIncreasingSubsequence.decisions.jumpToPredecessor',
+    ),
+  },
+} as const;
 
 export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): Generator<SortStep> {
   const values = scenario.values;
@@ -15,9 +119,9 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
     lengths,
     prev,
     chosenIndices,
-    description: 'Initialize every position with subsequence length 1, because each value is a valid LIS by itself.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize singleton lengths',
+    phaseLabel: I18N.phases.initializeSingletons,
     phase: 'init',
   });
 
@@ -34,16 +138,30 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
         activeIndex: index,
         candidateIndex: candidate,
         description: canExtend
-          ? `Value ${values[candidate]} can extend into ${values[index]}, so compare LIS length ${lengths[candidate]} + 1.`
-          : `Value ${values[candidate]} cannot extend into ${values[index]} because the sequence would stop increasing.`,
+          ? i18nText(I18N.descriptions.canExtend, {
+              from: values[candidate],
+              to: values[index],
+              length: lengths[candidate],
+            })
+          : i18nText(I18N.descriptions.blocked, {
+              from: values[candidate],
+              to: values[index],
+            }),
         activeCodeLine: 5,
-        phaseLabel: 'Inspect predecessor',
+        phaseLabel: I18N.phases.inspectPredecessor,
         phase: 'compare',
         computation: {
-          label: `${values[candidate]} -> ${values[index]}`,
+          label: i18nText(I18N.labels.edgeLabel, {
+            from: values[candidate],
+            to: values[index],
+          }),
           expression: canExtend ? `${lengths[candidate]} + 1` : `${values[candidate]} >= ${values[index]}`,
-          result: canExtend ? String(candidateLength) : 'blocked',
-          decision: canExtend && candidateLength > lengths[index]! ? 'new best predecessor' : canExtend ? 'keep previous best' : 'skip candidate',
+          result: canExtend ? String(candidateLength) : I18N.labels.blocked,
+          decision: canExtend && candidateLength > lengths[index]!
+            ? I18N.decisions.newBestPredecessor
+            : canExtend
+              ? I18N.decisions.keepPreviousBest
+              : I18N.decisions.skipCandidate,
         },
       });
 
@@ -59,15 +177,21 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
           activeIndex: index,
           candidateIndex: candidate,
           activeStatus: 'improved',
-          description: `Update LIS ending at index ${index + 1} to length ${candidateLength} via predecessor index ${candidate + 1}.`,
+          description: i18nText(I18N.descriptions.commitPredecessor, {
+            index: index + 1,
+            length: candidateLength,
+            predecessor: candidate + 1,
+          }),
           activeCodeLine: 6,
-          phaseLabel: 'Commit better predecessor',
+          phaseLabel: I18N.phases.commitPredecessor,
           phase: 'settle-node',
           computation: {
-            label: `len[${index + 1}]`,
+            label: i18nText(I18N.labels.lenIndex, { index: index + 1 }),
             expression: `prev = ${candidate + 1}`,
             result: String(candidateLength),
-            decision: `route now flows through ${values[candidate]}`,
+            decision: i18nText(I18N.decisions.routeFlowsThrough, {
+              value: values[candidate],
+            }),
           },
         });
       }
@@ -80,15 +204,18 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
       chosenIndices,
       activeIndex: index,
       activeStatus: 'chosen',
-      description: `Finalize the best LIS that ends exactly at index ${index + 1}.`,
+      description: i18nText(I18N.descriptions.lockResult, { index: index + 1 }),
       activeCodeLine: 8,
-      phaseLabel: 'Lock index result',
+      phaseLabel: I18N.phases.lockIndexResult,
       phase: 'settle-node',
       computation: {
-        label: `finish ${values[index]}`,
+        label: i18nText(I18N.labels.finishValue, { value: values[index] }),
         expression: `len = ${lengths[index]}`,
-        result: prev[index] === null ? 'start' : `prev ${values[prev[index]!]} `,
-        decision: prev[index] === null ? 'single-value subsequence' : 'best predecessor kept',
+        result:
+          prev[index] === null
+            ? I18N.labels.startValue
+            : i18nText(I18N.labels.prevValue, { value: values[prev[index]!] }),
+        decision: prev[index] === null ? I18N.decisions.singleValue : I18N.decisions.bestPredecessorKept,
       },
     });
   }
@@ -105,15 +232,15 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
     chosenIndices,
     activeIndex: bestIndex,
     activeStatus: 'improved',
-    description: `Pick index ${bestIndex + 1} as the LIS endpoint because it has the strongest length.`,
+    description: i18nText(I18N.descriptions.chooseEndpoint, { index: bestIndex + 1 }),
     activeCodeLine: 10,
-    phaseLabel: 'Choose best endpoint',
+    phaseLabel: I18N.phases.chooseEndpoint,
     phase: 'compare',
     computation: {
-      label: 'Best endpoint',
+      label: I18N.labels.bestEndpoint,
       expression: lengths.map((value, index) => `i${index + 1}:${value}`).join(' · '),
       result: `i${bestIndex + 1}`,
-      decision: `length ${lengths[bestIndex]}`,
+      decision: i18nText(I18N.decisions.lengthValue, { value: lengths[bestIndex] }),
     },
   });
 
@@ -128,15 +255,18 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
       chosenIndices,
       activeIndex: cursor,
       activeStatus: 'backtrack',
-      description: `Trace LIS backwards through index ${cursor + 1}.`,
+      description: i18nText(I18N.descriptions.backtrack, { index: cursor + 1 }),
       activeCodeLine: 11,
-      phaseLabel: 'Backtrack LIS path',
+      phaseLabel: I18N.phases.backtrackPath,
       phase: 'relax',
       computation: {
-        label: `Trace ${values[cursor]}`,
-        expression: prev[cursor] === null ? 'start of chain' : `prev = ${values[prev[cursor]!]} `,
+        label: i18nText(I18N.labels.traceValue, { value: values[cursor] }),
+        expression:
+          prev[cursor] === null
+            ? I18N.labels.startValue
+            : `prev = ${values[prev[cursor]!]} `,
         result: lisLabel(scenario, chosenIndices),
-        decision: prev[cursor] === null ? 'sequence origin reached' : 'jump to predecessor',
+        decision: prev[cursor] === null ? I18N.decisions.sequenceOrigin : I18N.decisions.jumpToPredecessor,
       },
     });
 
@@ -148,9 +278,9 @@ export function* longestIncreasingSubsequenceGenerator(scenario: LisScenario): G
     lengths,
     prev,
     chosenIndices,
-    description: `Recovered one longest increasing subsequence with length ${lengths[bestIndex]!}.`,
+    description: i18nText(I18N.descriptions.complete, { length: lengths[bestIndex]! }),
     activeCodeLine: 12,
-    phaseLabel: 'LIS ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -160,9 +290,9 @@ function createStep(args: {
   readonly lengths: readonly number[];
   readonly prev: readonly (number | null)[];
   readonly chosenIndices: ReadonlySet<number>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeIndex?: number;
   readonly candidateIndex?: number;
@@ -244,26 +374,31 @@ function createStep(args: {
 
   const bestLength = Math.max(...args.lengths);
   const insights: DpInsight[] = [
-    { label: 'Values', value: String(args.scenario.values.length), tone: 'accent' },
-    { label: 'Best length', value: String(bestLength), tone: 'success' },
-    { label: 'Chosen route', value: String(args.chosenIndices.size), tone: 'warning' },
-    { label: 'Peak value', value: String(Math.max(...args.scenario.values)), tone: 'info' },
-    { label: 'Strip', value: '3 × n', tone: 'info' },
+    { label: I18N.insights.valuesLabel, value: String(args.scenario.values.length), tone: 'accent' },
+    { label: I18N.insights.bestLengthLabel, value: String(bestLength), tone: 'success' },
+    { label: I18N.insights.chosenRouteLabel, value: String(args.chosenIndices.size), tone: 'warning' },
+    { label: I18N.insights.peakValueLabel, value: String(Math.max(...args.scenario.values)), tone: 'info' },
+    { label: I18N.insights.stripLabel, value: I18N.labels.stripValue, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'longest-increasing-subsequence',
-    modeLabel: 'Longest Increasing Subsequence',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `len = ${bestLength}`,
+    resultLabel: i18nText(I18N.labels.resultLength, { value: bestLength }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `3 × ${args.scenario.values.length}`,
-    activeLabel: args.activeIndex === undefined ? null : `idx ${args.activeIndex + 1} = ${args.scenario.values[args.activeIndex]!}`,
+    activeLabel: args.activeIndex === undefined
+      ? null
+      : i18nText(I18N.labels.activeIndex, {
+          index: args.activeIndex + 1,
+          value: args.scenario.values[args.activeIndex]!,
+        }),
     pathLabel: lisLabel(args.scenario, args.chosenIndices),
-    primaryItemsLabel: 'Input values',
+    primaryItemsLabel: I18N.labels.inputValuesLabel,
     primaryItems: args.scenario.values.map((value, index) => `${index + 1}:${value}`),
-    secondaryItemsLabel: 'Current lengths',
+    secondaryItemsLabel: I18N.labels.currentLengthsLabel,
     secondaryItems: args.lengths.map((value, index) => `i${index + 1}=${value}`),
     insights,
     rowHeaders,
@@ -276,7 +411,12 @@ function createStep(args: {
   });
 }
 
-function lisLabel(scenario: LisScenario, chosenIndices: ReadonlySet<number>): string {
+function lisLabel(
+  scenario: LisScenario,
+  chosenIndices: ReadonlySet<number>,
+): TranslatableText {
   const ordered = Array.from(chosenIndices).sort((left, right) => left - right).map((index) => scenario.values[index]!);
-  return ordered.length > 0 ? `LIS: ${ordered.join(' → ')}` : 'LIS: pending';
+  return ordered.length > 0
+    ? i18nText(I18N.labels.pathValue, { values: ordered.join(' → ') })
+    : I18N.labels.pathPending;
 }

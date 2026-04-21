@@ -5,50 +5,56 @@
 
       <div class="trace__summary">
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Mode</span>
-          <span class="trace__summary-value">{{ gridState.modeLabel }}</span>
+          <span class="trace__summary-label">{{ I18N.summary.modeLabel | transloco }}</span>
+          <span class="trace__summary-value">{{ gridState.modeLabel | i18nText }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Active</span>
+          <span class="trace__summary-label">{{ I18N.summary.activeLabel | transloco }}</span>
           <span class="trace__summary-value">{{ activeLabel() }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Frontier</span>
+          <span class="trace__summary-label">{{ I18N.summary.frontierLabel | transloco }}</span>
           <span class="trace__summary-value">{{ gridState.frontierCount }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Visited</span>
+          <span class="trace__summary-label">{{ I18N.summary.visitedLabel | transloco }}</span>
           <span class="trace__summary-value">{{ gridState.visitedCount }}</span>
         </div>
         <div class="trace__summary-card">
-          <span class="trace__summary-label">Result</span>
-          <span class="trace__summary-value">{{ resultLabel() }}</span>
+          <span class="trace__summary-label">{{ I18N.summary.resultLabel | transloco }}</span>
+          <span class="trace__summary-value">{{ resultLabel() | i18nText }}</span>
         </div>
       </div>
 
       <div class="trace__calculation">
         <div class="trace__calc-strip">
           <div class="trace__calc-pill">
-            <span class="trace__calc-label">Source</span>
-            <span class="trace__calc-value">{{ gridState.sourceLabel }}</span>
+            <span class="trace__calc-label">{{ I18N.summary.sourceLabel | transloco }}</span>
+            <span class="trace__calc-value">{{ gridState.sourceLabel | i18nText }}</span>
           </div>
           <div class="trace__calc-pill">
-            <span class="trace__calc-label">Target</span>
-            <span class="trace__calc-value">{{ gridState.targetLabel }}</span>
+            <span class="trace__calc-label">{{ I18N.summary.targetLabel | transloco }}</span>
+            <span class="trace__calc-value">{{ gridState.targetLabel | i18nText }}</span>
           </div>
           <div class="trace__calc-pill">
-            <span class="trace__calc-label">Board</span>
+            <span class="trace__calc-label">{{ I18N.summary.boardLabel | transloco }}</span>
             <span class="trace__calc-value">{{ gridState.rows }}×{{ gridState.cols }}</span>
           </div>
         </div>
-        <div class="trace__calc-decision">{{ gridState.decision ?? 'waiting for next step' }}</div>
+        <div class="trace__calc-decision">
+          @if (gridState.decision) {
+            {{ gridState.decision | i18nText }}
+          } @else {
+            {{ I18N.summary.waitingDecisionLabel | transloco }}
+          }
+        </div>
       </div>
 
       <div class="trace__queue">
-        <div class="trace__queue-label">Visit order</div>
+        <div class="trace__queue-label">{{ I18N.summary.visitOrderLabel | transloco }}</div>
         <div class="trace__queue-items">
           @if (gridState.visitOrder.length === 0) {
-            <span class="trace__queue-empty">not started</span>
+            <span class="trace__queue-empty">{{ I18N.summary.notStartedLabel | transloco }}</span>
           } @else {
             @for (label of gridState.visitOrder; track $index) {
               <span class="trace__queue-chip">{{ label }}</span>
@@ -63,10 +69,10 @@
         [columns]="tableColumns"
         [rows]="tableRows()"
         [legendItems]="tableLegendItems()"
-        emptyLabel="No active cells yet"
+        [emptyLabelKey]="I18N.tableEmptyLabel"
       />
     </div>
   } @else {
-    <div class="trace__empty">No grid trace available for this step.</div>
+    <div class="trace__empty">{{ I18N.emptyLabel | transloco }}</div>
   }
 </div>

@@ -1,4 +1,18 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.bubbleSort.descriptions.start'),
+    compare: t('features.algorithms.runtime.sort.bubbleSort.descriptions.compare'),
+    swap: t('features.algorithms.runtime.sort.bubbleSort.descriptions.swap'),
+    passComplete: t('features.algorithms.runtime.sort.bubbleSort.descriptions.passComplete'),
+    earlyExit: t('features.algorithms.runtime.sort.bubbleSort.descriptions.earlyExit'),
+    complete: t('features.algorithms.runtime.sort.bubbleSort.descriptions.complete'),
+  },
+} as const;
 
 export function* bubbleSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -13,7 +27,7 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
     sorted: [...sorted],
     boundary,
     activeCodeLine: 1,
-    description: `Start bubble sort (n=${n})`,
+    description: i18nText(I18N.descriptions.start, { size: n }),
   };
 
   for (let i = 0; i < n - 1; i++) {
@@ -27,7 +41,12 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
         sorted: [...sorted],
         boundary,
         activeCodeLine: 6,
-        description: `Compare arr[${j}]=${arr[j]} and arr[${j + 1}]=${arr[j + 1]}`,
+        description: i18nText(I18N.descriptions.compare, {
+          leftIndex: j,
+          leftValue: arr[j] ?? '',
+          rightIndex: j + 1,
+          rightValue: arr[j + 1] ?? '',
+        }),
       };
 
       if (arr[j] > arr[j + 1]) {
@@ -44,7 +63,12 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
           sorted: [...sorted],
           boundary,
           activeCodeLine: 7,
-          description: `Swap ${left} and ${right} at indices ${j}, ${j + 1}`,
+          description: i18nText(I18N.descriptions.swap, {
+            left,
+            right,
+            leftIndex: j,
+            rightIndex: j + 1,
+          }),
         };
       }
     }
@@ -59,7 +83,10 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
       sorted: [...sorted],
       boundary,
       activeCodeLine: 11,
-      description: `Pass ${i + 1} complete — index ${boundary} locked in`,
+      description: i18nText(I18N.descriptions.passComplete, {
+        pass: i + 1,
+        boundary,
+      }),
     };
 
     if (!swappedAny) {
@@ -74,7 +101,7 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
         sorted: [...sorted],
         boundary: 0,
         activeCodeLine: 11,
-        description: 'No swaps — array already sorted, early exit',
+        description: I18N.descriptions.earlyExit,
       };
 
       yield {
@@ -84,7 +111,7 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
         sorted: [...sorted],
         boundary: 0,
         activeCodeLine: 13,
-        description: 'Sorting complete',
+        description: I18N.descriptions.complete,
       };
       return;
     }
@@ -101,6 +128,6 @@ export function* bubbleSortGenerator(input: readonly number[]): Generator<SortSt
     sorted: [...sorted],
     boundary: 0,
     activeCodeLine: 13,
-    description: 'Sorting complete',
+    description: I18N.descriptions.complete,
   };
 }

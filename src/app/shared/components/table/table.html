@@ -1,6 +1,14 @@
 <div class="table-shell">
   @if (rows().length === 0) {
-    <div class="table__empty">{{ emptyLabel() }}</div>
+    <div class="table__empty">
+      @if (emptyLabel(); as emptyLabel) {
+        {{ emptyLabel }}
+      } @else if (emptyLabelKey(); as emptyLabelKey) {
+        {{ emptyLabelKey | transloco }}
+      } @else {
+        {{ I18N_KEY.shared.table.emptyLabel | transloco }}
+      }
+    </div>
   } @else {
     <table
       class="table"
@@ -18,8 +26,15 @@
         <thead>
           <tr>
             @for (column of columns(); track column.id) {
-              <th [class.table__head--center]="cellAlign(column) === 'center'" [class.table__head--end]="cellAlign(column) === 'end'">
-                {{ column.header ?? column.id }}
+              <th
+                [class.table__head--center]="cellAlign(column) === 'center'"
+                [class.table__head--end]="cellAlign(column) === 'end'"
+              >
+                @if (column.headerKey; as headerKey) {
+                  {{ headerKey | transloco }}
+                } @else {
+                  {{ column.header ?? column.id }}
+                }
               </th>
             }
           </tr>
@@ -38,7 +53,9 @@
             @for (column of columns(); track column.id) {
               <td
                 class="table__cell"
-                [class.table__cell--mono]="cellKind(column) === 'mono' || cellKind(column) === 'number'"
+                [class.table__cell--mono]="
+                  cellKind(column) === 'mono' || cellKind(column) === 'number'
+                "
                 [class.table__cell--center]="cellAlign(column) === 'center'"
                 [class.table__cell--end]="cellAlign(column) === 'end'"
               >
@@ -59,12 +76,24 @@
                         [ghost]="tag.ghost ?? false"
                       />
                     } @else {
-                      <span class="table__placeholder">{{ column.placeholder ?? '—' }}</span>
+                      <span class="table__placeholder">
+                        @if (column.placeholderKey; as placeholderKey) {
+                          {{ placeholderKey | transloco }}
+                        } @else {
+                          {{ column.placeholder ?? '—' }}
+                        }
+                      </span>
                     }
                   }
                   @case ('tags') {
                     @if (tagsValue(row, column).length === 0) {
-                      <span class="table__placeholder">{{ column.placeholder ?? '—' }}</span>
+                      <span class="table__placeholder">
+                        @if (column.placeholderKey; as placeholderKey) {
+                          {{ placeholderKey | transloco }}
+                        } @else {
+                          {{ column.placeholder ?? '—' }}
+                        }
+                      </span>
                     } @else {
                       <div class="table__tags">
                         @for (tag of tagsValue(row, column); track trackTag($index, tag)) {
@@ -120,9 +149,17 @@
               }
 
               <div class="table__legend-copy">
-                <span class="table__legend-label">{{ item.label }}</span>
+                <span class="table__legend-label">
+                  @if (item.labelKey; as labelKey) {
+                    {{ labelKey | transloco }}
+                  } @else {
+                    {{ item.label }}
+                  }
+                </span>
                 @if (item.description) {
                   <span class="table__legend-description">{{ item.description }}</span>
+                } @else if (item.descriptionKey; as descriptionKey) {
+                  <span class="table__legend-description">{{ descriptionKey | transloco }}</span>
                 }
               </div>
             </div>
@@ -136,7 +173,15 @@
         [attr.aria-expanded]="legendOpen()"
         (click)="toggleLegend()"
       >
-        <span class="table__legend-toggle-copy">{{ legendLabel() }}</span>
+        <span class="table__legend-toggle-copy">
+          @if (legendLabel(); as legendLabel) {
+            {{ legendLabel }}
+          } @else if (legendLabelKey(); as legendLabelKey) {
+            {{ legendLabelKey | transloco }}
+          } @else {
+            {{ I18N_KEY.shared.table.legendLabel | transloco }}
+          }
+        </span>
         <span class="table__legend-toggle-icon" aria-hidden="true">
           <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6">
             <path d="M2.5 7.5L6 4l3.5 3.5" />

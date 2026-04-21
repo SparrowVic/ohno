@@ -1,3 +1,5 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
 import { SortPhase, SortStep } from '../../models/sort-step';
 import {
   SortPhaseTone,
@@ -15,15 +17,24 @@ interface PhaseMeta {
 }
 
 const PHASE_META: Partial<Record<SortPhase, PhaseMeta>> = {
-  idle: { label: 'Ready', tone: 'idle' },
-  init: { label: 'Init', tone: 'idle' },
-  compare: { label: 'Compare', tone: 'compare' },
-  swap: { label: 'Swap', tone: 'swap' },
-  'focus-digit': { label: 'Focus digit', tone: 'distribute' },
-  distribute: { label: 'Distribute', tone: 'distribute' },
-  gather: { label: 'Gather', tone: 'settle' },
-  'pass-complete': { label: 'Pass complete', tone: 'settle' },
-  complete: { label: 'Sorted', tone: 'complete' },
+  idle: { label: t('features.algorithms.tracePanels.sort.phases.idle'), tone: 'idle' },
+  init: { label: t('features.algorithms.tracePanels.sort.phases.init'), tone: 'idle' },
+  compare: { label: t('features.algorithms.tracePanels.sort.phases.compare'), tone: 'compare' },
+  swap: { label: t('features.algorithms.tracePanels.sort.phases.swap'), tone: 'swap' },
+  'focus-digit': {
+    label: t('features.algorithms.tracePanels.sort.phases.focusDigit'),
+    tone: 'distribute',
+  },
+  distribute: {
+    label: t('features.algorithms.tracePanels.sort.phases.distribute'),
+    tone: 'distribute',
+  },
+  gather: { label: t('features.algorithms.tracePanels.sort.phases.gather'), tone: 'settle' },
+  'pass-complete': {
+    label: t('features.algorithms.tracePanels.sort.phases.passComplete'),
+    tone: 'settle',
+  },
+  complete: { label: t('features.algorithms.tracePanels.sort.phases.complete'), tone: 'complete' },
 };
 
 /** Derive a Trace-tab state from a raw sort step. Returns `null` when

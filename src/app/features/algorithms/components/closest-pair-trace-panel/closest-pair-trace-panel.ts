@@ -1,17 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { ClosestPairStepState, GeometryPoint } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-closest-pair-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection],
+  imports: [SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './closest-pair-trace-panel.html',
   styleUrl: './closest-pair-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClosestPairTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<ClosestPairStepState | null>(null);
 
   private readonly emptyPair = {
@@ -33,24 +40,24 @@ export class ClosestPairTracePanel {
   readonly phaseLabel = computed(() => {
     switch (this.state()?.phase ?? '') {
       case 'init':
-        return 'Point Field';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.init);
       case 'sort':
-        return 'Dual Sorting';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.sort);
       case 'divide':
-        return 'Divide';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.divide);
       case 'base':
-        return 'Base Case';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.base);
       case 'merge':
-        return 'Merge';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.merge);
       case 'strip':
-        return 'Strip Window';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.strip);
       case 'compare':
       case 'compare-strip':
-        return 'Distance Check';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.compare);
       case 'update':
-        return 'Best Update';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.update);
       case 'complete':
-        return 'Closest Pair';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.complete);
       default:
         return this.state()?.phase ?? '';
     }
@@ -82,5 +89,10 @@ export class ClosestPairTracePanel {
       left: state.points.find((point) => point.id === pair[0]),
       right: state.points.find((point) => point.id === pair[1]),
     };
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

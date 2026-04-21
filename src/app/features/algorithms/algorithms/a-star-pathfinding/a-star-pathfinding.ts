@@ -1,6 +1,64 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { GridTraceCell, GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
 import { AStarScenario, cellId, labelForCell, neighbors } from '../../utils/grid-scenarios/grid-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.grid.aStarPathfinding.modeLabel'),
+  statuses: {
+    readyToExplore: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.statuses.readyToExplore',
+    ),
+    pickLowestF: t('features.algorithms.runtime.grid.aStarPathfinding.statuses.pickLowestF'),
+    pathFound: t('features.algorithms.runtime.grid.aStarPathfinding.statuses.pathFound'),
+    inspectNeighbor: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.statuses.inspectNeighbor',
+    ),
+    keepCurrentRoute: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.statuses.keepCurrentRoute',
+    ),
+    updateFrontierRoute: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.statuses.updateFrontierRoute',
+    ),
+    noPathFound: t('features.algorithms.runtime.grid.aStarPathfinding.statuses.noPathFound'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.grid.aStarPathfinding.descriptions.initialize'),
+    pickFrontier: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.descriptions.pickFrontier',
+    ),
+    goalReached: t('features.algorithms.runtime.grid.aStarPathfinding.descriptions.goalReached'),
+    inspectNeighbor: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.descriptions.inspectNeighbor',
+    ),
+    keepBetterRoute: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.descriptions.keepBetterRoute',
+    ),
+    updateRoute: t('features.algorithms.runtime.grid.aStarPathfinding.descriptions.updateRoute'),
+    exhausted: t('features.algorithms.runtime.grid.aStarPathfinding.descriptions.exhausted'),
+  },
+  decisions: {
+    initializeScores: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.decisions.initializeScores',
+    ),
+    frontierScores: t('features.algorithms.runtime.grid.aStarPathfinding.decisions.frontierScores'),
+    shortestPathLength: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.decisions.shortestPathLength',
+    ),
+    tentativeScores: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.decisions.tentativeScores',
+    ),
+    knownRouteBetter: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.decisions.knownRouteBetter',
+    ),
+    setScores: t('features.algorithms.runtime.grid.aStarPathfinding.decisions.setScores'),
+    exhaustedReachable: t(
+      'features.algorithms.runtime.grid.aStarPathfinding.decisions.exhaustedReachable',
+    ),
+  },
+} as const;
 
 export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<SortStep> {
   const startId = cellId(scenario.startRow, scenario.startCol);
@@ -23,11 +81,14 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
     previous,
     visitOrder,
     activeId: startId,
-    description: `Initialize A* from ${labelForCell(scenario.startRow, scenario.startCol)} toward ${labelForCell(scenario.goalRow, scenario.goalCol)}.`,
+    description: i18nText(I18N.descriptions.initialize, {
+      start: labelForCell(scenario.startRow, scenario.startCol),
+      goal: labelForCell(scenario.goalRow, scenario.goalCol),
+    }),
     activeCodeLine: 2,
     phase: 'init',
-    statusLabel: 'Ready to explore',
-    decision: 'g = 0, h = Manhattan distance, f = g + h.',
+    statusLabel: I18N.statuses.readyToExplore,
+    decision: I18N.decisions.initializeScores,
   });
 
   while (open.size > 0) {
@@ -45,11 +106,14 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
       previous,
       visitOrder,
       activeId: currentId,
-      description: `Pick ${labelForCell(row, col)} as the most promising frontier cell.`,
+      description: i18nText(I18N.descriptions.pickFrontier, { cell: labelForCell(row, col) }),
       activeCodeLine: 5,
       phase: 'pick-node',
-      statusLabel: 'Pick lowest f-score',
-      decision: `f = ${fScore.get(currentId) ?? '∞'}, g = ${gScore.get(currentId) ?? '∞'}.`,
+      statusLabel: I18N.statuses.pickLowestF,
+      decision: i18nText(I18N.decisions.frontierScores, {
+        f: fScore.get(currentId) ?? '∞',
+        g: gScore.get(currentId) ?? '∞',
+      }),
     });
 
     if (currentId === goalId) {
@@ -67,11 +131,15 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
         previous,
         visitOrder,
         activeId: currentId,
-        description: `Goal reached. Reconstruct the path from ${labelForCell(scenario.goalRow, scenario.goalCol)} back to the start.`,
+        description: i18nText(I18N.descriptions.goalReached, {
+          goal: labelForCell(scenario.goalRow, scenario.goalCol),
+        }),
         activeCodeLine: 12,
         phase: 'graph-complete',
-        statusLabel: 'Path found',
-        decision: `Shortest grid path length: ${Math.max(0, path.size - 1)} step(s).`,
+        statusLabel: I18N.statuses.pathFound,
+        decision: i18nText(I18N.decisions.shortestPathLength, {
+          count: Math.max(0, path.size - 1),
+        }),
       });
       return;
     }
@@ -101,11 +169,18 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
         previous,
         visitOrder,
         activeId: nextId,
-        description: `Inspect ${labelForCell(nextRow, nextCol)} from ${labelForCell(row, col)}.`,
+        description: i18nText(I18N.descriptions.inspectNeighbor, {
+          cell: labelForCell(nextRow, nextCol),
+          from: labelForCell(row, col),
+        }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
-        statusLabel: 'Inspect neighbor',
-        decision: `tentative g=${tentativeG}, h=${nextH}, f=${nextF}.`,
+        statusLabel: I18N.statuses.inspectNeighbor,
+        decision: i18nText(I18N.decisions.tentativeScores, {
+          g: tentativeG,
+          h: nextH,
+          f: nextF,
+        }),
       });
 
       if (tentativeG >= knownG && open.has(nextId)) {
@@ -119,11 +194,13 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
           previous,
           visitOrder,
           activeId: nextId,
-          description: `Keep the better known route to ${labelForCell(nextRow, nextCol)}.`,
+          description: i18nText(I18N.descriptions.keepBetterRoute, {
+            cell: labelForCell(nextRow, nextCol),
+          }),
           activeCodeLine: 8,
           phase: 'skip-relax',
-          statusLabel: 'Keep current route',
-          decision: `Known g=${knownG} is still better.`,
+          statusLabel: I18N.statuses.keepCurrentRoute,
+          decision: i18nText(I18N.decisions.knownRouteBetter, { g: knownG }),
         });
         continue;
       }
@@ -143,11 +220,18 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
         previous,
         visitOrder,
         activeId: nextId,
-        description: `Update ${labelForCell(nextRow, nextCol)} with a better route through ${labelForCell(row, col)}.`,
+        description: i18nText(I18N.descriptions.updateRoute, {
+          cell: labelForCell(nextRow, nextCol),
+          from: labelForCell(row, col),
+        }),
         activeCodeLine: 9,
         phase: 'relax',
-        statusLabel: 'Update frontier route',
-        decision: `Set g=${tentativeG}, h=${nextH}, f=${nextF}.`,
+        statusLabel: I18N.statuses.updateFrontierRoute,
+        decision: i18nText(I18N.decisions.setScores, {
+          g: tentativeG,
+          h: nextH,
+          f: nextF,
+        }),
       });
     }
   }
@@ -162,11 +246,11 @@ export function* aStarPathfindingGenerator(scenario: AStarScenario): Generator<S
     previous,
     visitOrder,
     activeId: null,
-    description: 'A* finished without reaching the goal. The frontier has been exhausted.',
+    description: I18N.descriptions.exhausted,
     activeCodeLine: 13,
     phase: 'graph-complete',
-    statusLabel: 'No path found',
-    decision: 'All reachable cells were explored before reaching the goal.',
+    statusLabel: I18N.statuses.noPathFound,
+    decision: I18N.decisions.exhaustedReachable,
   });
 }
 
@@ -180,15 +264,15 @@ function createAStarStep(args: {
   readonly previous: ReadonlyMap<string, string | null>;
   readonly visitOrder: readonly string[];
   readonly activeId: string | null;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
-  readonly statusLabel: string;
-  readonly decision: string;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText;
 }): SortStep {
   const state: GridTraceState = {
     mode: 'a-star',
-    modeLabel: 'A* Pathfinding',
+    modeLabel: I18N.modeLabel,
     statusLabel: args.statusLabel,
     decision: args.decision,
     rows: args.scenario.size,

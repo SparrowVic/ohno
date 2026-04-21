@@ -1,3 +1,5 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
 import { DpPresetOption } from '../../models/dp';
 
 export interface KnapsackItem {
@@ -187,130 +189,258 @@ export interface ProfileDpScenario {
   readonly height: number;
 }
 
+interface DpPresetKeys {
+  readonly label: string;
+  readonly description: string;
+}
+
+function presetKeys(baseKey: string): DpPresetKeys {
+  return {
+    label: t(`${baseKey}.label`),
+    description: t(`${baseKey}.description`),
+  };
+}
+
+function createPresetOption(id: string, keys: DpPresetKeys): DpPresetOption {
+  return {
+    id,
+    label: keys.label,
+    description: keys.description,
+  };
+}
+
+const DP_PRESET_KEY = {
+  knapsack: {
+    camp: presetKeys('features.algorithms.scenarios.dp.knapsack.camp'),
+    heist: presetKeys('features.algorithms.scenarios.dp.knapsack.heist'),
+    lab: presetKeys('features.algorithms.scenarios.dp.knapsack.lab'),
+  },
+  lcs: {
+    dna: presetKeys('features.algorithms.scenarios.dp.lcs.dna'),
+    words: presetKeys('features.algorithms.scenarios.dp.lcs.words'),
+    signals: presetKeys('features.algorithms.scenarios.dp.lcs.signals'),
+  },
+  editDistance: {
+    typo: presetKeys('features.algorithms.scenarios.dp.editDistance.typo'),
+    plural: presetKeys('features.algorithms.scenarios.dp.editDistance.plural'),
+    code: presetKeys('features.algorithms.scenarios.dp.editDistance.code'),
+  },
+  matrixChain: {
+    classic: presetKeys('features.algorithms.scenarios.dp.matrixChain.classic'),
+    balanced: presetKeys('features.algorithms.scenarios.dp.matrixChain.balanced'),
+    swing: presetKeys('features.algorithms.scenarios.dp.matrixChain.swing'),
+  },
+  coinChange: {
+    metro: presetKeys('features.algorithms.scenarios.dp.coinChange.metro'),
+    arcade: presetKeys('features.algorithms.scenarios.dp.coinChange.arcade'),
+    market: presetKeys('features.algorithms.scenarios.dp.coinChange.market'),
+  },
+  subsetSum: {
+    trail: presetKeys('features.algorithms.scenarios.dp.subsetSum.trail'),
+    laser: presetKeys('features.algorithms.scenarios.dp.subsetSum.laser'),
+    lab: presetKeys('features.algorithms.scenarios.dp.subsetSum.lab'),
+  },
+  lps: {
+    radar: presetKeys('features.algorithms.scenarios.dp.lps.radar'),
+    phrase: presetKeys('features.algorithms.scenarios.dp.lps.phrase'),
+    signal: presetKeys('features.algorithms.scenarios.dp.lps.signal'),
+  },
+  burstBalloons: {
+    classic: presetKeys('features.algorithms.scenarios.dp.burstBalloons.classic'),
+    zigzag: presetKeys('features.algorithms.scenarios.dp.burstBalloons.zigzag'),
+    dense: presetKeys('features.algorithms.scenarios.dp.burstBalloons.dense'),
+  },
+  wildcard: {
+    globs: presetKeys('features.algorithms.scenarios.dp.wildcard.globs'),
+    routes: presetKeys('features.algorithms.scenarios.dp.wildcard.routes'),
+    codes: presetKeys('features.algorithms.scenarios.dp.wildcard.codes'),
+  },
+  lis: {
+    wave: presetKeys('features.algorithms.scenarios.dp.lis.wave'),
+    skyline: presetKeys('features.algorithms.scenarios.dp.lis.skyline'),
+    rebound: presetKeys('features.algorithms.scenarios.dp.lis.rebound'),
+  },
+  climbingStairs: {
+    tower: presetKeys('features.algorithms.scenarios.dp.climbingStairs.tower'),
+    metro: presetKeys('features.algorithms.scenarios.dp.climbingStairs.metro'),
+    summit: presetKeys('features.algorithms.scenarios.dp.climbingStairs.summit'),
+  },
+  fibonacci: {
+    classic: presetKeys('features.algorithms.scenarios.dp.fibonacci.classic'),
+    growth: presetKeys('features.algorithms.scenarios.dp.fibonacci.growth'),
+    signal: presetKeys('features.algorithms.scenarios.dp.fibonacci.signal'),
+  },
+  regex: {
+    alias: presetKeys('features.algorithms.scenarios.dp.regex.alias'),
+    logs: presetKeys('features.algorithms.scenarios.dp.regex.logs'),
+    pulse: presetKeys('features.algorithms.scenarios.dp.regex.pulse'),
+  },
+  travelingSalesman: {
+    metro: presetKeys('features.algorithms.scenarios.dp.travelingSalesman.metro'),
+    drone: presetKeys('features.algorithms.scenarios.dp.travelingSalesman.drone'),
+    coast: presetKeys('features.algorithms.scenarios.dp.travelingSalesman.coast'),
+  },
+  treeDp: {
+    orchard: presetKeys('features.algorithms.scenarios.dp.treeDp.orchard'),
+    campus: presetKeys('features.algorithms.scenarios.dp.treeDp.campus'),
+    vault: presetKeys('features.algorithms.scenarios.dp.treeDp.vault'),
+  },
+  bitmaskDp: {
+    robots: presetKeys('features.algorithms.scenarios.dp.bitmaskDp.robots'),
+    crews: presetKeys('features.algorithms.scenarios.dp.bitmaskDp.crews'),
+    labs: presetKeys('features.algorithms.scenarios.dp.bitmaskDp.labs'),
+  },
+  cht: {
+    track: presetKeys('features.algorithms.scenarios.dp.cht.track'),
+    metro: presetKeys('features.algorithms.scenarios.dp.cht.metro'),
+    pulse: presetKeys('features.algorithms.scenarios.dp.cht.pulse'),
+  },
+  divideConquer: {
+    shifts: presetKeys('features.algorithms.scenarios.dp.divideConquer.shifts'),
+    pods: presetKeys('features.algorithms.scenarios.dp.divideConquer.pods'),
+    freight: presetKeys('features.algorithms.scenarios.dp.divideConquer.freight'),
+  },
+  knuth: {
+    chapters: presetKeys('features.algorithms.scenarios.dp.knuth.chapters'),
+    archives: presetKeys('features.algorithms.scenarios.dp.knuth.archives'),
+    packets: presetKeys('features.algorithms.scenarios.dp.knuth.packets'),
+  },
+  sos: {
+    signals: presetKeys('features.algorithms.scenarios.dp.sos.signals'),
+    radar: presetKeys('features.algorithms.scenarios.dp.sos.radar'),
+    cache: presetKeys('features.algorithms.scenarios.dp.sos.cache'),
+  },
+  profile: {
+    tiles: presetKeys('features.algorithms.scenarios.dp.profile.tiles'),
+    corridor: presetKeys('features.algorithms.scenarios.dp.profile.corridor'),
+    lab: presetKeys('features.algorithms.scenarios.dp.profile.lab'),
+  },
+} as const;
+
 export const KNAPSACK_PRESETS: readonly DpPresetOption[] = [
-  { id: 'camp', label: 'Camp Pack', description: 'Balanced weights and values, ideal for showing skip vs take decisions.' },
-  { id: 'heist', label: 'Heist Loadout', description: 'Several flashy high-value items compete for a tight capacity budget.' },
-  { id: 'lab', label: 'Lab Crate', description: 'Dense scientific cargo where medium items often beat one expensive choice.' },
+  createPresetOption('camp', DP_PRESET_KEY.knapsack.camp),
+  createPresetOption('heist', DP_PRESET_KEY.knapsack.heist),
+  createPresetOption('lab', DP_PRESET_KEY.knapsack.lab),
 ];
 
 export const LCS_PRESETS: readonly DpPresetOption[] = [
-  { id: 'dna', label: 'DNA', description: 'Short nucleotide strings make diagonal matches visually obvious.' },
-  { id: 'words', label: 'Words', description: 'Readable word pairs make the final subsequence easy to understand.' },
-  { id: 'signals', label: 'Signals', description: 'Letter-code sequences create competing left vs top DP decisions.' },
+  createPresetOption('dna', DP_PRESET_KEY.lcs.dna),
+  createPresetOption('words', DP_PRESET_KEY.lcs.words),
+  createPresetOption('signals', DP_PRESET_KEY.lcs.signals),
 ];
 
 export const EDIT_DISTANCE_PRESETS: readonly DpPresetOption[] = [
-  { id: 'typo', label: 'Typo Fix', description: 'Classic misspellings show replace, insert and delete transitions cleanly.' },
-  { id: 'plural', label: 'Grammar', description: 'Word-shape changes make suffix edits and carry moves easy to follow.' },
-  { id: 'code', label: 'Code Refactor', description: 'Programmer-ish tokens reveal how edits cluster around naming changes.' },
+  createPresetOption('typo', DP_PRESET_KEY.editDistance.typo),
+  createPresetOption('plural', DP_PRESET_KEY.editDistance.plural),
+  createPresetOption('code', DP_PRESET_KEY.editDistance.code),
 ];
 
 export const MATRIX_CHAIN_PRESETS: readonly DpPresetOption[] = [
-  { id: 'classic', label: 'Classic', description: 'The textbook chain exposes why split points matter so much.' },
-  { id: 'balanced', label: 'Balanced', description: 'Dimensions stay moderate and produce a steady triangular DP fill.' },
-  { id: 'swing', label: 'Swing', description: 'Alternating small and huge dimensions make bad split costs explode.' },
+  createPresetOption('classic', DP_PRESET_KEY.matrixChain.classic),
+  createPresetOption('balanced', DP_PRESET_KEY.matrixChain.balanced),
+  createPresetOption('swing', DP_PRESET_KEY.matrixChain.swing),
 ];
 
 export const COIN_CHANGE_PRESETS: readonly DpPresetOption[] = [
-  { id: 'metro', label: 'Metro Fare', description: 'Classic coin set where one greedy-looking pick is not always optimal.' },
-  { id: 'arcade', label: 'Arcade Tokens', description: 'Medium denominations create several competing minimum-coin paths.' },
-  { id: 'market', label: 'Market Change', description: 'Small and large coins mix to show reuse of the same row in unbounded DP.' },
+  createPresetOption('metro', DP_PRESET_KEY.coinChange.metro),
+  createPresetOption('arcade', DP_PRESET_KEY.coinChange.arcade),
+  createPresetOption('market', DP_PRESET_KEY.coinChange.market),
 ];
 
 export const SUBSET_SUM_PRESETS: readonly DpPresetOption[] = [
-  { id: 'trail', label: 'Trail Mix', description: 'Snack weights create one clean subset and a few tempting dead ends.' },
-  { id: 'laser', label: 'Laser Grid', description: 'Numbers are balanced so multiple near-target branches compete.' },
-  { id: 'lab', label: 'Lab Budget', description: 'A denser set makes the boolean table light up in clusters.' },
+  createPresetOption('trail', DP_PRESET_KEY.subsetSum.trail),
+  createPresetOption('laser', DP_PRESET_KEY.subsetSum.laser),
+  createPresetOption('lab', DP_PRESET_KEY.subsetSum.lab),
 ];
 
 export const LPS_PRESETS: readonly DpPresetOption[] = [
-  { id: 'radar', label: 'Radar', description: 'Letter symmetry creates a visibly clean palindromic backbone.' },
-  { id: 'phrase', label: 'Phrase', description: 'Readable words make matching outer characters easier to follow.' },
-  { id: 'signal', label: 'Signal', description: 'The best palindrome is hidden across several skipped positions.' },
+  createPresetOption('radar', DP_PRESET_KEY.lps.radar),
+  createPresetOption('phrase', DP_PRESET_KEY.lps.phrase),
+  createPresetOption('signal', DP_PRESET_KEY.lps.signal),
 ];
 
 export const BURST_BALLOONS_PRESETS: readonly DpPresetOption[] = [
-  { id: 'classic', label: 'Classic', description: 'A compact coin-yield set shows why the last balloon in an interval matters.' },
-  { id: 'zigzag', label: 'Zigzag', description: 'High-low alternation makes the split decisions visually dramatic.' },
-  { id: 'dense', label: 'Dense', description: 'A slightly larger board emphasizes interval reuse and split storage.' },
+  createPresetOption('classic', DP_PRESET_KEY.burstBalloons.classic),
+  createPresetOption('zigzag', DP_PRESET_KEY.burstBalloons.zigzag),
+  createPresetOption('dense', DP_PRESET_KEY.burstBalloons.dense),
 ];
 
 export const WILDCARD_PRESETS: readonly DpPresetOption[] = [
-  { id: 'globs', label: 'Globs', description: 'Simple ? and * patterns show horizontal vs vertical star movement clearly.' },
-  { id: 'routes', label: 'Routes', description: 'Path-like strings make wildcard spans easy to reason about.' },
-  { id: 'codes', label: 'Codes', description: 'Dense symbol-like strings make skipped vs consumed star states stand out.' },
+  createPresetOption('globs', DP_PRESET_KEY.wildcard.globs),
+  createPresetOption('routes', DP_PRESET_KEY.wildcard.routes),
+  createPresetOption('codes', DP_PRESET_KEY.wildcard.codes),
 ];
 
 export const LIS_PRESETS: readonly DpPresetOption[] = [
-  { id: 'wave', label: 'Wave', description: 'Alternating rises and dips force the algorithm to keep revising its best predecessor.' },
-  { id: 'skyline', label: 'Skyline', description: 'Mostly rising values with a few breaks make the final subsequence easy to spot.' },
-  { id: 'rebound', label: 'Rebound', description: 'Late recovery values create a more dramatic backtrack route.' },
+  createPresetOption('wave', DP_PRESET_KEY.lis.wave),
+  createPresetOption('skyline', DP_PRESET_KEY.lis.skyline),
+  createPresetOption('rebound', DP_PRESET_KEY.lis.rebound),
 ];
 
 export const CLIMBING_STAIRS_PRESETS: readonly DpPresetOption[] = [
-  { id: 'tower', label: 'Tower', description: 'A clean staircase count where each landing inherits the two previous counts.' },
-  { id: 'metro', label: 'Metro', description: 'Urban stop labels frame the recurrence as a compact commuter problem.' },
-  { id: 'summit', label: 'Summit', description: 'A slightly taller climb makes the Fibonacci-like growth feel more dramatic.' },
+  createPresetOption('tower', DP_PRESET_KEY.climbingStairs.tower),
+  createPresetOption('metro', DP_PRESET_KEY.climbingStairs.metro),
+  createPresetOption('summit', DP_PRESET_KEY.climbingStairs.summit),
 ];
 
 export const FIBONACCI_PRESETS: readonly DpPresetOption[] = [
-  { id: 'classic', label: 'Classic', description: 'The standard Fibonacci sequence is ideal for showing additive DP growth.' },
-  { id: 'growth', label: 'Growth', description: 'A slightly larger n turns the recurrence into a visibly accelerating wave.' },
-  { id: 'signal', label: 'Signal', description: 'Shorter terms keep the focus on how the cache fills from left to right.' },
+  createPresetOption('classic', DP_PRESET_KEY.fibonacci.classic),
+  createPresetOption('growth', DP_PRESET_KEY.fibonacci.growth),
+  createPresetOption('signal', DP_PRESET_KEY.fibonacci.signal),
 ];
 
 export const REGEX_PRESETS: readonly DpPresetOption[] = [
-  { id: 'alias', label: 'Alias', description: 'Dot and star mix to show both literal matches and repeated spans.' },
-  { id: 'logs', label: 'Logs', description: 'A denser pattern makes zero-occurrence vs consume-one branches easy to compare.' },
-  { id: 'pulse', label: 'Pulse', description: 'Short strings keep the regex star mechanic readable and compact.' },
+  createPresetOption('alias', DP_PRESET_KEY.regex.alias),
+  createPresetOption('logs', DP_PRESET_KEY.regex.logs),
+  createPresetOption('pulse', DP_PRESET_KEY.regex.pulse),
 ];
 
 export const TSP_PRESETS: readonly DpPresetOption[] = [
-  { id: 'metro', label: 'Metro Loop', description: 'A compact symmetric city map that produces a clear optimal Hamiltonian tour.' },
-  { id: 'drone', label: 'Drone Route', description: 'Edge weights vary more sharply, so bad subset transitions stand out.' },
-  { id: 'coast', label: 'Coast Hop', description: 'A slightly larger route shows why subset masks need to remember the end city.' },
+  createPresetOption('metro', DP_PRESET_KEY.travelingSalesman.metro),
+  createPresetOption('drone', DP_PRESET_KEY.travelingSalesman.drone),
+  createPresetOption('coast', DP_PRESET_KEY.travelingSalesman.coast),
 ];
 
 export const TREE_DP_PRESETS: readonly DpPresetOption[] = [
-  { id: 'orchard', label: 'Orchard', description: 'Fruit values on a branching tree make include-vs-skip choices easy to follow.' },
-  { id: 'campus', label: 'Campus', description: 'A wider tree creates clear postorder aggregation across several children.' },
-  { id: 'vault', label: 'Vault', description: 'Heavier leaf rewards make the independent-set backtrack more dramatic.' },
+  createPresetOption('orchard', DP_PRESET_KEY.treeDp.orchard),
+  createPresetOption('campus', DP_PRESET_KEY.treeDp.campus),
+  createPresetOption('vault', DP_PRESET_KEY.treeDp.vault),
 ];
 
 export const BITMASK_DP_PRESETS: readonly DpPresetOption[] = [
-  { id: 'robots', label: 'Robots', description: 'Assigning robots to charging bays shows subset masks filling from sparse to dense.' },
-  { id: 'crews', label: 'Crews', description: 'Crew-to-task costs create several close assignment alternatives.' },
-  { id: 'labs', label: 'Labs', description: 'A denser cost matrix highlights why each mask encodes used jobs.' },
+  createPresetOption('robots', DP_PRESET_KEY.bitmaskDp.robots),
+  createPresetOption('crews', DP_PRESET_KEY.bitmaskDp.crews),
+  createPresetOption('labs', DP_PRESET_KEY.bitmaskDp.labs),
 ];
 
 export const CHT_PRESETS: readonly DpPresetOption[] = [
-  { id: 'track', label: 'Track', description: 'Monotone x-values make query order and hull pruning visually clean.' },
-  { id: 'metro', label: 'Metro', description: 'A slightly noisier distance sequence shows why older lines become obsolete.' },
-  { id: 'pulse', label: 'Pulse', description: 'Compact points keep the line transitions readable in a strip view.' },
+  createPresetOption('track', DP_PRESET_KEY.cht.track),
+  createPresetOption('metro', DP_PRESET_KEY.cht.metro),
+  createPresetOption('pulse', DP_PRESET_KEY.cht.pulse),
 ];
 
 export const DIVIDE_CONQUER_PRESETS: readonly DpPresetOption[] = [
-  { id: 'shifts', label: 'Shifts', description: 'Segmenting workloads into teams gives a clear partition-cost narrative.' },
-  { id: 'pods', label: 'Pods', description: 'Balanced numbers make monotone optimal splits easy to spot.' },
-  { id: 'freight', label: 'Freight', description: 'Heavier tails force the optimal split range to move steadily right.' },
+  createPresetOption('shifts', DP_PRESET_KEY.divideConquer.shifts),
+  createPresetOption('pods', DP_PRESET_KEY.divideConquer.pods),
+  createPresetOption('freight', DP_PRESET_KEY.divideConquer.freight),
 ];
 
 export const KNUTH_PRESETS: readonly DpPresetOption[] = [
-  { id: 'chapters', label: 'Chapters', description: 'Adjacent file-merge costs produce a compact interval DP with narrow opt windows.' },
-  { id: 'archives', label: 'Archives', description: 'Uneven file sizes make the saved split window more interesting.' },
-  { id: 'packets', label: 'Packets', description: 'A short merge chain keeps the Knuth optimization readable and dense.' },
+  createPresetOption('chapters', DP_PRESET_KEY.knuth.chapters),
+  createPresetOption('archives', DP_PRESET_KEY.knuth.archives),
+  createPresetOption('packets', DP_PRESET_KEY.knuth.packets),
 ];
 
 export const SOS_PRESETS: readonly DpPresetOption[] = [
-  { id: 'signals', label: 'Signals', description: 'Subset values make it easy to see how supersets absorb all of their submasks.' },
-  { id: 'radar', label: 'Radar', description: 'Bitmask contributions are clustered, so each SOS stage lights up different families.' },
-  { id: 'cache', label: 'Cache', description: 'A denser base array makes the sum-over-subsets propagation feel more dramatic.' },
+  createPresetOption('signals', DP_PRESET_KEY.sos.signals),
+  createPresetOption('radar', DP_PRESET_KEY.sos.radar),
+  createPresetOption('cache', DP_PRESET_KEY.sos.cache),
 ];
 
 export const PROFILE_PRESETS: readonly DpPresetOption[] = [
-  { id: 'tiles', label: 'Tiles', description: 'Classic domino tilings show how frontier masks move from one column to the next.' },
-  { id: 'corridor', label: 'Corridor', description: 'A slightly longer board makes recurring profiles and counts easy to compare.' },
-  { id: 'lab', label: 'Lab Grid', description: 'Compact profile states expose how a frontier DP reuses the same mask vocabulary.' },
+  createPresetOption('tiles', DP_PRESET_KEY.profile.tiles),
+  createPresetOption('corridor', DP_PRESET_KEY.profile.corridor),
+  createPresetOption('lab', DP_PRESET_KEY.profile.lab),
 ];
 
 const KNAPSACK_TEMPLATES = {

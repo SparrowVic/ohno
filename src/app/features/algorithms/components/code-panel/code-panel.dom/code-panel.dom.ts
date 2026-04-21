@@ -1,8 +1,16 @@
 import { CodeRegion } from '../../../models/detail';
 
+export interface CodeRegionStateLabels {
+  readonly expandRegionAriaLabel: string;
+  readonly collapseRegionAriaLabel: string;
+  readonly collapsedRegionSummary: (lineCount: number) => string;
+}
+
 export function findClickedRegionId(event: MouseEvent): string | null {
   const target = event.target as HTMLElement | null;
-  return target?.closest<HTMLButtonElement>('.code-panel__fold-toggle')?.dataset['regionId'] ?? null;
+  return (
+    target?.closest<HTMLButtonElement>('.code-panel__fold-toggle')?.dataset['regionId'] ?? null
+  );
 }
 
 export function applyActiveLineHighlight(
@@ -17,7 +25,9 @@ export function applyActiveLineHighlight(
   }
 
   if (nextLine !== null) {
-    const nextElement = root.querySelector<HTMLElement>(`.code-panel__render-line[data-line="${nextLine}"]`);
+    const nextElement = root.querySelector<HTMLElement>(
+      `.code-panel__render-line[data-line="${nextLine}"]`,
+    );
     nextElement?.classList.add('code-panel__render-line--active');
     nextElement?.scrollIntoView({ block: 'nearest' });
   }
@@ -29,6 +39,7 @@ export function syncCodeRegionState(
   root: HTMLElement,
   regions: readonly CodeRegion[],
   collapsedRegionIds: ReadonlySet<string>,
+  labels: CodeRegionStateLabels,
 ): void {
   const document = root.ownerDocument;
   const lines = [...root.querySelectorAll<HTMLElement>('.code-panel__render-line')];
@@ -42,7 +53,9 @@ export function syncCodeRegionState(
       'code-panel__render-line--collapsed',
       'code-panel__render-line--hidden',
     );
-    line.querySelectorAll('.code-panel__fold-toggle, .code-panel__fold-summary').forEach((node) => node.remove());
+    line
+      .querySelectorAll('.code-panel__fold-toggle, .code-panel__fold-summary')
+      .forEach((node) => node.remove());
   }
 
   const hiddenLines = new Set<number>();
@@ -80,7 +93,10 @@ export function syncCodeRegionState(
     toggle.type = 'button';
     toggle.className = 'code-panel__fold-toggle';
     toggle.dataset['regionId'] = region.id;
-    toggle.setAttribute('aria-label', collapsed ? 'Expand code region' : 'Collapse code region');
+    toggle.setAttribute(
+      'aria-label',
+      collapsed ? labels.expandRegionAriaLabel : labels.collapseRegionAriaLabel,
+    );
     toggle.setAttribute('aria-expanded', String(!collapsed));
     toggle.innerHTML =
       '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5L8 6 4 9.5"/></svg>';
@@ -89,7 +105,7 @@ export function syncCodeRegionState(
     if (collapsed) {
       const summary = document.createElement('span');
       summary.className = 'code-panel__fold-summary';
-      summary.textContent = `… ${region.endLine - region.startLine} lines`;
+      summary.textContent = labels.collapsedRegionSummary(region.endLine - region.startLine);
       header.append(summary);
     }
   }

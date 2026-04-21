@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import {
   faGolang,
   faJava,
@@ -25,16 +26,10 @@ import {
   faSwift,
 } from '@fortawesome/free-brands-svg-icons';
 
+import { I18N_KEY } from '../../../core/i18n/i18n-keys';
 import { CodeLanguage } from '../../../features/algorithms/models/detail';
 
-type CodeLanguageDialId =
-  | CodeLanguage
-  | 'javascript'
-  | 'go'
-  | 'rust'
-  | 'swift'
-  | 'php'
-  | 'kotlin';
+type CodeLanguageDialId = CodeLanguage | 'javascript' | 'go' | 'rust' | 'swift' | 'php' | 'kotlin';
 
 export interface CodeLanguageDialOption {
   readonly id: CodeLanguageDialId;
@@ -98,7 +93,7 @@ const STAGGER_STEP_MS = 34;
 
 @Component({
   selector: 'app-code-language-dial',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, TranslocoPipe],
   templateUrl: './code-language-dial.html',
   styleUrl: './code-language-dial.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,9 +109,10 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   private rafToken: number | null = null;
   private readonly repositionHandler = () => this.scheduleMeasure();
 
+  protected readonly I18N_KEY = I18N_KEY;
   readonly options = input.required<readonly CodeLanguageDialOption[]>();
   readonly value = input.required<CodeLanguage>();
-  readonly ariaLabel = input('Code language switcher');
+  readonly ariaLabel = input<string | null>(null);
   readonly valueChange = output<CodeLanguage>();
 
   protected readonly open = signal(false);

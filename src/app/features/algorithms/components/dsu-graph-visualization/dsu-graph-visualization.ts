@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import {
   DsuMode,
   DsuNodeStatus,
@@ -37,26 +40,29 @@ const ARROW_MARKERS: readonly ArrowMarker[] = [
   { id: 'dsuArrowAccepted', fill: 'rgb(var(--accent-rgb) / 0.85)' },
 ];
 
+const I18N = I18N_KEY.features.algorithms.visualizations.dsuGraph;
+
 @Component({
   selector: 'app-dsu-graph-visualization',
-  imports: [],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './dsu-graph-visualization.html',
   styleUrl: './dsu-graph-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuGraphVisualization {
+  protected readonly I18N = I18N;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
   readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
   readonly mode = computed<DsuMode>(() => this.state()?.mode ?? 'union-find');
-  readonly modeLabel = computed(() => this.state()?.modeLabel ?? 'Union-Find');
+  readonly modeLabel = computed(() => this.state()?.modeLabel ?? '—');
   readonly statusLabel = computed(() => this.state()?.statusLabel ?? '—');
   readonly componentCount = computed(() => this.state()?.componentCount ?? 0);
   readonly resultLabel = computed(() => this.state()?.resultLabel ?? '—');
   readonly activeLabel = computed(() => this.state()?.activePairLabel ?? '—');
-  readonly decision = computed(() => this.state()?.decision ?? 'Awaiting next state change.');
+  readonly decision = computed(() => this.state()?.decision ?? '—');
 
   readonly arrowMarkers = ARROW_MARKERS;
 

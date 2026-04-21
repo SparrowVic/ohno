@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheckDouble, faCrosshairs, faLink } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import {
   BurrowsWheelerTraceState,
   HuffmanTraceState,
@@ -21,15 +24,20 @@ import {
 } from '../../models/string';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-string-trace-panel',
-  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection],
+  imports: [FaIconComponent, I18nTextPipe, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './string-trace-panel.html',
   styleUrl: './string-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StringTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input.required<StringTraceState | null>();
 
   readonly kmpState = computed<KmpTraceState | null>(() => {
@@ -62,9 +70,18 @@ export class StringTracePanel {
   });
 
   readonly legend = [
-    { label: 'Current focus', icon: faCrosshairs },
-    { label: 'Reusable shortcut / structure', icon: faLink },
-    { label: 'Confirmed result', icon: faCheckDouble },
+    {
+      labelKey: I18N_KEY.features.algorithms.tracePanels.string.legendItems.currentFocus,
+      icon: faCrosshairs,
+    },
+    {
+      labelKey: I18N_KEY.features.algorithms.tracePanels.string.legendItems.reusableStructure,
+      icon: faLink,
+    },
+    {
+      labelKey: I18N_KEY.features.algorithms.tracePanels.string.legendItems.confirmedResult,
+      icon: faCheckDouble,
+    },
   ] as const;
 
   failurePreview(state: KmpTraceState): readonly number[] {
@@ -83,7 +100,34 @@ export class StringTracePanel {
     return state.runGroups.map((group) => `${group.count}×${group.char}`);
   }
 
+  jumpLabel(state: KmpTraceState): string {
+    return state.fallbackFrom !== null
+      ? `${state.fallbackFrom} → ${state.fallbackTo}`
+      : this.translate(I18N_KEY.features.algorithms.tracePanels.string.kmp.noJumpLabel);
+  }
+
+  rabinStatusLabel(state: RabinKarpTraceState): string {
+    if (state.collision) {
+      return this.translate(
+        I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.collisionStatusLabel,
+      );
+    }
+    if (state.verifying) {
+      return this.translate(
+        I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.verifyStatusLabel,
+      );
+    }
+    return this.translate(
+      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.hashOnlyStatusLabel,
+    );
+  }
+
   formatRatio(value: number | null): string {
     return value === null ? '—' : `${value.toFixed(2)}x`;
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

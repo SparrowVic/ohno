@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { subsetSumGenerator } from './subset-sum';
 import type { SortStep } from '../../models/sort-step';
 import type { SubsetSumScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: SubsetSumScenario): SortStep[] {
   return [...subsetSumGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('subset-sum', () => {
@@ -21,10 +31,20 @@ describe('subset-sum', () => {
 
     expect(steps[0]?.phase).toBe('init');
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('target = T');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Subset: 3 + 7');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.subsetSum.labels.resultTarget',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe('T');
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.subsetSum.labels.subsetPath',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.values).toBe('3 + 7');
     expect(
-      steps.some((step) => step.dp?.phaseLabel === 'Backtrack take'),
+      steps.some(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.subsetSum.phases.backtrackTake',
+      ),
     ).toBe(true);
   });
 
@@ -39,8 +59,10 @@ describe('subset-sum', () => {
     });
 
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('target = F');
-    expect(steps.at(-1)?.description).toContain('impossible');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe('F');
+    expect(keyOf(steps.at(-1)?.description)).toBe(
+      'features.algorithms.runtime.dp.subsetSum.descriptions.impossible',
+    );
     expect(
       steps.some((step) => step.phase === 'relax' || step.phase === 'skip-relax'),
     ).toBe(false);

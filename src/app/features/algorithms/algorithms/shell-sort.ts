@@ -1,5 +1,20 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.shellSort.descriptions.start'),
+    beginGapPass: t('features.algorithms.runtime.sort.shellSort.descriptions.beginGapPass'),
+    takeValue: t('features.algorithms.runtime.sort.shellSort.descriptions.takeValue'),
+    compareGap: t('features.algorithms.runtime.sort.shellSort.descriptions.compareGap'),
+    shiftGap: t('features.algorithms.runtime.sort.shellSort.descriptions.shiftGap'),
+    insertGap: t('features.algorithms.runtime.sort.shellSort.descriptions.insertGap'),
+    complete: t('features.algorithms.runtime.sort.shellSort.descriptions.complete'),
+  },
+} as const;
 
 export function* shellSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -8,7 +23,7 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start shell sort (n=${size})`,
+    description: i18nText(I18N.descriptions.start, { size }),
     boundary: size,
     phase: 'init',
   });
@@ -17,7 +32,7 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
     yield createArrayStep({
       array: arr,
       activeCodeLine: 2,
-      description: `Begin gap pass with gap ${gap}.`,
+      description: i18nText(I18N.descriptions.beginGapPass, { gap }),
       boundary: size,
       phase: 'compare',
     });
@@ -29,7 +44,11 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 4,
-        description: `Take ${value} from index ${index} and scan left in steps of ${gap}.`,
+        description: i18nText(I18N.descriptions.takeValue, {
+          value,
+          index,
+          gap,
+        }),
         comparing: [Math.max(0, index - gap), index],
         sorted: gap === 1 ? prefixSorted(index) : [],
         boundary: size,
@@ -40,7 +59,11 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
         yield createArrayStep({
           array: arr,
           activeCodeLine: 6,
-          description: `Compare ${arr[scan - gap]} with ${value} across gap ${gap}.`,
+          description: i18nText(I18N.descriptions.compareGap, {
+            leftValue: arr[scan - gap] ?? '',
+            value,
+            gap,
+          }),
           comparing: [scan - gap, scan],
           sorted: gap === 1 ? prefixSorted(index) : [],
           boundary: size,
@@ -52,7 +75,11 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
         yield createArrayStep({
           array: arr,
           activeCodeLine: 7,
-          description: `Shift ${arr[scan]} from index ${scan - gap} to ${scan}.`,
+          description: i18nText(I18N.descriptions.shiftGap, {
+            value: arr[scan] ?? '',
+            from: scan - gap,
+            to: scan,
+          }),
           comparing: [scan - gap, scan],
           sorted: gap === 1 ? prefixSorted(index) : [],
           boundary: size,
@@ -67,7 +94,11 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 9,
-        description: `Insert ${value} at index ${scan} for gap ${gap}.`,
+        description: i18nText(I18N.descriptions.insertGap, {
+          value,
+          index: scan,
+          gap,
+        }),
         comparing: [scan, scan],
         sorted: gap === 1 ? prefixSorted(index + 1) : [],
         boundary: gap === 1 ? index + 1 : size,
@@ -79,7 +110,7 @@ export function* shellSortGenerator(input: readonly number[]): Generator<SortSte
   yield createArrayStep({
     array: arr,
     activeCodeLine: 12,
-    description: 'Shell sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',

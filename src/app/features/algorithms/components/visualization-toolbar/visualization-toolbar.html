@@ -4,8 +4,8 @@
       <button
         type="button"
         class="ctrl-btn"
-        aria-label="Reset scenario"
-        title="Reset scenario"
+        [attr.aria-label]="I18N_KEY.features.algorithms.toolbar.resetLabel | transloco"
+        [attr.title]="I18N_KEY.features.algorithms.toolbar.resetLabel | transloco"
         (click)="resetClick.emit()"
       >
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -16,8 +16,8 @@
       <button
         type="button"
         class="ctrl-btn"
-        aria-label="Previous step"
-        title="Previous step"
+        [attr.aria-label]="I18N_KEY.features.algorithms.toolbar.previousStepLabel | transloco"
+        [attr.title]="I18N_KEY.features.algorithms.toolbar.previousStepLabel | transloco"
         [disabled]="!canStepBack()"
         (click)="stepBackClick.emit()"
       >
@@ -29,8 +29,8 @@
       <button
         type="button"
         class="ctrl-btn ctrl-btn--play"
-        [attr.aria-label]="transportLabel()"
-        [attr.title]="transportLabel()"
+        [attr.aria-label]="transportLabelKey() | transloco"
+        [attr.title]="transportLabelKey() | transloco"
         (click)="playToggle.emit()"
       >
         @if (isPlaying()) {
@@ -47,8 +47,8 @@
       <button
         type="button"
         class="ctrl-btn"
-        aria-label="Next step"
-        title="Next step"
+        [attr.aria-label]="I18N_KEY.features.algorithms.toolbar.nextStepLabel | transloco"
+        [attr.title]="I18N_KEY.features.algorithms.toolbar.nextStepLabel | transloco"
         [disabled]="!canStepForward()"
         (click)="stepForwardClick.emit()"
       >
@@ -61,8 +61,13 @@
 
     <div class="toolbar__progress">
       <div class="toolbar__progress-copy">
-        <span class="toolbar__eyebrow">Run state</span>
-        <span class="toolbar__counter">Step {{ currentStep() }} / {{ totalSteps() }}</span>
+        <span class="toolbar__eyebrow">{{
+          I18N_KEY.features.algorithms.toolbar.runStateLabel | transloco
+        }}</span>
+        <span class="toolbar__counter">{{
+          I18N_KEY.features.algorithms.toolbar.counterLabel
+            | transloco: { current: currentStep(), total: totalSteps() }
+        }}</span>
       </div>
       <div class="toolbar__progress-bar">
         <span class="toolbar__progress-fill" [style.width.%]="progressRatio()"></span>
@@ -73,18 +78,18 @@
   <div class="toolbar__dock">
     @if (hasVariantChoice()) {
       <app-lab-select
-        label="View"
+        [label]="I18N_KEY.features.algorithms.toolbar.viewLabel | transloco"
         [options]="variantSelectOptions()"
         [formControl]="variantControl"
       />
     }
     <app-lab-select
-      label="Dataset size"
+      [label]="I18N_KEY.features.algorithms.toolbar.datasetSizeLabel | transloco"
       [options]="sizeSelectOptions()"
       [formControl]="sizeControl"
     />
     <app-lab-slider
-      label="Speed"
+      [label]="I18N_KEY.features.algorithms.toolbar.speedLabel | transloco"
       [min]="1"
       [max]="10"
       [step]="1"

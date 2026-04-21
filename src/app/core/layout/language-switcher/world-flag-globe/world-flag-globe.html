@@ -3,21 +3,40 @@
     <div #canvasHost class="world-globe__canvas"></div>
     <div #hoverFlagCard class="world-globe__hover-flag">
       <span class="world-globe__hover-flag-emoji">{{ hoverFlag() }}</span>
-      <span class="world-globe__hover-flag-name">{{ hoverHeadline() }}</span>
+      <span class="world-globe__hover-flag-name">{{
+        hoveredCountry()?.name || (I18N_KEY.core.worldGlobe.defaultHoverHeadline | transloco)
+      }}</span>
     </div>
 
     <div #hud class="world-globe__hud">
       <div class="world-globe__hud-bottom">
         <div class="world-globe__badge">
-          <span class="world-globe__badge-eyebrow">Inspect</span>
-          <strong class="world-globe__badge-title">{{ hoverFlag() }} {{ hoverHeadline() }}</strong>
-          <span class="world-globe__badge-copy">{{ hoverNote() }}</span>
+          <span class="world-globe__badge-eyebrow">{{
+            I18N_KEY.core.worldGlobe.badgeEyebrow | transloco
+          }}</span>
+          <strong class="world-globe__badge-title">
+            {{ hoverFlag() }}
+            {{
+              hoveredCountry()?.name || (I18N_KEY.core.worldGlobe.defaultHoverHeadline | transloco)
+            }}
+          </strong>
+          <span class="world-globe__badge-copy">{{
+            hoveredCountry()
+              ? (I18N_KEY.core.worldGlobe.hoveredCountryNote | transloco)
+              : (I18N_KEY.core.worldGlobe.defaultHoverNote | transloco)
+          }}</span>
         </div>
 
         <div class="world-globe__legend">
-          <span class="world-globe__legend-pill">Hover country</span>
-          <span class="world-globe__legend-pill">Drag orbit</span>
-          <span class="world-globe__legend-pill">Wheel zoom</span>
+          <span class="world-globe__legend-pill">{{
+            I18N_KEY.core.worldGlobe.legend.hoverCountry | transloco
+          }}</span>
+          <span class="world-globe__legend-pill">{{
+            I18N_KEY.core.worldGlobe.legend.dragOrbit | transloco
+          }}</span>
+          <span class="world-globe__legend-pill">{{
+            I18N_KEY.core.worldGlobe.legend.wheelZoom | transloco
+          }}</span>
         </div>
       </div>
     </div>
@@ -25,13 +44,13 @@
     @if (loading()) {
       <div class="world-globe__overlay world-globe__overlay--loading">
         <div class="world-globe__loader"></div>
-        <p>Building atlas surface…</p>
+        <p>{{ I18N_KEY.core.worldGlobe.loading | transloco }}</p>
       </div>
     }
 
-    @if (loadError(); as error) {
+    @if (loadError()) {
       <div class="world-globe__overlay world-globe__overlay--error">
-        <p>{{ error }}</p>
+        <p>{{ I18N_KEY.core.worldGlobe.loadError | transloco }}</p>
       </div>
     }
   </div>

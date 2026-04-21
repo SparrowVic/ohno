@@ -1,9 +1,10 @@
 import { SortPhase, SortStep } from '../models/sort-step';
 import { StringTraceState } from '../models/string';
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export function createStringStep(args: {
   readonly activeCodeLine: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly string: StringTraceState;
   readonly phase?: SortPhase;
 }): SortStep {

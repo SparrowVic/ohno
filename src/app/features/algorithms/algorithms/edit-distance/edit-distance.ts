@@ -1,7 +1,83 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { EditDistanceScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.editDistance.modeLabel'),
+  phases: {
+    initializeBorders: t('features.algorithms.runtime.dp.editDistance.phases.initializeBorders'),
+    compareOperations: t('features.algorithms.runtime.dp.editDistance.phases.compareOperations'),
+    commitDistance: t('features.algorithms.runtime.dp.editDistance.phases.commitDistance'),
+    backtrackCarry: t('features.algorithms.runtime.dp.editDistance.phases.backtrackCarry'),
+    backtrackReplace: t('features.algorithms.runtime.dp.editDistance.phases.backtrackReplace'),
+    backtrackDelete: t('features.algorithms.runtime.dp.editDistance.phases.backtrackDelete'),
+    backtrackInsert: t('features.algorithms.runtime.dp.editDistance.phases.backtrackInsert'),
+    complete: t('features.algorithms.runtime.dp.editDistance.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.editDistance.descriptions.initialize'),
+    compareOperations: t(
+      'features.algorithms.runtime.dp.editDistance.descriptions.compareOperations',
+    ),
+    commitDistance: t('features.algorithms.runtime.dp.editDistance.descriptions.commitDistance'),
+    backtrackCarry: t('features.algorithms.runtime.dp.editDistance.descriptions.backtrackCarry'),
+    backtrackReplace: t(
+      'features.algorithms.runtime.dp.editDistance.descriptions.backtrackReplace',
+    ),
+    backtrackDelete: t('features.algorithms.runtime.dp.editDistance.descriptions.backtrackDelete'),
+    backtrackInsert: t('features.algorithms.runtime.dp.editDistance.descriptions.backtrackInsert'),
+    complete: t('features.algorithms.runtime.dp.editDistance.descriptions.complete'),
+  },
+  insights: {
+    sourceLabel: t('features.algorithms.runtime.dp.editDistance.insights.sourceLabel'),
+    targetLabel: t('features.algorithms.runtime.dp.editDistance.insights.targetLabel'),
+    distanceLabel: t('features.algorithms.runtime.dp.editDistance.insights.distanceLabel'),
+    opsLabel: t('features.algorithms.runtime.dp.editDistance.insights.opsLabel'),
+    gridLabel: t('features.algorithms.runtime.dp.editDistance.insights.gridLabel'),
+  },
+  labels: {
+    resultDistance: t('features.algorithms.runtime.dp.editDistance.labels.resultDistance'),
+    pathValue: t('features.algorithms.runtime.dp.editDistance.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.editDistance.labels.pathPending'),
+    sourceWordLabel: t('features.algorithms.runtime.dp.editDistance.labels.sourceWordLabel'),
+    targetOpsLabel: t('features.algorithms.runtime.dp.editDistance.labels.targetOpsLabel'),
+    activeCell: t('features.algorithms.runtime.dp.editDistance.labels.activeCell'),
+    compareReplace: t('features.algorithms.runtime.dp.editDistance.labels.compareReplace'),
+    compareDelete: t('features.algorithms.runtime.dp.editDistance.labels.compareDelete'),
+    compareInsert: t('features.algorithms.runtime.dp.editDistance.labels.compareInsert'),
+    charPair: t('features.algorithms.runtime.dp.editDistance.labels.charPair'),
+    dpCell: t('features.algorithms.runtime.dp.editDistance.labels.dpCell'),
+    coords: t('features.algorithms.runtime.dp.editDistance.labels.coords'),
+    keepOperation: t('features.algorithms.runtime.dp.editDistance.labels.keepOperation'),
+    replaceOperation: t('features.algorithms.runtime.dp.editDistance.labels.replaceOperation'),
+    deleteOperation: t('features.algorithms.runtime.dp.editDistance.labels.deleteOperation'),
+    insertOperation: t('features.algorithms.runtime.dp.editDistance.labels.insertOperation'),
+    noEditsValue: t('features.algorithms.runtime.dp.editDistance.labels.noEditsValue'),
+    pendingOpsValue: t('features.algorithms.runtime.dp.editDistance.labels.pendingOpsValue'),
+  },
+  decisions: {
+    carryDiagonalMatch: t(
+      'features.algorithms.runtime.dp.editDistance.decisions.carryDiagonalMatch',
+    ),
+    chooseCheapestEdit: t(
+      'features.algorithms.runtime.dp.editDistance.decisions.chooseCheapestEdit',
+    ),
+    freeDiagonalCarry: t('features.algorithms.runtime.dp.editDistance.decisions.freeDiagonalCarry'),
+    minimumEditStored: t(
+      'features.algorithms.runtime.dp.editDistance.decisions.minimumEditStored',
+    ),
+    carryMatch: t('features.algorithms.runtime.dp.editDistance.decisions.carryMatch'),
+    replaceAndContinue: t(
+      'features.algorithms.runtime.dp.editDistance.decisions.replaceAndContinue',
+    ),
+    moveUpward: t('features.algorithms.runtime.dp.editDistance.decisions.moveUpward'),
+    moveLeft: t('features.algorithms.runtime.dp.editDistance.decisions.moveLeft'),
+  },
+} as const;
 
 export function* editDistanceGenerator(scenario: EditDistanceScenario): Generator<SortStep> {
   const source = scenario.source.split('');
@@ -26,9 +102,9 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
     table,
     backtrackCells,
     operations,
-    description: 'Seed the top row and left column with insert/delete counts.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize borders',
+    phaseLabel: I18N.phases.initializeBorders,
     phase: 'init',
   });
 
@@ -49,16 +125,23 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
         operations,
         activeCell: [row, col],
         candidateCells: [[row - 1, col - 1], [row - 1, col], [row, col - 1]],
-        secondaryItems: [`replace = ${replaceCost}`, `delete = ${deleteCost}`, `insert = ${insertCost}`],
-        description: `Compare replace, delete and insert costs for ${leftChar} → ${rightChar}.`,
+        secondaryItems: [
+          i18nText(I18N.labels.compareReplace, { value: replaceCost }),
+          i18nText(I18N.labels.compareDelete, { value: deleteCost }),
+          i18nText(I18N.labels.compareInsert, { value: insertCost }),
+        ],
+        description: i18nText(I18N.descriptions.compareOperations, { leftChar, rightChar }),
         activeCodeLine: 5,
-        phaseLabel: 'Compare edit operations',
+        phaseLabel: I18N.phases.compareOperations,
         phase: 'compare',
         computation: {
-          label: `${leftChar} → ${rightChar}`,
+          label: i18nText(I18N.labels.charPair, { leftChar, rightChar }),
           expression: `min(diag ${replaceCost}, up ${deleteCost}, left ${insertCost})`,
           result: String(Math.min(replaceCost, deleteCost, insertCost)),
-          decision: leftChar === rightChar ? 'carry diagonal match when possible' : 'choose cheapest edit',
+          decision:
+            leftChar === rightChar
+              ? I18N.decisions.carryDiagonalMatch
+              : I18N.decisions.chooseCheapestEdit,
         },
       });
 
@@ -75,15 +158,22 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
         activeCell: [row, col],
         candidateCells: [[row - 1, col - 1], [row - 1, col], [row, col - 1]],
         activeCellStatus: status,
-        description: `Write dp[${row}][${col}] = ${table[row]![col]!}.`,
+        description: i18nText(I18N.descriptions.commitDistance, {
+          row,
+          col,
+          value: table[row]![col]!,
+        }),
         activeCodeLine: 8,
-        phaseLabel: 'Commit edit distance',
+        phaseLabel: I18N.phases.commitDistance,
         phase: 'settle-node',
         computation: {
-          label: `dp[${row}][${col}]`,
+          label: i18nText(I18N.labels.dpCell, { row, col }),
           expression: `${replaceCost}, ${deleteCost}, ${insertCost}`,
           result: String(table[row]![col]!),
-          decision: leftChar === rightChar ? 'free diagonal carry' : 'minimum edit stored',
+          decision:
+            leftChar === rightChar
+              ? I18N.decisions.freeDiagonalCarry
+              : I18N.decisions.minimumEditStored,
         },
       });
     }
@@ -103,7 +193,10 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
     if (canUseDiagonal && current === diagonalCost) {
       const leftChar = source[row - 1]!;
       const rightChar = target[col - 1]!;
-      const operation = leftChar === rightChar ? `keep ${leftChar}` : `replace ${leftChar}→${rightChar}`;
+      const operation =
+        leftChar === rightChar
+          ? equalityToken(leftChar)
+          : replacementToken(leftChar, rightChar);
       operations.unshift(operation);
 
       yield createStep({
@@ -115,18 +208,30 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
         operations,
         activeCell: [row, col],
         activeCellStatus: 'backtrack',
-        pathLabel: operations.join(' • '),
-        description: leftChar === rightChar
-          ? `${leftChar} already matches ${rightChar}, so move diagonally without cost.`
-          : `Best path replaces ${leftChar} with ${rightChar}, then moves diagonally.`,
+        pathLabel: editPathLabel(operations),
+        description:
+          leftChar === rightChar
+            ? i18nText(I18N.descriptions.backtrackCarry, { char: leftChar })
+            : i18nText(I18N.descriptions.backtrackReplace, {
+                leftChar,
+                rightChar,
+              }),
         activeCodeLine: 11,
-        phaseLabel: leftChar === rightChar ? 'Backtrack carry' : 'Backtrack replace',
+        phaseLabel:
+          leftChar === rightChar ? I18N.phases.backtrackCarry : I18N.phases.backtrackReplace,
         phase: 'relax',
         computation: {
-          label: operation,
+          label:
+            leftChar === rightChar
+              ? i18nText(I18N.labels.keepOperation, { char: leftChar })
+              : i18nText(I18N.labels.replaceOperation, {
+                  from: leftChar,
+                  to: rightChar,
+                }),
           expression: `diag = ${diagonalCost}`,
-          result: `(${row - 1}, ${col - 1})`,
-          decision: leftChar === rightChar ? 'carry match' : 'replace and continue',
+          result: i18nText(I18N.labels.coords, { row: row - 1, col: col - 1 }),
+          decision:
+            leftChar === rightChar ? I18N.decisions.carryMatch : I18N.decisions.replaceAndContinue,
         },
       });
       row -= 1;
@@ -135,7 +240,7 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
     }
 
     if (row > 0 && current === deleteCost) {
-      operations.unshift(`delete ${source[row - 1]!}`);
+      operations.unshift(deletionToken(source[row - 1]!));
       yield createStep({
         scenario,
         source,
@@ -145,23 +250,25 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
         operations,
         activeCell: [row, col],
         activeCellStatus: 'backtrack',
-        pathLabel: operations.join(' • '),
-        description: `Deleting ${source[row - 1]!} gives the optimal predecessor.`,
+        pathLabel: editPathLabel(operations),
+        description: i18nText(I18N.descriptions.backtrackDelete, {
+          char: source[row - 1],
+        }),
         activeCodeLine: 13,
-        phaseLabel: 'Backtrack delete',
+        phaseLabel: I18N.phases.backtrackDelete,
         phase: 'skip-relax',
         computation: {
-          label: `delete ${source[row - 1]!}`,
+          label: i18nText(I18N.labels.deleteOperation, { char: source[row - 1] }),
           expression: `up = ${deleteCost}`,
-          result: `(${row - 1}, ${col})`,
-          decision: 'move upward',
+          result: i18nText(I18N.labels.coords, { row: row - 1, col }),
+          decision: I18N.decisions.moveUpward,
         },
       });
       row -= 1;
       continue;
     }
 
-    operations.unshift(`insert ${target[col - 1]!}`);
+    operations.unshift(insertionToken(target[col - 1]!));
     yield createStep({
       scenario,
       source,
@@ -171,16 +278,16 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
       operations,
       activeCell: [row, col],
       activeCellStatus: 'backtrack',
-      pathLabel: operations.join(' • '),
-      description: `Inserting ${target[col - 1]!} gives the optimal predecessor from the left.`,
+      pathLabel: editPathLabel(operations),
+      description: i18nText(I18N.descriptions.backtrackInsert, { char: target[col - 1] }),
       activeCodeLine: 14,
-      phaseLabel: 'Backtrack insert',
+      phaseLabel: I18N.phases.backtrackInsert,
       phase: 'skip-relax',
       computation: {
-        label: `insert ${target[col - 1]!}`,
+        label: i18nText(I18N.labels.insertOperation, { char: target[col - 1] }),
         expression: `left = ${insertCost}`,
-        result: `(${row}, ${col - 1})`,
-        decision: 'move left',
+        result: i18nText(I18N.labels.coords, { row, col: col - 1 }),
+        decision: I18N.decisions.moveLeft,
       },
     });
     col -= 1;
@@ -193,10 +300,13 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
     table,
     backtrackCells,
     operations,
-    pathLabel: operations.join(' • ') || 'no edits',
-    description: `Edit distance is ${table[source.length]![target.length]!} with operations: ${operations.join(', ') || 'none'}.`,
+    pathLabel: editPathLabel(operations),
+    description: i18nText(I18N.descriptions.complete, {
+      distance: table[source.length]![target.length]!,
+      operations: operationSummary(operations),
+    }),
     activeCodeLine: 16,
-    phaseLabel: 'Edit script ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -208,15 +318,15 @@ function createStep(args: {
   readonly table: readonly (readonly number[])[];
   readonly backtrackCells: ReadonlySet<string>;
   readonly operations: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'chosen' | 'match' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
-  readonly pathLabel?: string;
+  readonly secondaryItems?: readonly TranslatableText[];
+  readonly pathLabel?: TranslatableText;
   readonly computation?: DpComputation | null;
 }): SortStep {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
@@ -284,27 +394,42 @@ function createStep(args: {
   }
 
   const insights: DpInsight[] = [
-    { label: 'Source', value: args.scenario.source, tone: 'accent' },
-    { label: 'Target', value: args.scenario.target, tone: 'info' },
-    { label: 'Distance', value: String(args.table[args.source.length]![args.target.length]!), tone: 'success' },
-    { label: 'Ops', value: String(args.operations.length), tone: 'warning' },
-    { label: 'Grid', value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
+    { label: I18N.insights.sourceLabel, value: args.scenario.source, tone: 'accent' },
+    { label: I18N.insights.targetLabel, value: args.scenario.target, tone: 'info' },
+    {
+      label: I18N.insights.distanceLabel,
+      value: String(args.table[args.source.length]![args.target.length]!),
+      tone: 'success',
+    },
+    { label: I18N.insights.opsLabel, value: String(args.operations.length), tone: 'warning' },
+    {
+      label: I18N.insights.gridLabel,
+      value: `${args.table.length} × ${args.table[0]!.length}`,
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'edit-distance',
-    modeLabel: 'Edit Distance',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `dist = ${args.table[args.source.length]![args.target.length]!}`,
+    resultLabel: i18nText(I18N.labels.resultDistance, {
+      value: args.table[args.source.length]![args.target.length]!,
+    }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
-    activeLabel: args.activeCell ? `${labelFor(args, args.activeCell[0], args.activeCell[1])}` : null,
-    pathLabel: args.pathLabel ?? (args.operations.length > 0 ? args.operations.join(' • ') : 'edit script pending'),
-    primaryItemsLabel: 'Source word',
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeCell, labelParamsFor(args, args.activeCell[0], args.activeCell[1]))
+        : null,
+    pathLabel: args.pathLabel ?? editPathLabel(args.operations, true),
+    primaryItemsLabel: I18N.labels.sourceWordLabel,
     primaryItems: args.source.map((char, index) => `${index + 1}:${char}`),
-    secondaryItemsLabel: 'Target / ops',
-    secondaryItems: args.secondaryItems ?? (args.operations.length > 0 ? args.operations : args.target.map((char, index) => `${index + 1}:${char}`)),
+    secondaryItemsLabel: I18N.labels.targetOpsLabel,
+    secondaryItems:
+      args.secondaryItems ??
+      (args.operations.length > 0 ? args.operations : args.target.map((char, index) => `${index + 1}:${char}`)),
     insights,
     rowHeaders,
     colHeaders,
@@ -317,8 +442,45 @@ function createStep(args: {
   });
 }
 
-function labelFor(args: { source: readonly string[]; target: readonly string[] }, row: number, col: number): string {
+function labelParamsFor(
+  args: { source: readonly string[]; target: readonly string[] },
+  row: number,
+  col: number,
+): { left: string; right: string } {
   const left = row === 0 ? '∅' : args.source[row - 1]!;
   const right = col === 0 ? '∅' : args.target[col - 1]!;
-  return `${left} → ${right}`;
+  return { left, right };
+}
+
+function equalityToken(char: string): string {
+  return `${char}=${char}`;
+}
+
+function replacementToken(from: string, to: string): string {
+  return `${from}→${to}`;
+}
+
+function deletionToken(char: string): string {
+  return `-${char}`;
+}
+
+function insertionToken(char: string): string {
+  return `+${char}`;
+}
+
+function operationSummary(operations: readonly string[]): string {
+  return operations.length > 0 ? operations.join(', ') : '∅';
+}
+
+function editPathLabel(
+  operations: readonly string[],
+  preferPending = false,
+): TranslatableText {
+  if (operations.length === 0) {
+    return preferPending ? I18N.labels.pathPending : i18nText(I18N.labels.pathValue, {
+      operations: I18N.labels.noEditsValue,
+    });
+  }
+
+  return i18nText(I18N.labels.pathValue, { operations: operations.join(' • ') });
 }

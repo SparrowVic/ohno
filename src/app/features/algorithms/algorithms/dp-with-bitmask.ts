@@ -1,13 +1,74 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { BitmaskDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.bitmaskDp.modeLabel'),
+  phases: {
+    initializeSubset: t('features.algorithms.runtime.dp.bitmaskDp.phases.initializeSubset'),
+    inspectAssignment: t('features.algorithms.runtime.dp.bitmaskDp.phases.inspectAssignment'),
+    commitAssignment: t('features.algorithms.runtime.dp.bitmaskDp.phases.commitAssignment'),
+    recoverAssignment: t('features.algorithms.runtime.dp.bitmaskDp.phases.recoverAssignment'),
+    complete: t('features.algorithms.runtime.dp.bitmaskDp.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.bitmaskDp.descriptions.initialize'),
+    inspectAssignment: t(
+      'features.algorithms.runtime.dp.bitmaskDp.descriptions.inspectAssignment',
+    ),
+    commitAssignment: t(
+      'features.algorithms.runtime.dp.bitmaskDp.descriptions.commitAssignment',
+    ),
+    recoverAssignment: t(
+      'features.algorithms.runtime.dp.bitmaskDp.descriptions.recoverAssignment',
+    ),
+    complete: t('features.algorithms.runtime.dp.bitmaskDp.descriptions.complete'),
+  },
+  insights: {
+    workersLabel: t('features.algorithms.runtime.dp.bitmaskDp.insights.workersLabel'),
+    masksLabel: t('features.algorithms.runtime.dp.bitmaskDp.insights.masksLabel'),
+    bestCostLabel: t('features.algorithms.runtime.dp.bitmaskDp.insights.bestCostLabel'),
+    chosenJobsLabel: t('features.algorithms.runtime.dp.bitmaskDp.insights.chosenJobsLabel'),
+    jobsLabel: t('features.algorithms.runtime.dp.bitmaskDp.insights.jobsLabel'),
+  },
+  labels: {
+    assignPair: t('features.algorithms.runtime.dp.bitmaskDp.labels.assignPair'),
+    stateLabel: t('features.algorithms.runtime.dp.bitmaskDp.labels.stateLabel'),
+    unreachable: t('features.algorithms.runtime.dp.bitmaskDp.labels.unreachable'),
+    parentJob: t('features.algorithms.runtime.dp.bitmaskDp.labels.parentJob'),
+    resultCost: t('features.algorithms.runtime.dp.bitmaskDp.labels.resultCost'),
+    resultPending: t('features.algorithms.runtime.dp.bitmaskDp.labels.resultPending'),
+    activeState: t('features.algorithms.runtime.dp.bitmaskDp.labels.activeState'),
+    pathValue: t('features.algorithms.runtime.dp.bitmaskDp.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.bitmaskDp.labels.pathPending'),
+    workersItemsLabel: t('features.algorithms.runtime.dp.bitmaskDp.labels.workersItemsLabel'),
+    jobsItemsLabel: t('features.algorithms.runtime.dp.bitmaskDp.labels.jobsItemsLabel'),
+    pendingValue: t('features.algorithms.runtime.dp.bitmaskDp.labels.pendingValue'),
+  },
+  decisions: {
+    cheaperAssignment: t('features.algorithms.runtime.dp.bitmaskDp.decisions.cheaperAssignment'),
+    keepPreviousBest: t('features.algorithms.runtime.dp.bitmaskDp.decisions.keepPreviousBest'),
+    noValidParentState: t(
+      'features.algorithms.runtime.dp.bitmaskDp.decisions.noValidParentState',
+    ),
+    storeParentJob: t('features.algorithms.runtime.dp.bitmaskDp.decisions.storeParentJob'),
+    removeJobFromMask: t('features.algorithms.runtime.dp.bitmaskDp.decisions.removeJobFromMask'),
+  },
+} as const;
+
 export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<SortStep> {
   const workerCount = scenario.workers.length;
   const allMasks = 1 << scenario.jobs.length;
-  const dp = Array.from({ length: workerCount + 1 }, () => Array.from({ length: allMasks }, () => Number.POSITIVE_INFINITY));
-  const parentJob = Array.from({ length: workerCount + 1 }, () => Array.from({ length: allMasks }, () => null as number | null));
+  const dp = Array.from({ length: workerCount + 1 }, () =>
+    Array.from({ length: allMasks }, () => Number.POSITIVE_INFINITY),
+  );
+  const parentJob = Array.from({ length: workerCount + 1 }, () =>
+    Array.from({ length: allMasks }, () => null as number | null),
+  );
   const backtrackCells = new Set<string>();
   const assignment = new Map<number, number>();
 
@@ -19,9 +80,9 @@ export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<
     parentJob,
     backtrackCells,
     assignment,
-    description: 'Seed the empty mask with zero cost before assigning any worker to any job.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize empty subset',
+    phaseLabel: I18N.phases.initializeSubset,
     phase: 'init',
   });
 
@@ -47,15 +108,23 @@ export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<
           assignment,
           activeCell: [worker, mask],
           candidateCells: [[worker - 1, previousMask]],
-          description: `Assign ${scenario.workers[worker - 1]} to ${scenario.jobs[job]} and extend mask ${maskLabel(previousMask, scenario.jobs.length)}.`,
+          description: i18nText(I18N.descriptions.inspectAssignment, {
+            worker: scenario.workers[worker - 1],
+            job: scenario.jobs[job],
+            mask: maskLabel(previousMask, scenario.jobs.length),
+          }),
           activeCodeLine: 5,
-          phaseLabel: 'Inspect job assignment',
+          phaseLabel: I18N.phases.inspectAssignment,
           phase: 'compare',
           computation: {
-            label: `${scenario.workers[worker - 1]} -> ${scenario.jobs[job]}`,
+            label: i18nText(I18N.labels.assignPair, {
+              worker: scenario.workers[worker - 1],
+              job: scenario.jobs[job],
+            }),
             expression: `${previousCost} + ${scenario.costs[worker - 1]![job]!}`,
             result: String(candidate),
-            decision: candidate < bestCost ? 'new cheaper assignment for this mask' : 'keep previous best job',
+            decision:
+              candidate < bestCost ? I18N.decisions.cheaperAssignment : I18N.decisions.keepPreviousBest,
           },
         });
 
@@ -76,15 +145,26 @@ export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<
         assignment,
         activeCell: [worker, mask],
         activeStatus: Number.isFinite(bestCost) ? 'improved' : 'blocked',
-        description: `Commit the cheapest way to assign the first ${worker} worker(s) using job mask ${maskLabel(mask, scenario.jobs.length)}.`,
+        description: i18nText(I18N.descriptions.commitAssignment, {
+          worker,
+          mask: maskLabel(mask, scenario.jobs.length),
+        }),
         activeCodeLine: 6,
-        phaseLabel: 'Commit subset assignment',
+        phaseLabel: I18N.phases.commitAssignment,
         phase: 'settle-node',
         computation: {
-          label: `dp[${worker}][${maskLabel(mask, scenario.jobs.length)}]`,
-          expression: bestJob === null ? 'unreachable' : `job = ${scenario.jobs[bestJob]!}`,
+          label: i18nText(I18N.labels.stateLabel, {
+            worker,
+            mask: maskLabel(mask, scenario.jobs.length),
+          }),
+          expression:
+            bestJob === null
+              ? I18N.labels.unreachable
+              : i18nText(I18N.labels.parentJob, {
+                  job: scenario.jobs[bestJob],
+                }),
           result: Number.isFinite(bestCost) ? String(bestCost) : '∞',
-          decision: bestJob === null ? 'mask has no valid parent state' : `store parent job ${scenario.jobs[bestJob]!}`,
+          decision: bestJob === null ? I18N.decisions.noValidParentState : I18N.decisions.storeParentJob,
         },
       });
     }
@@ -106,15 +186,21 @@ export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<
       assignment,
       activeCell: [worker, mask],
       activeStatus: 'backtrack',
-      description: `Backtrack ${scenario.workers[worker - 1]} to job ${scenario.jobs[job]}.`,
+      description: i18nText(I18N.descriptions.recoverAssignment, {
+        worker: scenario.workers[worker - 1],
+        job: scenario.jobs[job],
+      }),
       activeCodeLine: 8,
-      phaseLabel: 'Recover assignment',
+      phaseLabel: I18N.phases.recoverAssignment,
       phase: 'relax',
       computation: {
-        label: `${scenario.workers[worker - 1]} = ${scenario.jobs[job]}`,
+        label: i18nText(I18N.labels.assignPair, {
+          worker: scenario.workers[worker - 1],
+          job: scenario.jobs[job],
+        }),
         expression: `mask ${maskLabel(mask, scenario.jobs.length)}`,
         result: assignmentLabel(scenario, assignment),
-        decision: `remove ${scenario.jobs[job]} from the used-job mask`,
+        decision: I18N.decisions.removeJobFromMask,
       },
     });
 
@@ -128,9 +214,9 @@ export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<
     parentJob,
     backtrackCells,
     assignment,
-    description: `Recovered one minimum-cost assignment using subset DP.`,
+    description: I18N.descriptions.complete,
     activeCodeLine: 9,
-    phaseLabel: 'Assignment ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -141,9 +227,9 @@ function createStep(args: {
   readonly parentJob: readonly (readonly (number | null)[])[];
   readonly backtrackCells: ReadonlySet<string>;
   readonly assignment: ReadonlyMap<number, number>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
@@ -216,28 +302,38 @@ function createStep(args: {
   const finalMask = (1 << args.scenario.jobs.length) - 1;
   const finalCost = args.dp[args.scenario.workers.length]![finalMask]!;
   const insights: DpInsight[] = [
-    { label: 'Workers', value: String(args.scenario.workers.length), tone: 'accent' },
-    { label: 'Masks', value: String(1 << args.scenario.jobs.length), tone: 'info' },
-    { label: 'Best cost', value: Number.isFinite(finalCost) ? String(finalCost) : 'pending', tone: 'success' },
-    { label: 'Chosen jobs', value: String(args.assignment.size), tone: 'warning' },
-    { label: 'Jobs', value: args.scenario.jobs.join(' · '), tone: 'info' },
+    { label: I18N.insights.workersLabel, value: String(args.scenario.workers.length), tone: 'accent' },
+    { label: I18N.insights.masksLabel, value: String(1 << args.scenario.jobs.length), tone: 'info' },
+    {
+      label: I18N.insights.bestCostLabel,
+      value: Number.isFinite(finalCost) ? String(finalCost) : I18N.labels.pendingValue,
+      tone: 'success',
+    },
+    { label: I18N.insights.chosenJobsLabel, value: String(args.assignment.size), tone: 'warning' },
+    { label: I18N.insights.jobsLabel, value: args.scenario.jobs.join(' · '), tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'dp-with-bitmask',
-    modeLabel: 'DP with Bitmask',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: Number.isFinite(finalCost) ? `cost = ${finalCost}` : 'cost pending',
+    resultLabel: Number.isFinite(finalCost)
+      ? i18nText(I18N.labels.resultCost, { value: finalCost })
+      : I18N.labels.resultPending,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.dp.length} × ${args.dp[0]!.length}`,
-    activeLabel: args.activeCell
-      ? `${rowHeaders[args.activeCell[0]]!.label} × ${maskLabel(args.activeCell[1], args.scenario.jobs.length)}`
-      : null,
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeState, {
+            worker: rowHeaders[args.activeCell[0]]!.label,
+            mask: maskLabel(args.activeCell[1], args.scenario.jobs.length),
+          })
+        : null,
     pathLabel: assignmentLabel(args.scenario, args.assignment),
-    primaryItemsLabel: 'Workers',
+    primaryItemsLabel: I18N.labels.workersItemsLabel,
     primaryItems: args.scenario.workers.map((worker) => worker),
-    secondaryItemsLabel: 'Jobs',
+    secondaryItemsLabel: I18N.labels.jobsItemsLabel,
     secondaryItems: args.scenario.jobs.map((job) => job),
     insights,
     rowHeaders,
@@ -269,9 +365,14 @@ function jobMembers(mask: number, jobs: readonly string[]): string {
   return members.length > 0 ? members.join(' · ') : 'none';
 }
 
-function assignmentLabel(scenario: BitmaskDpScenario, assignment: ReadonlyMap<number, number>): string {
+function assignmentLabel(
+  scenario: BitmaskDpScenario,
+  assignment: ReadonlyMap<number, number>,
+): TranslatableText {
   const parts = Array.from(assignment.entries())
     .sort((left, right) => left[0] - right[0])
     .map(([worker, job]) => `${scenario.workers[worker]!}→${scenario.jobs[job]!}`);
-  return parts.length > 0 ? `Assign: ${parts.join(' · ')}` : 'Assign: pending';
+  return parts.length > 0
+    ? i18nText(I18N.labels.pathValue, { assignments: parts.join(' · ') })
+    : I18N.labels.pathPending;
 }

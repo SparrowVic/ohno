@@ -1,14 +1,129 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { KmpTraceState } from '../../models/string';
 import { KmpScenario } from '../../utils/string-scenarios/string-scenarios';
 
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.kmp.modeLabel'),
+  phases: {
+    setup: t('features.algorithms.runtime.string.kmp.phases.setup'),
+    buildFailure: t('features.algorithms.runtime.string.kmp.phases.buildFailure'),
+    failureFallback: t('features.algorithms.runtime.string.kmp.phases.failureFallback'),
+    failureCommit: t('features.algorithms.runtime.string.kmp.phases.failureCommit'),
+    searchReady: t('features.algorithms.runtime.string.kmp.phases.searchReady'),
+    characterMatch: t('features.algorithms.runtime.string.kmp.phases.characterMatch'),
+    mismatchCheck: t('features.algorithms.runtime.string.kmp.phases.mismatchCheck'),
+    matchReported: t('features.algorithms.runtime.string.kmp.phases.matchReported'),
+    advance: t('features.algorithms.runtime.string.kmp.phases.advance'),
+    failureJump: t('features.algorithms.runtime.string.kmp.phases.failureJump'),
+    shiftText: t('features.algorithms.runtime.string.kmp.phases.shiftText'),
+    complete: t('features.algorithms.runtime.string.kmp.phases.complete'),
+  },
+  insights: {
+    textLabel: t('features.algorithms.runtime.string.kmp.insights.textLabel'),
+    patternLabel: t('features.algorithms.runtime.string.kmp.insights.patternLabel'),
+    failureReadyLabel: t('features.algorithms.runtime.string.kmp.insights.failureReadyLabel'),
+    hitsLabel: t('features.algorithms.runtime.string.kmp.insights.hitsLabel'),
+    charsValue: t('features.algorithms.runtime.string.kmp.insights.charsValue'),
+    failureReadyValue: t('features.algorithms.runtime.string.kmp.insights.failureReadyValue'),
+    noneValue: t('features.algorithms.runtime.string.kmp.insights.noneValue'),
+  },
+  descriptions: {
+    prepare: t('features.algorithms.runtime.string.kmp.descriptions.prepare'),
+    compareFailureChars: t('features.algorithms.runtime.string.kmp.descriptions.compareFailureChars'),
+    failureBuildMismatch: t(
+      'features.algorithms.runtime.string.kmp.descriptions.failureBuildMismatch',
+    ),
+    failureCommit: t('features.algorithms.runtime.string.kmp.descriptions.failureCommit'),
+    failureTableReady: t('features.algorithms.runtime.string.kmp.descriptions.failureTableReady'),
+    compareTextPattern: t('features.algorithms.runtime.string.kmp.descriptions.compareTextPattern'),
+    fullMatchFound: t('features.algorithms.runtime.string.kmp.descriptions.fullMatchFound'),
+    advance: t('features.algorithms.runtime.string.kmp.descriptions.advance'),
+    failureJump: t('features.algorithms.runtime.string.kmp.descriptions.failureJump'),
+    shiftText: t('features.algorithms.runtime.string.kmp.descriptions.shiftText'),
+    completeNoMatch: t('features.algorithms.runtime.string.kmp.descriptions.completeNoMatch'),
+    completeMatches: t('features.algorithms.runtime.string.kmp.descriptions.completeMatches'),
+  },
+  decisions: {
+    buildFailureTable: t('features.algorithms.runtime.string.kmp.decisions.buildFailureTable'),
+    extendOverlap: t('features.algorithms.runtime.string.kmp.decisions.extendOverlap'),
+    keepPaidWork: t('features.algorithms.runtime.string.kmp.decisions.keepPaidWork'),
+    noBorderYet: t('features.algorithms.runtime.string.kmp.decisions.noBorderYet'),
+    keepBorderLength: t('features.algorithms.runtime.string.kmp.decisions.keepBorderLength'),
+    jumpByFailureLinks: t('features.algorithms.runtime.string.kmp.decisions.jumpByFailureLinks'),
+    advanceBothPointers: t('features.algorithms.runtime.string.kmp.decisions.advanceBothPointers'),
+    eitherJumpOrMove: t('features.algorithms.runtime.string.kmp.decisions.eitherJumpOrMove'),
+    restartPattern: t('features.algorithms.runtime.string.kmp.decisions.restartPattern'),
+    reuseOverlapOfLength: t('features.algorithms.runtime.string.kmp.decisions.reuseOverlapOfLength'),
+    keepExtendingWindow: t('features.algorithms.runtime.string.kmp.decisions.keepExtendingWindow'),
+    sameTextChar: t('features.algorithms.runtime.string.kmp.decisions.sameTextChar'),
+    noReusablePrefix: t('features.algorithms.runtime.string.kmp.decisions.noReusablePrefix'),
+    noMatchFound: t('features.algorithms.runtime.string.kmp.decisions.noMatchFound'),
+    allMatchesFound: t('features.algorithms.runtime.string.kmp.decisions.allMatchesFound'),
+    preventedBacktracking: t(
+      'features.algorithms.runtime.string.kmp.decisions.preventedBacktracking',
+    ),
+  },
+  computation: {
+    labels: {
+      failureSeed: t('features.algorithms.runtime.string.kmp.computation.labels.failureSeed'),
+      prefixCompare: t('features.algorithms.runtime.string.kmp.computation.labels.prefixCompare'),
+      failureFallback: t(
+        'features.algorithms.runtime.string.kmp.computation.labels.failureFallback',
+      ),
+      failureValue: t('features.algorithms.runtime.string.kmp.computation.labels.failureValue'),
+      readyToScan: t('features.algorithms.runtime.string.kmp.computation.labels.readyToScan'),
+      currentCompare: t('features.algorithms.runtime.string.kmp.computation.labels.currentCompare'),
+      postMatchJump: t('features.algorithms.runtime.string.kmp.computation.labels.postMatchJump'),
+      pointerUpdate: t('features.algorithms.runtime.string.kmp.computation.labels.pointerUpdate'),
+      failureJump: t('features.algorithms.runtime.string.kmp.computation.labels.failureJump'),
+      textShift: t('features.algorithms.runtime.string.kmp.computation.labels.textShift'),
+      finalOutcome: t('features.algorithms.runtime.string.kmp.computation.labels.finalOutcome'),
+    },
+    notes: {
+      failureSeed: t('features.algorithms.runtime.string.kmp.computation.notes.failureSeed'),
+      prefixCompare: t('features.algorithms.runtime.string.kmp.computation.notes.prefixCompare'),
+      failureFallback: t(
+        'features.algorithms.runtime.string.kmp.computation.notes.failureFallback',
+      ),
+      failureValueEmpty: t(
+        'features.algorithms.runtime.string.kmp.computation.notes.failureValueEmpty',
+      ),
+      failureValueBorder: t(
+        'features.algorithms.runtime.string.kmp.computation.notes.failureValueBorder',
+      ),
+      readyToScan: t('features.algorithms.runtime.string.kmp.computation.notes.readyToScan'),
+      currentCompareMatch: t(
+        'features.algorithms.runtime.string.kmp.computation.notes.currentCompareMatch',
+      ),
+      currentCompareMismatch: t(
+        'features.algorithms.runtime.string.kmp.computation.notes.currentCompareMismatch',
+      ),
+      postMatchJump: t('features.algorithms.runtime.string.kmp.computation.notes.postMatchJump'),
+      pointerUpdate: t('features.algorithms.runtime.string.kmp.computation.notes.pointerUpdate'),
+      failureJump: t('features.algorithms.runtime.string.kmp.computation.notes.failureJump'),
+      textShift: t('features.algorithms.runtime.string.kmp.computation.notes.textShift'),
+      finalOutcome: t('features.algorithms.runtime.string.kmp.computation.notes.finalOutcome'),
+    },
+  },
+  labels: {
+    noMatchesYet: t('features.algorithms.runtime.string.kmp.labels.noMatchesYet'),
+    noFullHitsYet: t('features.algorithms.runtime.string.kmp.labels.noFullHitsYet'),
+    noMatch: t('features.algorithms.runtime.string.kmp.labels.noMatch'),
+    noHit: t('features.algorithms.runtime.string.kmp.labels.noHit'),
+    hitCount: t('features.algorithms.runtime.string.kmp.labels.hitCount'),
+  },
+} as const;
+
 function makeState(args: {
   readonly scenario: KmpScenario;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly failure: readonly number[];
   readonly failureReadyIndex: number;
   readonly alignment: number;
@@ -26,7 +141,7 @@ function makeState(args: {
 
   return {
     mode: 'kmp',
-    modeLabel: 'Failure jumps',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -35,10 +150,29 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Text', value: `${args.scenario.text.length} chars`, tone: 'info' },
-      { label: 'Pattern', value: `${args.scenario.pattern.length} chars`, tone: 'accent' },
-      { label: 'Failure ready', value: `${Math.max(args.failureReadyIndex + 1, 0)} / ${args.scenario.pattern.length}`, tone: 'warning' },
-      { label: 'Hits', value: matchedCount === 0 ? 'none' : args.matches.join(', '), tone: matchedCount === 0 ? 'info' : 'success' },
+      {
+        label: I18N.insights.textLabel,
+        value: i18nText(I18N.insights.charsValue, { count: args.scenario.text.length }),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.patternLabel,
+        value: i18nText(I18N.insights.charsValue, { count: args.scenario.pattern.length }),
+        tone: 'accent',
+      },
+      {
+        label: I18N.insights.failureReadyLabel,
+        value: i18nText(I18N.insights.failureReadyValue, {
+          current: Math.max(args.failureReadyIndex + 1, 0),
+          total: args.scenario.pattern.length,
+        }),
+        tone: 'warning',
+      },
+      {
+        label: I18N.insights.hitsLabel,
+        value: matchedCount === 0 ? I18N.insights.noneValue : args.matches.join(', '),
+        tone: matchedCount === 0 ? 'info' : 'success',
+      },
     ],
     stage: args.stage,
     text: args.scenario.text,
@@ -66,14 +200,14 @@ export function* kmpPatternMatchingGenerator(
 
   yield createStringStep({
     activeCodeLine: 1,
-    description: `Prepare KMP search for pattern "${pattern}" inside text "${text}".`,
+    description: i18nText(I18N.descriptions.prepare, { pattern, text }),
     phase: 'init',
     string: makeState({
       scenario,
-      phaseLabel: 'Setup',
+      phaseLabel: I18N.phases.setup,
       activeLabel: 'failure[0] = 0',
-      resultLabel: 'No matches yet',
-      decisionLabel: 'Build the failure table before scanning the text.',
+      resultLabel: I18N.labels.noMatchesYet,
+      decisionLabel: I18N.decisions.buildFailureTable,
       failure,
       failureReadyIndex: 0,
       alignment: 0,
@@ -86,10 +220,10 @@ export function* kmpPatternMatchingGenerator(
       matches,
       stage: 'failure',
       computation: {
-        label: 'Failure seed',
+        label: I18N.computation.labels.failureSeed,
         expression: 'fail[0] = 0',
         result: '0',
-        note: 'The first character has no shorter proper prefix to fall back to.',
+        note: I18N.computation.notes.failureSeed,
       },
     }),
   });
@@ -98,14 +232,19 @@ export function* kmpPatternMatchingGenerator(
   for (let index = 1; index < pattern.length; index++) {
     yield createStringStep({
       activeCodeLine: 2,
-      description: `Compare pattern[${index}] = "${pattern[index]}" with prefix character pattern[${prefix}] = "${pattern[prefix] ?? '∅'}".`,
+      description: i18nText(I18N.descriptions.compareFailureChars, {
+        index,
+        current: pattern[index] ?? '∅',
+        prefix,
+        prefixChar: pattern[prefix] ?? '∅',
+      }),
       phase: 'compare',
       string: makeState({
         scenario,
-        phaseLabel: 'Build failure',
+        phaseLabel: I18N.phases.buildFailure,
         activeLabel: `fail[${index}]`,
         resultLabel: failure.slice(0, Math.max(index, 1)).join(' · ') || '0',
-        decisionLabel: 'Try to extend the current proper prefix / suffix overlap.',
+        decisionLabel: I18N.decisions.extendOverlap,
         failure,
         failureReadyIndex: index - 1,
         alignment: 0,
@@ -118,10 +257,10 @@ export function* kmpPatternMatchingGenerator(
         matches,
         stage: 'failure',
         computation: {
-          label: 'Prefix compare',
+          label: I18N.computation.labels.prefixCompare,
           expression: `pattern[${index}] ?= pattern[${prefix}]`,
           result: `${pattern[index] ?? '∅'} vs ${pattern[prefix] ?? '∅'}`,
-          note: 'Failure links store the longest reusable prefix when a mismatch happens later.',
+          note: I18N.computation.notes.prefixCompare,
         },
       }),
     });
@@ -130,14 +269,17 @@ export function* kmpPatternMatchingGenerator(
       const nextPrefix = failure[prefix - 1] ?? 0;
       yield createStringStep({
         activeCodeLine: 2,
-        description: `Failure build mismatch: reuse fail[${prefix - 1}] = ${nextPrefix} instead of restarting from zero.`,
+        description: i18nText(I18N.descriptions.failureBuildMismatch, {
+          from: prefix - 1,
+          next: nextPrefix,
+        }),
         phase: 'pass-complete',
         string: makeState({
           scenario,
-          phaseLabel: 'Failure fallback',
+          phaseLabel: I18N.phases.failureFallback,
           activeLabel: `prefix ${prefix} → ${nextPrefix}`,
           resultLabel: failure.slice(0, Math.max(index, 1)).join(' · ') || '0',
-          decisionLabel: 'Slide inside the pattern and keep the work you already paid for.',
+          decisionLabel: I18N.decisions.keepPaidWork,
           failure,
           failureReadyIndex: index - 1,
           alignment: 0,
@@ -150,10 +292,10 @@ export function* kmpPatternMatchingGenerator(
           matches,
           stage: 'failure',
           computation: {
-            label: 'Failure fallback',
+            label: I18N.computation.labels.failureFallback,
             expression: `prefix = fail[${prefix - 1}]`,
             result: String(nextPrefix),
-            note: 'KMP reuses the best smaller border instead of rechecking from the start.',
+            note: I18N.computation.notes.failureFallback,
           },
         }),
       });
@@ -167,14 +309,17 @@ export function* kmpPatternMatchingGenerator(
 
     yield createStringStep({
       activeCodeLine: 2,
-      description: `Set fail[${index}] = ${prefix}. That overlap is ready for future jumps.`,
+      description: i18nText(I18N.descriptions.failureCommit, { index, prefix }),
       phase: 'pass-complete',
       string: makeState({
         scenario,
-        phaseLabel: 'Failure commit',
+        phaseLabel: I18N.phases.failureCommit,
         activeLabel: `fail[${index}] = ${prefix}`,
         resultLabel: failure.slice(0, index + 1).join(' · '),
-        decisionLabel: prefix === 0 ? 'No border yet.' : `Keep border length ${prefix}.`,
+        decisionLabel:
+          prefix === 0
+            ? I18N.decisions.noBorderYet
+            : i18nText(I18N.decisions.keepBorderLength, { prefix }),
         failure,
         failureReadyIndex: index,
         alignment: 0,
@@ -187,10 +332,13 @@ export function* kmpPatternMatchingGenerator(
         matches,
         stage: 'failure',
         computation: {
-          label: 'Failure value',
+          label: I18N.computation.labels.failureValue,
           expression: `fail[${index}] = ${prefix}`,
           result: String(prefix),
-          note: prefix === 0 ? 'Mismatch collapsed all reusable overlap.' : 'This border becomes the next jump target.',
+          note:
+            prefix === 0
+              ? I18N.computation.notes.failureValueEmpty
+              : I18N.computation.notes.failureValueBorder,
         },
       }),
     });
@@ -198,14 +346,16 @@ export function* kmpPatternMatchingGenerator(
 
   yield createStringStep({
     activeCodeLine: 3,
-    description: `Failure table ready: [${failure.join(', ')}]. Start scanning the text without rewinding it.`,
+    description: i18nText(I18N.descriptions.failureTableReady, {
+      failure: failure.join(', '),
+    }),
     phase: 'init',
     string: makeState({
       scenario,
-      phaseLabel: 'Search ready',
+      phaseLabel: I18N.phases.searchReady,
       activeLabel: 'i = 0, j = 0',
       resultLabel: `[${failure.join(', ')}]`,
-      decisionLabel: 'The pattern can now jump by failure links instead of resetting after mismatches.',
+      decisionLabel: I18N.decisions.jumpByFailureLinks,
       failure,
       failureReadyIndex: pattern.length - 1,
       alignment: 0,
@@ -218,10 +368,10 @@ export function* kmpPatternMatchingGenerator(
       matches,
       stage: 'scan',
       computation: {
-        label: 'Ready to scan',
+        label: I18N.computation.labels.readyToScan,
         expression: `alignment = i - j = 0`,
         result: '0',
-        note: 'Pattern starts under the first text character.',
+        note: I18N.computation.notes.readyToScan,
       },
     }),
   });
@@ -235,14 +385,19 @@ export function* kmpPatternMatchingGenerator(
 
     yield createStringStep({
       activeCodeLine: 5,
-      description: `Compare text[${textIndex}] = "${text[textIndex]}" with pattern[${patternIndex}] = "${pattern[patternIndex]}".`,
+      description: i18nText(I18N.descriptions.compareTextPattern, {
+        textIndex,
+        textChar: text[textIndex] ?? '∅',
+        patternIndex,
+        patternChar: pattern[patternIndex] ?? '∅',
+      }),
       phase: 'compare',
       string: makeState({
         scenario,
-        phaseLabel: match ? 'Character match' : 'Mismatch check',
+        phaseLabel: match ? I18N.phases.characterMatch : I18N.phases.mismatchCheck,
         activeLabel: `i=${textIndex}, j=${patternIndex}`,
-        resultLabel: matches.length === 0 ? 'No full hits yet' : matches.join(', '),
-        decisionLabel: match ? 'Advance both pointers.' : 'Either jump by failure or move the text cursor.',
+        resultLabel: matches.length === 0 ? I18N.labels.noFullHitsYet : matches.join(', '),
+        decisionLabel: match ? I18N.decisions.advanceBothPointers : I18N.decisions.eitherJumpOrMove,
         failure,
         failureReadyIndex: pattern.length - 1,
         alignment,
@@ -255,10 +410,13 @@ export function* kmpPatternMatchingGenerator(
         matches,
         stage: 'scan',
         computation: {
-          label: 'Current compare',
+          label: I18N.computation.labels.currentCompare,
           expression: `text[${textIndex}] ${match ? '=' : '≠'} pattern[${patternIndex}]`,
           result: `"${text[textIndex]}" ${match ? '=' : '≠'} "${pattern[patternIndex]}"`,
-          note: match ? 'No backtracking needed.' : 'This is where KMP saves time with fail[j - 1].',
+          note:
+            match
+              ? I18N.computation.notes.currentCompareMatch
+              : I18N.computation.notes.currentCompareMismatch,
         },
       }),
     });
@@ -274,14 +432,21 @@ export function* kmpPatternMatchingGenerator(
 
         yield createStringStep({
           activeCodeLine: 8,
-          description: `Full match found at text index ${hitStart}. KMP keeps scanning by jumping j to fail[${patternIndex - 1}] = ${fallback}.`,
+          description: i18nText(I18N.descriptions.fullMatchFound, {
+            hitStart,
+            failureIndex: patternIndex - 1,
+            fallback,
+          }),
           phase: 'complete',
           string: makeState({
             scenario,
-            phaseLabel: 'Match reported',
+            phaseLabel: I18N.phases.matchReported,
             activeLabel: `hit @ ${hitStart}`,
             resultLabel: matches.join(', '),
-            decisionLabel: fallback === 0 ? 'Restart pattern from the beginning.' : `Reuse overlap of length ${fallback}.`,
+            decisionLabel:
+              fallback === 0
+                ? I18N.decisions.restartPattern
+                : i18nText(I18N.decisions.reuseOverlapOfLength, { fallback }),
             failure,
             failureReadyIndex: pattern.length - 1,
             alignment: textIndex - patternIndex,
@@ -294,10 +459,10 @@ export function* kmpPatternMatchingGenerator(
             matches,
             stage: 'scan',
             computation: {
-              label: 'Post-match jump',
+              label: I18N.computation.labels.postMatchJump,
               expression: `j = fail[${patternIndex - 1}]`,
               result: String(fallback),
-              note: 'Overlapping matches stay visible because the text cursor never moves backward.',
+              note: I18N.computation.notes.postMatchJump,
             },
           }),
         });
@@ -306,14 +471,14 @@ export function* kmpPatternMatchingGenerator(
       } else {
         yield createStringStep({
           activeCodeLine: 6,
-          description: 'Characters matched, so both pointers move forward together.',
+          description: I18N.descriptions.advance,
           phase: 'pass-complete',
           string: makeState({
             scenario,
-            phaseLabel: 'Advance',
+            phaseLabel: I18N.phases.advance,
             activeLabel: `i=${textIndex}, j=${patternIndex}`,
-            resultLabel: matches.length === 0 ? 'No full hits yet' : matches.join(', '),
-            decisionLabel: 'Keep extending the aligned window.',
+            resultLabel: matches.length === 0 ? I18N.labels.noFullHitsYet : matches.join(', '),
+            decisionLabel: I18N.decisions.keepExtendingWindow,
             failure,
             failureReadyIndex: pattern.length - 1,
             alignment: textIndex - patternIndex,
@@ -326,10 +491,10 @@ export function* kmpPatternMatchingGenerator(
             matches,
             stage: 'scan',
             computation: {
-              label: 'Pointer update',
+              label: I18N.computation.labels.pointerUpdate,
               expression: 'i++, j++',
               result: `i=${textIndex}, j=${patternIndex}`,
-              note: 'KMP only jumps on mismatches or after reporting a full hit.',
+              note: I18N.computation.notes.pointerUpdate,
             },
           }),
         });
@@ -341,14 +506,18 @@ export function* kmpPatternMatchingGenerator(
       const nextPatternIndex = failure[patternIndex - 1] ?? 0;
       yield createStringStep({
         activeCodeLine: 10,
-        description: `Mismatch. Jump pattern index from ${patternIndex} to fail[${patternIndex - 1}] = ${nextPatternIndex} without moving the text cursor.`,
+        description: i18nText(I18N.descriptions.failureJump, {
+          patternIndex,
+          failureIndex: patternIndex - 1,
+          nextPatternIndex,
+        }),
         phase: 'pass-complete',
         string: makeState({
           scenario,
-          phaseLabel: 'Failure jump',
+          phaseLabel: I18N.phases.failureJump,
           activeLabel: `j: ${patternIndex} → ${nextPatternIndex}`,
-          resultLabel: matches.length === 0 ? 'No full hits yet' : matches.join(', '),
-          decisionLabel: 'Pattern slides under the same text character; the text pointer stays put.',
+          resultLabel: matches.length === 0 ? I18N.labels.noFullHitsYet : matches.join(', '),
+          decisionLabel: I18N.decisions.sameTextChar,
           failure,
           failureReadyIndex: pattern.length - 1,
           alignment: textIndex - nextPatternIndex,
@@ -361,10 +530,10 @@ export function* kmpPatternMatchingGenerator(
           matches,
           stage: 'scan',
           computation: {
-            label: 'Failure jump',
+            label: I18N.computation.labels.failureJump,
             expression: `j = fail[${patternIndex - 1}]`,
             result: String(nextPatternIndex),
-            note: 'This is the KMP aha moment: reuse the longest safe prefix immediately.',
+            note: I18N.computation.notes.failureJump,
           },
         }),
       });
@@ -375,14 +544,14 @@ export function* kmpPatternMatchingGenerator(
     textIndex++;
     yield createStringStep({
       activeCodeLine: 11,
-      description: 'Mismatch at j = 0, so only the text cursor moves to the next position.',
+      description: I18N.descriptions.shiftText,
       phase: 'pass-complete',
       string: makeState({
         scenario,
-        phaseLabel: 'Shift text',
+        phaseLabel: I18N.phases.shiftText,
         activeLabel: `i=${textIndex}, j=0`,
-        resultLabel: matches.length === 0 ? 'No full hits yet' : matches.join(', '),
-        decisionLabel: 'No reusable prefix exists yet, so the window shifts by one.',
+        resultLabel: matches.length === 0 ? I18N.labels.noFullHitsYet : matches.join(', '),
+        decisionLabel: I18N.decisions.noReusablePrefix,
         failure,
         failureReadyIndex: pattern.length - 1,
         alignment: textIndex,
@@ -395,10 +564,10 @@ export function* kmpPatternMatchingGenerator(
         matches,
         stage: 'scan',
         computation: {
-          label: 'Text shift',
+          label: I18N.computation.labels.textShift,
           expression: 'i++',
           result: `i=${textIndex}`,
-          note: 'Only the text moves when no failure link can help.',
+          note: I18N.computation.notes.textShift,
         },
       }),
     });
@@ -408,18 +577,21 @@ export function* kmpPatternMatchingGenerator(
     activeCodeLine: 8,
     description:
       matches.length === 0
-        ? 'KMP finished scanning the text. No full pattern match was found.'
-        : `KMP finished. Matches found at indices ${matches.join(', ')}.`,
+        ? I18N.descriptions.completeNoMatch
+        : i18nText(I18N.descriptions.completeMatches, { matches: matches.join(', ') }),
     phase: 'complete',
     string: makeState({
       scenario,
-      phaseLabel: 'Complete',
-      activeLabel: matches.length === 0 ? 'No hit' : `${matches.length} hit(s)`,
-      resultLabel: matches.length === 0 ? 'No match' : matches.join(', '),
+      phaseLabel: I18N.phases.complete,
+      activeLabel:
+        matches.length === 0
+          ? I18N.labels.noHit
+          : i18nText(I18N.labels.hitCount, { count: matches.length }),
+      resultLabel: matches.length === 0 ? I18N.labels.noMatch : matches.join(', '),
       decisionLabel:
         matches.length === 0
-          ? 'Failure jumps still prevented wasteful backtracking.'
-          : 'All matches were found without rewinding the text pointer.',
+          ? I18N.decisions.preventedBacktracking
+          : I18N.decisions.allMatchesFound,
       failure,
       failureReadyIndex: pattern.length - 1,
       alignment: text.length,
@@ -432,10 +604,10 @@ export function* kmpPatternMatchingGenerator(
       matches,
       stage: 'done',
       computation: {
-        label: 'Final outcome',
+        label: I18N.computation.labels.finalOutcome,
         expression: 'matches',
         result: matches.length === 0 ? '∅' : matches.join(', '),
-        note: 'KMP runs in O(n + m) because every fallback reuses the failure table instead of rescanning text.',
+        note: I18N.computation.notes.finalOutcome,
       },
     }),
   });

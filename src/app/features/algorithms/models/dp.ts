@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type DpMode =
   | 'knapsack-01'
   | 'longest-common-subsequence'
@@ -74,32 +76,32 @@ export interface DpCell {
 }
 
 export interface DpInsight {
-  readonly label: string;
-  readonly value: string;
+  readonly label: TranslatableText;
+  readonly value: TranslatableText;
   readonly tone: 'info' | 'accent' | 'success' | 'warning';
 }
 
 export interface DpComputation {
-  readonly label: string;
-  readonly expression: string;
-  readonly result: string | null;
-  readonly decision: string;
+  readonly label: TranslatableText;
+  readonly expression: TranslatableText;
+  readonly result: TranslatableText | null;
+  readonly decision: TranslatableText;
 }
 
 export interface DpTraceState {
   readonly mode: DpMode;
-  readonly modeLabel: string;
-  readonly phaseLabel: string;
-  readonly resultLabel: string;
-  readonly presetLabel: string;
-  readonly presetDescription: string;
+  readonly modeLabel: TranslatableText;
+  readonly phaseLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly presetLabel: TranslatableText;
+  readonly presetDescription: TranslatableText;
   readonly dimensionsLabel: string;
-  readonly activeLabel: string | null;
-  readonly pathLabel: string;
-  readonly primaryItemsLabel: string;
-  readonly primaryItems: readonly string[];
-  readonly secondaryItemsLabel: string;
-  readonly secondaryItems: readonly string[];
+  readonly activeLabel: TranslatableText | null;
+  readonly pathLabel: TranslatableText;
+  readonly primaryItemsLabel: TranslatableText;
+  readonly primaryItems: readonly TranslatableText[];
+  readonly secondaryItemsLabel: TranslatableText;
+  readonly secondaryItems: readonly TranslatableText[];
   readonly insights: readonly DpInsight[];
   readonly rowHeaders: readonly DpHeader[];
   readonly colHeaders: readonly DpHeader[];

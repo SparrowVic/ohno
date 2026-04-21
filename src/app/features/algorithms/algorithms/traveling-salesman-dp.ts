@@ -1,13 +1,102 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { TravelingSalesmanScenario } from '../utils/dp-scenarios/dp-scenarios';
 
-export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenario): Generator<SortStep> {
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.travelingSalesman.modeLabel'),
+  phases: {
+    initializeSubset: t('features.algorithms.runtime.dp.travelingSalesman.phases.initializeSubset'),
+    inspectExtension: t('features.algorithms.runtime.dp.travelingSalesman.phases.inspectExtension'),
+    commitSubset: t('features.algorithms.runtime.dp.travelingSalesman.phases.commitSubset'),
+    inspectClosure: t('features.algorithms.runtime.dp.travelingSalesman.phases.inspectClosure'),
+    pickClosingCity: t('features.algorithms.runtime.dp.travelingSalesman.phases.pickClosingCity'),
+    backtrackRoute: t('features.algorithms.runtime.dp.travelingSalesman.phases.backtrackRoute'),
+    complete: t('features.algorithms.runtime.dp.travelingSalesman.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.travelingSalesman.descriptions.initialize'),
+    inspectExtension: t(
+      'features.algorithms.runtime.dp.travelingSalesman.descriptions.inspectExtension',
+    ),
+    commitSubset: t('features.algorithms.runtime.dp.travelingSalesman.descriptions.commitSubset'),
+    inspectClosure: t('features.algorithms.runtime.dp.travelingSalesman.descriptions.inspectClosure'),
+    pickClosingCity: t(
+      'features.algorithms.runtime.dp.travelingSalesman.descriptions.pickClosingCity',
+    ),
+    backtrackRoute: t(
+      'features.algorithms.runtime.dp.travelingSalesman.descriptions.backtrackRoute',
+    ),
+    complete: t('features.algorithms.runtime.dp.travelingSalesman.descriptions.complete'),
+  },
+  insights: {
+    citiesLabel: t('features.algorithms.runtime.dp.travelingSalesman.insights.citiesLabel'),
+    subsetRowsLabel: t(
+      'features.algorithms.runtime.dp.travelingSalesman.insights.subsetRowsLabel',
+    ),
+    bestOpenRouteLabel: t(
+      'features.algorithms.runtime.dp.travelingSalesman.insights.bestOpenRouteLabel',
+    ),
+    traceDepthLabel: t(
+      'features.algorithms.runtime.dp.travelingSalesman.insights.traceDepthLabel',
+    ),
+    startLabel: t('features.algorithms.runtime.dp.travelingSalesman.insights.startLabel'),
+  },
+  labels: {
+    extensionLabel: t('features.algorithms.runtime.dp.travelingSalesman.labels.extensionLabel'),
+    stateLabel: t('features.algorithms.runtime.dp.travelingSalesman.labels.stateLabel'),
+    parentLabel: t('features.algorithms.runtime.dp.travelingSalesman.labels.parentLabel'),
+    bestTourEndLabel: t(
+      'features.algorithms.runtime.dp.travelingSalesman.labels.bestTourEndLabel',
+    ),
+    traceValue: t('features.algorithms.runtime.dp.travelingSalesman.labels.traceValue'),
+    pathValue: t('features.algorithms.runtime.dp.travelingSalesman.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.travelingSalesman.labels.pathPending'),
+    resultTour: t('features.algorithms.runtime.dp.travelingSalesman.labels.resultTour'),
+    resultPending: t('features.algorithms.runtime.dp.travelingSalesman.labels.resultPending'),
+    activeState: t('features.algorithms.runtime.dp.travelingSalesman.labels.activeState'),
+    citiesItemsLabel: t('features.algorithms.runtime.dp.travelingSalesman.labels.citiesItemsLabel'),
+    distanceLensLabel: t(
+      'features.algorithms.runtime.dp.travelingSalesman.labels.distanceLensLabel',
+    ),
+    distanceEdge: t('features.algorithms.runtime.dp.travelingSalesman.labels.distanceEdge'),
+    cityRowValue: t('features.algorithms.runtime.dp.travelingSalesman.labels.cityRowValue'),
+    pendingValue: t('features.algorithms.runtime.dp.travelingSalesman.labels.pendingValue'),
+  },
+  decisions: {
+    cheaperExpandedSubset: t(
+      'features.algorithms.runtime.dp.travelingSalesman.decisions.cheaperExpandedSubset',
+    ),
+    existingStateBetter: t(
+      'features.algorithms.runtime.dp.travelingSalesman.decisions.existingStateBetter',
+    ),
+    saveParent: t('features.algorithms.runtime.dp.travelingSalesman.decisions.saveParent'),
+    newBestCycle: t('features.algorithms.runtime.dp.travelingSalesman.decisions.newBestCycle'),
+    keepEarlierClosure: t(
+      'features.algorithms.runtime.dp.travelingSalesman.decisions.keepEarlierClosure',
+    ),
+    closesCheapestVia: t(
+      'features.algorithms.runtime.dp.travelingSalesman.decisions.closesCheapestVia',
+    ),
+    done: t('features.algorithms.runtime.dp.travelingSalesman.decisions.done'),
+    jumpToPredecessor: t(
+      'features.algorithms.runtime.dp.travelingSalesman.decisions.jumpToPredecessor',
+    ),
+  },
+} as const;
+
+export function* travelingSalesmanDpGenerator(
+  scenario: TravelingSalesmanScenario,
+): Generator<SortStep> {
   const cityCount = scenario.labels.length;
   const start = scenario.startIndex;
   const fullMask = (1 << cityCount) - 1;
-  const validMasks = Array.from({ length: fullMask + 1 }, (_, mask) => mask).filter((mask) => (mask & (1 << start)) !== 0);
+  const validMasks = Array.from({ length: fullMask + 1 }, (_, mask) => mask).filter(
+    (mask) => (mask & (1 << start)) !== 0,
+  );
   const rowIndexByMask = new Map(validMasks.map((mask, index) => [mask, index]));
   const cost = validMasks.map(() => Array.from({ length: cityCount }, () => Number.POSITIVE_INFINITY));
   const parent = validMasks.map(() => Array.from({ length: cityCount }, () => null as number | null));
@@ -22,9 +111,11 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
     cost,
     parent,
     backtrackCells,
-    description: `Seed the DP with only the start city ${scenario.labels[start]} visited and cost 0.`,
+    description: i18nText(I18N.descriptions.initialize, {
+      start: scenario.labels[start],
+    }),
     activeCodeLine: 2,
-    phaseLabel: 'Initialize start subset',
+    phaseLabel: I18N.phases.initializeSubset,
     phase: 'init',
   });
 
@@ -49,15 +140,25 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
           backtrackCells,
           activeCell: [nextRow, next],
           candidateCells: [[row, end]],
-          description: `Extend subset ${maskLabel(mask, cityCount)} from ${scenario.labels[end]} to ${scenario.labels[next]}.`,
+          description: i18nText(I18N.descriptions.inspectExtension, {
+            mask: maskLabel(mask, cityCount),
+            from: scenario.labels[end],
+            to: scenario.labels[next],
+          }),
           activeCodeLine: 5,
-          phaseLabel: 'Inspect subset extension',
+          phaseLabel: I18N.phases.inspectExtension,
           phase: 'compare',
           computation: {
-            label: `${maskLabel(mask, cityCount)} -> ${scenario.labels[next]}`,
+            label: i18nText(I18N.labels.extensionLabel, {
+              mask: maskLabel(mask, cityCount),
+              city: scenario.labels[next],
+            }),
             expression: `${cost[row]![end]!} + ${edgeCost}`,
             result: String(candidate),
-            decision: candidate < cost[nextRow]![next]! ? 'new cheaper route into expanded subset' : 'existing state stays better',
+            decision:
+              candidate < cost[nextRow]![next]!
+                ? I18N.decisions.cheaperExpandedSubset
+                : I18N.decisions.existingStateBetter,
           },
         });
 
@@ -74,15 +175,23 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
             activeCell: [nextRow, next],
             candidateCells: [[row, end]],
             activeStatus: 'improved',
-            description: `Commit improved DP state for subset ${maskLabel(nextMask, cityCount)} ending at ${scenario.labels[next]}.`,
+            description: i18nText(I18N.descriptions.commitSubset, {
+              mask: maskLabel(nextMask, cityCount),
+              city: scenario.labels[next],
+            }),
             activeCodeLine: 6,
-            phaseLabel: 'Commit expanded subset',
+            phaseLabel: I18N.phases.commitSubset,
             phase: 'settle-node',
             computation: {
-              label: `dp[${maskLabel(nextMask, cityCount)}][${scenario.labels[next]}]`,
-              expression: `from ${scenario.labels[end]}`,
+              label: i18nText(I18N.labels.stateLabel, {
+                mask: maskLabel(nextMask, cityCount),
+                city: scenario.labels[next],
+              }),
+              expression: i18nText(I18N.labels.parentLabel, {
+                city: scenario.labels[end],
+              }),
               result: String(candidate),
-              decision: `parent = ${scenario.labels[end]}`,
+              decision: I18N.decisions.saveParent,
             },
           });
         }
@@ -106,15 +215,20 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
       backtrackCells,
       activeCell: [fullRow, end],
       candidateCells: [[fullRow, end]],
-      description: `Close the tour by returning from ${scenario.labels[end]} back to ${scenario.labels[start]}.`,
+      description: i18nText(I18N.descriptions.inspectClosure, {
+        from: scenario.labels[end],
+        start: scenario.labels[start],
+      }),
       activeCodeLine: 8,
-      phaseLabel: 'Inspect cycle closure',
+      phaseLabel: I18N.phases.inspectClosure,
       phase: 'compare',
       computation: {
-        label: `close via ${scenario.labels[end]}`,
+        label: i18nText(I18N.labels.bestTourEndLabel, {
+          city: scenario.labels[end],
+        }),
         expression: `${cost[fullRow]![end]!} + ${scenario.distances[end]![start]!}`,
         result: String(candidate),
-        decision: candidate < bestTour ? 'new best Hamiltonian cycle' : 'keep earlier closure',
+        decision: candidate < bestTour ? I18N.decisions.newBestCycle : I18N.decisions.keepEarlierClosure,
       },
     });
 
@@ -132,19 +246,26 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
     backtrackCells,
     activeCell: [fullRow, bestEnd],
     activeStatus: 'improved',
-    description: `Best closure returns through ${scenario.labels[bestEnd]} with total tour cost ${bestTour}.`,
+    description: i18nText(I18N.descriptions.pickClosingCity, {
+      city: scenario.labels[bestEnd],
+      cost: bestTour,
+    }),
     activeCodeLine: 9,
-    phaseLabel: 'Pick best closing city',
+    phaseLabel: I18N.phases.pickClosingCity,
     phase: 'settle-node',
     computation: {
-      label: 'Best tour end city',
-      expression: scenario.labels.map((label, end) =>
-        end === start || !Number.isFinite(cost[fullRow]![end]!)
-          ? `${label}: —`
-          : `${label}: ${cost[fullRow]![end]! + scenario.distances[end]![start]!}`,
-      ).join(' · '),
+      label: I18N.labels.bestTourEndLabel,
+      expression: scenario.labels
+        .map((label, end) =>
+          end === start || !Number.isFinite(cost[fullRow]![end]!)
+            ? `${label}: —`
+            : `${label}: ${cost[fullRow]![end]! + scenario.distances[end]![start]!}`,
+        )
+        .join(' · '),
       result: scenario.labels[bestEnd]!,
-      decision: `tour closes cheapest via ${scenario.labels[bestEnd]}`,
+      decision: i18nText(I18N.decisions.closesCheapestVia, {
+        city: scenario.labels[bestEnd],
+      }),
     },
   });
 
@@ -165,15 +286,25 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
       activeCell: [row, cursorCity],
       activeStatus: 'backtrack',
       reverseTrace,
-      description: `Trace parent pointer from ${scenario.labels[cursorCity]} toward the start city.`,
+      description: i18nText(I18N.descriptions.backtrackRoute, {
+        city: scenario.labels[cursorCity],
+      }),
       activeCodeLine: 10,
-      phaseLabel: 'Backtrack Hamiltonian route',
+      phaseLabel: I18N.phases.backtrackRoute,
       phase: 'relax',
       computation: {
-        label: `Trace ${scenario.labels[cursorCity]}`,
-        expression: parent[row]![cursorCity] === null ? 'start' : `prev = ${scenario.labels[parent[row]![cursorCity]!]}`,
+        label: i18nText(I18N.labels.traceValue, { city: scenario.labels[cursorCity] }),
+        expression:
+          parent[row]![cursorCity] === null
+            ? 'start'
+            : i18nText(I18N.labels.parentLabel, {
+                city: scenario.labels[parent[row]![cursorCity]!],
+              }),
         result: reverseRouteLabel(scenario, reverseTrace),
-        decision: parent[row]![cursorCity] === null ? 'done' : 'jump to saved predecessor',
+        decision:
+          parent[row]![cursorCity] === null
+            ? I18N.decisions.done
+            : I18N.decisions.jumpToPredecessor,
       },
     });
 
@@ -189,9 +320,9 @@ export function* travelingSalesmanDpGenerator(scenario: TravelingSalesmanScenari
     parent,
     backtrackCells,
     reverseTrace,
-    description: `Recovered one optimal tour with Held-Karp subset DP.`,
+    description: I18N.descriptions.complete,
     activeCodeLine: 11,
-    phaseLabel: 'Tour ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -202,9 +333,9 @@ function createStep(args: {
   readonly cost: readonly (readonly number[])[];
   readonly parent: readonly (readonly (number | null)[])[];
   readonly backtrackCells: ReadonlySet<string>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
@@ -278,29 +409,49 @@ function createStep(args: {
   const bestKnown = Math.min(...args.cost[fullRow]!.filter((value) => Number.isFinite(value)));
   const reverseTrace = args.reverseTrace ?? [];
   const insights: DpInsight[] = [
-    { label: 'Cities', value: String(cityCount), tone: 'accent' },
-    { label: 'Subset rows', value: String(args.validMasks.length), tone: 'info' },
-    { label: 'Best open route', value: Number.isFinite(bestKnown) ? String(bestKnown) : 'pending', tone: 'success' },
-    { label: 'Trace depth', value: String(reverseTrace.length), tone: 'warning' },
-    { label: 'Start', value: args.scenario.labels[args.scenario.startIndex]!, tone: 'info' },
+    { label: I18N.insights.citiesLabel, value: String(cityCount), tone: 'accent' },
+    { label: I18N.insights.subsetRowsLabel, value: String(args.validMasks.length), tone: 'info' },
+    {
+      label: I18N.insights.bestOpenRouteLabel,
+      value: Number.isFinite(bestKnown) ? String(bestKnown) : I18N.labels.pendingValue,
+      tone: 'success',
+    },
+    { label: I18N.insights.traceDepthLabel, value: String(reverseTrace.length), tone: 'warning' },
+    {
+      label: I18N.insights.startLabel,
+      value: args.scenario.labels[args.scenario.startIndex]!,
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'traveling-salesman-dp',
-    modeLabel: 'Traveling Salesman DP',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     resultLabel: tspResultLabel(args.scenario, args.cost, args.validMasks),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.validMasks.length} × ${cityCount}`,
-    activeLabel: args.activeCell ? `${maskLabel(args.validMasks[args.activeCell[0]]!, cityCount)} -> ${args.scenario.labels[args.activeCell[1]]}` : null,
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeState, {
+            mask: maskLabel(args.validMasks[args.activeCell[0]]!, cityCount),
+            city: args.scenario.labels[args.activeCell[1]],
+          })
+        : null,
     pathLabel: finalTourLabel(args.scenario, reverseTrace),
-    primaryItemsLabel: 'Cities',
+    primaryItemsLabel: I18N.labels.citiesItemsLabel,
     primaryItems: args.scenario.labels.map((label, index) => `${label}${index === args.scenario.startIndex ? ' (start)' : ''}`),
-    secondaryItemsLabel: 'Distance lens',
+    secondaryItemsLabel: I18N.labels.distanceLensLabel,
     secondaryItems: args.activeCell
-      ? args.scenario.distances[args.activeCell[1]]!.map((value, index) => `${args.scenario.labels[args.activeCell![1]]}→${args.scenario.labels[index]}=${value}`)
-      : args.scenario.labels.map((label, index) => `${label} row`),
+      ? args.scenario.distances[args.activeCell[1]]!.map((value, index) =>
+          i18nText(I18N.labels.distanceEdge, {
+            from: args.scenario.labels[args.activeCell![1]],
+            to: args.scenario.labels[index],
+            value,
+          }),
+        )
+      : args.scenario.labels.map((label) => i18nText(I18N.labels.cityRowValue, { city: label })),
     insights,
     rowHeaders,
     colHeaders,
@@ -320,27 +471,44 @@ function memberLabel(mask: number, labels: readonly string[]): string {
   return labels.filter((_, index) => (mask & (1 << index)) !== 0).join(' · ');
 }
 
-function reverseRouteLabel(scenario: TravelingSalesmanScenario, reverseTrace: readonly number[]): string {
-  if (reverseTrace.length === 0) return `Trace: ${scenario.labels[scenario.startIndex]}`;
-  return `Trace: ${reverseTrace.map((index) => scenario.labels[index]!).join(' ← ')} ← ${scenario.labels[scenario.startIndex]}`;
+function reverseRouteLabel(
+  scenario: TravelingSalesmanScenario,
+  reverseTrace: readonly number[],
+): TranslatableText {
+  const trace = reverseTrace.length === 0
+    ? scenario.labels[scenario.startIndex]!
+    : `${reverseTrace.map((index) => scenario.labels[index]!).join(' ← ')} ← ${scenario.labels[scenario.startIndex]!}`;
+  return i18nText(I18N.labels.traceValue, { city: trace });
 }
 
-function finalTourLabel(scenario: TravelingSalesmanScenario, reverseTrace: readonly number[]): string {
-  if (reverseTrace.length === 0) return `Tour: ${scenario.labels[scenario.startIndex]} → ...`;
+function finalTourLabel(
+  scenario: TravelingSalesmanScenario,
+  reverseTrace: readonly number[],
+): TranslatableText {
+  if (reverseTrace.length === 0) return I18N.labels.pathPending;
   const ordered = [...reverseTrace].reverse();
-  return `Tour: ${[scenario.labels[scenario.startIndex]!, ...ordered.map((index) => scenario.labels[index]!), scenario.labels[scenario.startIndex]!].join(' → ')}`;
+  return i18nText(I18N.labels.pathValue, {
+    tour: [
+      scenario.labels[scenario.startIndex]!,
+      ...ordered.map((index) => scenario.labels[index]!),
+      scenario.labels[scenario.startIndex]!,
+    ].join(' → '),
+  });
 }
 
 function tspResultLabel(
   scenario: TravelingSalesmanScenario,
   cost: readonly (readonly number[])[],
   validMasks: readonly number[],
-): string {
+): TranslatableText {
   const fullRow = validMasks.length - 1;
   let best = Number.POSITIVE_INFINITY;
   for (let end = 0; end < scenario.labels.length; end++) {
     if (end === scenario.startIndex || !Number.isFinite(cost[fullRow]![end]!)) continue;
     best = Math.min(best, cost[fullRow]![end]! + scenario.distances[end]![scenario.startIndex]!);
   }
-  return Number.isFinite(best) ? `tour = ${best}` : 'tour pending';
+
+  return Number.isFinite(best)
+    ? i18nText(I18N.labels.resultTour, { value: best })
+    : I18N.labels.resultPending;
 }

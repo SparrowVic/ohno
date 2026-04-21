@@ -13,10 +13,12 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
-import { APP_LANG } from '../../../core/i18n/app-lang';
-import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { getStructureFacetLabelKey } from '../../../core/i18n/catalog-labels';
+import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
@@ -100,6 +102,7 @@ function createCardStyleVars(seed: string, difficulty: Difficulty): Record<strin
 })
 export class StructureCard implements AfterViewInit {
   private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly injector = inject(Injector);
@@ -112,57 +115,42 @@ export class StructureCard implements AfterViewInit {
   readonly shaderSeed = computed(() => `structure:${this.structure().id}`);
   readonly isInsane = computed(() => this.structure().difficulty === Difficulty.UltraHard);
   readonly showShader = computed(
-    () =>
-      this.isInsane() &&
-      this.inViewportState() &&
-      this.shaderPool.has(this.shaderSeed()),
+    () => this.isInsane() && this.inViewportState() && this.shaderPool.has(this.shaderSeed()),
   );
-  readonly facetLabel = computed(() =>
-    formatFacetLabel(this.structure().subcategory || this.structure().category),
-  );
+  readonly facetLabel = computed(() => {
+    const facet = this.structure().subcategory || this.structure().category;
+    const key = getStructureFacetLabelKey(facet);
+    return key ? this.translate(key) : formatFacetLabel(facet);
+  });
   readonly difficultyLabel = computed(() =>
-    getDifficultyLabel(this.structure().difficulty, this.language.activeLang()),
+    this.translate(getDifficultyLabelKey(this.structure().difficulty)),
   );
   readonly statusLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? this.structure().implemented
-        ? 'Interactive'
-        : 'Coming soon'
-      : this.structure().implemented
-        ? 'Interaktywna'
-        : 'Wkrótce',
+    this.translate(
+      this.structure().implemented
+        ? t('features.structures.card.status.interactive')
+        : t('features.structures.card.status.comingSoon'),
+    ),
   );
   readonly ctaLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? this.structure().implemented
-        ? 'Open module'
-        : 'In roadmap'
-      : this.structure().implemented
-        ? 'Otwórz moduł'
-        : 'W roadmapie',
+    this.translate(
+      this.structure().implemented
+        ? t('features.structures.card.cta.openModule')
+        : t('features.structures.card.cta.inRoadmap'),
+    ),
   );
   readonly previewHint = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? this.structure().implemented
-        ? 'Interactive model ready'
-        : 'Planned deep-dive module'
-      : this.structure().implemented
-        ? 'Interaktywny model gotowy'
-        : 'Planowany moduł deep-dive',
+    this.translate(
+      this.structure().implemented
+        ? t('features.structures.card.preview.readyHint')
+        : t('features.structures.card.preview.plannedHint'),
+    ),
   );
-  readonly roadmapChipLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN ? 'Roadmap' : 'Roadmap',
-  );
+  readonly roadmapChipLabel = computed(() => this.translate(t('shared.roadmap.chip')));
   readonly roadmapTitle = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Module locked for now'
-      : 'Moduł chwilowo zablokowany',
+    this.translate(t('features.structures.card.roadmap.title')),
   );
-  readonly roadmapHint = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'This structure is planned and visible in the roadmap, but its interactive module is not ready yet.'
-      : 'Ta struktura jest już widoczna na roadmapie, ale jej interaktywny moduł nie jest jeszcze gotowy.',
-  );
+  readonly roadmapHint = computed(() => this.translate(t('features.structures.card.roadmap.hint')));
   readonly displayTags = computed(() => this.structure().tags.slice(0, 3));
   readonly hiddenTagsCount = computed(
     () => this.structure().tags.length - this.displayTags().length,
@@ -213,5 +201,10 @@ export class StructureCard implements AfterViewInit {
       },
       { injector: this.injector },
     );
+  }
+
+  private translate(key: string, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

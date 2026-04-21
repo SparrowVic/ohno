@@ -1,4 +1,3 @@
-import { APP_LANG, AppLang } from '../../../../core/i18n/app-lang';
 import {
   ALGORITHM_TRAIT_GROUPS,
   ALGORITHM_TRAITS,
@@ -27,9 +26,13 @@ export interface TraitGroupView {
   readonly options: readonly TraitOptionView[];
 }
 
+type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
+
 const TRAIT_DEFINITION_BY_ID = new Map(ALGORITHM_TRAITS.map((trait) => [trait.id, trait] as const));
 
-export function buildTraitCounts(items: readonly AlgorithmItem[]): ReadonlyMap<AlgorithmTraitId, number> {
+export function buildTraitCounts(
+  items: readonly AlgorithmItem[],
+): ReadonlyMap<AlgorithmTraitId, number> {
   const counts = new Map<AlgorithmTraitId, number>();
 
   for (const item of items) {
@@ -42,9 +45,9 @@ export function buildTraitCounts(items: readonly AlgorithmItem[]): ReadonlyMap<A
 }
 
 export function buildTraitGroupsView(
-  lang: AppLang,
   selectedTraits: readonly AlgorithmTraitId[],
   counts: ReadonlyMap<AlgorithmTraitId, number>,
+  translate: TranslateFn,
 ): readonly TraitGroupView[] {
   const selected = new Set(selectedTraits);
 
@@ -52,7 +55,7 @@ export function buildTraitGroupsView(
     const options = ALGORITHM_TRAITS.filter((trait) => trait.group === group.id)
       .map<TraitOptionView>((trait) => ({
         id: trait.id,
-        label: lang === APP_LANG.EN ? trait.label : trait.labelPl,
+        label: translate(trait.labelKey),
         count: counts.get(trait.id) ?? 0,
         selected: selected.has(trait.id),
       }))
@@ -60,7 +63,7 @@ export function buildTraitGroupsView(
 
     return {
       id: group.id,
-      label: lang === APP_LANG.EN ? group.label : group.labelPl,
+      label: translate(group.labelKey),
       options,
     };
   }).filter((group) => group.options.length > 0);
@@ -116,25 +119,25 @@ export function filterItemsByTraits(
 }
 
 export function buildPageStats(
-  lang: AppLang,
   totalItems: number,
   implementedCount: number,
   trackCount: number,
+  translate: TranslateFn,
 ): readonly PageStat[] {
   return [
     {
       value: String(totalItems),
-      label: lang === APP_LANG.EN ? 'Visible now' : 'Widoczne teraz',
+      label: translate('features.algorithms.page.stats.visibleNow'),
       tone: 'accent',
     },
     {
       value: String(implementedCount),
-      label: lang === APP_LANG.EN ? 'Interactive' : 'Interaktywne',
+      label: translate('features.algorithms.page.stats.interactive'),
       tone: 'success',
     },
     {
       value: String(trackCount),
-      label: lang === APP_LANG.EN ? 'Tracks' : 'Ścieżki',
+      label: translate('features.algorithms.page.stats.tracks'),
       tone: 'neutral',
     },
   ];

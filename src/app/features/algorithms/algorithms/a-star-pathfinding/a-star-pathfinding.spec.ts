@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import type { AStarScenario } from '../../utils/grid-scenarios/grid-scenarios';
 import { cellId } from '../../utils/grid-scenarios/grid-scenarios';
@@ -7,6 +8,11 @@ import { aStarPathfindingGenerator } from './a-star-pathfinding';
 
 function collectSteps(scenario: AStarScenario): SortStep[] {
   return [...aStarPathfindingGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('a-star-pathfinding', () => {
@@ -23,9 +29,13 @@ describe('a-star-pathfinding', () => {
     const finalStep = steps.at(-1);
 
     expect(finalStep?.phase).toBe('graph-complete');
-    expect(finalStep?.grid?.statusLabel).toBe('Path found');
+    expect(keyOf(finalStep?.grid?.statusLabel)).toBe(
+      'features.algorithms.runtime.grid.aStarPathfinding.statuses.pathFound',
+    );
     expect(finalStep?.grid?.resultCount).toBe(7);
-    expect(finalStep?.description).toContain('Goal reached');
+    expect(keyOf(finalStep?.description)).toBe(
+      'features.algorithms.runtime.grid.aStarPathfinding.descriptions.goalReached',
+    );
     expect(finalStep?.grid?.cells.find((cell) => cell.id === cellId(3, 3))?.status).toBe('path');
     expect(steps.some((step) => step.phase === 'relax')).toBe(true);
   });
@@ -42,8 +52,12 @@ describe('a-star-pathfinding', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.grid?.statusLabel).toBe('No path found');
+    expect(keyOf(finalStep?.grid?.statusLabel)).toBe(
+      'features.algorithms.runtime.grid.aStarPathfinding.statuses.noPathFound',
+    );
     expect(finalStep?.grid?.resultCount).toBe(0);
-    expect(finalStep?.description).toContain('without reaching the goal');
+    expect(keyOf(finalStep?.description)).toBe(
+      'features.algorithms.runtime.grid.aStarPathfinding.descriptions.exhausted',
+    );
   });
 });

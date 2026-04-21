@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
 
@@ -5,6 +8,22 @@ interface BucketEntry {
   readonly value: number;
   readonly originalIndex: number;
 }
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.bucketSort.descriptions.start'),
+    placeInBucket: t('features.algorithms.runtime.sort.bucketSort.descriptions.placeInBucket'),
+    sortBucket: t('features.algorithms.runtime.sort.bucketSort.descriptions.sortBucket'),
+    insertWithinBucket: t(
+      'features.algorithms.runtime.sort.bucketSort.descriptions.insertWithinBucket',
+    ),
+    compareWithinBucket: t(
+      'features.algorithms.runtime.sort.bucketSort.descriptions.compareWithinBucket',
+    ),
+    writeFromBucket: t('features.algorithms.runtime.sort.bucketSort.descriptions.writeFromBucket'),
+    complete: t('features.algorithms.runtime.sort.bucketSort.descriptions.complete'),
+  },
+} as const;
 
 export function* bucketSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -18,7 +37,7 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start bucket sort (n=${size}, buckets=${bucketCount})`,
+    description: i18nText(I18N.descriptions.start, { size, bucketCount }),
     boundary: 0,
     phase: 'init',
   });
@@ -31,7 +50,7 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
     yield createArrayStep({
       array: arr,
       activeCodeLine: 5,
-      description: `Place ${value} from index ${index} into bucket ${bucketIndex}.`,
+      description: i18nText(I18N.descriptions.placeInBucket, { value, index, bucketIndex }),
       comparing: [index, index],
       boundary: 0,
       phase: 'compare',
@@ -50,7 +69,7 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
     yield createArrayStep({
       array: output,
       activeCodeLine: 8,
-      description: `Sort bucket ${bucketIndex} locally before writing it back.`,
+      description: i18nText(I18N.descriptions.sortBucket, { bucketIndex }),
       comparing: [bucket[0]!.originalIndex, bucket[bucket.length - 1]!.originalIndex],
       sorted: prefixSorted(writeIndex),
       boundary: writeIndex,
@@ -64,7 +83,10 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
       yield createArrayStep({
         array: output,
         activeCodeLine: 8,
-        description: `Insert ${entry.value} into its sorted position inside bucket ${bucketIndex}.`,
+        description: i18nText(I18N.descriptions.insertWithinBucket, {
+          value: entry.value,
+          bucketIndex,
+        }),
         comparing: [bucket[scan]!.originalIndex, entry.originalIndex],
         sorted: prefixSorted(writeIndex),
         boundary: writeIndex,
@@ -75,7 +97,11 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
         yield createArrayStep({
           array: output,
           activeCodeLine: 8,
-          description: `Compare ${bucket[scan]!.value} with ${entry.value} inside bucket ${bucketIndex}.`,
+          description: i18nText(I18N.descriptions.compareWithinBucket, {
+            leftValue: bucket[scan]!.value,
+            rightValue: entry.value,
+            bucketIndex,
+          }),
           comparing: [bucket[scan]!.originalIndex, entry.originalIndex],
           sorted: prefixSorted(writeIndex),
           boundary: writeIndex,
@@ -95,7 +121,11 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
       yield createArrayStep({
         array: output,
         activeCodeLine: 10,
-        description: `Write ${entry.value} from bucket ${bucketIndex} into index ${writeIndex}.`,
+        description: i18nText(I18N.descriptions.writeFromBucket, {
+          value: entry.value,
+          bucketIndex,
+          index: writeIndex,
+        }),
         comparing: [writeIndex, writeIndex],
         sorted: prefixSorted(writeIndex + 1),
         boundary: writeIndex + 1,
@@ -109,7 +139,7 @@ export function* bucketSortGenerator(input: readonly number[]): Generator<SortSt
   yield createArrayStep({
     array: output,
     activeCodeLine: 13,
-    description: 'Bucket sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',

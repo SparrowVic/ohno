@@ -1,7 +1,53 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep } from '../dp-step';
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { FibonacciScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.fibonacci.modeLabel'),
+  phases: {
+    initializeBaseTerms: t('features.algorithms.runtime.dp.fibonacci.phases.initializeBaseTerms'),
+    inspectParents: t('features.algorithms.runtime.dp.fibonacci.phases.inspectParents'),
+    commitTerm: t('features.algorithms.runtime.dp.fibonacci.phases.commitTerm'),
+    complete: t('features.algorithms.runtime.dp.fibonacci.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.fibonacci.descriptions.initialize'),
+    inspectParents: t('features.algorithms.runtime.dp.fibonacci.descriptions.inspectParents'),
+    commitTerm: t('features.algorithms.runtime.dp.fibonacci.descriptions.commitTerm'),
+    complete: t('features.algorithms.runtime.dp.fibonacci.descriptions.complete'),
+  },
+  insights: {
+    nLabel: t('features.algorithms.runtime.dp.fibonacci.insights.nLabel'),
+    resultLabel: t('features.algorithms.runtime.dp.fibonacci.insights.resultLabel'),
+    growthLabel: t('features.algorithms.runtime.dp.fibonacci.insights.growthLabel'),
+    baseLabel: t('features.algorithms.runtime.dp.fibonacci.insights.baseLabel'),
+    stripLabel: t('features.algorithms.runtime.dp.fibonacci.insights.stripLabel'),
+  },
+  labels: {
+    resultValue: t('features.algorithms.runtime.dp.fibonacci.labels.resultValue'),
+    activeTerm: t('features.algorithms.runtime.dp.fibonacci.labels.activeTerm'),
+    pathValue: t('features.algorithms.runtime.dp.fibonacci.labels.pathValue'),
+    termIndicesLabel: t('features.algorithms.runtime.dp.fibonacci.labels.termIndicesLabel'),
+    cachedValuesLabel: t('features.algorithms.runtime.dp.fibonacci.labels.cachedValuesLabel'),
+    growthPair: t('features.algorithms.runtime.dp.fibonacci.labels.growthPair'),
+    seedValue: t('features.algorithms.runtime.dp.fibonacci.labels.seedValue'),
+    baseValue: t('features.algorithms.runtime.dp.fibonacci.labels.baseValue'),
+    stripValue: t('features.algorithms.runtime.dp.fibonacci.labels.stripValue'),
+    termFormula: t('features.algorithms.runtime.dp.fibonacci.labels.termFormula'),
+  },
+  decisions: {
+    combineAdjacentCachedTerms: t(
+      'features.algorithms.runtime.dp.fibonacci.decisions.combineAdjacentCachedTerms',
+    ),
+    cacheFilledForFutureTerms: t(
+      'features.algorithms.runtime.dp.fibonacci.decisions.cacheFilledForFutureTerms',
+    ),
+  },
+} as const;
 
 export function* fibonacciDpGenerator(scenario: FibonacciScenario): Generator<SortStep> {
   const fib = Array.from({ length: scenario.n + 1 }, () => 0);
@@ -10,9 +56,9 @@ export function* fibonacciDpGenerator(scenario: FibonacciScenario): Generator<So
   yield createStep({
     scenario,
     fib,
-    description: 'Seed F(0) = 0 and F(1) = 1 before tabulating larger terms.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize base terms',
+    phaseLabel: I18N.phases.initializeBaseTerms,
     phase: 'init',
   });
 
@@ -22,15 +68,15 @@ export function* fibonacciDpGenerator(scenario: FibonacciScenario): Generator<So
       fib,
       activeIndex: index,
       candidateIndexes: [index - 1, index - 2],
-      description: `F(${index}) is the sum of the two previous Fibonacci terms.`,
+      description: i18nText(I18N.descriptions.inspectParents, { index }),
       activeCodeLine: 4,
-      phaseLabel: 'Inspect recurrence parents',
+      phaseLabel: I18N.phases.inspectParents,
       phase: 'compare',
       computation: {
-        label: `F(${index})`,
+        label: i18nText(I18N.labels.termFormula, { index }),
         expression: `${fib[index - 1]!} + ${fib[index - 2]!}`,
         result: String(fib[index - 1]! + fib[index - 2]!),
-        decision: 'combine adjacent cached terms',
+        decision: I18N.decisions.combineAdjacentCachedTerms,
       },
     });
 
@@ -42,15 +88,15 @@ export function* fibonacciDpGenerator(scenario: FibonacciScenario): Generator<So
       activeIndex: index,
       candidateIndexes: [index - 1, index - 2],
       activeStatus: 'improved',
-      description: `Store F(${index}) in the table so later terms can reuse it instantly.`,
+      description: i18nText(I18N.descriptions.commitTerm, { index }),
       activeCodeLine: 5,
-      phaseLabel: 'Commit Fibonacci term',
+      phaseLabel: I18N.phases.commitTerm,
       phase: 'settle-node',
       computation: {
-        label: `F(${index})`,
+        label: i18nText(I18N.labels.termFormula, { index }),
         expression: `${fib[index - 1]!} + ${fib[index - 2]!}`,
         result: String(fib[index]!),
-        decision: 'cache filled for future terms',
+        decision: I18N.decisions.cacheFilledForFutureTerms,
       },
     });
   }
@@ -60,9 +106,9 @@ export function* fibonacciDpGenerator(scenario: FibonacciScenario): Generator<So
     fib,
     activeIndex: scenario.n,
     activeStatus: 'chosen',
-    description: `Tabulation finishes with F(${scenario.n}) ready at the end of the strip.`,
+    description: i18nText(I18N.descriptions.complete, { index: scenario.n }),
     activeCodeLine: 6,
-    phaseLabel: 'Fibonacci ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -70,9 +116,9 @@ export function* fibonacciDpGenerator(scenario: FibonacciScenario): Generator<So
 function createStep(args: {
   readonly scenario: FibonacciScenario;
   readonly fib: readonly number[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeIndex?: number;
   readonly candidateIndexes?: readonly number[];
@@ -113,26 +159,50 @@ function createStep(args: {
   }));
 
   const insights: DpInsight[] = [
-    { label: 'n', value: String(args.scenario.n), tone: 'accent' },
-    { label: 'F(n)', value: String(args.fib[args.scenario.n] ?? 0), tone: 'success' },
-    { label: 'Growth', value: args.activeIndex && args.activeIndex >= 2 ? `${args.fib[args.activeIndex - 2]} → ${args.fib[args.activeIndex - 1]}` : 'seed', tone: 'warning' },
-    { label: 'Base', value: '0 / 1', tone: 'info' },
-    { label: 'Strip', value: `1 × ${args.fib.length}`, tone: 'info' },
+    { label: I18N.insights.nLabel, value: String(args.scenario.n), tone: 'accent' },
+    {
+      label: I18N.insights.resultLabel,
+      value: String(args.fib[args.scenario.n] ?? 0),
+      tone: 'success',
+    },
+    {
+      label: I18N.insights.growthLabel,
+      value:
+        args.activeIndex && args.activeIndex >= 2
+          ? i18nText(I18N.labels.growthPair, {
+              left: args.fib[args.activeIndex - 2],
+              right: args.fib[args.activeIndex - 1],
+            })
+          : I18N.labels.seedValue,
+      tone: 'warning',
+    },
+    { label: I18N.insights.baseLabel, value: I18N.labels.baseValue, tone: 'info' },
+    {
+      label: I18N.insights.stripLabel,
+      value: i18nText(I18N.labels.stripValue, { length: args.fib.length }),
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'fibonacci-dp',
-    modeLabel: 'Fibonacci DP',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `F(${args.scenario.n}) = ${args.fib[args.scenario.n] ?? 0}`,
+    resultLabel: i18nText(I18N.labels.resultValue, {
+      index: args.scenario.n,
+      value: args.fib[args.scenario.n] ?? 0,
+    }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `1 × ${args.fib.length}`,
-    activeLabel: args.activeIndex === undefined ? null : `term ${args.activeIndex}`,
-    pathLabel: `Sequence: ${args.fib.join(' · ')}`,
-    primaryItemsLabel: 'Term indices',
+    activeLabel:
+      args.activeIndex === undefined
+        ? null
+        : i18nText(I18N.labels.activeTerm, { index: args.activeIndex }),
+    pathLabel: i18nText(I18N.labels.pathValue, { sequence: args.fib.join(' · ') }),
+    primaryItemsLabel: I18N.labels.termIndicesLabel,
     primaryItems: args.fib.map((_, index) => `F(${index})`),
-    secondaryItemsLabel: 'Cached values',
+    secondaryItemsLabel: I18N.labels.cachedValuesLabel,
     secondaryItems: args.fib.map((value, index) => `F${index}=${value}`),
     insights,
     rowHeaders,

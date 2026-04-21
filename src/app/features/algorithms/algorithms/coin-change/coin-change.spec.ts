@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { coinChangeGenerator } from './coin-change';
 import type { SortStep } from '../../models/sort-step';
 import type { CoinChangeScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: CoinChangeScenario): SortStep[] {
   return [...coinChangeGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('coin-change', () => {
@@ -25,10 +35,20 @@ describe('coin-change', () => {
     expect(phases).toContain('relax');
     expect(phases).toContain('skip-relax');
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('min coins = 2');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Coins: 3 + 3');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.coinChange.labels.resultMinCoins',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe('2');
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.coinChange.labels.coinPath',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.coins).toBe('3 + 3');
     expect(
-      steps.filter((step) => step.dp?.phaseLabel === 'Backtrack take').length,
+      steps.filter(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.coinChange.phases.backtrackTake',
+      ).length,
     ).toBe(2);
   });
 
@@ -43,8 +63,10 @@ describe('coin-change', () => {
     });
 
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('min coins = ∞');
-    expect(steps.at(-1)?.description).toContain('unreachable');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe('∞');
+    expect(keyOf(steps.at(-1)?.description)).toBe(
+      'features.algorithms.runtime.dp.coinChange.descriptions.unreachable',
+    );
     expect(
       steps.some((step) => step.phase === 'relax' || step.phase === 'skip-relax'),
     ).toBe(false);

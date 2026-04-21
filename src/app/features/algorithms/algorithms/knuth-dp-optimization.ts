@@ -1,9 +1,80 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { KnuthDpScenario } from '../utils/dp-scenarios/dp-scenarios';
 
-export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Generator<SortStep> {
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.modeLabel'),
+  phases: {
+    initializeDiagonal: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.phases.initializeDiagonal',
+    ),
+    inspectWindow: t('features.algorithms.runtime.dp.knuthDpOptimization.phases.inspectWindow'),
+    commitInterval: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.phases.commitInterval',
+    ),
+    traceLeaf: t('features.algorithms.runtime.dp.knuthDpOptimization.phases.traceLeaf'),
+    traceSplit: t('features.algorithms.runtime.dp.knuthDpOptimization.phases.traceSplit'),
+    complete: t('features.algorithms.runtime.dp.knuthDpOptimization.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.knuthDpOptimization.descriptions.initialize'),
+    inspectWindow: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.descriptions.inspectWindow',
+    ),
+    commitInterval: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.descriptions.commitInterval',
+    ),
+    complete: t('features.algorithms.runtime.dp.knuthDpOptimization.descriptions.complete'),
+    traceLeaf: t('features.algorithms.runtime.dp.knuthDpOptimization.descriptions.traceLeaf'),
+    traceSplit: t('features.algorithms.runtime.dp.knuthDpOptimization.descriptions.traceSplit'),
+  },
+  insights: {
+    filesLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.insights.filesLabel'),
+    totalCostLabel: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.insights.totalCostLabel',
+    ),
+    traceCellsLabel: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.insights.traceCellsLabel',
+    ),
+    weightsLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.insights.weightsLabel'),
+    shapeLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.insights.shapeLabel'),
+  },
+  labels: {
+    resultCost: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.resultCost'),
+    resultPending: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.resultPending'),
+    activeInterval: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.activeInterval'),
+    pathValue: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.pathPending'),
+    fileSizesLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.fileSizesLabel'),
+    optWindowsLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.optWindowsLabel'),
+    intervalLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.intervalLabel'),
+    cellLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.cellLabel'),
+    leafLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.leafLabel'),
+    traceLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.traceLabel'),
+    upperTriangle: t('features.algorithms.runtime.dp.knuthDpOptimization.labels.upperTriangle'),
+  },
+  decisions: {
+    newBestSplit: t('features.algorithms.runtime.dp.knuthDpOptimization.decisions.newBestSplit'),
+    keepEarlierSplit: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.decisions.keepEarlierSplit',
+    ),
+    saveOptSplit: t('features.algorithms.runtime.dp.knuthDpOptimization.decisions.saveOptSplit'),
+    noFurtherSplit: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.decisions.noFurtherSplit',
+    ),
+    openSubintervals: t(
+      'features.algorithms.runtime.dp.knuthDpOptimization.decisions.openSubintervals',
+    ),
+  },
+} as const;
+
+export function* knuthDpOptimizationGenerator(
+  scenario: KnuthDpScenario,
+): Generator<SortStep> {
   const files = scenario.files;
   const n = files.length;
   const prefix = [0];
@@ -22,9 +93,9 @@ export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Genera
     dp,
     opt,
     traced,
-    description: 'Set the diagonal to zero because a single file needs no merge cost.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize diagonal',
+    phaseLabel: I18N.phases.initializeDiagonal,
     phase: 'init',
   });
 
@@ -47,15 +118,23 @@ export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Genera
           traced,
           activeCell: [left, right],
           candidateCells: [[left, split], [split + 1, right]],
-          description: `Knuth narrows the split search for interval ${left + 1}..${right + 1} to ${low + 1}..${high + 1}.`,
+          description: i18nText(I18N.descriptions.inspectWindow, {
+            left: left + 1,
+            right: right + 1,
+            low: low + 1,
+            high: high + 1,
+          }),
           activeCodeLine: 5,
-          phaseLabel: 'Inspect narrowed split window',
+          phaseLabel: I18N.phases.inspectWindow,
           phase: 'compare',
           computation: {
-            label: `files ${left + 1}..${right + 1}`,
+            label: i18nText(I18N.labels.intervalLabel, {
+              left: left + 1,
+              right: right + 1,
+            }),
             expression: `${dp[left]![split] ?? 0} + ${dp[split + 1]![right] ?? 0} + ${mergeWeight}`,
             result: String(candidate),
-            decision: candidate < bestCost ? 'new best split inside Knuth window' : 'keep earlier split',
+            decision: candidate < bestCost ? I18N.decisions.newBestSplit : I18N.decisions.keepEarlierSplit,
           },
         });
 
@@ -75,15 +154,19 @@ export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Genera
         traced,
         activeCell: [left, right],
         activeStatus: 'improved',
-        description: `Commit dp[${left + 1}][${right + 1}] with split ${bestSplit + 1}.`,
+        description: i18nText(I18N.descriptions.commitInterval, {
+          left: left + 1,
+          right: right + 1,
+          split: bestSplit + 1,
+        }),
         activeCodeLine: 6,
-        phaseLabel: 'Commit interval answer',
+        phaseLabel: I18N.phases.commitInterval,
         phase: 'settle-node',
         computation: {
-          label: `dp[${left + 1}][${right + 1}]`,
+          label: i18nText(I18N.labels.cellLabel, { left: left + 1, right: right + 1 }),
           expression: `window ${low + 1}..${high + 1}`,
           result: String(bestCost),
-          decision: `opt split saved as ${bestSplit + 1}`,
+          decision: i18nText(I18N.decisions.saveOptSplit, { split: bestSplit + 1 }),
         },
       });
     }
@@ -96,9 +179,9 @@ export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Genera
     dp,
     opt,
     traced,
-    description: `Recovered one optimal merge plan using the saved Knuth split windows.`,
+    description: I18N.descriptions.complete,
     activeCodeLine: 8,
-    phaseLabel: 'Merge plan ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 
@@ -112,15 +195,15 @@ export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Genera
         traced,
         activeCell: [left, right],
         activeStatus: 'backtrack',
-        description: `File ${left + 1} is a leaf in the optimal merge tree.`,
+        description: i18nText(I18N.descriptions.traceLeaf, { index: left + 1 }),
         activeCodeLine: 7,
-        phaseLabel: 'Trace merge leaf',
+        phaseLabel: I18N.phases.traceLeaf,
         phase: 'relax',
         computation: {
-          label: `file ${left + 1}`,
+          label: i18nText(I18N.labels.leafLabel, { index: left + 1 }),
           expression: 'leaf',
           result: mergePlanLabel(opt, 0, n - 1),
-          decision: 'no further split needed',
+          decision: I18N.decisions.noFurtherSplit,
         },
       });
       return;
@@ -135,15 +218,19 @@ export function* knuthDpOptimizationGenerator(scenario: KnuthDpScenario): Genera
       activeCell: [left, right],
       candidateCells: [[left, split], [split + 1, right]],
       activeStatus: 'backtrack',
-      description: `Interval ${left + 1}..${right + 1} expands through saved split ${split + 1}.`,
+      description: i18nText(I18N.descriptions.traceSplit, {
+        left: left + 1,
+        right: right + 1,
+        split: split + 1,
+      }),
       activeCodeLine: 7,
-      phaseLabel: 'Trace merge split',
+      phaseLabel: I18N.phases.traceSplit,
       phase: 'relax',
       computation: {
-        label: `trace ${left + 1}..${right + 1}`,
+        label: i18nText(I18N.labels.traceLabel, { left: left + 1, right: right + 1 }),
         expression: `split = ${split + 1}`,
         result: mergePlanLabel(opt, 0, n - 1),
-        decision: 'open left and right subintervals',
+        decision: I18N.decisions.openSubintervals,
       },
     });
 
@@ -157,9 +244,9 @@ function createStep(args: {
   readonly dp: readonly (readonly (number | null)[])[];
   readonly opt: readonly (readonly (number | null)[])[];
   readonly traced: ReadonlySet<string>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
@@ -217,26 +304,36 @@ function createStep(args: {
 
   const best = args.dp[0]![args.scenario.files.length - 1];
   const insights: DpInsight[] = [
-    { label: 'Files', value: String(args.scenario.files.length), tone: 'accent' },
-    { label: 'Total merge cost', value: best === null ? 'pending' : String(best), tone: 'success' },
-    { label: 'Trace cells', value: String(args.traced.size), tone: 'warning' },
-    { label: 'Weights', value: args.scenario.files.join(' · '), tone: 'info' },
-    { label: 'Shape', value: 'upper triangle', tone: 'info' },
+    { label: I18N.insights.filesLabel, value: String(args.scenario.files.length), tone: 'accent' },
+    {
+      label: I18N.insights.totalCostLabel,
+      value: best === null ? I18N.labels.resultPending : String(best),
+      tone: 'success',
+    },
+    { label: I18N.insights.traceCellsLabel, value: String(args.traced.size), tone: 'warning' },
+    { label: I18N.insights.weightsLabel, value: args.scenario.files.join(' · '), tone: 'info' },
+    { label: I18N.insights.shapeLabel, value: I18N.labels.upperTriangle, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'knuth-dp-optimization',
-    modeLabel: 'Knuth DP Optimization',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: best === null ? 'merge pending' : `cost = ${best}`,
+    resultLabel: best === null ? I18N.labels.resultPending : i18nText(I18N.labels.resultCost, { value: best }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.scenario.files.length} × ${args.scenario.files.length}`,
-    activeLabel: args.activeCell ? `F${args.activeCell[0] + 1}..F${args.activeCell[1] + 1}` : null,
-    pathLabel: mergePlanLabel(args.opt, 0, args.scenario.files.length - 1),
-    primaryItemsLabel: 'File sizes',
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeInterval, {
+            left: args.activeCell[0] + 1,
+            right: args.activeCell[1] + 1,
+          })
+        : null,
+    pathLabel: mergePlanLabelLabel(args.opt, 0, args.scenario.files.length - 1),
+    primaryItemsLabel: I18N.labels.fileSizesLabel,
     primaryItems: args.scenario.files.map((file, index) => `F${index + 1}:${file}`),
-    secondaryItemsLabel: 'Opt windows',
+    secondaryItemsLabel: I18N.labels.optWindowsLabel,
     secondaryItems: args.scenario.files.map((_, index) => `opt row ${index + 1}`),
     insights,
     rowHeaders: headers,
@@ -254,10 +351,23 @@ function rangeSum(prefix: readonly number[], left: number, right: number): numbe
   return prefix[right + 1]! - prefix[left]!;
 }
 
-function mergePlanLabel(opt: readonly (readonly (number | null)[])[], left: number, right: number): string {
+function mergePlanLabel(
+  opt: readonly (readonly (number | null)[])[],
+  left: number,
+  right: number,
+): string {
   if (left > right) return 'pending';
   if (left === right) return `F${left + 1}`;
   const split = opt[left]![right];
   if (split === null) return `F${left + 1}..F${right + 1}`;
   return `(${mergePlanLabel(opt, left, split)} + ${mergePlanLabel(opt, split + 1, right)})`;
+}
+
+function mergePlanLabelLabel(
+  opt: readonly (readonly (number | null)[])[],
+  left: number,
+  right: number,
+): TranslatableText {
+  const plan = mergePlanLabel(opt, left, right);
+  return plan === 'pending' ? I18N.labels.pathPending : i18nText(I18N.labels.pathValue, { value: plan });
 }

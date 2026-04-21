@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
@@ -8,6 +11,56 @@ interface HullLine {
   readonly m: number;
   readonly b: number;
 }
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.modeLabel'),
+  phases: {
+    initializeHull: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.initializeHull'),
+    advanceQuery: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.advanceQuery'),
+    commitQuery: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.commitQuery'),
+    pruneLine: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.pruneLine'),
+    insertLine: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.insertLine'),
+    backtrack: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.backtrack'),
+    complete: t('features.algorithms.runtime.dp.dpConvexHullTrick.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.initialize'),
+    advanceQuery: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.advanceQuery'),
+    commitQuery: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.commitQuery'),
+    pruneLine: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.pruneLine'),
+    insertLine: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.insertLine'),
+    backtrack: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.backtrack'),
+    complete: t('features.algorithms.runtime.dp.dpConvexHullTrick.descriptions.complete'),
+  },
+  insights: {
+    pointsLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.insights.pointsLabel'),
+    hullSizeLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.insights.hullSizeLabel'),
+    lastDpLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.insights.lastDpLabel'),
+    transitionsLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.insights.transitionsLabel'),
+    costLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.insights.costLabel'),
+  },
+  labels: {
+    resultDp: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.resultDp'),
+    resultPending: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.resultPending'),
+    activePoint: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.activePoint'),
+    pathValue: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.pathPending'),
+    pointValuesLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.pointValuesLabel'),
+    hullLinesLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.hullLinesLabel'),
+    queryLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.queryLabel'),
+    dpLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.dpLabel'),
+    pruneLabel: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.pruneLabel'),
+    hullSizeValue: t('features.algorithms.runtime.dp.dpConvexHullTrick.labels.hullSizeValue'),
+  },
+  decisions: {
+    popFront: t('features.algorithms.runtime.dp.dpConvexHullTrick.decisions.popFront'),
+    bestPredecessor: t('features.algorithms.runtime.dp.dpConvexHullTrick.decisions.bestPredecessor'),
+    middleDominated: t('features.algorithms.runtime.dp.dpConvexHullTrick.decisions.middleDominated'),
+    lineReady: t('features.algorithms.runtime.dp.dpConvexHullTrick.decisions.lineReady'),
+    backtrackFinished: t('features.algorithms.runtime.dp.dpConvexHullTrick.decisions.backtrackFinished'),
+    jumpPredecessor: t('features.algorithms.runtime.dp.dpConvexHullTrick.decisions.jumpPredecessor'),
+  },
+} as const;
 
 export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<SortStep> {
   const xValues = scenario.xValues;
@@ -31,9 +84,9 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
     prev,
     hull,
     chosen,
-    description: 'Start with the first point and insert its line into the lower hull for future queries.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize first hull line',
+    phaseLabel: I18N.phases.initializeHull,
     phase: 'init',
   });
 
@@ -51,15 +104,15 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
         chosen,
         activeIndex: index,
         candidateIndex: hull[0]!.index,
-        description: `At x = ${x}, the next hull line beats the current front line, so the old front becomes obsolete for all later queries.`,
+        description: i18nText(I18N.descriptions.advanceQuery, { x }),
         activeCodeLine: 5,
-        phaseLabel: 'Advance query pointer',
+        phaseLabel: I18N.phases.advanceQuery,
         phase: 'compare',
         computation: {
-          label: `query x = ${x}`,
+          label: i18nText(I18N.labels.queryLabel, { x }),
           expression: `${lineLabel(hull[0]!)} => ${evaluate(hull[0]!, x)} vs ${lineLabel(hull[1]!)} => ${evaluate(hull[1]!, x)}`,
           result: lineLabel(hull[1]!),
-          decision: 'pop front line from the active hull',
+          decision: I18N.decisions.popFront,
         },
       });
       hull.shift();
@@ -83,15 +136,15 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
       activeIndex: index,
       candidateIndex: bestLine.index,
       activeStatus: 'improved',
-      description: `Query the front hull line at x = ${x} and combine it with the quadratic term to get dp[${index + 1}].`,
+      description: i18nText(I18N.descriptions.commitQuery, { x, index: index + 1 }),
       activeCodeLine: 6,
-      phaseLabel: 'Commit hull query result',
+      phaseLabel: I18N.phases.commitQuery,
       phase: 'settle-node',
       computation: {
-        label: `dp[${index + 1}]`,
+        label: i18nText(I18N.labels.dpLabel, { index: index + 1 }),
         expression: `${x}² + ${scenario.transitionCost} + ${bestValue}`,
         result: String(dp[index]!),
-        decision: `best predecessor line comes from point ${bestLine.index + 1}`,
+        decision: i18nText(I18N.decisions.bestPredecessor, { index: bestLine.index + 1 }),
       },
     });
 
@@ -107,15 +160,15 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
         chosen,
         activeIndex: index,
         candidateIndex: hull[hull.length - 1]!.index,
-        description: `The newest line from point ${index + 1} makes the previous tail line irrelevant, so prune the hull.`,
+        description: i18nText(I18N.descriptions.pruneLine, { index: index + 1 }),
         activeCodeLine: 7,
-        phaseLabel: 'Prune dominated hull line',
+        phaseLabel: I18N.phases.pruneLine,
         phase: 'compare',
         computation: {
-          label: `prune with ${lineLabel(nextLine)}`,
+          label: i18nText(I18N.labels.pruneLabel, { line: lineLabel(nextLine) }),
           expression: `${lineLabel(hull[hull.length - 2]!)} · ${lineLabel(hull[hull.length - 1]!)} · ${lineLabel(nextLine)}`,
           result: lineLabel(hull[hull.length - 1]!),
-          decision: 'middle line loses every future monotone query',
+          decision: I18N.decisions.middleDominated,
         },
       });
       hull.pop();
@@ -133,15 +186,15 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
       chosen,
       activeIndex: index,
       activeStatus: 'chosen',
-      description: `Append the fresh line from point ${index + 1} to the hull for later x-queries.`,
+      description: i18nText(I18N.descriptions.insertLine, { index: index + 1 }),
       activeCodeLine: 8,
-      phaseLabel: 'Insert new hull line',
+      phaseLabel: I18N.phases.insertLine,
       phase: 'settle-node',
       computation: {
         label: lineLabel(nextLine),
         expression: `m = ${nextLine.m}, b = ${nextLine.b}`,
-        result: `hull size ${hull.length}`,
-        decision: 'line is ready for future monotone queries',
+        result: i18nText(I18N.labels.hullSizeValue, { size: hull.length }),
+        decision: I18N.decisions.lineReady,
       },
     });
   }
@@ -159,15 +212,15 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
       chosen,
       activeIndex: cursor,
       activeStatus: 'backtrack',
-      description: `Trace dp predecessor links backwards from point ${cursor + 1}.`,
+      description: i18nText(I18N.descriptions.backtrack, { index: cursor + 1 }),
       activeCodeLine: 9,
-      phaseLabel: 'Backtrack chosen transitions',
+      phaseLabel: I18N.phases.backtrack,
       phase: 'relax',
       computation: {
-        label: `trace ${cursor + 1}`,
+        label: i18nText(I18N.labels.queryLabel, { x: scenario.xValues[cursor] }),
         expression: prev[cursor] === null ? 'origin' : `prev = ${prev[cursor]! + 1}`,
         result: chtPathLabel(scenario, chosen),
-        decision: prev[cursor] === null ? 'backtrack finished' : 'jump to predecessor point',
+        decision: prev[cursor] === null ? I18N.decisions.backtrackFinished : I18N.decisions.jumpPredecessor,
       },
     });
     cursor = prev[cursor];
@@ -181,9 +234,9 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
     prev,
     hull,
     chosen,
-    description: `Finished the monotone convex hull trick pass.`,
+    description: I18N.descriptions.complete,
     activeCodeLine: 10,
-    phaseLabel: 'Hull DP ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -196,9 +249,9 @@ function createStep(args: {
   readonly prev: readonly (number | null)[];
   readonly hull: readonly HullLine[];
   readonly chosen: ReadonlySet<number>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeIndex?: number;
   readonly candidateIndex?: number;
@@ -285,26 +338,33 @@ function createStep(args: {
   }
 
   const insights: DpInsight[] = [
-    { label: 'Points', value: String(args.scenario.xValues.length), tone: 'accent' },
-    { label: 'Hull size', value: String(args.hull.length), tone: 'info' },
-    { label: 'Last dp', value: Number.isFinite(args.dp[args.dp.length - 1]!) ? String(args.dp[args.dp.length - 1]!) : 'pending', tone: 'success' },
-    { label: 'Transitions', value: String(args.chosen.size), tone: 'warning' },
-    { label: 'Cost C', value: String(args.scenario.transitionCost), tone: 'info' },
+    { label: I18N.insights.pointsLabel, value: String(args.scenario.xValues.length), tone: 'accent' },
+    { label: I18N.insights.hullSizeLabel, value: String(args.hull.length), tone: 'info' },
+    {
+      label: I18N.insights.lastDpLabel,
+      value: Number.isFinite(args.dp[args.dp.length - 1]!) ? String(args.dp[args.dp.length - 1]!) : I18N.labels.resultPending,
+      tone: 'success',
+    },
+    { label: I18N.insights.transitionsLabel, value: String(args.chosen.size), tone: 'warning' },
+    { label: I18N.insights.costLabel, value: String(args.scenario.transitionCost), tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'dp-convex-hull-trick',
-    modeLabel: 'DP Convex Hull Trick',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: Number.isFinite(args.dp[args.dp.length - 1]!) ? `dp = ${args.dp[args.dp.length - 1]!}` : 'dp pending',
+    resultLabel: Number.isFinite(args.dp[args.dp.length - 1]!) ? i18nText(I18N.labels.resultDp, { value: args.dp[args.dp.length - 1]! }) : I18N.labels.resultPending,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `4 × ${args.scenario.xValues.length}`,
-    activeLabel: args.activeIndex === undefined ? null : `point ${args.activeIndex + 1}`,
+    activeLabel:
+      args.activeIndex === undefined
+        ? null
+        : i18nText(I18N.labels.activePoint, { index: args.activeIndex + 1 }),
     pathLabel: chtPathLabel(args.scenario, args.chosen),
-    primaryItemsLabel: 'Point x-values',
+    primaryItemsLabel: I18N.labels.pointValuesLabel,
     primaryItems: args.scenario.xValues.map((x, index) => `p${index + 1}:${x}`),
-    secondaryItemsLabel: 'Active hull lines',
+    secondaryItemsLabel: I18N.labels.hullLinesLabel,
     secondaryItems: args.hull.map((line) => lineLabel(line)),
     insights,
     rowHeaders,
@@ -335,7 +395,14 @@ function lineLabel(line: HullLine): string {
   return `p${line.index + 1}: y=${line.m}x+${line.b}`;
 }
 
-function chtPathLabel(scenario: ChtDpScenario, chosen: ReadonlySet<number>): string {
-  const points = Array.from(chosen).sort((left, right) => left - right).map((index) => `p${index + 1}@${scenario.xValues[index]!}`);
-  return points.length > 0 ? `Path: ${points.join(' → ')}` : 'Path: pending';
+function chtPathLabel(
+  scenario: ChtDpScenario,
+  chosen: ReadonlySet<number>,
+): TranslatableText {
+  const points = Array.from(chosen)
+    .sort((left, right) => left - right)
+    .map((index) => `p${index + 1}@${scenario.xValues[index]!}`);
+  return points.length > 0
+    ? i18nText(I18N.labels.pathValue, { points: points.join(' → ') })
+    : I18N.labels.pathPending;
 }

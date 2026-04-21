@@ -1,3 +1,5 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
 /**
  * Per-algorithm catalog shared by the sorting Trace tab (short hint
  * at the top — step-accompanying teaching) and the sorting Info tab
@@ -22,235 +24,436 @@ export interface SortAlgorithmTutorial {
   readonly weaknesses: readonly string[];
 }
 
+const SORT_TUTORIAL_KEY = {
+  bubbleSort: {
+    pattern: t('features.algorithms.tutorials.sort.bubbleSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.bubbleSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.bubbleSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.bubbleSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.bubbleSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.bubbleSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.bubbleSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.bubbleSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.bubbleSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.bubbleSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.bubbleSort.weaknesses.item2'),
+    },
+  },
+  selectionSort: {
+    pattern: t('features.algorithms.tutorials.sort.selectionSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.selectionSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.selectionSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.selectionSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.selectionSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.selectionSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.selectionSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.selectionSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.selectionSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.selectionSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.selectionSort.weaknesses.item2'),
+    },
+  },
+  insertionSort: {
+    pattern: t('features.algorithms.tutorials.sort.insertionSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.insertionSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.insertionSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.insertionSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.insertionSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.insertionSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.insertionSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.insertionSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.insertionSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.insertionSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.insertionSort.weaknesses.item2'),
+    },
+  },
+  mergeSort: {
+    pattern: t('features.algorithms.tutorials.sort.mergeSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.mergeSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.mergeSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.mergeSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.mergeSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.mergeSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.mergeSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.mergeSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.mergeSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.mergeSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.mergeSort.weaknesses.item2'),
+    },
+  },
+  quickSort: {
+    pattern: t('features.algorithms.tutorials.sort.quickSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.quickSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.quickSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.quickSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.quickSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.quickSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.quickSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.quickSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.quickSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.quickSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.quickSort.weaknesses.item2'),
+    },
+  },
+  heapSort: {
+    pattern: t('features.algorithms.tutorials.sort.heapSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.heapSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.heapSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.heapSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.heapSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.heapSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.heapSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.heapSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.heapSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.heapSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.heapSort.weaknesses.item2'),
+    },
+  },
+  radixSort: {
+    pattern: t('features.algorithms.tutorials.sort.radixSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.radixSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.radixSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.radixSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.radixSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.radixSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.radixSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.radixSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.radixSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.radixSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.radixSort.weaknesses.item2'),
+    },
+  },
+  countingSort: {
+    pattern: t('features.algorithms.tutorials.sort.countingSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.countingSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.countingSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.countingSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.countingSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.countingSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.countingSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.countingSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.countingSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.countingSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.countingSort.weaknesses.item2'),
+    },
+  },
+  shellSort: {
+    pattern: t('features.algorithms.tutorials.sort.shellSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.shellSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.shellSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.shellSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.shellSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.shellSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.shellSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.shellSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.shellSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.shellSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.shellSort.weaknesses.item2'),
+    },
+  },
+  timSort: {
+    pattern: t('features.algorithms.tutorials.sort.timSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.timSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.timSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.timSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.timSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.timSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.timSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.timSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.timSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.timSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.timSort.weaknesses.item2'),
+    },
+  },
+  bucketSort: {
+    pattern: t('features.algorithms.tutorials.sort.bucketSort.pattern'),
+    keyIdea: t('features.algorithms.tutorials.sort.bucketSort.keyIdea'),
+    watch: t('features.algorithms.tutorials.sort.bucketSort.watch'),
+    howItWorks: {
+      step1: t('features.algorithms.tutorials.sort.bucketSort.howItWorks.step1'),
+      step2: t('features.algorithms.tutorials.sort.bucketSort.howItWorks.step2'),
+      step3: t('features.algorithms.tutorials.sort.bucketSort.howItWorks.step3'),
+      step4: t('features.algorithms.tutorials.sort.bucketSort.howItWorks.step4'),
+    },
+    strengths: {
+      item1: t('features.algorithms.tutorials.sort.bucketSort.strengths.item1'),
+      item2: t('features.algorithms.tutorials.sort.bucketSort.strengths.item2'),
+    },
+    weaknesses: {
+      item1: t('features.algorithms.tutorials.sort.bucketSort.weaknesses.item1'),
+      item2: t('features.algorithms.tutorials.sort.bucketSort.weaknesses.item2'),
+    },
+  },
+} as const;
+
 export const SORT_ALGORITHM_TUTORIALS: Record<string, SortAlgorithmTutorial> = {
   'bubble-sort': {
-    pattern: 'Comparison',
-    keyIdea:
-      'Repeatedly swap adjacent pairs. After each pass the largest unsorted value "bubbles" to the right end.',
-    watch: 'Watch the right edge: every pass locks in one more final element.',
+    pattern: SORT_TUTORIAL_KEY.bubbleSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.bubbleSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.bubbleSort.watch,
     howItWorks: [
-      'Walk left-to-right, comparing each pair of neighbours.',
-      'If the left value is bigger, swap them.',
-      'After a full pass the largest unsorted value settles at the right end.',
-      'Shrink the pass range by one and repeat — stop when a whole pass has no swaps.',
+      SORT_TUTORIAL_KEY.bubbleSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.bubbleSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.bubbleSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.bubbleSort.howItWorks.step4,
     ],
     strengths: [
-      'Easy to implement and very easy to explain.',
-      'Runs in O(n) on input that is already sorted — the early-exit check catches it.',
+      SORT_TUTORIAL_KEY.bubbleSort.strengths.item1,
+      SORT_TUTORIAL_KEY.bubbleSort.strengths.item2,
     ],
     weaknesses: [
-      'O(n²) on average — impractical for anything beyond small inputs.',
-      'Every swap touches adjacent memory only, so it has no structural advantages over insertion sort.',
+      SORT_TUTORIAL_KEY.bubbleSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.bubbleSort.weaknesses.item2,
     ],
   },
 
   'selection-sort': {
-    pattern: 'Comparison',
-    keyIdea:
-      'Scan the unsorted region for the minimum, then swap it to the front of that region.',
-    watch: 'Watch the left edge grow by exactly one sorted element each pass.',
+    pattern: SORT_TUTORIAL_KEY.selectionSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.selectionSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.selectionSort.watch,
     howItWorks: [
-      'Treat the whole array as one unsorted region.',
-      'Scan the unsorted region for the smallest value.',
-      'Swap that smallest value into the first unsorted slot.',
-      'Move the sorted-boundary one step right and repeat.',
+      SORT_TUTORIAL_KEY.selectionSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.selectionSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.selectionSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.selectionSort.howItWorks.step4,
     ],
     strengths: [
-      'Uses at most n − 1 swaps — the fewest of any O(n²) sort.',
-      'Constant extra memory and very simple control flow.',
+      SORT_TUTORIAL_KEY.selectionSort.strengths.item1,
+      SORT_TUTORIAL_KEY.selectionSort.strengths.item2,
     ],
     weaknesses: [
-      'Always O(n²) — there is no early exit on already-sorted input.',
-      'Not stable by default: equal values can change their relative order.',
+      SORT_TUTORIAL_KEY.selectionSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.selectionSort.weaknesses.item2,
     ],
   },
 
   'insertion-sort': {
-    pattern: 'Comparison',
-    keyIdea:
-      'Take the next element and slide it leftward into its place inside the already-sorted prefix.',
-    watch: 'The sorted prefix keeps its order; neighbours shift right to make room.',
+    pattern: SORT_TUTORIAL_KEY.insertionSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.insertionSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.insertionSort.watch,
     howItWorks: [
-      'Treat the first element as a sorted prefix of length 1.',
-      'Pick the next element from the unsorted region.',
-      'Shift larger sorted values one step right until the pick fits.',
-      'Drop the pick into the gap. Repeat until nothing is left to insert.',
+      SORT_TUTORIAL_KEY.insertionSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.insertionSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.insertionSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.insertionSort.howItWorks.step4,
     ],
     strengths: [
-      'Near-linear (O(n)) on nearly-sorted input — excellent for "mostly sorted" data.',
-      'Stable, in-place, and simple enough to hand-execute.',
+      SORT_TUTORIAL_KEY.insertionSort.strengths.item1,
+      SORT_TUTORIAL_KEY.insertionSort.strengths.item2,
     ],
     weaknesses: [
-      'O(n²) on random or reverse-sorted input.',
-      'Lots of small shifts — cache-friendly but slow for large arrays.',
+      SORT_TUTORIAL_KEY.insertionSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.insertionSort.weaknesses.item2,
     ],
   },
 
   'merge-sort': {
-    pattern: 'Divide & conquer · Stable',
-    keyIdea:
-      'Split the array in half, sort each half recursively, then merge the sorted halves into one sorted array.',
-    watch: 'Small sub-arrays become sorted first; merges combine them upward.',
+    pattern: SORT_TUTORIAL_KEY.mergeSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.mergeSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.mergeSort.watch,
     howItWorks: [
-      'Split the array into two halves.',
-      'Recursively sort each half with the same procedure.',
-      'Walk both sorted halves in parallel, copying the smaller head into the output.',
-      'Continue until both halves are drained into the merged result.',
+      SORT_TUTORIAL_KEY.mergeSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.mergeSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.mergeSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.mergeSort.howItWorks.step4,
     ],
     strengths: [
-      'Guaranteed O(n log n) time on every input.',
-      'Stable — equal values keep their original order.',
+      SORT_TUTORIAL_KEY.mergeSort.strengths.item1,
+      SORT_TUTORIAL_KEY.mergeSort.strengths.item2,
     ],
     weaknesses: [
-      'Needs O(n) extra memory for the merge buffer.',
-      'Slower in practice than quick sort due to the extra copying.',
+      SORT_TUTORIAL_KEY.mergeSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.mergeSort.weaknesses.item2,
     ],
   },
 
   'quick-sort': {
-    pattern: 'Divide & conquer',
-    keyIdea:
-      'Pick a pivot, partition smaller values left and larger values right, then recurse into each side.',
-    watch: 'After every partition, the pivot lands at its final position.',
+    pattern: SORT_TUTORIAL_KEY.quickSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.quickSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.quickSort.watch,
     howItWorks: [
-      'Pick a pivot element (first, last, middle, or random).',
-      'Partition: move every value smaller than the pivot to its left, every larger value to its right.',
-      'The pivot now sits at its final sorted position.',
-      'Recurse into the left partition and the right partition.',
+      SORT_TUTORIAL_KEY.quickSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.quickSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.quickSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.quickSort.howItWorks.step4,
     ],
     strengths: [
-      'Often the fastest in-practice comparison sort — great cache behaviour.',
-      'In-place with O(log n) recursion depth when pivots split evenly.',
+      SORT_TUTORIAL_KEY.quickSort.strengths.item1,
+      SORT_TUTORIAL_KEY.quickSort.strengths.item2,
     ],
     weaknesses: [
-      'O(n²) in the worst case when pivots split the array badly.',
-      'Not stable by default; randomised pivots mitigate adversarial inputs.',
+      SORT_TUTORIAL_KEY.quickSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.quickSort.weaknesses.item2,
     ],
   },
 
   'heap-sort': {
-    pattern: 'Heap-based',
-    keyIdea:
-      'Build a max-heap, then repeatedly swap the root with the last element and shrink the heap.',
-    watch: 'The heap region contracts from the right while the sorted suffix grows.',
+    pattern: SORT_TUTORIAL_KEY.heapSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.heapSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.heapSort.watch,
     howItWorks: [
-      'Rearrange the array into a max-heap — every parent ≥ its children.',
-      'Swap the root (the max) with the last heap element.',
-      'Shrink the heap by one and restore the heap property on the new root (sift-down).',
-      'Repeat until the heap is empty.',
+      SORT_TUTORIAL_KEY.heapSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.heapSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.heapSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.heapSort.howItWorks.step4,
     ],
     strengths: [
-      'Guaranteed O(n log n), in-place, constant extra memory.',
-      'Worst-case behaviour matches the average — no adversarial inputs.',
+      SORT_TUTORIAL_KEY.heapSort.strengths.item1,
+      SORT_TUTORIAL_KEY.heapSort.strengths.item2,
     ],
     weaknesses: [
-      'Cache-unfriendly index jumps — slower in practice than quick/merge sort.',
-      'Not stable.',
+      SORT_TUTORIAL_KEY.heapSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.heapSort.weaknesses.item2,
     ],
   },
 
   'radix-sort': {
-    pattern: 'Non-comparison · Stable',
-    keyIdea:
-      'Sort by one digit position at a time, from least significant to most significant.',
-    watch: 'Each digit pass preserves the order established by previous passes.',
+    pattern: SORT_TUTORIAL_KEY.radixSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.radixSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.radixSort.watch,
     howItWorks: [
-      'Find the number with the most digits — this sets the number of passes.',
-      'Sort the array by the least-significant digit using a stable bucket sort.',
-      'Repeat for each more-significant digit.',
-      'After the most-significant digit pass, the whole array is sorted.',
+      SORT_TUTORIAL_KEY.radixSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.radixSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.radixSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.radixSort.howItWorks.step4,
     ],
     strengths: [
-      'Beats O(n log n) for fixed-width keys — runs in O(nk), where k = digit count.',
-      'Stable, so it is safe to use as the inner sort of a bigger pipeline.',
+      SORT_TUTORIAL_KEY.radixSort.strengths.item1,
+      SORT_TUTORIAL_KEY.radixSort.strengths.item2,
     ],
     weaknesses: [
-      'Only works out-of-the-box for non-negative integers or bounded keys.',
-      'Extra memory for the bucket arrays on every pass.',
+      SORT_TUTORIAL_KEY.radixSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.radixSort.weaknesses.item2,
     ],
   },
 
   'counting-sort': {
-    pattern: 'Non-comparison · Stable',
-    keyIdea:
-      'Count how many times each value appears, then use those counts to place each value directly in the output.',
-    watch: 'No comparisons happen — the algorithm trades memory for speed.',
+    pattern: SORT_TUTORIAL_KEY.countingSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.countingSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.countingSort.watch,
     howItWorks: [
-      'Scan the array once and count how many times each value appears.',
-      'Turn the counts into cumulative positions in the output.',
-      'Walk the input again and place each value at its reserved output index.',
-      'Copy the output back into the array.',
+      SORT_TUTORIAL_KEY.countingSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.countingSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.countingSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.countingSort.howItWorks.step4,
     ],
     strengths: [
-      'Linear time: O(n + k), where k = size of the value range.',
-      'Stable and comparison-free.',
+      SORT_TUTORIAL_KEY.countingSort.strengths.item1,
+      SORT_TUTORIAL_KEY.countingSort.strengths.item2,
     ],
     weaknesses: [
-      'Needs O(k) extra memory — impractical when the value range is very large.',
-      'Only works for integer-like, bounded keys.',
+      SORT_TUTORIAL_KEY.countingSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.countingSort.weaknesses.item2,
     ],
   },
 
   'shell-sort': {
-    pattern: 'Gap-based insertion',
-    keyIdea:
-      'Run insertion sort on subsequences spaced by a gap; shrink the gap and repeat until gap = 1.',
-    watch: 'Larger gaps fix long-range disorder; the final gap = 1 pass polishes.',
+    pattern: SORT_TUTORIAL_KEY.shellSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.shellSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.shellSort.watch,
     howItWorks: [
-      'Pick a gap sequence (for example n/2, n/4, …, 1).',
-      'For each gap, run insertion sort on the subsequences that are exactly that far apart.',
-      'Move to the next, smaller gap and repeat.',
-      'Finish with a gap = 1 pass — a final insertion sort on the whole array.',
+      SORT_TUTORIAL_KEY.shellSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.shellSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.shellSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.shellSort.howItWorks.step4,
     ],
     strengths: [
-      'Much faster than plain insertion sort on random input — usually O(n^1.25) to O(n^1.5).',
-      'Simple, in-place, no recursion.',
+      SORT_TUTORIAL_KEY.shellSort.strengths.item1,
+      SORT_TUTORIAL_KEY.shellSort.strengths.item2,
     ],
     weaknesses: [
-      'Exact complexity depends on the gap sequence, and analysing it is surprisingly hard.',
-      'Not stable.',
+      SORT_TUTORIAL_KEY.shellSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.shellSort.weaknesses.item2,
     ],
   },
 
   'tim-sort': {
-    pattern: 'Hybrid · Stable',
-    keyIdea:
-      'Detect already-sorted "runs", sort short ones with insertion, then merge runs with a stack policy.',
-    watch: 'Naturally ordered regions are preserved and merged without re-sorting.',
+    pattern: SORT_TUTORIAL_KEY.timSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.timSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.timSort.watch,
     howItWorks: [
-      'Scan the array for monotonic runs (ascending or descending sequences).',
-      'Pad runs that are shorter than a minimum using insertion sort.',
-      'Push each run on a stack and merge while a size-balance invariant is violated.',
-      'When the scan ends, drain the stack by merging the remaining runs.',
+      SORT_TUTORIAL_KEY.timSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.timSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.timSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.timSort.howItWorks.step4,
     ],
     strengths: [
-      'O(n) on sorted or nearly-sorted input — the runs are reused as-is.',
-      'Stable; shipped as the default sort in Python, Java, Android, and many others.',
+      SORT_TUTORIAL_KEY.timSort.strengths.item1,
+      SORT_TUTORIAL_KEY.timSort.strengths.item2,
     ],
     weaknesses: [
-      'The implementation is much more complex than merge or quick sort.',
-      'Small O(n) extra memory for the merge buffer.',
+      SORT_TUTORIAL_KEY.timSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.timSort.weaknesses.item2,
     ],
   },
 
   'bucket-sort': {
-    pattern: 'Non-comparison · Stable',
-    keyIdea:
-      'Partition values into buckets by range, sort each bucket independently, then concatenate the buckets.',
-    watch: 'Works best when values are evenly distributed so each bucket stays small.',
+    pattern: SORT_TUTORIAL_KEY.bucketSort.pattern,
+    keyIdea: SORT_TUTORIAL_KEY.bucketSort.keyIdea,
+    watch: SORT_TUTORIAL_KEY.bucketSort.watch,
     howItWorks: [
-      'Split the value range into a fixed number of buckets.',
-      'Drop each value into the bucket that covers its range.',
-      'Sort each bucket independently (usually with insertion sort).',
-      'Concatenate the buckets in order to get the final sorted array.',
+      SORT_TUTORIAL_KEY.bucketSort.howItWorks.step1,
+      SORT_TUTORIAL_KEY.bucketSort.howItWorks.step2,
+      SORT_TUTORIAL_KEY.bucketSort.howItWorks.step3,
+      SORT_TUTORIAL_KEY.bucketSort.howItWorks.step4,
     ],
     strengths: [
-      'Close to O(n) when values are uniformly distributed.',
-      'Stable if the inner bucket sort is stable.',
+      SORT_TUTORIAL_KEY.bucketSort.strengths.item1,
+      SORT_TUTORIAL_KEY.bucketSort.strengths.item2,
     ],
     weaknesses: [
-      'Degrades to O(n²) if many values cluster in a single bucket.',
-      'Extra memory proportional to the number of buckets.',
+      SORT_TUTORIAL_KEY.bucketSort.weaknesses.item1,
+      SORT_TUTORIAL_KEY.bucketSort.weaknesses.item2,
     ],
   },
 };

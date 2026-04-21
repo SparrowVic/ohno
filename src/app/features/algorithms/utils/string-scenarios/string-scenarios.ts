@@ -1,3 +1,5 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
 import { StringPresetOption } from '../../models/string';
 
 interface BaseStringScenario {
@@ -46,46 +48,104 @@ export interface HuffmanScenario extends BaseStringScenario {
   readonly source: string;
 }
 
+interface StringPresetKeys {
+  readonly label: string;
+  readonly description: string;
+}
+
+function presetKeys(baseKey: string): StringPresetKeys {
+  return {
+    label: t(`${baseKey}.label`),
+    description: t(`${baseKey}.description`),
+  };
+}
+
+function createPresetOption(id: string, keys: StringPresetKeys): StringPresetOption {
+  return {
+    id,
+    label: keys.label,
+    description: keys.description,
+  };
+}
+
+const STRING_PRESET_KEY = {
+  kmp: {
+    overlap: presetKeys('features.algorithms.scenarios.string.kmp.overlap'),
+    dna: presetKeys('features.algorithms.scenarios.string.kmp.dna'),
+    signal: presetKeys('features.algorithms.scenarios.string.kmp.signal'),
+  },
+  rabinKarp: {
+    alarm: presetKeys('features.algorithms.scenarios.string.rabinKarp.alarm'),
+    forensics: presetKeys('features.algorithms.scenarios.string.rabinKarp.forensics'),
+    neon: presetKeys('features.algorithms.scenarios.string.rabinKarp.neon'),
+  },
+  zAlgorithm: {
+    classic: presetKeys('features.algorithms.scenarios.string.zAlgorithm.classic'),
+    genome: presetKeys('features.algorithms.scenarios.string.zAlgorithm.genome'),
+    log: presetKeys('features.algorithms.scenarios.string.zAlgorithm.log'),
+  },
+  manacher: {
+    banana: presetKeys('features.algorithms.scenarios.string.manacher.banana'),
+    symmetry: presetKeys('features.algorithms.scenarios.string.manacher.symmetry'),
+    mixed: presetKeys('features.algorithms.scenarios.string.manacher.mixed'),
+  },
+  rle: {
+    runs: presetKeys('features.algorithms.scenarios.string.rle.runs'),
+    mixed: presetKeys('features.algorithms.scenarios.string.rle.mixed'),
+    worst: presetKeys('features.algorithms.scenarios.string.rle.worst'),
+  },
+  huffman: {
+    classic: presetKeys('features.algorithms.scenarios.string.huffman.classic'),
+    uniform: presetKeys('features.algorithms.scenarios.string.huffman.uniform'),
+    natural: presetKeys('features.algorithms.scenarios.string.huffman.natural'),
+  },
+  bwt: {
+    banana: presetKeys('features.algorithms.scenarios.string.bwt.banana'),
+    panama: presetKeys('features.algorithms.scenarios.string.bwt.panama'),
+    mississippi: presetKeys('features.algorithms.scenarios.string.bwt.mississippi'),
+  },
+} as const;
+
 export const KMP_PRESETS: readonly StringPresetOption[] = [
-  { id: 'overlap', label: 'Overlap', description: 'Classic self-overlap case where failure jumps save many retries.' },
-  { id: 'dna', label: 'DNA', description: 'Short genome-style pattern with repeated prefixes and suffixes.' },
-  { id: 'signal', label: 'Signal', description: 'Readable repeated phrase that makes jumps visually obvious.' },
+  createPresetOption('overlap', STRING_PRESET_KEY.kmp.overlap),
+  createPresetOption('dna', STRING_PRESET_KEY.kmp.dna),
+  createPresetOption('signal', STRING_PRESET_KEY.kmp.signal),
 ];
 
 export const RABIN_KARP_PRESETS: readonly StringPresetOption[] = [
-  { id: 'alarm', label: 'False Alarm', description: 'Small modulus makes rolling hashes collide often enough to teach verification.' },
-  { id: 'forensics', label: 'Forensics', description: 'A repetitive string where rolling updates are easier to track than full rescans.' },
-  { id: 'neon', label: 'Neon Feed', description: 'Readable repeated label stream with a clear matching window.' },
+  createPresetOption('alarm', STRING_PRESET_KEY.rabinKarp.alarm),
+  createPresetOption('forensics', STRING_PRESET_KEY.rabinKarp.forensics),
+  createPresetOption('neon', STRING_PRESET_KEY.rabinKarp.neon),
 ];
 
 export const Z_ALGORITHM_PRESETS: readonly StringPresetOption[] = [
-  { id: 'classic', label: 'Classic', description: 'Pattern concatenation produces clear Z-box reuse and a couple of exact hits.' },
-  { id: 'genome', label: 'Genome', description: 'Many overlapping prefixes turn the Z skyline into a dense cityscape.' },
-  { id: 'log', label: 'Log Stream', description: 'Readable text with long repeated prefixes and visible full-pattern bars.' },
+  createPresetOption('classic', STRING_PRESET_KEY.zAlgorithm.classic),
+  createPresetOption('genome', STRING_PRESET_KEY.zAlgorithm.genome),
+  createPresetOption('log', STRING_PRESET_KEY.zAlgorithm.log),
 ];
 
 export const MANACHER_PRESETS: readonly StringPresetOption[] = [
-  { id: 'banana', label: 'Banana Glow', description: 'Odd-length palindromes layer into a clean mirrored rainbow.' },
-  { id: 'symmetry', label: 'Symmetry', description: 'Dense mirrored structure makes center reuse and boundary growth easy to see.' },
-  { id: 'mixed', label: 'Mixed', description: 'Odd and even palindromes compete, so the longest answer is not obvious up front.' },
+  createPresetOption('banana', STRING_PRESET_KEY.manacher.banana),
+  createPresetOption('symmetry', STRING_PRESET_KEY.manacher.symmetry),
+  createPresetOption('mixed', STRING_PRESET_KEY.manacher.mixed),
 ];
 
 export const RLE_PRESETS: readonly StringPresetOption[] = [
-  { id: 'runs', label: 'Long runs', description: 'String with clear repeating runs' },
-  { id: 'mixed', label: 'Mixed', description: 'Mixture of short and long runs' },
-  { id: 'worst', label: 'No gain', description: 'String where RLE has no compression benefit' },
+  createPresetOption('runs', STRING_PRESET_KEY.rle.runs),
+  createPresetOption('mixed', STRING_PRESET_KEY.rle.mixed),
+  createPresetOption('worst', STRING_PRESET_KEY.rle.worst),
 ];
 
 export const HUFFMAN_PRESETS: readonly StringPresetOption[] = [
-  { id: 'classic', label: 'Classic', description: 'Skewed frequency distribution' },
-  { id: 'uniform', label: 'Uniform', description: 'Nearly equal frequencies' },
-  { id: 'natural', label: 'Natural', description: 'Natural-language-like distribution' },
+  createPresetOption('classic', STRING_PRESET_KEY.huffman.classic),
+  createPresetOption('uniform', STRING_PRESET_KEY.huffman.uniform),
+  createPresetOption('natural', STRING_PRESET_KEY.huffman.natural),
 ];
 
 export const BWT_PRESETS: readonly StringPresetOption[] = [
-  { id: 'banana', label: 'Banana', description: 'The canonical BWT demo: short, memorable, and perfect for grouped output runs.' },
-  { id: 'panama', label: 'Panama', description: 'Readable phrase-derived string where rotations visibly cluster repeated letters.' },
-  { id: 'mississippi', label: 'Mississippi', description: 'Heavier repetition shows why BWT helps later run-length compression.' },
+  createPresetOption('banana', STRING_PRESET_KEY.bwt.banana),
+  createPresetOption('panama', STRING_PRESET_KEY.bwt.panama),
+  createPresetOption('mississippi', STRING_PRESET_KEY.bwt.mississippi),
 ];
 
 export function createKmpScenario(size: number, presetId: string): KmpScenario {

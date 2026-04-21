@@ -1,7 +1,74 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { BurstBalloonsScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.burstBalloons.modeLabel'),
+  phases: {
+    initializeCanvas: t('features.algorithms.runtime.dp.burstBalloons.phases.initializeCanvas'),
+    inspectCandidate: t('features.algorithms.runtime.dp.burstBalloons.phases.inspectCandidate'),
+    commitScore: t('features.algorithms.runtime.dp.burstBalloons.phases.commitScore'),
+    traceSplit: t('features.algorithms.runtime.dp.burstBalloons.phases.traceSplit'),
+    appendBurst: t('features.algorithms.runtime.dp.burstBalloons.phases.appendBurst'),
+    complete: t('features.algorithms.runtime.dp.burstBalloons.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.burstBalloons.descriptions.initialize'),
+    inspectCandidate: t('features.algorithms.runtime.dp.burstBalloons.descriptions.inspectCandidate'),
+    commitScore: t('features.algorithms.runtime.dp.burstBalloons.descriptions.commitScore'),
+    traceSplit: t('features.algorithms.runtime.dp.burstBalloons.descriptions.traceSplit'),
+    appendBurst: t('features.algorithms.runtime.dp.burstBalloons.descriptions.appendBurst'),
+    complete: t('features.algorithms.runtime.dp.burstBalloons.descriptions.complete'),
+  },
+  insights: {
+    balloonsLabel: t('features.algorithms.runtime.dp.burstBalloons.insights.balloonsLabel'),
+    valuesLabel: t('features.algorithms.runtime.dp.burstBalloons.insights.valuesLabel'),
+    bestCoinsLabel: t('features.algorithms.runtime.dp.burstBalloons.insights.bestCoinsLabel'),
+    burstOrderLabel: t('features.algorithms.runtime.dp.burstBalloons.insights.burstOrderLabel'),
+    shapeLabel: t('features.algorithms.runtime.dp.burstBalloons.insights.shapeLabel'),
+  },
+  labels: {
+    leftValue: t('features.algorithms.runtime.dp.burstBalloons.labels.leftValue'),
+    burstValue: t('features.algorithms.runtime.dp.burstBalloons.labels.burstValue'),
+    rightValue: t('features.algorithms.runtime.dp.burstBalloons.labels.rightValue'),
+    intervalComputation: t('features.algorithms.runtime.dp.burstBalloons.labels.intervalComputation'),
+    dpCell: t('features.algorithms.runtime.dp.burstBalloons.labels.dpCell'),
+    traceInterval: t('features.algorithms.runtime.dp.burstBalloons.labels.traceInterval'),
+    burstLabel: t('features.algorithms.runtime.dp.burstBalloons.labels.burstLabel'),
+    resultCoins: t('features.algorithms.runtime.dp.burstBalloons.labels.resultCoins'),
+    resultPending: t('features.algorithms.runtime.dp.burstBalloons.labels.resultPending'),
+    activeInterval: t('features.algorithms.runtime.dp.burstBalloons.labels.activeInterval'),
+    pathValue: t('features.algorithms.runtime.dp.burstBalloons.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.burstBalloons.labels.pathPending'),
+    balloonValuesLabel: t(
+      'features.algorithms.runtime.dp.burstBalloons.labels.balloonValuesLabel',
+    ),
+    intervalLensLabel: t('features.algorithms.runtime.dp.burstBalloons.labels.intervalLensLabel'),
+    sentinelsValue: t('features.algorithms.runtime.dp.burstBalloons.labels.sentinelsValue'),
+    orderSizeValue: t('features.algorithms.runtime.dp.burstBalloons.labels.orderSizeValue'),
+    intervalRange: t('features.algorithms.runtime.dp.burstBalloons.labels.intervalRange'),
+    lastPivot: t('features.algorithms.runtime.dp.burstBalloons.labels.lastPivot'),
+    upperTriangle: t('features.algorithms.runtime.dp.burstBalloons.labels.upperTriangle'),
+    pending: t('features.algorithms.runtime.dp.burstBalloons.labels.pending'),
+  },
+  decisions: {
+    newBestLastBalloon: t(
+      'features.algorithms.runtime.dp.burstBalloons.decisions.newBestLastBalloon',
+    ),
+    keepPreviousSplit: t(
+      'features.algorithms.runtime.dp.burstBalloons.decisions.keepPreviousSplit',
+    ),
+    splitSaved: t('features.algorithms.runtime.dp.burstBalloons.decisions.splitSaved'),
+    expandSubintervals: t(
+      'features.algorithms.runtime.dp.burstBalloons.decisions.expandSubintervals',
+    ),
+    appendFinisher: t('features.algorithms.runtime.dp.burstBalloons.decisions.appendFinisher'),
+  },
+} as const;
 
 export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Generator<SortStep> {
   const balloons = scenario.balloons;
@@ -22,9 +89,9 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
     lastBurst,
     solutionCells,
     order,
-    description: 'Pad the array with sentinel 1s so every interval can treat its chosen last balloon uniformly.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize interval canvas',
+    phaseLabel: I18N.phases.initializeCanvas,
     phase: 'init',
   });
 
@@ -53,16 +120,24 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
             ...(pivot > left ? ([[left - 1, pivot - 2]] as const) : []),
             ...(pivot < right ? ([[pivot, right - 1]] as const) : []),
           ],
-          secondaryItems: [`left = ${leftScore}`, `burst = ${burstGain}`, `right = ${rightScore}`],
-          description: `Try keeping balloon #${pivot} as the last one burst inside interval #${left}..#${right}.`,
+          secondaryItems: [
+            i18nText(I18N.labels.leftValue, { value: leftScore }),
+            i18nText(I18N.labels.burstValue, { value: burstGain }),
+            i18nText(I18N.labels.rightValue, { value: rightScore }),
+          ],
+          description: i18nText(I18N.descriptions.inspectCandidate, {
+            pivot,
+            left,
+            right,
+          }),
           activeCodeLine: 6,
-          phaseLabel: 'Inspect last-burst candidate',
+          phaseLabel: I18N.phases.inspectCandidate,
           phase: 'compare',
           computation: {
-            label: `Interval #${left}..#${right}`,
+            label: i18nText(I18N.labels.intervalComputation, { left, right }),
             expression: `${leftScore} + ${padded[left - 1]}·${padded[pivot]}·${padded[right + 1]} + ${rightScore}`,
             result: String(candidate),
-            decision: candidate > best ? 'new best last balloon' : 'keep previous split',
+            decision: candidate > best ? I18N.decisions.newBestLastBalloon : I18N.decisions.keepPreviousSplit,
           },
         });
 
@@ -83,15 +158,19 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
         order,
         activeCell: [left - 1, right - 1],
         activeCellStatus: 'improved',
-        description: `Store best coin haul for interval #${left}..#${right} with balloon #${bestIndex} as the last burst.`,
+        description: i18nText(I18N.descriptions.commitScore, {
+          left,
+          right,
+          pivot: bestIndex,
+        }),
         activeCodeLine: 9,
-        phaseLabel: 'Commit best interval score',
+        phaseLabel: I18N.phases.commitScore,
         phase: 'settle-node',
         computation: {
-          label: `dp[${left}][${right}]`,
+          label: i18nText(I18N.labels.dpCell, { left, right }),
           expression: `last = #${bestIndex}`,
           result: String(best),
-          decision: `split saved for interval #${left}..#${right}`,
+          decision: i18nText(I18N.decisions.splitSaved, { left, right }),
         },
       });
     }
@@ -105,9 +184,11 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
     lastBurst,
     solutionCells,
     order,
-    description: `Recovered one optimal burst order with ${score[0]![count - 1] ?? 0} coins.`,
+    description: i18nText(I18N.descriptions.complete, {
+      coins: score[0]![count - 1] ?? 0,
+    }),
     activeCodeLine: 11,
-    phaseLabel: 'Burst plan ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 
@@ -131,15 +212,19 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
         ...(pivotIndex < right ? ([[pivotIndex, right - 1]] as const) : []),
       ],
       activeCellStatus: 'backtrack',
-      description: `Optimal interval #${left}..#${right} leaves balloon #${pivotIndex} for the final pop in this subproblem.`,
+      description: i18nText(I18N.descriptions.traceSplit, {
+        left,
+        right,
+        pivot: pivotIndex,
+      }),
       activeCodeLine: 10,
-      phaseLabel: 'Trace saved split',
+      phaseLabel: I18N.phases.traceSplit,
       phase: 'relax',
       computation: {
-        label: `Trace #${left}..#${right}`,
+        label: i18nText(I18N.labels.traceInterval, { left, right }),
         expression: `last burst = #${pivotIndex}`,
         result: orderLabel(order),
-        decision: 'expand left and right subintervals first',
+        decision: I18N.decisions.expandSubintervals,
       },
     });
 
@@ -155,15 +240,19 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
       order,
       activeCell: [row, col],
       activeCellStatus: 'backtrack',
-      description: `After both sides are solved, balloon #${pivotIndex} bursts last for interval #${left}..#${right}.`,
+      description: i18nText(I18N.descriptions.appendBurst, {
+        pivot: pivotIndex,
+        left,
+        right,
+      }),
       activeCodeLine: 10,
-      phaseLabel: 'Append burst to route',
+      phaseLabel: I18N.phases.appendBurst,
       phase: 'relax',
       computation: {
-        label: `Burst #${pivotIndex}`,
+        label: i18nText(I18N.labels.burstLabel, { pivot: pivotIndex }),
         expression: `value = ${balloons[pivotIndex - 1]!}`,
         result: orderLabel(order),
-        decision: 'append interval finisher to burst order',
+        decision: I18N.decisions.appendFinisher,
       },
     });
   }
@@ -175,14 +264,14 @@ function createStep(args: {
   readonly lastBurst: readonly (readonly (number | null)[])[];
   readonly solutionCells: ReadonlySet<string>;
   readonly order: readonly number[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'improved' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
+  readonly secondaryItems?: readonly TranslatableText[];
   readonly computation?: DpComputation | null;
 }): SortStep {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
@@ -232,27 +321,39 @@ function createStep(args: {
 
   const best = args.score[0]?.[args.scenario.balloons.length - 1] ?? null;
   const insights: DpInsight[] = [
-    { label: 'Balloons', value: String(args.scenario.balloons.length), tone: 'accent' },
-    { label: 'Values', value: args.scenario.balloons.join(', '), tone: 'info' },
-    { label: 'Best coins', value: best === null ? 'pending' : String(best), tone: 'success' },
-    { label: 'Burst order', value: String(args.order.length), tone: 'warning' },
-    { label: 'Shape', value: 'upper triangle', tone: 'info' },
+    { label: I18N.insights.balloonsLabel, value: String(args.scenario.balloons.length), tone: 'accent' },
+    { label: I18N.insights.valuesLabel, value: args.scenario.balloons.join(', '), tone: 'info' },
+    {
+      label: I18N.insights.bestCoinsLabel,
+      value: best === null ? I18N.labels.pending : String(best),
+      tone: 'success',
+    },
+    { label: I18N.insights.burstOrderLabel, value: String(args.order.length), tone: 'warning' },
+    { label: I18N.insights.shapeLabel, value: I18N.labels.upperTriangle, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'burst-balloons',
-    modeLabel: 'Burst Balloons',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: best === null ? 'coins pending' : `coins = ${best}`,
+    resultLabel: best === null ? I18N.labels.resultPending : i18nText(I18N.labels.resultCoins, { value: best }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.scenario.balloons.length} × ${args.scenario.balloons.length}`,
-    activeLabel: args.activeCell ? `#${args.activeCell[0] + 1}..#${args.activeCell[1] + 1}` : null,
+    activeLabel: args.activeCell
+      ? i18nText(I18N.labels.activeInterval, {
+          left: args.activeCell[0] + 1,
+          right: args.activeCell[1] + 1,
+        })
+      : null,
     pathLabel: orderLabel(args.order),
-    primaryItemsLabel: 'Balloon values',
+    primaryItemsLabel: I18N.labels.balloonValuesLabel,
     primaryItems: args.scenario.balloons.map((value, index) => `#${index + 1}=${value}`),
-    secondaryItemsLabel: 'Interval lens',
-    secondaryItems: args.secondaryItems ?? [`sentinels = 1 | ${args.scenario.balloons.join(' ')} | 1`, `order size = ${args.order.length}`],
+    secondaryItemsLabel: I18N.labels.intervalLensLabel,
+    secondaryItems: args.secondaryItems ?? [
+      i18nText(I18N.labels.sentinelsValue, { values: args.scenario.balloons.join(' ') }),
+      i18nText(I18N.labels.orderSizeValue, { size: args.order.length }),
+    ],
     insights,
     rowHeaders: headers,
     colHeaders: headers,
@@ -265,6 +366,10 @@ function createStep(args: {
   });
 }
 
-function orderLabel(order: readonly number[]): string {
-  return order.length > 0 ? `Order: ${order.map((index) => `#${index}`).join(' → ')}` : 'Order: pending';
+function orderLabel(order: readonly number[]): TranslatableText {
+  return order.length > 0
+    ? i18nText(I18N.labels.pathValue, {
+        order: order.map((index) => `#${index}`).join(' → '),
+      })
+    : I18N.labels.pathPending;
 }

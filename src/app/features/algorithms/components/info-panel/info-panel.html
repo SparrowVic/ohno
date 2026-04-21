@@ -1,7 +1,11 @@
 <section class="info">
   <div class="info__hero">
-    <span class="info__eyebrow">Briefing</span>
-    <h2 class="info__title">Algorithm profile</h2>
+    <span class="info__eyebrow">{{
+      I18N_KEY.features.algorithms.infoPanel.briefing | transloco
+    }}</span>
+    <h2 class="info__title">
+      {{ I18N_KEY.features.algorithms.infoPanel.algorithmProfile | transloco }}
+    </h2>
     <p class="info__desc">{{ algorithm().description }}</p>
   </div>
 
@@ -12,10 +16,16 @@
   </div>
 
   <div class="info__grid">
-    @for (card of cards(); track card.label) {
+    @for (card of cards(); track card.labelKey) {
       <div class="info__card">
-        <div class="info__label">{{ card.label }}</div>
-        <div class="info__value">{{ card.value }}</div>
+        <div class="info__label">{{ card.labelKey | transloco }}</div>
+        <div class="info__value">
+          @if (card.valueKey; as valueKey) {
+            {{ valueKey | transloco }}
+          } @else {
+            {{ card.value }}
+          }
+        </div>
       </div>
     }
   </div>
@@ -23,37 +33,56 @@
   @if (tutorial(); as tutorial) {
     <div class="info__tutorial">
       <div class="info__tutorial-head">
-        <span class="info__eyebrow">Tutorial</span>
-        <h3 class="info__tutorial-title">How it works</h3>
-        <span class="info__tutorial-badge">{{ tutorial.pattern }}</span>
+        <span class="info__eyebrow">{{
+          I18N_KEY.features.algorithms.infoPanel.tutorial | transloco
+        }}</span>
+        <h3 class="info__tutorial-title">
+          {{ I18N_KEY.features.algorithms.infoPanel.howItWorks | transloco }}
+        </h3>
+        <span class="info__tutorial-badge">{{
+          looksLikeI18nKey(tutorial.pattern) ? (tutorial.pattern | transloco) : tutorial.pattern
+        }}</span>
       </div>
 
-      <p class="info__tutorial-idea">{{ tutorial.keyIdea }}</p>
+      <p class="info__tutorial-idea">
+        {{ looksLikeI18nKey(tutorial.keyIdea) ? (tutorial.keyIdea | transloco) : tutorial.keyIdea }}
+      </p>
 
-      <ol class="info__steps" aria-label="Algorithm steps">
+      <ol
+        class="info__steps"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.infoPanel.algorithmStepsAriaLabel | transloco
+        "
+      >
         @for (step of tutorial.howItWorks; track $index) {
           <li class="info__step">
             <span class="info__step-num">{{ $index + 1 }}</span>
-            <span class="info__step-text">{{ step }}</span>
+            <span class="info__step-text">{{
+              looksLikeI18nKey(step) ? (step | transloco) : step
+            }}</span>
           </li>
         }
       </ol>
 
       <div class="info__tradeoffs">
         <div class="info__tradeoff info__tradeoff--plus">
-          <span class="info__tradeoff-label">Strengths</span>
+          <span class="info__tradeoff-label">{{
+            I18N_KEY.features.algorithms.infoPanel.strengths | transloco
+          }}</span>
           <ul class="info__tradeoff-list">
             @for (item of tutorial.strengths; track $index) {
-              <li>{{ item }}</li>
+              <li>{{ looksLikeI18nKey(item) ? (item | transloco) : item }}</li>
             }
           </ul>
         </div>
 
         <div class="info__tradeoff info__tradeoff--minus">
-          <span class="info__tradeoff-label">Trade-offs</span>
+          <span class="info__tradeoff-label">{{
+            I18N_KEY.features.algorithms.infoPanel.tradeOffs | transloco
+          }}</span>
           <ul class="info__tradeoff-list">
             @for (item of tutorial.weaknesses; track $index) {
-              <li>{{ item }}</li>
+              <li>{{ looksLikeI18nKey(item) ? (item | transloco) : item }}</li>
             }
           </ul>
         </div>

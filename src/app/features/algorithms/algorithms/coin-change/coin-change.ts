@@ -1,7 +1,90 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { CoinChangeScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.coinChange.modeLabel'),
+  phases: {
+    initializeUnreachable: t(
+      'features.algorithms.runtime.dp.coinChange.phases.initializeUnreachable',
+    ),
+    compareSkipTake: t('features.algorithms.runtime.dp.coinChange.phases.compareSkipTake'),
+    commitBestCoinCount: t(
+      'features.algorithms.runtime.dp.coinChange.phases.commitBestCoinCount',
+    ),
+    noSolution: t('features.algorithms.runtime.dp.coinChange.phases.noSolution'),
+    backtrackTake: t('features.algorithms.runtime.dp.coinChange.phases.backtrackTake'),
+    backtrackSkip: t('features.algorithms.runtime.dp.coinChange.phases.backtrackSkip'),
+    optimalChangeReady: t('features.algorithms.runtime.dp.coinChange.phases.optimalChangeReady'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.coinChange.descriptions.initialize'),
+    compareSkipTake: t('features.algorithms.runtime.dp.coinChange.descriptions.compareSkipTake'),
+    forcedSkip: t('features.algorithms.runtime.dp.coinChange.descriptions.forcedSkip'),
+    storeBest: t('features.algorithms.runtime.dp.coinChange.descriptions.storeBest'),
+    unreachable: t('features.algorithms.runtime.dp.coinChange.descriptions.unreachable'),
+    backtrackTake: t('features.algorithms.runtime.dp.coinChange.descriptions.backtrackTake'),
+    backtrackSkip: t('features.algorithms.runtime.dp.coinChange.descriptions.backtrackSkip'),
+    complete: t('features.algorithms.runtime.dp.coinChange.descriptions.complete'),
+  },
+  insights: {
+    targetLabel: t('features.algorithms.runtime.dp.coinChange.insights.targetLabel'),
+    coinsLabel: t('features.algorithms.runtime.dp.coinChange.insights.coinsLabel'),
+    minCountLabel: t('features.algorithms.runtime.dp.coinChange.insights.minCountLabel'),
+    pickedLabel: t('features.algorithms.runtime.dp.coinChange.insights.pickedLabel'),
+    gridLabel: t('features.algorithms.runtime.dp.coinChange.insights.gridLabel'),
+  },
+  labels: {
+    resultMinCoins: t('features.algorithms.runtime.dp.coinChange.labels.resultMinCoins'),
+    coinPath: t('features.algorithms.runtime.dp.coinChange.labels.coinPath'),
+    coinsPending: t('features.algorithms.runtime.dp.coinChange.labels.coinsPending'),
+    denominationsLabel: t(
+      'features.algorithms.runtime.dp.coinChange.labels.denominationsLabel',
+    ),
+    currentLensLabel: t('features.algorithms.runtime.dp.coinChange.labels.currentLensLabel'),
+    unboundedRowHint: t('features.algorithms.runtime.dp.coinChange.labels.unboundedRowHint'),
+    activeCell: t('features.algorithms.runtime.dp.coinChange.labels.activeCell'),
+    skipValue: t('features.algorithms.runtime.dp.coinChange.labels.skipValue'),
+    takeValue: t('features.algorithms.runtime.dp.coinChange.labels.takeValue'),
+    takeUnavailable: t('features.algorithms.runtime.dp.coinChange.labels.takeUnavailable'),
+    bestValue: t('features.algorithms.runtime.dp.coinChange.labels.bestValue'),
+    coinValue: t('features.algorithms.runtime.dp.coinChange.labels.coinValue'),
+    coinAmountComputation: t(
+      'features.algorithms.runtime.dp.coinChange.labels.coinAmountComputation',
+    ),
+    dpCellComputation: t(
+      'features.algorithms.runtime.dp.coinChange.labels.dpCellComputation',
+    ),
+    takeCoinComputation: t(
+      'features.algorithms.runtime.dp.coinChange.labels.takeCoinComputation',
+    ),
+    skipCoinComputation: t(
+      'features.algorithms.runtime.dp.coinChange.labels.skipCoinComputation',
+    ),
+    amountValue: t('features.algorithms.runtime.dp.coinChange.labels.amountValue'),
+    rowValue: t('features.algorithms.runtime.dp.coinChange.labels.rowValue'),
+  },
+  decisions: {
+    reuseCoinInUnboundedRow: t(
+      'features.algorithms.runtime.dp.coinChange.decisions.reuseCoinInUnboundedRow',
+    ),
+    carryPreviousBest: t(
+      'features.algorithms.runtime.dp.coinChange.decisions.carryPreviousBest',
+    ),
+    takeBranchChosen: t(
+      'features.algorithms.runtime.dp.coinChange.decisions.takeBranchChosen',
+    ),
+    skipBranchKept: t('features.algorithms.runtime.dp.coinChange.decisions.skipBranchKept'),
+    reuseSameDenominationRow: t(
+      'features.algorithms.runtime.dp.coinChange.decisions.reuseSameDenominationRow',
+    ),
+    moveUpward: t('features.algorithms.runtime.dp.coinChange.decisions.moveUpward'),
+  },
+} as const;
 
 export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<SortStep> {
   const coinCount = scenario.coins.length;
@@ -17,9 +100,9 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
     table,
     pickedCoins,
     backtrackCells,
-    description: 'Initialize amount 0 with 0 coins and mark every other amount as unreachable before processing denominations.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize unreachable states',
+    phaseLabel: I18N.phases.initializeUnreachable,
     phase: 'init',
   });
 
@@ -39,22 +122,27 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
         activeCell: [row, amount],
         candidateCells: canTake ? [[row - 1, amount], [row, amount - coin]] : [[row - 1, amount]],
         secondaryItems: [
-          `skip = ${formatCost(skipValue)}`,
-          canTake ? `take = ${formatCost(takeValue)}` : 'take unavailable',
+          i18nText(I18N.labels.skipValue, { value: formatCost(skipValue) }),
+          canTake
+            ? i18nText(I18N.labels.takeValue, { value: formatCost(takeValue) })
+            : I18N.labels.takeUnavailable,
         ],
         description: canTake
-          ? `At amount ${amount}, compare skipping coin ${coin} with taking it again from the same row.`
-          : `Coin ${coin} cannot help amount ${amount}, so only the skip branch survives.`,
+          ? i18nText(I18N.descriptions.compareSkipTake, { amount, coin })
+          : i18nText(I18N.descriptions.forcedSkip, { coin, amount }),
         activeCodeLine: 5,
-        phaseLabel: 'Compare skip vs take',
+        phaseLabel: I18N.phases.compareSkipTake,
         phase: 'compare',
         computation: {
-          label: `${coin} for amount ${amount}`,
+          label: i18nText(I18N.labels.coinAmountComputation, { coin, amount }),
           expression: canTake
             ? `min(dp[${row - 1}][${amount}] = ${formatCost(skipValue)}, dp[${row}][${amount - coin}] + 1 = ${formatCost(takeValue)})`
             : `${coin} > ${amount} or prior amount unreachable`,
           result: formatCost(Math.min(skipValue, takeValue)),
-          decision: canTake && takeValue < skipValue ? 'reuse coin in unbounded row' : 'carry previous best',
+          decision:
+            canTake && takeValue < skipValue
+              ? I18N.decisions.reuseCoinInUnboundedRow
+              : I18N.decisions.carryPreviousBest,
         },
       });
 
@@ -68,16 +156,22 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
         activeCell: [row, amount],
         candidateCells: canTake ? [[row - 1, amount], [row, amount - coin]] : [[row - 1, amount]],
         activeCellStatus: Number.isFinite(table[row]![amount]!) ? (canTake && takeValue < skipValue ? 'improved' : 'chosen') : 'blocked',
-        secondaryItems: [`best = ${formatCost(table[row]![amount]!)}`, `coin ${coin}`],
-        description: `Store minimum coins for amount ${amount} using first ${row} denomination(s).`,
+        secondaryItems: [
+          i18nText(I18N.labels.bestValue, { value: formatCost(table[row]![amount]!) }),
+          i18nText(I18N.labels.coinValue, { coin }),
+        ],
+        description: i18nText(I18N.descriptions.storeBest, { amount, row }),
         activeCodeLine: 8,
-        phaseLabel: 'Commit best coin count',
+        phaseLabel: I18N.phases.commitBestCoinCount,
         phase: 'settle-node',
         computation: {
-          label: `dp[${row}][${amount}]`,
+          label: i18nText(I18N.labels.dpCellComputation, { row, amount }),
           expression: `${formatCost(skipValue)} vs ${formatCost(takeValue)}`,
           result: formatCost(table[row]![amount]!),
-          decision: canTake && takeValue < skipValue ? 'take branch chosen' : 'skip branch kept',
+          decision:
+            canTake && takeValue < skipValue
+              ? I18N.decisions.takeBranchChosen
+              : I18N.decisions.skipBranchKept,
         },
       });
     }
@@ -89,9 +183,9 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
       table,
       pickedCoins,
       backtrackCells,
-      description: `Target ${target} is unreachable with the available denominations.`,
+      description: i18nText(I18N.descriptions.unreachable, { target }),
       activeCodeLine: 15,
-      phaseLabel: 'No solution',
+      phaseLabel: I18N.phases.noSolution,
       phase: 'complete',
     });
     return;
@@ -118,16 +212,16 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
         backtrackCells,
         activeCell: [row, amount],
         activeCellStatus: 'backtrack',
-        pathLabel: `Coins: ${pickedCoins.join(' + ')}`,
-        description: `Take coin ${coin} and stay on the same row because coins are unbounded.`,
+        pathLabel: coinPathLabel(pickedCoins),
+        description: i18nText(I18N.descriptions.backtrackTake, { coin }),
         activeCodeLine: 11,
-        phaseLabel: 'Backtrack take',
+        phaseLabel: I18N.phases.backtrackTake,
         phase: 'relax',
         computation: {
-          label: `Take ${coin}`,
+          label: i18nText(I18N.labels.takeCoinComputation, { coin }),
           expression: `${formatCost(current)} = ${formatCost(takeValue)}`,
-          result: `amount ${amount - coin}`,
-          decision: 'reuse same denomination row',
+          result: i18nText(I18N.labels.amountValue, { amount: amount - coin }),
+          decision: I18N.decisions.reuseSameDenominationRow,
         },
       });
       amount -= coin;
@@ -139,16 +233,16 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
         backtrackCells,
         activeCell: [row, amount],
         activeCellStatus: 'backtrack',
-        pathLabel: pickedCoins.length > 0 ? `Coins: ${pickedCoins.join(' + ')}` : 'Coins: tracing...',
-        description: `Skip denomination ${coin} and move to the previous row.`,
+        pathLabel: coinPathLabel(pickedCoins),
+        description: i18nText(I18N.descriptions.backtrackSkip, { coin }),
         activeCodeLine: 13,
-        phaseLabel: 'Backtrack skip',
+        phaseLabel: I18N.phases.backtrackSkip,
         phase: 'skip-relax',
         computation: {
-          label: `Skip ${coin}`,
+          label: i18nText(I18N.labels.skipCoinComputation, { coin }),
           expression: `${formatCost(current)} = ${formatCost(skipValue)}`,
-          result: `row ${row - 1}`,
-          decision: 'move upward',
+          result: i18nText(I18N.labels.rowValue, { row: row - 1 }),
+          decision: I18N.decisions.moveUpward,
         },
       });
       row -= 1;
@@ -160,10 +254,13 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
     table,
     pickedCoins,
     backtrackCells,
-    pathLabel: `Coins: ${pickedCoins.join(' + ')}`,
-    description: `Minimum coins for amount ${target} is ${table[coinCount]![target]!}.`,
+    pathLabel: coinPathLabel(pickedCoins),
+    description: i18nText(I18N.descriptions.complete, {
+      target,
+      best: table[coinCount]![target]!,
+    }),
     activeCodeLine: 15,
-    phaseLabel: 'Optimal change ready',
+    phaseLabel: I18N.phases.optimalChangeReady,
     phase: 'complete',
   });
 }
@@ -173,15 +270,15 @@ function createStep(args: {
   readonly table: readonly (readonly number[])[];
   readonly pickedCoins: readonly number[];
   readonly backtrackCells: ReadonlySet<string>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'improved' | 'chosen' | 'blocked' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
-  readonly pathLabel?: string;
+  readonly secondaryItems?: readonly TranslatableText[];
+  readonly pathLabel?: TranslatableText;
   readonly computation?: DpComputation | null;
 }): SortStep {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
@@ -242,27 +339,36 @@ function createStep(args: {
 
   const best = args.table[args.scenario.coins.length]![args.scenario.target]!;
   const insights: DpInsight[] = [
-    { label: 'Target', value: String(args.scenario.target), tone: 'accent' },
-    { label: 'Coins', value: args.scenario.coins.join(', '), tone: 'info' },
-    { label: 'Min count', value: formatCost(best), tone: Number.isFinite(best) ? 'success' : 'warning' },
-    { label: 'Picked', value: String(args.pickedCoins.length), tone: 'warning' },
-    { label: 'Grid', value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
+    { label: I18N.insights.targetLabel, value: String(args.scenario.target), tone: 'accent' },
+    { label: I18N.insights.coinsLabel, value: args.scenario.coins.join(', '), tone: 'info' },
+    {
+      label: I18N.insights.minCountLabel,
+      value: formatCost(best),
+      tone: Number.isFinite(best) ? 'success' : 'warning',
+    },
+    { label: I18N.insights.pickedLabel, value: String(args.pickedCoins.length), tone: 'warning' },
+    { label: I18N.insights.gridLabel, value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'coin-change',
-    modeLabel: 'Coin Change',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `min coins = ${formatCost(best)}`,
+    resultLabel: i18nText(I18N.labels.resultMinCoins, { value: formatCost(best) }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
-    activeLabel: args.activeCell ? `coin row ${args.activeCell[0]} · amount ${args.activeCell[1]}` : null,
-    pathLabel: args.pathLabel ?? (args.pickedCoins.length > 0 ? `Coins: ${args.pickedCoins.join(' + ')}` : 'Coins: pending'),
-    primaryItemsLabel: 'Denominations',
+    activeLabel: args.activeCell
+      ? i18nText(I18N.labels.activeCell, {
+          row: args.activeCell[0],
+          amount: args.activeCell[1],
+        })
+      : null,
+    pathLabel: args.pathLabel ?? coinPathLabel(args.pickedCoins),
+    primaryItemsLabel: I18N.labels.denominationsLabel,
     primaryItems: args.scenario.coins.map((coin) => `${coin}`),
-    secondaryItemsLabel: 'Current lens',
-    secondaryItems: args.secondaryItems ?? ['unbounded take stays on same row'],
+    secondaryItemsLabel: I18N.labels.currentLensLabel,
+    secondaryItems: args.secondaryItems ?? [I18N.labels.unboundedRowHint],
     insights,
     rowHeaders,
     colHeaders,
@@ -277,4 +383,10 @@ function createStep(args: {
 
 function formatCost(value: number): string {
   return Number.isFinite(value) ? String(value) : '∞';
+}
+
+function coinPathLabel(pickedCoins: readonly number[]): TranslatableText {
+  return pickedCoins.length > 0
+    ? i18nText(I18N.labels.coinPath, { coins: pickedCoins.join(' + ') })
+    : I18N.labels.coinsPending;
 }

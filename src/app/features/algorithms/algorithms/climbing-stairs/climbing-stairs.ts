@@ -1,7 +1,59 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep } from '../dp-step';
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { ClimbingStairsScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.climbingStairs.modeLabel'),
+  phases: {
+    initializeLandings: t(
+      'features.algorithms.runtime.dp.climbingStairs.phases.initializeLandings',
+    ),
+    inspectParents: t('features.algorithms.runtime.dp.climbingStairs.phases.inspectParents'),
+    commitCount: t('features.algorithms.runtime.dp.climbingStairs.phases.commitCount'),
+    complete: t('features.algorithms.runtime.dp.climbingStairs.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.climbingStairs.descriptions.initialize'),
+    inspectParents: t(
+      'features.algorithms.runtime.dp.climbingStairs.descriptions.inspectParents',
+    ),
+    commitCount: t('features.algorithms.runtime.dp.climbingStairs.descriptions.commitCount'),
+    complete: t('features.algorithms.runtime.dp.climbingStairs.descriptions.complete'),
+  },
+  insights: {
+    stairsLabel: t('features.algorithms.runtime.dp.climbingStairs.insights.stairsLabel'),
+    waysLabel: t('features.algorithms.runtime.dp.climbingStairs.insights.waysLabel'),
+    lastPairLabel: t('features.algorithms.runtime.dp.climbingStairs.insights.lastPairLabel'),
+    baseLabel: t('features.algorithms.runtime.dp.climbingStairs.insights.baseLabel'),
+    stripLabel: t('features.algorithms.runtime.dp.climbingStairs.insights.stripLabel'),
+  },
+  labels: {
+    resultValue: t('features.algorithms.runtime.dp.climbingStairs.labels.resultValue'),
+    activeStep: t('features.algorithms.runtime.dp.climbingStairs.labels.activeStep'),
+    pathValue: t('features.algorithms.runtime.dp.climbingStairs.labels.pathValue'),
+    landingIndicesLabel: t(
+      'features.algorithms.runtime.dp.climbingStairs.labels.landingIndicesLabel',
+    ),
+    computedWaysLabel: t(
+      'features.algorithms.runtime.dp.climbingStairs.labels.computedWaysLabel',
+    ),
+    stepFormula: t('features.algorithms.runtime.dp.climbingStairs.labels.stepFormula'),
+    lastPairValue: t('features.algorithms.runtime.dp.climbingStairs.labels.lastPairValue'),
+    seedValue: t('features.algorithms.runtime.dp.climbingStairs.labels.seedValue'),
+    baseValue: t('features.algorithms.runtime.dp.climbingStairs.labels.baseValue'),
+    stripValue: t('features.algorithms.runtime.dp.climbingStairs.labels.stripValue'),
+  },
+  decisions: {
+    addArrivals: t('features.algorithms.runtime.dp.climbingStairs.decisions.addArrivals'),
+    recurrenceCommitted: t(
+      'features.algorithms.runtime.dp.climbingStairs.decisions.recurrenceCommitted',
+    ),
+  },
+} as const;
 
 export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Generator<SortStep> {
   const ways = Array.from({ length: scenario.steps + 1 }, () => 0);
@@ -11,9 +63,9 @@ export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Gene
   yield createStep({
     scenario,
     ways,
-    description: 'Seed the ground step and the first stair with one way each.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize first landings',
+    phaseLabel: I18N.phases.initializeLandings,
     phase: 'init',
   });
 
@@ -23,15 +75,19 @@ export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Gene
       ways,
       activeIndex: step,
       candidateIndexes: [step - 1, step - 2],
-      description: `Ways to reach stair ${step} come from stair ${step - 1} and stair ${step - 2}.`,
+      description: i18nText(I18N.descriptions.inspectParents, {
+        step,
+        prev: step - 1,
+        prevPrev: step - 2,
+      }),
       activeCodeLine: 4,
-      phaseLabel: 'Inspect recurrence parents',
+      phaseLabel: I18N.phases.inspectParents,
       phase: 'compare',
       computation: {
-        label: `ways[${step}]`,
+        label: i18nText(I18N.labels.stepFormula, { step }),
         expression: `${ways[step - 1]!} + ${ways[step - 2]!}`,
         result: String(ways[step - 1]! + ways[step - 2]!),
-        decision: 'add one-step and two-step arrivals',
+        decision: I18N.decisions.addArrivals,
       },
     });
 
@@ -43,15 +99,15 @@ export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Gene
       activeIndex: step,
       candidateIndexes: [step - 1, step - 2],
       activeStatus: 'improved',
-      description: `Store the total number of ways to stand on stair ${step}.`,
+      description: i18nText(I18N.descriptions.commitCount, { step }),
       activeCodeLine: 5,
-      phaseLabel: 'Commit stair count',
+      phaseLabel: I18N.phases.commitCount,
       phase: 'settle-node',
       computation: {
-        label: `ways[${step}]`,
+        label: i18nText(I18N.labels.stepFormula, { step }),
         expression: `${ways[step - 1]!} + ${ways[step - 2]!}`,
         result: String(ways[step]!),
-        decision: 'recurrence committed',
+        decision: I18N.decisions.recurrenceCommitted,
       },
     });
   }
@@ -61,9 +117,9 @@ export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Gene
     ways,
     activeIndex: scenario.steps,
     activeStatus: 'chosen',
-    description: `Finished counting all valid 1-step and 2-step climbs up to stair ${scenario.steps}.`,
+    description: i18nText(I18N.descriptions.complete, { step: scenario.steps }),
     activeCodeLine: 6,
-    phaseLabel: 'Count ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -71,9 +127,9 @@ export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Gene
 function createStep(args: {
   readonly scenario: ClimbingStairsScenario;
   readonly ways: readonly number[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeIndex?: number;
   readonly candidateIndexes?: readonly number[];
@@ -114,26 +170,49 @@ function createStep(args: {
   }));
 
   const insights: DpInsight[] = [
-    { label: 'Stairs', value: String(args.scenario.steps), tone: 'accent' },
-    { label: 'Ways', value: String(args.ways[args.scenario.steps] ?? 0), tone: 'success' },
-    { label: 'Last pair', value: args.activeIndex && args.activeIndex >= 2 ? `${args.ways[args.activeIndex - 1]} + ${args.ways[args.activeIndex - 2]}` : 'seed', tone: 'warning' },
-    { label: 'Base', value: '1 / 1', tone: 'info' },
-    { label: 'Strip', value: `1 × ${args.ways.length}`, tone: 'info' },
+    { label: I18N.insights.stairsLabel, value: String(args.scenario.steps), tone: 'accent' },
+    {
+      label: I18N.insights.waysLabel,
+      value: String(args.ways[args.scenario.steps] ?? 0),
+      tone: 'success',
+    },
+    {
+      label: I18N.insights.lastPairLabel,
+      value:
+        args.activeIndex && args.activeIndex >= 2
+          ? i18nText(I18N.labels.lastPairValue, {
+              left: args.ways[args.activeIndex - 1],
+              right: args.ways[args.activeIndex - 2],
+            })
+          : I18N.labels.seedValue,
+      tone: 'warning',
+    },
+    { label: I18N.insights.baseLabel, value: I18N.labels.baseValue, tone: 'info' },
+    {
+      label: I18N.insights.stripLabel,
+      value: i18nText(I18N.labels.stripValue, { length: args.ways.length }),
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'climbing-stairs',
-    modeLabel: 'Climbing Stairs',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `ways = ${args.ways[args.scenario.steps] ?? 0}`,
+    resultLabel: i18nText(I18N.labels.resultValue, {
+      value: args.ways[args.scenario.steps] ?? 0,
+    }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `1 × ${args.ways.length}`,
-    activeLabel: args.activeIndex === undefined ? null : `step ${args.activeIndex}`,
-    pathLabel: `Sequence: ${args.ways.join(' · ')}`,
-    primaryItemsLabel: 'Landing indices',
+    activeLabel:
+      args.activeIndex === undefined
+        ? null
+        : i18nText(I18N.labels.activeStep, { step: args.activeIndex }),
+    pathLabel: i18nText(I18N.labels.pathValue, { sequence: args.ways.join(' · ') }),
+    primaryItemsLabel: I18N.labels.landingIndicesLabel,
     primaryItems: args.ways.map((_, index) => `step ${index}`),
-    secondaryItemsLabel: 'Computed ways',
+    secondaryItemsLabel: I18N.labels.computedWaysLabel,
     secondaryItems: args.ways.map((value, index) => `w${index}=${value}`),
     insights,
     rowHeaders,

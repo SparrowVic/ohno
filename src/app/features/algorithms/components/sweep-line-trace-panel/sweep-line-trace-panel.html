@@ -1,24 +1,46 @@
 <div class="trace">
   @if (state(); as geo) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Sweep line summary">
-        <app-segmented-panel-section eyebrow="Scanline" [value]="geo.currentEventLabel" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.sweepLine.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Area"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sweepLine.scanlineLabel | transloco"
+          [value]="geo.currentEventLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sweepLine.areaLabel | transloco"
           [value]="geo.coveredArea.toFixed(1)"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Spans"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sweepLine.spansLabel | transloco"
           [value]="geo.spans.length"
           [valueMono]="true"
         />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Sweep line details">
-        <app-segmented-panel-section eyebrow="Active merged spans" [badge]="geo.spans.length">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.sweepLine.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.sweepLine.activeMergedSpansLabel | transloco
+          "
+          [badge]="geo.spans.length"
+        >
           @if (geo.spans.length === 0) {
-            <div class="trace__placeholder">No active spans on this scanline.</div>
+            <div class="trace__placeholder">
+              {{
+                I18N_KEY.features.algorithms.tracePanels.sweepLine.noActiveSpansLabel | transloco
+              }}
+            </div>
           } @else {
             <app-table
               class="trace__table"
@@ -30,10 +52,15 @@
           }
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Event queue" [badge]="geo.events.length">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sweepLine.eventQueueLabel | transloco"
+          [badge]="geo.events.length"
+        >
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No queued events remain.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.sweepLine.noQueuedEventsLabel | transloco
+              }}</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
@@ -44,6 +71,8 @@
       </app-segmented-panel>
     </div>
   } @else {
-    <div class="trace__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.sweepLine.emptyLabel | transloco }}
+    </div>
   }
 </div>

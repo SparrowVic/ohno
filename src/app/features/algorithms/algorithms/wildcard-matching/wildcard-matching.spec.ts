@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { wildcardMatchingGenerator } from './wildcard-matching';
 import type { SortStep } from '../../models/sort-step';
 import type { WildcardMatchingScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: WildcardMatchingScenario): SortStep[] {
   return [...wildcardMatchingGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('wildcard-matching', () => {
@@ -20,13 +30,27 @@ describe('wildcard-matching', () => {
     });
 
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('match = T');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Route: *→∅ · *→a · b=b');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.wildcardMatching.labels.resultMatch',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe('T');
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.wildcardMatching.labels.pathValue',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.route).toBe('*→∅ · *→a · b=b');
     expect(
-      steps.some((step) => step.dp?.phaseLabel === 'Trace star consume'),
+      steps.some(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.wildcardMatching.phases.traceStarConsume',
+      ),
     ).toBe(true);
     expect(
-      steps.some((step) => step.dp?.phaseLabel === 'Trace star empty branch'),
+      steps.some(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.wildcardMatching.phases.traceStarEmpty',
+      ),
     ).toBe(true);
   });
 
@@ -40,10 +64,16 @@ describe('wildcard-matching', () => {
       target: '*c',
     });
 
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('match = F');
-    expect(steps.at(-1)?.description).toContain('do not match');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe('F');
+    expect(keyOf(steps.at(-1)?.description)).toBe(
+      'features.algorithms.runtime.dp.wildcardMatching.descriptions.noMatch',
+    );
     expect(
-      steps.some((step) => step.dp?.phaseLabel?.startsWith('Trace ')),
+      steps.some((step) =>
+        keyOf(step.dp?.phaseLabel)?.startsWith(
+          'features.algorithms.runtime.dp.wildcardMatching.phases.trace',
+        ) ?? false,
+      ),
     ).toBe(false);
   });
 });

@@ -2,45 +2,73 @@
   @if (gridState(); as grid) {
     <aside class="viz-flow__guide">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Grid Guide</span>
-        <h3 class="viz-flow__title">Follow the frontier</h3>
-        <p class="viz-flow__desc">{{ grid.decision ?? 'Watch the active frontier cell and the route it unlocks next.' }}</p>
+        <span class="viz-flow__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.grid.guideEyebrow | transloco
+        }}</span>
+        <h3 class="viz-flow__title">
+          {{ I18N_KEY.features.algorithms.visualizations.grid.guideTitle | transloco }}
+        </h3>
+        <p class="viz-flow__desc">
+          @if (grid.decision) {
+            {{ grid.decision | i18nText }}
+          } @else {
+            {{ I18N_KEY.features.algorithms.visualizations.grid.guideFallbackDesc | transloco }}
+          }
+        </p>
       </div>
 
       <div class="grid-viz__focus-card">
-        <span class="grid-viz__eyebrow">{{ grid.modeLabel }}</span>
-        <span class="grid-viz__focus-value">{{ grid.sourceLabel }}</span>
-        <span class="grid-viz__focus-subtitle">{{ sourceSubtitle() }}</span>
+        <span class="grid-viz__eyebrow">{{ grid.modeLabel | i18nText }}</span>
+        <span class="grid-viz__focus-value">{{ grid.sourceLabel | i18nText }}</span>
+        <span class="grid-viz__focus-subtitle">{{ sourceSubtitleKey() | transloco }}</span>
       </div>
 
       <div class="grid-viz__decision-shell">
-        <div class="grid-viz__decision-label">{{ grid.statusLabel }}</div>
-        <div class="grid-viz__decision">{{ grid.decision ?? 'watch the board evolve step by step' }}</div>
+        <div class="grid-viz__decision-label">{{ grid.statusLabel | i18nText }}</div>
+        <div class="grid-viz__decision">
+          @if (grid.decision) {
+            {{ grid.decision | i18nText }}
+          } @else {
+            {{ I18N_KEY.features.algorithms.visualizations.grid.decisionFallback | transloco }}
+          }
+        </div>
       </div>
     </aside>
 
     <section class="viz-flow__brief">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">{{ grid.modeLabel }}</h3>
-        <p class="viz-flow__desc">Source, target and wave stats stay separate from the board so the motion on the grid stays readable.</p>
+        <span class="viz-flow__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.grid.snapshotEyebrow | transloco
+        }}</span>
+        <h3 class="viz-flow__title">{{ grid.modeLabel | i18nText }}</h3>
+        <p class="viz-flow__desc">
+          {{ I18N_KEY.features.algorithms.visualizations.grid.snapshotDesc | transloco }}
+        </p>
       </div>
 
       <div class="grid-viz__status-band">
         <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">Target</span>
-          <span class="grid-viz__metric-value">{{ grid.targetLabel }}</span>
+          <span class="grid-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.grid.targetLabel | transloco
+          }}</span>
+          <span class="grid-viz__metric-value">{{ grid.targetLabel | i18nText }}</span>
         </div>
         <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">Frontier</span>
+          <span class="grid-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.grid.frontierLabel | transloco
+          }}</span>
           <span class="grid-viz__metric-value">{{ grid.frontierCount }}</span>
         </div>
         <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">Visited</span>
+          <span class="grid-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.grid.visitedLabel | transloco
+          }}</span>
           <span class="grid-viz__metric-value">{{ grid.visitedCount }}</span>
         </div>
         <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">Result</span>
+          <span class="grid-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.grid.resultLabel | transloco
+          }}</span>
           <span class="grid-viz__metric-value">{{ resultLabel() }}</span>
         </div>
       </div>
@@ -49,10 +77,14 @@
     <section class="viz-flow__stage">
       <div class="viz-flow__stage-head">
         <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Board state</h3>
+          <span class="viz-flow__eyebrow">{{
+            I18N_KEY.features.algorithms.visualizations.grid.stageEyebrow | transloco
+          }}</span>
+          <h3 class="viz-flow__title">
+            {{ I18N_KEY.features.algorithms.visualizations.grid.stageTitle | transloco }}
+          </h3>
         </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ grid.statusLabel }}</span>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ grid.statusLabel | i18nText }}</span>
       </div>
 
       <div class="viz-flow__stage-body">

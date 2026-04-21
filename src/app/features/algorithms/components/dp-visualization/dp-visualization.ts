@@ -11,11 +11,16 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
+import { isI18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCell, DpPresetOption, DpTraceState } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 interface KnapsackItemCard {
   readonly row: number;
@@ -36,15 +41,16 @@ interface CapacityMarker {
 
 interface KnapsackMetric {
   readonly label: string;
-  readonly value: string;
+  readonly value: TranslatableText;
   readonly tone: 'accent' | 'info' | 'success' | 'warning';
 }
 
 interface KnapsackBranch {
   readonly kind: 'skip' | 'take';
-  readonly label: string;
+  readonly label: I18nKey;
   readonly value: string;
-  readonly note: string;
+  readonly note: I18nKey;
+  readonly noteParams?: Record<string, string | number | undefined>;
   readonly status: 'available' | 'winner' | 'blocked';
 }
 
@@ -59,12 +65,14 @@ const FOCUS_CELL_STATUSES = new Set<DpCell['status']>([
 
 @Component({
   selector: 'app-dp-visualization',
-  imports: [],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './dp-visualization.html',
   styleUrl: './dp-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  protected readonly I18N_KEY = I18N_KEY;
+  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -144,17 +152,17 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
 
     return [
       {
-        label: 'Best value',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.bestValue,
         value: metricValue(state, 'Best value') ?? state.resultLabel,
         tone: 'success',
       },
       {
-        label: 'Packed',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.packed,
         value: metricValue(state, 'Picked') ?? '0',
         tone: 'warning',
       },
       {
-        label: 'Table',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.table,
         value: metricValue(state, 'Table') ?? state.dimensionsLabel,
         tone: 'info',
       },
@@ -184,20 +192,32 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
     return [
       {
         kind: 'skip',
-        label: 'Skip branch',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.skipLabel,
         value: skipValue ?? '—',
-        note: `reuse dp[${active.row - 1}][${active.col}]`,
+        note: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.skipNote,
+        noteParams: { row: active.row - 1, col: active.col },
         status: winner === 'skip' ? 'winner' : 'available',
       },
       {
         kind: 'take',
-        label: 'Take branch',
-        value: takeAvailable ? (takeValue ?? '—') : 'blocked',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.takeLabel,
+        value: takeAvailable
+          ? (takeValue ?? '—')
+          : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.blockedValue,
         note: hasConcreteItem
           ? active.col >= itemWeight
-            ? `read dp[${active.row - 1}][${active.col - itemWeight}] + ${itemValue}`
-            : `needs weight ${itemWeight}`
-          : 'need previous state + item value',
+            ? I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.takeNote
+            : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.needsWeightNote
+          : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.needPreviousStateNote,
+        noteParams: hasConcreteItem
+          ? active.col >= itemWeight
+            ? {
+                row: active.row - 1,
+                col: active.col - itemWeight,
+                value: itemValue,
+              }
+            : { weight: itemWeight }
+          : undefined,
         status: !takeAvailable ? 'blocked' : winner === 'take' ? 'winner' : 'available',
       },
     ];
@@ -449,16 +469,24 @@ function parseItemStats(metaLabel: string | null): {
 }
 
 function metricValue(state: DpTraceState, label: string): string | null {
-  return state.insights.find((insight) => insight.label === label)?.value ?? null;
+  const insight = state.insights.find(
+    (entry) => entry.label === label || (isI18nText(entry.label) && entry.label.key.endsWith(label)),
+  );
+  return typeof insight?.value === 'string' ? insight.value : null;
 }
 
 function secondaryValue(state: DpTraceState, prefix: 'skip' | 'take'): string | null {
-  const item = state.secondaryItems.find((entry) => entry.startsWith(`${prefix} = `));
-  return item ? item.slice(prefix.length + 3) : null;
+  const item = state.secondaryItems.find(
+    (entry) => typeof entry === 'string' && entry.startsWith(`${prefix} = `),
+  );
+  return typeof item === 'string' ? item.slice(prefix.length + 3) : null;
 }
 
-function winningBranch(decision: string): 'skip' | 'take' | null {
-  const normalized = decision.toLowerCase();
+function winningBranch(decision: TranslatableText): 'skip' | 'take' | null {
+  const normalized =
+    typeof decision === 'string'
+      ? decision.toLowerCase()
+      : decision.key.toLowerCase();
   if (normalized.includes('take')) {
     return 'take';
   }

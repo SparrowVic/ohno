@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import type { FloodFillScenario } from '../../utils/grid-scenarios/grid-scenarios';
 import { floodFillGenerator } from './flood-fill';
 
 function collectSteps(scenario: FloodFillScenario): SortStep[] {
   return [...floodFillGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('flood-fill', () => {
@@ -26,7 +32,9 @@ describe('flood-fill', () => {
     const finalStep = steps.at(-1);
 
     expect(finalStep?.phase).toBe('graph-complete');
-    expect(finalStep?.grid?.statusLabel).toBe('Region complete');
+    expect(keyOf(finalStep?.grid?.statusLabel)).toBe(
+      'features.algorithms.runtime.grid.floodFill.statuses.regionComplete',
+    );
     expect(finalStep?.grid?.resultCount).toBe(4);
     expect(finalStep?.grid?.visitOrder).toEqual(['r0 c0', 'r0 c1', 'r1 c0', 'r2 c0']);
     expect(finalStep?.grid?.cells.filter((cell) => cell.status === 'filled')).toHaveLength(4);
