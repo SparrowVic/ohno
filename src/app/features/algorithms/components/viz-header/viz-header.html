@@ -1,0 +1,16 @@
+<header class="viz-header" [attr.data-tone]="tone()">
+  <div class="viz-header__rail" aria-hidden="true"></div>
+
+  <div class="viz-header__copy">
+    @if (phase(); as phaseText) {
+      <span class="viz-header__phase">{{ phaseText | i18nText }}</span>
+    }
+    @if (action(); as actionText) {
+      <p class="viz-header__action">{{ actionText | i18nText }}</p>
+    }
+  </div>
+
+  <div class="viz-header__slot">
+    <ng-content />
+  </div>
+</header>

@@ -86,5 +86,15 @@
     @case ('delaunay') {
       <app-delaunay-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
+    @case ('tree') {
+      <app-tree-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="treePresetOptions()"
+        [presetId]="treePresetId()"
+        (presetChange)="treePresetChange.emit($event)"
+      />
+    }
   }
 </div>

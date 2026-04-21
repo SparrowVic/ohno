@@ -1,658 +1,611 @@
-<section
-  class="string-lab viz-flow"
-  [class.string-lab--huffman]="state()?.mode === 'huffman'"
-  #container
->
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
   @if (state(); as stringState) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.string.guideEyebrow | transloco
-        }}</span>
-        <h3 class="viz-flow__title">{{ stringState.modeLabel | i18nText }}</h3>
-        <p class="viz-flow__desc">{{ stringState.decisionLabel | i18nText }}</p>
-      </div>
+    <div class="string-stage-wrap" #container>
+      @switch (stringState.mode) {
+        @case ('kmp') {
+          @if (kmpState(); as kmp) {
+            <div class="string-stage">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of kmp.text; track $index; let index = $index) {
+                    <div
+                      class="{{ kmpTextClass(index) }}"
+                      [attr.data-kmp-text]="index"
+                    >
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
 
-      <div class="string-lab__hud">
-        <div class="hud-card">
-          <span class="hud-card__label">{{
-            I18N_KEY.features.algorithms.tracePanels.string.modeLabel | transloco
-          }}</span>
-          <span class="hud-card__value">{{ stringState.modeLabel | i18nText }}</span>
-        </div>
-        <div class="hud-card">
-          <span class="hud-card__label">{{
-            I18N_KEY.features.algorithms.tracePanels.string.phaseLabel | transloco
-          }}</span>
-          <span class="hud-card__value">{{ stringState.phaseLabel | i18nText }}</span>
-        </div>
-        <div class="hud-card">
-          <span class="hud-card__label">{{
-            I18N_KEY.features.algorithms.tracePanels.string.activeLabel | transloco
-          }}</span>
-          <span class="hud-card__value">{{ stringState.activeLabel | i18nText }}</span>
-        </div>
-        <div class="hud-card">
-          <span class="hud-card__label">{{
-            I18N_KEY.features.algorithms.tracePanels.string.resultLabel | transloco
-          }}</span>
-          <span class="hud-card__value">{{ stringState.resultLabel | i18nText }}</span>
-        </div>
-        <div class="hud-card hud-card--wide">
-          <span class="hud-card__label">{{
-            I18N_KEY.features.algorithms.tracePanels.string.decisionLabel | transloco
-          }}</span>
-          <span class="hud-card__value">{{ stringState.decisionLabel | i18nText }}</span>
-        </div>
-      </div>
-
-      <div class="string-lab__calc">
-        @if (stringState.computation; as computation) {
-          <div class="calc-card">
-            <span class="calc-card__label">{{ computation.label | i18nText }}</span>
-            <span class="calc-card__expression">{{ computation.expression | i18nText }}</span>
-            @if (computation.result) {
-              <span class="calc-card__result">{{ computation.result | i18nText }}</span>
-            }
-            <span class="calc-card__note">{{ computation.note | i18nText }}</span>
-          </div>
-        } @else {
-          <div class="calc-card calc-card--empty">
-            <span class="calc-card__label">{{
-              I18N_KEY.features.algorithms.visualizations.string.computationLabel | transloco
-            }}</span>
-            <span class="calc-card__note">{{
-              I18N_KEY.features.algorithms.visualizations.string.computationEmptyNote | transloco
-            }}</span>
-          </div>
-        }
-      </div>
-    </aside>
-
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.string.labEyebrow | transloco
-        }}</span>
-        <h3 class="viz-flow__title">{{ stringState.presetLabel | i18nText }}</h3>
-        <p class="viz-flow__desc">{{ stringState.presetDescription | i18nText }}</p>
-      </div>
-
-      <div class="playground-bar">
-        <div class="playground-bar__copy">
-          <span class="playground-bar__eyebrow">{{
-            I18N_KEY.features.algorithms.visualizations.string.presetEyebrow | transloco
-          }}</span>
-          <span class="playground-bar__title">{{
-            stringState.phaseLabel | i18nText
-          }}</span>
-          <span class="playground-bar__desc">{{ stringState.activeLabel | i18nText }}</span>
-        </div>
-        <div class="playground-bar__presets">
-          @for (option of presetOptions(); track option.id) {
-            <button
-              type="button"
-              class="preset-chip"
-              [class.preset-chip--active]="presetId() === option.id"
-              (click)="selectPreset(option.id)"
-            >
-              {{ looksLikeI18nKey(option.label) ? (option.label | transloco) : option.label }}
-            </button>
-          }
-        </div>
-      </div>
-
-      <div class="string-lab__insights">
-        @for (insight of stringState.insights; track insight.label) {
-          <div class="insight-card insight-card--{{ insight.tone }}">
-            <span class="insight-card__label">{{ insight.label | i18nText }}</span>
-            <span class="insight-card__value">{{ insight.value | i18nText }}</span>
-          </div>
-        }
-      </div>
-    </section>
-
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">{{
-            I18N_KEY.features.algorithms.visualizations.string.stageEyebrow | transloco
-          }}</span>
-          <h3 class="viz-flow__title">{{ stringState.modeLabel | i18nText }}</h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ stringState.phaseLabel | i18nText }}</span>
-      </div>
-
-      <div class="viz-flow__stage-body">
-        @switch (stringState.mode) {
-      @case ('kmp') {
-        @if (kmpState(); as kmp) {
-          <div class="string-stage">
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
-              }}</span>
-              <div class="cell-track">
-                @for (char of kmp.text; track $index; let index = $index) {
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
+                }}</span>
+                <div class="cell-track cell-track--floating">
                   <div
-                    class="{{ kmpTextClass(index) }}"
-                    [attr.data-kmp-text]="index"
+                    class="float-track"
+                    [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
                   >
-                    <span>{{ char }}</span>
-                    <small>{{ index }}</small>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
-              }}</span>
-              <div class="cell-track cell-track--floating">
-                <div
-                  class="float-track"
-                  [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
-                >
-                  @for (char of kmp.pattern; track $index; let index = $index) {
-                    <div
-                      class="{{ kmpPatternClass(index) }}"
-                      [attr.data-kmp-pattern]="index"
-                    >
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.tracePanels.string.kmp.failureTableLabel | transloco
-              }}</span>
-              <div class="cell-track cell-track--floating">
-                <div
-                  class="float-track"
-                  [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
-                >
-                  @for (value of kmp.failure; track $index; let index = $index) {
-                    <div class="{{ failureClass(index) }}">
-                      <span>{{ index <= kmp.failureReadyIndex ? value : '·' }}</span>
-                      <small>f{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-
-            <div class="string-jump">
-              <span class="string-jump__label">{{
-                I18N_KEY.features.algorithms.tracePanels.string.kmp.jumpLabel | transloco
-              }}</span>
-              <span class="string-jump__value">
-                @if (kmp.fallbackFrom !== null && kmp.fallbackTo !== null) {
-                  j: {{ kmp.fallbackFrom }} → {{ kmp.fallbackTo }}
-                } @else {
-                  {{ I18N_KEY.features.algorithms.tracePanels.string.kmp.noJumpLabel | transloco }}
-                }
-              </span>
-            </div>
-          </div>
-        }
-      }
-
-      @case ('rabin-karp') {
-        @if (rabinState(); as rabin) {
-          <div class="string-stage">
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
-              }}</span>
-              <div class="cell-track">
-                @for (char of rabin.text; track $index; let index = $index) {
-                  <div class="{{ rabinTextClass(index) }}">
-                    <span>{{ char }}</span>
-                    <small>{{ index }}</small>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
-              }}</span>
-              <div class="cell-track">
-                @for (char of rabin.pattern; track $index; let index = $index) {
-                  <div class="{{ rabinPatternClass(index) }}">
-                    <span>{{ char }}</span>
-                    <small>{{ index }}</small>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div class="hash-strip">
-              <div class="hash-card">
-                <span class="hash-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.patternLabel
-                    | transloco
-                }}</span>
-                <span class="hash-card__value">{{ rabin.patternHash }}</span>
-              </div>
-              <div class="hash-card hash-card--window">
-                <span class="hash-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.windowLabel
-                    | transloco
-                }}</span>
-                <span class="hash-card__value">{{ rabin.windowHash }}</span>
-              </div>
-              <div class="hash-card">
-                <span class="hash-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.rollingWindowLabel
-                    | transloco
-                }}</span>
-                <span class="hash-card__value">{{ rabin.windowStart }}..{{ rabin.windowStart + rabin.windowLength - 1 }}</span>
-              </div>
-              <div class="hash-card hash-card--alert">
-                <span class="hash-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.statusLabel
-                    | transloco
-                }}</span>
-                <span class="hash-card__value">
-                  @if (rabin.collision) {
-                    {{
-                      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.collisionStatusLabel
-                        | transloco
-                    }}
-                  } @else if (rabin.verifying) {
-                    {{
-                      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.verifyStatusLabel
-                        | transloco
-                    }}
-                  } @else {
-                    {{
-                      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.hashOnlyStatusLabel
-                        | transloco
-                    }}
-                  }
-                </span>
-              </div>
-            </div>
-
-            <div class="hash-meta">
-              <span class="meta-pill"
-                >{{ I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.outgoingLabel | transloco }}:
-                {{ rabin.outgoingChar ?? '—' }}</span
-              >
-              <span class="meta-pill meta-pill--accent"
-                >{{ I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.incomingLabel | transloco }}:
-                {{ rabin.incomingChar ?? '—' }}</span
-              >
-              <span class="meta-pill meta-pill--soft"
-                >{{ I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.baseModLabel | transloco }}
-                {{ rabin.base }} / {{ rabin.mod }}</span
-              >
-            </div>
-          </div>
-        }
-      }
-
-      @case ('z-algorithm') {
-        @if (zState(); as zStateValue) {
-          <div class="string-stage string-stage--z">
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.combined | transloco
-              }}</span>
-              <div class="cell-track">
-                @for (char of zStateValue.combined; track $index; let index = $index) {
-                  <div class="{{ zCharClass(index) }}">
-                    <span>{{ char }}</span>
-                    <small>{{ index }}</small>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div class="z-landscape">
-              @for (value of zStateValue.zValues; track $index; let index = $index) {
-                <div class="z-col">
-                  <div
-                    class="{{ zBarClass(index) }}"
-                    [style.height]="zBarHeight(value)"
-                    [attr.data-z-bar]="index"
-                  ></div>
-                  <span class="z-col__label">{{ value }}</span>
-                </div>
-              }
-            </div>
-          </div>
-        }
-      }
-
-      @case ('manacher') {
-        @if (manacherState(); as manacher) {
-          <div class="string-stage string-stage--manacher">
-
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
-              }}</span>
-              <div class="cell-track">
-                @for (char of manacher.source; track $index; let index = $index) {
-                  <div class="str-cell str-cell--accent">
-                    <span>{{ char }}</span>
-                    <small>{{ index }}</small>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div class="arc-board-wrap">
-              <div class="manacher-stage" [style.width.px]="manacherTrackWidth()">
-
-                <svg
-                  class="arc-board"
-                  [attr.width]="manacherTrackWidth()"
-                  height="128"
-                  [attr.viewBox]="manacherArcViewBox()"
-                >
-                  <defs>
-                    <filter id="mch-glow-warm" x="-60%" y="-60%" width="220%" height="220%">
-                      <feGaussianBlur stdDeviation="4" result="b"/>
-                      <feMerge>
-                        <feMergeNode in="b"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                    <filter id="mch-glow-cool" x="-60%" y="-60%" width="220%" height="220%">
-                      <feGaussianBlur stdDeviation="5" result="b"/>
-                      <feMerge>
-                        <feMergeNode in="b"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                  </defs>
-
-                  @if (manacher.leftBoundary !== null && manacher.rightBoundary !== null && manacher.rightBoundary > manacher.leftBoundary) {
-                    <rect
-                      class="mch-window"
-                      [attr.x]="manacherWindowX(manacher.leftBoundary)"
-                      y="0"
-                      [attr.width]="manacherWindowW(manacher.leftBoundary, manacher.rightBoundary)"
-                      height="128"
-                      rx="8"
-                    />
-                  }
-
-                  @for (arc of manacherArcs(); track arc.id) {
-                    <path
-                      class="arc arc--{{ arc.tone }}"
-                      [attr.d]="arc.path"
-                      pathLength="1"
-                    />
-                  }
-
-                  @if (manacher.currentCenter !== null) {
-                    <line
-                      class="mch-beam"
-                      [attr.x1]="manacherCenterX(manacher.currentCenter)"
-                      [attr.x2]="manacherCenterX(manacher.currentCenter)"
-                      y1="0"
-                      y2="128"
-                    />
-                  }
-                </svg>
-
-                <div class="cell-track cell-track--inline">
-                  @for (char of manacher.transformed; track $index; let index = $index) {
-                    <div
-                      class="{{ manacherCharClass(index) }}"
-                      [attr.data-manacher-char]="index"
-                    >
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-
-                <div class="mch-radius-row">
-                  @for (value of manacher.radii; track $index; let index = $index) {
-                    <div class="{{ radiusClass(index) }}">
-                      <span>{{ value }}</span>
-                      <small>P{{ index }}</small>
-                    </div>
-                  }
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        }
-      }
-
-      @case ('burrows-wheeler-transform') {
-        @if (bwtState(); as bwt) {
-          <div class="string-stage string-stage--bwt">
-            <div class="bwt-summary">
-              <div class="bwt-summary__card">
-                <span class="bwt-summary__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
-                }}</span>
-                <span class="bwt-summary__value">{{ bwt.source }}</span>
-              </div>
-              <div class="bwt-summary__card">
-                <span class="bwt-summary__label">F</span>
-                <span class="bwt-summary__value">{{ bwt.firstColumn || '—' }}</span>
-              </div>
-              <div class="bwt-summary__card">
-                <span class="bwt-summary__label">L</span>
-                <span class="bwt-summary__value bwt-summary__value--output">{{ bwt.lastColumn || '—' }}</span>
-              </div>
-            </div>
-
-            <div class="bwt-matrix-wrap">
-              @for (row of bwt.rotations; track row.id) {
-                <div
-                  class="{{ bwtRowClass(row) }}"
-                  [attr.data-bwt-row]="row.id"
-                >
-                  <span class="bwt-row__index">{{ row.startIndex }}</span>
-                  <div class="bwt-row__chars">
-                    @for (char of row.text; track $index; let index = $index) {
-                      <span class="{{ bwtCellClass(row, index) }}">{{ char }}</span>
+                    @for (char of kmp.pattern; track $index; let index = $index) {
+                      <div
+                        class="{{ kmpPatternClass(index) }}"
+                        [attr.data-kmp-pattern]="index"
+                      >
+                        <span>{{ char }}</span>
+                        <small>{{ index }}</small>
+                      </div>
                     }
                   </div>
                 </div>
-              }
-            </div>
+              </div>
 
-            <div class="run-strip">
-              @for (group of bwt.runGroups; track group.id) {
-                <span class="{{ bwtRunClass(group.tone) }}">
-                  {{ group.count }}×{{ group.char }}
-                </span>
-              }
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.kmp.failureTableLabel | transloco
+                }}</span>
+                <div class="cell-track cell-track--floating">
+                  <div
+                    class="float-track"
+                    [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
+                  >
+                    @for (value of kmp.failure; track $index; let index = $index) {
+                      <div class="{{ failureClass(index) }}">
+                        <span>{{ index <= kmp.failureReadyIndex ? value : '·' }}</span>
+                        <small>f{{ index }}</small>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          }
         }
-      }
 
-      @case ('rle') {
-        @if (rleState(); as rle) {
-          <div class="string-stage string-stage--rle">
-            <div class="string-row">
-              <span class="string-row__label">{{
-                I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
-              }}</span>
-              <div class="cell-track">
-                @for (char of rle.source; track $index; let index = $index) {
-                  <div class="{{ rleCellClass(rle, index) }}">
-                    <span>{{ char }}</span>
-                    <small>{{ index }}</small>
+        @case ('rabin-karp') {
+          @if (rabinState(); as rabin) {
+            <div class="string-stage">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of rabin.text; track $index; let index = $index) {
+                    <div class="{{ rabinTextClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of rabin.pattern; track $index; let index = $index) {
+                    <div class="{{ rabinPatternClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="hash-strip">
+                <div class="hash-card">
+                  <span class="hash-card__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.patternLabel | transloco
+                  }}</span>
+                  <span class="hash-card__value">{{ rabin.patternHash }}</span>
+                </div>
+                <div class="hash-card hash-card--window">
+                  <span class="hash-card__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.windowLabel | transloco
+                  }}</span>
+                  <span class="hash-card__value">{{ rabin.windowHash }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        }
+
+        @case ('z-algorithm') {
+          @if (zState(); as zStateValue) {
+            <div class="string-stage string-stage--z">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.combined | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of zStateValue.combined; track $index; let index = $index) {
+                    <div class="{{ zCharClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="z-landscape">
+                @for (value of zStateValue.zValues; track $index; let index = $index) {
+                  <div class="z-col">
+                    <div
+                      class="{{ zBarClass(index) }}"
+                      [style.height]="zBarHeight(value)"
+                      [attr.data-z-bar]="index"
+                    ></div>
+                    <span class="z-col__label">{{ value }}</span>
                   </div>
                 }
               </div>
             </div>
+          }
+        }
 
-            <div class="rle-stats-row">
-              <div class="rle-stat-card">
-                <span class="rle-stat-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rle.charLabel | transloco
+        @case ('aho-corasick') {
+          @if (ahoState(); as aho) {
+            <div class="string-stage string-stage--aho">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
                 }}</span>
-                <span class="rle-stat-card__value">{{ rle.groupChar || '—' }}</span>
+                <div class="cell-track">
+                  @for (char of aho.text; track $index; let index = $index) {
+                    <div class="{{ ahoTextClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
               </div>
-              <div class="rle-stat-card rle-stat-card--count">
-                <span class="rle-stat-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rle.countLabel | transloco
+
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.patterns | transloco
                 }}</span>
-                <span class="rle-stat-card__value">{{ rle.groupCount || 0 }}</span>
+                <div class="chip-track">
+                  @for (pattern of aho.patterns; track pattern) {
+                    <span class="value-chip" [class.value-chip--soft]="!ahoPatternMatched(pattern)">
+                      {{ pattern }}
+                    </span>
+                  }
+                </div>
               </div>
-              <div class="rle-stat-card rle-stat-card--ratio">
-                <span class="rle-stat-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rle.ratioLabel | transloco
+
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.nodes | transloco
                 }}</span>
-                <span class="rle-stat-card__value">
-                  {{ rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—' }}
-                </span>
-              </div>
-              <div class="rle-stat-card">
-                <span class="rle-stat-card__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rle.runsDoneLabel | transloco
-                }}</span>
-                <span class="rle-stat-card__value">{{ rle.completedRuns.length }}</span>
+                <div class="node-grid">
+                  @for (node of aho.nodes; track node.id) {
+                    <div class="node-card node-card--{{ node.tone }}">
+                      <div class="node-card__title">
+                        <span>q{{ node.index }}</span>
+                        <small>{{ node.char }}</small>
+                      </div>
+                      <div class="node-card__meta">f → {{ node.failId ?? '—' }}</div>
+                      <div class="node-card__meta">
+                        {{ node.outputs.length > 0 ? node.outputs.join(', ') : '—' }}
+                      </div>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
+          }
+        }
 
-            <div class="rle-output-wrap">
-              <span class="rle-output-label">{{
-                I18N_KEY.features.algorithms.tracePanels.string.rle.outputLabel | transloco
-              }}</span>
-              <div class="rle-chips-row">
-                @for (run of rle.completedRuns; track run.id) {
-                  <div class="rle-chip rle-chip--done">
-                    <span class="rle-chip__count">{{ run.count }}</span>
-                    <span class="rle-chip__char">{{ run.char }}</span>
-                  </div>
-                }
-                @if (rle.phase !== 'complete' && rle.groupCount > 0) {
-                  <div class="rle-chip rle-chip--active">
-                    <span class="rle-chip__count">{{ rle.groupCount }}</span>
-                    <span class="rle-chip__char">{{ rle.groupChar }}</span>
-                  </div>
-                }
-                @if (rle.completedRuns.length === 0 && rle.groupCount === 0) {
-                  <span class="rle-empty">{{
-                    I18N_KEY.features.algorithms.visualizations.string.rle.waitingForFirstRun
+        @case ('suffix-array-construction') {
+          @if (suffixArrayState(); as suffixArray) {
+            <div class="string-stage string-stage--suffix">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of suffixArray.source; track $index; let index = $index) {
+                    <div class="{{ suffixSourceClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="bwt-summary">
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.suffixArray.stepSizeLabel
                       | transloco
                   }}</span>
-                }
+                  <span class="bwt-summary__value">{{ suffixArray.stepSize }}</span>
+                </div>
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ suffixArray.distinctRanks }}</span>
+                </div>
               </div>
-            </div>
-          </div>
-        }
-      }
 
-      @case ('huffman') {
-        @if (huffmanState(); as huffman) {
-          <div class="string-stage string-stage--huffman">
-            @if (huffman.phase === 'freq') {
-              <div class="freq-chart">
-                @for (f of huffman.charFreqs; track f.char) {
-                  <div class="freq-col" [class.freq-col--active]="f.isActive">
-                    <div class="freq-bar-wrap">
-                      @if (f.isActive) {
-                        <span class="freq-count">{{ f.freq }}</span>
-                      }
-                      <div class="freq-bar" [style.height]="freqBarHeight(f.freq)"></div>
-                    </div>
-                    <div class="freq-char">'{{ f.char }}'</div>
+              <div class="suffix-list">
+                @for (row of suffixArray.rows; track row.id) {
+                  <div class="suffix-row suffix-row--{{ row.tone }}">
+                    <span class="suffix-row__order">{{ row.order }}</span>
+                    <span class="suffix-row__index">{{ row.startIndex }}</span>
+                    <span class="suffix-row__text">{{ row.suffix }}</span>
+                    <span class="suffix-row__pair">{{ row.pairLabel }}</span>
+                    <span class="suffix-row__rank">r{{ row.rank }}</span>
                   </div>
                 }
               </div>
-            } @else {
-              <div class="huff-arena">
-                <div class="huff-tree-wrap">
-                  <svg
-                    class="huff-tree-svg"
-                    [attr.width]="huffmanSvgWidth()"
-                    [attr.height]="huffmanSvgHeight()"
-                    [attr.viewBox]="'0 0 ' + huffmanSvgWidth() + ' ' + huffmanSvgHeight()"
-                  >
-                    @for (edge of huffmanVisibleEdges(); track edge.fromId + edge.toId) {
-                      @if (huffNodeById(edge.fromId); as fromNode) {
-                        @if (huffNodeById(edge.toId); as toNode) {
-                          <line
-                            class="huff-edge"
-                            [attr.x1]="fromNode.x"
-                            [attr.y1]="fromNode.y"
-                            [attr.x2]="toNode.x"
-                            [attr.y2]="toNode.y"
-                          />
-                          <text
-                            class="huff-edge-label huff-edge-label--{{ edge.label }}"
-                            [attr.x]="(fromNode.x + toNode.x) / 2"
-                            [attr.y]="(fromNode.y + toNode.y) / 2 - 6"
-                            text-anchor="middle"
-                          >{{ edge.label }}</text>
-                        }
-                      }
-                    }
-                    @for (node of huffmanVisibleNodes(); track node.id) {
-                      <g class="huff-node-g huff-node-g--{{ node.tone }}" [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
-                        <circle class="huff-node" r="22" />
-                        <text class="huff-node__freq" text-anchor="middle" dy="-3">{{ node.freq }}</text>
-                        @if (node.char) {
-                          <text class="huff-node__char" text-anchor="middle" dy="11">'{{ node.char }}'</text>
-                        }
-                      </g>
-                    }
-                  </svg>
-                </div>
+            </div>
+          }
+        }
 
-                <div class="huff-heap-strip">
-                  @for (item of huffman.heapItems; track item.id) {
-                    <div class="huff-heap-pill huff-heap-pill--{{ item.role ?? 'default' }}">
-                      <span class="huff-heap-pill__freq">{{ item.freq }}</span>
-                      @if (item.char) {
-                        <span class="huff-heap-pill__char">'{{ item.char }}'</span>
-                      } @else {
-                        <span class="huff-heap-pill__char huff-heap-pill__char--internal">∅</span>
-                      }
+        @case ('suffix-array-lcp-kasai') {
+          @if (suffixLcpState(); as suffixLcp) {
+            <div class="string-stage string-stage--suffix">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of suffixLcp.source; track $index; let index = $index) {
+                    <div class="{{ suffixSourceClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
                     </div>
                   }
                 </div>
               </div>
 
-              @if (huffman.phase === 'codes' && huffman.codeTable.length > 0) {
-                <div class="huff-code-table">
-                  @for (entry of huffman.codeTable; track entry.char) {
-                    <div class="huff-code-row">
-                      <span class="huff-code-row__char">'{{ entry.char }}'</span>
-                      <span class="huff-code-row__freq">f={{ entry.freq }}</span>
-                      <div class="huff-code-row__bits">
-                        @for (bit of entry.code.split(''); track $index) {
-                          <span class="huff-bit huff-bit--{{ bit }}">{{ bit }}</span>
-                        }
-                      </div>
-                      <span class="huff-code-row__len">{{ entry.code.length }}b</span>
+              <div class="suffix-list">
+                @for (row of suffixLcp.rows; track row.id) {
+                  <div class="suffix-row suffix-row--{{ row.tone }}">
+                    <span class="suffix-row__order">{{ row.order }}</span>
+                    <span class="suffix-row__index">{{ row.startIndex }}</span>
+                    <span class="suffix-row__text">{{ row.suffix }}</span>
+                    <span class="suffix-row__pair">LCP {{ row.lcp ?? '—' }}</span>
+                    <span class="suffix-row__rank">r{{ suffixLcp.rankArray[row.startIndex] }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        @case ('manacher') {
+          @if (manacherState(); as manacher) {
+            <div class="string-stage string-stage--manacher">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of manacher.source; track $index; let index = $index) {
+                    <div class="str-cell str-cell--accent">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
                     </div>
                   }
                 </div>
+              </div>
+
+              <div class="arc-board-wrap">
+                <div class="manacher-stage" [style.width.px]="manacherTrackWidth()">
+                  <svg
+                    class="arc-board"
+                    [attr.width]="manacherTrackWidth()"
+                    height="128"
+                    [attr.viewBox]="manacherArcViewBox()"
+                  >
+                    <defs>
+                      <filter id="mch-glow-warm" x="-60%" y="-60%" width="220%" height="220%">
+                        <feGaussianBlur stdDeviation="4" result="b"/>
+                        <feMerge>
+                          <feMergeNode in="b"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                      <filter id="mch-glow-cool" x="-60%" y="-60%" width="220%" height="220%">
+                        <feGaussianBlur stdDeviation="5" result="b"/>
+                        <feMerge>
+                          <feMergeNode in="b"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                    </defs>
+
+                    @if (manacher.leftBoundary !== null && manacher.rightBoundary !== null && manacher.rightBoundary > manacher.leftBoundary) {
+                      <rect
+                        class="mch-window"
+                        [attr.x]="manacherWindowX(manacher.leftBoundary)"
+                        y="0"
+                        [attr.width]="manacherWindowW(manacher.leftBoundary, manacher.rightBoundary)"
+                        height="128"
+                        rx="8"
+                      />
+                    }
+
+                    @for (arc of manacherArcs(); track arc.id) {
+                      <path
+                        class="arc arc--{{ arc.tone }}"
+                        [attr.d]="arc.path"
+                        pathLength="1"
+                      />
+                    }
+
+                    @if (manacher.currentCenter !== null) {
+                      <line
+                        class="mch-beam"
+                        [attr.x1]="manacherCenterX(manacher.currentCenter)"
+                        [attr.x2]="manacherCenterX(manacher.currentCenter)"
+                        y1="0"
+                        y2="128"
+                      />
+                    }
+                  </svg>
+
+                  <div class="cell-track cell-track--inline">
+                    @for (char of manacher.transformed; track $index; let index = $index) {
+                      <div
+                        class="{{ manacherCharClass(index) }}"
+                        [attr.data-manacher-char]="index"
+                      >
+                        <span>{{ char }}</span>
+                        <small>{{ index }}</small>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="mch-radius-row">
+                    @for (value of manacher.radii; track $index; let index = $index) {
+                      <div class="{{ radiusClass(index) }}">
+                        <span>{{ value }}</span>
+                        <small>P{{ index }}</small>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        }
+
+        @case ('palindromic-tree') {
+          @if (palindromicTreeState(); as palTree) {
+            <div class="string-stage string-stage--pal-tree">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of palTree.source; track $index; let index = $index) {
+                    <div class="{{ palSourceClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="bwt-summary">
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.distinctLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ palTree.distinctCount }}</span>
+                </div>
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.processedLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ palTree.processedIndex + 1 }}</span>
+                </div>
+              </div>
+
+              <div class="node-grid">
+                @for (node of palTree.nodes; track node.id) {
+                    <div class="node-card node-card--{{ node.tone }}">
+                      <div class="node-card__title">
+                        <span>{{ node.palindrome }}</span>
+                        <small>#{{ node.id }}</small>
+                      </div>
+                      <div class="node-card__meta">|s| = {{ node.length }}</div>
+                      <div class="node-card__meta">↘ {{ node.suffixLinkId ?? '—' }}</div>
+                      <div class="node-card__meta">×{{ node.occurrences }}</div>
+                    </div>
+                  }
+                </div>
+            </div>
+          }
+        }
+
+        @case ('burrows-wheeler-transform') {
+          @if (bwtState(); as bwt) {
+            <div class="string-stage string-stage--bwt">
+              <div class="bwt-summary">
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ bwt.source }}</span>
+                </div>
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">F</span>
+                  <span class="bwt-summary__value">{{ bwt.firstColumn || '—' }}</span>
+                </div>
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">L</span>
+                  <span class="bwt-summary__value bwt-summary__value--output">{{ bwt.lastColumn || '—' }}</span>
+                </div>
+              </div>
+
+              <div class="bwt-matrix-wrap">
+                @for (row of bwt.rotations; track row.id) {
+                  <div
+                    class="{{ bwtRowClass(row) }}"
+                    [attr.data-bwt-row]="row.id"
+                  >
+                    <span class="bwt-row__index">{{ row.startIndex }}</span>
+                    <div class="bwt-row__chars">
+                      @for (char of row.text; track $index; let index = $index) {
+                        <span class="{{ bwtCellClass(row, index) }}">{{ char }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        @case ('rle') {
+          @if (rleState(); as rle) {
+            <div class="string-stage string-stage--rle">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of rle.source; track $index; let index = $index) {
+                    <div class="{{ rleCellClass(rle, index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="rle-output-wrap">
+                <span class="rle-output-label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rle.outputLabel | transloco
+                }}</span>
+                <div class="rle-chips-row">
+                  @for (run of rle.completedRuns; track run.id) {
+                    <div class="rle-chip rle-chip--done">
+                      <span class="rle-chip__count">{{ run.count }}</span>
+                      <span class="rle-chip__char">{{ run.char }}</span>
+                    </div>
+                  }
+                  @if (rle.phase !== 'complete' && rle.groupCount > 0) {
+                    <div class="rle-chip rle-chip--active">
+                      <span class="rle-chip__count">{{ rle.groupCount }}</span>
+                      <span class="rle-chip__char">{{ rle.groupChar }}</span>
+                    </div>
+                  }
+                  @if (rle.completedRuns.length === 0 && rle.groupCount === 0) {
+                    <span class="rle-empty">{{
+                      I18N_KEY.features.algorithms.visualizations.string.rle.waitingForFirstRun | transloco
+                    }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+
+        @case ('huffman') {
+          @if (huffmanState(); as huffman) {
+            <div class="string-stage string-stage--huffman">
+              @if (huffman.phase === 'freq') {
+                <div class="freq-chart">
+                  @for (f of huffman.charFreqs; track f.char) {
+                    <div class="freq-col" [class.freq-col--active]="f.isActive">
+                      <div class="freq-bar-wrap">
+                        @if (f.isActive) {
+                          <span class="freq-count">{{ f.freq }}</span>
+                        }
+                        <div class="freq-bar" [style.height]="freqBarHeight(f.freq)"></div>
+                      </div>
+                      <div class="freq-char">'{{ f.char }}'</div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="huff-arena">
+                  <div class="huff-tree-wrap">
+                    <svg
+                      class="huff-tree-svg"
+                      [attr.width]="huffmanSvgWidth()"
+                      [attr.height]="huffmanSvgHeight()"
+                      [attr.viewBox]="'0 0 ' + huffmanSvgWidth() + ' ' + huffmanSvgHeight()"
+                    >
+                      @for (edge of huffmanVisibleEdges(); track edge.fromId + edge.toId) {
+                        @if (huffNodeById(edge.fromId); as fromNode) {
+                          @if (huffNodeById(edge.toId); as toNode) {
+                            <line
+                              class="huff-edge"
+                              [attr.x1]="fromNode.x"
+                              [attr.y1]="fromNode.y"
+                              [attr.x2]="toNode.x"
+                              [attr.y2]="toNode.y"
+                            />
+                            <text
+                              class="huff-edge-label huff-edge-label--{{ edge.label }}"
+                              [attr.x]="(fromNode.x + toNode.x) / 2"
+                              [attr.y]="(fromNode.y + toNode.y) / 2 - 6"
+                              text-anchor="middle"
+                            >{{ edge.label }}</text>
+                          }
+                        }
+                      }
+                      @for (node of huffmanVisibleNodes(); track node.id) {
+                        <g class="huff-node-g huff-node-g--{{ node.tone }}" [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+                          <circle class="huff-node" r="22" />
+                          <text class="huff-node__freq" text-anchor="middle" dy="-3">{{ node.freq }}</text>
+                          @if (node.char) {
+                            <text class="huff-node__char" text-anchor="middle" dy="11">'{{ node.char }}'</text>
+                          }
+                        </g>
+                      }
+                    </svg>
+                  </div>
+                </div>
+
+                @if (huffman.phase === 'codes' && huffman.codeTable.length > 0) {
+                  <div class="huff-code-table">
+                    @for (entry of huffman.codeTable; track entry.char) {
+                      <div class="huff-code-row">
+                        <span class="huff-code-row__char">'{{ entry.char }}'</span>
+                        <span class="huff-code-row__freq">f={{ entry.freq }}</span>
+                        <div class="huff-code-row__bits">
+                          @for (bit of entry.code.split(''); track $index) {
+                            <span class="huff-bit huff-bit--{{ bit }}">{{ bit }}</span>
+                          }
+                        </div>
+                        <span class="huff-code-row__len">{{ entry.code.length }}b</span>
+                      </div>
+                    }
+                  </div>
+                }
               }
-            }
-          </div>
+            </div>
+          }
         }
       }
-    }
-      </div>
-    </section>
+    </div>
   } @else {
-    <div class="string-lab__empty">{{
+    <p class="string-lab__empty">{{
       I18N_KEY.features.algorithms.visualizations.string.emptyLabel | transloco
-    }}</div>
+    }}</p>
   }
-</section>
+</app-viz-panel>

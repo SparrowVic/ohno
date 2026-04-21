@@ -4,97 +4,18 @@
   flex: 1;
 }
 
-.dsu-viz {
-  min-height: 0;
-  width: 100%;
-}
-
-.dsu-viz__hud {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
-  gap: 8px;
-}
-
-.dsu-viz__stat,
-.dsu-viz__panel {
-  min-width: 0;
-  border-radius: 14px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.012)),
-    rgba(12, 18, 30, 0.72);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
-}
-
-.dsu-viz__stat {
-  padding: 10px 12px;
-}
-
-.dsu-viz__label,
-.dsu-viz__panel-label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  font-weight: 700;
-}
-
-.dsu-viz__value {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.dsu-viz__panel-title {
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--text-primary);
-}
-
-.dsu-viz__body {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
-  gap: 10px;
-}
-
-.dsu-viz__panel {
-  padding: 10px;
-}
-
-.dsu-viz__panel-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.dsu-viz__panel-pill {
-  padding: 5px 9px;
-  border-radius: 999px;
-  background: rgb(var(--chrome-accent-rgb) / 0.14);
-  color: var(--chrome-accent-strong);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  border: 0.5px solid rgb(var(--chrome-accent-rgb) / 0.26);
-}
-
 /* ============================================================ */
 /* GROUPS — each one is a tree (root + members)                 */
 /* ============================================================ */
 .dsu-viz__groups {
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
   gap: 8px;
+  align-content: start;
+  padding: 14px;
+  overflow: auto;
 }
 
 .dsu-group {
@@ -163,9 +84,7 @@
 /* ============================================================ */
 /* NODE CHIPS inside a group                                     */
 /* ============================================================ */
-.dsu-group__chips,
-.dsu-edge-list,
-.dsu-links {
+.dsu-group__chips {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
@@ -209,7 +128,9 @@
   background:
     radial-gradient(circle at 50% 20%, rgb(var(--chrome-accent-alt-rgb) / 0.16), transparent 65%),
     rgba(13, 17, 26, 0.82);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 10px rgb(var(--chrome-accent-alt-rgb) / 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 0 10px rgb(var(--chrome-accent-alt-rgb) / 0.14);
 }
 
 .dsu-node-chip--root .dsu-node-chip__label {
@@ -224,8 +145,7 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background:
-    radial-gradient(circle at 35% 30%, #ffffff, rgb(var(--chrome-accent-alt-rgb)) 70%);
+  background: radial-gradient(circle at 35% 30%, #ffffff, rgb(var(--chrome-accent-alt-rgb)) 70%);
   box-shadow: 0 0 6px rgb(var(--chrome-accent-alt-rgb) / 0.6);
 }
 
@@ -247,7 +167,8 @@
 }
 
 @keyframes dsu-active-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 10px rgb(var(--chrome-accent-warm-rgb) / 0.18);
   }
   50% {
@@ -270,249 +191,17 @@
   color: var(--accent-strong);
 }
 
-/* ============================================================ */
-/* KRUSKAL / UNION-FIND EDGE RAIL                                */
-/* ============================================================ */
-.dsu-viz__panel--rail {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.dsu-edge-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-  gap: 6px;
-}
-
-.dsu-edge {
-  position: relative;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.02);
-  transition:
-    border-color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft);
-}
-
-.dsu-edge__title {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-
-.dsu-edge__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 5px;
-}
-
-.dsu-edge__weight {
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  color: var(--text-primary);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.dsu-edge__state {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-/* PENDING — muted chrome-accent, "in the queue, not yet considered". */
-.dsu-edge--pending {
-  border-color: rgb(var(--chrome-accent-rgb) / 0.2);
-  background: rgb(var(--chrome-accent-rgb) / 0.04);
-}
-
-.dsu-edge--pending .dsu-edge__state {
-  color: var(--chrome-accent-strong);
-}
-
-/* ACTIVE — pink, currently being evaluated. Pulses to catch the eye. */
-.dsu-edge--active {
-  border-color: rgb(var(--chrome-accent-warm-rgb) / 0.55);
-  background:
-    linear-gradient(90deg, rgb(var(--chrome-accent-warm-rgb) / 0.12), transparent 70%),
-    rgba(255, 255, 255, 0.022);
-  box-shadow: inset 3px 0 0 rgb(var(--chrome-accent-warm-rgb) / 0.8);
-  animation: dsu-active-pulse 1.4s var(--ease-out-expo) infinite;
-}
-
-.dsu-edge--active .dsu-edge__title {
-  color: var(--chrome-accent-warm);
-}
-
-.dsu-edge--active .dsu-edge__state {
-  color: var(--chrome-accent-warm);
-}
-
-/* ACCEPTED — lime, in the MST. Prominent so the growing spanning
-   tree is scannable in the list. */
-.dsu-edge--accepted {
-  border-color: rgb(var(--accent-rgb) / 0.5);
-  background:
-    linear-gradient(90deg, rgb(var(--accent-rgb) / 0.14), rgb(var(--accent-rgb) / 0.03)),
-    rgba(255, 255, 255, 0.02);
-  box-shadow: inset 3px 0 0 rgb(var(--accent-rgb) / 0.75);
-}
-
-.dsu-edge--accepted .dsu-edge__title {
-  color: var(--accent-strong);
-}
-
-.dsu-edge--accepted .dsu-edge__state {
-  color: var(--accent-strong);
-}
-
-.dsu-edge--accepted .dsu-edge__weight {
-  background: rgb(var(--accent-rgb) / 0.16);
-  border-color: rgb(var(--accent-rgb) / 0.3);
-  color: var(--accent-strong);
-}
-
-/* REJECTED — rose danger + strikethrough on the title. It's
-   discarded, shouldn't compete with the interesting states. */
-.dsu-edge--rejected {
-  border-color: rgb(var(--viz-danger-rgb) / 0.22);
-  background: rgb(var(--viz-danger-rgb) / 0.04);
-  opacity: 0.7;
-}
-
-.dsu-edge--rejected .dsu-edge__title {
-  text-decoration: line-through;
-  text-decoration-color: rgb(var(--viz-danger-rgb) / 0.6);
-  text-decoration-thickness: 1px;
-  color: var(--text-secondary);
-}
-
-.dsu-edge--rejected .dsu-edge__state {
-  color: var(--viz-danger-ink);
-}
-
-/* ============================================================ */
-/* PARENT MAP — compact pointer rail                             */
-/* ============================================================ */
-.dsu-viz__panel--dense {
-  padding-top: 9px;
-}
-
-.dsu-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
-}
-
-.dsu-link {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.022);
-}
-
-.dsu-link__name {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.dsu-link__arrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.dsu-link__meta {
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  color: var(--text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Root link rendered as a badge pill instead of an arrow. */
-.dsu-link--root {
-  border-color: rgb(var(--chrome-accent-alt-rgb) / 0.36);
-  background: rgb(var(--chrome-accent-alt-rgb) / 0.06);
-}
-
-.dsu-link--root .dsu-link__name {
-  color: var(--chrome-accent-alt-strong);
-}
-
-.dsu-link--root .dsu-link__arrow {
-  color: var(--chrome-accent-alt-strong);
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 9px;
-}
-
-.dsu-link--active,
-.dsu-link--query {
-  border-color: rgb(var(--chrome-accent-warm-rgb) / 0.4);
-  background: rgb(var(--chrome-accent-warm-rgb) / 0.06);
-}
-
-.dsu-link--active .dsu-link__name,
-.dsu-link--query .dsu-link__name {
-  color: var(--chrome-accent-warm);
-}
-
-.dsu-link--merged,
-.dsu-link--compressed {
-  border-color: rgb(var(--accent-rgb) / 0.36);
-  background: rgb(var(--accent-rgb) / 0.06);
-}
-
-.dsu-link--merged .dsu-link__name,
-.dsu-link--compressed .dsu-link__name {
-  color: var(--accent-strong);
-}
-
 .dsu-viz__empty {
+  margin: 0;
   padding: 18px;
   font-size: 12px;
   color: var(--text-tertiary);
 }
 
-/* Reduced motion — kill pulse loops, keep colours. */
 @media (prefers-reduced-motion: reduce) {
   .dsu-node-chip--active,
-  .dsu-node-chip--query,
-  .dsu-edge--active {
+  .dsu-node-chip--query {
     animation: none;
-  }
-}
-
-@media (max-width: 1080px) {
-  .dsu-viz__body {
-    grid-template-columns: 1fr;
-  }
-
-  .dsu-viz__groups {
-    grid-template-columns: 1fr;
   }
 }
 

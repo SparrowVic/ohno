@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
   computed,
   effect,
   input,
@@ -9,9 +8,14 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import { WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
 
 /** Radius of a rendered node body. Edges are trimmed by this amount
  *  so arrow tips land on the node's border instead of being swallowed
@@ -53,28 +57,29 @@ interface RenderedEdge {
   readonly midY: number;
 }
 
+const I18N = I18N_KEY.features.algorithms.visualizations.graph;
+
 @Component({
   selector: 'app-graph-visualization',
-  imports: [],
+  imports: [TranslocoPipe, VizHeader, VizPanel],
   templateUrl: './graph-visualization.html',
   styleUrl: './graph-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphVisualization {
+  protected readonly I18N = I18N;
   readonly graph = input<WeightedGraphData | null>(null);
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
   readonly focusedNodeId = input<string | null>(null);
   readonly focusedNodeIdChange = output<string | null>();
 
-  private previousHighlights: Record<string, string> | null = null;
-  private highlightTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly changedCardsState = signal<ReadonlySet<string>>(new Set());
   private readonly selectedNodeIdState = signal<string | null>(null);
 
   readonly graphState = computed(() => this.step()?.graph ?? null);
   readonly nodes = computed(() => this.graphState()?.nodes ?? []);
   readonly arrowMarkers = ARROW_MARKERS;
+
   /** Enriched edges: pre-computes trimmed endpoints so arrow tips
    *  touch the node border instead of sinking into the fill, and
    *  also carries the midpoint for placing weight badges. */
@@ -91,10 +96,6 @@ export class GraphVisualization {
       const dx = toX - fromX;
       const dy = toY - fromY;
       const dist = Math.hypot(dx, dy) || 1;
-      // Shrink both ends by the node radius (+ a touch) so the line
-      // — and any arrow marker at its tip — stops on the circle's
-      // border rather than its centre. Guard against very short
-      // distances where trimming would invert the segment.
       const trim = Math.min(NODE_RADIUS + ARROW_TIP_INSET, dist / 2 - 0.5);
       const ux = dx / dist;
       const uy = dy / dist;
@@ -117,81 +118,96 @@ export class GraphVisualization {
       };
     });
   });
+
   readonly metricLabel = computed(() => this.graphState()?.metricLabel ?? 'Distance');
   readonly secondaryLabel = computed(() => this.graphState()?.secondaryLabel ?? 'Prev');
-  readonly frontierLabel = computed(() => this.graphState()?.frontierLabel ?? 'Queue');
-  readonly frontierHeadLabel = computed(() => this.graphState()?.frontierHeadLabel ?? 'Queue head');
-  readonly completionLabel = computed(() => this.graphState()?.completionLabel ?? 'Visited');
   readonly showEdgeWeights = computed(() => this.graphState()?.showEdgeWeights ?? true);
-  /** Suppress the distance/secondary labels above and below each node
-   *  when they would just duplicate state already conveyed by the
-   *  node's tone. Bipartite's partition is a clear example —
-   *  "Color" is the left/right side, already obvious from the fill
-   *  colour, so the floating chips only add visual noise and
-   *  collide when nodes stack vertically. */
-  readonly showNodeLabels = computed(() => this.metricLabel() !== 'Color');
-  readonly detailLabel = computed(() => this.graphState()?.detailLabel ?? 'Path');
-  readonly sourceCardLabel = computed(() => {
-    if (this.detailLabel().startsWith('Euler')) {
-      return 'Start';
+
+  /** Suppress the distance/secondary labels above and below each
+   *  node when they'd just duplicate state already conveyed by the
+   *  node's tone. Bipartite / chromatic colourings are the clear
+   *  examples — the partition is already obvious from the fill, so
+   *  floating chips only add collision noise on tightly-packed
+   *  layouts. */
+  readonly showNodeLabels = computed(
+    () => this.metricLabel() !== 'Color' && this.metricLabel() !== 'Side',
+  );
+
+  /** Phase label — passed straight into VizHeader. Generators emit
+   *  either a plain string or an i18n key; the `i18nText` pipe
+   *  inside VizHeader resolves whichever it turns out to be. */
+  readonly phaseLabel = computed<TranslatableText>(() => {
+    return this.graphState()?.phaseLabel ?? I18N.initializeLabel;
+  });
+
+  /** Action sentence for the header — a single line answering "what
+   *  did this step just do?". Picks the most specific fact available
+   *  without layering multiple hints into one crowded string:
+   *
+   *    1. Generator-provided `decision` — the richest per-step text.
+   *    2. Active edge label — "A → B · 5".
+   *    3. Current node — "Inspecting X".
+   *    4. Detail value — prose fallback from the generator.
+   *    5. "Scanning" — when nothing interesting is happening. */
+  readonly actionText = computed<TranslatableText>(() => {
+    const state = this.graphState();
+    if (!state) return I18N.initializeLabel;
+
+    const decision = state.computation?.decision;
+    if (decision) return decision;
+
+    const activeEdgeId = state.activeEdgeId;
+    if (activeEdgeId) {
+      const edge = this.edges().find((item) => item.id === activeEdgeId);
+      if (edge) return this.formatEdgeLabel(edge);
     }
-    if (this.detailLabel() === 'Steiner tree') {
-      return 'Terminal';
+
+    const currentNodeId = state.currentNodeId;
+    if (currentNodeId) {
+      return i18nText(I18N.inspectingLabel, { node: this.nodeLabel(currentNodeId) });
     }
-    if (this.detailLabel() === 'Dominator tree') {
-      return 'Entry';
+
+    const detailValue = state.detailValue;
+    if (detailValue) return detailValue;
+
+    return I18N.scanningLabel;
+  });
+
+  /** Tone for the header's accent rail — a purely structural
+   *  heuristic driven by edge / node state flags (no brittle text
+   *  inspection, so it survives i18n cleanly):
+   *
+   *    - relaxed / tree edge → lime (improvement / locked in)
+   *    - active edge         → pink (acting now)
+   *    - any other edge      → cyan (attending)
+   *    - current node only   → cyan
+   *    - idle                → neutral */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.graphState();
+    if (!state) return 'default';
+
+    const activeEdgeId = state.activeEdgeId;
+    if (activeEdgeId) {
+      const edge = this.edges().find((item) => item.id === activeEdgeId);
+      if (edge?.isRelaxed || edge?.isTree) return 'sorted';
+      if (edge?.isActive) return 'swap';
+      return 'compare';
     }
-    switch (this.detailLabel()) {
-      case 'MST tree':
-        return 'Start';
-      case 'Component sweep':
-      case 'Partition check':
-      case 'Critical links':
-      case 'Tarjan SCC map':
-      case 'Finish stack':
-      case 'Kosaraju SCC map':
-        return 'Seed';
-      default:
-        return 'Source';
-    }
+
+    if (state.currentNodeId) return 'compare';
+
+    return 'default';
   });
-  readonly sourceLabel = computed(() => {
-    const sourceId = this.graphState()?.sourceId ?? this.graph()?.sourceId ?? null;
-    if (!sourceId) return '—';
-    return this.nodes().find((node) => node.id === sourceId)?.label ?? '—';
+
+  readonly routeMode = computed<'shortest-tree' | 'bfs-tree' | 'dfs-tree' | null>(() => {
+    const metric = this.metricLabel();
+    const detail = this.graphState()?.detailLabel ?? '';
+    if (metric === 'Distance') return 'shortest-tree';
+    if (metric === 'Level') return 'bfs-tree';
+    if (metric === 'Depth' && detail === 'Depth path') return 'dfs-tree';
+    return null;
   });
-  readonly currentLabel = computed(() => {
-    const currentNodeId = this.graphState()?.currentNodeId;
-    if (!currentNodeId) return 'Scanning';
-    return this.nodes().find((node) => node.id === currentNodeId)?.label ?? 'Scanning';
-  });
-  readonly phaseLabel = computed(() => {
-    return this.graphState()?.phaseLabel ?? 'Initialize graph';
-  });
-  readonly settledCount = computed(() => this.nodes().filter((node) => node.isSettled).length);
-  readonly frontierCount = computed(() => this.nodes().filter((node) => node.isFrontier).length);
-  readonly activeEdgeLabel = computed(() => {
-    const edgeId = this.graphState()?.activeEdgeId;
-    if (!edgeId) return '—';
-    const edge = this.edges().find((item) => item.id === edgeId);
-    if (!edge) return '—';
-    if (!this.showEdgeWeights()) {
-      return `${this.nodeLabel(edge.from)} → ${this.nodeLabel(edge.to)}`;
-    }
-    return `${this.nodeLabel(edge.from)} → ${this.nodeLabel(edge.to)} · ${edge.weight}`;
-  });
-  readonly queueLead = computed(() => {
-    const entry = this.graphState()?.queue[0];
-    if (!entry) return 'empty';
-    return `${entry.label} · ${this.formatDistance(entry.distance)}`;
-  });
-  readonly detailValue = computed(() => {
-    const value = this.graphState()?.detailValue;
-    if (value) return value;
-    const currentNodeId = this.graphState()?.currentNodeId;
-    if (!currentNodeId) return 'No active node';
-    return this.describePath(currentNodeId);
-  });
+
   readonly selectedNodeId = computed(() => {
     const nodes = this.nodes();
     const routeMode = this.routeMode();
@@ -207,11 +223,13 @@ export class GraphVisualization {
 
     return this.defaultFocusNodeId();
   });
+
   readonly focusedPathNodeIds = computed(() => {
     const focusedNodeId = this.selectedNodeId();
     if (!focusedNodeId || !this.routeMode()) return new Set<string>();
     return new Set(this.pathNodeIds(focusedNodeId));
   });
+
   readonly focusedPathEdgeIds = computed(() => {
     const focusedNodeId = this.selectedNodeId();
     if (!focusedNodeId || !this.routeMode()) return new Set<string>();
@@ -227,159 +245,29 @@ export class GraphVisualization {
     }
     return ids;
   });
-  readonly routeMode = computed<'shortest-tree' | 'bfs-tree' | 'dfs-tree' | null>(() => {
-    const metric = this.metricLabel();
-    const detail = this.detailLabel();
-    if (metric === 'Distance') return 'shortest-tree';
-    if (metric === 'Level') return 'bfs-tree';
-    if (metric === 'Depth' && detail === 'Depth path') return 'dfs-tree';
-    return null;
+
+  /** Chip visible when route-focus is active AND it resolves to a
+   *  multi-hop path — a single-node "path" carries no information
+   *  worth the UI real estate. */
+  readonly focusChipVisible = computed(() => {
+    if (!this.routeMode()) return false;
+    return this.focusedPathNodeIds().size > 1;
   });
-  readonly structureLabel = computed(() => {
-    switch (this.routeMode()) {
-      case 'shortest-tree':
-        return 'Shortest-path tree';
-      case 'bfs-tree':
-        return 'BFS discovery tree';
-      case 'dfs-tree':
-        return 'DFS discovery tree';
-      default:
-        if (this.detailLabel() === 'Component sweep') return 'Component partition';
-        if (this.detailLabel() === 'Partition check') return 'Two-color validation';
-        if (this.detailLabel() === 'MST tree') return 'Minimum spanning tree';
-        if (this.detailLabel().startsWith('Euler')) return 'Edge-by-edge trail';
-        if (this.detailLabel() === 'Color search') return 'Constraint coloring search';
-        if (this.detailLabel() === 'Steiner tree') return 'Exact terminal DP tree';
-        if (this.detailLabel() === 'Dominator tree') return 'Control-flow dominance';
-        if (this.detailLabel() === 'Critical links') return 'Low-link analysis';
-        if (this.detailLabel() === 'Tarjan SCC map') return 'Low-link SCC sweep';
-        if (this.detailLabel() === 'Finish stack') return 'Finish-order sweep';
-        if (this.detailLabel() === 'Kosaraju SCC map') return 'Reverse-pass SCC sweep';
-        if (this.detailLabel() === 'Cycle') return 'Cycle witness';
-        if (this.detailLabel() === 'Topo order') return 'Ordering flow';
-        return 'Graph state';
-    }
-  });
-  readonly structureHint = computed(() => {
-    switch (this.routeMode()) {
-      case 'shortest-tree':
-        return 'Teal edges show all finalized shortest routes from the source. Click a node to focus one route.';
-      case 'bfs-tree':
-        return 'Tree edges show first discovery in BFS. Click a node to inspect one shortest unweighted route.';
-      case 'dfs-tree':
-        return 'Tree edges show DFS discovery order. Click a node to inspect one explored branch.';
-      default:
-        if (this.detailLabel() === 'Component sweep') {
-          return 'The algorithm expands one disconnected component at a time and labels every reached node.';
-        }
-        if (this.detailLabel() === 'Partition check') {
-          return 'Blue and amber nodes should only connect across sides. A red edge marks an odd-cycle conflict.';
-        }
-        if (this.detailLabel() === 'MST tree') {
-          return 'Teal edges belong to the growing minimum spanning tree. Candidate costs compete to connect the next node.';
-        }
-        if (this.detailLabel().startsWith('Euler')) {
-          return 'Purple edges extend the live walk, teal edges are already locked into the final trail, and odd endpoints mark a path instead of a circuit.';
-        }
-        if (this.detailLabel() === 'Color search') {
-          return 'Colored nodes show the current palette assignment, while red edges expose the conflicts that force backtracking.';
-        }
-        if (this.detailLabel() === 'Steiner tree') {
-          return 'Blue terminals must be connected, green nodes are optional Steiner connectors, and teal edges form the exact minimum-cost terminal tree.';
-        }
-        if (this.detailLabel() === 'Dominator tree') {
-          return 'The directed graph is the CFG, while teal arrows show immediate dominance once every block settles to its final dominator set.';
-        }
-        if (this.detailLabel() === 'Critical links') {
-          return 'Red nodes or edges are articulation points and bridges whose removal disconnects the graph.';
-        }
-        if (this.detailLabel() === 'Tarjan SCC map') {
-          return 'Active nodes stay on one Tarjan stack until a root closes an entire strongly connected component.';
-        }
-        if (this.detailLabel() === 'Finish stack') {
-          return 'Pass 1 only builds finish order on the original graph. Pass 2 will traverse the reversed arrows.';
-        }
-        if (this.detailLabel() === 'Kosaraju SCC map') {
-          return 'Pass 2 follows reversed edges in finish order. Colored groups are finalized SCCs.';
-        }
-        if (this.detailLabel() === 'Cycle') return 'This view explains DFS state and the detected cycle, not a single source-to-target path.';
-        if (this.detailLabel() === 'Topo order') return 'This view explains how nodes enter topological order, not source-to-target routes.';
-        return 'The graph highlights the algorithm state step by step.';
-    }
-  });
-  readonly focusedNodeLabel = computed(() => {
+
+  /** Human-readable path for the focus chip — joined with a right
+   *  arrow so it reads as a route. Plain text; no i18n needed, node
+   *  labels are single-letter identifiers. */
+  readonly focusedPathText = computed(() => {
     const focusedNodeId = this.selectedNodeId();
-    if (!focusedNodeId) return '—';
-    return this.nodeLabel(focusedNodeId);
-  });
-  readonly focusCardLabel = computed(() => (this.routeMode() ? 'Focused target' : 'Context'));
-  readonly focusCardValue = computed(() => (this.routeMode() ? this.focusedNodeLabel() : this.detailLabel()));
-  readonly focusCardHint = computed(() => (this.routeMode() ? 'Click any node' : this.structureLabel()));
-  readonly focusedPathLabel = computed(() => {
-    const focusedNodeId = this.selectedNodeId();
-    if (!focusedNodeId || !this.routeMode()) return '—';
+    if (!focusedNodeId || !this.routeMode()) return '';
     return this.describePath(focusedNodeId);
   });
-  readonly detailPillLabel = computed(() => (this.routeMode() ? 'Focused route' : this.detailLabel()));
-  readonly detailPillValue = computed(() => (this.routeMode() ? this.focusedPathLabel() : this.detailValue()));
-  readonly treeRouteCount = computed(() => {
-    if (!this.routeMode()) return 0;
-    return this.nodes().filter((node) => node.previousId !== null).length;
-  });
+
+  readonly focusChipLabel = computed<TranslatableText>(() =>
+    i18nText(I18N.focusedRouteLabel, { path: this.focusedPathText() }),
+  );
 
   constructor() {
-    effect(() => {
-      const step = this.step();
-      const values = {
-        source: this.sourceLabel(),
-        current: this.currentLabel(),
-        settled: String(this.settledCount()),
-        queue: String(this.frontierCount()),
-        phase: this.phaseLabel(),
-        edge: this.activeEdgeLabel(),
-        queueLead: this.queueLead(),
-        detail: this.detailValue(),
-      };
-
-      untracked(() => {
-        if (!step) {
-          this.previousHighlights = values;
-          this.changedCardsState.set(new Set());
-          return;
-        }
-
-        if (!this.previousHighlights) {
-          this.previousHighlights = values;
-          this.changedCardsState.set(new Set());
-          return;
-        }
-
-        const changed = new Set<string>();
-        for (const [key, value] of Object.entries(values)) {
-          if (this.previousHighlights[key] !== value) {
-            changed.add(key);
-          }
-        }
-
-        this.previousHighlights = values;
-        this.changedCardsState.set(changed);
-
-        if (this.highlightTimer !== null) {
-          clearTimeout(this.highlightTimer);
-          this.highlightTimer = null;
-        }
-
-        if (changed.size === 0) {
-          return;
-        }
-
-        this.highlightTimer = setTimeout(() => {
-          this.highlightTimer = null;
-          this.changedCardsState.set(new Set());
-        }, this.highlightDuration());
-      });
-    });
-
     effect(() => {
       const resolved = this.selectedNodeId();
       const incoming = this.focusedNodeId();
@@ -389,12 +277,6 @@ export class GraphVisualization {
         }
       });
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.highlightTimer !== null) {
-      clearTimeout(this.highlightTimer);
-    }
   }
 
   edgeMarker(edge: RenderedEdge): string | null {
@@ -410,11 +292,6 @@ export class GraphVisualization {
       return '—';
     }
     return distance === null ? '∞' : String(distance);
-  }
-
-  previousLabel(previousId: string | null): string {
-    if (!previousId) return '—';
-    return this.nodes().find((node) => node.id === previousId)?.label ?? '—';
   }
 
   secondaryText(nodeId: string): string {
@@ -442,14 +319,16 @@ export class GraphVisualization {
     return nodeId !== currentNodeId && nodeId !== edge.from && nodeId !== edge.to;
   }
 
-  isCardChanged(id: string): boolean {
-    return this.changedCardsState().has(id);
-  }
-
   selectNode(nodeId: string): void {
     if (!this.routeMode()) return;
     this.selectedNodeIdState.set(nodeId);
     this.focusedNodeIdChange.emit(nodeId);
+  }
+
+  clearFocus(): void {
+    if (!this.routeMode()) return;
+    this.selectedNodeIdState.set(null);
+    this.focusedNodeIdChange.emit(null);
   }
 
   isNodeSelected(nodeId: string): boolean {
@@ -469,11 +348,24 @@ export class GraphVisualization {
   }
 
   isNodeInTree(nodeId: string): boolean {
-    return this.nodes().some((node) => node.id === nodeId && (node.previousId !== null || node.isSource));
+    return this.nodes().some(
+      (node) => node.id === nodeId && (node.previousId !== null || node.isSource),
+    );
   }
 
   private nodeLabel(nodeId: string): string {
     return this.nodes().find((node) => node.id === nodeId)?.label ?? nodeId;
+  }
+
+  /** Compose an edge descriptor like "A → B · 5" (with weight) or
+   *  "A → B" (weightless). Returned as a plain string — node labels
+   *  are single identifiers and the arrow glyph is universal, so no
+   *  i18n template is required. */
+  private formatEdgeLabel(edge: RenderedEdge): string {
+    const from = this.nodeLabel(edge.from);
+    const to = this.nodeLabel(edge.to);
+    if (!this.showEdgeWeights()) return `${from} → ${to}`;
+    return `${from} → ${to} · ${edge.weight}`;
   }
 
   private describePath(nodeId: string): string {
@@ -486,11 +378,6 @@ export class GraphVisualization {
       hops++;
     }
     return path.join(' → ');
-  }
-
-  private highlightDuration(): number {
-    const speed = this.speed();
-    return Math.max(280, 860 - speed * 55);
   }
 
   private defaultFocusNodeId(): string | null {

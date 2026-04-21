@@ -6,15 +6,12 @@ import {
   OnDestroy,
   computed,
   effect,
-  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { MatrixCell, MatrixTraceState } from '../../models/matrix';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
@@ -22,19 +19,17 @@ import {
   createMotionProfile,
   pulseElement,
 } from '../../utils/visualization-motion/visualization-motion';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
 
 @Component({
   selector: 'app-matrix-visualization',
-  imports: [TranslocoPipe],
+  imports: [VizHeader, VizPanel],
   templateUrl: './matrix-visualization.html',
   styleUrl: './matrix-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatrixVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
-
-  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -44,26 +39,39 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
   private lastStep: SortStep | null = null;
 
   readonly state = computed<MatrixTraceState | null>(() => this.step()?.matrix ?? null);
-  readonly modeLabel = computed(
-    () =>
-      this.state()?.modeLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.matrix.modeFallback),
-  );
-  readonly phaseLabel = computed(
-    () =>
-      this.state()?.phaseLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.matrix.phaseFallback),
-  );
-  readonly resultLabel = computed(() => this.state()?.resultLabel ?? '—');
-  readonly activeLabel = computed(() => {
+
+  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+
+  readonly actionText = computed<TranslatableText>(() => {
     const state = this.state();
-    if (!state) return '—';
-    const parts = [state.activeRowLabel, state.activeColLabel].filter((part) => part);
-    return parts.length > 0 ? parts.join(' × ') : (state.pivotLabel ?? '—');
+    if (!state) return '';
+    const phase = state.phaseLabel;
+    const pivot = state.pivotLabel;
+    const rowColParts = [state.activeRowLabel, state.activeColLabel].filter((part) => !!part);
+    const rowCol = rowColParts.length > 0 ? rowColParts.join(' × ') : null;
+
+    if (phase && rowCol) return `${phase} · ${rowCol}`;
+    if (phase && pivot) return `${phase} · k=${pivot}`;
+    return phase ?? rowCol ?? pivot ?? '';
   });
-  readonly pivotLabel = computed(() => this.state()?.pivotLabel ?? '—');
-  readonly focusItems = computed(() => this.state()?.focusItems ?? []);
-  readonly secondaryItems = computed(() => this.state()?.secondaryItems ?? []);
+
+  /** Tone from cell statuses:
+   *    - assignment → sorted (locked in)
+   *    - active     → swap (acting now)
+   *    - improved   → sorted
+   *    - adjusted   → compare (attending)
+   *    - idle       → default */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.state();
+    if (!state) return 'default';
+    const cells = state.cells;
+    if (cells.some((cell) => cell.status === 'assignment')) return 'sorted';
+    if (cells.some((cell) => cell.status === 'improved')) return 'sorted';
+    if (cells.some((cell) => cell.status === 'active')) return 'swap';
+    if (cells.some((cell) => cell.status === 'adjusted')) return 'compare';
+    if (cells.some((cell) => cell.status === 'pivot')) return 'compare';
+    return 'default';
+  });
 
   /** Indices of rows/columns whose header carries the `covered`
    *  status. We surface these so the template can render overlay
@@ -160,10 +168,6 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
       if (!['active', 'improved', 'assignment', 'adjusted'].includes(cell.status)) continue;
       const el = this.findCell(cell.id);
       if (!el) continue;
-      // Glow colour follows the cell state's new palette: pink for
-      // "acting now" (active), lime for anything that just improved /
-      // got assigned. Matches the resting CSS colours so the pulse
-      // reads as the same state coming in, not a conflicting flash.
       const glowColor =
         cell.status === 'active'
           ? 'rgb(var(--chrome-accent-warm-rgb) / 0.5)'
@@ -182,10 +186,5 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
 
   private findCell(id: string): HTMLElement | null {
     return this.containerRef().nativeElement.querySelector(`[data-cell-id="${id}"]`);
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
   }
 }

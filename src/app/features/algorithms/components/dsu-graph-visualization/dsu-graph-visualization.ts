@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   DsuMode,
   DsuNodeStatus,
@@ -17,6 +17,8 @@ import {
   layoutDsuForest,
   unionFindEdgeStatusFromChild,
 } from '../../utils/dsu-graph-layout/dsu-graph-layout';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
 
 interface RenderedNode {
   readonly id: string;
@@ -44,7 +46,7 @@ const I18N = I18N_KEY.features.algorithms.visualizations.dsuGraph;
 
 @Component({
   selector: 'app-dsu-graph-visualization',
-  imports: [I18nTextPipe, TranslocoPipe],
+  imports: [TranslocoPipe, VizHeader, VizPanel],
   templateUrl: './dsu-graph-visualization.html',
   styleUrl: './dsu-graph-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -130,6 +132,46 @@ export class DsuGraphVisualization {
         }),
       )
       .filter((edge): edge is DsuGraphRenderedEdge => edge !== null);
+  });
+
+  /** Mode tag — "UNION-FIND" or "KRUSKAL" — passes straight through
+   *  the header's i18n-text pipe (modeLabel is already a translated
+   *  TranslatableText from the trace generator). */
+  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+
+  /** Action sentence for the header. Priority:
+   *    1. `decision`    — richest per-step fact ("Union(3,7) accepted").
+   *    2. `activeLabel` — pair under consideration.
+   *    3. `statusLabel` — generic state. */
+  readonly actionText = computed<TranslatableText>(() => {
+    const state = this.state();
+    if (!state) return '';
+    return state.decision ?? state.activePairLabel ?? state.statusLabel ?? '';
+  });
+
+  /** Tone from structural flags — same convention as graph-viz:
+   *    - accepted edge / merged-or-compressed node → sorted (lime, locked in)
+   *    - active edge / active-or-query node        → swap   (pink, acting now)
+   *    - rejected edge                              → compare (cyan, attending)
+   *    - idle                                       → default */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.state();
+    if (!state) return 'default';
+
+    const edges = this.renderedEdges();
+    if (edges.some((edge) => edge.status === 'accepted')) return 'sorted';
+    if (edges.some((edge) => edge.status === 'active')) return 'swap';
+
+    const nodes = this.renderedNodes();
+    if (nodes.some((node) => node.status === 'merged' || node.status === 'compressed')) {
+      return 'sorted';
+    }
+    if (nodes.some((node) => node.status === 'active' || node.status === 'query')) {
+      return 'compare';
+    }
+
+    if (edges.some((edge) => edge.status === 'rejected')) return 'compare';
+    return 'default';
   });
 
   edgeMarker(edge: DsuGraphRenderedEdge): string | null {

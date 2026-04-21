@@ -1440,7 +1440,406 @@
             }
           }
         },
+        "dsu": {
+          "kruskalsMst": {
+            "decisions": {
+              "acceptNextCheapest": "akceptuj najtańszą krawędź, która nie domyka cyklu",
+              "pendingEdgesWorse": "wszystkie pozostałe krawędzie są cięższe albo zbędne",
+              "rootCompare": "{{from}} -> {{fromRoot}}, {{to}} -> {{toRoot}}",
+              "shareRoot": "oba końce mają już wspólny korzeń",
+              "treeWeightGrows": "waga MST = {{weight}}"
+            },
+            "descriptions": {
+              "acceptEdge": "Zaakceptuj {{from}} - {{to}} do MST.",
+              "complete": "Kruskal zakończył się z {{count}} zaakceptowanymi krawędziami i łączną wagą {{weight}}.",
+              "initialize": "Krawędzie są posortowane wagą; zacznij od pustego lasu.",
+              "inspectEdge": "Sprawdź krawędź {{from}} - {{to}} (w={{weight}}).",
+              "rejectEdge": "Odrzuć {{from}} - {{to}}, bo domyka cykl."
+            },
+            "labels": {
+              "acceptedEdges": "{{count}} / {{total}} zaakceptowanych krawędzi",
+              "mstWeight": "waga = {{weight}}",
+              "sortedEdges": "Posortowane krawędzie"
+            },
+            "modeLabel": "MST Kruskala",
+            "statuses": {
+              "acceptEdge": "Zaakceptuj krawędź",
+              "complete": "MST gotowe",
+              "inspectNextEdge": "Sprawdź następną krawędź",
+              "rejectCycleEdge": "Odrzuć krawędź cyklu",
+              "sortedEdgeScan": "Przegląd posortowanych krawędzi"
+            }
+          },
+          "unionFind": {
+            "decisions": {
+              "currentPath": "ścieżka = {{path}}",
+              "finalStable": "przetworzono wszystkie operacje union",
+              "newRootRepresents": "{{root}} reprezentuje teraz {{count}} węzłów",
+              "noStructuralChange": "brak zmiany struktury",
+              "representativeIs": "reprezentant = {{root}}",
+              "representativePair": "{{left}} -> {{leftRoot}}, {{right}} -> {{rightRoot}}",
+              "singletonRoots": "każdy węzeł startuje jako własny korzeń"
+            },
+            "descriptions": {
+              "alreadyCompressed": "{{node}} już wskazuje bezpośrednio na korzeń {{root}}.",
+              "attachRoot": "Podepnij korzeń {{attach}} pod {{keep}}.",
+              "compareRoots": "Porównaj korzenie {{left}} i {{right}}.",
+              "complete": "Union-Find zakończony z {{count}} składową(-ymi).",
+              "compressPath": "Skompresuj ścieżkę tak, by każdy odwiedzony węzeł wskazywał korzeń {{root}}.",
+              "followPath": "Śledź łańcuch rodziców od {{label}}.",
+              "initialize": "Zacznij od singletonów dla każdego węzła.",
+              "skipMerge": "Pomiń scalenie, bo oba węzły już dzielą korzeń {{root}}."
+            },
+            "labels": {
+              "activeSets": "{{count}} aktywnych zbiorów",
+              "operationQueue": "Kolejka operacji",
+              "singletonSets": "{{count}} singletonów"
+            },
+            "modeLabel": "Union-Find",
+            "statuses": {
+              "compareRoots": "Porównaj korzenie",
+              "complete": "Las ustabilizowany",
+              "findRepresentative": "Szukaj reprezentanta",
+              "pathCompression": "Kompresja ścieżki",
+              "ready": "Gotowe",
+              "unionByRank": "Scalenie według rangi",
+              "unionSkipped": "Scalenie pominięte"
+            }
+          }
+        },
+        "grid": {
+          "aStarPathfinding": {
+            "decisions": {
+              "exhaustedReachable": "wyczerpano wszystkie osiągalne komórki",
+              "frontierScores": "f = {{f}}, g = {{g}}",
+              "initializeScores": "ustaw g(start) = 0 oraz f(start) = h(start)",
+              "knownRouteBetter": "znane g = {{g}} jest lepsze",
+              "setScores": "ustaw g = {{g}}, h = {{h}}, f = {{f}}",
+              "shortestPathLength": "długość ścieżki = {{count}}",
+              "tentativeScores": "tymczasowe g = {{g}}, h = {{h}}, f = {{f}}"
+            },
+            "descriptions": {
+              "exhausted": "Zbiór otwarty się wyczerpał; żadna ścieżka nie dochodzi do celu.",
+              "goalReached": "Osiągnięto cel {{goal}} i można odtworzyć ścieżkę.",
+              "initialize": "Zainicjalizuj A* od {{start}} do {{goal}}.",
+              "inspectNeighbor": "Sprawdź sąsiada {{cell}} wychodząc z {{from}}.",
+              "keepBetterRoute": "Znana trasa do {{cell}} jest już lepsza.",
+              "pickFrontier": "Wybierz {{cell}} z najniższym wynikiem frontu.",
+              "updateRoute": "Zaktualizuj trasę do {{cell}} przez {{from}}."
+            },
+            "modeLabel": "A* Pathfinding",
+            "statuses": {
+              "inspectNeighbor": "Sprawdź sąsiada",
+              "keepCurrentRoute": "Zachowaj bieżącą trasę",
+              "noPathFound": "Brak ścieżki",
+              "pathFound": "Ścieżka znaleziona",
+              "pickLowestF": "Wybierz najniższe f",
+              "readyToExplore": "Gotowe do eksploracji",
+              "updateFrontierRoute": "Zaktualizuj trasę frontu"
+            }
+          },
+          "floodFill": {
+            "decisions": {
+              "cellColor": "kolor komórki = {{color}}",
+              "finalRegionSize": "rozmiar regionu = {{count}}",
+              "keepOriginalColor": "zachowaj oryginalny kolor",
+              "paintedColor": "pomalowano na {{fillColor}}",
+              "replaceColors": "zamień {{sourceColor}} na {{fillColor}}",
+              "sameSourceColor": "ten sam kolor źródłowy {{sourceColor}}"
+            },
+            "descriptions": {
+              "blocked": "{{cell}} nie należy do regionu źródłowego, więc pomiń tę komórkę.",
+              "complete": "Flood fill zakończony: zamalowano {{count}} komórek.",
+              "fill": "Pokoloruj {{cell}} kolorem wypełnienia.",
+              "inspect": "Sprawdź {{cell}} na głębokości {{depth}}.",
+              "queueNeighbor": "Dodaj pasującego sąsiada {{cell}} do kolejki.",
+              "start": "Zacznij od {{cell}} z kolorem źródłowym {{sourceColor}}."
+            },
+            "labels": {
+              "fillColor": "wypełnienie {{color}}"
+            },
+            "modeLabel": "Flood fill",
+            "statuses": {
+              "blockedCell": "Zablokowana komórka",
+              "inspectCurrentCell": "Sprawdź bieżącą komórkę",
+              "queueMatchingNeighbor": "Dodaj pasującego sąsiada",
+              "readyToSpread": "Gotowe do rozlewania",
+              "regionComplete": "Region gotowy",
+              "regionExpands": "Region się rozszerza"
+            }
+          }
+        },
+        "search": {
+          "binarySearch": {
+            "decisions": {
+              "candidateWindowEmpty": "okno kandydatów jest puste",
+              "collapsedWindow": "zwiń do indeksu {{index}}",
+              "compare": "{{value}} {{relation}} {{target}}",
+              "newWindow": "nowe okno [{{low}}, {{high}}]"
+            },
+            "descriptions": {
+              "found": "Cel {{target}} znaleziony na indeksie {{index}}.",
+              "moveLeft": "{{value}} jest za duże, więc przesuń okno w lewo.",
+              "moveRight": "{{value}} jest za małe, więc przesuń okno w prawo.",
+              "notFound": "Okno wyszukiwania zapadło się bez trafienia.",
+              "probe": "Sprawdź środek {{index}} o wartości {{value}} względem {{target}}.",
+              "start": "Szukaj {{target}} w posortowanym oknie."
+            },
+            "modeLabel": "Wyszukiwanie binarne",
+            "statuses": {
+              "comparing": "Sprawdź środek",
+              "found": "Cel znaleziony",
+              "moveLeft": "Przesuń okno w lewo",
+              "moveRight": "Przesuń okno w prawo",
+              "notFound": "Okno wyczerpane",
+              "ready": "Okno gotowe"
+            }
+          },
+          "binarySearchVariants": {
+            "decisions": {
+              "advanceLow": "nowe low = {{low}}",
+              "candidateFirst": "kandydat na pierwsze trafienie = {{index}}",
+              "candidateLast": "kandydat na ostatnie trafienie = {{index}}",
+              "firstMatchFixed": "pierwsze trafienie ustalone na {{index}}",
+              "lowerBoundSearchFailed": "przebieg lewego brzegu nie znalazł trafienia",
+              "lowerCompare": "{{value}} {{relation}} {{target}}",
+              "newHigh": "nowe high = {{high}}",
+              "rangeWidth": "szerokość zakresu = {{count}}",
+              "trimRight": "nowe high = {{high}}",
+              "upperBoundSearchMiss": "przebieg prawego brzegu nie utrzymał poprawnego zakresu",
+              "upperCompare": "{{value}} {{relation}} {{target}}"
+            },
+            "descriptions": {
+              "completeRange": "Zakres dla {{target}} to {{left}}..{{right}}.",
+              "lowerProbe": "Sonda lewego brzegu na indeksie {{index}} z wartością {{value}}.",
+              "moveLeftForFirst": "{{target}} może zaczynać się tutaj albo wcześniej, więc przytnij prawą stronę.",
+              "moveRightForLast": "{{target}} może ciągnąć się dalej w prawo, więc podnieś low.",
+              "noFinalRange": "Przebieg prawego brzegu zakończył się bez poszerzenia końcowego zakresu dla {{target}}.",
+              "noRange": "W przebiegu lewego brzegu nie znaleziono żadnego wystąpienia {{target}}.",
+              "start": "Znajdź pierwszy i ostatni indeks wartości {{target}}.",
+              "switchPhase": "Pierwsze trafienie ustalone na {{index}}; teraz szukaj ostatniego trafienia.",
+              "tooLargeForLast": "{{value}} jest za duże na ostatnie trafienie, więc obniż high.",
+              "tooSmallForFirst": "{{value}} jest za małe na pierwsze trafienie, więc podnieś low.",
+              "upperProbe": "Sonda prawego brzegu na indeksie {{index}} z wartością {{value}}."
+            },
+            "modeLabels": {
+              "boundsSearch": "Szukanie zakresu",
+              "lowerBound": "Szukaj lewego brzegu",
+              "upperBound": "Szukaj prawego brzegu"
+            },
+            "statuses": {
+              "comparing": "Sprawdź kandydata brzegu",
+              "firstMatchCandidate": "Kandydat na pierwsze trafienie",
+              "lastMatchCandidate": "Kandydat na ostatnie trafienie",
+              "moveLeft": "Przytnij prawą stronę",
+              "moveRight": "Przesuń lewą stronę",
+              "notFound": "Brak zakresu",
+              "rangeFound": "Zakres ustalony",
+              "ready": "Gotowe na lewy brzeg",
+              "switchPhase": "Przełącz na prawy brzeg"
+            }
+          },
+          "linearSearch": {
+            "decisions": {
+              "allSlotsExhausted": "wyczerpano wszystkie pozycje",
+              "compare": "{{value}} {{relation}} {{target}}",
+              "discardIndex": "odrzuć indeks {{index}}",
+              "stopAtIndex": "zatrzymaj na indeksie {{index}}"
+            },
+            "descriptions": {
+              "advance": "Wartość {{value}} nie jest równa {{target}}, więc przejdź do następnej pozycji.",
+              "found": "Znaleziono {{target}} na indeksie {{index}}.",
+              "inspect": "Sprawdź indeks {{index}}: {{value}} vs {{target}}.",
+              "notFound": "Doszliśmy do końca bez znalezienia {{target}}.",
+              "start": "Przeskanuj {{size}} pozycji od lewej do prawej w poszukiwaniu {{target}}."
+            },
+            "modeLabel": "Wyszukiwanie liniowe",
+            "statuses": {
+              "advance": "Przesuń kursor",
+              "comparing": "Porównanie pozycji",
+              "found": "Znaleziono trafienie",
+              "notFound": "Brak celu",
+              "ready": "Gotowe do skanowania"
+            }
+          }
+        },
+        "sort": {
+          "bubbleSort": {
+            "descriptions": {
+              "compare": "Porównaj {{leftValue}} na indeksie {{leftIndex}} z {{rightValue}} na indeksie {{rightIndex}}.",
+              "complete": "Bubble sort zakończony.",
+              "earlyExit": "W tym przebiegu nie było żadnej zamiany, więc tablica jest już posortowana.",
+              "passComplete": "Przebieg {{pass}} zakończony; sufiks zaczynający się od indeksu {{boundary}} jest już ustalony.",
+              "start": "Rozpocznij bubble sort (n = {{size}}).",
+              "swap": "Zamień {{left}} z indeksu {{leftIndex}} z {{right}} z indeksu {{rightIndex}}."
+            }
+          },
+          "bucketSort": {
+            "descriptions": {
+              "compareWithinBucket": "Porównaj {{leftValue}} z {{rightValue}} wewnątrz bucketu {{bucketIndex}}.",
+              "complete": "Bucket sort zakończony.",
+              "insertWithinBucket": "Wstaw {{value}} na jego posortowaną pozycję wewnątrz bucketu {{bucketIndex}}.",
+              "placeInBucket": "Umieść {{value}} z indeksu {{index}} w buckecie {{bucketIndex}}.",
+              "sortBucket": "Posortuj bucket {{bucketIndex}} lokalnie przed przepisaniem go z powrotem.",
+              "start": "Rozpocznij bucket sort (n = {{size}}, buckety = {{bucketCount}}).",
+              "writeFromBucket": "Zapisz {{value}} z bucketu {{bucketIndex}} na indeks {{index}}."
+            }
+          },
+          "countingSort": {
+            "descriptions": {
+              "complete": "Counting sort zakończony.",
+              "countValue": "Zlicz wartość {{value}} na indeksie {{index}}; liczność wynosi teraz {{count}}.",
+              "start": "Rozpocznij counting sort (n = {{size}}, max = {{max}}).",
+              "writeValue": "Zapisz {{value}} na indeksie {{index}}."
+            }
+          },
+          "heapSort": {
+            "descriptions": {
+              "compareLeft": "Porównaj lewe dziecko {{leftChild}} z bieżącym maksimum {{currentLargest}}.",
+              "compareRight": "Porównaj prawe dziecko {{rightChild}} z bieżącym maksimum {{currentLargest}}.",
+              "complete": "Heap sort zakończony.",
+              "extractRoot": "Zamień maksimum {{max}} z korzenia z {{tail}} na indeksie {{end}}.",
+              "restoreHeap": "Zamień korzeń {{rootValue}} z większym dzieckiem {{largestValue}}, aby odtworzyć kopiec.",
+              "start": "Rozpocznij heap sort (n = {{size}})."
+            }
+          },
+          "insertionSort": {
+            "descriptions": {
+              "compare": "Porównaj {{current}} z {{value}} wewnątrz posortowanego prefiksu.",
+              "complete": "Insertion sort zakończony.",
+              "insert": "Wstaw {{value}} na indeks {{index}}.",
+              "shift": "Przesuń {{value}} o jedno miejsce w prawo.",
+              "start": "Rozpocznij insertion sort (n = {{size}}).",
+              "takeValue": "Weź {{value}} z indeksu {{index}} i wstaw go do posortowanego prefiksu."
+            }
+          },
+          "mergeSort": {
+            "descriptions": {
+              "compareHalves": "Porównaj lewą wartość {{leftValue}} z prawą wartością {{rightValue}} podczas scalania.",
+              "complete": "Merge sort zakończony.",
+              "splitRange": "Podziel zakres [{{left}}, {{right}}] w punkcie {{middle}}.",
+              "start": "Rozpocznij merge sort (n = {{size}}).",
+              "writeBack": "Zapisz {{value}} z powrotem na indeksie {{index}}."
+            }
+          },
+          "quickSort": {
+            "descriptions": {
+              "choosePivot": "Wybierz pivot {{pivot}} z indeksu {{index}}.",
+              "comparePivot": "Porównaj {{value}} z pivotem {{pivot}}.",
+              "complete": "Quick sort zakończony.",
+              "pivotSettled": "Pivot {{pivot}} jest już ustalony na indeksie {{index}}.",
+              "placePivot": "Umieść pivot {{pivot}} na indeksie {{index}} i przenieś {{left}} do prawej partycji.",
+              "singleElement": "Pojedynczy element {{value}} na indeksie {{index}} jest już ustalony.",
+              "start": "Rozpocznij quick sort (n = {{size}}).",
+              "swapPartition": "Zamień miejscami wartości partycji {{left}} i {{right}}."
+            }
+          },
+          "radixSort": {
+            "descriptions": {
+              "distributeToBucket": "Wyślij {{value}} do bucketu {{bucket}} według pozycji 10^{{digitPower}}.",
+              "finalPassComplete": "Wszystkie przebiegi cyfr są zakończone; tablica jest posortowana.",
+              "focusDigit": "Skup się na pozycji cyfry 10^{{digitPower}} dla {{count}} wartości.",
+              "gatherFromBucket": "Zbierz {{value}} z bucketu {{bucket}} z powrotem do strumienia wyjściowego.",
+              "passComplete": "Przebieg {{pass}}/{{maxDigits}} zakończony; kolejność jest już ustalona dla pozycji 10^{{digitPower}}.",
+              "start": "Rozpocznij radix sort (baza 10, maxDigits = {{maxDigits}})."
+            }
+          },
+          "selectionSort": {
+            "descriptions": {
+              "compareMinimum": "Porównaj bieżące minimum {{currentMinimum}} z kandydatem {{candidate}} na indeksie {{scan}}.",
+              "complete": "Selection sort zakończony.",
+              "indexFixed": "Indeks {{index}} jest już ustalony w finalnej kolejności.",
+              "newMinimum": "Znaleziono nowe minimum: {{value}}.",
+              "scanSuffix": "Przeskanuj sufiks od indeksu {{index}}, aby znaleźć kolejne minimum.",
+              "start": "Rozpocznij selection sort (n = {{size}}).",
+              "swap": "Zamień {{left}} z {{right}}, aby indeks {{index}} dostał minimum."
+            }
+          },
+          "shellSort": {
+            "descriptions": {
+              "beginGapPass": "Rozpocznij przebieg z krokiem {{gap}}.",
+              "compareGap": "Porównaj {{leftValue}} z {{value}} przy kroku {{gap}}.",
+              "complete": "Shell sort zakończony.",
+              "insertGap": "Wstaw {{value}} na indeks {{index}} dla kroku {{gap}}.",
+              "shiftGap": "Przesuń {{value}} z indeksu {{from}} na {{to}} przy tym kroku.",
+              "start": "Rozpocznij shell sort (n = {{size}}).",
+              "takeValue": "Weź {{value}} z indeksu {{index}} do wstawiania z krokiem {{gap}}."
+            }
+          },
+          "timSort": {
+            "descriptions": {
+              "buildRun": "Zbuduj run [{{start}}, {{end}}] przy użyciu insertion sorta.",
+              "compareMerge": "Porównaj {{leftValue}} z {{rightValue}} podczas scalania runów.",
+              "compareWithinRun": "Porównaj {{leftValue}} z {{value}}, rozszerzając run.",
+              "complete": "Tim sort zakończony.",
+              "insertWithinRun": "Wstaw {{value}} wewnątrz runu [{{left}}, {{right}}].",
+              "mergeRuns": "Scal runy [{{left}}, {{middle}}] oraz [{{nextStart}}, {{right}}].",
+              "placeWithinRun": "Umieść {{value}} na indeksie {{index}} wewnątrz runu.",
+              "shiftWithinRun": "Przesuń {{value}} o jedno miejsce w prawo wewnątrz runu.",
+              "start": "Rozpocznij tim sort (n = {{size}}, minRun = {{minRun}}).",
+              "writeMergedValue": "Zapisz scaloną wartość {{value}} z powrotem na indeksie {{index}}."
+            }
+          }
+        },
         "string": {
+          "ahoCorasick": {
+            "computation": {
+              "labels": {
+                "failureLink": "Link failure",
+                "finalSummary": "Podsumowanie końcowe",
+                "outputSet": "Zbiór wyjść",
+                "textStep": "Krok po tekście",
+                "transition": "Przejście"
+              },
+              "notes": {
+                "failureLink": "Linki failure wskazują najdłuższy poprawny sufiks, który już istnieje w trie.",
+                "finalSummary": "Jedno przejście po tekście zgłasza wszystkie zapisane wzorce bez ponownego skanowania wcześniejszych znaków.",
+                "outputSet": "Stan terminalny emituje każdy wzorzec kończący się w tym stanie, także te odziedziczone przez linki failure.",
+                "textStep": "Każdy nowy znak przesuwa automat dalej albo wymusza cofanie po failure linkach, aż pojawi się poprawna krawędź.",
+                "transition": "Wspólne prefiksy pozostają na jednej gałęzi, więc ten sam początek wstawiamy tylko raz."
+              }
+            },
+            "decisions": {
+              "chaseFailureLinks": "Jeśli krawędzi brakuje, idź po failure linkach, aż pojawi się stan z użytecznym sufiksem.",
+              "emitOutputs": "Gdy bieżący stan ma wyjścia, zgłoś każdy wzorzec kończący się w tym miejscu.",
+              "growTrie": "Brakująca krawędź oznacza, że trie potrzebuje nowego stanu dla tego znaku.",
+              "scanFinished": "Cały tekst został przeskanowany i wszystkie wystąpienia słów kluczowych są już znane.",
+              "sharePrefixes": "Wzorce z tym samym początkiem powinny współdzielić jeden prefiks w trie.",
+              "stitchFailureLinks": "Każdy stan trie dostaje krawędź awaryjną do najlepszego poprawnego sufiksu."
+            },
+            "descriptions": {
+              "advanceScan": "Zużyj text[{{index}}] = '{{char}}' i przejdź do stanu automatu {{state}}.",
+              "complete": "Aho-Corasick zakończony z {{count}} zgłoszonymi trafieniami.",
+              "followFailure": "Stan {{from}} nie ma krawędzi dla '{{char}}', więc przechodzimy linkiem failure do {{target}}.",
+              "init": "Zbuduj jeden automat słów kluczowych dla wzorców {{patterns}} i przeskanuj tekst „{{text}}” w jednym przebiegu.",
+              "insertEdge": "Wstaw '{{char}}' ze wzorca „{{pattern}}” i utwórz stan {{state}}.",
+              "reportMatches": "Stan {{state}} emituje {{count}} wzorców: {{patterns}}.",
+              "reuseEdge": "Wzorzec „{{pattern}}” korzysta z istniejącej krawędzi dla '{{char}}', więc trie pozostaje zwarte.",
+              "setFailure": "Ustaw failure link stanu {{state}} na {{target}}.",
+              "terminal": "Stan {{state}} staje się terminalny dla wzorca „{{pattern}}”."
+            },
+            "insights": {
+              "activeStateLabel": "Aktywny stan",
+              "countValue": "{{count}}",
+              "matchesLabel": "Trafienia",
+              "noneValue": "—",
+              "patternsLabel": "Wzorce",
+              "stateValue": "stan {{state}}",
+              "trieNodesLabel": "Węzły trie"
+            },
+            "labels": {
+              "matchesValue": "{{count}} trafień",
+              "noMatchesYet": "Jeszcze brak trafień"
+            },
+            "modeLabel": "Aho-Corasick",
+            "phases": {
+              "buildFailure": "Budowa failure linków",
+              "buildTrie": "Budowa trie",
+              "complete": "Skan zakończony",
+              "reportMatch": "Raport trafień",
+              "scanText": "Skan tekstu"
+            }
+          },
           "burrowsWheelerTransform": {
             "computation": {
               "expressions": {
@@ -1723,6 +2122,56 @@
               "shiftWindow": "Przesunięcie okna"
             }
           },
+          "palindromicTree": {
+            "computation": {
+              "labels": {
+                "finalSummary": "Podsumowanie końcowe",
+                "newNode": "Nowy węzeł",
+                "occurrenceCount": "Licznik wystąpień",
+                "suffixLink": "Suffix link"
+              },
+              "notes": {
+                "finalSummary": "Eertree przechowuje każdy różny palindrom tylko raz i łączy go z najdłuższym palindromicznym sufiksem.",
+                "newNode": "Nowy palindrom pojawia się tylko wtedy, gdy bieżący znak rozszerza jakiś palindromiczny sufiks do nowego napisu.",
+                "occurrenceCount": "Jeśli palindrom już istnieje, zwiększamy tylko licznik jego wystąpień.",
+                "suffixLink": "Suffix linki przeskakują po palindromicznych sufiksach, aż znajdzie się następny węzeł, który można rozszerzyć."
+              }
+            },
+            "decisions": {
+              "addNewPalindrome": "Brakuje pasującej krawędzi wyjściowej, więc trzeba utworzyć nowy węzeł palindromu.",
+              "chaseSuffixLinks": "Idź po suffix linkach, aż bieżący znak będzie mógł się odbić wokół kandydującego palindromu.",
+              "reuseExistingNode": "Jeśli krawędź już istnieje, użyj istniejącego węzła palindromu i zaktualizuj tylko licznik.",
+              "treeReady": "Każdy znak został przetworzony, więc drzewo palindromiczne jest kompletne."
+            },
+            "descriptions": {
+              "complete": "Drzewo palindromiczne gotowe z {{count}} różnymi palindromami.",
+              "followLink": "Wykonaj {{hops}} skoków po suffix linkach, aby znaleźć palindrom, który może wchłonąć '{{char}}'.",
+              "init": "Uruchom Eertree dla „{{text}}” z dwoma standardowymi korzeniami: długość -1 i długość 0.",
+              "insertNode": "Utwórz nowy węzeł palindromu „{{palindrome}}”.",
+              "reuseNode": "Użyj ponownie istniejącego węzła palindromu „{{palindrome}}”."
+            },
+            "insights": {
+              "activeLabel": "Aktywny węzeł",
+              "countValue": "{{count}}",
+              "distinctLabel": "Różne",
+              "longestSuffixLabel": "Najdłuższy sufiks",
+              "nodeValue": "węzeł {{node}}",
+              "noneValue": "—",
+              "processedLabel": "Przetworzone"
+            },
+            "labels": {
+              "distinctValue": "{{count}} różnych palindromów",
+              "pendingTree": "Drzewo w toku"
+            },
+            "modeLabel": "Drzewo palindromiczne",
+            "phases": {
+              "complete": "Drzewo gotowe",
+              "followLink": "Skoki po suffix linkach",
+              "insertNode": "Wstawienie węzła",
+              "reuseNode": "Ponowne użycie węzła",
+              "roots": "Korzenie gotowe"
+            }
+          },
           "rabinKarp": {
             "computation": {
               "labels": {
@@ -1857,6 +2306,98 @@
               "setup": "Przygotowanie"
             }
           },
+          "suffixArray": {
+            "computation": {
+              "labels": {
+                "finalArray": "Końcowa tablica sufiksowa",
+                "initialRanks": "Rangi początkowe",
+                "newRanks": "Nowe rangi",
+                "rankPairs": "Pary rang",
+                "reorderedSuffixes": "Przestawione sufiksy"
+              },
+              "notes": {
+                "finalArray": "Gdy każdy sufiks ma już unikalną klasę rangi, bieżący porządek jest finalną tablicą sufiksową.",
+                "initialRanks": "Pierwsza runda startuje od rang pojedynczych znaków.",
+                "newRanks": "Równe pary zostają w tej samej klasie, a różne otwierają nową rangę.",
+                "rankPairs": "Algorytm doubling sortuje sufiksy po dwóch sąsiadujących blokach rang o rozmiarze k.",
+                "reorderedSuffixes": "Posortowanie par rang daje aktualny porządek sufiksów."
+              }
+            },
+            "decisions": {
+              "compareRankPairs": "Porównuj sufiksy po parze (rank[i], rank[i + k]), zamiast skanować całe ogony.",
+              "compressClasses": "Po sortowaniu równe pary zwijają się do jednej klasy równoważności, a różne dostają nową rangę.",
+              "orderReady": "Każdy sufiks ma już unikalną rangę, więc porządek jest ostateczny."
+            },
+            "descriptions": {
+              "assignRanks": "Runda {{round}} przydziela {{classes}} różnych klas rang po posortowaniu bieżących par.",
+              "complete": "Tablica sufiksowa gotowa. Końcowy porządek: {{order}}.",
+              "seed": "Nadaj każdemu sufiksowi początkową rangę po pierwszym znaku dla „{{text}}”.",
+              "sortPairs": "Runda {{round}} sortuje sufiksy po parach bloków o rozmiarze {{stepSize}}."
+            },
+            "insights": {
+              "countValue": "{{count}}",
+              "distinctRanksLabel": "Różne rangi",
+              "noneValue": "—",
+              "orderLabel": "Porządek",
+              "strideLabel": "Krok",
+              "strideValue": "k = {{size}}",
+              "suffixesLabel": "Sufiksy"
+            },
+            "labels": {
+              "pendingArray": "Tablica sufiksowa w toku",
+              "readyValue": "{{order}}"
+            },
+            "modeLabel": "Budowa tablicy sufiksowej",
+            "phases": {
+              "assignRanks": "Przydzielanie rang",
+              "complete": "Porządek gotowy",
+              "seedRanks": "Rangi startowe",
+              "sortPairs": "Sortowanie par rang"
+            }
+          },
+          "suffixArrayLcp": {
+            "computation": {
+              "labels": {
+                "finalLcp": "Końcowa tablica LCP",
+                "kasaiStep": "Krok Kasaiego",
+                "suffixArray": "Tablica sufiksowa"
+              },
+              "notes": {
+                "finalLcp": "Każda wartość LCP przechowuje długość wspólnego prefiksu sąsiednich sufiksów w porządku tablicy sufiksowej.",
+                "kasaiStep": "Kasai po każdym kroku odzyskuje jeden znak overlapu, więc cały skan pozostaje liniowy.",
+                "suffixArray": "Kasai startuje od gotowej tablicy sufiksowej i jej odwrotnej tablicy rang."
+              }
+            },
+            "decisions": {
+              "compareNeighbors": "Porównuj każdy sufiks tylko z następnym sąsiadem w porządku tablicy sufiksowej.",
+              "lcpReady": "Każda para sąsiednich sufiksów ma już policzoną długość wspólnego prefiksu.",
+              "reuseOverlap": "Po zakończeniu jednego porównania następny sufiks może odzyskać jeden znak overlapu."
+            },
+            "descriptions": {
+              "compare": "Porównaj sufiks {{left}} z sufiksem {{right}} i zapisz overlap {{overlap}}.",
+              "complete": "Tablica LCP gotowa: {{values}}.",
+              "seed": "Uruchom Kasaiego z tablicą sufiksową {{suffixArray}} dla „{{text}}”."
+            },
+            "insights": {
+              "activePairLabel": "Aktywna para",
+              "countValue": "{{count}}",
+              "noneValue": "—",
+              "overlapLabel": "Overlap",
+              "pairValue": "{{left}} ↔ {{right}}",
+              "readyLcpLabel": "Gotowe LCP",
+              "suffixesLabel": "Sufiksy"
+            },
+            "labels": {
+              "pendingLcp": "LCP w toku",
+              "readyValue": "{{values}}"
+            },
+            "modeLabel": "Tablica sufiksowa + LCP",
+            "phases": {
+              "complete": "LCP gotowe",
+              "kasaiScan": "Skan Kasaiego",
+              "seedOrder": "Wczytanie porządku"
+            }
+          },
           "zAlgorithm": {
             "computation": {
               "labels": {
@@ -1922,344 +2463,52 @@
             }
           }
         },
-        "search": {
-          "linearSearch": {
-            "modeLabel": "Wyszukiwanie liniowe",
-            "statuses": {
-              "ready": "Gotowe do skanowania",
-              "comparing": "Porównanie pozycji",
-              "found": "Znaleziono trafienie",
-              "advance": "Przesuń kursor",
-              "notFound": "Brak celu"
-            },
-            "descriptions": {
-              "start": "Przeskanuj {{size}} pozycji od lewej do prawej w poszukiwaniu {{target}}.",
-              "inspect": "Sprawdź indeks {{index}}: {{value}} vs {{target}}.",
-              "found": "Znaleziono {{target}} na indeksie {{index}}.",
-              "advance": "Wartość {{value}} nie jest równa {{target}}, więc przejdź do następnej pozycji.",
-              "notFound": "Doszliśmy do końca bez znalezienia {{target}}."
+        "tree": {
+          "treeTraversals": {
+            "computation": {
+              "output": "dopisanie do taśmy wyjściowej",
+              "queuePop": "queue.shift",
+              "queuePush": "queue.push",
+              "stackPop": "stack.pop",
+              "stackPush": "stack.push",
+              "visit": "odwiedzenie"
             },
             "decisions": {
-              "compare": "{{value}} {{relation}} {{target}}",
-              "stopAtIndex": "zatrzymaj na indeksie {{index}}",
-              "discardIndex": "odrzuć indeks {{index}}",
-              "allSlotsExhausted": "wyczerpano wszystkie pozycje"
-            }
-          },
-          "binarySearch": {
-            "modeLabel": "Wyszukiwanie binarne",
-            "statuses": {
-              "ready": "Okno gotowe",
-              "comparing": "Sprawdź środek",
-              "found": "Cel znaleziony",
-              "moveRight": "Przesuń okno w prawo",
-              "moveLeft": "Przesuń okno w lewo",
-              "notFound": "Okno wyczerpane"
+              "backtrackDone": "Poddrzewo gotowe — wróć do ramki rodzica.",
+              "dequeueLevel": "BFS pobiera po jednym poziomie naraz.",
+              "emitCurrent": "Dopisz bieżący węzeł teraz.",
+              "finished": "Wszystkie węzły odwiedzone.",
+              "leftBeforeRight": "Lewe poddrzewo przed prawym.",
+              "pushThenDescend": "Wrzuć ramkę, potem zejdź w głąb.",
+              "rightAfterSelf": "Prawe poddrzewo po bieżącym węźle."
             },
             "descriptions": {
-              "start": "Szukaj {{target}} w posortowanym oknie.",
-              "probe": "Sprawdź środek {{index}} o wartości {{value}} względem {{target}}.",
-              "found": "Cel {{target}} znaleziony na indeksie {{index}}.",
-              "moveRight": "{{value}} jest za małe, więc przesuń okno w prawo.",
-              "moveLeft": "{{value}} jest za duże, więc przesuń okno w lewo.",
-              "notFound": "Okno wyszukiwania zapadło się bez trafienia."
+              "backtrack": "Wracamy z poddrzewa — zdejmij ramkę ze stosu.",
+              "complete": "Przejście ukończone — każdy węzeł jest w wyjściu.",
+              "dequeue": "Pobierz kolejny węzeł z kolejki level-order.",
+              "descendLeft": "Zejdź do lewego poddrzewa.",
+              "descendRight": "Zejdź do prawego poddrzewa.",
+              "enqueue": "Dołóż węzeł do kolejki fali level-order.",
+              "push": "Wrzuć bieżący węzeł na stos wywołań.",
+              "start": "Zaczynaj przejście od korzenia.",
+              "visit": "Dopisz bieżący węzeł do sekwencji wyjściowej."
             },
-            "decisions": {
-              "compare": "{{value}} {{relation}} {{target}}",
-              "collapsedWindow": "zwiń do indeksu {{index}}",
-              "newWindow": "nowe okno [{{low}}, {{high}}]",
-              "candidateWindowEmpty": "okno kandydatów jest puste"
-            }
-          },
-          "binarySearchVariants": {
             "modeLabels": {
-              "lowerBound": "Szukaj lewego brzegu",
-              "upperBound": "Szukaj prawego brzegu",
-              "boundsSearch": "Szukanie zakresu"
+              "inorder": "Inorder (DFS)",
+              "levelOrder": "Level-order (BFS)",
+              "postorder": "Postorder (DFS)",
+              "preorder": "Preorder (DFS)"
             },
-            "statuses": {
-              "ready": "Gotowe na lewy brzeg",
-              "comparing": "Sprawdź kandydata brzegu",
-              "moveLeft": "Przytnij prawą stronę",
-              "firstMatchCandidate": "Kandydat na pierwsze trafienie",
-              "moveRight": "Przesuń lewą stronę",
-              "notFound": "Brak zakresu",
-              "switchPhase": "Przełącz na prawy brzeg",
-              "lastMatchCandidate": "Kandydat na ostatnie trafienie",
-              "rangeFound": "Zakres ustalony"
-            },
-            "descriptions": {
-              "start": "Znajdź pierwszy i ostatni indeks wartości {{target}}.",
-              "lowerProbe": "Sonda lewego brzegu na indeksie {{index}} z wartością {{value}}.",
-              "moveLeftForFirst": "{{target}} może zaczynać się tutaj albo wcześniej, więc przytnij prawą stronę.",
-              "tooSmallForFirst": "{{value}} jest za małe na pierwsze trafienie, więc podnieś low.",
-              "noRange": "W przebiegu lewego brzegu nie znaleziono żadnego wystąpienia {{target}}.",
-              "switchPhase": "Pierwsze trafienie ustalone na {{index}}; teraz szukaj ostatniego trafienia.",
-              "upperProbe": "Sonda prawego brzegu na indeksie {{index}} z wartością {{value}}.",
-              "moveRightForLast": "{{target}} może ciągnąć się dalej w prawo, więc podnieś low.",
-              "tooLargeForLast": "{{value}} jest za duże na ostatnie trafienie, więc obniż high.",
-              "completeRange": "Zakres dla {{target}} to {{left}}..{{right}}.",
-              "noFinalRange": "Przebieg prawego brzegu zakończył się bez poszerzenia końcowego zakresu dla {{target}}."
-            },
-            "decisions": {
-              "lowerCompare": "{{value}} {{relation}} {{target}}",
-              "trimRight": "nowe high = {{high}}",
-              "candidateFirst": "kandydat na pierwsze trafienie = {{index}}",
-              "advanceLow": "nowe low = {{low}}",
-              "lowerBoundSearchFailed": "przebieg lewego brzegu nie znalazł trafienia",
-              "firstMatchFixed": "pierwsze trafienie ustalone na {{index}}",
-              "upperCompare": "{{value}} {{relation}} {{target}}",
-              "candidateLast": "kandydat na ostatnie trafienie = {{index}}",
-              "newHigh": "nowe high = {{high}}",
-              "rangeWidth": "szerokość zakresu = {{count}}",
-              "upperBoundSearchMiss": "przebieg prawego brzegu nie utrzymał poprawnego zakresu"
-            }
-          }
-        },
-        "grid": {
-          "floodFill": {
-            "modeLabel": "Flood fill",
-            "statuses": {
-              "readyToSpread": "Gotowe do rozlewania",
-              "inspectCurrentCell": "Sprawdź bieżącą komórkę",
-              "blockedCell": "Zablokowana komórka",
-              "regionExpands": "Region się rozszerza",
-              "queueMatchingNeighbor": "Dodaj pasującego sąsiada",
-              "regionComplete": "Region gotowy"
-            },
-            "descriptions": {
-              "start": "Zacznij od {{cell}} z kolorem źródłowym {{sourceColor}}.",
-              "inspect": "Sprawdź {{cell}} na głębokości {{depth}}.",
-              "blocked": "{{cell}} nie należy do regionu źródłowego, więc pomiń tę komórkę.",
-              "fill": "Pokoloruj {{cell}} kolorem wypełnienia.",
-              "queueNeighbor": "Dodaj pasującego sąsiada {{cell}} do kolejki.",
-              "complete": "Flood fill zakończony: zamalowano {{count}} komórek."
-            },
-            "decisions": {
-              "replaceColors": "zamień {{sourceColor}} na {{fillColor}}",
-              "cellColor": "kolor komórki = {{color}}",
-              "keepOriginalColor": "zachowaj oryginalny kolor",
-              "paintedColor": "pomalowano na {{fillColor}}",
-              "sameSourceColor": "ten sam kolor źródłowy {{sourceColor}}",
-              "finalRegionSize": "rozmiar regionu = {{count}}"
-            },
-            "labels": {
-              "fillColor": "wypełnienie {{color}}"
-            }
-          },
-          "aStarPathfinding": {
-            "modeLabel": "A* Pathfinding",
-            "statuses": {
-              "readyToExplore": "Gotowe do eksploracji",
-              "pickLowestF": "Wybierz najniższe f",
-              "pathFound": "Ścieżka znaleziona",
-              "inspectNeighbor": "Sprawdź sąsiada",
-              "keepCurrentRoute": "Zachowaj bieżącą trasę",
-              "updateFrontierRoute": "Zaktualizuj trasę frontu",
-              "noPathFound": "Brak ścieżki"
-            },
-            "descriptions": {
-              "initialize": "Zainicjalizuj A* od {{start}} do {{goal}}.",
-              "pickFrontier": "Wybierz {{cell}} z najniższym wynikiem frontu.",
-              "goalReached": "Osiągnięto cel {{goal}} i można odtworzyć ścieżkę.",
-              "inspectNeighbor": "Sprawdź sąsiada {{cell}} wychodząc z {{from}}.",
-              "keepBetterRoute": "Znana trasa do {{cell}} jest już lepsza.",
-              "updateRoute": "Zaktualizuj trasę do {{cell}} przez {{from}}.",
-              "exhausted": "Zbiór otwarty się wyczerpał; żadna ścieżka nie dochodzi do celu."
-            },
-            "decisions": {
-              "initializeScores": "ustaw g(start) = 0 oraz f(start) = h(start)",
-              "frontierScores": "f = {{f}}, g = {{g}}",
-              "shortestPathLength": "długość ścieżki = {{count}}",
-              "tentativeScores": "tymczasowe g = {{g}}, h = {{h}}, f = {{f}}",
-              "knownRouteBetter": "znane g = {{g}} jest lepsze",
-              "setScores": "ustaw g = {{g}}, h = {{h}}, f = {{f}}",
-              "exhaustedReachable": "wyczerpano wszystkie osiągalne komórki"
-            }
-          }
-        },
-        "dsu": {
-          "unionFind": {
-            "modeLabel": "Union-Find",
-            "statuses": {
-              "ready": "Gotowe",
-              "findRepresentative": "Szukaj reprezentanta",
-              "pathCompression": "Kompresja ścieżki",
-              "compareRoots": "Porównaj korzenie",
-              "unionSkipped": "Scalenie pominięte",
-              "unionByRank": "Scalenie według rangi",
-              "complete": "Las ustabilizowany"
-            },
-            "descriptions": {
-              "initialize": "Zacznij od singletonów dla każdego węzła.",
-              "followPath": "Śledź łańcuch rodziców od {{label}}.",
-              "compressPath": "Skompresuj ścieżkę tak, by każdy odwiedzony węzeł wskazywał korzeń {{root}}.",
-              "alreadyCompressed": "{{node}} już wskazuje bezpośrednio na korzeń {{root}}.",
-              "compareRoots": "Porównaj korzenie {{left}} i {{right}}.",
-              "skipMerge": "Pomiń scalenie, bo oba węzły już dzielą korzeń {{root}}.",
-              "attachRoot": "Podepnij korzeń {{attach}} pod {{keep}}.",
-              "complete": "Union-Find zakończony z {{count}} składową(-ymi)."
-            },
-            "decisions": {
-              "singletonRoots": "każdy węzeł startuje jako własny korzeń",
-              "currentPath": "ścieżka = {{path}}",
-              "representativeIs": "reprezentant = {{root}}",
-              "representativePair": "{{left}} -> {{leftRoot}}, {{right}} -> {{rightRoot}}",
-              "noStructuralChange": "brak zmiany struktury",
-              "newRootRepresents": "{{root}} reprezentuje teraz {{count}} węzłów",
-              "finalStable": "przetworzono wszystkie operacje union"
-            },
-            "labels": {
-              "singletonSets": "{{count}} singletonów",
-              "activeSets": "{{count}} aktywnych zbiorów",
-              "operationQueue": "Kolejka operacji"
-            }
-          },
-          "kruskalsMst": {
-            "modeLabel": "MST Kruskala",
-            "statuses": {
-              "sortedEdgeScan": "Przegląd posortowanych krawędzi",
-              "inspectNextEdge": "Sprawdź następną krawędź",
-              "rejectCycleEdge": "Odrzuć krawędź cyklu",
-              "acceptEdge": "Zaakceptuj krawędź",
-              "complete": "MST gotowe"
-            },
-            "descriptions": {
-              "initialize": "Krawędzie są posortowane wagą; zacznij od pustego lasu.",
-              "inspectEdge": "Sprawdź krawędź {{from}} - {{to}} (w={{weight}}).",
-              "rejectEdge": "Odrzuć {{from}} - {{to}}, bo domyka cykl.",
-              "acceptEdge": "Zaakceptuj {{from}} - {{to}} do MST.",
-              "complete": "Kruskal zakończył się z {{count}} zaakceptowanymi krawędziami i łączną wagą {{weight}}."
-            },
-            "decisions": {
-              "acceptNextCheapest": "akceptuj najtańszą krawędź, która nie domyka cyklu",
-              "rootCompare": "{{from}} -> {{fromRoot}}, {{to}} -> {{toRoot}}",
-              "shareRoot": "oba końce mają już wspólny korzeń",
-              "treeWeightGrows": "waga MST = {{weight}}",
-              "pendingEdgesWorse": "wszystkie pozostałe krawędzie są cięższe albo zbędne"
-            },
-            "labels": {
-              "mstWeight": "waga = {{weight}}",
-              "acceptedEdges": "{{count}} / {{total}} zaakceptowanych krawędzi",
-              "sortedEdges": "Posortowane krawędzie"
-            }
-          }
-        },
-        "sort": {
-          "bubbleSort": {
-            "descriptions": {
-              "start": "Rozpocznij bubble sort (n = {{size}}).",
-              "compare": "Porównaj {{leftValue}} na indeksie {{leftIndex}} z {{rightValue}} na indeksie {{rightIndex}}.",
-              "swap": "Zamień {{left}} z indeksu {{leftIndex}} z {{right}} z indeksu {{rightIndex}}.",
-              "passComplete": "Przebieg {{pass}} zakończony; sufiks zaczynający się od indeksu {{boundary}} jest już ustalony.",
-              "earlyExit": "W tym przebiegu nie było żadnej zamiany, więc tablica jest już posortowana.",
-              "complete": "Bubble sort zakończony."
-            }
-          },
-          "selectionSort": {
-            "descriptions": {
-              "start": "Rozpocznij selection sort (n = {{size}}).",
-              "scanSuffix": "Przeskanuj sufiks od indeksu {{index}}, aby znaleźć kolejne minimum.",
-              "compareMinimum": "Porównaj bieżące minimum {{currentMinimum}} z kandydatem {{candidate}} na indeksie {{scan}}.",
-              "newMinimum": "Znaleziono nowe minimum: {{value}}.",
-              "swap": "Zamień {{left}} z {{right}}, aby indeks {{index}} dostał minimum.",
-              "indexFixed": "Indeks {{index}} jest już ustalony w finalnej kolejności.",
-              "complete": "Selection sort zakończony."
-            }
-          },
-          "insertionSort": {
-            "descriptions": {
-              "start": "Rozpocznij insertion sort (n = {{size}}).",
-              "takeValue": "Weź {{value}} z indeksu {{index}} i wstaw go do posortowanego prefiksu.",
-              "compare": "Porównaj {{current}} z {{value}} wewnątrz posortowanego prefiksu.",
-              "shift": "Przesuń {{value}} o jedno miejsce w prawo.",
-              "insert": "Wstaw {{value}} na indeks {{index}}.",
-              "complete": "Insertion sort zakończony."
-            }
-          },
-          "mergeSort": {
-            "descriptions": {
-              "start": "Rozpocznij merge sort (n = {{size}}).",
-              "complete": "Merge sort zakończony.",
-              "splitRange": "Podziel zakres [{{left}}, {{right}}] w punkcie {{middle}}.",
-              "compareHalves": "Porównaj lewą wartość {{leftValue}} z prawą wartością {{rightValue}} podczas scalania.",
-              "writeBack": "Zapisz {{value}} z powrotem na indeksie {{index}}."
-            }
-          },
-          "quickSort": {
-            "descriptions": {
-              "start": "Rozpocznij quick sort (n = {{size}}).",
-              "complete": "Quick sort zakończony.",
-              "singleElement": "Pojedynczy element {{value}} na indeksie {{index}} jest już ustalony.",
-              "choosePivot": "Wybierz pivot {{pivot}} z indeksu {{index}}.",
-              "comparePivot": "Porównaj {{value}} z pivotem {{pivot}}.",
-              "swapPartition": "Zamień miejscami wartości partycji {{left}} i {{right}}.",
-              "placePivot": "Umieść pivot {{pivot}} na indeksie {{index}} i przenieś {{left}} do prawej partycji.",
-              "pivotSettled": "Pivot {{pivot}} jest już ustalony na indeksie {{index}}."
-            }
-          },
-          "heapSort": {
-            "descriptions": {
-              "start": "Rozpocznij heap sort (n = {{size}}).",
-              "extractRoot": "Zamień maksimum {{max}} z korzenia z {{tail}} na indeksie {{end}}.",
-              "complete": "Heap sort zakończony.",
-              "compareLeft": "Porównaj lewe dziecko {{leftChild}} z bieżącym maksimum {{currentLargest}}.",
-              "compareRight": "Porównaj prawe dziecko {{rightChild}} z bieżącym maksimum {{currentLargest}}.",
-              "restoreHeap": "Zamień korzeń {{rootValue}} z większym dzieckiem {{largestValue}}, aby odtworzyć kopiec."
-            }
-          },
-          "countingSort": {
-            "descriptions": {
-              "start": "Rozpocznij counting sort (n = {{size}}, max = {{max}}).",
-              "countValue": "Zlicz wartość {{value}} na indeksie {{index}}; liczność wynosi teraz {{count}}.",
-              "writeValue": "Zapisz {{value}} na indeksie {{index}}.",
-              "complete": "Counting sort zakończony."
-            }
-          },
-          "shellSort": {
-            "descriptions": {
-              "start": "Rozpocznij shell sort (n = {{size}}).",
-              "beginGapPass": "Rozpocznij przebieg z krokiem {{gap}}.",
-              "takeValue": "Weź {{value}} z indeksu {{index}} do wstawiania z krokiem {{gap}}.",
-              "compareGap": "Porównaj {{leftValue}} z {{value}} przy kroku {{gap}}.",
-              "shiftGap": "Przesuń {{value}} z indeksu {{from}} na {{to}} przy tym kroku.",
-              "insertGap": "Wstaw {{value}} na indeks {{index}} dla kroku {{gap}}.",
-              "complete": "Shell sort zakończony."
-            }
-          },
-          "bucketSort": {
-            "descriptions": {
-              "start": "Rozpocznij bucket sort (n = {{size}}, buckety = {{bucketCount}}).",
-              "placeInBucket": "Umieść {{value}} z indeksu {{index}} w buckecie {{bucketIndex}}.",
-              "sortBucket": "Posortuj bucket {{bucketIndex}} lokalnie przed przepisaniem go z powrotem.",
-              "insertWithinBucket": "Wstaw {{value}} na jego posortowaną pozycję wewnątrz bucketu {{bucketIndex}}.",
-              "compareWithinBucket": "Porównaj {{leftValue}} z {{rightValue}} wewnątrz bucketu {{bucketIndex}}.",
-              "writeFromBucket": "Zapisz {{value}} z bucketu {{bucketIndex}} na indeks {{index}}.",
-              "complete": "Bucket sort zakończony."
-            }
-          },
-          "radixSort": {
-            "descriptions": {
-              "start": "Rozpocznij radix sort (baza 10, maxDigits = {{maxDigits}}).",
-              "focusDigit": "Skup się na pozycji cyfry 10^{{digitPower}} dla {{count}} wartości.",
-              "distributeToBucket": "Wyślij {{value}} do bucketu {{bucket}} według pozycji 10^{{digitPower}}.",
-              "gatherFromBucket": "Zbierz {{value}} z bucketu {{bucket}} z powrotem do strumienia wyjściowego.",
-              "finalPassComplete": "Wszystkie przebiegi cyfr są zakończone; tablica jest posortowana.",
-              "passComplete": "Przebieg {{pass}}/{{maxDigits}} zakończony; kolejność jest już ustalona dla pozycji 10^{{digitPower}}."
-            }
-          },
-          "timSort": {
-            "descriptions": {
-              "start": "Rozpocznij tim sort (n = {{size}}, minRun = {{minRun}}).",
-              "buildRun": "Zbuduj run [{{start}}, {{end}}] przy użyciu insertion sorta.",
-              "mergeRuns": "Scal runy [{{left}}, {{middle}}] oraz [{{nextStart}}, {{right}}].",
-              "complete": "Tim sort zakończony.",
-              "insertWithinRun": "Wstaw {{value}} wewnątrz runu [{{left}}, {{right}}].",
-              "compareWithinRun": "Porównaj {{leftValue}} z {{value}}, rozszerzając run.",
-              "shiftWithinRun": "Przesuń {{value}} o jedno miejsce w prawo wewnątrz runu.",
-              "placeWithinRun": "Umieść {{value}} na indeksie {{index}} wewnątrz runu.",
-              "compareMerge": "Porównaj {{leftValue}} z {{rightValue}} podczas scalania runów.",
-              "writeMergedValue": "Zapisz scaloną wartość {{value}} z powrotem na indeksie {{index}}."
+            "phases": {
+              "backtrack": "Powrót",
+              "complete": "Zakończone",
+              "dequeue": "Pobranie z kolejki",
+              "descendLeft": "Lewe dziecko",
+              "descendRight": "Prawe dziecko",
+              "enqueue": "Dodanie do kolejki",
+              "init": "Inicjalizacja",
+              "push": "Wrzucenie na stos",
+              "visit": "Odwiedzenie"
             }
           }
         }
@@ -2562,6 +2811,20 @@
           }
         },
         "string": {
+          "ahoCorasick": {
+            "alerts": {
+              "description": "Krótkie słowa alarmowe pokazują, jak jeden automat może wykrywać wiele słów kluczowych w jednym przebiegu.",
+              "label": "Alerty"
+            },
+            "classic": {
+              "description": "Klasyczny przykład „ushers”, w którym łatwo zweryfikować wspólne prefiksy i emitowane dopasowania.",
+              "label": "Klasyczny"
+            },
+            "genome": {
+              "description": "Nakładające się fragmenty DNA tworzą wiele współdzielonych gałęzi trie i fallbacków po sufiksach.",
+              "label": "Genom"
+            }
+          },
           "bwt": {
             "banana": {
               "description": "Kanoniczne demo BWT: krótkie, zapamiętywalne i idealne do zgrupowanych serii w wyniku.",
@@ -2618,6 +2881,20 @@
               "label": "Symetria"
             }
           },
+          "palindromicTree": {
+            "banana": {
+              "description": "Powtarzające się centra tworzą zwarte drzewo różnych palindromicznych podciągów.",
+              "label": "Banana"
+            },
+            "mixed": {
+              "description": "Kilka krótkich i średnich palindromów pojawia się online, a suffix linki stale pracują.",
+              "label": "Mieszany"
+            },
+            "symmetry": {
+              "description": "Silna symetria ułatwia wychwycenie nowych palindromów i ponownie używanych węzłów sufiksowych.",
+              "label": "Symetria"
+            }
+          },
           "rabinKarp": {
             "alarm": {
               "description": "Mały moduł powoduje dość częste kolizje hashy, żeby dobrze pokazać weryfikację.",
@@ -2646,6 +2923,34 @@
               "label": "Brak zysku"
             }
           },
+          "suffixArray": {
+            "abracadabra": {
+              "description": "Powtarzające się prefiksy wymuszają kilka rund rangowania, zanim każdy sufiks stanie się unikalny.",
+              "label": "Abrakadabra"
+            },
+            "banana": {
+              "description": "Kanoniczny przykład tablicy sufiksowej z krótkim i łatwym do zapamiętania wynikiem.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Gęste powtórzenia mocno obciążają rundy doublingu i klasy równoważności.",
+              "label": "Mississippi"
+            }
+          },
+          "suffixArrayLcp": {
+            "abracadabra": {
+              "description": "Powtarzające się fragmenty dają poszarpany profil LCP po ustaleniu porządku sufiksów.",
+              "label": "Abrakadabra"
+            },
+            "banana": {
+              "description": "Klasyczna banana prowadzi do znanego profilu LCP 1,3,0,0,2.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Wiele sąsiednich sufiksów dzieli długie prefiksy, więc dobrze widać ponowne użycie overlapu w Kasaim.",
+              "label": "Mississippi"
+            }
+          },
           "zAlgorithm": {
             "classic": {
               "description": "Konkatenacja wzorca tworzy czytelne ponowne użycie Z-boxa i kilka dokładnych trafień.",
@@ -2658,6 +2963,26 @@
             "log": {
               "description": "Czytelny tekst z długimi powtarzającymi się prefiksami i widocznymi słupkami pełnego wzorca.",
               "label": "Strumień logów"
+            }
+          }
+        },
+        "tree": {
+          "treeTraversals": {
+            "inorderBst": {
+              "description": "Klasyczne przejście drzewa BST — porządek inorder produkuje wartości w rosnącym porządku sortowania.",
+              "label": "Inorder na BST"
+            },
+            "levelOrderWave": {
+              "description": "Fala BFS napędzana kolejką — każde zamiecenie kończy jedną warstwę głębokości przed przejściem do następnej.",
+              "label": "Level-order BFS"
+            },
+            "postorderSizes": {
+              "description": "Najpierw dzieci, na końcu węzeł. Ten porządek odpowiada obliczeniom typu bottom-up: rozmiary poddrzew, sumy, wysokości.",
+              "label": "Postorder"
+            },
+            "preorderBalanced": {
+              "description": "DFS: najpierw odwiedź węzeł, potem zejdź w lewo, potem w prawo. Wyjście rysuje front przejścia rozchodzący się z korzenia.",
+              "label": "Preorder"
             }
           }
         }
@@ -2724,6 +3049,7 @@
           "newTargetSum": "Nowa suma docelowa",
           "newTerminalGraph": "Nowy graf terminali",
           "newTrailGraph": "Nowy graf ścieżki",
+          "newTreeShape": "Nowy kształt drzewa",
           "newWildcardPair": "Nowa para wildcard",
           "newWordPair": "Nowa para słów",
           "newZSkyline": "Nowa panorama Z",
@@ -2806,6 +3132,7 @@
           "terminalDpTree": "Drzewo terminalnego DP",
           "treeBuilder": "Budowniczy drzewa",
           "treeGraph": "Graf drzewa",
+          "treeWalk": "Przejście drzewa",
           "triangleMesh": "Siatka trójkątów",
           "twoPassScc": "SCC w dwóch przebiegach",
           "twoSideCheck": "Kontrola dwóch stron",
@@ -3004,6 +3331,53 @@
           "uiLensBadgeLabel": "Soczewka UI",
           "visitOrderLabel": "Kolejność odwiedzin",
           "waitingDecisionLabel": "Oczekiwanie na krok porównania / relaksacji / decyzji."
+        },
+        "grid": {
+          "activeLabel": "Aktywne",
+          "boardLabel": "Plansza",
+          "columns": {
+            "cell": "Komórka",
+            "status": "Status",
+            "tags": "Tagi",
+            "value": "Wartość"
+          },
+          "emptyLabel": "Brak śladu siatki dla tego kroku.",
+          "filledCount": "{{count}} wypełn.",
+          "frontierLabel": "Frontier",
+          "modeLabel": "Tryb",
+          "notStartedLabel": "nie rozpoczęto",
+          "pathCount": "{{count}} w ścieżce",
+          "resultLabel": "Wynik",
+          "sourceLabel": "Źródło",
+          "statuses": {
+            "blocked": "zablokowana",
+            "closed": "zamknięta",
+            "current": "bieżąca",
+            "filled": "wypełniona",
+            "frontier": "frontier",
+            "goal": "cel",
+            "idle": "bezczynna",
+            "path": "ścieżka",
+            "source": "źródło",
+            "wall": "ściana"
+          },
+          "tableEmptyLabel": "Brak jeszcze aktywnych komórek siatki",
+          "tagLegend": {
+            "blocked": "Zablokowana komórka",
+            "candidate": "Kandydat",
+            "closed": "Zamknięta komórka",
+            "current": "Bieżąca komórka",
+            "filled": "Wypełniona komórka",
+            "frontier": "Frontier",
+            "goal": "Komórka celu",
+            "path": "Końcowa ścieżka",
+            "seed": "Komórka startowa",
+            "wall": "Ściana"
+          },
+          "targetLabel": "Cel",
+          "visitOrderLabel": "Kolejność odwiedzin",
+          "visitedLabel": "Odwiedzone",
+          "waitingDecisionLabel": "Oczekiwanie na następną aktualizację siatki."
         },
         "halfPlane": {
           "areaLabel": "Pole",
@@ -3240,6 +3614,15 @@
         },
         "string": {
           "activeLabel": "Aktywne",
+          "ahoCorasick": {
+            "automatonLabel": "Automat",
+            "currentCharLabel": "Bieżący znak",
+            "currentStateLabel": "Bieżący stan",
+            "detailsAriaLabel": "Szczegóły Aho-Corasick",
+            "failurePathLabel": "Ścieżka failure",
+            "matchCountLabel": "Liczba trafień",
+            "matchesLabel": "Trafienia"
+          },
           "burrowsWheeler": {
             "columnsLabel": "Kolumny",
             "detailsAriaLabel": "Szczegóły Burrowsa-Wheelera",
@@ -3297,6 +3680,14 @@
           },
           "modeLabel": "Tryb",
           "noFormulaLabel": "Brak dodatkowej formuły w tym kroku.",
+          "palindromicTree": {
+            "activeNodeLabel": "Aktywny węzeł",
+            "currentCharLabel": "Bieżący znak",
+            "detailsAriaLabel": "Szczegóły drzewa palindromicznego",
+            "distinctLabel": "Różne palindromy",
+            "nodesLabel": "Węzły",
+            "processedLabel": "Przetworzone"
+          },
           "phaseLabel": "Faza",
           "presetLabel": "Preset",
           "presetNoteLabel": "Notatka presetu",
@@ -3331,6 +3722,20 @@
             "runsDoneLabel": "Gotowe serie",
             "scannerLabel": "Skaner"
           },
+          "suffixArray": {
+            "detailsAriaLabel": "Szczegóły tablicy sufiksowej",
+            "distinctRanksLabel": "Różne rangi",
+            "orderLabel": "Porządek sufiksów",
+            "ranksLabel": "Rangi",
+            "stepSizeLabel": "Krok"
+          },
+          "suffixArrayLcp": {
+            "activePairLabel": "Aktywna para",
+            "compareWithLabel": "Porównaj z",
+            "detailsAriaLabel": "Szczegóły LCP tablicy sufiksowej",
+            "lcpLabel": "Wartości LCP",
+            "overlapLabel": "Wspólny prefiks"
+          },
           "summaryAriaLabel": "Podsumowanie stringów",
           "waitingEventLabel": "Oczekiwanie na następne zdarzenie stringowe.",
           "zAlgorithm": {
@@ -3355,6 +3760,16 @@
           "spansLabel": "Zakresy",
           "summaryAriaLabel": "Podsumowanie sweep line"
         },
+        "tree": {
+          "currentNodeLabel": "Bieżący",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu drzewa dla tego kroku.",
+          "outputLabel": "Wyjście",
+          "progressLabel": "Postęp",
+          "queueLabel": "Kolejka",
+          "stackLabel": "Stos wywołań",
+          "waitingStepLabel": "Oczekiwanie na kolejny krok przejścia drzewa."
+        },
         "voronoi": {
           "activeSiteLabel": "Aktywny punkt",
           "cellLabel": "Komórka",
@@ -3366,53 +3781,6 @@
           "siteEventRailLabel": "Szyna zdarzeń punktów",
           "summaryAriaLabel": "Podsumowanie Voronoia",
           "sweepYLabel": "Sweep y"
-        },
-        "grid": {
-          "modeLabel": "Tryb",
-          "activeLabel": "Aktywne",
-          "frontierLabel": "Frontier",
-          "visitedLabel": "Odwiedzone",
-          "resultLabel": "Wynik",
-          "sourceLabel": "Źródło",
-          "targetLabel": "Cel",
-          "boardLabel": "Plansza",
-          "visitOrderLabel": "Kolejność odwiedzin",
-          "filledCount": "{{count}} wypełn.",
-          "pathCount": "{{count}} w ścieżce",
-          "waitingDecisionLabel": "Oczekiwanie na następną aktualizację siatki.",
-          "notStartedLabel": "nie rozpoczęto",
-          "tableEmptyLabel": "Brak jeszcze aktywnych komórek siatki",
-          "emptyLabel": "Brak śladu siatki dla tego kroku.",
-          "columns": {
-            "cell": "Komórka",
-            "value": "Wartość",
-            "status": "Status",
-            "tags": "Tagi"
-          },
-          "tagLegend": {
-            "seed": "Komórka startowa",
-            "goal": "Komórka celu",
-            "frontier": "Frontier",
-            "current": "Bieżąca komórka",
-            "filled": "Wypełniona komórka",
-            "closed": "Zamknięta komórka",
-            "path": "Końcowa ścieżka",
-            "wall": "Ściana",
-            "blocked": "Zablokowana komórka",
-            "candidate": "Kandydat"
-          },
-          "statuses": {
-            "idle": "bezczynna",
-            "wall": "ściana",
-            "source": "źródło",
-            "goal": "cel",
-            "frontier": "frontier",
-            "current": "bieżąca",
-            "filled": "wypełniona",
-            "closed": "zamknięta",
-            "path": "ścieżka",
-            "blocked": "zablokowana"
-          }
         }
       },
       "traits": {
@@ -4175,113 +4543,114 @@
         }
       },
       "visualizations": {
-        "dp": {
-          "emptyLabel": "Brak śladu DP dla tego kroku.",
-          "guideDesc": "Skup się na aktywnym wierszu, kolumnie lub przedziale, a potem użyj podświetlonych chipów, żeby zobaczyć, które podproblemy zasilają następny zapis.",
-          "guideEyebrow": "Przewodnik DP",
-          "guideTitle": "Najpierw odczytaj aktywny stan",
-          "knapsack": {
-            "activeCellLabel": "aktywna komórka",
-            "applyCurrentMoveLabel": "Zastosuj bieżący ruch",
-            "backtrackPathLabel": "ścieżka backtrackingu",
-            "baseCasesMeta": "wiersz 0 lub pojemność 0",
-            "baseCasesValue": "Przypadki bazowe",
-            "baseRowValue": "Wiersz bazowy",
-            "boardLabel": "przedmioty × pojemność",
-            "branches": {
-              "blockedValue": "zablokowane",
-              "needPreviousStateNote": "wymaga poprzedniego stanu + wartości przedmiotu",
-              "needsWeightNote": "wymaga wagi {{weight}}",
-              "skipLabel": "Gałąź pomiń",
-              "skipNote": "użyj ponownie dp[{{row}}][{{col}}]",
-              "takeLabel": "Gałąź weź",
-              "takeNote": "odczytaj dp[{{row}}][{{col}}] + {{value}}"
-            },
-            "capacityLaneLabel": "Pas pojemności",
-            "currentItemLabel": "Bieżący przedmiot",
-            "currentPackLabel": "Aktualny pakiet",
-            "decisionEyebrow": "Soczewka decyzji",
-            "decisionTitle": "Pomiń kontra weź",
-            "followActiveRowLabel": "Śledź aktywny wiersz",
-            "guideEyebrow": "Przewodnik wizualny",
-            "guideTitle": "Gdzie patrzeć teraz",
-            "inputShelfEyebrow": "Półka wejściowa",
-            "inputShelfTitle": "Przedmioty zasilają wiersze",
-            "labEyebrow": "Laboratorium plecaka",
-            "lockCapacityColumnLabel": "Zablokuj kolumnę pojemności",
-            "metrics": {
-              "bestValue": "Najlepsza wartość",
-              "packed": "Spakowane",
-              "table": "Tabela"
-            },
-            "noWinningBranchLabel": "Brak zwycięskiej gałęzi.",
-            "outcomeEyebrow": "Wynik",
-            "outcomeTitle": "Stan plecaka",
-            "packEmptyLabel": "Wybrane przedmioty pojawią się tutaj podczas backtrackingu.",
-            "rowLabel": "wiersz {{row}}",
-            "scenarioEyebrow": "Scenariusz",
-            "sourceCellsLabel": "komórki źródłowe",
-            "valueShortLabel": "wartość",
-            "waitingTransitionLabel": "Oczekiwanie na kolejne porównanie.",
-            "weightShortLabel": "waga",
-            "workspaceEyebrow": "Obszar roboczy",
-            "workspaceTitle": "Tabela DP gra główną rolę"
+        "closestPair": {
+          "action": {
+            "regionAndBest": "{{region}} · najlepsza {{best}}"
           },
-          "presetLabEyebrow": "Laboratorium presetów",
-          "scenarioEyebrow": "Scenariusz",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Przestrzeń DP"
+          "phases": {
+            "base": "Przypadek bazowy",
+            "compare": "Test odległości",
+            "complete": "Najbliższa para",
+            "divide": "Podział",
+            "init": "Zbiór punktów",
+            "merge": "Łączenie",
+            "sort": "Sortowanie po x i y",
+            "strip": "Pas środkowy",
+            "update": "Aktualizacja najlepszej"
+          }
         },
-        "grid": {
-          "decisionFallback": "obserwuj, jak plansza zmienia się krok po kroku",
-          "frontierLabel": "Frontier",
-          "guideEyebrow": "Przewodnik po siatce",
-          "guideFallbackDesc": "Obserwuj aktywną komórkę frontier i trasę, którą odblokowuje jako następną.",
-          "guideTitle": "Śledź frontier",
-          "resultFilledLabel": "{{count}} wypełn.",
-          "resultLabel": "Wynik",
-          "resultPathLabel": "{{count}} w ścieżce",
-          "snapshotDesc": "Źródło, cel i statystyki fali pozostają oddzielone od planszy, żeby ruch na siatce był czytelny.",
-          "snapshotEyebrow": "Migawka",
-          "sourceSubtitles": {
-            "seed": "komórka startowa",
-            "start": "start"
+        "convexHull": {
+          "action": {
+            "detail": "{{turn}} · cross={{cross}} · otoczka {{hull}}",
+            "hullOnly": "otoczka {{hull}}"
           },
-          "stageEyebrow": "Scena",
-          "stageTitle": "Stan planszy",
-          "targetLabel": "Cel",
-          "visitedLabel": "Odwiedzone"
+          "phases": {
+            "checking": "Test iloczynu wektorowego",
+            "complete": "Otoczka gotowa",
+            "init": "Inicjalizacja",
+            "initStack": "Przygotowanie stosu",
+            "pivot": "Wybór punktu osiowego",
+            "pop": "Zdjęcie ze stosu",
+            "push": "Wrzucenie na stos",
+            "sort": "Sortowanie polarne"
+          },
+          "turn": {
+            "ccw": "CCW",
+            "cw": "CW"
+          }
         },
-        "matrix": {
-          "emptyLabel": "Brak śladu macierzy dla tego kroku.",
-          "guideDesc": "Najpierw śledź podświetlone wiersze, kolumny i komórki pivota. Reszta macierzy to kontekst pomocniczy.",
-          "guideEyebrow": "Przewodnik po macierzy",
-          "guideTitle": "Śledź aktywne osie",
-          "modeFallback": "Macierz",
-          "phaseFallback": "Inicjalizacja",
-          "snapshotDesc": "Bieżąca faza, pivot i wynik pozostają widoczne bez konkurowania z samą planszą.",
-          "snapshotEyebrow": "Migawka",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Przestrzeń macierzy"
+        "delaunay": {
+          "action": {
+            "countOnly": "{{count}} △",
+            "focusAndCount": "{{focus}} · {{count}} △"
+          },
+          "phases": {
+            "circumcircle": "Test okręgu opisanego",
+            "commit": "Zatwierdzenie trójkąta",
+            "complete": "Siatka gotowa",
+            "init": "Zbiór punktów"
+          }
+        },
+        "dsu": {
+          "emptyLabel": "Brak śladu DSU dla tego kroku.",
+          "nodeCount": "{{count}} węzłów",
+          "nodeSubtitle": {
+            "parent": "rodzic {{label}}",
+            "root": "węzeł korzenia"
+          },
+          "rootBadge": "korzeń {{label}}"
+        },
+        "dsuGraph": {
+          "emptyLabel": "Brak śladu grafu DSU dla tego kroku."
+        },
+        "graph": {
+          "clearFocusAriaLabel": "Wyczyść skupioną trasę",
+          "focusedRouteLabel": "W fokusie: {{path}}",
+          "initializeLabel": "Inicjalizacja grafu",
+          "inspectingLabel": "Sprawdzam {{node}}",
+          "scanningLabel": "Skanowanie"
+        },
+        "halfPlane": {
+          "phases": {
+            "clip": "Przycinanie regionu",
+            "complete": "Przecięcie gotowe",
+            "constraint": "Nałożenie ograniczenia",
+            "infeasible": "Brak regionu dopuszczalnego",
+            "init": "Region startowy"
+          }
+        },
+        "lineIntersection": {
+          "phases": {
+            "activate": "Wstawienie końca",
+            "complete": "Miotła zakończona",
+            "init": "Przygotowanie miotły",
+            "intersection": "Znaleziono przecięcie",
+            "retire": "Usunięcie końca"
+          }
+        },
+        "minkowskiSum": {
+          "action": {
+            "activeAndProgress": "{{active}} · {{merged}}/{{total}} krawędzi",
+            "progress": "{{merged}}/{{total}} krawędzi"
+          },
+          "overview": {
+            "inputALabel": "Wejście A",
+            "inputBLabel": "Wejście B",
+            "obstacleLabel": "Przeszkoda",
+            "reflectedLabel": "Odbicie",
+            "robotLabel": "Robot"
+          },
+          "phases": {
+            "complete": "Otoczka C-space",
+            "init": "Figury wejściowe",
+            "merge": "Łączenie krawędzi",
+            "reflect": "Odbicie robota",
+            "seed": "Wierzchołek startowy"
+          }
         },
         "network": {
-          "activeRouteLabel": "Aktywna trasa",
-          "decisionFallback": "Oczekiwanie na kolejne zdarzenie sieciowe.",
           "emptyLabel": "Brak śladu warstwowej sieci dla tego kroku.",
-          "focusFallback": "Fokus",
-          "focusItemsEmpty": "jeszcze brak",
-          "frontierFallback": "Frontier",
-          "guideDesc": "Status, decyzja i chipy fokusu pokazują, czy bieżący przebieg szuka, powiększa czy domyka ścieżkę.",
-          "guideEyebrow": "Przewodnik po sieci",
-          "guideTitle": "Śledź żywą trasę",
           "modeFallback": "Sieć warstwowa",
-          "phaseFallback": "Inicjalizacja",
-          "queueEmptyLabel": "pusto",
-          "queueFallback": "Kolejka",
-          "snapshotDesc": "Nacisk trasy, podgląd kolejki i wynik pozostają czytelne bez zasłaniania samej sieci.",
-          "snapshotEyebrow": "Migawka",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Arena sieci",
           "statusFallback": "Oczekiwanie na krok"
         },
         "search": {
@@ -4289,101 +4658,44 @@
             "first": "pierwsze",
             "firstLast": "pierwsze + ostatnie",
             "last": "ostatnie"
-          },
-          "decisionFallback": "obserwuj, jak sygnał omiata tablicę",
-          "guideEyebrow": "Przewodnik po wyszukiwaniu",
-          "guideFallbackDesc": "Najpierw śledź aktywną sondę, zanim spojrzysz na resztę tablicy.",
-          "guideTitle": "Obserwuj sondę",
-          "hitRange": {
-            "multiple": "indeksy {{start}}..{{end}}",
-            "none": "brak potwierdzonego trafienia",
-            "single": "indeks {{index}}"
-          },
-          "hitsLabel": "Trafienia",
-          "probeLabel": "Sonda",
-          "snapshotDesc": "Granice okna, pozycja sondy i potwierdzone trafienia pozostają w jednym zwartym widoku.",
-          "snapshotEyebrow": "Migawka",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Tablica pod inspekcją",
-          "targetLabel": "Cel",
-          "windowLabel": "Okno"
+          }
         },
         "string": {
-          "computationEmptyNote": "Ten krok to czyste przejście stanu bez dodatkowego wzoru do wyjaśnienia.",
-          "computationLabel": "Obliczenie",
           "emptyLabel": "Brak śladu String Lab dla tego kroku.",
-          "guideEyebrow": "Przewodnik po stringach",
-          "labEyebrow": "Laboratorium stringów",
           "labels": {
             "combined": "Połączony",
             "input": "Wejście",
+            "lcp": "LCP",
+            "nodes": "Węzły",
+            "palindromes": "Palindromy",
             "pattern": "Wzorzec",
+            "patterns": "Wzorce",
             "source": "Źródło",
+            "suffixes": "Sufiksy",
             "text": "Tekst"
           },
-          "presetEyebrow": "Preset",
           "rle": {
             "waitingForFirstRun": "Oczekiwanie na pierwszy przebieg…"
-          },
-          "stageEyebrow": "Scena"
-        },
-        "dsu": {
-          "guideEyebrow": "Przewodnik DSU",
-          "guideTitle": "Śledź aktywne scalenie",
-          "guideDesc": "Obserwuj bieżące korzenie, a potem czytaj szynę operacji, aby zobaczyć, czy krok znajduje, kompresuje czy scala.",
-          "modeLabel": "Tryb",
-          "componentsLabel": "Składowe",
-          "activeLabel": "Aktywne",
-          "resultLabel": "Wynik",
-          "railLabel": "Szyna operacji",
-          "awaitingDecisionLabel": "Oczekiwanie na następną decyzję DSU.",
-          "snapshotEyebrow": "Migawka",
-          "snapshotTitle": "Mapa rodziców",
-          "snapshotDesc": "Połączenia rodziców pozostają widoczne, więc kompresja ścieżki i uniony są czytelne bez gubienia obrazu całego lasu.",
-          "parentMapLabel": "Mapa rodziców",
-          "parentMapTitle": "Węzeł -> rodzic",
-          "rootLabel": "korzeń",
-          "rankSizeValue": "ranga {{rank}} · rozmiar {{size}}",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Las zbiorów",
-          "setForestLabel": "Las zbiorów",
-          "rootBadge": "korzeń {{label}}",
-          "nodeCount": "{{count}} węzłów",
-          "emptyLabel": "Brak śladu DSU dla tego kroku.",
-          "modeHints": {
-            "unionFind": "Kompresja ścieżki + union by rank",
-            "kruskal": "Union-Find wewnątrz Kruskala"
-          },
-          "edgeLabels": {
-            "find": "find {{label}}",
-            "union": "{{from}} <-> {{to}}"
-          },
-          "nodeSubtitle": {
-            "root": "węzeł korzenia",
-            "parent": "rodzic {{label}}"
-          },
-          "edgeStatuses": {
-            "pending": "oczekuje",
-            "active": "aktywna",
-            "accepted": "zaakceptowana",
-            "rejected": "odrzucona"
           }
         },
-        "dsuGraph": {
-          "guideEyebrow": "Graf DSU",
-          "unionFindTitle": "Śledź wskaźniki rodziców",
-          "kruskalTitle": "Buduj las MST",
-          "modeLabel": "Tryb",
-          "componentsLabel": "Składowe",
-          "activeLabel": "Aktywne",
-          "resultLabel": "Wynik",
-          "snapshotEyebrow": "Migawka",
-          "unionFindSnapshotDesc": "Strzałki rodziców pokazują, jak kompresja ścieżki skraca łańcuchy do reprezentantów.",
-          "kruskalSnapshotDesc": "Zaakceptowane krawędzie zostają w lesie, a odrzucone pokazują, gdzie domknąłby się cykl.",
-          "stageEyebrow": "Scena",
-          "unionFindStageTitle": "Las reprezentantów",
-          "kruskalStageTitle": "Przegląd krawędzi",
-          "emptyLabel": "Brak śladu grafu DSU dla tego kroku."
+        "sweepLine": {
+          "phases": {
+            "complete": "Obszar obliczony",
+            "event": "Zdarzenie krawędzi",
+            "init": "Skaner gotowy"
+          }
+        },
+        "voronoi": {
+          "action": {
+            "closedOnly": "{{closed}} zamkniętych",
+            "focusAndClosed": "{{focus}} · {{closed}} zamkniętych"
+          },
+          "phases": {
+            "cell": "Zamknięcie komórki",
+            "complete": "Diagram gotowy",
+            "init": "Zbiór zarodków",
+            "site": "Zdarzenie zarodka"
+          }
         }
       }
     },

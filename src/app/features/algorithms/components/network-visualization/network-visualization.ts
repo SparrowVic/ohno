@@ -15,6 +15,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { NetworkEdgeSnapshot, NetworkNodeSnapshot, NetworkTraceState } from '../../models/network';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
@@ -22,10 +23,12 @@ import {
   createMotionProfile,
   pulseSvgElement,
 } from '../../utils/visualization-motion/visualization-motion';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
 
 @Component({
   selector: 'app-network-visualization',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, VizHeader, VizPanel],
   templateUrl: './network-visualization.html',
   styleUrl: './network-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,66 +42,69 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
+  private readonly containerRef = viewChild.required<ElementRef<SVGSVGElement>>('container');
 
   private initialized = false;
   private lastStep: SortStep | null = null;
 
   readonly state = computed<NetworkTraceState | null>(() => this.step()?.network ?? null);
-  readonly modeLabel = computed(
+  readonly nodes = computed(() => this.state()?.nodes ?? []);
+  readonly edges = computed(() => this.state()?.edges ?? []);
+
+  private readonly modeLabel = computed(
     () =>
       this.state()?.modeLabel ??
       this.translate(I18N_KEY.features.algorithms.visualizations.network.modeFallback),
   );
-  readonly phaseLabel = computed(
-    () =>
-      this.state()?.phaseLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.phaseFallback),
-  );
-  readonly frontierLabel = computed(
-    () =>
-      this.state()?.frontierLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.frontierFallback),
-  );
-  readonly frontierCount = computed(() => this.state()?.frontierCount ?? 0);
-  readonly routeLabel = computed(
-    () =>
-      this.state()?.activeRouteLabel ??
-      this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel),
-  );
-  readonly resultLabel = computed(
-    () =>
-      this.state()?.resultLabel ??
-      this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel),
-  );
-  readonly focusItemsLabel = computed(
-    () =>
-      this.state()?.focusItemsLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.focusFallback),
-  );
-  readonly focusItems = computed(() => this.state()?.focusItems ?? []);
-  readonly statusLabel = computed(
+  private readonly statusLabel = computed(
     () =>
       this.state()?.statusLabel ??
       this.translate(I18N_KEY.features.algorithms.visualizations.network.statusFallback),
   );
-  readonly decisionLabel = computed(
-    () =>
-      this.state()?.computation?.decision ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.decisionFallback),
-  );
-  readonly nodes = computed(() => this.state()?.nodes ?? []);
-  readonly edges = computed(() => this.state()?.edges ?? []);
-  readonly queueLabel = computed(
-    () =>
-      this.state()?.queueLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.queueFallback),
-  );
-  readonly queuePreview = computed(() => {
-    const queue = this.state()?.queue ?? [];
-    return queue.length > 0
-      ? queue.join(' · ')
-      : this.translate(I18N_KEY.features.algorithms.visualizations.network.queueEmptyLabel);
+  private readonly decisionLabel = computed(() => this.state()?.computation?.decision ?? null);
+  private readonly routeLabel = computed(() => this.state()?.activeRouteLabel ?? null);
+
+  /** Mode tag — the algorithm family ("Max-flow", "Matching", …). Stays
+   *  fixed across steps, so it reads as the viz's identity badge. */
+  readonly phaseLabel = computed<TranslatableText>(() => this.modeLabel());
+
+  /** Action sentence for the header. Priority:
+   *    1. `computation.decision` — richest per-step fact.
+   *    2. `activeRouteLabel`     — augmenting path under consideration.
+   *    3. `statusLabel`          — generic state fallback. */
+  readonly actionText = computed<TranslatableText>(() => {
+    const decision = this.decisionLabel();
+    if (decision) return decision;
+
+    const route = this.routeLabel();
+    if (route) return route;
+
+    return this.statusLabel();
+  });
+
+  /** Tone derived from edge/node status flags — same convention as
+   *  other viz headers:
+   *    - augment / matched / flow → sorted (lime, locked in)
+   *    - active                   → swap   (pink, acting now)
+   *    - blocked                  → compare (cyan, attending)
+   *    - current node             → compare
+   *    - idle                     → default */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.state();
+    if (!state) return 'default';
+
+    const edges = state.edges;
+    if (edges.some((edge) => edge.status === 'augment')) return 'sorted';
+    if (edges.some((edge) => edge.status === 'matched' || edge.status === 'flow')) {
+      return 'sorted';
+    }
+    if (edges.some((edge) => edge.status === 'active')) return 'swap';
+    if (edges.some((edge) => edge.status === 'blocked')) return 'compare';
+
+    const nodes = state.nodes;
+    if (nodes.some((node) => node.status === 'current')) return 'compare';
+
+    return 'default';
   });
 
   constructor() {
@@ -168,6 +174,10 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     return `translate(${this.edgeMidpoint(edge, 'x')} ${this.edgeMidpoint(edge, 'y')})`;
   }
 
+  node(nodeId: string): NetworkNodeSnapshot | undefined {
+    return this.nodes().find((node) => node.id === nodeId);
+  }
+
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
     const current = step.network;
     const previous = previousStep?.network ?? null;
@@ -210,10 +220,6 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
         ],
       });
     }
-  }
-
-  node(nodeId: string): NetworkNodeSnapshot | undefined {
-    return this.nodes().find((node) => node.id === nodeId);
   }
 
   private findSvgElement(selector: string): SVGElement | null {

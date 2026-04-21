@@ -18,6 +18,8 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { GridTraceCell, GridTraceState, GridTraceTag } from '../../models/grid';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { TraceHint } from '../trace-hint/trace-hint';
@@ -59,7 +61,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-grid-trace-panel',
-  imports: [I18nTextPipe, Table, TraceHint, TranslocoPipe],
+  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './grid-trace-panel.html',
   styleUrl: './grid-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

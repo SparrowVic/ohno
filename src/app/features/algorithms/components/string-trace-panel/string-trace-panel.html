@@ -319,6 +319,71 @@
       </app-segmented-panel>
     }
 
+    @if (ahoState(); as aho) {
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.automatonLabel | transloco
+          "
+        >
+          <div class="kv-list">
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.currentStateLabel
+                  | transloco
+              }}</span>
+              <strong>{{ aho.activeNodeId }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.currentCharLabel
+                  | transloco
+              }}</span>
+              <strong>{{ aho.currentChar ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.failurePathLabel
+                  | transloco
+              }}</span>
+              <strong>{{ aho.failurePath.length > 0 ? aho.failurePath.join(' -> ') : '—' }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.matchCountLabel
+                  | transloco
+              }}</span>
+              <strong>{{ aho.matches.length }}</strong>
+            </div>
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.matchesLabel | transloco
+          "
+          [badge]="aho.matches.length"
+        >
+          <div class="value-strip">
+            @if (ahoMatchPreview(aho).length === 0) {
+              <span class="trace__detail-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.noneYetLabel | transloco
+              }}</span>
+            } @else {
+              @for (match of ahoMatchPreview(aho); track match) {
+                <span class="value-chip value-chip--soft">{{ match }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    }
+
     @if (manacherState(); as manacher) {
       <app-segmented-panel
         class="trace__detail-grid"
@@ -378,6 +443,178 @@
               }}</span>
               <strong>{{ manacher.longestPalindrome || '—' }}</strong>
             </div>
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    }
+
+    @if (suffixArrayState(); as suffixArray) {
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.suffixArray.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.suffixArray.orderLabel | transloco
+          "
+        >
+          <div class="kv-list">
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.suffixArray.stepSizeLabel
+                  | transloco
+              }}</span>
+              <strong>{{ suffixArray.stepSize }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel
+                  | transloco
+              }}</span>
+              <strong>{{ suffixArray.distinctRanks }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.suffixArray.orderLabel | transloco
+              }}</span>
+              <strong>{{ suffixOrderPreview(suffixArray.suffixArray) }}</strong>
+            </div>
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.suffixArray.ranksLabel | transloco
+          "
+          [badge]="suffixArray.rows.length"
+        >
+          <div class="value-strip">
+            @for (row of suffixArray.rows; track row.id) {
+              <span class="value-chip" [class.value-chip--active]="suffixArray.activeSuffixes.includes(row.startIndex)">
+                {{ row.startIndex }}:r{{ row.rank }}
+              </span>
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    }
+
+    @if (suffixLcpState(); as suffixLcp) {
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.detailsAriaLabel
+            | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.activePairLabel
+              | transloco
+          "
+        >
+          <div class="kv-list">
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.activePairLabel
+                  | transloco
+              }}</span>
+              <strong>{{
+                suffixLcp.activeSuffixes.length === 2
+                  ? suffixLcp.activeSuffixes[0] + ' / ' + suffixLcp.activeSuffixes[1]
+                  : '—'
+              }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.compareWithLabel
+                  | transloco
+              }}</span>
+              <strong>{{ suffixLcp.compareWith ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.overlapLabel
+                  | transloco
+              }}</span>
+              <strong>{{ suffixLcp.currentMatchLength }}</strong>
+            </div>
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.lcpLabel | transloco
+          "
+          [badge]="suffixLcp.rows.length"
+        >
+          <div class="value-strip">
+            @for (value of lcpPreview(suffixLcp); track value) {
+              <span class="value-chip value-chip--soft">{{ value }}</span>
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    }
+
+    @if (palindromicTreeState(); as palTree) {
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.detailsAriaLabel
+            | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.activeNodeLabel
+              | transloco
+          "
+        >
+          <div class="kv-list">
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.currentCharLabel
+                  | transloco
+              }}</span>
+              <strong>{{ palTree.currentChar ?? '—' }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.activeNodeLabel
+                  | transloco
+              }}</span>
+              <strong>{{ palTree.activeNodeId }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.processedLabel
+                  | transloco
+              }}</span>
+              <strong>{{ palTree.processedIndex + 1 }}</strong>
+            </div>
+            <div>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.distinctLabel
+                  | transloco
+              }}</span>
+              <strong>{{ palTree.distinctCount }}</strong>
+            </div>
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.nodesLabel | transloco
+          "
+          [badge]="palTree.nodes.length"
+        >
+          <div class="value-strip">
+            @for (node of palNodePreview(palTree); track node) {
+              <span class="value-chip value-chip--soft">{{ node }}</span>
+            }
           </div>
         </app-segmented-panel-section>
       </app-segmented-panel>

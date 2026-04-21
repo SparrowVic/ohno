@@ -55,6 +55,8 @@
         <app-network-trace-panel [state]="networkState()" [algorithmId]="algorithm().id" />
       } @else if (stringState()) {
         <app-string-trace-panel [state]="stringState()" />
+      } @else if (treeState()) {
+        <app-tree-trace-panel [state]="treeState()" />
       } @else if (closestPairGeometryState()) {
         <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
       } @else if (lineIntersectionGeometryState()) {

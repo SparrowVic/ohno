@@ -1,96 +1,46 @@
-<div class="dlv viz-flow">
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+
   @if (geoState(); as geo) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Triangle Guide</span>
-        <h3 class="viz-flow__title">Track new faces</h3>
-        <p class="viz-flow__desc">Event chips explain which triangle or circle test is currently reshaping the triangulation.</p>
-      </div>
+    <div class="dlv__stage">
+      <svg class="dlv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="dlv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.3" />
+          </pattern>
+        </defs>
+        <rect x="-6" y="-6" width="112" height="112" fill="url(#dlv-grid)" />
 
-      <div class="dlv__footer">
-        <span class="dlv__footer-key">Triangle rail</span>
-        <div class="dlv__events">
-          @for (event of geo.events; track event.id) {
-            <span class="dlv__event dlv__event--{{ event.tone }}">{{ event.label }}</span>
-          }
-        </div>
-      </div>
-    </aside>
+        @for (triangle of geo.triangles; track triangle.id) {
+          <polygon [attr.points]="polygonPoints(triangle)" [class]="'dlv__triangle dlv__triangle--' + triangle.tone" />
+        }
 
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">{{ phaseLabel(geo.phase) }}</h3>
-        <p class="viz-flow__desc">Triangle count, active face and phase stay compact while the mesh itself remains unobstructed.</p>
-      </div>
+        @for (edge of geo.edges; track edge.id) {
+          <line
+            [attr.x1]="edge.start.x"
+            [attr.y1]="100 - edge.start.y"
+            [attr.x2]="edge.end.x"
+            [attr.y2]="100 - edge.end.y"
+            class="dlv__edge"
+          />
+        }
 
-      <div class="dlv__hud">
-        <div class="dlv__card dlv__card--phase">
-          <span class="dlv__key">Phase</span>
-          <span class="dlv__val">{{ phaseLabel(geo.phase) }}</span>
-        </div>
-        <div class="dlv__card">
-          <span class="dlv__key">Triangles</span>
-          <span class="dlv__val dlv__val--accent">{{ geo.triangleCount }}</span>
-        </div>
-        <div class="dlv__card">
-          <span class="dlv__key">Focus</span>
-          <span class="dlv__val">{{ geo.activeTriangleLabel }}</span>
-        </div>
-      </div>
-    </section>
+        @for (circle of geo.circles; track circle.id) {
+          <circle
+            [attr.cx]="circle.cx"
+            [attr.cy]="100 - circle.cy"
+            [attr.r]="circle.r"
+            [class]="'dlv__circle dlv__circle--' + circle.tone"
+          />
+        }
 
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Triangulation mesh</h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ geo.activeTriangleLabel }}</span>
-      </div>
-
-      <div class="viz-flow__stage-body">
-        <div class="dlv__stage">
-          <svg class="dlv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <pattern id="dlv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.3" />
-              </pattern>
-            </defs>
-            <rect x="-6" y="-6" width="112" height="112" fill="url(#dlv-grid)" />
-
-            @for (triangle of geo.triangles; track triangle.id) {
-              <polygon [attr.points]="polygonPoints(triangle)" [class]="'dlv__triangle dlv__triangle--' + triangle.tone" />
-            }
-
-            @for (edge of geo.edges; track edge.id) {
-              <line
-                [attr.x1]="edge.start.x"
-                [attr.y1]="100 - edge.start.y"
-                [attr.x2]="edge.end.x"
-                [attr.y2]="100 - edge.end.y"
-                class="dlv__edge"
-              />
-            }
-
-            @for (circle of geo.circles; track circle.id) {
-              <circle
-                [attr.cx]="circle.cx"
-                [attr.cy]="100 - circle.cy"
-                [attr.r]="circle.r"
-                [class]="'dlv__circle dlv__circle--' + circle.tone"
-              />
-            }
-
-            @for (point of geo.points; track point.id) {
-              <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
-                <circle [class]="'dlv__point ' + (point.status === 'compare' ? 'dlv__point--active' : 'dlv__point--idle')" r="3.2" />
-                <circle [class]="'dlv__point-glow ' + (point.status === 'compare' ? 'dlv__point-glow--active' : 'dlv__point-glow--idle')" r="5.8" />
-              </g>
-            }
-          </svg>
-        </div>
-      </div>
-    </section>
+        @for (point of geo.points; track point.id) {
+          <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
+            <circle [class]="'dlv__point ' + (point.status === 'compare' ? 'dlv__point--active' : 'dlv__point--idle')" r="3.2" />
+            <circle [class]="'dlv__point-glow ' + (point.status === 'compare' ? 'dlv__point-glow--active' : 'dlv__point-glow--idle')" r="5.8" />
+          </g>
+        }
+      </svg>
+    </div>
   }
-</div>
+</app-viz-panel>

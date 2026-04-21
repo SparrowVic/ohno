@@ -1,0 +1,122 @@
+<div class="trace">
+  @if (state(); as tree) {
+    <div class="trace__header">
+      <!-- Facts — order, current node, visited progress, stack/queue size. -->
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="tree.modeLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="tree.phaseLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.tree.currentNodeLabel | transloco
+          "
+          [value]="currentLabel()"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.tree.progressLabel | transloco
+          "
+          [value]="progressLabel()"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
+
+      <!-- Calc — decision + the live step computation (push/pop). -->
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.tree.decisionLabel | transloco"
+          [value]="tree.decisionLabel | i18nText"
+        >
+          @if (tree.computation; as computation) {
+            <code class="trace__calc-expression"
+              >{{ computation.label | i18nText }}:
+              {{ computation.expression | i18nText }}</code
+            >
+            <p class="trace__calc-note">{{ computation.note | i18nText }}</p>
+          } @else {
+            <p class="trace__calc-note">
+              {{ I18N_KEY.features.algorithms.tracePanels.tree.waitingStepLabel | transloco }}
+            </p>
+          }
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+
+      <!-- Streams — stack/queue + emitted output tape. -->
+      <app-segmented-panel class="trace__streams">
+        @if (showStack()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.tree.stackLabel | transloco"
+            [badge]="stackItems().length"
+          >
+            <div class="trace__stream-items">
+              @if (stackItems().length === 0) {
+                <span class="trace__stream-empty">{{
+                  I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel | transloco
+                }}</span>
+              } @else {
+                @for (item of stackItems(); track item.id; let isLast = $last) {
+                  <span
+                    class="trace__stream-chip"
+                    [class.trace__stream-chip--active]="isLast"
+                    >{{ item.label }}</span
+                  >
+                }
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+
+        @if (showQueue()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.tree.queueLabel | transloco"
+            [badge]="queueItems().length"
+          >
+            <div class="trace__stream-items">
+              @if (queueItems().length === 0) {
+                <span class="trace__stream-empty">{{
+                  I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel | transloco
+                }}</span>
+              } @else {
+                @for (item of queueItems(); track item.id; let isFirst = $first) {
+                  <span
+                    class="trace__stream-chip"
+                    [class.trace__stream-chip--active]="isFirst"
+                    >{{ item.label }}</span
+                  >
+                }
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.tree.outputLabel | transloco"
+          [badge]="tree.visitedCount"
+        >
+          <div class="trace__stream-items">
+            @if (tree.output.length === 0) {
+              <span class="trace__stream-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
+            } @else {
+              @for (label of tree.output; track $index) {
+                <span class="trace__stream-chip trace__stream-chip--done">{{ label }}</span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    </div>
+  } @else {
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      {{ I18N_KEY.features.algorithms.tracePanels.tree.emptyLabel | transloco }}
+    </div>
+  }
+</div>

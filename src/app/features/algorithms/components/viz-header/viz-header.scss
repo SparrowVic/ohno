@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+/* Header bar — two text lines + 3px accent rail on the left.
+   Sits above the canvas with a hairline divider underneath; no
+   internal padding tricks, just a clean typographic strip. */
+.viz-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px 11px 14px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+  transition:
+    background var(--duration-base) var(--ease-soft),
+    border-color var(--duration-base) var(--ease-soft);
+}
+
+/* Accent rail — the only chromatic element on the panel chrome.
+   Spans the header's full height, sits in its own grid column so
+   copy aligns flush to the divider without visually bleeding
+   behind the rail. Colour is driven by the tone attribute. */
+.viz-header__rail {
+  align-self: stretch;
+  width: 3px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.18);
+  transition:
+    background var(--duration-base) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-soft);
+}
+
+.viz-header[data-tone='compare'] .viz-header__rail {
+  background: rgb(var(--chrome-accent-alt-rgb) / 0.95);
+  box-shadow: 0 0 10px rgb(var(--chrome-accent-alt-rgb) / 0.45);
+}
+
+.viz-header[data-tone='swap'] .viz-header__rail {
+  background: rgb(var(--chrome-accent-warm-rgb) / 0.95);
+  box-shadow: 0 0 10px rgb(var(--chrome-accent-warm-rgb) / 0.45);
+}
+
+.viz-header[data-tone='sorted'],
+.viz-header[data-tone='complete'] {
+  .viz-header__rail {
+    background: rgb(var(--accent-rgb) / 0.95);
+    box-shadow: 0 0 10px rgb(var(--accent-rgb) / 0.45);
+  }
+}
+
+.viz-header[data-tone='settle'] .viz-header__rail {
+  background: rgb(var(--viz-route-rgb) / 0.95);
+  box-shadow: 0 0 10px rgb(var(--viz-route-rgb) / 0.4);
+}
+
+.viz-header[data-tone='distribute'] .viz-header__rail {
+  background: rgb(var(--chrome-accent-rgb) / 0.95);
+  box-shadow: 0 0 10px rgb(var(--chrome-accent-rgb) / 0.4);
+}
+
+.viz-header__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Phase tag — mono uppercase micro-typography. Intentionally tiny
+   with a fixed letter-spacing so it reads as a label, not a
+   heading. Colour stays muted; the rail does the semantic work. */
+.viz-header__phase {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  line-height: 1;
+}
+
+/* Action sentence — the "caption" describing what the current
+   step did. Reads like a museum label: one crisp line, never
+   wraps aggressively, ellipsis if it overflows. */
+.viz-header__action {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Right-edge slot — hosts optional focus chip, legend toggle or
+   any small interaction. Empty by default, shrinks to zero. */
+.viz-header__slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* At narrow widths the action sentence can wrap to two lines; the
+   phase tag stays put. Single ellipsis still kicks in for really
+   long content. */
+@container (max-width: 560px) {
+  .viz-header__action {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}

@@ -198,6 +198,7 @@ export const I18N_KEY = {
           newRegexPair: t('features.algorithms.toolbar.actions.newRegexPair'),
           newRollingHashCase: t('features.algorithms.toolbar.actions.newRollingHashCase'),
           newRootedTree: t('features.algorithms.toolbar.actions.newRootedTree'),
+          newTreeShape: t('features.algorithms.toolbar.actions.newTreeShape'),
           newRunSequence: t('features.algorithms.toolbar.actions.newRunSequence'),
           newScanField: t('features.algorithms.toolbar.actions.newScanField'),
           newScenario: t('features.algorithms.toolbar.actions.newScenario'),
@@ -284,6 +285,7 @@ export const I18N_KEY = {
           terminalDpTree: t('features.algorithms.toolbar.variants.terminalDpTree'),
           treeBuilder: t('features.algorithms.toolbar.variants.treeBuilder'),
           treeGraph: t('features.algorithms.toolbar.variants.treeGraph'),
+          treeWalk: t('features.algorithms.toolbar.variants.treeWalk'),
           triangleMesh: t('features.algorithms.toolbar.variants.triangleMesh'),
           twoPassScc: t('features.algorithms.toolbar.variants.twoPassScc'),
           twoSideCheck: t('features.algorithms.toolbar.variants.twoSideCheck'),
@@ -719,6 +721,65 @@ export const I18N_KEY = {
             boundsLabel: t('features.algorithms.tracePanels.string.manacher.boundsLabel'),
             longestLabel: t('features.algorithms.tracePanels.string.manacher.longestLabel'),
           },
+          ahoCorasick: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.detailsAriaLabel',
+            ),
+            automatonLabel: t('features.algorithms.tracePanels.string.ahoCorasick.automatonLabel'),
+            currentStateLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.currentStateLabel',
+            ),
+            currentCharLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.currentCharLabel',
+            ),
+            failurePathLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.failurePathLabel',
+            ),
+            matchCountLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.matchCountLabel',
+            ),
+            matchesLabel: t('features.algorithms.tracePanels.string.ahoCorasick.matchesLabel'),
+          },
+          suffixArray: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.suffixArray.detailsAriaLabel',
+            ),
+            orderLabel: t('features.algorithms.tracePanels.string.suffixArray.orderLabel'),
+            stepSizeLabel: t('features.algorithms.tracePanels.string.suffixArray.stepSizeLabel'),
+            distinctRanksLabel: t(
+              'features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel',
+            ),
+            ranksLabel: t('features.algorithms.tracePanels.string.suffixArray.ranksLabel'),
+          },
+          suffixArrayLcp: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.suffixArrayLcp.detailsAriaLabel',
+            ),
+            activePairLabel: t(
+              'features.algorithms.tracePanels.string.suffixArrayLcp.activePairLabel',
+            ),
+            compareWithLabel: t(
+              'features.algorithms.tracePanels.string.suffixArrayLcp.compareWithLabel',
+            ),
+            overlapLabel: t('features.algorithms.tracePanels.string.suffixArrayLcp.overlapLabel'),
+            lcpLabel: t('features.algorithms.tracePanels.string.suffixArrayLcp.lcpLabel'),
+          },
+          palindromicTree: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.detailsAriaLabel',
+            ),
+            activeNodeLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.activeNodeLabel',
+            ),
+            currentCharLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.currentCharLabel',
+            ),
+            distinctLabel: t('features.algorithms.tracePanels.string.palindromicTree.distinctLabel'),
+            processedLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.processedLabel',
+            ),
+            nodesLabel: t('features.algorithms.tracePanels.string.palindromicTree.nodesLabel'),
+          },
           burrowsWheeler: {
             detailsAriaLabel: t(
               'features.algorithms.tracePanels.string.burrowsWheeler.detailsAriaLabel',
@@ -1002,261 +1063,183 @@ export const I18N_KEY = {
             sorted: t('features.algorithms.tracePanels.sort.statuses.sorted'),
           },
         },
+        tree: {
+          currentNodeLabel: t('features.algorithms.tracePanels.tree.currentNodeLabel'),
+          progressLabel: t('features.algorithms.tracePanels.tree.progressLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.tree.decisionLabel'),
+          waitingStepLabel: t('features.algorithms.tracePanels.tree.waitingStepLabel'),
+          stackLabel: t('features.algorithms.tracePanels.tree.stackLabel'),
+          queueLabel: t('features.algorithms.tracePanels.tree.queueLabel'),
+          outputLabel: t('features.algorithms.tracePanels.tree.outputLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.tree.emptyLabel'),
+        },
       },
       visualizations: {
-        dp: {
-          guideEyebrow: t('features.algorithms.visualizations.dp.guideEyebrow'),
-          guideTitle: t('features.algorithms.visualizations.dp.guideTitle'),
-          guideDesc: t('features.algorithms.visualizations.dp.guideDesc'),
-          presetLabEyebrow: t('features.algorithms.visualizations.dp.presetLabEyebrow'),
-          scenarioEyebrow: t('features.algorithms.visualizations.dp.scenarioEyebrow'),
-          stageEyebrow: t('features.algorithms.visualizations.dp.stageEyebrow'),
-          stageTitle: t('features.algorithms.visualizations.dp.stageTitle'),
-          emptyLabel: t('features.algorithms.visualizations.dp.emptyLabel'),
-          knapsack: {
-            guideEyebrow: t('features.algorithms.visualizations.dp.knapsack.guideEyebrow'),
-            guideTitle: t('features.algorithms.visualizations.dp.knapsack.guideTitle'),
-            currentItemLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.currentItemLabel',
-            ),
-            weightShortLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.weightShortLabel',
-            ),
-            valueShortLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.valueShortLabel',
-            ),
-            baseCasesValue: t('features.algorithms.visualizations.dp.knapsack.baseCasesValue'),
-            baseCasesMeta: t('features.algorithms.visualizations.dp.knapsack.baseCasesMeta'),
-            followActiveRowLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.followActiveRowLabel',
-            ),
-            baseRowValue: t('features.algorithms.visualizations.dp.knapsack.baseRowValue'),
-            lockCapacityColumnLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.lockCapacityColumnLabel',
-            ),
-            applyCurrentMoveLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.applyCurrentMoveLabel',
-            ),
-            decisionEyebrow: t(
-              'features.algorithms.visualizations.dp.knapsack.decisionEyebrow',
-            ),
-            decisionTitle: t('features.algorithms.visualizations.dp.knapsack.decisionTitle'),
-            waitingTransitionLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.waitingTransitionLabel',
-            ),
-            noWinningBranchLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.noWinningBranchLabel',
-            ),
-            outcomeEyebrow: t('features.algorithms.visualizations.dp.knapsack.outcomeEyebrow'),
-            outcomeTitle: t('features.algorithms.visualizations.dp.knapsack.outcomeTitle'),
-            currentPackLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.currentPackLabel',
-            ),
-            packEmptyLabel: t('features.algorithms.visualizations.dp.knapsack.packEmptyLabel'),
-            labEyebrow: t('features.algorithms.visualizations.dp.knapsack.labEyebrow'),
-            scenarioEyebrow: t(
-              'features.algorithms.visualizations.dp.knapsack.scenarioEyebrow',
-            ),
-            inputShelfEyebrow: t(
-              'features.algorithms.visualizations.dp.knapsack.inputShelfEyebrow',
-            ),
-            inputShelfTitle: t('features.algorithms.visualizations.dp.knapsack.inputShelfTitle'),
-            rowLabel: t('features.algorithms.visualizations.dp.knapsack.rowLabel'),
-            workspaceEyebrow: t(
-              'features.algorithms.visualizations.dp.knapsack.workspaceEyebrow',
-            ),
-            workspaceTitle: t('features.algorithms.visualizations.dp.knapsack.workspaceTitle'),
-            activeCellLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.activeCellLabel',
-            ),
-            sourceCellsLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.sourceCellsLabel',
-            ),
-            backtrackPathLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.backtrackPathLabel',
-            ),
-            capacityLaneLabel: t(
-              'features.algorithms.visualizations.dp.knapsack.capacityLaneLabel',
-            ),
-            boardLabel: t('features.algorithms.visualizations.dp.knapsack.boardLabel'),
-            metrics: {
-              bestValue: t('features.algorithms.visualizations.dp.knapsack.metrics.bestValue'),
-              packed: t('features.algorithms.visualizations.dp.knapsack.metrics.packed'),
-              table: t('features.algorithms.visualizations.dp.knapsack.metrics.table'),
-            },
-            branches: {
-              skipLabel: t('features.algorithms.visualizations.dp.knapsack.branches.skipLabel'),
-              takeLabel: t('features.algorithms.visualizations.dp.knapsack.branches.takeLabel'),
-              blockedValue: t(
-                'features.algorithms.visualizations.dp.knapsack.branches.blockedValue',
-              ),
-              skipNote: t('features.algorithms.visualizations.dp.knapsack.branches.skipNote'),
-              takeNote: t('features.algorithms.visualizations.dp.knapsack.branches.takeNote'),
-              needsWeightNote: t(
-                'features.algorithms.visualizations.dp.knapsack.branches.needsWeightNote',
-              ),
-              needPreviousStateNote: t(
-                'features.algorithms.visualizations.dp.knapsack.branches.needPreviousStateNote',
-              ),
-            },
-          },
-        },
         search: {
-          guideEyebrow: t('features.algorithms.visualizations.search.guideEyebrow'),
-          guideTitle: t('features.algorithms.visualizations.search.guideTitle'),
-          guideFallbackDesc: t('features.algorithms.visualizations.search.guideFallbackDesc'),
-          targetLabel: t('features.algorithms.visualizations.search.targetLabel'),
-          decisionFallback: t('features.algorithms.visualizations.search.decisionFallback'),
-          snapshotEyebrow: t('features.algorithms.visualizations.search.snapshotEyebrow'),
-          snapshotDesc: t('features.algorithms.visualizations.search.snapshotDesc'),
-          windowLabel: t('features.algorithms.visualizations.search.windowLabel'),
-          probeLabel: t('features.algorithms.visualizations.search.probeLabel'),
-          hitsLabel: t('features.algorithms.visualizations.search.hitsLabel'),
-          stageEyebrow: t('features.algorithms.visualizations.search.stageEyebrow'),
-          stageTitle: t('features.algorithms.visualizations.search.stageTitle'),
           boundLabels: {
             firstLast: t('features.algorithms.visualizations.search.boundLabels.firstLast'),
             first: t('features.algorithms.visualizations.search.boundLabels.first'),
             last: t('features.algorithms.visualizations.search.boundLabels.last'),
           },
-          hitRange: {
-            none: t('features.algorithms.visualizations.search.hitRange.none'),
-            single: t('features.algorithms.visualizations.search.hitRange.single'),
-            multiple: t('features.algorithms.visualizations.search.hitRange.multiple'),
-          },
-        },
-        grid: {
-          guideEyebrow: t('features.algorithms.visualizations.grid.guideEyebrow'),
-          guideTitle: t('features.algorithms.visualizations.grid.guideTitle'),
-          guideFallbackDesc: t('features.algorithms.visualizations.grid.guideFallbackDesc'),
-          decisionFallback: t('features.algorithms.visualizations.grid.decisionFallback'),
-          snapshotEyebrow: t('features.algorithms.visualizations.grid.snapshotEyebrow'),
-          snapshotDesc: t('features.algorithms.visualizations.grid.snapshotDesc'),
-          targetLabel: t('features.algorithms.visualizations.grid.targetLabel'),
-          frontierLabel: t('features.algorithms.visualizations.grid.frontierLabel'),
-          visitedLabel: t('features.algorithms.visualizations.grid.visitedLabel'),
-          resultLabel: t('features.algorithms.visualizations.grid.resultLabel'),
-          stageEyebrow: t('features.algorithms.visualizations.grid.stageEyebrow'),
-          stageTitle: t('features.algorithms.visualizations.grid.stageTitle'),
-          sourceSubtitles: {
-            seed: t('features.algorithms.visualizations.grid.sourceSubtitles.seed'),
-            start: t('features.algorithms.visualizations.grid.sourceSubtitles.start'),
-          },
-          resultFilledLabel: t('features.algorithms.visualizations.grid.resultFilledLabel'),
-          resultPathLabel: t('features.algorithms.visualizations.grid.resultPathLabel'),
         },
         dsu: {
-          guideEyebrow: t('features.algorithms.visualizations.dsu.guideEyebrow'),
-          guideTitle: t('features.algorithms.visualizations.dsu.guideTitle'),
-          guideDesc: t('features.algorithms.visualizations.dsu.guideDesc'),
-          modeLabel: t('features.algorithms.visualizations.dsu.modeLabel'),
-          componentsLabel: t('features.algorithms.visualizations.dsu.componentsLabel'),
-          activeLabel: t('features.algorithms.visualizations.dsu.activeLabel'),
-          resultLabel: t('features.algorithms.visualizations.dsu.resultLabel'),
-          railLabel: t('features.algorithms.visualizations.dsu.railLabel'),
-          awaitingDecisionLabel: t('features.algorithms.visualizations.dsu.awaitingDecisionLabel'),
-          snapshotEyebrow: t('features.algorithms.visualizations.dsu.snapshotEyebrow'),
-          snapshotTitle: t('features.algorithms.visualizations.dsu.snapshotTitle'),
-          snapshotDesc: t('features.algorithms.visualizations.dsu.snapshotDesc'),
-          parentMapLabel: t('features.algorithms.visualizations.dsu.parentMapLabel'),
-          parentMapTitle: t('features.algorithms.visualizations.dsu.parentMapTitle'),
-          rootLabel: t('features.algorithms.visualizations.dsu.rootLabel'),
-          rankSizeValue: t('features.algorithms.visualizations.dsu.rankSizeValue'),
-          stageEyebrow: t('features.algorithms.visualizations.dsu.stageEyebrow'),
-          stageTitle: t('features.algorithms.visualizations.dsu.stageTitle'),
-          setForestLabel: t('features.algorithms.visualizations.dsu.setForestLabel'),
           rootBadge: t('features.algorithms.visualizations.dsu.rootBadge'),
           nodeCount: t('features.algorithms.visualizations.dsu.nodeCount'),
           emptyLabel: t('features.algorithms.visualizations.dsu.emptyLabel'),
-          modeHints: {
-            unionFind: t('features.algorithms.visualizations.dsu.modeHints.unionFind'),
-            kruskal: t('features.algorithms.visualizations.dsu.modeHints.kruskal'),
-          },
-          edgeLabels: {
-            find: t('features.algorithms.visualizations.dsu.edgeLabels.find'),
-            union: t('features.algorithms.visualizations.dsu.edgeLabels.union'),
-          },
           nodeSubtitle: {
             root: t('features.algorithms.visualizations.dsu.nodeSubtitle.root'),
             parent: t('features.algorithms.visualizations.dsu.nodeSubtitle.parent'),
           },
-          edgeStatuses: {
-            pending: t('features.algorithms.visualizations.dsu.edgeStatuses.pending'),
-            active: t('features.algorithms.visualizations.dsu.edgeStatuses.active'),
-            accepted: t('features.algorithms.visualizations.dsu.edgeStatuses.accepted'),
-            rejected: t('features.algorithms.visualizations.dsu.edgeStatuses.rejected'),
-          },
         },
         dsuGraph: {
-          guideEyebrow: t('features.algorithms.visualizations.dsuGraph.guideEyebrow'),
-          unionFindTitle: t('features.algorithms.visualizations.dsuGraph.unionFindTitle'),
-          kruskalTitle: t('features.algorithms.visualizations.dsuGraph.kruskalTitle'),
-          modeLabel: t('features.algorithms.visualizations.dsuGraph.modeLabel'),
-          componentsLabel: t('features.algorithms.visualizations.dsuGraph.componentsLabel'),
-          activeLabel: t('features.algorithms.visualizations.dsuGraph.activeLabel'),
-          resultLabel: t('features.algorithms.visualizations.dsuGraph.resultLabel'),
-          snapshotEyebrow: t('features.algorithms.visualizations.dsuGraph.snapshotEyebrow'),
-          unionFindSnapshotDesc: t(
-            'features.algorithms.visualizations.dsuGraph.unionFindSnapshotDesc',
-          ),
-          kruskalSnapshotDesc: t(
-            'features.algorithms.visualizations.dsuGraph.kruskalSnapshotDesc',
-          ),
-          stageEyebrow: t('features.algorithms.visualizations.dsuGraph.stageEyebrow'),
-          unionFindStageTitle: t(
-            'features.algorithms.visualizations.dsuGraph.unionFindStageTitle',
-          ),
-          kruskalStageTitle: t('features.algorithms.visualizations.dsuGraph.kruskalStageTitle'),
           emptyLabel: t('features.algorithms.visualizations.dsuGraph.emptyLabel'),
         },
-        matrix: {
-          guideEyebrow: t('features.algorithms.visualizations.matrix.guideEyebrow'),
-          guideTitle: t('features.algorithms.visualizations.matrix.guideTitle'),
-          guideDesc: t('features.algorithms.visualizations.matrix.guideDesc'),
-          snapshotEyebrow: t('features.algorithms.visualizations.matrix.snapshotEyebrow'),
-          snapshotDesc: t('features.algorithms.visualizations.matrix.snapshotDesc'),
-          modeFallback: t('features.algorithms.visualizations.matrix.modeFallback'),
-          phaseFallback: t('features.algorithms.visualizations.matrix.phaseFallback'),
-          stageEyebrow: t('features.algorithms.visualizations.matrix.stageEyebrow'),
-          stageTitle: t('features.algorithms.visualizations.matrix.stageTitle'),
-          emptyLabel: t('features.algorithms.visualizations.matrix.emptyLabel'),
+        graph: {
+          initializeLabel: t('features.algorithms.visualizations.graph.initializeLabel'),
+          scanningLabel: t('features.algorithms.visualizations.graph.scanningLabel'),
+          inspectingLabel: t('features.algorithms.visualizations.graph.inspectingLabel'),
+          focusedRouteLabel: t('features.algorithms.visualizations.graph.focusedRouteLabel'),
+          clearFocusAriaLabel: t(
+            'features.algorithms.visualizations.graph.clearFocusAriaLabel',
+          ),
+        },
+        closestPair: {
+          phases: {
+            init: t('features.algorithms.visualizations.closestPair.phases.init'),
+            sort: t('features.algorithms.visualizations.closestPair.phases.sort'),
+            divide: t('features.algorithms.visualizations.closestPair.phases.divide'),
+            base: t('features.algorithms.visualizations.closestPair.phases.base'),
+            merge: t('features.algorithms.visualizations.closestPair.phases.merge'),
+            strip: t('features.algorithms.visualizations.closestPair.phases.strip'),
+            compare: t('features.algorithms.visualizations.closestPair.phases.compare'),
+            update: t('features.algorithms.visualizations.closestPair.phases.update'),
+            complete: t('features.algorithms.visualizations.closestPair.phases.complete'),
+          },
+          action: {
+            regionAndBest: t(
+              'features.algorithms.visualizations.closestPair.action.regionAndBest',
+            ),
+          },
+        },
+        convexHull: {
+          phases: {
+            init: t('features.algorithms.visualizations.convexHull.phases.init'),
+            pivot: t('features.algorithms.visualizations.convexHull.phases.pivot'),
+            sort: t('features.algorithms.visualizations.convexHull.phases.sort'),
+            initStack: t('features.algorithms.visualizations.convexHull.phases.initStack'),
+            checking: t('features.algorithms.visualizations.convexHull.phases.checking'),
+            pop: t('features.algorithms.visualizations.convexHull.phases.pop'),
+            push: t('features.algorithms.visualizations.convexHull.phases.push'),
+            complete: t('features.algorithms.visualizations.convexHull.phases.complete'),
+          },
+          turn: {
+            ccw: t('features.algorithms.visualizations.convexHull.turn.ccw'),
+            cw: t('features.algorithms.visualizations.convexHull.turn.cw'),
+          },
+          action: {
+            detail: t('features.algorithms.visualizations.convexHull.action.detail'),
+            hullOnly: t('features.algorithms.visualizations.convexHull.action.hullOnly'),
+          },
+        },
+        delaunay: {
+          phases: {
+            init: t('features.algorithms.visualizations.delaunay.phases.init'),
+            circumcircle: t('features.algorithms.visualizations.delaunay.phases.circumcircle'),
+            commit: t('features.algorithms.visualizations.delaunay.phases.commit'),
+            complete: t('features.algorithms.visualizations.delaunay.phases.complete'),
+          },
+          action: {
+            focusAndCount: t(
+              'features.algorithms.visualizations.delaunay.action.focusAndCount',
+            ),
+            countOnly: t('features.algorithms.visualizations.delaunay.action.countOnly'),
+          },
+        },
+        halfPlane: {
+          phases: {
+            init: t('features.algorithms.visualizations.halfPlane.phases.init'),
+            constraint: t('features.algorithms.visualizations.halfPlane.phases.constraint'),
+            clip: t('features.algorithms.visualizations.halfPlane.phases.clip'),
+            infeasible: t('features.algorithms.visualizations.halfPlane.phases.infeasible'),
+            complete: t('features.algorithms.visualizations.halfPlane.phases.complete'),
+          },
+        },
+        lineIntersection: {
+          phases: {
+            init: t('features.algorithms.visualizations.lineIntersection.phases.init'),
+            activate: t('features.algorithms.visualizations.lineIntersection.phases.activate'),
+            retire: t('features.algorithms.visualizations.lineIntersection.phases.retire'),
+            intersection: t(
+              'features.algorithms.visualizations.lineIntersection.phases.intersection',
+            ),
+            complete: t('features.algorithms.visualizations.lineIntersection.phases.complete'),
+          },
+        },
+        minkowskiSum: {
+          phases: {
+            init: t('features.algorithms.visualizations.minkowskiSum.phases.init'),
+            reflect: t('features.algorithms.visualizations.minkowskiSum.phases.reflect'),
+            seed: t('features.algorithms.visualizations.minkowskiSum.phases.seed'),
+            merge: t('features.algorithms.visualizations.minkowskiSum.phases.merge'),
+            complete: t('features.algorithms.visualizations.minkowskiSum.phases.complete'),
+          },
+          action: {
+            progress: t('features.algorithms.visualizations.minkowskiSum.action.progress'),
+            activeAndProgress: t(
+              'features.algorithms.visualizations.minkowskiSum.action.activeAndProgress',
+            ),
+          },
+          overview: {
+            inputALabel: t('features.algorithms.visualizations.minkowskiSum.overview.inputALabel'),
+            obstacleLabel: t(
+              'features.algorithms.visualizations.minkowskiSum.overview.obstacleLabel',
+            ),
+            inputBLabel: t('features.algorithms.visualizations.minkowskiSum.overview.inputBLabel'),
+            robotLabel: t('features.algorithms.visualizations.minkowskiSum.overview.robotLabel'),
+            reflectedLabel: t(
+              'features.algorithms.visualizations.minkowskiSum.overview.reflectedLabel',
+            ),
+          },
+        },
+        sweepLine: {
+          phases: {
+            init: t('features.algorithms.visualizations.sweepLine.phases.init'),
+            event: t('features.algorithms.visualizations.sweepLine.phases.event'),
+            complete: t('features.algorithms.visualizations.sweepLine.phases.complete'),
+          },
+        },
+        voronoi: {
+          phases: {
+            init: t('features.algorithms.visualizations.voronoi.phases.init'),
+            site: t('features.algorithms.visualizations.voronoi.phases.site'),
+            cell: t('features.algorithms.visualizations.voronoi.phases.cell'),
+            complete: t('features.algorithms.visualizations.voronoi.phases.complete'),
+          },
+          action: {
+            focusAndClosed: t(
+              'features.algorithms.visualizations.voronoi.action.focusAndClosed',
+            ),
+            closedOnly: t('features.algorithms.visualizations.voronoi.action.closedOnly'),
+          },
         },
         network: {
-          guideEyebrow: t('features.algorithms.visualizations.network.guideEyebrow'),
-          guideTitle: t('features.algorithms.visualizations.network.guideTitle'),
-          guideDesc: t('features.algorithms.visualizations.network.guideDesc'),
-          focusItemsEmpty: t('features.algorithms.visualizations.network.focusItemsEmpty'),
-          snapshotEyebrow: t('features.algorithms.visualizations.network.snapshotEyebrow'),
-          snapshotDesc: t('features.algorithms.visualizations.network.snapshotDesc'),
-          activeRouteLabel: t('features.algorithms.visualizations.network.activeRouteLabel'),
-          stageEyebrow: t('features.algorithms.visualizations.network.stageEyebrow'),
-          stageTitle: t('features.algorithms.visualizations.network.stageTitle'),
           emptyLabel: t('features.algorithms.visualizations.network.emptyLabel'),
           modeFallback: t('features.algorithms.visualizations.network.modeFallback'),
-          phaseFallback: t('features.algorithms.visualizations.network.phaseFallback'),
-          frontierFallback: t('features.algorithms.visualizations.network.frontierFallback'),
-          focusFallback: t('features.algorithms.visualizations.network.focusFallback'),
           statusFallback: t('features.algorithms.visualizations.network.statusFallback'),
-          decisionFallback: t('features.algorithms.visualizations.network.decisionFallback'),
-          queueFallback: t('features.algorithms.visualizations.network.queueFallback'),
-          queueEmptyLabel: t('features.algorithms.visualizations.network.queueEmptyLabel'),
         },
         string: {
-          guideEyebrow: t('features.algorithms.visualizations.string.guideEyebrow'),
-          computationLabel: t('features.algorithms.visualizations.string.computationLabel'),
-          computationEmptyNote: t(
-            'features.algorithms.visualizations.string.computationEmptyNote',
-          ),
-          labEyebrow: t('features.algorithms.visualizations.string.labEyebrow'),
-          presetEyebrow: t('features.algorithms.visualizations.string.presetEyebrow'),
-          stageEyebrow: t('features.algorithms.visualizations.string.stageEyebrow'),
           emptyLabel: t('features.algorithms.visualizations.string.emptyLabel'),
           labels: {
             text: t('features.algorithms.visualizations.string.labels.text'),
             pattern: t('features.algorithms.visualizations.string.labels.pattern'),
+            patterns: t('features.algorithms.visualizations.string.labels.patterns'),
             combined: t('features.algorithms.visualizations.string.labels.combined'),
             source: t('features.algorithms.visualizations.string.labels.source'),
             input: t('features.algorithms.visualizations.string.labels.input'),
+            nodes: t('features.algorithms.visualizations.string.labels.nodes'),
+            suffixes: t('features.algorithms.visualizations.string.labels.suffixes'),
+            lcp: t('features.algorithms.visualizations.string.labels.lcp'),
+            palindromes: t('features.algorithms.visualizations.string.labels.palindromes'),
           },
           rle: {
             waitingForFirstRun: t(

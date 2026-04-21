@@ -1440,7 +1440,406 @@
             }
           }
         },
+        "dsu": {
+          "kruskalsMst": {
+            "decisions": {
+              "acceptNextCheapest": "accept the next cheapest edge that does not close a cycle",
+              "pendingEdgesWorse": "all remaining edges are heavier or redundant",
+              "rootCompare": "{{from}} -> {{fromRoot}}, {{to}} -> {{toRoot}}",
+              "shareRoot": "both endpoints already share a root",
+              "treeWeightGrows": "MST weight = {{weight}}"
+            },
+            "descriptions": {
+              "acceptEdge": "Accept {{from}} - {{to}} into the MST.",
+              "complete": "Kruskal finished with {{count}} accepted edge(s) and total weight {{weight}}.",
+              "initialize": "Edges are sorted by weight; start with an empty forest.",
+              "inspectEdge": "Inspect edge {{from}} - {{to}} (w={{weight}}).",
+              "rejectEdge": "Reject {{from}} - {{to}} because it closes a cycle."
+            },
+            "labels": {
+              "acceptedEdges": "{{count}} / {{total}} edges accepted",
+              "mstWeight": "weight = {{weight}}",
+              "sortedEdges": "Sorted edges"
+            },
+            "modeLabel": "Kruskal's MST",
+            "statuses": {
+              "acceptEdge": "Accept edge",
+              "complete": "MST complete",
+              "inspectNextEdge": "Inspect next edge",
+              "rejectCycleEdge": "Reject cycle edge",
+              "sortedEdgeScan": "Sorted edge scan"
+            }
+          },
+          "unionFind": {
+            "decisions": {
+              "currentPath": "path = {{path}}",
+              "finalStable": "all unions processed",
+              "newRootRepresents": "{{root}} now represents {{count}} node(s)",
+              "noStructuralChange": "no structural change",
+              "representativeIs": "representative = {{root}}",
+              "representativePair": "{{left}} -> {{leftRoot}}, {{right}} -> {{rightRoot}}",
+              "singletonRoots": "every node starts as its own root"
+            },
+            "descriptions": {
+              "alreadyCompressed": "{{node}} already points directly to root {{root}}.",
+              "attachRoot": "Attach root {{attach}} under {{keep}}.",
+              "compareRoots": "Compare roots of {{left}} and {{right}}.",
+              "complete": "Union-Find finished with {{count}} component(s).",
+              "compressPath": "Compress the path so every visited node points to root {{root}}.",
+              "followPath": "Follow the parent chain from {{label}}.",
+              "initialize": "Start with singleton sets for every node.",
+              "skipMerge": "Skip merge because both nodes already share root {{root}}."
+            },
+            "labels": {
+              "activeSets": "{{count}} active set(s)",
+              "operationQueue": "Operation queue",
+              "singletonSets": "{{count}} singleton set(s)"
+            },
+            "modeLabel": "Union-Find",
+            "statuses": {
+              "compareRoots": "Compare roots",
+              "complete": "Stable forest",
+              "findRepresentative": "Find representative",
+              "pathCompression": "Compress path",
+              "ready": "Ready",
+              "unionByRank": "Union by rank",
+              "unionSkipped": "Union skipped"
+            }
+          }
+        },
+        "grid": {
+          "aStarPathfinding": {
+            "decisions": {
+              "exhaustedReachable": "all reachable cells exhausted",
+              "frontierScores": "f = {{f}}, g = {{g}}",
+              "initializeScores": "set g(start) = 0 and f(start) = h(start)",
+              "knownRouteBetter": "known g = {{g}} is better",
+              "setScores": "set g = {{g}}, h = {{h}}, f = {{f}}",
+              "shortestPathLength": "path length = {{count}}",
+              "tentativeScores": "tentative g = {{g}}, h = {{h}}, f = {{f}}"
+            },
+            "descriptions": {
+              "exhausted": "Open set exhausted; no path reaches the goal.",
+              "goalReached": "Reached goal {{goal}} and reconstruct the path.",
+              "initialize": "Initialize A* from {{start}} to {{goal}}.",
+              "inspectNeighbor": "Inspect neighbor {{cell}} from {{from}}.",
+              "keepBetterRoute": "The known route to {{cell}} is already better.",
+              "pickFrontier": "Pick {{cell}} with the lowest frontier score.",
+              "updateRoute": "Update route to {{cell}} through {{from}}."
+            },
+            "modeLabel": "A* Pathfinding",
+            "statuses": {
+              "inspectNeighbor": "Inspect neighbor",
+              "keepCurrentRoute": "Keep current route",
+              "noPathFound": "No path found",
+              "pathFound": "Path found",
+              "pickLowestF": "Pick lowest f-score",
+              "readyToExplore": "Ready to explore",
+              "updateFrontierRoute": "Update frontier route"
+            }
+          },
+          "floodFill": {
+            "decisions": {
+              "cellColor": "cell color = {{color}}",
+              "finalRegionSize": "region size = {{count}}",
+              "keepOriginalColor": "keep original color",
+              "paintedColor": "painted with {{fillColor}}",
+              "replaceColors": "replace {{sourceColor}} with {{fillColor}}",
+              "sameSourceColor": "same source color {{sourceColor}}"
+            },
+            "descriptions": {
+              "blocked": "{{cell}} does not belong to the source region, so skip it.",
+              "complete": "Flood fill finished with {{count}} painted cell(s).",
+              "fill": "Paint {{cell}} with the fill color.",
+              "inspect": "Inspect {{cell}} at depth {{depth}}.",
+              "queueNeighbor": "Queue matching neighbor {{cell}}.",
+              "start": "Start from {{cell}} with source color {{sourceColor}}."
+            },
+            "labels": {
+              "fillColor": "fill {{color}}"
+            },
+            "modeLabel": "Flood Fill",
+            "statuses": {
+              "blockedCell": "Blocked cell",
+              "inspectCurrentCell": "Inspect current cell",
+              "queueMatchingNeighbor": "Queue matching neighbor",
+              "readyToSpread": "Ready to spread",
+              "regionComplete": "Region complete",
+              "regionExpands": "Region expands"
+            }
+          }
+        },
+        "search": {
+          "binarySearch": {
+            "decisions": {
+              "candidateWindowEmpty": "candidate window is empty",
+              "collapsedWindow": "collapse to index {{index}}",
+              "compare": "{{value}} {{relation}} {{target}}",
+              "newWindow": "new window [{{low}}, {{high}}]"
+            },
+            "descriptions": {
+              "found": "Target {{target}} found at index {{index}}.",
+              "moveLeft": "{{value}} is too large, so move the window left.",
+              "moveRight": "{{value}} is too small, so move the window right.",
+              "notFound": "The search window collapsed without a match.",
+              "probe": "Probe midpoint {{index}} with value {{value}} against {{target}}.",
+              "start": "Search the sorted window for {{target}}."
+            },
+            "modeLabel": "Binary Search",
+            "statuses": {
+              "comparing": "Probe midpoint",
+              "found": "Target found",
+              "moveLeft": "Shift left window",
+              "moveRight": "Shift right window",
+              "notFound": "Window exhausted",
+              "ready": "Window ready"
+            }
+          },
+          "binarySearchVariants": {
+            "decisions": {
+              "advanceLow": "new low = {{low}}",
+              "candidateFirst": "first match candidate = {{index}}",
+              "candidateLast": "last match candidate = {{index}}",
+              "firstMatchFixed": "first match fixed at {{index}}",
+              "lowerBoundSearchFailed": "lower-bound pass found no match",
+              "lowerCompare": "{{value}} {{relation}} {{target}}",
+              "newHigh": "new high = {{high}}",
+              "rangeWidth": "range width = {{count}}",
+              "trimRight": "new high = {{high}}",
+              "upperBoundSearchMiss": "upper-bound pass kept no valid range",
+              "upperCompare": "{{value}} {{relation}} {{target}}"
+            },
+            "descriptions": {
+              "completeRange": "Range for {{target}} is {{left}}..{{right}}.",
+              "lowerProbe": "Lower-bound probe at index {{index}} with value {{value}}.",
+              "moveLeftForFirst": "{{target}} could start here or earlier, so trim the right side.",
+              "moveRightForLast": "{{target}} could continue to the right, so advance low.",
+              "noFinalRange": "Upper-bound pass ended without widening the final range for {{target}}.",
+              "noRange": "No occurrence of {{target}} was found during the lower-bound pass.",
+              "start": "Find the first and last index of {{target}}.",
+              "switchPhase": "First match fixed at {{index}}; now search for the last match.",
+              "tooLargeForLast": "{{value}} is too large for the last match, so trim high.",
+              "tooSmallForFirst": "{{value}} is too small for the first match, so advance low.",
+              "upperProbe": "Upper-bound probe at index {{index}} with value {{value}}."
+            },
+            "modeLabels": {
+              "boundsSearch": "Bounds search",
+              "lowerBound": "Lower bound search",
+              "upperBound": "Upper bound search"
+            },
+            "statuses": {
+              "comparing": "Probe bound candidate",
+              "firstMatchCandidate": "First match candidate",
+              "lastMatchCandidate": "Last match candidate",
+              "moveLeft": "Trim right side",
+              "moveRight": "Advance left side",
+              "notFound": "Bounds missing",
+              "rangeFound": "Range fixed",
+              "ready": "Ready for lower bound",
+              "switchPhase": "Switch to upper bound"
+            }
+          },
+          "linearSearch": {
+            "decisions": {
+              "allSlotsExhausted": "all slots exhausted",
+              "compare": "{{value}} {{relation}} {{target}}",
+              "discardIndex": "discard index {{index}}",
+              "stopAtIndex": "stop at index {{index}}"
+            },
+            "descriptions": {
+              "advance": "Value {{value}} is not {{target}}, so advance to the next slot.",
+              "found": "Found {{target}} at index {{index}}.",
+              "inspect": "Inspect index {{index}}: {{value}} vs {{target}}.",
+              "notFound": "Reached the end without finding {{target}}.",
+              "start": "Scan {{size}} slot(s) from left to right for {{target}}."
+            },
+            "modeLabel": "Linear Search",
+            "statuses": {
+              "advance": "Advance cursor",
+              "comparing": "Comparing slot",
+              "found": "Match found",
+              "notFound": "Target missing",
+              "ready": "Ready to scan"
+            }
+          }
+        },
+        "sort": {
+          "bubbleSort": {
+            "descriptions": {
+              "compare": "Compare {{leftValue}} at index {{leftIndex}} with {{rightValue}} at index {{rightIndex}}.",
+              "complete": "Bubble sort complete.",
+              "earlyExit": "No swaps happened in this pass, so the array is already sorted.",
+              "passComplete": "Pass {{pass}} complete; the suffix starting at index {{boundary}} is fixed.",
+              "start": "Start bubble sort (n = {{size}}).",
+              "swap": "Swap {{left}} at index {{leftIndex}} with {{right}} at index {{rightIndex}}."
+            }
+          },
+          "bucketSort": {
+            "descriptions": {
+              "compareWithinBucket": "Compare {{leftValue}} with {{rightValue}} inside bucket {{bucketIndex}}.",
+              "complete": "Bucket sort complete.",
+              "insertWithinBucket": "Insert {{value}} into its sorted position inside bucket {{bucketIndex}}.",
+              "placeInBucket": "Place {{value}} from index {{index}} into bucket {{bucketIndex}}.",
+              "sortBucket": "Sort bucket {{bucketIndex}} locally before writing it back.",
+              "start": "Start bucket sort (n = {{size}}, buckets = {{bucketCount}}).",
+              "writeFromBucket": "Write {{value}} from bucket {{bucketIndex}} into index {{index}}."
+            }
+          },
+          "countingSort": {
+            "descriptions": {
+              "complete": "Counting sort complete.",
+              "countValue": "Count value {{value}} at index {{index}}; frequency is now {{count}}.",
+              "start": "Start counting sort (n = {{size}}, max = {{max}}).",
+              "writeValue": "Write {{value}} into index {{index}}."
+            }
+          },
+          "heapSort": {
+            "descriptions": {
+              "compareLeft": "Compare left child {{leftChild}} with current largest {{currentLargest}}.",
+              "compareRight": "Compare right child {{rightChild}} with current largest {{currentLargest}}.",
+              "complete": "Heap sort complete.",
+              "extractRoot": "Swap max {{max}} at the root with {{tail}} at index {{end}}.",
+              "restoreHeap": "Swap root {{rootValue}} with larger child {{largestValue}} to restore the heap.",
+              "start": "Start heap sort (n = {{size}})."
+            }
+          },
+          "insertionSort": {
+            "descriptions": {
+              "compare": "Compare {{current}} with {{value}} inside the sorted prefix.",
+              "complete": "Insertion sort complete.",
+              "insert": "Insert {{value}} at index {{index}}.",
+              "shift": "Shift {{value}} one slot to the right.",
+              "start": "Start insertion sort (n = {{size}}).",
+              "takeValue": "Take {{value}} from index {{index}} and insert it into the sorted prefix."
+            }
+          },
+          "mergeSort": {
+            "descriptions": {
+              "compareHalves": "Compare left {{leftValue}} with right {{rightValue}} while merging.",
+              "complete": "Merge sort complete.",
+              "splitRange": "Split range [{{left}}, {{right}}] at {{middle}}.",
+              "start": "Start merge sort (n = {{size}}).",
+              "writeBack": "Write {{value}} back to index {{index}}."
+            }
+          },
+          "quickSort": {
+            "descriptions": {
+              "choosePivot": "Choose pivot {{pivot}} from index {{index}}.",
+              "comparePivot": "Compare {{value}} with pivot {{pivot}}.",
+              "complete": "Quick sort complete.",
+              "pivotSettled": "Pivot {{pivot}} is already settled at index {{index}}.",
+              "placePivot": "Place pivot {{pivot}} at index {{index}} and move {{left}} into the right partition.",
+              "singleElement": "Single element {{value}} at index {{index}} is already fixed.",
+              "start": "Start quick sort (n = {{size}}).",
+              "swapPartition": "Swap partition values {{left}} and {{right}}."
+            }
+          },
+          "radixSort": {
+            "descriptions": {
+              "distributeToBucket": "Send {{value}} to bucket {{bucket}} using digit position 10^{{digitPower}}.",
+              "finalPassComplete": "All digit passes are complete; the array is sorted.",
+              "focusDigit": "Focus digit position 10^{{digitPower}} across {{count}} values.",
+              "gatherFromBucket": "Gather {{value}} from bucket {{bucket}} back into the output stream.",
+              "passComplete": "Pass {{pass}}/{{maxDigits}} complete; order is fixed for digit position 10^{{digitPower}}.",
+              "start": "Start radix sort (base 10, maxDigits = {{maxDigits}})."
+            }
+          },
+          "selectionSort": {
+            "descriptions": {
+              "compareMinimum": "Compare current minimum {{currentMinimum}} with candidate {{candidate}} at index {{scan}}.",
+              "complete": "Selection sort complete.",
+              "indexFixed": "Index {{index}} is now fixed in final order.",
+              "newMinimum": "New minimum found: {{value}}.",
+              "scanSuffix": "Scan the suffix starting at index {{index}} to find the next minimum.",
+              "start": "Start selection sort (n = {{size}}).",
+              "swap": "Swap {{left}} with {{right}} so index {{index}} gets the minimum."
+            }
+          },
+          "shellSort": {
+            "descriptions": {
+              "beginGapPass": "Begin gap pass with gap {{gap}}.",
+              "compareGap": "Compare {{leftValue}} with {{value}} across gap {{gap}}.",
+              "complete": "Shell sort complete.",
+              "insertGap": "Insert {{value}} at index {{index}} for gap {{gap}}.",
+              "shiftGap": "Shift {{value}} from index {{from}} to {{to}} across the gap.",
+              "start": "Start shell sort (n = {{size}}).",
+              "takeValue": "Take {{value}} from index {{index}} for gap {{gap}} insertion."
+            }
+          },
+          "timSort": {
+            "descriptions": {
+              "buildRun": "Build run [{{start}}, {{end}}] with insertion sort.",
+              "compareMerge": "Compare {{leftValue}} with {{rightValue}} while merging runs.",
+              "compareWithinRun": "Compare {{leftValue}} with {{value}} while extending the run.",
+              "complete": "Tim sort complete.",
+              "insertWithinRun": "Insert {{value}} within run [{{left}}, {{right}}].",
+              "mergeRuns": "Merge runs [{{left}}, {{middle}}] and [{{nextStart}}, {{right}}].",
+              "placeWithinRun": "Place {{value}} at index {{index}} inside the run.",
+              "shiftWithinRun": "Shift {{value}} one slot to the right inside the run.",
+              "start": "Start tim sort (n = {{size}}, minRun = {{minRun}}).",
+              "writeMergedValue": "Write merged value {{value}} back to index {{index}}."
+            }
+          }
+        },
         "string": {
+          "ahoCorasick": {
+            "computation": {
+              "labels": {
+                "failureLink": "Failure link",
+                "finalSummary": "Final summary",
+                "outputSet": "Output set",
+                "textStep": "Text step",
+                "transition": "Transition"
+              },
+              "notes": {
+                "failureLink": "Failure links point to the longest proper suffix that is also present in the trie.",
+                "finalSummary": "One pass through the text reports every stored pattern without rescanning old characters.",
+                "outputSet": "Terminal states emit every pattern that ends at this automaton state, including outputs inherited through failure links.",
+                "textStep": "Each incoming character advances the automaton or falls back until a valid edge appears.",
+                "transition": "Shared prefixes stay in one branch, so common beginnings are inserted only once."
+              }
+            },
+            "decisions": {
+              "chaseFailureLinks": "If an edge is missing, keep following failure links until a reusable suffix state appears.",
+              "emitOutputs": "Whenever the current state stores outputs, report every pattern that finishes here.",
+              "growTrie": "A missing edge means the trie needs a new state for this character.",
+              "scanFinished": "The full text is scanned and every emitted keyword occurrence is now known.",
+              "sharePrefixes": "Patterns that begin the same way should reuse the same trie prefix.",
+              "stitchFailureLinks": "Each trie state gets a fallback edge to the best proper suffix state."
+            },
+            "descriptions": {
+              "advanceScan": "Consume text[{{index}}] = '{{char}}' and continue from automaton state {{state}}.",
+              "complete": "Aho-Corasick finished with {{count}} reported matches.",
+              "followFailure": "State {{from}} has no edge for '{{char}}', so follow the failure link to {{target}}.",
+              "init": "Build one keyword automaton for patterns {{patterns}} and scan the text \"{{text}}\" in a single pass.",
+              "insertEdge": "Insert '{{char}}' from pattern \"{{pattern}}\" and create state {{state}}.",
+              "reportMatches": "State {{state}} emits {{count}} pattern(s): {{patterns}}.",
+              "reuseEdge": "Pattern \"{{pattern}}\" reuses the existing edge for '{{char}}' and stays compact.",
+              "setFailure": "Set the failure link of state {{state}} to {{target}}.",
+              "terminal": "State {{state}} becomes terminal for pattern \"{{pattern}}\"."
+            },
+            "insights": {
+              "activeStateLabel": "Active state",
+              "countValue": "{{count}}",
+              "matchesLabel": "Matches",
+              "noneValue": "—",
+              "patternsLabel": "Patterns",
+              "stateValue": "state {{state}}",
+              "trieNodesLabel": "Trie nodes"
+            },
+            "labels": {
+              "matchesValue": "{{count}} matches",
+              "noMatchesYet": "No matches yet"
+            },
+            "modeLabel": "Aho-Corasick",
+            "phases": {
+              "buildFailure": "Build failure links",
+              "buildTrie": "Build trie",
+              "complete": "Scan complete",
+              "reportMatch": "Report matches",
+              "scanText": "Scan text"
+            }
+          },
           "burrowsWheelerTransform": {
             "computation": {
               "expressions": {
@@ -1723,6 +2122,56 @@
               "shiftWindow": "Shift window"
             }
           },
+          "palindromicTree": {
+            "computation": {
+              "labels": {
+                "finalSummary": "Final summary",
+                "newNode": "New node",
+                "occurrenceCount": "Occurrence count",
+                "suffixLink": "Suffix link"
+              },
+              "notes": {
+                "finalSummary": "The Eertree stores every distinct palindrome once and links each one to its longest palindromic suffix.",
+                "newNode": "A new palindrome appears only when the current character extends some palindromic suffix into a new string.",
+                "occurrenceCount": "If the palindrome already exists, only its occurrence counter grows.",
+                "suffixLink": "Suffix links jump between palindromic suffixes until the next extendable node is found."
+              }
+            },
+            "decisions": {
+              "addNewPalindrome": "No existing outgoing edge fits this character, so a new palindrome node must be created.",
+              "chaseSuffixLinks": "Follow suffix links until the current character can mirror around the candidate palindrome.",
+              "reuseExistingNode": "If the outgoing edge already exists, reuse that palindrome node and only update its count.",
+              "treeReady": "Every character has been processed, so the palindromic tree is complete."
+            },
+            "descriptions": {
+              "complete": "Palindromic tree finished with {{count}} distinct palindromes.",
+              "followLink": "Follow {{hops}} suffix-link hop(s) to find a palindrome that can absorb '{{char}}'.",
+              "init": "Start the Eertree for \"{{text}}\" with the two standard roots: length -1 and length 0.",
+              "insertNode": "Create the new palindrome node \"{{palindrome}}\".",
+              "reuseNode": "Reuse the existing palindrome node \"{{palindrome}}\"."
+            },
+            "insights": {
+              "activeLabel": "Active node",
+              "countValue": "{{count}}",
+              "distinctLabel": "Distinct",
+              "longestSuffixLabel": "Longest suffix",
+              "nodeValue": "node {{node}}",
+              "noneValue": "—",
+              "processedLabel": "Processed"
+            },
+            "labels": {
+              "distinctValue": "{{count}} distinct palindromes",
+              "pendingTree": "Tree pending"
+            },
+            "modeLabel": "Palindromic Tree",
+            "phases": {
+              "complete": "Tree ready",
+              "followLink": "Follow suffix links",
+              "insertNode": "Insert node",
+              "reuseNode": "Reuse node",
+              "roots": "Roots ready"
+            }
+          },
           "rabinKarp": {
             "computation": {
               "labels": {
@@ -1857,6 +2306,98 @@
               "setup": "Setup"
             }
           },
+          "suffixArray": {
+            "computation": {
+              "labels": {
+                "finalArray": "Final suffix array",
+                "initialRanks": "Initial ranks",
+                "newRanks": "New ranks",
+                "rankPairs": "Rank pairs",
+                "reorderedSuffixes": "Reordered suffixes"
+              },
+              "notes": {
+                "finalArray": "Once every suffix has a unique rank class, the current order is the final suffix array.",
+                "initialRanks": "The first round starts from single-character ranks.",
+                "newRanks": "Equal pairs stay in the same class; different pairs open a new rank.",
+                "rankPairs": "The doubling algorithm sorts suffixes by two adjacent rank blocks of size k.",
+                "reorderedSuffixes": "Sorting the rank pairs gives the current suffix order."
+              }
+            },
+            "decisions": {
+              "compareRankPairs": "Compare suffixes by the pair (rank[i], rank[i + k]) instead of rescanning full tails.",
+              "compressClasses": "Sorted equal pairs collapse into one equivalence class; distinct pairs get a new rank.",
+              "orderReady": "Every suffix now has a unique rank, so the ordering is final."
+            },
+            "descriptions": {
+              "assignRanks": "Round {{round}} assigns {{classes}} distinct rank classes after sorting the current pairs.",
+              "complete": "Suffix array finished. Final order: {{order}}.",
+              "seed": "Seed every suffix with its first-character rank for \"{{text}}\".",
+              "sortPairs": "Round {{round}} sorts suffixes by pairs of blocks of size {{stepSize}}."
+            },
+            "insights": {
+              "countValue": "{{count}}",
+              "distinctRanksLabel": "Distinct ranks",
+              "noneValue": "—",
+              "orderLabel": "Order",
+              "strideLabel": "Stride",
+              "strideValue": "k = {{size}}",
+              "suffixesLabel": "Suffixes"
+            },
+            "labels": {
+              "pendingArray": "Suffix array pending",
+              "readyValue": "{{order}}"
+            },
+            "modeLabel": "Suffix Array Construction",
+            "phases": {
+              "assignRanks": "Assign ranks",
+              "complete": "Order ready",
+              "seedRanks": "Seed ranks",
+              "sortPairs": "Sort rank pairs"
+            }
+          },
+          "suffixArrayLcp": {
+            "computation": {
+              "labels": {
+                "finalLcp": "Final LCP array",
+                "kasaiStep": "Kasai step",
+                "suffixArray": "Suffix array"
+              },
+              "notes": {
+                "finalLcp": "Each LCP value stores the shared prefix length of adjacent suffixes in suffix-array order.",
+                "kasaiStep": "Kasai reuses one character of overlap after every step, so the whole scan stays linear.",
+                "suffixArray": "Kasai starts from an already prepared suffix array and its inverse rank array."
+              }
+            },
+            "decisions": {
+              "compareNeighbors": "Compare each suffix only with its next neighbor in suffix-array order.",
+              "lcpReady": "Every adjacent suffix pair now has its longest common prefix length.",
+              "reuseOverlap": "When one comparison finishes, the next suffix can reuse one character of the overlap."
+            },
+            "descriptions": {
+              "compare": "Compare suffix {{left}} with suffix {{right}} and store overlap {{overlap}}.",
+              "complete": "LCP array finished: {{values}}.",
+              "seed": "Start Kasai from suffix array {{suffixArray}} for \"{{text}}\"."
+            },
+            "insights": {
+              "activePairLabel": "Active pair",
+              "countValue": "{{count}}",
+              "noneValue": "—",
+              "overlapLabel": "Overlap",
+              "pairValue": "{{left}} ↔ {{right}}",
+              "readyLcpLabel": "Ready LCP",
+              "suffixesLabel": "Suffixes"
+            },
+            "labels": {
+              "pendingLcp": "LCP pending",
+              "readyValue": "{{values}}"
+            },
+            "modeLabel": "Suffix Array + LCP",
+            "phases": {
+              "complete": "LCP ready",
+              "kasaiScan": "Kasai scan",
+              "seedOrder": "Load suffix order"
+            }
+          },
           "zAlgorithm": {
             "computation": {
               "labels": {
@@ -1922,344 +2463,52 @@
             }
           }
         },
-        "search": {
-          "linearSearch": {
-            "modeLabel": "Linear Search",
-            "statuses": {
-              "ready": "Ready to scan",
-              "comparing": "Comparing slot",
-              "found": "Match found",
-              "advance": "Advance cursor",
-              "notFound": "Target missing"
-            },
-            "descriptions": {
-              "start": "Scan {{size}} slot(s) from left to right for {{target}}.",
-              "inspect": "Inspect index {{index}}: {{value}} vs {{target}}.",
-              "found": "Found {{target}} at index {{index}}.",
-              "advance": "Value {{value}} is not {{target}}, so advance to the next slot.",
-              "notFound": "Reached the end without finding {{target}}."
+        "tree": {
+          "treeTraversals": {
+            "computation": {
+              "output": "append to output tape",
+              "queuePop": "queue.shift",
+              "queuePush": "queue.push",
+              "stackPop": "stack.pop",
+              "stackPush": "stack.push",
+              "visit": "visit"
             },
             "decisions": {
-              "compare": "{{value}} {{relation}} {{target}}",
-              "stopAtIndex": "stop at index {{index}}",
-              "discardIndex": "discard index {{index}}",
-              "allSlotsExhausted": "all slots exhausted"
-            }
-          },
-          "binarySearch": {
-            "modeLabel": "Binary Search",
-            "statuses": {
-              "ready": "Window ready",
-              "comparing": "Probe midpoint",
-              "found": "Target found",
-              "moveRight": "Shift right window",
-              "moveLeft": "Shift left window",
-              "notFound": "Window exhausted"
+              "backtrackDone": "Subtree done — return to parent frame.",
+              "dequeueLevel": "BFS dequeues one level at a time.",
+              "emitCurrent": "Emit current node now.",
+              "finished": "All nodes have been visited.",
+              "leftBeforeRight": "Visit left subtree before right.",
+              "pushThenDescend": "Push frame, then descend.",
+              "rightAfterSelf": "Right subtree follows current node."
             },
             "descriptions": {
-              "start": "Search the sorted window for {{target}}.",
-              "probe": "Probe midpoint {{index}} with value {{value}} against {{target}}.",
-              "found": "Target {{target}} found at index {{index}}.",
-              "moveRight": "{{value}} is too small, so move the window right.",
-              "moveLeft": "{{value}} is too large, so move the window left.",
-              "notFound": "The search window collapsed without a match."
+              "backtrack": "Return from this subtree; pop the call stack.",
+              "complete": "Traversal finished — every node is in the output.",
+              "dequeue": "Dequeue the next level-order node.",
+              "descendLeft": "Descend into the left child.",
+              "descendRight": "Descend into the right child.",
+              "enqueue": "Enqueue the next node for the level-order wave.",
+              "push": "Push the current node onto the call stack.",
+              "start": "Start traversal from the root.",
+              "visit": "Emit the current node to the output sequence."
             },
-            "decisions": {
-              "compare": "{{value}} {{relation}} {{target}}",
-              "collapsedWindow": "collapse to index {{index}}",
-              "newWindow": "new window [{{low}}, {{high}}]",
-              "candidateWindowEmpty": "candidate window is empty"
-            }
-          },
-          "binarySearchVariants": {
             "modeLabels": {
-              "lowerBound": "Lower bound search",
-              "upperBound": "Upper bound search",
-              "boundsSearch": "Bounds search"
+              "inorder": "Inorder (DFS)",
+              "levelOrder": "Level-order (BFS)",
+              "postorder": "Postorder (DFS)",
+              "preorder": "Preorder (DFS)"
             },
-            "statuses": {
-              "ready": "Ready for lower bound",
-              "comparing": "Probe bound candidate",
-              "moveLeft": "Trim right side",
-              "firstMatchCandidate": "First match candidate",
-              "moveRight": "Advance left side",
-              "notFound": "Bounds missing",
-              "switchPhase": "Switch to upper bound",
-              "lastMatchCandidate": "Last match candidate",
-              "rangeFound": "Range fixed"
-            },
-            "descriptions": {
-              "start": "Find the first and last index of {{target}}.",
-              "lowerProbe": "Lower-bound probe at index {{index}} with value {{value}}.",
-              "moveLeftForFirst": "{{target}} could start here or earlier, so trim the right side.",
-              "tooSmallForFirst": "{{value}} is too small for the first match, so advance low.",
-              "noRange": "No occurrence of {{target}} was found during the lower-bound pass.",
-              "switchPhase": "First match fixed at {{index}}; now search for the last match.",
-              "upperProbe": "Upper-bound probe at index {{index}} with value {{value}}.",
-              "moveRightForLast": "{{target}} could continue to the right, so advance low.",
-              "tooLargeForLast": "{{value}} is too large for the last match, so trim high.",
-              "completeRange": "Range for {{target}} is {{left}}..{{right}}.",
-              "noFinalRange": "Upper-bound pass ended without widening the final range for {{target}}."
-            },
-            "decisions": {
-              "lowerCompare": "{{value}} {{relation}} {{target}}",
-              "trimRight": "new high = {{high}}",
-              "candidateFirst": "first match candidate = {{index}}",
-              "advanceLow": "new low = {{low}}",
-              "lowerBoundSearchFailed": "lower-bound pass found no match",
-              "firstMatchFixed": "first match fixed at {{index}}",
-              "upperCompare": "{{value}} {{relation}} {{target}}",
-              "candidateLast": "last match candidate = {{index}}",
-              "newHigh": "new high = {{high}}",
-              "rangeWidth": "range width = {{count}}",
-              "upperBoundSearchMiss": "upper-bound pass kept no valid range"
-            }
-          }
-        },
-        "grid": {
-          "floodFill": {
-            "modeLabel": "Flood Fill",
-            "statuses": {
-              "readyToSpread": "Ready to spread",
-              "inspectCurrentCell": "Inspect current cell",
-              "blockedCell": "Blocked cell",
-              "regionExpands": "Region expands",
-              "queueMatchingNeighbor": "Queue matching neighbor",
-              "regionComplete": "Region complete"
-            },
-            "descriptions": {
-              "start": "Start from {{cell}} with source color {{sourceColor}}.",
-              "inspect": "Inspect {{cell}} at depth {{depth}}.",
-              "blocked": "{{cell}} does not belong to the source region, so skip it.",
-              "fill": "Paint {{cell}} with the fill color.",
-              "queueNeighbor": "Queue matching neighbor {{cell}}.",
-              "complete": "Flood fill finished with {{count}} painted cell(s)."
-            },
-            "decisions": {
-              "replaceColors": "replace {{sourceColor}} with {{fillColor}}",
-              "cellColor": "cell color = {{color}}",
-              "keepOriginalColor": "keep original color",
-              "paintedColor": "painted with {{fillColor}}",
-              "sameSourceColor": "same source color {{sourceColor}}",
-              "finalRegionSize": "region size = {{count}}"
-            },
-            "labels": {
-              "fillColor": "fill {{color}}"
-            }
-          },
-          "aStarPathfinding": {
-            "modeLabel": "A* Pathfinding",
-            "statuses": {
-              "readyToExplore": "Ready to explore",
-              "pickLowestF": "Pick lowest f-score",
-              "pathFound": "Path found",
-              "inspectNeighbor": "Inspect neighbor",
-              "keepCurrentRoute": "Keep current route",
-              "updateFrontierRoute": "Update frontier route",
-              "noPathFound": "No path found"
-            },
-            "descriptions": {
-              "initialize": "Initialize A* from {{start}} to {{goal}}.",
-              "pickFrontier": "Pick {{cell}} with the lowest frontier score.",
-              "goalReached": "Reached goal {{goal}} and reconstruct the path.",
-              "inspectNeighbor": "Inspect neighbor {{cell}} from {{from}}.",
-              "keepBetterRoute": "The known route to {{cell}} is already better.",
-              "updateRoute": "Update route to {{cell}} through {{from}}.",
-              "exhausted": "Open set exhausted; no path reaches the goal."
-            },
-            "decisions": {
-              "initializeScores": "set g(start) = 0 and f(start) = h(start)",
-              "frontierScores": "f = {{f}}, g = {{g}}",
-              "shortestPathLength": "path length = {{count}}",
-              "tentativeScores": "tentative g = {{g}}, h = {{h}}, f = {{f}}",
-              "knownRouteBetter": "known g = {{g}} is better",
-              "setScores": "set g = {{g}}, h = {{h}}, f = {{f}}",
-              "exhaustedReachable": "all reachable cells exhausted"
-            }
-          }
-        },
-        "dsu": {
-          "unionFind": {
-            "modeLabel": "Union-Find",
-            "statuses": {
-              "ready": "Ready",
-              "findRepresentative": "Find representative",
-              "pathCompression": "Compress path",
-              "compareRoots": "Compare roots",
-              "unionSkipped": "Union skipped",
-              "unionByRank": "Union by rank",
-              "complete": "Stable forest"
-            },
-            "descriptions": {
-              "initialize": "Start with singleton sets for every node.",
-              "followPath": "Follow the parent chain from {{label}}.",
-              "compressPath": "Compress the path so every visited node points to root {{root}}.",
-              "alreadyCompressed": "{{node}} already points directly to root {{root}}.",
-              "compareRoots": "Compare roots of {{left}} and {{right}}.",
-              "skipMerge": "Skip merge because both nodes already share root {{root}}.",
-              "attachRoot": "Attach root {{attach}} under {{keep}}.",
-              "complete": "Union-Find finished with {{count}} component(s)."
-            },
-            "decisions": {
-              "singletonRoots": "every node starts as its own root",
-              "currentPath": "path = {{path}}",
-              "representativeIs": "representative = {{root}}",
-              "representativePair": "{{left}} -> {{leftRoot}}, {{right}} -> {{rightRoot}}",
-              "noStructuralChange": "no structural change",
-              "newRootRepresents": "{{root}} now represents {{count}} node(s)",
-              "finalStable": "all unions processed"
-            },
-            "labels": {
-              "singletonSets": "{{count}} singleton set(s)",
-              "activeSets": "{{count}} active set(s)",
-              "operationQueue": "Operation queue"
-            }
-          },
-          "kruskalsMst": {
-            "modeLabel": "Kruskal's MST",
-            "statuses": {
-              "sortedEdgeScan": "Sorted edge scan",
-              "inspectNextEdge": "Inspect next edge",
-              "rejectCycleEdge": "Reject cycle edge",
-              "acceptEdge": "Accept edge",
-              "complete": "MST complete"
-            },
-            "descriptions": {
-              "initialize": "Edges are sorted by weight; start with an empty forest.",
-              "inspectEdge": "Inspect edge {{from}} - {{to}} (w={{weight}}).",
-              "rejectEdge": "Reject {{from}} - {{to}} because it closes a cycle.",
-              "acceptEdge": "Accept {{from}} - {{to}} into the MST.",
-              "complete": "Kruskal finished with {{count}} accepted edge(s) and total weight {{weight}}."
-            },
-            "decisions": {
-              "acceptNextCheapest": "accept the next cheapest edge that does not close a cycle",
-              "rootCompare": "{{from}} -> {{fromRoot}}, {{to}} -> {{toRoot}}",
-              "shareRoot": "both endpoints already share a root",
-              "treeWeightGrows": "MST weight = {{weight}}",
-              "pendingEdgesWorse": "all remaining edges are heavier or redundant"
-            },
-            "labels": {
-              "mstWeight": "weight = {{weight}}",
-              "acceptedEdges": "{{count}} / {{total}} edges accepted",
-              "sortedEdges": "Sorted edges"
-            }
-          }
-        },
-        "sort": {
-          "bubbleSort": {
-            "descriptions": {
-              "start": "Start bubble sort (n = {{size}}).",
-              "compare": "Compare {{leftValue}} at index {{leftIndex}} with {{rightValue}} at index {{rightIndex}}.",
-              "swap": "Swap {{left}} at index {{leftIndex}} with {{right}} at index {{rightIndex}}.",
-              "passComplete": "Pass {{pass}} complete; the suffix starting at index {{boundary}} is fixed.",
-              "earlyExit": "No swaps happened in this pass, so the array is already sorted.",
-              "complete": "Bubble sort complete."
-            }
-          },
-          "selectionSort": {
-            "descriptions": {
-              "start": "Start selection sort (n = {{size}}).",
-              "scanSuffix": "Scan the suffix starting at index {{index}} to find the next minimum.",
-              "compareMinimum": "Compare current minimum {{currentMinimum}} with candidate {{candidate}} at index {{scan}}.",
-              "newMinimum": "New minimum found: {{value}}.",
-              "swap": "Swap {{left}} with {{right}} so index {{index}} gets the minimum.",
-              "indexFixed": "Index {{index}} is now fixed in final order.",
-              "complete": "Selection sort complete."
-            }
-          },
-          "insertionSort": {
-            "descriptions": {
-              "start": "Start insertion sort (n = {{size}}).",
-              "takeValue": "Take {{value}} from index {{index}} and insert it into the sorted prefix.",
-              "compare": "Compare {{current}} with {{value}} inside the sorted prefix.",
-              "shift": "Shift {{value}} one slot to the right.",
-              "insert": "Insert {{value}} at index {{index}}.",
-              "complete": "Insertion sort complete."
-            }
-          },
-          "mergeSort": {
-            "descriptions": {
-              "start": "Start merge sort (n = {{size}}).",
-              "complete": "Merge sort complete.",
-              "splitRange": "Split range [{{left}}, {{right}}] at {{middle}}.",
-              "compareHalves": "Compare left {{leftValue}} with right {{rightValue}} while merging.",
-              "writeBack": "Write {{value}} back to index {{index}}."
-            }
-          },
-          "quickSort": {
-            "descriptions": {
-              "start": "Start quick sort (n = {{size}}).",
-              "complete": "Quick sort complete.",
-              "singleElement": "Single element {{value}} at index {{index}} is already fixed.",
-              "choosePivot": "Choose pivot {{pivot}} from index {{index}}.",
-              "comparePivot": "Compare {{value}} with pivot {{pivot}}.",
-              "swapPartition": "Swap partition values {{left}} and {{right}}.",
-              "placePivot": "Place pivot {{pivot}} at index {{index}} and move {{left}} into the right partition.",
-              "pivotSettled": "Pivot {{pivot}} is already settled at index {{index}}."
-            }
-          },
-          "heapSort": {
-            "descriptions": {
-              "start": "Start heap sort (n = {{size}}).",
-              "extractRoot": "Swap max {{max}} at the root with {{tail}} at index {{end}}.",
-              "complete": "Heap sort complete.",
-              "compareLeft": "Compare left child {{leftChild}} with current largest {{currentLargest}}.",
-              "compareRight": "Compare right child {{rightChild}} with current largest {{currentLargest}}.",
-              "restoreHeap": "Swap root {{rootValue}} with larger child {{largestValue}} to restore the heap."
-            }
-          },
-          "countingSort": {
-            "descriptions": {
-              "start": "Start counting sort (n = {{size}}, max = {{max}}).",
-              "countValue": "Count value {{value}} at index {{index}}; frequency is now {{count}}.",
-              "writeValue": "Write {{value}} into index {{index}}.",
-              "complete": "Counting sort complete."
-            }
-          },
-          "shellSort": {
-            "descriptions": {
-              "start": "Start shell sort (n = {{size}}).",
-              "beginGapPass": "Begin gap pass with gap {{gap}}.",
-              "takeValue": "Take {{value}} from index {{index}} for gap {{gap}} insertion.",
-              "compareGap": "Compare {{leftValue}} with {{value}} across gap {{gap}}.",
-              "shiftGap": "Shift {{value}} from index {{from}} to {{to}} across the gap.",
-              "insertGap": "Insert {{value}} at index {{index}} for gap {{gap}}.",
-              "complete": "Shell sort complete."
-            }
-          },
-          "bucketSort": {
-            "descriptions": {
-              "start": "Start bucket sort (n = {{size}}, buckets = {{bucketCount}}).",
-              "placeInBucket": "Place {{value}} from index {{index}} into bucket {{bucketIndex}}.",
-              "sortBucket": "Sort bucket {{bucketIndex}} locally before writing it back.",
-              "insertWithinBucket": "Insert {{value}} into its sorted position inside bucket {{bucketIndex}}.",
-              "compareWithinBucket": "Compare {{leftValue}} with {{rightValue}} inside bucket {{bucketIndex}}.",
-              "writeFromBucket": "Write {{value}} from bucket {{bucketIndex}} into index {{index}}.",
-              "complete": "Bucket sort complete."
-            }
-          },
-          "radixSort": {
-            "descriptions": {
-              "start": "Start radix sort (base 10, maxDigits = {{maxDigits}}).",
-              "focusDigit": "Focus digit position 10^{{digitPower}} across {{count}} values.",
-              "distributeToBucket": "Send {{value}} to bucket {{bucket}} using digit position 10^{{digitPower}}.",
-              "gatherFromBucket": "Gather {{value}} from bucket {{bucket}} back into the output stream.",
-              "finalPassComplete": "All digit passes are complete; the array is sorted.",
-              "passComplete": "Pass {{pass}}/{{maxDigits}} complete; order is fixed for digit position 10^{{digitPower}}."
-            }
-          },
-          "timSort": {
-            "descriptions": {
-              "start": "Start tim sort (n = {{size}}, minRun = {{minRun}}).",
-              "buildRun": "Build run [{{start}}, {{end}}] with insertion sort.",
-              "mergeRuns": "Merge runs [{{left}}, {{middle}}] and [{{nextStart}}, {{right}}].",
-              "complete": "Tim sort complete.",
-              "insertWithinRun": "Insert {{value}} within run [{{left}}, {{right}}].",
-              "compareWithinRun": "Compare {{leftValue}} with {{value}} while extending the run.",
-              "shiftWithinRun": "Shift {{value}} one slot to the right inside the run.",
-              "placeWithinRun": "Place {{value}} at index {{index}} inside the run.",
-              "compareMerge": "Compare {{leftValue}} with {{rightValue}} while merging runs.",
-              "writeMergedValue": "Write merged value {{value}} back to index {{index}}."
+            "phases": {
+              "backtrack": "Backtrack",
+              "complete": "Complete",
+              "dequeue": "Dequeue",
+              "descendLeft": "Go left",
+              "descendRight": "Go right",
+              "enqueue": "Enqueue",
+              "init": "Initialize",
+              "push": "Push",
+              "visit": "Visit"
             }
           }
         }
@@ -2562,6 +2811,20 @@
           }
         },
         "string": {
+          "ahoCorasick": {
+            "alerts": {
+              "description": "Short alert words show how one automaton can flag several keywords in a single pass.",
+              "label": "Alerts"
+            },
+            "classic": {
+              "description": "The classic \"ushers\" example makes shared prefixes and emitted outputs easy to verify.",
+              "label": "Classic"
+            },
+            "genome": {
+              "description": "Overlapping DNA fragments create many reusable trie branches and suffix fallbacks.",
+              "label": "Genome"
+            }
+          },
           "bwt": {
             "banana": {
               "description": "The canonical BWT demo: short, memorable, and perfect for grouped output runs.",
@@ -2618,6 +2881,20 @@
               "label": "Symmetry"
             }
           },
+          "palindromicTree": {
+            "banana": {
+              "description": "Repeated centers create a compact tree of distinct palindromic substrings.",
+              "label": "Banana"
+            },
+            "mixed": {
+              "description": "Several short and medium palindromes appear online while the suffix links stay busy.",
+              "label": "Mixed"
+            },
+            "symmetry": {
+              "description": "Strong mirrored structure makes new palindromes and reused suffix nodes easy to spot.",
+              "label": "Symmetry"
+            }
+          },
           "rabinKarp": {
             "alarm": {
               "description": "Small modulus makes rolling hashes collide often enough to teach verification.",
@@ -2646,6 +2923,34 @@
               "label": "No gain"
             }
           },
+          "suffixArray": {
+            "abracadabra": {
+              "description": "Repeated prefixes force multiple rank rounds before every suffix becomes unique.",
+              "label": "Abracadabra"
+            },
+            "banana": {
+              "description": "Canonical suffix-array example with a short, memorable final order.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Dense repetition stresses the doubling rounds and equivalence classes.",
+              "label": "Mississippi"
+            }
+          },
+          "suffixArrayLcp": {
+            "abracadabra": {
+              "description": "Repeated fragments produce a jagged LCP skyline after the suffix order is ready.",
+              "label": "Abracadabra"
+            },
+            "banana": {
+              "description": "The classic banana suffix order leads to the well-known LCP profile 1,3,0,0,2.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Many adjacent suffixes share long prefixes, so Kasai's overlap reuse becomes visible.",
+              "label": "Mississippi"
+            }
+          },
           "zAlgorithm": {
             "classic": {
               "description": "Pattern concatenation produces clear Z-box reuse and a couple of exact hits.",
@@ -2658,6 +2963,26 @@
             "log": {
               "description": "Readable text with long repeated prefixes and visible full-pattern bars.",
               "label": "Log Stream"
+            }
+          }
+        },
+        "tree": {
+          "treeTraversals": {
+            "inorderBst": {
+              "description": "Classic binary-search-tree walk — the inorder visit order produces the underlying values in sorted ascending order.",
+              "label": "Inorder on BST"
+            },
+            "levelOrderWave": {
+              "description": "Queue-driven breadth-first wave — each sweep completes one depth layer before moving to the next.",
+              "label": "Level-order BFS"
+            },
+            "postorderSizes": {
+              "description": "Children first, node last. The order matches how bottom-up aggregations (subtree sizes, sums, heights) are computed.",
+              "label": "Postorder fold"
+            },
+            "preorderBalanced": {
+              "description": "Depth-first: emit the node, then descend left, then right. The output traces the visit frontier from root outward.",
+              "label": "Preorder walk"
             }
           }
         }
@@ -2724,6 +3049,7 @@
           "newTargetSum": "New target sum",
           "newTerminalGraph": "New terminal graph",
           "newTrailGraph": "New trail graph",
+          "newTreeShape": "New tree shape",
           "newWildcardPair": "New wildcard pair",
           "newWordPair": "New word pair",
           "newZSkyline": "New Z skyline",
@@ -2806,6 +3132,7 @@
           "terminalDpTree": "Terminal DP Tree",
           "treeBuilder": "Tree Builder",
           "treeGraph": "Tree Graph",
+          "treeWalk": "Tree Walk",
           "triangleMesh": "Triangle Mesh",
           "twoPassScc": "Two-Pass SCC",
           "twoSideCheck": "Two-Side Check",
@@ -3004,6 +3331,53 @@
           "uiLensBadgeLabel": "UI lens",
           "visitOrderLabel": "Visit order",
           "waitingDecisionLabel": "Waiting for a compare/relax/decision step."
+        },
+        "grid": {
+          "activeLabel": "Active",
+          "boardLabel": "Board",
+          "columns": {
+            "cell": "Cell",
+            "status": "Status",
+            "tags": "Tags",
+            "value": "Value"
+          },
+          "emptyLabel": "No grid trace available for this step.",
+          "filledCount": "{{count}} filled",
+          "frontierLabel": "Frontier",
+          "modeLabel": "Mode",
+          "notStartedLabel": "not started",
+          "pathCount": "{{count}} in path",
+          "resultLabel": "Result",
+          "sourceLabel": "Source",
+          "statuses": {
+            "blocked": "blocked",
+            "closed": "closed",
+            "current": "current",
+            "filled": "filled",
+            "frontier": "frontier",
+            "goal": "goal",
+            "idle": "idle",
+            "path": "path",
+            "source": "source",
+            "wall": "wall"
+          },
+          "tableEmptyLabel": "No active grid cells yet",
+          "tagLegend": {
+            "blocked": "Blocked cell",
+            "candidate": "Candidate",
+            "closed": "Closed cell",
+            "current": "Current cell",
+            "filled": "Filled cell",
+            "frontier": "Frontier",
+            "goal": "Goal cell",
+            "path": "Final path",
+            "seed": "Seed cell",
+            "wall": "Wall"
+          },
+          "targetLabel": "Target",
+          "visitOrderLabel": "Visit order",
+          "visitedLabel": "Visited",
+          "waitingDecisionLabel": "Waiting for the next grid update."
         },
         "halfPlane": {
           "areaLabel": "Area",
@@ -3240,6 +3614,15 @@
         },
         "string": {
           "activeLabel": "Active",
+          "ahoCorasick": {
+            "automatonLabel": "Automaton",
+            "currentCharLabel": "Current char",
+            "currentStateLabel": "Current state",
+            "detailsAriaLabel": "Aho-Corasick details",
+            "failurePathLabel": "Failure path",
+            "matchCountLabel": "Match count",
+            "matchesLabel": "Matches"
+          },
           "burrowsWheeler": {
             "columnsLabel": "Columns",
             "detailsAriaLabel": "Burrows-Wheeler details",
@@ -3297,6 +3680,14 @@
           },
           "modeLabel": "Mode",
           "noFormulaLabel": "No extra formula on this step.",
+          "palindromicTree": {
+            "activeNodeLabel": "Active node",
+            "currentCharLabel": "Current char",
+            "detailsAriaLabel": "Palindromic tree details",
+            "distinctLabel": "Distinct palindromes",
+            "nodesLabel": "Nodes",
+            "processedLabel": "Processed"
+          },
           "phaseLabel": "Phase",
           "presetLabel": "Preset",
           "presetNoteLabel": "Preset note",
@@ -3331,6 +3722,20 @@
             "runsDoneLabel": "Runs done",
             "scannerLabel": "Scanner"
           },
+          "suffixArray": {
+            "detailsAriaLabel": "Suffix array details",
+            "distinctRanksLabel": "Distinct ranks",
+            "orderLabel": "Suffix order",
+            "ranksLabel": "Ranks",
+            "stepSizeLabel": "Step size"
+          },
+          "suffixArrayLcp": {
+            "activePairLabel": "Active pair",
+            "compareWithLabel": "Compare with",
+            "detailsAriaLabel": "Suffix array LCP details",
+            "lcpLabel": "LCP values",
+            "overlapLabel": "Overlap"
+          },
           "summaryAriaLabel": "String summary",
           "waitingEventLabel": "Waiting for next string event.",
           "zAlgorithm": {
@@ -3355,6 +3760,16 @@
           "spansLabel": "Spans",
           "summaryAriaLabel": "Sweep line summary"
         },
+        "tree": {
+          "currentNodeLabel": "Current",
+          "decisionLabel": "Decision",
+          "emptyLabel": "No tree trace available for this step.",
+          "outputLabel": "Output",
+          "progressLabel": "Progress",
+          "queueLabel": "Queue",
+          "stackLabel": "Call stack",
+          "waitingStepLabel": "Waiting for the next traversal step."
+        },
         "voronoi": {
           "activeSiteLabel": "Active site",
           "cellLabel": "Cell",
@@ -3366,53 +3781,6 @@
           "siteEventRailLabel": "Site event rail",
           "summaryAriaLabel": "Voronoi summary",
           "sweepYLabel": "Sweep y"
-        },
-        "grid": {
-          "modeLabel": "Mode",
-          "activeLabel": "Active",
-          "frontierLabel": "Frontier",
-          "visitedLabel": "Visited",
-          "resultLabel": "Result",
-          "sourceLabel": "Source",
-          "targetLabel": "Target",
-          "boardLabel": "Board",
-          "visitOrderLabel": "Visit order",
-          "filledCount": "{{count}} filled",
-          "pathCount": "{{count}} in path",
-          "waitingDecisionLabel": "Waiting for the next grid update.",
-          "notStartedLabel": "not started",
-          "tableEmptyLabel": "No active grid cells yet",
-          "emptyLabel": "No grid trace available for this step.",
-          "columns": {
-            "cell": "Cell",
-            "value": "Value",
-            "status": "Status",
-            "tags": "Tags"
-          },
-          "tagLegend": {
-            "seed": "Seed cell",
-            "goal": "Goal cell",
-            "frontier": "Frontier",
-            "current": "Current cell",
-            "filled": "Filled cell",
-            "closed": "Closed cell",
-            "path": "Final path",
-            "wall": "Wall",
-            "blocked": "Blocked cell",
-            "candidate": "Candidate"
-          },
-          "statuses": {
-            "idle": "idle",
-            "wall": "wall",
-            "source": "source",
-            "goal": "goal",
-            "frontier": "frontier",
-            "current": "current",
-            "filled": "filled",
-            "closed": "closed",
-            "path": "path",
-            "blocked": "blocked"
-          }
         }
       },
       "traits": {
@@ -4175,113 +4543,114 @@
         }
       },
       "visualizations": {
-        "dp": {
-          "emptyLabel": "No DP trace available for this step.",
-          "guideDesc": "Lock onto the active row, column or interval, then use the highlighted chips to understand which subproblems feed the next write.",
-          "guideEyebrow": "DP Guide",
-          "guideTitle": "Read the active state first",
-          "knapsack": {
-            "activeCellLabel": "active cell",
-            "applyCurrentMoveLabel": "Apply the current move",
-            "backtrackPathLabel": "backtrack path",
-            "baseCasesMeta": "row 0 or capacity 0",
-            "baseCasesValue": "Base cases",
-            "baseRowValue": "Base row",
-            "boardLabel": "items × capacity",
-            "branches": {
-              "blockedValue": "blocked",
-              "needPreviousStateNote": "need previous state + item value",
-              "needsWeightNote": "needs weight {{weight}}",
-              "skipLabel": "Skip branch",
-              "skipNote": "reuse dp[{{row}}][{{col}}]",
-              "takeLabel": "Take branch",
-              "takeNote": "read dp[{{row}}][{{col}}] + {{value}}"
-            },
-            "capacityLaneLabel": "Capacity lane",
-            "currentItemLabel": "Current item",
-            "currentPackLabel": "Current pack",
-            "decisionEyebrow": "Decision Lens",
-            "decisionTitle": "Skip vs take",
-            "followActiveRowLabel": "Follow the active row",
-            "guideEyebrow": "Visual Guide",
-            "guideTitle": "Where to look now",
-            "inputShelfEyebrow": "Input Shelf",
-            "inputShelfTitle": "Items feed the rows",
-            "labEyebrow": "Knapsack Lab",
-            "lockCapacityColumnLabel": "Lock the capacity column",
-            "metrics": {
-              "bestValue": "Best value",
-              "packed": "Packed",
-              "table": "Table"
-            },
-            "noWinningBranchLabel": "No winning branch yet.",
-            "outcomeEyebrow": "Outcome",
-            "outcomeTitle": "Backpack status",
-            "packEmptyLabel": "Selected items appear here during backtracking.",
-            "rowLabel": "row {{row}}",
-            "scenarioEyebrow": "Scenario",
-            "sourceCellsLabel": "source cells",
-            "valueShortLabel": "value",
-            "waitingTransitionLabel": "Waiting for the next comparison.",
-            "weightShortLabel": "weight",
-            "workspaceEyebrow": "Workspace",
-            "workspaceTitle": "DP table is the hero"
+        "closestPair": {
+          "action": {
+            "regionAndBest": "{{region}} · best {{best}}"
           },
-          "presetLabEyebrow": "Preset Lab",
-          "scenarioEyebrow": "Scenario",
-          "stageEyebrow": "Stage",
-          "stageTitle": "DP workspace"
+          "phases": {
+            "base": "Base case",
+            "compare": "Check distance",
+            "complete": "Closest pair",
+            "divide": "Divide",
+            "init": "Point field",
+            "merge": "Merge",
+            "sort": "Sort by x and y",
+            "strip": "Build middle strip",
+            "update": "Update best"
+          }
         },
-        "grid": {
-          "decisionFallback": "watch the board evolve step by step",
-          "frontierLabel": "Frontier",
-          "guideEyebrow": "Grid Guide",
-          "guideFallbackDesc": "Watch the active frontier cell and the route it unlocks next.",
-          "guideTitle": "Follow the frontier",
-          "resultFilledLabel": "{{count}} filled",
-          "resultLabel": "Result",
-          "resultPathLabel": "{{count}} in path",
-          "snapshotDesc": "Source, target and wave stats stay separate from the board so the motion on the grid stays readable.",
-          "snapshotEyebrow": "Snapshot",
-          "sourceSubtitles": {
-            "seed": "seed cell",
-            "start": "start"
+        "convexHull": {
+          "action": {
+            "detail": "{{turn}} · cross={{cross}} · hull {{hull}}",
+            "hullOnly": "hull {{hull}}"
           },
-          "stageEyebrow": "Stage",
-          "stageTitle": "Board state",
-          "targetLabel": "Target",
-          "visitedLabel": "Visited"
+          "phases": {
+            "checking": "Cross-product check",
+            "complete": "Hull complete",
+            "init": "Initialize",
+            "initStack": "Prime stack",
+            "pivot": "Pick pivot",
+            "pop": "Pop from stack",
+            "push": "Push onto stack",
+            "sort": "Polar sort"
+          },
+          "turn": {
+            "ccw": "CCW",
+            "cw": "CW"
+          }
         },
-        "matrix": {
-          "emptyLabel": "No matrix trace available for this step.",
-          "guideDesc": "Follow the highlighted rows, columns and pivot cells first. The rest of the matrix is supporting context.",
-          "guideEyebrow": "Matrix Guide",
-          "guideTitle": "Track the active axes",
-          "modeFallback": "Matrix",
-          "phaseFallback": "Initialize",
-          "snapshotDesc": "Current phase, pivot and result stay visible without competing with the board itself.",
-          "snapshotEyebrow": "Snapshot",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Matrix workspace"
+        "delaunay": {
+          "action": {
+            "countOnly": "{{count}} △",
+            "focusAndCount": "{{focus}} · {{count}} △"
+          },
+          "phases": {
+            "circumcircle": "Circumcircle test",
+            "commit": "Commit triangle",
+            "complete": "Mesh complete",
+            "init": "Point field"
+          }
+        },
+        "dsu": {
+          "emptyLabel": "No DSU trace available for this step.",
+          "nodeCount": "{{count}} node(s)",
+          "nodeSubtitle": {
+            "parent": "parent {{label}}",
+            "root": "root node"
+          },
+          "rootBadge": "root {{label}}"
+        },
+        "dsuGraph": {
+          "emptyLabel": "No DSU graph trace available for this step."
+        },
+        "graph": {
+          "clearFocusAriaLabel": "Clear focused route",
+          "focusedRouteLabel": "Focused: {{path}}",
+          "initializeLabel": "Initialize graph",
+          "inspectingLabel": "Inspecting {{node}}",
+          "scanningLabel": "Scanning"
+        },
+        "halfPlane": {
+          "phases": {
+            "clip": "Clip region",
+            "complete": "Intersection complete",
+            "constraint": "Apply constraint",
+            "infeasible": "No feasible region",
+            "init": "Starting region"
+          }
+        },
+        "lineIntersection": {
+          "phases": {
+            "activate": "Activate endpoint",
+            "complete": "Sweep complete",
+            "init": "Sweep setup",
+            "intersection": "Crossing found",
+            "retire": "Retire endpoint"
+          }
+        },
+        "minkowskiSum": {
+          "action": {
+            "activeAndProgress": "{{active}} · {{merged}}/{{total}} edges",
+            "progress": "{{merged}}/{{total}} edges"
+          },
+          "overview": {
+            "inputALabel": "Input A",
+            "inputBLabel": "Input B",
+            "obstacleLabel": "Obstacle",
+            "reflectedLabel": "Reflected",
+            "robotLabel": "Robot"
+          },
+          "phases": {
+            "complete": "C-space hull",
+            "init": "Input shapes",
+            "merge": "Merge edges",
+            "reflect": "Reflect robot",
+            "seed": "Seed vertex"
+          }
         },
         "network": {
-          "activeRouteLabel": "Active Route",
-          "decisionFallback": "Waiting for next network event.",
           "emptyLabel": "No layered network trace available for this step.",
-          "focusFallback": "Focus",
-          "focusItemsEmpty": "none yet",
-          "frontierFallback": "Frontier",
-          "guideDesc": "Status, decision and focus chips tell you whether the current pass is searching, augmenting or locking a path.",
-          "guideEyebrow": "Network Guide",
-          "guideTitle": "Track the live route",
           "modeFallback": "Layered network",
-          "phaseFallback": "Initialize",
-          "queueEmptyLabel": "empty",
-          "queueFallback": "Queue",
-          "snapshotDesc": "Route pressure, queue preview and result stay readable without covering the actual network.",
-          "snapshotEyebrow": "Snapshot",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Network arena",
           "statusFallback": "Awaiting step"
         },
         "search": {
@@ -4289,101 +4658,44 @@
             "first": "first",
             "firstLast": "first + last",
             "last": "last"
-          },
-          "decisionFallback": "watch the signal sweep the array",
-          "guideEyebrow": "Search Guide",
-          "guideFallbackDesc": "Track the active probe before you scan the rest of the array.",
-          "guideTitle": "Watch the probe",
-          "hitRange": {
-            "multiple": "indices {{start}}..{{end}}",
-            "none": "no confirmed match",
-            "single": "index {{index}}"
-          },
-          "hitsLabel": "Hits",
-          "probeLabel": "Probe",
-          "snapshotDesc": "Window bounds, probe position and confirmed hits stay in one compact overview.",
-          "snapshotEyebrow": "Snapshot",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Array under inspection",
-          "targetLabel": "Target",
-          "windowLabel": "Window"
+          }
         },
         "string": {
-          "computationEmptyNote": "This step is a pure state transition with no extra formula to explain.",
-          "computationLabel": "Computation",
           "emptyLabel": "No String Lab trace available for this step.",
-          "guideEyebrow": "String Guide",
-          "labEyebrow": "String Lab",
           "labels": {
             "combined": "Combined",
             "input": "Input",
+            "lcp": "LCP",
+            "nodes": "Nodes",
+            "palindromes": "Palindromes",
             "pattern": "Pattern",
+            "patterns": "Patterns",
             "source": "Source",
+            "suffixes": "Suffixes",
             "text": "Text"
           },
-          "presetEyebrow": "Preset",
           "rle": {
             "waitingForFirstRun": "Waiting for first run…"
-          },
-          "stageEyebrow": "Stage"
-        },
-        "dsu": {
-          "guideEyebrow": "DSU Guide",
-          "guideTitle": "Track the active merge",
-          "guideDesc": "Watch the current roots, then read the rail to see whether the step is finding, compressing or merging.",
-          "modeLabel": "Mode",
-          "componentsLabel": "Components",
-          "activeLabel": "Active",
-          "resultLabel": "Result",
-          "railLabel": "Operation rail",
-          "awaitingDecisionLabel": "Waiting for the next DSU decision.",
-          "snapshotEyebrow": "Snapshot",
-          "snapshotTitle": "Parent map",
-          "snapshotDesc": "Parent links stay visible so you can see compression and unions without losing the forest overview.",
-          "parentMapLabel": "Parent map",
-          "parentMapTitle": "Node -> parent",
-          "rootLabel": "root",
-          "rankSizeValue": "rank {{rank}} · size {{size}}",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Set forest",
-          "setForestLabel": "Set forest",
-          "rootBadge": "root {{label}}",
-          "nodeCount": "{{count}} node(s)",
-          "emptyLabel": "No DSU trace available for this step.",
-          "modeHints": {
-            "unionFind": "Path compression + union by rank",
-            "kruskal": "Union-Find inside Kruskal"
-          },
-          "edgeLabels": {
-            "find": "find {{label}}",
-            "union": "{{from}} <-> {{to}}"
-          },
-          "nodeSubtitle": {
-            "root": "root node",
-            "parent": "parent {{label}}"
-          },
-          "edgeStatuses": {
-            "pending": "pending",
-            "active": "active",
-            "accepted": "accepted",
-            "rejected": "rejected"
           }
         },
-        "dsuGraph": {
-          "guideEyebrow": "DSU Graph",
-          "unionFindTitle": "Follow parent pointers",
-          "kruskalTitle": "Grow the MST forest",
-          "modeLabel": "Mode",
-          "componentsLabel": "Components",
-          "activeLabel": "Active",
-          "resultLabel": "Result",
-          "snapshotEyebrow": "Snapshot",
-          "unionFindSnapshotDesc": "Parent arrows show how path compression shortens chains toward each representative.",
-          "kruskalSnapshotDesc": "Accepted edges stay in the forest while rejected ones reveal where a cycle would close.",
-          "stageEyebrow": "Stage",
-          "unionFindStageTitle": "Representative forest",
-          "kruskalStageTitle": "Edge scan",
-          "emptyLabel": "No DSU graph trace available for this step."
+        "sweepLine": {
+          "phases": {
+            "complete": "Area computed",
+            "event": "Edge event",
+            "init": "Scanner ready"
+          }
+        },
+        "voronoi": {
+          "action": {
+            "closedOnly": "{{closed}} closed",
+            "focusAndClosed": "{{focus}} · {{closed}} closed"
+          },
+          "phases": {
+            "cell": "Freeze cell",
+            "complete": "Diagram complete",
+            "init": "Site field",
+            "site": "Site event"
+          }
         }
       }
     },

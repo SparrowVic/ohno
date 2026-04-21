@@ -17,6 +17,8 @@ import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { MatrixCell, MatrixTraceState, MatrixTraceTag } from '../../models/matrix';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { TraceHint } from '../trace-hint/trace-hint';
@@ -115,7 +117,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-matrix-trace-panel',
-  imports: [Table, TraceHint, TranslocoPipe],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './matrix-trace-panel.html',
   styleUrl: './matrix-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import {
   GeometryCoord,
   GeometryPolygonRegion,
@@ -7,6 +10,10 @@ import {
   isMinkowskiSumState,
 } from '../../models/geometry';
 import { SortStep } from '../../models/sort-step';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
+
+const I18N = I18N_KEY.features.algorithms.visualizations.minkowskiSum;
 
 interface Bounds {
   readonly minX: number;
@@ -17,12 +24,13 @@ interface Bounds {
 
 @Component({
   selector: 'app-minkowski-sum-visualization',
-  imports: [],
+  imports: [TranslocoPipe, VizHeader, VizPanel],
   templateUrl: './minkowski-sum-visualization.html',
   styleUrl: './minkowski-sum-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MinkowskiSumVisualization {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -37,16 +45,35 @@ export class MinkowskiSumVisualization {
   readonly reflected = computed(() => this.findPolygon('reflected'));
   readonly result = computed(() => this.findPolygon('result') ?? this.findPolygon('result-preview'));
 
-  phaseLabel(phase: string): string {
+  readonly phaseLabel = computed<TranslatableText>(() => {
+    const phase = this.geoState()?.phase;
     switch (phase) {
-      case 'init': return 'Input Shapes';
-      case 'reflect': return 'Robot Reflection';
-      case 'seed': return 'Seed Vertex';
-      case 'merge': return 'Edge Merge';
-      case 'complete': return 'C-Space Hull';
-      default: return phase;
+      case 'init': return I18N.phases.init;
+      case 'reflect': return I18N.phases.reflect;
+      case 'seed': return I18N.phases.seed;
+      case 'merge': return I18N.phases.merge;
+      case 'complete': return I18N.phases.complete;
+      default: return '';
     }
-  }
+  });
+
+  readonly actionText = computed<TranslatableText>(() => {
+    const geo = this.geoState();
+    if (!geo) return '';
+    const merged = geo.mergedEdgeCount;
+    const total = geo.totalEdges;
+    return geo.activeSource
+      ? i18nText(I18N.action.activeAndProgress, { active: geo.activeSource, merged, total })
+      : i18nText(I18N.action.progress, { merged, total });
+  });
+
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const phase = this.geoState()?.phase;
+    if (phase === 'complete') return 'sorted';
+    if (phase === 'merge') return 'swap';
+    if (phase === 'reflect' || phase === 'seed') return 'compare';
+    return 'default';
+  });
 
   galleryPoints(region: GeometryPolygonRegion | undefined): string {
     return this.projectPoints(region?.vertices ?? []);
@@ -67,10 +94,12 @@ export class MinkowskiSumVisualization {
 
   private projectPoints(vertices: readonly GeometryCoord[], padding = 12): string {
     const bounds = this.boundsOf(vertices);
-    return vertices.map((vertex) => {
-      const projected = this.project(vertex, bounds, padding);
-      return `${projected.x},${projected.y}`;
-    }).join(' ');
+    return vertices
+      .map((vertex) => {
+        const projected = this.project(vertex, bounds, padding);
+        return `${projected.x},${projected.y}`;
+      })
+      .join(' ');
   }
 
   private boundsOf(vertices: readonly GeometryCoord[]): Bounds {
@@ -100,10 +129,17 @@ export class MinkowskiSumVisualization {
     return { minX, maxX, minY, maxY };
   }
 
-  private project(vertex: GeometryCoord, bounds: Bounds, padding: number): { readonly x: number; readonly y: number } {
+  private project(
+    vertex: GeometryCoord,
+    bounds: Bounds,
+    padding: number,
+  ): { readonly x: number; readonly y: number } {
     const width = 100 - padding * 2;
     const height = 100 - padding * 2;
-    const scale = Math.min(width / (bounds.maxX - bounds.minX), height / (bounds.maxY - bounds.minY));
+    const scale = Math.min(
+      width / (bounds.maxX - bounds.minX),
+      height / (bounds.maxY - bounds.minY),
+    );
     const offsetX = (100 - (bounds.maxX - bounds.minX) * scale) / 2;
     const offsetY = (100 - (bounds.maxY - bounds.minY) * scale) / 2;
 

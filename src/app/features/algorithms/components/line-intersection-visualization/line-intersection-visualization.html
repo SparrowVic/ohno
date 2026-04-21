@@ -1,72 +1,9 @@
-<div class="liv viz-flow">
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+
   @if (geoState(); as geo) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Sweep Guide</span>
-        <h3 class="viz-flow__title">Read the active order</h3>
-        <p class="viz-flow__desc">The vertical sweep line only makes sense together with the live segment order beside it.</p>
-      </div>
-
-      <div class="liv__footer">
-        <span class="liv__footer-key">Active order</span>
-        <div class="liv__order">
-          @if (geo.activeOrder.length === 0) {
-            <span class="liv__order-empty">no segments on the sweep line</span>
-          }
-          @for (label of geo.activeOrder; track label) {
-            <span class="liv__order-chip">{{ label }}</span>
-          }
-        </div>
-      </div>
-    </aside>
-
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">{{ phaseLabel(geo.phase) }}</h3>
-        <p class="viz-flow__desc">Sweep position, current event and queued chips stay together above the scene.</p>
-      </div>
-
-      <div class="liv__hud">
-        <div class="liv__card liv__card--phase">
-          <span class="liv__card-key">Phase</span>
-          <span class="liv__card-val">{{ phaseLabel(geo.phase) }}</span>
-        </div>
-        <div class="liv__card">
-          <span class="liv__card-key">Sweep x</span>
-          <span class="liv__card-val">{{ geo.sweepX !== null ? geo.sweepX.toFixed(1) : 'ready' }}</span>
-        </div>
-        <div class="liv__card">
-          <span class="liv__card-key">Found</span>
-          <span class="liv__card-val liv__card-val--accent">{{ geo.foundCount }}</span>
-        </div>
-        <div class="liv__card">
-          <span class="liv__card-key">Event</span>
-          <span class="liv__card-val">{{ geo.currentEventLabel }}</span>
-        </div>
-      </div>
-
-      <div class="liv__events">
-        @for (event of events(); track event.id) {
-          <span class="liv__event liv__event--{{ event.tone }} liv__event--{{ event.kind }}">
-            {{ event.label }}
-          </span>
-        }
-      </div>
-    </section>
-
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Intersection canvas</h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--warm">{{ geo.currentEventLabel }}</span>
-      </div>
-
-      <div class="viz-flow__stage-body">
-        <div class="liv__stage">
-          <svg class="liv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="liv__stage">
+      <svg class="liv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="liv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
             <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
@@ -94,9 +31,7 @@
             <circle class="liv__hit-core" r="1.5" />
           </g>
         }
-          </svg>
-        </div>
-      </div>
-    </section>
+      </svg>
+    </div>
   }
-</div>
+</app-viz-panel>

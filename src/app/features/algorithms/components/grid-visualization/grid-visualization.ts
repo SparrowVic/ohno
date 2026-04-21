@@ -4,17 +4,14 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  computed,
   effect,
-  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
@@ -22,19 +19,17 @@ import {
   createMotionProfile,
   pulseElement,
 } from '../../utils/visualization-motion/visualization-motion';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
 
 @Component({
   selector: 'app-grid-visualization',
-  imports: [I18nTextPipe, TranslocoPipe],
+  imports: [VizHeader, VizPanel],
   templateUrl: './grid-visualization.html',
   styleUrl: './grid-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GridVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
-
-  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -43,6 +38,33 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
 
   private initialized = false;
   private lastStep: SortStep | null = null;
+
+  readonly state = computed<GridTraceState | null>(() => this.step()?.grid ?? null);
+
+  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+
+  readonly actionText = computed<TranslatableText>(() => {
+    const state = this.state();
+    if (!state) return '';
+    return state.decision ?? state.statusLabel ?? '';
+  });
+
+  /** Tone derived from cell statuses:
+   *    - path  → sorted (lime, route locked in)
+   *    - current → swap (pink, acting now)
+   *    - frontier → compare (cyan, attending)
+   *    - filled → sorted (the flood-fill variant's "done")
+   *    - idle → default */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.state();
+    if (!state) return 'default';
+    const cells = state.cells;
+    if (cells.some((cell) => cell.status === 'path')) return 'sorted';
+    if (cells.some((cell) => cell.status === 'current')) return 'swap';
+    if (cells.some((cell) => cell.status === 'filled')) return 'sorted';
+    if (cells.some((cell) => cell.status === 'frontier')) return 'compare';
+    return 'default';
+  });
 
   constructor() {
     effect(() => {
@@ -90,37 +112,16 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
   }
 
   gridState(): GridTraceState | null {
-    return this.step()?.grid ?? null;
+    return this.state();
   }
 
   boardColumns(): string {
-    const cols = this.gridState()?.cols ?? 1;
+    const cols = this.state()?.cols ?? 1;
     return `repeat(${cols}, minmax(0, 1fr))`;
   }
 
   cellClass(status: string): string {
     return `grid-cell grid-cell--${status}`;
-  }
-
-  sourceSubtitleKey(): I18nKey {
-    const state = this.gridState();
-    if (!state || state.mode !== 'flood-fill') {
-      return I18N_KEY.features.algorithms.visualizations.grid.sourceSubtitles.start;
-    }
-    return I18N_KEY.features.algorithms.visualizations.grid.sourceSubtitles.seed;
-  }
-
-  resultLabel(): string {
-    const state = this.gridState();
-    if (!state)
-      return this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel);
-    return state.mode === 'flood-fill'
-      ? this.translate(I18N_KEY.features.algorithms.visualizations.grid.resultFilledLabel, {
-          count: state.resultCount,
-        })
-      : this.translate(I18N_KEY.features.algorithms.visualizations.grid.resultPathLabel, {
-          count: state.resultCount,
-        });
   }
 
   cellCoreLabel(cell: GridTraceState['cells'][number]): string {
@@ -196,10 +197,5 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
 
   private findCell(id: string): HTMLElement | null {
     return this.containerRef().nativeElement.querySelector(`[data-cell-id="${id}"]`);
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
   }
 }

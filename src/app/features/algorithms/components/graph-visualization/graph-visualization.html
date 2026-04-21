@@ -1,114 +1,19 @@
-<section class="graph-shell viz-flow">
-  <aside class="viz-flow__guide">
-    <div class="viz-flow__section-head">
-      <span class="viz-flow__eyebrow">Graph Guide</span>
-      <h3 class="viz-flow__title">Follow the active frontier</h3>
-      <p class="viz-flow__desc">Keep your eyes on the current node, active edge and focus hint. The rest of the graph gives context.</p>
-    </div>
-
-    <div class="graph-shell__focus">
-      <div class="focus-pill focus-pill--guide focus-pill--view">
-        <span class="focus-pill__label">View</span>
-        <span class="focus-pill__value">{{ structureLabel() }}</span>
-      </div>
-      <div class="focus-pill focus-pill--phase" [class.focus-pill--changed]="isCardChanged('phase')">
-        <span class="focus-pill__label">Phase</span>
-        <span class="focus-pill__value">{{ phaseLabel() }}</span>
-      </div>
-      <div class="focus-pill focus-pill--edge" [class.focus-pill--changed]="isCardChanged('edge')">
-        <span class="focus-pill__label">Edge</span>
-        <span class="focus-pill__value">{{ activeEdgeLabel() }}</span>
-      </div>
-      <div
-        class="focus-pill focus-pill--detail"
-        [class.focus-pill--changed]="isCardChanged('detail')"
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    @if (focusChipVisible()) {
+      <button
+        class="graph-focus-chip"
+        type="button"
+        (click)="clearFocus()"
+        [attr.aria-label]="I18N.clearFocusAriaLabel | transloco"
       >
-        <span class="focus-pill__label">{{ detailPillLabel() }}</span>
-        <span class="focus-pill__value">{{ detailPillValue() }}</span>
-        <span class="focus-pill__hint">{{ structureHint() }}</span>
-      </div>
-    </div>
-  </aside>
+        <span class="graph-focus-chip__text">{{ focusedPathText() }}</span>
+        <span class="graph-focus-chip__close" aria-hidden="true">×</span>
+      </button>
+    }
+  </app-viz-header>
 
-  <section class="viz-flow__brief">
-    <div class="viz-flow__section-head">
-      <span class="viz-flow__eyebrow">Snapshot</span>
-      <h3 class="viz-flow__title">{{ focusCardLabel() }}</h3>
-      <p class="viz-flow__desc">Source, frontier and completion stay in a compact strip above the graph stage.</p>
-    </div>
-
-    <div class="graph-shell__hud">
-    <div
-      class="hud-card hud-card--compact hud-card--source"
-      [class.hud-card--changed]="isCardChanged('source')"
-    >
-      <span class="hud-card__label">{{ sourceCardLabel() }}</span>
-      <span class="hud-card__value">{{ sourceLabel() }}</span>
-    </div>
-    <div class="hud-card hud-card--compact hud-card--focus">
-      <span class="hud-card__label">{{ focusCardLabel() }}</span>
-      <span class="hud-card__value">{{ focusCardValue() }}</span>
-      <span class="hud-card__hint">{{ focusCardHint() }}</span>
-    </div>
-    <div
-      class="hud-card hud-card--compact hud-card--current"
-      [class.hud-card--changed]="isCardChanged('current')"
-    >
-      <span class="hud-card__label">Current</span>
-      <span class="hud-card__value">{{ currentLabel() }}</span>
-    </div>
-    <div
-      class="hud-card hud-card--compact hud-card--frontier"
-      [class.hud-card--changed]="isCardChanged('queue')"
-    >
-      <span class="hud-card__label">{{ frontierLabel() }}</span>
-      <div class="hud-card__pair">
-        <div class="hud-card__mini">
-          <span class="hud-card__value">{{ frontierCount() }}</span>
-          <span class="hud-card__hint">active</span>
-        </div>
-        <div class="hud-card__mini hud-card__mini--secondary">
-          <span class="hud-card__meta">{{ frontierHeadLabel() }}</span>
-          <span class="hud-card__hint">{{ queueLead() }}</span>
-        </div>
-      </div>
-    </div>
-    <div
-      class="hud-card hud-card--compact hud-card--progress"
-      [class.hud-card--changed]="isCardChanged('settled')"
-    >
-      <span class="hud-card__label">Progress</span>
-      <div class="hud-card__pair">
-        <div class="hud-card__mini">
-          <span class="hud-card__value">{{ settledCount() }}</span>
-          <span class="hud-card__hint">{{ completionLabel() }}</span>
-        </div>
-        <div class="hud-card__mini">
-          <span class="hud-card__value">
-            @if (routeMode()) {
-              {{ treeRouteCount() }}
-            } @else {
-              —
-            }
-          </span>
-          <span class="hud-card__hint">tree routes</span>
-        </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="viz-flow__stage">
-    <div class="viz-flow__stage-head">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Stage</span>
-        <h3 class="viz-flow__title">Graph arena</h3>
-      </div>
-      <span class="viz-flow__pill viz-flow__pill--warm">{{ currentLabel() }}</span>
-    </div>
-
-    <div class="viz-flow__stage-body">
-      <svg class="graph" viewBox="0 0 960 620" preserveAspectRatio="xMidYMid meet">
+  <svg class="graph" viewBox="0 0 960 620" preserveAspectRatio="xMidYMid meet">
     <defs>
       <linearGradient id="graphEdgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="var(--viz-route)" />
@@ -194,7 +99,5 @@
         }
       </g>
     }
-      </svg>
-    </div>
-  </section>
-</section>
+  </svg>
+</app-viz-panel>

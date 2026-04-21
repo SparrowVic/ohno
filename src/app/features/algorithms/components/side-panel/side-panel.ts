@@ -44,6 +44,7 @@ import { NetworkTraceState } from '../../models/network';
 import { SearchTraceState } from '../../models/search';
 import { SortTraceState } from '../../models/sort-trace';
 import { StringTraceState } from '../../models/string';
+import { TreeTraversalTraceState } from '../../models/tree';
 import { ClosestPairTracePanel } from '../closest-pair-trace-panel/closest-pair-trace-panel';
 import { CodePanel } from '../code-panel/code-panel';
 import { DelaunayTracePanel } from '../delaunay-trace-panel/delaunay-trace-panel';
@@ -63,6 +64,7 @@ import { SearchTracePanel } from '../search-trace-panel/search-trace-panel';
 import { SortTracePanel } from '../sort-trace-panel/sort-trace-panel';
 import { StringTracePanel } from '../string-trace-panel/string-trace-panel';
 import { SweepLineTracePanel } from '../sweep-line-trace-panel/sweep-line-trace-panel';
+import { TreeTracePanel } from '../tree-trace-panel/tree-trace-panel';
 import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
@@ -102,6 +104,7 @@ const MAX_WIDTH = 680;
     StringTracePanel,
     SweepLineTracePanel,
     TranslocoPipe,
+    TreeTracePanel,
     NgTemplateOutlet,
     VoronoiTracePanel,
   ],
@@ -126,6 +129,7 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly searchState = input<SearchTraceState | null>(null);
   readonly sortState = input<SortTraceState | null>(null);
   readonly stringState = input<StringTraceState | null>(null);
+  readonly treeState = input<TreeTraversalTraceState | null>(null);
   readonly geometryState = input<GeometryStepState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
   readonly graphFocusPathLabel = input<string | null>(null);
@@ -143,7 +147,8 @@ export class SidePanel implements OnInit, OnDestroy {
       this.searchState() ||
       this.sortState() ||
       this.geometryState() ||
-      this.stringState()
+      this.stringState() ||
+      this.treeState()
         ? (['trace', ...BASE_SIDE_TAB_IDS] as const)
         : BASE_SIDE_TAB_IDS;
 

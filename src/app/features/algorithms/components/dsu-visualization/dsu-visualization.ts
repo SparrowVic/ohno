@@ -13,18 +13,20 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
-import { DsuEdgeTrace, DsuGroupTrace, DsuNodeTrace, DsuTraceState } from '../../models/dsu';
+import { DsuGroupTrace, DsuNodeTrace, DsuTraceState } from '../../models/dsu';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
 
 const I18N = I18N_KEY.features.algorithms.visualizations.dsu;
 
 @Component({
   selector: 'app-dsu-visualization',
-  imports: [I18nTextPipe, TranslocoPipe],
+  imports: [I18nTextPipe, TranslocoPipe, VizHeader, VizPanel],
   templateUrl: './dsu-visualization.html',
   styleUrl: './dsu-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,11 +43,40 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
   private lastStep: SortStep | null = null;
 
   readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
-  readonly activeLabel = computed(() => this.state()?.activePairLabel ?? '—');
-  readonly railLabel = computed(() => this.state()?.operationsLabel ?? I18N.railLabel);
-  readonly modeHint = computed(() => {
+
+  /** Algorithm tag — "Union-Find" or "Kruskal". Stays fixed for the
+   *  run; the header's rail tone adds the step-level motion. */
+  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+
+  /** Action sentence. `decision` is the richest per-step fact; we
+   *  fall back to the generic status label when nothing meaningful
+   *  is decided yet. */
+  readonly actionText = computed<TranslatableText>(() => {
     const state = this.state();
-    return state?.mode === 'kruskal' ? I18N.modeHints.kruskal : I18N.modeHints.unionFind;
+    if (!state) return '';
+    return state.decision ?? state.statusLabel ?? '';
+  });
+
+  /** Tone derived from edge/node statuses — mirrors the dsu-graph
+   *  viz convention so both DSU views read as the same family. */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.state();
+    if (!state) return 'default';
+
+    const edges = state.edges;
+    if (edges.some((edge) => edge.status === 'accepted')) return 'sorted';
+    if (edges.some((edge) => edge.status === 'active')) return 'swap';
+
+    const nodes = state.nodes;
+    if (nodes.some((node) => node.status === 'merged' || node.status === 'compressed')) {
+      return 'sorted';
+    }
+    if (nodes.some((node) => node.status === 'active' || node.status === 'query')) {
+      return 'compare';
+    }
+
+    if (edges.some((edge) => edge.status === 'rejected')) return 'compare';
+    return 'default';
   });
 
   constructor() {
@@ -107,38 +138,6 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
       .sort((left, right) => left.label.localeCompare(right.label));
   }
 
-  nodeRows(): readonly DsuNodeTrace[] {
-    return [...(this.state()?.nodes ?? [])].sort((left, right) => left.label.localeCompare(right.label));
-  }
-
-  edgeRows(): readonly DsuEdgeTrace[] {
-    return this.state()?.edges ?? [];
-  }
-
-  edgeLabel(edge: DsuEdgeTrace): TranslatableText {
-    const state = this.state();
-    if (state?.mode === 'union-find') {
-      if (edge.toLabel === 'find') {
-        return i18nText(I18N.edgeLabels.find, { label: edge.fromLabel });
-      }
-      return i18nText(I18N.edgeLabels.union, { from: edge.fromLabel, to: edge.toLabel });
-    }
-    return `${edge.fromLabel}-${edge.toLabel}`;
-  }
-
-  edgeStatus(edge: DsuEdgeTrace): TranslatableText {
-    switch (edge.status) {
-      case 'pending':
-        return I18N.edgeStatuses.pending;
-      case 'active':
-        return I18N.edgeStatuses.active;
-      case 'accepted':
-        return I18N.edgeStatuses.accepted;
-      case 'rejected':
-        return I18N.edgeStatuses.rejected;
-    }
-  }
-
   nodeSubtitle(node: DsuNodeTrace): TranslatableText {
     if (node.parentId === node.id) return I18N.nodeSubtitle.root;
     return i18nText(I18N.nodeSubtitle.parent, { label: node.parentLabel });
@@ -152,7 +151,9 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
     const motion = createMotionProfile(this.speed());
 
     if (current.activePairLabel && current.activePairLabel !== previous?.activePairLabel) {
-      for (const node of current.nodes.filter((item) => item.status === 'active' || item.status === 'query')) {
+      for (const node of current.nodes.filter(
+        (item) => item.status === 'active' || item.status === 'query',
+      )) {
         const el = this.findElement(`[data-node-id="${node.id}"]`);
         if (!el) continue;
         pulseElement(el, {
@@ -167,12 +168,14 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
       }
     }
 
-    const previousStatuses = new Map(previous?.nodes.map((node) => [node.id, node.status]) ?? []);
+    const previousStatuses = new Map(
+      previous?.nodes.map((node) => [node.id, node.status]) ?? [],
+    );
     for (const node of current.nodes) {
       const prior = previousStatuses.get(node.id);
       if (!prior || prior === node.status) continue;
       if (node.status !== 'merged' && node.status !== 'compressed') continue;
-      const el = this.findElement(`[data-parent-id="${node.id}"]`);
+      const el = this.findElement(`[data-node-id="${node.id}"]`);
       if (!el) continue;
       pulseElement(el, {
         duration: motion.settleMs,
@@ -180,25 +183,6 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
         filter: [
           'drop-shadow(0 0 0 transparent)',
           'drop-shadow(0 0 7px rgba(62,207,142,0.14))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-    }
-
-    const previousEdges = new Map(previous?.edges.map((edge) => [edge.id, edge.status]) ?? []);
-    for (const edge of current.edges) {
-      const prior = previousEdges.get(edge.id);
-      if (!prior || prior === edge.status) continue;
-      const el = this.findElement(`[data-edge-id="${edge.id}"]`);
-      if (!el) continue;
-      pulseElement(el, {
-        duration: motion.compareMs,
-        scale: 1.015,
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          edge.status === 'accepted'
-            ? 'drop-shadow(0 0 8px rgba(62,207,142,0.14))'
-            : 'drop-shadow(0 0 8px rgba(244,63,94,0.14))',
           'drop-shadow(0 0 0 transparent)',
         ],
       });

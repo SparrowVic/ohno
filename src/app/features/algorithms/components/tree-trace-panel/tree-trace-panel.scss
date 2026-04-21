@@ -1,0 +1,138 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.trace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  container-type: inline-size;
+  gap: 10px;
+}
+
+.trace__header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Facts — 4 equal cells (mode, phase, current, progress). */
+.trace__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  --segmented-panel-section-gap: 7px;
+  --segmented-panel-section-padding: 11px 12px 12px;
+}
+
+.trace__facts app-segmented-panel-section {
+  position: relative;
+}
+
+.trace__facts app-segmented-panel-section:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Calc — decision card with the live computation expression + note. */
+.trace__calc {
+  display: grid;
+  grid-template-columns: 1fr;
+  --segmented-panel-section-padding: 11px 12px 12px;
+}
+
+.trace__calc-expression {
+  display: block;
+  margin-top: 6px;
+  min-height: 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.trace__calc-note {
+  margin: 4px 0 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* Streams — stack (or queue) + output tape. */
+.trace__streams {
+  display: grid;
+  grid-template-columns: 1fr;
+  --segmented-panel-section-padding: 10px 12px 11px;
+}
+
+.trace__stream-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.trace__stream-chip {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgb(var(--viz-route-rgb) / 0.14);
+  color: var(--viz-route-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.trace__stream-chip--active {
+  background: rgb(var(--chrome-accent-warm-rgb) / 0.2);
+  color: var(--chrome-accent-warm);
+  box-shadow: inset 0 0 0 1px rgb(var(--chrome-accent-warm-rgb) / 0.45);
+}
+
+.trace__stream-chip--done {
+  background: rgb(var(--accent-rgb) / 0.16);
+  color: var(--accent-strong);
+}
+
+.trace__stream-empty {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.trace__empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.trace__empty-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--viz-warning-rgb) / 0.5);
+  box-shadow: 0 0 8px rgb(var(--viz-warning-rgb) / 0.3);
+}
+
+@container (max-width: 560px) {
+  .trace__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trace__facts app-segmented-panel-section:not(:first-child)::before {
+    display: none;
+  }
+}

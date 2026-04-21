@@ -18,6 +18,8 @@ import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { NetworkTraceRow, NetworkTraceState, NetworkTraceTag } from '../../models/network';
+import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
+import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { TraceHint } from '../trace-hint/trace-hint';
@@ -98,7 +100,7 @@ const TAG_LEGEND: readonly NetworkTagLegendItem[] = [
 
 @Component({
   selector: 'app-network-trace-panel',
-  imports: [Table, TraceHint, TranslocoPipe],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './network-trace-panel.html',
   styleUrl: './network-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

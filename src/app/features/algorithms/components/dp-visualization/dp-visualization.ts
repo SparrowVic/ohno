@@ -13,46 +13,16 @@ import {
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
-import { isI18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { DpCell, DpPresetOption, DpTraceState } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
-
-interface KnapsackItemCard {
-  readonly row: number;
-  readonly label: string;
-  readonly weight: number | null;
-  readonly value: number | null;
-  readonly metaLabel: string | null;
-  readonly isActive: boolean;
-  readonly isPacked: boolean;
-}
-
-interface CapacityMarker {
-  readonly col: number;
-  readonly label: string;
-  readonly isActive: boolean;
-  readonly isBase: boolean;
-}
-
-interface KnapsackMetric {
-  readonly label: string;
-  readonly value: TranslatableText;
-  readonly tone: 'accent' | 'info' | 'success' | 'warning';
-}
-
-interface KnapsackBranch {
-  readonly kind: 'skip' | 'take';
-  readonly label: I18nKey;
-  readonly value: string;
-  readonly note: I18nKey;
-  readonly noteParams?: Record<string, string | number | undefined>;
-  readonly status: 'available' | 'winner' | 'blocked';
-}
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
+import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
 
 const FOCUS_CELL_STATUSES = new Set<DpCell['status']>([
   'active',
@@ -63,15 +33,37 @@ const FOCUS_CELL_STATUSES = new Set<DpCell['status']>([
   'match',
 ]);
 
+/** Knapsack item card for the item shelf — extracted from the row
+ *  header so the UI can show weight / value alongside the label and
+ *  highlight whichever row is currently being evaluated. */
+interface KnapsackItemCard {
+  readonly row: number;
+  readonly label: string;
+  readonly weight: number | null;
+  readonly value: number | null;
+  readonly metaLabel: string | null;
+  readonly isActive: boolean;
+  readonly isPacked: boolean;
+}
+
+/** Capacity marker sitting on the ruler strip above the board. One
+ *  per column — base (w=0) gets a distinct badge, the active column
+ *  pulses to match the current focus cell. */
+interface CapacityMarker {
+  readonly col: number;
+  readonly label: string;
+  readonly isActive: boolean;
+  readonly isBase: boolean;
+}
+
 @Component({
   selector: 'app-dp-visualization',
-  imports: [I18nTextPipe, TranslocoPipe],
+  imports: [I18nTextPipe, TranslocoPipe, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './dp-visualization.html',
   styleUrl: './dp-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  protected readonly I18N_KEY = I18N_KEY;
   protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
@@ -86,36 +78,35 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
   private lastStep: SortStep | null = null;
 
   readonly state = computed<DpTraceState | null>(() => this.step()?.dp ?? null);
-  readonly isKnapsack = computed(() => this.state()?.mode === 'knapsack-01');
-  readonly activeLabel = computed(() => this.state()?.activeLabel ?? '—');
-  readonly pathLabel = computed(() => this.state()?.pathLabel ?? '—');
-  readonly activeCell = computed<DpCell | null>(() => findFocusCell(this.state()));
-  readonly activeItemCard = computed<KnapsackItemCard | null>(() => {
-    const state = this.state();
-    const active = this.activeCell();
-    if (!state || state.mode !== 'knapsack-01' || !active || active.row === 0) {
-      return null;
-    }
 
-    const header = state.rowHeaders[active.row] ?? null;
-    const stats = parseItemStats(header?.metaLabel ?? null);
-    return {
-      row: active.row,
-      label: header?.label ?? `item ${active.row}`,
-      weight: stats.weight,
-      value: stats.value,
-      metaLabel: header?.metaLabel ?? null,
-      isActive: true,
-      isPacked: header?.status === 'accent',
-    };
+  /** True when the current DP instance is the 0/1 knapsack. Drives
+   *  the item-shelf + capacity-ruler strip above the board — the two
+   *  axes-as-entities that make knapsack's "take vs skip" decision
+   *  readable at a glance, rather than buried in header labels. */
+  readonly isKnapsack = computed(() => this.state()?.mode === 'knapsack-01');
+
+  /** The cell the algorithm is currently deciding on. Falls back to
+   *  any focus-class status so the item shelf / ruler highlight the
+   *  right row + column even when the tag hasn't been set yet. */
+  readonly activeCell = computed<DpCell | null>(() => {
+    const state = this.state();
+    if (!state) return null;
+    return (
+      state.cells.find((cell) => cell.tags.includes('active')) ??
+      state.cells.find((cell) => FOCUS_CELL_STATUSES.has(cell.status)) ??
+      null
+    );
   });
+
+  /** Item cards — one per data row (row 0 is the w=0 base and is
+   *  excluded). We parse `w{n} · v{n}` out of the row header's meta
+   *  label so the card can split weight from value into separate
+   *  badges; if the generator format ever changes the parse returns
+   *  nulls and the UI falls back to '—'. */
   readonly itemCards = computed<readonly KnapsackItemCard[]>(() => {
     const state = this.state();
     const active = this.activeCell();
-    if (!state || state.mode !== 'knapsack-01') {
-      return [];
-    }
-
+    if (!state || state.mode !== 'knapsack-01') return [];
     return state.rowHeaders.slice(1).map((header, index) => {
       const stats = parseItemStats(header.metaLabel);
       const row = index + 1;
@@ -130,13 +121,14 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
       };
     });
   });
+
+  /** Capacity markers — one per column header. The active column
+   *  matches the current decision cell's `col`; base (w=0) gets a
+   *  distinct badge tone. */
   readonly capacityMarkers = computed<readonly CapacityMarker[]>(() => {
     const state = this.state();
     const active = this.activeCell();
-    if (!state || state.mode !== 'knapsack-01') {
-      return [];
-    }
-
+    if (!state || state.mode !== 'knapsack-01') return [];
     return state.colHeaders.map((header, index) => ({
       col: index,
       label: header.label,
@@ -144,83 +136,43 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
       isBase: index === 0,
     }));
   });
-  readonly knapsackMetrics = computed<readonly KnapsackMetric[]>(() => {
-    const state = this.state();
-    if (!state || state.mode !== 'knapsack-01') {
-      return [];
-    }
 
-    return [
-      {
-        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.bestValue,
-        value: metricValue(state, 'Best value') ?? state.resultLabel,
-        tone: 'success',
-      },
-      {
-        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.packed,
-        value: metricValue(state, 'Picked') ?? '0',
-        tone: 'warning',
-      },
-      {
-        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.table,
-        value: metricValue(state, 'Table') ?? state.dimensionsLabel,
-        tone: 'info',
-      },
-    ];
+  /** Algorithm tag — "LCS", "Knapsack 0/1", etc. Stays stable across
+   *  steps and reads as the viz's identity badge. */
+  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+
+  /** Action sentence. Picks the richest per-step description:
+   *    1. `computation.decision` — "take (+v5)"
+   *    2. `computation.expression` — "dp[i-1][w] vs dp[i-1][w-wᵢ]+vᵢ"
+   *    3. `phaseLabel` — generic phase name
+   *    4. `activeLabel` — active row/col */
+  readonly actionText = computed<TranslatableText>(() => {
+    const state = this.state();
+    if (!state) return '';
+    return (
+      state.computation?.decision ??
+      state.computation?.expression ??
+      state.phaseLabel ??
+      state.activeLabel ??
+      ''
+    );
   });
-  readonly packedItems = computed<readonly string[]>(() =>
-    this.itemCards()
-      .filter((item) => item.isPacked)
-      .map((item) => item.label),
-  );
-  readonly knapsackBranches = computed<readonly KnapsackBranch[]>(() => {
-    const state = this.state();
-    const active = this.activeCell();
-    const activeItem = this.activeItemCard();
-    if (!state || state.mode !== 'knapsack-01' || !active || active.row === 0) {
-      return [];
-    }
 
-    const skipValue = secondaryValue(state, 'skip');
-    const takeValue = secondaryValue(state, 'take');
-    const winner = winningBranch(state.computation?.decision ?? '');
-    const itemWeight = activeItem?.weight ?? null;
-    const itemValue = activeItem?.value ?? null;
-    const hasConcreteItem = itemWeight !== null && itemValue !== null;
-    const takeAvailable = hasConcreteItem ? active.col >= itemWeight : true;
-
-    return [
-      {
-        kind: 'skip',
-        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.skipLabel,
-        value: skipValue ?? '—',
-        note: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.skipNote,
-        noteParams: { row: active.row - 1, col: active.col },
-        status: winner === 'skip' ? 'winner' : 'available',
-      },
-      {
-        kind: 'take',
-        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.takeLabel,
-        value: takeAvailable
-          ? (takeValue ?? '—')
-          : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.blockedValue,
-        note: hasConcreteItem
-          ? active.col >= itemWeight
-            ? I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.takeNote
-            : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.needsWeightNote
-          : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.needPreviousStateNote,
-        noteParams: hasConcreteItem
-          ? active.col >= itemWeight
-            ? {
-                row: active.row - 1,
-                col: active.col - itemWeight,
-                value: itemValue,
-              }
-            : { weight: itemWeight }
-          : undefined,
-        status: !takeAvailable ? 'blocked' : winner === 'take' ? 'winner' : 'available',
-      },
-    ];
+  /** Tone derived from cell status flags:
+   *    - chosen / improved → sorted (lime, value locked in)
+   *    - active            → swap   (pink, acting now)
+   *    - match             → compare (cyan, attending)
+   *    - backtrack / blocked → compare
+   *    - idle              → default */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const cells = this.state()?.cells ?? [];
+    if (cells.some((cell) => cell.status === 'chosen')) return 'sorted';
+    if (cells.some((cell) => cell.status === 'improved')) return 'sorted';
+    if (cells.some((cell) => cell.status === 'active')) return 'swap';
+    if (cells.some((cell) => cell.status === 'backtrack')) return 'compare';
+    if (cells.some((cell) => cell.status === 'match')) return 'compare';
+    if (cells.some((cell) => cell.status === 'blocked')) return 'compare';
+    return 'default';
   });
 
   constructor() {
@@ -301,38 +253,6 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
     return `dp-head dp-head--${status}`;
   }
 
-  insightClass(tone: string): string {
-    return `insight-card insight-card--${tone}`;
-  }
-
-  metricClass(tone: KnapsackMetric['tone']): string {
-    return `knapsack-metric knapsack-metric--${tone}`;
-  }
-
-  itemCardClass(item: KnapsackItemCard): string {
-    return [
-      'item-shelf__card',
-      item.isActive ? 'item-shelf__card--active' : '',
-      item.isPacked ? 'item-shelf__card--packed' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-  }
-
-  markerClass(marker: CapacityMarker): string {
-    return [
-      'capacity-ruler__mark',
-      marker.isActive ? 'capacity-ruler__mark--active' : '',
-      marker.isBase ? 'capacity-ruler__mark--base' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-  }
-
-  branchClass(branch: KnapsackBranch): string {
-    return `decision-branch decision-branch--${branch.status} decision-branch--${branch.kind}`;
-  }
-
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
     const current = step.dp;
     const previous = previousStep?.dp ?? null;
@@ -345,54 +265,6 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
 
     if (currentFocus && currentFocus.id !== previousFocus?.id) {
       this.scrollCellIntoView(currentFocus.id);
-    }
-
-    if (current.mode === 'knapsack-01' && currentFocus) {
-      if (currentFocus.row > 0 && currentFocus.row !== previousFocus?.row) {
-        const itemCard = this.findElement(`[data-item-row="${currentFocus.row}"]`);
-        if (itemCard) {
-          pulseElement(itemCard, {
-            duration: motion.compareMs,
-            scale: 1.02,
-            filter: [
-              'drop-shadow(0 0 0 transparent)',
-              'drop-shadow(0 0 18px rgba(184, 213, 110, 0.22))',
-              'drop-shadow(0 0 0 transparent)',
-            ],
-          });
-        }
-      }
-
-      if (currentFocus.col !== previousFocus?.col) {
-        const marker = this.findElement(`[data-capacity-col="${currentFocus.col}"]`);
-        if (marker) {
-          pulseElement(marker, {
-            duration: motion.compareMs,
-            scale: 1.04,
-            filter: [
-              'drop-shadow(0 0 0 transparent)',
-              'drop-shadow(0 0 18px rgba(149, 169, 191, 0.2))',
-              'drop-shadow(0 0 0 transparent)',
-            ],
-          });
-        }
-      }
-
-      const winner = winningBranch(current.computation?.decision ?? '');
-      if (winner) {
-        const branch = this.findElement(`[data-branch-kind="${winner}"]`);
-        if (branch) {
-          pulseElement(branch, {
-            duration: motion.settleMs,
-            scale: 1.015,
-            filter: [
-              'drop-shadow(0 0 0 transparent)',
-              'drop-shadow(0 0 20px rgba(184, 213, 110, 0.18))',
-              'drop-shadow(0 0 0 transparent)',
-            ],
-          });
-        }
-      }
     }
 
     for (const cell of current.cells) {
@@ -429,10 +301,6 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
       inline: 'nearest',
     });
   }
-
-  private findElement(selector: string): HTMLElement | null {
-    return this.containerRef().nativeElement.querySelector(selector);
-  }
 }
 
 function glowForStatus(status: DpCell['status']): string {
@@ -456,44 +324,19 @@ function findFocusCell(state: DpTraceState | null | undefined): DpCell | null {
   );
 }
 
+/** Pulls `w{weight} · v{value}` or `w{weight} | v{value}` out of the
+ *  row header meta label. Both glyphs appear in generator output —
+ *  tolerate either so we don't need to couple the UI to a single
+ *  format. Returns nulls when nothing matches so the UI falls back
+ *  to a dash. */
 function parseItemStats(metaLabel: string | null): {
   readonly weight: number | null;
   readonly value: number | null;
 } {
   const match =
-    metaLabel?.match(/w(\d+)\s*[·|]\s*v(\d+)/i) ?? metaLabel?.match(/w(\d+)\s*·\s*v(\d+)/i);
+    metaLabel?.match(/w(\d+)\s*·\s*v(\d+)/i) ?? metaLabel?.match(/w(\d+)\s*\|\s*v(\d+)/i);
   return {
     weight: match ? Number(match[1]) : null,
     value: match ? Number(match[2]) : null,
   };
-}
-
-function metricValue(state: DpTraceState, label: string): string | null {
-  const insight = state.insights.find(
-    (entry) => entry.label === label || (isI18nText(entry.label) && entry.label.key.endsWith(label)),
-  );
-  return typeof insight?.value === 'string' ? insight.value : null;
-}
-
-function secondaryValue(state: DpTraceState, prefix: 'skip' | 'take'): string | null {
-  const item = state.secondaryItems.find(
-    (entry) => typeof entry === 'string' && entry.startsWith(`${prefix} = `),
-  );
-  return typeof item === 'string' ? item.slice(prefix.length + 3) : null;
-}
-
-function winningBranch(decision: TranslatableText): 'skip' | 'take' | null {
-  const normalized =
-    typeof decision === 'string'
-      ? decision.toLowerCase()
-      : decision.key.toLowerCase();
-  if (normalized.includes('take')) {
-    return 'take';
-  }
-
-  if (normalized.includes('skip')) {
-    return 'skip';
-  }
-
-  return null;
 }

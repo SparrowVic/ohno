@@ -7,6 +7,7 @@ import { MatrixTraceState } from './matrix';
 import { NetworkTraceState } from './network';
 import { SearchTraceState } from './search';
 import { StringTraceState } from './string';
+import { TreeTraversalTraceState } from './tree';
 import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export type SortPhase =
@@ -62,4 +63,5 @@ export interface SortStep {
   readonly search?: SearchTraceState | null;
   readonly string?: StringTraceState | null;
   readonly geometry?: GeometryStepState | null;
+  readonly tree?: TreeTraversalTraceState | null;
 }

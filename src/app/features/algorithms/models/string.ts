@@ -196,6 +196,95 @@ export interface HuffmanTraceState extends StringTraceBase {
   readonly totalCompressedBits: number;
 }
 
+export interface AhoCorasickMatch {
+  readonly pattern: string;
+  readonly startIndex: number;
+  readonly endIndex: number;
+}
+
+export interface AhoCorasickNodeView {
+  readonly id: string;
+  readonly index: number;
+  readonly char: string;
+  readonly depth: number;
+  readonly failId: string | null;
+  readonly outputs: readonly string[];
+  readonly tone: 'root' | 'active' | 'failure' | 'match' | 'ready';
+}
+
+export interface AhoCorasickTraceState extends StringTraceBase {
+  readonly mode: 'aho-corasick';
+  readonly phase: 'build' | 'link' | 'scan' | 'complete';
+  readonly text: string;
+  readonly patterns: readonly string[];
+  readonly nodes: readonly AhoCorasickNodeView[];
+  readonly currentTextIndex: number | null;
+  readonly currentChar: string | null;
+  readonly activeNodeId: string;
+  readonly failurePath: readonly string[];
+  readonly matches: readonly AhoCorasickMatch[];
+}
+
+export interface StringSuffixRow {
+  readonly id: string;
+  readonly startIndex: number;
+  readonly suffix: string;
+  readonly pairLabel: string;
+  readonly rank: number;
+  readonly order: number | null;
+  readonly lcp: number | null;
+  readonly tone: 'pending' | 'active' | 'compare' | 'sorted';
+}
+
+export interface SuffixArrayConstructionTraceState extends StringTraceBase {
+  readonly mode: 'suffix-array-construction';
+  readonly phase: 'seed' | 'sort' | 'rank' | 'complete';
+  readonly source: string;
+  readonly stepSize: number;
+  readonly round: number;
+  readonly suffixArray: readonly number[];
+  readonly ranks: readonly number[];
+  readonly rows: readonly StringSuffixRow[];
+  readonly activeSuffixes: readonly number[];
+  readonly distinctRanks: number;
+}
+
+export interface SuffixArrayLcpTraceState extends StringTraceBase {
+  readonly mode: 'suffix-array-lcp-kasai';
+  readonly phase: 'seed' | 'scan' | 'complete';
+  readonly source: string;
+  readonly suffixArray: readonly number[];
+  readonly rankArray: readonly number[];
+  readonly lcpValues: readonly number[];
+  readonly rows: readonly StringSuffixRow[];
+  readonly activeSuffixes: readonly number[];
+  readonly activeOrder: number | null;
+  readonly compareWith: number | null;
+  readonly currentMatchLength: number;
+}
+
+export interface PalindromicTreeNodeView {
+  readonly id: string;
+  readonly palindrome: string;
+  readonly length: number;
+  readonly suffixLinkId: string | null;
+  readonly occurrences: number;
+  readonly tone: 'root' | 'active' | 'new' | 'suffix' | 'ready';
+}
+
+export interface PalindromicTreeTraceState extends StringTraceBase {
+  readonly mode: 'palindromic-tree';
+  readonly phase: 'roots' | 'followLink' | 'reuse' | 'insert' | 'complete';
+  readonly source: string;
+  readonly processedIndex: number;
+  readonly currentChar: string | null;
+  readonly activeNodeId: string;
+  readonly suffixPath: readonly string[];
+  readonly nodes: readonly PalindromicTreeNodeView[];
+  readonly longestSuffix: string;
+  readonly distinctCount: number;
+}
+
 export type StringTraceState =
   | KmpTraceState
   | RabinKarpTraceState
@@ -203,7 +292,11 @@ export type StringTraceState =
   | ManacherTraceState
   | BurrowsWheelerTraceState
   | RleTraceState
-  | HuffmanTraceState;
+  | HuffmanTraceState
+  | AhoCorasickTraceState
+  | SuffixArrayConstructionTraceState
+  | SuffixArrayLcpTraceState
+  | PalindromicTreeTraceState;
 
 export function isKmpState(
   state: StringTraceState | null | undefined,
@@ -245,4 +338,28 @@ export function isHuffmanState(
   state: StringTraceState | null | undefined,
 ): state is HuffmanTraceState {
   return state?.mode === 'huffman';
+}
+
+export function isAhoCorasickState(
+  state: StringTraceState | null | undefined,
+): state is AhoCorasickTraceState {
+  return state?.mode === 'aho-corasick';
+}
+
+export function isSuffixArrayConstructionState(
+  state: StringTraceState | null | undefined,
+): state is SuffixArrayConstructionTraceState {
+  return state?.mode === 'suffix-array-construction';
+}
+
+export function isSuffixArrayLcpState(
+  state: StringTraceState | null | undefined,
+): state is SuffixArrayLcpTraceState {
+  return state?.mode === 'suffix-array-lcp-kasai';
+}
+
+export function isPalindromicTreeState(
+  state: StringTraceState | null | undefined,
+): state is PalindromicTreeTraceState {
+  return state?.mode === 'palindromic-tree';
 }

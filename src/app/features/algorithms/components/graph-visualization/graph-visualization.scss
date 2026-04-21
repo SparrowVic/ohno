@@ -4,169 +4,74 @@
   min-height: 0;
 }
 
-.graph-shell {
-  min-height: 0;
-}
-
-.graph-shell__hud {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-  gap: 8px;
-  padding: 10px 12px 0;
-}
-
-.graph-shell__focus {
-  display: grid;
-  grid-template-columns: minmax(168px, 1.08fr) repeat(2, minmax(96px, 1fr));
-  grid-template-areas:
-    'detail view phase'
-    'detail edge edge';
-  gap: 8px;
-  padding: 6px 12px 0;
-}
-
-.hud-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 9px 10px;
-  border-radius: 12px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.025);
-  backdrop-filter: blur(14px);
-
-  &--changed {
-    animation: stat-flash 700ms ease;
-    border-color: rgb(var(--viz-route-rgb) / 0.42);
-    box-shadow: 0 10px 22px rgba(10, 18, 28, 0.24);
-  }
-}
-
-.hud-card--compact {
-  min-width: 0;
-}
-
-.hud-card__label {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.hud-card__value {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hud-card__hint {
-  font-size: 9px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hud-card__meta {
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.hud-card__pair {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
-  gap: 6px;
-  min-width: 0;
-}
-
-.hud-card__mini {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.focus-pill {
-  min-width: 0;
-  padding: 9px 10px;
-  border-radius: 12px;
-  border: 0.5px solid rgba(255, 255, 255, 0.05);
-  background:
-    linear-gradient(180deg, rgb(var(--viz-window-rgb) / 0.08), rgb(var(--viz-window-rgb) / 0.03)),
-    rgba(255, 255, 255, 0.02);
-
-  &--changed {
-    animation: stat-flash 700ms ease;
-    border-color: rgb(var(--viz-window-rgb) / 0.42);
-    box-shadow: 0 10px 22px rgba(11, 12, 28, 0.24);
-  }
-}
-
-.focus-pill--detail {
-  grid-area: detail;
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  min-height: 100%;
-}
-
-.focus-pill--view {
-  grid-area: view;
-}
-
-.focus-pill--phase {
-  grid-area: phase;
-}
-
-.focus-pill--edge {
-  grid-area: edge;
-}
-
-.focus-pill__label {
-  display: block;
-  margin-bottom: 3px;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.focus-pill__value {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.focus-pill__hint {
-  display: block;
-  margin-top: 4px;
-  font-size: 9px;
-  line-height: 1.35;
-  color: var(--text-secondary);
-}
-
-.focus-pill--guide {
-  background:
-    linear-gradient(180deg, rgb(var(--viz-route-rgb) / 0.08), rgb(var(--viz-route-rgb) / 0.03)),
-    rgba(255, 255, 255, 0.02);
-}
-
+/* SVG canvas — occupies the whole panel body. Flex sizing lets it
+   grow to fill the remaining height under the header while the
+   viewBox keeps its aspect ratio. */
 .graph {
   flex: 1;
   width: 100%;
   min-height: 0;
+  display: block;
 }
 
+/* Focus chip — compact pill slotted into the header's right edge
+   when a multi-hop route is focused. Hairline border + neutral
+   surface so it inherits the header's chrome instead of competing
+   with it. The × glyph is the sole affordance. */
+.graph-focus-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  cursor: pointer;
+  max-width: 240px;
+  transition:
+    color var(--duration-base) var(--ease-soft),
+    background var(--duration-base) var(--ease-soft),
+    border-color var(--duration-base) var(--ease-soft);
+
+  &:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgb(var(--viz-hit-rgb) / 0.7);
+    outline-offset: 2px;
+  }
+}
+
+.graph-focus-chip__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.graph-focus-chip__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Edges — default neutral stroke; state flags paint over the
+   base. Transitions keep changes smooth when steps advance. */
 .edge-line {
   stroke: rgba(255, 255, 255, 0.16);
   stroke-width: 2;
@@ -477,63 +382,5 @@
   50% {
     transform: scale(1.08);
     opacity: 0.96;
-  }
-}
-
-@keyframes stat-flash {
-  0% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1);
-  }
-
-  30% {
-    transform: translateY(-3px) scale(1.02);
-    filter: brightness(1.12);
-  }
-
-  100% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1);
-  }
-}
-
-@media (max-width: 1180px) {
-  .graph-shell__hud,
-  .graph-shell__focus {
-    gap: 6px;
-  }
-}
-
-@container (max-width: 400px) {
-  .graph-shell__focus {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas:
-      'detail detail'
-      'view phase'
-      'edge edge';
-  }
-}
-
-@media (max-width: 820px) {
-  .graph-shell__hud,
-  .graph-shell__focus {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .hud-card--source,
-  .hud-card--focus,
-  .hud-card--current,
-  .hud-card--frontier,
-  .hud-card--progress,
-  .focus-pill--view,
-  .focus-pill--phase,
-  .focus-pill--edge,
-  .focus-pill--detail {
-    grid-column: span 1;
-  }
-
-  .hud-card__pair {
-    grid-template-columns: 1fr;
-    gap: 4px;
   }
 }
