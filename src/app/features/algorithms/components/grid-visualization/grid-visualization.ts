@@ -5,24 +5,35 @@ import {
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import {
+  createMotionProfile,
+  pulseElement,
+} from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-grid-visualization',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './grid-visualization.html',
   styleUrl: './grid-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GridVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -90,16 +101,25 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
     return `grid-cell grid-cell--${status}`;
   }
 
-  sourceSubtitle(): string {
+  sourceSubtitleKey(): I18nKey {
     const state = this.gridState();
-    if (!state) return '—';
-    return state.mode === 'flood-fill' ? 'seed cell' : 'start';
+    if (!state || state.mode !== 'flood-fill') {
+      return I18N_KEY.features.algorithms.visualizations.grid.sourceSubtitles.start;
+    }
+    return I18N_KEY.features.algorithms.visualizations.grid.sourceSubtitles.seed;
   }
 
   resultLabel(): string {
     const state = this.gridState();
-    if (!state) return '—';
-    return state.mode === 'flood-fill' ? `${state.resultCount} filled` : `${state.resultCount} in path`;
+    if (!state)
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel);
+    return state.mode === 'flood-fill'
+      ? this.translate(I18N_KEY.features.algorithms.visualizations.grid.resultFilledLabel, {
+          count: state.resultCount,
+        })
+      : this.translate(I18N_KEY.features.algorithms.visualizations.grid.resultPathLabel, {
+          count: state.resultCount,
+        });
   }
 
   cellCoreLabel(cell: GridTraceState['cells'][number]): string {
@@ -129,8 +149,12 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
       }
     }
 
-    const previousFrontier = new Set(previous?.cells.filter((cell) => cell.status === 'frontier').map((cell) => cell.id) ?? []);
-    const freshFrontier = current.cells.filter((cell) => cell.status === 'frontier' && !previousFrontier.has(cell.id));
+    const previousFrontier = new Set(
+      previous?.cells.filter((cell) => cell.status === 'frontier').map((cell) => cell.id) ?? [],
+    );
+    const freshFrontier = current.cells.filter(
+      (cell) => cell.status === 'frontier' && !previousFrontier.has(cell.id),
+    );
     for (const cellData of freshFrontier) {
       const cell = this.findCell(cellData.id);
       if (!cell) continue;
@@ -146,10 +170,13 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
     }
 
     const previousResults = new Set(
-      previous?.cells.filter((cell) => cell.status === 'filled' || cell.status === 'path').map((cell) => cell.id) ?? [],
+      previous?.cells
+        .filter((cell) => cell.status === 'filled' || cell.status === 'path')
+        .map((cell) => cell.id) ?? [],
     );
     const freshResults = current.cells.filter(
-      (cell) => (cell.status === 'filled' || cell.status === 'path') && !previousResults.has(cell.id),
+      (cell) =>
+        (cell.status === 'filled' || cell.status === 'path') && !previousResults.has(cell.id),
     );
     for (const cellData of freshResults) {
       const cell = this.findCell(cellData.id);
@@ -168,5 +195,10 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
 
   private findCell(id: string): HTMLElement | null {
     return this.containerRef().nativeElement.querySelector(`[data-cell-id="${id}"]`);
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

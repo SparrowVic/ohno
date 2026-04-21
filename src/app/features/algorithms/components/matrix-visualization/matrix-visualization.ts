@@ -6,24 +6,35 @@ import {
   OnDestroy,
   computed,
   effect,
+  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { MatrixCell, MatrixTraceState } from '../../models/matrix';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import {
+  createMotionProfile,
+  pulseElement,
+} from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-matrix-visualization',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './matrix-visualization.html',
   styleUrl: './matrix-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatrixVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -33,14 +44,22 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
   private lastStep: SortStep | null = null;
 
   readonly state = computed<MatrixTraceState | null>(() => this.step()?.matrix ?? null);
-  readonly modeLabel = computed(() => this.state()?.modeLabel ?? 'Matrix');
-  readonly phaseLabel = computed(() => this.state()?.phaseLabel ?? 'Initialize');
+  readonly modeLabel = computed(
+    () =>
+      this.state()?.modeLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.matrix.modeFallback),
+  );
+  readonly phaseLabel = computed(
+    () =>
+      this.state()?.phaseLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.matrix.phaseFallback),
+  );
   readonly resultLabel = computed(() => this.state()?.resultLabel ?? '—');
   readonly activeLabel = computed(() => {
     const state = this.state();
     if (!state) return '—';
     const parts = [state.activeRowLabel, state.activeColLabel].filter((part) => part);
-    return parts.length > 0 ? parts.join(' × ') : state.pivotLabel ?? '—';
+    return parts.length > 0 ? parts.join(' × ') : (state.pivotLabel ?? '—');
   });
   readonly pivotLabel = computed(() => this.state()?.pivotLabel ?? '—');
   readonly focusItems = computed(() => this.state()?.focusItems ?? []);
@@ -108,7 +127,11 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
   }
 
   rowCells(row: number): readonly MatrixCell[] {
-    return this.state()?.cells.filter((cell) => cell.row === row).sort((left, right) => left.col - right.col) ?? [];
+    return (
+      this.state()
+        ?.cells.filter((cell) => cell.row === row)
+        .sort((left, right) => left.col - right.col) ?? []
+    );
   }
 
   gridCols(): string {
@@ -159,5 +182,10 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
 
   private findCell(id: string): HTMLElement | null {
     return this.containerRef().nativeElement.querySelector(`[data-cell-id="${id}"]`);
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

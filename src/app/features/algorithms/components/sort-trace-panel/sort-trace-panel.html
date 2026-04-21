@@ -9,20 +9,28 @@
       <!-- ======================================================== -->
       <!-- PANEL 1 — Facts / summary metrics                         -->
       <!-- ======================================================== -->
-      <app-segmented-panel class="trace__facts" aria-label="Trace summary">
-        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel()" />
+      <app-segmented-panel
+        class="trace__facts"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.sort.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Sorted"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.phaseLabel | transloco"
+          [value]="phaseLabel()"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.sortedLabel | transloco"
           [value]="sortedLabel()"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Boundary"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.boundaryLabel | transloco"
           [value]="boundaryLabel()"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Unsorted"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.unsortedLabel | transloco"
           [value]="sortState.unsortedCount"
           [valueMono]="true"
         />
@@ -31,11 +39,16 @@
       <!-- ======================================================== -->
       <!-- PANEL 2 — Current decision                                -->
       <!-- ======================================================== -->
-      <app-segmented-panel class="trace__calc" aria-label="Current step">
+      <app-segmented-panel
+        class="trace__calc"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.sort.currentStepAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Current pair"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.currentPairLabel | transloco"
           [value]="pairLabel()"
-          [badge]="pairBadge()"
+          [badge]="pairBadgeLabel()"
           [valueMono]="true"
         >
           <code class="trace__calc-expression">{{ pairValues() }}</code>
@@ -44,7 +57,7 @@
 
         @if (digitLabel()) {
           <app-segmented-panel-section
-            eyebrow="Digit pass"
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.digitPassLabel | transloco"
             [value]="digitLabel()"
             [valueMono]="true"
           />
@@ -56,12 +69,13 @@
       <!-- ======================================================== -->
       @if (sortState.buckets.length > 0) {
         <app-segmented-panel class="trace__streams">
-          <app-segmented-panel-section eyebrow="Buckets" [badge]="sortState.buckets.length">
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.bucketsLabel | transloco"
+            [badge]="sortState.buckets.length"
+          >
             <div class="trace__stream-items">
               @for (bucket of sortState.buckets; track bucket.bucket) {
-                <span
-                  class="trace__stream-chip"
-                  [class.trace__stream-chip--active]="bucket.active"
+                <span class="trace__stream-chip" [class.trace__stream-chip--active]="bucket.active"
                   >{{ bucket.bucket }} · {{ bucket.count }}</span
                 >
               }
@@ -79,13 +93,13 @@
         [columns]="tableColumns"
         [rows]="tableRows()"
         [legendItems]="tableLegendItems()"
-        emptyLabel="No array rows yet"
+        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.sort.tableEmptyLabel"
       />
     </div>
   } @else {
     <div class="trace__empty">
       <span class="trace__empty-dot" aria-hidden="true"></span>
-      No trace available for this step.
+      {{ I18N_KEY.features.algorithms.tracePanels.sort.emptyLabel | transloco }}
     </div>
   }
 </div>

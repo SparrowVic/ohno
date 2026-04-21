@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faArrowRightArrowLeft,
@@ -6,7 +6,10 @@ import {
   faCircle,
   faCrosshairs,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { SortTraceRow, SortTraceState, SortTraceTag } from '../../models/sort-trace';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -17,31 +20,67 @@ import { TraceHint } from '../trace-hint/trace-hint';
 
 interface TagLegendItem {
   readonly id: SortTraceTag;
-  readonly label: string;
+  readonly labelKey: I18nKey;
   readonly icon: IconDefinition;
 }
 
 const TAG_LEGEND: readonly TagLegendItem[] = [
-  { id: 'compare', label: 'In the compare pair', icon: faCrosshairs },
-  { id: 'swap', label: 'Being swapped', icon: faArrowRightArrowLeft },
-  { id: 'sorted', label: 'Locked in final position', icon: faCheckDouble },
+  {
+    id: 'compare',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.sort.tagLegend.compare,
+    icon: faCrosshairs,
+  },
+  {
+    id: 'swap',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.sort.tagLegend.swap,
+    icon: faArrowRightArrowLeft,
+  },
+  {
+    id: 'sorted',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.sort.tagLegend.sorted,
+    icon: faCheckDouble,
+  },
 ];
 
 const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'index', header: 'Index', width: '64px', kind: 'mono' },
-  { id: 'value', header: 'Value', width: '92px', kind: 'mono' },
-  { id: 'status', header: 'Status', width: '110px', kind: 'tag' },
-  { id: 'tags', header: 'Tags', width: '92px', kind: 'tags' },
+  {
+    id: 'index',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.sort.columns.index,
+    width: '64px',
+    kind: 'mono',
+  },
+  {
+    id: 'value',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.sort.columns.value,
+    width: '92px',
+    kind: 'mono',
+  },
+  {
+    id: 'status',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.sort.columns.status,
+    width: '110px',
+    kind: 'tag',
+  },
+  {
+    id: 'tags',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.sort.columns.tags,
+    width: '92px',
+    kind: 'tags',
+  },
 ];
 
 @Component({
   selector: 'app-sort-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './sort-trace-panel.html',
   styleUrl: './sort-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SortTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<SortTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
   readonly tableColumns = TABLE_COLUMNS;
@@ -66,27 +105,34 @@ export class SortTracePanel {
 
   readonly pairLabel = computed(() => {
     const state = this.state();
-    if (!state) return 'none';
+    if (!state) return this.translate(I18N_KEY.features.algorithms.tracePanels.common.noneLabel);
     const pair = state.swapping ?? state.comparing;
-    if (!pair) return 'none';
+    if (!pair) return this.translate(I18N_KEY.features.algorithms.tracePanels.common.noneLabel);
     return `[${pair.indexA}, ${pair.indexB}]`;
   });
 
   readonly pairValues = computed(() => {
     const state = this.state();
-    if (!state) return '—';
+    if (!state)
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel);
     const pair = state.swapping ?? state.comparing;
-    if (!pair) return '—';
+    if (!pair)
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel);
     const arrow = state.swapping ? '↔' : '↔';
     return `${pair.valueA} ${arrow} ${pair.valueB}`;
   });
 
-  readonly pairBadge = computed(() => {
+  readonly pairBadgeLabel = computed(() => {
     const state = this.state();
-    if (!state) return 'idle';
-    if (state.swapping) return 'swap';
-    if (state.comparing) return 'compare';
-    return 'idle';
+    if (!state)
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.pairBadges.idle);
+    if (state.swapping) {
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.pairBadges.swap);
+    }
+    if (state.comparing) {
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.pairBadges.compare);
+    }
+    return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.pairBadges.idle);
   });
 
   readonly sortedLabel = computed(() => {
@@ -107,13 +153,16 @@ export class SortTracePanel {
     return `${digit.index + 1} / ${digit.max}`;
   });
 
-  readonly hasRadixContext = computed(() => this.digitLabel() !== null || this.state()?.buckets.length);
+  readonly hasRadixContext = computed(
+    () => this.digitLabel() !== null || this.state()?.buckets.length,
+  );
 
   readonly tableLegendItems = computed(() =>
     TAG_LEGEND.map((item) => ({
       id: item.id,
       tag: this.traceTag(item.id),
-      label: item.label,
+      label: '',
+      labelKey: item.labelKey,
     })),
   );
 
@@ -142,12 +191,13 @@ export class SortTracePanel {
   }
 
   tagLabel(tag: SortTraceTag): string {
-    return TAG_LEGEND.find((item) => item.id === tag)?.label ?? tag;
+    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
+    return labelKey ? this.translate(labelKey) : tag;
   }
 
   statusTag(row: SortTraceRow): UiTagModel {
     return {
-      label: row.status,
+      label: this.statusLabel(row.status),
       tone:
         row.status === 'swapping'
           ? 'danger'
@@ -183,5 +233,23 @@ export class SortTracePanel {
       case 'sorted':
         return 'success';
     }
+  }
+
+  private statusLabel(status: SortTraceRow['status']): string {
+    switch (status) {
+      case 'unsorted':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.statuses.unsorted);
+      case 'comparing':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.statuses.comparing);
+      case 'swapping':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.statuses.swapping);
+      case 'sorted':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.sort.statuses.sorted);
+    }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

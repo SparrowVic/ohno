@@ -2,43 +2,67 @@
   @if (searchState(); as search) {
     <aside class="viz-flow__guide">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Search Guide</span>
-        <h3 class="viz-flow__title">Watch the probe</h3>
-        <p class="viz-flow__desc">{{ search.decision ?? 'Track the active probe before you scan the rest of the array.' }}</p>
+        <span class="viz-flow__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.search.guideEyebrow | transloco
+        }}</span>
+        <h3 class="viz-flow__title">
+          {{ I18N_KEY.features.algorithms.visualizations.search.guideTitle | transloco }}
+        </h3>
+        <p class="viz-flow__desc">
+          {{
+            search.decision ||
+              (I18N_KEY.features.algorithms.visualizations.search.guideFallbackDesc | transloco)
+          }}
+        </p>
       </div>
 
       <div class="search-viz__target-card">
-        <span class="search-viz__eyebrow">Target</span>
+        <span class="search-viz__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.search.targetLabel | transloco
+        }}</span>
         <span class="search-viz__target-value">{{ search.target }}</span>
         <span class="search-viz__target-subtitle">{{ search.modeLabel }}</span>
       </div>
 
       <div class="search-viz__decision-shell">
         <div class="search-viz__decision-label">{{ search.statusLabel }}</div>
-        <div class="search-viz__decision">{{ search.decision ?? 'watch the signal sweep the array' }}</div>
+        <div class="search-viz__decision">
+          {{
+            search.decision ||
+              (I18N_KEY.features.algorithms.visualizations.search.decisionFallback | transloco)
+          }}
+        </div>
       </div>
     </aside>
 
     <section class="viz-flow__brief">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
+        <span class="viz-flow__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.search.snapshotEyebrow | transloco
+        }}</span>
         <h3 class="viz-flow__title">{{ search.modeLabel }}</h3>
-        <p class="viz-flow__desc">Window bounds, probe position and confirmed hits stay in one compact overview.</p>
+        <p class="viz-flow__desc">
+          {{ I18N_KEY.features.algorithms.visualizations.search.snapshotDesc | transloco }}
+        </p>
       </div>
 
       <div class="search-viz__status-band">
         <div class="search-viz__metric">
-          <span class="search-viz__metric-label">Window</span>
+          <span class="search-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.search.windowLabel | transloco
+          }}</span>
           <span class="search-viz__metric-value">
             @if (search.low !== null && search.high !== null) {
               [{{ search.low }}, {{ search.high }}]
             } @else {
-              empty
+              {{ I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel | transloco }}
             }
           </span>
         </div>
         <div class="search-viz__metric">
-          <span class="search-viz__metric-label">Probe</span>
+          <span class="search-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.search.probeLabel | transloco
+          }}</span>
           <span class="search-viz__metric-value">
             @if (search.probeIndex !== null) {
               {{ search.probeIndex }}
@@ -48,7 +72,9 @@
           </span>
         </div>
         <div class="search-viz__metric">
-          <span class="search-viz__metric-label">Hits</span>
+          <span class="search-viz__metric-label">{{
+            I18N_KEY.features.algorithms.visualizations.search.hitsLabel | transloco
+          }}</span>
           <span class="search-viz__metric-value">{{ hitRangeLabel() }}</span>
         </div>
       </div>
@@ -57,8 +83,12 @@
     <section class="viz-flow__stage">
       <div class="viz-flow__stage-head">
         <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Array under inspection</h3>
+          <span class="viz-flow__eyebrow">{{
+            I18N_KEY.features.algorithms.visualizations.search.stageEyebrow | transloco
+          }}</span>
+          <h3 class="viz-flow__title">
+            {{ I18N_KEY.features.algorithms.visualizations.search.stageTitle | transloco }}
+          </h3>
         </div>
         <span class="viz-flow__pill viz-flow__pill--warm">{{ search.statusLabel }}</span>
       </div>
@@ -75,8 +105,8 @@
                 <div class="cell__beam"></div>
                 <div class="cell__chrome">
                   <span class="cell__index">#{{ $index }}</span>
-                  @if (boundLabel($index); as label) {
-                    <span class="cell__bound">{{ label }}</span>
+                  @if (boundLabelKey($index); as labelKey) {
+                    <span class="cell__bound">{{ labelKey | transloco }}</span>
                   }
                 </div>
                 <div class="cell__value">{{ value }}</div>

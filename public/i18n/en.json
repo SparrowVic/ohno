@@ -873,6 +873,41 @@
           "waitingDecisionLabel": "waiting for next move",
           "windowLabel": "Window"
         },
+        "sort": {
+          "boundaryLabel": "Boundary",
+          "bucketsLabel": "Buckets",
+          "columns": {
+            "index": "Index",
+            "status": "Status",
+            "tags": "Tags",
+            "value": "Value"
+          },
+          "currentPairLabel": "Current pair",
+          "currentStepAriaLabel": "Current step",
+          "digitPassLabel": "Digit pass",
+          "emptyLabel": "No trace available for this step.",
+          "pairBadges": {
+            "compare": "compare",
+            "idle": "idle",
+            "swap": "swap"
+          },
+          "phaseLabel": "Phase",
+          "sortedLabel": "Sorted",
+          "statuses": {
+            "comparing": "comparing",
+            "sorted": "sorted",
+            "swapping": "swapping",
+            "unsorted": "unsorted"
+          },
+          "summaryAriaLabel": "Trace summary",
+          "tableEmptyLabel": "No array rows yet",
+          "tagLegend": {
+            "compare": "In the compare pair",
+            "sorted": "Locked in final position",
+            "swap": "Being swapped"
+          },
+          "unsortedLabel": "Unsorted"
+        },
         "string": {
           "activeLabel": "Active",
           "burrowsWheeler": {
@@ -1032,6 +1067,84 @@
           "shortestPath": "Shortest path",
           "stable": "Stable",
           "trie": "Trie"
+        }
+      },
+      "visualizations": {
+        "grid": {
+          "decisionFallback": "watch the board evolve step by step",
+          "frontierLabel": "Frontier",
+          "guideEyebrow": "Grid Guide",
+          "guideFallbackDesc": "Watch the active frontier cell and the route it unlocks next.",
+          "guideTitle": "Follow the frontier",
+          "resultFilledLabel": "{{count}} filled",
+          "resultLabel": "Result",
+          "resultPathLabel": "{{count}} in path",
+          "snapshotDesc": "Source, target and wave stats stay separate from the board so the motion on the grid stays readable.",
+          "snapshotEyebrow": "Snapshot",
+          "sourceSubtitles": {
+            "seed": "seed cell",
+            "start": "start"
+          },
+          "stageEyebrow": "Stage",
+          "stageTitle": "Board state",
+          "targetLabel": "Target",
+          "visitedLabel": "Visited"
+        },
+        "matrix": {
+          "emptyLabel": "No matrix trace available for this step.",
+          "guideDesc": "Follow the highlighted rows, columns and pivot cells first. The rest of the matrix is supporting context.",
+          "guideEyebrow": "Matrix Guide",
+          "guideTitle": "Track the active axes",
+          "modeFallback": "Matrix",
+          "phaseFallback": "Initialize",
+          "snapshotDesc": "Current phase, pivot and result stay visible without competing with the board itself.",
+          "snapshotEyebrow": "Snapshot",
+          "stageEyebrow": "Stage",
+          "stageTitle": "Matrix workspace"
+        },
+        "network": {
+          "activeRouteLabel": "Active Route",
+          "decisionFallback": "Waiting for next network event.",
+          "emptyLabel": "No layered network trace available for this step.",
+          "focusFallback": "Focus",
+          "focusItemsEmpty": "none yet",
+          "frontierFallback": "Frontier",
+          "guideDesc": "Status, decision and focus chips tell you whether the current pass is searching, augmenting or locking a path.",
+          "guideEyebrow": "Network Guide",
+          "guideTitle": "Track the live route",
+          "modeFallback": "Layered network",
+          "phaseFallback": "Initialize",
+          "queueEmptyLabel": "empty",
+          "queueFallback": "Queue",
+          "snapshotDesc": "Route pressure, queue preview and result stay readable without covering the actual network.",
+          "snapshotEyebrow": "Snapshot",
+          "stageEyebrow": "Stage",
+          "stageTitle": "Network arena",
+          "statusFallback": "Awaiting step"
+        },
+        "search": {
+          "boundLabels": {
+            "first": "first",
+            "firstLast": "first + last",
+            "last": "last"
+          },
+          "decisionFallback": "watch the signal sweep the array",
+          "guideEyebrow": "Search Guide",
+          "guideFallbackDesc": "Track the active probe before you scan the rest of the array.",
+          "guideTitle": "Watch the probe",
+          "hitRange": {
+            "multiple": "indices {{start}}..{{end}}",
+            "none": "no confirmed match",
+            "single": "index {{index}}"
+          },
+          "hitsLabel": "Hits",
+          "probeLabel": "Probe",
+          "snapshotDesc": "Window bounds, probe position and confirmed hits stay in one compact overview.",
+          "snapshotEyebrow": "Snapshot",
+          "stageEyebrow": "Stage",
+          "stageTitle": "Array under inspection",
+          "targetLabel": "Target",
+          "windowLabel": "Window"
         }
       }
     },

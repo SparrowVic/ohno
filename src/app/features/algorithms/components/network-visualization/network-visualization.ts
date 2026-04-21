@@ -6,24 +6,35 @@ import {
   OnDestroy,
   computed,
   effect,
+  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { NetworkEdgeSnapshot, NetworkNodeSnapshot, NetworkTraceState } from '../../models/network';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseSvgElement } from '../../utils/visualization-motion/visualization-motion';
+import {
+  createMotionProfile,
+  pulseSvgElement,
+} from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-network-visualization',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './network-visualization.html',
   styleUrl: './network-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -34,22 +45,60 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
   private lastStep: SortStep | null = null;
 
   readonly state = computed<NetworkTraceState | null>(() => this.step()?.network ?? null);
-  readonly modeLabel = computed(() => this.state()?.modeLabel ?? 'Layered network');
-  readonly phaseLabel = computed(() => this.state()?.phaseLabel ?? 'Initialize');
-  readonly frontierLabel = computed(() => this.state()?.frontierLabel ?? 'Frontier');
+  readonly modeLabel = computed(
+    () =>
+      this.state()?.modeLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.modeFallback),
+  );
+  readonly phaseLabel = computed(
+    () =>
+      this.state()?.phaseLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.phaseFallback),
+  );
+  readonly frontierLabel = computed(
+    () =>
+      this.state()?.frontierLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.frontierFallback),
+  );
   readonly frontierCount = computed(() => this.state()?.frontierCount ?? 0);
-  readonly routeLabel = computed(() => this.state()?.activeRouteLabel ?? '—');
-  readonly resultLabel = computed(() => this.state()?.resultLabel ?? '—');
-  readonly focusItemsLabel = computed(() => this.state()?.focusItemsLabel ?? 'Focus');
+  readonly routeLabel = computed(
+    () =>
+      this.state()?.activeRouteLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel),
+  );
+  readonly resultLabel = computed(
+    () =>
+      this.state()?.resultLabel ??
+      this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel),
+  );
+  readonly focusItemsLabel = computed(
+    () =>
+      this.state()?.focusItemsLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.focusFallback),
+  );
   readonly focusItems = computed(() => this.state()?.focusItems ?? []);
-  readonly statusLabel = computed(() => this.state()?.statusLabel ?? 'Awaiting step');
-  readonly decisionLabel = computed(() => this.state()?.computation?.decision ?? 'Waiting for next network event.');
+  readonly statusLabel = computed(
+    () =>
+      this.state()?.statusLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.statusFallback),
+  );
+  readonly decisionLabel = computed(
+    () =>
+      this.state()?.computation?.decision ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.decisionFallback),
+  );
   readonly nodes = computed(() => this.state()?.nodes ?? []);
   readonly edges = computed(() => this.state()?.edges ?? []);
-  readonly queueLabel = computed(() => this.state()?.queueLabel ?? 'Queue');
+  readonly queueLabel = computed(
+    () =>
+      this.state()?.queueLabel ??
+      this.translate(I18N_KEY.features.algorithms.visualizations.network.queueFallback),
+  );
   readonly queuePreview = computed(() => {
     const queue = this.state()?.queue ?? [];
-    return queue.length > 0 ? queue.join(' · ') : 'empty';
+    return queue.length > 0
+      ? queue.join(' · ')
+      : this.translate(I18N_KEY.features.algorithms.visualizations.network.queueEmptyLabel);
   });
 
   constructor() {
@@ -147,7 +196,8 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     for (const edge of current.edges) {
       const prior = previousEdges.get(edge.id);
       if (!prior || prior === edge.status) continue;
-      if (edge.status !== 'augment' && edge.status !== 'matched' && edge.status !== 'flow') continue;
+      if (edge.status !== 'augment' && edge.status !== 'matched' && edge.status !== 'flow')
+        continue;
       const edgeEl = this.findSvgElement(`[data-edge-id="${edge.id}"]`);
       if (!edgeEl) continue;
       pulseSvgElement(edgeEl, {
@@ -168,5 +218,10 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
 
   private findSvgElement(selector: string): SVGElement | null {
     return this.containerRef().nativeElement.querySelector<SVGElement>(selector);
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

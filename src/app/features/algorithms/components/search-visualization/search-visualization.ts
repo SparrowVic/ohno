@@ -5,24 +5,35 @@ import {
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { SearchTraceState } from '../../models/search';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import {
+  createMotionProfile,
+  pulseElement,
+} from '../../utils/visualization-motion/visualization-motion';
 
 @Component({
   selector: 'app-search-visualization',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './search-visualization.html',
   styleUrl: './search-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -92,20 +103,35 @@ export class SearchVisualization implements AfterViewInit, OnDestroy, Visualizat
     return index >= state.low && index <= state.high;
   }
 
-  boundLabel(index: number): string | null {
+  boundLabelKey(index: number): I18nKey | null {
     const state = this.searchState();
     if (!state) return null;
-    if (state.leftBound === index && state.rightBound === index) return 'first + last';
-    if (state.leftBound === index) return 'first';
-    if (state.rightBound === index) return 'last';
+    if (state.leftBound === index && state.rightBound === index) {
+      return I18N_KEY.features.algorithms.visualizations.search.boundLabels.firstLast;
+    }
+    if (state.leftBound === index) {
+      return I18N_KEY.features.algorithms.visualizations.search.boundLabels.first;
+    }
+    if (state.rightBound === index) {
+      return I18N_KEY.features.algorithms.visualizations.search.boundLabels.last;
+    }
     return null;
   }
 
   hitRangeLabel(): string {
     const hits = this.searchState()?.resultIndices ?? [];
-    if (hits.length === 0) return 'no confirmed match';
-    if (hits.length === 1) return `index ${hits[0]}`;
-    return `indices ${hits[0]}..${hits[hits.length - 1]}`;
+    if (hits.length === 0) {
+      return this.translate(I18N_KEY.features.algorithms.visualizations.search.hitRange.none);
+    }
+    if (hits.length === 1) {
+      return this.translate(I18N_KEY.features.algorithms.visualizations.search.hitRange.single, {
+        index: hits[0],
+      });
+    }
+    return this.translate(I18N_KEY.features.algorithms.visualizations.search.hitRange.multiple, {
+      start: hits[0],
+      end: hits[hits.length - 1],
+    });
   }
 
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
@@ -130,7 +156,9 @@ export class SearchVisualization implements AfterViewInit, OnDestroy, Visualizat
       }
     }
 
-    const freshHits = current.resultIndices.filter((index) => !(previous?.resultIndices ?? []).includes(index));
+    const freshHits = current.resultIndices.filter(
+      (index) => !(previous?.resultIndices ?? []).includes(index),
+    );
     for (const index of freshHits) {
       const cell = this.findCell(index);
       if (!cell) continue;
@@ -145,7 +173,9 @@ export class SearchVisualization implements AfterViewInit, OnDestroy, Visualizat
       });
     }
 
-    const freshEliminated = current.eliminated.filter((index) => !(previous?.eliminated ?? []).includes(index));
+    const freshEliminated = current.eliminated.filter(
+      (index) => !(previous?.eliminated ?? []).includes(index),
+    );
     for (const index of freshEliminated) {
       const cell = this.findCell(index);
       if (!cell) continue;
@@ -162,7 +192,9 @@ export class SearchVisualization implements AfterViewInit, OnDestroy, Visualizat
     }
 
     if (current.decision && current.decision !== previous?.decision) {
-      const chip = this.containerRef().nativeElement.querySelector('.search-viz__decision') as HTMLElement | null;
+      const chip = this.containerRef().nativeElement.querySelector(
+        '.search-viz__decision',
+      ) as HTMLElement | null;
       if (chip) {
         pulseElement(chip, {
           duration: motion.compareMs,
@@ -179,5 +211,10 @@ export class SearchVisualization implements AfterViewInit, OnDestroy, Visualizat
 
   private findCell(index: number): HTMLElement | null {
     return this.containerRef().nativeElement.querySelector(`[data-index="${index}"]`);
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

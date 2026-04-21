@@ -873,6 +873,41 @@
           "waitingDecisionLabel": "oczekiwanie na kolejny ruch",
           "windowLabel": "Okno"
         },
+        "sort": {
+          "boundaryLabel": "Granica",
+          "bucketsLabel": "Buckety",
+          "columns": {
+            "index": "Indeks",
+            "status": "Status",
+            "tags": "Tagi",
+            "value": "Wartość"
+          },
+          "currentPairLabel": "Bieżąca para",
+          "currentStepAriaLabel": "Bieżący krok",
+          "digitPassLabel": "Przebieg cyfry",
+          "emptyLabel": "Brak śladu dla tego kroku.",
+          "pairBadges": {
+            "compare": "porównanie",
+            "idle": "bezczynnie",
+            "swap": "zamiana"
+          },
+          "phaseLabel": "Faza",
+          "sortedLabel": "Posortowane",
+          "statuses": {
+            "comparing": "porównywanie",
+            "sorted": "posortowane",
+            "swapping": "zamiana",
+            "unsorted": "nieposortowane"
+          },
+          "summaryAriaLabel": "Podsumowanie śladu",
+          "tableEmptyLabel": "Brak wierszy tablicy",
+          "tagLegend": {
+            "compare": "W aktywnej parze porównania",
+            "sorted": "Zablokowane w końcowej pozycji",
+            "swap": "W trakcie zamiany"
+          },
+          "unsortedLabel": "Nieposortowane"
+        },
         "string": {
           "activeLabel": "Aktywne",
           "burrowsWheeler": {
@@ -1032,6 +1067,84 @@
           "shortestPath": "Najkrótsza ścieżka",
           "stable": "Stabilny",
           "trie": "Trie"
+        }
+      },
+      "visualizations": {
+        "grid": {
+          "decisionFallback": "obserwuj, jak plansza zmienia się krok po kroku",
+          "frontierLabel": "Frontier",
+          "guideEyebrow": "Przewodnik po siatce",
+          "guideFallbackDesc": "Obserwuj aktywną komórkę frontier i trasę, którą odblokowuje jako następną.",
+          "guideTitle": "Śledź frontier",
+          "resultFilledLabel": "{{count}} wypełn.",
+          "resultLabel": "Wynik",
+          "resultPathLabel": "{{count}} w ścieżce",
+          "snapshotDesc": "Źródło, cel i statystyki fali pozostają oddzielone od planszy, żeby ruch na siatce był czytelny.",
+          "snapshotEyebrow": "Migawka",
+          "sourceSubtitles": {
+            "seed": "komórka startowa",
+            "start": "start"
+          },
+          "stageEyebrow": "Scena",
+          "stageTitle": "Stan planszy",
+          "targetLabel": "Cel",
+          "visitedLabel": "Odwiedzone"
+        },
+        "matrix": {
+          "emptyLabel": "Brak śladu macierzy dla tego kroku.",
+          "guideDesc": "Najpierw śledź podświetlone wiersze, kolumny i komórki pivota. Reszta macierzy to kontekst pomocniczy.",
+          "guideEyebrow": "Przewodnik po macierzy",
+          "guideTitle": "Śledź aktywne osie",
+          "modeFallback": "Macierz",
+          "phaseFallback": "Inicjalizacja",
+          "snapshotDesc": "Bieżąca faza, pivot i wynik pozostają widoczne bez konkurowania z samą planszą.",
+          "snapshotEyebrow": "Migawka",
+          "stageEyebrow": "Scena",
+          "stageTitle": "Przestrzeń macierzy"
+        },
+        "network": {
+          "activeRouteLabel": "Aktywna trasa",
+          "decisionFallback": "Oczekiwanie na kolejne zdarzenie sieciowe.",
+          "emptyLabel": "Brak śladu warstwowej sieci dla tego kroku.",
+          "focusFallback": "Fokus",
+          "focusItemsEmpty": "jeszcze brak",
+          "frontierFallback": "Frontier",
+          "guideDesc": "Status, decyzja i chipy fokusu pokazują, czy bieżący przebieg szuka, powiększa czy domyka ścieżkę.",
+          "guideEyebrow": "Przewodnik po sieci",
+          "guideTitle": "Śledź żywą trasę",
+          "modeFallback": "Sieć warstwowa",
+          "phaseFallback": "Inicjalizacja",
+          "queueEmptyLabel": "pusto",
+          "queueFallback": "Kolejka",
+          "snapshotDesc": "Nacisk trasy, podgląd kolejki i wynik pozostają czytelne bez zasłaniania samej sieci.",
+          "snapshotEyebrow": "Migawka",
+          "stageEyebrow": "Scena",
+          "stageTitle": "Arena sieci",
+          "statusFallback": "Oczekiwanie na krok"
+        },
+        "search": {
+          "boundLabels": {
+            "first": "pierwsze",
+            "firstLast": "pierwsze + ostatnie",
+            "last": "ostatnie"
+          },
+          "decisionFallback": "obserwuj, jak sygnał omiata tablicę",
+          "guideEyebrow": "Przewodnik po wyszukiwaniu",
+          "guideFallbackDesc": "Najpierw śledź aktywną sondę, zanim spojrzysz na resztę tablicy.",
+          "guideTitle": "Obserwuj sondę",
+          "hitRange": {
+            "multiple": "indeksy {{start}}..{{end}}",
+            "none": "brak potwierdzonego trafienia",
+            "single": "indeks {{index}}"
+          },
+          "hitsLabel": "Trafienia",
+          "probeLabel": "Sonda",
+          "snapshotDesc": "Granice okna, pozycja sondy i potwierdzone trafienia pozostają w jednym zwartym widoku.",
+          "snapshotEyebrow": "Migawka",
+          "stageEyebrow": "Scena",
+          "stageTitle": "Tablica pod inspekcją",
+          "targetLabel": "Cel",
+          "windowLabel": "Okno"
         }
       }
     },
