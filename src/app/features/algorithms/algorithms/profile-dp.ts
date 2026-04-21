@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
@@ -15,10 +18,55 @@ const PROFILE_TRANSITIONS: Record<number, readonly ProfileTransition[]> = {
   3: [{ nextMask: 0, label: 'already filled' }],
 };
 
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.profileDp.modeLabel'),
+  phases: {
+    initializeProfile: t('features.algorithms.runtime.dp.profileDp.phases.initializeProfile'),
+    inspectTransition: t('features.algorithms.runtime.dp.profileDp.phases.inspectTransition'),
+    commitCount: t('features.algorithms.runtime.dp.profileDp.phases.commitCount'),
+    backtrackRoute: t('features.algorithms.runtime.dp.profileDp.phases.backtrackRoute'),
+    complete: t('features.algorithms.runtime.dp.profileDp.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.profileDp.descriptions.initialize'),
+    inspectTransition: t('features.algorithms.runtime.dp.profileDp.descriptions.inspectTransition'),
+    commitCount: t('features.algorithms.runtime.dp.profileDp.descriptions.commitCount'),
+    backtrackRoute: t('features.algorithms.runtime.dp.profileDp.descriptions.backtrackRoute'),
+    complete: t('features.algorithms.runtime.dp.profileDp.descriptions.complete'),
+  },
+  insights: {
+    boardLabel: t('features.algorithms.runtime.dp.profileDp.insights.boardLabel'),
+    profilesLabel: t('features.algorithms.runtime.dp.profileDp.insights.profilesLabel'),
+    tilingsLabel: t('features.algorithms.runtime.dp.profileDp.insights.tilingsLabel'),
+    routeMasksLabel: t('features.algorithms.runtime.dp.profileDp.insights.routeMasksLabel'),
+    goalMaskLabel: t('features.algorithms.runtime.dp.profileDp.insights.goalMaskLabel'),
+  },
+  labels: {
+    resultTilings: t('features.algorithms.runtime.dp.profileDp.labels.resultTilings'),
+    activeState: t('features.algorithms.runtime.dp.profileDp.labels.activeState'),
+    pathValue: t('features.algorithms.runtime.dp.profileDp.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.profileDp.labels.pathPending'),
+    profilesLabel: t('features.algorithms.runtime.dp.profileDp.labels.profilesLabel'),
+    columnFrontsLabel: t('features.algorithms.runtime.dp.profileDp.labels.columnFrontsLabel'),
+    transitionLabel: t('features.algorithms.runtime.dp.profileDp.labels.transitionLabel'),
+    cellLabel: t('features.algorithms.runtime.dp.profileDp.labels.cellLabel'),
+    parentValue: t('features.algorithms.runtime.dp.profileDp.labels.parentValue'),
+    boardValue: t('features.algorithms.runtime.dp.profileDp.labels.boardValue'),
+  },
+  decisions: {
+    addContinuations: t('features.algorithms.runtime.dp.profileDp.decisions.addContinuations'),
+    storeParentFrontier: t('features.algorithms.runtime.dp.profileDp.decisions.storeParentFrontier'),
+    originReached: t('features.algorithms.runtime.dp.profileDp.decisions.originReached'),
+    jumpToParent: t('features.algorithms.runtime.dp.profileDp.decisions.jumpToParent'),
+  },
+} as const;
+
 export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<SortStep> {
   const maskCount = 1 << scenario.height;
   const dp = Array.from({ length: scenario.columns + 1 }, () => Array.from({ length: maskCount }, () => 0));
-  const parentMask = Array.from({ length: scenario.columns + 1 }, () => Array.from({ length: maskCount }, () => null as number | null));
+  const parentMask = Array.from({ length: scenario.columns + 1 }, () =>
+    Array.from({ length: maskCount }, () => null as number | null),
+  );
   const traced = new Set<string>();
   const route: number[] = [];
 
@@ -30,9 +78,9 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
     parentMask,
     traced,
     route,
-    description: 'Seed column 0 with an empty frontier mask before any dominoes are placed.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize empty profile',
+    phaseLabel: I18N.phases.initializeProfile,
     phase: 'init',
   });
 
@@ -53,15 +101,23 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
           route,
           activeCell: [column + 1, nextMask],
           candidateCells: [[column, mask]],
-          description: `At column ${column + 1}, frontier ${profileLabel(mask)} can transition to ${profileLabel(nextMask)} via ${transition.label}.`,
+          description: i18nText(I18N.descriptions.inspectTransition, {
+            column: column + 1,
+            from: profileLabel(mask, scenario.height),
+            to: profileLabel(nextMask, scenario.height),
+            transition: transition.label,
+          }),
           activeCodeLine: 5,
-          phaseLabel: 'Inspect profile transition',
+          phaseLabel: I18N.phases.inspectTransition,
           phase: 'compare',
           computation: {
-            label: `${profileLabel(mask)} -> ${profileLabel(nextMask)}`,
+            label: i18nText(I18N.labels.transitionLabel, {
+              from: profileLabel(mask, scenario.height),
+              to: profileLabel(nextMask, scenario.height),
+            }),
             expression: `${dp[column + 1]![nextMask]!} + ${ways}`,
             result: String(nextWays),
-            decision: 'add every valid tiling continuation for this frontier',
+            decision: I18N.decisions.addContinuations,
           },
         });
 
@@ -79,15 +135,23 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
           activeCell: [column + 1, nextMask],
           candidateCells: [[column, mask]],
           activeStatus: 'improved',
-          description: `Commit the new tiling count for column ${column + 1} and frontier ${profileLabel(nextMask)}.`,
+          description: i18nText(I18N.descriptions.commitCount, {
+            column: column + 1,
+            mask: profileLabel(nextMask, scenario.height),
+          }),
           activeCodeLine: 6,
-          phaseLabel: 'Commit profile count',
+          phaseLabel: I18N.phases.commitCount,
           phase: 'settle-node',
           computation: {
-            label: `dp[${column + 1}][${profileLabel(nextMask)}]`,
+            label: i18nText(I18N.labels.cellLabel, {
+              column: column + 1,
+              mask: profileLabel(nextMask, scenario.height),
+            }),
             expression: `${dp[column + 1]![nextMask]! - ways} + ${ways}`,
             result: String(dp[column + 1]![nextMask]!),
-            decision: `store one parent frontier ${profileLabel(parentMask[column + 1]![nextMask] ?? 0)}`,
+            decision: i18nText(I18N.decisions.storeParentFrontier, {
+              mask: profileLabel(parentMask[column + 1]![nextMask] ?? 0, scenario.height),
+            }),
           },
         });
       }
@@ -108,15 +172,22 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
       route,
       activeCell: [column, mask],
       activeStatus: 'backtrack',
-      description: `Trace one valid frontier route ending in empty mask ${profileLabel(mask)}.`,
+      description: i18nText(I18N.descriptions.backtrackRoute, {
+        mask: profileLabel(mask, scenario.height),
+      }),
       activeCodeLine: 8,
-      phaseLabel: 'Backtrack profile route',
+      phaseLabel: I18N.phases.backtrackRoute,
       phase: 'relax',
       computation: {
         label: `column ${column}`,
-        expression: `mask ${profileLabel(mask)}`,
-        result: routeLabel(route),
-        decision: column === 0 ? 'origin frontier reached' : `jump to parent ${profileLabel(parentMask[column]![mask] ?? 0)}`,
+        expression: `mask ${profileLabel(mask, scenario.height)}`,
+        result: routeLabel(route, scenario.height),
+        decision:
+          column === 0
+            ? I18N.decisions.originReached
+            : i18nText(I18N.decisions.jumpToParent, {
+                mask: profileLabel(parentMask[column]![mask] ?? 0, scenario.height),
+              }),
       },
     });
 
@@ -131,9 +202,11 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
     parentMask,
     traced,
     route,
-    description: `Finished counting profile transitions for a ${scenario.height}×${scenario.columns} domino board.`,
+    description: i18nText(I18N.descriptions.complete, {
+      board: `${scenario.height}×${scenario.columns}`,
+    }),
     activeCodeLine: 9,
-    phaseLabel: 'Tiling counts ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -144,9 +217,9 @@ function createStep(args: {
   readonly parentMask: readonly (readonly (number | null)[])[];
   readonly traced: ReadonlySet<string>;
   readonly route: readonly number[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
@@ -164,7 +237,7 @@ function createStep(args: {
   }));
   const colHeaders: DpHeaderConfig[] = Array.from({ length: args.dp[0]!.length }, (_, mask) => ({
     id: `col-${mask}`,
-    label: profileLabel(mask),
+    label: profileLabel(mask, args.scenario.height),
     status: (args.activeCell?.[1] === mask ? 'active' : mask === 0 ? 'target' : 'idle') as DpHeaderConfig['status'],
     metaLabel: mask === 0 ? 'empty' : 'filled bits',
   }));
@@ -184,9 +257,14 @@ function createStep(args: {
         row,
         col,
         rowLabel: `c${row}`,
-        colLabel: profileLabel(col),
+        colLabel: profileLabel(col, args.scenario.height),
         valueLabel: String(args.dp[row]![col]!),
-        metaLabel: args.parentMask[row]![col] === null ? (row === 0 && col === 0 ? 'seed' : null) : profileLabel(args.parentMask[row]![col] ?? 0),
+        metaLabel:
+          args.parentMask[row]![col] === null
+            ? row === 0 && col === 0
+              ? 'seed'
+              : null
+            : profileLabel(args.parentMask[row]![col] ?? 0, args.scenario.height),
         status: args.traced.has(id)
           ? 'backtrack'
           : id === activeCellId
@@ -205,26 +283,39 @@ function createStep(args: {
 
   const result = args.dp[args.scenario.columns]![0]!;
   const insights: DpInsight[] = [
-    { label: 'Board', value: `${args.scenario.height}×${args.scenario.columns}`, tone: 'accent' },
-    { label: 'Profiles', value: String(args.dp[0]!.length), tone: 'info' },
-    { label: 'Tilings', value: String(result), tone: 'success' },
-    { label: 'Route masks', value: String(args.route.length), tone: 'warning' },
-    { label: 'Goal mask', value: profileLabel(0), tone: 'info' },
+    {
+      label: I18N.insights.boardLabel,
+      value: i18nText(I18N.labels.boardValue, {
+        height: args.scenario.height,
+        columns: args.scenario.columns,
+      }),
+      tone: 'accent',
+    },
+    { label: I18N.insights.profilesLabel, value: String(args.dp[0]!.length), tone: 'info' },
+    { label: I18N.insights.tilingsLabel, value: String(result), tone: 'success' },
+    { label: I18N.insights.routeMasksLabel, value: String(args.route.length), tone: 'warning' },
+    { label: I18N.insights.goalMaskLabel, value: profileLabel(0, args.scenario.height), tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'profile-dp',
-    modeLabel: 'Profile DP',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `tilings = ${result}`,
+    resultLabel: i18nText(I18N.labels.resultTilings, { value: result }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.dp.length} × ${args.dp[0]!.length}`,
-    activeLabel: args.activeCell ? `c${args.activeCell[0]} × ${profileLabel(args.activeCell[1])}` : null,
-    pathLabel: routeLabel(args.route),
-    primaryItemsLabel: 'Profiles',
-    primaryItems: Array.from({ length: args.dp[0]!.length }, (_, mask) => profileLabel(mask)),
-    secondaryItemsLabel: 'Column fronts',
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeState, {
+            column: args.activeCell[0],
+            mask: profileLabel(args.activeCell[1], args.scenario.height),
+          })
+        : null,
+    pathLabel: routeLabel(args.route, args.scenario.height),
+    primaryItemsLabel: I18N.labels.profilesLabel,
+    primaryItems: Array.from({ length: args.dp[0]!.length }, (_, mask) => profileLabel(mask, args.scenario.height)),
+    secondaryItemsLabel: I18N.labels.columnFrontsLabel,
     secondaryItems: Array.from({ length: args.dp.length }, (_, column) => `c${column}`),
     insights,
     rowHeaders,
@@ -237,10 +328,14 @@ function createStep(args: {
   });
 }
 
-function profileLabel(mask: number): string {
-  return mask.toString(2).padStart(2, '0');
+function profileLabel(mask: number, width: number): string {
+  return mask.toString(2).padStart(width, '0');
 }
 
-function routeLabel(route: readonly number[]): string {
-  return route.length > 0 ? `Route: ${route.map((mask) => profileLabel(mask)).join(' → ')}` : 'Route: pending';
+function routeLabel(route: readonly number[], width: number): TranslatableText {
+  return route.length > 0
+    ? i18nText(I18N.labels.pathValue, {
+        route: route.map((mask) => profileLabel(mask, width)).join(' → '),
+      })
+    : I18N.labels.pathPending;
 }

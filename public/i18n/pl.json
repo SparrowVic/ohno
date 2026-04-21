@@ -539,6 +539,142 @@
               "optimalChangeReady": "Gotowa optymalna reszta"
             }
           },
+          "divideConquerDpOptimization": {
+            "decisions": {
+              "jumpPrevPrefix": "skocz do prefiksu {{split}}",
+              "keepCurrentBest": "bieżący najlepszy pozostaje lepszy",
+              "newBestSplit": "nowy najlepszy podział",
+              "recursionWindows": "rekurencja na oknach {{left}} i {{right}}"
+            },
+            "descriptions": {
+              "backtrack": "Grupa {{group}} kończy się cięciem [{{left}}..{{right}}], więc przejdź do poprzedniego prefiksu.",
+              "commitMidpoint": "Zapisz najtańszy podział dla grupy {{group}} kończącej się na prefiksie {{mid}}.",
+              "complete": "Odtworzono jeden optymalny podział na {{groups}} grup.",
+              "initialize": "Zainicjalizuj bazowy wiersz DP i przygotuj okna rekurencji dla każdej liczby grup.",
+              "inspectRange": "Dla grupy {{group}} i środka {{mid}} sprawdź podział {{split}} w bieżącym oknie divide-and-conquer."
+            },
+            "insights": {
+              "bestCostLabel": "Najlepszy koszt",
+              "groupsLabel": "Grupy",
+              "inputLabel": "Wejście",
+              "partitionsLabel": "Podziały",
+              "valuesLabel": "Wartości"
+            },
+            "labels": {
+              "activeState": "g{{group}} × {{end}}",
+              "candidateLabel": "g{{group}} -> {{mid}}",
+              "groupRowsLabel": "Wiersze grup",
+              "inputValuesLabel": "Wartości wejściowe",
+              "pathPending": "Cięcia: oczekuje",
+              "pathValue": "Cięcia: {{cuts}}",
+              "resultCost": "cost = {{value}}",
+              "resultPending": "koszt oczekuje",
+              "stateLabel": "dp[{{group}}][{{end}}]"
+            },
+            "modeLabel": "Optymalizacja DP metodą divide and conquer",
+            "phases": {
+              "backtrackSplits": "Cofnij cięcia",
+              "commitMidpoint": "Zapisz środek",
+              "complete": "Cięcia gotowe",
+              "initializeRows": "Zainicjalizuj wiersze",
+              "inspectRange": "Sprawdź zakres środka"
+            }
+          },
+          "dpConvexHullTrick": {
+            "decisions": {
+              "backtrackFinished": "cofanie doszło do punktu początkowego",
+              "bestPredecessor": "najlepszy poprzednik to p{{index}}",
+              "jumpPredecessor": "skocz do poprzednika",
+              "lineReady": "nowa prosta jest gotowa na kolejne zapytania",
+              "middleDominated": "środkowa prosta jest zdominowana na zawsze",
+              "popFront": "pierwsza prosta jest gorsza, usuń ją"
+            },
+            "descriptions": {
+              "advanceQuery": "Dla x = {{x}} odrzuć pierwszą prostą, jeśli następna daje lepszą wartość.",
+              "backtrack": "Prześledź łańcuch wybranych poprzedników zaczynając od punktu p{{index}}.",
+              "commitQuery": "Zapisz najlepszego poprzednika dla punktu p{{index}} przy x = {{x}}.",
+              "complete": "Odtworzono jedną optymalną ścieżkę poprzedników przez punkty.",
+              "initialize": "Ustaw początkowe dp w pierwszym punkcie i wstaw pierwszą prostą nośną do hull.",
+              "insertLine": "Wstaw prostą nośną wygenerowaną przez punkt p{{index}} do hull.",
+              "pruneLine": "Przed wstawieniem p{{index}} usuń środkową prostą, jeśli pozostaje zdominowana już na zawsze."
+            },
+            "insights": {
+              "costLabel": "Koszt przejścia",
+              "hullSizeLabel": "Rozmiar hull",
+              "lastDpLabel": "Ostatnie dp",
+              "pointsLabel": "Punkty",
+              "transitionsLabel": "Przejścia"
+            },
+            "labels": {
+              "activePoint": "punkt p{{index}}",
+              "dpLabel": "dp[{{index}}]",
+              "hullLinesLabel": "Proste hull",
+              "hullSizeValue": "rozmiar hull = {{size}}",
+              "pathPending": "Ścieżka: oczekuje",
+              "pathValue": "Ścieżka: {{points}}",
+              "pointValuesLabel": "Wartości punktów",
+              "pruneLabel": "usuń {{line}}",
+              "queryLabel": "zapytanie x = {{x}}",
+              "resultDp": "dp = {{value}}",
+              "resultPending": "dp oczekuje"
+            },
+            "modeLabel": "DP Convex Hull Trick",
+            "phases": {
+              "advanceQuery": "Przesuń głowę zapytania",
+              "backtrack": "Cofnij ścieżkę",
+              "commitQuery": "Zapisz zapytanie",
+              "complete": "Optymalna ścieżka gotowa",
+              "initializeHull": "Zainicjalizuj hull",
+              "insertLine": "Wstaw nową prostą",
+              "pruneLine": "Usuń zdominowaną prostą"
+            }
+          },
+          "dpOnTrees": {
+            "decisions": {
+              "leafDirect": "liść wnosi wartość bezpośrednio",
+              "mergeChild": "scal wkład dziecka do stanu rodzica",
+              "skipDominates": "dominuje stan skip",
+              "takeDominates": "dominuje stan take"
+            },
+            "descriptions": {
+              "aggregateChild": "Połącz dziecko {{child}}: wzięcie {{node}} wymusza skip u dziecka, a pominięcie rodzica może użyć najlepszego stanu dziecka.",
+              "chooseNode": "Wybierz {{node}}, bo stan take jest lepszy niż pominięcie, a rodzic nie jest zaznaczony.",
+              "commitStates": "Zapisz take / skip / best dla poddrzewa zakorzenionego w {{node}}.",
+              "complete": "Odtworzono jeden maksymalny wagowo zbiór niezależny na drzewie.",
+              "initialize": "Ukorzeń drzewo i przygotuj postorder, aby każde poddrzewo dziecka było rozwiązane przed rodzicem.",
+              "inspectLeaf": "Węzeł-liść {{node}} nie ma dzieci, więc jego wartość take to po prostu własna waga {{weight}}.",
+              "skipBetterState": "Pomiń {{node}}, bo stan skip jest lepszy niż take.",
+              "skipParentTaken": "Pomiń {{node}}, bo jego rodzic został już wybrany."
+            },
+            "insights": {
+              "chosenLabel": "Wybrane",
+              "nodesLabel": "Węzły",
+              "postorderLabel": "Postorder",
+              "rootBestLabel": "Najlepszy korzeń",
+              "stripLabel": "Pasek"
+            },
+            "labels": {
+              "activeNode": "węzeł {{node}}",
+              "bestLabel": "best[{{node}}]",
+              "pairLabel": "{{node}} + {{child}}",
+              "pathPending": "Wybrane: oczekuje",
+              "pathValue": "Wybrane: {{nodes}}",
+              "postorderNodesLabel": "Węzły postorder",
+              "postorderValue": "{{value}}",
+              "resultBest": "best = {{value}}",
+              "stripValue": "4 × {{length}}",
+              "treeEdgesLabel": "Krawędzie drzewa"
+            },
+            "modeLabel": "DP na drzewach",
+            "phases": {
+              "aggregateChild": "Agreguj poddrzewo dziecka",
+              "backtrackChosen": "Cofnij wybrany zbiór",
+              "commitStates": "Zapisz stany poddrzewa",
+              "complete": "Wybrane węzły gotowe",
+              "initializeTree": "Zainicjalizuj ukorzenione drzewo",
+              "inspectLeaf": "Sprawdź stan liścia"
+            }
+          },
           "editDistance": {
             "decisions": {
               "carryDiagonalMatch": "przenieś dopasowanie po przekątnej, jeśli się da",
@@ -691,6 +827,53 @@
               "compareSkipTake": "Porównanie pomiń kontra weź",
               "initializeBaseRow": "Inicjalizacja wiersza bazowego",
               "optimalSolutionReady": "Gotowe optymalne rozwiązanie"
+            }
+          },
+          "knuthDpOptimization": {
+            "decisions": {
+              "keepEarlierSplit": "wcześniejszy podział pozostaje lepszy",
+              "newBestSplit": "nowy najlepszy podział w oknie",
+              "noFurtherSplit": "liść nie ma dalszego podziału",
+              "openSubintervals": "otwórz oba podprzedziały",
+              "saveOptSplit": "zapisz optymalny podział {{split}}"
+            },
+            "descriptions": {
+              "commitInterval": "Zapisz najtańszy koszt scalenia dla przedziału F{{left}}..F{{right}} z podziałem po pliku {{split}}.",
+              "complete": "Odtworzono jeden optymalny plan scalania dla całego zakresu plików.",
+              "initialize": "Zainicjalizuj każdy przekątny przedział, aby pojedynczy plik miał koszt scalenia 0, a tabela opt Knutha startowała na przekątnej.",
+              "inspectWindow": "Dla przedziału F{{left}}..F{{right}} trzeba sprawdzić tylko podziały z okna Knutha {{low}}..{{high}}.",
+              "traceLeaf": "Plik F{{index}} jest liściem w optymalnym drzewie scalania.",
+              "traceSplit": "Przedział F{{left}}..F{{right}} dzieli się po pliku F{{split}} w optymalnym drzewie scalania."
+            },
+            "insights": {
+              "filesLabel": "Pliki",
+              "shapeLabel": "Kształt",
+              "totalCostLabel": "Łączny koszt",
+              "traceCellsLabel": "Komórki ścieżki",
+              "weightsLabel": "Wagi"
+            },
+            "labels": {
+              "activeInterval": "F{{left}}..F{{right}}",
+              "cellLabel": "dp[{{left}}][{{right}}]",
+              "fileSizesLabel": "Rozmiary plików",
+              "intervalLabel": "F{{left}}..F{{right}}",
+              "leafLabel": "liść F{{index}}",
+              "optWindowsLabel": "Okna opt",
+              "pathPending": "Plan: oczekuje",
+              "pathValue": "Plan: {{value}}",
+              "resultCost": "cost = {{value}}",
+              "resultPending": "koszt oczekuje",
+              "traceLabel": "ślad F{{left}}..F{{right}}",
+              "upperTriangle": "górny trójkąt"
+            },
+            "modeLabel": "Optymalizacja Knutha",
+            "phases": {
+              "commitInterval": "Zapisz przedział",
+              "complete": "Plan scalania gotowy",
+              "initializeDiagonal": "Zainicjalizuj przekątną",
+              "inspectWindow": "Sprawdź okno Knutha",
+              "traceLeaf": "Śledź liść",
+              "traceSplit": "Śledź optymalny podział"
             }
           },
           "longestCommonSubsequence": {
@@ -920,6 +1103,48 @@
               "traceSplit": "Śledź optymalny podział"
             }
           },
+          "profileDp": {
+            "decisions": {
+              "addContinuations": "dodaj wszystkie poprawne kontynuacje układania dla tego frontu",
+              "jumpToParent": "skocz do rodzica {{mask}}",
+              "originReached": "osiągnięto front początkowy",
+              "storeParentFrontier": "zapisz jeden rodzicielski front {{mask}}"
+            },
+            "descriptions": {
+              "backtrackRoute": "Prześledź jedną poprawną trasę frontu kończącą się pustą maską {{mask}}.",
+              "commitCount": "Zapisz nową liczbę ułożeń dla kolumny {{column}} i frontu {{mask}}.",
+              "complete": "Zakończono liczenie przejść profilowych dla planszy {{board}}.",
+              "initialize": "Ustaw kolumnę 0 z pustą maską frontu, zanim zostaną położone jakiekolwiek domina.",
+              "inspectTransition": "W kolumnie {{column}} front {{from}} może przejść do {{to}} przez {{transition}}."
+            },
+            "insights": {
+              "boardLabel": "Plansza",
+              "goalMaskLabel": "Maska celu",
+              "profilesLabel": "Profile",
+              "routeMasksLabel": "Maski trasy",
+              "tilingsLabel": "Ułożenia"
+            },
+            "labels": {
+              "activeState": "c{{column}} × {{mask}}",
+              "boardValue": "{{height}}×{{columns}}",
+              "cellLabel": "dp[{{column}}][{{mask}}]",
+              "columnFrontsLabel": "Fronty kolumn",
+              "parentValue": "rodzic = {{mask}}",
+              "pathPending": "Trasa: oczekuje",
+              "pathValue": "Trasa: {{route}}",
+              "profilesLabel": "Profile",
+              "resultTilings": "tilings = {{value}}",
+              "transitionLabel": "{{from}} -> {{to}}"
+            },
+            "modeLabel": "DP profilowe",
+            "phases": {
+              "backtrackRoute": "Cofnij trasę profilu",
+              "commitCount": "Zapisz liczność profilu",
+              "complete": "Liczności ułożeń gotowe",
+              "initializeProfile": "Zainicjalizuj pusty profil",
+              "inspectTransition": "Sprawdź przejście profilu"
+            }
+          },
           "regexMatching": {
             "decisions": {
               "bothStarBranchesFail": "obie gałęzie gwiazdki zawodzą",
@@ -984,6 +1209,53 @@
               "traceDirect": "Śledź bezpośrednie dopasowanie",
               "traceStarConsume": "Śledź pochłanianie przez gwiazdkę",
               "traceStarEmpty": "Śledź pustą grupę z gwiazdką"
+            }
+          },
+          "sosDp": {
+            "decisions": {
+              "aggregateSubmask": "agreguj wszystkie podzbiory różniące się tylko tym bitem",
+              "followBranches": "podążaj wszystkimi gałęziami współtwórców",
+              "noMerge": "bit nieobecny, więc nie ma scalenia podzbiorów",
+              "recordContributor": "zapisz bazową submaskę jako współtwórcę",
+              "stageAccumulates": "etap akumuluje wszystkie istotne submaski"
+            },
+            "descriptions": {
+              "carryMask": "Maska {{mask}} nie zawiera bitu {{bit}}, więc kolejny etap tylko przenosi poprzednią wartość.",
+              "commitTransition": "Zapisz zaktualizowaną wartość sum-over-subsets dla {{mask}} po przetworzeniu bitu {{bit}}.",
+              "complete": "Odtworzono maski bazowe, które składają się na maskę fokusową {{mask}}.",
+              "initialize": "Zacznij od bazowych wartości funkcji w wierszu 0, zanim zostaną zastosowane przejścia bitowe SOS.",
+              "mergeSubmask": "Bit {{bit}} jest ustawiony w masce {{mask}}, więc dodaj wkład submaski {{submask}}.",
+              "traceBase": "Maska bazowa {{mask}} wnosi bezpośredni wkład do fokusowego wyniku SOS.",
+              "traceContributors": "Śledź fokusową maskę przez etap SOS {{stage}}."
+            },
+            "insights": {
+              "bitsLabel": "Bity",
+              "contributorsLabel": "Współtwórcy",
+              "focusLabel": "Fokus",
+              "focusedSumLabel": "Suma fokusowa",
+              "masksLabel": "Maski"
+            },
+            "labels": {
+              "activeBitsLabel": "Aktywne bity",
+              "activeState": "{{row}} × {{mask}}",
+              "baseValuesLabel": "Wartości bazowe",
+              "carryLabel": "{{mask}} @ bit {{bit}}",
+              "cellLabel": "dp[{{stage}}][{{mask}}]",
+              "mergeLabel": "{{mask}} przez bit {{bit}}",
+              "pathPending": "Submaski: oczekuje",
+              "pathValue": "Submaski: {{masks}}",
+              "resultSum": "sum = {{value}}",
+              "stageLabel": "{{mask}} @ etap {{stage}}"
+            },
+            "modeLabel": "SOS DP",
+            "phases": {
+              "carryMask": "Przenieś nietkniętą maskę",
+              "commitTransition": "Zapisz przejście SOS",
+              "complete": "Współtwórcy gotowi",
+              "initializeBase": "Zainicjalizuj bazowy wiersz podzbiorów",
+              "mergeSubmask": "Scal wkład submaski",
+              "traceBase": "Śledź bazowego współtwórcę",
+              "traceContributors": "Śledź ścieżkę wkładów SOS"
             }
           },
           "subsetSum": {
