@@ -4,26 +4,47 @@
       <app-segmented-panel
         class="trace__summary"
         orientation="vertical"
-        aria-label="String summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.summaryAriaLabel | transloco
+        "
       >
-        <app-segmented-panel-section class="trace__summary-mode" eyebrow="Mode">
+        <app-segmented-panel-section
+          class="trace__summary-mode"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.modeLabel | transloco"
+        >
           <div class="trace__summary-combo">
             <span class="trace__summary-mode-value">{{ stringState.modeLabel }}</span>
             <span class="trace__summary-preset">
-              <span class="trace__summary-preset-label">Preset</span>
+              <span class="trace__summary-preset-label">{{
+                I18N_KEY.features.algorithms.tracePanels.string.presetLabel | transloco
+              }}</span>
               <span class="trace__summary-preset-value">{{ stringState.presetLabel }}</span>
             </span>
           </div>
         </app-segmented-panel-section>
-        <app-segmented-panel-section eyebrow="Phase" [value]="stringState.phaseLabel" />
-        <app-segmented-panel-section eyebrow="Active" [value]="stringState.activeLabel || '—'" />
-        <app-segmented-panel-section eyebrow="Result" [value]="stringState.resultLabel" />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.phaseLabel | transloco"
+          [value]="stringState.phaseLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.activeLabel | transloco"
+          [value]="stringState.activeLabel || '—'"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.resultLabel | transloco"
+          [value]="stringState.resultLabel"
+        />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__calculation" aria-label="String calculation summary">
+      <app-segmented-panel
+        class="trace__calculation"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.calculationAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
           class="trace__calc-section trace__calc-section--preset"
-          eyebrow="Preset note"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.presetNoteLabel | transloco"
         >
           <div class="trace__calc-expression">{{ stringState.presetDescription }}</div>
         </app-segmented-panel-section>
@@ -31,10 +52,16 @@
         <app-segmented-panel-section
           class="trace__calc-section"
           [class.trace__calc-section--muted]="!stringState.computation"
-          [eyebrow]="stringState.computation?.label ?? 'Current transition'"
+          [eyebrow]="
+            stringState.computation?.label ||
+            (I18N_KEY.features.algorithms.tracePanels.string.currentTransitionLabel | transloco)
+          "
         >
           <div class="trace__calc-expression">
-            {{ stringState.computation?.expression ?? 'Waiting for next string event.' }}
+            {{
+              stringState.computation?.expression ||
+                (I18N_KEY.features.algorithms.tracePanels.string.waitingEventLabel | transloco)
+            }}
           </div>
           @if (stringState.computation?.result; as result) {
             <div class="trace__calc-result">{{ result }}</div>
@@ -42,13 +69,16 @@
             <div class="trace__calc-result trace__calc-result--muted">—</div>
           }
           <div class="trace__calc-note">
-            {{ stringState.computation?.note ?? 'No extra formula on this step.' }}
+            {{
+              stringState.computation?.note ||
+                (I18N_KEY.features.algorithms.tracePanels.string.noFormulaLabel | transloco)
+            }}
           </div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section
           class="trace__calc-section trace__calc-section--decision"
-          eyebrow="Decision"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.decisionLabel | transloco"
         >
           <div class="trace__calc-note">{{ stringState.decisionLabel }}</div>
         </app-segmented-panel-section>
@@ -57,9 +87,14 @@
       <app-segmented-panel
         class="trace__feeds"
         orientation="vertical"
-        aria-label="String trace context"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.contextAriaLabel | transloco
+        "
       >
-        <app-segmented-panel-section eyebrow="Insights" [badge]="stringState.insights.length">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.insightsLabel | transloco"
+          [badge]="stringState.insights.length"
+        >
           <div class="trace__insight-list">
             @for (insight of stringState.insights; track insight.label) {
               <span class="trace__insight-chip trace__insight-chip--{{ insight.tone }}">
@@ -70,12 +105,15 @@
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Legend" [badge]="legend.length">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.legendLabel | transloco"
+          [badge]="legend.length"
+        >
           <div class="trace__legend-list">
-            @for (item of legend; track item.label) {
+            @for (item of legend; track item.labelKey) {
               <span class="trace__legend-chip">
                 <fa-icon [icon]="item.icon" />
-                <span class="trace__legend-text">{{ item.label }}</span>
+                <span class="trace__legend-text">{{ item.labelKey | transloco }}</span>
               </span>
             }
           </div>
@@ -84,8 +122,18 @@
     </div>
 
     @if (kmpState(); as kmp) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="KMP details">
-        <app-segmented-panel-section eyebrow="Failure table" [badge]="kmp.failure.length">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.kmp.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.kmp.failureTableLabel | transloco
+          "
+          [badge]="kmp.failure.length"
+        >
           <div class="value-strip">
             @for (value of failurePreview(kmp); track $index; let index = $index) {
               <span
@@ -100,22 +148,33 @@
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Scan state">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.kmp.scanStateLabel | transloco"
+        >
           <div class="kv-list">
             <div>
-              <span>Alignment</span><strong>{{ kmp.alignment }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.kmp.alignmentLabel | transloco
+              }}</span>
+              <strong>{{ kmp.alignment }}</strong>
             </div>
             <div>
-              <span>Text index</span><strong>{{ kmp.textIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.kmp.textIndexLabel | transloco
+              }}</span>
+              <strong>{{ kmp.textIndex ?? '—' }}</strong>
             </div>
             <div>
-              <span>Pattern index</span><strong>{{ kmp.patternIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.kmp.patternIndexLabel | transloco
+              }}</span>
+              <strong>{{ kmp.patternIndex ?? '—' }}</strong>
             </div>
             <div>
-              <span>Jump</span
-              ><strong>{{
-                kmp.fallbackFrom !== null ? kmp.fallbackFrom + ' → ' + kmp.fallbackTo : 'none'
-              }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.kmp.jumpLabel | transloco
+              }}</span>
+              <strong>{{ jumpLabel(kmp) }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -123,40 +182,75 @@
     }
 
     @if (rabinState(); as rabin) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="Rabin-Karp details">
-        <app-segmented-panel-section eyebrow="Hashes">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.hashesLabel | transloco
+          "
+        >
           <div class="kv-list">
             <div>
-              <span>Pattern</span><strong>{{ rabin.patternHash }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.patternLabel | transloco
+              }}</span>
+              <strong>{{ rabin.patternHash }}</strong>
             </div>
             <div>
-              <span>Window</span><strong>{{ rabin.windowHash }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.windowLabel | transloco
+              }}</span>
+              <strong>{{ rabin.windowHash }}</strong>
             </div>
             <div>
-              <span>Base / mod</span><strong>{{ rabin.base }} / {{ rabin.mod }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.baseModLabel | transloco
+              }}</span>
+              <strong>{{ rabin.base }} / {{ rabin.mod }}</strong>
             </div>
             <div>
-              <span>Verify step</span><strong>{{ rabin.verificationIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.verifyStepLabel
+                  | transloco
+              }}</span>
+              <strong>{{ rabin.verificationIndex ?? '—' }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Rolling window">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.rollingWindowLabel | transloco
+          "
+        >
           <div class="kv-list">
             <div>
-              <span>Start</span><strong>{{ rabin.windowStart }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.startLabel | transloco
+              }}</span>
+              <strong>{{ rabin.windowStart }}</strong>
             </div>
             <div>
-              <span>Outgoing</span><strong>{{ rabin.outgoingChar ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.outgoingLabel | transloco
+              }}</span>
+              <strong>{{ rabin.outgoingChar ?? '—' }}</strong>
             </div>
             <div>
-              <span>Incoming</span><strong>{{ rabin.incomingChar ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.incomingLabel | transloco
+              }}</span>
+              <strong>{{ rabin.incomingChar ?? '—' }}</strong>
             </div>
             <div>
-              <span>Status</span
-              ><strong>{{
-                rabin.collision ? 'collision' : rabin.verifying ? 'verify' : 'hash only'
-              }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.statusLabel | transloco
+              }}</span>
+              <strong>{{ rabinStatusLabel(rabin) }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -164,8 +258,18 @@
     }
 
     @if (zState(); as zStateValue) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="Z algorithm details">
-        <app-segmented-panel-section eyebrow="Z skyline" [badge]="zStateValue.zValues.length">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.skylineLabel | transloco
+          "
+          [badge]="zStateValue.zValues.length"
+        >
           <div class="value-strip">
             @for (value of zPreview(zStateValue); track $index; let index = $index) {
               <span
@@ -178,20 +282,37 @@
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Z-box">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.boxLabel | transloco
+          "
+        >
           <div class="kv-list">
             <div>
-              <span>L</span><strong>{{ zStateValue.boxLeft ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.leftLabel | transloco
+              }}</span>
+              <strong>{{ zStateValue.boxLeft ?? '—' }}</strong>
             </div>
             <div>
-              <span>R</span><strong>{{ zStateValue.boxRight ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.rightLabel | transloco
+              }}</span>
+              <strong>{{ zStateValue.boxRight ?? '—' }}</strong>
             </div>
             <div>
-              <span>Prefix compare</span
-              ><strong>{{ zStateValue.comparePrefixIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.prefixCompareLabel
+                  | transloco
+              }}</span>
+              <strong>{{ zStateValue.comparePrefixIndex ?? '—' }}</strong>
             </div>
             <div>
-              <span>Text compare</span><strong>{{ zStateValue.compareMatchIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.textCompareLabel
+                  | transloco
+              }}</span>
+              <strong>{{ zStateValue.compareMatchIndex ?? '—' }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -199,8 +320,18 @@
     }
 
     @if (manacherState(); as manacher) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="Manacher details">
-        <app-segmented-panel-section eyebrow="Radius array" [badge]="manacher.radii.length">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.manacher.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.manacher.radiusArrayLabel | transloco
+          "
+          [badge]="manacher.radii.length"
+        >
           <div class="value-strip">
             @for (value of radiiPreview(manacher); track $index; let index = $index) {
               <span
@@ -215,22 +346,37 @@
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Mirror window">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.manacher.mirrorWindowLabel | transloco
+          "
+        >
           <div class="kv-list">
             <div>
-              <span>Center</span><strong>{{ manacher.currentCenter ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.manacher.centerLabel | transloco
+              }}</span>
+              <strong>{{ manacher.currentCenter ?? '—' }}</strong>
             </div>
             <div>
-              <span>Mirror</span><strong>{{ manacher.mirrorIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.manacher.mirrorLabel | transloco
+              }}</span>
+              <strong>{{ manacher.mirrorIndex ?? '—' }}</strong>
             </div>
             <div>
-              <span>Bounds</span
-              ><strong
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.manacher.boundsLabel | transloco
+              }}</span>
+              <strong
                 >{{ manacher.leftBoundary ?? '—' }}..{{ manacher.rightBoundary ?? '—' }}</strong
               >
             </div>
             <div>
-              <span>Longest</span><strong>{{ manacher.longestPalindrome || '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.manacher.longestLabel | transloco
+              }}</span>
+              <strong>{{ manacher.longestPalindrome || '—' }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -238,28 +384,62 @@
     }
 
     @if (bwtState(); as bwt) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="Burrows-Wheeler details">
-        <app-segmented-panel-section eyebrow="Columns">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.detailsAriaLabel
+            | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.columnsLabel | transloco
+          "
+        >
           <div class="kv-list">
             <div>
-              <span>Input</span><strong>{{ bwt.source }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.inputLabel
+                  | transloco
+              }}</span>
+              <strong>{{ bwt.source }}</strong>
             </div>
             <div>
-              <span>F</span><strong>{{ bwt.firstColumn || '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.firstColumnLabel
+                  | transloco
+              }}</span>
+              <strong>{{ bwt.firstColumn || '—' }}</strong>
             </div>
             <div>
-              <span>L</span><strong>{{ bwt.lastColumn || '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.lastColumnLabel
+                  | transloco
+              }}</span>
+              <strong>{{ bwt.lastColumn || '—' }}</strong>
             </div>
             <div>
-              <span>Gain</span><strong>{{ formatRatio(bwt.compressionRatio) }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.gainLabel | transloco
+              }}</span>
+              <strong>{{ formatRatio(bwt.compressionRatio) }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Output runs" [badge]="bwt.runGroups.length">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.outputRunsLabel
+              | transloco
+          "
+          [badge]="bwt.runGroups.length"
+        >
           <div class="value-strip">
             @if (groupPreview(bwt).length === 0) {
-              <span class="trace__detail-empty">none yet</span>
+              <span class="trace__detail-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.noneYetLabel
+                  | transloco
+              }}</span>
             } @else {
               @for (group of groupPreview(bwt); track group) {
                 <span class="value-chip value-chip--soft">{{ group }}</span>
@@ -271,40 +451,78 @@
     }
 
     @if (rleState(); as rle) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="RLE details">
-        <app-segmented-panel-section eyebrow="Scanner">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.rle.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.rle.scannerLabel | transloco"
+        >
           <div class="kv-list">
             <div>
-              <span>Position</span><strong>{{ rle.scanIndex ?? '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.positionLabel | transloco
+              }}</span>
+              <strong>{{ rle.scanIndex ?? '—' }}</strong>
             </div>
             <div>
-              <span>Char</span><strong>'{{ rle.groupChar || '—' }}'</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.charLabel | transloco
+              }}</span>
+              <strong>'{{ rle.groupChar || '—' }}'</strong>
             </div>
             <div>
-              <span>Count</span><strong>{{ rle.groupCount }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.countLabel | transloco
+              }}</span>
+              <strong>{{ rle.groupCount }}</strong>
             </div>
             <div>
-              <span>Phase</span><strong>{{ rle.phase }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.phaseLabel | transloco
+              }}</span>
+              <strong>{{ rle.phase }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Result" [badge]="rle.completedRuns.length">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.rle.resultLabel | transloco"
+          [badge]="rle.completedRuns.length"
+        >
           <div class="kv-list">
             <div>
-              <span>Runs done</span><strong>{{ rle.completedRuns.length }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.runsDoneLabel | transloco
+              }}</span>
+              <strong>{{ rle.completedRuns.length }}</strong>
             </div>
             <div>
-              <span>Output</span><strong>{{ rle.output || '—' }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.outputLabel | transloco
+              }}</span>
+              <strong>{{ rle.output || '—' }}</strong>
             </div>
             <div>
-              <span>Ratio</span
-              ><strong>{{
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.ratioLabel | transloco
+              }}</span>
+              <strong>{{
                 rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—'
               }}</strong>
             </div>
             <div>
-              <span>Original</span><strong>{{ rle.source.length }} chars</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.originalLabel | transloco
+              }}</span>
+              <strong>
+                {{ rle.source.length }}
+                {{
+                  I18N_KEY.features.algorithms.tracePanels.string.rle.charsSuffixLabel | transloco
+                }}
+              </strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -312,35 +530,80 @@
     }
 
     @if (huffmanState(); as huffman) {
-      <app-segmented-panel class="trace__detail-grid" aria-label="Huffman details">
-        <app-segmented-panel-section eyebrow="Heap" [badge]="huffman.heapItems.length">
+      <app-segmented-panel
+        class="trace__detail-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.string.huffman.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.huffman.heapLabel | transloco"
+          [badge]="huffman.heapItems.length"
+        >
           <div class="kv-list">
             <div>
-              <span>Size</span><strong>{{ huffman.heapItems.length }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.sizeLabel | transloco
+              }}</span>
+              <strong>{{ huffman.heapItems.length }}</strong>
             </div>
             <div>
-              <span>Phase</span><strong>{{ huffman.phase }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.phaseLabel | transloco
+              }}</span>
+              <strong>{{ huffman.phase }}</strong>
             </div>
             <div>
-              <span>Unique chars</span><strong>{{ huffman.charFreqs.length }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.uniqueCharsLabel | transloco
+              }}</span>
+              <strong>{{ huffman.charFreqs.length }}</strong>
             </div>
             <div>
-              <span>Codes assigned</span><strong>{{ huffman.codeTable.length }}</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.codesAssignedLabel
+                  | transloco
+              }}</span>
+              <strong>{{ huffman.codeTable.length }}</strong>
             </div>
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Compression">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.string.huffman.compressionLabel | transloco
+          "
+        >
           <div class="kv-list">
             <div>
-              <span>Original</span><strong>{{ huffman.totalOriginalBits }} bits</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.originalLabel | transloco
+              }}</span>
+              <strong>
+                {{ huffman.totalOriginalBits }}
+                {{
+                  I18N_KEY.features.algorithms.tracePanels.string.huffman.bitsSuffixLabel
+                    | transloco
+                }}
+              </strong>
             </div>
             <div>
-              <span>Compressed</span><strong>{{ huffman.totalCompressedBits }} bits</strong>
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.compressedLabel | transloco
+              }}</span>
+              <strong>
+                {{ huffman.totalCompressedBits }}
+                {{
+                  I18N_KEY.features.algorithms.tracePanels.string.huffman.bitsSuffixLabel
+                    | transloco
+                }}
+              </strong>
             </div>
             <div>
-              <span>Savings</span
-              ><strong>{{
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.savingsLabel | transloco
+              }}</span>
+              <strong>{{
                 huffman.totalOriginalBits > 0
                   ? ((1 - huffman.totalCompressedBits / huffman.totalOriginalBits) * 100).toFixed(
                       0
@@ -349,8 +612,10 @@
               }}</strong>
             </div>
             <div>
-              <span>Ratio</span
-              ><strong>{{
+              <span>{{
+                I18N_KEY.features.algorithms.tracePanels.string.huffman.ratioLabel | transloco
+              }}</span>
+              <strong>{{
                 formatRatio(
                   huffman.totalOriginalBits > 0
                     ? huffman.totalCompressedBits / huffman.totalOriginalBits
@@ -363,6 +628,8 @@
       </app-segmented-panel>
     }
   } @else {
-    <div class="trace__empty">No string trace available.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.string.emptyLabel | transloco }}
+    </div>
   }
 </div>

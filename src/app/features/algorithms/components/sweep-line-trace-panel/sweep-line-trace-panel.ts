@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { SweepLineStepState } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -12,12 +14,13 @@ const SPAN_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-sweep-line-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './sweep-line-trace-panel.html',
   styleUrl: './sweep-line-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SweepLineTracePanel {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<SweepLineStepState | null>(null);
   readonly spanColumns = SPAN_COLUMNS;
   readonly spanRows = computed<readonly TableRow[]>(() =>

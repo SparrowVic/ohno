@@ -3,43 +3,77 @@
     <div class="trace__header">
       <app-segmented-panel
         class="trace__summary trace__summary--{{ geo.phase }}"
-        aria-label="Closest pair summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.closestPair.summaryAriaLabel | transloco
+        "
       >
-        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel()" />
         <app-segmented-panel-section
-          eyebrow="Best"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.closestPair.phaseLabel | transloco"
+          [value]="phaseLabel()"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.closestPair.bestLabel | transloco"
           [value]="formatDistance(geo.bestDistance)"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Checks"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.closestPair.checksLabel | transloco"
           [value]="geo.checkedPairs"
           [valueMono]="true"
         />
-        <app-segmented-panel-section eyebrow="Depth" [value]="geo.depth" [valueMono]="true" />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.closestPair.depthLabel | transloco"
+          [value]="geo.depth"
+          [valueMono]="true"
+        />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__facts" aria-label="Closest pair region">
-        <app-segmented-panel-section eyebrow="Region" [value]="geo.regionLabel" />
+      <app-segmented-panel
+        class="trace__facts"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.closestPair.regionAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Strip corridor"
-          [value]="geo.stripWidth !== null ? '±' + geo.stripWidth.toFixed(2) : 'inactive'"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.closestPair.regionLabel | transloco"
+          [value]="geo.regionLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.closestPair.stripCorridorLabel | transloco
+          "
+          [value]="
+            geo.stripWidth !== null
+              ? '±' + geo.stripWidth.toFixed(2)
+              : (I18N_KEY.features.algorithms.tracePanels.closestPair.inactiveLabel | transloco)
+          "
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Strip points"
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.closestPair.stripPointsLabel | transloco
+          "
           [value]="stripCount()"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Split x"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.closestPair.splitXLabel | transloco"
           [value]="geo.midX !== null ? geo.midX.toFixed(1) : '—'"
           [valueMono]="true"
         />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__compare" aria-label="Closest pair comparison">
-        <app-segmented-panel-section eyebrow="Current pair">
+      <app-segmented-panel
+        class="trace__compare"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.closestPair.comparisonAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.closestPair.currentPairLabel | transloco
+          "
+        >
           <div class="trace__pair-block" [class.trace__pair-block--ghost]="!hasCurrentPair()">
             <div class="trace__pair-row">
               <span
@@ -60,12 +94,22 @@
               <span>{{ formatCoord(currentPairSlot().right) }}</span>
             </div>
             <span class="trace__pair-note">
-              {{ hasCurrentPair() ? 'Active comparison' : 'Waiting for next comparison' }}
+              {{
+                hasCurrentPair()
+                  ? (I18N_KEY.features.algorithms.tracePanels.closestPair.activeComparisonLabel
+                    | transloco)
+                  : (I18N_KEY.features.algorithms.tracePanels.closestPair.waitingComparisonLabel
+                    | transloco)
+              }}
             </span>
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Best so far">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.closestPair.bestSoFarLabel | transloco
+          "
+        >
           <div class="trace__pair-block" [class.trace__pair-block--ghost]="!hasBestPair()">
             <div class="trace__pair-row">
               <span
@@ -86,7 +130,13 @@
               <span>{{ formatCoord(bestPairSlot().right) }}</span>
             </div>
             <span class="trace__pair-note">
-              {{ hasBestPair() ? 'Current champion pair' : 'No winning pair yet' }}
+              {{
+                hasBestPair()
+                  ? (I18N_KEY.features.algorithms.tracePanels.closestPair.championPairLabel
+                    | transloco)
+                  : (I18N_KEY.features.algorithms.tracePanels.closestPair.noWinningPairLabel
+                    | transloco)
+              }}
             </span>
           </div>
         </app-segmented-panel-section>
@@ -96,14 +146,22 @@
         <app-segmented-panel
           class="trace__detail"
           orientation="vertical"
-          aria-label="Closest pair recursion"
+          [attr.aria-label]="
+            I18N_KEY.features.algorithms.tracePanels.closestPair.recursionAriaLabel | transloco
+          "
         >
-          <app-segmented-panel-section eyebrow="Recursion trail" [badge]="geo.trail.length">
+          <app-segmented-panel-section
+            [eyebrow]="
+              I18N_KEY.features.algorithms.tracePanels.closestPair.recursionTrailLabel | transloco
+            "
+            [badge]="geo.trail.length"
+          >
             <div class="trace__trail-list">
               @if (geo.trail.length === 0) {
-                <span class="trace__placeholder"
-                  >Recursion trail will appear once the split starts.</span
-                >
+                <span class="trace__placeholder">{{
+                  I18N_KEY.features.algorithms.tracePanels.closestPair.recursionTrailPlaceholder
+                    | transloco
+                }}</span>
               } @else {
                 @for (part of geo.trail; track part) {
                   <span class="trace__trail-chip">{{ part }}</span>
@@ -116,29 +174,47 @@
         <app-segmented-panel
           class="trace__detail"
           orientation="vertical"
-          aria-label="Closest pair legend"
+          [attr.aria-label]="
+            I18N_KEY.features.algorithms.tracePanels.closestPair.legendAriaLabel | transloco
+          "
         >
-          <app-segmented-panel-section eyebrow="Point status">
+          <app-segmented-panel-section
+            [eyebrow]="
+              I18N_KEY.features.algorithms.tracePanels.closestPair.pointStatusLabel | transloco
+            "
+          >
             <div class="trace__legend-grid">
               <div class="trace__legend-item">
                 <span class="trace__dot trace__dot--left"></span>
-                <span>Left half</span>
+                <span>{{
+                  I18N_KEY.features.algorithms.tracePanels.closestPair.leftHalfLabel | transloco
+                }}</span>
               </div>
               <div class="trace__legend-item">
                 <span class="trace__dot trace__dot--right"></span>
-                <span>Right half</span>
+                <span>{{
+                  I18N_KEY.features.algorithms.tracePanels.closestPair.rightHalfLabel | transloco
+                }}</span>
               </div>
               <div class="trace__legend-item">
                 <span class="trace__dot trace__dot--strip"></span>
-                <span>Strip candidate</span>
+                <span>{{
+                  I18N_KEY.features.algorithms.tracePanels.closestPair.stripCandidateLabel
+                    | transloco
+                }}</span>
               </div>
               <div class="trace__legend-item">
                 <span class="trace__dot trace__dot--current"></span>
-                <span>Current comparison</span>
+                <span>{{
+                  I18N_KEY.features.algorithms.tracePanels.closestPair.currentComparisonLabel
+                    | transloco
+                }}</span>
               </div>
               <div class="trace__legend-item">
                 <span class="trace__dot trace__dot--best"></span>
-                <span>Best pair</span>
+                <span>{{
+                  I18N_KEY.features.algorithms.tracePanels.closestPair.bestPairLabel | transloco
+                }}</span>
               </div>
             </div>
           </app-segmented-panel-section>
@@ -146,6 +222,8 @@
       </div>
     </div>
   } @else {
-    <div class="trace__empty">No geometry trace for this step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.closestPair.emptyLabel | transloco }}
+    </div>
   }
 </div>

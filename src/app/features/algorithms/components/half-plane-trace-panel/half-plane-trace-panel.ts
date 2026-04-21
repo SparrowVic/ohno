@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { HalfPlaneIntersectionStepState } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -12,12 +15,16 @@ const VERTEX_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-half-plane-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './half-plane-trace-panel.html',
   styleUrl: './half-plane-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HalfPlaneTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<HalfPlaneIntersectionStepState | null>(null);
   readonly vertexColumns = VERTEX_COLUMNS;
 
@@ -49,15 +56,15 @@ export class HalfPlaneTracePanel {
   phaseLabel(phase: string): string {
     switch (phase) {
       case 'init':
-        return 'Initial Region';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.halfPlane.phases.init);
       case 'constraint':
-        return 'Constraint Insert';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.halfPlane.phases.constraint);
       case 'clip':
-        return 'Clipped Region';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.halfPlane.phases.clip);
       case 'infeasible':
-        return 'Infeasible';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.halfPlane.phases.infeasible);
       case 'complete':
-        return 'Intersection Ready';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.halfPlane.phases.complete);
       default:
         return phase;
     }
@@ -69,5 +76,10 @@ export class HalfPlaneTracePanel {
 
   formatVertex(vertex: { readonly x: number; readonly y: number } | null): string {
     return vertex ? `(${vertex.x.toFixed(1)}, ${vertex.y.toFixed(1)})` : '(—, —)';
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

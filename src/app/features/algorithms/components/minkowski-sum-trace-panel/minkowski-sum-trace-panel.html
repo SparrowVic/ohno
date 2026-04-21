@@ -1,33 +1,63 @@
 <div class="trace">
   @if (state(); as geo) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Minkowski summary">
-        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel(geo.phase)" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.minkowskiSum.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Merged"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.minkowskiSum.phaseLabel | transloco"
+          [value]="phaseLabel(geo.phase)"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.minkowskiSum.mergedLabel | transloco"
           [value]="geo.mergedEdgeCount"
           [valueMono]="true"
         />
-        <app-segmented-panel-section eyebrow="Total" [value]="geo.totalEdges" [valueMono]="true" />
         <app-segmented-panel-section
-          eyebrow="Area"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.minkowskiSum.totalLabel | transloco"
+          [value]="geo.totalEdges"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.minkowskiSum.areaLabel | transloco"
           [value]="geo.resultArea !== null ? geo.resultArea.toFixed(1) : '—'"
           [valueMono]="true"
         />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Minkowski streams">
-        <app-segmented-panel-section eyebrow="Current merge source">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.minkowskiSum.streamsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.minkowskiSum.currentMergeSourceLabel
+              | transloco
+          "
+        >
           <span class="trace__focus">{{ geo.activeSource ?? '—' }}</span>
           @if (geo.currentVectorLabel) {
             <span class="trace__subtle">{{ geo.currentVectorLabel }}</span>
           }
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Merge rail" [badge]="geo.events.length">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.minkowskiSum.mergeRailLabel | transloco
+          "
+          [badge]="geo.events.length"
+        >
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No queued merge steps yet.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.minkowskiSum.noQueuedMergeStepsLabel
+                  | transloco
+              }}</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
@@ -37,10 +67,26 @@
         </app-segmented-panel-section>
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__detail" orientation="vertical" aria-label="Active vectors">
-        <app-segmented-panel-section eyebrow="Active vectors" [badge]="currentVectors().length">
+      <app-segmented-panel
+        class="trace__detail"
+        orientation="vertical"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.minkowskiSum.activeVectorsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.minkowskiSum.activeVectorsLabel | transloco
+          "
+          [badge]="currentVectors().length"
+        >
           @if (currentVectors().length === 0) {
-            <div class="trace__placeholder">Waiting for active edge vectors.</div>
+            <div class="trace__placeholder">
+              {{
+                I18N_KEY.features.algorithms.tracePanels.minkowskiSum.waitingForVectorsLabel
+                  | transloco
+              }}
+            </div>
           } @else {
             <app-table
               class="trace__table"
@@ -54,6 +100,8 @@
       </app-segmented-panel>
     </div>
   } @else {
-    <div class="trace__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.minkowskiSum.emptyLabel | transloco }}
+    </div>
   }
 </div>

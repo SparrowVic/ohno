@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { LineIntersectionStepState } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -12,12 +15,16 @@ const INTERSECTION_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-line-intersection-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './line-intersection-trace-panel.html',
   styleUrl: './line-intersection-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineIntersectionTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<LineIntersectionStepState | null>(null);
   readonly intersectionColumns = INTERSECTION_COLUMNS;
 
@@ -43,17 +50,32 @@ export class LineIntersectionTracePanel {
   phaseLabel(phase: string): string {
     switch (phase) {
       case 'init':
-        return 'Sweep Setup';
+        return this.translate(
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.phases.init,
+        );
       case 'activate':
-        return 'Insert Segment';
+        return this.translate(
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.phases.activate,
+        );
       case 'retire':
-        return 'Remove Segment';
+        return this.translate(
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.phases.retire,
+        );
       case 'intersection':
-        return 'Crossing Event';
+        return this.translate(
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.phases.intersection,
+        );
       case 'complete':
-        return 'Sweep Complete';
+        return this.translate(
+          I18N_KEY.features.algorithms.tracePanels.lineIntersection.phases.complete,
+        );
       default:
         return phase;
     }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

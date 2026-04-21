@@ -1,17 +1,34 @@
 <div class="trace">
   @if (state(); as geo) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Delaunay summary">
-        <app-segmented-panel-section eyebrow="Triangle" [value]="geo.activeTriangleLabel" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.delaunay.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Committed"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.delaunay.triangleLabel | transloco"
+          [value]="geo.activeTriangleLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.delaunay.committedLabel | transloco"
           [value]="geo.triangleCount"
           [valueMono]="true"
         />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Delaunay details">
-        <app-segmented-panel-section eyebrow="Circumcircle">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.delaunay.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.delaunay.circumcircleLabel | transloco
+          "
+        >
           <app-table
             class="trace__table"
             [columns]="circleColumns"
@@ -21,10 +38,17 @@
           />
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Triangle rail" [badge]="geo.events.length">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.delaunay.triangleRailLabel | transloco
+          "
+          [badge]="geo.events.length"
+        >
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No queued triangles yet.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.delaunay.noQueuedTrianglesLabel | transloco
+              }}</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
@@ -35,6 +59,8 @@
       </app-segmented-panel>
     </div>
   } @else {
-    <div class="trace__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.delaunay.emptyLabel | transloco }}
+    </div>
   }
 </div>

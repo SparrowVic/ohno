@@ -1,22 +1,41 @@
 <div class="trace">
   @if (state(); as geo) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Voronoi summary">
-        <app-segmented-panel-section eyebrow="Cell" [value]="geo.currentCellLabel" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.voronoi.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Closed cells"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.voronoi.cellLabel | transloco"
+          [value]="geo.currentCellLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.voronoi.closedCellsLabel | transloco"
           [value]="geo.closedCells"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Sweep y"
-          [value]="geo.sweepY !== null ? geo.sweepY.toFixed(1) : 'done'"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.voronoi.sweepYLabel | transloco"
+          [value]="
+            geo.sweepY !== null
+              ? geo.sweepY.toFixed(1)
+              : (I18N_KEY.features.algorithms.tracePanels.voronoi.doneLabel | transloco)
+          "
           [valueMono]="true"
         />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Voronoi details">
-        <app-segmented-panel-section eyebrow="Active site">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.voronoi.detailsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.voronoi.activeSiteLabel | transloco"
+        >
           <app-table
             class="trace__table"
             [columns]="siteColumns"
@@ -26,10 +45,17 @@
           />
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Site event rail" [badge]="geo.events.length">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.voronoi.siteEventRailLabel | transloco
+          "
+          [badge]="geo.events.length"
+        >
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No queued sites yet.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.voronoi.noQueuedSitesLabel | transloco
+              }}</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
@@ -40,6 +66,8 @@
       </app-segmented-panel>
     </div>
   } @else {
-    <div class="trace__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.voronoi.emptyLabel | transloco }}
+    </div>
   }
 </div>

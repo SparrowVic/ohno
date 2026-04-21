@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { MinkowskiSumStepState } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -12,12 +15,16 @@ const VECTOR_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-minkowski-sum-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './minkowski-sum-trace-panel.html',
   styleUrl: './minkowski-sum-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MinkowskiSumTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<MinkowskiSumStepState | null>(null);
   readonly vectorColumns = VECTOR_COLUMNS;
 
@@ -37,17 +44,24 @@ export class MinkowskiSumTracePanel {
   phaseLabel(phase: string): string {
     switch (phase) {
       case 'init':
-        return 'Input Shapes';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.minkowskiSum.phases.init);
       case 'reflect':
-        return 'Robot Reflection';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.minkowskiSum.phases.reflect);
       case 'seed':
-        return 'Seed Vertex';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.minkowskiSum.phases.seed);
       case 'merge':
-        return 'Edge Merge';
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.minkowskiSum.phases.merge);
       case 'complete':
-        return 'Final Polygon';
+        return this.translate(
+          I18N_KEY.features.algorithms.tracePanels.minkowskiSum.phases.complete,
+        );
       default:
         return phase;
     }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

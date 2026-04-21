@@ -1,26 +1,58 @@
 <div class="trace">
   @if (state(); as geo) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Half-plane summary">
-        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel(geo.phase)" />
-        <app-segmented-panel-section eyebrow="Verts" [value]="geo.vertexCount" [valueMono]="true" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.halfPlane.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          eyebrow="Area"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.phaseLabel | transloco"
+          [value]="phaseLabel(geo.phase)"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.vertsLabel | transloco"
+          [value]="geo.vertexCount"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.areaLabel | transloco"
           [value]="geo.feasibleArea !== null ? geo.feasibleArea.toFixed(1) : '0.0'"
           [valueMono]="true"
         />
-        <app-segmented-panel-section eyebrow="Status" [value]="geo.status" />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.statusLabel | transloco"
+          [value]="geo.status"
+        />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__streams" aria-label="Half-plane streams">
-        <app-segmented-panel-section eyebrow="Current boundary">
+      <app-segmented-panel
+        class="trace__streams"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.halfPlane.streamsAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.halfPlane.currentBoundaryLabel | transloco
+          "
+        >
           <span class="trace__focus">{{ geo.currentConstraintLabel }}</span>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Constraint rail" [badge]="geo.events.length">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.halfPlane.constraintRailLabel | transloco
+          "
+          [badge]="geo.events.length"
+        >
           <div class="trace__chips">
             @if (geo.events.length === 0) {
-              <span class="trace__placeholder">No queued constraints yet.</span>
+              <span class="trace__placeholder">{{
+                I18N_KEY.features.algorithms.tracePanels.halfPlane.noQueuedConstraintsLabel
+                  | transloco
+              }}</span>
             } @else {
               @for (event of geo.events; track event.id) {
                 <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
@@ -33,10 +65,14 @@
       <app-segmented-panel
         class="trace__detail"
         orientation="vertical"
-        aria-label="Half-plane polygon"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.halfPlane.polygonAriaLabel | transloco
+        "
       >
         <app-segmented-panel-section
-          eyebrow="Feasible polygon vertices"
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.halfPlane.feasibleVerticesLabel | transloco
+          "
           [badge]="feasiblePolygon()?.vertices?.length ?? 0"
         >
           <app-table
@@ -48,15 +84,19 @@
           />
           <div class="trace__status-note" [class.trace__status-note--ghost]="!feasiblePolygon()">
             @if (feasiblePolygon()) {
-              Vertices update as each constraint clips the feasible region.
+              {{
+                I18N_KEY.features.algorithms.tracePanels.halfPlane.verticesUpdateLabel | transloco
+              }}
             } @else {
-              Feasible polygon is empty in this step.
+              {{ I18N_KEY.features.algorithms.tracePanels.halfPlane.polygonEmptyLabel | transloco }}
             }
           </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
     </div>
   } @else {
-    <div class="trace__empty">No trace data for this geometry step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.halfPlane.emptyLabel | transloco }}
+    </div>
   }
 </div>
