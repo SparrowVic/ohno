@@ -3,6 +3,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { getAlgorithmFacetLabelKey } from '../../../../core/i18n/catalog-labels';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { AlgorithmItem } from '../../models/algorithm';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { SORT_ALGORITHM_TUTORIALS } from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
@@ -39,6 +40,7 @@ function humanize(value: string): string {
 })
 export class InfoPanel {
   protected readonly I18N_KEY = I18N_KEY;
+  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly algorithm = input.required<AlgorithmItem>();
 
   readonly cards = computed<readonly ComplexityCard[]>(() => {

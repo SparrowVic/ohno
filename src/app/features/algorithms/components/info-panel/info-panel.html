@@ -39,10 +39,14 @@
         <h3 class="info__tutorial-title">
           {{ I18N_KEY.features.algorithms.infoPanel.howItWorks | transloco }}
         </h3>
-        <span class="info__tutorial-badge">{{ tutorial.pattern }}</span>
+        <span class="info__tutorial-badge">{{
+          looksLikeI18nKey(tutorial.pattern) ? (tutorial.pattern | transloco) : tutorial.pattern
+        }}</span>
       </div>
 
-      <p class="info__tutorial-idea">{{ tutorial.keyIdea }}</p>
+      <p class="info__tutorial-idea">
+        {{ looksLikeI18nKey(tutorial.keyIdea) ? (tutorial.keyIdea | transloco) : tutorial.keyIdea }}
+      </p>
 
       <ol
         class="info__steps"
@@ -53,7 +57,9 @@
         @for (step of tutorial.howItWorks; track $index) {
           <li class="info__step">
             <span class="info__step-num">{{ $index + 1 }}</span>
-            <span class="info__step-text">{{ step }}</span>
+            <span class="info__step-text">{{
+              looksLikeI18nKey(step) ? (step | transloco) : step
+            }}</span>
           </li>
         }
       </ol>
@@ -65,7 +71,7 @@
           }}</span>
           <ul class="info__tradeoff-list">
             @for (item of tutorial.strengths; track $index) {
-              <li>{{ item }}</li>
+              <li>{{ looksLikeI18nKey(item) ? (item | transloco) : item }}</li>
             }
           </ul>
         </div>
@@ -76,7 +82,7 @@
           }}</span>
           <ul class="info__tradeoff-list">
             @for (item of tutorial.weaknesses; track $index) {
-              <li>{{ item }}</li>
+              <li>{{ looksLikeI18nKey(item) ? (item | transloco) : item }}</li>
             }
           </ul>
         </div>

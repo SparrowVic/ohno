@@ -1069,6 +1069,219 @@
           "trie": "Trie"
         }
       },
+      "tutorials": {
+        "sort": {
+          "bubbleSort": {
+            "howItWorks": {
+              "step1": "Walk left-to-right, comparing each pair of neighbours.",
+              "step2": "If the left value is bigger, swap them.",
+              "step3": "After a full pass the largest unsorted value settles at the right end.",
+              "step4": "Shrink the pass range by one and repeat — stop when a whole pass has no swaps."
+            },
+            "keyIdea": "Repeatedly swap adjacent pairs. After each pass the largest unsorted value \"bubbles\" to the right end.",
+            "pattern": "Comparison",
+            "strengths": {
+              "item1": "Easy to implement and very easy to explain.",
+              "item2": "Runs in O(n) on input that is already sorted — the early-exit check catches it."
+            },
+            "watch": "Watch the right edge: every pass locks in one more final element.",
+            "weaknesses": {
+              "item1": "O(n²) on average — impractical for anything beyond small inputs.",
+              "item2": "Every swap touches adjacent memory only, so it has no structural advantages over insertion sort."
+            }
+          },
+          "bucketSort": {
+            "howItWorks": {
+              "step1": "Split the value range into a fixed number of buckets.",
+              "step2": "Drop each value into the bucket that covers its range.",
+              "step3": "Sort each bucket independently (usually with insertion sort).",
+              "step4": "Concatenate the buckets in order to get the final sorted array."
+            },
+            "keyIdea": "Partition values into buckets by range, sort each bucket independently, then concatenate the buckets.",
+            "pattern": "Non-comparison · Stable",
+            "strengths": {
+              "item1": "Close to O(n) when values are uniformly distributed.",
+              "item2": "Stable if the inner bucket sort is stable."
+            },
+            "watch": "Works best when values are evenly distributed so each bucket stays small.",
+            "weaknesses": {
+              "item1": "Degrades to O(n²) if many values cluster in a single bucket.",
+              "item2": "Extra memory proportional to the number of buckets."
+            }
+          },
+          "countingSort": {
+            "howItWorks": {
+              "step1": "Scan the array once and count how many times each value appears.",
+              "step2": "Turn the counts into cumulative positions in the output.",
+              "step3": "Walk the input again and place each value at its reserved output index.",
+              "step4": "Copy the output back into the array."
+            },
+            "keyIdea": "Count how many times each value appears, then use those counts to place each value directly in the output.",
+            "pattern": "Non-comparison · Stable",
+            "strengths": {
+              "item1": "Linear time: O(n + k), where k = size of the value range.",
+              "item2": "Stable and comparison-free."
+            },
+            "watch": "No comparisons happen — the algorithm trades memory for speed.",
+            "weaknesses": {
+              "item1": "Needs O(k) extra memory — impractical when the value range is very large.",
+              "item2": "Only works for integer-like, bounded keys."
+            }
+          },
+          "heapSort": {
+            "howItWorks": {
+              "step1": "Rearrange the array into a max-heap — every parent ≥ its children.",
+              "step2": "Swap the root (the max) with the last heap element.",
+              "step3": "Shrink the heap by one and restore the heap property on the new root (sift-down).",
+              "step4": "Repeat until the heap is empty."
+            },
+            "keyIdea": "Build a max-heap, then repeatedly swap the root with the last element and shrink the heap.",
+            "pattern": "Heap-based",
+            "strengths": {
+              "item1": "Guaranteed O(n log n), in-place, constant extra memory.",
+              "item2": "Worst-case behaviour matches the average — no adversarial inputs."
+            },
+            "watch": "The heap region contracts from the right while the sorted suffix grows.",
+            "weaknesses": {
+              "item1": "Cache-unfriendly index jumps — slower in practice than quick/merge sort.",
+              "item2": "Not stable."
+            }
+          },
+          "insertionSort": {
+            "howItWorks": {
+              "step1": "Treat the first element as a sorted prefix of length 1.",
+              "step2": "Pick the next element from the unsorted region.",
+              "step3": "Shift larger sorted values one step right until the pick fits.",
+              "step4": "Drop the pick into the gap. Repeat until nothing is left to insert."
+            },
+            "keyIdea": "Take the next element and slide it leftward into its place inside the already-sorted prefix.",
+            "pattern": "Comparison",
+            "strengths": {
+              "item1": "Near-linear (O(n)) on nearly-sorted input — excellent for \"mostly sorted\" data.",
+              "item2": "Stable, in-place, and simple enough to hand-execute."
+            },
+            "watch": "The sorted prefix keeps its order; neighbours shift right to make room.",
+            "weaknesses": {
+              "item1": "O(n²) on random or reverse-sorted input.",
+              "item2": "Lots of small shifts — cache-friendly but slow for large arrays."
+            }
+          },
+          "mergeSort": {
+            "howItWorks": {
+              "step1": "Split the array into two halves.",
+              "step2": "Recursively sort each half with the same procedure.",
+              "step3": "Walk both sorted halves in parallel, copying the smaller head into the output.",
+              "step4": "Continue until both halves are drained into the merged result."
+            },
+            "keyIdea": "Split the array in half, sort each half recursively, then merge the sorted halves into one sorted array.",
+            "pattern": "Divide & conquer · Stable",
+            "strengths": {
+              "item1": "Guaranteed O(n log n) time on every input.",
+              "item2": "Stable — equal values keep their original order."
+            },
+            "watch": "Small sub-arrays become sorted first; merges combine them upward.",
+            "weaknesses": {
+              "item1": "Needs O(n) extra memory for the merge buffer.",
+              "item2": "Slower in practice than quick sort due to the extra copying."
+            }
+          },
+          "quickSort": {
+            "howItWorks": {
+              "step1": "Pick a pivot element (first, last, middle, or random).",
+              "step2": "Partition: move every value smaller than the pivot to its left, every larger value to its right.",
+              "step3": "The pivot now sits at its final sorted position.",
+              "step4": "Recurse into the left partition and the right partition."
+            },
+            "keyIdea": "Pick a pivot, partition smaller values left and larger values right, then recurse into each side.",
+            "pattern": "Divide & conquer",
+            "strengths": {
+              "item1": "Often the fastest in-practice comparison sort — great cache behaviour.",
+              "item2": "In-place with O(log n) recursion depth when pivots split evenly."
+            },
+            "watch": "After every partition, the pivot lands at its final position.",
+            "weaknesses": {
+              "item1": "O(n²) in the worst case when pivots split the array badly.",
+              "item2": "Not stable by default; randomised pivots mitigate adversarial inputs."
+            }
+          },
+          "radixSort": {
+            "howItWorks": {
+              "step1": "Find the number with the most digits — this sets the number of passes.",
+              "step2": "Sort the array by the least-significant digit using a stable bucket sort.",
+              "step3": "Repeat for each more-significant digit.",
+              "step4": "After the most-significant digit pass, the whole array is sorted."
+            },
+            "keyIdea": "Sort by one digit position at a time, from least significant to most significant.",
+            "pattern": "Non-comparison · Stable",
+            "strengths": {
+              "item1": "Beats O(n log n) for fixed-width keys — runs in O(nk), where k = digit count.",
+              "item2": "Stable, so it is safe to use as the inner sort of a bigger pipeline."
+            },
+            "watch": "Each digit pass preserves the order established by previous passes.",
+            "weaknesses": {
+              "item1": "Only works out-of-the-box for non-negative integers or bounded keys.",
+              "item2": "Extra memory for the bucket arrays on every pass."
+            }
+          },
+          "selectionSort": {
+            "howItWorks": {
+              "step1": "Treat the whole array as one unsorted region.",
+              "step2": "Scan the unsorted region for the smallest value.",
+              "step3": "Swap that smallest value into the first unsorted slot.",
+              "step4": "Move the sorted-boundary one step right and repeat."
+            },
+            "keyIdea": "Scan the unsorted region for the minimum, then swap it to the front of that region.",
+            "pattern": "Comparison",
+            "strengths": {
+              "item1": "Uses at most n − 1 swaps — the fewest of any O(n²) sort.",
+              "item2": "Constant extra memory and very simple control flow."
+            },
+            "watch": "Watch the left edge grow by exactly one sorted element each pass.",
+            "weaknesses": {
+              "item1": "Always O(n²) — there is no early exit on already-sorted input.",
+              "item2": "Not stable by default: equal values can change their relative order."
+            }
+          },
+          "shellSort": {
+            "howItWorks": {
+              "step1": "Pick a gap sequence (for example n/2, n/4, …, 1).",
+              "step2": "For each gap, run insertion sort on the subsequences that are exactly that far apart.",
+              "step3": "Move to the next, smaller gap and repeat.",
+              "step4": "Finish with a gap = 1 pass — a final insertion sort on the whole array."
+            },
+            "keyIdea": "Run insertion sort on subsequences spaced by a gap; shrink the gap and repeat until gap = 1.",
+            "pattern": "Gap-based insertion",
+            "strengths": {
+              "item1": "Much faster than plain insertion sort on random input — usually O(n^1.25) to O(n^1.5).",
+              "item2": "Simple, in-place, no recursion."
+            },
+            "watch": "Larger gaps fix long-range disorder; the final gap = 1 pass polishes.",
+            "weaknesses": {
+              "item1": "Exact complexity depends on the gap sequence, and analysing it is surprisingly hard.",
+              "item2": "Not stable."
+            }
+          },
+          "timSort": {
+            "howItWorks": {
+              "step1": "Scan the array for monotonic runs (ascending or descending sequences).",
+              "step2": "Pad runs that are shorter than a minimum using insertion sort.",
+              "step3": "Push each run on a stack and merge while a size-balance invariant is violated.",
+              "step4": "When the scan ends, drain the stack by merging the remaining runs."
+            },
+            "keyIdea": "Detect already-sorted \"runs\", sort short ones with insertion, then merge runs with a stack policy.",
+            "pattern": "Hybrid · Stable",
+            "strengths": {
+              "item1": "O(n) on sorted or nearly-sorted input — the runs are reused as-is.",
+              "item2": "Stable; shipped as the default sort in Python, Java, Android, and many others."
+            },
+            "watch": "Naturally ordered regions are preserved and merged without re-sorting.",
+            "weaknesses": {
+              "item1": "The implementation is much more complex than merge or quick sort.",
+              "item2": "Small O(n) extra memory for the merge buffer."
+            }
+          }
+        }
+      },
       "visualizations": {
         "grid": {
           "decisionFallback": "watch the board evolve step by step",

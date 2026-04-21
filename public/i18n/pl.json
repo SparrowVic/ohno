@@ -1069,6 +1069,219 @@
           "trie": "Trie"
         }
       },
+      "tutorials": {
+        "sort": {
+          "bubbleSort": {
+            "howItWorks": {
+              "step1": "Idź od lewej do prawej, porównując każdą parę sąsiadów.",
+              "step2": "Jeśli lewa wartość jest większa, zamień je miejscami.",
+              "step3": "Po pełnym przebiegu największa nieposortowana wartość trafia na prawy koniec.",
+              "step4": "Skróć zakres przebiegu o jeden i powtarzaj — zatrzymaj się, gdy cały przebieg nie wykona żadnej zamiany."
+            },
+            "keyIdea": "Wielokrotnie zamieniaj miejscami sąsiednie pary. Po każdym przebiegu największa nieposortowana wartość „wypływa” na prawy koniec.",
+            "pattern": "Porównawcze",
+            "strengths": {
+              "item1": "Łatwe do zaimplementowania i bardzo łatwe do wyjaśnienia.",
+              "item2": "Działa w O(n) dla już posortowanych danych — warunek wczesnego wyjścia od razu to wykrywa."
+            },
+            "watch": "Obserwuj prawą krawędź: każdy przebieg blokuje na miejscu jeszcze jeden finalny element.",
+            "weaknesses": {
+              "item1": "Średnio O(n²) — niepraktyczne dla czegokolwiek poza małymi wejściami.",
+              "item2": "Każda zamiana dotyka tylko sąsiedniej pamięci, więc nie daje żadnych strukturalnych przewag nad insertion sort."
+            }
+          },
+          "bucketSort": {
+            "howItWorks": {
+              "step1": "Podziel zakres wartości na stałą liczbę kubełków.",
+              "step2": "Wrzuć każdą wartość do kubełka obejmującego jej zakres.",
+              "step3": "Posortuj każdy kubełek osobno (zwykle insertion sortem).",
+              "step4": "Połącz kubełki w kolejności, aby otrzymać finalnie posortowaną tablicę."
+            },
+            "keyIdea": "Podziel wartości na kubełki według zakresu, posortuj każdy kubełek osobno, a potem połącz kubełki w jedną sekwencję.",
+            "pattern": "Nieporównawcze · Stabilne",
+            "strengths": {
+              "item1": "Bliskie O(n), gdy wartości są rozłożone równomiernie.",
+              "item2": "Stabilne, jeśli sortowanie wewnątrz kubełków też jest stabilne."
+            },
+            "watch": "Działa najlepiej, gdy wartości są rozłożone równomiernie i każdy kubełek pozostaje mały.",
+            "weaknesses": {
+              "item1": "Degeneruje do O(n²), jeśli wiele wartości trafi do jednego kubełka.",
+              "item2": "Dodatkowa pamięć proporcjonalna do liczby kubełków."
+            }
+          },
+          "countingSort": {
+            "howItWorks": {
+              "step1": "Przejdź raz po tablicy i policz, ile razy pojawia się każda wartość.",
+              "step2": "Zamień zliczenia na skumulowane pozycje w tablicy wynikowej.",
+              "step3": "Przejdź ponownie po wejściu i umieść każdą wartość na zarezerwowanym indeksie wyniku.",
+              "step4": "Przepisz wynik z powrotem do tablicy."
+            },
+            "keyIdea": "Policz, ile razy pojawia się każda wartość, a potem użyj tych zliczeń, by umieścić każdą wartość bezpośrednio w wyniku.",
+            "pattern": "Nieporównawcze · Stabilne",
+            "strengths": {
+              "item1": "Liniowy czas: O(n + k), gdzie k = rozmiar zakresu wartości.",
+              "item2": "Stabilne i pozbawione porównań."
+            },
+            "watch": "Nie dochodzi tu do porównań — algorytm zamienia pamięć na szybkość.",
+            "weaknesses": {
+              "item1": "Wymaga O(k) dodatkowej pamięci — niepraktyczne, gdy zakres wartości jest bardzo duży.",
+              "item2": "Działa tylko dla kluczy całkowitoliczbowych albo podobnie ograniczonych."
+            }
+          },
+          "heapSort": {
+            "howItWorks": {
+              "step1": "Przestaw tablicę w kopiec maksymalny — każdy rodzic jest ≥ od swoich dzieci.",
+              "step2": "Zamień korzeń (maksimum) z ostatnim elementem kopca.",
+              "step3": "Zmniejsz kopiec o jeden i przywróć własność kopca dla nowego korzenia (sift-down).",
+              "step4": "Powtarzaj, aż kopiec będzie pusty."
+            },
+            "keyIdea": "Zbuduj kopiec maksymalny, a potem wielokrotnie zamieniaj korzeń z ostatnim elementem i zmniejszaj kopiec.",
+            "pattern": "Oparte na kopcu",
+            "strengths": {
+              "item1": "Gwarantowane O(n log n), in-place i stała pamięć dodatkowa.",
+              "item2": "Najgorszy przypadek zachowuje się tak samo jak średni — brak wejść, które go psują."
+            },
+            "watch": "Obszar kopca kurczy się od prawej, a posortowany sufiks rośnie.",
+            "weaknesses": {
+              "item1": "Skoki po indeksach są nieprzyjazne dla cache — w praktyce wolniejsze od quick/merge sorta.",
+              "item2": "Niestabilne."
+            }
+          },
+          "insertionSort": {
+            "howItWorks": {
+              "step1": "Potraktuj pierwszy element jako posortowany prefiks długości 1.",
+              "step2": "Weź kolejny element z nieposortowanej części.",
+              "step3": "Przesuwaj większe wartości z prefiksu o jedno miejsce w prawo, aż wybrany element będzie pasował.",
+              "step4": "Wstaw wybrany element w powstałą lukę. Powtarzaj, aż nie zostanie nic do wstawienia."
+            },
+            "keyIdea": "Weź kolejny element i przesuwaj go w lewo, aż trafi na swoje miejsce w już posortowanym prefiksie.",
+            "pattern": "Porównawcze",
+            "strengths": {
+              "item1": "Prawie liniowe (O(n)) dla prawie posortowanych danych — świetne dla „niemal uporządkowanych” wejść.",
+              "item2": "Stabilne, in-place i na tyle proste, że da się je wykonać ręcznie."
+            },
+            "watch": "Posortowany prefiks zachowuje kolejność; sąsiedzi przesuwają się w prawo, żeby zrobić miejsce.",
+            "weaknesses": {
+              "item1": "O(n²) dla losowych lub odwrotnie posortowanych danych.",
+              "item2": "Dużo małych przesunięć — przyjazne dla cache, ale wolne dla dużych tablic."
+            }
+          },
+          "mergeSort": {
+            "howItWorks": {
+              "step1": "Podziel tablicę na dwie połówki.",
+              "step2": "Posortuj każdą połówkę rekurencyjnie tą samą procedurą.",
+              "step3": "Przechodź równolegle po obu posortowanych połówkach, kopiując mniejszą wartość do wyniku.",
+              "step4": "Kontynuuj, aż obie połówki zostaną całkowicie przepisane do scalonego wyniku."
+            },
+            "keyIdea": "Podziel tablicę na pół, posortuj każdą połowę rekurencyjnie, a potem scal obie uporządkowane połówki w jedną posortowaną tablicę.",
+            "pattern": "Dziel i zwyciężaj · Stabilne",
+            "strengths": {
+              "item1": "Gwarantowane O(n log n) dla każdego wejścia.",
+              "item2": "Stabilne — równe wartości zachowują swoją pierwotną kolejność."
+            },
+            "watch": "Najpierw porządkują się małe podtablice; scalenia łączą je potem coraz wyżej.",
+            "weaknesses": {
+              "item1": "Wymaga O(n) dodatkowej pamięci na bufor scalania.",
+              "item2": "W praktyce bywa wolniejsze od quick sorta przez dodatkowe kopiowanie."
+            }
+          },
+          "quickSort": {
+            "howItWorks": {
+              "step1": "Wybierz pivot (pierwszy, ostatni, środkowy albo losowy element).",
+              "step2": "Wykonaj partycjonowanie: przenieś wszystkie wartości mniejsze od pivota na lewo, a większe na prawo.",
+              "step3": "Pivot siedzi już teraz na swojej finalnej, posortowanej pozycji.",
+              "step4": "Uruchom rekurencję dla lewego i prawego fragmentu."
+            },
+            "keyIdea": "Wybierz pivot, podziel wartości na mniejsze po lewej i większe po prawej, a potem wywołaj algorytm rekurencyjnie dla obu stron.",
+            "pattern": "Dziel i zwyciężaj",
+            "strengths": {
+              "item1": "Często najszybsze w praktyce sortowanie porównawcze — świetnie współpracuje z cache.",
+              "item2": "In-place z głębokością rekurencji O(log n), gdy pivoty dzielą tablicę równomiernie."
+            },
+            "watch": "Po każdym partycjonowaniu pivot ląduje na swojej finalnej pozycji.",
+            "weaknesses": {
+              "item1": "O(n²) w najgorszym przypadku, gdy pivoty źle dzielą tablicę.",
+              "item2": "Domyślnie niestabilne; losowe pivoty ograniczają problem wejść adwersarialnych."
+            }
+          },
+          "radixSort": {
+            "howItWorks": {
+              "step1": "Znajdź liczbę o największej liczbie cyfr — to określa liczbę przebiegów.",
+              "step2": "Posortuj tablicę według najmniej znaczącej cyfry przy użyciu stabilnego bucket sorta.",
+              "step3": "Powtórz dla każdej bardziej znaczącej cyfry.",
+              "step4": "Po przebiegu dla najbardziej znaczącej cyfry cała tablica jest już posortowana."
+            },
+            "keyIdea": "Sortuj po jednej pozycji cyfry naraz, od najmniej znaczącej do najbardziej znaczącej.",
+            "pattern": "Nieporównawcze · Stabilne",
+            "strengths": {
+              "item1": "Pokonuje O(n log n) dla kluczy o stałej szerokości — działa w O(nk), gdzie k = liczba cyfr.",
+              "item2": "Stabilne, więc bezpiecznie może działać jako sortowanie wewnętrzne w większym pipeline."
+            },
+            "watch": "Każdy przebieg po cyfrze zachowuje porządek ustalony przez wcześniejsze przebiegi.",
+            "weaknesses": {
+              "item1": "Działa od ręki tylko dla nieujemnych liczb całkowitych albo ograniczonych kluczy.",
+              "item2": "Dodatkowa pamięć na tablice kubełków w każdym przebiegu."
+            }
+          },
+          "selectionSort": {
+            "howItWorks": {
+              "step1": "Potraktuj całą tablicę jako jeden nieposortowany fragment.",
+              "step2": "Przeskanuj nieposortowany fragment i znajdź najmniejszą wartość.",
+              "step3": "Zamień tę najmniejszą wartość z pierwszym nieposortowanym miejscem.",
+              "step4": "Przesuń granicę posortowanej części o jeden w prawo i powtórz."
+            },
+            "keyIdea": "Przeskanuj nieposortowany fragment w poszukiwaniu minimum, a potem zamień je z początkiem tego fragmentu.",
+            "pattern": "Porównawcze",
+            "strengths": {
+              "item1": "Wykonuje co najwyżej n − 1 zamian — najmniej spośród sortowań O(n²).",
+              "item2": "Stała pamięć dodatkowa i bardzo prosty przepływ sterowania."
+            },
+            "watch": "Obserwuj lewą krawędź: w każdym przebiegu rośnie o dokładnie jeden posortowany element.",
+            "weaknesses": {
+              "item1": "Zawsze O(n²) — nie ma wczesnego wyjścia dla już posortowanych danych.",
+              "item2": "Domyślnie nie jest stabilne: równe wartości mogą zmienić swoją względną kolejność."
+            }
+          },
+          "shellSort": {
+            "howItWorks": {
+              "step1": "Wybierz sekwencję odstępów (na przykład n/2, n/4, …, 1).",
+              "step2": "Dla każdego odstępu uruchom insertion sort na podsekwencjach oddalonych dokładnie o ten krok.",
+              "step3": "Przejdź do kolejnego, mniejszego odstępu i powtórz.",
+              "step4": "Zakończ przebiegiem dla gap = 1 — to końcowy insertion sort na całej tablicy."
+            },
+            "keyIdea": "Uruchamiaj insertion sort na podsekwencjach oddzielonych odstępem; zmniejszaj odstęp i powtarzaj, aż gap = 1.",
+            "pattern": "Wstawianie z odstępem",
+            "strengths": {
+              "item1": "Dużo szybsze od zwykłego insertion sorta dla losowych danych — zwykle O(n^1.25) do O(n^1.5).",
+              "item2": "Proste, in-place, bez rekurencji."
+            },
+            "watch": "Większe odstępy naprawiają dalekie nieuporządkowanie; końcowy przebieg z gap = 1 wszystko doszlifowuje.",
+            "weaknesses": {
+              "item1": "Dokładna złożoność zależy od sekwencji odstępów, a jej analiza jest zaskakująco trudna.",
+              "item2": "Niestabilne."
+            }
+          },
+          "timSort": {
+            "howItWorks": {
+              "step1": "Przeskanuj tablicę w poszukiwaniu monotonicznych runów (rosnących albo malejących sekwencji).",
+              "step2": "Uzupełnij runy krótsze od minimum za pomocą insertion sorta.",
+              "step3": "Wrzuć każdy run na stos i scalaj, gdy zostanie naruszony warunek równowagi rozmiarów.",
+              "step4": "Gdy skan się skończy, opróżnij stos, scalając pozostałe runy."
+            },
+            "keyIdea": "Wykrywaj już posortowane „runy”, krótkie domykaj insertion sortem, a potem scalaj runy według polityki stosu.",
+            "pattern": "Hybrydowe · Stabilne",
+            "strengths": {
+              "item1": "O(n) dla posortowanych lub prawie posortowanych danych — runy są wykorzystywane tak, jak są.",
+              "item2": "Stabilne; używane jako domyślne sortowanie w Pythonie, Javie, Androidzie i wielu innych miejscach."
+            },
+            "watch": "Naturalnie uporządkowane fragmenty są zachowywane i scalane bez ponownego sortowania.",
+            "weaknesses": {
+              "item1": "Implementacja jest znacznie bardziej złożona niż merge lub quick sort.",
+              "item2": "Niewielka dodatkowa pamięć O(n) na bufor scalania."
+            }
+          }
+        }
+      },
       "visualizations": {
         "grid": {
           "decisionFallback": "obserwuj, jak plansza zmienia się krok po kroku",
