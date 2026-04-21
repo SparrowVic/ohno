@@ -345,6 +345,51 @@
       },
       "runtime": {
         "dp": {
+          "bitmaskDp": {
+            "decisions": {
+              "cheaperAssignment": "new cheaper assignment for this mask",
+              "keepPreviousBest": "keep previous best job",
+              "noValidParentState": "mask has no valid parent state",
+              "removeJobFromMask": "remove job from the used-job mask",
+              "storeParentJob": "store parent job"
+            },
+            "descriptions": {
+              "commitAssignment": "Commit the cheapest way to assign the first {{worker}} worker(s) using job mask {{mask}}.",
+              "complete": "Recovered one minimum-cost assignment using subset DP.",
+              "initialize": "Seed the empty mask with zero cost before assigning any worker to any job.",
+              "inspectAssignment": "Assign {{worker}} to {{job}} and extend mask {{mask}}.",
+              "recoverAssignment": "Backtrack {{worker}} to job {{job}}."
+            },
+            "insights": {
+              "bestCostLabel": "Best cost",
+              "chosenJobsLabel": "Chosen jobs",
+              "jobsLabel": "Jobs",
+              "masksLabel": "Masks",
+              "workersLabel": "Workers"
+            },
+            "labels": {
+              "activeState": "{{worker}} × {{mask}}",
+              "assignPair": "{{worker}} -> {{job}}",
+              "jobsItemsLabel": "Jobs",
+              "parentJob": "job = {{job}}",
+              "pathPending": "Assign: pending",
+              "pathValue": "Assign: {{assignments}}",
+              "pendingValue": "pending",
+              "resultCost": "cost = {{value}}",
+              "resultPending": "cost pending",
+              "stateLabel": "dp[{{worker}}][{{mask}}]",
+              "unreachable": "unreachable",
+              "workersItemsLabel": "Workers"
+            },
+            "modeLabel": "DP with Bitmask",
+            "phases": {
+              "commitAssignment": "Commit subset assignment",
+              "complete": "Assignment ready",
+              "initializeSubset": "Initialize empty subset",
+              "inspectAssignment": "Inspect job assignment",
+              "recoverAssignment": "Recover assignment"
+            }
+          },
           "burstBalloons": {
             "decisions": {
               "appendFinisher": "append interval finisher to burst order",
@@ -761,6 +806,71 @@
               "lockIndexResult": "Lock index result"
             }
           },
+          "longestPalindromicSubsequence": {
+            "decisions": {
+              "bottomIntervalKept": "bottom interval kept",
+              "centerLocked": "center character locked in",
+              "dropLeftBoundary": "drop left boundary",
+              "dropRightBoundary": "drop right boundary",
+              "followLeft": "follow left interval",
+              "followLower": "follow lower interval",
+              "leftIntervalKept": "left interval kept",
+              "matchingOuterStored": "matching outer pair stored",
+              "moveInward": "move inward on both sides",
+              "wrapMirroredPair": "wrap inner subsequence with a mirrored pair"
+            },
+            "descriptions": {
+              "commitInterval": "Store best palindrome length for interval {{leftChar}}..{{rightChar}}.",
+              "complete": "Recovered longest palindromic subsequence \"{{palindrome}}\".",
+              "initialize": "Seed every single-character interval on the diagonal with length 1.",
+              "matchOuter": "Outer characters {{leftChar}} and {{rightChar}} match, so the interval can wrap the inner palindrome.",
+              "mismatchOuter": "{{leftChar}} and {{rightChar}} do not match, so keep the stronger shorter interval.",
+              "skipLeft": "Skipping {{char}} preserves the longer palindrome, so move the left boundary inward.",
+              "skipRight": "Skipping {{char}} preserves the longer palindrome, so move the right boundary inward.",
+              "takePair": "Take mirrored pair {{leftChar}}...{{rightChar}} and continue inside the interval.",
+              "traceCenter": "{{char}} becomes the center of the palindrome."
+            },
+            "insights": {
+              "bestLengthLabel": "Best length",
+              "charsLabel": "Chars",
+              "mirrorPairsLabel": "Mirror pairs",
+              "recoveredLabel": "Recovered",
+              "shapeLabel": "Shape"
+            },
+            "labels": {
+              "activeInterval": "interval {{left}}..{{right}}",
+              "cellLabel": "dp[{{row}}][{{col}}]",
+              "centerLabel": "Center {{char}}",
+              "dropLeftValue": "drop left = {{value}}",
+              "dropRightValue": "drop right = {{value}}",
+              "innerValue": "inner = {{value}}",
+              "intervalLensLabel": "Interval lens",
+              "intervalPair": "{{leftChar}}..{{rightChar}}",
+              "mirroredValue": "mirrored = {{value}}",
+              "pairItem": "pair {{leftChar}} = {{rightChar}}",
+              "pathPending": "LPS: pending",
+              "pathValue": "LPS: {{value}}",
+              "pendingValue": "pending",
+              "resultLength": "len = {{value}}",
+              "skipLeftLabel": "Skip {{char}}",
+              "skipRightLabel": "Skip {{char}}",
+              "sourceStringLabel": "Source string",
+              "sourceValue": "source = {{value}}",
+              "takeLabel": "Take {{leftChar}}..{{rightChar}}",
+              "upperTriangle": "upper triangle"
+            },
+            "modeLabel": "Longest Palindromic Subsequence",
+            "phases": {
+              "commitInterval": "Commit interval answer",
+              "complete": "Palindrome ready",
+              "initializeDiagonal": "Initialize diagonal intervals",
+              "inspectTransition": "Inspect interval transition",
+              "skipLeft": "Skip left boundary",
+              "skipRight": "Skip right boundary",
+              "takePair": "Take mirrored pair",
+              "traceCenter": "Trace palindrome center"
+            }
+          },
           "matrixChain": {
             "decisions": {
               "expandChildren": "expand left and right child intervals",
@@ -929,6 +1039,61 @@
               "initializeBooleanTable": "Initialize boolean table",
               "noSubsetFound": "No subset found",
               "subsetReady": "Subset ready"
+            }
+          },
+          "travelingSalesman": {
+            "decisions": {
+              "cheaperExpandedSubset": "new cheaper route into expanded subset",
+              "closesCheapestVia": "tour closes cheapest via {{city}}",
+              "done": "done",
+              "existingStateBetter": "existing state stays better",
+              "jumpToPredecessor": "jump to saved predecessor",
+              "keepEarlierClosure": "keep earlier closure",
+              "newBestCycle": "new best Hamiltonian cycle",
+              "saveParent": "save parent city"
+            },
+            "descriptions": {
+              "backtrackRoute": "Trace parent pointer from {{city}} toward the start city.",
+              "commitSubset": "Commit improved DP state for subset {{mask}} ending at {{city}}.",
+              "complete": "Recovered one optimal tour with Held-Karp subset DP.",
+              "initialize": "Seed the DP with only the start city {{start}} visited and cost 0.",
+              "inspectClosure": "Close the tour by returning from {{from}} back to {{start}}.",
+              "inspectExtension": "Extend subset {{mask}} from {{from}} to {{to}}.",
+              "pickClosingCity": "Best closure returns through {{city}} with total tour cost {{cost}}."
+            },
+            "insights": {
+              "bestOpenRouteLabel": "Best open route",
+              "citiesLabel": "Cities",
+              "startLabel": "Start",
+              "subsetRowsLabel": "Subset rows",
+              "traceDepthLabel": "Trace depth"
+            },
+            "labels": {
+              "activeState": "{{mask}} -> {{city}}",
+              "bestTourEndLabel": "Best tour end city",
+              "citiesItemsLabel": "Cities",
+              "cityRowValue": "{{city}} row",
+              "distanceEdge": "{{from}}→{{to}}={{value}}",
+              "distanceLensLabel": "Distance lens",
+              "extensionLabel": "{{mask}} -> {{city}}",
+              "parentLabel": "parent = {{city}}",
+              "pathPending": "Tour: pending",
+              "pathValue": "Tour: {{tour}}",
+              "pendingValue": "pending",
+              "resultPending": "tour pending",
+              "resultTour": "tour = {{value}}",
+              "stateLabel": "dp[{{mask}}][{{city}}]",
+              "traceValue": "Trace: {{city}}"
+            },
+            "modeLabel": "Traveling Salesman DP",
+            "phases": {
+              "backtrackRoute": "Backtrack Hamiltonian route",
+              "commitSubset": "Commit expanded subset",
+              "complete": "Tour ready",
+              "initializeSubset": "Initialize start subset",
+              "inspectClosure": "Inspect cycle closure",
+              "inspectExtension": "Inspect subset extension",
+              "pickClosingCity": "Pick best closing city"
             }
           },
           "wildcardMatching": {

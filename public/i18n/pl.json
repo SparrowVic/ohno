@@ -345,6 +345,51 @@
       },
       "runtime": {
         "dp": {
+          "bitmaskDp": {
+            "decisions": {
+              "cheaperAssignment": "nowe tańsze przypisanie dla tej maski",
+              "keepPreviousBest": "zachowaj poprzednie najlepsze zadanie",
+              "noValidParentState": "maska nie ma poprawnego stanu rodzica",
+              "removeJobFromMask": "usuń zadanie z maski użytych zadań",
+              "storeParentJob": "zapisz zadanie rodzica"
+            },
+            "descriptions": {
+              "commitAssignment": "Zapisz najtańszy sposób przypisania pierwszych {{worker}} pracowników przy użyciu maski zadań {{mask}}.",
+              "complete": "Odtworzono jedno przypisanie o minimalnym koszcie przy użyciu subset DP.",
+              "initialize": "Ustaw pustą maskę z kosztem 0, zanim przypiszesz jakiegokolwiek pracownika do zadania.",
+              "inspectAssignment": "Przypisz {{worker}} do {{job}} i rozszerz maskę {{mask}}.",
+              "recoverAssignment": "Cofnij przypisanie {{worker}} do zadania {{job}}."
+            },
+            "insights": {
+              "bestCostLabel": "Najlepszy koszt",
+              "chosenJobsLabel": "Wybrane zadania",
+              "jobsLabel": "Zadania",
+              "masksLabel": "Maski",
+              "workersLabel": "Pracownicy"
+            },
+            "labels": {
+              "activeState": "{{worker}} × {{mask}}",
+              "assignPair": "{{worker}} -> {{job}}",
+              "jobsItemsLabel": "Zadania",
+              "parentJob": "zadanie = {{job}}",
+              "pathPending": "Przypisz: oczekuje",
+              "pathValue": "Przypisz: {{assignments}}",
+              "pendingValue": "oczekuje",
+              "resultCost": "cost = {{value}}",
+              "resultPending": "koszt oczekuje",
+              "stateLabel": "dp[{{worker}}][{{mask}}]",
+              "unreachable": "nieosiągalne",
+              "workersItemsLabel": "Pracownicy"
+            },
+            "modeLabel": "DP z bitmaską",
+            "phases": {
+              "commitAssignment": "Zapisz przypisanie podzbioru",
+              "complete": "Przypisanie gotowe",
+              "initializeSubset": "Zainicjalizuj pusty podzbiór",
+              "inspectAssignment": "Sprawdź przypisanie zadania",
+              "recoverAssignment": "Odtwórz przypisanie"
+            }
+          },
           "burstBalloons": {
             "decisions": {
               "appendFinisher": "dopisz domykający balon do kolejności pękania",
@@ -761,6 +806,71 @@
               "lockIndexResult": "Zamknięcie wyniku indeksu"
             }
           },
+          "longestPalindromicSubsequence": {
+            "decisions": {
+              "bottomIntervalKept": "zachowano dolny przedział",
+              "centerLocked": "zablokowano znak środkowy",
+              "dropLeftBoundary": "pomiń lewą granicę",
+              "dropRightBoundary": "pomiń prawą granicę",
+              "followLeft": "podążaj za lewym przedziałem",
+              "followLower": "podążaj za dolnym przedziałem",
+              "leftIntervalKept": "zachowano lewy przedział",
+              "matchingOuterStored": "zapisano pasującą zewnętrzną parę",
+              "moveInward": "idź do środka z obu stron",
+              "wrapMirroredPair": "otocz wewnętrzny podciąg lustrzaną parą"
+            },
+            "descriptions": {
+              "commitInterval": "Zapisz najlepszą długość palindromu dla przedziału {{leftChar}}..{{rightChar}}.",
+              "complete": "Odtworzono najdłuższy podciąg palindromiczny \"{{palindrome}}\".",
+              "initialize": "Ustaw każdy jednoznakowy przedział na przekątnej z długością 1.",
+              "matchOuter": "Zewnętrzne znaki {{leftChar}} i {{rightChar}} są równe, więc przedział może otoczyć wewnętrzny palindrom.",
+              "mismatchOuter": "{{leftChar}} i {{rightChar}} nie pasują, więc zachowaj silniejszy krótszy przedział.",
+              "skipLeft": "Pominięcie {{char}} zachowuje dłuższy palindrom, więc przesuń lewą granicę do środka.",
+              "skipRight": "Pominięcie {{char}} zachowuje dłuższy palindrom, więc przesuń prawą granicę do środka.",
+              "takePair": "Weź lustrzaną parę {{leftChar}}...{{rightChar}} i kontynuuj wewnątrz przedziału.",
+              "traceCenter": "{{char}} staje się środkiem palindromu."
+            },
+            "insights": {
+              "bestLengthLabel": "Najlepsza długość",
+              "charsLabel": "Znaki",
+              "mirrorPairsLabel": "Pary lustrzane",
+              "recoveredLabel": "Odtworzony",
+              "shapeLabel": "Kształt"
+            },
+            "labels": {
+              "activeInterval": "przedział {{left}}..{{right}}",
+              "cellLabel": "dp[{{row}}][{{col}}]",
+              "centerLabel": "Środek {{char}}",
+              "dropLeftValue": "pomijając lewo = {{value}}",
+              "dropRightValue": "pomijając prawo = {{value}}",
+              "innerValue": "środek = {{value}}",
+              "intervalLensLabel": "Podgląd przedziałów",
+              "intervalPair": "{{leftChar}}..{{rightChar}}",
+              "mirroredValue": "lustrzane = {{value}}",
+              "pairItem": "para {{leftChar}} = {{rightChar}}",
+              "pathPending": "LPS: oczekuje",
+              "pathValue": "LPS: {{value}}",
+              "pendingValue": "oczekuje",
+              "resultLength": "len = {{value}}",
+              "skipLeftLabel": "Pomiń {{char}}",
+              "skipRightLabel": "Pomiń {{char}}",
+              "sourceStringLabel": "Łańcuch źródłowy",
+              "sourceValue": "źródło = {{value}}",
+              "takeLabel": "Weź {{leftChar}}..{{rightChar}}",
+              "upperTriangle": "górny trójkąt"
+            },
+            "modeLabel": "Najdłuższy podciąg palindromiczny",
+            "phases": {
+              "commitInterval": "Zapisz odpowiedź przedziału",
+              "complete": "Palindrom gotowy",
+              "initializeDiagonal": "Zainicjalizuj przekątne przedziały",
+              "inspectTransition": "Sprawdź przejście przedziału",
+              "skipLeft": "Pomiń lewą granicę",
+              "skipRight": "Pomiń prawą granicę",
+              "takePair": "Weź lustrzaną parę",
+              "traceCenter": "Śledź środek palindromu"
+            }
+          },
           "matrixChain": {
             "decisions": {
               "expandChildren": "rozwiń lewe i prawe dziecko",
@@ -929,6 +1039,61 @@
               "initializeBooleanTable": "Inicjalizacja tabeli boolowskiej",
               "noSubsetFound": "Nie znaleziono podzbioru",
               "subsetReady": "Podzbiór gotowy"
+            }
+          },
+          "travelingSalesman": {
+            "decisions": {
+              "cheaperExpandedSubset": "nowa tańsza droga do rozszerzonego podzbioru",
+              "closesCheapestVia": "trasa najtaniej domyka się przez {{city}}",
+              "done": "gotowe",
+              "existingStateBetter": "istniejący stan pozostaje lepszy",
+              "jumpToPredecessor": "skocz do zapisanego poprzednika",
+              "keepEarlierClosure": "zachowaj wcześniejsze domknięcie",
+              "newBestCycle": "nowy najlepszy cykl Hamiltona",
+              "saveParent": "zapisz miasto rodzica"
+            },
+            "descriptions": {
+              "backtrackRoute": "Śledź wskaźnik rodzica od {{city}} w stronę miasta startowego.",
+              "commitSubset": "Zapisz ulepszony stan DP dla podzbioru {{mask}} kończącego się w {{city}}.",
+              "complete": "Odtworzono jedną optymalną trasę przy użyciu subset DP Held-Karpa.",
+              "initialize": "Ustaw DP tak, aby odwiedzone było tylko miasto startowe {{start}} z kosztem 0.",
+              "inspectClosure": "Domknij trasę, wracając z {{from}} do miasta startowego {{start}}.",
+              "inspectExtension": "Rozszerz podzbiór {{mask}} z {{from}} do {{to}}.",
+              "pickClosingCity": "Najlepsze domknięcie wraca przez {{city}} z całkowitym kosztem {{cost}}."
+            },
+            "insights": {
+              "bestOpenRouteLabel": "Najlepsza otwarta trasa",
+              "citiesLabel": "Miasta",
+              "startLabel": "Start",
+              "subsetRowsLabel": "Wiersze podzbiorów",
+              "traceDepthLabel": "Głębokość śledzenia"
+            },
+            "labels": {
+              "activeState": "{{mask}} -> {{city}}",
+              "bestTourEndLabel": "Najlepsze miasto końcowe trasy",
+              "citiesItemsLabel": "Miasta",
+              "cityRowValue": "wiersz {{city}}",
+              "distanceEdge": "{{from}}→{{to}}={{value}}",
+              "distanceLensLabel": "Podgląd odległości",
+              "extensionLabel": "{{mask}} -> {{city}}",
+              "parentLabel": "rodzic = {{city}}",
+              "pathPending": "Trasa: oczekuje",
+              "pathValue": "Trasa: {{tour}}",
+              "pendingValue": "oczekuje",
+              "resultPending": "trasa oczekuje",
+              "resultTour": "tour = {{value}}",
+              "stateLabel": "dp[{{mask}}][{{city}}]",
+              "traceValue": "Śledzenie: {{city}}"
+            },
+            "modeLabel": "DP komiwojażera",
+            "phases": {
+              "backtrackRoute": "Cofnij trasę Hamiltona",
+              "commitSubset": "Zapisz rozszerzony podzbiór",
+              "complete": "Trasa gotowa",
+              "initializeSubset": "Zainicjalizuj podzbiór startowy",
+              "inspectClosure": "Sprawdź domknięcie cyklu",
+              "inspectExtension": "Sprawdź rozszerzenie podzbioru",
+              "pickClosingCity": "Wybierz najlepsze miasto domknięcia"
             }
           },
           "wildcardMatching": {
