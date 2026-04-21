@@ -1,6 +1,9 @@
 <div class="trace" [attr.data-tone]="decisionTone()">
   @if (state(); as graphState) {
     <div class="trace__header">
+      <!-- Teaching hint — algorithm-specific key idea + what to watch -->
+      <app-trace-hint [keyIdea]="hintKeyIdea()" [watch]="hintWatch()" />
+
       <!-- ======================================================== -->
       <!-- PANEL 1 — Facts / summary metrics                         -->
       <!-- ======================================================== -->

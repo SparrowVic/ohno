@@ -11,9 +11,11 @@ import {
   faWandMagicSparkles,
 } from '@fortawesome/pro-solid-svg-icons';
 
+import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { GridTraceCell, GridTraceState, GridTraceTag } from '../../models/grid';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
+import { TraceHint } from '../trace-hint/trace-hint';
 
 interface GridTagLegendItem {
   readonly id: GridTraceTag;
@@ -43,13 +45,23 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-grid-trace-panel',
-  imports: [Table],
+  imports: [Table, TraceHint],
   templateUrl: './grid-trace-panel.html',
   styleUrl: './grid-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GridTracePanel {
   readonly state = input<GridTraceState | null>(null);
+  readonly algorithmId = input<string | null>(null);
+
+  readonly hintKeyIdea = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+  });
+  readonly hintWatch = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+  });
 
   readonly legend = TAG_LEGEND;
   readonly tableColumns = TABLE_COLUMNS;

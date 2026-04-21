@@ -9,9 +9,11 @@ import {
   faXmark,
 } from '@fortawesome/pro-solid-svg-icons';
 
+import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { DsuEdgeTrace, DsuNodeTrace, DsuTraceState, DsuTraceTag } from '../../models/dsu';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
+import { TraceHint } from '../trace-hint/trace-hint';
 
 interface DsuTagLegendItem {
   readonly id: DsuTraceTag | 'accepted' | 'rejected';
@@ -41,13 +43,23 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-dsu-trace-panel',
-  imports: [Table],
+  imports: [Table, TraceHint],
   templateUrl: './dsu-trace-panel.html',
   styleUrl: './dsu-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuTracePanel {
   readonly state = input<DsuTraceState | null>(null);
+  readonly algorithmId = input<string | null>(null);
+
+  readonly hintKeyIdea = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+  });
+  readonly hintWatch = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+  });
 
   readonly legend = TAG_LEGEND;
   readonly tableColumns = TABLE_COLUMNS;
