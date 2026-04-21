@@ -27,7 +27,6 @@ interface Bar {
   value: number;
   position: number;
   group: SVGGElement;
-  shadow: SVGEllipseElement;
   rect: SVGRectElement;
   text: SVGTextElement;
 }
@@ -37,49 +36,31 @@ type BarState = 'default' | 'comparing' | 'swapping' | 'sorted';
 interface StateStyle {
   readonly fill: string;
   readonly stroke: string;
-  readonly textFill: string;
-  readonly textOpacity: number;
-  readonly shadowFill: string;
-  readonly shadowOpacity: number;
 }
 
 /** Single source of truth for each visual state. Each bar is a SOLID
- *  fill + thin stroke — no vertical gradient, no sheen, no top cap.
- *  Colors alias directly onto the app's identity palette so the
- *  sorting scene reads as the same UI (cyan = attending,
- *  pink = acting, lime = done). */
+ *  fill + hairline stroke — no vertical gradient, no sheen, no cap,
+ *  no shadow. Colors alias directly onto the app's identity palette
+ *  (cyan = attending, pink = acting, lime = done). Text color stays
+ *  `--text-primary` always — the bar's own color already conveys the
+ *  state and tinting the label on top of a same-colored fill was a
+ *  low-contrast read. */
 const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
   default: {
-    fill: 'rgb(var(--viz-state-default-rgb) / 0.72)',
-    stroke: 'rgb(var(--viz-state-default-rgb) / 0.88)',
-    textFill: 'var(--text-primary)',
-    textOpacity: 0.82,
-    shadowFill: 'rgba(2, 6, 23, 0.48)',
-    shadowOpacity: 0.36,
+    fill: 'rgb(var(--viz-state-default-rgb) / 0.85)',
+    stroke: 'rgb(var(--viz-state-default-rgb) / 0.95)',
   },
   comparing: {
     fill: 'rgb(var(--viz-state-compare-rgb) / 0.92)',
     stroke: 'var(--viz-state-compare)',
-    textFill: 'var(--viz-state-compare)',
-    textOpacity: 1,
-    shadowFill: 'var(--viz-state-compare)',
-    shadowOpacity: 0.22,
   },
   swapping: {
     fill: 'rgb(var(--viz-state-swap-rgb) / 0.92)',
     stroke: 'var(--viz-state-swap)',
-    textFill: 'var(--viz-state-swap)',
-    textOpacity: 1,
-    shadowFill: 'var(--viz-state-swap)',
-    shadowOpacity: 0.24,
   },
   sorted: {
     fill: 'rgb(var(--viz-state-sorted-rgb) / 0.92)',
     stroke: 'var(--viz-state-sorted)',
-    textFill: 'var(--viz-state-sorted)',
-    textOpacity: 1,
-    shadowFill: 'var(--viz-state-sorted)',
-    shadowOpacity: 0.2,
   },
 };
 
@@ -102,9 +83,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
   private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private backdropGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
   private barsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private baselineLine: SVGLineElement | null = null;
   private bars: Bar[] = [];
   private width = 0;
   private height = 0;
@@ -140,14 +119,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('preserveAspectRatio', 'none');
-
-    this.backdropGroup = this.svg.append('g').attr('pointer-events', 'none');
-    this.baselineLine = this.backdropGroup
-      .append('line')
-      .attr('stroke', 'rgba(255, 255, 255, 0.08)')
-      .attr('stroke-width', 1)
-      .attr('stroke-linecap', 'round')
-      .node() as SVGLineElement;
 
     this.barsGroup = this.svg.append('g').attr('class', 'bars');
 
@@ -214,9 +185,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     this.clearBars();
     this.svg?.remove();
     this.svg = null;
-    this.backdropGroup = null;
     this.barsGroup = null;
-    this.baselineLine = null;
     this.initialized = false;
     this.lastStep = null;
   }
@@ -253,32 +222,26 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     }
 
     const g = this.barsGroup.append('g').attr('class', 'bar').attr('data-id', id);
-    const shadow = g
-      .append('ellipse')
-      .attr('fill', 'rgba(2, 6, 23, 0.46)')
-      .attr('opacity', 0.34)
-      .style('transform-box', 'fill-box')
-      .style('transform-origin', 'center center');
     const defaultStyle = BAR_STATE_STYLES.default;
     const rect = g
       .append('rect')
       .attr('fill', defaultStyle.fill)
       .attr('stroke', defaultStyle.stroke)
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 0.5)
       .style('shape-rendering', 'geometricPrecision')
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center bottom');
     const text = g
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('fill', defaultStyle.textFill)
-      .attr('opacity', defaultStyle.textOpacity)
+      .attr('fill', 'var(--text-primary)')
       .style('font-family', 'var(--font-mono)')
       .style('font-weight', '600')
       .style('letter-spacing', '0.02em')
+      .style('font-variant-numeric', 'tabular-nums')
       .style('paint-order', 'stroke fill')
-      .style('stroke', 'rgba(8, 10, 16, 0.92)')
-      .style('stroke-width', '3.5px')
+      .style('stroke', 'rgba(8, 10, 16, 0.82)')
+      .style('stroke-width', '2px')
       .style('stroke-linejoin', 'round')
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center')
@@ -289,7 +252,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       value,
       position,
       group: g.node() as SVGGElement,
-      shadow: shadow.node() as SVGEllipseElement,
       rect: rect.node() as SVGRectElement,
       text: text.node() as SVGTextElement,
     };
@@ -307,19 +269,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     this.width = rect.width;
     this.height = rect.height;
     this.svg?.attr('viewBox', `0 0 ${Math.max(this.width, 1)} ${Math.max(this.height, 1)}`);
-  }
-
-  private syncBackdrop(): void {
-    const floorY = this.baselineY();
-    const left = this.horizontalPadding();
-    const right = Math.max(left, this.width - left);
-
-    if (this.baselineLine) {
-      this.baselineLine.setAttribute('x1', String(left));
-      this.baselineLine.setAttribute('x2', String(right));
-      this.baselineLine.setAttribute('y1', String(floorY + 1));
-      this.baselineLine.setAttribute('y2', String(floorY + 1));
-    }
   }
 
   private horizontalPadding(): number {
@@ -363,7 +312,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
 
   private layoutAll(): void {
     this.measure();
-    this.syncBackdrop();
     const barWidth = this.barWidth();
     for (const bar of this.bars) {
       this.layoutBar(bar, barWidth);
@@ -378,16 +326,8 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     const radius = this.radiusFor(barWidth, barHeight);
     const labelSize = clamp(barWidth * 0.42, 10, 14);
     const labelY = Math.max(labelSize + 6, y - 10);
-    const shadowWidth = Math.max(10, barWidth * 0.72);
-    const shadowHeight = Math.max(3, Math.min(10, barWidth * 0.16));
 
     bar.group.setAttribute('transform', `translate(${x}, 0)`);
-
-    bar.shadow.setAttribute('cx', String(barWidth / 2));
-    bar.shadow.setAttribute('cy', String(floorY + 5));
-    bar.shadow.setAttribute('rx', String(shadowWidth / 2));
-    bar.shadow.setAttribute('ry', String(shadowHeight / 2));
-    bar.shadow.removeAttribute('transform');
 
     bar.rect.setAttribute('x', '0');
     bar.rect.setAttribute('y', String(y));
@@ -423,17 +363,10 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       onUpdate: () => {
         const arc = Math.sin(Math.PI * state.t);
         const y = -arc * lift;
-        const shadowScaleX = 1 - arc * 0.22;
-        const shadowScaleY = 1 - arc * 0.38;
         target.setAttribute('transform', `translate(${state.x}, ${y})`);
-        bar.shadow.setAttribute(
-          'transform',
-          `translate(0, ${-y * 0.92}) scale(${shadowScaleX}, ${shadowScaleY})`,
-        );
       },
       onComplete: () => {
         target.setAttribute('transform', `translate(${toX}, 0)`);
-        bar.shadow.removeAttribute('transform');
       },
     });
   }
@@ -459,13 +392,11 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     const style = BAR_STATE_STYLES[state];
     bar.rect.setAttribute('fill', style.fill);
     bar.rect.setAttribute('stroke', style.stroke);
-    bar.text.setAttribute('fill', style.textFill);
-    bar.text.setAttribute('opacity', String(style.textOpacity));
-    bar.shadow.setAttribute('fill', style.shadowFill);
-    bar.shadow.setAttribute('opacity', String(style.shadowOpacity));
   }
 
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    if (prefersReducedMotion()) return;
+
     const motion = this.motion();
     if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
       this.animateCompare(step.comparing, motion);
@@ -494,11 +425,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
         origin: 'center bottom',
         filter: glowFilter('var(--viz-state-compare)', 16),
       });
-      pulseSvgElement(bar.text, {
-        duration: motion.compareMs,
-        scale: 1.08,
-        filter: glowFilter('var(--viz-state-compare)', 10),
-      });
     }
   }
 
@@ -513,12 +439,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
         scale: 1.04,
         origin: 'center bottom',
         filter: glowFilter('var(--viz-state-sorted)', 18),
-      });
-      pulseSvgElement(bar.text, {
-        duration: motion.settleMs,
-        delay,
-        scale: 1.08,
-        filter: glowFilter('var(--viz-state-sorted)', 10),
       });
     });
   }
@@ -568,4 +488,9 @@ function glowFilter(color: string, radius: number): readonly [string, string, st
     `drop-shadow(0 0 ${radius}px ${color})`,
     'drop-shadow(0 0 0 transparent)',
   ];
+}
+
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }

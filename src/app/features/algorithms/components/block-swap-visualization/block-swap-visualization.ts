@@ -51,44 +51,31 @@ type BlockState = 'default' | 'comparing' | 'swapping' | 'sorted';
 interface StateStyle {
   readonly fill: string;
   readonly stroke: string;
-  readonly textFill: string;
-  readonly shadowFill: string;
-  readonly shadowOpacity: number;
 }
 
 /** Single source of truth for each visual state. Each tile is a SOLID
- *  fill + thin stroke — no backplate, no inner glow core, no gloss
- *  overlay. Colors alias directly onto the app's identity palette so
- *  the block field reads as the same UI language as the rest of the
- *  app (cyan = attending, pink = acting, lime = done). */
+ *  fill + hairline stroke — no backplate, no inner glow core, no gloss
+ *  overlay. Text stays `--text-primary` always (dual-tone label on a
+ *  same-colored fill was a low-contrast read); state is conveyed by
+ *  the tile color itself. Colors alias onto the app's identity palette
+ *  so the block field reads as part of the same UI (cyan = attending,
+ *  pink = acting, lime = done). */
 const BLOCK_STATE_STYLES: Record<BlockState, StateStyle> = {
   default: {
-    fill: 'rgb(var(--viz-state-default-rgb) / 0.7)',
-    stroke: 'rgb(var(--viz-state-default-rgb) / 0.9)',
-    textFill: 'var(--text-primary)',
-    shadowFill: 'rgba(2, 6, 23, 0.5)',
-    shadowOpacity: 0.38,
+    fill: 'rgb(var(--viz-state-default-rgb) / 0.85)',
+    stroke: 'rgb(var(--viz-state-default-rgb) / 0.95)',
   },
   comparing: {
     fill: 'rgb(var(--viz-state-compare-rgb) / 0.92)',
     stroke: 'var(--viz-state-compare)',
-    textFill: 'var(--viz-state-compare)',
-    shadowFill: 'var(--viz-state-compare)',
-    shadowOpacity: 0.24,
   },
   swapping: {
     fill: 'rgb(var(--viz-state-swap-rgb) / 0.92)',
     stroke: 'var(--viz-state-swap)',
-    textFill: 'var(--viz-state-swap)',
-    shadowFill: 'var(--viz-state-swap)',
-    shadowOpacity: 0.26,
   },
   sorted: {
     fill: 'rgb(var(--viz-state-sorted-rgb) / 0.92)',
     stroke: 'var(--viz-state-sorted)',
-    textFill: 'var(--viz-state-sorted)',
-    shadowFill: 'var(--viz-state-sorted)',
-    shadowOpacity: 0.22,
   },
 };
 
@@ -286,16 +273,19 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
     }
 
     const g = this.rowGroup.append('g').attr('class', 'block').attr('data-id', id);
+    // Subtle ground shadow — barely visible at rest, scales during
+    // the swap arc so tiles read as "lifting" off the stage. Softer
+    // than the old halo (0.5 → 0.22 alpha, tighter inset).
     const shadow = g
       .append('rect')
-      .attr('x', '4')
-      .attr('y', '7')
-      .attr('width', String(BLOCK_SIZE - 8))
-      .attr('height', String(BLOCK_SIZE - 4))
-      .attr('rx', '15')
-      .attr('ry', '15')
-      .attr('fill', 'rgba(2, 6, 23, 0.5)')
-      .attr('opacity', 0.38)
+      .attr('x', '5')
+      .attr('y', '8')
+      .attr('width', String(BLOCK_SIZE - 10))
+      .attr('height', String(BLOCK_SIZE - 6))
+      .attr('rx', '13')
+      .attr('ry', '13')
+      .attr('fill', 'rgba(2, 6, 23, 0.55)')
+      .attr('opacity', 0.22)
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center');
     const defaultStyle = BLOCK_STATE_STYLES.default;
@@ -303,11 +293,11 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
       .append('rect')
       .attr('width', String(BLOCK_SIZE))
       .attr('height', String(BLOCK_SIZE))
-      .attr('rx', '14')
-      .attr('ry', '14')
+      .attr('rx', '12')
+      .attr('ry', '12')
       .attr('fill', defaultStyle.fill)
       .attr('stroke', defaultStyle.stroke)
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 0.5)
       .style('shape-rendering', 'geometricPrecision')
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center');
@@ -317,13 +307,14 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
       .attr('y', String(BLOCK_SIZE / 2 + 5))
       .attr('text-anchor', 'middle')
       .attr('font-size', 14)
-      .attr('fill', defaultStyle.textFill)
+      .attr('fill', 'var(--text-primary)')
       .style('font-family', 'var(--font-mono)')
       .style('font-weight', '600')
       .style('letter-spacing', '0.03em')
+      .style('font-variant-numeric', 'tabular-nums')
       .style('paint-order', 'stroke fill')
-      .style('stroke', 'rgba(8, 10, 16, 0.92)')
-      .style('stroke-width', '3.5px')
+      .style('stroke', 'rgba(8, 10, 16, 0.82)')
+      .style('stroke-width', '2px')
       .style('stroke-linejoin', 'round')
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center')
@@ -454,9 +445,6 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
     const style = BLOCK_STATE_STYLES[state];
     block.rect.setAttribute('fill', style.fill);
     block.rect.setAttribute('stroke', style.stroke);
-    block.text.setAttribute('fill', style.textFill);
-    block.shadow.setAttribute('fill', style.shadowFill);
-    block.shadow.setAttribute('opacity', String(style.shadowOpacity));
   }
 
   private valuesByPosition(): number[] {
@@ -586,6 +574,8 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
   }
 
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
+    if (prefersReducedMotion()) return;
+
     const motion = this.motion();
     if (step.comparing && !samePair(previousStep?.comparing ?? null, step.comparing)) {
       this.animateCompare(step.comparing, motion);
@@ -613,11 +603,6 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
         scale: 1.06,
         filter: glowFilter('var(--viz-state-compare)', 18),
       });
-      pulseSvgElement(block.text, {
-        duration: motion.compareMs,
-        scale: 1.08,
-        filter: glowFilter('var(--viz-state-compare)', 10),
-      });
     }
   }
 
@@ -631,12 +616,6 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
         delay,
         scale: 1.05,
         filter: glowFilter('var(--viz-state-sorted)', 20),
-      });
-      pulseSvgElement(block.text, {
-        duration: motion.settleMs,
-        delay,
-        scale: 1.08,
-        filter: glowFilter('var(--viz-state-sorted)', 10),
       });
     });
   }
@@ -673,4 +652,9 @@ function glowFilter(color: string, radius: number): readonly [string, string, st
     `drop-shadow(0 0 ${radius}px ${color})`,
     'drop-shadow(0 0 0 transparent)',
   ];
+}
+
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
