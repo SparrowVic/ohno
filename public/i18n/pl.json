@@ -343,6 +343,293 @@
           "triggerLabel": "Cechy"
         }
       },
+      "runtime": {
+        "string": {
+          "kmp": {
+            "computation": {
+              "labels": {
+                "currentCompare": "Bieżące porównanie",
+                "failureFallback": "Cofnięcie failure",
+                "failureJump": "Skok failure",
+                "failureSeed": "Ziarno failure",
+                "failureValue": "Wartość failure",
+                "finalOutcome": "Wynik końcowy",
+                "pointerUpdate": "Aktualizacja wskaźników",
+                "postMatchJump": "Skok po dopasowaniu",
+                "prefixCompare": "Porównanie prefiksu",
+                "readyToScan": "Gotowe do skanowania",
+                "textShift": "Przesunięcie tekstu"
+              },
+              "notes": {
+                "currentCompareMatch": "Nie trzeba robić backtrackingu.",
+                "currentCompareMismatch": "To właśnie tutaj KMP oszczędza czas dzięki fail[j - 1].",
+                "failureFallback": "KMP używa najlepszego mniejszego bordera zamiast sprawdzać od początku.",
+                "failureJump": "To jest moment „aha” w KMP: od razu użyj ponownie najdłuższego bezpiecznego prefiksu.",
+                "failureSeed": "Pierwszy znak nie ma krótszego właściwego prefiksu, do którego można się cofnąć.",
+                "failureValueBorder": "Ta granica staje się kolejnym celem skoku.",
+                "failureValueEmpty": "Niedopasowanie skasowało całe użyteczne nakładanie.",
+                "finalOutcome": "KMP działa w O(n + m), bo każde cofnięcie używa tablicy failure zamiast ponownie skanować tekst.",
+                "pointerUpdate": "KMP skacze tylko przy niedopasowaniach albo po zgłoszeniu pełnego trafienia.",
+                "postMatchJump": "Nakładające się dopasowania pozostają widoczne, bo wskaźnik tekstu nigdy się nie cofa.",
+                "prefixCompare": "Linki failure przechowują najdłuższy prefiks do ponownego użycia, gdy później pojawi się niedopasowanie.",
+                "readyToScan": "Wzorzec startuje pod pierwszym znakiem tekstu.",
+                "textShift": "Gdy failure nie może pomóc, przesuwa się tylko tekst."
+              }
+            },
+            "decisions": {
+              "advanceBothPointers": "Przesuń oba wskaźniki.",
+              "allMatchesFound": "Wszystkie dopasowania znaleziono bez cofania wskaźnika tekstu.",
+              "buildFailureTable": "Zbuduj tablicę failure przed skanowaniem tekstu.",
+              "eitherJumpOrMove": "Albo skocz po failure, albo przesuń wskaźnik tekstu.",
+              "extendOverlap": "Spróbuj wydłużyć bieżące nakładanie prefiksu i sufiksu.",
+              "jumpByFailureLinks": "Wzorzec może teraz skakać po linkach failure zamiast resetować się po niedopasowaniu.",
+              "keepBorderLength": "Zachowaj długość granicy {{prefix}}.",
+              "keepExtendingWindow": "Dalej wydłużaj wyrównane okno.",
+              "keepPaidWork": "Przesuń się wewnątrz wzorca i zachowaj pracę, którą już wykonałeś.",
+              "noBorderYet": "Jeszcze bez granicy.",
+              "noMatchFound": "Skoki failure i tak zapobiegły marnowaniu pracy na backtracking.",
+              "noReusablePrefix": "Nie ma jeszcze prefiksu do ponownego użycia, więc okno przesuwa się o jeden.",
+              "preventedBacktracking": "Skoki failure i tak zapobiegły marnowaniu pracy na backtracking.",
+              "restartPattern": "Zacznij wzorzec od początku.",
+              "reuseOverlapOfLength": "Użyj ponownie nakładania długości {{fallback}}.",
+              "sameTextChar": "Wzorzec przesuwa się pod tym samym znakiem tekstu; wskaźnik tekstu zostaje na miejscu."
+            },
+            "descriptions": {
+              "advance": "Znaki pasują, więc oba wskaźniki przesuwają się do przodu razem.",
+              "compareFailureChars": "Porównaj pattern[{{index}}] = \"{{current}}\" z prefiksowym znakiem pattern[{{prefix}}] = \"{{prefixChar}}\".",
+              "compareTextPattern": "Porównaj text[{{textIndex}}] = \"{{textChar}}\" z pattern[{{patternIndex}}] = \"{{patternChar}}\".",
+              "completeMatches": "KMP zakończone. Dopasowania znaleziono na indeksach {{matches}}.",
+              "completeNoMatch": "KMP zakończył skanowanie tekstu. Nie znaleziono pełnego dopasowania wzorca.",
+              "failureBuildMismatch": "Niedopasowanie podczas budowy failure: użyj ponownie fail[{{from}}] = {{next}} zamiast wracać do zera.",
+              "failureCommit": "Ustaw fail[{{index}}] = {{prefix}}. To nakładanie jest gotowe na kolejne skoki.",
+              "failureJump": "Niedopasowanie. Przeskocz z indeksu wzorca {{patternIndex}} do fail[{{failureIndex}}] = {{nextPatternIndex}} bez ruszania wskaźnika tekstu.",
+              "failureTableReady": "Tablica failure gotowa: [{{failure}}]. Zacznij skanować tekst bez cofania wskaźnika.",
+              "fullMatchFound": "Pełne dopasowanie znalezione na indeksie {{hitStart}}. KMP idzie dalej, przeskakując j do fail[{{failureIndex}}] = {{fallback}}.",
+              "prepare": "Przygotuj wyszukiwanie KMP dla wzorca \"{{pattern}}\" w tekście \"{{text}}\".",
+              "shiftText": "Niedopasowanie przy j = 0, więc przesuwa się tylko wskaźnik tekstu."
+            },
+            "insights": {
+              "charsValue": "{{count}} znaków",
+              "failureReadyLabel": "Gotowe failure",
+              "failureReadyValue": "{{current}} / {{total}}",
+              "hitsLabel": "Trafienia",
+              "noneValue": "brak",
+              "patternLabel": "Wzorzec",
+              "textLabel": "Tekst"
+            },
+            "labels": {
+              "hitCount": "{{count}} traf.",
+              "noFullHitsYet": "Jeszcze bez pełnych trafień",
+              "noHit": "Brak trafienia",
+              "noMatch": "Brak dopasowania",
+              "noMatchesYet": "Jeszcze bez dopasowań"
+            },
+            "modeLabel": "Skoki failure",
+            "phases": {
+              "advance": "Przesunięcie",
+              "buildFailure": "Budowa failure",
+              "characterMatch": "Dopasowanie znaków",
+              "complete": "Zakończono",
+              "failureCommit": "Zapis failure",
+              "failureFallback": "Cofnięcie failure",
+              "failureJump": "Skok failure",
+              "matchReported": "Zgłoszono trafienie",
+              "mismatchCheck": "Sprawdzenie niedopasowania",
+              "searchReady": "Gotowe do szukania",
+              "setup": "Przygotowanie",
+              "shiftText": "Przesunięcie tekstu"
+            }
+          },
+          "manacher": {
+            "computation": {
+              "labels": {
+                "boundaryUpdate": "Aktualizacja granicy",
+                "expansionCompare": "Porównanie rozszerzenia",
+                "longestPalindrome": "Najdłuższy palindrom",
+                "mirrorSeed": "Ziarno z lustra",
+                "transformedString": "Przekształcony ciąg"
+              },
+              "notes": {
+                "boundaryUpdate": "Wszystko wewnątrz tej granicy dostaje darmową dolną granicę z lustra.",
+                "expansionCompare": "Każde udane porównanie zwiększa promień palindromu o jeden krok w przekształconym ciągu.",
+                "longestPalindrome": "Długość najdłuższego oryginalnego palindromu jest dokładnie równa promieniowi w ciągu przekształconym.",
+                "mirrorSeed": "Manacher pożycza gwarantowaną bezpieczną część z lustrzanego środka przed dalszym rozszerzaniem.",
+                "transformedString": "To usuwa potrzebę osobnej obsługi środków palindromów parzystych i nieparzystych."
+              }
+            },
+            "decisions": {
+              "addSeparators": "Wstaw separatory #, żeby każdy palindrom zachowywał się jak promień o nieparzystej długości wokół jednego środka.",
+              "allRadiiKnown": "Wszystkie promienie palindromów są już znane, więc końcowa tęcza pokazuje każdy środek naraz.",
+              "defineWindow": "Bieżący palindrom wyznacza teraz okno lustrzane dla kolejnych środków.",
+              "growOutward": "Pasujące lustrzane znaki pozwalają palindromowej tęczy rosnąć na zewnątrz.",
+              "reuseMirror": "Najpierw użyj promienia z lustra; tylko dodatkowy wzrost wymaga nowych porównań."
+            },
+            "descriptions": {
+              "complete": "Manacher zakończył działanie. Najdłuższy palindrom to \"{{palindrome}}\".",
+              "expand": "Rozszerz wokół środka {{index}}: porównaj \"{{leftChar}}\" i \"{{rightChar}}\".",
+              "mirrorReuse": "W bieżącej prawej granicy skopiuj min(right - i, P[mirror]) = {{reused}} z lustra {{mirror}}.",
+              "shiftWindow": "Zaktualizuj aktywne okno palindromu do środka {{center}} i prawej granicy {{right}}.",
+              "transform": "Przekształć \"{{source}}\" w \"{{transformed}}\", żeby palindromy parzyste i nieparzyste miały jedną wspólną regułę rozszerzania."
+            },
+            "insights": {
+              "centerLabel": "Środek",
+              "charsValue": "{{count}} znaków",
+              "emptyValue": "puste",
+              "longestLabel": "Najdłuższy",
+              "sourceLabel": "Źródło",
+              "windowLabel": "Okno",
+              "windowValue": "[{{left}}, {{right}}]"
+            },
+            "labels": {
+              "noPalindromeYet": "Jeszcze bez zmierzonego palindromu"
+            },
+            "modeLabel": "Rozszerzanie lustrzane",
+            "phases": {
+              "complete": "Zakończono",
+              "expandPalindrome": "Rozszerzanie palindromu",
+              "mirrorReuse": "Użycie lustra",
+              "setup": "Przygotowanie",
+              "shiftWindow": "Przesunięcie okna"
+            }
+          },
+          "rabinKarp": {
+            "computation": {
+              "labels": {
+                "characterVerify": "Weryfikacja znaku",
+                "collision": "Kolizja",
+                "finalOutcome": "Wynik końcowy",
+                "hashGate": "Bramka hashy",
+                "initialHashes": "Początkowe hashe",
+                "rollingHash": "Rolling hash",
+                "verifiedHit": "Zweryfikowane trafienie"
+              },
+              "notes": {
+                "collision": "Rabin-Karp wygrywa średnio, bo takie czerwone alarmy są rzadkie.",
+                "finalOutcome": "Rolling hash robi tanie filtrowanie, a kontrole znaków potwierdzają ocalałych kandydatów.",
+                "hashGateMatch": "Hashe się zgadzają, więc Rabin-Karp musi sprawdzić znaki.",
+                "hashGateSkip": "Nie potrzeba tu kosztownego porównywania znak po znaku.",
+                "initialHashes": "Jeśli hashe się różnią, całe okno można odrzucić natychmiast.",
+                "rollingHash": "Usuń stary znak wiodący, przesuń bazę i dołóż nowy znak na końcu.",
+                "verifiedHit": "Zgodny hash i udana weryfikacja to prawdziwe wystąpienie.",
+                "verifyCollision": "To koszt kolizji: hashe pasowały, tekst nie.",
+                "verifyMatch": "Kandydat z hasha nadal wygląda poprawnie."
+              }
+            },
+            "decisions": {
+              "charsAgree": "Znaki nadal się zgadzają.",
+              "collision": "Równy hash, inny tekst: to kolizja i fałszywy alarm.",
+              "constantTimeRoll": "Aktualizacja hasha kosztuje O(1), więc okno może płynąć bez przeliczania wszystkiego od zera.",
+              "keepSliding": "Przesuwaj się dalej; sam hash nie wystarcza.",
+              "noMatchFound": "Każde obiecujące okno zostało albo odrzucone, albo okazało się kolizją.",
+              "rollingHashNarrowed": "Rolling hash zawęził szukanie do kilku krótkich weryfikacji.",
+              "seedHashes": "Zahashuj wzorzec i pierwsze okno tekstu przed przesuwaniem.",
+              "slideOnDifferentHash": "Różne hashe pozwalają od razu przesunąć okno.",
+              "survivedVerification": "Kandydat z hasha przetrwał wszystkie kontrole znaków.",
+              "verifyOnEqualHash": "Równe hashe uruchamiają weryfikację znak po znaku."
+            },
+            "descriptions": {
+              "compareHashes": "Porównaj hash okna {{windowHash}} z hashem wzorca {{patternHash}} na starcie {{start}}.",
+              "completeMatches": "Rabin-Karp zakończony. Zweryfikowane dopasowania na indeksach {{matches}}.",
+              "completeNoMatch": "Rabin-Karp zakończył działanie. Nie znaleziono żadnego zweryfikowanego wystąpienia wzorca.",
+              "falseAlarm": "Fałszywy alarm w oknie {{start}}: rolling hash zderzył się, ale znaki nie pasują w całości.",
+              "prepare": "Przygotuj Rabin-Karp dla wzorca \"{{pattern}}\" z bazą {{base}} i mod {{mod}}.",
+              "rollHash": "Przetocz hash do przodu: usuń \"{{outgoingChar}}\" i dodaj \"{{incomingChar}}\".",
+              "verifiedMatch": "Zweryfikowano pełne dopasowanie na indeksie {{start}}.",
+              "verifyChars": "Zweryfikuj text[{{textIndex}}] = \"{{textChar}}\" względem pattern[{{patternIndex}}] = \"{{patternChar}}\"."
+            },
+            "insights": {
+              "baseLabel": "Baza",
+              "hitsLabel": "Trafienia",
+              "modLabel": "Mod",
+              "noneValue": "brak",
+              "windowLabel": "Okno",
+              "windowValue": "{{start}}..{{end}}"
+            },
+            "labels": {
+              "hitCount": "{{count}} traf.",
+              "noHit": "Brak trafienia",
+              "noMatch": "Brak dopasowania",
+              "noMatchesYet": "Jeszcze bez dopasowań",
+              "noVerifiedHitYet": "Jeszcze bez zweryfikowanego trafienia"
+            },
+            "modeLabel": "Okno rolling hasha",
+            "phases": {
+              "complete": "Zakończono",
+              "falseAlarm": "Fałszywy alarm",
+              "hashCompare": "Porównanie hashy",
+              "rollHash": "Przetoczenie hasha",
+              "setup": "Przygotowanie",
+              "verifiedMatch": "Zweryfikowane dopasowanie",
+              "verifyCollision": "Weryfikacja kolizji",
+              "verifyHit": "Weryfikacja trafienia"
+            }
+          },
+          "zAlgorithm": {
+            "computation": {
+              "labels": {
+                "boxReuse": "Użycie boxa",
+                "boxUpdate": "Aktualizacja boxa",
+                "combinedString": "Połączony ciąg",
+                "expansionCompare": "Porównanie rozszerzenia",
+                "finalSkyline": "Końcowa panorama",
+                "fullBar": "Pełny słupek"
+              },
+              "notes": {
+                "boxReuse": "Bieżący box [L, R] już za darmo gwarantuje taką długość dopasowania prefiksu.",
+                "boxUpdate": "Bieżące dopasowanie staje się nowym najlepszym oknem do ponownego użycia.",
+                "combinedString": "Każdy słupek, który po stronie tekstu osiągnie długość wzorca, oznacza pełne wystąpienie.",
+                "expansionCompare": "To wydłuża bieżące dopasowanie prefiksu o jeszcze jeden znak.",
+                "finalSkyline": "Czas liniowy bierze się z używania bieżącego boxa [L, R] zamiast ponownego rozwijania każdego sufiksu od zera.",
+                "fullBar": "Dlatego panorama Z jest tak czytelna: pełne trafienia stają się oczywistymi wysokimi słupkami."
+              }
+            },
+            "decisions": {
+              "copyGuaranteedPart": "Skopiuj tyle, ile bieżący box gwarantuje bezpiecznie, zanim zaczniesz rozwijać dalej.",
+              "fullHeightBar": "Słupek pełnej wysokości po stronie tekstu oznacza pełne dopasowanie prefiksowego wzorca.",
+              "growTaller": "Dopóki obie strony się zgadzają, słupek panoramy rośnie.",
+              "noFullHeightBar": "Panorama pokazuje częściowe użycie prefiksu, ale nigdy nie osiąga pełnej wysokości wzorca.",
+              "reuseFutureWork": "Przyszłe pozycje w tym boxie mogą użyć już wykonanej pracy zamiast zaczynać od zera.",
+              "revealAllMatches": "Panorama pokazuje teraz wszystkie pełne wystąpienia na pierwszy rzut oka.",
+              "skylineStartsFlat": "Panorama startuje płasko; każdy słupek będzie przechowywał długość dopasowanego prefiksu."
+            },
+            "descriptions": {
+              "buildArray": "Zbuduj tablicę Z dla \"{{combined}}\", żeby używać ponownie dopasowań prefiksu w całym ciągu.",
+              "completeMatches": "Tablica Z gotowa. Słupki pełnej wysokości wzorca wskazują dopasowania na indeksach {{matches}}.",
+              "completeNoMatch": "Tablica Z gotowa. Po stronie tekstu nie pojawił się żaden słupek o pełnej wysokości wzorca.",
+              "expandBar": "Rozszerz Z[{{index}}], porównując znak prefiksu \"{{prefixChar}}\" z \"{{matchChar}}\".",
+              "patternHit": "Słupek Z[{{index}}] osiągnął pełną długość wzorca, więc wzorzec występuje w tekście na indeksie {{textOffset}}.",
+              "reuseBox": "W aktywnym Z-boxie zainicjuj Z[{{index}}] wartością min({{remaining}}, Z[{{sourceIndex}}]) = {{reused}}.",
+              "shiftBox": "Zaktualizuj Z-box do [{{left}}, {{right}}], bo nowy słupek sięga dalej w prawo."
+            },
+            "insights": {
+              "boxLabel": "Z-box",
+              "boxValue": "[{{left}}, {{right}}]",
+              "charsValue": "{{count}} znaków",
+              "combinedLabel": "Ciąg łączony",
+              "emptyValue": "pusty",
+              "hitsLabel": "Trafienia",
+              "noneValue": "brak",
+              "patternLabel": "Wzorzec"
+            },
+            "labels": {
+              "hitCount": "{{count}} traf.",
+              "noFullPatternBar": "Jeszcze bez słupka pełnej wysokości wzorca",
+              "noHit": "Brak trafienia",
+              "noHitYet": "Jeszcze bez trafienia",
+              "noMatch": "Brak dopasowania"
+            },
+            "modeLabel": "Panorama Z-boxów",
+            "phases": {
+              "complete": "Zakończono",
+              "expandBar": "Rozszerzanie słupka",
+              "patternHit": "Trafienie wzorca",
+              "reuseBox": "Użycie boxa",
+              "setup": "Przygotowanie",
+              "shiftBox": "Przesunięcie boxa"
+            }
+          }
+        }
+      },
       "scenarios": {
         "dp": {
           "bitmaskDp": {

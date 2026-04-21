@@ -1,15 +1,103 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { ZAlgorithmTraceState } from '../../models/string';
 import { ZAlgorithmScenario } from '../../utils/string-scenarios/string-scenarios';
 
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.zAlgorithm.modeLabel'),
+  phases: {
+    setup: t('features.algorithms.runtime.string.zAlgorithm.phases.setup'),
+    reuseBox: t('features.algorithms.runtime.string.zAlgorithm.phases.reuseBox'),
+    expandBar: t('features.algorithms.runtime.string.zAlgorithm.phases.expandBar'),
+    shiftBox: t('features.algorithms.runtime.string.zAlgorithm.phases.shiftBox'),
+    patternHit: t('features.algorithms.runtime.string.zAlgorithm.phases.patternHit'),
+    complete: t('features.algorithms.runtime.string.zAlgorithm.phases.complete'),
+  },
+  insights: {
+    patternLabel: t('features.algorithms.runtime.string.zAlgorithm.insights.patternLabel'),
+    combinedLabel: t('features.algorithms.runtime.string.zAlgorithm.insights.combinedLabel'),
+    boxLabel: t('features.algorithms.runtime.string.zAlgorithm.insights.boxLabel'),
+    hitsLabel: t('features.algorithms.runtime.string.zAlgorithm.insights.hitsLabel'),
+    charsValue: t('features.algorithms.runtime.string.zAlgorithm.insights.charsValue'),
+    boxValue: t('features.algorithms.runtime.string.zAlgorithm.insights.boxValue'),
+    emptyValue: t('features.algorithms.runtime.string.zAlgorithm.insights.emptyValue'),
+    noneValue: t('features.algorithms.runtime.string.zAlgorithm.insights.noneValue'),
+  },
+  descriptions: {
+    buildArray: t('features.algorithms.runtime.string.zAlgorithm.descriptions.buildArray'),
+    reuseBox: t('features.algorithms.runtime.string.zAlgorithm.descriptions.reuseBox'),
+    expandBar: t('features.algorithms.runtime.string.zAlgorithm.descriptions.expandBar'),
+    shiftBox: t('features.algorithms.runtime.string.zAlgorithm.descriptions.shiftBox'),
+    patternHit: t('features.algorithms.runtime.string.zAlgorithm.descriptions.patternHit'),
+    completeNoMatch: t(
+      'features.algorithms.runtime.string.zAlgorithm.descriptions.completeNoMatch',
+    ),
+    completeMatches: t(
+      'features.algorithms.runtime.string.zAlgorithm.descriptions.completeMatches',
+    ),
+  },
+  decisions: {
+    skylineStartsFlat: t(
+      'features.algorithms.runtime.string.zAlgorithm.decisions.skylineStartsFlat',
+    ),
+    copyGuaranteedPart: t(
+      'features.algorithms.runtime.string.zAlgorithm.decisions.copyGuaranteedPart',
+    ),
+    growTaller: t('features.algorithms.runtime.string.zAlgorithm.decisions.growTaller'),
+    reuseFutureWork: t('features.algorithms.runtime.string.zAlgorithm.decisions.reuseFutureWork'),
+    fullHeightBar: t('features.algorithms.runtime.string.zAlgorithm.decisions.fullHeightBar'),
+    noFullHeightBar: t('features.algorithms.runtime.string.zAlgorithm.decisions.noFullHeightBar'),
+    revealAllMatches: t('features.algorithms.runtime.string.zAlgorithm.decisions.revealAllMatches'),
+  },
+  computation: {
+    labels: {
+      combinedString: t(
+        'features.algorithms.runtime.string.zAlgorithm.computation.labels.combinedString',
+      ),
+      boxReuse: t('features.algorithms.runtime.string.zAlgorithm.computation.labels.boxReuse'),
+      expansionCompare: t(
+        'features.algorithms.runtime.string.zAlgorithm.computation.labels.expansionCompare',
+      ),
+      boxUpdate: t('features.algorithms.runtime.string.zAlgorithm.computation.labels.boxUpdate'),
+      fullBar: t('features.algorithms.runtime.string.zAlgorithm.computation.labels.fullBar'),
+      finalSkyline: t(
+        'features.algorithms.runtime.string.zAlgorithm.computation.labels.finalSkyline',
+      ),
+    },
+    notes: {
+      combinedString: t(
+        'features.algorithms.runtime.string.zAlgorithm.computation.notes.combinedString',
+      ),
+      boxReuse: t('features.algorithms.runtime.string.zAlgorithm.computation.notes.boxReuse'),
+      expansionCompare: t(
+        'features.algorithms.runtime.string.zAlgorithm.computation.notes.expansionCompare',
+      ),
+      boxUpdate: t('features.algorithms.runtime.string.zAlgorithm.computation.notes.boxUpdate'),
+      fullBar: t('features.algorithms.runtime.string.zAlgorithm.computation.notes.fullBar'),
+      finalSkyline: t(
+        'features.algorithms.runtime.string.zAlgorithm.computation.notes.finalSkyline',
+      ),
+    },
+  },
+  labels: {
+    noFullPatternBar: t('features.algorithms.runtime.string.zAlgorithm.labels.noFullPatternBar'),
+    noHitYet: t('features.algorithms.runtime.string.zAlgorithm.labels.noHitYet'),
+    noMatch: t('features.algorithms.runtime.string.zAlgorithm.labels.noMatch'),
+    noHit: t('features.algorithms.runtime.string.zAlgorithm.labels.noHit'),
+    hitCount: t('features.algorithms.runtime.string.zAlgorithm.labels.hitCount'),
+  },
+} as const;
+
 function makeState(args: {
   readonly scenario: ZAlgorithmScenario;
   readonly combined: string;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly zValues: readonly number[];
   readonly activeIndex: number | null;
   readonly boxLeft: number | null;
@@ -21,7 +109,7 @@ function makeState(args: {
 }): ZAlgorithmTraceState {
   return {
     mode: 'z-algorithm',
-    modeLabel: 'Z-box skyline',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -30,17 +118,29 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Pattern', value: `${args.scenario.pattern.length} chars`, tone: 'accent' },
-      { label: 'Combined', value: `${args.combined.length} chars`, tone: 'info' },
       {
-        label: 'Z-box',
+        label: I18N.insights.patternLabel,
+        value: i18nText(I18N.insights.charsValue, { count: args.scenario.pattern.length }),
+        tone: 'accent',
+      },
+      {
+        label: I18N.insights.combinedLabel,
+        value: i18nText(I18N.insights.charsValue, { count: args.combined.length }),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.boxLabel,
         value:
           args.boxLeft === null || args.boxRight === null
-            ? 'empty'
-            : `[${args.boxLeft}, ${args.boxRight}]`,
+            ? I18N.insights.emptyValue
+            : i18nText(I18N.insights.boxValue, { left: args.boxLeft, right: args.boxRight }),
         tone: 'warning',
       },
-      { label: 'Hits', value: args.matches.length === 0 ? 'none' : args.matches.join(', '), tone: args.matches.length === 0 ? 'info' : 'success' },
+      {
+        label: I18N.insights.hitsLabel,
+        value: args.matches.length === 0 ? I18N.insights.noneValue : args.matches.join(', '),
+        tone: args.matches.length === 0 ? 'info' : 'success',
+      },
     ],
     combined: args.combined,
     patternLength: args.scenario.pattern.length,
@@ -65,15 +165,17 @@ export function* zAlgorithmGenerator(
 
   yield createStringStep({
     activeCodeLine: 1,
-    description: `Build the Z-array for "${scenario.pattern}$${scenario.text}" to reuse prefix matches across the whole string.`,
+    description: i18nText(I18N.descriptions.buildArray, {
+      combined: `${scenario.pattern}$${scenario.text}`,
+    }),
     phase: 'init',
     string: makeState({
       scenario,
       combined,
-      phaseLabel: 'Setup',
+      phaseLabel: I18N.phases.setup,
       activeLabel: 'Z[0] = |S|',
-      resultLabel: 'No full-pattern bar yet',
-      decisionLabel: 'The skyline starts flat; each bar will store a prefix length.',
+      resultLabel: I18N.labels.noFullPatternBar,
+      decisionLabel: I18N.decisions.skylineStartsFlat,
       zValues,
       activeIndex: 0,
       boxLeft: 0,
@@ -82,10 +184,10 @@ export function* zAlgorithmGenerator(
       compareMatchIndex: null,
       matches,
       computation: {
-        label: 'Combined string',
+        label: I18N.computation.labels.combinedString,
         expression: `${scenario.pattern} + "$" + ${scenario.text}`,
         result: combined,
-        note: 'Any bar reaching the pattern length on the text side marks a full occurrence.',
+        note: I18N.computation.notes.combinedString,
       },
     }),
   });
@@ -100,15 +202,20 @@ export function* zAlgorithmGenerator(
 
       yield createStringStep({
         activeCodeLine: 5,
-        description: `Inside the active Z-box, seed Z[${index}] with min(${right - index + 1}, Z[${index - left}]) = ${reused}.`,
+        description: i18nText(I18N.descriptions.reuseBox, {
+          index,
+          remaining: right - index + 1,
+          sourceIndex: index - left,
+          reused,
+        }),
         phase: 'compare',
         string: makeState({
           scenario,
           combined,
-          phaseLabel: 'Reuse box',
+          phaseLabel: I18N.phases.reuseBox,
           activeLabel: `i = ${index}`,
-          resultLabel: matches.length === 0 ? 'No hit yet' : matches.join(', '),
-          decisionLabel: 'Copy as much as the current box safely guarantees before expanding.',
+          resultLabel: matches.length === 0 ? I18N.labels.noHitYet : matches.join(', '),
+          decisionLabel: I18N.decisions.copyGuaranteedPart,
           zValues,
           activeIndex: index,
           boxLeft: left,
@@ -117,10 +224,10 @@ export function* zAlgorithmGenerator(
           compareMatchIndex: index,
           matches,
           computation: {
-            label: 'Box reuse',
+            label: I18N.computation.labels.boxReuse,
             expression: `Z[${index}] = min(${right - index + 1}, Z[${index - left}])`,
             result: String(reused),
-            note: 'The current [L, R] box already proves this much prefix match for free.',
+            note: I18N.computation.notes.boxReuse,
           },
         }),
       });
@@ -135,15 +242,19 @@ export function* zAlgorithmGenerator(
 
       yield createStringStep({
         activeCodeLine: 6,
-        description: `Expand Z[${index}] by comparing prefix char "${combined[prefixIndex]}" with "${combined[matchIndex]}".`,
+        description: i18nText(I18N.descriptions.expandBar, {
+          index,
+          prefixChar: combined[prefixIndex] ?? '∅',
+          matchChar: combined[matchIndex] ?? '∅',
+        }),
         phase: 'compare',
         string: makeState({
           scenario,
           combined,
-          phaseLabel: 'Expand bar',
+          phaseLabel: I18N.phases.expandBar,
           activeLabel: `Z[${index}] = ${zValues[index]}`,
-          resultLabel: matches.length === 0 ? 'No hit yet' : matches.join(', '),
-          decisionLabel: 'As long as both sides match, the skyline bar grows taller.',
+          resultLabel: matches.length === 0 ? I18N.labels.noHitYet : matches.join(', '),
+          decisionLabel: I18N.decisions.growTaller,
           zValues,
           activeIndex: index,
           boxLeft: left,
@@ -152,10 +263,10 @@ export function* zAlgorithmGenerator(
           compareMatchIndex: matchIndex,
           matches,
           computation: {
-            label: 'Expansion compare',
+            label: I18N.computation.labels.expansionCompare,
             expression: `S[${prefixIndex}] = S[${matchIndex}]`,
             result: `"${combined[prefixIndex]}" = "${combined[matchIndex]}"`,
-            note: 'This extends the current prefix match by one more character.',
+            note: I18N.computation.notes.expansionCompare,
           },
         }),
       });
@@ -169,15 +280,15 @@ export function* zAlgorithmGenerator(
 
       yield createStringStep({
         activeCodeLine: 9,
-        description: `Update the Z-box to [${left}, ${right}] because the new bar extends farther right.`,
+        description: i18nText(I18N.descriptions.shiftBox, { left, right }),
         phase: 'pass-complete',
         string: makeState({
           scenario,
           combined,
-          phaseLabel: 'Shift box',
+          phaseLabel: I18N.phases.shiftBox,
           activeLabel: `[L, R] = [${left}, ${right}]`,
-          resultLabel: matches.length === 0 ? 'No hit yet' : matches.join(', '),
-          decisionLabel: 'Future positions inside this box can reuse work instead of starting from zero.',
+          resultLabel: matches.length === 0 ? I18N.labels.noHitYet : matches.join(', '),
+          decisionLabel: I18N.decisions.reuseFutureWork,
           zValues,
           activeIndex: index,
           boxLeft: left,
@@ -186,10 +297,10 @@ export function* zAlgorithmGenerator(
           compareMatchIndex: null,
           matches,
           computation: {
-            label: 'Box update',
+            label: I18N.computation.labels.boxUpdate,
             expression: `[L, R] = [${index}, ${index + zValues[index] - 1}]`,
             result: `[${left}, ${right}]`,
-            note: 'The current match becomes the new best reusable prefix window.',
+            note: I18N.computation.notes.boxUpdate,
           },
         }),
       });
@@ -201,15 +312,15 @@ export function* zAlgorithmGenerator(
 
       yield createStringStep({
         activeCodeLine: 9,
-        description: `Bar Z[${index}] reached the full pattern length, so the pattern occurs in the text at index ${textOffset}.`,
+        description: i18nText(I18N.descriptions.patternHit, { index, textOffset }),
         phase: 'complete',
         string: makeState({
           scenario,
           combined,
-          phaseLabel: 'Pattern hit',
+          phaseLabel: I18N.phases.patternHit,
           activeLabel: `match @ ${textOffset}`,
           resultLabel: matches.join(', '),
-          decisionLabel: 'A full-height bar on the text side means the prefix pattern matched completely.',
+          decisionLabel: I18N.decisions.fullHeightBar,
           zValues,
           activeIndex: index,
           boxLeft: left,
@@ -218,10 +329,10 @@ export function* zAlgorithmGenerator(
           compareMatchIndex: null,
           matches,
           computation: {
-            label: 'Full bar',
+            label: I18N.computation.labels.fullBar,
             expression: `Z[${index}] ≥ |pattern|`,
             result: `${zValues[index]} ≥ ${scenario.pattern.length}`,
-            note: 'This is why the Z skyline is so readable: full hits become obvious tall bars.',
+            note: I18N.computation.notes.fullBar,
           },
         }),
       });
@@ -232,19 +343,22 @@ export function* zAlgorithmGenerator(
     activeCodeLine: 9,
     description:
       matches.length === 0
-        ? 'Z-array complete. No full pattern-height bar appeared on the text side.'
-        : `Z-array complete. Full-pattern bars mark matches at indices ${matches.join(', ')}.`,
+        ? I18N.descriptions.completeNoMatch
+        : i18nText(I18N.descriptions.completeMatches, { matches: matches.join(', ') }),
     phase: 'complete',
     string: makeState({
       scenario,
       combined,
-      phaseLabel: 'Complete',
-      activeLabel: matches.length === 0 ? 'No hit' : `${matches.length} hit(s)`,
-      resultLabel: matches.length === 0 ? 'No match' : matches.join(', '),
+      phaseLabel: I18N.phases.complete,
+      activeLabel:
+        matches.length === 0
+          ? I18N.labels.noHit
+          : i18nText(I18N.labels.hitCount, { count: matches.length }),
+      resultLabel: matches.length === 0 ? I18N.labels.noMatch : matches.join(', '),
       decisionLabel:
         matches.length === 0
-          ? 'The skyline shows partial prefix reuse but never reaches the full pattern height.'
-          : 'The skyline now reveals every full occurrence at a glance.',
+          ? I18N.decisions.noFullHeightBar
+          : I18N.decisions.revealAllMatches,
       zValues,
       activeIndex: null,
       boxLeft: left,
@@ -253,10 +367,10 @@ export function* zAlgorithmGenerator(
       compareMatchIndex: null,
       matches,
       computation: {
-        label: 'Final skyline',
+        label: I18N.computation.labels.finalSkyline,
         expression: 'Z values',
         result: `[${zValues.join(', ')}]`,
-        note: 'Linear time comes from reusing the current [L, R] box instead of re-expanding every suffix from scratch.',
+        note: I18N.computation.notes.finalSkyline,
       },
     }),
   });

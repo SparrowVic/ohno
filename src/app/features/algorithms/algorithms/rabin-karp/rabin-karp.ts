@@ -1,7 +1,109 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { RabinKarpTraceState } from '../../models/string';
 import { RabinKarpScenario } from '../../utils/string-scenarios/string-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.rabinKarp.modeLabel'),
+  phases: {
+    setup: t('features.algorithms.runtime.string.rabinKarp.phases.setup'),
+    hashCompare: t('features.algorithms.runtime.string.rabinKarp.phases.hashCompare'),
+    verifyHit: t('features.algorithms.runtime.string.rabinKarp.phases.verifyHit'),
+    verifyCollision: t('features.algorithms.runtime.string.rabinKarp.phases.verifyCollision'),
+    falseAlarm: t('features.algorithms.runtime.string.rabinKarp.phases.falseAlarm'),
+    verifiedMatch: t('features.algorithms.runtime.string.rabinKarp.phases.verifiedMatch'),
+    rollHash: t('features.algorithms.runtime.string.rabinKarp.phases.rollHash'),
+    complete: t('features.algorithms.runtime.string.rabinKarp.phases.complete'),
+  },
+  insights: {
+    baseLabel: t('features.algorithms.runtime.string.rabinKarp.insights.baseLabel'),
+    modLabel: t('features.algorithms.runtime.string.rabinKarp.insights.modLabel'),
+    windowLabel: t('features.algorithms.runtime.string.rabinKarp.insights.windowLabel'),
+    hitsLabel: t('features.algorithms.runtime.string.rabinKarp.insights.hitsLabel'),
+    windowValue: t('features.algorithms.runtime.string.rabinKarp.insights.windowValue'),
+    noneValue: t('features.algorithms.runtime.string.rabinKarp.insights.noneValue'),
+  },
+  descriptions: {
+    prepare: t('features.algorithms.runtime.string.rabinKarp.descriptions.prepare'),
+    compareHashes: t('features.algorithms.runtime.string.rabinKarp.descriptions.compareHashes'),
+    verifyChars: t('features.algorithms.runtime.string.rabinKarp.descriptions.verifyChars'),
+    falseAlarm: t('features.algorithms.runtime.string.rabinKarp.descriptions.falseAlarm'),
+    verifiedMatch: t('features.algorithms.runtime.string.rabinKarp.descriptions.verifiedMatch'),
+    rollHash: t('features.algorithms.runtime.string.rabinKarp.descriptions.rollHash'),
+    completeNoMatch: t('features.algorithms.runtime.string.rabinKarp.descriptions.completeNoMatch'),
+    completeMatches: t('features.algorithms.runtime.string.rabinKarp.descriptions.completeMatches'),
+  },
+  decisions: {
+    seedHashes: t('features.algorithms.runtime.string.rabinKarp.decisions.seedHashes'),
+    verifyOnEqualHash: t(
+      'features.algorithms.runtime.string.rabinKarp.decisions.verifyOnEqualHash',
+    ),
+    slideOnDifferentHash: t(
+      'features.algorithms.runtime.string.rabinKarp.decisions.slideOnDifferentHash',
+    ),
+    charsAgree: t('features.algorithms.runtime.string.rabinKarp.decisions.charsAgree'),
+    collision: t('features.algorithms.runtime.string.rabinKarp.decisions.collision'),
+    keepSliding: t('features.algorithms.runtime.string.rabinKarp.decisions.keepSliding'),
+    survivedVerification: t(
+      'features.algorithms.runtime.string.rabinKarp.decisions.survivedVerification',
+    ),
+    constantTimeRoll: t(
+      'features.algorithms.runtime.string.rabinKarp.decisions.constantTimeRoll',
+    ),
+    noMatchFound: t('features.algorithms.runtime.string.rabinKarp.decisions.noMatchFound'),
+    rollingHashNarrowed: t(
+      'features.algorithms.runtime.string.rabinKarp.decisions.rollingHashNarrowed',
+    ),
+  },
+  computation: {
+    labels: {
+      initialHashes: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.labels.initialHashes',
+      ),
+      hashGate: t('features.algorithms.runtime.string.rabinKarp.computation.labels.hashGate'),
+      characterVerify: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.labels.characterVerify',
+      ),
+      collision: t('features.algorithms.runtime.string.rabinKarp.computation.labels.collision'),
+      verifiedHit: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.labels.verifiedHit',
+      ),
+      rollingHash: t('features.algorithms.runtime.string.rabinKarp.computation.labels.rollingHash'),
+      finalOutcome: t('features.algorithms.runtime.string.rabinKarp.computation.labels.finalOutcome'),
+    },
+    notes: {
+      initialHashes: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.notes.initialHashes',
+      ),
+      hashGateMatch: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.notes.hashGateMatch',
+      ),
+      hashGateSkip: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.notes.hashGateSkip',
+      ),
+      verifyMatch: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.notes.verifyMatch',
+      ),
+      verifyCollision: t(
+        'features.algorithms.runtime.string.rabinKarp.computation.notes.verifyCollision',
+      ),
+      collision: t('features.algorithms.runtime.string.rabinKarp.computation.notes.collision'),
+      verifiedHit: t('features.algorithms.runtime.string.rabinKarp.computation.notes.verifiedHit'),
+      rollingHash: t('features.algorithms.runtime.string.rabinKarp.computation.notes.rollingHash'),
+      finalOutcome: t('features.algorithms.runtime.string.rabinKarp.computation.notes.finalOutcome'),
+    },
+  },
+  labels: {
+    noMatchesYet: t('features.algorithms.runtime.string.rabinKarp.labels.noMatchesYet'),
+    noVerifiedHitYet: t('features.algorithms.runtime.string.rabinKarp.labels.noVerifiedHitYet'),
+    noMatch: t('features.algorithms.runtime.string.rabinKarp.labels.noMatch'),
+    noHit: t('features.algorithms.runtime.string.rabinKarp.labels.noHit'),
+    hitCount: t('features.algorithms.runtime.string.rabinKarp.labels.hitCount'),
+  },
+} as const;
 
 function hashOf(source: string, base: number, mod: number): number {
   let value = 0;
@@ -28,10 +130,10 @@ function powMod(base: number, exponent: number, mod: number): number {
 
 function makeState(args: {
   readonly scenario: RabinKarpScenario;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly windowStart: number;
   readonly patternHash: number;
   readonly windowHash: number;
@@ -45,7 +147,7 @@ function makeState(args: {
 }): RabinKarpTraceState {
   return {
     mode: 'rabin-karp',
-    modeLabel: 'Rolling hash window',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -54,10 +156,21 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Base', value: String(args.scenario.base), tone: 'accent' },
-      { label: 'Mod', value: String(args.scenario.mod), tone: 'warning' },
-      { label: 'Window', value: `${args.windowStart}..${args.windowStart + args.scenario.pattern.length - 1}`, tone: 'info' },
-      { label: 'Hits', value: args.matches.length === 0 ? 'none' : args.matches.join(', '), tone: args.matches.length === 0 ? 'info' : 'success' },
+      { label: I18N.insights.baseLabel, value: String(args.scenario.base), tone: 'accent' },
+      { label: I18N.insights.modLabel, value: String(args.scenario.mod), tone: 'warning' },
+      {
+        label: I18N.insights.windowLabel,
+        value: i18nText(I18N.insights.windowValue, {
+          start: args.windowStart,
+          end: args.windowStart + args.scenario.pattern.length - 1,
+        }),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.hitsLabel,
+        value: args.matches.length === 0 ? I18N.insights.noneValue : args.matches.join(', '),
+        tone: args.matches.length === 0 ? 'info' : 'success',
+      },
     ],
     text: args.scenario.text,
     pattern: args.scenario.pattern,
@@ -89,14 +202,14 @@ export function* rabinKarpGenerator(
 
   yield createStringStep({
     activeCodeLine: 1,
-    description: `Prepare Rabin-Karp for pattern "${pattern}" with base ${base} and mod ${mod}.`,
+    description: i18nText(I18N.descriptions.prepare, { pattern, base, mod }),
     phase: 'init',
     string: makeState({
       scenario,
-      phaseLabel: 'Setup',
+      phaseLabel: I18N.phases.setup,
       activeLabel: `window 0..${m - 1}`,
-      resultLabel: 'No matches yet',
-      decisionLabel: 'Hash the pattern and the first text window before sliding.',
+      resultLabel: I18N.labels.noMatchesYet,
+      decisionLabel: I18N.decisions.seedHashes,
       windowStart: 0,
       patternHash,
       windowHash,
@@ -107,10 +220,10 @@ export function* rabinKarpGenerator(
       outgoingChar: null,
       incomingChar: null,
       computation: {
-        label: 'Initial hashes',
+        label: I18N.computation.labels.initialHashes,
         expression: `hash(pattern) = ${patternHash}, hash(text[0..${m})) = ${windowHash}`,
         result: `${patternHash} vs ${windowHash}`,
-        note: 'If hashes differ, the whole window can be rejected instantly.',
+        note: I18N.computation.notes.initialHashes,
       },
     }),
   });
@@ -120,14 +233,19 @@ export function* rabinKarpGenerator(
 
     yield createStringStep({
       activeCodeLine: 5,
-      description: `Compare window hash ${windowHash} with pattern hash ${patternHash} at start ${start}.`,
+      description: i18nText(I18N.descriptions.compareHashes, {
+        windowHash,
+        patternHash,
+        start,
+      }),
       phase: 'compare',
       string: makeState({
         scenario,
-        phaseLabel: 'Hash compare',
+        phaseLabel: I18N.phases.hashCompare,
         activeLabel: `window @ ${start}`,
-        resultLabel: matches.length === 0 ? 'No verified hit yet' : matches.join(', '),
-        decisionLabel: hashesMatch ? 'Equal hashes trigger a character verification.' : 'Different hashes let the window slide immediately.',
+        resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
+        decisionLabel:
+          hashesMatch ? I18N.decisions.verifyOnEqualHash : I18N.decisions.slideOnDifferentHash,
         windowStart: start,
         patternHash,
         windowHash,
@@ -138,10 +256,13 @@ export function* rabinKarpGenerator(
         outgoingChar: null,
         incomingChar: null,
         computation: {
-          label: 'Hash gate',
+          label: I18N.computation.labels.hashGate,
           expression: `${windowHash} ${hashesMatch ? '=' : '≠'} ${patternHash}`,
           result: hashesMatch ? 'possible match' : 'skip window',
-          note: hashesMatch ? 'Hashes agree, so Rabin-Karp must verify the characters.' : 'No expensive per-character compare is needed here.',
+          note:
+            hashesMatch
+              ? I18N.computation.notes.hashGateMatch
+              : I18N.computation.notes.hashGateSkip,
         },
       }),
     });
@@ -152,14 +273,19 @@ export function* rabinKarpGenerator(
         const same = text[start + offset] === pattern[offset];
         yield createStringStep({
           activeCodeLine: 6,
-          description: `Verify text[${start + offset}] = "${text[start + offset]}" against pattern[${offset}] = "${pattern[offset]}".`,
+          description: i18nText(I18N.descriptions.verifyChars, {
+            textIndex: start + offset,
+            textChar: text[start + offset] ?? '∅',
+            patternIndex: offset,
+            patternChar: pattern[offset] ?? '∅',
+          }),
           phase: 'compare',
           string: makeState({
             scenario,
-            phaseLabel: same ? 'Verify hit' : 'Verify collision',
+            phaseLabel: same ? I18N.phases.verifyHit : I18N.phases.verifyCollision,
             activeLabel: `check ${offset + 1} / ${m}`,
-            resultLabel: matches.length === 0 ? 'No verified hit yet' : matches.join(', '),
-            decisionLabel: same ? 'Characters still agree.' : 'Equal hash, different text: this is a false alarm collision.',
+            resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
+            decisionLabel: same ? I18N.decisions.charsAgree : I18N.decisions.collision,
             windowStart: start,
             patternHash,
             windowHash,
@@ -170,10 +296,13 @@ export function* rabinKarpGenerator(
             outgoingChar: null,
             incomingChar: null,
             computation: {
-              label: 'Character verify',
+              label: I18N.computation.labels.characterVerify,
               expression: `text[${start + offset}] ${same ? '=' : '≠'} pattern[${offset}]`,
               result: `"${text[start + offset]}" ${same ? '=' : '≠'} "${pattern[offset]}"`,
-              note: same ? 'The hash candidate still looks legitimate.' : 'This is the cost of a collision: hashes matched, text did not.',
+              note:
+                same
+                  ? I18N.computation.notes.verifyMatch
+                  : I18N.computation.notes.verifyCollision,
             },
           }),
         });
@@ -182,14 +311,14 @@ export function* rabinKarpGenerator(
           verified = false;
           yield createStringStep({
             activeCodeLine: 6,
-            description: `False alarm at window ${start}: the rolling hash collided, but the characters do not fully match.`,
+            description: i18nText(I18N.descriptions.falseAlarm, { start }),
             phase: 'pass-complete',
             string: makeState({
               scenario,
-              phaseLabel: 'False alarm',
+              phaseLabel: I18N.phases.falseAlarm,
               activeLabel: `collision @ ${start}`,
-              resultLabel: matches.length === 0 ? 'No verified hit yet' : matches.join(', '),
-              decisionLabel: 'Keep sliding; the hash alone is not enough.',
+              resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
+              decisionLabel: I18N.decisions.keepSliding,
               windowStart: start,
               patternHash,
               windowHash,
@@ -200,10 +329,10 @@ export function* rabinKarpGenerator(
               outgoingChar: null,
               incomingChar: null,
               computation: {
-                label: 'Collision',
+                label: I18N.computation.labels.collision,
                 expression: `${windowHash} = ${patternHash}, but text[${start + offset}] ≠ pattern[${offset}]`,
                 result: 'reject',
-                note: 'Rabin-Karp wins on average because these red-alert verifications are rare.',
+                note: I18N.computation.notes.collision,
               },
             }),
           });
@@ -215,14 +344,14 @@ export function* rabinKarpGenerator(
         matches.push(start);
         yield createStringStep({
           activeCodeLine: 6,
-          description: `Verified full match at index ${start}.`,
+          description: i18nText(I18N.descriptions.verifiedMatch, { start }),
           phase: 'complete',
           string: makeState({
             scenario,
-            phaseLabel: 'Verified match',
+            phaseLabel: I18N.phases.verifiedMatch,
             activeLabel: `hit @ ${start}`,
             resultLabel: matches.join(', '),
-            decisionLabel: 'The hash candidate survived every character check.',
+            decisionLabel: I18N.decisions.survivedVerification,
             windowStart: start,
             patternHash,
             windowHash,
@@ -233,10 +362,10 @@ export function* rabinKarpGenerator(
             outgoingChar: null,
             incomingChar: null,
             computation: {
-              label: 'Verified hit',
+              label: I18N.computation.labels.verifiedHit,
               expression: `text[${start}..${start + m}) = pattern`,
               result: 'match',
-              note: 'A hash match plus successful verification is a real occurrence.',
+              note: I18N.computation.notes.verifiedHit,
             },
           }),
         });
@@ -254,14 +383,17 @@ export function* rabinKarpGenerator(
 
     yield createStringStep({
       activeCodeLine: 8,
-      description: `Roll the hash forward: drop "${outgoingChar}" and add "${incomingChar}".`,
+      description: i18nText(I18N.descriptions.rollHash, {
+        outgoingChar: outgoingChar ?? '∅',
+        incomingChar: incomingChar ?? '∅',
+      }),
       phase: 'pass-complete',
       string: makeState({
         scenario,
-        phaseLabel: 'Roll hash',
+        phaseLabel: I18N.phases.rollHash,
         activeLabel: `window ${start + 1}..${start + m}`,
-        resultLabel: matches.length === 0 ? 'No verified hit yet' : matches.join(', '),
-        decisionLabel: 'Hash update costs O(1), so the window can glide without rehashing every character.',
+        resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
+        decisionLabel: I18N.decisions.constantTimeRoll,
         windowStart: start + 1,
         patternHash,
         windowHash: nextHash,
@@ -272,10 +404,10 @@ export function* rabinKarpGenerator(
         outgoingChar,
         incomingChar,
         computation: {
-          label: 'Rolling hash',
+          label: I18N.computation.labels.rollingHash,
           expression: `(((${windowHash} - ${outgoingValue}·${highestPower}) mod ${mod})·${base} + ${incomingValue}) mod ${mod}`,
           result: String(nextHash),
-          note: 'Remove the old leading character, shift the base, and inject the new trailing one.',
+          note: I18N.computation.notes.rollingHash,
         },
       }),
     });
@@ -287,18 +419,21 @@ export function* rabinKarpGenerator(
     activeCodeLine: 9,
     description:
       matches.length === 0
-        ? 'Rabin-Karp finished. No verified pattern occurrence was found.'
-        : `Rabin-Karp finished. Verified matches at indices ${matches.join(', ')}.`,
+        ? I18N.descriptions.completeNoMatch
+        : i18nText(I18N.descriptions.completeMatches, { matches: matches.join(', ') }),
     phase: 'complete',
     string: makeState({
       scenario,
-      phaseLabel: 'Complete',
-      activeLabel: matches.length === 0 ? 'No hit' : `${matches.length} hit(s)`,
-      resultLabel: matches.length === 0 ? 'No match' : matches.join(', '),
+      phaseLabel: I18N.phases.complete,
+      activeLabel:
+        matches.length === 0
+          ? I18N.labels.noHit
+          : i18nText(I18N.labels.hitCount, { count: matches.length }),
+      resultLabel: matches.length === 0 ? I18N.labels.noMatch : matches.join(', '),
       decisionLabel:
         matches.length === 0
-          ? 'Every promising hash window was either rejected or collided.'
-          : 'Rolling hash narrowed the search to a few short verifications.',
+          ? I18N.decisions.noMatchFound
+          : I18N.decisions.rollingHashNarrowed,
       windowStart: Math.max(text.length - m, 0),
       patternHash,
       windowHash,
@@ -309,10 +444,10 @@ export function* rabinKarpGenerator(
       outgoingChar: null,
       incomingChar: null,
       computation: {
-        label: 'Final outcome',
+        label: I18N.computation.labels.finalOutcome,
         expression: 'verified matches',
         result: matches.length === 0 ? '∅' : matches.join(', '),
-        note: 'The rolling hash does the cheap filtering; character checks confirm the survivors.',
+        note: I18N.computation.notes.finalOutcome,
       },
     }),
   });

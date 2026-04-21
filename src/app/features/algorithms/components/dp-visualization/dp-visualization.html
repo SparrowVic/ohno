@@ -18,7 +18,7 @@
                     | transloco
                 }}</div>
                 <div class="focus-card__hero-value">{{
-                  looksLikeI18nKey(activeItem.label) ? (activeItem.label | transloco) : activeItem.label
+                  activeItem.label | i18nText
                 }}</div>
                 <div class="focus-card__hero-meta">
                   <span
@@ -64,11 +64,7 @@
                   }}</div>
                   <div class="focus-step__value">
                     @if (activeItemCard()?.label; as activeItemLabel) {
-                      {{
-                        looksLikeI18nKey(activeItemLabel)
-                          ? (activeItemLabel | transloco)
-                          : activeItemLabel
-                      }}
+                      {{ activeItemLabel | i18nText }}
                     } @else {
                       {{
                         I18N_KEY.features.algorithms.visualizations.dp.knapsack.baseRowValue
@@ -86,7 +82,7 @@
                       | transloco
                   }}</div>
                   <div class="focus-step__value">{{
-                    looksLikeI18nKey(activeLabel()) ? (activeLabel() | transloco) : activeLabel()
+                    activeLabel() | i18nText
                   }}</div>
                 </div>
               </div>
@@ -99,11 +95,7 @@
                   }}</div>
                   <div class="focus-step__value">
                     @if (step()?.description; as stepDescription) {
-                      {{
-                        looksLikeI18nKey(stepDescription)
-                          ? (stepDescription | transloco)
-                          : stepDescription
-                      }}
+                      {{ stepDescription | i18nText }}
                     } @else {
                       —
                     }
@@ -127,9 +119,7 @@
                 }}</h3>
               </div>
               <span class="knapsack-topbar__phase">{{
-                looksLikeI18nKey(dpState.resultLabel)
-                  ? (dpState.resultLabel | transloco)
-                  : dpState.resultLabel
+                dpState.resultLabel | i18nText
               }}</span>
             </div>
 
@@ -137,9 +127,7 @@
               @for (branch of knapsackBranches(); track branch.kind) {
                 <article class="{{ branchClass(branch) }}" [attr.data-branch-kind]="branch.kind">
                   <div class="decision-branch__label">{{ branch.label | transloco }}</div>
-                  <div class="decision-branch__value">{{
-                    looksLikeI18nKey(branch.value) ? (branch.value | transloco) : branch.value
-                  }}</div>
+                  <div class="decision-branch__value">{{ branch.value | i18nText }}</div>
                   <div class="decision-branch__note">{{
                     branch.note | transloco: branch.noteParams
                   }}</div>
@@ -150,11 +138,7 @@
             <div class="decision-formula" [class.decision-formula--muted]="!dpState.computation">
               <div class="section-kicker">
                 @if (dpState.computation?.label; as computationLabel) {
-                  {{
-                    looksLikeI18nKey(computationLabel)
-                      ? (computationLabel | transloco)
-                      : computationLabel
-                  }}
+                  {{ computationLabel | i18nText }}
                 } @else {
                   {{
                     I18N_KEY.features.algorithms.tracePanels.dp.currentTransitionLabel | transloco
@@ -163,11 +147,7 @@
               </div>
               <div class="decision-formula__expression">
                 @if (dpState.computation?.expression; as computationExpression) {
-                  {{
-                    looksLikeI18nKey(computationExpression)
-                      ? (computationExpression | transloco)
-                      : computationExpression
-                  }}
+                  {{ computationExpression | i18nText }}
                 } @else {
                   {{
                     I18N_KEY.features.algorithms.visualizations.dp.knapsack.waitingTransitionLabel
@@ -185,11 +165,7 @@
                 </span>
                 <span class="decision-formula__decision">
                   @if (dpState.computation?.decision; as computationDecision) {
-                    {{
-                      looksLikeI18nKey(computationDecision)
-                        ? (computationDecision | transloco)
-                        : computationDecision
-                    }}
+                    {{ computationDecision | i18nText }}
                   } @else {
                     {{
                       I18N_KEY.features.algorithms.visualizations.dp.knapsack.noWinningBranchLabel
@@ -222,7 +198,7 @@
                   | transloco
               }}</div>
               <div class="pack-summary__value">{{
-                looksLikeI18nKey(pathLabel()) ? (pathLabel() | transloco) : pathLabel()
+                pathLabel() | i18nText
               }}</div>
             </div>
 
@@ -234,9 +210,7 @@
                 }}</span>
               } @else {
                 @for (item of packedItems(); track item) {
-                  <span class="pack-chip">{{
-                    looksLikeI18nKey(item) ? (item | transloco) : item
-                  }}</span>
+                  <span class="pack-chip">{{ item | i18nText }}</span>
                 }
               }
             </div>
@@ -251,32 +225,20 @@
               }}</span>
               <div class="knapsack-topbar__title-row">
                 <h2 class="knapsack-topbar__title">{{
-                  looksLikeI18nKey(dpState.presetLabel)
-                    ? (dpState.presetLabel | transloco)
-                    : dpState.presetLabel
+                  dpState.presetLabel | i18nText
                 }}</h2>
                 <span class="knapsack-topbar__phase">{{
-                  looksLikeI18nKey(dpState.phaseLabel)
-                    ? (dpState.phaseLabel | transloco)
-                    : dpState.phaseLabel
+                  dpState.phaseLabel | i18nText
                 }}</span>
               </div>
-              <p class="knapsack-topbar__desc">{{
-                looksLikeI18nKey(dpState.presetDescription)
-                  ? (dpState.presetDescription | transloco)
-                  : dpState.presetDescription
-              }}</p>
+              <p class="knapsack-topbar__desc">{{ dpState.presetDescription | i18nText }}</p>
             </div>
 
             <div class="knapsack-topbar__metrics">
               @for (metric of knapsackMetrics(); track metric.label) {
                 <div class="{{ metricClass(metric.tone) }}">
-                  <span class="section-kicker">{{
-                    looksLikeI18nKey(metric.label) ? (metric.label | transloco) : metric.label
-                  }}</span>
-                  <span class="knapsack-metric__value">{{
-                    looksLikeI18nKey(metric.value) ? (metric.value | transloco) : metric.value
-                  }}</span>
+                  <span class="section-kicker">{{ metric.label | i18nText }}</span>
+                  <span class="knapsack-metric__value">{{ metric.value | i18nText }}</span>
                 </div>
               }
             </div>
@@ -406,9 +368,7 @@
                   I18N_KEY.features.algorithms.visualizations.dp.knapsack.boardLabel | transloco
                 }}</span>
                 <small>{{
-                  looksLikeI18nKey(dpState.dimensionsLabel)
-                    ? (dpState.dimensionsLabel | transloco)
-                    : dpState.dimensionsLabel
+                  dpState.dimensionsLabel | i18nText
                 }}</small>
               </div>
 
@@ -482,7 +442,7 @@
               I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco
             }}</span>
             <span class="hud-card__value">{{
-              looksLikeI18nKey(dpState.modeLabel) ? (dpState.modeLabel | transloco) : dpState.modeLabel
+              dpState.modeLabel | i18nText
             }}</span>
           </div>
           <div class="hud-card">
@@ -490,9 +450,7 @@
               I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco
             }}</span>
             <span class="hud-card__value">{{
-              looksLikeI18nKey(dpState.phaseLabel)
-                ? (dpState.phaseLabel | transloco)
-                : dpState.phaseLabel
+              dpState.phaseLabel | i18nText
             }}</span>
           </div>
           <div class="hud-card">
@@ -500,7 +458,7 @@
               I18N_KEY.features.algorithms.tracePanels.common.activeLabel | transloco
             }}</span>
             <span class="hud-card__value">{{
-              looksLikeI18nKey(activeLabel()) ? (activeLabel() | transloco) : activeLabel()
+              activeLabel() | i18nText
             }}</span>
           </div>
           <div class="hud-card">
@@ -508,9 +466,7 @@
               I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco
             }}</span>
             <span class="hud-card__value">{{
-              looksLikeI18nKey(dpState.resultLabel)
-                ? (dpState.resultLabel | transloco)
-                : dpState.resultLabel
+              dpState.resultLabel | i18nText
             }}</span>
           </div>
           <div class="hud-card">
@@ -518,18 +474,14 @@
               I18N_KEY.features.algorithms.tracePanels.common.routeLabel | transloco
             }}</span>
             <span class="hud-card__value">{{
-              looksLikeI18nKey(pathLabel()) ? (pathLabel() | transloco) : pathLabel()
+              pathLabel() | i18nText
             }}</span>
           </div>
         </div>
 
         <div class="dp-shell__rails">
           <div class="focus-pill">
-            <span class="focus-pill__label">{{
-              looksLikeI18nKey(dpState.primaryItemsLabel)
-                ? (dpState.primaryItemsLabel | transloco)
-                : dpState.primaryItemsLabel
-            }}</span>
+            <span class="focus-pill__label">{{ dpState.primaryItemsLabel | i18nText }}</span>
             <div class="focus-pill__chips">
               @if (dpState.primaryItems.length === 0) {
                 <span class="focus-pill__empty">{{
@@ -537,19 +489,13 @@
                 }}</span>
               } @else {
                 @for (item of dpState.primaryItems; track item) {
-                  <span class="focus-pill__chip">{{
-                    looksLikeI18nKey(item) ? (item | transloco) : item
-                  }}</span>
+                  <span class="focus-pill__chip">{{ item | i18nText }}</span>
                 }
               }
             </div>
           </div>
           <div class="focus-pill">
-            <span class="focus-pill__label">{{
-              looksLikeI18nKey(dpState.secondaryItemsLabel)
-                ? (dpState.secondaryItemsLabel | transloco)
-                : dpState.secondaryItemsLabel
-            }}</span>
+            <span class="focus-pill__label">{{ dpState.secondaryItemsLabel | i18nText }}</span>
             <div class="focus-pill__chips">
               @if (dpState.secondaryItems.length === 0) {
                 <span class="focus-pill__empty">{{
@@ -557,9 +503,7 @@
                 }}</span>
               } @else {
                 @for (item of dpState.secondaryItems; track item) {
-                  <span class="focus-pill__chip focus-pill__chip--soft">{{
-                    looksLikeI18nKey(item) ? (item | transloco) : item
-                  }}</span>
+                  <span class="focus-pill__chip focus-pill__chip--soft">{{ item | i18nText }}</span>
                 }
               }
             </div>
@@ -572,16 +516,8 @@
           <span class="viz-flow__eyebrow">{{
             I18N_KEY.features.algorithms.visualizations.dp.presetLabEyebrow | transloco
           }}</span>
-          <h3 class="viz-flow__title">{{
-            looksLikeI18nKey(dpState.presetLabel)
-              ? (dpState.presetLabel | transloco)
-              : dpState.presetLabel
-          }}</h3>
-          <p class="viz-flow__desc">{{
-            looksLikeI18nKey(dpState.presetDescription)
-              ? (dpState.presetDescription | transloco)
-              : dpState.presetDescription
-          }}</p>
+          <h3 class="viz-flow__title">{{ dpState.presetLabel | i18nText }}</h3>
+          <p class="viz-flow__desc">{{ dpState.presetDescription | i18nText }}</p>
         </div>
 
         <div class="playground-bar">
@@ -589,16 +525,8 @@
             <span class="playground-bar__eyebrow">{{
               I18N_KEY.features.algorithms.visualizations.dp.scenarioEyebrow | transloco
             }}</span>
-            <span class="playground-bar__title">{{
-              looksLikeI18nKey(dpState.phaseLabel)
-                ? (dpState.phaseLabel | transloco)
-                : dpState.phaseLabel
-            }}</span>
-            <span class="playground-bar__desc">{{
-              looksLikeI18nKey(dpState.resultLabel)
-                ? (dpState.resultLabel | transloco)
-                : dpState.resultLabel
-            }}</span>
+            <span class="playground-bar__title">{{ dpState.phaseLabel | i18nText }}</span>
+            <span class="playground-bar__desc">{{ dpState.resultLabel | i18nText }}</span>
           </div>
           <div class="playground-bar__presets">
             @for (option of presetOptions(); track option.id) {
@@ -616,34 +544,20 @@
 
         @if (dpState.computation; as computation) {
           <div class="viz-flow__mini-card">
-            <span class="viz-flow__mini-key">{{
-              looksLikeI18nKey(computation.label) ? (computation.label | transloco) : computation.label
-            }}</span>
-            <span class="viz-flow__mini-val">{{
-              looksLikeI18nKey(computation.expression)
-                ? (computation.expression | transloco)
-                : computation.expression
-            }}</span>
+            <span class="viz-flow__mini-key">{{ computation.label | i18nText }}</span>
+            <span class="viz-flow__mini-val">{{ computation.expression | i18nText }}</span>
             @if (computation.result) {
               <span class="viz-flow__mini-val">= {{ computation.result }}</span>
             }
-            <span class="viz-flow__desc">{{
-              looksLikeI18nKey(computation.decision)
-                ? (computation.decision | transloco)
-                : computation.decision
-            }}</span>
+            <span class="viz-flow__desc">{{ computation.decision | i18nText }}</span>
           </div>
         }
 
         <div class="dp-shell__insights">
           @for (insight of dpState.insights; track insight.label) {
             <div class="{{ insightClass(insight.tone) }}">
-              <span class="insight-card__label">{{
-                looksLikeI18nKey(insight.label) ? (insight.label | transloco) : insight.label
-              }}</span>
-              <span class="insight-card__value">{{
-                looksLikeI18nKey(insight.value) ? (insight.value | transloco) : insight.value
-              }}</span>
+              <span class="insight-card__label">{{ insight.label | i18nText }}</span>
+              <span class="insight-card__value">{{ insight.value | i18nText }}</span>
             </div>
           }
         </div>
@@ -659,11 +573,7 @@
               I18N_KEY.features.algorithms.visualizations.dp.stageTitle | transloco
             }}</h3>
           </div>
-          <span class="viz-flow__pill viz-flow__pill--soft">{{
-            looksLikeI18nKey(dpState.dimensionsLabel)
-              ? (dpState.dimensionsLabel | transloco)
-              : dpState.dimensionsLabel
-          }}</span>
+          <span class="viz-flow__pill viz-flow__pill--soft">{{ dpState.dimensionsLabel | i18nText }}</span>
         </div>
 
         <div class="viz-flow__stage-body">
@@ -673,11 +583,7 @@
               [class.dp-board--upper]="dpState.tableShape === 'upper-triangle'"
               [style.grid-template-columns]="gridCols()"
             >
-              <div class="dp-corner">{{
-                looksLikeI18nKey(dpState.dimensionsLabel)
-                  ? (dpState.dimensionsLabel | transloco)
-                  : dpState.dimensionsLabel
-              }}</div>
+              <div class="dp-corner">{{ dpState.dimensionsLabel | i18nText }}</div>
 
               @for (colHeader of dpState.colHeaders; track colHeader.id) {
                 <div class="{{ headerClass(colHeader.status) }}">

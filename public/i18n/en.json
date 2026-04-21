@@ -343,6 +343,293 @@
           "triggerLabel": "Traits"
         }
       },
+      "runtime": {
+        "string": {
+          "kmp": {
+            "computation": {
+              "labels": {
+                "currentCompare": "Current compare",
+                "failureFallback": "Failure fallback",
+                "failureJump": "Failure jump",
+                "failureSeed": "Failure seed",
+                "failureValue": "Failure value",
+                "finalOutcome": "Final outcome",
+                "pointerUpdate": "Pointer update",
+                "postMatchJump": "Post-match jump",
+                "prefixCompare": "Prefix compare",
+                "readyToScan": "Ready to scan",
+                "textShift": "Text shift"
+              },
+              "notes": {
+                "currentCompareMatch": "No backtracking needed.",
+                "currentCompareMismatch": "This is where KMP saves time with fail[j - 1].",
+                "failureFallback": "KMP reuses the best smaller border instead of rechecking from the start.",
+                "failureJump": "This is the KMP aha moment: reuse the longest safe prefix immediately.",
+                "failureSeed": "The first character has no shorter proper prefix to fall back to.",
+                "failureValueBorder": "This border becomes the next jump target.",
+                "failureValueEmpty": "Mismatch collapsed all reusable overlap.",
+                "finalOutcome": "KMP runs in O(n + m) because every fallback reuses the failure table instead of rescanning text.",
+                "pointerUpdate": "KMP only jumps on mismatches or after reporting a full hit.",
+                "postMatchJump": "Overlapping matches stay visible because the text cursor never moves backward.",
+                "prefixCompare": "Failure links store the longest reusable prefix when a mismatch happens later.",
+                "readyToScan": "Pattern starts under the first text character.",
+                "textShift": "Only the text moves when no failure link can help."
+              }
+            },
+            "decisions": {
+              "advanceBothPointers": "Advance both pointers.",
+              "allMatchesFound": "All matches were found without rewinding the text pointer.",
+              "buildFailureTable": "Build the failure table before scanning the text.",
+              "eitherJumpOrMove": "Either jump by failure or move the text cursor.",
+              "extendOverlap": "Try to extend the current proper prefix / suffix overlap.",
+              "jumpByFailureLinks": "The pattern can now jump by failure links instead of resetting after mismatches.",
+              "keepBorderLength": "Keep border length {{prefix}}.",
+              "keepExtendingWindow": "Keep extending the aligned window.",
+              "keepPaidWork": "Slide inside the pattern and keep the work you already paid for.",
+              "noBorderYet": "No border yet.",
+              "noMatchFound": "Failure jumps still prevented wasteful backtracking.",
+              "noReusablePrefix": "No reusable prefix exists yet, so the window shifts by one.",
+              "preventedBacktracking": "Failure jumps still prevented wasteful backtracking.",
+              "restartPattern": "Restart pattern from the beginning.",
+              "reuseOverlapOfLength": "Reuse overlap of length {{fallback}}.",
+              "sameTextChar": "Pattern slides under the same text character; the text pointer stays put."
+            },
+            "descriptions": {
+              "advance": "Characters matched, so both pointers move forward together.",
+              "compareFailureChars": "Compare pattern[{{index}}] = \"{{current}}\" with prefix character pattern[{{prefix}}] = \"{{prefixChar}}\".",
+              "compareTextPattern": "Compare text[{{textIndex}}] = \"{{textChar}}\" with pattern[{{patternIndex}}] = \"{{patternChar}}\".",
+              "completeMatches": "KMP finished. Matches found at indices {{matches}}.",
+              "completeNoMatch": "KMP finished scanning the text. No full pattern match was found.",
+              "failureBuildMismatch": "Failure build mismatch: reuse fail[{{from}}] = {{next}} instead of restarting from zero.",
+              "failureCommit": "Set fail[{{index}}] = {{prefix}}. That overlap is ready for future jumps.",
+              "failureJump": "Mismatch. Jump pattern index from {{patternIndex}} to fail[{{failureIndex}}] = {{nextPatternIndex}} without moving the text cursor.",
+              "failureTableReady": "Failure table ready: [{{failure}}]. Start scanning the text without rewinding it.",
+              "fullMatchFound": "Full match found at text index {{hitStart}}. KMP keeps scanning by jumping j to fail[{{failureIndex}}] = {{fallback}}.",
+              "prepare": "Prepare KMP search for pattern \"{{pattern}}\" inside text \"{{text}}\".",
+              "shiftText": "Mismatch at j = 0, so only the text cursor moves to the next position."
+            },
+            "insights": {
+              "charsValue": "{{count}} chars",
+              "failureReadyLabel": "Failure ready",
+              "failureReadyValue": "{{current}} / {{total}}",
+              "hitsLabel": "Hits",
+              "noneValue": "none",
+              "patternLabel": "Pattern",
+              "textLabel": "Text"
+            },
+            "labels": {
+              "hitCount": "{{count}} hit(s)",
+              "noFullHitsYet": "No full hits yet",
+              "noHit": "No hit",
+              "noMatch": "No match",
+              "noMatchesYet": "No matches yet"
+            },
+            "modeLabel": "Failure jumps",
+            "phases": {
+              "advance": "Advance",
+              "buildFailure": "Build failure",
+              "characterMatch": "Character match",
+              "complete": "Complete",
+              "failureCommit": "Failure commit",
+              "failureFallback": "Failure fallback",
+              "failureJump": "Failure jump",
+              "matchReported": "Match reported",
+              "mismatchCheck": "Mismatch check",
+              "searchReady": "Search ready",
+              "setup": "Setup",
+              "shiftText": "Shift text"
+            }
+          },
+          "manacher": {
+            "computation": {
+              "labels": {
+                "boundaryUpdate": "Boundary update",
+                "expansionCompare": "Expansion compare",
+                "longestPalindrome": "Longest palindrome",
+                "mirrorSeed": "Mirror seed",
+                "transformedString": "Transformed string"
+              },
+              "notes": {
+                "boundaryUpdate": "Anything inside this boundary gets a free mirrored lower bound.",
+                "expansionCompare": "Each successful compare increases the palindrome radius by one transformed step.",
+                "longestPalindrome": "The longest original palindrome length is exactly the transformed radius.",
+                "mirrorSeed": "Manacher borrows the guaranteed safe part from the mirrored center before expanding.",
+                "transformedString": "This removes the need to separately handle odd and even palindrome centers."
+              }
+            },
+            "decisions": {
+              "addSeparators": "Insert # separators so every palindrome behaves like an odd-length radius around one center.",
+              "allRadiiKnown": "All palindrome radii are now known, so the final rainbow shows every center at once.",
+              "defineWindow": "The current palindrome now defines the mirror window for future centers.",
+              "growOutward": "Matching mirrored characters let the palindrome rainbow grow outward.",
+              "reuseMirror": "Reuse the mirrored radius first; only extra growth needs fresh comparisons."
+            },
+            "descriptions": {
+              "complete": "Manacher finished. The longest palindrome is \"{{palindrome}}\".",
+              "expand": "Expand around center {{index}}: compare \"{{leftChar}}\" and \"{{rightChar}}\".",
+              "mirrorReuse": "Inside the current right boundary, copy min(right - i, P[mirror]) = {{reused}} from mirror {{mirror}}.",
+              "shiftWindow": "Update the active palindrome window to center {{center}} with right boundary {{right}}.",
+              "transform": "Transform \"{{source}}\" into \"{{transformed}}\" so odd and even palindromes share one unified expansion rule."
+            },
+            "insights": {
+              "centerLabel": "Center",
+              "charsValue": "{{count}} chars",
+              "emptyValue": "empty",
+              "longestLabel": "Longest",
+              "sourceLabel": "Source",
+              "windowLabel": "Window",
+              "windowValue": "[{{left}}, {{right}}]"
+            },
+            "labels": {
+              "noPalindromeYet": "No palindrome measured yet"
+            },
+            "modeLabel": "Mirror expansion",
+            "phases": {
+              "complete": "Complete",
+              "expandPalindrome": "Expand palindrome",
+              "mirrorReuse": "Mirror reuse",
+              "setup": "Setup",
+              "shiftWindow": "Shift window"
+            }
+          },
+          "rabinKarp": {
+            "computation": {
+              "labels": {
+                "characterVerify": "Character verify",
+                "collision": "Collision",
+                "finalOutcome": "Final outcome",
+                "hashGate": "Hash gate",
+                "initialHashes": "Initial hashes",
+                "rollingHash": "Rolling hash",
+                "verifiedHit": "Verified hit"
+              },
+              "notes": {
+                "collision": "Rabin-Karp wins on average because these red-alert verifications are rare.",
+                "finalOutcome": "The rolling hash does the cheap filtering; character checks confirm the survivors.",
+                "hashGateMatch": "Hashes agree, so Rabin-Karp must verify the characters.",
+                "hashGateSkip": "No expensive per-character compare is needed here.",
+                "initialHashes": "If hashes differ, the whole window can be rejected instantly.",
+                "rollingHash": "Remove the old leading character, shift the base, and inject the new trailing one.",
+                "verifiedHit": "A hash match plus successful verification is a real occurrence.",
+                "verifyCollision": "This is the cost of a collision: hashes matched, text did not.",
+                "verifyMatch": "The hash candidate still looks legitimate."
+              }
+            },
+            "decisions": {
+              "charsAgree": "Characters still agree.",
+              "collision": "Equal hash, different text: this is a false alarm collision.",
+              "constantTimeRoll": "Hash update costs O(1), so the window can glide without rehashing every character.",
+              "keepSliding": "Keep sliding; the hash alone is not enough.",
+              "noMatchFound": "Every promising hash window was either rejected or collided.",
+              "rollingHashNarrowed": "Rolling hash narrowed the search to a few short verifications.",
+              "seedHashes": "Hash the pattern and the first text window before sliding.",
+              "slideOnDifferentHash": "Different hashes let the window slide immediately.",
+              "survivedVerification": "The hash candidate survived every character check.",
+              "verifyOnEqualHash": "Equal hashes trigger a character verification."
+            },
+            "descriptions": {
+              "compareHashes": "Compare window hash {{windowHash}} with pattern hash {{patternHash}} at start {{start}}.",
+              "completeMatches": "Rabin-Karp finished. Verified matches at indices {{matches}}.",
+              "completeNoMatch": "Rabin-Karp finished. No verified pattern occurrence was found.",
+              "falseAlarm": "False alarm at window {{start}}: the rolling hash collided, but the characters do not fully match.",
+              "prepare": "Prepare Rabin-Karp for pattern \"{{pattern}}\" with base {{base}} and mod {{mod}}.",
+              "rollHash": "Roll the hash forward: drop \"{{outgoingChar}}\" and add \"{{incomingChar}}\".",
+              "verifiedMatch": "Verified full match at index {{start}}.",
+              "verifyChars": "Verify text[{{textIndex}}] = \"{{textChar}}\" against pattern[{{patternIndex}}] = \"{{patternChar}}\"."
+            },
+            "insights": {
+              "baseLabel": "Base",
+              "hitsLabel": "Hits",
+              "modLabel": "Mod",
+              "noneValue": "none",
+              "windowLabel": "Window",
+              "windowValue": "{{start}}..{{end}}"
+            },
+            "labels": {
+              "hitCount": "{{count}} hit(s)",
+              "noHit": "No hit",
+              "noMatch": "No match",
+              "noMatchesYet": "No matches yet",
+              "noVerifiedHitYet": "No verified hit yet"
+            },
+            "modeLabel": "Rolling hash window",
+            "phases": {
+              "complete": "Complete",
+              "falseAlarm": "False alarm",
+              "hashCompare": "Hash compare",
+              "rollHash": "Roll hash",
+              "setup": "Setup",
+              "verifiedMatch": "Verified match",
+              "verifyCollision": "Verify collision",
+              "verifyHit": "Verify hit"
+            }
+          },
+          "zAlgorithm": {
+            "computation": {
+              "labels": {
+                "boxReuse": "Box reuse",
+                "boxUpdate": "Box update",
+                "combinedString": "Combined string",
+                "expansionCompare": "Expansion compare",
+                "finalSkyline": "Final skyline",
+                "fullBar": "Full bar"
+              },
+              "notes": {
+                "boxReuse": "The current [L, R] box already proves this much prefix match for free.",
+                "boxUpdate": "The current match becomes the new best reusable prefix window.",
+                "combinedString": "Any bar reaching the pattern length on the text side marks a full occurrence.",
+                "expansionCompare": "This extends the current prefix match by one more character.",
+                "finalSkyline": "Linear time comes from reusing the current [L, R] box instead of re-expanding every suffix from scratch.",
+                "fullBar": "This is why the Z skyline is so readable: full hits become obvious tall bars."
+              }
+            },
+            "decisions": {
+              "copyGuaranteedPart": "Copy as much as the current box safely guarantees before expanding.",
+              "fullHeightBar": "A full-height bar on the text side means the prefix pattern matched completely.",
+              "growTaller": "As long as both sides match, the skyline bar grows taller.",
+              "noFullHeightBar": "The skyline shows partial prefix reuse but never reaches the full pattern height.",
+              "reuseFutureWork": "Future positions inside this box can reuse work instead of starting from zero.",
+              "revealAllMatches": "The skyline now reveals every full occurrence at a glance.",
+              "skylineStartsFlat": "The skyline starts flat; each bar will store a prefix length."
+            },
+            "descriptions": {
+              "buildArray": "Build the Z-array for \"{{combined}}\" to reuse prefix matches across the whole string.",
+              "completeMatches": "Z-array complete. Full-pattern bars mark matches at indices {{matches}}.",
+              "completeNoMatch": "Z-array complete. No full pattern-height bar appeared on the text side.",
+              "expandBar": "Expand Z[{{index}}] by comparing prefix char \"{{prefixChar}}\" with \"{{matchChar}}\".",
+              "patternHit": "Bar Z[{{index}}] reached the full pattern length, so the pattern occurs in the text at index {{textOffset}}.",
+              "reuseBox": "Inside the active Z-box, seed Z[{{index}}] with min({{remaining}}, Z[{{sourceIndex}}]) = {{reused}}.",
+              "shiftBox": "Update the Z-box to [{{left}}, {{right}}] because the new bar extends farther right."
+            },
+            "insights": {
+              "boxLabel": "Z-box",
+              "boxValue": "[{{left}}, {{right}}]",
+              "charsValue": "{{count}} chars",
+              "combinedLabel": "Combined",
+              "emptyValue": "empty",
+              "hitsLabel": "Hits",
+              "noneValue": "none",
+              "patternLabel": "Pattern"
+            },
+            "labels": {
+              "hitCount": "{{count}} hit(s)",
+              "noFullPatternBar": "No full-pattern bar yet",
+              "noHit": "No hit",
+              "noHitYet": "No hit yet",
+              "noMatch": "No match"
+            },
+            "modeLabel": "Z-box skyline",
+            "phases": {
+              "complete": "Complete",
+              "expandBar": "Expand bar",
+              "patternHit": "Pattern hit",
+              "reuseBox": "Reuse box",
+              "setup": "Setup",
+              "shiftBox": "Shift box"
+            }
+          }
+        }
+      },
       "scenarios": {
         "dp": {
           "bitmaskDp": {

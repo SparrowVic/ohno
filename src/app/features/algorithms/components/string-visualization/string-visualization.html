@@ -9,16 +9,8 @@
         <span class="viz-flow__eyebrow">{{
           I18N_KEY.features.algorithms.visualizations.string.guideEyebrow | transloco
         }}</span>
-        <h3 class="viz-flow__title">{{
-          looksLikeI18nKey(stringState.modeLabel)
-            ? (stringState.modeLabel | transloco)
-            : stringState.modeLabel
-        }}</h3>
-        <p class="viz-flow__desc">{{
-          looksLikeI18nKey(stringState.decisionLabel)
-            ? (stringState.decisionLabel | transloco)
-            : stringState.decisionLabel
-        }}</p>
+        <h3 class="viz-flow__title">{{ stringState.modeLabel | i18nText }}</h3>
+        <p class="viz-flow__desc">{{ stringState.decisionLabel | i18nText }}</p>
       </div>
 
       <div class="string-lab__hud">
@@ -26,71 +18,43 @@
           <span class="hud-card__label">{{
             I18N_KEY.features.algorithms.tracePanels.string.modeLabel | transloco
           }}</span>
-          <span class="hud-card__value">{{
-            looksLikeI18nKey(stringState.modeLabel)
-              ? (stringState.modeLabel | transloco)
-              : stringState.modeLabel
-          }}</span>
+          <span class="hud-card__value">{{ stringState.modeLabel | i18nText }}</span>
         </div>
         <div class="hud-card">
           <span class="hud-card__label">{{
             I18N_KEY.features.algorithms.tracePanels.string.phaseLabel | transloco
           }}</span>
-          <span class="hud-card__value">{{
-            looksLikeI18nKey(stringState.phaseLabel)
-              ? (stringState.phaseLabel | transloco)
-              : stringState.phaseLabel
-          }}</span>
+          <span class="hud-card__value">{{ stringState.phaseLabel | i18nText }}</span>
         </div>
         <div class="hud-card">
           <span class="hud-card__label">{{
             I18N_KEY.features.algorithms.tracePanels.string.activeLabel | transloco
           }}</span>
-          <span class="hud-card__value">{{
-            looksLikeI18nKey(stringState.activeLabel)
-              ? (stringState.activeLabel | transloco)
-              : stringState.activeLabel
-          }}</span>
+          <span class="hud-card__value">{{ stringState.activeLabel | i18nText }}</span>
         </div>
         <div class="hud-card">
           <span class="hud-card__label">{{
             I18N_KEY.features.algorithms.tracePanels.string.resultLabel | transloco
           }}</span>
-          <span class="hud-card__value">{{
-            looksLikeI18nKey(stringState.resultLabel)
-              ? (stringState.resultLabel | transloco)
-              : stringState.resultLabel
-          }}</span>
+          <span class="hud-card__value">{{ stringState.resultLabel | i18nText }}</span>
         </div>
         <div class="hud-card hud-card--wide">
           <span class="hud-card__label">{{
             I18N_KEY.features.algorithms.tracePanels.string.decisionLabel | transloco
           }}</span>
-          <span class="hud-card__value">{{
-            looksLikeI18nKey(stringState.decisionLabel)
-              ? (stringState.decisionLabel | transloco)
-              : stringState.decisionLabel
-          }}</span>
+          <span class="hud-card__value">{{ stringState.decisionLabel | i18nText }}</span>
         </div>
       </div>
 
       <div class="string-lab__calc">
         @if (stringState.computation; as computation) {
           <div class="calc-card">
-            <span class="calc-card__label">{{
-              looksLikeI18nKey(computation.label) ? (computation.label | transloco) : computation.label
-            }}</span>
-            <span class="calc-card__expression">{{
-              looksLikeI18nKey(computation.expression)
-                ? (computation.expression | transloco)
-                : computation.expression
-            }}</span>
+            <span class="calc-card__label">{{ computation.label | i18nText }}</span>
+            <span class="calc-card__expression">{{ computation.expression | i18nText }}</span>
             @if (computation.result) {
               <span class="calc-card__result">{{ computation.result }}</span>
             }
-            <span class="calc-card__note">{{
-              looksLikeI18nKey(computation.note) ? (computation.note | transloco) : computation.note
-            }}</span>
+            <span class="calc-card__note">{{ computation.note | i18nText }}</span>
           </div>
         } @else {
           <div class="calc-card calc-card--empty">
@@ -110,16 +74,8 @@
         <span class="viz-flow__eyebrow">{{
           I18N_KEY.features.algorithms.visualizations.string.labEyebrow | transloco
         }}</span>
-        <h3 class="viz-flow__title">{{
-          looksLikeI18nKey(stringState.presetLabel)
-            ? (stringState.presetLabel | transloco)
-            : stringState.presetLabel
-        }}</h3>
-        <p class="viz-flow__desc">{{
-          looksLikeI18nKey(stringState.presetDescription)
-            ? (stringState.presetDescription | transloco)
-            : stringState.presetDescription
-        }}</p>
+        <h3 class="viz-flow__title">{{ stringState.presetLabel | i18nText }}</h3>
+        <p class="viz-flow__desc">{{ stringState.presetDescription | i18nText }}</p>
       </div>
 
       <div class="playground-bar">
@@ -128,15 +84,9 @@
             I18N_KEY.features.algorithms.visualizations.string.presetEyebrow | transloco
           }}</span>
           <span class="playground-bar__title">{{
-            looksLikeI18nKey(stringState.phaseLabel)
-              ? (stringState.phaseLabel | transloco)
-              : stringState.phaseLabel
+            stringState.phaseLabel | i18nText
           }}</span>
-          <span class="playground-bar__desc">{{
-            looksLikeI18nKey(stringState.activeLabel)
-              ? (stringState.activeLabel | transloco)
-              : stringState.activeLabel
-          }}</span>
+          <span class="playground-bar__desc">{{ stringState.activeLabel | i18nText }}</span>
         </div>
         <div class="playground-bar__presets">
           @for (option of presetOptions(); track option.id) {
@@ -155,12 +105,8 @@
       <div class="string-lab__insights">
         @for (insight of stringState.insights; track insight.label) {
           <div class="insight-card insight-card--{{ insight.tone }}">
-            <span class="insight-card__label">{{
-              looksLikeI18nKey(insight.label) ? (insight.label | transloco) : insight.label
-            }}</span>
-            <span class="insight-card__value">{{
-              looksLikeI18nKey(insight.value) ? (insight.value | transloco) : insight.value
-            }}</span>
+            <span class="insight-card__label">{{ insight.label | i18nText }}</span>
+            <span class="insight-card__value">{{ insight.value | i18nText }}</span>
           </div>
         }
       </div>
@@ -172,17 +118,9 @@
           <span class="viz-flow__eyebrow">{{
             I18N_KEY.features.algorithms.visualizations.string.stageEyebrow | transloco
           }}</span>
-          <h3 class="viz-flow__title">{{
-            looksLikeI18nKey(stringState.modeLabel)
-              ? (stringState.modeLabel | transloco)
-              : stringState.modeLabel
-          }}</h3>
+          <h3 class="viz-flow__title">{{ stringState.modeLabel | i18nText }}</h3>
         </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{
-          looksLikeI18nKey(stringState.phaseLabel)
-            ? (stringState.phaseLabel | transloco)
-            : stringState.phaseLabel
-        }}</span>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ stringState.phaseLabel | i18nText }}</span>
       </div>
 
       <div class="viz-flow__stage-body">

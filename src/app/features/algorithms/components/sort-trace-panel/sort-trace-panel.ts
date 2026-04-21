@@ -10,7 +10,6 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { SortTraceRow, SortTraceState, SortTraceTag } from '../../models/sort-trace';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -18,6 +17,7 @@ import { Table, TableColumn, TableRow } from '../../../../shared/components/tabl
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { SORT_ALGORITHM_TUTORIALS } from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
 import { TraceHint } from '../trace-hint/trace-hint';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 interface TagLegendItem {
   readonly id: SortTraceTag;
@@ -72,7 +72,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-sort-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
+  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './sort-trace-panel.html',
   styleUrl: './sort-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,7 +82,6 @@ export class SortTracePanel {
   private readonly transloco = inject(TranslocoService);
 
   protected readonly I18N_KEY = I18N_KEY;
-  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly state = input<SortTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
   readonly tableColumns = TABLE_COLUMNS;

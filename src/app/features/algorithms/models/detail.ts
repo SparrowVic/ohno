@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export interface LegendItem {
   readonly label: string;
   readonly color: string;
@@ -51,6 +53,6 @@ export type CodeVariantMap = Partial<Record<CodeLanguage, CodeVariant>>;
 
 export interface LogEntry {
   readonly step: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly timestamp: number;
 }

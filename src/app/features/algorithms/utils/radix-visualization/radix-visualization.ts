@@ -3,6 +3,7 @@ import {
   SortItemSnapshot,
   SortStep,
 } from '../../models/sort-step';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 
 export interface RadixDigitBadge {
   readonly exponent: number;
@@ -21,7 +22,7 @@ export interface RadixViewState {
   readonly activeItemId: string | null;
   readonly activeBucket: number | null;
   readonly phase: SortStep['phase'];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly passNumber: number;
 }
 

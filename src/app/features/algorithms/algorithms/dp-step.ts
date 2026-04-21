@@ -8,6 +8,7 @@ import {
   DpTraceTag,
 } from '../models/dp';
 import { SortStep } from '../models/sort-step';
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export interface DpHeaderConfig {
   readonly id: string;
@@ -29,24 +30,24 @@ export interface DpCellConfig {
 
 export interface CreateDpStepArgs {
   readonly mode: DpMode;
-  readonly modeLabel: string;
-  readonly phaseLabel: string;
-  readonly resultLabel: string;
-  readonly presetLabel: string;
-  readonly presetDescription: string;
+  readonly modeLabel: TranslatableText;
+  readonly phaseLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly presetLabel: TranslatableText;
+  readonly presetDescription: TranslatableText;
   readonly dimensionsLabel: string;
-  readonly activeLabel: string | null;
-  readonly pathLabel: string;
-  readonly primaryItemsLabel: string;
-  readonly primaryItems: readonly string[];
-  readonly secondaryItemsLabel: string;
-  readonly secondaryItems: readonly string[];
+  readonly activeLabel: TranslatableText | null;
+  readonly pathLabel: TranslatableText;
+  readonly primaryItemsLabel: TranslatableText;
+  readonly primaryItems: readonly TranslatableText[];
+  readonly secondaryItemsLabel: TranslatableText;
+  readonly secondaryItems: readonly TranslatableText[];
   readonly insights: readonly DpInsight[];
   readonly rowHeaders: readonly DpHeaderConfig[];
   readonly colHeaders: readonly DpHeaderConfig[];
   readonly cells: readonly DpCellConfig[];
   readonly activeCodeLine: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly tableShape?: DpTraceState['tableShape'];
   readonly computation?: DpComputation | null;

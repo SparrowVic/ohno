@@ -13,48 +13,26 @@
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.modeLabel | transloco"
         >
           <div class="trace__summary-combo">
-            <span class="trace__summary-mode-value">{{
-              looksLikeI18nKey(stringState.modeLabel)
-                ? (stringState.modeLabel | transloco)
-                : stringState.modeLabel
-            }}</span>
+            <span class="trace__summary-mode-value">{{ stringState.modeLabel | i18nText }}</span>
             <span class="trace__summary-preset">
               <span class="trace__summary-preset-label">{{
                 I18N_KEY.features.algorithms.tracePanels.string.presetLabel | transloco
               }}</span>
-              <span class="trace__summary-preset-value">{{
-                looksLikeI18nKey(stringState.presetLabel)
-                  ? (stringState.presetLabel | transloco)
-                  : stringState.presetLabel
-              }}</span>
+              <span class="trace__summary-preset-value">{{ stringState.presetLabel | i18nText }}</span>
             </span>
           </div>
         </app-segmented-panel-section>
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.phaseLabel | transloco"
-          [value]="
-            looksLikeI18nKey(stringState.phaseLabel)
-              ? (stringState.phaseLabel | transloco)
-              : stringState.phaseLabel
-          "
+          [value]="stringState.phaseLabel | i18nText"
         />
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.activeLabel | transloco"
-          [value]="
-            stringState.activeLabel
-              ? looksLikeI18nKey(stringState.activeLabel)
-                ? (stringState.activeLabel | transloco)
-                : stringState.activeLabel
-              : '—'
-          "
+          [value]="stringState.activeLabel | i18nText: '—'"
         />
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.resultLabel | transloco"
-          [value]="
-            looksLikeI18nKey(stringState.resultLabel)
-              ? (stringState.resultLabel | transloco)
-              : stringState.resultLabel
-          "
+          [value]="stringState.resultLabel | i18nText"
         />
       </app-segmented-panel>
 
@@ -68,32 +46,20 @@
           class="trace__calc-section trace__calc-section--preset"
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.presetNoteLabel | transloco"
         >
-          <div class="trace__calc-expression">{{
-            looksLikeI18nKey(stringState.presetDescription)
-              ? (stringState.presetDescription | transloco)
-              : stringState.presetDescription
-          }}</div>
+          <div class="trace__calc-expression">{{ stringState.presetDescription | i18nText }}</div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section
           class="trace__calc-section"
           [class.trace__calc-section--muted]="!stringState.computation"
           [eyebrow]="
-            (stringState.computation?.label
-              ? looksLikeI18nKey(stringState.computation?.label)
-                ? (stringState.computation?.label | transloco)
-                : stringState.computation?.label
-              : null) ||
+            (stringState.computation?.label | i18nText) ||
             (I18N_KEY.features.algorithms.tracePanels.string.currentTransitionLabel | transloco)
           "
         >
           <div class="trace__calc-expression">
             {{
-              (stringState.computation?.expression
-                ? looksLikeI18nKey(stringState.computation?.expression)
-                  ? (stringState.computation?.expression | transloco)
-                  : stringState.computation?.expression
-                : null) ||
+              (stringState.computation?.expression | i18nText) ||
                 (I18N_KEY.features.algorithms.tracePanels.string.waitingEventLabel | transloco)
             }}
           </div>
@@ -104,11 +70,7 @@
           }
           <div class="trace__calc-note">
             {{
-              (stringState.computation?.note
-                ? looksLikeI18nKey(stringState.computation?.note)
-                  ? (stringState.computation?.note | transloco)
-                  : stringState.computation?.note
-                : null) ||
+              (stringState.computation?.note | i18nText) ||
                 (I18N_KEY.features.algorithms.tracePanels.string.noFormulaLabel | transloco)
             }}
           </div>
@@ -118,11 +80,7 @@
           class="trace__calc-section trace__calc-section--decision"
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.decisionLabel | transloco"
         >
-          <div class="trace__calc-note">{{
-            looksLikeI18nKey(stringState.decisionLabel)
-              ? (stringState.decisionLabel | transloco)
-              : stringState.decisionLabel
-          }}</div>
+          <div class="trace__calc-note">{{ stringState.decisionLabel | i18nText }}</div>
         </app-segmented-panel-section>
       </app-segmented-panel>
 
@@ -140,12 +98,8 @@
           <div class="trace__insight-list">
             @for (insight of stringState.insights; track insight.label) {
               <span class="trace__insight-chip trace__insight-chip--{{ insight.tone }}">
-                <span class="trace__insight-label">{{
-                  looksLikeI18nKey(insight.label) ? (insight.label | transloco) : insight.label
-                }}</span>
-                <span class="trace__insight-value">{{
-                  looksLikeI18nKey(insight.value) ? (insight.value | transloco) : insight.value
-                }}</span>
+                <span class="trace__insight-label">{{ insight.label | i18nText }}</span>
+                <span class="trace__insight-value">{{ insight.value | i18nText }}</span>
               </span>
             }
           </div>

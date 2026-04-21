@@ -64,10 +64,11 @@ import {
   zBarHeight,
   zCharClass,
 } from './string-visualization.utils/string-visualization.utils';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-string-visualization',
-  imports: [TranslocoPipe],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './string-visualization.html',
   styleUrl: './string-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

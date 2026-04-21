@@ -7,6 +7,7 @@ import { MatrixTraceState } from './matrix';
 import { NetworkTraceState } from './network';
 import { SearchTraceState } from './search';
 import { StringTraceState } from './string';
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export type SortPhase =
   | 'idle'
@@ -43,7 +44,7 @@ export interface SortStep {
   readonly sorted: readonly number[];
   readonly boundary: number;
   readonly activeCodeLine: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly phase?: SortPhase;
   readonly items?: readonly SortItemSnapshot[];
   readonly sourceItems?: readonly SortItemSnapshot[];

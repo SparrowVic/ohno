@@ -5,7 +5,6 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import {
   BurrowsWheelerTraceState,
   HuffmanTraceState,
@@ -25,10 +24,11 @@ import {
 } from '../../models/string';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-string-trace-panel',
-  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
+  imports: [FaIconComponent, I18nTextPipe, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './string-trace-panel.html',
   styleUrl: './string-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,7 +38,6 @@ export class StringTracePanel {
   private readonly transloco = inject(TranslocoService);
 
   protected readonly I18N_KEY = I18N_KEY;
-  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly state = input.required<StringTraceState | null>();
 
   readonly kmpState = computed<KmpTraceState | null>(() => {

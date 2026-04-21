@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import type { ManacherScenario } from '../../utils/string-scenarios/string-scenarios';
 import { manacherGenerator } from './manacher';
 
 function collectSteps(scenario: ManacherScenario): SortStep[] {
   return [...manacherGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('manacher', () => {
@@ -18,8 +24,20 @@ describe('manacher', () => {
       source: 'ABACABA',
     });
 
-    expect(steps.some((step) => step.string?.phaseLabel === 'Mirror reuse')).toBe(true);
-    expect(steps.some((step) => step.string?.phaseLabel === 'Shift window')).toBe(true);
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.manacher.phases.mirrorReuse',
+      ),
+    ).toBe(true);
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.manacher.phases.shiftWindow',
+      ),
+    ).toBe(true);
     expect(steps.at(-1)?.string?.resultLabel).toBe('ABACABA');
     expect(steps.at(-1)?.string?.longestRadius).toBeGreaterThan(1);
   });

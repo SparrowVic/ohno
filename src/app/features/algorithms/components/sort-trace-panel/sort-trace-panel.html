@@ -17,7 +17,7 @@
       >
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.phaseLabel | transloco"
-          [value]="looksLikeI18nKey(phaseLabel()) ? (phaseLabel() | transloco) : phaseLabel()"
+          [value]="phaseLabel() | i18nText"
         />
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.sort.sortedLabel | transloco"
@@ -52,11 +52,7 @@
           [valueMono]="true"
         >
           <code class="trace__calc-expression">{{ pairValues() }}</code>
-          <p class="trace__calc-note">{{
-            looksLikeI18nKey(sortState.description)
-              ? (sortState.description | transloco)
-              : sortState.description
-          }}</p>
+          <p class="trace__calc-note">{{ sortState.description | i18nText }}</p>
         </app-segmented-panel-section>
 
         @if (digitLabel()) {

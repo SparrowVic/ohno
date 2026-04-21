@@ -1,4 +1,5 @@
 import { SortPhase } from './sort-step';
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 /** Row-level status in the sort trace table — mirrors the `data-state`
  *  a bar/tile carries on the canvas so the Trace tab reads the same
@@ -35,7 +36,7 @@ export interface SortTraceState {
   readonly phase: SortPhase;
   readonly phaseLabel: string;
   readonly phaseTone: SortPhaseTone;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly comparing: SortTracePair | null;
   readonly swapping: SortTracePair | null;
   readonly sortedCount: number;
