@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faArrowRightArrowLeft,
   faCheckDouble,
   faCircle,
   faCrosshairs,
-  faLightbulb,
 } from '@fortawesome/pro-solid-svg-icons';
 
 import { SortTraceRow, SortTraceState, SortTraceTag } from '../../models/sort-trace';
@@ -14,7 +12,8 @@ import { SegmentedPanel } from '../../../../shared/components/segmented-panel/se
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { SORT_ALGORITHM_HINTS, SortAlgorithmHint } from './sort-algorithm-hints';
+import { SORT_ALGORITHM_TUTORIALS } from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
+import { TraceHint } from '../trace-hint/trace-hint';
 
 interface TagLegendItem {
   readonly id: SortTraceTag;
@@ -37,7 +36,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-sort-trace-panel',
-  imports: [FaIconComponent, SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint],
   templateUrl: './sort-trace-panel.html',
   styleUrl: './sort-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,15 +46,19 @@ export class SortTracePanel {
   readonly algorithmId = input<string | null>(null);
   readonly tableColumns = TABLE_COLUMNS;
   readonly legend = TAG_LEGEND;
-  readonly lightbulbIcon = faLightbulb;
 
-  /** Algorithm-specific teaching hint. Null for algorithms that
-   *  don't have an entry in the catalog — the card is hidden in that
-   *  case so the Trace tab stays clean. */
-  readonly hint = computed<SortAlgorithmHint | null>(() => {
+  /** Look up the current algorithm's tutorial entry, if any, and
+   *  surface its Trace-relevant key idea + watch fields. The fuller
+   *  tutorial lives in the Info tab. */
+  readonly hintKeyIdea = computed<string | null>(() => {
     const id = this.algorithmId();
     if (!id) return null;
-    return SORT_ALGORITHM_HINTS[id] ?? null;
+    return SORT_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null;
+  });
+  readonly hintWatch = computed<string | null>(() => {
+    const id = this.algorithmId();
+    if (!id) return null;
+    return SORT_ALGORITHM_TUTORIALS[id]?.watch ?? null;
   });
 
   readonly phaseLabel = computed(() => this.state()?.phaseLabel ?? '—');

@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+.trace-hint {
+  --segmented-panel-section-gap: 6px;
+  --segmented-panel-section-padding: 12px 14px 13px;
+  border-color: rgb(var(--accent-rgb) / 0.18);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.05), rgb(var(--accent-rgb) / 0.015)),
+    rgba(255, 255, 255, 0.012);
+}
+
+.trace-hint__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+
+.trace-hint__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgb(var(--accent-rgb) / 0.14);
+  color: var(--accent-strong);
+  font-size: 13px;
+  border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
+  box-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.14);
+}
+
+.trace-hint__copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.trace-hint__idea {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.trace-hint__watch {
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}

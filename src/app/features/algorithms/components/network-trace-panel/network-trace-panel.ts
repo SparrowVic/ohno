@@ -13,9 +13,11 @@ import {
   faWandMagicSparkles,
 } from '@fortawesome/pro-solid-svg-icons';
 
+import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { NetworkTraceRow, NetworkTraceState, NetworkTraceTag } from '../../models/network';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
+import { TraceHint } from '../trace-hint/trace-hint';
 
 interface NetworkTagLegendItem {
   readonly id: NetworkTraceTag;
@@ -41,13 +43,23 @@ const TAG_LEGEND: readonly NetworkTagLegendItem[] = [
 
 @Component({
   selector: 'app-network-trace-panel',
-  imports: [Table],
+  imports: [Table, TraceHint],
   templateUrl: './network-trace-panel.html',
   styleUrl: './network-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkTracePanel {
   readonly state = input<NetworkTraceState | null>(null);
+  readonly algorithmId = input<string | null>(null);
+
+  readonly hintKeyIdea = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+  });
+  readonly hintWatch = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+  });
 
   readonly legend = TAG_LEGEND;
   readonly tableLegendItems = computed(() =>

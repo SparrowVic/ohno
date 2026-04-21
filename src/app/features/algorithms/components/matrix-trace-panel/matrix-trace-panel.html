@@ -1,6 +1,8 @@
 <div class="trace">
   @if (state(); as matrixState) {
     <div class="trace__header">
+      <app-trace-hint [keyIdea]="hintKeyIdea()" [watch]="hintWatch()" />
+
       <div class="trace__summary">
         <div class="trace__summary-card">
           <span class="trace__summary-label">Mode</span>

@@ -169,85 +169,89 @@
 
 .edge-line {
   stroke: rgba(255, 255, 255, 0.16);
-  stroke-width: 3.5;
+  stroke-width: 2;
   transition:
     stroke 220ms ease,
     opacity 220ms ease,
     stroke-width 220ms ease;
 
   &--tree {
-    stroke: rgb(var(--viz-route-rgb) / 0.52);
+    stroke: rgb(var(--viz-route-rgb) / 0.6);
+    stroke-width: 2.4;
   }
 
   &--focused {
     stroke: rgb(var(--viz-hit-rgb) / 0.95);
-    stroke-width: 5.5;
+    stroke-width: 3.5;
   }
 
   &--active {
     stroke: url(#graphEdgeGlow);
-    stroke-width: 6;
-    stroke-dasharray: 14 10;
+    stroke-width: 3.5;
+    stroke-dasharray: 10 8;
     animation: edge-flow 700ms linear infinite;
   }
 
   &--relaxed {
     stroke: var(--viz-route);
-    stroke-width: 5.5;
+    stroke-width: 3;
   }
 
   &--muted {
-    opacity: 0.2;
+    opacity: 0.22;
   }
 }
 
 .edge-line[data-tone='critical'],
 .edge-line[data-tone='bridge'] {
   stroke: rgb(var(--viz-danger-rgb) / 0.9);
-  stroke-width: 5.5;
+  stroke-width: 3;
 }
 
 .edge-line[data-tone='component-a'] {
-  stroke: rgb(var(--viz-accent-rgb) / 0.58);
-  stroke-width: 4.5;
+  stroke: rgb(var(--viz-accent-rgb) / 0.62);
+  stroke-width: 2.6;
 }
 
 .edge-line[data-tone='component-b'] {
-  stroke: rgba(139, 92, 246, 0.56);
-  stroke-width: 4.5;
+  stroke: rgba(139, 92, 246, 0.62);
+  stroke-width: 2.6;
 }
 
 .edge-line[data-tone='component-c'] {
-  stroke: rgb(var(--viz-success-rgb) / 0.56);
-  stroke-width: 4.5;
+  stroke: rgb(var(--viz-success-rgb) / 0.62);
+  stroke-width: 2.6;
 }
 
 .edge-line[data-tone='component-d'] {
-  stroke: rgb(var(--viz-warning-rgb) / 0.56);
-  stroke-width: 4.5;
+  stroke: rgb(var(--viz-warning-rgb) / 0.62);
+  stroke-width: 2.6;
 }
 
 .edge-line[data-tone='terminal'] {
-  stroke: rgb(var(--viz-accent-rgb) / 0.58);
-  stroke-width: 4.5;
+  stroke: rgb(var(--viz-accent-rgb) / 0.62);
+  stroke-width: 2.6;
 }
 
 .edge-line[data-tone='steiner'] {
-  stroke: rgb(var(--viz-success-rgb) / 0.58);
-  stroke-width: 4.5;
+  stroke: rgb(var(--viz-success-rgb) / 0.62);
+  stroke-width: 2.6;
 }
 
 .edge-weight {
   rect {
-    fill: rgba(13, 16, 24, 0.9);
+    fill: rgba(13, 16, 24, 0.92);
     stroke: rgba(255, 255, 255, 0.08);
   }
 
   text {
     fill: var(--text-primary);
-    font-size: 13px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-variant-numeric: tabular-nums;
     text-anchor: middle;
     font-weight: 600;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -281,7 +285,7 @@
 .node__body {
   fill: #1f2430;
   stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 2;
+  stroke-width: 1.5;
 }
 
 .node__label,
@@ -289,19 +293,22 @@
 .node__previous text {
   fill: var(--text-primary);
   text-anchor: middle;
+  font-variant-numeric: tabular-nums;
 }
 
 .node__metric-label {
   fill: var(--text-tertiary);
   text-anchor: middle;
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .node__label {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .node[data-tone='left'] {
@@ -364,13 +371,17 @@
 
 .node__distance rect,
 .node__previous rect {
-  fill: rgba(10, 12, 18, 0.84);
-  stroke: rgba(255, 255, 255, 0.08);
+  fill: rgba(10, 12, 18, 0.9);
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 0.5;
 }
 
 .node__distance text,
 .node__previous text {
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .node--source {

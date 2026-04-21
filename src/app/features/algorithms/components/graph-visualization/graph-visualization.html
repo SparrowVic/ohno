@@ -114,48 +114,21 @@
         <stop offset="0%" stop-color="var(--viz-route)" />
         <stop offset="100%" stop-color="var(--viz-window)" />
       </linearGradient>
-      <marker
-        id="graphArrowDefault"
-        markerWidth="10"
-        markerHeight="10"
-        refX="8"
-        refY="5"
-        orient="auto"
-      >
-        <path d="M0 0L10 5L0 10Z" fill="rgba(255,255,255,0.52)" />
-      </marker>
-      <marker
-        id="graphArrowTree"
-        markerWidth="10"
-        markerHeight="10"
-        refX="8"
-        refY="5"
-        orient="auto"
-      >
-        <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.66)" />
-      </marker>
-      <marker
-        id="graphArrowActive"
-        markerWidth="10"
-        markerHeight="10"
-        refX="8"
-        refY="5"
-        orient="auto"
-      >
-        <path d="M0 0L10 5L0 10Z" fill="rgba(124,110,240,0.82)" />
-      </marker>
-      <marker
-        id="graphArrowRelaxed"
-        markerWidth="10"
-        markerHeight="10"
-        refX="8"
-        refY="5"
-        orient="auto"
-      >
-        <path d="M0 0L10 5L0 10Z" fill="rgba(94,234,212,0.94)" />
-      </marker>
+      @for (marker of arrowMarkers; track marker.id) {
+        <marker
+          [attr.id]="marker.id"
+          markerWidth="9"
+          markerHeight="9"
+          refX="8"
+          refY="4.5"
+          orient="auto"
+          markerUnits="userSpaceOnUse"
+        >
+          <path d="M0 0L9 4.5L0 9Z" [attr.fill]="marker.fill" />
+        </marker>
+      }
       <filter id="graphNodeGlow">
-        <feGaussianBlur stdDeviation="6" result="blur" />
+        <feGaussianBlur stdDeviation="4" result="blur" />
         <feMerge>
           <feMergeNode in="blur" />
           <feMergeNode in="SourceGraphic" />
@@ -173,16 +146,16 @@
           [class.edge-line--active]="edge.isActive"
           [class.edge-line--relaxed]="edge.isRelaxed"
           [class.edge-line--muted]="isEdgeMuted(edge.id)"
-          [attr.marker-end]="edge.directed ? edgeMarker(edge.id) : null"
-          [attr.x1]="edgePoint(edge.id, 'from', 'x')"
-          [attr.y1]="edgePoint(edge.id, 'from', 'y')"
-          [attr.x2]="edgePoint(edge.id, 'to', 'x')"
-          [attr.y2]="edgePoint(edge.id, 'to', 'y')"
+          [attr.marker-end]="edgeMarker(edge)"
+          [attr.x1]="edge.x1"
+          [attr.y1]="edge.y1"
+          [attr.x2]="edge.x2"
+          [attr.y2]="edge.y2"
         />
         @if (showEdgeWeights()) {
-          <g class="edge-weight" [attr.transform]="weightTransform(edge.id)">
-            <rect x="-21" y="-14" width="42" height="28" rx="14" />
-            <text y="4">{{ edge.weight }}</text>
+          <g class="edge-weight" [attr.transform]="'translate(' + edge.midX + ' ' + edge.midY + ')'">
+            <rect x="-15" y="-10" width="30" height="20" rx="6" />
+            <text y="3">{{ edge.weight }}</text>
           </g>
         }
       </g>
@@ -203,20 +176,22 @@
         [class.node--clickable]="routeMode()"
         (click)="selectNode(node.id)"
       >
-        <circle class="node__halo" r="40" />
-        <circle class="node__body" r="28" filter="url(#graphNodeGlow)" />
-        <text class="node__label" y="6">{{ node.label }}</text>
+        <circle class="node__halo" r="30" />
+        <circle class="node__body" r="22" filter="url(#graphNodeGlow)" />
+        <text class="node__label" y="5">{{ node.label }}</text>
 
-        <g class="node__distance" transform="translate(0 -48)">
-          <rect x="-34" y="-14" width="68" height="28" rx="14" />
-          <text class="node__metric-label" y="-18">{{ metricLabel() }}</text>
-          <text y="4">{{ formatDistance(node.distance) }}</text>
-        </g>
+        @if (showNodeLabels()) {
+          <g class="node__distance" transform="translate(0 -36)">
+            <rect x="-26" y="-11" width="52" height="22" rx="7" />
+            <text class="node__metric-label" y="-14">{{ metricLabel() }}</text>
+            <text y="3">{{ formatDistance(node.distance) }}</text>
+          </g>
 
-        <g class="node__previous" transform="translate(0 50)">
-          <rect x="-34" y="-12" width="68" height="24" rx="12" />
-          <text y="4">{{ secondaryLabel() }} {{ secondaryText(node.id) }}</text>
-        </g>
+          <g class="node__previous" transform="translate(0 38)">
+            <rect x="-26" y="-10" width="52" height="20" rx="6" />
+            <text y="3">{{ secondaryLabel() }} {{ secondaryText(node.id) }}</text>
+          </g>
+        }
       </g>
     }
       </svg>

@@ -38,8 +38,10 @@
 
 .hud-card__value {
   display: block;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -62,15 +64,17 @@
 .focus-pill__chip {
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(124, 110, 240, 0.13);
-  color: #cbc6ff;
+  background: rgb(var(--chrome-accent-rgb) / 0.14);
+  color: var(--chrome-accent-strong);
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .focus-pill__chip--soft {
-  background: rgba(94, 234, 212, 0.12);
-  color: #97ece1;
+  background: rgb(var(--chrome-accent-alt-rgb) / 0.14);
+  color: var(--chrome-accent-alt-strong);
 }
 
 .focus-pill__empty,
@@ -89,18 +93,20 @@
 .matrix-board {
   --matrix-cols: 5;
   display: grid;
-  gap: 6px;
+  gap: 5px;
   min-width: 620px;
+  position: relative;
 }
 
 .matrix-corner,
 .matrix-head,
 .matrix-cell {
   min-width: 0;
-  min-height: 64px;
-  border-radius: 14px;
+  min-height: 60px;
+  border-radius: 10px;
   border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.024);
+  background: rgba(13, 17, 26, 0.72);
+  position: relative;
 }
 
 .matrix-corner,
@@ -109,30 +115,54 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 700;
-  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
 }
 
 .matrix-corner {
-  background: rgba(255, 255, 255, 0.032);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
 }
 
+/* ============================================================ */
+/* HEADER STATES                                                 */
+/* ============================================================ */
 .matrix-head--active {
-  background: rgba(240, 180, 41, 0.12);
-  border-color: rgba(240, 180, 41, 0.18);
+  background: rgb(var(--chrome-accent-warm-rgb) / 0.12);
+  border-color: rgb(var(--chrome-accent-warm-rgb) / 0.3);
+  color: var(--chrome-accent-warm);
 }
 
 .matrix-head--pivot {
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.18);
+  background: rgb(var(--chrome-accent-alt-rgb) / 0.12);
+  border-color: rgb(var(--chrome-accent-alt-rgb) / 0.3);
+  color: var(--chrome-accent-alt-strong);
+  font-weight: 800;
 }
 
 .matrix-head--covered {
-  background: rgba(124, 110, 240, 0.12);
-  border-color: rgba(124, 110, 240, 0.18);
+  background: rgb(var(--chrome-accent-rgb) / 0.1);
+  border-color: rgb(var(--chrome-accent-rgb) / 0.28);
+  color: var(--chrome-accent-strong);
+  font-style: italic;
 }
 
+.matrix-head--assignment {
+  background: rgb(var(--accent-rgb) / 0.12);
+  border-color: rgb(var(--accent-rgb) / 0.32);
+  color: var(--accent-strong);
+}
+
+/* ============================================================ */
+/* CELL BASE                                                     */
+/* ============================================================ */
 .matrix-cell {
   display: flex;
   flex-direction: column;
@@ -140,57 +170,198 @@
   justify-content: center;
   gap: 3px;
   padding: 8px 6px;
+  transition:
+    background 200ms var(--ease-soft),
+    border-color 200ms var(--ease-soft),
+    box-shadow 240ms var(--ease-out-quart),
+    transform 200ms var(--ease-out-quart);
 }
 
 .matrix-cell__value {
-  font-size: clamp(14px, calc(23px - (var(--matrix-cols) * 1.2px)), 22px);
+  font-family: var(--font-mono);
+  font-size: clamp(13px, calc(22px - (var(--matrix-cols) * 1.1px)), 19px);
   line-height: 1;
   font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .matrix-cell__meta {
-  font-size: clamp(9px, calc(12px - (var(--matrix-cols) * 0.25px)), 11px);
-  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: clamp(8px, calc(11px - (var(--matrix-cols) * 0.2px)), 10px);
+  color: var(--text-tertiary);
   line-height: 1.2;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
+/* ============================================================ */
+/* CELL STATES                                                   */
+/* ============================================================ */
+
+/* ACTIVE — pink, the current working cell. Pulsates so it's never missed. */
 .matrix-cell--active {
-  background: rgba(240, 180, 41, 0.1);
-  border-color: rgba(240, 180, 41, 0.2);
+  background:
+    radial-gradient(circle at 50% 45%, rgb(var(--chrome-accent-warm-rgb) / 0.24), transparent 60%),
+    rgba(13, 17, 26, 0.82);
+  border: 1.25px solid rgb(var(--chrome-accent-warm-rgb) / 0.8);
+  box-shadow:
+    inset 0 0 0 0.5px rgb(var(--chrome-accent-warm-rgb) / 0.4),
+    0 0 18px rgb(var(--chrome-accent-warm-rgb) / 0.28);
+  z-index: 3;
+  animation: matrix-cell-active 1.4s var(--ease-out-expo) infinite;
 }
 
+.matrix-cell--active .matrix-cell__value {
+  color: var(--chrome-accent-warm);
+}
+
+@keyframes matrix-cell-active {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 0.5px rgb(var(--chrome-accent-warm-rgb) / 0.4),
+      0 0 14px rgb(var(--chrome-accent-warm-rgb) / 0.22);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 0.5px rgb(var(--chrome-accent-warm-rgb) / 0.55),
+      0 0 24px rgb(var(--chrome-accent-warm-rgb) / 0.38);
+  }
+}
+
+/* PIVOT — cyan, the "through-k" row/col pivot in Floyd-Warshall. */
 .matrix-cell--pivot {
-  background: rgba(56, 189, 248, 0.08);
-  border-color: rgba(56, 189, 248, 0.16);
+  background: rgb(var(--chrome-accent-alt-rgb) / 0.1);
+  border: 1px solid rgb(var(--chrome-accent-alt-rgb) / 0.4);
+  box-shadow: inset 0 0 0 0.5px rgb(var(--chrome-accent-alt-rgb) / 0.2);
 }
 
-.matrix-cell--improved,
+.matrix-cell--pivot .matrix-cell__value {
+  color: var(--chrome-accent-alt-strong);
+}
+
+/* IMPROVED — lime, a just-updated shorter distance. */
+.matrix-cell--improved {
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.2), rgb(var(--accent-rgb) / 0.06)),
+    rgba(13, 17, 26, 0.82);
+  border: 1px solid rgb(var(--accent-rgb) / 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 14px rgb(var(--accent-rgb) / 0.25);
+}
+
+.matrix-cell--improved .matrix-cell__value {
+  color: var(--accent-strong);
+}
+
+/* ASSIGNMENT — bright lime final with a check-mark corner dot, the final answer. */
 .matrix-cell--assignment {
-  background: rgba(62, 207, 142, 0.1);
-  border-color: rgba(62, 207, 142, 0.2);
+  background:
+    radial-gradient(circle at 50% 45%, rgb(var(--accent-rgb) / 0.3), transparent 60%),
+    rgba(13, 17, 26, 0.88);
+  border: 1.25px solid rgb(var(--accent-rgb) / 0.85);
+  box-shadow:
+    inset 0 0 0 0.5px rgb(var(--accent-rgb) / 0.4),
+    0 0 18px rgb(var(--accent-rgb) / 0.3);
+  z-index: 4;
 }
 
-.matrix-cell--covered,
+.matrix-cell--assignment .matrix-cell__value {
+  color: var(--accent-strong);
+  text-shadow: 0 0 8px rgb(var(--accent-rgb) / 0.45);
+}
+
+.matrix-cell--assignment::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 30%, #ffffff, rgb(var(--accent-rgb)) 70%);
+  box-shadow: 0 0 6px rgb(var(--accent-rgb) / 0.6);
+  z-index: 1;
+}
+
+/* COVERED — muted context, an in-scope cell that's currently struck out. */
+.matrix-cell--covered {
+  background: rgb(var(--chrome-accent-rgb) / 0.05);
+  border-color: rgb(var(--chrome-accent-rgb) / 0.18);
+  opacity: 0.82;
+}
+
+.matrix-cell--covered .matrix-cell__value,
+.matrix-cell--covered .matrix-cell__meta {
+  color: var(--text-tertiary);
+}
+
+/* CANDIDATE — violet soft, "could be picked next". */
 .matrix-cell--candidate {
-  background: rgba(124, 110, 240, 0.08);
-  border-color: rgba(124, 110, 240, 0.16);
+  background: rgb(var(--chrome-accent-rgb) / 0.08);
+  border: 0.5px solid rgb(var(--chrome-accent-rgb) / 0.26);
 }
 
+/* ZERO — potential assignment site in Hungarian; subtle lime hint. */
 .matrix-cell--zero {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--accent-rgb) / 0.06);
+  border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
 }
 
+.matrix-cell--zero .matrix-cell__value {
+  color: var(--accent-strong);
+}
+
+/* ADJUSTED — Hungarian: a cell whose value just shifted up/down. */
 .matrix-cell--adjusted {
-  background: rgba(94, 234, 212, 0.08);
-  border-color: rgba(94, 234, 212, 0.18);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.12), rgb(var(--accent-rgb) / 0.04)),
+    rgba(13, 17, 26, 0.82);
+  border: 0.5px solid rgb(var(--accent-rgb) / 0.36);
 }
 
+/* BLOCKED — impossible / infinity. */
 .matrix-cell--blocked {
-  background: rgba(244, 63, 94, 0.08);
-  border-color: rgba(244, 63, 94, 0.18);
+  background: rgb(var(--viz-danger-rgb) / 0.06);
+  border: 0.5px solid rgb(var(--viz-danger-rgb) / 0.22);
+  color: var(--viz-danger-ink);
+}
+
+/* ============================================================ */
+/* COVERING-LINE OVERLAYS                                        */
+/*                                                               */
+/* One div per covered row/col, placed as a grid item spanning   */
+/* the whole data range. Painted after cells so it reads as a    */
+/* live bar cutting across the matrix (Hungarian's "cover        */
+/* lines" concept made literal).                                 */
+/* ============================================================ */
+.matrix-cover {
+  pointer-events: none;
+  border-radius: 12px;
+  background: rgb(var(--chrome-accent-rgb) / 0.1);
+  box-shadow:
+    inset 0 0 0 0.5px rgb(var(--chrome-accent-rgb) / 0.3),
+    0 0 18px -4px rgb(var(--chrome-accent-rgb) / 0.28);
+  z-index: 2;
+  mix-blend-mode: screen;
+}
+
+.matrix-cover--row {
+  margin: -1px 0;
+}
+
+.matrix-cover--col {
+  margin: 0 -1px;
+}
+
+/* Reduced motion — quiet the pulse loop. */
+@media (prefers-reduced-motion: reduce) {
+  .matrix-cell--active {
+    animation: none;
+  }
 }
 
 @container (max-width: 420px) {

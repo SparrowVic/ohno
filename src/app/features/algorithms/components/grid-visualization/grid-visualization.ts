@@ -119,10 +119,10 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
       if (cell) {
         pulseElement(cell, {
           duration: motion.compareMs,
-          scale: 1.04,
+          scale: 1.06,
           filter: [
             'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 8px rgba(240,180,41,0.18))',
+            'drop-shadow(0 0 12px rgb(var(--chrome-accent-warm-rgb) / 0.5))',
             'drop-shadow(0 0 0 transparent)',
           ],
         });
@@ -136,10 +136,10 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
       if (!cell) continue;
       pulseElement(cell, {
         duration: motion.compareMs,
-        scale: 1.02,
+        scale: 1.03,
         filter: [
           'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 6px rgba(124,110,240,0.18))',
+          'drop-shadow(0 0 10px rgb(var(--chrome-accent-rgb) / 0.4))',
           'drop-shadow(0 0 0 transparent)',
         ],
       });
@@ -156,10 +156,10 @@ export class GridVisualization implements AfterViewInit, OnDestroy, Visualizatio
       if (!cell) continue;
       pulseElement(cell, {
         duration: motion.settleMs,
-        scale: 1.03,
+        scale: 1.04,
         filter: [
           'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 8px rgba(62,207,142,0.16))',
+          'drop-shadow(0 0 14px rgb(var(--accent-rgb) / 0.4))',
           'drop-shadow(0 0 0 transparent)',
         ],
       });

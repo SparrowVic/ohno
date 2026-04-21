@@ -37,6 +37,7 @@
       @if (traceState()) {
         <app-graph-trace-panel
           [state]="traceState()"
+          [algorithmId]="algorithm().id"
           [focusTargetLabel]="graphFocusTargetLabel()"
           [focusPathLabel]="graphFocusPathLabel()"
           [focusModeLabel]="graphFocusModeLabel()"
@@ -45,13 +46,13 @@
       } @else if (dpState()) {
         <app-dp-trace-panel [state]="dpState()" />
       } @else if (dsuState()) {
-        <app-dsu-trace-panel [state]="dsuState()" />
+        <app-dsu-trace-panel [state]="dsuState()" [algorithmId]="algorithm().id" />
       } @else if (gridState()) {
-        <app-grid-trace-panel [state]="gridState()" />
+        <app-grid-trace-panel [state]="gridState()" [algorithmId]="algorithm().id" />
       } @else if (matrixState()) {
-        <app-matrix-trace-panel [state]="matrixState()" />
+        <app-matrix-trace-panel [state]="matrixState()" [algorithmId]="algorithm().id" />
       } @else if (networkState()) {
-        <app-network-trace-panel [state]="networkState()" />
+        <app-network-trace-panel [state]="networkState()" [algorithmId]="algorithm().id" />
       } @else if (stringState()) {
         <app-string-trace-panel [state]="stringState()" />
       } @else if (closestPairGeometryState()) {

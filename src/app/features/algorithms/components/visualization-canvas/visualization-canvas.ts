@@ -9,8 +9,9 @@ import { SortStep } from '../../models/sort-step';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { BarChartVisualization } from '../bar-chart-visualization/bar-chart-visualization';
 import { BlockSwapVisualization } from '../block-swap-visualization/block-swap-visualization';
-import { DijkstraGraphVisualization } from '../dijkstra-graph-visualization/dijkstra-graph-visualization';
+import { GraphVisualization } from '../graph-visualization/graph-visualization';
 import { DpVisualization } from '../dp-visualization/dp-visualization';
+import { DsuGraphVisualization } from '../dsu-graph-visualization/dsu-graph-visualization';
 import { DsuVisualization } from '../dsu-visualization/dsu-visualization';
 import { HalfPlaneVisualization } from '../half-plane-visualization/half-plane-visualization';
 import { LineIntersectionVisualization } from '../line-intersection-visualization/line-intersection-visualization';
@@ -35,8 +36,9 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     ConvexHullVisualization,
     DelaunayVisualization,
     BlockSwapVisualization,
-    DijkstraGraphVisualization,
+    GraphVisualization,
     DpVisualization,
+    DsuGraphVisualization,
     DsuVisualization,
     HalfPlaneVisualization,
     MatrixVisualization,

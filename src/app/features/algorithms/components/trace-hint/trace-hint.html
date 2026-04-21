@@ -1,0 +1,19 @@
+@if (keyIdea() || watch()) {
+  <app-segmented-panel class="trace-hint" aria-label="Trace hint">
+    <app-segmented-panel-section>
+      <div class="trace-hint__row">
+        <span class="trace-hint__icon" aria-hidden="true">
+          <fa-icon [icon]="lightbulbIcon" />
+        </span>
+        <div class="trace-hint__copy">
+          @if (keyIdea(); as idea) {
+            <p class="trace-hint__idea">{{ idea }}</p>
+          }
+          @if (watch(); as watchText) {
+            <p class="trace-hint__watch">{{ watchText }}</p>
+          }
+        </div>
+      </div>
+    </app-segmented-panel-section>
+  </app-segmented-panel>
+}

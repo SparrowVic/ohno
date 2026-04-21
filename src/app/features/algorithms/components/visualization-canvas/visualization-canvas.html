@@ -16,7 +16,7 @@
       <app-radix-matrix-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
     @case ('dijkstra-graph') {
-      <app-dijkstra-graph-visualization
+      <app-graph-visualization
         [graph]="graph()"
         [step]="step()"
         [speed]="speed()"
@@ -26,6 +26,9 @@
     }
     @case ('dsu') {
       <app-dsu-visualization [array]="array()" [step]="step()" [speed]="speed()" />
+    }
+    @case ('dsu-graph') {
+      <app-dsu-graph-visualization [array]="array()" [step]="step()" [speed]="speed()" />
     }
     @case ('network') {
       <app-network-visualization [array]="array()" [step]="step()" [speed]="speed()" />

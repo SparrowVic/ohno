@@ -1,24 +1,36 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { GraphStepState, GraphTraceRow } from '../../models/graph';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
+import { TraceHint } from '../trace-hint/trace-hint';
 
 @Component({
   selector: 'app-graph-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint],
   templateUrl: './graph-trace-panel.html',
   styleUrl: './graph-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphTracePanel {
   readonly state = input<GraphStepState | null>(null);
+  readonly algorithmId = input<string | null>(null);
   readonly focusTargetLabel = input<string | null>(null);
   readonly focusPathLabel = input<string | null>(null);
   readonly focusModeLabel = input<string | null>(null);
   readonly focusHint = input<string | null>(null);
+
+  readonly hintKeyIdea = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+  });
+  readonly hintWatch = computed<string | null>(() => {
+    const id = this.algorithmId();
+    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+  });
   readonly sourceLabel = computed(() => {
     const state = this.state();
     if (!state) return '—';

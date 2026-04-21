@@ -4,21 +4,7 @@
       <!-- ======================================================== -->
       <!-- PANEL 0 — Algorithm teaching hint (key idea + what to watch) -->
       <!-- ======================================================== -->
-      @if (hint(); as algorithmHint) {
-        <app-segmented-panel class="trace__hint" aria-label="Algorithm key idea">
-          <app-segmented-panel-section [eyebrow]="algorithmHint.pattern">
-            <div class="trace__hint-row">
-              <span class="trace__hint-icon" aria-hidden="true">
-                <fa-icon [icon]="lightbulbIcon" />
-              </span>
-              <div class="trace__hint-copy">
-                <p class="trace__hint-idea">{{ algorithmHint.keyIdea }}</p>
-                <p class="trace__hint-watch">{{ algorithmHint.watch }}</p>
-              </div>
-            </div>
-          </app-segmented-panel-section>
-        </app-segmented-panel>
-      }
+      <app-trace-hint [keyIdea]="hintKeyIdea()" [watch]="hintWatch()" />
 
       <!-- ======================================================== -->
       <!-- PANEL 1 — Facts / summary metrics                         -->
