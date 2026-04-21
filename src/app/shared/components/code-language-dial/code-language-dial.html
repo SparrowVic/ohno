@@ -1,7 +1,7 @@
 <div
   class="code-language-dial"
   [class.code-language-dial--open]="open()"
-  [attr.aria-label]="ariaLabel()"
+  [attr.aria-label]="resolvedAriaLabel()"
 >
   <div
     #fan
@@ -37,8 +37,8 @@
         [style.--dial-spin]="item.launchSpinDeg + 'deg'"
         [style.--dial-accent]="item.accent"
         [style.--dial-delay]="item.delayMs + 'ms'"
-        [attr.aria-label]="item.disabled ? item.label + ' coming soon' : 'Switch code to ' + item.label"
-        [title]="item.disabled ? item.label + ' · ' + (item.hint ?? 'Coming soon') : item.label"
+        [attr.aria-label]="itemAriaLabel(item)"
+        [title]="itemTitle(item)"
         [disabled]="item.disabled"
         (click)="item.language && select(item.language)"
       >
@@ -60,7 +60,7 @@
     [class.code-language-dial__trigger--text]="!activeOption().icon"
     [style.--dial-accent]="activeOption().accent"
     [attr.aria-expanded]="open()"
-    [attr.aria-label]="ariaLabel()"
+    [attr.aria-label]="resolvedAriaLabel()"
     [title]="activeOption().label"
     (click)="toggle()"
   >

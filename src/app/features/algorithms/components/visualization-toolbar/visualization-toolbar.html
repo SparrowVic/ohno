@@ -4,8 +4,8 @@
       <button
         type="button"
         class="ctrl-btn"
-        aria-label="Reset scenario"
-        title="Reset scenario"
+        [attr.aria-label]="resetLabel()"
+        [attr.title]="resetLabel()"
         (click)="resetClick.emit()"
       >
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -16,8 +16,8 @@
       <button
         type="button"
         class="ctrl-btn"
-        aria-label="Previous step"
-        title="Previous step"
+        [attr.aria-label]="previousStepLabel()"
+        [attr.title]="previousStepLabel()"
         [disabled]="!canStepBack()"
         (click)="stepBackClick.emit()"
       >
@@ -47,8 +47,8 @@
       <button
         type="button"
         class="ctrl-btn"
-        aria-label="Next step"
-        title="Next step"
+        [attr.aria-label]="nextStepLabel()"
+        [attr.title]="nextStepLabel()"
         [disabled]="!canStepForward()"
         (click)="stepForwardClick.emit()"
       >
@@ -61,8 +61,8 @@
 
     <div class="toolbar__progress">
       <div class="toolbar__progress-copy">
-        <span class="toolbar__eyebrow">Run state</span>
-        <span class="toolbar__counter">Step {{ currentStep() }} / {{ totalSteps() }}</span>
+        <span class="toolbar__eyebrow">{{ runStateLabel() }}</span>
+        <span class="toolbar__counter">{{ counterLabel() }}</span>
       </div>
       <div class="toolbar__progress-bar">
         <span class="toolbar__progress-fill" [style.width.%]="progressRatio()"></span>
@@ -73,18 +73,18 @@
   <div class="toolbar__dock">
     @if (hasVariantChoice()) {
       <app-lab-select
-        label="View"
+        [label]="viewLabel()"
         [options]="variantSelectOptions()"
         [formControl]="variantControl"
       />
     }
     <app-lab-select
-      label="Dataset size"
+      [label]="datasetSizeLabel()"
       [options]="sizeSelectOptions()"
       [formControl]="sizeControl"
     />
     <app-lab-slider
-      label="Speed"
+      [label]="speedLabel()"
       [min]="1"
       [max]="10"
       [step]="1"

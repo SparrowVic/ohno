@@ -99,7 +99,7 @@
     <div
       class="side-tabs"
       role="tablist"
-      aria-label="Inspector tabs"
+      [attr.aria-label]="inspectorTabsAriaLabel()"
       [style.--side-tabs-count]="tabs().length"
       [style.--side-tabs-index]="activeTabIndex()"
     >

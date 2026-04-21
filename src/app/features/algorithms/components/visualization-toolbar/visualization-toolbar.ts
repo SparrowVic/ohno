@@ -3,13 +3,17 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
   output,
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { TranslocoService } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
@@ -23,6 +27,9 @@ import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualizationToolbar {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
   readonly isPlaying = input.required<boolean>();
   readonly speed = input.required<number>();
   readonly currentStep = input.required<number>();
@@ -54,6 +61,27 @@ export class VisualizationToolbar {
       label: `${option} ${this.sizeUnit()}`,
     })),
   );
+  readonly resetLabel = computed(() => this.translate(t('features.algorithms.toolbar.resetLabel')));
+  readonly previousStepLabel = computed(() =>
+    this.translate(t('features.algorithms.toolbar.previousStepLabel')),
+  );
+  readonly nextStepLabel = computed(() =>
+    this.translate(t('features.algorithms.toolbar.nextStepLabel')),
+  );
+  readonly runStateLabel = computed(() =>
+    this.translate(t('features.algorithms.toolbar.runStateLabel')),
+  );
+  readonly counterLabel = computed(() =>
+    this.translate(t('features.algorithms.toolbar.counterLabel'), {
+      current: this.currentStep(),
+      total: this.totalSteps(),
+    }),
+  );
+  readonly viewLabel = computed(() => this.translate(t('features.algorithms.toolbar.viewLabel')));
+  readonly datasetSizeLabel = computed(() =>
+    this.translate(t('features.algorithms.toolbar.datasetSizeLabel')),
+  );
+  readonly speedLabel = computed(() => this.translate(t('features.algorithms.toolbar.speedLabel')));
 
   readonly speedControl = new FormControl(5, { nonNullable: true });
   readonly variantControl = new FormControl<VisualizationVariant>('bar', { nonNullable: true });
@@ -110,6 +138,13 @@ export class VisualizationToolbar {
   }
 
   transportLabel(): string {
-    return this.isPlaying() ? 'Pause playback' : 'Start playback';
+    return this.isPlaying()
+      ? this.translate(t('features.algorithms.toolbar.pausePlaybackLabel'))
+      : this.translate(t('features.algorithms.toolbar.startPlaybackLabel'));
+  }
+
+  private translate(key: string, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

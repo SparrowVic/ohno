@@ -11,7 +11,10 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LogEntry } from '../../models/detail';
 import { DpTraceState } from '../../models/dp';
@@ -70,16 +73,7 @@ interface SideTab {
   readonly label: string;
 }
 
-const BASE_SIDE_TABS: readonly SideTab[] = [
-  { id: 'code', label: 'Code' },
-  { id: 'info', label: 'Info' },
-  { id: 'log', label: 'Log' },
-];
-
-const TRACE_TAB: SideTab = {
-  id: 'trace',
-  label: 'Trace',
-};
+const BASE_SIDE_TAB_IDS: readonly SideTabId[] = ['code', 'info', 'log'];
 
 const LS_KEY = 'ohno:side-panel-width';
 const DEFAULT_WIDTH = 340;
@@ -137,20 +131,29 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusModeLabel = input<string | null>(null);
   readonly graphFocusHint = input<string | null>(null);
 
-  readonly tabs = computed<readonly SideTab[]>(() =>
-    this.traceState() ||
-    this.dpState() ||
-    this.dsuState() ||
-    this.gridState() ||
-    this.matrixState() ||
-    this.networkState() ||
-    this.searchState() ||
-    this.sortState() ||
-    this.geometryState() ||
-    this.stringState()
-      ? [TRACE_TAB, ...BASE_SIDE_TABS]
-      : BASE_SIDE_TABS,
+  readonly inspectorTabsAriaLabel = computed(() =>
+    this.translate(t('features.algorithms.sidePanel.ariaLabel')),
   );
+  readonly tabs = computed<readonly SideTab[]>(() => {
+    const ids =
+      this.traceState() ||
+      this.dpState() ||
+      this.dsuState() ||
+      this.gridState() ||
+      this.matrixState() ||
+      this.networkState() ||
+      this.searchState() ||
+      this.sortState() ||
+      this.geometryState() ||
+      this.stringState()
+        ? (['trace', ...BASE_SIDE_TAB_IDS] as const)
+        : BASE_SIDE_TAB_IDS;
+
+    return ids.map((id) => ({
+      id,
+      label: this.getTabLabel(id),
+    }));
+  });
   readonly logEntryCount = computed(() => this.logEntries().length);
   readonly convexHullGeometryState = computed<ConvexHullStepState | null>(() => {
     const state = this.geometryState();
@@ -195,6 +198,8 @@ export class SidePanel implements OnInit, OnDestroy {
 
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly doc = inject(DOCUMENT);
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
 
   private dragging = false;
   private dragStartX = 0;
@@ -268,5 +273,23 @@ export class SidePanel implements OnInit, OnDestroy {
 
   private applyWidth(width: number): void {
     this.hostEl.style.width = `${width}px`;
+  }
+
+  private getTabLabel(id: SideTabId): string {
+    switch (id) {
+      case 'trace':
+        return this.translate(t('features.algorithms.sidePanel.tabs.trace'));
+      case 'code':
+        return this.translate(t('features.algorithms.sidePanel.tabs.code'));
+      case 'info':
+        return this.translate(t('features.algorithms.sidePanel.tabs.info'));
+      case 'log':
+        return this.translate(t('features.algorithms.sidePanel.tabs.log'));
+    }
+  }
+
+  private translate(key: string, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

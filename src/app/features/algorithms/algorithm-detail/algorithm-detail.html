@@ -1,7 +1,7 @@
 @if (algorithm(); as algo) {
   <div class="detail">
     <header class="topbar">
-      <a class="topbar__brand" routerLink="/algorithms" aria-label="Oh(no) home">
+      <a class="topbar__brand" routerLink="/algorithms" [attr.aria-label]="homeAriaLabel()">
         <img
           class="topbar__brand-logo"
           src="/branding/ohno-logo-v38-graph-paper-seal.svg"
@@ -10,7 +10,7 @@
       </a>
       <div class="topbar__identity">
         <div class="topbar__copy">
-          <nav class="topbar__crumbs" aria-label="Category breadcrumb">
+          <nav class="topbar__crumbs" [attr.aria-label]="breadcrumbAriaLabel()">
             @for (crumb of breadcrumbs(); track crumb; let last = $last) {
               <span class="topbar__crumb">{{ crumb }}</span>
               @if (!last) {
@@ -32,14 +32,11 @@
             <path d="M10.5 3.5L5.5 8l5 4.5" />
             <path d="M13 8H6" />
           </svg>
-          Browse
+          {{ backLabel() }}
         </button>
         <span class="topbar__pill">{{ currentVariantLabel() }}</span>
         <span class="topbar__pill">{{ sizeSummaryLabel() }}</span>
-        <span
-          class="topbar__pill topbar__pill--strong"
-          [class.topbar__pill--live]="isPlaying()"
-        >
+        <span class="topbar__pill topbar__pill--strong" [class.topbar__pill--live]="isPlaying()">
           @if (isPlaying()) {
             <span class="topbar__pill-live-dot" aria-hidden="true"></span>
           }
@@ -59,8 +56,8 @@
             [size]="size()"
             [sizeOptions]="sizeOptions()"
             [variant]="variant()"
-            [variantOptions]="variantOptions()"
-            [sizeUnit]="sizeUnit()"
+            [variantOptions]="translatedVariantOptions()"
+            [sizeUnit]="sizeUnitLabel()"
             [randomizeLabel]="randomizeLabel()"
             (resetClick)="onReset()"
             (stepBackClick)="onStepBack()"
@@ -115,7 +112,7 @@
     } @else {
       <div class="unavailable">
         <div class="unavailable__panel">
-          <div class="unavailable__eyebrow">Locked</div>
+          <div class="unavailable__eyebrow">{{ lockedLabel() }}</div>
           <h2 class="unavailable__title">{{ algo.name }}</h2>
           <p class="unavailable__desc">{{ unavailableLabel() }}</p>
           <p class="unavailable__hint">{{ algo.description }}</p>
@@ -125,7 +122,7 @@
   </div>
 } @else {
   <div class="not-found">
-    <p>Algorithm not found.</p>
-    <button type="button" class="back-btn" (click)="back()">Back to algorithms</button>
+    <p>{{ notFoundLabel() }}</p>
+    <button type="button" class="back-btn" (click)="back()">{{ backToAlgorithmsLabel() }}</button>
   </div>
 }

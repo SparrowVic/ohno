@@ -9,11 +9,18 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { map } from 'rxjs';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
-import { APP_LANG } from '../../../core/i18n/app-lang';
-import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
+import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
+import {
+  getVisualizationActionLabelKey,
+  getVisualizationSizeUnitLabelKey,
+  getVisualizationVariantLabelKey,
+} from '../../../core/i18n/visualization-labels';
 import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
@@ -62,6 +69,7 @@ export class AlgorithmDetail {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly engine = inject(VisualizationEngine);
   private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
 
   private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
     initialValue: this.route.snapshot.paramMap.get('id'),
@@ -69,7 +77,9 @@ export class AlgorithmDetail {
 
   private readonly sizeSig = signal(16);
   private readonly variantSig = signal<VisualizationVariant>('bar');
-  private readonly arraySig = signal<readonly number[]>(this.createRandomArray(16, { min: 1, max: 99 }));
+  private readonly arraySig = signal<readonly number[]>(
+    this.createRandomArray(16, { min: 1, max: 99 }),
+  );
   private readonly graphSig = signal<WeightedGraphData | null>(null);
   private readonly dpPresetSig = signal<string | null>(null);
   private readonly stringPresetSig = signal<string | null>(null);
@@ -90,24 +100,32 @@ export class AlgorithmDetail {
 
   readonly difficultyLabel = computed(() => {
     const algorithm = this.algorithm();
-    return algorithm ? getDifficultyLabel(algorithm.difficulty, this.language.activeLang()) : '';
+    return algorithm ? this.translate(getDifficultyLabelKey(algorithm.difficulty)) : '';
   });
-  readonly unavailableLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Visualization is not implemented yet.'
-      : 'Ta wizualizacja nie jest jeszcze zaimplementowana.',
+  readonly homeAriaLabel = computed(() => this.translate(t('core.navbar.homeAriaLabel')));
+  readonly breadcrumbAriaLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.breadcrumbAriaLabel')),
   );
-  readonly labEyebrow = computed(() => {
-    const algorithm = this.algorithm();
-    return algorithm ? `${humanizeLabel(algorithm.category)} / ${humanizeLabel(algorithm.subcategory)}` : '';
-  });
+  readonly backLabel = computed(() => this.translate(t('features.algorithms.detail.backLabel')));
+  readonly lockedLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.lockedLabel')),
+  );
+  readonly unavailableLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.unavailableLabel')),
+  );
+  readonly notFoundLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.notFoundLabel')),
+  );
+  readonly backToAlgorithmsLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.backToAlgorithmsLabel')),
+  );
   readonly breadcrumbs = computed(() => {
     const algorithm = this.algorithm();
     if (!algorithm) return [];
-    return [
-      humanizeLabel(algorithm.category),
-      humanizeLabel(algorithm.subcategory),
-    ].filter(Boolean);
+
+    return [algorithm.category, algorithm.subcategory]
+      .filter(Boolean)
+      .map((facet) => this.translateFacet(facet));
   });
 
   readonly size = this.sizeSig.asReadonly();
@@ -134,22 +152,53 @@ export class AlgorithmDetail {
     const config = this.config();
     return config?.kind === 'string' ? config.presetOptions : [];
   });
-  readonly sizeUnit = computed(() => this.config()?.sizeUnit ?? 'elements');
-  readonly randomizeLabel = computed(() => this.config()?.randomizeLabel ?? 'Randomize');
+  readonly sizeUnitLabel = computed(() => {
+    const unit = this.config()?.sizeUnit ?? 'elements';
+    return this.translateMaybe(getVisualizationSizeUnitLabelKey(unit), unit);
+  });
+  readonly randomizeLabel = computed(() => {
+    const label = this.config()?.randomizeLabel ?? 'Randomize';
+    return this.translateMaybe(getVisualizationActionLabelKey(label), label);
+  });
+  readonly translatedVariantOptions = computed(() =>
+    this.variantOptions().map((option) => ({
+      ...option,
+      label: this.translateMaybe(getVisualizationVariantLabelKey(option.label), option.label),
+    })),
+  );
   readonly currentVariantLabel = computed(() => {
     const active = this.variantSig();
-    return this.variantOptions().find((option) => option.value === active)?.label ?? humanizeLabel(active);
+    return (
+      this.translatedVariantOptions().find((option) => option.value === active)?.label ??
+      humanizeLabel(active)
+    );
   });
-  readonly sizeSummaryLabel = computed(() => `${this.sizeSig()} ${this.sizeUnit()}`);
-  readonly stepSummaryLabel = computed(() => `Step ${this.currentStep()} / ${this.totalSteps()}`);
+  readonly sizeSummaryLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.sizeSummaryLabel'), {
+      count: this.sizeSig(),
+      unit: this.sizeUnitLabel(),
+    }),
+  );
+  readonly stepSummaryLabel = computed(() =>
+    this.translate(t('features.algorithms.detail.stepSummaryLabel'), {
+      current: this.currentStep(),
+      total: this.totalSteps(),
+    }),
+  );
 
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
   readonly dsuTrace = computed<DsuTraceState | null>(() => this.currentSnapshot()?.dsu ?? null);
   readonly gridTrace = computed<GridTraceState | null>(() => this.currentSnapshot()?.grid ?? null);
-  readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
-  readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
-  readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
+  readonly matrixTrace = computed<MatrixTraceState | null>(
+    () => this.currentSnapshot()?.matrix ?? null,
+  );
+  readonly networkTrace = computed<NetworkTraceState | null>(
+    () => this.currentSnapshot()?.network ?? null,
+  );
+  readonly searchTrace = computed<SearchTraceState | null>(
+    () => this.currentSnapshot()?.search ?? null,
+  );
   readonly sortTrace = computed<SortTraceState | null>(() => {
     const snapshot = this.currentSnapshot();
     const config = this.config();
@@ -158,7 +207,9 @@ export class AlgorithmDetail {
     if (!snapshot || !config || config.kind !== 'array') return null;
     return deriveSortTrace(snapshot);
   });
-  readonly stringTrace = computed<StringTraceState | null>(() => this.currentSnapshot()?.string ?? null);
+  readonly stringTrace = computed<StringTraceState | null>(
+    () => this.currentSnapshot()?.string ?? null,
+  );
   readonly geometryTrace = computed<GeometryStepState | null>(
     () => this.currentSnapshot()?.geometry ?? null,
   );
@@ -166,9 +217,15 @@ export class AlgorithmDetail {
   readonly graphRouteModeLabel = computed(() => {
     const trace = this.graphTrace();
     if (!trace) return null;
-    if (trace.metricLabel === 'Distance') return 'Focused shortest path';
-    if (trace.metricLabel === 'Level') return 'Focused BFS route';
-    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') return 'Focused DFS branch';
+    if (trace.metricLabel === 'Distance') {
+      return this.translate(t('features.algorithms.detail.graphFocus.shortestPathLabel'));
+    }
+    if (trace.metricLabel === 'Level') {
+      return this.translate(t('features.algorithms.detail.graphFocus.bfsRouteLabel'));
+    }
+    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
+      return this.translate(t('features.algorithms.detail.graphFocus.dfsBranchLabel'));
+    }
     return null;
   });
   readonly graphFocusTargetLabel = computed(() => {
@@ -187,13 +244,13 @@ export class AlgorithmDetail {
     const trace = this.graphTrace();
     if (!trace || !this.graphRouteModeLabel()) return null;
     if (trace.metricLabel === 'Distance') {
-      return 'Whole graph shows the shortest-path tree. This line shows one selected endpoint route.';
+      return this.translate(t('features.algorithms.detail.graphFocus.shortestPathHint'));
     }
     if (trace.metricLabel === 'Level') {
-      return 'Whole graph shows the BFS discovery tree. This line shows one selected source-to-node route.';
+      return this.translate(t('features.algorithms.detail.graphFocus.bfsRouteHint'));
     }
     if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
-      return 'Whole graph shows the DFS tree. This line shows one selected explored branch.';
+      return this.translate(t('features.algorithms.detail.graphFocus.dfsBranchHint'));
     }
     return null;
   });
@@ -226,7 +283,9 @@ export class AlgorithmDetail {
         lines: config.codeLines,
         regions: config.codeRegions ?? [],
         highlightMap: config.codeHighlightMap,
-        source: config.codeLines.map((line) => line.tokens.map((token) => token.text).join('')).join('\n'),
+        source: config.codeLines
+          .map((line) => line.tokens.map((token) => token.text).join(''))
+          .join('\n'),
       },
     };
   });
@@ -301,7 +360,11 @@ export class AlgorithmDetail {
   onVariantChange(value: VisualizationVariant): void {
     const config = this.config();
     if (!config) return;
-    if (!config.variantOptions.some((option) => option.value === value) || value === this.variantSig()) return;
+    if (
+      !config.variantOptions.some((option) => option.value === value) ||
+      value === this.variantSig()
+    )
+      return;
 
     this.variantSig.set(value);
     this.resetPlaybackState();
@@ -315,7 +378,8 @@ export class AlgorithmDetail {
   onDpPresetChange(value: string): void {
     const config = this.config();
     if (!config || config.kind !== 'dp') return;
-    if (!config.presetOptions.some((option) => option.id === value) || value === this.dpPresetSig()) return;
+    if (!config.presetOptions.some((option) => option.id === value) || value === this.dpPresetSig())
+      return;
 
     this.dpPresetSig.set(value);
     this.rebuildVisualization(config, this.sizeSig(), { dpPresetId: value });
@@ -324,7 +388,11 @@ export class AlgorithmDetail {
   onStringPresetChange(value: string): void {
     const config = this.config();
     if (!config || config.kind !== 'string') return;
-    if (!config.presetOptions.some((option) => option.id === value) || value === this.stringPresetSig()) return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.stringPresetSig()
+    )
+      return;
 
     this.stringPresetSig.set(value);
     this.rebuildVisualization(config, this.sizeSig(), { stringPresetId: value });
@@ -464,5 +532,22 @@ export class AlgorithmDetail {
       });
 
     return candidates[0]?.id ?? sourceId ?? null;
+  }
+
+  private translate(key: string, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
+  }
+
+  private translateMaybe(
+    key: string | null,
+    fallback: string,
+    params?: Record<string, string | number>,
+  ): string {
+    return key ? this.translate(key, params) : fallback;
+  }
+
+  private translateFacet(facet: string): string {
+    return this.translateMaybe(getAlgorithmFacetLabelKey(facet), humanizeLabel(facet));
   }
 }

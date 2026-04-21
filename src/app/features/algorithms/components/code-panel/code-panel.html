@@ -5,11 +5,15 @@
         class="code-toolbar__dial"
         [options]="availableLanguages()"
         [value]="selectedLanguage()"
-        [ariaLabel]="'Code language switcher'"
+        [ariaLabel]="codeLanguageAriaLabel()"
         (valueChange)="selectLanguage($event)"
       />
 
-      <app-copy-code-button class="code-toolbar__copy" [copied]="copied()" (pressed)="copyCurrentCode()" />
+      <app-copy-code-button
+        class="code-toolbar__copy"
+        [copied]="copied()"
+        (pressed)="copyCurrentCode()"
+      />
     </div>
 
     <div class="code-scroll">
@@ -24,6 +28,6 @@
       ></div>
     </div>
   } @else {
-    <div class="code-empty">No code available.</div>
+    <div class="code-empty">{{ emptyLabel() }}</div>
   }
 </div>
