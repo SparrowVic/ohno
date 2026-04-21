@@ -1,0 +1,158 @@
+<section class="dsu-graph viz-flow">
+  @if (state(); as dsuState) {
+    <aside class="viz-flow__guide">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">DSU Graph Guide</span>
+        <h3 class="viz-flow__title">
+          @if (mode() === 'union-find') {
+            Follow the tree pointers
+          } @else {
+            Watch edges enter the MST
+          }
+        </h3>
+        <p class="viz-flow__desc">{{ decision() }}</p>
+      </div>
+
+      <div class="dsu-graph__hud">
+        <div class="dsu-graph__stat">
+          <span class="dsu-graph__label">Mode</span>
+          <span class="dsu-graph__value">{{ modeLabel() }}</span>
+        </div>
+        <div class="dsu-graph__stat">
+          <span class="dsu-graph__label">Components</span>
+          <span class="dsu-graph__value">{{ componentCount() }}</span>
+        </div>
+        <div class="dsu-graph__stat">
+          <span class="dsu-graph__label">Active</span>
+          <span class="dsu-graph__value">{{ activeLabel() }}</span>
+        </div>
+        <div class="dsu-graph__stat">
+          <span class="dsu-graph__label">Result</span>
+          <span class="dsu-graph__value">{{ resultLabel() }}</span>
+        </div>
+      </div>
+    </aside>
+
+    <section class="viz-flow__brief">
+      <div class="viz-flow__section-head">
+        <span class="viz-flow__eyebrow">Snapshot</span>
+        <h3 class="viz-flow__title">{{ statusLabel() }}</h3>
+        <p class="viz-flow__desc">
+          @if (mode() === 'union-find') {
+            Each tree is one disjoint set. Cyan roots are representatives; edges point to parents.
+          } @else {
+            Nodes sit on a ring; candidate edges fill in as the algorithm picks or rejects them.
+          }
+        </p>
+      </div>
+    </section>
+
+    <section class="viz-flow__stage">
+      <div class="viz-flow__stage-head">
+        <div class="viz-flow__section-head">
+          <span class="viz-flow__eyebrow">Stage</span>
+          <h3 class="viz-flow__title">
+            @if (mode() === 'union-find') {
+              Set forest (graph view)
+            } @else {
+              Candidate graph (MST view)
+            }
+          </h3>
+        </div>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ statusLabel() }}</span>
+      </div>
+
+      <div class="viz-flow__stage-body">
+        <svg
+          class="dsu-graph__svg"
+          viewBox="0 0 960 620"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            @for (marker of arrowMarkers; track marker.id) {
+              <marker
+                [attr.id]="marker.id"
+                markerWidth="9"
+                markerHeight="9"
+                refX="8"
+                refY="4.5"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0 0L9 4.5L0 9Z" [attr.fill]="marker.fill" />
+              </marker>
+            }
+            <filter id="dsuNodeGlow">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Edges -->
+          @for (edge of renderedEdges(); track edge.id) {
+            <g class="dsu-graph-edge-group">
+              <line
+                class="dsu-graph-edge"
+                [class.dsu-graph-edge--parent]="edge.status === 'parent'"
+                [class.dsu-graph-edge--pending]="edge.status === 'pending'"
+                [class.dsu-graph-edge--active]="edge.status === 'active'"
+                [class.dsu-graph-edge--accepted]="edge.status === 'accepted'"
+                [class.dsu-graph-edge--rejected]="edge.status === 'rejected'"
+                [attr.marker-end]="edgeMarker(edge)"
+                [attr.x1]="edge.x1"
+                [attr.y1]="edge.y1"
+                [attr.x2]="edge.x2"
+                [attr.y2]="edge.y2"
+              />
+              @if (edge.weight !== null && edge.weight !== undefined) {
+                <g
+                  class="dsu-graph-edge-weight"
+                  [class.dsu-graph-edge-weight--accepted]="edge.status === 'accepted'"
+                  [class.dsu-graph-edge-weight--active]="edge.status === 'active'"
+                  [class.dsu-graph-edge-weight--rejected]="edge.status === 'rejected'"
+                  [attr.transform]="'translate(' + edge.midX + ' ' + edge.midY + ')'"
+                >
+                  <rect x="-15" y="-10" width="30" height="20" rx="6" />
+                  <text y="3">{{ edge.weight }}</text>
+                </g>
+              }
+            </g>
+          }
+
+          <!-- Nodes -->
+          @for (node of renderedNodes(); track node.id) {
+            <g
+              class="dsu-graph-node"
+              [class.dsu-graph-node--root]="node.isRoot"
+              [class.dsu-graph-node--active]="node.status === 'active'"
+              [class.dsu-graph-node--query]="node.status === 'query'"
+              [class.dsu-graph-node--merged]="node.status === 'merged'"
+              [class.dsu-graph-node--compressed]="node.status === 'compressed'"
+              [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+            >
+              <circle class="dsu-graph-node__halo" r="30" />
+              <circle class="dsu-graph-node__body" r="22" filter="url(#dsuNodeGlow)" />
+              <text class="dsu-graph-node__label" y="5">{{ node.label }}</text>
+
+              @if (node.isRoot) {
+                <g class="dsu-graph-node__crown" transform="translate(16 -16)">
+                  <circle r="6" />
+                  <circle class="dsu-graph-node__crown-core" r="3" />
+                </g>
+              }
+
+              <text class="dsu-graph-node__meta" y="40">
+                r{{ node.rank }} · s{{ node.size }}
+              </text>
+            </g>
+          }
+        </svg>
+      </div>
+    </section>
+  } @else {
+    <div class="dsu-graph__empty">No DSU trace available for this step.</div>
+  }
+</section>

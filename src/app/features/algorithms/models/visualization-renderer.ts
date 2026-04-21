@@ -15,6 +15,7 @@ export type VisualizationVariant =
   | 'grid'
   | 'matrix'
   | 'dsu'
+  | 'dsu-graph'
   | 'network'
   | 'radix'
   | 'radix-strip'

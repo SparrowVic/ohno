@@ -1205,10 +1205,12 @@ const MATRIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 const DP_VARIANT_OPTIONS: readonly VisualizationOption[] = [{ value: 'dp', label: 'DP Lab' }];
 
 const UNION_FIND_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dsu-graph', label: 'Tree Graph' },
   { value: 'dsu', label: 'Set Forest' },
 ];
 
 const KRUSKAL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'dsu-graph', label: 'Edge Graph' },
   { value: 'dsu', label: 'Edge Forest' },
 ];
 
@@ -1695,12 +1697,16 @@ function createDsuViewConfig<TScenario>(args: {
   readonly randomizeLabel?: string;
 }): DsuAlgorithmViewConfig<TScenario> {
   const sizeOptions = args.sizeOptions ?? [6, 8, 10];
+  // First variant in the list wins as default — lets callers put
+  // their preferred default view at the top (e.g. `dsu-graph` for
+  // Union-Find / Kruskal, which now default to the graph view).
+  const defaultVariant = args.variantOptions[0]?.value ?? 'dsu';
   return {
     kind: 'dsu',
     codeLines: args.codeLines,
     codeVariants: args.codeVariants,
     variantOptions: args.variantOptions,
-    defaultVariant: 'dsu',
+    defaultVariant,
     sizeOptions,
     defaultSize: args.defaultSize ?? sizeOptions[0] ?? 6,
     createScenario: args.createScenario,
