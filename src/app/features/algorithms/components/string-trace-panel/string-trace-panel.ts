@@ -6,20 +6,28 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import {
+  AhoCorasickTraceState,
   BurrowsWheelerTraceState,
   HuffmanTraceState,
   KmpTraceState,
   ManacherTraceState,
+  PalindromicTreeTraceState,
   RabinKarpTraceState,
   RleTraceState,
   StringTraceState,
+  SuffixArrayConstructionTraceState,
+  SuffixArrayLcpTraceState,
   ZAlgorithmTraceState,
+  isAhoCorasickState,
   isBurrowsWheelerState,
   isHuffmanState,
   isKmpState,
   isManacherState,
+  isPalindromicTreeState,
   isRabinKarpState,
   isRleState,
+  isSuffixArrayConstructionState,
+  isSuffixArrayLcpState,
   isZAlgorithmState,
 } from '../../models/string';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
@@ -68,6 +76,22 @@ export class StringTracePanel {
     const state = this.state();
     return isHuffmanState(state) ? state : null;
   });
+  readonly ahoState = computed<AhoCorasickTraceState | null>(() => {
+    const state = this.state();
+    return isAhoCorasickState(state) ? state : null;
+  });
+  readonly suffixArrayState = computed<SuffixArrayConstructionTraceState | null>(() => {
+    const state = this.state();
+    return isSuffixArrayConstructionState(state) ? state : null;
+  });
+  readonly suffixLcpState = computed<SuffixArrayLcpTraceState | null>(() => {
+    const state = this.state();
+    return isSuffixArrayLcpState(state) ? state : null;
+  });
+  readonly palindromicTreeState = computed<PalindromicTreeTraceState | null>(() => {
+    const state = this.state();
+    return isPalindromicTreeState(state) ? state : null;
+  });
 
   readonly legend = [
     {
@@ -98,6 +122,26 @@ export class StringTracePanel {
 
   groupPreview(state: BurrowsWheelerTraceState): readonly string[] {
     return state.runGroups.map((group) => `${group.count}×${group.char}`);
+  }
+
+  ahoMatchPreview(state: AhoCorasickTraceState): readonly string[] {
+    return state.matches.map((match) => `${match.pattern}@${match.startIndex}`);
+  }
+
+  suffixOrderPreview(order: readonly number[]): string {
+    return order.join(', ');
+  }
+
+  lcpPreview(state: SuffixArrayLcpTraceState): readonly string[] {
+    return state.lcpValues
+      .slice(0, Math.max(state.lcpValues.length - 1, 0))
+      .map((value, index) => `${index}:${value}`);
+  }
+
+  palNodePreview(state: PalindromicTreeTraceState): readonly string[] {
+    return state.nodes
+      .filter((node) => node.length > 0)
+      .map((node) => `${node.palindrome}(${node.occurrences})`);
   }
 
   jumpLabel(state: KmpTraceState): string {

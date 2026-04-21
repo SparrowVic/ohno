@@ -1063,6 +1063,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'pattern-matching',
     tags: ['multi-pattern', 'trie', 'automaton'],
+    implemented: true,
   }),
   algo({
     id: 'manacher',
@@ -1082,6 +1083,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'suffix-palindromes',
     tags: ['suffixes', 'lexicographic', 'indexing'],
+    implemented: true,
   }),
   algo({
     id: 'suffix-array-lcp-kasai',
@@ -1091,6 +1093,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'suffix-palindromes',
     tags: ['suffix array', 'LCP', 'Kasai'],
+    implemented: true,
   }),
   algo({
     id: 'palindromic-tree',
@@ -1100,6 +1103,7 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'strings',
     subcategory: 'suffix-palindromes',
     tags: ['palindromes', 'Eertree', 'online'],
+    implemented: true,
   }),
   algo({
     id: 'burrows-wheeler-transform',

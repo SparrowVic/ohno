@@ -1,4 +1,5 @@
 import { aStarPathfindingGenerator } from '../../algorithms/a-star-pathfinding/a-star-pathfinding';
+import { ahoCorasickGenerator } from '../../algorithms/aho-corasick/aho-corasick';
 import { bfsGenerator } from '../../algorithms/bfs/bfs';
 import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { binarySearchGenerator } from '../../algorithms/binary-search/binary-search';
@@ -63,6 +64,7 @@ import { profileDpGenerator } from '../../algorithms/profile-dp';
 import { rabinKarpGenerator } from '../../algorithms/rabin-karp/rabin-karp';
 import { runLengthEncodingGenerator } from '../../algorithms/run-length-encoding/run-length-encoding';
 import { regexMatchingDpGenerator } from '../../algorithms/regex-matching-dp/regex-matching-dp';
+import { palindromicTreeGenerator } from '../../algorithms/palindromic-tree/palindromic-tree';
 import { selectionSortGenerator } from '../../algorithms/selection-sort';
 import { shellSortGenerator } from '../../algorithms/shell-sort';
 import { sosDpGenerator } from '../../algorithms/sos-dp';
@@ -78,6 +80,8 @@ import { voronoiDiagramGenerator, VoronoiDiagramScenario } from '../../algorithm
 import { wildcardMatchingGenerator } from '../../algorithms/wildcard-matching/wildcard-matching';
 import { zAlgorithmGenerator } from '../../algorithms/z-algorithm/z-algorithm';
 import { burrowsWheelerTransformGenerator } from '../../algorithms/burrows-wheeler-transform/burrows-wheeler-transform';
+import { suffixArrayConstructionGenerator } from '../../algorithms/suffix-array-construction/suffix-array-construction';
+import { suffixArrayLcpKasaiGenerator } from '../../algorithms/suffix-array-lcp-kasai/suffix-array-lcp-kasai';
 import { convexHullGenerator, ConvexHullScenario } from '../../algorithms/convex-hull';
 import {
   delaunayTriangulationGenerator,
@@ -318,6 +322,12 @@ import {
   MANACHER_CODE_VARIANTS,
 } from '../../data/manacher-code';
 import {
+  AHO_CORASICK_CODE,
+  AHO_CORASICK_CODE_HIGHLIGHT_MAP,
+  AHO_CORASICK_CODE_REGIONS,
+  AHO_CORASICK_CODE_VARIANTS,
+} from '../../data/aho-corasick-code';
+import {
   MATRIX_CHAIN_MULTIPLICATION_CODE,
   MATRIX_CHAIN_MULTIPLICATION_CODE_HIGHLIGHT_MAP,
   MATRIX_CHAIN_MULTIPLICATION_CODE_REGIONS,
@@ -345,6 +355,12 @@ import {
   KMP_PATTERN_MATCHING_CODE_REGIONS,
   KMP_PATTERN_MATCHING_CODE_VARIANTS,
 } from '../../data/kmp-pattern-matching-code';
+import {
+  PALINDROMIC_TREE_CODE,
+  PALINDROMIC_TREE_CODE_HIGHLIGHT_MAP,
+  PALINDROMIC_TREE_CODE_REGIONS,
+  PALINDROMIC_TREE_CODE_VARIANTS,
+} from '../../data/palindromic-tree-code';
 import {
   PROFILE_DP_CODE,
   PROFILE_DP_CODE_HIGHLIGHT_MAP,
@@ -375,6 +391,18 @@ import {
   RABIN_KARP_CODE_REGIONS,
   RABIN_KARP_CODE_VARIANTS,
 } from '../../data/rabin-karp-code';
+import {
+  SUFFIX_ARRAY_CONSTRUCTION_CODE,
+  SUFFIX_ARRAY_CONSTRUCTION_CODE_HIGHLIGHT_MAP,
+  SUFFIX_ARRAY_CONSTRUCTION_CODE_REGIONS,
+  SUFFIX_ARRAY_CONSTRUCTION_CODE_VARIANTS,
+} from '../../data/suffix-array-construction-code';
+import {
+  SUFFIX_ARRAY_LCP_KASAI_CODE,
+  SUFFIX_ARRAY_LCP_KASAI_CODE_HIGHLIGHT_MAP,
+  SUFFIX_ARRAY_LCP_KASAI_CODE_REGIONS,
+  SUFFIX_ARRAY_LCP_KASAI_CODE_VARIANTS,
+} from '../../data/suffix-array-lcp-kasai-code';
 import {
   REGEX_MATCHING_DP_CODE,
   REGEX_MATCHING_DP_CODE_HIGHLIGHT_MAP,
@@ -631,26 +659,38 @@ import {
   MinCostMaxFlowScenario,
 } from '../../utils/network-scenarios/network-scenarios';
 import {
+  AHO_CORASICK_PRESETS,
   BWT_PRESETS,
   HUFFMAN_PRESETS,
   KMP_PRESETS,
   MANACHER_PRESETS,
+  PALINDROMIC_TREE_PRESETS,
   RABIN_KARP_PRESETS,
   RLE_PRESETS,
+  SUFFIX_ARRAY_LCP_PRESETS,
+  SUFFIX_ARRAY_PRESETS,
   Z_ALGORITHM_PRESETS,
+  AhoCorasickScenario,
   BurrowsWheelerScenario,
   HuffmanScenario,
   KmpScenario,
   ManacherScenario,
+  PalindromicTreeScenario,
   RabinKarpScenario,
   RleScenario,
+  SuffixArrayLcpScenario,
+  SuffixArrayScenario,
   ZAlgorithmScenario,
+  createAhoCorasickScenario,
   createBurrowsWheelerScenario,
   createHuffmanScenario,
   createKmpScenario,
   createManacherScenario,
+  createPalindromicTreeScenario,
   createRabinKarpScenario,
   createRleScenario,
+  createSuffixArrayLcpScenario,
+  createSuffixArrayScenario,
   createZAlgorithmScenario,
 } from '../../utils/string-scenarios/string-scenarios';
 import {
@@ -1892,6 +1932,62 @@ const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
   randomizeLabel: 'New palindrome field',
 });
 
+const AHO_CORASICK_VIEW_CONFIG = createStringViewConfig<AhoCorasickScenario>({
+  codeLines: AHO_CORASICK_CODE,
+  codeRegions: AHO_CORASICK_CODE_REGIONS,
+  codeHighlightMap: AHO_CORASICK_CODE_HIGHLIGHT_MAP,
+  codeVariants: AHO_CORASICK_CODE_VARIANTS,
+  createScenario: (size, presetId) => createAhoCorasickScenario(size, presetId),
+  generator: ahoCorasickGenerator,
+  presetOptions: AHO_CORASICK_PRESETS,
+  sizeOptions: [12, 18, 24],
+  defaultSize: 18,
+  sizeUnit: 'text chars',
+  randomizeLabel: 'New string case',
+});
+
+const SUFFIX_ARRAY_VIEW_CONFIG = createStringViewConfig<SuffixArrayScenario>({
+  codeLines: SUFFIX_ARRAY_CONSTRUCTION_CODE,
+  codeRegions: SUFFIX_ARRAY_CONSTRUCTION_CODE_REGIONS,
+  codeHighlightMap: SUFFIX_ARRAY_CONSTRUCTION_CODE_HIGHLIGHT_MAP,
+  codeVariants: SUFFIX_ARRAY_CONSTRUCTION_CODE_VARIANTS,
+  createScenario: (size, presetId) => createSuffixArrayScenario(size, presetId),
+  generator: suffixArrayConstructionGenerator,
+  presetOptions: SUFFIX_ARRAY_PRESETS,
+  sizeOptions: [8, 12, 16],
+  defaultSize: 12,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New string case',
+});
+
+const SUFFIX_ARRAY_LCP_VIEW_CONFIG = createStringViewConfig<SuffixArrayLcpScenario>({
+  codeLines: SUFFIX_ARRAY_LCP_KASAI_CODE,
+  codeRegions: SUFFIX_ARRAY_LCP_KASAI_CODE_REGIONS,
+  codeHighlightMap: SUFFIX_ARRAY_LCP_KASAI_CODE_HIGHLIGHT_MAP,
+  codeVariants: SUFFIX_ARRAY_LCP_KASAI_CODE_VARIANTS,
+  createScenario: (size, presetId) => createSuffixArrayLcpScenario(size, presetId),
+  generator: suffixArrayLcpKasaiGenerator,
+  presetOptions: SUFFIX_ARRAY_LCP_PRESETS,
+  sizeOptions: [8, 12, 16],
+  defaultSize: 12,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New string case',
+});
+
+const PALINDROMIC_TREE_VIEW_CONFIG = createStringViewConfig<PalindromicTreeScenario>({
+  codeLines: PALINDROMIC_TREE_CODE,
+  codeRegions: PALINDROMIC_TREE_CODE_REGIONS,
+  codeHighlightMap: PALINDROMIC_TREE_CODE_HIGHLIGHT_MAP,
+  codeVariants: PALINDROMIC_TREE_CODE_VARIANTS,
+  createScenario: (size, presetId) => createPalindromicTreeScenario(size, presetId),
+  generator: palindromicTreeGenerator,
+  presetOptions: PALINDROMIC_TREE_PRESETS,
+  sizeOptions: [8, 12, 16],
+  defaultSize: 12,
+  sizeUnit: 'chars',
+  randomizeLabel: 'New string case',
+});
+
 const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenario>({
   codeLines: BURROWS_WHEELER_TRANSFORM_CODE,
   codeRegions: BURROWS_WHEELER_TRANSFORM_CODE_REGIONS,
@@ -2822,7 +2918,11 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'kmp-pattern-matching') return KMP_VIEW_CONFIG;
   if (id === 'rabin-karp') return RABIN_KARP_VIEW_CONFIG;
   if (id === 'z-algorithm') return Z_ALGORITHM_VIEW_CONFIG;
+  if (id === 'aho-corasick') return AHO_CORASICK_VIEW_CONFIG;
   if (id === 'manacher') return MANACHER_VIEW_CONFIG;
+  if (id === 'suffix-array-construction') return SUFFIX_ARRAY_VIEW_CONFIG;
+  if (id === 'suffix-array-lcp-kasai') return SUFFIX_ARRAY_LCP_VIEW_CONFIG;
+  if (id === 'palindromic-tree') return PALINDROMIC_TREE_VIEW_CONFIG;
   if (id === 'burrows-wheeler-transform') return BURROWS_WHEELER_VIEW_CONFIG;
   if (id === 'run-length-encoding') return RLE_VIEW_CONFIG;
   if (id === 'huffman-coding') return HUFFMAN_VIEW_CONFIG;

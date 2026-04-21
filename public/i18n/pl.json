@@ -1782,6 +1782,64 @@
           }
         },
         "string": {
+          "ahoCorasick": {
+            "computation": {
+              "labels": {
+                "failureLink": "Link failure",
+                "finalSummary": "Podsumowanie końcowe",
+                "outputSet": "Zbiór wyjść",
+                "textStep": "Krok po tekście",
+                "transition": "Przejście"
+              },
+              "notes": {
+                "failureLink": "Linki failure wskazują najdłuższy poprawny sufiks, który już istnieje w trie.",
+                "finalSummary": "Jedno przejście po tekście zgłasza wszystkie zapisane wzorce bez ponownego skanowania wcześniejszych znaków.",
+                "outputSet": "Stan terminalny emituje każdy wzorzec kończący się w tym stanie, także te odziedziczone przez linki failure.",
+                "textStep": "Każdy nowy znak przesuwa automat dalej albo wymusza cofanie po failure linkach, aż pojawi się poprawna krawędź.",
+                "transition": "Wspólne prefiksy pozostają na jednej gałęzi, więc ten sam początek wstawiamy tylko raz."
+              }
+            },
+            "decisions": {
+              "chaseFailureLinks": "Jeśli krawędzi brakuje, idź po failure linkach, aż pojawi się stan z użytecznym sufiksem.",
+              "emitOutputs": "Gdy bieżący stan ma wyjścia, zgłoś każdy wzorzec kończący się w tym miejscu.",
+              "growTrie": "Brakująca krawędź oznacza, że trie potrzebuje nowego stanu dla tego znaku.",
+              "scanFinished": "Cały tekst został przeskanowany i wszystkie wystąpienia słów kluczowych są już znane.",
+              "sharePrefixes": "Wzorce z tym samym początkiem powinny współdzielić jeden prefiks w trie.",
+              "stitchFailureLinks": "Każdy stan trie dostaje krawędź awaryjną do najlepszego poprawnego sufiksu."
+            },
+            "descriptions": {
+              "advanceScan": "Zużyj text[{{index}}] = '{{char}}' i przejdź do stanu automatu {{state}}.",
+              "complete": "Aho-Corasick zakończony z {{count}} zgłoszonymi trafieniami.",
+              "followFailure": "Stan {{from}} nie ma krawędzi dla '{{char}}', więc przechodzimy linkiem failure do {{target}}.",
+              "init": "Zbuduj jeden automat słów kluczowych dla wzorców {{patterns}} i przeskanuj tekst „{{text}}” w jednym przebiegu.",
+              "insertEdge": "Wstaw '{{char}}' ze wzorca „{{pattern}}” i utwórz stan {{state}}.",
+              "reportMatches": "Stan {{state}} emituje {{count}} wzorców: {{patterns}}.",
+              "reuseEdge": "Wzorzec „{{pattern}}” korzysta z istniejącej krawędzi dla '{{char}}', więc trie pozostaje zwarte.",
+              "setFailure": "Ustaw failure link stanu {{state}} na {{target}}.",
+              "terminal": "Stan {{state}} staje się terminalny dla wzorca „{{pattern}}”."
+            },
+            "insights": {
+              "activeStateLabel": "Aktywny stan",
+              "countValue": "{{count}}",
+              "matchesLabel": "Trafienia",
+              "noneValue": "—",
+              "patternsLabel": "Wzorce",
+              "stateValue": "stan {{state}}",
+              "trieNodesLabel": "Węzły trie"
+            },
+            "labels": {
+              "matchesValue": "{{count}} trafień",
+              "noMatchesYet": "Jeszcze brak trafień"
+            },
+            "modeLabel": "Aho-Corasick",
+            "phases": {
+              "buildFailure": "Budowa failure linków",
+              "buildTrie": "Budowa trie",
+              "complete": "Skan zakończony",
+              "reportMatch": "Raport trafień",
+              "scanText": "Skan tekstu"
+            }
+          },
           "burrowsWheelerTransform": {
             "computation": {
               "expressions": {
@@ -2064,6 +2122,56 @@
               "shiftWindow": "Przesunięcie okna"
             }
           },
+          "palindromicTree": {
+            "computation": {
+              "labels": {
+                "finalSummary": "Podsumowanie końcowe",
+                "newNode": "Nowy węzeł",
+                "occurrenceCount": "Licznik wystąpień",
+                "suffixLink": "Suffix link"
+              },
+              "notes": {
+                "finalSummary": "Eertree przechowuje każdy różny palindrom tylko raz i łączy go z najdłuższym palindromicznym sufiksem.",
+                "newNode": "Nowy palindrom pojawia się tylko wtedy, gdy bieżący znak rozszerza jakiś palindromiczny sufiks do nowego napisu.",
+                "occurrenceCount": "Jeśli palindrom już istnieje, zwiększamy tylko licznik jego wystąpień.",
+                "suffixLink": "Suffix linki przeskakują po palindromicznych sufiksach, aż znajdzie się następny węzeł, który można rozszerzyć."
+              }
+            },
+            "decisions": {
+              "addNewPalindrome": "Brakuje pasującej krawędzi wyjściowej, więc trzeba utworzyć nowy węzeł palindromu.",
+              "chaseSuffixLinks": "Idź po suffix linkach, aż bieżący znak będzie mógł się odbić wokół kandydującego palindromu.",
+              "reuseExistingNode": "Jeśli krawędź już istnieje, użyj istniejącego węzła palindromu i zaktualizuj tylko licznik.",
+              "treeReady": "Każdy znak został przetworzony, więc drzewo palindromiczne jest kompletne."
+            },
+            "descriptions": {
+              "complete": "Drzewo palindromiczne gotowe z {{count}} różnymi palindromami.",
+              "followLink": "Wykonaj {{hops}} skoków po suffix linkach, aby znaleźć palindrom, który może wchłonąć '{{char}}'.",
+              "init": "Uruchom Eertree dla „{{text}}” z dwoma standardowymi korzeniami: długość -1 i długość 0.",
+              "insertNode": "Utwórz nowy węzeł palindromu „{{palindrome}}”.",
+              "reuseNode": "Użyj ponownie istniejącego węzła palindromu „{{palindrome}}”."
+            },
+            "insights": {
+              "activeLabel": "Aktywny węzeł",
+              "countValue": "{{count}}",
+              "distinctLabel": "Różne",
+              "longestSuffixLabel": "Najdłuższy sufiks",
+              "nodeValue": "węzeł {{node}}",
+              "noneValue": "—",
+              "processedLabel": "Przetworzone"
+            },
+            "labels": {
+              "distinctValue": "{{count}} różnych palindromów",
+              "pendingTree": "Drzewo w toku"
+            },
+            "modeLabel": "Drzewo palindromiczne",
+            "phases": {
+              "complete": "Drzewo gotowe",
+              "followLink": "Skoki po suffix linkach",
+              "insertNode": "Wstawienie węzła",
+              "reuseNode": "Ponowne użycie węzła",
+              "roots": "Korzenie gotowe"
+            }
+          },
           "rabinKarp": {
             "computation": {
               "labels": {
@@ -2196,6 +2304,98 @@
               "extend": "Rozszerzanie",
               "scan": "Skanowanie",
               "setup": "Przygotowanie"
+            }
+          },
+          "suffixArray": {
+            "computation": {
+              "labels": {
+                "finalArray": "Końcowa tablica sufiksowa",
+                "initialRanks": "Rangi początkowe",
+                "newRanks": "Nowe rangi",
+                "rankPairs": "Pary rang",
+                "reorderedSuffixes": "Przestawione sufiksy"
+              },
+              "notes": {
+                "finalArray": "Gdy każdy sufiks ma już unikalną klasę rangi, bieżący porządek jest finalną tablicą sufiksową.",
+                "initialRanks": "Pierwsza runda startuje od rang pojedynczych znaków.",
+                "newRanks": "Równe pary zostają w tej samej klasie, a różne otwierają nową rangę.",
+                "rankPairs": "Algorytm doubling sortuje sufiksy po dwóch sąsiadujących blokach rang o rozmiarze k.",
+                "reorderedSuffixes": "Posortowanie par rang daje aktualny porządek sufiksów."
+              }
+            },
+            "decisions": {
+              "compareRankPairs": "Porównuj sufiksy po parze (rank[i], rank[i + k]), zamiast skanować całe ogony.",
+              "compressClasses": "Po sortowaniu równe pary zwijają się do jednej klasy równoważności, a różne dostają nową rangę.",
+              "orderReady": "Każdy sufiks ma już unikalną rangę, więc porządek jest ostateczny."
+            },
+            "descriptions": {
+              "assignRanks": "Runda {{round}} przydziela {{classes}} różnych klas rang po posortowaniu bieżących par.",
+              "complete": "Tablica sufiksowa gotowa. Końcowy porządek: {{order}}.",
+              "seed": "Nadaj każdemu sufiksowi początkową rangę po pierwszym znaku dla „{{text}}”.",
+              "sortPairs": "Runda {{round}} sortuje sufiksy po parach bloków o rozmiarze {{stepSize}}."
+            },
+            "insights": {
+              "countValue": "{{count}}",
+              "distinctRanksLabel": "Różne rangi",
+              "noneValue": "—",
+              "orderLabel": "Porządek",
+              "strideLabel": "Krok",
+              "strideValue": "k = {{size}}",
+              "suffixesLabel": "Sufiksy"
+            },
+            "labels": {
+              "pendingArray": "Tablica sufiksowa w toku",
+              "readyValue": "{{order}}"
+            },
+            "modeLabel": "Budowa tablicy sufiksowej",
+            "phases": {
+              "assignRanks": "Przydzielanie rang",
+              "complete": "Porządek gotowy",
+              "seedRanks": "Rangi startowe",
+              "sortPairs": "Sortowanie par rang"
+            }
+          },
+          "suffixArrayLcp": {
+            "computation": {
+              "labels": {
+                "finalLcp": "Końcowa tablica LCP",
+                "kasaiStep": "Krok Kasaiego",
+                "suffixArray": "Tablica sufiksowa"
+              },
+              "notes": {
+                "finalLcp": "Każda wartość LCP przechowuje długość wspólnego prefiksu sąsiednich sufiksów w porządku tablicy sufiksowej.",
+                "kasaiStep": "Kasai po każdym kroku odzyskuje jeden znak overlapu, więc cały skan pozostaje liniowy.",
+                "suffixArray": "Kasai startuje od gotowej tablicy sufiksowej i jej odwrotnej tablicy rang."
+              }
+            },
+            "decisions": {
+              "compareNeighbors": "Porównuj każdy sufiks tylko z następnym sąsiadem w porządku tablicy sufiksowej.",
+              "lcpReady": "Każda para sąsiednich sufiksów ma już policzoną długość wspólnego prefiksu.",
+              "reuseOverlap": "Po zakończeniu jednego porównania następny sufiks może odzyskać jeden znak overlapu."
+            },
+            "descriptions": {
+              "compare": "Porównaj sufiks {{left}} z sufiksem {{right}} i zapisz overlap {{overlap}}.",
+              "complete": "Tablica LCP gotowa: {{values}}.",
+              "seed": "Uruchom Kasaiego z tablicą sufiksową {{suffixArray}} dla „{{text}}”."
+            },
+            "insights": {
+              "activePairLabel": "Aktywna para",
+              "countValue": "{{count}}",
+              "noneValue": "—",
+              "overlapLabel": "Overlap",
+              "pairValue": "{{left}} ↔ {{right}}",
+              "readyLcpLabel": "Gotowe LCP",
+              "suffixesLabel": "Sufiksy"
+            },
+            "labels": {
+              "pendingLcp": "LCP w toku",
+              "readyValue": "{{values}}"
+            },
+            "modeLabel": "Tablica sufiksowa + LCP",
+            "phases": {
+              "complete": "LCP gotowe",
+              "kasaiScan": "Skan Kasaiego",
+              "seedOrder": "Wczytanie porządku"
             }
           },
           "zAlgorithm": {
@@ -2611,6 +2811,20 @@
           }
         },
         "string": {
+          "ahoCorasick": {
+            "alerts": {
+              "description": "Krótkie słowa alarmowe pokazują, jak jeden automat może wykrywać wiele słów kluczowych w jednym przebiegu.",
+              "label": "Alerty"
+            },
+            "classic": {
+              "description": "Klasyczny przykład „ushers”, w którym łatwo zweryfikować wspólne prefiksy i emitowane dopasowania.",
+              "label": "Klasyczny"
+            },
+            "genome": {
+              "description": "Nakładające się fragmenty DNA tworzą wiele współdzielonych gałęzi trie i fallbacków po sufiksach.",
+              "label": "Genom"
+            }
+          },
           "bwt": {
             "banana": {
               "description": "Kanoniczne demo BWT: krótkie, zapamiętywalne i idealne do zgrupowanych serii w wyniku.",
@@ -2667,6 +2881,20 @@
               "label": "Symetria"
             }
           },
+          "palindromicTree": {
+            "banana": {
+              "description": "Powtarzające się centra tworzą zwarte drzewo różnych palindromicznych podciągów.",
+              "label": "Banana"
+            },
+            "mixed": {
+              "description": "Kilka krótkich i średnich palindromów pojawia się online, a suffix linki stale pracują.",
+              "label": "Mieszany"
+            },
+            "symmetry": {
+              "description": "Silna symetria ułatwia wychwycenie nowych palindromów i ponownie używanych węzłów sufiksowych.",
+              "label": "Symetria"
+            }
+          },
           "rabinKarp": {
             "alarm": {
               "description": "Mały moduł powoduje dość częste kolizje hashy, żeby dobrze pokazać weryfikację.",
@@ -2693,6 +2921,34 @@
             "worst": {
               "description": "Ciąg, w którym RLE nie daje korzyści kompresji",
               "label": "Brak zysku"
+            }
+          },
+          "suffixArray": {
+            "abracadabra": {
+              "description": "Powtarzające się prefiksy wymuszają kilka rund rangowania, zanim każdy sufiks stanie się unikalny.",
+              "label": "Abrakadabra"
+            },
+            "banana": {
+              "description": "Kanoniczny przykład tablicy sufiksowej z krótkim i łatwym do zapamiętania wynikiem.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Gęste powtórzenia mocno obciążają rundy doublingu i klasy równoważności.",
+              "label": "Mississippi"
+            }
+          },
+          "suffixArrayLcp": {
+            "abracadabra": {
+              "description": "Powtarzające się fragmenty dają poszarpany profil LCP po ustaleniu porządku sufiksów.",
+              "label": "Abrakadabra"
+            },
+            "banana": {
+              "description": "Klasyczna banana prowadzi do znanego profilu LCP 1,3,0,0,2.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Wiele sąsiednich sufiksów dzieli długie prefiksy, więc dobrze widać ponowne użycie overlapu w Kasaim.",
+              "label": "Mississippi"
             }
           },
           "zAlgorithm": {
@@ -2779,7 +3035,6 @@
           "newRegexPair": "Nowa para regexów",
           "newRollingHashCase": "Nowy przypadek rolling hasha",
           "newRootedTree": "Nowe ukorzenione drzewo",
-          "newTreeShape": "Nowy kształt drzewa",
           "newRunSequence": "Nowa sekwencja przebiegu",
           "newScanField": "Nowe pole skanowania",
           "newScenario": "Nowy scenariusz",
@@ -2794,6 +3049,7 @@
           "newTargetSum": "Nowa suma docelowa",
           "newTerminalGraph": "Nowy graf terminali",
           "newTrailGraph": "Nowy graf ścieżki",
+          "newTreeShape": "Nowy kształt drzewa",
           "newWildcardPair": "Nowa para wildcard",
           "newWordPair": "Nowa para słów",
           "newZSkyline": "Nowa panorama Z",
@@ -3358,6 +3614,15 @@
         },
         "string": {
           "activeLabel": "Aktywne",
+          "ahoCorasick": {
+            "automatonLabel": "Automat",
+            "currentCharLabel": "Bieżący znak",
+            "currentStateLabel": "Bieżący stan",
+            "detailsAriaLabel": "Szczegóły Aho-Corasick",
+            "failurePathLabel": "Ścieżka failure",
+            "matchCountLabel": "Liczba trafień",
+            "matchesLabel": "Trafienia"
+          },
           "burrowsWheeler": {
             "columnsLabel": "Kolumny",
             "detailsAriaLabel": "Szczegóły Burrowsa-Wheelera",
@@ -3415,6 +3680,14 @@
           },
           "modeLabel": "Tryb",
           "noFormulaLabel": "Brak dodatkowej formuły w tym kroku.",
+          "palindromicTree": {
+            "activeNodeLabel": "Aktywny węzeł",
+            "currentCharLabel": "Bieżący znak",
+            "detailsAriaLabel": "Szczegóły drzewa palindromicznego",
+            "distinctLabel": "Różne palindromy",
+            "nodesLabel": "Węzły",
+            "processedLabel": "Przetworzone"
+          },
           "phaseLabel": "Faza",
           "presetLabel": "Preset",
           "presetNoteLabel": "Notatka presetu",
@@ -3448,6 +3721,20 @@
             "resultLabel": "Wynik",
             "runsDoneLabel": "Gotowe serie",
             "scannerLabel": "Skaner"
+          },
+          "suffixArray": {
+            "detailsAriaLabel": "Szczegóły tablicy sufiksowej",
+            "distinctRanksLabel": "Różne rangi",
+            "orderLabel": "Porządek sufiksów",
+            "ranksLabel": "Rangi",
+            "stepSizeLabel": "Krok"
+          },
+          "suffixArrayLcp": {
+            "activePairLabel": "Aktywna para",
+            "compareWithLabel": "Porównaj z",
+            "detailsAriaLabel": "Szczegóły LCP tablicy sufiksowej",
+            "lcpLabel": "Wartości LCP",
+            "overlapLabel": "Wspólny prefiks"
           },
           "summaryAriaLabel": "Podsumowanie stringów",
           "waitingEventLabel": "Oczekiwanie na następne zdarzenie stringowe.",
@@ -4378,8 +4665,13 @@
           "labels": {
             "combined": "Połączony",
             "input": "Wejście",
+            "lcp": "LCP",
+            "nodes": "Węzły",
+            "palindromes": "Palindromy",
             "pattern": "Wzorzec",
+            "patterns": "Wzorce",
             "source": "Źródło",
+            "suffixes": "Sufiksy",
             "text": "Tekst"
           },
           "rle": {

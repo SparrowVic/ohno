@@ -17,21 +17,29 @@ import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
+  AhoCorasickTraceState,
   BurrowsWheelerTraceState,
   HuffmanTraceState,
   KmpTraceState,
   ManacherTraceState,
+  PalindromicTreeTraceState,
   RabinKarpTraceState,
   RleTraceState,
   StringPresetOption,
   StringTraceState,
+  SuffixArrayConstructionTraceState,
+  SuffixArrayLcpTraceState,
   ZAlgorithmTraceState,
+  isAhoCorasickState,
   isBurrowsWheelerState,
   isHuffmanState,
   isKmpState,
   isManacherState,
+  isPalindromicTreeState,
   isRabinKarpState,
   isRleState,
+  isSuffixArrayConstructionState,
+  isSuffixArrayLcpState,
   isZAlgorithmState,
 } from '../../models/string';
 import { SortStep } from '../../models/sort-step';
@@ -119,6 +127,22 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
     const state = this.state();
     return isHuffmanState(state) ? state : null;
   });
+  readonly ahoState = computed<AhoCorasickTraceState | null>(() => {
+    const state = this.state();
+    return isAhoCorasickState(state) ? state : null;
+  });
+  readonly suffixArrayState = computed<SuffixArrayConstructionTraceState | null>(() => {
+    const state = this.state();
+    return isSuffixArrayConstructionState(state) ? state : null;
+  });
+  readonly suffixLcpState = computed<SuffixArrayLcpTraceState | null>(() => {
+    const state = this.state();
+    return isSuffixArrayLcpState(state) ? state : null;
+  });
+  readonly palindromicTreeState = computed<PalindromicTreeTraceState | null>(() => {
+    const state = this.state();
+    return isPalindromicTreeState(state) ? state : null;
+  });
 
   /** Algorithm tag — "KMP", "Rabin-Karp", "Z-Algorithm", …. Identity
    *  of the viz; stable across steps. */
@@ -172,6 +196,31 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
       if (huffman.phase === 'merge') return 'swap';
     }
 
+    const aho = this.ahoState();
+    if (aho) {
+      if (aho.phase === 'complete') return 'sorted';
+      if (aho.matches.length > 0) return 'sorted';
+      if (aho.phase === 'scan') return 'compare';
+    }
+
+    const suffixArray = this.suffixArrayState();
+    if (suffixArray) {
+      if (suffixArray.phase === 'complete') return 'sorted';
+      return 'compare';
+    }
+
+    const suffixLcp = this.suffixLcpState();
+    if (suffixLcp) {
+      if (suffixLcp.phase === 'complete') return 'sorted';
+      return 'compare';
+    }
+
+    const palindromicTree = this.palindromicTreeState();
+    if (palindromicTree) {
+      if (palindromicTree.phase === 'complete') return 'sorted';
+      return 'compare';
+    }
+
     const manacher = this.manacherState();
     if (manacher && manacher.currentCenter !== null) return 'compare';
 
@@ -215,6 +264,36 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
     return new Map(this.huffmanVisibleNodes().map((node) => [node.id, node] as const));
   });
   protected readonly huffNodeById = (id: string) => this.huffmanNodeMap().get(id);
+  protected readonly ahoTextClass = (index: number) => {
+    const state = this.ahoState();
+    if (!state) return 'str-cell';
+    if (state.currentTextIndex === index) return 'str-cell str-cell--focus';
+    if (state.matches.some((match) => index >= match.startIndex && index <= match.endIndex)) {
+      return 'str-cell str-cell--found';
+    }
+    if (state.currentTextIndex !== null && index < state.currentTextIndex) {
+      return 'str-cell str-cell--accent';
+    }
+    return 'str-cell';
+  };
+  protected readonly ahoPatternMatched = (pattern: string) =>
+    this.ahoState()?.matches.some((match) => match.pattern === pattern) ?? false;
+  protected readonly suffixSourceClass = (index: number) => {
+    const suffixState = this.suffixArrayState();
+    if (suffixState?.activeSuffixes.includes(index)) return 'str-cell str-cell--focus';
+    const lcpState = this.suffixLcpState();
+    if (lcpState?.activeSuffixes.includes(index)) return 'str-cell str-cell--focus';
+    if (lcpState && lcpState.suffixArray.includes(index)) return 'str-cell str-cell--accent';
+    if (suffixState && suffixState.suffixArray.includes(index)) return 'str-cell str-cell--accent';
+    return 'str-cell';
+  };
+  protected readonly palSourceClass = (index: number) => {
+    const state = this.palindromicTreeState();
+    if (!state) return 'str-cell';
+    if (state.processedIndex === index) return 'str-cell str-cell--focus';
+    if (state.processedIndex >= index) return 'str-cell str-cell--accent';
+    return 'str-cell str-cell--ghost';
+  };
 
   constructor() {
     effect(() => {

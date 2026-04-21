@@ -721,6 +721,65 @@ export const I18N_KEY = {
             boundsLabel: t('features.algorithms.tracePanels.string.manacher.boundsLabel'),
             longestLabel: t('features.algorithms.tracePanels.string.manacher.longestLabel'),
           },
+          ahoCorasick: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.detailsAriaLabel',
+            ),
+            automatonLabel: t('features.algorithms.tracePanels.string.ahoCorasick.automatonLabel'),
+            currentStateLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.currentStateLabel',
+            ),
+            currentCharLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.currentCharLabel',
+            ),
+            failurePathLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.failurePathLabel',
+            ),
+            matchCountLabel: t(
+              'features.algorithms.tracePanels.string.ahoCorasick.matchCountLabel',
+            ),
+            matchesLabel: t('features.algorithms.tracePanels.string.ahoCorasick.matchesLabel'),
+          },
+          suffixArray: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.suffixArray.detailsAriaLabel',
+            ),
+            orderLabel: t('features.algorithms.tracePanels.string.suffixArray.orderLabel'),
+            stepSizeLabel: t('features.algorithms.tracePanels.string.suffixArray.stepSizeLabel'),
+            distinctRanksLabel: t(
+              'features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel',
+            ),
+            ranksLabel: t('features.algorithms.tracePanels.string.suffixArray.ranksLabel'),
+          },
+          suffixArrayLcp: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.suffixArrayLcp.detailsAriaLabel',
+            ),
+            activePairLabel: t(
+              'features.algorithms.tracePanels.string.suffixArrayLcp.activePairLabel',
+            ),
+            compareWithLabel: t(
+              'features.algorithms.tracePanels.string.suffixArrayLcp.compareWithLabel',
+            ),
+            overlapLabel: t('features.algorithms.tracePanels.string.suffixArrayLcp.overlapLabel'),
+            lcpLabel: t('features.algorithms.tracePanels.string.suffixArrayLcp.lcpLabel'),
+          },
+          palindromicTree: {
+            detailsAriaLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.detailsAriaLabel',
+            ),
+            activeNodeLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.activeNodeLabel',
+            ),
+            currentCharLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.currentCharLabel',
+            ),
+            distinctLabel: t('features.algorithms.tracePanels.string.palindromicTree.distinctLabel'),
+            processedLabel: t(
+              'features.algorithms.tracePanels.string.palindromicTree.processedLabel',
+            ),
+            nodesLabel: t('features.algorithms.tracePanels.string.palindromicTree.nodesLabel'),
+          },
           burrowsWheeler: {
             detailsAriaLabel: t(
               'features.algorithms.tracePanels.string.burrowsWheeler.detailsAriaLabel',
@@ -1173,9 +1232,14 @@ export const I18N_KEY = {
           labels: {
             text: t('features.algorithms.visualizations.string.labels.text'),
             pattern: t('features.algorithms.visualizations.string.labels.pattern'),
+            patterns: t('features.algorithms.visualizations.string.labels.patterns'),
             combined: t('features.algorithms.visualizations.string.labels.combined'),
             source: t('features.algorithms.visualizations.string.labels.source'),
             input: t('features.algorithms.visualizations.string.labels.input'),
+            nodes: t('features.algorithms.visualizations.string.labels.nodes'),
+            suffixes: t('features.algorithms.visualizations.string.labels.suffixes'),
+            lcp: t('features.algorithms.visualizations.string.labels.lcp'),
+            palindromes: t('features.algorithms.visualizations.string.labels.palindromes'),
           },
           rle: {
             waitingForFirstRun: t(

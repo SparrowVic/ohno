@@ -1782,6 +1782,64 @@
           }
         },
         "string": {
+          "ahoCorasick": {
+            "computation": {
+              "labels": {
+                "failureLink": "Failure link",
+                "finalSummary": "Final summary",
+                "outputSet": "Output set",
+                "textStep": "Text step",
+                "transition": "Transition"
+              },
+              "notes": {
+                "failureLink": "Failure links point to the longest proper suffix that is also present in the trie.",
+                "finalSummary": "One pass through the text reports every stored pattern without rescanning old characters.",
+                "outputSet": "Terminal states emit every pattern that ends at this automaton state, including outputs inherited through failure links.",
+                "textStep": "Each incoming character advances the automaton or falls back until a valid edge appears.",
+                "transition": "Shared prefixes stay in one branch, so common beginnings are inserted only once."
+              }
+            },
+            "decisions": {
+              "chaseFailureLinks": "If an edge is missing, keep following failure links until a reusable suffix state appears.",
+              "emitOutputs": "Whenever the current state stores outputs, report every pattern that finishes here.",
+              "growTrie": "A missing edge means the trie needs a new state for this character.",
+              "scanFinished": "The full text is scanned and every emitted keyword occurrence is now known.",
+              "sharePrefixes": "Patterns that begin the same way should reuse the same trie prefix.",
+              "stitchFailureLinks": "Each trie state gets a fallback edge to the best proper suffix state."
+            },
+            "descriptions": {
+              "advanceScan": "Consume text[{{index}}] = '{{char}}' and continue from automaton state {{state}}.",
+              "complete": "Aho-Corasick finished with {{count}} reported matches.",
+              "followFailure": "State {{from}} has no edge for '{{char}}', so follow the failure link to {{target}}.",
+              "init": "Build one keyword automaton for patterns {{patterns}} and scan the text \"{{text}}\" in a single pass.",
+              "insertEdge": "Insert '{{char}}' from pattern \"{{pattern}}\" and create state {{state}}.",
+              "reportMatches": "State {{state}} emits {{count}} pattern(s): {{patterns}}.",
+              "reuseEdge": "Pattern \"{{pattern}}\" reuses the existing edge for '{{char}}' and stays compact.",
+              "setFailure": "Set the failure link of state {{state}} to {{target}}.",
+              "terminal": "State {{state}} becomes terminal for pattern \"{{pattern}}\"."
+            },
+            "insights": {
+              "activeStateLabel": "Active state",
+              "countValue": "{{count}}",
+              "matchesLabel": "Matches",
+              "noneValue": "—",
+              "patternsLabel": "Patterns",
+              "stateValue": "state {{state}}",
+              "trieNodesLabel": "Trie nodes"
+            },
+            "labels": {
+              "matchesValue": "{{count}} matches",
+              "noMatchesYet": "No matches yet"
+            },
+            "modeLabel": "Aho-Corasick",
+            "phases": {
+              "buildFailure": "Build failure links",
+              "buildTrie": "Build trie",
+              "complete": "Scan complete",
+              "reportMatch": "Report matches",
+              "scanText": "Scan text"
+            }
+          },
           "burrowsWheelerTransform": {
             "computation": {
               "expressions": {
@@ -2064,6 +2122,56 @@
               "shiftWindow": "Shift window"
             }
           },
+          "palindromicTree": {
+            "computation": {
+              "labels": {
+                "finalSummary": "Final summary",
+                "newNode": "New node",
+                "occurrenceCount": "Occurrence count",
+                "suffixLink": "Suffix link"
+              },
+              "notes": {
+                "finalSummary": "The Eertree stores every distinct palindrome once and links each one to its longest palindromic suffix.",
+                "newNode": "A new palindrome appears only when the current character extends some palindromic suffix into a new string.",
+                "occurrenceCount": "If the palindrome already exists, only its occurrence counter grows.",
+                "suffixLink": "Suffix links jump between palindromic suffixes until the next extendable node is found."
+              }
+            },
+            "decisions": {
+              "addNewPalindrome": "No existing outgoing edge fits this character, so a new palindrome node must be created.",
+              "chaseSuffixLinks": "Follow suffix links until the current character can mirror around the candidate palindrome.",
+              "reuseExistingNode": "If the outgoing edge already exists, reuse that palindrome node and only update its count.",
+              "treeReady": "Every character has been processed, so the palindromic tree is complete."
+            },
+            "descriptions": {
+              "complete": "Palindromic tree finished with {{count}} distinct palindromes.",
+              "followLink": "Follow {{hops}} suffix-link hop(s) to find a palindrome that can absorb '{{char}}'.",
+              "init": "Start the Eertree for \"{{text}}\" with the two standard roots: length -1 and length 0.",
+              "insertNode": "Create the new palindrome node \"{{palindrome}}\".",
+              "reuseNode": "Reuse the existing palindrome node \"{{palindrome}}\"."
+            },
+            "insights": {
+              "activeLabel": "Active node",
+              "countValue": "{{count}}",
+              "distinctLabel": "Distinct",
+              "longestSuffixLabel": "Longest suffix",
+              "nodeValue": "node {{node}}",
+              "noneValue": "—",
+              "processedLabel": "Processed"
+            },
+            "labels": {
+              "distinctValue": "{{count}} distinct palindromes",
+              "pendingTree": "Tree pending"
+            },
+            "modeLabel": "Palindromic Tree",
+            "phases": {
+              "complete": "Tree ready",
+              "followLink": "Follow suffix links",
+              "insertNode": "Insert node",
+              "reuseNode": "Reuse node",
+              "roots": "Roots ready"
+            }
+          },
           "rabinKarp": {
             "computation": {
               "labels": {
@@ -2196,6 +2304,98 @@
               "extend": "Extend",
               "scan": "Scan",
               "setup": "Setup"
+            }
+          },
+          "suffixArray": {
+            "computation": {
+              "labels": {
+                "finalArray": "Final suffix array",
+                "initialRanks": "Initial ranks",
+                "newRanks": "New ranks",
+                "rankPairs": "Rank pairs",
+                "reorderedSuffixes": "Reordered suffixes"
+              },
+              "notes": {
+                "finalArray": "Once every suffix has a unique rank class, the current order is the final suffix array.",
+                "initialRanks": "The first round starts from single-character ranks.",
+                "newRanks": "Equal pairs stay in the same class; different pairs open a new rank.",
+                "rankPairs": "The doubling algorithm sorts suffixes by two adjacent rank blocks of size k.",
+                "reorderedSuffixes": "Sorting the rank pairs gives the current suffix order."
+              }
+            },
+            "decisions": {
+              "compareRankPairs": "Compare suffixes by the pair (rank[i], rank[i + k]) instead of rescanning full tails.",
+              "compressClasses": "Sorted equal pairs collapse into one equivalence class; distinct pairs get a new rank.",
+              "orderReady": "Every suffix now has a unique rank, so the ordering is final."
+            },
+            "descriptions": {
+              "assignRanks": "Round {{round}} assigns {{classes}} distinct rank classes after sorting the current pairs.",
+              "complete": "Suffix array finished. Final order: {{order}}.",
+              "seed": "Seed every suffix with its first-character rank for \"{{text}}\".",
+              "sortPairs": "Round {{round}} sorts suffixes by pairs of blocks of size {{stepSize}}."
+            },
+            "insights": {
+              "countValue": "{{count}}",
+              "distinctRanksLabel": "Distinct ranks",
+              "noneValue": "—",
+              "orderLabel": "Order",
+              "strideLabel": "Stride",
+              "strideValue": "k = {{size}}",
+              "suffixesLabel": "Suffixes"
+            },
+            "labels": {
+              "pendingArray": "Suffix array pending",
+              "readyValue": "{{order}}"
+            },
+            "modeLabel": "Suffix Array Construction",
+            "phases": {
+              "assignRanks": "Assign ranks",
+              "complete": "Order ready",
+              "seedRanks": "Seed ranks",
+              "sortPairs": "Sort rank pairs"
+            }
+          },
+          "suffixArrayLcp": {
+            "computation": {
+              "labels": {
+                "finalLcp": "Final LCP array",
+                "kasaiStep": "Kasai step",
+                "suffixArray": "Suffix array"
+              },
+              "notes": {
+                "finalLcp": "Each LCP value stores the shared prefix length of adjacent suffixes in suffix-array order.",
+                "kasaiStep": "Kasai reuses one character of overlap after every step, so the whole scan stays linear.",
+                "suffixArray": "Kasai starts from an already prepared suffix array and its inverse rank array."
+              }
+            },
+            "decisions": {
+              "compareNeighbors": "Compare each suffix only with its next neighbor in suffix-array order.",
+              "lcpReady": "Every adjacent suffix pair now has its longest common prefix length.",
+              "reuseOverlap": "When one comparison finishes, the next suffix can reuse one character of the overlap."
+            },
+            "descriptions": {
+              "compare": "Compare suffix {{left}} with suffix {{right}} and store overlap {{overlap}}.",
+              "complete": "LCP array finished: {{values}}.",
+              "seed": "Start Kasai from suffix array {{suffixArray}} for \"{{text}}\"."
+            },
+            "insights": {
+              "activePairLabel": "Active pair",
+              "countValue": "{{count}}",
+              "noneValue": "—",
+              "overlapLabel": "Overlap",
+              "pairValue": "{{left}} ↔ {{right}}",
+              "readyLcpLabel": "Ready LCP",
+              "suffixesLabel": "Suffixes"
+            },
+            "labels": {
+              "pendingLcp": "LCP pending",
+              "readyValue": "{{values}}"
+            },
+            "modeLabel": "Suffix Array + LCP",
+            "phases": {
+              "complete": "LCP ready",
+              "kasaiScan": "Kasai scan",
+              "seedOrder": "Load suffix order"
             }
           },
           "zAlgorithm": {
@@ -2611,6 +2811,20 @@
           }
         },
         "string": {
+          "ahoCorasick": {
+            "alerts": {
+              "description": "Short alert words show how one automaton can flag several keywords in a single pass.",
+              "label": "Alerts"
+            },
+            "classic": {
+              "description": "The classic \"ushers\" example makes shared prefixes and emitted outputs easy to verify.",
+              "label": "Classic"
+            },
+            "genome": {
+              "description": "Overlapping DNA fragments create many reusable trie branches and suffix fallbacks.",
+              "label": "Genome"
+            }
+          },
           "bwt": {
             "banana": {
               "description": "The canonical BWT demo: short, memorable, and perfect for grouped output runs.",
@@ -2667,6 +2881,20 @@
               "label": "Symmetry"
             }
           },
+          "palindromicTree": {
+            "banana": {
+              "description": "Repeated centers create a compact tree of distinct palindromic substrings.",
+              "label": "Banana"
+            },
+            "mixed": {
+              "description": "Several short and medium palindromes appear online while the suffix links stay busy.",
+              "label": "Mixed"
+            },
+            "symmetry": {
+              "description": "Strong mirrored structure makes new palindromes and reused suffix nodes easy to spot.",
+              "label": "Symmetry"
+            }
+          },
           "rabinKarp": {
             "alarm": {
               "description": "Small modulus makes rolling hashes collide often enough to teach verification.",
@@ -2693,6 +2921,34 @@
             "worst": {
               "description": "String where RLE has no compression benefit",
               "label": "No gain"
+            }
+          },
+          "suffixArray": {
+            "abracadabra": {
+              "description": "Repeated prefixes force multiple rank rounds before every suffix becomes unique.",
+              "label": "Abracadabra"
+            },
+            "banana": {
+              "description": "Canonical suffix-array example with a short, memorable final order.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Dense repetition stresses the doubling rounds and equivalence classes.",
+              "label": "Mississippi"
+            }
+          },
+          "suffixArrayLcp": {
+            "abracadabra": {
+              "description": "Repeated fragments produce a jagged LCP skyline after the suffix order is ready.",
+              "label": "Abracadabra"
+            },
+            "banana": {
+              "description": "The classic banana suffix order leads to the well-known LCP profile 1,3,0,0,2.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Many adjacent suffixes share long prefixes, so Kasai's overlap reuse becomes visible.",
+              "label": "Mississippi"
             }
           },
           "zAlgorithm": {
@@ -2779,7 +3035,6 @@
           "newRegexPair": "New regex pair",
           "newRollingHashCase": "New rolling-hash case",
           "newRootedTree": "New rooted tree",
-          "newTreeShape": "New tree shape",
           "newRunSequence": "New run sequence",
           "newScanField": "New scan field",
           "newScenario": "New scenario",
@@ -2794,6 +3049,7 @@
           "newTargetSum": "New target sum",
           "newTerminalGraph": "New terminal graph",
           "newTrailGraph": "New trail graph",
+          "newTreeShape": "New tree shape",
           "newWildcardPair": "New wildcard pair",
           "newWordPair": "New word pair",
           "newZSkyline": "New Z skyline",
@@ -3358,6 +3614,15 @@
         },
         "string": {
           "activeLabel": "Active",
+          "ahoCorasick": {
+            "automatonLabel": "Automaton",
+            "currentCharLabel": "Current char",
+            "currentStateLabel": "Current state",
+            "detailsAriaLabel": "Aho-Corasick details",
+            "failurePathLabel": "Failure path",
+            "matchCountLabel": "Match count",
+            "matchesLabel": "Matches"
+          },
           "burrowsWheeler": {
             "columnsLabel": "Columns",
             "detailsAriaLabel": "Burrows-Wheeler details",
@@ -3415,6 +3680,14 @@
           },
           "modeLabel": "Mode",
           "noFormulaLabel": "No extra formula on this step.",
+          "palindromicTree": {
+            "activeNodeLabel": "Active node",
+            "currentCharLabel": "Current char",
+            "detailsAriaLabel": "Palindromic tree details",
+            "distinctLabel": "Distinct palindromes",
+            "nodesLabel": "Nodes",
+            "processedLabel": "Processed"
+          },
           "phaseLabel": "Phase",
           "presetLabel": "Preset",
           "presetNoteLabel": "Preset note",
@@ -3448,6 +3721,20 @@
             "resultLabel": "Result",
             "runsDoneLabel": "Runs done",
             "scannerLabel": "Scanner"
+          },
+          "suffixArray": {
+            "detailsAriaLabel": "Suffix array details",
+            "distinctRanksLabel": "Distinct ranks",
+            "orderLabel": "Suffix order",
+            "ranksLabel": "Ranks",
+            "stepSizeLabel": "Step size"
+          },
+          "suffixArrayLcp": {
+            "activePairLabel": "Active pair",
+            "compareWithLabel": "Compare with",
+            "detailsAriaLabel": "Suffix array LCP details",
+            "lcpLabel": "LCP values",
+            "overlapLabel": "Overlap"
           },
           "summaryAriaLabel": "String summary",
           "waitingEventLabel": "Waiting for next string event.",
@@ -4378,8 +4665,13 @@
           "labels": {
             "combined": "Combined",
             "input": "Input",
+            "lcp": "LCP",
+            "nodes": "Nodes",
+            "palindromes": "Palindromes",
             "pattern": "Pattern",
+            "patterns": "Patterns",
             "source": "Source",
+            "suffixes": "Suffixes",
             "text": "Text"
           },
           "rle": {

@@ -156,6 +156,140 @@
           }
         }
 
+        @case ('aho-corasick') {
+          @if (ahoState(); as aho) {
+            <div class="string-stage string-stage--aho">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of aho.text; track $index; let index = $index) {
+                    <div class="{{ ahoTextClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.patterns | transloco
+                }}</span>
+                <div class="chip-track">
+                  @for (pattern of aho.patterns; track pattern) {
+                    <span class="value-chip" [class.value-chip--soft]="!ahoPatternMatched(pattern)">
+                      {{ pattern }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.nodes | transloco
+                }}</span>
+                <div class="node-grid">
+                  @for (node of aho.nodes; track node.id) {
+                    <div class="node-card node-card--{{ node.tone }}">
+                      <div class="node-card__title">
+                        <span>q{{ node.index }}</span>
+                        <small>{{ node.char }}</small>
+                      </div>
+                      <div class="node-card__meta">f → {{ node.failId ?? '—' }}</div>
+                      <div class="node-card__meta">
+                        {{ node.outputs.length > 0 ? node.outputs.join(', ') : '—' }}
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+
+        @case ('suffix-array-construction') {
+          @if (suffixArrayState(); as suffixArray) {
+            <div class="string-stage string-stage--suffix">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of suffixArray.source; track $index; let index = $index) {
+                    <div class="{{ suffixSourceClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="bwt-summary">
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.suffixArray.stepSizeLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ suffixArray.stepSize }}</span>
+                </div>
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ suffixArray.distinctRanks }}</span>
+                </div>
+              </div>
+
+              <div class="suffix-list">
+                @for (row of suffixArray.rows; track row.id) {
+                  <div class="suffix-row suffix-row--{{ row.tone }}">
+                    <span class="suffix-row__order">{{ row.order }}</span>
+                    <span class="suffix-row__index">{{ row.startIndex }}</span>
+                    <span class="suffix-row__text">{{ row.suffix }}</span>
+                    <span class="suffix-row__pair">{{ row.pairLabel }}</span>
+                    <span class="suffix-row__rank">r{{ row.rank }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        @case ('suffix-array-lcp-kasai') {
+          @if (suffixLcpState(); as suffixLcp) {
+            <div class="string-stage string-stage--suffix">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of suffixLcp.source; track $index; let index = $index) {
+                    <div class="{{ suffixSourceClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="suffix-list">
+                @for (row of suffixLcp.rows; track row.id) {
+                  <div class="suffix-row suffix-row--{{ row.tone }}">
+                    <span class="suffix-row__order">{{ row.order }}</span>
+                    <span class="suffix-row__index">{{ row.startIndex }}</span>
+                    <span class="suffix-row__text">{{ row.suffix }}</span>
+                    <span class="suffix-row__pair">LCP {{ row.lcp ?? '—' }}</span>
+                    <span class="suffix-row__rank">r{{ suffixLcp.rankArray[row.startIndex] }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+
         @case ('manacher') {
           @if (manacherState(); as manacher) {
             <div class="string-stage string-stage--manacher">
@@ -250,6 +384,57 @@
                   </div>
                 </div>
               </div>
+            </div>
+          }
+        }
+
+        @case ('palindromic-tree') {
+          @if (palindromicTreeState(); as palTree) {
+            <div class="string-stage string-stage--pal-tree">
+              <div class="string-row">
+                <span class="string-row__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+                }}</span>
+                <div class="cell-track">
+                  @for (char of palTree.source; track $index; let index = $index) {
+                    <div class="{{ palSourceClass(index) }}">
+                      <span>{{ char }}</span>
+                      <small>{{ index }}</small>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="bwt-summary">
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.distinctLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ palTree.distinctCount }}</span>
+                </div>
+                <div class="bwt-summary__card">
+                  <span class="bwt-summary__label">{{
+                    I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.processedLabel
+                      | transloco
+                  }}</span>
+                  <span class="bwt-summary__value">{{ palTree.processedIndex + 1 }}</span>
+                </div>
+              </div>
+
+              <div class="node-grid">
+                @for (node of palTree.nodes; track node.id) {
+                    <div class="node-card node-card--{{ node.tone }}">
+                      <div class="node-card__title">
+                        <span>{{ node.palindrome }}</span>
+                        <small>#{{ node.id }}</small>
+                      </div>
+                      <div class="node-card__meta">|s| = {{ node.length }}</div>
+                      <div class="node-card__meta">↘ {{ node.suffixLinkId ?? '—' }}</div>
+                      <div class="node-card__meta">×{{ node.occurrences }}</div>
+                    </div>
+                  }
+                </div>
             </div>
           }
         }

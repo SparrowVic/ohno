@@ -33,6 +33,27 @@ export interface ManacherScenario extends BaseStringScenario {
   readonly source: string;
 }
 
+export interface AhoCorasickScenario extends BaseStringScenario {
+  readonly kind: 'aho-corasick';
+  readonly text: string;
+  readonly patterns: readonly string[];
+}
+
+export interface SuffixArrayScenario extends BaseStringScenario {
+  readonly kind: 'suffix-array-construction';
+  readonly source: string;
+}
+
+export interface SuffixArrayLcpScenario extends BaseStringScenario {
+  readonly kind: 'suffix-array-lcp-kasai';
+  readonly source: string;
+}
+
+export interface PalindromicTreeScenario extends BaseStringScenario {
+  readonly kind: 'palindromic-tree';
+  readonly source: string;
+}
+
 export interface BurrowsWheelerScenario extends BaseStringScenario {
   readonly kind: 'burrows-wheeler-transform';
   readonly source: string;
@@ -89,6 +110,26 @@ const STRING_PRESET_KEY = {
     symmetry: presetKeys('features.algorithms.scenarios.string.manacher.symmetry'),
     mixed: presetKeys('features.algorithms.scenarios.string.manacher.mixed'),
   },
+  ahoCorasick: {
+    classic: presetKeys('features.algorithms.scenarios.string.ahoCorasick.classic'),
+    genome: presetKeys('features.algorithms.scenarios.string.ahoCorasick.genome'),
+    alerts: presetKeys('features.algorithms.scenarios.string.ahoCorasick.alerts'),
+  },
+  suffixArray: {
+    banana: presetKeys('features.algorithms.scenarios.string.suffixArray.banana'),
+    mississippi: presetKeys('features.algorithms.scenarios.string.suffixArray.mississippi'),
+    abracadabra: presetKeys('features.algorithms.scenarios.string.suffixArray.abracadabra'),
+  },
+  suffixArrayLcp: {
+    banana: presetKeys('features.algorithms.scenarios.string.suffixArrayLcp.banana'),
+    mississippi: presetKeys('features.algorithms.scenarios.string.suffixArrayLcp.mississippi'),
+    abracadabra: presetKeys('features.algorithms.scenarios.string.suffixArrayLcp.abracadabra'),
+  },
+  palindromicTree: {
+    banana: presetKeys('features.algorithms.scenarios.string.palindromicTree.banana'),
+    symmetry: presetKeys('features.algorithms.scenarios.string.palindromicTree.symmetry'),
+    mixed: presetKeys('features.algorithms.scenarios.string.palindromicTree.mixed'),
+  },
   rle: {
     runs: presetKeys('features.algorithms.scenarios.string.rle.runs'),
     mixed: presetKeys('features.algorithms.scenarios.string.rle.mixed'),
@@ -128,6 +169,30 @@ export const MANACHER_PRESETS: readonly StringPresetOption[] = [
   createPresetOption('banana', STRING_PRESET_KEY.manacher.banana),
   createPresetOption('symmetry', STRING_PRESET_KEY.manacher.symmetry),
   createPresetOption('mixed', STRING_PRESET_KEY.manacher.mixed),
+];
+
+export const AHO_CORASICK_PRESETS: readonly StringPresetOption[] = [
+  createPresetOption('classic', STRING_PRESET_KEY.ahoCorasick.classic),
+  createPresetOption('genome', STRING_PRESET_KEY.ahoCorasick.genome),
+  createPresetOption('alerts', STRING_PRESET_KEY.ahoCorasick.alerts),
+];
+
+export const SUFFIX_ARRAY_PRESETS: readonly StringPresetOption[] = [
+  createPresetOption('banana', STRING_PRESET_KEY.suffixArray.banana),
+  createPresetOption('mississippi', STRING_PRESET_KEY.suffixArray.mississippi),
+  createPresetOption('abracadabra', STRING_PRESET_KEY.suffixArray.abracadabra),
+];
+
+export const SUFFIX_ARRAY_LCP_PRESETS: readonly StringPresetOption[] = [
+  createPresetOption('banana', STRING_PRESET_KEY.suffixArrayLcp.banana),
+  createPresetOption('mississippi', STRING_PRESET_KEY.suffixArrayLcp.mississippi),
+  createPresetOption('abracadabra', STRING_PRESET_KEY.suffixArrayLcp.abracadabra),
+];
+
+export const PALINDROMIC_TREE_PRESETS: readonly StringPresetOption[] = [
+  createPresetOption('banana', STRING_PRESET_KEY.palindromicTree.banana),
+  createPresetOption('symmetry', STRING_PRESET_KEY.palindromicTree.symmetry),
+  createPresetOption('mixed', STRING_PRESET_KEY.palindromicTree.mixed),
 ];
 
 export const RLE_PRESETS: readonly StringPresetOption[] = [
@@ -352,6 +417,170 @@ export function createManacherScenario(size: number, presetId: string): Manacher
         : tier === 'medium'
           ? 'BANANALEVEL'
           : 'BANANALEVELCIVIC',
+  };
+}
+
+export function createAhoCorasickScenario(
+  size: number,
+  presetId: string,
+): AhoCorasickScenario {
+  const preset = resolvePreset(AHO_CORASICK_PRESETS, presetId);
+  const tier = size <= 12 ? 'short' : size <= 18 ? 'medium' : 'long';
+
+  if (preset.id === 'genome') {
+    return {
+      kind: 'aho-corasick',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      text:
+        tier === 'short'
+          ? 'ACGATCGA'
+          : tier === 'medium'
+            ? 'ACGATCGACGTA'
+            : 'ACGATCGACGTACGATC',
+      patterns: ['AC', 'CGA', 'GAT', 'TCG'],
+    };
+  }
+
+  if (preset.id === 'alerts') {
+    return {
+      kind: 'aho-corasick',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      text:
+        tier === 'short'
+          ? 'warnalert'
+          : tier === 'medium'
+            ? 'warnalerterror'
+            : 'warnalerterrorpanic',
+      patterns: ['warn', 'alert', 'error', 'panic'],
+    };
+  }
+
+  return {
+    kind: 'aho-corasick',
+    presetId: preset.id,
+    presetLabel: preset.label,
+    presetDescription: preset.description,
+    text:
+      tier === 'short'
+        ? 'ushers'
+        : tier === 'medium'
+          ? 'ushershis'
+          : 'ushershishers',
+    patterns: ['he', 'she', 'his', 'hers'],
+  };
+}
+
+export function createSuffixArrayScenario(
+  size: number,
+  presetId: string,
+): SuffixArrayScenario {
+  const preset = resolvePreset(SUFFIX_ARRAY_PRESETS, presetId);
+  const tier = size <= 8 ? 'short' : size <= 12 ? 'medium' : 'long';
+
+  if (preset.id === 'mississippi') {
+    return {
+      kind: 'suffix-array-construction',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source: tier === 'short' ? 'mississ' : tier === 'medium' ? 'mississippi' : 'mississippian',
+    };
+  }
+
+  if (preset.id === 'abracadabra') {
+    return {
+      kind: 'suffix-array-construction',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source:
+        tier === 'short' ? 'abracad' : tier === 'medium' ? 'abracadabra' : 'abracadabracad',
+    };
+  }
+
+  return {
+    kind: 'suffix-array-construction',
+    presetId: preset.id,
+    presetLabel: preset.label,
+    presetDescription: preset.description,
+    source: tier === 'short' ? 'banana' : tier === 'medium' ? 'bananaband' : 'bananabandana',
+  };
+}
+
+export function createSuffixArrayLcpScenario(
+  size: number,
+  presetId: string,
+): SuffixArrayLcpScenario {
+  const preset = resolvePreset(SUFFIX_ARRAY_LCP_PRESETS, presetId);
+  const tier = size <= 8 ? 'short' : size <= 12 ? 'medium' : 'long';
+
+  if (preset.id === 'mississippi') {
+    return {
+      kind: 'suffix-array-lcp-kasai',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source: tier === 'short' ? 'mississ' : tier === 'medium' ? 'mississippi' : 'mississippian',
+    };
+  }
+
+  if (preset.id === 'abracadabra') {
+    return {
+      kind: 'suffix-array-lcp-kasai',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source:
+        tier === 'short' ? 'abracad' : tier === 'medium' ? 'abracadabra' : 'abracadabracad',
+    };
+  }
+
+  return {
+    kind: 'suffix-array-lcp-kasai',
+    presetId: preset.id,
+    presetLabel: preset.label,
+    presetDescription: preset.description,
+    source: tier === 'short' ? 'banana' : tier === 'medium' ? 'bananaband' : 'bananabandana',
+  };
+}
+
+export function createPalindromicTreeScenario(
+  size: number,
+  presetId: string,
+): PalindromicTreeScenario {
+  const preset = resolvePreset(PALINDROMIC_TREE_PRESETS, presetId);
+  const tier = size <= 8 ? 'short' : size <= 12 ? 'medium' : 'long';
+
+  if (preset.id === 'symmetry') {
+    return {
+      kind: 'palindromic-tree',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source: tier === 'short' ? 'abacaba' : tier === 'medium' ? 'abacabaxaba' : 'abacabaxabacaba',
+    };
+  }
+
+  if (preset.id === 'mixed') {
+    return {
+      kind: 'palindromic-tree',
+      presetId: preset.id,
+      presetLabel: preset.label,
+      presetDescription: preset.description,
+      source: tier === 'short' ? 'levelup' : tier === 'medium' ? 'levelupnoon' : 'levelupnooncivic',
+    };
+  }
+
+  return {
+    kind: 'palindromic-tree',
+    presetId: preset.id,
+    presetLabel: preset.label,
+    presetDescription: preset.description,
+    source: tier === 'short' ? 'banana' : tier === 'medium' ? 'bananalevel' : 'bananalevelcivic',
   };
 }
 
