@@ -506,6 +506,253 @@ const DELAUNAY_TRIANGULATION_CPP = buildStructuredCode(
   'cpp',
 );
 
+const DELAUNAY_TRIANGULATION_JS = buildStructuredCode(
+  `
+  //@step 1
+  function buildDelaunayTriangulation(points) {
+    const delaunay = Delaunay.from(points, (point) => point.x, (point) => point.y);
+
+    //@step 3
+    const triangles = chunkTriangles(delaunay.triangles).map(([a, b, c]) =>
+      createTriangle(points, a, b, c),
+    );
+
+    //@step 4
+    const mesh = triangles.filter((triangle) => isLocallyDelaunay(triangle, points));
+
+    //@step 5
+    return mesh;
+  }
+  `,
+  'javascript',
+);
+
+const DELAUNAY_TRIANGULATION_GO = buildStructuredCode(
+  `
+  package geometry
+
+  import "math"
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  type Circle struct {
+      Cx float64
+      Cy float64
+      R  float64
+  }
+
+  type Triangle struct {
+      Vertices [3]int
+      Circle   Circle
+  }
+
+  type DelaunayBackend interface {
+      Triangles(points []Point) [][3]int
+  }
+
+  //@step 1
+  func BuildDelaunayTriangulation(points []Point, backend DelaunayBackend) []Triangle {
+      rawTriangles := backend.Triangles(points)
+
+      //@step 3
+      triangles := make([]Triangle, 0, len(rawTriangles))
+      for _, triple := range rawTriangles {
+          triangles = append(triangles, createTriangle(points, triple[0], triple[1], triple[2]))
+      }
+
+      //@step 4
+      mesh := make([]Triangle, 0, len(triangles))
+      for _, triangle := range triangles {
+          if isLocallyDelaunay(triangle, points) {
+              mesh = append(mesh, triangle)
+          }
+      }
+
+      //@step 5
+      return mesh
+  }
+
+  func circumcircle(a Point, b Point, c Point) Circle {
+      determinant := 2 * (a.X*(b.Y-c.Y) + b.X*(c.Y-a.Y) + c.X*(a.Y-b.Y))
+      if math.Abs(determinant) < 1e-6 {
+          cx := (a.X + b.X + c.X) / 3
+          cy := (a.Y + b.Y + c.Y) / 3
+          return Circle{Cx: cx, Cy: cy, R: math.Max(math.Hypot(cx-a.X, cy-a.Y), math.Max(math.Hypot(cx-b.X, cy-b.Y), math.Hypot(cx-c.X, cy-c.Y)))}
+      }
+      ux := ((a.X*a.X+a.Y*a.Y)*(b.Y-c.Y) + (b.X*b.X+b.Y*b.Y)*(c.Y-a.Y) + (c.X*c.X+c.Y*c.Y)*(a.Y-b.Y)) / determinant
+      uy := ((a.X*a.X+a.Y*a.Y)*(c.X-b.X) + (b.X*b.X+b.Y*b.Y)*(a.X-c.X) + (c.X*c.X+c.Y*c.Y)*(b.X-a.X)) / determinant
+      return Circle{Cx: ux, Cy: uy, R: math.Hypot(ux-a.X, uy-a.Y)}
+  }
+  `,
+  'go',
+);
+
+const DELAUNAY_TRIANGULATION_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  #[derive(Clone, Copy)]
+  struct Circle {
+      cx: f64,
+      cy: f64,
+      r: f64,
+  }
+
+  #[derive(Clone, Copy)]
+  struct Triangle {
+      vertices: [usize; 3],
+      circle: Circle,
+  }
+
+  trait DelaunayBackend {
+      fn triangles(&self, points: &[Point]) -> Vec<[usize; 3]>;
+  }
+
+  //@step 1
+  fn build_delaunay_triangulation(points: &[Point], backend: &dyn DelaunayBackend) -> Vec<Triangle> {
+      let raw_triangles = backend.triangles(points);
+
+      //@step 3
+      let triangles: Vec<Triangle> = raw_triangles
+          .into_iter()
+          .map(|[a, b, c]| create_triangle(points, a, b, c))
+          .collect();
+
+      //@step 4
+      let mesh: Vec<Triangle> = triangles
+          .into_iter()
+          .filter(|triangle| is_locally_delaunay(*triangle, points))
+          .collect();
+
+      //@step 5
+      mesh
+  }
+  `,
+  'rust',
+);
+
+const DELAUNAY_TRIANGULATION_SWIFT = buildStructuredCode(
+  `
+  struct Point {
+      let x: Double
+      let y: Double
+  }
+
+  struct Circle {
+      let cx: Double
+      let cy: Double
+      let r: Double
+  }
+
+  struct Triangle {
+      let vertices: [Int]
+      let circle: Circle
+  }
+
+  protocol DelaunayBackend {
+      func triangles(_ points: [Point]) -> [(Int, Int, Int)]
+  }
+
+  //@step 1
+  func buildDelaunayTriangulation(_ points: [Point], backend: DelaunayBackend) -> [Triangle] {
+      let rawTriangles = backend.triangles(points)
+
+      //@step 3
+      let triangles = rawTriangles.map { a, b, c in
+          createTriangle(points, a, b, c)
+      }
+
+      //@step 4
+      let mesh = triangles.filter { triangle in
+          isLocallyDelaunay(triangle, points)
+      }
+
+      //@step 5
+      return mesh
+  }
+  `,
+  'swift',
+);
+
+const DELAUNAY_TRIANGULATION_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(public float $x, public float $y) {}
+  }
+
+  final class Circle
+  {
+      public function __construct(public float $cx, public float $cy, public float $r) {}
+  }
+
+  final class Triangle
+  {
+      public function __construct(public array $vertices, public Circle $circle) {}
+  }
+
+  //@step 1
+  function buildDelaunayTriangulation(array $points, object $backend): array
+  {
+      $rawTriangles = $backend->triangles($points);
+
+      //@step 3
+      $triangles = array_map(
+          fn (array $triple): Triangle => createTriangle($points, $triple[0], $triple[1], $triple[2]),
+          $rawTriangles,
+      );
+
+      //@step 4
+      $mesh = array_values(array_filter(
+          $triangles,
+          fn (Triangle $triangle): bool => isLocallyDelaunay($triangle, $points),
+      ));
+
+      //@step 5
+      return $mesh;
+  }
+  `,
+  'php',
+);
+
+const DELAUNAY_TRIANGULATION_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+  data class Circle(val cx: Double, val cy: Double, val r: Double)
+  data class Triangle(val vertices: Triple<Int, Int, Int>, val circle: Circle)
+
+  interface DelaunayBackend {
+      fun triangles(points: List<Point>): List<Triple<Int, Int, Int>>
+  }
+
+  //@step 1
+  fun buildDelaunayTriangulation(points: List<Point>, backend: DelaunayBackend): List<Triangle> {
+      val rawTriangles = backend.triangles(points)
+
+      //@step 3
+      val triangles = rawTriangles.map { (a, b, c) ->
+          createTriangle(points, a, b, c)
+      }
+
+      //@step 4
+      val mesh = triangles.filter { triangle ->
+          isLocallyDelaunay(triangle, points)
+      }
+
+      //@step 5
+      return mesh
+  }
+  `,
+  'kotlin',
+);
+
 export const DELAUNAY_TRIANGULATION_CODE = DELAUNAY_TRIANGULATION_TS.lines;
 export const DELAUNAY_TRIANGULATION_CODE_REGIONS = DELAUNAY_TRIANGULATION_TS.regions;
 export const DELAUNAY_TRIANGULATION_CODE_HIGHLIGHT_MAP = DELAUNAY_TRIANGULATION_TS.highlightMap;
@@ -516,6 +763,13 @@ export const DELAUNAY_TRIANGULATION_CODE_VARIANTS: CodeVariantMap = {
     regions: DELAUNAY_TRIANGULATION_TS.regions,
     highlightMap: DELAUNAY_TRIANGULATION_TS.highlightMap,
     source: DELAUNAY_TRIANGULATION_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: DELAUNAY_TRIANGULATION_JS.lines,
+    regions: DELAUNAY_TRIANGULATION_JS.regions,
+    highlightMap: DELAUNAY_TRIANGULATION_JS.highlightMap,
+    source: DELAUNAY_TRIANGULATION_JS.source,
   },
   python: {
     language: 'python',
@@ -544,5 +798,40 @@ export const DELAUNAY_TRIANGULATION_CODE_VARIANTS: CodeVariantMap = {
     regions: DELAUNAY_TRIANGULATION_CPP.regions,
     highlightMap: DELAUNAY_TRIANGULATION_CPP.highlightMap,
     source: DELAUNAY_TRIANGULATION_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: DELAUNAY_TRIANGULATION_GO.lines,
+    regions: DELAUNAY_TRIANGULATION_GO.regions,
+    highlightMap: DELAUNAY_TRIANGULATION_GO.highlightMap,
+    source: DELAUNAY_TRIANGULATION_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: DELAUNAY_TRIANGULATION_RUST.lines,
+    regions: DELAUNAY_TRIANGULATION_RUST.regions,
+    highlightMap: DELAUNAY_TRIANGULATION_RUST.highlightMap,
+    source: DELAUNAY_TRIANGULATION_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: DELAUNAY_TRIANGULATION_SWIFT.lines,
+    regions: DELAUNAY_TRIANGULATION_SWIFT.regions,
+    highlightMap: DELAUNAY_TRIANGULATION_SWIFT.highlightMap,
+    source: DELAUNAY_TRIANGULATION_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: DELAUNAY_TRIANGULATION_PHP.lines,
+    regions: DELAUNAY_TRIANGULATION_PHP.regions,
+    highlightMap: DELAUNAY_TRIANGULATION_PHP.highlightMap,
+    source: DELAUNAY_TRIANGULATION_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: DELAUNAY_TRIANGULATION_KOTLIN.lines,
+    regions: DELAUNAY_TRIANGULATION_KOTLIN.regions,
+    highlightMap: DELAUNAY_TRIANGULATION_KOTLIN.highlightMap,
+    source: DELAUNAY_TRIANGULATION_KOTLIN.source,
   },
 };

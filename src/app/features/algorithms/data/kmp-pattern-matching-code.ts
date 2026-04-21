@@ -386,6 +386,470 @@ const KMP_CPP = buildStructuredCode(
   'cpp',
 );
 
+const KMP_JS = buildStructuredCode(
+  `
+  /**
+   * Find every occurrence of pattern in text with Knuth-Morris-Pratt.
+   * Input: text and pattern strings.
+   * Returns: all start indices where pattern occurs in text.
+   */
+  //#region kmp-search function open
+  //@step 1
+  function kmpSearch(text, pattern) {
+      if (pattern.length === 0) {
+          return [];
+      }
+
+      const matches = [];
+      const failure = buildFailureTable(pattern);
+
+      //@step 3
+      let textIndex = 0;
+      let patternIndex = 0;
+
+      while (textIndex < text.length) {
+          //@step 5
+          if (text[textIndex] === pattern[patternIndex]) {
+              //@step 6
+              textIndex += 1;
+              patternIndex += 1;
+
+              if (patternIndex === pattern.length) {
+                  //@step 8
+                  matches.push(textIndex - patternIndex);
+                  patternIndex = failure[patternIndex - 1] ?? 0;
+              }
+
+              continue;
+          }
+
+          if (patternIndex > 0) {
+              //@step 10
+              patternIndex = failure[patternIndex - 1] ?? 0;
+              continue;
+          }
+
+          //@step 11
+          textIndex += 1;
+      }
+
+      return matches;
+  }
+  //#endregion kmp-search
+
+  //#region failure-table helper collapsed
+  //@step 2
+  function buildFailureTable(pattern) {
+      const failure = Array.from({ length: pattern.length }, () => 0);
+      let prefix = 0;
+
+      for (let index = 1; index < pattern.length; index += 1) {
+          while (prefix > 0 && pattern[index] !== pattern[prefix]) {
+              prefix = failure[prefix - 1] ?? 0;
+          }
+
+          if (pattern[index] === pattern[prefix]) {
+              prefix += 1;
+          }
+
+          failure[index] = prefix;
+      }
+
+      return failure;
+  }
+  //#endregion failure-table
+  `,
+  'javascript',
+);
+
+const KMP_GO = buildStructuredCode(
+  `
+  package strings
+
+  /**
+   * Finds every occurrence of pattern in text with Knuth-Morris-Pratt.
+   * Input: text and pattern strings.
+   * Returns: all start indices where pattern occurs in text.
+   */
+  //#region kmp-search function open
+  //@step 1
+  func KmpSearch(text string, pattern string) []int {
+      if len(pattern) == 0 {
+          return []int{}
+      }
+
+      matches := make([]int, 0)
+      failure := buildFailureTable(pattern)
+
+      //@step 3
+      textIndex := 0
+      patternIndex := 0
+
+      for textIndex < len(text) {
+          //@step 5
+          if text[textIndex] == pattern[patternIndex] {
+              //@step 6
+              textIndex += 1
+              patternIndex += 1
+
+              if patternIndex == len(pattern) {
+                  //@step 8
+                  matches = append(matches, textIndex - patternIndex)
+                  patternIndex = failure[patternIndex - 1]
+              }
+
+              continue
+          }
+
+          if patternIndex > 0 {
+              //@step 10
+              patternIndex = failure[patternIndex - 1]
+              continue
+          }
+
+          //@step 11
+          textIndex += 1
+      }
+
+      return matches
+  }
+  //#endregion kmp-search
+
+  //#region failure-table helper collapsed
+  //@step 2
+  func buildFailureTable(pattern string) []int {
+      failure := make([]int, len(pattern))
+      prefix := 0
+
+      for index := 1; index < len(pattern); index += 1 {
+          for prefix > 0 && pattern[index] != pattern[prefix] {
+              prefix = failure[prefix - 1]
+          }
+
+          if pattern[index] == pattern[prefix] {
+              prefix += 1
+          }
+
+          failure[index] = prefix
+      }
+
+      return failure
+  }
+  //#endregion failure-table
+  `,
+  'go',
+);
+
+const KMP_RUST = buildStructuredCode(
+  `
+  /**
+   * Finds every occurrence of pattern in text with Knuth-Morris-Pratt.
+   * Input: text and pattern strings.
+   * Returns: all start indices where pattern occurs in text.
+   */
+  //#region kmp-search function open
+  //@step 1
+  fn kmp_search(text: &str, pattern: &str) -> Vec<usize> {
+      if pattern.is_empty() {
+          return Vec::new();
+      }
+
+      let text_chars: Vec<char> = text.chars().collect();
+      let pattern_chars: Vec<char> = pattern.chars().collect();
+      let mut matches = Vec::new();
+      let failure = build_failure_table(&pattern_chars);
+
+      //@step 3
+      let mut text_index = 0usize;
+      let mut pattern_index = 0usize;
+
+      while text_index < text_chars.len() {
+          //@step 5
+          if text_chars[text_index] == pattern_chars[pattern_index] {
+              //@step 6
+              text_index += 1;
+              pattern_index += 1;
+
+              if pattern_index == pattern_chars.len() {
+                  //@step 8
+                  matches.push(text_index - pattern_index);
+                  pattern_index = failure[pattern_index - 1];
+              }
+
+              continue;
+          }
+
+          if pattern_index > 0 {
+              //@step 10
+              pattern_index = failure[pattern_index - 1];
+              continue;
+          }
+
+          //@step 11
+          text_index += 1;
+      }
+
+      matches
+  }
+  //#endregion kmp-search
+
+  //#region failure-table helper collapsed
+  //@step 2
+  fn build_failure_table(pattern: &[char]) -> Vec<usize> {
+      let mut failure = vec![0; pattern.len()];
+      let mut prefix = 0usize;
+
+      for index in 1..pattern.len() {
+          while prefix > 0 && pattern[index] != pattern[prefix] {
+              prefix = failure[prefix - 1];
+          }
+
+          if pattern[index] == pattern[prefix] {
+              prefix += 1;
+          }
+
+          failure[index] = prefix;
+      }
+
+      failure
+  }
+  //#endregion failure-table
+  `,
+  'rust',
+);
+
+const KMP_SWIFT = buildStructuredCode(
+  `
+  /**
+   * Finds every occurrence of pattern in text with Knuth-Morris-Pratt.
+   * Input: text and pattern strings.
+   * Returns: all start indices where pattern occurs in text.
+   */
+  //#region kmp-search function open
+  //@step 1
+  func kmpSearch(_ text: String, _ pattern: String) -> [Int] {
+      if pattern.isEmpty {
+          return []
+      }
+
+      let textChars = Array(text)
+      let patternChars = Array(pattern)
+      var matches: [Int] = []
+      let failure = buildFailureTable(patternChars)
+
+      //@step 3
+      var textIndex = 0
+      var patternIndex = 0
+
+      while textIndex < textChars.count {
+          //@step 5
+          if textChars[textIndex] == patternChars[patternIndex] {
+              //@step 6
+              textIndex += 1
+              patternIndex += 1
+
+              if patternIndex == patternChars.count {
+                  //@step 8
+                  matches.append(textIndex - patternIndex)
+                  patternIndex = failure[patternIndex - 1]
+              }
+
+              continue
+          }
+
+          if patternIndex > 0 {
+              //@step 10
+              patternIndex = failure[patternIndex - 1]
+              continue
+          }
+
+          //@step 11
+          textIndex += 1
+      }
+
+      return matches
+  }
+  //#endregion kmp-search
+
+  //#region failure-table helper collapsed
+  //@step 2
+  func buildFailureTable(_ pattern: [Character]) -> [Int] {
+      var failure = Array(repeating: 0, count: pattern.count)
+      var prefix = 0
+
+      for index in 1..<pattern.count {
+          while prefix > 0 && pattern[index] != pattern[prefix] {
+              prefix = failure[prefix - 1]
+          }
+
+          if pattern[index] == pattern[prefix] {
+              prefix += 1
+          }
+
+          failure[index] = prefix
+      }
+
+      return failure
+  }
+  //#endregion failure-table
+  `,
+  'swift',
+);
+
+const KMP_PHP = buildStructuredCode(
+  `
+  /**
+   * Finds every occurrence of pattern in text with Knuth-Morris-Pratt.
+   * Input: text and pattern strings.
+   * Returns: all start indices where pattern occurs in text.
+   */
+  //#region kmp-search function open
+  //@step 1
+  function kmpSearch(string $text, string $pattern): array
+  {
+      if ($pattern === '') {
+          return [];
+      }
+
+      $matches = [];
+      $failure = buildFailureTable($pattern);
+
+      //@step 3
+      $textIndex = 0;
+      $patternIndex = 0;
+
+      while ($textIndex < strlen($text)) {
+          //@step 5
+          if ($text[$textIndex] === $pattern[$patternIndex]) {
+              //@step 6
+              $textIndex += 1;
+              $patternIndex += 1;
+
+              if ($patternIndex === strlen($pattern)) {
+                  //@step 8
+                  $matches[] = $textIndex - $patternIndex;
+                  $patternIndex = $failure[$patternIndex - 1];
+              }
+
+              continue;
+          }
+
+          if ($patternIndex > 0) {
+              //@step 10
+              $patternIndex = $failure[$patternIndex - 1];
+              continue;
+          }
+
+          //@step 11
+          $textIndex += 1;
+      }
+
+      return $matches;
+  }
+  //#endregion kmp-search
+
+  //#region failure-table helper collapsed
+  //@step 2
+  function buildFailureTable(string $pattern): array
+  {
+      $failure = array_fill(0, strlen($pattern), 0);
+      $prefix = 0;
+
+      for ($index = 1; $index < strlen($pattern); $index += 1) {
+          while ($prefix > 0 && $pattern[$index] !== $pattern[$prefix]) {
+              $prefix = $failure[$prefix - 1];
+          }
+
+          if ($pattern[$index] === $pattern[$prefix]) {
+              $prefix += 1;
+          }
+
+          $failure[$index] = $prefix;
+      }
+
+      return $failure;
+  }
+  //#endregion failure-table
+  `,
+  'php',
+);
+
+const KMP_KOTLIN = buildStructuredCode(
+  `
+  /**
+   * Finds every occurrence of pattern in text with Knuth-Morris-Pratt.
+   * Input: text and pattern strings.
+   * Returns: all start indices where pattern occurs in text.
+   */
+  //#region kmp-search function open
+  //@step 1
+  fun kmpSearch(text: String, pattern: String): List<Int> {
+      if (pattern.isEmpty()) {
+          return emptyList()
+      }
+
+      val matches = mutableListOf<Int>()
+      val failure = buildFailureTable(pattern)
+
+      //@step 3
+      var textIndex = 0
+      var patternIndex = 0
+
+      while (textIndex < text.length) {
+          //@step 5
+          if (text[textIndex] == pattern[patternIndex]) {
+              //@step 6
+              textIndex += 1
+              patternIndex += 1
+
+              if (patternIndex == pattern.length) {
+                  //@step 8
+                  matches += textIndex - patternIndex
+                  patternIndex = failure[patternIndex - 1]
+              }
+
+              continue
+          }
+
+          if (patternIndex > 0) {
+              //@step 10
+              patternIndex = failure[patternIndex - 1]
+              continue
+          }
+
+          //@step 11
+          textIndex += 1
+      }
+
+      return matches
+  }
+  //#endregion kmp-search
+
+  //#region failure-table helper collapsed
+  //@step 2
+  fun buildFailureTable(pattern: String): IntArray {
+      val failure = IntArray(pattern.length)
+      var prefix = 0
+
+      for (index in 1 until pattern.length) {
+          while (prefix > 0 && pattern[index] != pattern[prefix]) {
+              prefix = failure[prefix - 1]
+          }
+
+          if (pattern[index] == pattern[prefix]) {
+              prefix += 1
+          }
+
+          failure[index] = prefix
+      }
+
+      return failure
+  }
+  //#endregion failure-table
+  `,
+  'kotlin',
+);
+
 export const KMP_PATTERN_MATCHING_CODE = KMP_TS.lines;
 export const KMP_PATTERN_MATCHING_CODE_REGIONS = KMP_TS.regions;
 export const KMP_PATTERN_MATCHING_CODE_HIGHLIGHT_MAP = KMP_TS.highlightMap;
@@ -396,6 +860,13 @@ export const KMP_PATTERN_MATCHING_CODE_VARIANTS: CodeVariantMap = {
     regions: KMP_TS.regions,
     highlightMap: KMP_TS.highlightMap,
     source: KMP_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: KMP_JS.lines,
+    regions: KMP_JS.regions,
+    highlightMap: KMP_JS.highlightMap,
+    source: KMP_JS.source,
   },
   python: {
     language: 'python',
@@ -424,5 +895,40 @@ export const KMP_PATTERN_MATCHING_CODE_VARIANTS: CodeVariantMap = {
     regions: KMP_CPP.regions,
     highlightMap: KMP_CPP.highlightMap,
     source: KMP_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: KMP_GO.lines,
+    regions: KMP_GO.regions,
+    highlightMap: KMP_GO.highlightMap,
+    source: KMP_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: KMP_RUST.lines,
+    regions: KMP_RUST.regions,
+    highlightMap: KMP_RUST.highlightMap,
+    source: KMP_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: KMP_SWIFT.lines,
+    regions: KMP_SWIFT.regions,
+    highlightMap: KMP_SWIFT.highlightMap,
+    source: KMP_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: KMP_PHP.lines,
+    regions: KMP_PHP.regions,
+    highlightMap: KMP_PHP.highlightMap,
+    source: KMP_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: KMP_KOTLIN.lines,
+    regions: KMP_KOTLIN.regions,
+    highlightMap: KMP_KOTLIN.highlightMap,
+    source: KMP_KOTLIN.source,
   },
 };

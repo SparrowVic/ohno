@@ -559,6 +559,229 @@ const HALF_PLANE_CPP = buildStructuredCode(
   'cpp',
 );
 
+const HALF_PLANE_JS = buildStructuredCode(
+  `
+  //@step 1
+  function intersectHalfPlanes(constraints) {
+    let feasible = createCanvasBounds();
+
+    for (const constraint of constraints) {
+      //@step 3
+      const forbidden = clipPolygon(createCanvasBounds(), constraint, false);
+
+      //@step 4
+      feasible = clipPolygon(feasible, constraint, true);
+
+      //@step 5
+      if (feasible.length === 0) {
+        return [];
+      }
+    }
+
+    //@step 6
+    return feasible;
+  }
+  `,
+  'javascript',
+);
+
+const HALF_PLANE_GO = buildStructuredCode(
+  `
+  package geometry
+
+  import "math"
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  type HalfPlane struct {
+      Start Point
+      End   Point
+  }
+
+  //@step 1
+  func IntersectHalfPlanes(constraints []HalfPlane) []Point {
+      feasible := createCanvasBounds()
+
+      for _, constraint := range constraints {
+          //@step 3
+          forbidden := clipPolygon(createCanvasBounds(), constraint, false)
+          _ = forbidden
+
+          //@step 4
+          feasible = clipPolygon(feasible, constraint, true)
+
+          //@step 5
+          if len(feasible) == 0 {
+              return []Point{}
+          }
+      }
+
+      //@step 6
+      return feasible
+  }
+
+  func lineIntersection(s Point, e Point, a Point, b Point) Point {
+      denominator := (s.X-e.X)*(a.Y-b.Y) - (s.Y-e.Y)*(a.X-b.X)
+      if math.Abs(denominator) < 1e-6 {
+          return e
+      }
+      det1 := s.X*e.Y - s.Y*e.X
+      det2 := a.X*b.Y - a.Y*b.X
+      return Point{
+          X: (det1*(a.X-b.X) - (s.X-e.X)*det2) / denominator,
+          Y: (det1*(a.Y-b.Y) - (s.Y-e.Y)*det2) / denominator,
+      }
+  }
+  `,
+  'go',
+);
+
+const HALF_PLANE_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  #[derive(Clone, Copy)]
+  struct HalfPlane {
+      start: Point,
+      end: Point,
+  }
+
+  //@step 1
+  fn intersect_half_planes(constraints: &[HalfPlane]) -> Vec<Point> {
+      let mut feasible = create_canvas_bounds();
+
+      for constraint in constraints {
+          //@step 3
+          let _forbidden = clip_polygon(create_canvas_bounds(), *constraint, false);
+
+          //@step 4
+          feasible = clip_polygon(feasible, *constraint, true);
+
+          //@step 5
+          if feasible.is_empty() {
+              return Vec::new();
+          }
+      }
+
+      //@step 6
+      feasible
+  }
+  `,
+  'rust',
+);
+
+const HALF_PLANE_SWIFT = buildStructuredCode(
+  `
+  struct Point {
+      let x: Double
+      let y: Double
+  }
+
+  struct HalfPlane {
+      let start: Point
+      let end: Point
+  }
+
+  //@step 1
+  func intersectHalfPlanes(_ constraints: [HalfPlane]) -> [Point] {
+      var feasible = createCanvasBounds()
+
+      for constraint in constraints {
+          //@step 3
+          let forbidden = clipPolygon(createCanvasBounds(), constraint, keepInside: false)
+          _ = forbidden
+
+          //@step 4
+          feasible = clipPolygon(feasible, constraint, keepInside: true)
+
+          //@step 5
+          if feasible.isEmpty {
+              return []
+          }
+      }
+
+      //@step 6
+      return feasible
+  }
+  `,
+  'swift',
+);
+
+const HALF_PLANE_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(public float $x, public float $y) {}
+  }
+
+  final class HalfPlane
+  {
+      public function __construct(public Point $start, public Point $end) {}
+  }
+
+  //@step 1
+  function intersectHalfPlanes(array $constraints): array
+  {
+      $feasible = createCanvasBounds();
+
+      foreach ($constraints as $constraint) {
+          //@step 3
+          $forbidden = clipPolygon(createCanvasBounds(), $constraint, false);
+          unset($forbidden);
+
+          //@step 4
+          $feasible = clipPolygon($feasible, $constraint, true);
+
+          //@step 5
+          if ($feasible === []) {
+              return [];
+          }
+      }
+
+      //@step 6
+      return $feasible;
+  }
+  `,
+  'php',
+);
+
+const HALF_PLANE_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+  data class HalfPlane(val start: Point, val end: Point)
+
+  //@step 1
+  fun intersectHalfPlanes(constraints: List<HalfPlane>): List<Point> {
+      var feasible = createCanvasBounds()
+
+      for (constraint in constraints) {
+          //@step 3
+          val forbidden = clipPolygon(createCanvasBounds(), constraint, keepInside = false)
+          forbidden.size
+
+          //@step 4
+          feasible = clipPolygon(feasible, constraint, keepInside = true)
+
+          //@step 5
+          if (feasible.isEmpty()) {
+              return emptyList()
+          }
+      }
+
+      //@step 6
+      return feasible
+  }
+  `,
+  'kotlin',
+);
+
 export const HALF_PLANE_INTERSECTION_CODE = HALF_PLANE_TS.lines;
 export const HALF_PLANE_INTERSECTION_CODE_REGIONS = HALF_PLANE_TS.regions;
 export const HALF_PLANE_INTERSECTION_CODE_HIGHLIGHT_MAP = HALF_PLANE_TS.highlightMap;
@@ -569,6 +792,13 @@ export const HALF_PLANE_INTERSECTION_CODE_VARIANTS: CodeVariantMap = {
     regions: HALF_PLANE_TS.regions,
     highlightMap: HALF_PLANE_TS.highlightMap,
     source: HALF_PLANE_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: HALF_PLANE_JS.lines,
+    regions: HALF_PLANE_JS.regions,
+    highlightMap: HALF_PLANE_JS.highlightMap,
+    source: HALF_PLANE_JS.source,
   },
   python: {
     language: 'python',
@@ -597,5 +827,40 @@ export const HALF_PLANE_INTERSECTION_CODE_VARIANTS: CodeVariantMap = {
     regions: HALF_PLANE_CPP.regions,
     highlightMap: HALF_PLANE_CPP.highlightMap,
     source: HALF_PLANE_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: HALF_PLANE_GO.lines,
+    regions: HALF_PLANE_GO.regions,
+    highlightMap: HALF_PLANE_GO.highlightMap,
+    source: HALF_PLANE_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: HALF_PLANE_RUST.lines,
+    regions: HALF_PLANE_RUST.regions,
+    highlightMap: HALF_PLANE_RUST.highlightMap,
+    source: HALF_PLANE_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: HALF_PLANE_SWIFT.lines,
+    regions: HALF_PLANE_SWIFT.regions,
+    highlightMap: HALF_PLANE_SWIFT.highlightMap,
+    source: HALF_PLANE_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: HALF_PLANE_PHP.lines,
+    regions: HALF_PLANE_PHP.regions,
+    highlightMap: HALF_PLANE_PHP.highlightMap,
+    source: HALF_PLANE_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: HALF_PLANE_KOTLIN.lines,
+    regions: HALF_PLANE_KOTLIN.regions,
+    highlightMap: HALF_PLANE_KOTLIN.highlightMap,
+    source: HALF_PLANE_KOTLIN.source,
   },
 };

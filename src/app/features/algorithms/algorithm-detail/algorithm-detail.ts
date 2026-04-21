@@ -35,6 +35,8 @@ import { GridTraceState } from '../models/grid';
 import { MatrixTraceState } from '../models/matrix';
 import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
+import { SortTraceState } from '../models/sort-trace';
+import { deriveSortTrace } from '../utils/derive-sort-trace/derive-sort-trace';
 import { SortStep } from '../models/sort-step';
 import { StringPresetOption, StringTraceState } from '../models/string';
 import { VisualizationVariant } from '../models/visualization-renderer';
@@ -148,6 +150,14 @@ export class AlgorithmDetail {
   readonly matrixTrace = computed<MatrixTraceState | null>(() => this.currentSnapshot()?.matrix ?? null);
   readonly networkTrace = computed<NetworkTraceState | null>(() => this.currentSnapshot()?.network ?? null);
   readonly searchTrace = computed<SearchTraceState | null>(() => this.currentSnapshot()?.search ?? null);
+  readonly sortTrace = computed<SortTraceState | null>(() => {
+    const snapshot = this.currentSnapshot();
+    const config = this.config();
+    // Derive only for array-kind configs (the sorting family) so graph /
+    // grid / geometry / etc. algos don't double up on trace panels.
+    if (!snapshot || !config || config.kind !== 'array') return null;
+    return deriveSortTrace(snapshot);
+  });
   readonly stringTrace = computed<StringTraceState | null>(() => this.currentSnapshot()?.string ?? null);
   readonly geometryTrace = computed<GeometryStepState | null>(
     () => this.currentSnapshot()?.geometry ?? null,

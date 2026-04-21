@@ -595,6 +595,470 @@ const LINE_INTERSECTION_CPP = buildStructuredCode(
   'cpp',
 );
 
+const LINE_INTERSECTION_JS = buildStructuredCode(
+  `
+  //@step 1
+  function sweepSegmentIntersections(segments) {
+    const hits = collectIntersections(segments);
+    const events = buildEvents(segments, hits);
+    const active = new Set();
+    const result = [];
+
+    for (const event of events) {
+      //@step 3
+      if (event.kind === 'start') {
+        active.add(event.segmentIds[0]);
+        continue;
+      }
+
+      //@step 4
+      if (event.kind === 'end') {
+        active.delete(event.segmentIds[0]);
+        continue;
+      }
+
+      //@step 5
+      if (event.hit && event.segmentIds.every((id) => active.has(id))) {
+        result.push(event.hit);
+      }
+    }
+
+    //@step 6
+    return result;
+  }
+
+  function buildEvents(segments, intersections) {
+    return [
+      ...segments.map((segment) => ({ x: segment.start.x, kind: 'start', segmentIds: [segment.id], hit: null })),
+      ...segments.map((segment) => ({ x: segment.end.x, kind: 'end', segmentIds: [segment.id], hit: null })),
+      ...intersections.map((hit) => ({ x: hit.x, kind: 'intersection', segmentIds: [...hit.segmentIds], hit })),
+    ].sort((left, right) => left.x - right.x);
+  }
+
+  function collectIntersections(segments) {
+    const hits = [];
+    for (let i = 0; i < segments.length; i += 1) {
+      for (let j = i + 1; j < segments.length; j += 1) {
+        const hit = segmentIntersection(segments[i], segments[j]);
+        if (hit) hits.push(hit);
+      }
+    }
+    return hits;
+  }
+  `,
+  'javascript',
+);
+
+const LINE_INTERSECTION_GO = buildStructuredCode(
+  `
+  package geometry
+
+  import "sort"
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  type Segment struct {
+      ID    int
+      Start Point
+      End   Point
+  }
+
+  type Intersection struct {
+      X float64
+      Y float64
+      SegmentIDs [2]int
+  }
+
+  type SweepEvent struct {
+      X          float64
+      Kind       string
+      SegmentIDs []int
+      Hit        *Intersection
+  }
+
+  //@step 1
+  func SweepSegmentIntersections(segments []Segment) []Intersection {
+      hits := collectIntersections(segments)
+      events := buildEvents(segments, hits)
+      active := map[int]bool{}
+      result := make([]Intersection, 0)
+
+      for _, event := range events {
+          //@step 3
+          if event.Kind == "start" {
+              active[event.SegmentIDs[0]] = true
+              continue
+          }
+
+          //@step 4
+          if event.Kind == "end" {
+              delete(active, event.SegmentIDs[0])
+              continue
+          }
+
+          //@step 5
+          if event.Hit != nil && active[event.SegmentIDs[0]] && active[event.SegmentIDs[1]] {
+              result = append(result, *event.Hit)
+          }
+      }
+
+      //@step 6
+      return result
+  }
+
+  func buildEvents(segments []Segment, intersections []Intersection) []SweepEvent {
+      events := make([]SweepEvent, 0, len(segments)*2+len(intersections))
+      for _, segment := range segments {
+          events = append(events, SweepEvent{X: segment.Start.X, Kind: "start", SegmentIDs: []int{segment.ID}})
+          events = append(events, SweepEvent{X: segment.End.X, Kind: "end", SegmentIDs: []int{segment.ID}})
+      }
+      for _, hit := range intersections {
+          ids := hit.SegmentIDs
+          copyHit := hit
+          events = append(events, SweepEvent{X: hit.X, Kind: "intersection", SegmentIDs: []int{ids[0], ids[1]}, Hit: &copyHit})
+      }
+      sort.Slice(events, func(i, j int) bool { return events[i].X < events[j].X })
+      return events
+  }
+
+  func collectIntersections(segments []Segment) []Intersection {
+      hits := make([]Intersection, 0)
+      for i := 0; i < len(segments); i++ {
+          for j := i + 1; j < len(segments); j++ {
+              if hit, ok := segmentIntersection(segments[i], segments[j]); ok {
+                  hits = append(hits, hit)
+              }
+          }
+      }
+      return hits
+  }
+  `,
+  'go',
+);
+
+const LINE_INTERSECTION_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  #[derive(Clone, Copy)]
+  struct Segment {
+      id: usize,
+      start: Point,
+      end: Point,
+  }
+
+  #[derive(Clone, Copy)]
+  struct Intersection {
+      x: f64,
+      y: f64,
+      segment_ids: [usize; 2],
+  }
+
+  struct SweepEvent {
+      x: f64,
+      kind: &'static str,
+      segment_ids: Vec<usize>,
+      hit: Option<Intersection>,
+  }
+
+  //@step 1
+  fn sweep_segment_intersections(segments: &[Segment]) -> Vec<Intersection> {
+      let hits = collect_intersections(segments);
+      let mut events = build_events(segments, &hits);
+      events.sort_by(|left, right| left.x.total_cmp(&right.x));
+      let mut active = std::collections::HashSet::new();
+      let mut result = Vec::new();
+
+      for event in events {
+          //@step 3
+          if event.kind == "start" {
+              active.insert(event.segment_ids[0]);
+              continue;
+          }
+
+          //@step 4
+          if event.kind == "end" {
+              active.remove(&event.segment_ids[0]);
+              continue;
+          }
+
+          //@step 5
+          if let Some(hit) = event.hit {
+              if event.segment_ids.iter().all(|id| active.contains(id)) {
+                  result.push(hit);
+              }
+          }
+      }
+
+      //@step 6
+      result
+  }
+
+  fn build_events(segments: &[Segment], intersections: &[Intersection]) -> Vec<SweepEvent> {
+      let mut events = Vec::new();
+      for segment in segments {
+          events.push(SweepEvent { x: segment.start.x, kind: "start", segment_ids: vec![segment.id], hit: None });
+          events.push(SweepEvent { x: segment.end.x, kind: "end", segment_ids: vec![segment.id], hit: None });
+      }
+      for hit in intersections {
+          events.push(SweepEvent { x: hit.x, kind: "intersection", segment_ids: hit.segment_ids.to_vec(), hit: Some(*hit) });
+      }
+      events
+  }
+
+  fn collect_intersections(segments: &[Segment]) -> Vec<Intersection> {
+      let mut hits = Vec::new();
+      for i in 0..segments.len() {
+          for j in (i + 1)..segments.len() {
+              if let Some(hit) = segment_intersection(segments[i], segments[j]) {
+                  hits.push(hit);
+              }
+          }
+      }
+      hits
+  }
+  `,
+  'rust',
+);
+
+const LINE_INTERSECTION_SWIFT = buildStructuredCode(
+  `
+  struct Point {
+      let x: Double
+      let y: Double
+  }
+
+  struct Segment {
+      let id: Int
+      let start: Point
+      let end: Point
+  }
+
+  struct Intersection {
+      let x: Double
+      let y: Double
+      let segmentIds: [Int]
+  }
+
+  struct SweepEvent {
+      let x: Double
+      let kind: String
+      let segmentIds: [Int]
+      let hit: Intersection?
+  }
+
+  //@step 1
+  func sweepSegmentIntersections(_ segments: [Segment]) -> [Intersection] {
+      let hits = collectIntersections(segments)
+      let events = buildEvents(segments, hits).sorted { $0.x < $1.x }
+      var active = Set<Int>()
+      var result: [Intersection] = []
+
+      for event in events {
+          //@step 3
+          if event.kind == "start" {
+              active.insert(event.segmentIds[0])
+              continue
+          }
+
+          //@step 4
+          if event.kind == "end" {
+              active.remove(event.segmentIds[0])
+              continue
+          }
+
+          //@step 5
+          if let hit = event.hit, event.segmentIds.allSatisfy(active.contains) {
+              result.append(hit)
+          }
+      }
+
+      //@step 6
+      return result
+  }
+
+  func buildEvents(_ segments: [Segment], _ intersections: [Intersection]) -> [SweepEvent] {
+      let segmentEvents = segments.flatMap { segment in
+          [
+              SweepEvent(x: segment.start.x, kind: "start", segmentIds: [segment.id], hit: nil),
+              SweepEvent(x: segment.end.x, kind: "end", segmentIds: [segment.id], hit: nil),
+          ]
+      }
+      let hitEvents = intersections.map { hit in
+          SweepEvent(x: hit.x, kind: "intersection", segmentIds: hit.segmentIds, hit: hit)
+      }
+      return segmentEvents + hitEvents
+  }
+
+  func collectIntersections(_ segments: [Segment]) -> [Intersection] {
+      var hits: [Intersection] = []
+      for i in segments.indices {
+          for j in (i + 1)..<segments.count {
+              if let hit = segmentIntersection(segments[i], segments[j]) {
+                  hits.append(hit)
+              }
+          }
+      }
+      return hits
+  }
+  `,
+  'swift',
+);
+
+const LINE_INTERSECTION_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(public float $x, public float $y) {}
+  }
+
+  final class Segment
+  {
+      public function __construct(
+          public int $id,
+          public Point $start,
+          public Point $end,
+      ) {}
+  }
+
+  final class Intersection
+  {
+      public function __construct(
+          public float $x,
+          public float $y,
+          public array $segmentIds,
+      ) {}
+  }
+
+  //@step 1
+  function sweepSegmentIntersections(array $segments): array
+  {
+      $hits = collectIntersections($segments);
+      $events = buildEvents($segments, $hits);
+      $active = [];
+      $result = [];
+
+      foreach ($events as $event) {
+          //@step 3
+          if ($event['kind'] === 'start') {
+              $active[$event['segmentIds'][0]] = true;
+              continue;
+          }
+
+          //@step 4
+          if ($event['kind'] === 'end') {
+              unset($active[$event['segmentIds'][0]]);
+              continue;
+          }
+
+          //@step 5
+          if ($event['hit'] !== null && isset($active[$event['segmentIds'][0]], $active[$event['segmentIds'][1]])) {
+              $result[] = $event['hit'];
+          }
+      }
+
+      //@step 6
+      return $result;
+  }
+
+  function buildEvents(array $segments, array $intersections): array
+  {
+      $events = [];
+      foreach ($segments as $segment) {
+          $events[] = ['x' => $segment->start->x, 'kind' => 'start', 'segmentIds' => [$segment->id], 'hit' => null];
+          $events[] = ['x' => $segment->end->x, 'kind' => 'end', 'segmentIds' => [$segment->id], 'hit' => null];
+      }
+      foreach ($intersections as $hit) {
+          $events[] = ['x' => $hit->x, 'kind' => 'intersection', 'segmentIds' => $hit->segmentIds, 'hit' => $hit];
+      }
+      usort($events, fn (array $left, array $right): int => $left['x'] <=> $right['x']);
+      return $events;
+  }
+
+  function collectIntersections(array $segments): array
+  {
+      $hits = [];
+      for ($i = 0; $i < count($segments); $i += 1) {
+          for ($j = $i + 1; $j < count($segments); $j += 1) {
+              $hit = segmentIntersection($segments[$i], $segments[$j]);
+              if ($hit !== null) {
+                  $hits[] = $hit;
+              }
+          }
+      }
+      return $hits;
+  }
+  `,
+  'php',
+);
+
+const LINE_INTERSECTION_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+  data class Segment(val id: Int, val start: Point, val end: Point)
+  data class Intersection(val x: Double, val y: Double, val segmentIds: List<Int>)
+  data class SweepEvent(val x: Double, val kind: String, val segmentIds: List<Int>, val hit: Intersection?)
+
+  //@step 1
+  fun sweepSegmentIntersections(segments: List<Segment>): List<Intersection> {
+      val hits = collectIntersections(segments)
+      val events = buildEvents(segments, hits).sortedBy { it.x }
+      val active = mutableSetOf<Int>()
+      val result = mutableListOf<Intersection>()
+
+      for (event in events) {
+          //@step 3
+          if (event.kind == "start") {
+              active += event.segmentIds.first()
+              continue
+          }
+
+          //@step 4
+          if (event.kind == "end") {
+              active -= event.segmentIds.first()
+              continue
+          }
+
+          //@step 5
+          if (event.hit != null && event.segmentIds.all(active::contains)) {
+              result += event.hit
+          }
+      }
+
+      //@step 6
+      return result
+  }
+
+  fun buildEvents(segments: List<Segment>, intersections: List<Intersection>): List<SweepEvent> =
+      buildList {
+          segments.forEach { segment ->
+              add(SweepEvent(segment.start.x, "start", listOf(segment.id), null))
+              add(SweepEvent(segment.end.x, "end", listOf(segment.id), null))
+          }
+          intersections.forEach { hit ->
+              add(SweepEvent(hit.x, "intersection", hit.segmentIds, hit))
+          }
+      }
+
+  fun collectIntersections(segments: List<Segment>): List<Intersection> =
+      buildList {
+          for (i in segments.indices) {
+              for (j in i + 1 until segments.size) {
+                  segmentIntersection(segments[i], segments[j])?.let(::add)
+              }
+          }
+      }
+  `,
+  'kotlin',
+);
+
 export const LINE_INTERSECTION_CODE = LINE_INTERSECTION_TS.lines;
 export const LINE_INTERSECTION_CODE_REGIONS = LINE_INTERSECTION_TS.regions;
 export const LINE_INTERSECTION_CODE_HIGHLIGHT_MAP = LINE_INTERSECTION_TS.highlightMap;
@@ -605,6 +1069,13 @@ export const LINE_INTERSECTION_CODE_VARIANTS: CodeVariantMap = {
     regions: LINE_INTERSECTION_TS.regions,
     highlightMap: LINE_INTERSECTION_TS.highlightMap,
     source: LINE_INTERSECTION_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: LINE_INTERSECTION_JS.lines,
+    regions: LINE_INTERSECTION_JS.regions,
+    highlightMap: LINE_INTERSECTION_JS.highlightMap,
+    source: LINE_INTERSECTION_JS.source,
   },
   python: {
     language: 'python',
@@ -633,5 +1104,40 @@ export const LINE_INTERSECTION_CODE_VARIANTS: CodeVariantMap = {
     regions: LINE_INTERSECTION_CPP.regions,
     highlightMap: LINE_INTERSECTION_CPP.highlightMap,
     source: LINE_INTERSECTION_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: LINE_INTERSECTION_GO.lines,
+    regions: LINE_INTERSECTION_GO.regions,
+    highlightMap: LINE_INTERSECTION_GO.highlightMap,
+    source: LINE_INTERSECTION_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: LINE_INTERSECTION_RUST.lines,
+    regions: LINE_INTERSECTION_RUST.regions,
+    highlightMap: LINE_INTERSECTION_RUST.highlightMap,
+    source: LINE_INTERSECTION_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: LINE_INTERSECTION_SWIFT.lines,
+    regions: LINE_INTERSECTION_SWIFT.regions,
+    highlightMap: LINE_INTERSECTION_SWIFT.highlightMap,
+    source: LINE_INTERSECTION_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: LINE_INTERSECTION_PHP.lines,
+    regions: LINE_INTERSECTION_PHP.regions,
+    highlightMap: LINE_INTERSECTION_PHP.highlightMap,
+    source: LINE_INTERSECTION_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: LINE_INTERSECTION_KOTLIN.lines,
+    regions: LINE_INTERSECTION_KOTLIN.regions,
+    highlightMap: LINE_INTERSECTION_KOTLIN.highlightMap,
+    source: LINE_INTERSECTION_KOTLIN.source,
   },
 };

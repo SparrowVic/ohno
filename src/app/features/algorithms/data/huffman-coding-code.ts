@@ -499,6 +499,499 @@ const HUFFMAN_CPP = buildStructuredCode(
   'cpp',
 );
 
+const HUFFMAN_JS = buildStructuredCode(
+  `
+  /**
+   * Build prefix-free Huffman codes for a string.
+   * Input: source string.
+   * Returns: a map from character to its Huffman bitstring.
+   */
+  //#region huffman function open
+  function huffmanCodes(source) {
+      //@step 2
+      const frequencies = countFrequency(source);
+
+      //@step 3
+      const queue = buildPriorityQueue(frequencies);
+      if (queue.length === 0) {
+          return {};
+      }
+
+      while (queue.length > 1) {
+          queue.sort((left, right) => left.freq - right.freq);
+
+          //@step 5
+          const left = queue.shift();
+          const right = queue.shift();
+
+          //@step 7
+          queue.push({
+              char: null,
+              freq: left.freq + right.freq,
+              left,
+              right,
+          });
+      }
+
+      const codes = {};
+
+      //@step 10
+      assignCodes(queue[0], '', codes);
+      return codes;
+  }
+  //#endregion huffman
+
+  //#region frequency helper collapsed
+  function countFrequency(source) {
+      const frequencies = new Map();
+      for (const char of source) {
+          frequencies.set(char, (frequencies.get(char) ?? 0) + 1);
+      }
+      return frequencies;
+  }
+
+  function buildPriorityQueue(frequencies) {
+      return [...frequencies.entries()].map(([char, freq]) => ({
+          char,
+          freq,
+          left: null,
+          right: null,
+      }));
+  }
+
+  function assignCodes(node, prefix, codes) {
+      if (node.char !== null) {
+          codes[node.char] = prefix === '' ? '0' : prefix;
+          return;
+      }
+
+      assignCodes(node.left, prefix + '0', codes);
+      assignCodes(node.right, prefix + '1', codes);
+  }
+  //#endregion frequency
+  `,
+  'javascript',
+);
+
+const HUFFMAN_GO = buildStructuredCode(
+  `
+  package strings
+
+  //#region huffman-node interface collapsed
+  type HuffmanNode struct {
+      Char *rune
+      Freq int
+      Left *HuffmanNode
+      Right *HuffmanNode
+  }
+  //#endregion huffman-node
+
+  /**
+   * Builds prefix-free Huffman codes for a string.
+   * Input: source string.
+   * Returns: a map from character to its Huffman bitstring.
+   */
+  //#region huffman function open
+  func HuffmanCodes(source string) map[rune]string {
+      //@step 2
+      frequencies := countFrequency(source)
+
+      //@step 3
+      queue := buildPriorityQueue(frequencies)
+      if len(queue) == 0 {
+          return map[rune]string{}
+      }
+
+      for len(queue) > 1 {
+          sort.Slice(queue, func(left int, right int) bool {
+              return queue[left].Freq < queue[right].Freq
+          })
+
+          //@step 5
+          left := queue[0]
+          right := queue[1]
+          queue = queue[2:]
+
+          //@step 7
+          queue = append(queue, &HuffmanNode{
+              Char: nil,
+              Freq: left.Freq + right.Freq,
+              Left: left,
+              Right: right,
+          })
+      }
+
+      codes := make(map[rune]string)
+
+      //@step 10
+      assignCodes(queue[0], "", codes)
+      return codes
+  }
+  //#endregion huffman
+
+  //#region frequency helper collapsed
+  func countFrequency(source string) map[rune]int {
+      frequencies := make(map[rune]int)
+      for _, char := range source {
+          frequencies[char] += 1
+      }
+      return frequencies
+  }
+
+  func buildPriorityQueue(frequencies map[rune]int) []*HuffmanNode {
+      queue := make([]*HuffmanNode, 0, len(frequencies))
+      for char, freq := range frequencies {
+          currentChar := char
+          queue = append(queue, &HuffmanNode{Char: &currentChar, Freq: freq, Left: nil, Right: nil})
+      }
+      return queue
+  }
+
+  func assignCodes(node *HuffmanNode, prefix string, codes map[rune]string) {
+      if node.Char != nil {
+          if prefix == "" {
+              codes[*node.Char] = "0"
+          } else {
+              codes[*node.Char] = prefix
+          }
+          return
+      }
+
+      assignCodes(node.Left, prefix + "0", codes)
+      assignCodes(node.Right, prefix + "1", codes)
+  }
+  //#endregion frequency
+  `,
+  'go',
+);
+
+const HUFFMAN_RUST = buildStructuredCode(
+  `
+  use std::collections::HashMap;
+
+  //#region huffman-node interface collapsed
+  struct HuffmanNode {
+      ch: Option<char>,
+      freq: i32,
+      left: Option<Box<HuffmanNode>>,
+      right: Option<Box<HuffmanNode>>,
+  }
+  //#endregion huffman-node
+
+  /**
+   * Builds prefix-free Huffman codes for a string.
+   * Input: source string.
+   * Returns: a map from character to its Huffman bitstring.
+   */
+  //#region huffman function open
+  fn huffman_codes(source: &str) -> HashMap<char, String> {
+      //@step 2
+      let frequencies = count_frequency(source);
+
+      //@step 3
+      let mut queue = build_priority_queue(&frequencies);
+      if queue.is_empty() {
+          return HashMap::new();
+      }
+
+      while queue.len() > 1 {
+          queue.sort_by_key(|node| node.freq);
+
+          //@step 5
+          let left = queue.remove(0);
+          let right = queue.remove(0);
+
+          //@step 7
+          queue.push(HuffmanNode {
+              ch: None,
+              freq: left.freq + right.freq,
+              left: Some(Box::new(left)),
+              right: Some(Box::new(right)),
+          });
+      }
+
+      let mut codes = HashMap::new();
+
+      //@step 10
+      assign_codes(&queue[0], String::new(), &mut codes);
+      codes
+  }
+  //#endregion huffman
+
+  //#region frequency helper collapsed
+  fn count_frequency(source: &str) -> HashMap<char, i32> {
+      let mut frequencies = HashMap::new();
+      for ch in source.chars() {
+          *frequencies.entry(ch).or_insert(0) += 1;
+      }
+      frequencies
+  }
+
+  fn build_priority_queue(frequencies: &HashMap<char, i32>) -> Vec<HuffmanNode> {
+      frequencies
+          .iter()
+          .map(|(&ch, &freq)| HuffmanNode {
+              ch: Some(ch),
+              freq,
+              left: None,
+              right: None,
+          })
+          .collect()
+  }
+
+  fn assign_codes(node: &HuffmanNode, prefix: String, codes: &mut HashMap<char, String>) {
+      if let Some(ch) = node.ch {
+          codes.insert(ch, if prefix.is_empty() { "0".to_string() } else { prefix });
+          return;
+      }
+
+      assign_codes(node.left.as_ref().unwrap(), format!("{prefix}0"), codes);
+      assign_codes(node.right.as_ref().unwrap(), format!("{prefix}1"), codes);
+  }
+  //#endregion frequency
+  `,
+  'rust',
+);
+
+const HUFFMAN_SWIFT = buildStructuredCode(
+  `
+  //#region huffman-node interface collapsed
+  final class HuffmanNode {
+      let char: Character?
+      let freq: Int
+      let left: HuffmanNode?
+      let right: HuffmanNode?
+
+      init(char: Character?, freq: Int, left: HuffmanNode?, right: HuffmanNode?) {
+          self.char = char
+          self.freq = freq
+          self.left = left
+          self.right = right
+      }
+  }
+  //#endregion huffman-node
+
+  /**
+   * Builds prefix-free Huffman codes for a string.
+   * Input: source string.
+   * Returns: a map from character to its Huffman bitstring.
+   */
+  //#region huffman function open
+  func huffmanCodes(_ source: String) -> [Character: String] {
+      //@step 2
+      let frequencies = countFrequency(source)
+
+      //@step 3
+      var queue = buildPriorityQueue(frequencies)
+      if queue.isEmpty {
+          return [:]
+      }
+
+      while queue.count > 1 {
+          queue.sort { $0.freq < $1.freq }
+
+          //@step 5
+          let left = queue.removeFirst()
+          let right = queue.removeFirst()
+
+          //@step 7
+          queue.append(HuffmanNode(char: nil, freq: left.freq + right.freq, left: left, right: right))
+      }
+
+      var codes: [Character: String] = [:]
+
+      //@step 10
+      assignCodes(queue[0], "", &codes)
+      return codes
+  }
+  //#endregion huffman
+
+  //#region frequency helper collapsed
+  func countFrequency(_ source: String) -> [Character: Int] {
+      var frequencies: [Character: Int] = [:]
+      for char in source {
+          frequencies[char, default: 0] += 1
+      }
+      return frequencies
+  }
+
+  func buildPriorityQueue(_ frequencies: [Character: Int]) -> [HuffmanNode] {
+      frequencies.map { char, freq in
+          HuffmanNode(char: char, freq: freq, left: nil, right: nil)
+      }
+  }
+
+  func assignCodes(_ node: HuffmanNode, _ prefix: String, _ codes: inout [Character: String]) {
+      if let char = node.char {
+          codes[char] = prefix.isEmpty ? "0" : prefix
+          return
+      }
+
+      assignCodes(node.left!, prefix + "0", &codes)
+      assignCodes(node.right!, prefix + "1", &codes)
+  }
+  //#endregion frequency
+  `,
+  'swift',
+);
+
+const HUFFMAN_PHP = buildStructuredCode(
+  `
+  /**
+   * Builds prefix-free Huffman codes for a string.
+   * Input: source string.
+   * Returns: a map from character to its Huffman bitstring.
+   */
+  //#region huffman function open
+  function huffmanCodes(string $source): array
+  {
+      //@step 2
+      $frequencies = countFrequency($source);
+
+      //@step 3
+      $queue = buildPriorityQueue($frequencies);
+      if ($queue === []) {
+          return [];
+      }
+
+      while (count($queue) > 1) {
+          usort($queue, static fn (array $left, array $right): int => $left['freq'] <=> $right['freq']);
+
+          //@step 5
+          $left = array_shift($queue);
+          $right = array_shift($queue);
+
+          //@step 7
+          $queue[] = [
+              'char' => null,
+              'freq' => $left['freq'] + $right['freq'],
+              'left' => $left,
+              'right' => $right,
+          ];
+      }
+
+      $codes = [];
+
+      //@step 10
+      assignCodes($queue[0], '', $codes);
+      return $codes;
+  }
+  //#endregion huffman
+
+  //#region frequency helper collapsed
+  function countFrequency(string $source): array
+  {
+      $frequencies = [];
+      foreach (str_split($source) as $char) {
+          $frequencies[$char] = ($frequencies[$char] ?? 0) + 1;
+      }
+      return $frequencies;
+  }
+
+  function buildPriorityQueue(array $frequencies): array
+  {
+      $queue = [];
+      foreach ($frequencies as $char => $freq) {
+          $queue[] = [
+              'char' => $char,
+              'freq' => $freq,
+              'left' => null,
+              'right' => null,
+          ];
+      }
+      return $queue;
+  }
+
+  function assignCodes(array $node, string $prefix, array &$codes): void
+  {
+      if ($node['char'] !== null) {
+          $codes[$node['char']] = $prefix === '' ? '0' : $prefix;
+          return;
+      }
+
+      assignCodes($node['left'], $prefix . '0', $codes);
+      assignCodes($node['right'], $prefix . '1', $codes);
+  }
+  //#endregion frequency
+  `,
+  'php',
+);
+
+const HUFFMAN_KOTLIN = buildStructuredCode(
+  `
+  //#region huffman-node interface collapsed
+  data class HuffmanNode(
+      val ch: Char?,
+      val freq: Int,
+      val left: HuffmanNode? = null,
+      val right: HuffmanNode? = null,
+  )
+  //#endregion huffman-node
+
+  /**
+   * Builds prefix-free Huffman codes for a string.
+   * Input: source string.
+   * Returns: a map from character to its Huffman bitstring.
+   */
+  //#region huffman function open
+  fun huffmanCodes(source: String): Map<Char, String> {
+      //@step 2
+      val frequencies = countFrequency(source)
+
+      //@step 3
+      val queue = buildPriorityQueue(frequencies).toMutableList()
+      if (queue.isEmpty()) {
+          return emptyMap()
+      }
+
+      while (queue.size > 1) {
+          queue.sortBy { it.freq }
+
+          //@step 5
+          val left = queue.removeAt(0)
+          val right = queue.removeAt(0)
+
+          //@step 7
+          queue += HuffmanNode(ch = null, freq = left.freq + right.freq, left = left, right = right)
+      }
+
+      val codes = mutableMapOf<Char, String>()
+
+      //@step 10
+      assignCodes(queue[0], "", codes)
+      return codes
+  }
+  //#endregion huffman
+
+  //#region frequency helper collapsed
+  fun countFrequency(source: String): Map<Char, Int> {
+      val frequencies = mutableMapOf<Char, Int>()
+      for (char in source) {
+          frequencies[char] = (frequencies[char] ?: 0) + 1
+      }
+      return frequencies
+  }
+
+  fun buildPriorityQueue(frequencies: Map<Char, Int>): List<HuffmanNode> {
+      return frequencies.map { (char, freq) ->
+          HuffmanNode(ch = char, freq = freq)
+      }
+  }
+
+  fun assignCodes(node: HuffmanNode, prefix: String, codes: MutableMap<Char, String>) {
+      if (node.ch != null) {
+          codes[node.ch] = if (prefix.isEmpty()) "0" else prefix
+          return
+      }
+
+      assignCodes(node.left!!, prefix + "0", codes)
+      assignCodes(node.right!!, prefix + "1", codes)
+  }
+  //#endregion frequency
+  `,
+  'kotlin',
+);
+
 export const HUFFMAN_CODE = HUFFMAN_TS.lines;
 export const HUFFMAN_CODE_REGIONS = HUFFMAN_TS.regions;
 export const HUFFMAN_CODE_HIGHLIGHT_MAP = HUFFMAN_TS.highlightMap;
@@ -509,6 +1002,13 @@ export const HUFFMAN_CODE_VARIANTS: CodeVariantMap = {
     regions: HUFFMAN_TS.regions,
     highlightMap: HUFFMAN_TS.highlightMap,
     source: HUFFMAN_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: HUFFMAN_JS.lines,
+    regions: HUFFMAN_JS.regions,
+    highlightMap: HUFFMAN_JS.highlightMap,
+    source: HUFFMAN_JS.source,
   },
   python: {
     language: 'python',
@@ -537,5 +1037,40 @@ export const HUFFMAN_CODE_VARIANTS: CodeVariantMap = {
     regions: HUFFMAN_CPP.regions,
     highlightMap: HUFFMAN_CPP.highlightMap,
     source: HUFFMAN_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: HUFFMAN_GO.lines,
+    regions: HUFFMAN_GO.regions,
+    highlightMap: HUFFMAN_GO.highlightMap,
+    source: HUFFMAN_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: HUFFMAN_RUST.lines,
+    regions: HUFFMAN_RUST.regions,
+    highlightMap: HUFFMAN_RUST.highlightMap,
+    source: HUFFMAN_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: HUFFMAN_SWIFT.lines,
+    regions: HUFFMAN_SWIFT.regions,
+    highlightMap: HUFFMAN_SWIFT.highlightMap,
+    source: HUFFMAN_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: HUFFMAN_PHP.lines,
+    regions: HUFFMAN_PHP.regions,
+    highlightMap: HUFFMAN_PHP.highlightMap,
+    source: HUFFMAN_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: HUFFMAN_KOTLIN.lines,
+    regions: HUFFMAN_KOTLIN.regions,
+    highlightMap: HUFFMAN_KOTLIN.highlightMap,
+    source: HUFFMAN_KOTLIN.source,
   },
 };

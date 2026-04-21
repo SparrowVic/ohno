@@ -70,6 +70,8 @@
         <app-delaunay-trace-panel [state]="delaunayGeometryState()" />
       } @else if (convexHullGeometryState()) {
         <app-geometry-trace-panel [state]="convexHullGeometryState()" />
+      } @else if (sortState()) {
+        <app-sort-trace-panel [state]="sortState()" [algorithmId]="algorithm().id" />
       } @else {
         <app-search-trace-panel [state]="searchState()" />
       }

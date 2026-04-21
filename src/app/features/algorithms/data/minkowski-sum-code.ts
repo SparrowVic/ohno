@@ -669,6 +669,251 @@ const MINKOWSKI_SUM_CPP = buildStructuredCode(
   'cpp',
 );
 
+const MINKOWSKI_SUM_JS = buildStructuredCode(
+  `
+  //@step 1
+  function minkowskiSum(obstacle, robot) {
+    const polygonA = rotateToAnchor(ensureCounterClockwise(obstacle));
+
+    //@step 2
+    const polygonB = rotateToAnchor(ensureCounterClockwise(reflect(robot)));
+
+    const edgesA = edgeVectors(polygonA);
+    const edgesB = edgeVectors(polygonB);
+
+    //@step 3
+    const result = [add(polygonA[0], polygonB[0])];
+    let i = 0;
+    let j = 0;
+
+    while (i < edgesA.length || j < edgesB.length) {
+      //@step 5
+      const step = chooseNextVector(edgesA, edgesB, i, j);
+      result.push(add(result[result.length - 1], step.delta));
+      i = step.nextI;
+      j = step.nextJ;
+    }
+
+    //@step 6
+    return result;
+  }
+  `,
+  'javascript',
+);
+
+const MINKOWSKI_SUM_GO = buildStructuredCode(
+  `
+  package geometry
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  type VectorStep struct {
+      Delta Point
+      NextI int
+      NextJ int
+  }
+
+  //@step 1
+  func MinkowskiSum(obstacle []Point, robot []Point) []Point {
+      polygonA := rotateToAnchor(ensureCounterClockwise(obstacle))
+
+      //@step 2
+      polygonB := rotateToAnchor(ensureCounterClockwise(reflect(robot)))
+
+      edgesA := edgeVectors(polygonA)
+      edgesB := edgeVectors(polygonB)
+
+      //@step 3
+      result := []Point{add(polygonA[0], polygonB[0])}
+      i, j := 0, 0
+
+      for i < len(edgesA) || j < len(edgesB) {
+          //@step 5
+          step := chooseNextVector(edgesA, edgesB, i, j)
+          result = append(result, add(result[len(result)-1], step.Delta))
+          i = step.NextI
+          j = step.NextJ
+      }
+
+      //@step 6
+      return result
+  }
+  `,
+  'go',
+);
+
+const MINKOWSKI_SUM_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  struct VectorStep {
+      delta: Point,
+      next_i: usize,
+      next_j: usize,
+  }
+
+  //@step 1
+  fn minkowski_sum(obstacle: &[Point], robot: &[Point]) -> Vec<Point> {
+      let polygon_a = rotate_to_anchor(ensure_counter_clockwise(obstacle));
+
+      //@step 2
+      let polygon_b = rotate_to_anchor(ensure_counter_clockwise(reflect(robot)));
+
+      let edges_a = edge_vectors(&polygon_a);
+      let edges_b = edge_vectors(&polygon_b);
+
+      //@step 3
+      let mut result = vec![add(polygon_a[0], polygon_b[0])];
+      let (mut i, mut j) = (0, 0);
+
+      while i < edges_a.len() || j < edges_b.len() {
+          //@step 5
+          let step = choose_next_vector(&edges_a, &edges_b, i, j);
+          let last = *result.last().unwrap();
+          result.push(add(last, step.delta));
+          i = step.next_i;
+          j = step.next_j;
+      }
+
+      //@step 6
+      result
+  }
+  `,
+  'rust',
+);
+
+const MINKOWSKI_SUM_SWIFT = buildStructuredCode(
+  `
+  struct Point {
+      let x: Double
+      let y: Double
+  }
+
+  struct VectorStep {
+      let delta: Point
+      let nextI: Int
+      let nextJ: Int
+  }
+
+  //@step 1
+  func minkowskiSum(_ obstacle: [Point], _ robot: [Point]) -> [Point] {
+      let polygonA = rotateToAnchor(ensureCounterClockwise(obstacle))
+
+      //@step 2
+      let polygonB = rotateToAnchor(ensureCounterClockwise(reflect(robot)))
+
+      let edgesA = edgeVectors(polygonA)
+      let edgesB = edgeVectors(polygonB)
+
+      //@step 3
+      var result = [add(polygonA[0], polygonB[0])]
+      var i = 0
+      var j = 0
+
+      while i < edgesA.count || j < edgesB.count {
+          //@step 5
+          let step = chooseNextVector(edgesA, edgesB, i, j)
+          result.append(add(result[result.count - 1], step.delta))
+          i = step.nextI
+          j = step.nextJ
+      }
+
+      //@step 6
+      return result
+  }
+  `,
+  'swift',
+);
+
+const MINKOWSKI_SUM_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(public float $x, public float $y) {}
+  }
+
+  final class VectorStep
+  {
+      public function __construct(
+          public Point $delta,
+          public int $nextI,
+          public int $nextJ,
+      ) {}
+  }
+
+  //@step 1
+  function minkowskiSum(array $obstacle, array $robot): array
+  {
+      $polygonA = rotateToAnchor(ensureCounterClockwise($obstacle));
+
+      //@step 2
+      $polygonB = rotateToAnchor(ensureCounterClockwise(reflect($robot)));
+
+      $edgesA = edgeVectors($polygonA);
+      $edgesB = edgeVectors($polygonB);
+
+      //@step 3
+      $result = [add($polygonA[0], $polygonB[0])];
+      $i = 0;
+      $j = 0;
+
+      while ($i < count($edgesA) || $j < count($edgesB)) {
+          //@step 5
+          $step = chooseNextVector($edgesA, $edgesB, $i, $j);
+          $result[] = add($result[count($result) - 1], $step->delta);
+          $i = $step->nextI;
+          $j = $step->nextJ;
+      }
+
+      //@step 6
+      return $result;
+  }
+  `,
+  'php',
+);
+
+const MINKOWSKI_SUM_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+  data class VectorStep(val delta: Point, val nextI: Int, val nextJ: Int)
+
+  //@step 1
+  fun minkowskiSum(obstacle: List<Point>, robot: List<Point>): List<Point> {
+      val polygonA = rotateToAnchor(ensureCounterClockwise(obstacle))
+
+      //@step 2
+      val polygonB = rotateToAnchor(ensureCounterClockwise(reflect(robot)))
+
+      val edgesA = edgeVectors(polygonA)
+      val edgesB = edgeVectors(polygonB)
+
+      //@step 3
+      val result = mutableListOf(add(polygonA.first(), polygonB.first()))
+      var i = 0
+      var j = 0
+
+      while (i < edgesA.size || j < edgesB.size) {
+          //@step 5
+          val step = chooseNextVector(edgesA, edgesB, i, j)
+          result += add(result.last(), step.delta)
+          i = step.nextI
+          j = step.nextJ
+      }
+
+      //@step 6
+      return result
+  }
+  `,
+  'kotlin',
+);
+
 export const MINKOWSKI_SUM_CODE = MINKOWSKI_SUM_TS.lines;
 export const MINKOWSKI_SUM_CODE_REGIONS = MINKOWSKI_SUM_TS.regions;
 export const MINKOWSKI_SUM_CODE_HIGHLIGHT_MAP = MINKOWSKI_SUM_TS.highlightMap;
@@ -679,6 +924,13 @@ export const MINKOWSKI_SUM_CODE_VARIANTS: CodeVariantMap = {
     regions: MINKOWSKI_SUM_TS.regions,
     highlightMap: MINKOWSKI_SUM_TS.highlightMap,
     source: MINKOWSKI_SUM_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: MINKOWSKI_SUM_JS.lines,
+    regions: MINKOWSKI_SUM_JS.regions,
+    highlightMap: MINKOWSKI_SUM_JS.highlightMap,
+    source: MINKOWSKI_SUM_JS.source,
   },
   python: {
     language: 'python',
@@ -707,5 +959,40 @@ export const MINKOWSKI_SUM_CODE_VARIANTS: CodeVariantMap = {
     regions: MINKOWSKI_SUM_CPP.regions,
     highlightMap: MINKOWSKI_SUM_CPP.highlightMap,
     source: MINKOWSKI_SUM_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: MINKOWSKI_SUM_GO.lines,
+    regions: MINKOWSKI_SUM_GO.regions,
+    highlightMap: MINKOWSKI_SUM_GO.highlightMap,
+    source: MINKOWSKI_SUM_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: MINKOWSKI_SUM_RUST.lines,
+    regions: MINKOWSKI_SUM_RUST.regions,
+    highlightMap: MINKOWSKI_SUM_RUST.highlightMap,
+    source: MINKOWSKI_SUM_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: MINKOWSKI_SUM_SWIFT.lines,
+    regions: MINKOWSKI_SUM_SWIFT.regions,
+    highlightMap: MINKOWSKI_SUM_SWIFT.highlightMap,
+    source: MINKOWSKI_SUM_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: MINKOWSKI_SUM_PHP.lines,
+    regions: MINKOWSKI_SUM_PHP.regions,
+    highlightMap: MINKOWSKI_SUM_PHP.highlightMap,
+    source: MINKOWSKI_SUM_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: MINKOWSKI_SUM_KOTLIN.lines,
+    regions: MINKOWSKI_SUM_KOTLIN.regions,
+    highlightMap: MINKOWSKI_SUM_KOTLIN.highlightMap,
+    source: MINKOWSKI_SUM_KOTLIN.source,
   },
 };
