@@ -75,7 +75,9 @@ export function buildAvailableLanguageOptions(
       language: variant.language,
       label: LANGUAGE_LABELS[variant.language],
     })),
-    ...SUGGESTED_LANGUAGE_OPTIONS.filter((option) => !implementedLanguages.has(option.id as CodeLanguage)),
+    ...SUGGESTED_LANGUAGE_OPTIONS.filter(
+      (option) => !implementedLanguages.has(option.id as CodeLanguage),
+    ),
   ];
 }
 
@@ -98,6 +100,14 @@ export function buildVariantIdentity(variant: CodeVariant): string {
   ].join('\u0001');
 }
 
+function hasRenderableContent(line: CodeLine | undefined): boolean {
+  if (!line) {
+    return false;
+  }
+
+  return line.tokens.some((token) => token.text.trim().length > 0);
+}
+
 export function resolveActiveCodeLine(
   activeLineNumber: number | null,
   variant: CodeVariant,
@@ -106,7 +116,30 @@ export function resolveActiveCodeLine(
     return null;
   }
 
-  return variant.highlightMap?.[activeLineNumber] ?? activeLineNumber;
+  if (variant.lines.length === 0) {
+    return null;
+  }
+
+  const mapped = variant.highlightMap?.[activeLineNumber] ?? activeLineNumber;
+  const clamped = Math.min(Math.max(mapped, 1), variant.lines.length);
+
+  if (hasRenderableContent(variant.lines[clamped - 1])) {
+    return clamped;
+  }
+
+  for (let offset = 1; offset < variant.lines.length; offset += 1) {
+    const forward = clamped + offset;
+    if (forward <= variant.lines.length && hasRenderableContent(variant.lines[forward - 1])) {
+      return forward;
+    }
+
+    const backward = clamped - offset;
+    if (backward >= 1 && hasRenderableContent(variant.lines[backward - 1])) {
+      return backward;
+    }
+  }
+
+  return clamped;
 }
 
 export async function copyTextToClipboard(document: Document, value: string): Promise<void> {

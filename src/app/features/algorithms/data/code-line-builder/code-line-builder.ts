@@ -104,15 +104,26 @@ function detectBraceRegions(emittedLines: readonly string[]): readonly BraceRegi
         }
 
         if (inString !== null) {
-          if (ch === '\\') { i += 2; continue; }
+          if (ch === '\\') {
+            i += 2;
+            continue;
+          }
           if (ch === inString) inString = null;
           i += 1;
           continue;
         }
 
         if (ch === '/' && next === '/') break;
-        if (ch === '/' && next === '*') { inBlockComment = true; i += 2; continue; }
-        if (ch === '"' || ch === "'" || ch === '`') { inString = ch; i += 1; continue; }
+        if (ch === '/' && next === '*') {
+          inBlockComment = true;
+          i += 2;
+          continue;
+        }
+        if (ch === '"' || ch === "'" || ch === '`') {
+          inString = ch;
+          i += 1;
+          continue;
+        }
 
         if (ch === '(') paren += 1;
         else if (ch === ')') paren -= 1;
@@ -153,15 +164,26 @@ function detectBraceRegions(emittedLines: readonly string[]): readonly BraceRegi
         }
 
         if (inString !== null) {
-          if (ch === '\\') { i += 2; continue; }
+          if (ch === '\\') {
+            i += 2;
+            continue;
+          }
           if (ch === inString) inString = null;
           i += 1;
           continue;
         }
 
         if (ch === '/' && next === '/') break;
-        if (ch === '/' && next === '*') { inBlockComment = true; i += 2; continue; }
-        if (ch === '"' || ch === "'" || ch === '`') { inString = ch; i += 1; continue; }
+        if (ch === '/' && next === '*') {
+          inBlockComment = true;
+          i += 2;
+          continue;
+        }
+        if (ch === '"' || ch === "'" || ch === '`') {
+          inString = ch;
+          i += 1;
+          continue;
+        }
 
         if (ch === '(') {
           paren += 1;
@@ -260,7 +282,10 @@ function detectCStyleBlockComments(lines: readonly string[]): readonly BraceRegi
       }
 
       if (inString !== null) {
-        if (ch === '\\') { i += 2; continue; }
+        if (ch === '\\') {
+          i += 2;
+          continue;
+        }
         if (ch === inString) inString = null;
         i += 1;
         continue;
@@ -334,7 +359,11 @@ function detectPythonDocstringRegions(lines: readonly string[]): readonly BraceR
         const quote = line[i]!;
         i += 1;
         while (i < line.length && line[i] !== quote) {
-          if (line[i] === '\\') { i += 2; } else { i += 1; }
+          if (line[i] === '\\') {
+            i += 2;
+          } else {
+            i += 1;
+          }
         }
         if (i < line.length) i += 1;
         continue;
@@ -362,11 +391,7 @@ function inheritsCollapsedDefault(
   let innermost: CodeRegion | null = null;
   for (const ex of explicitRegions) {
     if (ex.startLine <= auto.startLine && ex.endLine >= auto.endLine) {
-      if (
-        !innermost ||
-        ex.startLine > innermost.startLine ||
-        ex.endLine < innermost.endLine
-      ) {
+      if (!innermost || ex.startLine > innermost.startLine || ex.endLine < innermost.endLine) {
         innermost = ex;
       }
     }
@@ -390,13 +415,16 @@ function inheritsCollapsedDefault(
   return true;
 }
 
-export function buildStructuredCode(source: string, language: CodeLanguage = 'typescript'): StructuredCode {
+export function buildStructuredCode(
+  source: string,
+  language: CodeLanguage = 'typescript',
+): StructuredCode {
   const emittedLines: string[] = [];
   const explicitRegions: CodeRegion[] = [];
   const highlightMap: Record<number, number> = {};
   const regionStack: RegionDraft[] = [];
 
-  let pendingStep: number | null = null;
+  let pendingSteps: number[] = [];
 
   for (const rawLine of dedent(source).split('\n')) {
     const regionStart = rawLine.match(REGION_START_RE);
@@ -436,14 +464,16 @@ export function buildStructuredCode(source: string, language: CodeLanguage = 'ty
 
     const stepDirective = rawLine.match(STEP_RE);
     if (stepDirective) {
-      pendingStep = Number(stepDirective[1]);
+      pendingSteps.push(Number(stepDirective[1]));
       continue;
     }
 
     emittedLines.push(rawLine);
-    if (pendingStep !== null) {
-      highlightMap[pendingStep] = emittedLines.length;
-      pendingStep = null;
+    if (pendingSteps.length > 0) {
+      for (const step of pendingSteps) {
+        highlightMap[step] = emittedLines.length;
+      }
+      pendingSteps = [];
     }
   }
 
@@ -529,9 +559,7 @@ export function buildStructuredCode(source: string, language: CodeLanguage = 'ty
     const explicitKeep = explicitRegions.filter(
       (ex) =>
         !promotedExplicits.has(ex) &&
-        !autoFoldRegions.some(
-          (br) => br.startLine >= ex.startLine && br.endLine <= ex.endLine,
-        ),
+        !autoFoldRegions.some((br) => br.startLine >= ex.startLine && br.endLine <= ex.endLine),
     );
 
     regions = [...autoAsCode, ...explicitKeep];

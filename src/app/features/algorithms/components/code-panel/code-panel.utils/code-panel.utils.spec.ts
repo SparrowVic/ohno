@@ -51,7 +51,9 @@ describe('code-panel.utils', () => {
       inputVariants: {},
       fallbackLanguage: 'typescript',
       fallbackLines: sampleLines,
-      fallbackRegions: [{ id: 'main', kind: 'function', startLine: 1, endLine: 2, collapsedByDefault: false }],
+      fallbackRegions: [
+        { id: 'main', kind: 'function', startLine: 1, endLine: 2, collapsedByDefault: false },
+      ],
     });
 
     expect(variants.typescript?.source).toContain('const answer = 42;');
@@ -91,13 +93,36 @@ describe('code-panel.utils', () => {
     const variant = {
       language: 'typescript' as const,
       lines: sampleLines,
-      regions: [{ id: 'main', kind: 'function' as const, startLine: 1, endLine: 2, collapsedByDefault: true }],
+      regions: [
+        {
+          id: 'main',
+          kind: 'function' as const,
+          startLine: 1,
+          endLine: 2,
+          collapsedByDefault: true,
+        },
+      ],
       highlightMap: { 8: 2 },
     };
 
     expect(buildVariantIdentity(variant)).toContain('main:1:2:1');
     expect(resolveActiveCodeLine(8, variant)).toBe(2);
     expect(resolveActiveCodeLine(null, variant)).toBeNull();
+  });
+
+  it('resolveActiveCodeLine skips blank lines when a mapping lands on whitespace', () => {
+    const variant = {
+      language: 'typescript' as const,
+      lines: [
+        { number: 1, tokens: [{ kind: 'text', text: 'const start = true;' }] },
+        { number: 2, tokens: [{ kind: 'text', text: '' }] },
+        { number: 3, tokens: [{ kind: 'text', text: 'process(start);' }] },
+      ],
+      regions: [],
+      highlightMap: { 5: 2 },
+    };
+
+    expect(resolveActiveCodeLine(5, variant)).toBe(3);
   });
 
   it('copyTextToClipboard uses the Clipboard API when available', async () => {

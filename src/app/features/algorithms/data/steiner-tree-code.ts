@@ -125,6 +125,115 @@ const STEINER_TREE_TS = buildStructuredCode(`
   //#endregion floyd-warshall
 `);
 
+const STEINER_TREE_JS = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  /**
+   * @typedef {{ id: string }} GraphNode
+   * @typedef {{ from: string, to: string, weight: number }} WeightedEdge
+   * @typedef {{ nodes: GraphNode[], edges: WeightedEdge[] }} WeightedGraphData
+   */
+  //#endregion graph-types
+
+  /**
+   * Compute the exact Steiner tree cost with the Dreyfus-Wagner subset DP.
+   * Input: weighted graph and terminal node ids.
+   * Returns: minimum total weight of any tree spanning all terminals.
+   */
+  //#region steiner function open
+  function steinerTreeCost(graph, terminals) {
+      //@step 2
+      const shortest = floydWarshall(graph);
+      const terminalCount = terminals.length;
+      const fullMask = (1 << terminalCount) - 1;
+      const nodeCount = shortest.nodeIds.length;
+      const dp = Array.from({ length: 1 << terminalCount }, () =>
+          Array.from({ length: nodeCount }, () => Number.POSITIVE_INFINITY),
+      );
+
+      //@step 3
+      for (let terminalIndex = 0; terminalIndex < terminalCount; terminalIndex += 1) {
+          const mask = 1 << terminalIndex;
+          const terminalNode = terminals[terminalIndex];
+          const targetIndex = shortest.indexById.get(terminalNode);
+
+          for (let nodeIndex = 0; nodeIndex < nodeCount; nodeIndex += 1) {
+              dp[mask][nodeIndex] = shortest.distance[nodeIndex][targetIndex];
+          }
+      }
+
+      for (let mask = 1; mask <= fullMask; mask += 1) {
+          if ((mask & (mask - 1)) === 0) {
+              continue;
+          }
+
+          //@step 4
+          for (let leftMask = (mask - 1) & mask; leftMask > 0; leftMask = (leftMask - 1) & mask) {
+              const rightMask = mask ^ leftMask;
+              if (rightMask === 0 || leftMask > rightMask) {
+                  continue;
+              }
+
+              for (let nodeIndex = 0; nodeIndex < nodeCount; nodeIndex += 1) {
+                  dp[mask][nodeIndex] = Math.min(
+                      dp[mask][nodeIndex],
+                      dp[leftMask][nodeIndex] + dp[rightMask][nodeIndex],
+                  );
+              }
+          }
+
+          //@step 5
+          for (let viaIndex = 0; viaIndex < nodeCount; viaIndex += 1) {
+              for (let nodeIndex = 0; nodeIndex < nodeCount; nodeIndex += 1) {
+                  dp[mask][nodeIndex] = Math.min(
+                      dp[mask][nodeIndex],
+                      dp[mask][viaIndex] + shortest.distance[viaIndex][nodeIndex],
+                  );
+              }
+          }
+      }
+
+      //@step 6
+      return Math.min(...dp[fullMask]);
+  }
+  //#endregion steiner
+
+  //#region floyd-warshall helper collapsed
+  function floydWarshall(graph) {
+      const nodeIds = graph.nodes.map((node) => node.id);
+      const indexById = new Map(nodeIds.map((nodeId, index) => [nodeId, index]));
+      const nodeCount = nodeIds.length;
+      const distance = Array.from({ length: nodeCount }, (_, row) =>
+          Array.from({ length: nodeCount }, (_, column) =>
+              row === column ? 0 : Number.POSITIVE_INFINITY,
+          ),
+      );
+
+      for (const edge of graph.edges) {
+          const fromIndex = indexById.get(edge.from);
+          const toIndex = indexById.get(edge.to);
+          distance[fromIndex][toIndex] = Math.min(distance[fromIndex][toIndex], edge.weight);
+          distance[toIndex][fromIndex] = Math.min(distance[toIndex][fromIndex], edge.weight);
+      }
+
+      for (let mid = 0; mid < nodeCount; mid += 1) {
+          for (let from = 0; from < nodeCount; from += 1) {
+              for (let to = 0; to < nodeCount; to += 1) {
+                  distance[from][to] = Math.min(
+                      distance[from][to],
+                      distance[from][mid] + distance[mid][to],
+                  );
+              }
+          }
+      }
+
+      return { nodeIds, indexById, distance };
+  }
+  //#endregion floyd-warshall
+  `,
+  'javascript',
+);
+
 const STEINER_TREE_PY = buildStructuredCode(
   `
   from dataclasses import dataclass
@@ -646,6 +755,654 @@ const STEINER_TREE_CPP = buildStructuredCode(
   'cpp',
 );
 
+const STEINER_TREE_GO = buildStructuredCode(
+  `
+  package graphs
+
+  import "math"
+
+  //#region graph-types interface collapsed
+  type GraphNode struct {
+      ID string
+  }
+
+  type WeightedEdge struct {
+      From   string
+      To     string
+      Weight float64
+  }
+
+  type WeightedGraphData struct {
+      Nodes []GraphNode
+      Edges []WeightedEdge
+  }
+
+  type FloydWarshallResult struct {
+      NodeIDs   []string
+      IndexByID map[string]int
+      Distance  [][]float64
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes the exact Steiner tree cost with the Dreyfus-Wagner subset DP.
+   * Input: weighted graph and terminal node ids.
+   * Returns: minimum total weight of any tree spanning all terminals.
+   */
+  //#region steiner function open
+  func SteinerTreeCost(graph WeightedGraphData, terminals []string) float64 {
+      //@step 2
+      shortest := floydWarshall(graph)
+      terminalCount := len(terminals)
+      fullMask := (1 << terminalCount) - 1
+      nodeCount := len(shortest.NodeIDs)
+      dp := make([][]float64, 1<<terminalCount)
+      for index := range dp {
+          dp[index] = make([]float64, nodeCount)
+          for nodeIndex := range dp[index] {
+              dp[index][nodeIndex] = math.Inf(1)
+          }
+      }
+
+      //@step 3
+      for terminalIndex, terminalNode := range terminals {
+          mask := 1 << terminalIndex
+          targetIndex := shortest.IndexByID[terminalNode]
+          for nodeIndex := 0; nodeIndex < nodeCount; nodeIndex += 1 {
+              dp[mask][nodeIndex] = shortest.Distance[nodeIndex][targetIndex]
+          }
+      }
+
+      for mask := 1; mask <= fullMask; mask += 1 {
+          if mask&(mask-1) == 0 {
+              continue
+          }
+
+          //@step 4
+          for leftMask := (mask - 1) & mask; leftMask > 0; leftMask = (leftMask - 1) & mask {
+              rightMask := mask ^ leftMask
+              if rightMask == 0 || leftMask > rightMask {
+                  continue
+              }
+
+              for nodeIndex := 0; nodeIndex < nodeCount; nodeIndex += 1 {
+                  candidate := dp[leftMask][nodeIndex] + dp[rightMask][nodeIndex]
+                  if candidate < dp[mask][nodeIndex] {
+                      dp[mask][nodeIndex] = candidate
+                  }
+              }
+          }
+
+          //@step 5
+          for viaIndex := 0; viaIndex < nodeCount; viaIndex += 1 {
+              for nodeIndex := 0; nodeIndex < nodeCount; nodeIndex += 1 {
+                  candidate := dp[mask][viaIndex] + shortest.Distance[viaIndex][nodeIndex]
+                  if candidate < dp[mask][nodeIndex] {
+                      dp[mask][nodeIndex] = candidate
+                  }
+              }
+          }
+      }
+
+      //@step 6
+      best := math.Inf(1)
+      for _, value := range dp[fullMask] {
+          if value < best {
+              best = value
+          }
+      }
+      return best
+  }
+  //#endregion steiner
+
+  //#region floyd-warshall helper collapsed
+  func floydWarshall(graph WeightedGraphData) FloydWarshallResult {
+      nodeIDs := make([]string, 0, len(graph.Nodes))
+      indexByID := map[string]int{}
+      for index, node := range graph.Nodes {
+          nodeIDs = append(nodeIDs, node.ID)
+          indexByID[node.ID] = index
+      }
+      nodeCount := len(nodeIDs)
+      distance := make([][]float64, nodeCount)
+      for row := 0; row < nodeCount; row += 1 {
+          distance[row] = make([]float64, nodeCount)
+          for column := 0; column < nodeCount; column += 1 {
+              if row == column {
+                  distance[row][column] = 0
+              } else {
+                  distance[row][column] = math.Inf(1)
+              }
+          }
+      }
+
+      for _, edge := range graph.Edges {
+          fromIndex := indexByID[edge.From]
+          toIndex := indexByID[edge.To]
+          if edge.Weight < distance[fromIndex][toIndex] {
+              distance[fromIndex][toIndex] = edge.Weight
+          }
+          if edge.Weight < distance[toIndex][fromIndex] {
+              distance[toIndex][fromIndex] = edge.Weight
+          }
+      }
+
+      for mid := 0; mid < nodeCount; mid += 1 {
+          for from := 0; from < nodeCount; from += 1 {
+              for to := 0; to < nodeCount; to += 1 {
+                  candidate := distance[from][mid] + distance[mid][to]
+                  if candidate < distance[from][to] {
+                      distance[from][to] = candidate
+                  }
+              }
+          }
+      }
+
+      return FloydWarshallResult{NodeIDs: nodeIDs, IndexByID: indexByID, Distance: distance}
+  }
+  //#endregion floyd-warshall
+  `,
+  'go',
+);
+
+const STEINER_TREE_RUST = buildStructuredCode(
+  `
+  use std::collections::HashMap;
+
+  //#region graph-types interface collapsed
+  #[derive(Clone)]
+  struct GraphNode {
+      id: String,
+  }
+
+  #[derive(Clone)]
+  struct WeightedEdge {
+      from: String,
+      to: String,
+      weight: f64,
+  }
+
+  struct WeightedGraphData {
+      nodes: Vec<GraphNode>,
+      edges: Vec<WeightedEdge>,
+  }
+
+  struct FloydWarshallResult {
+      node_ids: Vec<String>,
+      index_by_id: HashMap<String, usize>,
+      distance: Vec<Vec<f64>>,
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes the exact Steiner tree cost with the Dreyfus-Wagner subset DP.
+   * Input: weighted graph and terminal node ids.
+   * Returns: minimum total weight of any tree spanning all terminals.
+   */
+  //#region steiner function open
+  fn steiner_tree_cost(graph: &WeightedGraphData, terminals: &[String]) -> f64 {
+      //@step 2
+      let shortest = floyd_warshall(graph);
+      let terminal_count = terminals.len();
+      let full_mask = (1usize << terminal_count) - 1;
+      let node_count = shortest.node_ids.len();
+      let mut dp = vec![vec![f64::INFINITY; node_count]; 1usize << terminal_count];
+
+      //@step 3
+      for (terminal_index, terminal_node) in terminals.iter().enumerate() {
+          let mask = 1usize << terminal_index;
+          let target_index = shortest.index_by_id[terminal_node];
+          for node_index in 0..node_count {
+              dp[mask][node_index] = shortest.distance[node_index][target_index];
+          }
+      }
+
+      for mask in 1usize..=full_mask {
+          if (mask & (mask - 1)) == 0 {
+              continue;
+          }
+
+          //@step 4
+          let mut left_mask = (mask - 1) & mask;
+          while left_mask > 0 {
+              let right_mask = mask ^ left_mask;
+              if right_mask != 0 && left_mask <= right_mask {
+                  for node_index in 0..node_count {
+                      let candidate = dp[left_mask][node_index] + dp[right_mask][node_index];
+                      if candidate < dp[mask][node_index] {
+                          dp[mask][node_index] = candidate;
+                      }
+                  }
+              }
+              left_mask = (left_mask - 1) & mask;
+          }
+
+          //@step 5
+          for via_index in 0..node_count {
+              for node_index in 0..node_count {
+                  let candidate = dp[mask][via_index] + shortest.distance[via_index][node_index];
+                  if candidate < dp[mask][node_index] {
+                      dp[mask][node_index] = candidate;
+                  }
+              }
+          }
+      }
+
+      //@step 6
+      dp[full_mask].iter().copied().fold(f64::INFINITY, f64::min)
+  }
+  //#endregion steiner
+
+  //#region floyd-warshall helper collapsed
+  fn floyd_warshall(graph: &WeightedGraphData) -> FloydWarshallResult {
+      let node_ids: Vec<String> = graph.nodes.iter().map(|node| node.id.clone()).collect();
+      let index_by_id: HashMap<String, usize> = node_ids
+          .iter()
+          .enumerate()
+          .map(|(index, node_id)| (node_id.clone(), index))
+          .collect();
+      let node_count = node_ids.len();
+      let mut distance = vec![vec![f64::INFINITY; node_count]; node_count];
+      for row in 0..node_count {
+          distance[row][row] = 0.0;
+      }
+
+      for edge in &graph.edges {
+          let from_index = index_by_id[&edge.from];
+          let to_index = index_by_id[&edge.to];
+          distance[from_index][to_index] = distance[from_index][to_index].min(edge.weight);
+          distance[to_index][from_index] = distance[to_index][from_index].min(edge.weight);
+      }
+
+      for mid in 0..node_count {
+          for from in 0..node_count {
+              for to in 0..node_count {
+                  let candidate = distance[from][mid] + distance[mid][to];
+                  if candidate < distance[from][to] {
+                      distance[from][to] = candidate;
+                  }
+              }
+          }
+      }
+
+      FloydWarshallResult { node_ids, index_by_id, distance }
+  }
+  //#endregion floyd-warshall
+  `,
+  'rust',
+);
+
+const STEINER_TREE_SWIFT = buildStructuredCode(
+  `
+  import Foundation
+
+  //#region graph-types interface collapsed
+  struct GraphNode {
+      let id: String
+  }
+
+  struct WeightedEdge {
+      let from: String
+      let to: String
+      let weight: Double
+  }
+
+  struct WeightedGraphData {
+      let nodes: [GraphNode]
+      let edges: [WeightedEdge]
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes the exact Steiner tree cost with the Dreyfus-Wagner subset DP.
+   * Input: weighted graph and terminal node ids.
+   * Returns: minimum total weight of any tree spanning all terminals.
+   */
+  //#region steiner function open
+  func steinerTreeCost(graph: WeightedGraphData, terminals: [String]) -> Double {
+      //@step 2
+      let shortest = floydWarshall(graph: graph)
+      let terminalCount = terminals.count
+      let fullMask = (1 << terminalCount) - 1
+      let nodeCount = shortest.nodeIds.count
+      var dp = Array(
+          repeating: Array(repeating: Double.infinity, count: nodeCount),
+          count: 1 << terminalCount,
+      )
+
+      //@step 3
+      for (terminalIndex, terminalNode) in terminals.enumerated() {
+          let mask = 1 << terminalIndex
+          let targetIndex = shortest.indexById[terminalNode]!
+          for nodeIndex in 0..<nodeCount {
+              dp[mask][nodeIndex] = shortest.distance[nodeIndex][targetIndex]
+          }
+      }
+
+      if fullMask >= 1 {
+          for mask in 1...fullMask {
+              if (mask & (mask - 1)) == 0 {
+                  continue
+              }
+
+              //@step 4
+              var leftMask = (mask - 1) & mask
+              while leftMask > 0 {
+                  let rightMask = mask ^ leftMask
+                  if rightMask != 0 && leftMask <= rightMask {
+                      for nodeIndex in 0..<nodeCount {
+                          dp[mask][nodeIndex] = min(
+                              dp[mask][nodeIndex],
+                              dp[leftMask][nodeIndex] + dp[rightMask][nodeIndex]
+                          )
+                      }
+                  }
+                  leftMask = (leftMask - 1) & mask
+              }
+
+              //@step 5
+              for viaIndex in 0..<nodeCount {
+                  for nodeIndex in 0..<nodeCount {
+                      dp[mask][nodeIndex] = min(
+                          dp[mask][nodeIndex],
+                          dp[mask][viaIndex] + shortest.distance[viaIndex][nodeIndex]
+                      )
+                  }
+              }
+          }
+      }
+
+      //@step 6
+      return dp[fullMask].min() ?? Double.infinity
+  }
+  //#endregion steiner
+
+  //#region floyd-warshall helper collapsed
+  func floydWarshall(
+      graph: WeightedGraphData,
+  ) -> (
+      nodeIds: [String],
+      indexById: [String: Int],
+      distance: [[Double]]
+  ) {
+      let nodeIds = graph.nodes.map(\.id)
+      let indexById = Dictionary(uniqueKeysWithValues: nodeIds.enumerated().map { ($1, $0) })
+      let nodeCount = nodeIds.count
+      var distance = Array(
+          repeating: Array(repeating: Double.infinity, count: nodeCount),
+          count: nodeCount,
+      )
+      for index in 0..<nodeCount {
+          distance[index][index] = 0
+      }
+
+      for edge in graph.edges {
+          let fromIndex = indexById[edge.from]!
+          let toIndex = indexById[edge.to]!
+          distance[fromIndex][toIndex] = min(distance[fromIndex][toIndex], edge.weight)
+          distance[toIndex][fromIndex] = min(distance[toIndex][fromIndex], edge.weight)
+      }
+
+      for mid in 0..<nodeCount {
+          for from in 0..<nodeCount {
+              for to in 0..<nodeCount {
+                  distance[from][to] = min(distance[from][to], distance[from][mid] + distance[mid][to])
+              }
+          }
+      }
+
+      return (nodeIds, indexById, distance)
+  }
+  //#endregion floyd-warshall
+  `,
+  'swift',
+);
+
+const STEINER_TREE_PHP = buildStructuredCode(
+  `
+  <?php
+
+  //#region graph-types interface collapsed
+  final class GraphNode
+  {
+      public function __construct(public string $id) {}
+  }
+
+  final class WeightedEdge
+  {
+      public function __construct(
+          public string $from,
+          public string $to,
+          public float $weight,
+      ) {}
+  }
+
+  final class WeightedGraphData
+  {
+      /**
+       * @param list<GraphNode> $nodes
+       * @param list<WeightedEdge> $edges
+       */
+      public function __construct(
+          public array $nodes,
+          public array $edges,
+      ) {}
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes the exact Steiner tree cost with the Dreyfus-Wagner subset DP.
+   * Input: weighted graph and terminal node ids.
+   * Returns: minimum total weight of any tree spanning all terminals.
+   */
+  //#region steiner function open
+  function steinerTreeCost(WeightedGraphData $graph, array $terminals): float
+  {
+      //@step 2
+      ['nodeIds' => $nodeIds, 'indexById' => $indexById, 'distance' => $distance] = floydWarshall($graph);
+      $terminalCount = count($terminals);
+      $fullMask = (1 << $terminalCount) - 1;
+      $nodeCount = count($nodeIds);
+      $dp = array_fill(0, 1 << $terminalCount, array_fill(0, $nodeCount, INF));
+
+      //@step 3
+      foreach ($terminals as $terminalIndex => $terminalNode) {
+          $mask = 1 << $terminalIndex;
+          $targetIndex = $indexById[$terminalNode];
+          for ($nodeIndex = 0; $nodeIndex < $nodeCount; $nodeIndex += 1) {
+              $dp[$mask][$nodeIndex] = $distance[$nodeIndex][$targetIndex];
+          }
+      }
+
+      for ($mask = 1; $mask <= $fullMask; $mask += 1) {
+          if (($mask & ($mask - 1)) === 0) {
+              continue;
+          }
+
+          //@step 4
+          for ($leftMask = ($mask - 1) & $mask; $leftMask > 0; $leftMask = ($leftMask - 1) & $mask) {
+              $rightMask = $mask ^ $leftMask;
+              if ($rightMask === 0 || $leftMask > $rightMask) {
+                  continue;
+              }
+
+              for ($nodeIndex = 0; $nodeIndex < $nodeCount; $nodeIndex += 1) {
+                  $dp[$mask][$nodeIndex] = min(
+                      $dp[$mask][$nodeIndex],
+                      $dp[$leftMask][$nodeIndex] + $dp[$rightMask][$nodeIndex],
+                  );
+              }
+          }
+
+          //@step 5
+          for ($viaIndex = 0; $viaIndex < $nodeCount; $viaIndex += 1) {
+              for ($nodeIndex = 0; $nodeIndex < $nodeCount; $nodeIndex += 1) {
+                  $dp[$mask][$nodeIndex] = min(
+                      $dp[$mask][$nodeIndex],
+                      $dp[$mask][$viaIndex] + $distance[$viaIndex][$nodeIndex],
+                  );
+              }
+          }
+      }
+
+      //@step 6
+      return min($dp[$fullMask]);
+  }
+  //#endregion steiner
+
+  //#region floyd-warshall helper collapsed
+  function floydWarshall(WeightedGraphData $graph): array
+  {
+      $nodeIds = array_map(fn (GraphNode $node): string => $node->id, $graph->nodes);
+      $indexById = [];
+      foreach ($nodeIds as $index => $nodeId) {
+          $indexById[$nodeId] = $index;
+      }
+      $nodeCount = count($nodeIds);
+      $distance = array_fill(0, $nodeCount, array_fill(0, $nodeCount, INF));
+      for ($index = 0; $index < $nodeCount; $index += 1) {
+          $distance[$index][$index] = 0.0;
+      }
+
+      foreach ($graph->edges as $edge) {
+          $fromIndex = $indexById[$edge->from];
+          $toIndex = $indexById[$edge->to];
+          $distance[$fromIndex][$toIndex] = min($distance[$fromIndex][$toIndex], $edge->weight);
+          $distance[$toIndex][$fromIndex] = min($distance[$toIndex][$fromIndex], $edge->weight);
+      }
+
+      for ($mid = 0; $mid < $nodeCount; $mid += 1) {
+          for ($from = 0; $from < $nodeCount; $from += 1) {
+              for ($to = 0; $to < $nodeCount; $to += 1) {
+                  $distance[$from][$to] = min($distance[$from][$to], $distance[$from][$mid] + $distance[$mid][$to]);
+              }
+          }
+      }
+
+      return ['nodeIds' => $nodeIds, 'indexById' => $indexById, 'distance' => $distance];
+  }
+  //#endregion floyd-warshall
+  `,
+  'php',
+);
+
+const STEINER_TREE_KOTLIN = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  data class GraphNode(val id: String)
+
+  data class WeightedEdge(
+      val from: String,
+      val to: String,
+      val weight: Double,
+  )
+
+  data class WeightedGraphData(
+      val nodes: List<GraphNode>,
+      val edges: List<WeightedEdge>,
+  )
+
+  data class FloydWarshallResult(
+      val nodeIds: List<String>,
+      val indexById: Map<String, Int>,
+      val distance: List<MutableList<Double>>,
+  )
+  //#endregion graph-types
+
+  /**
+   * Computes the exact Steiner tree cost with the Dreyfus-Wagner subset DP.
+   * Input: weighted graph and terminal node ids.
+   * Returns: minimum total weight of any tree spanning all terminals.
+   */
+  //#region steiner function open
+  fun steinerTreeCost(graph: WeightedGraphData, terminals: List<String>): Double {
+      //@step 2
+      val shortest = floydWarshall(graph)
+      val terminalCount = terminals.size
+      val fullMask = (1 shl terminalCount) - 1
+      val nodeCount = shortest.nodeIds.size
+      val dp = List(1 shl terminalCount) {
+          MutableList(nodeCount) { Double.POSITIVE_INFINITY }
+      }
+
+      //@step 3
+      for ((terminalIndex, terminalNode) in terminals.withIndex()) {
+          val mask = 1 shl terminalIndex
+          val targetIndex = shortest.indexById.getValue(terminalNode)
+          for (nodeIndex in 0 until nodeCount) {
+              dp[mask][nodeIndex] = shortest.distance[nodeIndex][targetIndex]
+          }
+      }
+
+      for (mask in 1..fullMask) {
+          if ((mask and (mask - 1)) == 0) {
+              continue
+          }
+
+          //@step 4
+          var leftMask = (mask - 1) and mask
+          while (leftMask > 0) {
+              val rightMask = mask xor leftMask
+              if (rightMask != 0 && leftMask <= rightMask) {
+                  for (nodeIndex in 0 until nodeCount) {
+                      dp[mask][nodeIndex] = minOf(
+                          dp[mask][nodeIndex],
+                          dp[leftMask][nodeIndex] + dp[rightMask][nodeIndex],
+                      )
+                  }
+              }
+              leftMask = (leftMask - 1) and mask
+          }
+
+          //@step 5
+          for (viaIndex in 0 until nodeCount) {
+              for (nodeIndex in 0 until nodeCount) {
+                  dp[mask][nodeIndex] = minOf(
+                      dp[mask][nodeIndex],
+                      dp[mask][viaIndex] + shortest.distance[viaIndex][nodeIndex],
+                  )
+              }
+          }
+      }
+
+      //@step 6
+      return dp[fullMask].minOrNull() ?: Double.POSITIVE_INFINITY
+  }
+  //#endregion steiner
+
+  //#region floyd-warshall helper collapsed
+  fun floydWarshall(graph: WeightedGraphData): FloydWarshallResult {
+      val nodeIds = graph.nodes.map { it.id }
+      val indexById = nodeIds.withIndex().associate { (index, nodeId) -> nodeId to index }
+      val nodeCount = nodeIds.size
+      val distance = MutableList(nodeCount) { row ->
+          MutableList(nodeCount) { column ->
+              if (row == column) 0.0 else Double.POSITIVE_INFINITY
+          }
+      }
+
+      for (edge in graph.edges) {
+          val fromIndex = indexById.getValue(edge.from)
+          val toIndex = indexById.getValue(edge.to)
+          distance[fromIndex][toIndex] = minOf(distance[fromIndex][toIndex], edge.weight)
+          distance[toIndex][fromIndex] = minOf(distance[toIndex][fromIndex], edge.weight)
+      }
+
+      for (mid in 0 until nodeCount) {
+          for (from in 0 until nodeCount) {
+              for (to in 0 until nodeCount) {
+                  distance[from][to] = minOf(distance[from][to], distance[from][mid] + distance[mid][to])
+              }
+          }
+      }
+
+      return FloydWarshallResult(nodeIds, indexById, distance)
+  }
+  //#endregion floyd-warshall
+  `,
+  'kotlin',
+);
+
 export const STEINER_TREE_CODE = STEINER_TREE_TS.lines;
 export const STEINER_TREE_CODE_REGIONS = STEINER_TREE_TS.regions;
 export const STEINER_TREE_CODE_HIGHLIGHT_MAP = STEINER_TREE_TS.highlightMap;
@@ -656,6 +1413,13 @@ export const STEINER_TREE_CODE_VARIANTS: CodeVariantMap = {
     regions: STEINER_TREE_TS.regions,
     highlightMap: STEINER_TREE_TS.highlightMap,
     source: STEINER_TREE_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: STEINER_TREE_JS.lines,
+    regions: STEINER_TREE_JS.regions,
+    highlightMap: STEINER_TREE_JS.highlightMap,
+    source: STEINER_TREE_JS.source,
   },
   python: {
     language: 'python',
@@ -684,5 +1448,40 @@ export const STEINER_TREE_CODE_VARIANTS: CodeVariantMap = {
     regions: STEINER_TREE_CPP.regions,
     highlightMap: STEINER_TREE_CPP.highlightMap,
     source: STEINER_TREE_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: STEINER_TREE_GO.lines,
+    regions: STEINER_TREE_GO.regions,
+    highlightMap: STEINER_TREE_GO.highlightMap,
+    source: STEINER_TREE_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: STEINER_TREE_RUST.lines,
+    regions: STEINER_TREE_RUST.regions,
+    highlightMap: STEINER_TREE_RUST.highlightMap,
+    source: STEINER_TREE_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: STEINER_TREE_SWIFT.lines,
+    regions: STEINER_TREE_SWIFT.regions,
+    highlightMap: STEINER_TREE_SWIFT.highlightMap,
+    source: STEINER_TREE_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: STEINER_TREE_PHP.lines,
+    regions: STEINER_TREE_PHP.regions,
+    highlightMap: STEINER_TREE_PHP.highlightMap,
+    source: STEINER_TREE_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: STEINER_TREE_KOTLIN.lines,
+    regions: STEINER_TREE_KOTLIN.regions,
+    highlightMap: STEINER_TREE_KOTLIN.highlightMap,
+    source: STEINER_TREE_KOTLIN.source,
   },
 };

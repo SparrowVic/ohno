@@ -119,6 +119,110 @@ const PRIMS_MST_TS = buildStructuredCode(`
   //#endregion extract-min
 `);
 
+const PRIMS_MST_JS = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  /**
+   * @typedef {{ id: string }} GraphNode
+   * @typedef {{ from: string, to: string, weight: number }} WeightedEdge
+   * @typedef {{ nodes: GraphNode[], edges: WeightedEdge[] }} WeightedGraphData
+   */
+  //#endregion graph-types
+
+  /**
+   * Build a minimum spanning tree with Prim's algorithm.
+   * Input: connected weighted graph interpreted as undirected and a start id.
+   * Returns: parent map of the MST rooted at start.
+   */
+  //#region prim function open
+  //@step 2
+  function primsMst(graph, start) {
+      const adjacency = buildUndirectedAdjacency(graph);
+      const key = new Map();
+      const parent = new Map();
+      const inTree = new Set();
+
+      for (const node of graph.nodes) {
+          key.set(node.id, Number.POSITIVE_INFINITY);
+          parent.set(node.id, null);
+      }
+
+      key.set(start, 0);
+
+      while (inTree.size < graph.nodes.length) {
+          //@step 5
+          const current = extractMinVertex(key, inTree);
+          if (current === null) {
+              break;
+          }
+
+          //@step 12
+          inTree.add(current);
+
+          //@step 7
+          for (const edge of adjacency.get(current) ?? []) {
+              //@step 8
+              if (inTree.has(edge.to)) {
+                  continue;
+              }
+
+              //@step 9
+              if (edge.weight < (key.get(edge.to) ?? Number.POSITIVE_INFINITY)) {
+                  key.set(edge.to, edge.weight);
+                  parent.set(edge.to, current);
+              }
+          }
+      }
+
+      //@step 14
+      return parent;
+  }
+  //#endregion prim
+
+  //#region build-adjacency helper collapsed
+  function buildUndirectedAdjacency(graph) {
+      const adjacency = new Map();
+
+      for (const node of graph.nodes) {
+          adjacency.set(node.id, []);
+      }
+
+      for (const edge of graph.edges) {
+          adjacency.get(edge.from)?.push(edge);
+          adjacency.get(edge.to)?.push({
+              from: edge.to,
+              to: edge.from,
+              weight: edge.weight,
+          });
+      }
+
+      return adjacency;
+  }
+  //#endregion build-adjacency
+
+  //#region extract-min helper collapsed
+  function extractMinVertex(key, inTree) {
+      let bestId = null;
+      let bestKey = Number.POSITIVE_INFINITY;
+
+      for (const [nodeId, value] of key) {
+          if (inTree.has(nodeId)) {
+              continue;
+          }
+
+          if (value < bestKey) {
+              bestKey = value;
+              bestId = nodeId;
+          }
+      }
+
+      return bestId;
+  }
+  //#endregion extract-min
+  `,
+  'javascript',
+);
+
 const PRIMS_MST_PY = buildStructuredCode(
   `
   from dataclasses import dataclass
@@ -591,6 +695,600 @@ const PRIMS_MST_CPP = buildStructuredCode(
   'cpp',
 );
 
+const PRIMS_MST_GO = buildStructuredCode(
+  `
+  package graphs
+
+  import "math"
+
+  //#region graph-types interface collapsed
+  type GraphNode struct {
+      ID string
+  }
+
+  type WeightedEdge struct {
+      From   string
+      To     string
+      Weight float64
+  }
+
+  type WeightedGraphData struct {
+      Nodes []GraphNode
+      Edges []WeightedEdge
+  }
+  //#endregion graph-types
+
+  /**
+   * Builds a minimum spanning tree with Prim's algorithm.
+   * Input: connected weighted graph interpreted as undirected and a start id.
+   * Returns: parent map of the MST rooted at start.
+   */
+  //#region prim function open
+  //@step 2
+  func PrimsMst(graph WeightedGraphData, start string) map[string]*string {
+      adjacency := buildUndirectedAdjacency(graph)
+      key := map[string]float64{}
+      parent := map[string]*string{}
+      inTree := map[string]struct{}{}
+
+      for _, node := range graph.Nodes {
+          key[node.ID] = math.Inf(1)
+          parent[node.ID] = nil
+      }
+
+      key[start] = 0
+
+      for len(inTree) < len(graph.Nodes) {
+          //@step 5
+          current, ok := extractMinVertex(key, inTree)
+          if !ok {
+              break
+          }
+
+          //@step 12
+          inTree[current] = struct{}{}
+
+          //@step 7
+          for _, edge := range adjacency[current] {
+              //@step 8
+              if _, seen := inTree[edge.To]; seen {
+                  continue
+              }
+
+              //@step 9
+              if edge.Weight < key[edge.To] {
+                  key[edge.To] = edge.Weight
+                  parentValue := current
+                  parent[edge.To] = &parentValue
+              }
+          }
+      }
+
+      //@step 14
+      return parent
+  }
+  //#endregion prim
+
+  //#region build-adjacency helper collapsed
+  func buildUndirectedAdjacency(graph WeightedGraphData) map[string][]WeightedEdge {
+      adjacency := make(map[string][]WeightedEdge)
+
+      for _, node := range graph.Nodes {
+          adjacency[node.ID] = []WeightedEdge{}
+      }
+
+      for _, edge := range graph.Edges {
+          adjacency[edge.From] = append(adjacency[edge.From], edge)
+          adjacency[edge.To] = append(adjacency[edge.To], WeightedEdge{
+              From: edge.To,
+              To: edge.From,
+              Weight: edge.Weight,
+          })
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+
+  //#region extract-min helper collapsed
+  func extractMinVertex(
+      key map[string]float64,
+      inTree map[string]struct{},
+  ) (string, bool) {
+      bestID := ""
+      bestKey := math.Inf(1)
+
+      for nodeID, value := range key {
+          if _, seen := inTree[nodeID]; seen {
+              continue
+          }
+
+          if value < bestKey {
+              bestKey = value
+              bestID = nodeID
+          }
+      }
+
+      return bestID, bestID != ""
+  }
+  //#endregion extract-min
+  `,
+  'go',
+);
+
+const PRIMS_MST_RUST = buildStructuredCode(
+  `
+  use std::collections::{HashMap, HashSet};
+
+  //#region graph-types interface collapsed
+  #[derive(Clone)]
+  struct GraphNode {
+      id: String,
+  }
+
+  #[derive(Clone)]
+  struct WeightedEdge {
+      from: String,
+      to: String,
+      weight: f64,
+  }
+
+  struct WeightedGraphData {
+      nodes: Vec<GraphNode>,
+      edges: Vec<WeightedEdge>,
+  }
+  //#endregion graph-types
+
+  /**
+   * Builds a minimum spanning tree with Prim's algorithm.
+   * Input: connected weighted graph interpreted as undirected and a start id.
+   * Returns: parent map of the MST rooted at start.
+   */
+  //#region prim function open
+  //@step 2
+  fn prims_mst(graph: &WeightedGraphData, start: &str) -> HashMap<String, Option<String>> {
+      let adjacency = build_undirected_adjacency(graph);
+      let mut key = HashMap::new();
+      let mut parent = HashMap::new();
+      let mut in_tree = HashSet::new();
+
+      for node in &graph.nodes {
+          key.insert(node.id.clone(), f64::INFINITY);
+          parent.insert(node.id.clone(), None);
+      }
+
+      key.insert(start.to_string(), 0.0);
+
+      while in_tree.len() < graph.nodes.len() {
+          //@step 5
+          let current = extract_min_vertex(&key, &in_tree);
+          if current.is_none() {
+              break;
+          }
+
+          let current = current.unwrap();
+
+          //@step 12
+          in_tree.insert(current.clone());
+
+          //@step 7
+          for edge in adjacency.get(&current).cloned().unwrap_or_default() {
+              //@step 8
+              if in_tree.contains(&edge.to) {
+                  continue;
+              }
+
+              //@step 9
+              if edge.weight < key.get(&edge.to).copied().unwrap_or(f64::INFINITY) {
+                  key.insert(edge.to.clone(), edge.weight);
+                  parent.insert(edge.to.clone(), Some(current.clone()));
+              }
+          }
+      }
+
+      //@step 14
+      parent
+  }
+  //#endregion prim
+
+  //#region build-adjacency helper collapsed
+  fn build_undirected_adjacency(graph: &WeightedGraphData) -> HashMap<String, Vec<WeightedEdge>> {
+      let mut adjacency = HashMap::new();
+
+      for node in &graph.nodes {
+          adjacency.insert(node.id.clone(), Vec::new());
+      }
+
+      for edge in &graph.edges {
+          adjacency.entry(edge.from.clone()).or_insert_with(Vec::new).push(edge.clone());
+          adjacency.entry(edge.to.clone()).or_insert_with(Vec::new).push(WeightedEdge {
+              from: edge.to.clone(),
+              to: edge.from.clone(),
+              weight: edge.weight,
+          });
+      }
+
+      adjacency
+  }
+  //#endregion build-adjacency
+
+  //#region extract-min helper collapsed
+  fn extract_min_vertex(
+      key: &HashMap<String, f64>,
+      in_tree: &HashSet<String>,
+  ) -> Option<String> {
+      let mut best_id = None;
+      let mut best_key = f64::INFINITY;
+
+      for (node_id, value) in key {
+          if in_tree.contains(node_id) {
+              continue;
+          }
+
+          if *value < best_key {
+              best_key = *value;
+              best_id = Some(node_id.clone());
+          }
+      }
+
+      best_id
+  }
+  //#endregion extract-min
+  `,
+  'rust',
+);
+
+const PRIMS_MST_SWIFT = buildStructuredCode(
+  `
+  import Foundation
+
+  //#region graph-types interface collapsed
+  struct GraphNode {
+      let id: String
+  }
+
+  struct WeightedEdge {
+      let from: String
+      let to: String
+      let weight: Double
+  }
+
+  struct WeightedGraphData {
+      let nodes: [GraphNode]
+      let edges: [WeightedEdge]
+  }
+  //#endregion graph-types
+
+  /**
+   * Builds a minimum spanning tree with Prim's algorithm.
+   * Input: connected weighted graph interpreted as undirected and a start id.
+   * Returns: parent map of the MST rooted at start.
+   */
+  //#region prim function open
+  //@step 2
+  func primsMst(graph: WeightedGraphData, start: String) -> [String: String?] {
+      let adjacency = buildUndirectedAdjacency(graph: graph)
+      var key: [String: Double] = [:]
+      var parent: [String: String?] = [:]
+      var inTree = Set<String>()
+
+      for node in graph.nodes {
+          key[node.id] = Double.infinity
+          parent[node.id] = nil
+      }
+
+      key[start] = 0
+
+      while inTree.count < graph.nodes.count {
+          //@step 5
+          guard let current = extractMinVertex(key: key, inTree: inTree) else {
+              break
+          }
+
+          //@step 12
+          inTree.insert(current)
+
+          //@step 7
+          for edge in adjacency[current] ?? [] {
+              //@step 8
+              if inTree.contains(edge.to) {
+                  continue
+              }
+
+              //@step 9
+              if edge.weight < (key[edge.to] ?? Double.infinity) {
+                  key[edge.to] = edge.weight
+                  parent[edge.to] = current
+              }
+          }
+      }
+
+      //@step 14
+      return parent
+  }
+  //#endregion prim
+
+  //#region build-adjacency helper collapsed
+  func buildUndirectedAdjacency(graph: WeightedGraphData) -> [String: [WeightedEdge]] {
+      var adjacency: [String: [WeightedEdge]] = [:]
+
+      for node in graph.nodes {
+          adjacency[node.id] = []
+      }
+
+      for edge in graph.edges {
+          adjacency[edge.from, default: []].append(edge)
+          adjacency[edge.to, default: []].append(
+              WeightedEdge(from: edge.to, to: edge.from, weight: edge.weight)
+          )
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+
+  //#region extract-min helper collapsed
+  func extractMinVertex(
+      key: [String: Double],
+      inTree: Set<String>,
+  ) -> String? {
+      var bestId: String?
+      var bestKey = Double.infinity
+
+      for (nodeId, value) in key {
+          if inTree.contains(nodeId) {
+              continue
+          }
+
+          if value < bestKey {
+              bestKey = value
+              bestId = nodeId
+          }
+      }
+
+      return bestId
+  }
+  //#endregion extract-min
+  `,
+  'swift',
+);
+
+const PRIMS_MST_PHP = buildStructuredCode(
+  `
+  <?php
+
+  //#region graph-types interface collapsed
+  final class GraphNode
+  {
+      public function __construct(public string $id) {}
+  }
+
+  final class WeightedEdge
+  {
+      public function __construct(
+          public string $from,
+          public string $to,
+          public float $weight,
+      ) {}
+  }
+
+  final class WeightedGraphData
+  {
+      /**
+       * @param list<GraphNode> $nodes
+       * @param list<WeightedEdge> $edges
+       */
+      public function __construct(
+          public array $nodes,
+          public array $edges,
+      ) {}
+  }
+  //#endregion graph-types
+
+  /**
+   * Builds a minimum spanning tree with Prim's algorithm.
+   * Input: connected weighted graph interpreted as undirected and a start id.
+   * Returns: parent map of the MST rooted at start.
+   *
+   * @return array<string, string|null>
+   */
+  //#region prim function open
+  //@step 2
+  function primsMst(WeightedGraphData $graph, string $start): array
+  {
+      $adjacency = buildUndirectedAdjacency($graph);
+      $key = [];
+      $parent = [];
+      $inTree = [];
+
+      foreach ($graph->nodes as $node) {
+          $key[$node->id] = INF;
+          $parent[$node->id] = null;
+      }
+
+      $key[$start] = 0.0;
+
+      while (count($inTree) < count($graph->nodes)) {
+          //@step 5
+          $current = extractMinVertex($key, $inTree);
+          if ($current === null) {
+              break;
+          }
+
+          //@step 12
+          $inTree[$current] = true;
+
+          //@step 7
+          foreach ($adjacency[$current] ?? [] as $edge) {
+              //@step 8
+              if (isset($inTree[$edge->to])) {
+                  continue;
+              }
+
+              //@step 9
+              if ($edge->weight < ($key[$edge->to] ?? INF)) {
+                  $key[$edge->to] = $edge->weight;
+                  $parent[$edge->to] = $current;
+              }
+          }
+      }
+
+      //@step 14
+      return $parent;
+  }
+  //#endregion prim
+
+  //#region build-adjacency helper collapsed
+  function buildUndirectedAdjacency(WeightedGraphData $graph): array
+  {
+      $adjacency = [];
+
+      foreach ($graph->nodes as $node) {
+          $adjacency[$node->id] = [];
+      }
+
+      foreach ($graph->edges as $edge) {
+          $adjacency[$edge->from][] = $edge;
+          $adjacency[$edge->to][] = new WeightedEdge($edge->to, $edge->from, $edge->weight);
+      }
+
+      return $adjacency;
+  }
+  //#endregion build-adjacency
+
+  //#region extract-min helper collapsed
+  function extractMinVertex(array $key, array $inTree): ?string
+  {
+      $bestId = null;
+      $bestKey = INF;
+
+      foreach ($key as $nodeId => $value) {
+          if (isset($inTree[$nodeId])) {
+              continue;
+          }
+
+          if ($value < $bestKey) {
+              $bestKey = $value;
+              $bestId = $nodeId;
+          }
+      }
+
+      return $bestId;
+  }
+  //#endregion extract-min
+  `,
+  'php',
+);
+
+const PRIMS_MST_KOTLIN = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  data class GraphNode(val id: String)
+
+  data class WeightedEdge(
+      val from: String,
+      val to: String,
+      val weight: Double,
+  )
+
+  data class WeightedGraphData(
+      val nodes: List<GraphNode>,
+      val edges: List<WeightedEdge>,
+  )
+  //#endregion graph-types
+
+  /**
+   * Builds a minimum spanning tree with Prim's algorithm.
+   * Input: connected weighted graph interpreted as undirected and a start id.
+   * Returns: parent map of the MST rooted at start.
+   */
+  //#region prim function open
+  //@step 2
+  fun primsMst(graph: WeightedGraphData, start: String): Map<String, String?> {
+      val adjacency = buildUndirectedAdjacency(graph)
+      val key = mutableMapOf<String, Double>()
+      val parent = mutableMapOf<String, String?>()
+      val inTree = mutableSetOf<String>()
+
+      for (node in graph.nodes) {
+          key[node.id] = Double.POSITIVE_INFINITY
+          parent[node.id] = null
+      }
+
+      key[start] = 0.0
+
+      while (inTree.size < graph.nodes.size) {
+          //@step 5
+          val current = extractMinVertex(key, inTree) ?: break
+
+          //@step 12
+          inTree += current
+
+          //@step 7
+          for (edge in adjacency[current].orEmpty()) {
+              //@step 8
+              if (edge.to in inTree) {
+                  continue
+              }
+
+              //@step 9
+              if (edge.weight < (key[edge.to] ?: Double.POSITIVE_INFINITY)) {
+                  key[edge.to] = edge.weight
+                  parent[edge.to] = current
+              }
+          }
+      }
+
+      //@step 14
+      return parent
+  }
+  //#endregion prim
+
+  //#region build-adjacency helper collapsed
+  fun buildUndirectedAdjacency(graph: WeightedGraphData): MutableMap<String, MutableList<WeightedEdge>> {
+      val adjacency = mutableMapOf<String, MutableList<WeightedEdge>>()
+
+      for (node in graph.nodes) {
+          adjacency[node.id] = mutableListOf()
+      }
+
+      for (edge in graph.edges) {
+          adjacency.getOrPut(edge.from) { mutableListOf() }.add(edge)
+          adjacency.getOrPut(edge.to) { mutableListOf() }.add(
+              WeightedEdge(edge.to, edge.from, edge.weight)
+          )
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+
+  //#region extract-min helper collapsed
+  fun extractMinVertex(
+      key: Map<String, Double>,
+      inTree: Set<String>,
+  ): String? {
+      var bestId: String? = null
+      var bestKey = Double.POSITIVE_INFINITY
+
+      for ((nodeId, value) in key) {
+          if (nodeId in inTree) {
+              continue
+          }
+
+          if (value < bestKey) {
+              bestKey = value
+              bestId = nodeId
+          }
+      }
+
+      return bestId
+  }
+  //#endregion extract-min
+  `,
+  'kotlin',
+);
+
 export const PRIMS_MST_CODE = PRIMS_MST_TS.lines;
 export const PRIMS_MST_CODE_REGIONS = PRIMS_MST_TS.regions;
 export const PRIMS_MST_CODE_HIGHLIGHT_MAP = PRIMS_MST_TS.highlightMap;
@@ -601,6 +1299,13 @@ export const PRIMS_MST_CODE_VARIANTS: CodeVariantMap = {
     regions: PRIMS_MST_TS.regions,
     highlightMap: PRIMS_MST_TS.highlightMap,
     source: PRIMS_MST_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: PRIMS_MST_JS.lines,
+    regions: PRIMS_MST_JS.regions,
+    highlightMap: PRIMS_MST_JS.highlightMap,
+    source: PRIMS_MST_JS.source,
   },
   python: {
     language: 'python',
@@ -629,5 +1334,40 @@ export const PRIMS_MST_CODE_VARIANTS: CodeVariantMap = {
     regions: PRIMS_MST_CPP.regions,
     highlightMap: PRIMS_MST_CPP.highlightMap,
     source: PRIMS_MST_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: PRIMS_MST_GO.lines,
+    regions: PRIMS_MST_GO.regions,
+    highlightMap: PRIMS_MST_GO.highlightMap,
+    source: PRIMS_MST_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: PRIMS_MST_RUST.lines,
+    regions: PRIMS_MST_RUST.regions,
+    highlightMap: PRIMS_MST_RUST.highlightMap,
+    source: PRIMS_MST_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: PRIMS_MST_SWIFT.lines,
+    regions: PRIMS_MST_SWIFT.regions,
+    highlightMap: PRIMS_MST_SWIFT.highlightMap,
+    source: PRIMS_MST_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: PRIMS_MST_PHP.lines,
+    regions: PRIMS_MST_PHP.regions,
+    highlightMap: PRIMS_MST_PHP.highlightMap,
+    source: PRIMS_MST_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: PRIMS_MST_KOTLIN.lines,
+    regions: PRIMS_MST_KOTLIN.regions,
+    highlightMap: PRIMS_MST_KOTLIN.highlightMap,
+    source: PRIMS_MST_KOTLIN.source,
   },
 };

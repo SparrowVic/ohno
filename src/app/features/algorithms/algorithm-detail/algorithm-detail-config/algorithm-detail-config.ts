@@ -86,7 +86,10 @@ import {
 import { hopcroftKarpGenerator } from '../../algorithms/hopcroft-karp';
 import { hungarianAlgorithmGenerator } from '../../algorithms/hungarian-algorithm';
 import { kosarajuSccGenerator } from '../../algorithms/kosaraju-scc';
-import { A_STAR_PATHFINDING_CODE } from '../../data/a-star-pathfinding-code';
+import {
+  A_STAR_PATHFINDING_CODE,
+  A_STAR_PATHFINDING_CODE_VARIANTS,
+} from '../../data/a-star-pathfinding-code';
 import {
   BELLMAN_FORD_CODE,
   BELLMAN_FORD_CODE_HIGHLIGHT_MAP,
@@ -195,7 +198,7 @@ import {
   DIJKSTRA_CODE_REGIONS,
   DIJKSTRA_CODE_VARIANTS,
 } from '../../data/dijkstra-code';
-import { DINIC_MAX_FLOW_CODE } from '../../data/dinic-max-flow-code';
+import { DINIC_MAX_FLOW_CODE, DINIC_MAX_FLOW_CODE_VARIANTS } from '../../data/dinic-max-flow-code';
 import {
   DOMINATOR_TREE_CODE,
   DOMINATOR_TREE_CODE_HIGHLIGHT_MAP,
@@ -226,7 +229,7 @@ import {
   DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_REGIONS,
   DIVIDE_CONQUER_DP_OPTIMIZATION_CODE_VARIANTS,
 } from '../../data/divide-conquer-dp-optimization-code';
-import { EDMONDS_KARP_CODE } from '../../data/edmonds-karp-code';
+import { EDMONDS_KARP_CODE, EDMONDS_KARP_CODE_VARIANTS } from '../../data/edmonds-karp-code';
 import {
   EDIT_DISTANCE_CODE,
   EDIT_DISTANCE_CODE_HIGHLIGHT_MAP,
@@ -245,8 +248,8 @@ import {
   FIBONACCI_DP_CODE_REGIONS,
   FIBONACCI_DP_CODE_VARIANTS,
 } from '../../data/fibonacci-dp-code';
-import { FLOYD_WARSHALL_CODE } from '../../data/floyd-warshall-code';
-import { FLOOD_FILL_CODE } from '../../data/flood-fill-code';
+import { FLOYD_WARSHALL_CODE, FLOYD_WARSHALL_CODE_VARIANTS } from '../../data/floyd-warshall-code';
+import { FLOOD_FILL_CODE, FLOOD_FILL_CODE_VARIANTS } from '../../data/flood-fill-code';
 import {
   HALF_PLANE_INTERSECTION_CODE,
   HALF_PLANE_INTERSECTION_CODE_HIGHLIGHT_MAP,
@@ -277,7 +280,7 @@ import {
   KNUTH_DP_OPTIMIZATION_CODE_REGIONS,
   KNUTH_DP_OPTIMIZATION_CODE_VARIANTS,
 } from '../../data/knuth-dp-optimization-code';
-import { KRUSKALS_MST_CODE } from '../../data/kruskals-mst-code';
+import { KRUSKALS_MST_CODE, KRUSKALS_MST_CODE_VARIANTS } from '../../data/kruskals-mst-code';
 import {
   LINEAR_SEARCH_CODE,
   LINEAR_SEARCH_CODE_HIGHLIGHT_MAP,
@@ -326,7 +329,10 @@ import {
   MERGE_SORT_CODE_REGIONS,
   MERGE_SORT_CODE_VARIANTS,
 } from '../../data/merge-sort-code';
-import { MIN_COST_MAX_FLOW_CODE } from '../../data/min-cost-max-flow-code';
+import {
+  MIN_COST_MAX_FLOW_CODE,
+  MIN_COST_MAX_FLOW_CODE_VARIANTS,
+} from '../../data/min-cost-max-flow-code';
 import {
   MINKOWSKI_SUM_CODE,
   MINKOWSKI_SUM_CODE_HIGHLIGHT_MAP,
@@ -435,7 +441,7 @@ import {
   TRAVELING_SALESMAN_DP_CODE_REGIONS,
   TRAVELING_SALESMAN_DP_CODE_VARIANTS,
 } from '../../data/traveling-salesman-dp-code';
-import { UNION_FIND_CODE } from '../../data/union-find-code';
+import { UNION_FIND_CODE, UNION_FIND_CODE_VARIANTS } from '../../data/union-find-code';
 import {
   VORONOI_DIAGRAM_CODE,
   VORONOI_DIAGRAM_CODE_HIGHLIGHT_MAP,
@@ -471,7 +477,7 @@ import { SearchTraceState } from '../../models/search';
 import { StringPresetOption, StringTraceState } from '../../models/string';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../../models/detail';
-import { HOPCROFT_KARP_CODE } from '../../data/hopcroft-karp-code';
+import { HOPCROFT_KARP_CODE, HOPCROFT_KARP_CODE_VARIANTS } from '../../data/hopcroft-karp-code';
 import {
   HUFFMAN_CODE,
   HUFFMAN_CODE_HIGHLIGHT_MAP,
@@ -598,7 +604,10 @@ import {
   createFloodFillScenario,
   FloodFillScenario,
 } from '../../utils/grid-scenarios/grid-scenarios';
-import { HUNGARIAN_ALGORITHM_CODE } from '../../data/hungarian-algorithm-code';
+import {
+  HUNGARIAN_ALGORITHM_CODE,
+  HUNGARIAN_ALGORITHM_CODE_VARIANTS,
+} from '../../data/hungarian-algorithm-code';
 import {
   createFloydWarshallScenario,
   createHungarianScenario,
@@ -1549,6 +1558,7 @@ function createSearchViewConfig(args: {
 
 function createGridViewConfig<TScenario>(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeVariants?: CodeVariantMap;
   readonly createScenario: (size: number) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
   readonly legendItems: readonly LegendItem[];
@@ -1560,6 +1570,7 @@ function createGridViewConfig<TScenario>(args: {
   return {
     kind: 'grid',
     codeLines: args.codeLines,
+    codeVariants: args.codeVariants,
     variantOptions: GRID_VARIANT_OPTIONS,
     defaultVariant: 'grid',
     sizeOptions,
@@ -1609,6 +1620,7 @@ function createStringViewConfig<TScenario>(args: {
 
 function createMatrixViewConfig<TScenario>(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeVariants?: CodeVariantMap;
   readonly createScenario: (size: number) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
   readonly legendItems: readonly LegendItem[];
@@ -1621,6 +1633,7 @@ function createMatrixViewConfig<TScenario>(args: {
   return {
     kind: 'matrix',
     codeLines: args.codeLines,
+    codeVariants: args.codeVariants,
     variantOptions: MATRIX_VARIANT_OPTIONS,
     defaultVariant: 'matrix',
     sizeOptions,
@@ -1671,6 +1684,7 @@ function createDpViewConfig<TScenario>(args: {
 
 function createDsuViewConfig<TScenario>(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeVariants?: CodeVariantMap;
   readonly variantOptions: readonly VisualizationOption[];
   readonly createScenario: (size: number) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
@@ -1684,6 +1698,7 @@ function createDsuViewConfig<TScenario>(args: {
   return {
     kind: 'dsu',
     codeLines: args.codeLines,
+    codeVariants: args.codeVariants,
     variantOptions: args.variantOptions,
     defaultVariant: 'dsu',
     sizeOptions,
@@ -1698,6 +1713,7 @@ function createDsuViewConfig<TScenario>(args: {
 
 function createNetworkViewConfig<TScenario>(args: {
   readonly codeLines: readonly CodeLine[];
+  readonly codeVariants?: CodeVariantMap;
   readonly variantOptions: readonly VisualizationOption[];
   readonly createScenario: (size: number) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
@@ -1711,6 +1727,7 @@ function createNetworkViewConfig<TScenario>(args: {
   return {
     kind: 'network',
     codeLines: args.codeLines,
+    codeVariants: args.codeVariants,
     variantOptions: args.variantOptions,
     defaultVariant: 'network',
     sizeOptions,
@@ -2158,6 +2175,7 @@ const DOMINATOR_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
 
 const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
   codeLines: FLOOD_FILL_CODE,
+  codeVariants: FLOOD_FILL_CODE_VARIANTS,
   createScenario: (size) => createFloodFillScenario(size),
   generator: floodFillGenerator,
   legendItems: FLOOD_FILL_LEGEND,
@@ -2168,6 +2186,7 @@ const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
 
 const A_STAR_VIEW_CONFIG = createGridViewConfig<AStarScenario>({
   codeLines: A_STAR_PATHFINDING_CODE,
+  codeVariants: A_STAR_PATHFINDING_CODE_VARIANTS,
   createScenario: (size) => createAStarScenario(size),
   generator: aStarPathfindingGenerator,
   legendItems: A_STAR_LEGEND,
@@ -2178,6 +2197,7 @@ const A_STAR_VIEW_CONFIG = createGridViewConfig<AStarScenario>({
 
 const FLOYD_WARSHALL_VIEW_CONFIG = createMatrixViewConfig<FloydWarshallScenario>({
   codeLines: FLOYD_WARSHALL_CODE,
+  codeVariants: FLOYD_WARSHALL_CODE_VARIANTS,
   createScenario: (size) => createFloydWarshallScenario(size),
   generator: floydWarshallGenerator,
   legendItems: FLOYD_WARSHALL_LEGEND,
@@ -2188,6 +2208,7 @@ const FLOYD_WARSHALL_VIEW_CONFIG = createMatrixViewConfig<FloydWarshallScenario>
 
 const HUNGARIAN_VIEW_CONFIG = createMatrixViewConfig<HungarianScenario>({
   codeLines: HUNGARIAN_ALGORITHM_CODE,
+  codeVariants: HUNGARIAN_ALGORITHM_CODE_VARIANTS,
   createScenario: (size) => createHungarianScenario(size),
   generator: hungarianAlgorithmGenerator,
   legendItems: HUNGARIAN_LEGEND,
@@ -2513,6 +2534,7 @@ const KNUTH_VIEW_CONFIG = createDpViewConfig<KnuthDpScenario>({
 
 const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
   codeLines: UNION_FIND_CODE,
+  codeVariants: UNION_FIND_CODE_VARIANTS,
   variantOptions: UNION_FIND_VARIANT_OPTIONS,
   createScenario: (size) => createUnionFindScenario(size),
   generator: unionFindGenerator,
@@ -2525,6 +2547,7 @@ const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
 
 const KRUSKAL_VIEW_CONFIG = createDsuViewConfig<KruskalScenario>({
   codeLines: KRUSKALS_MST_CODE,
+  codeVariants: KRUSKALS_MST_CODE_VARIANTS,
   variantOptions: KRUSKAL_VARIANT_OPTIONS,
   createScenario: (size) => createKruskalScenario(size),
   generator: kruskalsMstGenerator,
@@ -2537,6 +2560,7 @@ const KRUSKAL_VIEW_CONFIG = createDsuViewConfig<KruskalScenario>({
 
 const HOPCROFT_KARP_VIEW_CONFIG = createNetworkViewConfig<HopcroftKarpScenario>({
   codeLines: HOPCROFT_KARP_CODE,
+  codeVariants: HOPCROFT_KARP_CODE_VARIANTS,
   variantOptions: HOPCROFT_KARP_VARIANT_OPTIONS,
   createScenario: (size) => createHopcroftKarpScenario(size),
   generator: hopcroftKarpGenerator,
@@ -2549,6 +2573,7 @@ const HOPCROFT_KARP_VIEW_CONFIG = createNetworkViewConfig<HopcroftKarpScenario>(
 
 const DINIC_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
   codeLines: DINIC_MAX_FLOW_CODE,
+  codeVariants: DINIC_MAX_FLOW_CODE_VARIANTS,
   variantOptions: DINIC_VARIANT_OPTIONS,
   createScenario: (size) => createDinicScenario(size),
   generator: dinicMaxFlowGenerator,
@@ -2561,6 +2586,7 @@ const DINIC_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
 
 const EDMONDS_KARP_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
   codeLines: EDMONDS_KARP_CODE,
+  codeVariants: EDMONDS_KARP_CODE_VARIANTS,
   variantOptions: EDMONDS_KARP_VARIANT_OPTIONS,
   createScenario: (size) => createEdmondsKarpScenario(size),
   generator: edmondsKarpGenerator,
@@ -2573,6 +2599,7 @@ const EDMONDS_KARP_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
 
 const MIN_COST_MAX_FLOW_VIEW_CONFIG = createNetworkViewConfig<MinCostMaxFlowScenario>({
   codeLines: MIN_COST_MAX_FLOW_CODE,
+  codeVariants: MIN_COST_MAX_FLOW_CODE_VARIANTS,
   variantOptions: MIN_COST_MAX_FLOW_VARIANT_OPTIONS,
   createScenario: (size) => createMinCostMaxFlowScenario(size),
   generator: minCostMaxFlowGenerator,

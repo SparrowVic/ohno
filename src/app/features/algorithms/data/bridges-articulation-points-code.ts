@@ -127,6 +127,122 @@ const BRIDGES_ARTICULATION_POINTS_TS = buildStructuredCode(`
   //#endregion build-adjacency
 `);
 
+const BRIDGES_ARTICULATION_POINTS_JS = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  /**
+   * @typedef {{ id: string }} GraphNode
+   * @typedef {{ from: string, to: string }} GraphEdge
+   * @typedef {{ nodes: GraphNode[], edges: GraphEdge[] }} GraphData
+   */
+  //#endregion graph-types
+
+  /**
+   * Find all bridges and articulation points in an undirected graph.
+   * Input: graph interpreted as undirected.
+   * Returns: bridge edge pairs and articulation node ids.
+   */
+  //#region critical-cuts function open
+  //@step 2
+  function findCriticalCuts(graph) {
+      const adjacency = buildUndirectedAdjacency(graph);
+      const discovery = new Map();
+      const low = new Map();
+      const articulation = new Set();
+      const bridges = [];
+      let time = 0;
+
+      for (const node of graph.nodes) {
+          discovery.set(node.id, null);
+          low.set(node.id, null);
+      }
+
+      for (const node of graph.nodes) {
+          if (discovery.get(node.id) !== null) {
+              continue;
+          }
+
+          //@step 4
+          dfs(node.id, null);
+      }
+
+      //@step 16
+      return { bridges, articulation };
+
+      //#region dfs helper collapsed
+      function dfs(nodeId, parentId) {
+          time += 1;
+          discovery.set(nodeId, time);
+          low.set(nodeId, time);
+          let childCount = 0;
+
+          //@step 7
+          for (const neighbor of adjacency.get(nodeId) ?? []) {
+              //@step 8
+              if (neighbor !== parentId && discovery.get(neighbor) !== null) {
+                  low.set(
+                      nodeId,
+                      Math.min(low.get(nodeId) ?? Number.POSITIVE_INFINITY, discovery.get(neighbor)),
+                  );
+                  continue;
+              }
+
+              //@step 10
+              if (discovery.get(neighbor) === null) {
+                  childCount += 1;
+                  dfs(neighbor, nodeId);
+
+                  //@step 12
+                  low.set(
+                      nodeId,
+                      Math.min(low.get(nodeId) ?? Number.POSITIVE_INFINITY, low.get(neighbor)),
+                  );
+
+                  const nodeDiscovery = discovery.get(nodeId);
+                  const childLow = low.get(neighbor);
+
+                  //@step 13
+                  if (childLow > nodeDiscovery) {
+                      bridges.push([nodeId, neighbor]);
+                  }
+
+                  if (parentId !== null && childLow >= nodeDiscovery) {
+                      articulation.add(nodeId);
+                  }
+              }
+          }
+
+          if (parentId === null && childCount > 1) {
+              articulation.add(nodeId);
+          }
+
+          //@step 15
+          return;
+      }
+      //#endregion dfs
+  }
+  //#endregion critical-cuts
+
+  //#region build-adjacency helper collapsed
+  function buildUndirectedAdjacency(graph) {
+      const adjacency = new Map();
+
+      for (const node of graph.nodes) {
+          adjacency.set(node.id, []);
+      }
+
+      for (const edge of graph.edges) {
+          adjacency.get(edge.from)?.push(edge.to);
+          adjacency.get(edge.to)?.push(edge.from);
+      }
+
+      return adjacency;
+  }
+  //#endregion build-adjacency
+  `,
+  'javascript',
+);
+
 const BRIDGES_ARTICULATION_POINTS_PY = buildStructuredCode(
   `
   from dataclasses import dataclass
@@ -636,9 +752,679 @@ const BRIDGES_ARTICULATION_POINTS_CPP = buildStructuredCode(
   'cpp',
 );
 
+const BRIDGES_ARTICULATION_POINTS_GO = buildStructuredCode(
+  `
+  package graphs
+
+  //#region graph-types interface collapsed
+  type GraphNode struct {
+      ID string
+  }
+
+  type GraphEdge struct {
+      From string
+      To   string
+  }
+
+  type GraphData struct {
+      Nodes []GraphNode
+      Edges []GraphEdge
+  }
+
+  type CriticalCuts struct {
+      Bridges      [][2]string
+      Articulation map[string]struct{}
+  }
+  //#endregion graph-types
+
+  /**
+   * Finds all bridges and articulation points in an undirected graph.
+   * Input: graph interpreted as undirected.
+   * Returns: bridge edge pairs and articulation node ids.
+   */
+  //#region critical-cuts function open
+  //@step 2
+  func FindCriticalCuts(graph GraphData) CriticalCuts {
+      adjacency := buildUndirectedAdjacency(graph)
+      discovery := map[string]int{}
+      low := map[string]int{}
+      articulation := map[string]struct{}{}
+      bridges := [][2]string{}
+      time := 0
+
+      for _, node := range graph.Nodes {
+          discovery[node.ID] = 0
+          low[node.ID] = 0
+      }
+
+      var dfs func(string, string)
+      dfs = func(nodeID string, parentID string) {
+          time += 1
+          discovery[nodeID] = time
+          low[nodeID] = time
+          childCount := 0
+
+          //@step 7
+          for _, neighbor := range adjacency[nodeID] {
+              //@step 8
+              if neighbor != parentID && discovery[neighbor] != 0 {
+                  if discovery[neighbor] < low[nodeID] {
+                      low[nodeID] = discovery[neighbor]
+                  }
+                  continue
+              }
+
+              //@step 10
+              if discovery[neighbor] == 0 {
+                  childCount += 1
+                  dfs(neighbor, nodeID)
+
+                  //@step 12
+                  if low[neighbor] < low[nodeID] {
+                      low[nodeID] = low[neighbor]
+                  }
+
+                  nodeDiscovery := discovery[nodeID]
+                  childLow := low[neighbor]
+
+                  //@step 13
+                  if childLow > nodeDiscovery {
+                      bridges = append(bridges, [2]string{nodeID, neighbor})
+                  }
+
+                  if parentID != "" && childLow >= nodeDiscovery {
+                      articulation[nodeID] = struct{}{}
+                  }
+              }
+          }
+
+          if parentID == "" && childCount > 1 {
+              articulation[nodeID] = struct{}{}
+          }
+
+          //@step 15
+          return
+      }
+
+      for _, node := range graph.Nodes {
+          if discovery[node.ID] != 0 {
+              continue
+          }
+
+          //@step 4
+          dfs(node.ID, "")
+      }
+
+      //@step 16
+      return CriticalCuts{Bridges: bridges, Articulation: articulation}
+  }
+  //#endregion critical-cuts
+
+  //#region build-adjacency helper collapsed
+  func buildUndirectedAdjacency(graph GraphData) map[string][]string {
+      adjacency := make(map[string][]string)
+
+      for _, node := range graph.Nodes {
+          adjacency[node.ID] = []string{}
+      }
+
+      for _, edge := range graph.Edges {
+          adjacency[edge.From] = append(adjacency[edge.From], edge.To)
+          adjacency[edge.To] = append(adjacency[edge.To], edge.From)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'go',
+);
+
+const BRIDGES_ARTICULATION_POINTS_RUST = buildStructuredCode(
+  `
+  use std::collections::{HashMap, HashSet};
+
+  //#region graph-types interface collapsed
+  #[derive(Clone)]
+  struct GraphNode {
+      id: String,
+  }
+
+  #[derive(Clone)]
+  struct GraphEdge {
+      from: String,
+      to: String,
+  }
+
+  struct GraphData {
+      nodes: Vec<GraphNode>,
+      edges: Vec<GraphEdge>,
+  }
+
+  struct CriticalCuts {
+      bridges: Vec<(String, String)>,
+      articulation: HashSet<String>,
+  }
+  //#endregion graph-types
+
+  /**
+   * Finds all bridges and articulation points in an undirected graph.
+   * Input: graph interpreted as undirected.
+   * Returns: bridge edge pairs and articulation node ids.
+   */
+  //#region critical-cuts function open
+  //@step 2
+  fn find_critical_cuts(graph: &GraphData) -> CriticalCuts {
+      let adjacency = build_undirected_adjacency(graph);
+      let mut discovery = HashMap::new();
+      let mut low = HashMap::new();
+      let mut articulation = HashSet::new();
+      let mut bridges = Vec::new();
+      let mut time = 0;
+
+      for node in &graph.nodes {
+          discovery.insert(node.id.clone(), 0);
+          low.insert(node.id.clone(), 0);
+      }
+
+      for node in &graph.nodes {
+          if discovery.get(&node.id).copied().unwrap_or(0) != 0 {
+              continue;
+          }
+
+          //@step 4
+          dfs(
+              &node.id,
+              None,
+              &adjacency,
+              &mut discovery,
+              &mut low,
+              &mut articulation,
+              &mut bridges,
+              &mut time,
+          );
+      }
+
+      //@step 16
+      CriticalCuts { bridges, articulation }
+  }
+  //#endregion critical-cuts
+
+  //#region dfs helper collapsed
+  fn dfs(
+      node_id: &str,
+      parent_id: Option<&str>,
+      adjacency: &HashMap<String, Vec<String>>,
+      discovery: &mut HashMap<String, i32>,
+      low: &mut HashMap<String, i32>,
+      articulation: &mut HashSet<String>,
+      bridges: &mut Vec<(String, String)>,
+      time: &mut i32,
+  ) {
+      *time += 1;
+      discovery.insert(node_id.to_string(), *time);
+      low.insert(node_id.to_string(), *time);
+      let mut child_count = 0;
+
+      //@step 7
+      for neighbor in adjacency.get(node_id).cloned().unwrap_or_default() {
+          //@step 8
+          if Some(neighbor.as_str()) != parent_id && discovery.get(&neighbor).copied().unwrap_or(0) != 0 {
+              let next_low = std::cmp::min(
+                  low.get(node_id).copied().unwrap_or(i32::MAX),
+                  discovery.get(&neighbor).copied().unwrap_or(i32::MAX),
+              );
+              low.insert(node_id.to_string(), next_low);
+              continue;
+          }
+
+          //@step 10
+          if discovery.get(&neighbor).copied().unwrap_or(0) == 0 {
+              child_count += 1;
+              dfs(
+                  &neighbor,
+                  Some(node_id),
+                  adjacency,
+                  discovery,
+                  low,
+                  articulation,
+                  bridges,
+                  time,
+              );
+
+              //@step 12
+              let next_low = std::cmp::min(
+                  low.get(node_id).copied().unwrap_or(i32::MAX),
+                  low.get(&neighbor).copied().unwrap_or(i32::MAX),
+              );
+              low.insert(node_id.to_string(), next_low);
+
+              let node_discovery = discovery.get(node_id).copied().unwrap_or(0);
+              let child_low = low.get(&neighbor).copied().unwrap_or(0);
+
+              //@step 13
+              if child_low > node_discovery {
+                  bridges.push((node_id.to_string(), neighbor.clone()));
+              }
+
+              if parent_id.is_some() && child_low >= node_discovery {
+                  articulation.insert(node_id.to_string());
+              }
+          }
+      }
+
+      if parent_id.is_none() && child_count > 1 {
+          articulation.insert(node_id.to_string());
+      }
+
+      //@step 15
+      return;
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  fn build_undirected_adjacency(graph: &GraphData) -> HashMap<String, Vec<String>> {
+      let mut adjacency = HashMap::new();
+
+      for node in &graph.nodes {
+          adjacency.insert(node.id.clone(), Vec::new());
+      }
+
+      for edge in &graph.edges {
+          adjacency.entry(edge.from.clone()).or_insert_with(Vec::new).push(edge.to.clone());
+          adjacency.entry(edge.to.clone()).or_insert_with(Vec::new).push(edge.from.clone());
+      }
+
+      adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'rust',
+);
+
+const BRIDGES_ARTICULATION_POINTS_SWIFT = buildStructuredCode(
+  `
+  import Foundation
+
+  //#region graph-types interface collapsed
+  struct GraphNode {
+      let id: String
+  }
+
+  struct GraphEdge {
+      let from: String
+      let to: String
+  }
+
+  struct GraphData {
+      let nodes: [GraphNode]
+      let edges: [GraphEdge]
+  }
+  //#endregion graph-types
+
+  /**
+   * Finds all bridges and articulation points in an undirected graph.
+   * Input: graph interpreted as undirected.
+   * Returns: bridge edge pairs and articulation node ids.
+   */
+  //#region critical-cuts function open
+  //@step 2
+  func findCriticalCuts(graph: GraphData) -> (
+      bridges: [(String, String)],
+      articulation: Set<String>
+  ) {
+      let adjacency = buildUndirectedAdjacency(graph: graph)
+      var discovery: [String: Int] = [:]
+      var low: [String: Int] = [:]
+      var articulation = Set<String>()
+      var bridges: [(String, String)] = []
+      var time = 0
+
+      for node in graph.nodes {
+          discovery[node.id] = 0
+          low[node.id] = 0
+      }
+
+      func dfs(_ nodeId: String, parentId: String?) {
+          time += 1
+          discovery[nodeId] = time
+          low[nodeId] = time
+          var childCount = 0
+
+          //@step 7
+          for neighbor in adjacency[nodeId] ?? [] {
+              //@step 8
+              if neighbor != parentId && (discovery[neighbor] ?? 0) != 0 {
+                  low[nodeId] = min(low[nodeId] ?? .max, discovery[neighbor] ?? .max)
+                  continue
+              }
+
+              //@step 10
+              if (discovery[neighbor] ?? 0) == 0 {
+                  childCount += 1
+                  dfs(neighbor, parentId: nodeId)
+
+                  //@step 12
+                  low[nodeId] = min(low[nodeId] ?? .max, low[neighbor] ?? .max)
+
+                  let nodeDiscovery = discovery[nodeId] ?? 0
+                  let childLow = low[neighbor] ?? 0
+
+                  //@step 13
+                  if childLow > nodeDiscovery {
+                      bridges.append((nodeId, neighbor))
+                  }
+
+                  if parentId != nil && childLow >= nodeDiscovery {
+                      articulation.insert(nodeId)
+                  }
+              }
+          }
+
+          if parentId == nil && childCount > 1 {
+              articulation.insert(nodeId)
+          }
+
+          //@step 15
+          return
+      }
+
+      for node in graph.nodes {
+          if (discovery[node.id] ?? 0) != 0 {
+              continue
+          }
+
+          //@step 4
+          dfs(node.id, parentId: nil)
+      }
+
+      //@step 16
+      return (bridges, articulation)
+  }
+  //#endregion critical-cuts
+
+  //#region build-adjacency helper collapsed
+  func buildUndirectedAdjacency(graph: GraphData) -> [String: [String]] {
+      var adjacency: [String: [String]] = [:]
+
+      for node in graph.nodes {
+          adjacency[node.id] = []
+      }
+
+      for edge in graph.edges {
+          adjacency[edge.from, default: []].append(edge.to)
+          adjacency[edge.to, default: []].append(edge.from)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'swift',
+);
+
+const BRIDGES_ARTICULATION_POINTS_PHP = buildStructuredCode(
+  `
+  <?php
+
+  //#region graph-types interface collapsed
+  final class GraphNode
+  {
+      public function __construct(public string $id) {}
+  }
+
+  final class GraphEdge
+  {
+      public function __construct(
+          public string $from,
+          public string $to,
+      ) {}
+  }
+
+  final class GraphData
+  {
+      /**
+       * @param list<GraphNode> $nodes
+       * @param list<GraphEdge> $edges
+       */
+      public function __construct(
+          public array $nodes,
+          public array $edges,
+      ) {}
+  }
+  //#endregion graph-types
+
+  /**
+   * Finds all bridges and articulation points in an undirected graph.
+   * Input: graph interpreted as undirected.
+   * Returns: bridge edge pairs and articulation node ids.
+   *
+   * @return array{
+   *   bridges: list<array{0: string, 1: string}>,
+   *   articulation: array<string, bool>
+   * }
+   */
+  //#region critical-cuts function open
+  //@step 2
+  function findCriticalCuts(GraphData $graph): array
+  {
+      $adjacency = buildUndirectedAdjacency($graph);
+      $discovery = [];
+      $low = [];
+      $articulation = [];
+      $bridges = [];
+      $time = 0;
+
+      foreach ($graph->nodes as $node) {
+          $discovery[$node->id] = null;
+          $low[$node->id] = null;
+      }
+
+      $dfs = function (string $nodeId, ?string $parentId) use (
+          &$dfs,
+          $adjacency,
+          &$discovery,
+          &$low,
+          &$articulation,
+          &$bridges,
+          &$time,
+      ): void {
+          $time += 1;
+          $discovery[$nodeId] = $time;
+          $low[$nodeId] = $time;
+          $childCount = 0;
+
+          //@step 7
+          foreach ($adjacency[$nodeId] ?? [] as $neighbor) {
+              //@step 8
+              if ($neighbor !== $parentId && ($discovery[$neighbor] ?? null) !== null) {
+                  $low[$nodeId] = min($low[$nodeId], $discovery[$neighbor]);
+                  continue;
+              }
+
+              //@step 10
+              if (($discovery[$neighbor] ?? null) === null) {
+                  $childCount += 1;
+                  $dfs($neighbor, $nodeId);
+
+                  //@step 12
+                  $low[$nodeId] = min($low[$nodeId], $low[$neighbor]);
+
+                  $nodeDiscovery = $discovery[$nodeId];
+                  $childLow = $low[$neighbor];
+
+                  //@step 13
+                  if ($childLow > $nodeDiscovery) {
+                      $bridges[] = [$nodeId, $neighbor];
+                  }
+
+                  if ($parentId !== null && $childLow >= $nodeDiscovery) {
+                      $articulation[$nodeId] = true;
+                  }
+              }
+          }
+
+          if ($parentId === null && $childCount > 1) {
+              $articulation[$nodeId] = true;
+          }
+
+          //@step 15
+          return;
+      };
+
+      foreach ($graph->nodes as $node) {
+          if (($discovery[$node->id] ?? null) !== null) {
+              continue;
+          }
+
+          //@step 4
+          $dfs($node->id, null);
+      }
+
+      //@step 16
+      return ['bridges' => $bridges, 'articulation' => $articulation];
+  }
+  //#endregion critical-cuts
+
+  //#region build-adjacency helper collapsed
+  function buildUndirectedAdjacency(GraphData $graph): array
+  {
+      $adjacency = [];
+
+      foreach ($graph->nodes as $node) {
+          $adjacency[$node->id] = [];
+      }
+
+      foreach ($graph->edges as $edge) {
+          $adjacency[$edge->from][] = $edge->to;
+          $adjacency[$edge->to][] = $edge->from;
+      }
+
+      return $adjacency;
+  }
+  //#endregion build-adjacency
+  `,
+  'php',
+);
+
+const BRIDGES_ARTICULATION_POINTS_KOTLIN = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  data class GraphNode(val id: String)
+
+  data class GraphEdge(
+      val from: String,
+      val to: String,
+  )
+
+  data class GraphData(
+      val nodes: List<GraphNode>,
+      val edges: List<GraphEdge>,
+  )
+  //#endregion graph-types
+
+  /**
+   * Finds all bridges and articulation points in an undirected graph.
+   * Input: graph interpreted as undirected.
+   * Returns: bridge edge pairs and articulation node ids.
+   */
+  //#region critical-cuts function open
+  //@step 2
+  fun findCriticalCuts(graph: GraphData): Pair<List<Pair<String, String>>, Set<String>> {
+      val adjacency = buildUndirectedAdjacency(graph)
+      val discovery = mutableMapOf<String, Int?>()
+      val low = mutableMapOf<String, Int?>()
+      val articulation = mutableSetOf<String>()
+      val bridges = mutableListOf<Pair<String, String>>()
+      var time = 0
+
+      for (node in graph.nodes) {
+          discovery[node.id] = null
+          low[node.id] = null
+      }
+
+      fun dfs(nodeId: String, parentId: String?) {
+          time += 1
+          discovery[nodeId] = time
+          low[nodeId] = time
+          var childCount = 0
+
+          //@step 7
+          for (neighbor in adjacency[nodeId].orEmpty()) {
+              //@step 8
+              if (neighbor != parentId && discovery[neighbor] != null) {
+                  low[nodeId] = minOf(low[nodeId] ?: Int.MAX_VALUE, discovery[neighbor]!!)
+                  continue
+              }
+
+              //@step 10
+              if (discovery[neighbor] == null) {
+                  childCount += 1
+                  dfs(neighbor, nodeId)
+
+                  //@step 12
+                  low[nodeId] = minOf(low[nodeId] ?: Int.MAX_VALUE, low[neighbor]!!)
+
+                  val nodeDiscovery = discovery[nodeId]!!
+                  val childLow = low[neighbor]!!
+
+                  //@step 13
+                  if (childLow > nodeDiscovery) {
+                      bridges += nodeId to neighbor
+                  }
+
+                  if (parentId != null && childLow >= nodeDiscovery) {
+                      articulation += nodeId
+                  }
+              }
+          }
+
+          if (parentId == null && childCount > 1) {
+              articulation += nodeId
+          }
+
+          //@step 15
+          return
+      }
+
+      for (node in graph.nodes) {
+          if (discovery[node.id] != null) {
+              continue
+          }
+
+          //@step 4
+          dfs(node.id, null)
+      }
+
+      //@step 16
+      return bridges to articulation
+  }
+  //#endregion critical-cuts
+
+  //#region build-adjacency helper collapsed
+  fun buildUndirectedAdjacency(graph: GraphData): MutableMap<String, MutableList<String>> {
+      val adjacency = mutableMapOf<String, MutableList<String>>()
+
+      for (node in graph.nodes) {
+          adjacency[node.id] = mutableListOf()
+      }
+
+      for (edge in graph.edges) {
+          adjacency.getOrPut(edge.from) { mutableListOf() }.add(edge.to)
+          adjacency.getOrPut(edge.to) { mutableListOf() }.add(edge.from)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'kotlin',
+);
+
 export const BRIDGES_ARTICULATION_POINTS_CODE = BRIDGES_ARTICULATION_POINTS_TS.lines;
 export const BRIDGES_ARTICULATION_POINTS_CODE_REGIONS = BRIDGES_ARTICULATION_POINTS_TS.regions;
-export const BRIDGES_ARTICULATION_POINTS_CODE_HIGHLIGHT_MAP = BRIDGES_ARTICULATION_POINTS_TS.highlightMap;
+export const BRIDGES_ARTICULATION_POINTS_CODE_HIGHLIGHT_MAP =
+  BRIDGES_ARTICULATION_POINTS_TS.highlightMap;
 export const BRIDGES_ARTICULATION_POINTS_CODE_VARIANTS: CodeVariantMap = {
   typescript: {
     language: 'typescript',
@@ -646,6 +1432,13 @@ export const BRIDGES_ARTICULATION_POINTS_CODE_VARIANTS: CodeVariantMap = {
     regions: BRIDGES_ARTICULATION_POINTS_TS.regions,
     highlightMap: BRIDGES_ARTICULATION_POINTS_TS.highlightMap,
     source: BRIDGES_ARTICULATION_POINTS_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: BRIDGES_ARTICULATION_POINTS_JS.lines,
+    regions: BRIDGES_ARTICULATION_POINTS_JS.regions,
+    highlightMap: BRIDGES_ARTICULATION_POINTS_JS.highlightMap,
+    source: BRIDGES_ARTICULATION_POINTS_JS.source,
   },
   python: {
     language: 'python',
@@ -674,5 +1467,40 @@ export const BRIDGES_ARTICULATION_POINTS_CODE_VARIANTS: CodeVariantMap = {
     regions: BRIDGES_ARTICULATION_POINTS_CPP.regions,
     highlightMap: BRIDGES_ARTICULATION_POINTS_CPP.highlightMap,
     source: BRIDGES_ARTICULATION_POINTS_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: BRIDGES_ARTICULATION_POINTS_GO.lines,
+    regions: BRIDGES_ARTICULATION_POINTS_GO.regions,
+    highlightMap: BRIDGES_ARTICULATION_POINTS_GO.highlightMap,
+    source: BRIDGES_ARTICULATION_POINTS_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: BRIDGES_ARTICULATION_POINTS_RUST.lines,
+    regions: BRIDGES_ARTICULATION_POINTS_RUST.regions,
+    highlightMap: BRIDGES_ARTICULATION_POINTS_RUST.highlightMap,
+    source: BRIDGES_ARTICULATION_POINTS_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: BRIDGES_ARTICULATION_POINTS_SWIFT.lines,
+    regions: BRIDGES_ARTICULATION_POINTS_SWIFT.regions,
+    highlightMap: BRIDGES_ARTICULATION_POINTS_SWIFT.highlightMap,
+    source: BRIDGES_ARTICULATION_POINTS_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: BRIDGES_ARTICULATION_POINTS_PHP.lines,
+    regions: BRIDGES_ARTICULATION_POINTS_PHP.regions,
+    highlightMap: BRIDGES_ARTICULATION_POINTS_PHP.highlightMap,
+    source: BRIDGES_ARTICULATION_POINTS_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: BRIDGES_ARTICULATION_POINTS_KOTLIN.lines,
+    regions: BRIDGES_ARTICULATION_POINTS_KOTLIN.regions,
+    highlightMap: BRIDGES_ARTICULATION_POINTS_KOTLIN.highlightMap,
+    source: BRIDGES_ARTICULATION_POINTS_KOTLIN.source,
   },
 };
