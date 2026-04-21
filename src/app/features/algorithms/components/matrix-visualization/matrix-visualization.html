@@ -96,6 +96,27 @@
                 </div>
               }
             }
+
+            <!-- Covering-lines overlay — one bar per covered row/col.
+                 Rendered AFTER the cells so they paint on top. Cells
+                 live on grid rows 2..N+1 / cols 2..N+1 (row 1 + col 1
+                 hold the headers), so the overlay offsets need +2. -->
+            @for (rowIndex of coveredRowIndices(); track rowIndex) {
+              <div
+                class="matrix-cover matrix-cover--row"
+                [style.grid-row]="rowIndex + 2"
+                style="grid-column: 2 / -1"
+                aria-hidden="true"
+              ></div>
+            }
+            @for (colIndex of coveredColIndices(); track colIndex) {
+              <div
+                class="matrix-cover matrix-cover--col"
+                [style.grid-column]="colIndex + 2"
+                style="grid-row: 2 / -1"
+                aria-hidden="true"
+              ></div>
+            }
           </div>
         </div>
       </div>
