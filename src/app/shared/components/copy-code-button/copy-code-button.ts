@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
-  computed,
   effect,
   input,
   output,
@@ -10,12 +9,13 @@ import {
 } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheck, faCopy, faSparkles } from '@fortawesome/pro-solid-svg-icons';
-import { translateSignal } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe } from '@jsverse/transloco';
+
+import { I18N_KEY } from '../../../core/i18n/i18n-keys';
 
 @Component({
   selector: 'app-copy-code-button',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, TranslocoPipe],
   templateUrl: './copy-code-button.html',
   styleUrl: './copy-code-button.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,19 +28,10 @@ export class CopyCodeButton implements OnDestroy {
   readonly copiedAriaLabel = input<string | null>(null);
   readonly pressed = output<void>();
 
+  protected readonly I18N_KEY = I18N_KEY;
   protected readonly pressPulse = signal(false);
   protected readonly successPulse = signal(false);
   protected readonly iconPulse = signal(false);
-  protected readonly resolvedLabel = computed(() => this.label() ?? this.defaultLabel());
-  protected readonly resolvedCopiedLabel = computed(
-    () => this.copiedLabel() ?? this.defaultCopiedLabel(),
-  );
-  protected readonly resolvedAriaLabel = computed(
-    () => this.ariaLabel() ?? this.defaultAriaLabel(),
-  );
-  protected readonly resolvedCopiedAriaLabel = computed(
-    () => this.copiedAriaLabel() ?? this.defaultCopiedAriaLabel(),
-  );
   protected readonly icons = {
     copy: faCopy,
     check: faCheck,
@@ -51,12 +42,6 @@ export class CopyCodeButton implements OnDestroy {
   private successResetTimer: ReturnType<typeof setTimeout> | null = null;
   private iconResetTimer: ReturnType<typeof setTimeout> | null = null;
   private lastCopied = false;
-  private readonly defaultLabel = translateSignal(t('shared.copyCodeButton.label'));
-  private readonly defaultCopiedLabel = translateSignal(t('shared.copyCodeButton.copiedLabel'));
-  private readonly defaultAriaLabel = translateSignal(t('shared.copyCodeButton.ariaLabel'));
-  private readonly defaultCopiedAriaLabel = translateSignal(
-    t('shared.copyCodeButton.copiedAriaLabel'),
-  );
 
   constructor() {
     effect(() => {

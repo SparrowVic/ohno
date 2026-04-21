@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faBullseye,
@@ -9,7 +9,10 @@ import {
   faScissors,
   faWandMagicSparkles,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { SearchTraceRow, SearchTraceState, SearchTraceTag } from '../../models/search';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -18,35 +21,87 @@ import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 
 interface SearchTagLegendItem {
   readonly id: SearchTraceTag;
-  readonly label: string;
+  readonly labelKey: I18nKey;
   readonly icon: IconDefinition;
 }
 
 const TAG_LEGEND: readonly SearchTagLegendItem[] = [
-  { id: 'pending', label: 'Not checked yet', icon: faCircle },
-  { id: 'candidate', label: 'Still inside active window', icon: faWandMagicSparkles },
-  { id: 'compare', label: 'Current probe / compare', icon: faCrosshairs },
-  { id: 'checked', label: 'Checked earlier', icon: faEye },
-  { id: 'pruned', label: 'Eliminated from search', icon: faScissors },
-  { id: 'bound', label: 'First or last match boundary', icon: faBullseye },
-  { id: 'match', label: 'Confirmed hit', icon: faCheckDouble },
+  {
+    id: 'pending',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.pending,
+    icon: faCircle,
+  },
+  {
+    id: 'candidate',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.candidate,
+    icon: faWandMagicSparkles,
+  },
+  {
+    id: 'compare',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.compare,
+    icon: faCrosshairs,
+  },
+  {
+    id: 'checked',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.checked,
+    icon: faEye,
+  },
+  {
+    id: 'pruned',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.pruned,
+    icon: faScissors,
+  },
+  {
+    id: 'bound',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.bound,
+    icon: faBullseye,
+  },
+  {
+    id: 'match',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.match,
+    icon: faCheckDouble,
+  },
 ];
 
 const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'index', header: 'Index', width: '64px', kind: 'mono' },
-  { id: 'value', header: 'Value', width: '92px', kind: 'mono' },
-  { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
-  { id: 'tags', header: 'Tags', width: '92px', kind: 'tags' },
+  {
+    id: 'index',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.index,
+    width: '64px',
+    kind: 'mono',
+  },
+  {
+    id: 'value',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.value,
+    width: '92px',
+    kind: 'mono',
+  },
+  {
+    id: 'status',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.status,
+    width: '92px',
+    kind: 'tag',
+  },
+  {
+    id: 'tags',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.tags,
+    width: '92px',
+    kind: 'tags',
+  },
 ];
 
 @Component({
   selector: 'app-search-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './search-trace-panel.html',
   styleUrl: './search-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<SearchTraceState | null>(null);
   readonly tableColumns = TABLE_COLUMNS;
 
@@ -60,7 +115,9 @@ export class SearchTracePanel {
   readonly windowLabel = computed(() => {
     const low = this.state()?.low;
     const high = this.state()?.high;
-    if (low === null || high === null) return 'empty';
+    if (low === null || high === null) {
+      return this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel);
+    }
     return `[${low}, ${high}]`;
   });
 
@@ -76,7 +133,8 @@ export class SearchTracePanel {
     TAG_LEGEND.map((item) => ({
       id: item.id,
       tag: this.traceTag(item.id),
-      label: item.label,
+      label: '',
+      labelKey: item.labelKey,
     })),
   );
   readonly tableRows = computed<readonly TableRow[]>(() =>
@@ -97,12 +155,13 @@ export class SearchTracePanel {
   }
 
   tagLabel(tag: SearchTraceTag): string {
-    return TAG_LEGEND.find((item) => item.id === tag)?.label ?? tag;
+    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
+    return labelKey ? this.translate(labelKey) : tag;
   }
 
   statusTag(row: SearchTraceRow): UiTagModel {
     return {
-      label: row.status,
+      label: this.statusLabel(row.status),
       tone: row.status === 'found' ? 'success' : row.status === 'probe' ? 'warning' : 'neutral',
       appearance: 'soft',
       size: 'sm',
@@ -130,7 +189,9 @@ export class SearchTracePanel {
     return 'idle';
   }
 
-  private tagTone(tag: SearchTraceTag): 'neutral' | 'window' | 'warning' | 'route' | 'danger' | 'hit' | 'success' {
+  private tagTone(
+    tag: SearchTraceTag,
+  ): 'neutral' | 'window' | 'warning' | 'route' | 'danger' | 'hit' | 'success' {
     switch (tag) {
       case 'pending':
         return 'neutral';
@@ -147,5 +208,29 @@ export class SearchTracePanel {
       case 'match':
         return 'success';
     }
+  }
+
+  private statusLabel(status: SearchTraceRow['status']): string {
+    switch (status) {
+      case 'idle':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.idle);
+      case 'window':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.window);
+      case 'probe':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.probe);
+      case 'visited':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.visited);
+      case 'eliminated':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.eliminated);
+      case 'bound':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.bound);
+      case 'found':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.found);
+    }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

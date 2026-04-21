@@ -5,8 +5,16 @@
   [class.copy-code-button--copied]="copied()"
   [class.copy-code-button--success-pulse]="successPulse()"
   [class.copy-code-button--icon-pulse]="iconPulse()"
-  [attr.aria-label]="copied() ? resolvedCopiedAriaLabel() : resolvedAriaLabel()"
-  [title]="copied() ? resolvedCopiedLabel() : resolvedLabel()"
+  [attr.aria-label]="
+    copied()
+      ? copiedAriaLabel() || (I18N_KEY.shared.copyCodeButton.copiedAriaLabel | transloco)
+      : ariaLabel() || (I18N_KEY.shared.copyCodeButton.ariaLabel | transloco)
+  "
+  [title]="
+    copied()
+      ? copiedLabel() || (I18N_KEY.shared.copyCodeButton.copiedLabel | transloco)
+      : label() || (I18N_KEY.shared.copyCodeButton.label | transloco)
+  "
   (click)="handleClick()"
 >
   <span class="copy-code-button__bloom" aria-hidden="true"></span>
@@ -18,6 +26,10 @@
   </span>
 
   <span class="copy-code-button__sr" aria-live="polite" aria-atomic="true">
-    {{ copied() ? resolvedCopiedAriaLabel() : resolvedLabel() }}
+    {{
+      copied()
+        ? copiedAriaLabel() || (I18N_KEY.shared.copyCodeButton.copiedAriaLabel | transloco)
+        : label() || (I18N_KEY.shared.copyCodeButton.label | transloco)
+    }}
   </span>
 </button>

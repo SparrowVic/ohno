@@ -11,10 +11,9 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { TranslocoService } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LogEntry } from '../../models/detail';
 import { DpTraceState } from '../../models/dp';
@@ -70,7 +69,7 @@ type SideTabId = 'trace' | 'code' | 'info' | 'log';
 
 interface SideTab {
   readonly id: SideTabId;
-  readonly label: string;
+  readonly labelKey: I18nKey;
 }
 
 const BASE_SIDE_TAB_IDS: readonly SideTabId[] = ['code', 'info', 'log'];
@@ -102,6 +101,7 @@ const MAX_WIDTH = 680;
     SortTracePanel,
     StringTracePanel,
     SweepLineTracePanel,
+    TranslocoPipe,
     NgTemplateOutlet,
     VoronoiTracePanel,
   ],
@@ -110,6 +110,7 @@ const MAX_WIDTH = 680;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidePanel implements OnInit, OnDestroy {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly algorithm = input.required<AlgorithmItem>();
   readonly codeLines = input.required<readonly CodeLine[]>();
   readonly codeRegions = input<readonly CodeRegion[]>([]);
@@ -131,9 +132,6 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly graphFocusModeLabel = input<string | null>(null);
   readonly graphFocusHint = input<string | null>(null);
 
-  readonly inspectorTabsAriaLabel = computed(() =>
-    this.translate(t('features.algorithms.sidePanel.ariaLabel')),
-  );
   readonly tabs = computed<readonly SideTab[]>(() => {
     const ids =
       this.traceState() ||
@@ -151,7 +149,7 @@ export class SidePanel implements OnInit, OnDestroy {
 
     return ids.map((id) => ({
       id,
-      label: this.getTabLabel(id),
+      labelKey: this.getTabLabelKey(id),
     }));
   });
   readonly logEntryCount = computed(() => this.logEntries().length);
@@ -198,8 +196,6 @@ export class SidePanel implements OnInit, OnDestroy {
 
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly doc = inject(DOCUMENT);
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
 
   private dragging = false;
   private dragStartX = 0;
@@ -275,21 +271,16 @@ export class SidePanel implements OnInit, OnDestroy {
     this.hostEl.style.width = `${width}px`;
   }
 
-  private getTabLabel(id: SideTabId): string {
+  private getTabLabelKey(id: SideTabId): I18nKey {
     switch (id) {
       case 'trace':
-        return this.translate(t('features.algorithms.sidePanel.tabs.trace'));
+        return I18N_KEY.features.algorithms.sidePanel.tabs.trace;
       case 'code':
-        return this.translate(t('features.algorithms.sidePanel.tabs.code'));
+        return I18N_KEY.features.algorithms.sidePanel.tabs.code;
       case 'info':
-        return this.translate(t('features.algorithms.sidePanel.tabs.info'));
+        return I18N_KEY.features.algorithms.sidePanel.tabs.info;
       case 'log':
-        return this.translate(t('features.algorithms.sidePanel.tabs.log'));
+        return I18N_KEY.features.algorithms.sidePanel.tabs.log;
     }
-  }
-
-  private translate(key: string, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
   }
 }

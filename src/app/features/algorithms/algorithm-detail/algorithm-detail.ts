@@ -9,13 +9,13 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoService } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
 import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
+import { I18N_KEY, I18nKey } from '../../../core/i18n/i18n-keys';
 import {
   getVisualizationActionLabelKey,
   getVisualizationSizeUnitLabelKey,
@@ -57,7 +57,14 @@ interface RebuildOptions {
 
 @Component({
   selector: 'app-algorithm-detail',
-  imports: [LegendBar, SidePanel, VisualizationCanvas, VisualizationToolbar, RouterLink],
+  imports: [
+    LegendBar,
+    SidePanel,
+    VisualizationCanvas,
+    VisualizationToolbar,
+    RouterLink,
+    TranslocoPipe,
+  ],
   templateUrl: './algorithm-detail.html',
   styleUrl: './algorithm-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -71,6 +78,7 @@ export class AlgorithmDetail {
   private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
 
+  protected readonly I18N_KEY = I18N_KEY;
   private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
     initialValue: this.route.snapshot.paramMap.get('id'),
   });
@@ -98,27 +106,10 @@ export class AlgorithmDetail {
     return algorithm?.implemented ? getAlgorithmViewConfig(algorithm.id) : null;
   });
 
-  readonly difficultyLabel = computed(() => {
+  readonly difficultyLabelKey = computed(() => {
     const algorithm = this.algorithm();
-    return algorithm ? this.translate(getDifficultyLabelKey(algorithm.difficulty)) : '';
+    return algorithm ? getDifficultyLabelKey(algorithm.difficulty) : null;
   });
-  readonly homeAriaLabel = computed(() => this.translate(t('core.navbar.homeAriaLabel')));
-  readonly breadcrumbAriaLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.breadcrumbAriaLabel')),
-  );
-  readonly backLabel = computed(() => this.translate(t('features.algorithms.detail.backLabel')));
-  readonly lockedLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.lockedLabel')),
-  );
-  readonly unavailableLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.unavailableLabel')),
-  );
-  readonly notFoundLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.notFoundLabel')),
-  );
-  readonly backToAlgorithmsLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.backToAlgorithmsLabel')),
-  );
   readonly breadcrumbs = computed(() => {
     const algorithm = this.algorithm();
     if (!algorithm) return [];
@@ -173,18 +164,6 @@ export class AlgorithmDetail {
       humanizeLabel(active)
     );
   });
-  readonly sizeSummaryLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.sizeSummaryLabel'), {
-      count: this.sizeSig(),
-      unit: this.sizeUnitLabel(),
-    }),
-  );
-  readonly stepSummaryLabel = computed(() =>
-    this.translate(t('features.algorithms.detail.stepSummaryLabel'), {
-      current: this.currentStep(),
-      total: this.totalSteps(),
-    }),
-  );
 
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
@@ -218,13 +197,13 @@ export class AlgorithmDetail {
     const trace = this.graphTrace();
     if (!trace) return null;
     if (trace.metricLabel === 'Distance') {
-      return this.translate(t('features.algorithms.detail.graphFocus.shortestPathLabel'));
+      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.shortestPathLabel);
     }
     if (trace.metricLabel === 'Level') {
-      return this.translate(t('features.algorithms.detail.graphFocus.bfsRouteLabel'));
+      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.bfsRouteLabel);
     }
     if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
-      return this.translate(t('features.algorithms.detail.graphFocus.dfsBranchLabel'));
+      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.dfsBranchLabel);
     }
     return null;
   });
@@ -244,13 +223,13 @@ export class AlgorithmDetail {
     const trace = this.graphTrace();
     if (!trace || !this.graphRouteModeLabel()) return null;
     if (trace.metricLabel === 'Distance') {
-      return this.translate(t('features.algorithms.detail.graphFocus.shortestPathHint'));
+      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.shortestPathHint);
     }
     if (trace.metricLabel === 'Level') {
-      return this.translate(t('features.algorithms.detail.graphFocus.bfsRouteHint'));
+      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.bfsRouteHint);
     }
     if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
-      return this.translate(t('features.algorithms.detail.graphFocus.dfsBranchHint'));
+      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.dfsBranchHint);
     }
     return null;
   });
@@ -534,13 +513,13 @@ export class AlgorithmDetail {
     return candidates[0]?.id ?? sourceId ?? null;
   }
 
-  private translate(key: string, params?: Record<string, string | number>): string {
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
     this.language.activeLang();
     return this.transloco.translate(key, params);
   }
 
   private translateMaybe(
-    key: string | null,
+    key: I18nKey | null,
     fallback: string,
     params?: Record<string, string | number>,
   ): string {

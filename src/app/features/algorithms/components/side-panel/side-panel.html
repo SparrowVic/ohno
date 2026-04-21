@@ -99,7 +99,7 @@
     <div
       class="side-tabs"
       role="tablist"
-      [attr.aria-label]="inspectorTabsAriaLabel()"
+      [attr.aria-label]="I18N_KEY.features.algorithms.sidePanel.ariaLabel | transloco"
       [style.--side-tabs-count]="tabs().length"
       [style.--side-tabs-index]="activeTabIndex()"
     >
@@ -120,7 +120,7 @@
           </span>
           <span class="side-tab__copy">
             <span class="side-tab__label">
-              <span>{{ tab.label }}</span>
+              <span>{{ tab.labelKey | transloco }}</span>
               @if (tab.id === 'log' && logEntryCount() > 0) {
                 <span class="side-tab__badge">{{ logEntryCount() }}</span>
               }

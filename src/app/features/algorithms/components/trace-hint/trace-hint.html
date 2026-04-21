@@ -1,5 +1,8 @@
 @if (keyIdea() || watch()) {
-  <app-segmented-panel class="trace-hint" aria-label="Trace hint">
+  <app-segmented-panel
+    class="trace-hint"
+    [attr.aria-label]="I18N_KEY.features.algorithms.traceHint.ariaLabel | transloco"
+  >
     <app-segmented-panel-section>
       <div class="trace-hint__row">
         <span class="trace-hint__icon" aria-hidden="true">

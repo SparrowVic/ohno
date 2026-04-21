@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faBullseye,
@@ -11,7 +11,10 @@ import {
   faSquare,
   faWandMagicSparkles,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { MatrixCell, MatrixTraceState, MatrixTraceTag } from '../../models/matrix';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
@@ -20,49 +23,118 @@ import { TraceHint } from '../trace-hint/trace-hint';
 
 interface MatrixTagLegendItem {
   readonly id: MatrixTraceTag;
-  readonly label: string;
+  readonly labelKey: I18nKey;
   readonly icon: IconDefinition;
 }
 
 const TAG_LEGEND: readonly MatrixTagLegendItem[] = [
-  { id: 'pivot', label: 'Pivot row / column', icon: faBullseye },
-  { id: 'active', label: 'Current compare cell', icon: faWandMagicSparkles },
-  { id: 'improved', label: 'Improved shortest distance', icon: faCheckDouble },
-  { id: 'covered', label: 'Covered by current line set', icon: faColumns3 },
-  { id: 'zero', label: 'Zero-cost candidate', icon: faCircle },
-  { id: 'assignment', label: 'Chosen assignment cell', icon: faSquare },
-  { id: 'row', label: 'Active row', icon: faMinus },
-  { id: 'column', label: 'Active column', icon: faColumns3 },
-  { id: 'adjusted', label: 'Changed by reduction / shift', icon: faPenRuler },
-  { id: 'infinite', label: 'Currently unreachable', icon: faLayerGroup },
+  {
+    id: 'pivot',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.pivot,
+    icon: faBullseye,
+  },
+  {
+    id: 'active',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.active,
+    icon: faWandMagicSparkles,
+  },
+  {
+    id: 'improved',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.improved,
+    icon: faCheckDouble,
+  },
+  {
+    id: 'covered',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.covered,
+    icon: faColumns3,
+  },
+  {
+    id: 'zero',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.zero,
+    icon: faCircle,
+  },
+  {
+    id: 'assignment',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.assignment,
+    icon: faSquare,
+  },
+  {
+    id: 'row',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.row,
+    icon: faMinus,
+  },
+  {
+    id: 'column',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.column,
+    icon: faColumns3,
+  },
+  {
+    id: 'adjusted',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.adjusted,
+    icon: faPenRuler,
+  },
+  {
+    id: 'infinite',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.infinite,
+    icon: faLayerGroup,
+  },
 ];
 
 const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'cell', header: 'Cell', width: '88px', kind: 'mono' },
-  { id: 'value', header: 'Value', width: '54px', kind: 'mono' },
-  { id: 'meta', header: 'Meta', width: '82px', kind: 'mono' },
-  { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
-  { id: 'tags', header: 'Tags', width: '92px', kind: 'tags' },
+  {
+    id: 'cell',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.cell,
+    width: '88px',
+    kind: 'mono',
+  },
+  {
+    id: 'value',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.value,
+    width: '54px',
+    kind: 'mono',
+  },
+  {
+    id: 'meta',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.meta,
+    width: '82px',
+    kind: 'mono',
+  },
+  {
+    id: 'status',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.status,
+    width: '92px',
+    kind: 'tag',
+  },
+  {
+    id: 'tags',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.tags,
+    width: '92px',
+    kind: 'tags',
+  },
 ];
 
 @Component({
   selector: 'app-matrix-trace-panel',
-  imports: [Table, TraceHint],
+  imports: [Table, TraceHint, TranslocoPipe],
   templateUrl: './matrix-trace-panel.html',
   styleUrl: './matrix-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatrixTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<MatrixTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
   readonly hintKeyIdea = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
   });
   readonly hintWatch = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
   });
 
   readonly legend = TAG_LEGEND;
@@ -71,7 +143,8 @@ export class MatrixTracePanel {
     TAG_LEGEND.map((item) => ({
       id: item.id,
       tag: this.traceTag(item.id),
-      label: item.label,
+      label: '',
+      labelKey: item.labelKey,
     })),
   );
   readonly visibleRows = computed<readonly MatrixCell[]>(() =>
@@ -103,12 +176,13 @@ export class MatrixTracePanel {
   }
 
   tagLabel(tag: MatrixTraceTag): string {
-    return TAG_LEGEND.find((item) => item.id === tag)?.label ?? tag;
+    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
+    return labelKey ? this.translate(labelKey) : tag;
   }
 
   statusTag(cell: MatrixCell): UiTagModel {
     return {
-      label: cell.status,
+      label: this.statusLabel(cell.status),
       tone: this.statusTone(cell.status),
       appearance: 'soft',
       size: 'sm',
@@ -128,7 +202,9 @@ export class MatrixTracePanel {
     };
   }
 
-  private statusTone(status: MatrixCell['status']): 'warning' | 'success' | 'window' | 'danger' | 'neutral' {
+  private statusTone(
+    status: MatrixCell['status'],
+  ): 'warning' | 'success' | 'window' | 'danger' | 'neutral' {
     switch (status) {
       case 'active':
       case 'candidate':
@@ -165,5 +241,35 @@ export class MatrixTracePanel {
       case 'infinite':
         return 'neutral';
     }
+  }
+
+  private statusLabel(status: MatrixCell['status']): string {
+    switch (status) {
+      case 'idle':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.idle);
+      case 'pivot':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.pivot);
+      case 'active':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.active);
+      case 'candidate':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.candidate);
+      case 'improved':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.improved);
+      case 'assignment':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.assignment);
+      case 'adjusted':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.adjusted);
+      case 'covered':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.covered);
+      case 'zero':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.zero);
+      case 'blocked':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.blocked);
+    }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

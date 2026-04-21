@@ -15,8 +15,7 @@ import {
 } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { TranslocoService, translateSignal } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe } from '@jsverse/transloco';
 import {
   faGolang,
   faJava,
@@ -27,7 +26,7 @@ import {
   faSwift,
 } from '@fortawesome/free-brands-svg-icons';
 
-import { AppLanguageService } from '../../../core/i18n/app-language.service';
+import { I18N_KEY } from '../../../core/i18n/i18n-keys';
 import { CodeLanguage } from '../../../features/algorithms/models/detail';
 
 type CodeLanguageDialId = CodeLanguage | 'javascript' | 'go' | 'rust' | 'swift' | 'php' | 'kotlin';
@@ -94,7 +93,7 @@ const STAGGER_STEP_MS = 34;
 
 @Component({
   selector: 'app-code-language-dial',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, TranslocoPipe],
   templateUrl: './code-language-dial.html',
   styleUrl: './code-language-dial.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -102,8 +101,6 @@ const STAGGER_STEP_MS = 34;
 export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zone = inject(NgZone);
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
   private readonly triggerRef = viewChild<ElementRef<HTMLButtonElement>>('triggerBtn');
   private readonly fanRef = viewChild<ElementRef<HTMLDivElement>>('fan');
   private fanEl: HTMLDivElement | null = null;
@@ -112,6 +109,7 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   private rafToken: number | null = null;
   private readonly repositionHandler = () => this.scheduleMeasure();
 
+  protected readonly I18N_KEY = I18N_KEY;
   readonly options = input.required<readonly CodeLanguageDialOption[]>();
   readonly value = input.required<CodeLanguage>();
   readonly ariaLabel = input<string | null>(null);
@@ -119,9 +117,6 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
 
   protected readonly open = signal(false);
   protected readonly selectionPulse = signal(false);
-  protected readonly resolvedAriaLabel = computed(
-    () => this.ariaLabel() ?? this.defaultAriaLabel(),
-  );
   protected readonly triggerRect = signal<TriggerRect>({
     x: 0,
     y: 0,
@@ -164,8 +159,6 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
       return this.toDialItem(option, x, y, spinDeg, STAGGER_BASE_MS + index * STAGGER_STEP_MS);
     });
   });
-  private readonly defaultAriaLabel = translateSignal(t('shared.codeLanguageDial.ariaLabel'));
-  private readonly comingSoonLabel = translateSignal(t('shared.codeLanguageDial.comingSoon'));
 
   ngAfterViewInit(): void {
     // Portal the fan to <body>. Any ancestor with backdrop-filter/transform/
@@ -208,20 +201,6 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
     if (!this.open()) return;
     this.open.set(false);
     this.detachListeners();
-  }
-
-  protected itemAriaLabel(item: CodeLanguageDialItem): string {
-    return item.disabled
-      ? this.translate(t('shared.codeLanguageDial.languageComingSoon'), {
-          language: item.label,
-        })
-      : this.translate(t('shared.codeLanguageDial.switchToLanguage'), {
-          language: item.label,
-        });
-  }
-
-  protected itemTitle(item: CodeLanguageDialItem): string {
-    return item.disabled ? `${item.label} · ${this.comingSoonLabel()}` : item.label;
   }
 
   @HostListener('document:pointerdown', ['$event'])
@@ -328,10 +307,5 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
       cancelAnimationFrame(this.rafToken);
       this.rafToken = null;
     }
-  }
-
-  private translate(key: string, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faBan,
@@ -12,7 +12,10 @@ import {
   faRoute,
   faWandMagicSparkles,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { NetworkTraceRow, NetworkTraceState, NetworkTraceTag } from '../../models/network';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
@@ -21,44 +24,100 @@ import { TraceHint } from '../trace-hint/trace-hint';
 
 interface NetworkTagLegendItem {
   readonly id: NetworkTraceTag;
-  readonly label: string;
+  readonly labelKey: I18nKey;
   readonly icon: IconDefinition;
 }
 
 const TAG_LEGEND: readonly NetworkTagLegendItem[] = [
-  { id: 'source', label: 'Source anchor', icon: faCircleDot },
-  { id: 'sink', label: 'Sink / target', icon: faBullseye },
-  { id: 'left', label: 'Left partition node', icon: faCircleDot },
-  { id: 'right', label: 'Right partition node', icon: faBullseye },
-  { id: 'free', label: 'Currently unmatched / idle', icon: faWandMagicSparkles },
-  { id: 'matched', label: 'Paired or carrying solution structure', icon: faLink },
-  { id: 'frontier', label: 'Queued BFS frontier', icon: faWandMagicSparkles },
-  { id: 'current', label: 'Current inspect focus', icon: faCrosshairs },
-  { id: 'level', label: 'Inside active level graph', icon: faLayerGroup },
-  { id: 'augment', label: 'Current augmenting path', icon: faRoute },
-  { id: 'flow', label: 'Positive flow / selected structure', icon: faDroplet },
-  { id: 'blocked', label: 'Rejected / dead edge state', icon: faBan },
-  { id: 'saturated', label: 'No residual capacity left', icon: faCheckDouble },
+  {
+    id: 'source',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.source,
+    icon: faCircleDot,
+  },
+  {
+    id: 'sink',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.sink,
+    icon: faBullseye,
+  },
+  {
+    id: 'left',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.left,
+    icon: faCircleDot,
+  },
+  {
+    id: 'right',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.right,
+    icon: faBullseye,
+  },
+  {
+    id: 'free',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.free,
+    icon: faWandMagicSparkles,
+  },
+  {
+    id: 'matched',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.matched,
+    icon: faLink,
+  },
+  {
+    id: 'frontier',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.frontier,
+    icon: faWandMagicSparkles,
+  },
+  {
+    id: 'current',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.current,
+    icon: faCrosshairs,
+  },
+  {
+    id: 'level',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.level,
+    icon: faLayerGroup,
+  },
+  {
+    id: 'augment',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.augment,
+    icon: faRoute,
+  },
+  {
+    id: 'flow',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.flow,
+    icon: faDroplet,
+  },
+  {
+    id: 'blocked',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.blocked,
+    icon: faBan,
+  },
+  {
+    id: 'saturated',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.saturated,
+    icon: faCheckDouble,
+  },
 ];
 
 @Component({
   selector: 'app-network-trace-panel',
-  imports: [Table, TraceHint],
+  imports: [Table, TraceHint, TranslocoPipe],
   templateUrl: './network-trace-panel.html',
   styleUrl: './network-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<NetworkTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
   readonly hintKeyIdea = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
   });
   readonly hintWatch = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
   });
 
   readonly legend = TAG_LEGEND;
@@ -66,11 +125,14 @@ export class NetworkTracePanel {
     TAG_LEGEND.map((item) => ({
       id: item.id,
       tag: this.traceTag(item.id),
-      label: item.label,
+      label: '',
+      labelKey: item.labelKey,
     })),
   );
   readonly visibleRows = computed<readonly NetworkTraceRow[]>(() =>
-    [...(this.state()?.traceRows ?? [])].sort((left, right) => left.label.localeCompare(right.label)),
+    [...(this.state()?.traceRows ?? [])].sort((left, right) =>
+      left.label.localeCompare(right.label),
+    ),
   );
   readonly tableRows = computed<readonly TableRow[]>(() =>
     this.visibleRows().map((row) => ({
@@ -92,19 +154,44 @@ export class NetworkTracePanel {
     })),
   );
   readonly queuePreview = computed(() => {
-    const queue = this.state()?.queue ?? [];
-    return queue.length > 0 ? queue : ['empty'];
+    return this.state()?.queue ?? [];
   });
   readonly levelHeaderLabel = computed(() =>
-    this.state()?.mode === 'min-cost-max-flow' ? 'Cost' : 'Level',
+    this.translate(
+      this.state()?.mode === 'min-cost-max-flow'
+        ? I18N_KEY.features.algorithms.tracePanels.network.columns.cost
+        : I18N_KEY.features.algorithms.tracePanels.network.columns.level,
+    ),
   );
   readonly tableColumns = computed<readonly TableColumn[]>(() => [
-    { id: 'node', header: 'Node', width: '64px' },
-    { id: 'lane', header: 'Lane', width: '64px' },
-    { id: 'link', header: 'Link', width: '86px' },
+    {
+      id: 'node',
+      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.node,
+      width: '64px',
+    },
+    {
+      id: 'lane',
+      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.lane,
+      width: '64px',
+    },
+    {
+      id: 'link',
+      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.link,
+      width: '86px',
+    },
     { id: 'level', header: this.levelHeaderLabel(), width: '56px', kind: 'mono' },
-    { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
-    { id: 'tags', header: 'Tags', width: '92px', kind: 'tags' },
+    {
+      id: 'status',
+      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.status,
+      width: '92px',
+      kind: 'tag',
+    },
+    {
+      id: 'tags',
+      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.tags,
+      width: '92px',
+      kind: 'tags',
+    },
   ]);
 
   tagIcon(tag: NetworkTraceTag): IconDefinition {
@@ -112,12 +199,13 @@ export class NetworkTracePanel {
   }
 
   tagLabel(tag: NetworkTraceTag): string {
-    return TAG_LEGEND.find((item) => item.id === tag)?.label ?? tag;
+    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
+    return labelKey ? this.translate(labelKey) : tag;
   }
 
   statusTag(row: NetworkTraceRow): UiTagModel {
     return {
-      label: row.status,
+      label: this.statusLabel(row.status),
       tone: this.statusTone(row.status),
       appearance: 'soft',
       size: 'sm',
@@ -137,7 +225,9 @@ export class NetworkTracePanel {
     };
   }
 
-  private statusTone(status: NetworkTraceRow['status']): 'accent' | 'hit' | 'warning' | 'success' | 'danger' | 'neutral' {
+  private statusTone(
+    status: NetworkTraceRow['status'],
+  ): 'accent' | 'hit' | 'warning' | 'success' | 'danger' | 'neutral' {
     switch (status) {
       case 'source':
         return 'accent';
@@ -156,7 +246,9 @@ export class NetworkTracePanel {
     }
   }
 
-  private tagTone(tag: NetworkTraceTag): 'accent' | 'hit' | 'neutral' | 'window' | 'warning' | 'route' | 'success' | 'danger' {
+  private tagTone(
+    tag: NetworkTraceTag,
+  ): 'accent' | 'hit' | 'neutral' | 'window' | 'warning' | 'route' | 'success' | 'danger' {
     switch (tag) {
       case 'source':
       case 'left':
@@ -180,5 +272,31 @@ export class NetworkTracePanel {
       case 'blocked':
         return 'danger';
     }
+  }
+
+  private statusLabel(status: NetworkTraceRow['status']): string {
+    switch (status) {
+      case 'idle':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.idle);
+      case 'source':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.source);
+      case 'sink':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.sink);
+      case 'frontier':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.frontier);
+      case 'current':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.current);
+      case 'linked':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.linked);
+      case 'visited':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.visited);
+      case 'blocked':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.blocked);
+    }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

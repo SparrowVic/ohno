@@ -13,10 +13,10 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { TranslocoService } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { CodeHighlightService } from '../../../../shared/code-highlight.service';
 import {
   CodeLanguageDial,
@@ -48,7 +48,7 @@ import {
 
 @Component({
   selector: 'app-code-panel',
-  imports: [CodeLanguageDial, CopyCodeButton],
+  imports: [CodeLanguageDial, CopyCodeButton, TranslocoPipe],
   templateUrl: './code-panel.html',
   styleUrl: './code-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +65,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   readonly regions = input<readonly CodeRegion[]>([]);
   readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
+  protected readonly I18N_KEY = I18N_KEY;
   protected readonly renderRoot = viewChild<ElementRef<HTMLElement>>('renderRoot');
   protected readonly highlightedHtml = signal<SafeHtml>(
     this.sanitizer.bypassSecurityTrustHtml(EMPTY_CODE_PANEL_HTML),
@@ -79,19 +80,15 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   protected readonly activeVariant = computed<CodeVariant>(() => {
     return resolveActiveVariant(this.variantMap(), this.selectedLanguage());
   });
-  protected readonly codeLanguageAriaLabel = computed(() =>
-    this.translate(t('features.algorithms.codePanel.codeLanguageAriaLabel')),
-  );
-  protected readonly emptyLabel = computed(() =>
-    this.translate(t('features.algorithms.codePanel.emptyLabel')),
-  );
   private readonly regionStateLabels = computed(() => ({
-    expandRegionAriaLabel: this.translate(t('features.algorithms.codePanel.expandRegionAriaLabel')),
+    expandRegionAriaLabel: this.translate(
+      I18N_KEY.features.algorithms.codePanel.expandRegionAriaLabel,
+    ),
     collapseRegionAriaLabel: this.translate(
-      t('features.algorithms.codePanel.collapseRegionAriaLabel'),
+      I18N_KEY.features.algorithms.codePanel.collapseRegionAriaLabel,
     ),
     collapsedRegionSummary: (lineCount: number) =>
-      this.translate(t('features.algorithms.codePanel.collapsedRegionSummary'), {
+      this.translate(I18N_KEY.features.algorithms.codePanel.collapsedRegionSummary, {
         count: lineCount,
       }),
   }));
@@ -318,7 +315,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
     });
   }
 
-  private translate(key: string, params?: Record<string, string | number>): string {
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
     this.languageService.activeLang();
     return this.transloco.translate(key, params);
   }

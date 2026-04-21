@@ -1,417 +1,381 @@
 {
+  "catalog": {
+    "algorithms": {
+      "categories": {
+        "dp": "Dynamic programming",
+        "geometry": "Geometry",
+        "graphs": "Graphs",
+        "misc": "Other",
+        "searching": "Searching",
+        "sorting": "Sorting",
+        "strings": "Strings",
+        "trees": "Trees"
+      },
+      "subcategories": {
+        "advanced": "Advanced",
+        "array": "Linear",
+        "arrayTechniques": "Array techniques",
+        "backtracking": "Backtracking",
+        "binary": "Binary",
+        "classic": "Classic",
+        "comparison": "Comparison",
+        "compression": "Compression",
+        "computational": "Computational",
+        "connectivity": "Connectivity",
+        "flowMatching": "Flow & matching",
+        "gameTheory": "Game theory",
+        "math": "Math",
+        "mst": "MST",
+        "nonComparison": "Non-comparison",
+        "optimization": "Optimization",
+        "pathfinding": "Pathfinding",
+        "patternMatching": "Pattern matching",
+        "randomized": "Randomized",
+        "recursion": "Recursion",
+        "sequences": "Sequences",
+        "suffixPalindromes": "Suffix & palindromes",
+        "traversal": "Traversal"
+      }
+    },
+    "structures": {
+      "categories": {
+        "hashing": "Hashing",
+        "linear": "Linear",
+        "specialized": "Specialized",
+        "trees": "Trees"
+      },
+      "subcategories": {
+        "advanced": "Advanced",
+        "distributed": "Distributed",
+        "hashTable": "Hash tables",
+        "heaps": "Heaps",
+        "linkedList": "Linked lists",
+        "ordered": "Ordered",
+        "prefixSuffix": "Prefix / suffix",
+        "probabilistic": "Probabilistic",
+        "range": "Range",
+        "search": "Search trees",
+        "setUnion": "Set union",
+        "spatial": "Spatial",
+        "stackQueue": "Stack / queue"
+      }
+    }
+  },
   "core": {
+    "languageSwitcher": {
+      "closeGlobeAriaLabel": "Close world flag globe",
+      "closeLabel": "Close",
+      "closeOverlayAriaLabel": "Close overlay",
+      "eyebrow": "Language atlas",
+      "openAriaLabel": "Open world flag globe",
+      "overlayAriaLabel": "World flag globe"
+    },
     "navbar": {
-      "homeAriaLabel": "Oh(no) home",
       "commandAriaLabel": "Open search and command palette",
+      "homeAriaLabel": "Oh(no) home",
       "searchEyebrow": "Search",
       "searchPlaceholder": "Search..."
     },
     "navigation": {
       "primaryAriaLabel": "Primary navigation",
-      "tabs": {
-        "algorithms": "Algorithms",
-        "structures": "Structures"
-      },
       "sidebar": {
         "algorithms": {
           "groups": {
-            "overview": "Browse",
-            "sorting": "Sorting",
-            "searching": "Searching",
-            "trees": "Trees",
-            "graphs": "Graphs",
             "dp": "Dynamic prog.",
-            "strings": "Strings",
             "geometry": "Geometry",
-            "misc": "Other"
+            "graphs": "Graphs",
+            "misc": "Other",
+            "overview": "Browse",
+            "searching": "Searching",
+            "sorting": "Sorting",
+            "strings": "Strings",
+            "trees": "Trees"
           },
           "items": {
-            "allAlgorithms": "All algorithms",
-            "allSorting": "All sorting",
-            "comparison": "Comparison",
-            "nonComparison": "Non-comparison",
-            "allSearching": "All searching",
-            "arraySearch": "Linear",
-            "binarySearch": "Binary",
-            "allTrees": "All trees",
-            "treeTraversal": "Traversal",
-            "allGraphs": "All graphs",
-            "pathfinding": "Pathfinding",
-            "graphTraversal": "Traversal",
-            "mst": "MST",
-            "connectivity": "Connectivity",
-            "flowMatching": "Flow & matching",
             "advancedGraphs": "Advanced",
+            "allAlgorithms": "All algorithms",
             "allDp": "All DP",
-            "classic": "Classic",
-            "dpSequences": "Sequences",
-            "dpAdvanced": "Advanced",
-            "dpOptimization": "Optimization",
-            "allStrings": "All strings",
-            "patternMatching": "Pattern matching",
-            "suffixPalindromes": "Suffix & palindromes",
-            "compression": "Compression",
             "allGeometry": "All geometry",
-            "geometryComputational": "Computational",
-            "geometryAdvanced": "Advanced",
+            "allGraphs": "All graphs",
             "allMisc": "All other",
-            "math": "Math",
+            "allSearching": "All searching",
+            "allSorting": "All sorting",
+            "allStrings": "All strings",
+            "allTrees": "All trees",
+            "arraySearch": "Linear",
             "arrayTechniques": "Array techniques",
             "backtracking": "Backtracking",
-            "recursion": "Recursion",
+            "binarySearch": "Binary",
+            "classic": "Classic",
+            "comparison": "Comparison",
+            "compression": "Compression",
+            "connectivity": "Connectivity",
+            "dpAdvanced": "Advanced",
+            "dpOptimization": "Optimization",
+            "dpSequences": "Sequences",
+            "flowMatching": "Flow & matching",
             "gameTheory": "Game theory",
-            "randomized": "Randomized"
+            "geometryAdvanced": "Advanced",
+            "geometryComputational": "Computational",
+            "graphTraversal": "Traversal",
+            "math": "Math",
+            "mst": "MST",
+            "nonComparison": "Non-comparison",
+            "pathfinding": "Pathfinding",
+            "patternMatching": "Pattern matching",
+            "randomized": "Randomized",
+            "recursion": "Recursion",
+            "suffixPalindromes": "Suffix & palindromes",
+            "treeTraversal": "Traversal"
           },
           "sections": {
-            "allAlgorithms": "All algorithms",
-            "sortingAlgorithms": "Sorting algorithms",
-            "comparisonSorts": "Comparison sorts",
-            "nonComparisonSorts": "Non-comparison sorts",
-            "searchAlgorithms": "Search algorithms",
-            "linearSearchAlgorithms": "Linear search algorithms",
-            "binarySearchAlgorithms": "Binary search algorithms",
-            "treeAlgorithms": "Tree algorithms",
-            "treeTraversalAlgorithms": "Tree traversal algorithms",
-            "graphAlgorithms": "Graph algorithms",
-            "pathfindingAlgorithms": "Pathfinding algorithms",
-            "graphTraversal": "Graph traversal",
-            "minimumSpanningTree": "Minimum spanning tree",
-            "graphConnectivityAlgorithms": "Graph connectivity algorithms",
-            "flowAndMatchingAlgorithms": "Flow and matching algorithms",
-            "advancedGraphAlgorithms": "Advanced graph algorithms",
-            "dynamicProgramming": "Dynamic programming",
-            "classicDpProblems": "Classic DP problems",
-            "sequenceDpProblems": "Sequence DP problems",
             "advancedDpProblems": "Advanced DP problems",
-            "dpOptimizationTechniques": "DP optimization techniques",
-            "stringAlgorithms": "String algorithms",
-            "patternMatching": "Pattern matching",
-            "suffixAndPalindromeStructures": "Suffix and palindrome structures",
+            "advancedGeometryAlgorithms": "Advanced geometry algorithms",
+            "advancedGraphAlgorithms": "Advanced graph algorithms",
+            "allAlgorithms": "All algorithms",
+            "arrayTechniques": "Array techniques",
+            "backtrackingAlgorithms": "Backtracking algorithms",
+            "binarySearchAlgorithms": "Binary search algorithms",
+            "classicDpProblems": "Classic DP problems",
+            "comparisonSorts": "Comparison sorts",
             "compressionAndEncoding": "Compression and encoding",
             "computationalGeometry": "Computational geometry",
             "computationalGeometryAlgorithms": "Computational geometry algorithms",
-            "advancedGeometryAlgorithms": "Advanced geometry algorithms",
-            "otherAlgorithms": "Other algorithms",
-            "mathAlgorithms": "Math algorithms",
-            "arrayTechniques": "Array techniques",
-            "backtrackingAlgorithms": "Backtracking algorithms",
-            "recursionAndCallStack": "Recursion and call stack",
+            "dpOptimizationTechniques": "DP optimization techniques",
+            "dynamicProgramming": "Dynamic programming",
+            "flowAndMatchingAlgorithms": "Flow and matching algorithms",
             "gameTreeAlgorithms": "Game tree algorithms",
-            "randomizedAlgorithms": "Randomized algorithms"
+            "graphAlgorithms": "Graph algorithms",
+            "graphConnectivityAlgorithms": "Graph connectivity algorithms",
+            "graphTraversal": "Graph traversal",
+            "linearSearchAlgorithms": "Linear search algorithms",
+            "mathAlgorithms": "Math algorithms",
+            "minimumSpanningTree": "Minimum spanning tree",
+            "nonComparisonSorts": "Non-comparison sorts",
+            "otherAlgorithms": "Other algorithms",
+            "pathfindingAlgorithms": "Pathfinding algorithms",
+            "patternMatching": "Pattern matching",
+            "randomizedAlgorithms": "Randomized algorithms",
+            "recursionAndCallStack": "Recursion and call stack",
+            "searchAlgorithms": "Search algorithms",
+            "sequenceDpProblems": "Sequence DP problems",
+            "sortingAlgorithms": "Sorting algorithms",
+            "stringAlgorithms": "String algorithms",
+            "suffixAndPalindromeStructures": "Suffix and palindrome structures",
+            "treeAlgorithms": "Tree algorithms",
+            "treeTraversalAlgorithms": "Tree traversal algorithms"
           }
         },
         "structures": {
           "groups": {
             "catalog": "Browse",
-            "linear": "Linear",
             "hashing": "Hashing",
-            "trees": "Trees",
-            "specialized": "Specialized"
+            "linear": "Linear",
+            "specialized": "Specialized",
+            "trees": "Trees"
           },
           "items": {
-            "allStructures": "All structures",
-            "allLinear": "All linear",
-            "stackQueue": "Stack / queue",
-            "linkedList": "Linked lists",
-            "allHashing": "All hashing",
-            "hashTable": "Hash tables",
-            "probabilistic": "Probabilistic",
-            "distributed": "Distributed",
-            "allTrees": "All trees",
-            "searchTrees": "Search trees",
-            "heaps": "Heaps",
-            "prefixSuffix": "Prefix / suffix",
-            "range": "Range",
             "advancedTrees": "Advanced",
+            "allHashing": "All hashing",
+            "allLinear": "All linear",
             "allSpecialized": "All specialized",
+            "allStructures": "All structures",
+            "allTrees": "All trees",
+            "distributed": "Distributed",
+            "hashTable": "Hash tables",
+            "heaps": "Heaps",
+            "linkedList": "Linked lists",
             "ordered": "Ordered",
+            "prefixSuffix": "Prefix / suffix",
+            "probabilistic": "Probabilistic",
+            "range": "Range",
+            "searchTrees": "Search trees",
             "setUnion": "Set union",
-            "spatial": "Spatial"
+            "spatial": "Spatial",
+            "stackQueue": "Stack / queue"
           },
           "sections": {
-            "allStructures": "All structures",
-            "linearDataStructures": "Linear data structures",
-            "stackAndQueueStructures": "Stack and queue structures",
-            "linkedListStructures": "Linked list structures",
-            "hashingStructures": "Hashing structures",
-            "hashTableStructures": "Hash table structures",
-            "probabilisticStructures": "Probabilistic structures",
-            "distributedHashing": "Distributed hashing",
-            "treeDataStructures": "Tree data structures",
-            "searchTreeStructures": "Search tree structures",
-            "heapStructures": "Heap structures",
-            "prefixAndSuffixTrees": "Prefix and suffix trees",
-            "rangeQueryStructures": "Range query structures",
             "advancedTreeStructures": "Advanced tree structures",
-            "specializedDataStructures": "Specialized data structures",
-            "orderedRandomizedStructures": "Ordered randomized structures",
+            "allStructures": "All structures",
             "disjointSetStructures": "Disjoint set structures",
-            "spatialIndexingStructures": "Spatial indexing structures"
+            "distributedHashing": "Distributed hashing",
+            "hashTableStructures": "Hash table structures",
+            "hashingStructures": "Hashing structures",
+            "heapStructures": "Heap structures",
+            "linearDataStructures": "Linear data structures",
+            "linkedListStructures": "Linked list structures",
+            "orderedRandomizedStructures": "Ordered randomized structures",
+            "prefixAndSuffixTrees": "Prefix and suffix trees",
+            "probabilisticStructures": "Probabilistic structures",
+            "rangeQueryStructures": "Range query structures",
+            "searchTreeStructures": "Search tree structures",
+            "spatialIndexingStructures": "Spatial indexing structures",
+            "specializedDataStructures": "Specialized data structures",
+            "stackAndQueueStructures": "Stack and queue structures",
+            "treeDataStructures": "Tree data structures"
           }
         }
+      },
+      "tabs": {
+        "algorithms": "Algorithms",
+        "structures": "Structures"
       }
-    },
-    "languageSwitcher": {
-      "openAriaLabel": "Open world flag globe",
-      "eyebrow": "Language atlas",
-      "overlayAriaLabel": "World flag globe",
-      "closeGlobeAriaLabel": "Close world flag globe",
-      "closeOverlayAriaLabel": "Close overlay",
-      "closeLabel": "Close"
     },
     "worldGlobe": {
       "badgeEyebrow": "Inspect",
-      "loading": "Building atlas surface...",
-      "loadError": "Unable to initialize the world flag globe.",
       "defaultHoverHeadline": "Sweep across the planet",
-      "hoveredCountryNote": "Every country is now color-woven from its own flag palette. Hover still locks the country and sharpens its atlas glow.",
       "defaultHoverNote": "Drag to orbit. Scroll or pinch to zoom. Country dots are now painted from the flag colors of each individual nation.",
+      "hoveredCountryNote": "Every country is now color-woven from its own flag palette. Hover still locks the country and sharpens its atlas glow.",
       "legend": {
-        "hoverCountry": "Hover country",
         "dragOrbit": "Drag orbit",
+        "hoverCountry": "Hover country",
         "wheelZoom": "Wheel zoom"
-      }
-    }
-  },
-  "shared": {
-    "difficulty": {
-      "easy": "Easy",
-      "medium": "Medium",
-      "hard": "Hard",
-      "insane": "Insane"
-    },
-    "filters": {
-      "all": "All",
-      "difficulty": {
-        "ariaLabel": "Difficulty filter"
-      }
-    },
-    "roadmap": {
-      "chip": "Roadmap"
-    },
-    "copyCodeButton": {
-      "label": "Copy code",
-      "copiedLabel": "Copied",
-      "ariaLabel": "Copy code to clipboard",
-      "copiedAriaLabel": "Code copied to clipboard"
-    },
-    "codeLanguageDial": {
-      "ariaLabel": "Code language switcher",
-      "comingSoon": "Coming soon",
-      "languageComingSoon": "{{language}} coming soon",
-      "switchToLanguage": "Switch code to {{language}}"
-    }
-  },
-  "catalog": {
-    "algorithms": {
-      "categories": {
-        "sorting": "Sorting",
-        "searching": "Searching",
-        "trees": "Trees",
-        "graphs": "Graphs",
-        "dp": "Dynamic programming",
-        "strings": "Strings",
-        "geometry": "Geometry",
-        "misc": "Other"
       },
-      "subcategories": {
-        "comparison": "Comparison",
-        "nonComparison": "Non-comparison",
-        "array": "Linear",
-        "binary": "Binary",
-        "traversal": "Traversal",
-        "pathfinding": "Pathfinding",
-        "mst": "MST",
-        "connectivity": "Connectivity",
-        "flowMatching": "Flow & matching",
-        "advanced": "Advanced",
-        "classic": "Classic",
-        "sequences": "Sequences",
-        "optimization": "Optimization",
-        "patternMatching": "Pattern matching",
-        "suffixPalindromes": "Suffix & palindromes",
-        "compression": "Compression",
-        "computational": "Computational",
-        "math": "Math",
-        "arrayTechniques": "Array techniques",
-        "backtracking": "Backtracking",
-        "recursion": "Recursion",
-        "gameTheory": "Game theory",
-        "randomized": "Randomized"
-      }
-    },
-    "structures": {
-      "categories": {
-        "linear": "Linear",
-        "hashing": "Hashing",
-        "trees": "Trees",
-        "specialized": "Specialized"
-      },
-      "subcategories": {
-        "stackQueue": "Stack / queue",
-        "linkedList": "Linked lists",
-        "hashTable": "Hash tables",
-        "probabilistic": "Probabilistic",
-        "distributed": "Distributed",
-        "search": "Search trees",
-        "heaps": "Heaps",
-        "prefixSuffix": "Prefix / suffix",
-        "range": "Range",
-        "advanced": "Advanced",
-        "ordered": "Ordered",
-        "setUnion": "Set union",
-        "spatial": "Spatial"
-      }
+      "loadError": "Unable to initialize the world flag globe.",
+      "loading": "Building atlas surface..."
     }
   },
   "features": {
     "algorithms": {
-      "traits": {
-        "groups": {
-          "properties": "Properties",
-          "paradigms": "Paradigms",
-          "structures": "Structures",
-          "domains": "Problem types"
-        },
-        "items": {
-          "stable": "Stable",
-          "inPlace": "In-place",
-          "online": "Online",
-          "probabilistic": "Probabilistic",
-          "greedy": "Greedy",
-          "divideAndConquer": "Divide & conquer",
-          "dynamicProgramming": "Dynamic programming",
-          "backtracking": "Backtracking",
-          "randomized": "Randomized",
-          "heap": "Heap",
-          "trie": "Trie",
-          "dsu": "DSU",
-          "priorityQueue": "Priority queue",
-          "bitmask": "Bitmask",
-          "shortestPath": "Shortest path",
-          "matching": "Matching",
-          "mst": "MST",
-          "compression": "Compression",
-          "palindromes": "Palindromes",
-          "numberTheory": "Number theory",
-          "geometry": "Geometry"
-        }
-      },
-      "page": {
-        "title": "Algorithms",
-        "heroEyebrow": "Interactive Algorithm Atlas",
-        "heroDescription": "Scan topics faster, compare complexity at a glance and jump into polished visual walkthroughs without losing context.",
-        "filterSummary": {
-          "all": "All difficulty levels",
-          "semanticTraits": "{{count}} semantic traits",
-          "filtered": "Filtered by {{parts}}"
-        },
-        "availabilitySummary": "{{implemented}} interactive • {{upcoming}} roadmap",
-        "resultsLabel": "{{count}} algorithms in focus",
-        "resultsSubtitle": "Refine the current topic by difficulty and semantic traits without leaving the catalog context.",
-        "emptyLabel": "No algorithms match the current filters.",
-        "stats": {
-          "visibleNow": "Visible now",
-          "interactive": "Interactive",
-          "tracks": "Tracks"
-        },
-        "traits": {
-          "triggerLabel": "Traits",
-          "summaryEmpty": "Pick semantic filters",
-          "summarySelected": "{{count}} selected",
-          "ariaLabel": "Traits filter",
-          "ariaLabelSelected": "Traits filter, {{count}} selected",
-          "popoverTitle": "Semantic filters",
-          "popoverSubtitle": "Pick the properties and paradigms that matter for the current topic.",
-          "emptyLabel": "No semantic facets are available in the current topic.",
-          "clearLabel": "Clear all"
-        }
-      },
       "card": {
-        "status": {
-          "interactive": "Interactive",
-          "comingSoon": "Coming soon"
-        },
         "cta": {
-          "openVisualization": "Open visualization",
-          "inRoadmap": "In roadmap"
+          "inRoadmap": "In roadmap",
+          "openVisualization": "Open visualization"
+        },
+        "metrics": {
+          "space": "Space",
+          "time": "Time"
         },
         "preview": {
           "liveSignal": "Live signal",
-          "roadmap": "Roadmap",
-          "plannedHint": "Interactive walkthrough planned"
+          "plannedHint": "Interactive walkthrough planned",
+          "roadmap": "Roadmap"
         },
         "roadmap": {
-          "title": "Implementation planned",
-          "hint": "This visualization is already on the roadmap, but the interactive build is still locked."
+          "hint": "This visualization is already on the roadmap, but the interactive build is still locked.",
+          "title": "Implementation planned"
         },
-        "metrics": {
-          "time": "Time",
-          "space": "Space"
+        "status": {
+          "comingSoon": "Coming soon",
+          "interactive": "Interactive"
         }
       },
+      "codePanel": {
+        "codeLanguageAriaLabel": "Code language switcher",
+        "collapseRegionAriaLabel": "Collapse code region",
+        "collapsedRegionSummary": "… {{count}} lines",
+        "emptyLabel": "No code available.",
+        "expandRegionAriaLabel": "Expand code region"
+      },
       "detail": {
-        "breadcrumbAriaLabel": "Category breadcrumb",
         "backLabel": "Browse",
-        "lockedLabel": "Locked",
-        "unavailableLabel": "Visualization is not implemented yet.",
-        "notFoundLabel": "Algorithm not found.",
         "backToAlgorithmsLabel": "Back to algorithms",
-        "sizeSummaryLabel": "{{count}} {{unit}}",
-        "stepSummaryLabel": "Step {{current}} / {{total}}",
+        "breadcrumbAriaLabel": "Category breadcrumb",
         "graphFocus": {
-          "shortestPathLabel": "Focused shortest path",
+          "bfsRouteHint": "Whole graph shows the BFS discovery tree. This line shows one selected source-to-node route.",
           "bfsRouteLabel": "Focused BFS route",
+          "dfsBranchHint": "Whole graph shows the DFS tree. This line shows one selected explored branch.",
           "dfsBranchLabel": "Focused DFS branch",
           "shortestPathHint": "Whole graph shows the shortest-path tree. This line shows one selected endpoint route.",
-          "bfsRouteHint": "Whole graph shows the BFS discovery tree. This line shows one selected source-to-node route.",
-          "dfsBranchHint": "Whole graph shows the DFS tree. This line shows one selected explored branch."
+          "shortestPathLabel": "Focused shortest path"
+        },
+        "lockedLabel": "Locked",
+        "notFoundLabel": "Algorithm not found.",
+        "sizeSummaryLabel": "{{count}} {{unit}}",
+        "stepSummaryLabel": "Step {{current}} / {{total}}",
+        "unavailableLabel": "Visualization is not implemented yet."
+      },
+      "infoPanel": {
+        "algorithmProfile": "Algorithm profile",
+        "algorithmStepsAriaLabel": "Algorithm steps",
+        "briefing": "Briefing",
+        "cards": {
+          "category": "Category",
+          "inPlace": "In place",
+          "no": "No",
+          "space": "Space",
+          "stable": "Stable",
+          "subcategory": "Subcategory",
+          "timeAverage": "Time average",
+          "timeBest": "Time best",
+          "timeWorst": "Time worst",
+          "yes": "Yes"
+        },
+        "howItWorks": "How it works",
+        "strengths": "Strengths",
+        "tradeOffs": "Trade-offs",
+        "tutorial": "Tutorial"
+      },
+      "logPanel": {
+        "emptyLabel": "Run the scenario to start a chronological trace.",
+        "eventHeaderLabel": "event",
+        "stepHeaderLabel": "step",
+        "stepKeyLabel": "STEP",
+        "timeHeaderLabel": "time ·"
+      },
+      "page": {
+        "availabilitySummary": "{{implemented}} interactive • {{upcoming}} roadmap",
+        "emptyLabel": "No algorithms match the current filters.",
+        "filterSummary": {
+          "all": "All difficulty levels",
+          "filtered": "Filtered by {{parts}}",
+          "semanticTraits": "{{count}} semantic traits"
+        },
+        "heroDescription": "Scan topics faster, compare complexity at a glance and jump into polished visual walkthroughs without losing context.",
+        "heroEyebrow": "Interactive Algorithm Atlas",
+        "resultsLabel": "{{count}} algorithms in focus",
+        "resultsSubtitle": "Refine the current topic by difficulty and semantic traits without leaving the catalog context.",
+        "stats": {
+          "interactive": "Interactive",
+          "tracks": "Tracks",
+          "visibleNow": "Visible now"
+        },
+        "title": "Algorithms",
+        "traits": {
+          "ariaLabel": "Traits filter",
+          "ariaLabelSelected": "Traits filter, {{count}} selected",
+          "clearLabel": "Clear all",
+          "emptyLabel": "No semantic facets are available in the current topic.",
+          "popoverSubtitle": "Pick the properties and paradigms that matter for the current topic.",
+          "popoverTitle": "Semantic filters",
+          "summaryEmpty": "Pick semantic filters",
+          "summarySelected": "{{count}} selected",
+          "triggerLabel": "Traits"
         }
       },
       "sidePanel": {
         "ariaLabel": "Inspector tabs",
         "tabs": {
-          "trace": "Trace",
           "code": "Code",
           "info": "Info",
-          "log": "Log"
+          "log": "Log",
+          "trace": "Trace"
         }
       },
       "toolbar": {
-        "resetLabel": "Reset scenario",
-        "previousStepLabel": "Previous step",
-        "startPlaybackLabel": "Start playback",
-        "pausePlaybackLabel": "Pause playback",
-        "nextStepLabel": "Next step",
-        "runStateLabel": "Run state",
-        "counterLabel": "Step {{current}} / {{total}}",
-        "viewLabel": "View",
-        "datasetSizeLabel": "Dataset size",
-        "speedLabel": "Speed",
         "actions": {
-          "newBwtMatrix": "New BWT matrix",
-          "newCfg": "New CFG",
-          "newDag": "New DAG",
-          "newFibonacciRun": "New Fibonacci run",
-          "newKmpCase": "New KMP case",
-          "newLisStrip": "New LIS strip",
-          "newZSkyline": "New Z skyline",
           "newAssignmentGrid": "New assignment grid",
           "newAugmentingNetwork": "New augmenting network",
           "newBackpackCase": "New backpack case",
           "newBoard": "New board",
           "newBurstBoard": "New burst board",
+          "newBwtMatrix": "New BWT matrix",
+          "newCfg": "New CFG",
           "newChallenge": "New challenge",
           "newChangeCase": "New change case",
           "newCityLoop": "New city loop",
           "newConflictGraph": "New conflict graph",
           "newCrystalField": "New crystal field",
+          "newDag": "New DAG",
           "newFeasibleCut": "New feasible cut",
+          "newFibonacciRun": "New Fibonacci run",
           "newFlowNetwork": "New flow network",
           "newFrequencySet": "New frequency set",
           "newFrontierBoard": "New frontier board",
           "newGraph": "New graph",
           "newHullRun": "New hull run",
+          "newKmpCase": "New KMP case",
+          "newLisStrip": "New LIS strip",
           "newMaskAssignment": "New mask assignment",
           "newMatchingGraph": "New matching graph",
           "newMatrix": "New matrix",
@@ -443,8 +407,18 @@
           "newTrailGraph": "New trail graph",
           "newWildcardPair": "New wildcard pair",
           "newWordPair": "New word pair",
+          "newZSkyline": "New Z skyline",
           "randomize": "Randomize"
         },
+        "counterLabel": "Step {{current}} / {{total}}",
+        "datasetSizeLabel": "Dataset size",
+        "nextStepLabel": "Next step",
+        "pausePlaybackLabel": "Pause playback",
+        "previousStepLabel": "Previous step",
+        "resetLabel": "Reset scenario",
+        "runStateLabel": "Run state",
+        "speedLabel": "Speed",
+        "startPlaybackLabel": "Start playback",
         "units": {
           "balloons": "balloons",
           "bits": "bits",
@@ -488,11 +462,11 @@
           "criticalCuts": "Critical Cuts",
           "crystalCells": "Crystal Cells",
           "dagFlow": "DAG Flow",
-          "dpLab": "DP Lab",
           "depthChase": "Depth Chase",
           "digitMatrix": "Digit Matrix",
           "digitStrip": "Digit Strip",
           "divideAndStrip": "Divide & Strip",
+          "dpLab": "DP Lab",
           "edgeForest": "Edge Forest",
           "edgeGraph": "Edge Graph",
           "edgeTrail": "Edge Trail",
@@ -517,81 +491,367 @@
           "twoPassScc": "Two-Pass SCC",
           "twoSideCheck": "Two-Side Check",
           "vectorMerge": "Vector Merge"
+        },
+        "viewLabel": "View"
+      },
+      "traceHint": {
+        "ariaLabel": "Trace hint"
+      },
+      "tracePanels": {
+        "common": {
+          "activeLabel": "Active",
+          "emptyValueLabel": "empty",
+          "modeLabel": "Mode",
+          "noneLabel": "none",
+          "noneYetLabel": "none yet",
+          "notStartedLabel": "not started",
+          "phaseLabel": "Phase",
+          "resultLabel": "Result",
+          "routeLabel": "Route",
+          "sizeLabel": "Size",
+          "statusLabel": "Status"
+        },
+        "dp": {
+          "calculationAriaLabel": "DP calculation summary",
+          "columns": {
+            "cell": "Cell",
+            "meta": "Meta",
+            "status": "Status",
+            "tags": "Tags",
+            "value": "Value"
+          },
+          "currentTransitionLabel": "Current transition",
+          "emptyLabel": "No DP trace available for this step.",
+          "noActiveTransitionLabel": "No active transition in this step.",
+          "presetLabel": "Preset",
+          "presetNoteLabel": "Preset note",
+          "railsAriaLabel": "DP item rails",
+          "statuses": {
+            "active": "active",
+            "backtrack": "backtrack",
+            "base": "base",
+            "blocked": "blocked",
+            "candidate": "candidate",
+            "chosen": "chosen",
+            "idle": "idle",
+            "improved": "improved",
+            "match": "match"
+          },
+          "summaryAriaLabel": "DP summary",
+          "tableEmptyLabel": "No DP cells yet",
+          "tagLegend": {
+            "active": "Current DP cell",
+            "base": "Base case",
+            "best": "Best known answer",
+            "blocked": "Unavailable cell",
+            "delete": "Delete operation",
+            "insert": "Insert operation",
+            "match": "Character match",
+            "path": "Backtrack path",
+            "replace": "Replace operation",
+            "skip": "Skip / carry branch",
+            "split": "Interval split",
+            "take": "Take branch"
+          },
+          "waitingTransitionLabel": "Waiting for next state transition."
+        },
+        "dsu": {
+          "awaitingOperationLabel": "Awaiting next operation.",
+          "columns": {
+            "node": "Node",
+            "parent": "Parent",
+            "rank": "Rank",
+            "root": "Root",
+            "size": "Size",
+            "status": "Status",
+            "tags": "Tags"
+          },
+          "componentsLabel": "Components",
+          "currentSetsLabel": "Current sets",
+          "emptyLabel": "No DSU trace available for this step.",
+          "findOperationLabel": "find {{label}}",
+          "railLabel": "Rail",
+          "statuses": {
+            "active": "active",
+            "compressed": "compressed",
+            "idle": "idle",
+            "merged": "merged",
+            "query": "query",
+            "root": "root"
+          },
+          "tableEmptyLabel": "No DSU nodes yet",
+          "tagLegend": {
+            "accepted": "Accepted merge / MST edge",
+            "active": "Current merge / check focus",
+            "compressed": "Path compressed node",
+            "merged": "Merged under another root",
+            "query": "Find query path",
+            "rejected": "Rejected cycle / duplicate merge",
+            "root": "Representative root"
+          }
+        },
+        "graph": {
+          "calculationAriaLabel": "Current calculation",
+          "columns": {
+            "node": "Node",
+            "status": "Status"
+          },
+          "completionFallbackLabel": "Visited",
+          "contextLabel": "Context",
+          "currentDecisionLabel": "Current decision",
+          "currentLabel": "Current",
+          "emptyLabel": "No trace available for this step.",
+          "entryLabel": "Entry",
+          "focusedRouteHint": "The route focus is a UI lens, not always an algorithm input.",
+          "focusedTargetLabel": "Focused target",
+          "frontierFallbackLabel": "Queue",
+          "graphContextHint": "This algorithm is explained as a whole graph structure, not as one selected route.",
+          "graphStateBadgeLabel": "Graph state",
+          "idleBadgeLabel": "Idle",
+          "keepBadgeLabel": "Keep",
+          "metricFallbackLabel": "Distance",
+          "noDetailLabel": "No detail",
+          "noEdgeUpdateLabel": "No edge update",
+          "relaxBadgeLabel": "Relax",
+          "secondaryFallbackLabel": "Prev",
+          "seedLabel": "Seed",
+          "sourceLabel": "Source",
+          "startLabel": "Start",
+          "statuses": {
+            "current": "current",
+            "queued": "queued",
+            "source": "source",
+            "unseen": "unseen",
+            "visited": "visited"
+          },
+          "stepCalculationLabel": "Step calculation",
+          "summaryAriaLabel": "Trace summary",
+          "tableEmptyLabel": "No graph rows yet",
+          "terminalLabel": "Terminal",
+          "uiLensBadgeLabel": "UI lens",
+          "visitOrderLabel": "Visit order",
+          "waitingDecisionLabel": "Waiting for a compare/relax/decision step."
+        },
+        "matrix": {
+          "activeColLabel": "Active Col",
+          "activeRowLabel": "Active Row",
+          "columns": {
+            "cell": "Cell",
+            "meta": "Meta",
+            "status": "Status",
+            "tags": "Tags",
+            "value": "Value"
+          },
+          "emptyLabel": "No matrix trace available for this step.",
+          "pivotLabel": "Pivot",
+          "statuses": {
+            "active": "active",
+            "adjusted": "adjusted",
+            "assignment": "assignment",
+            "blocked": "blocked",
+            "candidate": "candidate",
+            "covered": "covered",
+            "idle": "idle",
+            "improved": "improved",
+            "pivot": "pivot",
+            "zero": "zero"
+          },
+          "tableEmptyLabel": "No active matrix cells yet",
+          "tagLegend": {
+            "active": "Current compare cell",
+            "adjusted": "Changed by reduction / shift",
+            "assignment": "Chosen assignment cell",
+            "column": "Active column",
+            "covered": "Covered by current line set",
+            "improved": "Improved shortest distance",
+            "infinite": "Currently unreachable",
+            "pivot": "Pivot row / column",
+            "row": "Active row",
+            "zero": "Zero-cost candidate"
+          },
+          "waitingOperationLabel": "Waiting for the next matrix operation."
+        },
+        "network": {
+          "columns": {
+            "cost": "Cost",
+            "lane": "Lane",
+            "level": "Level",
+            "link": "Link",
+            "node": "Node",
+            "status": "Status",
+            "tags": "Tags"
+          },
+          "emptyLabel": "No network trace available for this step.",
+          "queueEmptyLabel": "empty",
+          "statuses": {
+            "blocked": "blocked",
+            "current": "current",
+            "frontier": "frontier",
+            "idle": "idle",
+            "linked": "linked",
+            "sink": "sink",
+            "source": "source",
+            "visited": "visited"
+          },
+          "tableEmptyLabel": "No network rows yet",
+          "tagLegend": {
+            "augment": "Current augmenting path",
+            "blocked": "Rejected / dead edge state",
+            "current": "Current inspect focus",
+            "flow": "Positive flow / selected structure",
+            "free": "Currently unmatched / idle",
+            "frontier": "Queued BFS frontier",
+            "left": "Left partition node",
+            "level": "Inside active level graph",
+            "matched": "Paired or carrying solution structure",
+            "right": "Right partition node",
+            "saturated": "No residual capacity left",
+            "sink": "Sink / target",
+            "source": "Source anchor"
+          },
+          "waitingStepLabel": "Waiting for the next BFS / DFS / augment step."
+        },
+        "search": {
+          "calculationAriaLabel": "Search calculation summary",
+          "columns": {
+            "index": "Index",
+            "status": "Status",
+            "tags": "Tags",
+            "value": "Value"
+          },
+          "emptyLabel": "No search trace available for this step.",
+          "hitsLabel": "Hits",
+          "matchSpanLabel": "Match span",
+          "noConfirmedHitsLabel": "no confirmed hits",
+          "probeLabel": "Probe",
+          "statuses": {
+            "bound": "bound",
+            "eliminated": "eliminated",
+            "found": "found",
+            "idle": "idle",
+            "probe": "probe",
+            "visited": "visited",
+            "window": "window"
+          },
+          "summaryAriaLabel": "Search summary",
+          "tableEmptyLabel": "No search rows yet",
+          "tagLegend": {
+            "bound": "First or last match boundary",
+            "candidate": "Still inside active window",
+            "checked": "Checked earlier",
+            "compare": "Current probe / compare",
+            "match": "Confirmed hit",
+            "pending": "Not checked yet",
+            "pruned": "Eliminated from search"
+          },
+          "targetLabel": "Target",
+          "visitedOrderLabel": "Visited order",
+          "waitingDecisionLabel": "waiting for next move",
+          "windowLabel": "Window"
         }
       },
-      "infoPanel": {
-        "briefing": "Briefing",
-        "algorithmProfile": "Algorithm profile",
-        "tutorial": "Tutorial",
-        "howItWorks": "How it works",
-        "algorithmStepsAriaLabel": "Algorithm steps",
-        "strengths": "Strengths",
-        "tradeOffs": "Trade-offs",
-        "cards": {
-          "timeBest": "Time best",
-          "timeAverage": "Time average",
-          "timeWorst": "Time worst",
-          "space": "Space",
-          "subcategory": "Subcategory",
+      "traits": {
+        "groups": {
+          "domains": "Problem types",
+          "paradigms": "Paradigms",
+          "properties": "Properties",
+          "structures": "Structures"
+        },
+        "items": {
+          "backtracking": "Backtracking",
+          "bitmask": "Bitmask",
+          "compression": "Compression",
+          "divideAndConquer": "Divide & conquer",
+          "dsu": "DSU",
+          "dynamicProgramming": "Dynamic programming",
+          "geometry": "Geometry",
+          "greedy": "Greedy",
+          "heap": "Heap",
+          "inPlace": "In-place",
+          "matching": "Matching",
+          "mst": "MST",
+          "numberTheory": "Number theory",
+          "online": "Online",
+          "palindromes": "Palindromes",
+          "priorityQueue": "Priority queue",
+          "probabilistic": "Probabilistic",
+          "randomized": "Randomized",
+          "shortestPath": "Shortest path",
           "stable": "Stable",
-          "inPlace": "In place",
-          "category": "Category",
-          "yes": "Yes",
-          "no": "No"
+          "trie": "Trie"
         }
-      },
-      "logPanel": {
-        "emptyLabel": "Run the scenario to start a chronological trace.",
-        "timeHeaderLabel": "time ·",
-        "stepHeaderLabel": "step",
-        "eventHeaderLabel": "event",
-        "stepKeyLabel": "STEP"
-      },
-      "codePanel": {
-        "codeLanguageAriaLabel": "Code language switcher",
-        "emptyLabel": "No code available.",
-        "expandRegionAriaLabel": "Expand code region",
-        "collapseRegionAriaLabel": "Collapse code region",
-        "collapsedRegionSummary": "… {{count}} lines"
       }
     },
     "structures": {
+      "card": {
+        "cta": {
+          "inRoadmap": "In roadmap",
+          "openModule": "Open module"
+        },
+        "preview": {
+          "plannedHint": "Planned deep-dive module",
+          "readyHint": "Interactive model ready"
+        },
+        "roadmap": {
+          "hint": "This structure is planned and visible in the roadmap, but its interactive module is not ready yet.",
+          "title": "Module locked for now"
+        },
+        "status": {
+          "comingSoon": "Coming soon",
+          "interactive": "Interactive"
+        }
+      },
       "page": {
-        "title": "Structures",
-        "heroEyebrow": "Structure Library",
-        "heroDescription": "A cleaner overview of foundational structures, grouped by learning track and ready for future interactive modules.",
+        "availabilitySummary": "{{implemented}} live • {{upcoming}} roadmap",
+        "emptyLabel": "No structures match the current filters.",
         "filterSummary": {
           "all": "All difficulty levels",
           "filtered": "Filtered by {{label}}"
         },
-        "availabilitySummary": "{{implemented}} live • {{upcoming}} roadmap",
+        "heroDescription": "A cleaner overview of foundational structures, grouped by learning track and ready for future interactive modules.",
+        "heroEyebrow": "Structure Library",
         "resultsLabel": "{{count}} structures in focus",
         "resultsSubtitle": "Use the difficulty pills to rebalance the library while staying inside the current topic.",
-        "emptyLabel": "No structures match the current filters.",
         "stats": {
-          "visibleNow": "Visible now",
+          "roadmap": "Roadmap",
           "tracks": "Tracks",
-          "roadmap": "Roadmap"
-        }
-      },
-      "card": {
-        "status": {
-          "interactive": "Interactive",
-          "comingSoon": "Coming soon"
+          "visibleNow": "Visible now"
         },
-        "cta": {
-          "openModule": "Open module",
-          "inRoadmap": "In roadmap"
-        },
-        "preview": {
-          "readyHint": "Interactive model ready",
-          "plannedHint": "Planned deep-dive module"
-        },
-        "roadmap": {
-          "title": "Module locked for now",
-          "hint": "This structure is planned and visible in the roadmap, but its interactive module is not ready yet."
-        }
+        "title": "Structures"
       }
+    }
+  },
+  "shared": {
+    "codeLanguageDial": {
+      "ariaLabel": "Code language switcher",
+      "comingSoon": "Coming soon",
+      "languageComingSoon": "{{language}} coming soon",
+      "switchToLanguage": "Switch code to {{language}}"
+    },
+    "copyCodeButton": {
+      "ariaLabel": "Copy code to clipboard",
+      "copiedAriaLabel": "Code copied to clipboard",
+      "copiedLabel": "Copied",
+      "label": "Copy code"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "hard": "Hard",
+      "insane": "Insane",
+      "medium": "Medium"
+    },
+    "filters": {
+      "all": "All",
+      "difficulty": {
+        "ariaLabel": "Difficulty filter"
+      }
+    },
+    "roadmap": {
+      "chip": "Roadmap"
+    },
+    "table": {
+      "emptyLabel": "No rows",
+      "legendLabel": "Legend"
     }
   }
 }

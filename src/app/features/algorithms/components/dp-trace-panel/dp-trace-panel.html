@@ -1,26 +1,52 @@
 <div class="trace">
   @if (state(); as dpState) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" orientation="vertical" aria-label="DP summary">
-        <app-segmented-panel-section class="trace__summary-mode" eyebrow="Mode">
+      <app-segmented-panel
+        class="trace__summary"
+        orientation="vertical"
+        [attr.aria-label]="I18N_KEY.features.algorithms.tracePanels.dp.summaryAriaLabel | transloco"
+      >
+        <app-segmented-panel-section
+          class="trace__summary-mode"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+        >
           <div class="trace__summary-combo">
             <span class="trace__summary-mode-value">{{ dpState.modeLabel }}</span>
 
             @if (dpState.presetLabel) {
               <span class="trace__summary-preset">
-                <span class="trace__summary-preset-label">Preset</span>
+                <span class="trace__summary-preset-label">{{
+                  I18N_KEY.features.algorithms.tracePanels.dp.presetLabel | transloco
+                }}</span>
                 <span class="trace__summary-preset-value">{{ dpState.presetLabel }}</span>
               </span>
             }
           </div>
         </app-segmented-panel-section>
-        <app-segmented-panel-section eyebrow="Phase" [value]="dpState.phaseLabel" />
-        <app-segmented-panel-section eyebrow="Active" [value]="dpState.activeLabel ?? '—'" />
-        <app-segmented-panel-section eyebrow="Result" [value]="dpState.resultLabel" />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="dpState.phaseLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.activeLabel | transloco"
+          [value]="dpState.activeLabel ?? '—'"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+          [value]="dpState.resultLabel"
+        />
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__calc-grid" aria-label="DP calculation summary">
-        <app-segmented-panel-section class="trace__calc-section trace__calc-section--preset" eyebrow="Preset note">
+      <app-segmented-panel
+        class="trace__calc-grid"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.dp.calculationAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          class="trace__calc-section trace__calc-section--preset"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.dp.presetNoteLabel | transloco"
+        >
           <div class="trace__calc-expression">{{ dpState.presetDescription }}</div>
           <div class="trace__calc-decision">{{ dpState.pathLabel }}</div>
         </app-segmented-panel-section>
@@ -28,9 +54,17 @@
         <app-segmented-panel-section
           class="trace__calc-section"
           [class.trace__calc-section--muted]="!dpState.computation"
-          [eyebrow]="dpState.computation?.label ?? 'Current transition'"
+          [eyebrow]="
+            dpState.computation?.label ||
+            (I18N_KEY.features.algorithms.tracePanels.dp.currentTransitionLabel | transloco)
+          "
         >
-          <div class="trace__calc-expression">{{ dpState.computation?.expression ?? 'Waiting for next state transition.' }}</div>
+          <div class="trace__calc-expression">
+            {{
+              dpState.computation?.expression ||
+                (I18N_KEY.features.algorithms.tracePanels.dp.waitingTransitionLabel | transloco)
+            }}
+          </div>
           <div class="trace__calc-result">
             @if (dpState.computation?.result; as result) {
               = {{ result }}
@@ -38,15 +72,28 @@
               —
             }
           </div>
-          <div class="trace__calc-decision">{{ dpState.computation?.decision ?? 'No active transition in this step.' }}</div>
+          <div class="trace__calc-decision">
+            {{
+              dpState.computation?.decision ||
+                (I18N_KEY.features.algorithms.tracePanels.dp.noActiveTransitionLabel | transloco)
+            }}
+          </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
 
-      <app-segmented-panel class="trace__rails" aria-label="DP item rails">
-        <app-segmented-panel-section [eyebrow]="dpState.primaryItemsLabel" [badge]="dpState.primaryItems.length">
+      <app-segmented-panel
+        class="trace__rails"
+        [attr.aria-label]="I18N_KEY.features.algorithms.tracePanels.dp.railsAriaLabel | transloco"
+      >
+        <app-segmented-panel-section
+          [eyebrow]="dpState.primaryItemsLabel"
+          [badge]="dpState.primaryItems.length"
+        >
           <div class="trace__rail-items">
             @if (dpState.primaryItems.length === 0) {
-              <span class="trace__rail-empty">none</span>
+              <span class="trace__rail-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.noneLabel | transloco
+              }}</span>
             } @else {
               @for (item of dpState.primaryItems; track item) {
                 <span class="trace__chip">{{ item }}</span>
@@ -55,10 +102,15 @@
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section [eyebrow]="dpState.secondaryItemsLabel" [badge]="dpState.secondaryItems.length">
+        <app-segmented-panel-section
+          [eyebrow]="dpState.secondaryItemsLabel"
+          [badge]="dpState.secondaryItems.length"
+        >
           <div class="trace__rail-items">
             @if (dpState.secondaryItems.length === 0) {
-              <span class="trace__rail-empty">none</span>
+              <span class="trace__rail-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.noneLabel | transloco
+              }}</span>
             } @else {
               @for (item of dpState.secondaryItems; track item) {
                 <span class="trace__chip trace__chip--soft">{{ item }}</span>
@@ -74,10 +126,12 @@
         [columns]="tableColumns"
         [rows]="tableRows()"
         [legendItems]="tableLegendItems()"
-        emptyLabel="No DP cells yet"
+        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.dp.tableEmptyLabel"
       />
     </div>
   } @else {
-    <div class="trace__empty">No DP trace available for this step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.dp.emptyLabel | transloco }}
+    </div>
   }
 </div>

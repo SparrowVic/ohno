@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faArrowTurnDownRight,
@@ -15,7 +15,10 @@ import {
   faScissors,
   faSquareDashed,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { DpCell, DpTraceState, DpTraceTag } from '../../models/dp';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
@@ -24,41 +27,108 @@ import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 
 interface DpTagLegend {
   readonly id: DpTraceTag;
-  readonly label: string;
+  readonly labelKey: I18nKey;
   readonly icon: IconDefinition;
 }
 
 const TAG_LEGEND: readonly DpTagLegend[] = [
-  { id: 'active', label: 'Current DP cell', icon: faBolt },
-  { id: 'base', label: 'Base case', icon: faMinus },
-  { id: 'take', label: 'Take branch', icon: faCheck },
-  { id: 'skip', label: 'Skip / carry branch', icon: faArrowTurnDownRight },
-  { id: 'match', label: 'Character match', icon: faBadgeCheck },
-  { id: 'insert', label: 'Insert operation', icon: faDown },
-  { id: 'delete', label: 'Delete operation', icon: faScissors },
-  { id: 'replace', label: 'Replace operation', icon: faArrowsLeftRight },
-  { id: 'split', label: 'Interval split', icon: faMerge },
-  { id: 'best', label: 'Best known answer', icon: faCopy },
-  { id: 'path', label: 'Backtrack path', icon: faRoute },
-  { id: 'blocked', label: 'Unavailable cell', icon: faBan },
+  {
+    id: 'active',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.active,
+    icon: faBolt,
+  },
+  {
+    id: 'base',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.base,
+    icon: faMinus,
+  },
+  {
+    id: 'take',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.take,
+    icon: faCheck,
+  },
+  {
+    id: 'skip',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.skip,
+    icon: faArrowTurnDownRight,
+  },
+  {
+    id: 'match',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.match,
+    icon: faBadgeCheck,
+  },
+  {
+    id: 'insert',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.insert,
+    icon: faDown,
+  },
+  {
+    id: 'delete',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.delete,
+    icon: faScissors,
+  },
+  {
+    id: 'replace',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.replace,
+    icon: faArrowsLeftRight,
+  },
+  {
+    id: 'split',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.split,
+    icon: faMerge,
+  },
+  {
+    id: 'best',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.best,
+    icon: faCopy,
+  },
+  {
+    id: 'path',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.path,
+    icon: faRoute,
+  },
+  {
+    id: 'blocked',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.blocked,
+    icon: faBan,
+  },
 ];
 
 const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'cell', header: 'Cell', kind: 'mono' },
-  { id: 'value', header: 'Value', width: '72px', kind: 'mono' },
-  { id: 'meta', header: 'Meta', kind: 'mono' },
-  { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
-  { id: 'tags', header: 'Tags', width: '92px', kind: 'tags' },
+  { id: 'cell', headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.cell, kind: 'mono' },
+  {
+    id: 'value',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.value,
+    width: '72px',
+    kind: 'mono',
+  },
+  { id: 'meta', headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.meta, kind: 'mono' },
+  {
+    id: 'status',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.status,
+    width: '92px',
+    kind: 'tag',
+  },
+  {
+    id: 'tags',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.tags,
+    width: '92px',
+    kind: 'tags',
+  },
 ];
 
 @Component({
   selector: 'app-dp-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table],
+  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './dp-trace-panel.html',
   styleUrl: './dp-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DpTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<DpTraceState | null>(null);
   readonly legend = TAG_LEGEND;
   readonly tableColumns = TABLE_COLUMNS;
@@ -66,7 +136,8 @@ export class DpTracePanel {
     TAG_LEGEND.map((item) => ({
       id: item.id,
       tag: this.traceTag(item.id),
-      label: item.label,
+      label: '',
+      labelKey: item.labelKey,
     })),
   );
   readonly visibleRows = computed<readonly DpCell[]>(() =>
@@ -98,12 +169,13 @@ export class DpTracePanel {
   }
 
   tagLabel(tag: DpTraceTag): string {
-    return TAG_LEGEND.find((item) => item.id === tag)?.label ?? tag;
+    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
+    return labelKey ? this.translate(labelKey) : tag;
   }
 
   statusTag(cell: DpCell): UiTagModel {
     return {
-      label: cell.status,
+      label: this.statusLabel(cell.status),
       tone: this.statusTone(cell.status),
       appearance: 'soft',
       size: 'sm',
@@ -123,7 +195,9 @@ export class DpTracePanel {
     };
   }
 
-  private statusTone(status: DpCell['status']): 'neutral' | 'danger' | 'warning' | 'success' | 'route' | 'hit' {
+  private statusTone(
+    status: DpCell['status'],
+  ): 'neutral' | 'danger' | 'warning' | 'success' | 'route' | 'hit' {
     switch (status) {
       case 'base':
         return 'neutral';
@@ -144,7 +218,9 @@ export class DpTracePanel {
     }
   }
 
-  private tagTone(tag: DpTraceTag): 'neutral' | 'warning' | 'success' | 'route' | 'hit' | 'danger' | 'window' {
+  private tagTone(
+    tag: DpTraceTag,
+  ): 'neutral' | 'warning' | 'success' | 'route' | 'hit' | 'danger' | 'window' {
     switch (tag) {
       case 'active':
         return 'warning';
@@ -167,5 +243,33 @@ export class DpTracePanel {
       case 'blocked':
         return 'danger';
     }
+  }
+
+  private statusLabel(status: DpCell['status']): string {
+    switch (status) {
+      case 'idle':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.idle);
+      case 'base':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.base);
+      case 'blocked':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.blocked);
+      case 'active':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.active);
+      case 'candidate':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.candidate);
+      case 'improved':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.improved);
+      case 'chosen':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.chosen);
+      case 'backtrack':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.backtrack);
+      case 'match':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.match);
+    }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

@@ -1,13 +1,12 @@
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
-
 import { Difficulty } from '../../features/algorithms/models/algorithm';
 import { AppLang, APP_LANG } from './app-lang';
+import { I18N_KEY, I18nKey } from './i18n-keys';
 
-const DIFFICULTY_LABEL_KEYS: Record<Difficulty, string> = {
-  [Difficulty.Easy]: t('shared.difficulty.easy'),
-  [Difficulty.Medium]: t('shared.difficulty.medium'),
-  [Difficulty.Hard]: t('shared.difficulty.hard'),
-  [Difficulty.UltraHard]: t('shared.difficulty.insane'),
+const DIFFICULTY_LABEL_KEYS: Record<Difficulty, I18nKey> = {
+  [Difficulty.Easy]: I18N_KEY.shared.difficulty.easy,
+  [Difficulty.Medium]: I18N_KEY.shared.difficulty.medium,
+  [Difficulty.Hard]: I18N_KEY.shared.difficulty.hard,
+  [Difficulty.UltraHard]: I18N_KEY.shared.difficulty.insane,
 };
 
 const EN_LABELS: Record<Difficulty, string> = {
@@ -24,7 +23,7 @@ const PL_LABELS: Record<Difficulty, string> = {
   [Difficulty.UltraHard]: 'Przejebane',
 };
 
-export function getDifficultyLabelKey(difficulty: Difficulty): string {
+export function getDifficultyLabelKey(difficulty: Difficulty): I18nKey {
   return DIFFICULTY_LABEL_KEYS[difficulty];
 }
 

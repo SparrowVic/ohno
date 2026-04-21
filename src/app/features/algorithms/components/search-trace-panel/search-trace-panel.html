@@ -1,17 +1,29 @@
 <div class="trace">
   @if (state(); as searchState) {
     <div class="trace__header">
-      <app-segmented-panel class="trace__summary" aria-label="Search summary">
-        <app-segmented-panel-section eyebrow="Target" [value]="searchState.target" />
+      <app-segmented-panel
+        class="trace__summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.search.summaryAriaLabel | transloco
+        "
+      >
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.search.targetLabel | transloco"
+          [value]="searchState.target"
+        />
         <app-segmented-panel-section class="trace__summary-metrics">
           <div class="trace__summary-inline">
             <div class="trace__summary-item">
-              <span class="trace__summary-item-label">Probe</span>
+              <span class="trace__summary-item-label">{{
+                I18N_KEY.features.algorithms.tracePanels.search.probeLabel | transloco
+              }}</span>
               <span class="trace__summary-item-value">{{ probeLabel() }}</span>
             </div>
             <span class="trace__summary-divider" aria-hidden="true"></span>
             <div class="trace__summary-item">
-              <span class="trace__summary-item-label">Window</span>
+              <span class="trace__summary-item-label">{{
+                I18N_KEY.features.algorithms.tracePanels.search.windowLabel | transloco
+              }}</span>
               <span class="trace__summary-item-value">{{ windowLabel() }}</span>
             </div>
           </div>
@@ -20,21 +32,43 @@
 
       <app-segmented-panel
         class="trace__calculation trace__calculation--{{ resultTone() }}"
-        aria-label="Search calculation summary"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.search.calculationAriaLabel | transloco
+        "
       >
-        <app-segmented-panel-section eyebrow="Mode" [value]="searchState.modeLabel" />
-        <app-segmented-panel-section eyebrow="Status" [value]="searchState.statusLabel" />
-        <app-segmented-panel-section class="trace__calc-item--accent" eyebrow="Hits" [value]="hitLabel()" />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="searchState.modeLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco"
+          [value]="searchState.statusLabel"
+        />
+        <app-segmented-panel-section
+          class="trace__calc-item--accent"
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.search.hitsLabel | transloco"
+          [value]="hitLabel()"
+        />
         <app-segmented-panel-section class="trace__calc-decision-section">
-          <div class="trace__calc-decision">{{ searchState.decision ?? 'waiting for next move' }}</div>
+          <div class="trace__calc-decision">
+            {{
+              searchState.decision ||
+                (I18N_KEY.features.algorithms.tracePanels.search.waitingDecisionLabel | transloco)
+            }}
+          </div>
         </app-segmented-panel-section>
       </app-segmented-panel>
 
       <app-segmented-panel class="trace__feeds" orientation="vertical">
-        <app-segmented-panel-section eyebrow="Visited order" [badge]="searchState.visitedOrder.length">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.search.visitedOrderLabel | transloco"
+          [badge]="searchState.visitedOrder.length"
+        >
           <div class="trace__queue-items">
             @if (searchState.visitedOrder.length === 0) {
-              <span class="trace__queue-empty">not started</span>
+              <span class="trace__queue-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
             } @else {
               @for (index of searchState.visitedOrder; track $index) {
                 <span class="trace__queue-chip">{{ index }}</span>
@@ -43,10 +77,15 @@
           </div>
         </app-segmented-panel-section>
 
-        <app-segmented-panel-section eyebrow="Match span" [badge]="searchState.resultIndices.length">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.search.matchSpanLabel | transloco"
+          [badge]="searchState.resultIndices.length"
+        >
           <div class="trace__queue-items">
             @if (searchState.resultIndices.length === 0) {
-              <span class="trace__queue-empty">no confirmed hits</span>
+              <span class="trace__queue-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.search.noConfirmedHitsLabel | transloco
+              }}</span>
             } @else {
               @for (index of searchState.resultIndices; track index) {
                 <span class="trace__queue-chip trace__queue-chip--done">{{ index }}</span>
@@ -62,10 +101,12 @@
         [columns]="tableColumns"
         [rows]="tableRows()"
         [legendItems]="tableLegendItems()"
-        emptyLabel="No search rows yet"
+        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.search.tableEmptyLabel"
       />
     </div>
   } @else {
-    <div class="trace__empty">No search trace available for this step.</div>
+    <div class="trace__empty">
+      {{ I18N_KEY.features.algorithms.tracePanels.search.emptyLabel | transloco }}
+    </div>
   }
 </div>

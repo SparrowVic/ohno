@@ -3,17 +3,15 @@ import {
   Component,
   computed,
   effect,
-  inject,
   input,
   output,
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TranslocoService } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
@@ -21,15 +19,13 @@ import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-sele
 
 @Component({
   selector: 'app-visualization-toolbar',
-  imports: [LabSelect, LabSlider, ReactiveFormsModule],
+  imports: [LabSelect, LabSlider, ReactiveFormsModule, TranslocoPipe],
   templateUrl: './visualization-toolbar.html',
   styleUrl: './visualization-toolbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualizationToolbar {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
-
+  protected readonly I18N_KEY = I18N_KEY;
   readonly isPlaying = input.required<boolean>();
   readonly speed = input.required<number>();
   readonly currentStep = input.required<number>();
@@ -61,27 +57,6 @@ export class VisualizationToolbar {
       label: `${option} ${this.sizeUnit()}`,
     })),
   );
-  readonly resetLabel = computed(() => this.translate(t('features.algorithms.toolbar.resetLabel')));
-  readonly previousStepLabel = computed(() =>
-    this.translate(t('features.algorithms.toolbar.previousStepLabel')),
-  );
-  readonly nextStepLabel = computed(() =>
-    this.translate(t('features.algorithms.toolbar.nextStepLabel')),
-  );
-  readonly runStateLabel = computed(() =>
-    this.translate(t('features.algorithms.toolbar.runStateLabel')),
-  );
-  readonly counterLabel = computed(() =>
-    this.translate(t('features.algorithms.toolbar.counterLabel'), {
-      current: this.currentStep(),
-      total: this.totalSteps(),
-    }),
-  );
-  readonly viewLabel = computed(() => this.translate(t('features.algorithms.toolbar.viewLabel')));
-  readonly datasetSizeLabel = computed(() =>
-    this.translate(t('features.algorithms.toolbar.datasetSizeLabel')),
-  );
-  readonly speedLabel = computed(() => this.translate(t('features.algorithms.toolbar.speedLabel')));
 
   readonly speedControl = new FormControl(5, { nonNullable: true });
   readonly variantControl = new FormControl<VisualizationVariant>('bar', { nonNullable: true });
@@ -137,14 +112,9 @@ export class VisualizationToolbar {
       .subscribe((value) => this.variantChange.emit(value));
   }
 
-  transportLabel(): string {
+  transportLabelKey(): I18nKey {
     return this.isPlaying()
-      ? this.translate(t('features.algorithms.toolbar.pausePlaybackLabel'))
-      : this.translate(t('features.algorithms.toolbar.startPlaybackLabel'));
-  }
-
-  private translate(key: string, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
+      ? I18N_KEY.features.algorithms.toolbar.pausePlaybackLabel
+      : I18N_KEY.features.algorithms.toolbar.startPlaybackLabel;
   }
 }

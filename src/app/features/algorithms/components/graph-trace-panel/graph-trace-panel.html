@@ -7,9 +7,17 @@
       <!-- ======================================================== -->
       <!-- PANEL 1 — Facts / summary metrics                         -->
       <!-- ======================================================== -->
-      <app-segmented-panel class="trace__facts" aria-label="Trace summary">
+      <app-segmented-panel
+        class="trace__facts"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.graph.summaryAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section [eyebrow]="sourceCardLabel()" [value]="sourceLabel()" />
-        <app-segmented-panel-section eyebrow="Current" [value]="currentLabel()" />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.graph.currentLabel | transloco"
+          [value]="currentLabel()"
+        />
         <app-segmented-panel-section
           [eyebrow]="completionLabel()"
           [value]="settledCount()"
@@ -25,9 +33,16 @@
       <!-- ======================================================== -->
       <!-- PANEL 2 — Calculation / current decision                  -->
       <!-- ======================================================== -->
-      <app-segmented-panel class="trace__calc" aria-label="Current calculation">
+      <app-segmented-panel
+        class="trace__calc"
+        [attr.aria-label]="
+          I18N_KEY.features.algorithms.tracePanels.graph.calculationAriaLabel | transloco
+        "
+      >
         <app-segmented-panel-section
-          [eyebrow]="'Current decision'"
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.graph.currentDecisionLabel | transloco
+          "
           [value]="computationLabel()"
           [badge]="decisionBadge()"
         >
@@ -57,7 +72,9 @@
         <app-segmented-panel-section [eyebrow]="frontierLabel()" [badge]="graphState.queue.length">
           <div class="trace__stream-items">
             @if (graphState.queue.length === 0) {
-              <span class="trace__stream-empty">empty</span>
+              <span class="trace__stream-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel | transloco
+              }}</span>
             } @else {
               @for (entry of graphState.queue; track entry.nodeId) {
                 <span class="trace__stream-chip"
@@ -74,7 +91,9 @@
         >
           <div class="trace__stream-items">
             @if (graphState.visitOrder.length === 0) {
-              <span class="trace__stream-empty">not started</span>
+              <span class="trace__stream-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
             } @else {
               @for (label of graphState.visitOrder; track label) {
                 <span class="trace__stream-chip trace__stream-chip--done">{{ label }}</span>
@@ -89,12 +108,16 @@
     <!-- NODE TABLE                                                -->
     <!-- ======================================================== -->
     <div class="trace__table-wrap">
-      <app-table [columns]="tableColumns()" [rows]="tableRows()" emptyLabel="No graph rows yet" />
+      <app-table
+        [columns]="tableColumns()"
+        [rows]="tableRows()"
+        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.graph.tableEmptyLabel"
+      />
     </div>
   } @else {
     <div class="trace__empty">
       <span class="trace__empty-dot" aria-hidden="true"></span>
-      No trace available for this step.
+      {{ I18N_KEY.features.algorithms.tracePanels.graph.emptyLabel | transloco }}
     </div>
   }
 </div>

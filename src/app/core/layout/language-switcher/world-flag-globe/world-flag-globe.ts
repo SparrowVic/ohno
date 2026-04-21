@@ -12,8 +12,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { translateSignal } from '@jsverse/transloco';
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import { TranslocoPipe } from '@jsverse/transloco';
 import * as d3Scale from 'd3-scale';
 import { animate } from 'animejs';
 import type {
@@ -33,6 +32,8 @@ import type {
   WebGLRenderer,
 } from 'three';
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+import { I18N_KEY } from '../../../i18n/i18n-keys';
 
 type ThreeModule = typeof import('three');
 type OrbitControlsCtor = new (object: PerspectiveCamera, domElement?: HTMLElement) => OrbitControls;
@@ -98,31 +99,17 @@ const COUNTRY_PALETTE = [
 
 @Component({
   selector: 'app-world-flag-globe',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './world-flag-globe.html',
   styleUrl: './world-flag-globe.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorldFlagGlobe implements AfterViewInit {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly hoveredCountry = signal<CountryMarker | null>(null);
   readonly loading = signal(true);
   readonly loadError = signal(false);
-  readonly badgeEyebrow = translateSignal(t('core.worldGlobe.badgeEyebrow'));
-  readonly legendHoverCountry = translateSignal(t('core.worldGlobe.legend.hoverCountry'));
-  readonly legendDragOrbit = translateSignal(t('core.worldGlobe.legend.dragOrbit'));
-  readonly legendWheelZoom = translateSignal(t('core.worldGlobe.legend.wheelZoom'));
-  readonly loadingLabel = translateSignal(t('core.worldGlobe.loading'));
-  readonly loadErrorMessage = translateSignal(t('core.worldGlobe.loadError'));
-  readonly defaultHoverHeadline = translateSignal(t('core.worldGlobe.defaultHoverHeadline'));
-  readonly hoveredCountryNote = translateSignal(t('core.worldGlobe.hoveredCountryNote'));
-  readonly defaultHoverNote = translateSignal(t('core.worldGlobe.defaultHoverNote'));
-  readonly hoverHeadline = computed(
-    () => this.hoveredCountry()?.name ?? this.defaultHoverHeadline(),
-  );
   readonly hoverFlag = computed(() => this.hoveredCountry()?.flag ?? '🌍');
-  readonly hoverNote = computed(() =>
-    this.hoveredCountry() ? this.hoveredCountryNote() : this.defaultHoverNote(),
-  );
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);

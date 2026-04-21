@@ -5,7 +5,7 @@
         class="code-toolbar__dial"
         [options]="availableLanguages()"
         [value]="selectedLanguage()"
-        [ariaLabel]="codeLanguageAriaLabel()"
+        [ariaLabel]="I18N_KEY.features.algorithms.codePanel.codeLanguageAriaLabel | transloco"
         (valueChange)="selectLanguage($event)"
       />
 
@@ -28,6 +28,8 @@
       ></div>
     </div>
   } @else {
-    <div class="code-empty">{{ emptyLabel() }}</div>
+    <div class="code-empty">
+      {{ I18N_KEY.features.algorithms.codePanel.emptyLabel | transloco }}
+    </div>
   }
 </div>

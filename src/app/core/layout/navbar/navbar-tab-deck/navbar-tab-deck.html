@@ -6,7 +6,10 @@
   [class.tab-deck--fusion]="variant() === 'fusion'"
   [class.tab-deck--pill]="variant() === 'pill'"
 >
-  <nav class="tab-deck__nav" [attr.aria-label]="primaryNavigationAriaLabel()">
+  <nav
+    class="tab-deck__nav"
+    [attr.aria-label]="I18N_KEY.core.navigation.primaryAriaLabel | transloco"
+  >
     <ul class="tab-deck__list">
       @for (tab of tabs(); track tab.id) {
         <li

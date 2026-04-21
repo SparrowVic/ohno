@@ -4,7 +4,7 @@
     class="lang-switcher__trigger"
     [class.lang-switcher__trigger--open]="open()"
     [attr.aria-expanded]="open()"
-    [attr.aria-label]="openAriaLabel()"
+    [attr.aria-label]="I18N_KEY.core.languageSwitcher.openAriaLabel | transloco"
     (click)="toggleOpen()"
   >
     <span class="lang-switcher__orb" aria-hidden="true">
@@ -12,7 +12,9 @@
     </span>
 
     <span class="lang-switcher__copy">
-      <span class="lang-switcher__eyebrow">{{ eyebrow() }}</span>
+      <span class="lang-switcher__eyebrow">{{
+        I18N_KEY.core.languageSwitcher.eyebrow | transloco
+      }}</span>
       <span class="lang-switcher__label">{{ activeLangLabel() }}</span>
     </span>
 
@@ -24,13 +26,13 @@
       class="lang-switcher__overlay"
       role="dialog"
       aria-modal="true"
-      [attr.aria-label]="overlayAriaLabel()"
+      [attr.aria-label]="I18N_KEY.core.languageSwitcher.overlayAriaLabel | transloco"
     >
       <button
         #backdrop
         type="button"
         class="lang-switcher__backdrop"
-        [attr.aria-label]="closeGlobeAriaLabel()"
+        [attr.aria-label]="I18N_KEY.core.languageSwitcher.closeGlobeAriaLabel | transloco"
         (click)="close()"
       ></button>
 
@@ -38,10 +40,10 @@
         <button
           type="button"
           class="lang-switcher__close"
-          [attr.aria-label]="closeOverlayAriaLabel()"
+          [attr.aria-label]="I18N_KEY.core.languageSwitcher.closeOverlayAriaLabel | transloco"
           (click)="close()"
         >
-          {{ closeLabel() }}
+          {{ I18N_KEY.core.languageSwitcher.closeLabel | transloco }}
         </button>
 
         <app-world-flag-globe />

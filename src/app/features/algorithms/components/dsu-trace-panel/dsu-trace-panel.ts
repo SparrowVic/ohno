@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faCheckDouble,
@@ -8,7 +8,10 @@ import {
   faLink,
   faXmark,
 } from '@fortawesome/pro-solid-svg-icons';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { DsuEdgeTrace, DsuNodeTrace, DsuTraceState, DsuTraceTag } from '../../models/dsu';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
@@ -17,48 +20,100 @@ import { TraceHint } from '../trace-hint/trace-hint';
 
 interface DsuTagLegendItem {
   readonly id: DsuTraceTag | 'accepted' | 'rejected';
-  readonly label: string;
+  readonly labelKey: I18nKey;
   readonly icon: IconDefinition;
 }
 
 const TAG_LEGEND: readonly DsuTagLegendItem[] = [
-  { id: 'root', label: 'Representative root', icon: faCircleDot },
-  { id: 'active', label: 'Current merge / check focus', icon: faCrosshairs },
-  { id: 'query', label: 'Find query path', icon: faEye },
-  { id: 'merged', label: 'Merged under another root', icon: faLink },
-  { id: 'compressed', label: 'Path compressed node', icon: faCheckDouble },
-  { id: 'accepted', label: 'Accepted merge / MST edge', icon: faCheckDouble },
-  { id: 'rejected', label: 'Rejected cycle / duplicate merge', icon: faXmark },
+  {
+    id: 'root',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.root,
+    icon: faCircleDot,
+  },
+  {
+    id: 'active',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.active,
+    icon: faCrosshairs,
+  },
+  {
+    id: 'query',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.query,
+    icon: faEye,
+  },
+  {
+    id: 'merged',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.merged,
+    icon: faLink,
+  },
+  {
+    id: 'compressed',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.compressed,
+    icon: faCheckDouble,
+  },
+  {
+    id: 'accepted',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.accepted,
+    icon: faCheckDouble,
+  },
+  {
+    id: 'rejected',
+    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.rejected,
+    icon: faXmark,
+  },
 ];
 
 const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'node', header: 'Node' },
-  { id: 'parent', header: 'Parent' },
-  { id: 'root', header: 'Root' },
-  { id: 'rank', header: 'Rank', width: '54px', kind: 'mono' },
-  { id: 'size', header: 'Size', width: '54px', kind: 'mono' },
-  { id: 'status', header: 'Status', width: '92px', kind: 'tag' },
-  { id: 'tags', header: 'Tags', width: '92px', kind: 'tags' },
+  { id: 'node', headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.node },
+  { id: 'parent', headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.parent },
+  { id: 'root', headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.root },
+  {
+    id: 'rank',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.rank,
+    width: '54px',
+    kind: 'mono',
+  },
+  {
+    id: 'size',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.size,
+    width: '54px',
+    kind: 'mono',
+  },
+  {
+    id: 'status',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.status,
+    width: '92px',
+    kind: 'tag',
+  },
+  {
+    id: 'tags',
+    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.tags,
+    width: '92px',
+    kind: 'tags',
+  },
 ];
 
 @Component({
   selector: 'app-dsu-trace-panel',
-  imports: [Table, TraceHint],
+  imports: [Table, TraceHint, TranslocoPipe],
   templateUrl: './dsu-trace-panel.html',
   styleUrl: './dsu-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuTracePanel {
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+
+  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<DsuTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
   readonly hintKeyIdea = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
   });
   readonly hintWatch = computed<string | null>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
+    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
   });
 
   readonly legend = TAG_LEGEND;
@@ -67,7 +122,8 @@ export class DsuTracePanel {
     TAG_LEGEND.map((item) => ({
       id: item.id,
       tag: this.traceTag(item.id),
-      label: item.label,
+      label: '',
+      labelKey: item.labelKey,
     })),
   );
   readonly activeLabel = computed(() => this.state()?.activePairLabel ?? '—');
@@ -107,12 +163,13 @@ export class DsuTracePanel {
   }
 
   tagLabel(tag: DsuTraceTag | 'accepted' | 'rejected'): string {
-    return TAG_LEGEND.find((item) => item.id === tag)?.label ?? tag;
+    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
+    return labelKey ? this.translate(labelKey) : tag;
   }
 
   statusTag(node: DsuNodeTrace): UiTagModel {
     return {
-      label: node.status,
+      label: this.statusLabel(node.status),
       tone: this.statusTone(node.status),
       appearance: 'soft',
       size: 'sm',
@@ -135,7 +192,11 @@ export class DsuTracePanel {
   edgeLabel(edge: DsuEdgeTrace): string {
     const state = this.state();
     if (state?.mode === 'union-find') {
-      if (edge.toLabel === 'find') return `find ${edge.fromLabel}`;
+      if (edge.toLabel === 'find') {
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.findOperationLabel, {
+          label: edge.fromLabel,
+        });
+      }
       return `${edge.fromLabel}-${edge.toLabel}`;
     }
     return `${edge.fromLabel}-${edge.toLabel}`;
@@ -162,7 +223,9 @@ export class DsuTracePanel {
     }
   }
 
-  private tagTone(tag: DsuTraceTag | 'accepted' | 'rejected'): 'accent' | 'warning' | 'success' | 'danger' {
+  private tagTone(
+    tag: DsuTraceTag | 'accepted' | 'rejected',
+  ): 'accent' | 'warning' | 'success' | 'danger' {
     switch (tag) {
       case 'root':
         return 'accent';
@@ -176,5 +239,27 @@ export class DsuTracePanel {
       case 'rejected':
         return 'danger';
     }
+  }
+
+  private statusLabel(status: DsuNodeTrace['status']): string {
+    switch (status) {
+      case 'idle':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.idle);
+      case 'root':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.root);
+      case 'active':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.active);
+      case 'query':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.query);
+      case 'merged':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.merged);
+      case 'compressed':
+        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.compressed);
+    }
+  }
+
+  private translate(key: I18nKey, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }
