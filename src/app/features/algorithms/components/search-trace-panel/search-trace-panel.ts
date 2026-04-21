@@ -18,6 +18,7 @@ import { SegmentedPanel } from '../../../../shared/components/segmented-panel/se
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 interface SearchTagLegendItem {
   readonly id: SearchTraceTag;
@@ -92,7 +93,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-search-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
+  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './search-trace-panel.html',
   styleUrl: './search-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

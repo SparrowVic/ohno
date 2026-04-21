@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import { linearSearchGenerator } from './linear-search';
 
@@ -8,6 +9,11 @@ function collectSteps(args: {
   readonly target: number;
 }): SortStep[] {
   return [...linearSearchGenerator(args)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('linear-search', () => {
@@ -37,8 +43,12 @@ describe('linear-search', () => {
     });
 
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.search?.statusLabel).toBe('Not found');
-    expect(steps.at(-1)?.search?.decision).toBe('all slots exhausted');
+    expect(keyOf(steps.at(-1)?.search?.statusLabel)).toBe(
+      'features.algorithms.runtime.search.linearSearch.statuses.notFound',
+    );
+    expect(keyOf(steps.at(-1)?.search?.decision)).toBe(
+      'features.algorithms.runtime.search.linearSearch.decisions.allSlotsExhausted',
+    );
     expect(steps.at(-1)?.search?.visitedOrder).toEqual([0, 1]);
     expect(steps.at(-1)?.search?.eliminated).toEqual([0, 1]);
   });

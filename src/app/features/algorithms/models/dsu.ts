@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type DsuMode = 'union-find' | 'kruskal';
 
 export type DsuNodeStatus = 'idle' | 'active' | 'root' | 'merged' | 'compressed' | 'query';
@@ -39,13 +41,13 @@ export interface DsuEdgeTrace {
 
 export interface DsuTraceState {
   readonly mode: DsuMode;
-  readonly modeLabel: string;
-  readonly statusLabel: string;
-  readonly decision: string | null;
-  readonly activePairLabel: string | null;
+  readonly modeLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText | null;
+  readonly activePairLabel: TranslatableText | null;
   readonly componentCount: number;
-  readonly resultLabel: string;
-  readonly operationsLabel: string;
+  readonly resultLabel: TranslatableText;
+  readonly operationsLabel: TranslatableText;
   readonly nodes: readonly DsuNodeTrace[];
   readonly groups: readonly DsuGroupTrace[];
   readonly edges: readonly DsuEdgeTrace[];

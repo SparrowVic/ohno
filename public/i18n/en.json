@@ -1921,6 +1921,347 @@
               "shiftBox": "Shift box"
             }
           }
+        },
+        "search": {
+          "linearSearch": {
+            "modeLabel": "Linear Search",
+            "statuses": {
+              "ready": "Ready to scan",
+              "comparing": "Comparing slot",
+              "found": "Match found",
+              "advance": "Advance cursor",
+              "notFound": "Target missing"
+            },
+            "descriptions": {
+              "start": "Scan {{size}} slot(s) from left to right for {{target}}.",
+              "inspect": "Inspect index {{index}}: {{value}} vs {{target}}.",
+              "found": "Found {{target}} at index {{index}}.",
+              "advance": "Value {{value}} is not {{target}}, so advance to the next slot.",
+              "notFound": "Reached the end without finding {{target}}."
+            },
+            "decisions": {
+              "compare": "{{value}} {{relation}} {{target}}",
+              "stopAtIndex": "stop at index {{index}}",
+              "discardIndex": "discard index {{index}}",
+              "allSlotsExhausted": "all slots exhausted"
+            }
+          },
+          "binarySearch": {
+            "modeLabel": "Binary Search",
+            "statuses": {
+              "ready": "Window ready",
+              "comparing": "Probe midpoint",
+              "found": "Target found",
+              "moveRight": "Shift right window",
+              "moveLeft": "Shift left window",
+              "notFound": "Window exhausted"
+            },
+            "descriptions": {
+              "start": "Search the sorted window for {{target}}.",
+              "probe": "Probe midpoint {{index}} with value {{value}} against {{target}}.",
+              "found": "Target {{target}} found at index {{index}}.",
+              "moveRight": "{{value}} is too small, so move the window right.",
+              "moveLeft": "{{value}} is too large, so move the window left.",
+              "notFound": "The search window collapsed without a match."
+            },
+            "decisions": {
+              "compare": "{{value}} {{relation}} {{target}}",
+              "collapsedWindow": "collapse to index {{index}}",
+              "newWindow": "new window [{{low}}, {{high}}]",
+              "candidateWindowEmpty": "candidate window is empty"
+            }
+          },
+          "binarySearchVariants": {
+            "modeLabels": {
+              "lowerBound": "Lower bound search",
+              "upperBound": "Upper bound search",
+              "boundsSearch": "Bounds search"
+            },
+            "statuses": {
+              "ready": "Ready for lower bound",
+              "comparing": "Probe bound candidate",
+              "moveLeft": "Trim right side",
+              "firstMatchCandidate": "First match candidate",
+              "moveRight": "Advance left side",
+              "notFound": "Bounds missing",
+              "switchPhase": "Switch to upper bound",
+              "lastMatchCandidate": "Last match candidate",
+              "rangeFound": "Range fixed"
+            },
+            "descriptions": {
+              "start": "Find the first and last index of {{target}}.",
+              "lowerProbe": "Lower-bound probe at index {{index}} with value {{value}}.",
+              "moveLeftForFirst": "{{target}} could start here or earlier, so trim the right side.",
+              "tooSmallForFirst": "{{value}} is too small for the first match, so advance low.",
+              "noRange": "No occurrence of {{target}} was found during the lower-bound pass.",
+              "switchPhase": "First match fixed at {{index}}; now search for the last match.",
+              "upperProbe": "Upper-bound probe at index {{index}} with value {{value}}.",
+              "moveRightForLast": "{{target}} could continue to the right, so advance low.",
+              "tooLargeForLast": "{{value}} is too large for the last match, so trim high.",
+              "completeRange": "Range for {{target}} is {{left}}..{{right}}.",
+              "noFinalRange": "Upper-bound pass ended without widening the final range for {{target}}."
+            },
+            "decisions": {
+              "lowerCompare": "{{value}} {{relation}} {{target}}",
+              "trimRight": "new high = {{high}}",
+              "candidateFirst": "first match candidate = {{index}}",
+              "advanceLow": "new low = {{low}}",
+              "lowerBoundSearchFailed": "lower-bound pass found no match",
+              "firstMatchFixed": "first match fixed at {{index}}",
+              "upperCompare": "{{value}} {{relation}} {{target}}",
+              "candidateLast": "last match candidate = {{index}}",
+              "newHigh": "new high = {{high}}",
+              "rangeWidth": "range width = {{count}}",
+              "upperBoundSearchMiss": "upper-bound pass kept no valid range"
+            }
+          }
+        },
+        "grid": {
+          "floodFill": {
+            "modeLabel": "Flood Fill",
+            "statuses": {
+              "readyToSpread": "Ready to spread",
+              "inspectCurrentCell": "Inspect current cell",
+              "blockedCell": "Blocked cell",
+              "regionExpands": "Region expands",
+              "queueMatchingNeighbor": "Queue matching neighbor",
+              "regionComplete": "Region complete"
+            },
+            "descriptions": {
+              "start": "Start from {{cell}} with source color {{sourceColor}}.",
+              "inspect": "Inspect {{cell}} at depth {{depth}}.",
+              "blocked": "{{cell}} does not belong to the source region, so skip it.",
+              "fill": "Paint {{cell}} with the fill color.",
+              "queueNeighbor": "Queue matching neighbor {{cell}}.",
+              "complete": "Flood fill finished with {{count}} painted cell(s)."
+            },
+            "decisions": {
+              "replaceColors": "replace {{sourceColor}} with {{fillColor}}",
+              "cellColor": "cell color = {{color}}",
+              "keepOriginalColor": "keep original color",
+              "paintedColor": "painted with {{fillColor}}",
+              "sameSourceColor": "same source color {{sourceColor}}",
+              "finalRegionSize": "region size = {{count}}"
+            },
+            "labels": {
+              "fillColor": "fill {{color}}"
+            }
+          },
+          "aStarPathfinding": {
+            "modeLabel": "A* Pathfinding",
+            "statuses": {
+              "readyToExplore": "Ready to explore",
+              "pickLowestF": "Pick lowest f-score",
+              "pathFound": "Path found",
+              "inspectNeighbor": "Inspect neighbor",
+              "keepCurrentRoute": "Keep current route",
+              "updateFrontierRoute": "Update frontier route",
+              "noPathFound": "No path found"
+            },
+            "descriptions": {
+              "initialize": "Initialize A* from {{start}} to {{goal}}.",
+              "pickFrontier": "Pick {{cell}} with the lowest frontier score.",
+              "goalReached": "Reached goal {{goal}} and reconstruct the path.",
+              "inspectNeighbor": "Inspect neighbor {{cell}} from {{from}}.",
+              "keepBetterRoute": "The known route to {{cell}} is already better.",
+              "updateRoute": "Update route to {{cell}} through {{from}}.",
+              "exhausted": "Open set exhausted; no path reaches the goal."
+            },
+            "decisions": {
+              "initializeScores": "set g(start) = 0 and f(start) = h(start)",
+              "frontierScores": "f = {{f}}, g = {{g}}",
+              "shortestPathLength": "path length = {{count}}",
+              "tentativeScores": "tentative g = {{g}}, h = {{h}}, f = {{f}}",
+              "knownRouteBetter": "known g = {{g}} is better",
+              "setScores": "set g = {{g}}, h = {{h}}, f = {{f}}",
+              "exhaustedReachable": "all reachable cells exhausted"
+            }
+          }
+        },
+        "dsu": {
+          "unionFind": {
+            "modeLabel": "Union-Find",
+            "statuses": {
+              "ready": "Ready",
+              "findRepresentative": "Find representative",
+              "pathCompression": "Compress path",
+              "compareRoots": "Compare roots",
+              "unionSkipped": "Union skipped",
+              "unionByRank": "Union by rank",
+              "complete": "Stable forest"
+            },
+            "descriptions": {
+              "initialize": "Start with singleton sets for every node.",
+              "followPath": "Follow the parent chain from {{label}}.",
+              "compressPath": "Compress the path so every visited node points to root {{root}}.",
+              "alreadyCompressed": "{{node}} already points directly to root {{root}}.",
+              "compareRoots": "Compare roots of {{left}} and {{right}}.",
+              "skipMerge": "Skip merge because both nodes already share root {{root}}.",
+              "attachRoot": "Attach root {{attach}} under {{keep}}.",
+              "complete": "Union-Find finished with {{count}} component(s)."
+            },
+            "decisions": {
+              "singletonRoots": "every node starts as its own root",
+              "currentPath": "path = {{path}}",
+              "representativeIs": "representative = {{root}}",
+              "representativePair": "{{left}} -> {{leftRoot}}, {{right}} -> {{rightRoot}}",
+              "noStructuralChange": "no structural change",
+              "newRootRepresents": "{{root}} now represents {{count}} node(s)",
+              "finalStable": "all unions processed"
+            },
+            "labels": {
+              "singletonSets": "{{count}} singleton set(s)",
+              "activeSets": "{{count}} active set(s)",
+              "operationQueue": "Operation queue"
+            }
+          },
+          "kruskalsMst": {
+            "modeLabel": "Kruskal's MST",
+            "statuses": {
+              "sortedEdgeScan": "Sorted edge scan",
+              "inspectNextEdge": "Inspect next edge",
+              "rejectCycleEdge": "Reject cycle edge",
+              "acceptEdge": "Accept edge",
+              "complete": "MST complete"
+            },
+            "descriptions": {
+              "initialize": "Edges are sorted by weight; start with an empty forest.",
+              "inspectEdge": "Inspect edge {{from}} - {{to}} (w={{weight}}).",
+              "rejectEdge": "Reject {{from}} - {{to}} because it closes a cycle.",
+              "acceptEdge": "Accept {{from}} - {{to}} into the MST.",
+              "complete": "Kruskal finished with {{count}} accepted edge(s) and total weight {{weight}}."
+            },
+            "decisions": {
+              "acceptNextCheapest": "accept the next cheapest edge that does not close a cycle",
+              "rootCompare": "{{from}} -> {{fromRoot}}, {{to}} -> {{toRoot}}",
+              "shareRoot": "both endpoints already share a root",
+              "treeWeightGrows": "MST weight = {{weight}}",
+              "pendingEdgesWorse": "all remaining edges are heavier or redundant"
+            },
+            "labels": {
+              "mstWeight": "weight = {{weight}}",
+              "acceptedEdges": "{{count}} / {{total}} edges accepted",
+              "sortedEdges": "Sorted edges"
+            }
+          }
+        },
+        "sort": {
+          "bubbleSort": {
+            "descriptions": {
+              "start": "Start bubble sort (n = {{size}}).",
+              "compare": "Compare {{leftValue}} at index {{leftIndex}} with {{rightValue}} at index {{rightIndex}}.",
+              "swap": "Swap {{left}} at index {{leftIndex}} with {{right}} at index {{rightIndex}}.",
+              "passComplete": "Pass {{pass}} complete; the suffix starting at index {{boundary}} is fixed.",
+              "earlyExit": "No swaps happened in this pass, so the array is already sorted.",
+              "complete": "Bubble sort complete."
+            }
+          },
+          "selectionSort": {
+            "descriptions": {
+              "start": "Start selection sort (n = {{size}}).",
+              "scanSuffix": "Scan the suffix starting at index {{index}} to find the next minimum.",
+              "compareMinimum": "Compare current minimum {{currentMinimum}} with candidate {{candidate}} at index {{scan}}.",
+              "newMinimum": "New minimum found: {{value}}.",
+              "swap": "Swap {{left}} with {{right}} so index {{index}} gets the minimum.",
+              "indexFixed": "Index {{index}} is now fixed in final order.",
+              "complete": "Selection sort complete."
+            }
+          },
+          "insertionSort": {
+            "descriptions": {
+              "start": "Start insertion sort (n = {{size}}).",
+              "takeValue": "Take {{value}} from index {{index}} and insert it into the sorted prefix.",
+              "compare": "Compare {{current}} with {{value}} inside the sorted prefix.",
+              "shift": "Shift {{value}} one slot to the right.",
+              "insert": "Insert {{value}} at index {{index}}.",
+              "complete": "Insertion sort complete."
+            }
+          },
+          "mergeSort": {
+            "descriptions": {
+              "start": "Start merge sort (n = {{size}}).",
+              "complete": "Merge sort complete.",
+              "splitRange": "Split range [{{left}}, {{right}}] at {{middle}}.",
+              "compareHalves": "Compare left {{leftValue}} with right {{rightValue}} while merging.",
+              "writeBack": "Write {{value}} back to index {{index}}."
+            }
+          },
+          "quickSort": {
+            "descriptions": {
+              "start": "Start quick sort (n = {{size}}).",
+              "complete": "Quick sort complete.",
+              "singleElement": "Single element {{value}} at index {{index}} is already fixed.",
+              "choosePivot": "Choose pivot {{pivot}} from index {{index}}.",
+              "comparePivot": "Compare {{value}} with pivot {{pivot}}.",
+              "swapPartition": "Swap partition values {{left}} and {{right}}.",
+              "placePivot": "Place pivot {{pivot}} at index {{index}} and move {{left}} into the right partition.",
+              "pivotSettled": "Pivot {{pivot}} is already settled at index {{index}}."
+            }
+          },
+          "heapSort": {
+            "descriptions": {
+              "start": "Start heap sort (n = {{size}}).",
+              "extractRoot": "Swap max {{max}} at the root with {{tail}} at index {{end}}.",
+              "complete": "Heap sort complete.",
+              "compareLeft": "Compare left child {{leftChild}} with current largest {{currentLargest}}.",
+              "compareRight": "Compare right child {{rightChild}} with current largest {{currentLargest}}.",
+              "restoreHeap": "Swap root {{rootValue}} with larger child {{largestValue}} to restore the heap."
+            }
+          },
+          "countingSort": {
+            "descriptions": {
+              "start": "Start counting sort (n = {{size}}, max = {{max}}).",
+              "countValue": "Count value {{value}} at index {{index}}; frequency is now {{count}}.",
+              "writeValue": "Write {{value}} into index {{index}}.",
+              "complete": "Counting sort complete."
+            }
+          },
+          "shellSort": {
+            "descriptions": {
+              "start": "Start shell sort (n = {{size}}).",
+              "beginGapPass": "Begin gap pass with gap {{gap}}.",
+              "takeValue": "Take {{value}} from index {{index}} for gap {{gap}} insertion.",
+              "compareGap": "Compare {{leftValue}} with {{value}} across gap {{gap}}.",
+              "shiftGap": "Shift {{value}} from index {{from}} to {{to}} across the gap.",
+              "insertGap": "Insert {{value}} at index {{index}} for gap {{gap}}.",
+              "complete": "Shell sort complete."
+            }
+          },
+          "bucketSort": {
+            "descriptions": {
+              "start": "Start bucket sort (n = {{size}}, buckets = {{bucketCount}}).",
+              "placeInBucket": "Place {{value}} from index {{index}} into bucket {{bucketIndex}}.",
+              "sortBucket": "Sort bucket {{bucketIndex}} locally before writing it back.",
+              "insertWithinBucket": "Insert {{value}} into its sorted position inside bucket {{bucketIndex}}.",
+              "compareWithinBucket": "Compare {{leftValue}} with {{rightValue}} inside bucket {{bucketIndex}}.",
+              "writeFromBucket": "Write {{value}} from bucket {{bucketIndex}} into index {{index}}.",
+              "complete": "Bucket sort complete."
+            }
+          },
+          "radixSort": {
+            "descriptions": {
+              "start": "Start radix sort (base 10, maxDigits = {{maxDigits}}).",
+              "focusDigit": "Focus digit position 10^{{digitPower}} across {{count}} values.",
+              "distributeToBucket": "Send {{value}} to bucket {{bucket}} using digit position 10^{{digitPower}}.",
+              "gatherFromBucket": "Gather {{value}} from bucket {{bucket}} back into the output stream.",
+              "finalPassComplete": "All digit passes are complete; the array is sorted.",
+              "passComplete": "Pass {{pass}}/{{maxDigits}} complete; order is fixed for digit position 10^{{digitPower}}."
+            }
+          },
+          "timSort": {
+            "descriptions": {
+              "start": "Start tim sort (n = {{size}}, minRun = {{minRun}}).",
+              "buildRun": "Build run [{{start}}, {{end}}] with insertion sort.",
+              "mergeRuns": "Merge runs [{{left}}, {{middle}}] and [{{nextStart}}, {{right}}].",
+              "complete": "Tim sort complete.",
+              "insertWithinRun": "Insert {{value}} within run [{{left}}, {{right}}].",
+              "compareWithinRun": "Compare {{leftValue}} with {{value}} while extending the run.",
+              "shiftWithinRun": "Shift {{value}} one slot to the right inside the run.",
+              "placeWithinRun": "Place {{value}} at index {{index}} inside the run.",
+              "compareMerge": "Compare {{leftValue}} with {{rightValue}} while merging runs.",
+              "writeMergedValue": "Write merged value {{value}} back to index {{index}}."
+            }
+          }
         }
       },
       "scenarios": {
@@ -3025,6 +3366,53 @@
           "siteEventRailLabel": "Site event rail",
           "summaryAriaLabel": "Voronoi summary",
           "sweepYLabel": "Sweep y"
+        },
+        "grid": {
+          "modeLabel": "Mode",
+          "activeLabel": "Active",
+          "frontierLabel": "Frontier",
+          "visitedLabel": "Visited",
+          "resultLabel": "Result",
+          "sourceLabel": "Source",
+          "targetLabel": "Target",
+          "boardLabel": "Board",
+          "visitOrderLabel": "Visit order",
+          "filledCount": "{{count}} filled",
+          "pathCount": "{{count}} in path",
+          "waitingDecisionLabel": "Waiting for the next grid update.",
+          "notStartedLabel": "not started",
+          "tableEmptyLabel": "No active grid cells yet",
+          "emptyLabel": "No grid trace available for this step.",
+          "columns": {
+            "cell": "Cell",
+            "value": "Value",
+            "status": "Status",
+            "tags": "Tags"
+          },
+          "tagLegend": {
+            "seed": "Seed cell",
+            "goal": "Goal cell",
+            "frontier": "Frontier",
+            "current": "Current cell",
+            "filled": "Filled cell",
+            "closed": "Closed cell",
+            "path": "Final path",
+            "wall": "Wall",
+            "blocked": "Blocked cell",
+            "candidate": "Candidate"
+          },
+          "statuses": {
+            "idle": "idle",
+            "wall": "wall",
+            "source": "source",
+            "goal": "goal",
+            "frontier": "frontier",
+            "current": "current",
+            "filled": "filled",
+            "closed": "closed",
+            "path": "path",
+            "blocked": "blocked"
+          }
         }
       },
       "traits": {
@@ -3938,6 +4326,64 @@
             "waitingForFirstRun": "Waiting for first run…"
           },
           "stageEyebrow": "Stage"
+        },
+        "dsu": {
+          "guideEyebrow": "DSU Guide",
+          "guideTitle": "Track the active merge",
+          "guideDesc": "Watch the current roots, then read the rail to see whether the step is finding, compressing or merging.",
+          "modeLabel": "Mode",
+          "componentsLabel": "Components",
+          "activeLabel": "Active",
+          "resultLabel": "Result",
+          "railLabel": "Operation rail",
+          "awaitingDecisionLabel": "Waiting for the next DSU decision.",
+          "snapshotEyebrow": "Snapshot",
+          "snapshotTitle": "Parent map",
+          "snapshotDesc": "Parent links stay visible so you can see compression and unions without losing the forest overview.",
+          "parentMapLabel": "Parent map",
+          "parentMapTitle": "Node -> parent",
+          "rootLabel": "root",
+          "rankSizeValue": "rank {{rank}} · size {{size}}",
+          "stageEyebrow": "Stage",
+          "stageTitle": "Set forest",
+          "setForestLabel": "Set forest",
+          "rootBadge": "root {{label}}",
+          "nodeCount": "{{count}} node(s)",
+          "emptyLabel": "No DSU trace available for this step.",
+          "modeHints": {
+            "unionFind": "Path compression + union by rank",
+            "kruskal": "Union-Find inside Kruskal"
+          },
+          "edgeLabels": {
+            "find": "find {{label}}",
+            "union": "{{from}} <-> {{to}}"
+          },
+          "nodeSubtitle": {
+            "root": "root node",
+            "parent": "parent {{label}}"
+          },
+          "edgeStatuses": {
+            "pending": "pending",
+            "active": "active",
+            "accepted": "accepted",
+            "rejected": "rejected"
+          }
+        },
+        "dsuGraph": {
+          "guideEyebrow": "DSU Graph",
+          "unionFindTitle": "Follow parent pointers",
+          "kruskalTitle": "Grow the MST forest",
+          "modeLabel": "Mode",
+          "componentsLabel": "Components",
+          "activeLabel": "Active",
+          "resultLabel": "Result",
+          "snapshotEyebrow": "Snapshot",
+          "unionFindSnapshotDesc": "Parent arrows show how path compression shortens chains toward each representative.",
+          "kruskalSnapshotDesc": "Accepted edges stay in the forest while rejected ones reveal where a cycle would close.",
+          "stageEyebrow": "Stage",
+          "unionFindStageTitle": "Representative forest",
+          "kruskalStageTitle": "Edge scan",
+          "emptyLabel": "No DSU graph trace available for this step."
         }
       }
     },

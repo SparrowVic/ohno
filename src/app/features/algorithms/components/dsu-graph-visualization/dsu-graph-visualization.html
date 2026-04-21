@@ -2,46 +2,46 @@
   @if (state(); as dsuState) {
     <aside class="viz-flow__guide">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">DSU Graph Guide</span>
+        <span class="viz-flow__eyebrow">{{ I18N.guideEyebrow | transloco }}</span>
         <h3 class="viz-flow__title">
           @if (mode() === 'union-find') {
-            Follow the tree pointers
+            {{ I18N.unionFindTitle | transloco }}
           } @else {
-            Watch edges enter the MST
+            {{ I18N.kruskalTitle | transloco }}
           }
         </h3>
-        <p class="viz-flow__desc">{{ decision() }}</p>
+        <p class="viz-flow__desc">{{ decision() | i18nText }}</p>
       </div>
 
       <div class="dsu-graph__hud">
         <div class="dsu-graph__stat">
-          <span class="dsu-graph__label">Mode</span>
-          <span class="dsu-graph__value">{{ modeLabel() }}</span>
+          <span class="dsu-graph__label">{{ I18N.modeLabel | transloco }}</span>
+          <span class="dsu-graph__value">{{ modeLabel() | i18nText }}</span>
         </div>
         <div class="dsu-graph__stat">
-          <span class="dsu-graph__label">Components</span>
+          <span class="dsu-graph__label">{{ I18N.componentsLabel | transloco }}</span>
           <span class="dsu-graph__value">{{ componentCount() }}</span>
         </div>
         <div class="dsu-graph__stat">
-          <span class="dsu-graph__label">Active</span>
-          <span class="dsu-graph__value">{{ activeLabel() }}</span>
+          <span class="dsu-graph__label">{{ I18N.activeLabel | transloco }}</span>
+          <span class="dsu-graph__value">{{ activeLabel() | i18nText }}</span>
         </div>
         <div class="dsu-graph__stat">
-          <span class="dsu-graph__label">Result</span>
-          <span class="dsu-graph__value">{{ resultLabel() }}</span>
+          <span class="dsu-graph__label">{{ I18N.resultLabel | transloco }}</span>
+          <span class="dsu-graph__value">{{ resultLabel() | i18nText }}</span>
         </div>
       </div>
     </aside>
 
     <section class="viz-flow__brief">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">{{ statusLabel() }}</h3>
+        <span class="viz-flow__eyebrow">{{ I18N.snapshotEyebrow | transloco }}</span>
+        <h3 class="viz-flow__title">{{ statusLabel() | i18nText }}</h3>
         <p class="viz-flow__desc">
           @if (mode() === 'union-find') {
-            Each tree is one disjoint set. Cyan roots are representatives; edges point to parents.
+            {{ I18N.unionFindSnapshotDesc | transloco }}
           } @else {
-            Nodes sit on a ring; candidate edges fill in as the algorithm picks or rejects them.
+            {{ I18N.kruskalSnapshotDesc | transloco }}
           }
         </p>
       </div>
@@ -50,16 +50,16 @@
     <section class="viz-flow__stage">
       <div class="viz-flow__stage-head">
         <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
+          <span class="viz-flow__eyebrow">{{ I18N.stageEyebrow | transloco }}</span>
           <h3 class="viz-flow__title">
             @if (mode() === 'union-find') {
-              Set forest (graph view)
+              {{ I18N.unionFindStageTitle | transloco }}
             } @else {
-              Candidate graph (MST view)
+              {{ I18N.kruskalStageTitle | transloco }}
             }
           </h3>
         </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ statusLabel() }}</span>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{ statusLabel() | i18nText }}</span>
       </div>
 
       <div class="viz-flow__stage-body">
@@ -153,6 +153,6 @@
       </div>
     </section>
   } @else {
-    <div class="dsu-graph__empty">No DSU trace available for this step.</div>
+    <div class="dsu-graph__empty">{{ I18N.emptyLabel | transloco }}</div>
   }
 </section>

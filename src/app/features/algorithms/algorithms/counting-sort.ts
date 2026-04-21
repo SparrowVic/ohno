@@ -1,5 +1,17 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.countingSort.descriptions.start'),
+    countValue: t('features.algorithms.runtime.sort.countingSort.descriptions.countValue'),
+    writeValue: t('features.algorithms.runtime.sort.countingSort.descriptions.writeValue'),
+    complete: t('features.algorithms.runtime.sort.countingSort.descriptions.complete'),
+  },
+} as const;
 
 export function* countingSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -10,7 +22,7 @@ export function* countingSortGenerator(input: readonly number[]): Generator<Sort
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start counting sort (n=${size}, max=${max})`,
+    description: i18nText(I18N.descriptions.start, { size, max }),
     boundary: 0,
     phase: 'init',
   });
@@ -21,7 +33,11 @@ export function* countingSortGenerator(input: readonly number[]): Generator<Sort
     yield createArrayStep({
       array: arr,
       activeCodeLine: 5,
-      description: `Count value ${arr[index]} at index ${index}. It has appeared ${counts[arr[index]]} time(s).`,
+      description: i18nText(I18N.descriptions.countValue, {
+        value: arr[index] ?? '',
+        index,
+        count: counts[arr[index] ?? 0],
+      }),
       comparing: [index, index],
       boundary: 0,
       phase: 'compare',
@@ -37,7 +53,10 @@ export function* countingSortGenerator(input: readonly number[]): Generator<Sort
       yield createArrayStep({
         array: arr,
         activeCodeLine: 10,
-        description: `Write ${value} into sorted output slot ${writeIndex}.`,
+        description: i18nText(I18N.descriptions.writeValue, {
+          value,
+          index: writeIndex,
+        }),
         comparing: [writeIndex, writeIndex],
         sorted: prefixSorted(writeIndex + 1),
         boundary: writeIndex + 1,
@@ -51,7 +70,7 @@ export function* countingSortGenerator(input: readonly number[]): Generator<Sort
   yield createArrayStep({
     array: arr,
     activeCodeLine: 15,
-    description: 'Counting sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',

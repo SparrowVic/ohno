@@ -14,6 +14,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
@@ -24,7 +25,7 @@ import {
 
 @Component({
   selector: 'app-grid-visualization',
-  imports: [TranslocoPipe],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './grid-visualization.html',
   styleUrl: './grid-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

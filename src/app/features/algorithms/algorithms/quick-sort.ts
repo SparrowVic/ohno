@@ -1,5 +1,21 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.quickSort.descriptions.start'),
+    complete: t('features.algorithms.runtime.sort.quickSort.descriptions.complete'),
+    singleElement: t('features.algorithms.runtime.sort.quickSort.descriptions.singleElement'),
+    choosePivot: t('features.algorithms.runtime.sort.quickSort.descriptions.choosePivot'),
+    comparePivot: t('features.algorithms.runtime.sort.quickSort.descriptions.comparePivot'),
+    swapPartition: t('features.algorithms.runtime.sort.quickSort.descriptions.swapPartition'),
+    placePivot: t('features.algorithms.runtime.sort.quickSort.descriptions.placePivot'),
+    pivotSettled: t('features.algorithms.runtime.sort.quickSort.descriptions.pivotSettled'),
+  },
+} as const;
 
 export function* quickSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -9,7 +25,7 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start quick sort (n=${size})`,
+    description: i18nText(I18N.descriptions.start, { size }),
     boundary: size,
     phase: 'init',
   });
@@ -21,7 +37,7 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
   yield createArrayStep({
     array: arr,
     activeCodeLine: 3,
-    description: 'Quick sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',
@@ -37,7 +53,10 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 5,
-        description: `Single element ${arr[low]} at index ${low} is already fixed.`,
+        description: i18nText(I18N.descriptions.singleElement, {
+          value: arr[low] ?? '',
+          index: low,
+        }),
         sorted: [...settled].sort((left, right) => left - right),
         boundary: size,
         phase: 'pass-complete',
@@ -51,7 +70,7 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
     yield createArrayStep({
       array: arr,
       activeCodeLine: 6,
-      description: `Choose ${pivot} at index ${high} as the pivot.`,
+      description: i18nText(I18N.descriptions.choosePivot, { pivot, index: high }),
       comparing: [high, high],
       sorted: [...settled].sort((left, right) => left - right),
       boundary: size,
@@ -62,7 +81,10 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 9,
-        description: `Compare ${arr[index]} with pivot ${pivot}.`,
+        description: i18nText(I18N.descriptions.comparePivot, {
+          value: arr[index] ?? '',
+          pivot,
+        }),
         comparing: [index, high],
         sorted: [...settled].sort((left, right) => left - right),
         boundary: size,
@@ -78,7 +100,7 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
           yield createArrayStep({
             array: arr,
             activeCodeLine: 10,
-            description: `Swap ${left} with ${right} to expand the lower-than-pivot partition.`,
+            description: i18nText(I18N.descriptions.swapPartition, { left, right }),
             swapping: [storeIndex, index],
             sorted: [...settled].sort((leftIndex, rightIndex) => leftIndex - rightIndex),
             boundary: size,
@@ -99,7 +121,11 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 14,
-        description: `Place pivot ${right} into its final index ${storeIndex} by swapping with ${left}.`,
+        description: i18nText(I18N.descriptions.placePivot, {
+          pivot: right,
+          index: storeIndex,
+          left,
+        }),
         swapping: [storeIndex, high],
         sorted: [...settled].sort((leftIndex, rightIndex) => leftIndex - rightIndex),
         boundary: size,
@@ -110,7 +136,10 @@ export function* quickSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 14,
-        description: `Pivot ${pivot} is already at its final index ${storeIndex}.`,
+        description: i18nText(I18N.descriptions.pivotSettled, {
+          pivot,
+          index: storeIndex,
+        }),
         comparing: [storeIndex, storeIndex],
         sorted: [...settled].sort((leftIndex, rightIndex) => leftIndex - rightIndex),
         boundary: size,

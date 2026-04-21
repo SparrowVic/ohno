@@ -1,5 +1,38 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../../core/i18n/translatable-text';
 import { SortStep } from '../../models/sort-step';
 import { createSearchStep } from '../search-step';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.search.binarySearch.modeLabel'),
+  statuses: {
+    ready: t('features.algorithms.runtime.search.binarySearch.statuses.ready'),
+    comparing: t('features.algorithms.runtime.search.binarySearch.statuses.comparing'),
+    found: t('features.algorithms.runtime.search.binarySearch.statuses.found'),
+    moveRight: t('features.algorithms.runtime.search.binarySearch.statuses.moveRight'),
+    moveLeft: t('features.algorithms.runtime.search.binarySearch.statuses.moveLeft'),
+    notFound: t('features.algorithms.runtime.search.binarySearch.statuses.notFound'),
+  },
+  descriptions: {
+    start: t('features.algorithms.runtime.search.binarySearch.descriptions.start'),
+    probe: t('features.algorithms.runtime.search.binarySearch.descriptions.probe'),
+    found: t('features.algorithms.runtime.search.binarySearch.descriptions.found'),
+    moveRight: t('features.algorithms.runtime.search.binarySearch.descriptions.moveRight'),
+    moveLeft: t('features.algorithms.runtime.search.binarySearch.descriptions.moveLeft'),
+    notFound: t('features.algorithms.runtime.search.binarySearch.descriptions.notFound'),
+  },
+  decisions: {
+    compare: t('features.algorithms.runtime.search.binarySearch.decisions.compare'),
+    collapsedWindow: t(
+      'features.algorithms.runtime.search.binarySearch.decisions.collapsedWindow',
+    ),
+    newWindow: t('features.algorithms.runtime.search.binarySearch.decisions.newWindow'),
+    candidateWindowEmpty: t(
+      'features.algorithms.runtime.search.binarySearch.decisions.candidateWindowEmpty',
+    ),
+  },
+} as const;
 
 export function* binarySearchGenerator(args: {
   readonly array: readonly number[];
@@ -15,9 +48,9 @@ export function* binarySearchGenerator(args: {
     array: arr,
     target: args.target,
     activeCodeLine: 1,
-    description: `Start binary search for ${args.target} in a sorted array.`,
-    modeLabel: 'Binary search',
-    statusLabel: 'Ready',
+    description: i18nText(I18N.descriptions.start, { target: args.target }),
+    modeLabel: I18N.modeLabel,
+    statusLabel: I18N.statuses.ready,
     low: arr.length > 0 ? low : null,
     high: arr.length > 0 ? high : null,
     phase: 'init',
@@ -30,12 +63,18 @@ export function* binarySearchGenerator(args: {
       array: arr,
       target: args.target,
       activeCodeLine: 3,
-      description: `Probe middle index ${mid}: compare ${arr[mid]} with target ${args.target}.`,
-      modeLabel: 'Binary search',
-      statusLabel: 'Comparing',
-      decision: `${arr[mid]} ${arr[mid] === args.target ? '=' : arr[mid] < args.target ? '<' : '>'} ${
-        args.target
-      }`,
+      description: i18nText(I18N.descriptions.probe, {
+        index: mid,
+        value: arr[mid],
+        target: args.target,
+      }),
+      modeLabel: I18N.modeLabel,
+      statusLabel: I18N.statuses.comparing,
+      decision: i18nText(I18N.decisions.compare, {
+        value: arr[mid],
+        relation: arr[mid] === args.target ? '=' : arr[mid] < args.target ? '<' : '>',
+        target: args.target,
+      }),
       probeIndex: mid,
       low,
       high,
@@ -51,10 +90,10 @@ export function* binarySearchGenerator(args: {
         array: arr,
         target: args.target,
         activeCodeLine: 5,
-        description: `Found target ${args.target} at middle index ${mid}.`,
-        modeLabel: 'Binary search',
-        statusLabel: 'Found',
-        decision: `window collapsed on index ${mid}`,
+        description: i18nText(I18N.descriptions.found, { target: args.target, index: mid }),
+        modeLabel: I18N.modeLabel,
+        statusLabel: I18N.statuses.found,
+        decision: i18nText(I18N.decisions.collapsedWindow, { index: mid }),
         probeIndex: mid,
         low: mid,
         high: mid,
@@ -75,10 +114,13 @@ export function* binarySearchGenerator(args: {
         array: arr,
         target: args.target,
         activeCodeLine: 8,
-        description: `${arr[mid]} is smaller than ${args.target}, so keep only the right half.`,
-        modeLabel: 'Binary search',
-        statusLabel: 'Move right',
-        decision: `new window [${low}, ${high}]`,
+        description: i18nText(I18N.descriptions.moveRight, {
+          value: arr[mid],
+          target: args.target,
+        }),
+        modeLabel: I18N.modeLabel,
+        statusLabel: I18N.statuses.moveRight,
+        decision: i18nText(I18N.decisions.newWindow, { low, high }),
         low: low <= high ? low : null,
         high: low <= high ? high : null,
         eliminated: [...eliminated],
@@ -97,10 +139,13 @@ export function* binarySearchGenerator(args: {
       array: arr,
       target: args.target,
       activeCodeLine: 10,
-      description: `${arr[mid]} is larger than ${args.target}, so keep only the left half.`,
-      modeLabel: 'Binary search',
-      statusLabel: 'Move left',
-      decision: `new window [${low}, ${high}]`,
+      description: i18nText(I18N.descriptions.moveLeft, {
+        value: arr[mid],
+        target: args.target,
+      }),
+      modeLabel: I18N.modeLabel,
+      statusLabel: I18N.statuses.moveLeft,
+      decision: i18nText(I18N.decisions.newWindow, { low, high }),
       low: low <= high ? low : null,
       high: low <= high ? high : null,
       eliminated: [...eliminated],
@@ -113,10 +158,10 @@ export function* binarySearchGenerator(args: {
     array: arr,
     target: args.target,
     activeCodeLine: 12,
-    description: `Binary search exhausted the window. ${args.target} was not found.`,
-    modeLabel: 'Binary search',
-    statusLabel: 'Not found',
-    decision: 'candidate window became empty',
+    description: i18nText(I18N.descriptions.notFound, { target: args.target }),
+    modeLabel: I18N.modeLabel,
+    statusLabel: I18N.statuses.notFound,
+    decision: I18N.decisions.candidateWindowEmpty,
     low: null,
     high: null,
     eliminated: [...eliminated],

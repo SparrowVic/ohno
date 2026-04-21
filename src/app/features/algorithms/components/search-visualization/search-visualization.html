@@ -9,10 +9,11 @@
           {{ I18N_KEY.features.algorithms.visualizations.search.guideTitle | transloco }}
         </h3>
         <p class="viz-flow__desc">
-          {{
-            search.decision ||
-              (I18N_KEY.features.algorithms.visualizations.search.guideFallbackDesc | transloco)
-          }}
+          @if (search.decision) {
+            {{ search.decision | i18nText }}
+          } @else {
+            {{ I18N_KEY.features.algorithms.visualizations.search.guideFallbackDesc | transloco }}
+          }
         </p>
       </div>
 
@@ -21,16 +22,17 @@
           I18N_KEY.features.algorithms.visualizations.search.targetLabel | transloco
         }}</span>
         <span class="search-viz__target-value">{{ search.target }}</span>
-        <span class="search-viz__target-subtitle">{{ search.modeLabel }}</span>
+        <span class="search-viz__target-subtitle">{{ search.modeLabel | i18nText }}</span>
       </div>
 
       <div class="search-viz__decision-shell">
-        <div class="search-viz__decision-label">{{ search.statusLabel }}</div>
+        <div class="search-viz__decision-label">{{ search.statusLabel | i18nText }}</div>
         <div class="search-viz__decision">
-          {{
-            search.decision ||
-              (I18N_KEY.features.algorithms.visualizations.search.decisionFallback | transloco)
-          }}
+          @if (search.decision) {
+            {{ search.decision | i18nText }}
+          } @else {
+            {{ I18N_KEY.features.algorithms.visualizations.search.decisionFallback | transloco }}
+          }
         </div>
       </div>
     </aside>
@@ -40,7 +42,7 @@
         <span class="viz-flow__eyebrow">{{
           I18N_KEY.features.algorithms.visualizations.search.snapshotEyebrow | transloco
         }}</span>
-        <h3 class="viz-flow__title">{{ search.modeLabel }}</h3>
+        <h3 class="viz-flow__title">{{ search.modeLabel | i18nText }}</h3>
         <p class="viz-flow__desc">
           {{ I18N_KEY.features.algorithms.visualizations.search.snapshotDesc | transloco }}
         </p>
@@ -90,7 +92,7 @@
             {{ I18N_KEY.features.algorithms.visualizations.search.stageTitle | transloco }}
           </h3>
         </div>
-        <span class="viz-flow__pill viz-flow__pill--warm">{{ search.statusLabel }}</span>
+        <span class="viz-flow__pill viz-flow__pill--warm">{{ search.statusLabel | i18nText }}</span>
       </div>
 
       <div class="viz-flow__stage-body">

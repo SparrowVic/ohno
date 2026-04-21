@@ -17,6 +17,7 @@ import { DsuEdgeTrace, DsuNodeTrace, DsuTraceState, DsuTraceTag } from '../../mo
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { TraceHint } from '../trace-hint/trace-hint';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 interface DsuTagLegendItem {
   readonly id: DsuTraceTag | 'accepted' | 'rejected';
@@ -94,7 +95,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-dsu-trace-panel',
-  imports: [Table, TraceHint, TranslocoPipe],
+  imports: [I18nTextPipe, Table, TraceHint, TranslocoPipe],
   templateUrl: './dsu-trace-panel.html',
   styleUrl: './dsu-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

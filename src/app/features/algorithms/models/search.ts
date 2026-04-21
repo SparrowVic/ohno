@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type SearchRowStatus =
   | 'idle'
   | 'window'
@@ -18,9 +20,9 @@ export interface SearchTraceRow {
 
 export interface SearchTraceState {
   readonly target: number;
-  readonly modeLabel: string;
-  readonly statusLabel: string;
-  readonly decision: string | null;
+  readonly modeLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText | null;
   readonly low: number | null;
   readonly high: number | null;
   readonly probeIndex: number | null;

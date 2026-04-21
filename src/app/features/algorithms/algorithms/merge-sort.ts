@@ -1,5 +1,18 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import { SortStep } from '../models/sort-step';
 import { createArrayStep, prefixSorted } from './array-sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.mergeSort.descriptions.start'),
+    complete: t('features.algorithms.runtime.sort.mergeSort.descriptions.complete'),
+    splitRange: t('features.algorithms.runtime.sort.mergeSort.descriptions.splitRange'),
+    compareHalves: t('features.algorithms.runtime.sort.mergeSort.descriptions.compareHalves'),
+    writeBack: t('features.algorithms.runtime.sort.mergeSort.descriptions.writeBack'),
+  },
+} as const;
 
 export function* mergeSortGenerator(input: readonly number[]): Generator<SortStep> {
   const arr = [...input];
@@ -9,7 +22,7 @@ export function* mergeSortGenerator(input: readonly number[]): Generator<SortSte
   yield createArrayStep({
     array: arr,
     activeCodeLine: 1,
-    description: `Start merge sort (n=${size})`,
+    description: i18nText(I18N.descriptions.start, { size }),
     boundary: size,
     phase: 'init',
   });
@@ -21,7 +34,7 @@ export function* mergeSortGenerator(input: readonly number[]): Generator<SortSte
   yield createArrayStep({
     array: arr,
     activeCodeLine: 4,
-    description: 'Merge sort complete.',
+    description: I18N.descriptions.complete,
     sorted: prefixSorted(size),
     boundary: size,
     phase: 'complete',
@@ -37,7 +50,7 @@ export function* mergeSortGenerator(input: readonly number[]): Generator<SortSte
     yield createArrayStep({
       array: arr,
       activeCodeLine: 7,
-      description: `Split range [${left}, ${right}] around middle ${middle}.`,
+      description: i18nText(I18N.descriptions.splitRange, { left, right, middle }),
       comparing: [left, right],
       boundary: size,
       phase: 'compare',
@@ -57,7 +70,10 @@ export function* mergeSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 15,
-        description: `Compare ${arr[leftIndex]} from the left half with ${arr[rightIndex]} from the right half.`,
+        description: i18nText(I18N.descriptions.compareHalves, {
+          leftValue: arr[leftIndex] ?? '',
+          rightValue: arr[rightIndex] ?? '',
+        }),
         comparing: [leftIndex, rightIndex],
         boundary: size,
         phase: 'compare',
@@ -91,7 +107,10 @@ export function* mergeSortGenerator(input: readonly number[]): Generator<SortSte
       yield createArrayStep({
         array: arr,
         activeCodeLine: 19,
-        description: `Write merged value ${arr[index]} back to index ${index}.`,
+        description: i18nText(I18N.descriptions.writeBack, {
+          value: arr[index] ?? '',
+          index,
+        }),
         comparing: [index, index],
         boundary: size,
         phase: 'pass-complete',

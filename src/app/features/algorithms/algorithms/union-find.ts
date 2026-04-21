@@ -1,7 +1,58 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DsuEdgeTrace } from '../models/dsu';
 import { SortStep } from '../models/sort-step';
 import { UnionFindOperation, UnionFindScenario } from '../utils/dsu-scenarios/dsu-scenarios';
 import { createDsuStep, DsuBaseNode } from './dsu-step';
+
+const I18N = {
+  statuses: {
+    ready: t('features.algorithms.runtime.dsu.unionFind.statuses.ready'),
+    findRepresentative: t(
+      'features.algorithms.runtime.dsu.unionFind.statuses.findRepresentative',
+    ),
+    pathCompression: t('features.algorithms.runtime.dsu.unionFind.statuses.pathCompression'),
+    compareRoots: t('features.algorithms.runtime.dsu.unionFind.statuses.compareRoots'),
+    unionSkipped: t('features.algorithms.runtime.dsu.unionFind.statuses.unionSkipped'),
+    unionByRank: t('features.algorithms.runtime.dsu.unionFind.statuses.unionByRank'),
+    complete: t('features.algorithms.runtime.dsu.unionFind.statuses.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dsu.unionFind.descriptions.initialize'),
+    followPath: t('features.algorithms.runtime.dsu.unionFind.descriptions.followPath'),
+    compressPath: t('features.algorithms.runtime.dsu.unionFind.descriptions.compressPath'),
+    alreadyCompressed: t(
+      'features.algorithms.runtime.dsu.unionFind.descriptions.alreadyCompressed',
+    ),
+    compareRoots: t('features.algorithms.runtime.dsu.unionFind.descriptions.compareRoots'),
+    skipMerge: t('features.algorithms.runtime.dsu.unionFind.descriptions.skipMerge'),
+    attachRoot: t('features.algorithms.runtime.dsu.unionFind.descriptions.attachRoot'),
+    complete: t('features.algorithms.runtime.dsu.unionFind.descriptions.complete'),
+  },
+  decisions: {
+    singletonRoots: t('features.algorithms.runtime.dsu.unionFind.decisions.singletonRoots'),
+    currentPath: t('features.algorithms.runtime.dsu.unionFind.decisions.currentPath'),
+    representativeIs: t(
+      'features.algorithms.runtime.dsu.unionFind.decisions.representativeIs',
+    ),
+    representativePair: t(
+      'features.algorithms.runtime.dsu.unionFind.decisions.representativePair',
+    ),
+    noStructuralChange: t(
+      'features.algorithms.runtime.dsu.unionFind.decisions.noStructuralChange',
+    ),
+    newRootRepresents: t(
+      'features.algorithms.runtime.dsu.unionFind.decisions.newRootRepresents',
+    ),
+    finalStable: t('features.algorithms.runtime.dsu.unionFind.decisions.finalStable'),
+  },
+  labels: {
+    singletonSets: t('features.algorithms.runtime.dsu.unionFind.labels.singletonSets'),
+    activeSets: t('features.algorithms.runtime.dsu.unionFind.labels.activeSets'),
+    operationQueue: t('features.algorithms.runtime.dsu.unionFind.labels.operationQueue'),
+  },
+} as const;
 
 export function* unionFindGenerator(scenario: UnionFindScenario): Generator<SortStep> {
   const nodes = scenario.nodes;
@@ -17,12 +68,12 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
     size,
     operations: scenario.operations,
     statuses,
-    description: 'Initialize each element as its own set with itself as parent.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    statusLabel: 'Disjoint sets ready',
-    decision: 'Every node starts as a root of size 1.',
-    resultLabel: `${nodes.length} singleton sets`,
-    operationsLabel: 'Operation queue',
+    statusLabel: I18N.statuses.ready,
+    decision: I18N.decisions.singletonRoots,
+    resultLabel: i18nText(I18N.labels.singletonSets, { count: nodes.length }),
+    operationsLabel: I18N.labels.operationQueue,
   });
 
   for (let index = 0; index < scenario.operations.length; index++) {
@@ -39,12 +90,16 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
         size,
         operations: scenario.operations,
         statuses,
-        description: `Follow parent pointers from ${labelOf(nodes, operation.a)} to locate its representative.`,
+        description: i18nText(I18N.descriptions.followPath, {
+          label: labelOf(nodes, operation.a),
+        }),
         activeCodeLine: 5,
-        statusLabel: 'Find representative',
-        decision: `Current path: ${labelsFor(nodes, path).join(' → ')}.`,
-        resultLabel: `${componentCount(parent)} active sets`,
-        operationsLabel: 'Operation queue',
+        statusLabel: I18N.statuses.findRepresentative,
+        decision: i18nText(I18N.decisions.currentPath, {
+          path: labelsFor(nodes, path).join(' → '),
+        }),
+        resultLabel: i18nText(I18N.labels.activeSets, { count: componentCount(parent) }),
+        operationsLabel: I18N.labels.operationQueue,
         activeIds: path,
         queryIds: [operation.a],
       });
@@ -63,14 +118,18 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
         size,
         operations: scenario.operations,
         statuses,
-        description: compressed.length > 0
-          ? `Compress the path so every visited node now points directly to ${labelOf(nodes, root)}.`
-          : `${labelOf(nodes, operation.a)} already points to root ${labelOf(nodes, root)}.`,
+        description:
+          compressed.length > 0
+            ? i18nText(I18N.descriptions.compressPath, { root: labelOf(nodes, root) })
+            : i18nText(I18N.descriptions.alreadyCompressed, {
+                node: labelOf(nodes, operation.a),
+                root: labelOf(nodes, root),
+              }),
         activeCodeLine: 6,
-        statusLabel: 'Path compression',
-        decision: `Representative is ${labelOf(nodes, root)}.`,
-        resultLabel: `${componentCount(parent)} active sets`,
-        operationsLabel: 'Operation queue',
+        statusLabel: I18N.statuses.pathCompression,
+        decision: i18nText(I18N.decisions.representativeIs, { root: labelOf(nodes, root) }),
+        resultLabel: i18nText(I18N.labels.activeSets, { count: componentCount(parent) }),
+        operationsLabel: I18N.labels.operationQueue,
         activeIds: [root],
         compressedIds: compressed,
         queryIds: [operation.a],
@@ -90,12 +149,20 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
       size,
       operations: scenario.operations,
       statuses,
-      description: `Find the representatives for ${labelOf(nodes, operation.a)} and ${labelOf(nodes, operation.b!)} before merging.`,
+      description: i18nText(I18N.descriptions.compareRoots, {
+        left: labelOf(nodes, operation.a),
+        right: labelOf(nodes, operation.b!),
+      }),
       activeCodeLine: 8,
-      statusLabel: 'Compare two roots',
-      decision: `${labelOf(nodes, operation.a)} -> ${labelOf(nodes, leftRoot)}, ${labelOf(nodes, operation.b!)} -> ${labelOf(nodes, rightRoot)}.`,
-      resultLabel: `${componentCount(parent)} active sets`,
-      operationsLabel: 'Operation queue',
+      statusLabel: I18N.statuses.compareRoots,
+      decision: i18nText(I18N.decisions.representativePair, {
+        left: labelOf(nodes, operation.a),
+        leftRoot: labelOf(nodes, leftRoot),
+        right: labelOf(nodes, operation.b!),
+        rightRoot: labelOf(nodes, rightRoot),
+      }),
+      resultLabel: i18nText(I18N.labels.activeSets, { count: componentCount(parent) }),
+      operationsLabel: I18N.labels.operationQueue,
       activeIds: [operation.a, operation.b!],
       queryIds: [...new Set([...leftPath, ...rightPath])],
     });
@@ -109,12 +176,12 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
         size,
         operations: scenario.operations,
         statuses,
-        description: `Skip merge because both elements already belong to the same set rooted at ${labelOf(nodes, leftRoot)}.`,
+        description: i18nText(I18N.descriptions.skipMerge, { root: labelOf(nodes, leftRoot) }),
         activeCodeLine: 9,
-        statusLabel: 'Union skipped',
-        decision: 'No structural change needed.',
-        resultLabel: `${componentCount(parent)} active sets`,
-        operationsLabel: 'Operation queue',
+        statusLabel: I18N.statuses.unionSkipped,
+        decision: I18N.decisions.noStructuralChange,
+        resultLabel: i18nText(I18N.labels.activeSets, { count: componentCount(parent) }),
+        operationsLabel: I18N.labels.operationQueue,
         activeIds: [leftRoot],
       });
       continue;
@@ -143,12 +210,18 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
       size,
       operations: scenario.operations,
       statuses,
-      description: `Attach ${labelOf(nodes, attachRoot)} under ${labelOf(nodes, keepRoot)} and merge the two sets.`,
+      description: i18nText(I18N.descriptions.attachRoot, {
+        attach: labelOf(nodes, attachRoot),
+        keep: labelOf(nodes, keepRoot),
+      }),
       activeCodeLine: 10,
-      statusLabel: 'Union by rank',
-      decision: `New root ${labelOf(nodes, keepRoot)} now represents ${size.get(keepRoot)} element(s).`,
-      resultLabel: `${componentCount(parent)} active sets`,
-      operationsLabel: 'Operation queue',
+      statusLabel: I18N.statuses.unionByRank,
+      decision: i18nText(I18N.decisions.newRootRepresents, {
+        root: labelOf(nodes, keepRoot),
+        count: size.get(keepRoot),
+      }),
+      resultLabel: i18nText(I18N.labels.activeSets, { count: componentCount(parent) }),
+      operationsLabel: I18N.labels.operationQueue,
       activeIds: [keepRoot],
       mergedIds: [attachRoot],
     });
@@ -161,13 +234,13 @@ export function* unionFindGenerator(scenario: UnionFindScenario): Generator<Sort
     size,
     operations: scenario.operations,
     statuses,
-    description: `Union-Find complete. ${componentCount(parent)} disjoint set(s) remain after all operations.`,
+    description: i18nText(I18N.descriptions.complete, { count: componentCount(parent) }),
     activeCodeLine: 12,
     phase: 'graph-complete',
-    statusLabel: 'Operations complete',
-    decision: 'Final parent links and set sizes are stable.',
-    resultLabel: `${componentCount(parent)} active sets`,
-    operationsLabel: 'Operation queue',
+    statusLabel: I18N.statuses.complete,
+    decision: I18N.decisions.finalStable,
+    resultLabel: i18nText(I18N.labels.activeSets, { count: componentCount(parent) }),
+    operationsLabel: I18N.labels.operationQueue,
   });
 }
 
@@ -178,13 +251,13 @@ function createStep(args: {
   readonly size: ReadonlyMap<string, number>;
   readonly operations: readonly UnionFindOperation[];
   readonly statuses: ReadonlyMap<number, DsuEdgeTrace['status']>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
-  readonly statusLabel: string;
-  readonly decision: string;
-  readonly resultLabel: string;
-  readonly operationsLabel: string;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly operationsLabel: TranslatableText;
   readonly activeIds?: readonly string[];
   readonly mergedIds?: readonly string[];
   readonly compressedIds?: readonly string[];

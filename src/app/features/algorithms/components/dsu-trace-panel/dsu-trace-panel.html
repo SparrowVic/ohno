@@ -8,7 +8,7 @@
           <span class="trace__summary-label">{{
             I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco
           }}</span>
-          <span class="trace__summary-value">{{ dsuState.modeLabel }}</span>
+          <span class="trace__summary-value">{{ dsuState.modeLabel | i18nText }}</span>
         </div>
         <div class="trace__summary-card">
           <span class="trace__summary-label">{{
@@ -26,7 +26,7 @@
           <span class="trace__summary-label">{{
             I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco
           }}</span>
-          <span class="trace__summary-value">{{ dsuState.resultLabel }}</span>
+          <span class="trace__summary-value">{{ dsuState.resultLabel | i18nText }}</span>
         </div>
       </div>
 
@@ -36,20 +36,21 @@
             <span class="trace__summary-label">{{
               I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco
             }}</span>
-            <span class="trace__calc-value">{{ dsuState.statusLabel }}</span>
+            <span class="trace__calc-value">{{ dsuState.statusLabel | i18nText }}</span>
           </div>
           <div class="trace__calc-pill">
             <span class="trace__summary-label">{{
               I18N_KEY.features.algorithms.tracePanels.dsu.railLabel | transloco
             }}</span>
-            <span class="trace__calc-value">{{ dsuState.operationsLabel }}</span>
+            <span class="trace__calc-value">{{ dsuState.operationsLabel | i18nText }}</span>
           </div>
         </div>
         <div class="trace__calc-decision">
-          {{
-            dsuState.decision ||
-              (I18N_KEY.features.algorithms.tracePanels.dsu.awaitingOperationLabel | transloco)
-          }}
+          @if (dsuState.decision) {
+            {{ dsuState.decision | i18nText }}
+          } @else {
+            {{ I18N_KEY.features.algorithms.tracePanels.dsu.awaitingOperationLabel | transloco }}
+          }
         </div>
       </div>
 
@@ -71,7 +72,7 @@
       </div>
 
       <div class="trace__queue">
-        <div class="trace__section-label">{{ dsuState.operationsLabel }}</div>
+        <div class="trace__section-label">{{ dsuState.operationsLabel | i18nText }}</div>
         <div class="trace__queue-items">
           @for (edge of edgeRows(); track edge.id) {
             <span class="trace__queue-chip trace__queue-chip--{{ edge.status }}">

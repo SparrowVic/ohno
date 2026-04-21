@@ -1,6 +1,46 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { GridTraceCell, GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
 import { cellId, FloodFillScenario, labelForCell, neighbors } from '../../utils/grid-scenarios/grid-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.grid.floodFill.modeLabel'),
+  statuses: {
+    readyToSpread: t('features.algorithms.runtime.grid.floodFill.statuses.readyToSpread'),
+    inspectCurrentCell: t(
+      'features.algorithms.runtime.grid.floodFill.statuses.inspectCurrentCell',
+    ),
+    blockedCell: t('features.algorithms.runtime.grid.floodFill.statuses.blockedCell'),
+    regionExpands: t('features.algorithms.runtime.grid.floodFill.statuses.regionExpands'),
+    queueMatchingNeighbor: t(
+      'features.algorithms.runtime.grid.floodFill.statuses.queueMatchingNeighbor',
+    ),
+    regionComplete: t('features.algorithms.runtime.grid.floodFill.statuses.regionComplete'),
+  },
+  descriptions: {
+    start: t('features.algorithms.runtime.grid.floodFill.descriptions.start'),
+    inspect: t('features.algorithms.runtime.grid.floodFill.descriptions.inspect'),
+    blocked: t('features.algorithms.runtime.grid.floodFill.descriptions.blocked'),
+    fill: t('features.algorithms.runtime.grid.floodFill.descriptions.fill'),
+    queueNeighbor: t('features.algorithms.runtime.grid.floodFill.descriptions.queueNeighbor'),
+    complete: t('features.algorithms.runtime.grid.floodFill.descriptions.complete'),
+  },
+  decisions: {
+    replaceColors: t('features.algorithms.runtime.grid.floodFill.decisions.replaceColors'),
+    cellColor: t('features.algorithms.runtime.grid.floodFill.decisions.cellColor'),
+    keepOriginalColor: t(
+      'features.algorithms.runtime.grid.floodFill.decisions.keepOriginalColor',
+    ),
+    paintedColor: t('features.algorithms.runtime.grid.floodFill.decisions.paintedColor'),
+    sameSourceColor: t('features.algorithms.runtime.grid.floodFill.decisions.sameSourceColor'),
+    finalRegionSize: t('features.algorithms.runtime.grid.floodFill.decisions.finalRegionSize'),
+  },
+  labels: {
+    fillColor: t('features.algorithms.runtime.grid.floodFill.labels.fillColor'),
+  },
+} as const;
 
 export function* floodFillGenerator(scenario: FloodFillScenario): Generator<SortStep> {
   const filled = new Set<string>();
@@ -18,11 +58,17 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
     visited,
     order,
     activeId: seedId,
-    description: `Start flood fill at ${labelForCell(scenario.startRow, scenario.startCol)} and look for color ${scenario.sourceColor}.`,
+    description: i18nText(I18N.descriptions.start, {
+      cell: labelForCell(scenario.startRow, scenario.startCol),
+      sourceColor: scenario.sourceColor,
+    }),
     activeCodeLine: 2,
     phase: 'init',
-    statusLabel: 'Ready to spread',
-    decision: `Replace region color ${scenario.sourceColor} with ${scenario.fillColor}.`,
+    statusLabel: I18N.statuses.readyToSpread,
+    decision: i18nText(I18N.decisions.replaceColors, {
+      sourceColor: scenario.sourceColor,
+      fillColor: scenario.fillColor,
+    }),
   });
 
   while (queue.length > 0) {
@@ -38,11 +84,16 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
       visited,
       order,
       activeId: currentId,
-      description: `Inspect ${labelForCell(row, col)} at wave depth ${depth}.`,
+      description: i18nText(I18N.descriptions.inspect, {
+        cell: labelForCell(row, col),
+        depth,
+      }),
       activeCodeLine: 5,
       phase: 'pick-node',
-      statusLabel: 'Inspect current cell',
-      decision: `Cell color is ${scenario.cells[row]?.[col] ?? '?'}.`,
+      statusLabel: I18N.statuses.inspectCurrentCell,
+      decision: i18nText(I18N.decisions.cellColor, {
+        color: scenario.cells[row]?.[col] ?? '?',
+      }),
     });
 
     if ((scenario.cells[row]?.[col] ?? null) !== scenario.sourceColor || filled.has(currentId)) {
@@ -53,11 +104,13 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
         visited,
         order,
         activeId: currentId,
-        description: `${labelForCell(row, col)} does not belong to the fill region, so stop spreading through it.`,
+        description: i18nText(I18N.descriptions.blocked, {
+          cell: labelForCell(row, col),
+        }),
         activeCodeLine: 6,
         phase: 'skip-relax',
-        statusLabel: 'Blocked cell',
-        decision: 'Keep original color and skip expansion.',
+        statusLabel: I18N.statuses.blockedCell,
+        decision: I18N.decisions.keepOriginalColor,
       });
       continue;
     }
@@ -72,11 +125,13 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
       visited,
       order,
       activeId: currentId,
-      description: `Fill ${labelForCell(row, col)} and expand to its four neighbors.`,
+      description: i18nText(I18N.descriptions.fill, {
+        cell: labelForCell(row, col),
+      }),
       activeCodeLine: 7,
       phase: 'relax',
-      statusLabel: 'Region expands',
-      decision: `Painted with color ${scenario.fillColor}.`,
+      statusLabel: I18N.statuses.regionExpands,
+      decision: i18nText(I18N.decisions.paintedColor, { fillColor: scenario.fillColor }),
     });
 
     for (const [nextRow, nextCol] of neighbors(row, col, scenario.size)) {
@@ -98,11 +153,13 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
         visited,
         order,
         activeId: nextId,
-        description: `Queue ${labelForCell(nextRow, nextCol)} as the next matching cell in the wave.`,
+        description: i18nText(I18N.descriptions.queueNeighbor, {
+          cell: labelForCell(nextRow, nextCol),
+        }),
         activeCodeLine: 8,
         phase: 'inspect-edge',
-        statusLabel: 'Queue matching neighbor',
-        decision: `Same source color ${scenario.sourceColor}, so it joins the frontier.`,
+        statusLabel: I18N.statuses.queueMatchingNeighbor,
+        decision: i18nText(I18N.decisions.sameSourceColor, { sourceColor: scenario.sourceColor }),
       });
     }
   }
@@ -114,11 +171,11 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
     visited,
     order,
     activeId: null,
-    description: `Flood fill complete. Painted ${filled.size} cell(s) from the selected region.`,
+    description: i18nText(I18N.descriptions.complete, { count: filled.size }),
     activeCodeLine: 10,
     phase: 'graph-complete',
-    statusLabel: 'Region complete',
-    decision: `Final painted region size: ${filled.size}.`,
+    statusLabel: I18N.statuses.regionComplete,
+    decision: i18nText(I18N.decisions.finalRegionSize, { count: filled.size }),
   });
 }
 
@@ -129,15 +186,15 @@ function createFloodFillStep(args: {
   readonly visited: ReadonlySet<string>;
   readonly order: readonly string[];
   readonly activeId: string | null;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
-  readonly statusLabel: string;
-  readonly decision: string;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText;
 }): SortStep {
   const state: GridTraceState = {
     mode: 'flood-fill',
-    modeLabel: 'Flood Fill',
+    modeLabel: I18N.modeLabel,
     statusLabel: args.statusLabel,
     decision: args.decision,
     rows: args.scenario.size,
@@ -149,7 +206,7 @@ function createFloodFillStep(args: {
     visitedCount: args.visited.size,
     resultCount: args.filled.size,
     sourceLabel: labelForCell(args.scenario.startRow, args.scenario.startCol),
-    targetLabel: `fill ${args.scenario.fillColor}`,
+    targetLabel: i18nText(I18N.labels.fillColor, { color: args.scenario.fillColor }),
     visitOrder: [...args.order],
     cells: buildFloodCells(args.scenario, args.filled, args.frontier, args.visited, args.activeId),
   };

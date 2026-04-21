@@ -14,6 +14,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SearchTraceState } from '../../models/search';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
@@ -24,7 +25,7 @@ import {
 
 @Component({
   selector: 'app-search-visualization',
-  imports: [TranslocoPipe],
+  imports: [I18nTextPipe, TranslocoPipe],
   templateUrl: './search-visualization.html',
   styleUrl: './search-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

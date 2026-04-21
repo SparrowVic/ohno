@@ -1,8 +1,26 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText } from '../../../core/i18n/translatable-text';
 import {
   SortBucketSnapshot,
   SortItemSnapshot,
   SortStep,
 } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    start: t('features.algorithms.runtime.sort.radixSort.descriptions.start'),
+    focusDigit: t('features.algorithms.runtime.sort.radixSort.descriptions.focusDigit'),
+    distributeToBucket: t(
+      'features.algorithms.runtime.sort.radixSort.descriptions.distributeToBucket',
+    ),
+    gatherFromBucket: t('features.algorithms.runtime.sort.radixSort.descriptions.gatherFromBucket'),
+    finalPassComplete: t(
+      'features.algorithms.runtime.sort.radixSort.descriptions.finalPassComplete',
+    ),
+    passComplete: t('features.algorithms.runtime.sort.radixSort.descriptions.passComplete'),
+  },
+} as const;
 
 const EMPTY_SORTED: readonly number[] = [];
 const EMPTY_BUCKETS: readonly SortBucketSnapshot[] = Array.from({ length: 10 }, (_, bucket) => ({
@@ -23,7 +41,7 @@ export function* radixSortGenerator(input: readonly number[]): Generator<SortSte
     buckets: EMPTY_BUCKETS,
     phase: 'idle',
     activeCodeLine: 1,
-    description: `Start radix sort (base 10, ${maxDigits} digit${maxDigits === 1 ? '' : 's'})`,
+    description: i18nText(I18N.descriptions.start, { maxDigits }),
     maxDigits,
   });
 
@@ -40,7 +58,10 @@ export function* radixSortGenerator(input: readonly number[]): Generator<SortSte
       digitIndex,
       maxDigits,
       activeCodeLine: 3,
-      description: `Focus ${digitLabel(digitIndex)} digit across ${source.length} values`,
+      description: i18nText(I18N.descriptions.focusDigit, {
+        digitPower: digitIndex,
+        count: source.length,
+      }),
     });
 
     for (const item of source) {
@@ -58,7 +79,11 @@ export function* radixSortGenerator(input: readonly number[]): Generator<SortSte
         activeItemId: item.id,
         activeBucket: bucket,
         activeCodeLine: 7,
-        description: `Send ${item.value} to bucket ${bucket} using its ${digitLabel(digitIndex)} digit`,
+        description: i18nText(I18N.descriptions.distributeToBucket, {
+          value: item.value,
+          bucket,
+          digitPower: digitIndex,
+        }),
       });
     }
 
@@ -80,7 +105,10 @@ export function* radixSortGenerator(input: readonly number[]): Generator<SortSte
           activeItemId: item.id,
           activeBucket: bucket,
           activeCodeLine: 11,
-          description: `Gather ${item.value} from bucket ${bucket} back into the output stream`,
+          description: i18nText(I18N.descriptions.gatherFromBucket, {
+            value: item.value,
+            bucket,
+          }),
         });
       }
     }
@@ -98,8 +126,12 @@ export function* radixSortGenerator(input: readonly number[]): Generator<SortSte
       activeCodeLine: 13,
       description:
         digitIndex === maxDigits - 1
-          ? 'All digit passes complete — array sorted'
-          : `Pass ${digitIndex + 1}/${maxDigits} complete — order locked for the ${digitLabel(digitIndex)} digit`,
+          ? I18N.descriptions.finalPassComplete
+          : i18nText(I18N.descriptions.passComplete, {
+              pass: digitIndex + 1,
+              maxDigits,
+              digitPower: digitIndex,
+            }),
       sorted: digitIndex === maxDigits - 1 ? current.map((_, index) => index) : EMPTY_SORTED,
       boundary: digitIndex === maxDigits - 1 ? 0 : current.length,
     });
@@ -113,7 +145,7 @@ function createStep(config: {
   readonly buckets: readonly SortBucketSnapshot[];
   readonly phase: SortStep['phase'];
   readonly activeCodeLine: number;
-  readonly description: string;
+  readonly description: SortStep['description'];
   readonly digitIndex?: number | null;
   readonly maxDigits: number;
   readonly activeItemId?: string | null;
@@ -160,11 +192,4 @@ function valuesOf(items: readonly SortItemSnapshot[]): readonly number[] {
 
 function digitAt(value: number, digitIndex: number): number {
   return Math.floor(value / 10 ** digitIndex) % 10;
-}
-
-function digitLabel(digitIndex: number): string {
-  if (digitIndex === 0) return 'ones';
-  if (digitIndex === 1) return 'tens';
-  if (digitIndex === 2) return 'hundreds';
-  return `10^${digitIndex}`;
 }

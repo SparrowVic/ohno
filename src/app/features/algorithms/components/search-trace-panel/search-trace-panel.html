@@ -38,11 +38,11 @@
       >
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
-          [value]="searchState.modeLabel"
+          [value]="searchState.modeLabel | i18nText"
         />
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco"
-          [value]="searchState.statusLabel"
+          [value]="searchState.statusLabel | i18nText"
         />
         <app-segmented-panel-section
           class="trace__calc-item--accent"
@@ -51,10 +51,11 @@
         />
         <app-segmented-panel-section class="trace__calc-decision-section">
           <div class="trace__calc-decision">
-            {{
-              searchState.decision ||
-                (I18N_KEY.features.algorithms.tracePanels.search.waitingDecisionLabel | transloco)
-            }}
+            @if (searchState.decision) {
+              {{ searchState.decision | i18nText }}
+            } @else {
+              {{ I18N_KEY.features.algorithms.tracePanels.search.waitingDecisionLabel | transloco }}
+            }
           </div>
         </app-segmented-panel-section>
       </app-segmented-panel>

@@ -1,7 +1,43 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DsuEdgeTrace } from '../models/dsu';
 import { SortStep } from '../models/sort-step';
 import { KruskalScenario } from '../utils/dsu-scenarios/dsu-scenarios';
 import { createDsuStep, DsuBaseNode } from './dsu-step';
+
+const I18N = {
+  statuses: {
+    sortedEdgeScan: t('features.algorithms.runtime.dsu.kruskalsMst.statuses.sortedEdgeScan'),
+    inspectNextEdge: t('features.algorithms.runtime.dsu.kruskalsMst.statuses.inspectNextEdge'),
+    rejectCycleEdge: t('features.algorithms.runtime.dsu.kruskalsMst.statuses.rejectCycleEdge'),
+    acceptEdge: t('features.algorithms.runtime.dsu.kruskalsMst.statuses.acceptEdge'),
+    complete: t('features.algorithms.runtime.dsu.kruskalsMst.statuses.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dsu.kruskalsMst.descriptions.initialize'),
+    inspectEdge: t('features.algorithms.runtime.dsu.kruskalsMst.descriptions.inspectEdge'),
+    rejectEdge: t('features.algorithms.runtime.dsu.kruskalsMst.descriptions.rejectEdge'),
+    acceptEdge: t('features.algorithms.runtime.dsu.kruskalsMst.descriptions.acceptEdge'),
+    complete: t('features.algorithms.runtime.dsu.kruskalsMst.descriptions.complete'),
+  },
+  decisions: {
+    acceptNextCheapest: t(
+      'features.algorithms.runtime.dsu.kruskalsMst.decisions.acceptNextCheapest',
+    ),
+    rootCompare: t('features.algorithms.runtime.dsu.kruskalsMst.decisions.rootCompare'),
+    shareRoot: t('features.algorithms.runtime.dsu.kruskalsMst.decisions.shareRoot'),
+    treeWeightGrows: t('features.algorithms.runtime.dsu.kruskalsMst.decisions.treeWeightGrows'),
+    pendingEdgesWorse: t(
+      'features.algorithms.runtime.dsu.kruskalsMst.decisions.pendingEdgesWorse',
+    ),
+  },
+  labels: {
+    mstWeight: t('features.algorithms.runtime.dsu.kruskalsMst.labels.mstWeight'),
+    acceptedEdges: t('features.algorithms.runtime.dsu.kruskalsMst.labels.acceptedEdges'),
+    sortedEdges: t('features.algorithms.runtime.dsu.kruskalsMst.labels.sortedEdges'),
+  },
+} as const;
 
 export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<SortStep> {
   const nodes: readonly DsuBaseNode[] = scenario.graph.nodes.map((node) => ({ id: node.id, label: node.label }));
@@ -23,12 +59,12 @@ export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<Sort
     size,
     edges: sortedEdges,
     statuses,
-    description: 'Sort all edges by weight and initialize each vertex as its own component.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    statusLabel: 'Sorted edge scan',
-    decision: 'Kruskal will accept the next cheapest edge that does not create a cycle.',
-    resultLabel: `MST weight 0`,
-    operationsLabel: 'Sorted edges',
+    statusLabel: I18N.statuses.sortedEdgeScan,
+    decision: I18N.decisions.acceptNextCheapest,
+    resultLabel: i18nText(I18N.labels.mstWeight, { weight: 0 }),
+    operationsLabel: I18N.labels.sortedEdges,
   });
 
   for (const edge of sortedEdges) {
@@ -43,12 +79,24 @@ export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<Sort
       size,
       edges: sortedEdges,
       statuses,
-      description: `Check edge ${labelOf(nodes, edge.from)}–${labelOf(nodes, edge.to)} with weight ${edge.weight}.`,
+      description: i18nText(I18N.descriptions.inspectEdge, {
+        from: labelOf(nodes, edge.from),
+        to: labelOf(nodes, edge.to),
+        weight: edge.weight,
+      }),
       activeCodeLine: 5,
-      statusLabel: 'Inspect next edge',
-      decision: `${labelOf(nodes, edge.from)} is in ${labelOf(nodes, leftRoot)}, ${labelOf(nodes, edge.to)} is in ${labelOf(nodes, rightRoot)}.`,
-      resultLabel: `MST weight ${acceptedWeight}`,
-      operationsLabel: `Accepted ${acceptedCount}/${Math.max(0, nodes.length - 1)}`,
+      statusLabel: I18N.statuses.inspectNextEdge,
+      decision: i18nText(I18N.decisions.rootCompare, {
+        from: labelOf(nodes, edge.from),
+        fromRoot: labelOf(nodes, leftRoot),
+        to: labelOf(nodes, edge.to),
+        toRoot: labelOf(nodes, rightRoot),
+      }),
+      resultLabel: i18nText(I18N.labels.mstWeight, { weight: acceptedWeight }),
+      operationsLabel: i18nText(I18N.labels.acceptedEdges, {
+        count: acceptedCount,
+        total: Math.max(0, nodes.length - 1),
+      }),
       activeIds: [edge.from, edge.to],
       queryIds: [leftRoot, rightRoot],
     });
@@ -62,12 +110,18 @@ export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<Sort
         size,
         edges: sortedEdges,
         statuses,
-        description: `Reject ${labelOf(nodes, edge.from)}–${labelOf(nodes, edge.to)} because it would close a cycle.`,
+        description: i18nText(I18N.descriptions.rejectEdge, {
+          from: labelOf(nodes, edge.from),
+          to: labelOf(nodes, edge.to),
+        }),
         activeCodeLine: 6,
-        statusLabel: 'Reject cycle edge',
-        decision: 'Endpoints already share the same DSU root.',
-        resultLabel: `MST weight ${acceptedWeight}`,
-        operationsLabel: `Accepted ${acceptedCount}/${Math.max(0, nodes.length - 1)}`,
+        statusLabel: I18N.statuses.rejectCycleEdge,
+        decision: I18N.decisions.shareRoot,
+        resultLabel: i18nText(I18N.labels.mstWeight, { weight: acceptedWeight }),
+        operationsLabel: i18nText(I18N.labels.acceptedEdges, {
+          count: acceptedCount,
+          total: Math.max(0, nodes.length - 1),
+        }),
         activeIds: [leftRoot],
       });
       continue;
@@ -98,12 +152,18 @@ export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<Sort
       size,
       edges: sortedEdges,
       statuses,
-      description: `Accept ${labelOf(nodes, edge.from)}–${labelOf(nodes, edge.to)} and merge the two components.`,
+      description: i18nText(I18N.descriptions.acceptEdge, {
+        from: labelOf(nodes, edge.from),
+        to: labelOf(nodes, edge.to),
+      }),
       activeCodeLine: 7,
-      statusLabel: 'Accept edge into MST',
-      decision: `Tree weight grows to ${acceptedWeight}.`,
-      resultLabel: `MST weight ${acceptedWeight}`,
-      operationsLabel: `Accepted ${acceptedCount}/${Math.max(0, nodes.length - 1)}`,
+      statusLabel: I18N.statuses.acceptEdge,
+      decision: i18nText(I18N.decisions.treeWeightGrows, { weight: acceptedWeight }),
+      resultLabel: i18nText(I18N.labels.mstWeight, { weight: acceptedWeight }),
+      operationsLabel: i18nText(I18N.labels.acceptedEdges, {
+        count: acceptedCount,
+        total: Math.max(0, nodes.length - 1),
+      }),
       activeIds: [keepRoot],
       mergedIds: [attachRoot],
     });
@@ -116,13 +176,19 @@ export function* kruskalsMstGenerator(scenario: KruskalScenario): Generator<Sort
     size,
     edges: sortedEdges,
     statuses,
-    description: `Kruskal complete. The minimum spanning tree uses ${acceptedCount} edge(s) with total weight ${acceptedWeight}.`,
+    description: i18nText(I18N.descriptions.complete, {
+      count: acceptedCount,
+      weight: acceptedWeight,
+    }),
     activeCodeLine: 9,
     phase: 'graph-complete',
-    statusLabel: 'MST complete',
-    decision: 'Every remaining pending edge is more expensive or cycle-forming.',
-    resultLabel: `MST weight ${acceptedWeight}`,
-    operationsLabel: `Accepted ${acceptedCount}/${Math.max(0, nodes.length - 1)}`,
+    statusLabel: I18N.statuses.complete,
+    decision: I18N.decisions.pendingEdgesWorse,
+    resultLabel: i18nText(I18N.labels.mstWeight, { weight: acceptedWeight }),
+    operationsLabel: i18nText(I18N.labels.acceptedEdges, {
+      count: acceptedCount,
+      total: Math.max(0, nodes.length - 1),
+    }),
   });
 }
 
@@ -133,13 +199,13 @@ function createStep(args: {
   readonly size: ReadonlyMap<string, number>;
   readonly edges: readonly { id: string; from: string; to: string; weight: number }[];
   readonly statuses: ReadonlyMap<string, DsuEdgeTrace['status']>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
-  readonly statusLabel: string;
-  readonly decision: string;
-  readonly resultLabel: string;
-  readonly operationsLabel: string;
+  readonly statusLabel: TranslatableText;
+  readonly decision: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly operationsLabel: TranslatableText;
   readonly activeIds?: readonly string[];
   readonly mergedIds?: readonly string[];
   readonly queryIds?: readonly string[];
