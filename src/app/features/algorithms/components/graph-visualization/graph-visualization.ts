@@ -13,14 +13,54 @@ import {
 import { WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
 
+/** Radius of a rendered node body. Edges are trimmed by this amount
+ *  so arrow tips land on the node's border instead of being swallowed
+ *  by its fill. Keep in sync with the `r` attribute on `.node__body`. */
+const NODE_RADIUS = 22;
+/** Extra breathing room between the arrow tip and the node border. */
+const ARROW_TIP_INSET = 2;
+
+interface ArrowMarker {
+  readonly id: string;
+  readonly fill: string;
+}
+
+/** Palette of marker-end arrow heads used on directed edges. Rendered
+ *  as `<marker>` definitions in the template and picked per-edge
+ *  based on its current state. */
+const ARROW_MARKERS: readonly ArrowMarker[] = [
+  { id: 'graphArrowDefault', fill: 'rgba(255, 255, 255, 0.52)' },
+  { id: 'graphArrowTree', fill: 'rgba(94, 234, 212, 0.66)' },
+  { id: 'graphArrowActive', fill: 'rgba(124, 110, 240, 0.82)' },
+  { id: 'graphArrowRelaxed', fill: 'rgba(94, 234, 212, 0.94)' },
+];
+
+interface RenderedEdge {
+  readonly id: string;
+  readonly from: string;
+  readonly to: string;
+  readonly weight: number;
+  readonly directed: boolean;
+  readonly isTree: boolean;
+  readonly isActive: boolean;
+  readonly isRelaxed: boolean;
+  readonly tone: string | null | undefined;
+  readonly x1: number;
+  readonly y1: number;
+  readonly x2: number;
+  readonly y2: number;
+  readonly midX: number;
+  readonly midY: number;
+}
+
 @Component({
-  selector: 'app-dijkstra-graph-visualization',
+  selector: 'app-graph-visualization',
   imports: [],
-  templateUrl: './dijkstra-graph-visualization.html',
-  styleUrl: './dijkstra-graph-visualization.scss',
+  templateUrl: './graph-visualization.html',
+  styleUrl: './graph-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DijkstraGraphVisualization {
+export class GraphVisualization {
   readonly graph = input<WeightedGraphData | null>(null);
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -34,13 +74,62 @@ export class DijkstraGraphVisualization {
 
   readonly graphState = computed(() => this.step()?.graph ?? null);
   readonly nodes = computed(() => this.graphState()?.nodes ?? []);
-  readonly edges = computed(() => this.graphState()?.edges ?? []);
+  readonly arrowMarkers = ARROW_MARKERS;
+  /** Enriched edges: pre-computes trimmed endpoints so arrow tips
+   *  touch the node border instead of sinking into the fill, and
+   *  also carries the midpoint for placing weight badges. */
+  readonly edges = computed<readonly RenderedEdge[]>(() => {
+    const nodes = this.nodes();
+    const base = this.graphState()?.edges ?? [];
+    return base.map((edge) => {
+      const from = nodes.find((node) => node.id === edge.from);
+      const to = nodes.find((node) => node.id === edge.to);
+      const fromX = from?.x ?? 0;
+      const fromY = from?.y ?? 0;
+      const toX = to?.x ?? 0;
+      const toY = to?.y ?? 0;
+      const dx = toX - fromX;
+      const dy = toY - fromY;
+      const dist = Math.hypot(dx, dy) || 1;
+      // Shrink both ends by the node radius (+ a touch) so the line
+      // — and any arrow marker at its tip — stops on the circle's
+      // border rather than its centre. Guard against very short
+      // distances where trimming would invert the segment.
+      const trim = Math.min(NODE_RADIUS + ARROW_TIP_INSET, dist / 2 - 0.5);
+      const ux = dx / dist;
+      const uy = dy / dist;
+      return {
+        id: edge.id,
+        from: edge.from,
+        to: edge.to,
+        weight: edge.weight,
+        directed: edge.directed ?? false,
+        isTree: edge.isTree,
+        isActive: edge.isActive,
+        isRelaxed: edge.isRelaxed,
+        tone: edge.tone,
+        x1: fromX + ux * trim,
+        y1: fromY + uy * trim,
+        x2: toX - ux * trim,
+        y2: toY - uy * trim,
+        midX: (fromX + toX) / 2,
+        midY: (fromY + toY) / 2,
+      };
+    });
+  });
   readonly metricLabel = computed(() => this.graphState()?.metricLabel ?? 'Distance');
   readonly secondaryLabel = computed(() => this.graphState()?.secondaryLabel ?? 'Prev');
   readonly frontierLabel = computed(() => this.graphState()?.frontierLabel ?? 'Queue');
   readonly frontierHeadLabel = computed(() => this.graphState()?.frontierHeadLabel ?? 'Queue head');
   readonly completionLabel = computed(() => this.graphState()?.completionLabel ?? 'Visited');
   readonly showEdgeWeights = computed(() => this.graphState()?.showEdgeWeights ?? true);
+  /** Suppress the distance/secondary labels above and below each node
+   *  when they would just duplicate state already conveyed by the
+   *  node's tone. Bipartite's partition is a clear example —
+   *  "Color" is the left/right side, already obvious from the fill
+   *  colour, so the floating chips only add visual noise and
+   *  collide when nodes stack vertically. */
+  readonly showNodeLabels = computed(() => this.metricLabel() !== 'Color');
   readonly detailLabel = computed(() => this.graphState()?.detailLabel ?? 'Path');
   readonly sourceCardLabel = computed(() => {
     if (this.detailLabel().startsWith('Euler')) {
@@ -308,31 +397,12 @@ export class DijkstraGraphVisualization {
     }
   }
 
-  edgePoint(edgeId: string, key: 'from' | 'to', axis: 'x' | 'y'): number {
-    const edge = this.edges().find((item) => item.id === edgeId);
-    const nodeId = edge ? edge[key] : null;
-    const node = nodeId ? this.nodes().find((item) => item.id === nodeId) : null;
-    return node?.[axis] ?? 0;
-  }
-
-  edgeMarker(edgeId: string): string {
-    const edge = this.edges().find((item) => item.id === edgeId);
-    if (!edge?.directed) return '';
+  edgeMarker(edge: RenderedEdge): string | null {
+    if (!edge.directed) return null;
     if (edge.isRelaxed) return 'url(#graphArrowRelaxed)';
     if (edge.isActive) return 'url(#graphArrowActive)';
     if (edge.isTree) return 'url(#graphArrowTree)';
     return 'url(#graphArrowDefault)';
-  }
-
-  weightTransform(edgeId: string): string {
-    const edge = this.edges().find((item) => item.id === edgeId);
-    if (!edge) return 'translate(0 0)';
-    const from = this.nodes().find((node) => node.id === edge.from);
-    const to = this.nodes().find((node) => node.id === edge.to);
-    if (!from || !to) return 'translate(0 0)';
-    const x = (from.x + to.x) / 2;
-    const y = (from.y + to.y) / 2;
-    return `translate(${x} ${y})`;
   }
 
   formatDistance(distance: number | null): string {
