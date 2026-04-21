@@ -1,0 +1,114 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as tree) {
+    <div class="tree-canvas" #container>
+      <svg
+        class="tree-svg"
+        [attr.viewBox]="viewBox()"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          <filter id="tree-node-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Edges first so nodes paint on top. -->
+        @for (edge of tree.edges; track edge.id) {
+          <path
+            class="tree-edge"
+            [class.tree-edge--on-path]="edge.isOnPath"
+            [class.tree-edge--traversed]="edge.isTraversed"
+            [attr.d]="edgePath(edge)"
+          />
+        }
+
+        @for (node of tree.nodes; track node.id) {
+          <g
+            class="tree-node tree-node--{{ node.status }}"
+            [class.tree-node--root]="node.parentId === null"
+            [attr.data-tree-node]="node.id"
+            [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+          >
+            <circle class="tree-node__halo" r="22" />
+            <circle class="tree-node__body" r="16" filter="url(#tree-node-glow)" />
+            <text class="tree-node__label" y="5">{{ node.label }}</text>
+            @if (node.value !== null) {
+              <text class="tree-node__value" y="28">{{ node.value }}</text>
+            }
+          </g>
+        }
+      </svg>
+
+      <!-- Support strips: live stack/queue + emitted output tape. -->
+      <aside class="tree-support">
+        @if (stripKind() === 'stack') {
+          <section class="tree-strip tree-strip--stack">
+            <header class="tree-strip__head">
+              <span class="tree-strip__label">stack</span>
+              <span class="tree-strip__count">{{ stackItems().length }}</span>
+            </header>
+            <div class="tree-strip__items">
+              @if (stackItems().length === 0) {
+                <span class="tree-strip__empty">—</span>
+              } @else {
+                @for (item of stackItems(); track item.id; let isLast = $last) {
+                  <span
+                    class="tree-strip__chip"
+                    [class.tree-strip__chip--top]="isLast"
+                    >{{ item.label }}</span
+                  >
+                }
+              }
+            </div>
+          </section>
+        } @else if (stripKind() === 'queue') {
+          <section class="tree-strip tree-strip--queue">
+            <header class="tree-strip__head">
+              <span class="tree-strip__label">queue</span>
+              <span class="tree-strip__count">{{ queueItems().length }}</span>
+            </header>
+            <div class="tree-strip__items">
+              @if (queueItems().length === 0) {
+                <span class="tree-strip__empty">—</span>
+              } @else {
+                @for (item of queueItems(); track item.id; let isFirst = $first) {
+                  <span
+                    class="tree-strip__chip"
+                    [class.tree-strip__chip--head]="isFirst"
+                    >{{ item.label }}</span
+                  >
+                }
+              }
+            </div>
+          </section>
+        }
+
+        <section class="tree-output">
+          <header class="tree-strip__head">
+            <span class="tree-strip__label">output</span>
+            <span class="tree-strip__count">
+              {{ tree.visitedCount }} / {{ tree.totalNodes }}
+            </span>
+          </header>
+          <div class="tree-output__tape">
+            @for (label of tree.output; track $index) {
+              <span class="tree-output__chip">{{ label }}</span>
+            }
+          </div>
+        </section>
+      </aside>
+    </div>
+  }
+</app-viz-panel>

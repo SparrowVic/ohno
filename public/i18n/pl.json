@@ -2262,6 +2262,55 @@
               "writeMergedValue": "Zapisz scaloną wartość {{value}} z powrotem na indeksie {{index}}."
             }
           }
+        },
+        "tree": {
+          "treeTraversals": {
+            "modeLabels": {
+              "preorder": "Preorder (DFS)",
+              "inorder": "Inorder (DFS)",
+              "postorder": "Postorder (DFS)",
+              "levelOrder": "Level-order (BFS)"
+            },
+            "phases": {
+              "init": "Inicjalizacja",
+              "push": "Wrzucenie na stos",
+              "enqueue": "Dodanie do kolejki",
+              "visit": "Odwiedzenie",
+              "descendLeft": "Lewe dziecko",
+              "descendRight": "Prawe dziecko",
+              "backtrack": "Powrót",
+              "dequeue": "Pobranie z kolejki",
+              "complete": "Zakończone"
+            },
+            "descriptions": {
+              "start": "Zaczynaj przejście od korzenia.",
+              "push": "Wrzuć bieżący węzeł na stos wywołań.",
+              "enqueue": "Dołóż węzeł do kolejki fali level-order.",
+              "visit": "Dopisz bieżący węzeł do sekwencji wyjściowej.",
+              "descendLeft": "Zejdź do lewego poddrzewa.",
+              "descendRight": "Zejdź do prawego poddrzewa.",
+              "backtrack": "Wracamy z poddrzewa — zdejmij ramkę ze stosu.",
+              "dequeue": "Pobierz kolejny węzeł z kolejki level-order.",
+              "complete": "Przejście ukończone — każdy węzeł jest w wyjściu."
+            },
+            "decisions": {
+              "pushThenDescend": "Wrzuć ramkę, potem zejdź w głąb.",
+              "emitCurrent": "Dopisz bieżący węzeł teraz.",
+              "leftBeforeRight": "Lewe poddrzewo przed prawym.",
+              "rightAfterSelf": "Prawe poddrzewo po bieżącym węźle.",
+              "dequeueLevel": "BFS pobiera po jednym poziomie naraz.",
+              "backtrackDone": "Poddrzewo gotowe — wróć do ramki rodzica.",
+              "finished": "Wszystkie węzły odwiedzone."
+            },
+            "computation": {
+              "stackPush": "stack.push",
+              "stackPop": "stack.pop",
+              "queuePush": "queue.push",
+              "queuePop": "queue.shift",
+              "visit": "odwiedzenie",
+              "output": "dopisanie do taśmy wyjściowej"
+            }
+          }
         }
       },
       "scenarios": {
@@ -2658,6 +2707,26 @@
             "log": {
               "description": "Czytelny tekst z długimi powtarzającymi się prefiksami i widocznymi słupkami pełnego wzorca.",
               "label": "Strumień logów"
+            }
+          }
+        },
+        "tree": {
+          "treeTraversals": {
+            "preorderBalanced": {
+              "label": "Preorder",
+              "description": "DFS: najpierw odwiedź węzeł, potem zejdź w lewo, potem w prawo. Wyjście rysuje front przejścia rozchodzący się z korzenia."
+            },
+            "inorderBst": {
+              "label": "Inorder na BST",
+              "description": "Klasyczne przejście drzewa BST — porządek inorder produkuje wartości w rosnącym porządku sortowania."
+            },
+            "postorderSizes": {
+              "label": "Postorder",
+              "description": "Najpierw dzieci, na końcu węzeł. Ten porządek odpowiada obliczeniom typu bottom-up: rozmiary poddrzew, sumy, wysokości."
+            },
+            "levelOrderWave": {
+              "label": "Level-order BFS",
+              "description": "Fala BFS napędzana kolejką — każde zamiecenie kończy jedną warstwę głębokości przed przejściem do następnej."
             }
           }
         }
@@ -3237,6 +3306,16 @@
             "swap": "W trakcie zamiany"
           },
           "unsortedLabel": "Nieposortowane"
+        },
+        "tree": {
+          "currentNodeLabel": "Bieżący",
+          "progressLabel": "Postęp",
+          "decisionLabel": "Decyzja",
+          "waitingStepLabel": "Oczekiwanie na kolejny krok przejścia drzewa.",
+          "stackLabel": "Stos wywołań",
+          "queueLabel": "Kolejka",
+          "outputLabel": "Wyjście",
+          "emptyLabel": "Brak śladu drzewa dla tego kroku."
         },
         "string": {
           "activeLabel": "Aktywne",

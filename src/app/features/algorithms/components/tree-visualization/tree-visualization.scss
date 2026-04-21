@@ -1,0 +1,305 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Canvas grid: tree fills the main area, support strips stack on the
+   right at wide viewports, under the tree when narrow. */
+.tree-canvas {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 260px);
+  gap: 14px;
+  padding: 14px;
+  overflow: hidden;
+}
+
+.tree-svg {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: block;
+}
+
+/* ---------- EDGES ---------- */
+.tree-edge {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1.2;
+  fill: none;
+  transition:
+    stroke 220ms ease,
+    stroke-width 220ms ease,
+    opacity 220ms ease;
+}
+
+.tree-edge--traversed {
+  stroke: rgb(var(--viz-route-rgb) / 0.55);
+  stroke-width: 1.6;
+}
+
+.tree-edge--on-path {
+  stroke: rgb(var(--chrome-accent-warm-rgb) / 0.85);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  animation: tree-path-flow 800ms linear infinite;
+}
+
+@keyframes tree-path-flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+/* ---------- NODES ---------- */
+.tree-node {
+  transition: transform 220ms var(--ease-out-quart);
+}
+
+.tree-node__halo {
+  fill: transparent;
+  opacity: 0;
+  transition:
+    opacity 220ms ease,
+    fill 220ms ease;
+}
+
+.tree-node__body {
+  fill: #1f2430;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.5;
+  transition:
+    fill 220ms ease,
+    stroke 220ms ease;
+}
+
+.tree-node__label,
+.tree-node__value {
+  text-anchor: middle;
+  fill: var(--text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.tree-node__label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.tree-node__value {
+  font-size: 8px;
+  fill: var(--text-tertiary);
+  font-weight: 600;
+}
+
+/* Root badge — small accent dot in the top-left corner of the node
+   so the user can anchor the tree without staring at the layout. */
+.tree-node--root .tree-node__body {
+  stroke: rgb(var(--chrome-accent-alt-rgb) / 0.55);
+  stroke-width: 1.75;
+}
+
+.tree-node--onStack .tree-node__body {
+  fill: rgb(var(--viz-route-rgb) / 0.16);
+  stroke: rgb(var(--viz-route-rgb) / 0.6);
+}
+
+.tree-node--onStack .tree-node__halo {
+  opacity: 1;
+  fill: rgb(var(--viz-route-rgb) / 0.1);
+}
+
+.tree-node--queued .tree-node__body {
+  fill: rgb(var(--viz-window-rgb) / 0.16);
+  stroke: rgb(var(--viz-window-rgb) / 0.6);
+}
+
+.tree-node--queued .tree-node__halo {
+  opacity: 1;
+  fill: rgb(var(--viz-window-rgb) / 0.12);
+}
+
+.tree-node--current .tree-node__body {
+  fill: rgb(var(--chrome-accent-warm-rgb) / 0.22);
+  stroke: rgb(var(--chrome-accent-warm-rgb) / 0.9);
+  stroke-width: 2;
+}
+
+.tree-node--current .tree-node__halo {
+  opacity: 1;
+  fill: rgb(var(--chrome-accent-warm-rgb) / 0.18);
+  animation: tree-current-pulse 900ms var(--ease-out-expo) infinite;
+}
+
+.tree-node--current .tree-node__label {
+  fill: var(--chrome-accent-warm);
+}
+
+@keyframes tree-current-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+.tree-node--visited .tree-node__body {
+  fill: rgb(var(--accent-rgb) / 0.18);
+  stroke: rgb(var(--accent-rgb) / 0.75);
+}
+
+.tree-node--visited .tree-node__label {
+  fill: var(--accent-strong);
+}
+
+.tree-node--backtrack .tree-node__body {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-dasharray: 3 3;
+}
+
+/* ---------- SUPPORT STRIPS (stack / queue / output) ---------- */
+.tree-support {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+.tree-strip,
+.tree-output {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.tree-strip__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tree-strip__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.tree-strip__count {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tree-strip__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 24px;
+}
+
+.tree-strip__empty {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* Chip reads as a token on a tape. Stack grows rightward visually
+   (top is last); queue reads left-to-right (head first). */
+.tree-strip__chip {
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: rgb(var(--viz-route-rgb) / 0.14);
+  color: var(--viz-route-ink);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
+}
+
+.tree-strip__chip--top {
+  background: rgb(var(--chrome-accent-warm-rgb) / 0.2);
+  color: var(--chrome-accent-warm);
+  box-shadow: inset 0 0 0 1px rgb(var(--chrome-accent-warm-rgb) / 0.45);
+}
+
+.tree-strip--queue .tree-strip__chip {
+  background: rgb(var(--viz-window-rgb) / 0.16);
+  color: var(--viz-window-ink);
+}
+
+.tree-strip__chip--head {
+  background: rgb(var(--chrome-accent-warm-rgb) / 0.2);
+  color: var(--chrome-accent-warm);
+  box-shadow: inset 0 0 0 1px rgb(var(--chrome-accent-warm-rgb) / 0.45);
+}
+
+/* ---------- OUTPUT TAPE ---------- */
+.tree-output__tape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 28px;
+}
+
+.tree-output__chip {
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: rgb(var(--accent-rgb) / 0.14);
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tree-node--current .tree-node__halo,
+  .tree-edge--on-path {
+    animation: none;
+  }
+}
+
+@container (max-width: 640px) {
+  .tree-canvas {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(240px, 1fr) auto;
+  }
+
+  .tree-support {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .tree-strip,
+  .tree-output {
+    min-width: 220px;
+  }
+}

@@ -94,9 +94,12 @@
             [dpPresetId]="dpPresetId()"
             [stringPresetOptions]="stringPresetOptions()"
             [stringPresetId]="stringPresetId()"
+            [treePresetOptions]="treePresetOptions()"
+            [treePresetId]="treePresetId()"
             (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
             (dpPresetChange)="onDpPresetChange($event)"
             (stringPresetChange)="onStringPresetChange($event)"
+            (treePresetChange)="onTreePresetChange($event)"
           />
           <app-legend-bar [items]="legendItems()" />
         </div>
@@ -117,6 +120,7 @@
           [searchState]="searchTrace()"
           [sortState]="sortTrace()"
           [stringState]="stringTrace()"
+          [treeState]="treeTrace()"
           [geometryState]="geometryTrace()"
           [graphFocusTargetLabel]="graphFocusTargetLabel()"
           [graphFocusPathLabel]="graphFocusPathLabel()"

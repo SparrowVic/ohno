@@ -1002,6 +1002,16 @@ export const I18N_KEY = {
             sorted: t('features.algorithms.tracePanels.sort.statuses.sorted'),
           },
         },
+        tree: {
+          currentNodeLabel: t('features.algorithms.tracePanels.tree.currentNodeLabel'),
+          progressLabel: t('features.algorithms.tracePanels.tree.progressLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.tree.decisionLabel'),
+          waitingStepLabel: t('features.algorithms.tracePanels.tree.waitingStepLabel'),
+          stackLabel: t('features.algorithms.tracePanels.tree.stackLabel'),
+          queueLabel: t('features.algorithms.tracePanels.tree.queueLabel'),
+          outputLabel: t('features.algorithms.tracePanels.tree.outputLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.tree.emptyLabel'),
+        },
       },
       visualizations: {
         search: {

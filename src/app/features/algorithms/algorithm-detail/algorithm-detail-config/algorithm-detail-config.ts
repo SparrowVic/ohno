@@ -475,6 +475,7 @@ import { MatrixTraceState } from '../../models/matrix';
 import { NetworkTraceState } from '../../models/network';
 import { SearchTraceState } from '../../models/search';
 import { StringPresetOption, StringTraceState } from '../../models/string';
+import { TreePresetOption } from '../../models/tree';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../../models/detail';
 import { HOPCROFT_KARP_CODE, HOPCROFT_KARP_CODE_VARIANTS } from '../../data/hopcroft-karp-code';
@@ -484,6 +485,12 @@ import {
   HUFFMAN_CODE_REGIONS,
   HUFFMAN_CODE_VARIANTS,
 } from '../../data/huffman-coding-code';
+import {
+  TREE_TRAVERSALS_CODE,
+  TREE_TRAVERSALS_CODE_HIGHLIGHT_MAP,
+  TREE_TRAVERSALS_CODE_REGIONS,
+  TREE_TRAVERSALS_CODE_VARIANTS,
+} from '../../data/tree-traversals-code';
 import {
   CONVEX_HULL_CODE,
   CONVEX_HULL_CODE_HIGHLIGHT_MAP,
@@ -646,6 +653,13 @@ import {
   createRleScenario,
   createZAlgorithmScenario,
 } from '../../utils/string-scenarios/string-scenarios';
+import {
+  DEFAULT_TREE_TRAVERSALS_PRESET_ID,
+  TREE_TRAVERSALS_PRESETS,
+  TreeTraversalScenario,
+  createTreeTraversalScenario,
+} from '../../utils/tree-scenarios/tree-scenarios';
+import { treeTraversalsGenerator } from '../../algorithms/tree-traversals/tree-traversals';
 
 const BAR_LEGEND: readonly LegendItem[] = [
   { label: 'Unsorted', color: 'var(--viz-state-default)', opacity: 0.55 },
@@ -1194,6 +1208,10 @@ const STRING_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'string', label: 'String Lab' },
 ];
 
+const TREE_TRAVERSALS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'tree', label: 'Tree Walk' },
+];
+
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
 ];
@@ -1390,6 +1408,14 @@ interface GeometryAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithm
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface TreeAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'tree';
+  readonly presetOptions: readonly TreePresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 export type AlgorithmViewConfig =
   | ArrayAlgorithmViewConfig
   | GraphAlgorithmViewConfig
@@ -1400,7 +1426,8 @@ export type AlgorithmViewConfig =
   | DpAlgorithmViewConfig<any>
   | DsuAlgorithmViewConfig<any>
   | NetworkAlgorithmViewConfig<any>
-  | GeometryAlgorithmViewConfig<any>;
+  | GeometryAlgorithmViewConfig<any>
+  | TreeAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -1906,6 +1933,25 @@ const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
   sizeUnit: 'chars',
   randomizeLabel: 'New frequency set',
 });
+
+const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'tree',
+  codeLines: TREE_TRAVERSALS_CODE,
+  codeRegions: TREE_TRAVERSALS_CODE_REGIONS,
+  codeHighlightMap: TREE_TRAVERSALS_CODE_HIGHLIGHT_MAP,
+  codeVariants: TREE_TRAVERSALS_CODE_VARIANTS,
+  variantOptions: TREE_TRAVERSALS_VARIANT_OPTIONS,
+  defaultVariant: 'tree',
+  sizeOptions: [7, 15, 31],
+  defaultSize: 15,
+  sizeUnit: 'nodes',
+  randomizeLabel: 'New tree shape',
+  legendItems: () => [],
+  presetOptions: TREE_TRAVERSALS_PRESETS,
+  defaultPresetId: DEFAULT_TREE_TRAVERSALS_PRESET_ID,
+  createScenario: (size, presetId) => createTreeTraversalScenario(size, presetId),
+  generator: (scenario: TreeTraversalScenario) => treeTraversalsGenerator(scenario),
+};
 
 const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'graph',
@@ -2835,6 +2881,7 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'sweep-line') return SWEEP_LINE_VIEW_CONFIG;
   if (id === 'voronoi-diagram') return VORONOI_VIEW_CONFIG;
   if (id === 'delaunay-triangulation') return DELAUNAY_VIEW_CONFIG;
+  if (id === 'tree-traversals') return TREE_TRAVERSALS_VIEW_CONFIG;
   return BUBBLE_VIEW_CONFIG;
 }
 

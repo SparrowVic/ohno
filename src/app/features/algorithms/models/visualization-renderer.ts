@@ -28,4 +28,5 @@ export type VisualizationVariant =
   | 'minkowski-sum'
   | 'sweep-line'
   | 'voronoi'
-  | 'delaunay';
+  | 'delaunay'
+  | 'tree';

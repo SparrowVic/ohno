@@ -2262,6 +2262,55 @@
               "writeMergedValue": "Write merged value {{value}} back to index {{index}}."
             }
           }
+        },
+        "tree": {
+          "treeTraversals": {
+            "modeLabels": {
+              "preorder": "Preorder (DFS)",
+              "inorder": "Inorder (DFS)",
+              "postorder": "Postorder (DFS)",
+              "levelOrder": "Level-order (BFS)"
+            },
+            "phases": {
+              "init": "Initialize",
+              "push": "Push",
+              "enqueue": "Enqueue",
+              "visit": "Visit",
+              "descendLeft": "Go left",
+              "descendRight": "Go right",
+              "backtrack": "Backtrack",
+              "dequeue": "Dequeue",
+              "complete": "Complete"
+            },
+            "descriptions": {
+              "start": "Start traversal from the root.",
+              "push": "Push the current node onto the call stack.",
+              "enqueue": "Enqueue the next node for the level-order wave.",
+              "visit": "Emit the current node to the output sequence.",
+              "descendLeft": "Descend into the left child.",
+              "descendRight": "Descend into the right child.",
+              "backtrack": "Return from this subtree; pop the call stack.",
+              "dequeue": "Dequeue the next level-order node.",
+              "complete": "Traversal finished — every node is in the output."
+            },
+            "decisions": {
+              "pushThenDescend": "Push frame, then descend.",
+              "emitCurrent": "Emit current node now.",
+              "leftBeforeRight": "Visit left subtree before right.",
+              "rightAfterSelf": "Right subtree follows current node.",
+              "dequeueLevel": "BFS dequeues one level at a time.",
+              "backtrackDone": "Subtree done — return to parent frame.",
+              "finished": "All nodes have been visited."
+            },
+            "computation": {
+              "stackPush": "stack.push",
+              "stackPop": "stack.pop",
+              "queuePush": "queue.push",
+              "queuePop": "queue.shift",
+              "visit": "visit",
+              "output": "append to output tape"
+            }
+          }
         }
       },
       "scenarios": {
@@ -2658,6 +2707,26 @@
             "log": {
               "description": "Readable text with long repeated prefixes and visible full-pattern bars.",
               "label": "Log Stream"
+            }
+          }
+        },
+        "tree": {
+          "treeTraversals": {
+            "preorderBalanced": {
+              "label": "Preorder walk",
+              "description": "Depth-first: emit the node, then descend left, then right. The output traces the visit frontier from root outward."
+            },
+            "inorderBst": {
+              "label": "Inorder on BST",
+              "description": "Classic binary-search-tree walk — the inorder visit order produces the underlying values in sorted ascending order."
+            },
+            "postorderSizes": {
+              "label": "Postorder fold",
+              "description": "Children first, node last. The order matches how bottom-up aggregations (subtree sizes, sums, heights) are computed."
+            },
+            "levelOrderWave": {
+              "label": "Level-order BFS",
+              "description": "Queue-driven breadth-first wave — each sweep completes one depth layer before moving to the next."
             }
           }
         }
@@ -3237,6 +3306,16 @@
             "swap": "Being swapped"
           },
           "unsortedLabel": "Unsorted"
+        },
+        "tree": {
+          "currentNodeLabel": "Current",
+          "progressLabel": "Progress",
+          "decisionLabel": "Decision",
+          "waitingStepLabel": "Waiting for the next traversal step.",
+          "stackLabel": "Call stack",
+          "queueLabel": "Queue",
+          "outputLabel": "Output",
+          "emptyLabel": "No tree trace available for this step."
         },
         "string": {
           "activeLabel": "Active",

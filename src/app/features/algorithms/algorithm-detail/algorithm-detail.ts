@@ -46,6 +46,7 @@ import { SortTraceState } from '../models/sort-trace';
 import { deriveSortTrace } from '../utils/derive-sort-trace/derive-sort-trace';
 import { SortStep } from '../models/sort-step';
 import { StringPresetOption, StringTraceState } from '../models/string';
+import { TreePresetOption, TreeTraversalTraceState } from '../models/tree';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
@@ -53,6 +54,7 @@ import { VisualizationEngine } from '../services/visualization-engine/visualizat
 interface RebuildOptions {
   readonly dpPresetId?: string | null;
   readonly stringPresetId?: string | null;
+  readonly treePresetId?: string | null;
 }
 
 @Component({
@@ -91,6 +93,7 @@ export class AlgorithmDetail {
   private readonly graphSig = signal<WeightedGraphData | null>(null);
   private readonly dpPresetSig = signal<string | null>(null);
   private readonly stringPresetSig = signal<string | null>(null);
+  private readonly treePresetSig = signal<string | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
@@ -125,6 +128,7 @@ export class AlgorithmDetail {
   readonly graph = this.graphSig.asReadonly();
   readonly dpPresetId = this.dpPresetSig.asReadonly();
   readonly stringPresetId = this.stringPresetSig.asReadonly();
+  readonly treePresetId = this.treePresetSig.asReadonly();
   readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
@@ -142,6 +146,10 @@ export class AlgorithmDetail {
   readonly stringPresetOptions = computed<readonly StringPresetOption[]>(() => {
     const config = this.config();
     return config?.kind === 'string' ? config.presetOptions : [];
+  });
+  readonly treePresetOptions = computed<readonly TreePresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'tree' ? config.presetOptions : [];
   });
   readonly sizeUnitLabel = computed(() => {
     const unit = this.config()?.sizeUnit ?? 'elements';
@@ -188,6 +196,9 @@ export class AlgorithmDetail {
   });
   readonly stringTrace = computed<StringTraceState | null>(
     () => this.currentSnapshot()?.string ?? null,
+  );
+  readonly treeTrace = computed<TreeTraversalTraceState | null>(
+    () => this.currentSnapshot()?.tree ?? null,
   );
   readonly geometryTrace = computed<GeometryStepState | null>(
     () => this.currentSnapshot()?.geometry ?? null,
@@ -283,10 +294,12 @@ export class AlgorithmDetail {
         this.variantSig.set(config.defaultVariant);
         this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
         this.stringPresetSig.set(config.kind === 'string' ? config.defaultPresetId : null);
+        this.treePresetSig.set(config.kind === 'tree' ? config.defaultPresetId : null);
 
         this.rebuildVisualization(config, config.defaultSize, {
           dpPresetId: config.kind === 'dp' ? config.defaultPresetId : null,
           stringPresetId: config.kind === 'string' ? config.defaultPresetId : null,
+          treePresetId: config.kind === 'tree' ? config.defaultPresetId : null,
         });
       });
     });
@@ -377,11 +390,25 @@ export class AlgorithmDetail {
     this.rebuildVisualization(config, this.sizeSig(), { stringPresetId: value });
   }
 
+  onTreePresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'tree') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.treePresetSig()
+    )
+      return;
+
+    this.treePresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { treePresetId: value });
+  }
+
   private resetUnavailableState(): void {
     this.resetPlaybackState();
     this.graphSig.set(null);
     this.dpPresetSig.set(null);
     this.stringPresetSig.set(null);
+    this.treePresetSig.set(null);
     this.engine.reset();
   }
 
@@ -429,6 +456,14 @@ export class AlgorithmDetail {
       }
       case 'dp': {
         const presetId = options.dpPresetId ?? this.dpPresetSig() ?? config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'tree': {
+        const presetId = options.treePresetId ?? this.treePresetSig() ?? config.defaultPresetId;
         const scenario = config.createScenario(size, presetId);
         this.arraySig.set([]);
         this.graphSig.set(null);

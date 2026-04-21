@@ -26,6 +26,8 @@ import { SearchVisualization } from '../search-visualization/search-visualizatio
 import { StringPresetOption } from '../../models/string';
 import { StringVisualization } from '../string-visualization/string-visualization';
 import { SweepLineVisualization } from '../sweep-line-visualization/sweep-line-visualization';
+import { TreePresetOption } from '../../models/tree';
+import { TreeVisualization } from '../tree-visualization/tree-visualization';
 import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualization';
 
 @Component({
@@ -52,6 +54,7 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     SearchVisualization,
     StringVisualization,
     SweepLineVisualization,
+    TreeVisualization,
     VoronoiVisualization,
   ],
   templateUrl: './visualization-canvas.html',
@@ -69,7 +72,10 @@ export class VisualizationCanvas {
   readonly dpPresetId = input<string | null>(null);
   readonly stringPresetOptions = input<readonly StringPresetOption[]>([]);
   readonly stringPresetId = input<string | null>(null);
+  readonly treePresetOptions = input<readonly TreePresetOption[]>([]);
+  readonly treePresetId = input<string | null>(null);
   readonly graphFocusTargetChange = output<string | null>();
   readonly dpPresetChange = output<string>();
   readonly stringPresetChange = output<string>();
+  readonly treePresetChange = output<string>();
 }

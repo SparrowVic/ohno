@@ -265,6 +265,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'trees',
     subcategory: 'traversal',
     tags: ['DFS', 'BFS', 'in/pre/post-order'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(h)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'bfs',
