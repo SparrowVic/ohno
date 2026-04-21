@@ -4175,113 +4175,9 @@
         }
       },
       "visualizations": {
-        "dp": {
-          "emptyLabel": "No DP trace available for this step.",
-          "guideDesc": "Lock onto the active row, column or interval, then use the highlighted chips to understand which subproblems feed the next write.",
-          "guideEyebrow": "DP Guide",
-          "guideTitle": "Read the active state first",
-          "knapsack": {
-            "activeCellLabel": "active cell",
-            "applyCurrentMoveLabel": "Apply the current move",
-            "backtrackPathLabel": "backtrack path",
-            "baseCasesMeta": "row 0 or capacity 0",
-            "baseCasesValue": "Base cases",
-            "baseRowValue": "Base row",
-            "boardLabel": "items × capacity",
-            "branches": {
-              "blockedValue": "blocked",
-              "needPreviousStateNote": "need previous state + item value",
-              "needsWeightNote": "needs weight {{weight}}",
-              "skipLabel": "Skip branch",
-              "skipNote": "reuse dp[{{row}}][{{col}}]",
-              "takeLabel": "Take branch",
-              "takeNote": "read dp[{{row}}][{{col}}] + {{value}}"
-            },
-            "capacityLaneLabel": "Capacity lane",
-            "currentItemLabel": "Current item",
-            "currentPackLabel": "Current pack",
-            "decisionEyebrow": "Decision Lens",
-            "decisionTitle": "Skip vs take",
-            "followActiveRowLabel": "Follow the active row",
-            "guideEyebrow": "Visual Guide",
-            "guideTitle": "Where to look now",
-            "inputShelfEyebrow": "Input Shelf",
-            "inputShelfTitle": "Items feed the rows",
-            "labEyebrow": "Knapsack Lab",
-            "lockCapacityColumnLabel": "Lock the capacity column",
-            "metrics": {
-              "bestValue": "Best value",
-              "packed": "Packed",
-              "table": "Table"
-            },
-            "noWinningBranchLabel": "No winning branch yet.",
-            "outcomeEyebrow": "Outcome",
-            "outcomeTitle": "Backpack status",
-            "packEmptyLabel": "Selected items appear here during backtracking.",
-            "rowLabel": "row {{row}}",
-            "scenarioEyebrow": "Scenario",
-            "sourceCellsLabel": "source cells",
-            "valueShortLabel": "value",
-            "waitingTransitionLabel": "Waiting for the next comparison.",
-            "weightShortLabel": "weight",
-            "workspaceEyebrow": "Workspace",
-            "workspaceTitle": "DP table is the hero"
-          },
-          "presetLabEyebrow": "Preset Lab",
-          "scenarioEyebrow": "Scenario",
-          "stageEyebrow": "Stage",
-          "stageTitle": "DP workspace"
-        },
-        "grid": {
-          "decisionFallback": "watch the board evolve step by step",
-          "frontierLabel": "Frontier",
-          "guideEyebrow": "Grid Guide",
-          "guideFallbackDesc": "Watch the active frontier cell and the route it unlocks next.",
-          "guideTitle": "Follow the frontier",
-          "resultFilledLabel": "{{count}} filled",
-          "resultLabel": "Result",
-          "resultPathLabel": "{{count}} in path",
-          "snapshotDesc": "Source, target and wave stats stay separate from the board so the motion on the grid stays readable.",
-          "snapshotEyebrow": "Snapshot",
-          "sourceSubtitles": {
-            "seed": "seed cell",
-            "start": "start"
-          },
-          "stageEyebrow": "Stage",
-          "stageTitle": "Board state",
-          "targetLabel": "Target",
-          "visitedLabel": "Visited"
-        },
-        "matrix": {
-          "emptyLabel": "No matrix trace available for this step.",
-          "guideDesc": "Follow the highlighted rows, columns and pivot cells first. The rest of the matrix is supporting context.",
-          "guideEyebrow": "Matrix Guide",
-          "guideTitle": "Track the active axes",
-          "modeFallback": "Matrix",
-          "phaseFallback": "Initialize",
-          "snapshotDesc": "Current phase, pivot and result stay visible without competing with the board itself.",
-          "snapshotEyebrow": "Snapshot",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Matrix workspace"
-        },
         "network": {
-          "activeRouteLabel": "Active Route",
-          "decisionFallback": "Waiting for next network event.",
           "emptyLabel": "No layered network trace available for this step.",
-          "focusFallback": "Focus",
-          "focusItemsEmpty": "none yet",
-          "frontierFallback": "Frontier",
-          "guideDesc": "Status, decision and focus chips tell you whether the current pass is searching, augmenting or locking a path.",
-          "guideEyebrow": "Network Guide",
-          "guideTitle": "Track the live route",
           "modeFallback": "Layered network",
-          "phaseFallback": "Initialize",
-          "queueEmptyLabel": "empty",
-          "queueFallback": "Queue",
-          "snapshotDesc": "Route pressure, queue preview and result stay readable without covering the actual network.",
-          "snapshotEyebrow": "Snapshot",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Network arena",
           "statusFallback": "Awaiting step"
         },
         "search": {
@@ -4289,31 +4185,10 @@
             "first": "first",
             "firstLast": "first + last",
             "last": "last"
-          },
-          "decisionFallback": "watch the signal sweep the array",
-          "guideEyebrow": "Search Guide",
-          "guideFallbackDesc": "Track the active probe before you scan the rest of the array.",
-          "guideTitle": "Watch the probe",
-          "hitRange": {
-            "multiple": "indices {{start}}..{{end}}",
-            "none": "no confirmed match",
-            "single": "index {{index}}"
-          },
-          "hitsLabel": "Hits",
-          "probeLabel": "Probe",
-          "snapshotDesc": "Window bounds, probe position and confirmed hits stay in one compact overview.",
-          "snapshotEyebrow": "Snapshot",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Array under inspection",
-          "targetLabel": "Target",
-          "windowLabel": "Window"
+          }
         },
         "string": {
-          "computationEmptyNote": "This step is a pure state transition with no extra formula to explain.",
-          "computationLabel": "Computation",
           "emptyLabel": "No String Lab trace available for this step.",
-          "guideEyebrow": "String Guide",
-          "labEyebrow": "String Lab",
           "labels": {
             "combined": "Combined",
             "input": "Input",
@@ -4321,69 +4196,126 @@
             "source": "Source",
             "text": "Text"
           },
-          "presetEyebrow": "Preset",
           "rle": {
             "waitingForFirstRun": "Waiting for first run…"
-          },
-          "stageEyebrow": "Stage"
+          }
         },
         "dsu": {
-          "guideEyebrow": "DSU Guide",
-          "guideTitle": "Track the active merge",
-          "guideDesc": "Watch the current roots, then read the rail to see whether the step is finding, compressing or merging.",
-          "modeLabel": "Mode",
-          "componentsLabel": "Components",
-          "activeLabel": "Active",
-          "resultLabel": "Result",
-          "railLabel": "Operation rail",
-          "awaitingDecisionLabel": "Waiting for the next DSU decision.",
-          "snapshotEyebrow": "Snapshot",
-          "snapshotTitle": "Parent map",
-          "snapshotDesc": "Parent links stay visible so you can see compression and unions without losing the forest overview.",
-          "parentMapLabel": "Parent map",
-          "parentMapTitle": "Node -> parent",
-          "rootLabel": "root",
-          "rankSizeValue": "rank {{rank}} · size {{size}}",
-          "stageEyebrow": "Stage",
-          "stageTitle": "Set forest",
-          "setForestLabel": "Set forest",
           "rootBadge": "root {{label}}",
           "nodeCount": "{{count}} node(s)",
           "emptyLabel": "No DSU trace available for this step.",
-          "modeHints": {
-            "unionFind": "Path compression + union by rank",
-            "kruskal": "Union-Find inside Kruskal"
-          },
-          "edgeLabels": {
-            "find": "find {{label}}",
-            "union": "{{from}} <-> {{to}}"
-          },
           "nodeSubtitle": {
             "root": "root node",
             "parent": "parent {{label}}"
-          },
-          "edgeStatuses": {
-            "pending": "pending",
-            "active": "active",
-            "accepted": "accepted",
-            "rejected": "rejected"
           }
         },
         "dsuGraph": {
-          "guideEyebrow": "DSU Graph",
-          "unionFindTitle": "Follow parent pointers",
-          "kruskalTitle": "Grow the MST forest",
-          "modeLabel": "Mode",
-          "componentsLabel": "Components",
-          "activeLabel": "Active",
-          "resultLabel": "Result",
-          "snapshotEyebrow": "Snapshot",
-          "unionFindSnapshotDesc": "Parent arrows show how path compression shortens chains toward each representative.",
-          "kruskalSnapshotDesc": "Accepted edges stay in the forest while rejected ones reveal where a cycle would close.",
-          "stageEyebrow": "Stage",
-          "unionFindStageTitle": "Representative forest",
-          "kruskalStageTitle": "Edge scan",
           "emptyLabel": "No DSU graph trace available for this step."
+        },
+        "graph": {
+          "initializeLabel": "Initialize graph",
+          "scanningLabel": "Scanning",
+          "inspectingLabel": "Inspecting {{node}}",
+          "focusedRouteLabel": "Focused: {{path}}",
+          "clearFocusAriaLabel": "Clear focused route"
+        },
+        "closestPair": {
+          "phases": {
+            "init": "Point field",
+            "sort": "Sort by x and y",
+            "divide": "Divide",
+            "base": "Base case",
+            "merge": "Merge",
+            "strip": "Build middle strip",
+            "compare": "Check distance",
+            "update": "Update best",
+            "complete": "Closest pair"
+          },
+          "action": {
+            "regionAndBest": "{{region}} · best {{best}}"
+          }
+        },
+        "convexHull": {
+          "phases": {
+            "init": "Initialize",
+            "pivot": "Pick pivot",
+            "sort": "Polar sort",
+            "initStack": "Prime stack",
+            "checking": "Cross-product check",
+            "pop": "Pop from stack",
+            "push": "Push onto stack",
+            "complete": "Hull complete"
+          },
+          "turn": {
+            "ccw": "CCW",
+            "cw": "CW"
+          },
+          "action": {
+            "detail": "{{turn}} · cross={{cross}} · hull {{hull}}",
+            "hullOnly": "hull {{hull}}"
+          }
+        },
+        "delaunay": {
+          "phases": {
+            "init": "Point field",
+            "circumcircle": "Circumcircle test",
+            "commit": "Commit triangle",
+            "complete": "Mesh complete"
+          },
+          "action": {
+            "focusAndCount": "{{focus}} · {{count}} △",
+            "countOnly": "{{count}} △"
+          }
+        },
+        "halfPlane": {
+          "phases": {
+            "init": "Starting region",
+            "constraint": "Apply constraint",
+            "clip": "Clip region",
+            "infeasible": "No feasible region",
+            "complete": "Intersection complete"
+          }
+        },
+        "lineIntersection": {
+          "phases": {
+            "init": "Sweep setup",
+            "activate": "Activate endpoint",
+            "retire": "Retire endpoint",
+            "intersection": "Crossing found",
+            "complete": "Sweep complete"
+          }
+        },
+        "minkowskiSum": {
+          "phases": {
+            "init": "Input shapes",
+            "reflect": "Reflect robot",
+            "seed": "Seed vertex",
+            "merge": "Merge edges",
+            "complete": "C-space hull"
+          },
+          "action": {
+            "progress": "{{merged}}/{{total}} edges",
+            "activeAndProgress": "{{active}} · {{merged}}/{{total}} edges"
+          }
+        },
+        "sweepLine": {
+          "phases": {
+            "init": "Scanner ready",
+            "event": "Edge event",
+            "complete": "Area computed"
+          }
+        },
+        "voronoi": {
+          "phases": {
+            "init": "Site field",
+            "site": "Site event",
+            "cell": "Freeze cell",
+            "complete": "Diagram complete"
+          },
+          "action": {
+            "focusAndClosed": "{{focus}} · {{closed}} closed",
+            "closedOnly": "{{closed}} closed"
+          }
         }
       }
     },

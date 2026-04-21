@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import {
   ClosestPairStepState,
   GeometryBand,
@@ -8,10 +10,14 @@ import {
   isClosestPairState,
 } from '../../models/geometry';
 import { SortStep } from '../../models/sort-step';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
+
+const I18N = I18N_KEY.features.algorithms.visualizations.closestPair;
 
 @Component({
   selector: 'app-closest-pair-visualization',
-  imports: [],
+  imports: [VizHeader, VizPanel],
   templateUrl: './closest-pair-visualization.html',
   styleUrl: './closest-pair-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +43,44 @@ export class ClosestPairVisualization {
       map.set(point.id, point);
     }
     return map;
+  });
+
+  readonly phaseLabel = computed<TranslatableText>(() => {
+    const phase = this.geoState()?.phase;
+    switch (phase) {
+      case 'init': return I18N.phases.init;
+      case 'sort': return I18N.phases.sort;
+      case 'divide': return I18N.phases.divide;
+      case 'base': return I18N.phases.base;
+      case 'merge': return I18N.phases.merge;
+      case 'strip': return I18N.phases.strip;
+      case 'compare':
+      case 'compare-strip':
+        return I18N.phases.compare;
+      case 'update': return I18N.phases.update;
+      case 'complete': return I18N.phases.complete;
+      default: return '';
+    }
+  });
+
+  readonly actionText = computed<TranslatableText>(() => {
+    const geo = this.geoState();
+    if (!geo) return '';
+    const best = geo.bestDistance;
+    const region = geo.regionLabel;
+    if (best !== null && best !== undefined) {
+      return i18nText(I18N.action.regionAndBest, { region, best: best.toFixed(2) });
+    }
+    return region ?? '';
+  });
+
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const phase = this.geoState()?.phase;
+    if (phase === 'complete') return 'sorted';
+    if (phase === 'update') return 'sorted';
+    if (phase === 'compare' || phase === 'compare-strip') return 'swap';
+    if (phase === 'strip' || phase === 'merge') return 'compare';
+    return 'default';
   });
 
   ptSvgX(id: number): number {
@@ -76,26 +120,5 @@ export class ClosestPairVisualization {
       default:
         return Math.max(0.04, 0.08 - depth * 0.01);
     }
-  }
-
-  phaseLabel(phase: string): string {
-    switch (phase) {
-      case 'init': return 'Point Field';
-      case 'sort': return 'Dual Sorting';
-      case 'divide': return 'Split';
-      case 'base': return 'Base Case';
-      case 'merge': return 'Merge';
-      case 'strip': return 'Strip Build';
-      case 'compare':
-      case 'compare-strip':
-        return 'Distance Check';
-      case 'update': return 'Best Update';
-      case 'complete': return 'Closest Pair';
-      default: return phase;
-    }
-  }
-
-  formatDistance(value: number | null | undefined): string {
-    return value === null || value === undefined ? '—' : value.toFixed(2);
   }
 }

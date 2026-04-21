@@ -4175,113 +4175,9 @@
         }
       },
       "visualizations": {
-        "dp": {
-          "emptyLabel": "Brak śladu DP dla tego kroku.",
-          "guideDesc": "Skup się na aktywnym wierszu, kolumnie lub przedziale, a potem użyj podświetlonych chipów, żeby zobaczyć, które podproblemy zasilają następny zapis.",
-          "guideEyebrow": "Przewodnik DP",
-          "guideTitle": "Najpierw odczytaj aktywny stan",
-          "knapsack": {
-            "activeCellLabel": "aktywna komórka",
-            "applyCurrentMoveLabel": "Zastosuj bieżący ruch",
-            "backtrackPathLabel": "ścieżka backtrackingu",
-            "baseCasesMeta": "wiersz 0 lub pojemność 0",
-            "baseCasesValue": "Przypadki bazowe",
-            "baseRowValue": "Wiersz bazowy",
-            "boardLabel": "przedmioty × pojemność",
-            "branches": {
-              "blockedValue": "zablokowane",
-              "needPreviousStateNote": "wymaga poprzedniego stanu + wartości przedmiotu",
-              "needsWeightNote": "wymaga wagi {{weight}}",
-              "skipLabel": "Gałąź pomiń",
-              "skipNote": "użyj ponownie dp[{{row}}][{{col}}]",
-              "takeLabel": "Gałąź weź",
-              "takeNote": "odczytaj dp[{{row}}][{{col}}] + {{value}}"
-            },
-            "capacityLaneLabel": "Pas pojemności",
-            "currentItemLabel": "Bieżący przedmiot",
-            "currentPackLabel": "Aktualny pakiet",
-            "decisionEyebrow": "Soczewka decyzji",
-            "decisionTitle": "Pomiń kontra weź",
-            "followActiveRowLabel": "Śledź aktywny wiersz",
-            "guideEyebrow": "Przewodnik wizualny",
-            "guideTitle": "Gdzie patrzeć teraz",
-            "inputShelfEyebrow": "Półka wejściowa",
-            "inputShelfTitle": "Przedmioty zasilają wiersze",
-            "labEyebrow": "Laboratorium plecaka",
-            "lockCapacityColumnLabel": "Zablokuj kolumnę pojemności",
-            "metrics": {
-              "bestValue": "Najlepsza wartość",
-              "packed": "Spakowane",
-              "table": "Tabela"
-            },
-            "noWinningBranchLabel": "Brak zwycięskiej gałęzi.",
-            "outcomeEyebrow": "Wynik",
-            "outcomeTitle": "Stan plecaka",
-            "packEmptyLabel": "Wybrane przedmioty pojawią się tutaj podczas backtrackingu.",
-            "rowLabel": "wiersz {{row}}",
-            "scenarioEyebrow": "Scenariusz",
-            "sourceCellsLabel": "komórki źródłowe",
-            "valueShortLabel": "wartość",
-            "waitingTransitionLabel": "Oczekiwanie na kolejne porównanie.",
-            "weightShortLabel": "waga",
-            "workspaceEyebrow": "Obszar roboczy",
-            "workspaceTitle": "Tabela DP gra główną rolę"
-          },
-          "presetLabEyebrow": "Laboratorium presetów",
-          "scenarioEyebrow": "Scenariusz",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Przestrzeń DP"
-        },
-        "grid": {
-          "decisionFallback": "obserwuj, jak plansza zmienia się krok po kroku",
-          "frontierLabel": "Frontier",
-          "guideEyebrow": "Przewodnik po siatce",
-          "guideFallbackDesc": "Obserwuj aktywną komórkę frontier i trasę, którą odblokowuje jako następną.",
-          "guideTitle": "Śledź frontier",
-          "resultFilledLabel": "{{count}} wypełn.",
-          "resultLabel": "Wynik",
-          "resultPathLabel": "{{count}} w ścieżce",
-          "snapshotDesc": "Źródło, cel i statystyki fali pozostają oddzielone od planszy, żeby ruch na siatce był czytelny.",
-          "snapshotEyebrow": "Migawka",
-          "sourceSubtitles": {
-            "seed": "komórka startowa",
-            "start": "start"
-          },
-          "stageEyebrow": "Scena",
-          "stageTitle": "Stan planszy",
-          "targetLabel": "Cel",
-          "visitedLabel": "Odwiedzone"
-        },
-        "matrix": {
-          "emptyLabel": "Brak śladu macierzy dla tego kroku.",
-          "guideDesc": "Najpierw śledź podświetlone wiersze, kolumny i komórki pivota. Reszta macierzy to kontekst pomocniczy.",
-          "guideEyebrow": "Przewodnik po macierzy",
-          "guideTitle": "Śledź aktywne osie",
-          "modeFallback": "Macierz",
-          "phaseFallback": "Inicjalizacja",
-          "snapshotDesc": "Bieżąca faza, pivot i wynik pozostają widoczne bez konkurowania z samą planszą.",
-          "snapshotEyebrow": "Migawka",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Przestrzeń macierzy"
-        },
         "network": {
-          "activeRouteLabel": "Aktywna trasa",
-          "decisionFallback": "Oczekiwanie na kolejne zdarzenie sieciowe.",
           "emptyLabel": "Brak śladu warstwowej sieci dla tego kroku.",
-          "focusFallback": "Fokus",
-          "focusItemsEmpty": "jeszcze brak",
-          "frontierFallback": "Frontier",
-          "guideDesc": "Status, decyzja i chipy fokusu pokazują, czy bieżący przebieg szuka, powiększa czy domyka ścieżkę.",
-          "guideEyebrow": "Przewodnik po sieci",
-          "guideTitle": "Śledź żywą trasę",
           "modeFallback": "Sieć warstwowa",
-          "phaseFallback": "Inicjalizacja",
-          "queueEmptyLabel": "pusto",
-          "queueFallback": "Kolejka",
-          "snapshotDesc": "Nacisk trasy, podgląd kolejki i wynik pozostają czytelne bez zasłaniania samej sieci.",
-          "snapshotEyebrow": "Migawka",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Arena sieci",
           "statusFallback": "Oczekiwanie na krok"
         },
         "search": {
@@ -4289,31 +4185,10 @@
             "first": "pierwsze",
             "firstLast": "pierwsze + ostatnie",
             "last": "ostatnie"
-          },
-          "decisionFallback": "obserwuj, jak sygnał omiata tablicę",
-          "guideEyebrow": "Przewodnik po wyszukiwaniu",
-          "guideFallbackDesc": "Najpierw śledź aktywną sondę, zanim spojrzysz na resztę tablicy.",
-          "guideTitle": "Obserwuj sondę",
-          "hitRange": {
-            "multiple": "indeksy {{start}}..{{end}}",
-            "none": "brak potwierdzonego trafienia",
-            "single": "indeks {{index}}"
-          },
-          "hitsLabel": "Trafienia",
-          "probeLabel": "Sonda",
-          "snapshotDesc": "Granice okna, pozycja sondy i potwierdzone trafienia pozostają w jednym zwartym widoku.",
-          "snapshotEyebrow": "Migawka",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Tablica pod inspekcją",
-          "targetLabel": "Cel",
-          "windowLabel": "Okno"
+          }
         },
         "string": {
-          "computationEmptyNote": "Ten krok to czyste przejście stanu bez dodatkowego wzoru do wyjaśnienia.",
-          "computationLabel": "Obliczenie",
           "emptyLabel": "Brak śladu String Lab dla tego kroku.",
-          "guideEyebrow": "Przewodnik po stringach",
-          "labEyebrow": "Laboratorium stringów",
           "labels": {
             "combined": "Połączony",
             "input": "Wejście",
@@ -4321,69 +4196,126 @@
             "source": "Źródło",
             "text": "Tekst"
           },
-          "presetEyebrow": "Preset",
           "rle": {
             "waitingForFirstRun": "Oczekiwanie na pierwszy przebieg…"
-          },
-          "stageEyebrow": "Scena"
+          }
         },
         "dsu": {
-          "guideEyebrow": "Przewodnik DSU",
-          "guideTitle": "Śledź aktywne scalenie",
-          "guideDesc": "Obserwuj bieżące korzenie, a potem czytaj szynę operacji, aby zobaczyć, czy krok znajduje, kompresuje czy scala.",
-          "modeLabel": "Tryb",
-          "componentsLabel": "Składowe",
-          "activeLabel": "Aktywne",
-          "resultLabel": "Wynik",
-          "railLabel": "Szyna operacji",
-          "awaitingDecisionLabel": "Oczekiwanie na następną decyzję DSU.",
-          "snapshotEyebrow": "Migawka",
-          "snapshotTitle": "Mapa rodziców",
-          "snapshotDesc": "Połączenia rodziców pozostają widoczne, więc kompresja ścieżki i uniony są czytelne bez gubienia obrazu całego lasu.",
-          "parentMapLabel": "Mapa rodziców",
-          "parentMapTitle": "Węzeł -> rodzic",
-          "rootLabel": "korzeń",
-          "rankSizeValue": "ranga {{rank}} · rozmiar {{size}}",
-          "stageEyebrow": "Scena",
-          "stageTitle": "Las zbiorów",
-          "setForestLabel": "Las zbiorów",
           "rootBadge": "korzeń {{label}}",
           "nodeCount": "{{count}} węzłów",
           "emptyLabel": "Brak śladu DSU dla tego kroku.",
-          "modeHints": {
-            "unionFind": "Kompresja ścieżki + union by rank",
-            "kruskal": "Union-Find wewnątrz Kruskala"
-          },
-          "edgeLabels": {
-            "find": "find {{label}}",
-            "union": "{{from}} <-> {{to}}"
-          },
           "nodeSubtitle": {
             "root": "węzeł korzenia",
             "parent": "rodzic {{label}}"
-          },
-          "edgeStatuses": {
-            "pending": "oczekuje",
-            "active": "aktywna",
-            "accepted": "zaakceptowana",
-            "rejected": "odrzucona"
           }
         },
         "dsuGraph": {
-          "guideEyebrow": "Graf DSU",
-          "unionFindTitle": "Śledź wskaźniki rodziców",
-          "kruskalTitle": "Buduj las MST",
-          "modeLabel": "Tryb",
-          "componentsLabel": "Składowe",
-          "activeLabel": "Aktywne",
-          "resultLabel": "Wynik",
-          "snapshotEyebrow": "Migawka",
-          "unionFindSnapshotDesc": "Strzałki rodziców pokazują, jak kompresja ścieżki skraca łańcuchy do reprezentantów.",
-          "kruskalSnapshotDesc": "Zaakceptowane krawędzie zostają w lesie, a odrzucone pokazują, gdzie domknąłby się cykl.",
-          "stageEyebrow": "Scena",
-          "unionFindStageTitle": "Las reprezentantów",
-          "kruskalStageTitle": "Przegląd krawędzi",
           "emptyLabel": "Brak śladu grafu DSU dla tego kroku."
+        },
+        "graph": {
+          "initializeLabel": "Inicjalizacja grafu",
+          "scanningLabel": "Skanowanie",
+          "inspectingLabel": "Sprawdzam {{node}}",
+          "focusedRouteLabel": "W fokusie: {{path}}",
+          "clearFocusAriaLabel": "Wyczyść skupioną trasę"
+        },
+        "closestPair": {
+          "phases": {
+            "init": "Zbiór punktów",
+            "sort": "Sortowanie po x i y",
+            "divide": "Podział",
+            "base": "Przypadek bazowy",
+            "merge": "Łączenie",
+            "strip": "Pas środkowy",
+            "compare": "Test odległości",
+            "update": "Aktualizacja najlepszej",
+            "complete": "Najbliższa para"
+          },
+          "action": {
+            "regionAndBest": "{{region}} · najlepsza {{best}}"
+          }
+        },
+        "convexHull": {
+          "phases": {
+            "init": "Inicjalizacja",
+            "pivot": "Wybór punktu osiowego",
+            "sort": "Sortowanie polarne",
+            "initStack": "Przygotowanie stosu",
+            "checking": "Test iloczynu wektorowego",
+            "pop": "Zdjęcie ze stosu",
+            "push": "Wrzucenie na stos",
+            "complete": "Otoczka gotowa"
+          },
+          "turn": {
+            "ccw": "CCW",
+            "cw": "CW"
+          },
+          "action": {
+            "detail": "{{turn}} · cross={{cross}} · otoczka {{hull}}",
+            "hullOnly": "otoczka {{hull}}"
+          }
+        },
+        "delaunay": {
+          "phases": {
+            "init": "Zbiór punktów",
+            "circumcircle": "Test okręgu opisanego",
+            "commit": "Zatwierdzenie trójkąta",
+            "complete": "Siatka gotowa"
+          },
+          "action": {
+            "focusAndCount": "{{focus}} · {{count}} △",
+            "countOnly": "{{count}} △"
+          }
+        },
+        "halfPlane": {
+          "phases": {
+            "init": "Region startowy",
+            "constraint": "Nałożenie ograniczenia",
+            "clip": "Przycinanie regionu",
+            "infeasible": "Brak regionu dopuszczalnego",
+            "complete": "Przecięcie gotowe"
+          }
+        },
+        "lineIntersection": {
+          "phases": {
+            "init": "Przygotowanie miotły",
+            "activate": "Wstawienie końca",
+            "retire": "Usunięcie końca",
+            "intersection": "Znaleziono przecięcie",
+            "complete": "Miotła zakończona"
+          }
+        },
+        "minkowskiSum": {
+          "phases": {
+            "init": "Figury wejściowe",
+            "reflect": "Odbicie robota",
+            "seed": "Wierzchołek startowy",
+            "merge": "Łączenie krawędzi",
+            "complete": "Otoczka C-space"
+          },
+          "action": {
+            "progress": "{{merged}}/{{total}} krawędzi",
+            "activeAndProgress": "{{active}} · {{merged}}/{{total}} krawędzi"
+          }
+        },
+        "sweepLine": {
+          "phases": {
+            "init": "Skaner gotowy",
+            "event": "Zdarzenie krawędzi",
+            "complete": "Obszar obliczony"
+          }
+        },
+        "voronoi": {
+          "phases": {
+            "init": "Zbiór zarodków",
+            "site": "Zdarzenie zarodka",
+            "cell": "Zamknięcie komórki",
+            "complete": "Diagram gotowy"
+          },
+          "action": {
+            "focusAndClosed": "{{focus}} · {{closed}} zamkniętych",
+            "closedOnly": "{{closed}} zamkniętych"
+          }
         }
       }
     },

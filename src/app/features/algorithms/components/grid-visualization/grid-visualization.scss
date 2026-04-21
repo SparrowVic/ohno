@@ -4,101 +4,11 @@
   min-height: 0;
 }
 
-.grid-viz {
-  min-height: 0;
-  width: 100%;
-}
-
-.grid-viz__hero {
-  display: grid;
-  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
-  gap: 12px;
-}
-
-.grid-viz__focus-card,
-.grid-viz__status-band,
-.grid-viz__decision-shell,
-.grid-viz__board-shell {
-  border-radius: 18px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background:
-    radial-gradient(circle at top right, rgb(var(--chrome-accent-rgb) / 0.06), transparent 42%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-  box-shadow: 0 6px 18px rgba(8, 12, 24, 0.14);
-}
-
-.grid-viz__focus-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  padding: 16px 18px;
-}
-
-.grid-viz__eyebrow,
-.grid-viz__metric-label,
-.grid-viz__decision-label {
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.grid-viz__focus-value {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--text-primary);
-}
-
-.grid-viz__focus-subtitle {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.grid-viz__status-band {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  padding: 10px;
-}
-
-.grid-viz__metric {
-  min-width: 0;
-  padding: 10px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.028);
-}
-
-.grid-viz__metric-value {
-  display: block;
-  margin-top: 5px;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.grid-viz__decision-shell {
-  padding: 10px 14px;
-}
-
-.grid-viz__decision {
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 .grid-viz__board-shell {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 12px;
+  padding: 14px;
 }
 
 .grid-viz__board {
@@ -215,7 +125,8 @@
 }
 
 @keyframes grid-frontier-breathe {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.04),
       0 0 8px rgb(var(--chrome-accent-rgb) / 0.14);
@@ -248,7 +159,8 @@
 }
 
 @keyframes grid-current-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow:
       inset 0 0 0 0.5px rgb(var(--chrome-accent-warm-rgb) / 0.45),
       0 0 18px rgb(var(--chrome-accent-warm-rgb) / 0.28),
@@ -347,20 +259,9 @@
   background-color: rgb(var(--viz-danger-rgb) / 0.16);
 }
 
-/* Reduced motion — kill breathing / pulse loops, keep the colors. */
 @media (prefers-reduced-motion: reduce) {
   .grid-cell--frontier,
   .grid-cell--current {
     animation: none;
-  }
-}
-
-@container (max-width: 420px) {
-  .grid-viz__focus-card {
-    padding: 14px 16px;
-  }
-
-  .grid-viz__focus-value {
-    font-size: 22px;
   }
 }

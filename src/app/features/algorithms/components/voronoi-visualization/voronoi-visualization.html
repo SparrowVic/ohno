@@ -1,94 +1,40 @@
-<div class="vrv viz-flow">
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+
   @if (geoState(); as geo) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Site Guide</span>
-        <h3 class="viz-flow__title">Track the active site</h3>
-        <p class="viz-flow__desc">The sweep line closes cells one by one. The site rail tells you which point is currently shaping the diagram.</p>
-      </div>
+    <div class="vrv__stage">
+      <svg class="vrv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="vrv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
+          </pattern>
+        </defs>
+        <rect x="-6" y="-6" width="112" height="112" fill="url(#vrv-grid)" />
 
-      <div class="vrv__footer">
-        <span class="vrv__footer-key">Site rail</span>
-        <div class="vrv__events">
-          @for (event of geo.events; track event.id) {
-            <span class="vrv__event vrv__event--{{ event.tone }}">{{ event.label }}</span>
-          }
-        </div>
-      </div>
-    </aside>
+        @if (geo.sweepY !== null) {
+          <line x1="0" [attr.y1]="100 - geo.sweepY" x2="100" [attr.y2]="100 - geo.sweepY" class="vrv__sweep" />
+        }
 
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">{{ phaseLabel(geo.phase) }}</h3>
-        <p class="viz-flow__desc">Sweep position, closed cell count and focused cell stay visible while the tessellation remains uncluttered.</p>
-      </div>
+        @for (cell of geo.cells; track cell.id) {
+          <polygon
+            [attr.points]="polygonPoints(cell)"
+            class="vrv__cell"
+            [attr.fill]="cellColor(cell.id)"
+            [attr.stroke]="cellStroke(cell.id)"
+            [class.vrv__cell--active]="cell.tone === 'cell-active'"
+          />
+        }
 
-      <div class="vrv__hud">
-        <div class="vrv__card vrv__card--phase">
-          <span class="vrv__key">Phase</span>
-          <span class="vrv__val">{{ phaseLabel(geo.phase) }}</span>
-        </div>
-        <div class="vrv__card">
-          <span class="vrv__key">Sweep y</span>
-          <span class="vrv__val">{{ geo.sweepY !== null ? geo.sweepY.toFixed(1) : 'done' }}</span>
-        </div>
-        <div class="vrv__card">
-          <span class="vrv__key">Closed cells</span>
-          <span class="vrv__val vrv__val--accent">{{ geo.closedCells }}</span>
-        </div>
-        <div class="vrv__card">
-          <span class="vrv__key">Focus</span>
-          <span class="vrv__val">{{ geo.currentCellLabel }}</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Voronoi field</h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ geo.currentCellLabel }}</span>
-      </div>
-
-      <div class="viz-flow__stage-body">
-        <div class="vrv__stage">
-          <svg class="vrv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <pattern id="vrv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
-              </pattern>
-            </defs>
-            <rect x="-6" y="-6" width="112" height="112" fill="url(#vrv-grid)" />
-
-            @if (geo.sweepY !== null) {
-              <line x1="0" [attr.y1]="100 - geo.sweepY" x2="100" [attr.y2]="100 - geo.sweepY" class="vrv__sweep" />
-            }
-
-            @for (cell of geo.cells; track cell.id) {
-              <polygon
-                [attr.points]="polygonPoints(cell)"
-                class="vrv__cell"
-                [attr.fill]="cellColor(cell.id)"
-                [attr.stroke]="cellStroke(cell.id)"
-                [class.vrv__cell--active]="cell.tone === 'cell-active'"
-              />
-            }
-
-            @for (point of geo.points; track point.id) {
-              <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
-                <circle
-                  [class]="'vrv__site ' + (geo.activeSiteId === point.id ? 'vrv__site--active' : 'vrv__site--idle')"
-                  r="3.3"
-                />
-                <circle [class]="'vrv__site-glow ' + (geo.activeSiteId === point.id ? 'vrv__site-glow--active' : 'vrv__site-glow--idle')" r="6" />
-              </g>
-            }
-          </svg>
-        </div>
-      </div>
-    </section>
+        @for (point of geo.points; track point.id) {
+          <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
+            <circle
+              [class]="'vrv__site ' + (geo.activeSiteId === point.id ? 'vrv__site--active' : 'vrv__site--idle')"
+              r="3.3"
+            />
+            <circle [class]="'vrv__site-glow ' + (geo.activeSiteId === point.id ? 'vrv__site-glow--active' : 'vrv__site-glow--idle')" r="6" />
+          </g>
+        }
+      </svg>
+    </div>
   }
-</div>
+</app-viz-panel>

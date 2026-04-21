@@ -1,131 +1,49 @@
-<div class="chv viz-flow">
-  @if (geoState(); as geo) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Hull Guide</span>
-        <h3 class="viz-flow__title">Build the stack</h3>
-        <p class="viz-flow__desc">Watch the stack and the active turn check first. Those two signals explain every push and pop.</p>
-      </div>
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
-      <div class="viz-flow__metric-grid">
-        <div class="viz-flow__mini-card">
-          <span class="viz-flow__mini-key">Phase</span>
-          <span class="viz-flow__mini-val">{{ phaseLabel(geo.phase) }}</span>
-        </div>
-        <div class="viz-flow__mini-card">
-          <span class="viz-flow__mini-key">Hull size</span>
-          <span class="viz-flow__mini-val">{{ geo.stackIds.length }}</span>
-        </div>
-        <div class="viz-flow__mini-card">
-          <span class="viz-flow__mini-key">Cross</span>
-          <span class="viz-flow__mini-val">
-            @if (geo.crossProduct !== null) {
-              {{ geo.crossProduct > 0 ? '↺ ' : '↻ ' }}{{ geo.crossProduct.toFixed(0) }}
-            } @else {
-              —
-            }
-          </span>
-        </div>
-      </div>
+  @if (geoState()) {
+    <div class="chv__stage">
+      <svg class="chv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="chv-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="0" cy="0" r="0.4" fill="rgba(255,255,255,0.07)" />
+          </pattern>
+        </defs>
+        <rect x="-6" y="-6" width="112" height="112" fill="url(#chv-dots)" />
 
-      <div class="viz-flow__divider"></div>
-
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Stack Trail</span>
-        <h3 class="viz-flow__title">Current hull path</h3>
-      </div>
-
-      <div class="viz-flow__pill-row">
-        @if (geo.stackIds.length === 0) {
-          <span class="viz-flow__empty">Stack fills as the scan advances.</span>
+        @if (isComplete()) {
+          <polygon [attr.points]="hullPolyPoints()" class="chv__hull-poly" />
         }
-        @for (id of geo.stackIds; track id; let last = $last) {
-          <span class="viz-flow__pill" [class.viz-flow__pill--accent]="last">P{{ id }}</span>
+
+        @if (turnTriPoints(); as triPts) {
+          <polygon [attr.points]="triPts" class="chv__turn-tri" />
         }
-      </div>
-    </aside>
 
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">Snapshot</span>
-        <h3 class="viz-flow__title">Turn-check status</h3>
-        <p class="viz-flow__desc">Pivot, current triangle and the number of active hull edges stay visible without covering the canvas.</p>
-      </div>
+        @for (edge of edges(); track edge.fromId + '-' + edge.toId) {
+          <line
+            [attr.x1]="ptSvgX(edge.fromId)"
+            [attr.y1]="ptSvgY(edge.fromId)"
+            [attr.x2]="ptSvgX(edge.toId)"
+            [attr.y2]="ptSvgY(edge.toId)"
+            [class]="'chv__edge chv__edge--' + edge.kind"
+          />
+        }
 
-      <div class="viz-flow__metric-grid">
-        <div class="viz-flow__mini-card">
-          <span class="viz-flow__mini-key">Points</span>
-          <span class="viz-flow__mini-val">{{ geo.points.length }}</span>
-        </div>
-        <div class="viz-flow__mini-card">
-          <span class="viz-flow__mini-key">Edges</span>
-          <span class="viz-flow__mini-val">{{ geo.edges.length }}</span>
-        </div>
-        <div class="viz-flow__mini-card">
-          <span class="viz-flow__mini-key">Triangle</span>
-          <span class="viz-flow__mini-val">
-            @if (geo.turnCheck; as turnCheck) {
-              P{{ turnCheck[0] }} · P{{ turnCheck[1] }} · P{{ turnCheck[2] }}
-            } @else {
-              waiting
+        @for (pt of points(); track pt.id) {
+          <g [attr.transform]="ptTransform(pt)">
+            @if (showGlow(pt)) {
+              <circle [class]="'chv__glow chv__glow--' + pt.status" r="8" />
             }
-          </span>
-        </div>
-      </div>
-    </section>
+            <circle [class]="'chv__pt chv__pt--' + pt.status" r="4.2" />
 
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">Hull canvas</h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ phaseLabel(geo.phase) }}</span>
-      </div>
+            @if (pt.sortIndex !== null && pt.sortIndex !== undefined && pt.sortIndex > 0) {
+              <text class="chv__sort-badge" y="-7" text-anchor="middle">{{ pt.sortIndex }}</text>
+            }
 
-      <div class="viz-flow__stage-body">
-        <svg class="chv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <pattern id="chv-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-              <circle cx="0" cy="0" r="0.4" fill="rgba(255,255,255,0.07)" />
-            </pattern>
-          </defs>
-          <rect x="-6" y="-6" width="112" height="112" fill="url(#chv-dots)" />
-
-          @if (isComplete()) {
-            <polygon [attr.points]="hullPolyPoints()" class="chv__hull-poly" />
-          }
-
-          @if (turnTriPoints(); as triPts) {
-            <polygon [attr.points]="triPts" class="chv__turn-tri" />
-          }
-
-          @for (edge of edges(); track edge.fromId + '-' + edge.toId) {
-            <line
-              [attr.x1]="ptSvgX(edge.fromId)"
-              [attr.y1]="ptSvgY(edge.fromId)"
-              [attr.x2]="ptSvgX(edge.toId)"
-              [attr.y2]="ptSvgY(edge.toId)"
-              [class]="'chv__edge chv__edge--' + edge.kind"
-            />
-          }
-
-          @for (pt of points(); track pt.id) {
-            <g [attr.transform]="ptTransform(pt)">
-              @if (showGlow(pt)) {
-                <circle [class]="'chv__glow chv__glow--' + pt.status" r="8" />
-              }
-              <circle [class]="'chv__pt chv__pt--' + pt.status" r="4.2" />
-
-              @if (pt.sortIndex !== null && pt.sortIndex !== undefined && pt.sortIndex > 0) {
-                <text class="chv__sort-badge" y="-7" text-anchor="middle">{{ pt.sortIndex }}</text>
-              }
-
-              <text class="chv__pt-id" text-anchor="middle" dominant-baseline="middle">{{ pt.id }}</text>
-            </g>
-          }
-        </svg>
-      </div>
-    </section>
+            <text class="chv__pt-id" text-anchor="middle" dominant-baseline="middle">{{ pt.id }}</text>
+          </g>
+        }
+      </svg>
+    </div>
   }
-</div>
+</app-viz-panel>

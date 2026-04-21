@@ -2,15 +2,15 @@
   display: flex;
   flex: 1;
   min-height: 0;
-  flex-direction: column;
   overflow: hidden;
 }
 
-.chv {
+.chv__stage {
+  display: flex;
+  flex: 1;
   min-height: 0;
+  padding: 14px;
 }
-
-/* ─── SVG canvas ─── */
 
 .chv__svg {
   flex: 1;
@@ -19,8 +19,6 @@
   overflow: visible;
 }
 
-/* ─── Hull polygon fill ─── */
-
 .chv__hull-poly {
   fill: rgb(var(--viz-success-rgb) / 0.06);
   stroke: rgb(var(--viz-success-rgb) / 0.18);
@@ -28,16 +26,12 @@
   stroke-linejoin: round;
 }
 
-/* ─── Turn check triangle ─── */
-
 .chv__turn-tri {
   fill: rgb(var(--viz-warning-rgb) / 0.07);
   stroke: rgb(var(--viz-warning-rgb) / 0.22);
   stroke-width: 0.35;
   stroke-dasharray: 1.5 1;
 }
-
-/* ─── Edges ─── */
 
 .chv__edge {
   stroke-linecap: round;
@@ -55,8 +49,6 @@
     stroke-dasharray: none;
   }
 }
-
-/* ─── Point glow rings ─── */
 
 .chv__glow {
   opacity: 0.14;
@@ -79,8 +71,6 @@
     opacity: 0.2;
   }
 }
-
-/* ─── Points ─── */
 
 .chv__pt {
   stroke-width: 0.6;
@@ -124,8 +114,6 @@
   }
 }
 
-/* ─── Sort-order badge (shown above point) ─── */
-
 .chv__sort-badge {
   font-size: 2.6px;
   fill: rgba(255, 255, 255, 0.5);
@@ -134,141 +122,10 @@
   font-family: ui-monospace, monospace;
 }
 
-/* ─── Point ID label inside circle ─── */
-
 .chv__pt-id {
   font-size: 3.2px;
   fill: rgba(255, 255, 255, 0.9);
   font-weight: 800;
   pointer-events: none;
   font-family: ui-monospace, monospace;
-}
-
-/* ─── Bottom info bar ─── */
-
-.chv__bar {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 10px 2px 12px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-}
-
-.chv__bar-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  &--stack {
-    flex: 1;
-    min-width: 0;
-  }
-}
-
-.chv__bar-key {
-  font-size: 9px;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
-
-.chv__bar-phase {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 100px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-/* Phase-specific colours */
-.chv__phase--pivot .chv__bar-phase,
-.chv__bar-phase.chv__phase--pivot {
-  color: var(--viz-accent);
-  background: rgb(var(--viz-accent-rgb) / 0.1);
-  border-color: rgb(var(--viz-accent-rgb) / 0.2);
-}
-
-.chv__phase--sort .chv__bar-phase,
-.chv__bar-phase.chv__phase--sort {
-  color: #94a3b8;
-  background: rgba(148, 163, 184, 0.1);
-}
-
-.chv__phase--checking .chv__bar-phase,
-.chv__bar-phase.chv__phase--checking {
-  color: var(--viz-warning);
-  background: rgb(var(--viz-warning-rgb) / 0.1);
-  border-color: rgb(var(--viz-warning-rgb) / 0.2);
-}
-
-.chv__phase--pop .chv__bar-phase,
-.chv__bar-phase.chv__phase--pop {
-  color: #f43f5e;
-  background: rgb(var(--viz-danger-rgb) / 0.1);
-  border-color: rgb(var(--viz-danger-rgb) / 0.2);
-}
-
-.chv__phase--push .chv__bar-phase,
-.chv__bar-phase.chv__phase--push,
-.chv__phase--stack .chv__bar-phase {
-  color: #a5b4fc;
-  background: rgb(var(--viz-window-rgb) / 0.1);
-  border-color: rgb(var(--viz-window-rgb) / 0.2);
-}
-
-.chv__phase--complete .chv__bar-phase,
-.chv__bar-phase.chv__phase--complete {
-  color: var(--viz-success);
-  background: rgb(var(--viz-success-rgb) / 0.1);
-  border-color: rgb(var(--viz-success-rgb) / 0.2);
-}
-
-/* Stack chips */
-
-.chv__stack-row {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.chv__stack-chip {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 100px;
-  background: rgb(var(--viz-window-rgb) / 0.12);
-  border: 0.5px solid rgb(var(--viz-window-rgb) / 0.25);
-  color: rgba(165, 180, 252, 0.8);
-
-  &--top {
-    background: rgb(var(--viz-window-rgb) / 0.24);
-    border-color: rgb(var(--viz-window-rgb) / 0.45);
-    color: #c4b5fd;
-  }
-}
-
-.chv__stack-empty {
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-
-/* Cross product badge */
-
-.chv__cross {
-  font-size: 13px;
-  font-weight: 700;
-  font-family: ui-monospace, monospace;
-
-  &--pos {
-    color: var(--viz-success);
-  }
-  &--neg {
-    color: #f43f5e;
-  }
 }

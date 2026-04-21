@@ -15,6 +15,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   BurrowsWheelerTraceState,
   HuffmanTraceState,
@@ -35,6 +36,9 @@ import {
 } from '../../models/string';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
+import { VizPanel } from '../viz-panel/viz-panel';
+import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
 import { animateStringStepEffects } from './string-visualization.animations';
 import {
   buildManacherArcs,
@@ -64,11 +68,10 @@ import {
   zBarHeight,
   zCharClass,
 } from './string-visualization.utils/string-visualization.utils';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-string-visualization',
-  imports: [I18nTextPipe, TranslocoPipe],
+  imports: [TranslocoPipe, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './string-visualization.html',
   styleUrl: './string-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -115,6 +118,65 @@ export class StringVisualization implements AfterViewInit, OnDestroy, Visualizat
   readonly huffmanState = computed<HuffmanTraceState | null>(() => {
     const state = this.state();
     return isHuffmanState(state) ? state : null;
+  });
+
+  /** Algorithm tag — "KMP", "Rabin-Karp", "Z-Algorithm", …. Identity
+   *  of the viz; stable across steps. */
+  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+
+  /** Action sentence. Priority: decision > computation expression >
+   *  phase label > active label. Picks the single richest per-step
+   *  fact without crowding. */
+  readonly actionText = computed<TranslatableText>(() => {
+    const state = this.state();
+    if (!state) return '';
+    return (
+      state.decisionLabel ??
+      state.computation?.expression ??
+      state.phaseLabel ??
+      state.activeLabel ??
+      ''
+    );
+  });
+
+  /** Tone derived from mode-specific terminal flags. Most string
+   *  algorithms have a "complete/done" phase; when we're there the
+   *  rail goes lime. While a computation is in-flight we lean on
+   *  cyan for attentiveness. */
+  readonly headerTone = computed<VizHeaderTone>(() => {
+    const state = this.state();
+    if (!state) return 'default';
+
+    const kmp = this.kmpState();
+    if (kmp) {
+      if (kmp.stage === 'done') return 'sorted';
+      if (kmp.matches.length > 0) return 'sorted';
+    }
+
+    const rabin = this.rabinState();
+    if (rabin) {
+      if (rabin.collision) return 'sorted';
+      if (rabin.matches.length > 0) return 'sorted';
+      if (rabin.verifying) return 'swap';
+    }
+
+    const rle = this.rleState();
+    if (rle) {
+      if (rle.phase === 'complete') return 'sorted';
+      if (rle.phase === 'emit') return 'swap';
+    }
+
+    const huffman = this.huffmanState();
+    if (huffman) {
+      if (huffman.phase === 'codes') return 'sorted';
+      if (huffman.phase === 'merge') return 'swap';
+    }
+
+    const manacher = this.manacherState();
+    if (manacher && manacher.currentCenter !== null) return 'compare';
+
+    if (state.computation) return 'compare';
+    return 'default';
   });
 
   protected readonly patternOffset = patternOffset;

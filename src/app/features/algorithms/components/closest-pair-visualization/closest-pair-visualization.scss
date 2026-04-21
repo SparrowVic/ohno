@@ -5,21 +5,12 @@
   overflow: hidden;
 }
 
-.cpv {
-  min-height: 0;
-}
-
 .cpv__stage {
   position: relative;
   display: flex;
   flex: 1;
   min-height: 0;
-  border-radius: 18px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at top, rgb(var(--viz-route-rgb) / 0.05), transparent 38%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.84));
-  border: 0.5px solid rgba(255, 255, 255, 0.07);
+  padding: 14px;
 }
 
 .cpv__svg {
@@ -176,102 +167,4 @@
   fill: rgba(255, 255, 255, 0.95);
   font-family: ui-monospace, monospace;
   pointer-events: none;
-}
-
-.cpv__hud {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
-  gap: 8px;
-  pointer-events: none;
-}
-
-.cpv__card {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 3px;
-  padding: 9px 10px;
-  border-radius: 14px;
-  background: rgba(3, 7, 18, 0.72);
-  border: 0.5px solid rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(10px);
-
-  &--phase {
-    border-color: rgb(var(--viz-route-rgb) / 0.16);
-    background: rgba(2, 6, 23, 0.78);
-  }
-}
-
-.cpv__card-key {
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-tertiary);
-}
-
-.cpv__card-val {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-
-  &--best {
-    color: var(--viz-hit);
-  }
-
-  &--current {
-    color: var(--viz-warning);
-  }
-}
-
-.cpv__footer {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.cpv__meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.cpv__meta-key {
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-  color: var(--text-tertiary);
-}
-
-.cpv__meta-val {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-secondary);
-}
-
-.cpv__trail {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.cpv__trail-chip {
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 0.5px solid rgb(var(--viz-route-rgb) / 0.16);
-  background: rgb(var(--viz-route-rgb) / 0.08);
-  color: rgba(204, 251, 241, 0.92);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }

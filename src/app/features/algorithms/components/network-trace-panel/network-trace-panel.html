@@ -3,91 +3,90 @@
     <div class="trace__header">
       <app-trace-hint [keyIdea]="hintKeyIdea()" [watch]="hintWatch()" />
 
-      <div class="trace__summary">
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{
-            I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco
-          }}</span>
-          <span class="trace__summary-value">{{ networkState.modeLabel }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{
-            I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco
-          }}</span>
-          <span class="trace__summary-value">{{ networkState.phaseLabel }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{ networkState.frontierLabel }}</span>
-          <span class="trace__summary-value">{{ networkState.frontierCount }}</span>
-        </div>
-        <div class="trace__summary-card">
-          <span class="trace__summary-label">{{
-            I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco
-          }}</span>
-          <span class="trace__summary-value">{{ networkState.resultLabel }}</span>
-        </div>
-      </div>
+      <!-- Facts — mode / phase / frontier size / outcome. -->
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="networkState.modeLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="networkState.phaseLabel"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="networkState.frontierLabel"
+          [value]="networkState.frontierCount"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+          [value]="networkState.resultLabel"
+        />
+      </app-segmented-panel>
 
-      <div class="trace__calc">
-        <div class="trace__calc-strip">
-          <div class="trace__calc-pill">
-            <span class="trace__summary-label">{{
-              I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco
-            }}</span>
-            <span class="trace__calc-value">{{ networkState.statusLabel }}</span>
+      <!-- Calc — status + active route + live computation expression. -->
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.statusLabel | transloco"
+          [value]="networkState.statusLabel"
+        >
+          @if (networkState.computation; as computation) {
+            <code class="trace__calc-expression"
+              >{{ computation.label }}: {{ computation.expression }}@if (computation.result) {
+                = {{ computation.result }}
+              }</code
+            >
+            <p class="trace__calc-note">{{ computation.decision }}</p>
+          } @else {
+            <p class="trace__calc-note">
+              {{ I18N_KEY.features.algorithms.tracePanels.network.waitingStepLabel | transloco }}
+            </p>
+          }
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.routeLabel | transloco"
+          [value]="networkState.activeRouteLabel ?? '—'"
+          [valueMono]="true"
+        />
+      </app-segmented-panel>
+
+      <!-- Streams — queue + focus items. -->
+      <app-segmented-panel class="trace__streams">
+        <app-segmented-panel-section
+          [eyebrow]="networkState.queueLabel"
+          [badge]="queuePreview().length"
+        >
+          <div class="trace__stream-items">
+            @if (queuePreview().length === 0) {
+              <span class="trace__stream-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.network.queueEmptyLabel | transloco
+              }}</span>
+            } @else {
+              @for (item of queuePreview(); track item) {
+                <span class="trace__stream-chip">{{ item }}</span>
+              }
+            }
           </div>
-          <div class="trace__calc-pill">
-            <span class="trace__summary-label">{{
-              I18N_KEY.features.algorithms.tracePanels.common.routeLabel | transloco
-            }}</span>
-            <span class="trace__calc-value">{{ networkState.activeRouteLabel ?? '—' }}</span>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="networkState.focusItemsLabel"
+          [badge]="networkState.focusItems.length"
+        >
+          <div class="trace__stream-items">
+            @if (networkState.focusItems.length === 0) {
+              <span class="trace__stream-empty">{{
+                I18N_KEY.features.algorithms.tracePanels.common.noneYetLabel | transloco
+              }}</span>
+            } @else {
+              @for (item of networkState.focusItems; track item) {
+                <span class="trace__stream-chip trace__stream-chip--done">{{ item }}</span>
+              }
+            }
           </div>
-        </div>
-        <div class="trace__calc-decision">
-          @if (networkState.computation) {
-            <strong>{{ networkState.computation.label }}:</strong>
-            {{ networkState.computation.expression }}
-            @if (networkState.computation.result) {
-              <span> = {{ networkState.computation.result }}</span>
-            }
-            <span> · {{ networkState.computation.decision }}</span>
-          } @else {
-            <span>{{
-              I18N_KEY.features.algorithms.tracePanels.network.waitingStepLabel | transloco
-            }}</span>
-          }
-        </div>
-      </div>
-
-      <div class="trace__queue">
-        <div class="trace__section-label">{{ networkState.queueLabel }}</div>
-        <div class="trace__queue-items">
-          @if (queuePreview().length === 0) {
-            <span class="trace__queue-empty">{{
-              I18N_KEY.features.algorithms.tracePanels.network.queueEmptyLabel | transloco
-            }}</span>
-          } @else {
-            @for (item of queuePreview(); track item) {
-              <span class="trace__queue-chip">{{ item }}</span>
-            }
-          }
-        </div>
-      </div>
-
-      <div class="trace__queue">
-        <div class="trace__section-label">{{ networkState.focusItemsLabel }}</div>
-        <div class="trace__queue-items">
-          @if (networkState.focusItems.length === 0) {
-            <span class="trace__queue-empty">{{
-              I18N_KEY.features.algorithms.tracePanels.common.noneYetLabel | transloco
-            }}</span>
-          } @else {
-            @for (item of networkState.focusItems; track item) {
-              <span class="trace__queue-chip trace__queue-chip--done">{{ item }}</span>
-            }
-          }
-        </div>
-      </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
     </div>
 
     <div class="trace__table-wrap">
@@ -100,6 +99,7 @@
     </div>
   } @else {
     <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
       {{ I18N_KEY.features.algorithms.tracePanels.network.emptyLabel | transloco }}
     </div>
   }

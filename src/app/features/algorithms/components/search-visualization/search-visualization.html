@@ -1,122 +1,26 @@
-<div class="search-viz viz-flow" #container>
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+
   @if (searchState(); as search) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.search.guideEyebrow | transloco
-        }}</span>
-        <h3 class="viz-flow__title">
-          {{ I18N_KEY.features.algorithms.visualizations.search.guideTitle | transloco }}
-        </h3>
-        <p class="viz-flow__desc">
-          @if (search.decision) {
-            {{ search.decision | i18nText }}
-          } @else {
-            {{ I18N_KEY.features.algorithms.visualizations.search.guideFallbackDesc | transloco }}
-          }
-        </p>
-      </div>
-
-      <div class="search-viz__target-card">
-        <span class="search-viz__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.search.targetLabel | transloco
-        }}</span>
-        <span class="search-viz__target-value">{{ search.target }}</span>
-        <span class="search-viz__target-subtitle">{{ search.modeLabel | i18nText }}</span>
-      </div>
-
-      <div class="search-viz__decision-shell">
-        <div class="search-viz__decision-label">{{ search.statusLabel | i18nText }}</div>
-        <div class="search-viz__decision">
-          @if (search.decision) {
-            {{ search.decision | i18nText }}
-          } @else {
-            {{ I18N_KEY.features.algorithms.visualizations.search.decisionFallback | transloco }}
-          }
-        </div>
-      </div>
-    </aside>
-
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.search.snapshotEyebrow | transloco
-        }}</span>
-        <h3 class="viz-flow__title">{{ search.modeLabel | i18nText }}</h3>
-        <p class="viz-flow__desc">
-          {{ I18N_KEY.features.algorithms.visualizations.search.snapshotDesc | transloco }}
-        </p>
-      </div>
-
-      <div class="search-viz__status-band">
-        <div class="search-viz__metric">
-          <span class="search-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.search.windowLabel | transloco
-          }}</span>
-          <span class="search-viz__metric-value">
-            @if (search.low !== null && search.high !== null) {
-              [{{ search.low }}, {{ search.high }}]
-            } @else {
-              {{ I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel | transloco }}
-            }
-          </span>
-        </div>
-        <div class="search-viz__metric">
-          <span class="search-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.search.probeLabel | transloco
-          }}</span>
-          <span class="search-viz__metric-value">
-            @if (search.probeIndex !== null) {
-              {{ search.probeIndex }}
-            } @else {
-              —
-            }
-          </span>
-        </div>
-        <div class="search-viz__metric">
-          <span class="search-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.search.hitsLabel | transloco
-          }}</span>
-          <span class="search-viz__metric-value">{{ hitRangeLabel() }}</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">{{
-            I18N_KEY.features.algorithms.visualizations.search.stageEyebrow | transloco
-          }}</span>
-          <h3 class="viz-flow__title">
-            {{ I18N_KEY.features.algorithms.visualizations.search.stageTitle | transloco }}
-          </h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--warm">{{ search.statusLabel | i18nText }}</span>
-      </div>
-
-      <div class="viz-flow__stage-body">
-        <div class="search-viz__board">
-          <div class="search-viz__row">
-            @for (value of step()?.array ?? []; track $index) {
-              <div
-                [class]="cellClass($index)"
-                [class.cell--window-glow]="isInsideWindow($index)"
-                [attr.data-index]="$index"
-              >
-                <div class="cell__beam"></div>
-                <div class="cell__chrome">
-                  <span class="cell__index">#{{ $index }}</span>
-                  @if (boundLabelKey($index); as labelKey) {
-                    <span class="cell__bound">{{ labelKey | transloco }}</span>
-                  }
-                </div>
-                <div class="cell__value">{{ value }}</div>
-              </div>
-            }
+    <div class="search-viz__board" #container>
+      <div class="search-viz__row">
+        @for (value of step()?.array ?? []; track $index) {
+          <div
+            [class]="cellClass($index)"
+            [class.cell--window-glow]="isInsideWindow($index)"
+            [attr.data-index]="$index"
+          >
+            <div class="cell__beam"></div>
+            <div class="cell__chrome">
+              <span class="cell__index">#{{ $index }}</span>
+              @if (boundLabelKey($index); as labelKey) {
+                <span class="cell__bound">{{ labelKey | transloco }}</span>
+              }
+            </div>
+            <div class="cell__value">{{ value }}</div>
           </div>
-        </div>
+        }
       </div>
-    </section>
+    </div>
   }
-</div>
+</app-viz-panel>

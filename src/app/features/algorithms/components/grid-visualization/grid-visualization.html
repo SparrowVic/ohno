@@ -1,114 +1,26 @@
-<div class="grid-viz viz-flow" #container>
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+
   @if (gridState(); as grid) {
-    <aside class="viz-flow__guide">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.grid.guideEyebrow | transloco
-        }}</span>
-        <h3 class="viz-flow__title">
-          {{ I18N_KEY.features.algorithms.visualizations.grid.guideTitle | transloco }}
-        </h3>
-        <p class="viz-flow__desc">
-          @if (grid.decision) {
-            {{ grid.decision | i18nText }}
-          } @else {
-            {{ I18N_KEY.features.algorithms.visualizations.grid.guideFallbackDesc | transloco }}
-          }
-        </p>
-      </div>
-
-      <div class="grid-viz__focus-card">
-        <span class="grid-viz__eyebrow">{{ grid.modeLabel | i18nText }}</span>
-        <span class="grid-viz__focus-value">{{ grid.sourceLabel | i18nText }}</span>
-        <span class="grid-viz__focus-subtitle">{{ sourceSubtitleKey() | transloco }}</span>
-      </div>
-
-      <div class="grid-viz__decision-shell">
-        <div class="grid-viz__decision-label">{{ grid.statusLabel | i18nText }}</div>
-        <div class="grid-viz__decision">
-          @if (grid.decision) {
-            {{ grid.decision | i18nText }}
-          } @else {
-            {{ I18N_KEY.features.algorithms.visualizations.grid.decisionFallback | transloco }}
-          }
-        </div>
-      </div>
-    </aside>
-
-    <section class="viz-flow__brief">
-      <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">{{
-          I18N_KEY.features.algorithms.visualizations.grid.snapshotEyebrow | transloco
-        }}</span>
-        <h3 class="viz-flow__title">{{ grid.modeLabel | i18nText }}</h3>
-        <p class="viz-flow__desc">
-          {{ I18N_KEY.features.algorithms.visualizations.grid.snapshotDesc | transloco }}
-        </p>
-      </div>
-
-      <div class="grid-viz__status-band">
-        <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.grid.targetLabel | transloco
-          }}</span>
-          <span class="grid-viz__metric-value">{{ grid.targetLabel | i18nText }}</span>
-        </div>
-        <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.grid.frontierLabel | transloco
-          }}</span>
-          <span class="grid-viz__metric-value">{{ grid.frontierCount }}</span>
-        </div>
-        <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.grid.visitedLabel | transloco
-          }}</span>
-          <span class="grid-viz__metric-value">{{ grid.visitedCount }}</span>
-        </div>
-        <div class="grid-viz__metric">
-          <span class="grid-viz__metric-label">{{
-            I18N_KEY.features.algorithms.visualizations.grid.resultLabel | transloco
-          }}</span>
-          <span class="grid-viz__metric-value">{{ resultLabel() }}</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="viz-flow__stage">
-      <div class="viz-flow__stage-head">
-        <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">{{
-            I18N_KEY.features.algorithms.visualizations.grid.stageEyebrow | transloco
-          }}</span>
-          <h3 class="viz-flow__title">
-            {{ I18N_KEY.features.algorithms.visualizations.grid.stageTitle | transloco }}
-          </h3>
-        </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ grid.statusLabel | i18nText }}</span>
-      </div>
-
-      <div class="viz-flow__stage-body">
-        <div class="grid-viz__board-shell">
+    <div class="grid-viz__board-shell" #container>
+      <div
+        class="grid-viz__board"
+        [style.grid-template-columns]="boardColumns()"
+        [style.--grid-cols]="grid.cols"
+      >
+        @for (cell of grid.cells; track cell.id) {
           <div
-            class="grid-viz__board"
-            [style.grid-template-columns]="boardColumns()"
-            [style.--grid-cols]="grid.cols"
+            [class]="cellClass(cell.status)"
+            [attr.data-cell-id]="cell.id"
+            [attr.data-tone]="cell.tone ?? null"
           >
-            @for (cell of grid.cells; track cell.id) {
-              <div
-                [class]="cellClass(cell.status)"
-                [attr.data-cell-id]="cell.id"
-                [attr.data-tone]="cell.tone ?? null"
-              >
-                <div class="grid-cell__chrome">
-                  <span class="grid-cell__meta">{{ cell.metaLabel ?? ' ' }}</span>
-                </div>
-                <div class="grid-cell__value">{{ cellCoreLabel(cell) }}</div>
-              </div>
-            }
+            <div class="grid-cell__chrome">
+              <span class="grid-cell__meta">{{ cell.metaLabel ?? ' ' }}</span>
+            </div>
+            <div class="grid-cell__value">{{ cellCoreLabel(cell) }}</div>
           </div>
-        </div>
+        }
       </div>
-    </section>
+    </div>
   }
-</div>
+</app-viz-panel>

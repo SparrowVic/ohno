@@ -4,83 +4,44 @@
   min-height: 0;
 }
 
-.dsu-graph {
-  min-height: 0;
-  width: 100%;
-}
-
-/* ============================================================ */
-/* HUD — same language as the rest of the viz-flow panels       */
-/* ============================================================ */
-.dsu-graph__hud {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
-  gap: 8px;
-  padding: 6px 12px 0;
-}
-
-.dsu-graph__stat {
-  min-width: 0;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.012)),
-    rgba(12, 18, 30, 0.72);
-}
-
-.dsu-graph__label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--text-tertiary);
-}
-
-.dsu-graph__value {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dsu-graph__empty {
-  padding: 24px;
-  color: var(--text-tertiary);
-  font-size: 12px;
-}
-
 .dsu-graph__svg {
   flex: 1;
   width: 100%;
   min-height: 0;
+  display: block;
+}
+
+.dsu-graph__empty {
+  margin: 0;
+  padding: 24px;
+  color: var(--text-tertiary);
+  font-size: 12px;
 }
 
 /* ============================================================ */
 /* NODES                                                         */
 /* ============================================================ */
 .dsu-graph-node {
-  transition: transform 220ms var(--ease-out-quart), opacity 220ms var(--ease-soft);
+  transition:
+    transform 220ms var(--ease-out-quart),
+    opacity 220ms var(--ease-soft);
 }
 
 .dsu-graph-node__halo {
   fill: transparent;
   opacity: 0;
-  transition: opacity 220ms var(--ease-soft), fill 220ms var(--ease-soft);
+  transition:
+    opacity 220ms var(--ease-soft),
+    fill 220ms var(--ease-soft);
 }
 
 .dsu-graph-node__body {
   fill: #1f2430;
   stroke: rgba(255, 255, 255, 0.08);
   stroke-width: 1.5;
-  transition: fill 220ms var(--ease-soft), stroke 220ms var(--ease-soft);
+  transition:
+    fill 220ms var(--ease-soft),
+    stroke 220ms var(--ease-soft);
 }
 
 .dsu-graph-node__label {
@@ -173,11 +134,9 @@
   fill: var(--accent-strong);
 }
 
-/* Root that is also active / merged keeps the root look; the
-   active/merged classes add halo + accent tint which blend well. */
-
 @keyframes dsu-graph-pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.85;
   }
@@ -199,20 +158,17 @@
     opacity 220ms var(--ease-soft);
 }
 
-/* PARENT — quiet pointer line in Union-Find forests. */
 .dsu-graph-edge--parent {
   stroke: rgb(var(--chrome-accent-alt-rgb) / 0.55);
   stroke-width: 2.4;
 }
 
-/* PENDING — Kruskal candidate, unclaimed. */
 .dsu-graph-edge--pending {
   stroke: rgb(var(--chrome-accent-rgb) / 0.32);
   stroke-width: 1.5;
   stroke-dasharray: 5 5;
 }
 
-/* ACTIVE — currently being considered. */
 .dsu-graph-edge--active {
   stroke: rgb(var(--chrome-accent-warm-rgb) / 0.88);
   stroke-width: 3.2;
@@ -220,13 +176,11 @@
   stroke-dasharray: 10 6;
 }
 
-/* ACCEPTED — locked into the MST. */
 .dsu-graph-edge--accepted {
   stroke: rgb(var(--accent-rgb) / 0.85);
   stroke-width: 3;
 }
 
-/* REJECTED — would create a cycle, discarded. */
 .dsu-graph-edge--rejected {
   stroke: rgb(var(--viz-danger-rgb) / 0.52);
   stroke-width: 1.4;
