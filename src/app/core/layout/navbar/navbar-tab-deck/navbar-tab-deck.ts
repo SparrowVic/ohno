@@ -10,6 +10,8 @@ import {
   viewChild,
   viewChildren,
 } from '@angular/core';
+import { translateSignal } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { RouterLink } from '@angular/router';
 
 import { NavTab, NavTabId } from '../../../models/navigation';
@@ -63,6 +65,7 @@ export class NavbarTabDeck {
   readonly tabs = input.required<readonly NavTab[]>();
   readonly activeTabId = input.required<NavTabId>();
   readonly variant = input<NavbarTabDeckVariant>('fusion');
+  readonly primaryNavigationAriaLabel = translateSignal(t('core.navigation.primaryAriaLabel'));
 
   readonly activeLabel = computed(
     () => this.tabs().find((tab) => tab.id === this.activeTabId())?.label ?? '',

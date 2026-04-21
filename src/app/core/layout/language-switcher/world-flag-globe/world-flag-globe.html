@@ -9,15 +9,15 @@
     <div #hud class="world-globe__hud">
       <div class="world-globe__hud-bottom">
         <div class="world-globe__badge">
-          <span class="world-globe__badge-eyebrow">Inspect</span>
+          <span class="world-globe__badge-eyebrow">{{ badgeEyebrow() }}</span>
           <strong class="world-globe__badge-title">{{ hoverFlag() }} {{ hoverHeadline() }}</strong>
           <span class="world-globe__badge-copy">{{ hoverNote() }}</span>
         </div>
 
         <div class="world-globe__legend">
-          <span class="world-globe__legend-pill">Hover country</span>
-          <span class="world-globe__legend-pill">Drag orbit</span>
-          <span class="world-globe__legend-pill">Wheel zoom</span>
+          <span class="world-globe__legend-pill">{{ legendHoverCountry() }}</span>
+          <span class="world-globe__legend-pill">{{ legendDragOrbit() }}</span>
+          <span class="world-globe__legend-pill">{{ legendWheelZoom() }}</span>
         </div>
       </div>
     </div>
@@ -25,13 +25,13 @@
     @if (loading()) {
       <div class="world-globe__overlay world-globe__overlay--loading">
         <div class="world-globe__loader"></div>
-        <p>Building atlas surface…</p>
+        <p>{{ loadingLabel() }}</p>
       </div>
     }
 
-    @if (loadError(); as error) {
+    @if (loadError()) {
       <div class="world-globe__overlay world-globe__overlay--error">
-        <p>{{ error }}</p>
+        <p>{{ loadErrorMessage() }}</p>
       </div>
     }
   </div>

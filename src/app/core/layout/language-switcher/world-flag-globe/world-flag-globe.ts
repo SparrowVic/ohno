@@ -12,6 +12,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { translateSignal } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import * as d3Scale from 'd3-scale';
 import { animate } from 'animejs';
 import type {
@@ -104,13 +106,22 @@ const COUNTRY_PALETTE = [
 export class WorldFlagGlobe implements AfterViewInit {
   readonly hoveredCountry = signal<CountryMarker | null>(null);
   readonly loading = signal(true);
-  readonly loadError = signal<string | null>(null);
-  readonly hoverHeadline = computed(() => this.hoveredCountry()?.name ?? 'Sweep across the planet');
+  readonly loadError = signal(false);
+  readonly badgeEyebrow = translateSignal(t('core.worldGlobe.badgeEyebrow'));
+  readonly legendHoverCountry = translateSignal(t('core.worldGlobe.legend.hoverCountry'));
+  readonly legendDragOrbit = translateSignal(t('core.worldGlobe.legend.dragOrbit'));
+  readonly legendWheelZoom = translateSignal(t('core.worldGlobe.legend.wheelZoom'));
+  readonly loadingLabel = translateSignal(t('core.worldGlobe.loading'));
+  readonly loadErrorMessage = translateSignal(t('core.worldGlobe.loadError'));
+  readonly defaultHoverHeadline = translateSignal(t('core.worldGlobe.defaultHoverHeadline'));
+  readonly hoveredCountryNote = translateSignal(t('core.worldGlobe.hoveredCountryNote'));
+  readonly defaultHoverNote = translateSignal(t('core.worldGlobe.defaultHoverNote'));
+  readonly hoverHeadline = computed(
+    () => this.hoveredCountry()?.name ?? this.defaultHoverHeadline(),
+  );
   readonly hoverFlag = computed(() => this.hoveredCountry()?.flag ?? '🌍');
   readonly hoverNote = computed(() =>
-    this.hoveredCountry()
-      ? 'Every country is now color-woven from its own flag palette. Hover still locks the country and sharpens its atlas glow.'
-      : 'Drag to orbit. Scroll or pinch to zoom. Country dots are now painted from the flag colors of each individual nation.',
+    this.hoveredCountry() ? this.hoveredCountryNote() : this.defaultHoverNote(),
   );
 
   private readonly platformId = inject(PLATFORM_ID);
@@ -239,7 +250,7 @@ export class WorldFlagGlobe implements AfterViewInit {
   private async initialize(): Promise<void> {
     const host = this.canvasHostRef().nativeElement;
     this.loading.set(true);
-    this.loadError.set(null);
+    this.loadError.set(false);
 
     try {
       const [THREE, controlsModule, countries, surfaceDots, boundaryDots] = await Promise.all([
@@ -267,7 +278,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       this.playHudIntro();
     } catch (error) {
       console.error(error);
-      this.loadError.set('Unable to initialize the world flag globe.');
+      this.loadError.set(true);
       this.loading.set(false);
     }
   }
@@ -572,10 +583,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       'position',
       new THREE.BufferAttribute(new Float32Array(0), 3),
     );
-    hoverCountryGeometry.setAttribute(
-      'color',
-      new THREE.BufferAttribute(new Float32Array(0), 3),
-    );
+    hoverCountryGeometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(0), 3));
     const hoverCountryMaterial = new THREE.PointsMaterial({
       map: dotTexture,
       alphaTest: 0.18,
@@ -770,8 +778,7 @@ export class WorldFlagGlobe implements AfterViewInit {
       }
 
       if (this.surfaceGlowMaterial) {
-        this.surfaceGlowMaterial.opacity =
-          0.03 + this.introState.progress * (0.1 + shimmer * 0.03);
+        this.surfaceGlowMaterial.opacity = 0.03 + this.introState.progress * (0.1 + shimmer * 0.03);
         this.surfaceGlowMaterial.size = 0.0128 * sizeScale;
       }
 
@@ -849,9 +856,7 @@ export class WorldFlagGlobe implements AfterViewInit {
     const positions = marker
       ? (this.surfacePositionsByCountry.get(marker.countryIndex) ?? null)
       : null;
-    const colors = marker
-      ? (this.surfaceColorsByCountry.get(marker.countryIndex) ?? null)
-      : null;
+    const colors = marker ? (this.surfaceColorsByCountry.get(marker.countryIndex) ?? null) : null;
 
     if (!positions || positions.length === 0 || !colors || colors.length === 0) {
       geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));

@@ -1,6 +1,6 @@
 <nav class="navbar">
   <div class="navbar__left">
-    <a class="navbar__brand" routerLink="/algorithms" aria-label="Oh(no) home">
+    <a class="navbar__brand" routerLink="/algorithms" [attr.aria-label]="homeAriaLabel()">
       <img
         class="navbar__brand-logo"
         src="/branding/ohno-logo-v38-graph-paper-seal.svg"
@@ -15,7 +15,7 @@
 
   <div class="navbar__right">
     <div class="navbar__actions">
-      <button type="button" class="command-trigger" aria-label="Open search and command palette">
+      <button type="button" class="command-trigger" [attr.aria-label]="commandAriaLabel()">
         <svg
           class="command-trigger__icon"
           viewBox="0 0 16 16"
@@ -30,7 +30,7 @@
           <path d="M10.25 10.25L13 13" />
         </svg>
         <span class="command-trigger__copy">
-          <span class="command-trigger__eyebrow">Search</span>
+          <span class="command-trigger__eyebrow">{{ searchEyebrow() }}</span>
           <span class="command-trigger__label">{{ searchPlaceholder() }}</span>
         </span>
         <span class="command-trigger__hint" aria-hidden="true">

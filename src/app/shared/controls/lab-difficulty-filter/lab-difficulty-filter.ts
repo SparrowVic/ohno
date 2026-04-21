@@ -7,10 +7,10 @@ import {
   input,
   output,
 } from '@angular/core';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { APP_LANG, AppLang } from '../../../core/i18n/app-lang';
-import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { Difficulty } from '../../../features/algorithms/models/algorithm';
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
@@ -22,27 +22,31 @@ export interface DifficultyFilterOption {
   readonly tone: DifficultyFilterValue;
 }
 
-export function buildDifficultyFilterOptions(lang: AppLang): readonly DifficultyFilterOption[] {
+type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
+
+export function buildDifficultyFilterOptions(
+  translate: TranslateFn,
+): readonly DifficultyFilterOption[] {
   return [
-    { value: 'all', label: lang === APP_LANG.EN ? 'All' : 'Wszystkie', tone: 'all' },
+    { value: 'all', label: translate(t('shared.filters.all')), tone: 'all' },
     {
       value: Difficulty.Easy,
-      label: getDifficultyLabel(Difficulty.Easy, lang),
+      label: translate(getDifficultyLabelKey(Difficulty.Easy)),
       tone: Difficulty.Easy,
     },
     {
       value: Difficulty.Medium,
-      label: getDifficultyLabel(Difficulty.Medium, lang),
+      label: translate(getDifficultyLabelKey(Difficulty.Medium)),
       tone: Difficulty.Medium,
     },
     {
       value: Difficulty.Hard,
-      label: getDifficultyLabel(Difficulty.Hard, lang),
+      label: translate(getDifficultyLabelKey(Difficulty.Hard)),
       tone: Difficulty.Hard,
     },
     {
       value: Difficulty.UltraHard,
-      label: getDifficultyLabel(Difficulty.UltraHard, lang),
+      label: translate(getDifficultyLabelKey(Difficulty.UltraHard)),
       tone: Difficulty.UltraHard,
     },
   ];

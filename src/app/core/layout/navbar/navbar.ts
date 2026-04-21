@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { translateSignal } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { RouterLink } from '@angular/router';
 
-import { I18N_KEY } from '../../i18n/i18n-keys';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { NavigationService } from '../../services/navigation-service';
 import { NavbarTabDeck, NavbarTabDeckVariant } from './navbar-tab-deck/navbar-tab-deck';
@@ -18,6 +18,9 @@ export class Navbar {
 
   readonly tabs = this.navigation.tabs;
   readonly activeTabId = this.navigation.activeTabId;
-  readonly searchPlaceholder = translateSignal(I18N_KEY.navbar.searchPlaceholder);
+  readonly homeAriaLabel = translateSignal(t('core.navbar.homeAriaLabel'));
+  readonly commandAriaLabel = translateSignal(t('core.navbar.commandAriaLabel'));
+  readonly searchEyebrow = translateSignal(t('core.navbar.searchEyebrow'));
+  readonly searchPlaceholder = translateSignal(t('core.navbar.searchPlaceholder'));
   readonly tabDeckVariant: NavbarTabDeckVariant = 'pill';
 }

@@ -13,11 +13,13 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { RouterLink } from '@angular/router';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
-import { APP_LANG } from '../../../core/i18n/app-lang';
-import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
+import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
+import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
 import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
@@ -50,6 +52,7 @@ import {
 })
 export class AlgorithmCard implements AfterViewInit {
   private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly injector = inject(Injector);
@@ -63,69 +66,50 @@ export class AlgorithmCard implements AfterViewInit {
   readonly isInsane = computed(() => this.algorithm().difficulty === Difficulty.UltraHard);
   readonly isImplemented = computed(() => this.algorithm().implemented);
   readonly showShader = computed(
-    () =>
-      this.isInsane() &&
-      this.inViewportState() &&
-      this.shaderPool.has(this.algorithm().id),
+    () => this.isInsane() && this.inViewportState() && this.shaderPool.has(this.algorithm().id),
   );
-  readonly facetLabel = computed(() =>
-    formatFacetLabel(this.algorithm().subcategory || this.algorithm().category),
-  );
+  readonly facetLabel = computed(() => {
+    const facet = this.algorithm().subcategory || this.algorithm().category;
+    const key = getAlgorithmFacetLabelKey(facet);
+    return key ? this.translate(key) : formatFacetLabel(facet);
+  });
   readonly difficultyLabel = computed(() =>
-    getDifficultyLabel(this.algorithm().difficulty, this.language.activeLang()),
+    this.translate(getDifficultyLabelKey(this.algorithm().difficulty)),
   );
   readonly statusLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? this.algorithm().implemented
-        ? 'Interactive'
-        : 'Coming soon'
-      : this.algorithm().implemented
-        ? 'Interaktywny'
-        : 'Wkrótce',
+    this.translate(
+      this.algorithm().implemented
+        ? t('features.algorithms.card.status.interactive')
+        : t('features.algorithms.card.status.comingSoon'),
+    ),
   );
   readonly ctaLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? this.algorithm().implemented
-        ? 'Open visualization'
-        : 'In roadmap'
-      : this.algorithm().implemented
-        ? 'Otwórz wizualizację'
-        : 'W roadmapie',
+    this.translate(
+      this.algorithm().implemented
+        ? t('features.algorithms.card.cta.openVisualization')
+        : t('features.algorithms.card.cta.inRoadmap'),
+    ),
   );
   readonly previewLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? this.algorithm().implemented
-        ? 'Live signal'
-        : 'Roadmap'
-      : this.algorithm().implemented
-        ? 'Live signal'
-        : 'Roadmap',
+    this.translate(
+      this.algorithm().implemented
+        ? t('features.algorithms.card.preview.liveSignal')
+        : t('features.algorithms.card.preview.roadmap'),
+    ),
   );
   readonly previewHint = computed(() =>
     this.algorithm().implemented
       ? null
-      : this.language.activeLang() === APP_LANG.EN
-        ? 'Interactive walkthrough planned'
-        : 'Planowana interaktywna wizualizacja',
+      : this.translate(t('features.algorithms.card.preview.plannedHint')),
   );
-  readonly roadmapChipLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN ? 'Roadmap' : 'Roadmap',
-  );
+  readonly roadmapChipLabel = computed(() => this.translate(t('shared.roadmap.chip')));
   readonly roadmapTitle = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Implementation planned'
-      : 'Implementacja planowana',
+    this.translate(t('features.algorithms.card.roadmap.title')),
   );
-  readonly roadmapHint = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'This visualization is already on the roadmap, but the interactive build is still locked.'
-      : 'Ta wizualizacja jest już na roadmapie, ale interaktywna implementacja jest jeszcze zablokowana.',
-  );
+  readonly roadmapHint = computed(() => this.translate(t('features.algorithms.card.roadmap.hint')));
   readonly semanticTags = computed(() => buildSemanticTags(this.algorithm()));
   readonly displayTags = computed(() => this.semanticTags().slice(0, 3));
-  readonly hiddenTagsCount = computed(
-    () => this.semanticTags().length - this.displayTags().length,
-  );
+  readonly hiddenTagsCount = computed(() => this.semanticTags().length - this.displayTags().length);
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
   );
@@ -137,14 +121,13 @@ export class AlgorithmCard implements AfterViewInit {
   );
   readonly washStyle = computed(() => createWashStyle(this.algorithm().difficulty));
   readonly metrics = computed<readonly CardMetric[]>(() => {
-    const lang = this.language.activeLang();
     return [
       {
-        label: lang === APP_LANG.EN ? 'Time' : 'Czas',
+        label: this.translate(t('features.algorithms.card.metrics.time')),
         value: this.algorithm().complexity.timeAverage,
       },
       {
-        label: lang === APP_LANG.EN ? 'Space' : 'Pamięć',
+        label: this.translate(t('features.algorithms.card.metrics.space')),
         value: this.algorithm().complexity.space,
       },
     ];
@@ -188,5 +171,10 @@ export class AlgorithmCard implements AfterViewInit {
       },
       { injector: this.injector },
     );
+  }
+
+  private translate(key: string, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

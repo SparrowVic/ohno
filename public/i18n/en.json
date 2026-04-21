@@ -1,5 +1,381 @@
 {
-  "navbar": {
-    "searchPlaceholder": "Search..."
+  "core": {
+    "navbar": {
+      "homeAriaLabel": "Oh(no) home",
+      "commandAriaLabel": "Open search and command palette",
+      "searchEyebrow": "Search",
+      "searchPlaceholder": "Search..."
+    },
+    "navigation": {
+      "primaryAriaLabel": "Primary navigation",
+      "tabs": {
+        "algorithms": "Algorithms",
+        "structures": "Structures"
+      },
+      "sidebar": {
+        "algorithms": {
+          "groups": {
+            "overview": "Browse",
+            "sorting": "Sorting",
+            "searching": "Searching",
+            "trees": "Trees",
+            "graphs": "Graphs",
+            "dp": "Dynamic prog.",
+            "strings": "Strings",
+            "geometry": "Geometry",
+            "misc": "Other"
+          },
+          "items": {
+            "allAlgorithms": "All algorithms",
+            "allSorting": "All sorting",
+            "comparison": "Comparison",
+            "nonComparison": "Non-comparison",
+            "allSearching": "All searching",
+            "arraySearch": "Linear",
+            "binarySearch": "Binary",
+            "allTrees": "All trees",
+            "treeTraversal": "Traversal",
+            "allGraphs": "All graphs",
+            "pathfinding": "Pathfinding",
+            "graphTraversal": "Traversal",
+            "mst": "MST",
+            "connectivity": "Connectivity",
+            "flowMatching": "Flow & matching",
+            "advancedGraphs": "Advanced",
+            "allDp": "All DP",
+            "classic": "Classic",
+            "dpSequences": "Sequences",
+            "dpAdvanced": "Advanced",
+            "dpOptimization": "Optimization",
+            "allStrings": "All strings",
+            "patternMatching": "Pattern matching",
+            "suffixPalindromes": "Suffix & palindromes",
+            "compression": "Compression",
+            "allGeometry": "All geometry",
+            "geometryComputational": "Computational",
+            "geometryAdvanced": "Advanced",
+            "allMisc": "All other",
+            "math": "Math",
+            "arrayTechniques": "Array techniques",
+            "backtracking": "Backtracking",
+            "recursion": "Recursion",
+            "gameTheory": "Game theory",
+            "randomized": "Randomized"
+          },
+          "sections": {
+            "allAlgorithms": "All algorithms",
+            "sortingAlgorithms": "Sorting algorithms",
+            "comparisonSorts": "Comparison sorts",
+            "nonComparisonSorts": "Non-comparison sorts",
+            "searchAlgorithms": "Search algorithms",
+            "linearSearchAlgorithms": "Linear search algorithms",
+            "binarySearchAlgorithms": "Binary search algorithms",
+            "treeAlgorithms": "Tree algorithms",
+            "treeTraversalAlgorithms": "Tree traversal algorithms",
+            "graphAlgorithms": "Graph algorithms",
+            "pathfindingAlgorithms": "Pathfinding algorithms",
+            "graphTraversal": "Graph traversal",
+            "minimumSpanningTree": "Minimum spanning tree",
+            "graphConnectivityAlgorithms": "Graph connectivity algorithms",
+            "flowAndMatchingAlgorithms": "Flow and matching algorithms",
+            "advancedGraphAlgorithms": "Advanced graph algorithms",
+            "dynamicProgramming": "Dynamic programming",
+            "classicDpProblems": "Classic DP problems",
+            "sequenceDpProblems": "Sequence DP problems",
+            "advancedDpProblems": "Advanced DP problems",
+            "dpOptimizationTechniques": "DP optimization techniques",
+            "stringAlgorithms": "String algorithms",
+            "patternMatching": "Pattern matching",
+            "suffixAndPalindromeStructures": "Suffix and palindrome structures",
+            "compressionAndEncoding": "Compression and encoding",
+            "computationalGeometry": "Computational geometry",
+            "computationalGeometryAlgorithms": "Computational geometry algorithms",
+            "advancedGeometryAlgorithms": "Advanced geometry algorithms",
+            "otherAlgorithms": "Other algorithms",
+            "mathAlgorithms": "Math algorithms",
+            "arrayTechniques": "Array techniques",
+            "backtrackingAlgorithms": "Backtracking algorithms",
+            "recursionAndCallStack": "Recursion and call stack",
+            "gameTreeAlgorithms": "Game tree algorithms",
+            "randomizedAlgorithms": "Randomized algorithms"
+          }
+        },
+        "structures": {
+          "groups": {
+            "catalog": "Browse",
+            "linear": "Linear",
+            "hashing": "Hashing",
+            "trees": "Trees",
+            "specialized": "Specialized"
+          },
+          "items": {
+            "allStructures": "All structures",
+            "allLinear": "All linear",
+            "stackQueue": "Stack / queue",
+            "linkedList": "Linked lists",
+            "allHashing": "All hashing",
+            "hashTable": "Hash tables",
+            "probabilistic": "Probabilistic",
+            "distributed": "Distributed",
+            "allTrees": "All trees",
+            "searchTrees": "Search trees",
+            "heaps": "Heaps",
+            "prefixSuffix": "Prefix / suffix",
+            "range": "Range",
+            "advancedTrees": "Advanced",
+            "allSpecialized": "All specialized",
+            "ordered": "Ordered",
+            "setUnion": "Set union",
+            "spatial": "Spatial"
+          },
+          "sections": {
+            "allStructures": "All structures",
+            "linearDataStructures": "Linear data structures",
+            "stackAndQueueStructures": "Stack and queue structures",
+            "linkedListStructures": "Linked list structures",
+            "hashingStructures": "Hashing structures",
+            "hashTableStructures": "Hash table structures",
+            "probabilisticStructures": "Probabilistic structures",
+            "distributedHashing": "Distributed hashing",
+            "treeDataStructures": "Tree data structures",
+            "searchTreeStructures": "Search tree structures",
+            "heapStructures": "Heap structures",
+            "prefixAndSuffixTrees": "Prefix and suffix trees",
+            "rangeQueryStructures": "Range query structures",
+            "advancedTreeStructures": "Advanced tree structures",
+            "specializedDataStructures": "Specialized data structures",
+            "orderedRandomizedStructures": "Ordered randomized structures",
+            "disjointSetStructures": "Disjoint set structures",
+            "spatialIndexingStructures": "Spatial indexing structures"
+          }
+        }
+      }
+    },
+    "languageSwitcher": {
+      "openAriaLabel": "Open world flag globe",
+      "eyebrow": "Language atlas",
+      "overlayAriaLabel": "World flag globe",
+      "closeGlobeAriaLabel": "Close world flag globe",
+      "closeOverlayAriaLabel": "Close overlay",
+      "closeLabel": "Close"
+    },
+    "worldGlobe": {
+      "badgeEyebrow": "Inspect",
+      "loading": "Building atlas surface...",
+      "loadError": "Unable to initialize the world flag globe.",
+      "defaultHoverHeadline": "Sweep across the planet",
+      "hoveredCountryNote": "Every country is now color-woven from its own flag palette. Hover still locks the country and sharpens its atlas glow.",
+      "defaultHoverNote": "Drag to orbit. Scroll or pinch to zoom. Country dots are now painted from the flag colors of each individual nation.",
+      "legend": {
+        "hoverCountry": "Hover country",
+        "dragOrbit": "Drag orbit",
+        "wheelZoom": "Wheel zoom"
+      }
+    }
+  },
+  "shared": {
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "insane": "Insane"
+    },
+    "filters": {
+      "all": "All",
+      "difficulty": {
+        "ariaLabel": "Difficulty filter"
+      }
+    },
+    "roadmap": {
+      "chip": "Roadmap"
+    }
+  },
+  "catalog": {
+    "algorithms": {
+      "categories": {
+        "sorting": "Sorting",
+        "searching": "Searching",
+        "trees": "Trees",
+        "graphs": "Graphs",
+        "dp": "Dynamic programming",
+        "strings": "Strings",
+        "geometry": "Geometry",
+        "misc": "Other"
+      },
+      "subcategories": {
+        "comparison": "Comparison",
+        "nonComparison": "Non-comparison",
+        "array": "Linear",
+        "binary": "Binary",
+        "traversal": "Traversal",
+        "pathfinding": "Pathfinding",
+        "mst": "MST",
+        "connectivity": "Connectivity",
+        "flowMatching": "Flow & matching",
+        "advanced": "Advanced",
+        "classic": "Classic",
+        "sequences": "Sequences",
+        "optimization": "Optimization",
+        "patternMatching": "Pattern matching",
+        "suffixPalindromes": "Suffix & palindromes",
+        "compression": "Compression",
+        "computational": "Computational",
+        "math": "Math",
+        "arrayTechniques": "Array techniques",
+        "backtracking": "Backtracking",
+        "recursion": "Recursion",
+        "gameTheory": "Game theory",
+        "randomized": "Randomized"
+      }
+    },
+    "structures": {
+      "categories": {
+        "linear": "Linear",
+        "hashing": "Hashing",
+        "trees": "Trees",
+        "specialized": "Specialized"
+      },
+      "subcategories": {
+        "stackQueue": "Stack / queue",
+        "linkedList": "Linked lists",
+        "hashTable": "Hash tables",
+        "probabilistic": "Probabilistic",
+        "distributed": "Distributed",
+        "search": "Search trees",
+        "heaps": "Heaps",
+        "prefixSuffix": "Prefix / suffix",
+        "range": "Range",
+        "advanced": "Advanced",
+        "ordered": "Ordered",
+        "setUnion": "Set union",
+        "spatial": "Spatial"
+      }
+    }
+  },
+  "features": {
+    "algorithms": {
+      "traits": {
+        "groups": {
+          "properties": "Properties",
+          "paradigms": "Paradigms",
+          "structures": "Structures",
+          "domains": "Problem types"
+        },
+        "items": {
+          "stable": "Stable",
+          "inPlace": "In-place",
+          "online": "Online",
+          "probabilistic": "Probabilistic",
+          "greedy": "Greedy",
+          "divideAndConquer": "Divide & conquer",
+          "dynamicProgramming": "Dynamic programming",
+          "backtracking": "Backtracking",
+          "randomized": "Randomized",
+          "heap": "Heap",
+          "trie": "Trie",
+          "dsu": "DSU",
+          "priorityQueue": "Priority queue",
+          "bitmask": "Bitmask",
+          "shortestPath": "Shortest path",
+          "matching": "Matching",
+          "mst": "MST",
+          "compression": "Compression",
+          "palindromes": "Palindromes",
+          "numberTheory": "Number theory",
+          "geometry": "Geometry"
+        }
+      },
+      "page": {
+        "title": "Algorithms",
+        "heroEyebrow": "Interactive Algorithm Atlas",
+        "heroDescription": "Scan topics faster, compare complexity at a glance and jump into polished visual walkthroughs without losing context.",
+        "filterSummary": {
+          "all": "All difficulty levels",
+          "semanticTraits": "{{count}} semantic traits",
+          "filtered": "Filtered by {{parts}}"
+        },
+        "availabilitySummary": "{{implemented}} interactive • {{upcoming}} roadmap",
+        "resultsLabel": "{{count}} algorithms in focus",
+        "resultsSubtitle": "Refine the current topic by difficulty and semantic traits without leaving the catalog context.",
+        "emptyLabel": "No algorithms match the current filters.",
+        "stats": {
+          "visibleNow": "Visible now",
+          "interactive": "Interactive",
+          "tracks": "Tracks"
+        },
+        "traits": {
+          "triggerLabel": "Traits",
+          "summaryEmpty": "Pick semantic filters",
+          "summarySelected": "{{count}} selected",
+          "ariaLabel": "Traits filter",
+          "ariaLabelSelected": "Traits filter, {{count}} selected",
+          "popoverTitle": "Semantic filters",
+          "popoverSubtitle": "Pick the properties and paradigms that matter for the current topic.",
+          "emptyLabel": "No semantic facets are available in the current topic.",
+          "clearLabel": "Clear all"
+        }
+      },
+      "card": {
+        "status": {
+          "interactive": "Interactive",
+          "comingSoon": "Coming soon"
+        },
+        "cta": {
+          "openVisualization": "Open visualization",
+          "inRoadmap": "In roadmap"
+        },
+        "preview": {
+          "liveSignal": "Live signal",
+          "roadmap": "Roadmap",
+          "plannedHint": "Interactive walkthrough planned"
+        },
+        "roadmap": {
+          "title": "Implementation planned",
+          "hint": "This visualization is already on the roadmap, but the interactive build is still locked."
+        },
+        "metrics": {
+          "time": "Time",
+          "space": "Space"
+        }
+      }
+    },
+    "structures": {
+      "page": {
+        "title": "Structures",
+        "heroEyebrow": "Structure Library",
+        "heroDescription": "A cleaner overview of foundational structures, grouped by learning track and ready for future interactive modules.",
+        "filterSummary": {
+          "all": "All difficulty levels",
+          "filtered": "Filtered by {{label}}"
+        },
+        "availabilitySummary": "{{implemented}} live • {{upcoming}} roadmap",
+        "resultsLabel": "{{count}} structures in focus",
+        "resultsSubtitle": "Use the difficulty pills to rebalance the library while staying inside the current topic.",
+        "emptyLabel": "No structures match the current filters.",
+        "stats": {
+          "visibleNow": "Visible now",
+          "tracks": "Tracks",
+          "roadmap": "Roadmap"
+        }
+      },
+      "card": {
+        "status": {
+          "interactive": "Interactive",
+          "comingSoon": "Coming soon"
+        },
+        "cta": {
+          "openModule": "Open module",
+          "inRoadmap": "In roadmap"
+        },
+        "preview": {
+          "readyHint": "Interactive model ready",
+          "plannedHint": "Planned deep-dive module"
+        },
+        "roadmap": {
+          "title": "Module locked for now",
+          "hint": "This structure is planned and visible in the roadmap, but its interactive module is not ready yet."
+        }
+      }
+    }
   }
 }

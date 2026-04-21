@@ -1,15 +1,10 @@
 import { NgStyle } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
-import { getDifficultyLabel } from '../../../core/i18n/difficulty-label';
-import { APP_LANG } from '../../../core/i18n/app-lang';
+import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { NavigationService } from '../../../core/services/navigation-service';
 import { buildCategoryThemeVars } from '../../../shared/category-theme';
 import {
@@ -46,8 +41,11 @@ export class AlgorithmsPage {
   private readonly registry = inject(AlgorithmRegistry);
   private readonly navigation = inject(NavigationService);
   private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
 
-  readonly difficultyOptions = computed(() => buildDifficultyFilterOptions(this.language.activeLang()));
+  readonly difficultyOptions = computed(() =>
+    buildDifficultyFilterOptions((key, params) => this.translate(key, params)),
+  );
 
   private readonly difficultyFilter = signal<DifficultyFilterValue>('all');
   private readonly selectedTraitsState = signal<readonly AlgorithmTraitId[]>([]);
@@ -60,7 +58,11 @@ export class AlgorithmsPage {
     buildCategoryThemeVars(this.activeCategory(), 'page'),
   );
 
-  readonly title = computed(() => this.navigation.activeItem()?.sectionTitle ?? 'Algorithms');
+  readonly title = computed(
+    () =>
+      this.navigation.activeItem()?.sectionTitle ??
+      this.translate(t('features.algorithms.page.title')),
+  );
 
   readonly difficultyScopedItems = computed<readonly AlgorithmItem[]>(() => {
     const sidebarFilter = this.navigation.activeItem()?.filter;
@@ -79,10 +81,8 @@ export class AlgorithmsPage {
   });
 
   readonly traitGroups = computed<readonly TraitGroupView[]>(() => {
-    return buildTraitGroupsView(
-      this.language.activeLang(),
-      this.selectedTraitsState(),
-      this.traitCounts(),
+    return buildTraitGroupsView(this.selectedTraitsState(), this.traitCounts(), (key, params) =>
+      this.translate(key, params),
     );
   });
   readonly traitSelectGroups = computed<readonly LabMultiSelectGroup<AlgorithmTraitId>[]>(() => {
@@ -97,7 +97,9 @@ export class AlgorithmsPage {
     }));
   });
 
-  private readonly selectedTraitsByGroup = computed(() => groupSelectedTraits(this.selectedTraitsState()));
+  private readonly selectedTraitsByGroup = computed(() =>
+    groupSelectedTraits(this.selectedTraitsState()),
+  );
 
   readonly filteredItems = computed<readonly AlgorithmItem[]>(() => {
     return filterItemsByTraits(this.difficultyScopedItems(), this.selectedTraitsByGroup());
@@ -111,112 +113,93 @@ export class AlgorithmsPage {
   readonly trackCount = computed(
     () => new Set(this.filteredItems().map((item) => item.subcategory || item.category)).size,
   );
-  readonly heroEyebrow = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Interactive Algorithm Atlas'
-      : 'Interaktywny atlas algorytmów',
-  );
+  readonly heroEyebrow = computed(() => this.translate(t('features.algorithms.page.heroEyebrow')));
   readonly heroDescription = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Scan topics faster, compare complexity at a glance and jump into polished visual walkthroughs without losing context.'
-      : 'Przeglądaj tematy szybciej, porównuj złożoność na pierwszy rzut oka i przechodź do dopracowanych wizualizacji bez gubienia kontekstu.',
+    this.translate(t('features.algorithms.page.heroDescription')),
   );
   readonly filterSummary = computed(() => {
-    const lang = this.language.activeLang();
     const difficulty = this.activeDifficulty();
     const traitCount = this.activeTraits().length;
 
     if (difficulty === 'all' && traitCount === 0) {
-      return lang === APP_LANG.EN ? 'All difficulty levels' : 'Wszystkie poziomy trudności';
+      return this.translate(t('features.algorithms.page.filterSummary.all'));
     }
 
     const parts: string[] = [];
 
     if (difficulty !== 'all') {
-      const label = getDifficultyLabel(difficulty, lang).toLowerCase();
-      parts.push(lang === APP_LANG.EN ? label : label);
+      parts.push(this.translate(getDifficultyLabelKey(difficulty)).toLowerCase());
     }
 
     if (traitCount > 0) {
       parts.push(
-        lang === APP_LANG.EN ? `${traitCount} semantic traits` : `${traitCount} cech semantycznych`,
+        this.translate(t('features.algorithms.page.filterSummary.semanticTraits'), {
+          count: traitCount,
+        }),
       );
     }
 
-    return lang === APP_LANG.EN ? `Filtered by ${parts.join(' • ')}` : `Filtr: ${parts.join(' • ')}`;
+    return this.translate(t('features.algorithms.page.filterSummary.filtered'), {
+      parts: parts.join(' • '),
+    });
   });
   readonly availabilitySummary = computed(() => {
-    const lang = this.language.activeLang();
-    return lang === APP_LANG.EN
-      ? `${this.implementedCount()} interactive • ${this.upcomingCount()} roadmap`
-      : `${this.implementedCount()} interaktywnych • ${this.upcomingCount()} w roadmapie`;
+    return this.translate(t('features.algorithms.page.availabilitySummary'), {
+      implemented: this.implementedCount(),
+      upcoming: this.upcomingCount(),
+    });
   });
-  readonly resultsLabel = computed(() => {
-    const lang = this.language.activeLang();
-    return lang === APP_LANG.EN
-      ? `${this.totalItems()} algorithms in focus`
-      : `${this.totalItems()} algorytmów w bieżącym widoku`;
-  });
+  readonly resultsLabel = computed(() =>
+    this.translate(t('features.algorithms.page.resultsLabel'), {
+      count: this.totalItems(),
+    }),
+  );
   readonly resultsSubtitle = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Refine the current topic by difficulty and semantic traits without leaving the catalog context.'
-      : 'Zawężaj bieżący temat po poziomie trudności i cechach semantycznych bez wychodzenia z kontekstu katalogu.',
+    this.translate(t('features.algorithms.page.resultsSubtitle')),
   );
   readonly traitsTriggerLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN ? 'Traits' : 'Cechy',
+    this.translate(t('features.algorithms.page.traits.triggerLabel')),
   );
   readonly traitsSummary = computed(() => {
     const count = this.activeTraits().length;
-    const lang = this.language.activeLang();
 
     if (count === 0) {
-      return lang === APP_LANG.EN ? 'Pick semantic filters' : 'Wybierz filtry semantyczne';
+      return this.translate(t('features.algorithms.page.traits.summaryEmpty'));
     }
 
-    return lang === APP_LANG.EN ? `${count} selected` : `${count} wybrano`;
+    return this.translate(t('features.algorithms.page.traits.summarySelected'), { count });
   });
   readonly traitsTriggerAriaLabel = computed(() => {
     const count = this.activeTraits().length;
-    const lang = this.language.activeLang();
 
     if (count === 0) {
-      return lang === APP_LANG.EN ? 'Traits filter' : 'Filtr cech';
+      return this.translate(t('features.algorithms.page.traits.ariaLabel'));
     }
 
-    return lang === APP_LANG.EN
-      ? `Traits filter, ${count} selected`
-      : `Filtr cech, wybrano ${count}`;
+    return this.translate(t('features.algorithms.page.traits.ariaLabelSelected'), { count });
   });
   readonly traitsPopoverTitle = computed(() =>
-    this.language.activeLang() === APP_LANG.EN ? 'Semantic filters' : 'Filtry semantyczne',
+    this.translate(t('features.algorithms.page.traits.popoverTitle')),
   );
   readonly traitsPopoverSubtitle = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'Pick the properties and paradigms that matter for the current topic.'
-      : 'Wybierz własności i paradygmaty, które mają znaczenie w bieżącym temacie.',
+    this.translate(t('features.algorithms.page.traits.popoverSubtitle')),
   );
   readonly traitsEmptyLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'No semantic facets are available in the current topic.'
-      : 'W bieżącym temacie nie ma dostępnych cech semantycznych.',
+    this.translate(t('features.algorithms.page.traits.emptyLabel')),
   );
   readonly clearTraitsLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN ? 'Clear all' : 'Wyczyść wszystko',
+    this.translate(t('features.algorithms.page.traits.clearLabel')),
   );
   readonly difficultyGroupLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN ? 'Difficulty filter' : 'Filtr trudności',
+    this.translate(t('shared.filters.difficulty.ariaLabel')),
   );
-  readonly emptyLabel = computed(() =>
-    this.language.activeLang() === APP_LANG.EN
-      ? 'No algorithms match the current filters.'
-      : 'Żaden algorytm nie pasuje do bieżących filtrów.',
-  );
+  readonly emptyLabel = computed(() => this.translate(t('features.algorithms.page.emptyLabel')));
   readonly stats = computed<readonly PageStat[]>(() => {
     return buildPageStats(
-      this.language.activeLang(),
       this.totalItems(),
       this.implementedCount(),
       this.trackCount(),
+      (key, params) => this.translate(key, params),
     );
   });
 
@@ -226,5 +209,10 @@ export class AlgorithmsPage {
 
   selectTraits(value: readonly AlgorithmTraitId[]): void {
     this.selectedTraitsState.set([...value]);
+  }
+
+  private translate(key: string, params?: Record<string, string | number>): string {
+    this.language.activeLang();
+    return this.transloco.translate(key, params);
   }
 }

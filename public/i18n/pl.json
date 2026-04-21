@@ -1,5 +1,381 @@
 {
-  "navbar": {
-    "searchPlaceholder": "Szukaj..."
+  "core": {
+    "navbar": {
+      "homeAriaLabel": "Strona główna Oh(no)",
+      "commandAriaLabel": "Otwórz wyszukiwarkę i paletę poleceń",
+      "searchEyebrow": "Szukaj",
+      "searchPlaceholder": "Szukaj..."
+    },
+    "navigation": {
+      "primaryAriaLabel": "Nawigacja główna",
+      "tabs": {
+        "algorithms": "Algorytmy",
+        "structures": "Struktury"
+      },
+      "sidebar": {
+        "algorithms": {
+          "groups": {
+            "overview": "Przeglądaj",
+            "sorting": "Sortowanie",
+            "searching": "Wyszukiwanie",
+            "trees": "Drzewa",
+            "graphs": "Grafy",
+            "dp": "Dynamiczne",
+            "strings": "Napisy",
+            "geometry": "Geometria",
+            "misc": "Inne"
+          },
+          "items": {
+            "allAlgorithms": "Wszystkie algorytmy",
+            "allSorting": "Wszystkie sortowania",
+            "comparison": "Porównawcze",
+            "nonComparison": "Nieporównawcze",
+            "allSearching": "Wszystkie wyszukiwania",
+            "arraySearch": "Liniowe",
+            "binarySearch": "Binarne",
+            "allTrees": "Wszystkie drzewa",
+            "treeTraversal": "Przechodzenie",
+            "allGraphs": "Wszystkie grafy",
+            "pathfinding": "Wyznaczanie ścieżek",
+            "graphTraversal": "Przechodzenie",
+            "mst": "MST",
+            "connectivity": "Spójność",
+            "flowMatching": "Przepływ i skojarzenia",
+            "advancedGraphs": "Zaawansowane",
+            "allDp": "Wszystkie DP",
+            "classic": "Klasyczne",
+            "dpSequences": "Sekwencje",
+            "dpAdvanced": "Zaawansowane",
+            "dpOptimization": "Optymalizacje",
+            "allStrings": "Wszystkie napisy",
+            "patternMatching": "Dopasowanie wzorca",
+            "suffixPalindromes": "Sufiksy i palindromy",
+            "compression": "Kompresja",
+            "allGeometry": "Cała geometria",
+            "geometryComputational": "Obliczeniowa",
+            "geometryAdvanced": "Zaawansowana",
+            "allMisc": "Wszystkie inne",
+            "math": "Matematyka",
+            "arrayTechniques": "Techniki tablicowe",
+            "backtracking": "Backtracking",
+            "recursion": "Rekurencja",
+            "gameTheory": "Teoria gier",
+            "randomized": "Losowe"
+          },
+          "sections": {
+            "allAlgorithms": "Wszystkie algorytmy",
+            "sortingAlgorithms": "Algorytmy sortowania",
+            "comparisonSorts": "Sortowania porównawcze",
+            "nonComparisonSorts": "Sortowania nieporównawcze",
+            "searchAlgorithms": "Algorytmy wyszukiwania",
+            "linearSearchAlgorithms": "Algorytmy wyszukiwania liniowego",
+            "binarySearchAlgorithms": "Algorytmy wyszukiwania binarnego",
+            "treeAlgorithms": "Algorytmy na drzewach",
+            "treeTraversalAlgorithms": "Algorytmy przechodzenia po drzewie",
+            "graphAlgorithms": "Algorytmy grafowe",
+            "pathfindingAlgorithms": "Algorytmy wyznaczania ścieżek",
+            "graphTraversal": "Przechodzenie po grafie",
+            "minimumSpanningTree": "Minimalne drzewo rozpinające",
+            "graphConnectivityAlgorithms": "Algorytmy spójności grafu",
+            "flowAndMatchingAlgorithms": "Algorytmy przepływu i skojarzeń",
+            "advancedGraphAlgorithms": "Zaawansowane algorytmy grafowe",
+            "dynamicProgramming": "Programowanie dynamiczne",
+            "classicDpProblems": "Klasyczne problemy DP",
+            "sequenceDpProblems": "Problemy DP na sekwencjach",
+            "advancedDpProblems": "Zaawansowane problemy DP",
+            "dpOptimizationTechniques": "Techniki optymalizacji DP",
+            "stringAlgorithms": "Algorytmy napisowe",
+            "patternMatching": "Dopasowanie wzorca",
+            "suffixAndPalindromeStructures": "Struktury sufiksowe i palindromiczne",
+            "compressionAndEncoding": "Kompresja i kodowanie",
+            "computationalGeometry": "Geometria obliczeniowa",
+            "computationalGeometryAlgorithms": "Algorytmy geometrii obliczeniowej",
+            "advancedGeometryAlgorithms": "Zaawansowane algorytmy geometryczne",
+            "otherAlgorithms": "Inne algorytmy",
+            "mathAlgorithms": "Algorytmy matematyczne",
+            "arrayTechniques": "Techniki tablicowe",
+            "backtrackingAlgorithms": "Algorytmy backtrackingowe",
+            "recursionAndCallStack": "Rekurencja i stos wywołań",
+            "gameTreeAlgorithms": "Algorytmy drzew gier",
+            "randomizedAlgorithms": "Algorytmy losowe"
+          }
+        },
+        "structures": {
+          "groups": {
+            "catalog": "Przeglądaj",
+            "linear": "Liniowe",
+            "hashing": "Haszowanie",
+            "trees": "Drzewa",
+            "specialized": "Specjalizowane"
+          },
+          "items": {
+            "allStructures": "Wszystkie struktury",
+            "allLinear": "Wszystkie liniowe",
+            "stackQueue": "Stos / kolejka",
+            "linkedList": "Listy wiązane",
+            "allHashing": "Wszystkie haszujące",
+            "hashTable": "Tablice mieszające",
+            "probabilistic": "Probabilistyczne",
+            "distributed": "Rozproszone",
+            "allTrees": "Wszystkie drzewa",
+            "searchTrees": "Drzewa wyszukujące",
+            "heaps": "Kopce",
+            "prefixSuffix": "Prefiksy / sufiksy",
+            "range": "Zakresy",
+            "advancedTrees": "Zaawansowane",
+            "allSpecialized": "Wszystkie specjalizowane",
+            "ordered": "Uporządkowane",
+            "setUnion": "Suma zbiorów",
+            "spatial": "Przestrzenne"
+          },
+          "sections": {
+            "allStructures": "Wszystkie struktury",
+            "linearDataStructures": "Liniowe struktury danych",
+            "stackAndQueueStructures": "Struktury stosu i kolejki",
+            "linkedListStructures": "Struktury list wiązanych",
+            "hashingStructures": "Struktury haszujące",
+            "hashTableStructures": "Struktury tablic mieszających",
+            "probabilisticStructures": "Struktury probabilistyczne",
+            "distributedHashing": "Haszowanie rozproszone",
+            "treeDataStructures": "Drzewiaste struktury danych",
+            "searchTreeStructures": "Struktury drzew wyszukujących",
+            "heapStructures": "Struktury kopców",
+            "prefixAndSuffixTrees": "Drzewa prefiksowe i sufiksowe",
+            "rangeQueryStructures": "Struktury zapytań zakresowych",
+            "advancedTreeStructures": "Zaawansowane struktury drzewiaste",
+            "specializedDataStructures": "Specjalizowane struktury danych",
+            "orderedRandomizedStructures": "Uporządkowane struktury losowe",
+            "disjointSetStructures": "Struktury zbiorów rozłącznych",
+            "spatialIndexingStructures": "Struktury indeksowania przestrzennego"
+          }
+        }
+      }
+    },
+    "languageSwitcher": {
+      "openAriaLabel": "Otwórz glob z flagami świata",
+      "eyebrow": "Atlas języków",
+      "overlayAriaLabel": "Glob z flagami świata",
+      "closeGlobeAriaLabel": "Zamknij glob z flagami świata",
+      "closeOverlayAriaLabel": "Zamknij nakładkę",
+      "closeLabel": "Zamknij"
+    },
+    "worldGlobe": {
+      "badgeEyebrow": "Podgląd",
+      "loading": "Budowanie powierzchni atlasu...",
+      "loadError": "Nie udało się zainicjalizować globu z flagami świata.",
+      "defaultHoverHeadline": "Przesuń kursorem po planecie",
+      "hoveredCountryNote": "Każdy kraj jest teraz utkany z palety własnej flagi. Najechanie dalej blokuje kraj i wzmacnia atlasową poświatę.",
+      "defaultHoverNote": "Przeciągnij, aby obracać. Przewijaj lub szczyp, aby przybliżać. Punkty krajów są teraz malowane kolorami flag poszczególnych państw.",
+      "legend": {
+        "hoverCountry": "Najedź na kraj",
+        "dragOrbit": "Przeciągnij orbitę",
+        "wheelZoom": "Przybliż kółkiem"
+      }
+    }
+  },
+  "shared": {
+    "difficulty": {
+      "easy": "Łatwe",
+      "medium": "Średnie",
+      "hard": "Trudne",
+      "insane": "Ekstremalne"
+    },
+    "filters": {
+      "all": "Wszystkie",
+      "difficulty": {
+        "ariaLabel": "Filtr trudności"
+      }
+    },
+    "roadmap": {
+      "chip": "Roadmap"
+    }
+  },
+  "catalog": {
+    "algorithms": {
+      "categories": {
+        "sorting": "Sortowanie",
+        "searching": "Wyszukiwanie",
+        "trees": "Drzewa",
+        "graphs": "Grafy",
+        "dp": "Programowanie dynamiczne",
+        "strings": "Napisy",
+        "geometry": "Geometria",
+        "misc": "Inne"
+      },
+      "subcategories": {
+        "comparison": "Porównawcze",
+        "nonComparison": "Nieporównawcze",
+        "array": "Liniowe",
+        "binary": "Binarne",
+        "traversal": "Przechodzenie",
+        "pathfinding": "Wyznaczanie ścieżek",
+        "mst": "MST",
+        "connectivity": "Spójność",
+        "flowMatching": "Przepływ i skojarzenia",
+        "advanced": "Zaawansowane",
+        "classic": "Klasyczne",
+        "sequences": "Sekwencje",
+        "optimization": "Optymalizacje",
+        "patternMatching": "Dopasowanie wzorca",
+        "suffixPalindromes": "Sufiksy i palindromy",
+        "compression": "Kompresja",
+        "computational": "Obliczeniowa",
+        "math": "Matematyka",
+        "arrayTechniques": "Techniki tablicowe",
+        "backtracking": "Backtracking",
+        "recursion": "Rekurencja",
+        "gameTheory": "Teoria gier",
+        "randomized": "Losowe"
+      }
+    },
+    "structures": {
+      "categories": {
+        "linear": "Liniowe",
+        "hashing": "Haszowanie",
+        "trees": "Drzewa",
+        "specialized": "Specjalizowane"
+      },
+      "subcategories": {
+        "stackQueue": "Stos / kolejka",
+        "linkedList": "Listy wiązane",
+        "hashTable": "Tablice mieszające",
+        "probabilistic": "Probabilistyczne",
+        "distributed": "Rozproszone",
+        "search": "Drzewa wyszukujące",
+        "heaps": "Kopce",
+        "prefixSuffix": "Prefiksy / sufiksy",
+        "range": "Zakresy",
+        "advanced": "Zaawansowane",
+        "ordered": "Uporządkowane",
+        "setUnion": "Suma zbiorów",
+        "spatial": "Przestrzenne"
+      }
+    }
+  },
+  "features": {
+    "algorithms": {
+      "traits": {
+        "groups": {
+          "properties": "Właściwości",
+          "paradigms": "Paradygmaty",
+          "structures": "Struktury",
+          "domains": "Typy problemów"
+        },
+        "items": {
+          "stable": "Stabilny",
+          "inPlace": "In-place",
+          "online": "Online",
+          "probabilistic": "Probabilistyczny",
+          "greedy": "Zachłanny",
+          "divideAndConquer": "Dziel i zwyciężaj",
+          "dynamicProgramming": "Programowanie dynamiczne",
+          "backtracking": "Backtracking",
+          "randomized": "Losowy",
+          "heap": "Kopiec",
+          "trie": "Trie",
+          "dsu": "DSU",
+          "priorityQueue": "Kolejka priorytetowa",
+          "bitmask": "Bitmaska",
+          "shortestPath": "Najkrótsza ścieżka",
+          "matching": "Skojarzenia",
+          "mst": "MST",
+          "compression": "Kompresja",
+          "palindromes": "Palindromy",
+          "numberTheory": "Teoria liczb",
+          "geometry": "Geometria"
+        }
+      },
+      "page": {
+        "title": "Algorytmy",
+        "heroEyebrow": "Interaktywny atlas algorytmów",
+        "heroDescription": "Przeglądaj tematy szybciej, porównuj złożoność na pierwszy rzut oka i przechodź do dopracowanych wizualizacji bez gubienia kontekstu.",
+        "filterSummary": {
+          "all": "Wszystkie poziomy trudności",
+          "semanticTraits": "{{count}} cech semantycznych",
+          "filtered": "Filtr: {{parts}}"
+        },
+        "availabilitySummary": "{{implemented}} interaktywnych • {{upcoming}} w roadmapie",
+        "resultsLabel": "{{count}} algorytmów w bieżącym widoku",
+        "resultsSubtitle": "Zawężaj bieżący temat po poziomie trudności i cechach semantycznych bez wychodzenia z kontekstu katalogu.",
+        "emptyLabel": "Żaden algorytm nie pasuje do bieżących filtrów.",
+        "stats": {
+          "visibleNow": "Widoczne teraz",
+          "interactive": "Interaktywne",
+          "tracks": "Ścieżki"
+        },
+        "traits": {
+          "triggerLabel": "Cechy",
+          "summaryEmpty": "Wybierz filtry semantyczne",
+          "summarySelected": "Wybrano: {{count}}",
+          "ariaLabel": "Filtr cech",
+          "ariaLabelSelected": "Filtr cech, wybrano {{count}}",
+          "popoverTitle": "Filtry semantyczne",
+          "popoverSubtitle": "Wybierz właściwości i paradygmaty, które mają znaczenie w bieżącym temacie.",
+          "emptyLabel": "W bieżącym temacie nie ma dostępnych cech semantycznych.",
+          "clearLabel": "Wyczyść wszystko"
+        }
+      },
+      "card": {
+        "status": {
+          "interactive": "Interaktywny",
+          "comingSoon": "Wkrótce"
+        },
+        "cta": {
+          "openVisualization": "Otwórz wizualizację",
+          "inRoadmap": "W roadmapie"
+        },
+        "preview": {
+          "liveSignal": "Na żywo",
+          "roadmap": "Roadmap",
+          "plannedHint": "Planowana interaktywna wizualizacja"
+        },
+        "roadmap": {
+          "title": "Implementacja planowana",
+          "hint": "Ta wizualizacja jest już na roadmapie, ale interaktywna implementacja jest jeszcze zablokowana."
+        },
+        "metrics": {
+          "time": "Czas",
+          "space": "Pamięć"
+        }
+      }
+    },
+    "structures": {
+      "page": {
+        "title": "Struktury",
+        "heroEyebrow": "Biblioteka struktur",
+        "heroDescription": "Czytelniejszy przegląd struktur bazowych, pogrupowanych w ścieżki nauki i gotowych pod przyszłe interaktywne moduły.",
+        "filterSummary": {
+          "all": "Wszystkie poziomy trudności",
+          "filtered": "Filtr: {{label}}"
+        },
+        "availabilitySummary": "{{implemented}} gotowych • {{upcoming}} w roadmapie",
+        "resultsLabel": "{{count}} struktur w bieżącym widoku",
+        "resultsSubtitle": "Zmieniaj poziom trudności, pozostając w obrębie aktualnego obszaru biblioteki.",
+        "emptyLabel": "Żadna struktura nie pasuje do bieżących filtrów.",
+        "stats": {
+          "visibleNow": "Widoczne teraz",
+          "tracks": "Ścieżki",
+          "roadmap": "Roadmap"
+        }
+      },
+      "card": {
+        "status": {
+          "interactive": "Interaktywna",
+          "comingSoon": "Wkrótce"
+        },
+        "cta": {
+          "openModule": "Otwórz moduł",
+          "inRoadmap": "W roadmapie"
+        },
+        "preview": {
+          "readyHint": "Interaktywny model gotowy",
+          "plannedHint": "Planowany moduł deep-dive"
+        },
+        "roadmap": {
+          "title": "Moduł chwilowo zablokowany",
+          "hint": "Ta struktura jest już widoczna na roadmapie, ale jej interaktywny moduł nie jest jeszcze gotowy."
+        }
+      }
+    }
   }
 }
