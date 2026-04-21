@@ -417,6 +417,408 @@ const CONVEX_HULL_CPP = buildStructuredCode(
   'cpp',
 );
 
+const CONVEX_HULL_JS = buildStructuredCode(
+  `
+  //@step 1
+  function grahamScan(points) {
+    if (points.length < 3) {
+      return [...points];
+    }
+
+    //@step 2
+    const pivot = findPivot(points);
+    //@step 3
+    const ordered = sortByPolarAngle(points, pivot);
+    //@step 4
+    const hull = [pivot, ordered[0]];
+
+    for (const point of ordered.slice(1)) {
+      //@step 7
+      while (hull.length >= 2 && cross(hull[hull.length - 2], hull[hull.length - 1], point) <= 0) {
+        //@step 8
+        hull.pop();
+      }
+
+      //@step 9
+      hull.push(point);
+    }
+
+    //@step 10
+    return hull;
+  }
+
+  function findPivot(points) {
+    return points.reduce((best, point) =>
+      point.y < best.y || (point.y === best.y && point.x < best.x) ? point : best,
+    );
+  }
+
+  function sortByPolarAngle(points, pivot) {
+    return points
+      .filter((point) => point !== pivot)
+      .sort((left, right) => {
+        const angleDiff =
+          Math.atan2(left.y - pivot.y, left.x - pivot.x) -
+          Math.atan2(right.y - pivot.y, right.x - pivot.x);
+        return Math.abs(angleDiff) > 1e-9
+          ? angleDiff
+          : squaredDistance(pivot, left) - squaredDistance(pivot, right);
+      });
+  }
+
+  function cross(a, b, c) {
+    return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+  }
+
+  function squaredDistance(a, b) {
+    return (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+  }
+  `,
+  'javascript',
+);
+
+const CONVEX_HULL_GO = buildStructuredCode(
+  `
+  package geometry
+
+  import (
+      "math"
+      "sort"
+  )
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  //@step 1
+  func GrahamScan(points []Point) []Point {
+      if len(points) < 3 {
+          return append([]Point{}, points...)
+      }
+
+      //@step 2
+      pivot := findPivot(points)
+      //@step 3
+      ordered := sortByPolarAngle(points, pivot)
+      //@step 4
+      hull := []Point{pivot, ordered[0]}
+
+      for _, point := range ordered[1:] {
+          //@step 7
+          for len(hull) >= 2 && cross(hull[len(hull)-2], hull[len(hull)-1], point) <= 0 {
+              //@step 8
+              hull = hull[:len(hull)-1]
+          }
+
+          //@step 9
+          hull = append(hull, point)
+      }
+
+      //@step 10
+      return hull
+  }
+
+  func findPivot(points []Point) Point {
+      best := points[0]
+      for _, point := range points[1:] {
+          if point.Y < best.Y || (point.Y == best.Y && point.X < best.X) {
+              best = point
+          }
+      }
+      return best
+  }
+
+  func sortByPolarAngle(points []Point, pivot Point) []Point {
+      ordered := make([]Point, 0, len(points))
+      for _, point := range points {
+          if point != pivot {
+              ordered = append(ordered, point)
+          }
+      }
+      sort.Slice(ordered, func(i, j int) bool {
+          left, right := ordered[i], ordered[j]
+          angleDiff := math.Atan2(left.Y-pivot.Y, left.X-pivot.X) - math.Atan2(right.Y-pivot.Y, right.X-pivot.X)
+          if math.Abs(angleDiff) > 1e-9 {
+              return angleDiff < 0
+          }
+          return squaredDistance(pivot, left) < squaredDistance(pivot, right)
+      })
+      return ordered
+  }
+
+  func cross(a Point, b Point, c Point) float64 {
+      return (b.X-a.X)*(c.Y-a.Y) - (b.Y-a.Y)*(c.X-a.X)
+  }
+
+  func squaredDistance(a Point, b Point) float64 {
+      dx, dy := a.X-b.X, a.Y-b.Y
+      return dx*dx + dy*dy
+  }
+  `,
+  'go',
+);
+
+const CONVEX_HULL_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy, PartialEq)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  //@step 1
+  fn graham_scan(points: &[Point]) -> Vec<Point> {
+      if points.len() < 3 {
+          return points.to_vec();
+      }
+
+      //@step 2
+      let pivot = find_pivot(points);
+      //@step 3
+      let ordered = sort_by_polar_angle(points, pivot);
+      //@step 4
+      let mut hull = vec![pivot, ordered[0]];
+
+      for point in ordered.into_iter().skip(1) {
+          //@step 7
+          while hull.len() >= 2 && cross(hull[hull.len() - 2], hull[hull.len() - 1], point) <= 0.0 {
+              //@step 8
+              hull.pop();
+          }
+
+          //@step 9
+          hull.push(point);
+      }
+
+      //@step 10
+      hull
+  }
+
+  fn find_pivot(points: &[Point]) -> Point {
+      *points
+          .iter()
+          .min_by(|left, right| left.y.total_cmp(&right.y).then(left.x.total_cmp(&right.x)))
+          .unwrap()
+  }
+
+  fn sort_by_polar_angle(points: &[Point], pivot: Point) -> Vec<Point> {
+      let mut ordered: Vec<Point> = points.iter().copied().filter(|point| *point != pivot).collect();
+      ordered.sort_by(|left, right| {
+          let left_angle = (left.y - pivot.y).atan2(left.x - pivot.x);
+          let right_angle = (right.y - pivot.y).atan2(right.x - pivot.x);
+          left_angle
+              .total_cmp(&right_angle)
+              .then(squared_distance(pivot, *left).total_cmp(&squared_distance(pivot, *right)))
+      });
+      ordered
+  }
+
+  fn cross(a: Point, b: Point, c: Point) -> f64 {
+      (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+  }
+
+  fn squared_distance(a: Point, b: Point) -> f64 {
+      (a.x - b.x).powi(2) + (a.y - b.y).powi(2)
+  }
+  `,
+  'rust',
+);
+
+const CONVEX_HULL_SWIFT = buildStructuredCode(
+  `
+  struct Point: Equatable {
+      let x: Double
+      let y: Double
+  }
+
+  //@step 1
+  func grahamScan(_ points: [Point]) -> [Point] {
+      if points.count < 3 {
+          return points
+      }
+
+      //@step 2
+      let pivot = findPivot(points)
+      //@step 3
+      let ordered = sortByPolarAngle(points, pivot: pivot)
+      //@step 4
+      var hull = [pivot, ordered[0]]
+
+      for point in ordered.dropFirst() {
+          //@step 7
+          while hull.count >= 2 && cross(hull[hull.count - 2], hull[hull.count - 1], point) <= 0 {
+              //@step 8
+              hull.removeLast()
+          }
+
+          //@step 9
+          hull.append(point)
+      }
+
+      //@step 10
+      return hull
+  }
+
+  func findPivot(_ points: [Point]) -> Point {
+      points.min {
+          $0.y == $1.y ? $0.x < $1.x : $0.y < $1.y
+      }!
+  }
+
+  func sortByPolarAngle(_ points: [Point], pivot: Point) -> [Point] {
+      points
+          .filter { $0 != pivot }
+          .sorted {
+              let leftAngle = atan2($0.y - pivot.y, $0.x - pivot.x)
+              let rightAngle = atan2($1.y - pivot.y, $1.x - pivot.x)
+              if abs(leftAngle - rightAngle) > 1e-9 {
+                  return leftAngle < rightAngle
+              }
+              return squaredDistance(pivot, $0) < squaredDistance(pivot, $1)
+          }
+  }
+
+  func cross(_ a: Point, _ b: Point, _ c: Point) -> Double {
+      (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+  }
+
+  func squaredDistance(_ a: Point, _ b: Point) -> Double {
+      pow(a.x - b.x, 2) + pow(a.y - b.y, 2)
+  }
+  `,
+  'swift',
+);
+
+const CONVEX_HULL_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(
+          public float $x,
+          public float $y,
+      ) {}
+  }
+
+  //@step 1
+  function grahamScan(array $points): array
+  {
+      if (count($points) < 3) {
+          return array_values($points);
+      }
+
+      //@step 2
+      $pivot = findPivot($points);
+      //@step 3
+      $ordered = sortByPolarAngle($points, $pivot);
+      //@step 4
+      $hull = [$pivot, $ordered[0]];
+
+      foreach (array_slice($ordered, 1) as $point) {
+          //@step 7
+          while (count($hull) >= 2 && cross($hull[count($hull) - 2], $hull[count($hull) - 1], $point) <= 0.0) {
+              //@step 8
+              array_pop($hull);
+          }
+
+          //@step 9
+          $hull[] = $point;
+      }
+
+      //@step 10
+      return $hull;
+  }
+
+  function findPivot(array $points): Point
+  {
+      $best = $points[0];
+      foreach (array_slice($points, 1) as $point) {
+          if ($point->y < $best->y || ($point->y === $best->y && $point->x < $best->x)) {
+              $best = $point;
+          }
+      }
+      return $best;
+  }
+
+  function sortByPolarAngle(array $points, Point $pivot): array
+  {
+      $ordered = array_values(array_filter($points, fn (Point $point): bool => $point !== $pivot));
+      usort($ordered, function (Point $left, Point $right) use ($pivot): int {
+          $leftAngle = atan2($left->y - $pivot->y, $left->x - $pivot->x);
+          $rightAngle = atan2($right->y - $pivot->y, $right->x - $pivot->x);
+          if (abs($leftAngle - $rightAngle) > 1e-9) {
+              return $leftAngle <=> $rightAngle;
+          }
+          return squaredDistance($pivot, $left) <=> squaredDistance($pivot, $right);
+      });
+      return $ordered;
+  }
+
+  function cross(Point $a, Point $b, Point $c): float
+  {
+      return ($b->x - $a->x) * ($c->y - $a->y) - ($b->y - $a->y) * ($c->x - $a->x);
+  }
+
+  function squaredDistance(Point $a, Point $b): float
+  {
+      return ($a->x - $b->x) ** 2 + ($a->y - $b->y) ** 2;
+  }
+  `,
+  'php',
+);
+
+const CONVEX_HULL_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+
+  //@step 1
+  fun grahamScan(points: List<Point>): List<Point> {
+      if (points.size < 3) {
+          return points.toList()
+      }
+
+      //@step 2
+      val pivot = findPivot(points)
+      //@step 3
+      val ordered = sortByPolarAngle(points, pivot)
+      //@step 4
+      val hull = mutableListOf(pivot, ordered.first())
+
+      for (point in ordered.drop(1)) {
+          //@step 7
+          while (hull.size >= 2 && cross(hull[hull.size - 2], hull[hull.size - 1], point) <= 0.0) {
+              //@step 8
+              hull.removeAt(hull.lastIndex)
+          }
+
+          //@step 9
+          hull += point
+      }
+
+      //@step 10
+      return hull
+  }
+
+  fun findPivot(points: List<Point>): Point =
+      points.minWith(compareBy<Point> { it.y }.thenBy { it.x })
+
+  fun sortByPolarAngle(points: List<Point>, pivot: Point): List<Point> =
+      points
+          .filter { it != pivot }
+          .sortedWith(
+              compareBy<Point> { kotlin.math.atan2(it.y - pivot.y, it.x - pivot.x) }
+                  .thenBy { squaredDistance(pivot, it) },
+          )
+
+  fun cross(a: Point, b: Point, c: Point): Double =
+      (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+
+  fun squaredDistance(a: Point, b: Point): Double =
+      (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)
+  `,
+  'kotlin',
+);
+
 export const CONVEX_HULL_CODE = CONVEX_HULL_TS.lines;
 export const CONVEX_HULL_CODE_REGIONS = CONVEX_HULL_TS.regions;
 export const CONVEX_HULL_CODE_HIGHLIGHT_MAP = CONVEX_HULL_TS.highlightMap;
@@ -427,6 +829,13 @@ export const CONVEX_HULL_CODE_VARIANTS: CodeVariantMap = {
     regions: CONVEX_HULL_TS.regions,
     highlightMap: CONVEX_HULL_TS.highlightMap,
     source: CONVEX_HULL_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: CONVEX_HULL_JS.lines,
+    regions: CONVEX_HULL_JS.regions,
+    highlightMap: CONVEX_HULL_JS.highlightMap,
+    source: CONVEX_HULL_JS.source,
   },
   python: {
     language: 'python',
@@ -455,5 +864,40 @@ export const CONVEX_HULL_CODE_VARIANTS: CodeVariantMap = {
     regions: CONVEX_HULL_CPP.regions,
     highlightMap: CONVEX_HULL_CPP.highlightMap,
     source: CONVEX_HULL_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: CONVEX_HULL_GO.lines,
+    regions: CONVEX_HULL_GO.regions,
+    highlightMap: CONVEX_HULL_GO.highlightMap,
+    source: CONVEX_HULL_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: CONVEX_HULL_RUST.lines,
+    regions: CONVEX_HULL_RUST.regions,
+    highlightMap: CONVEX_HULL_RUST.highlightMap,
+    source: CONVEX_HULL_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: CONVEX_HULL_SWIFT.lines,
+    regions: CONVEX_HULL_SWIFT.regions,
+    highlightMap: CONVEX_HULL_SWIFT.highlightMap,
+    source: CONVEX_HULL_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: CONVEX_HULL_PHP.lines,
+    regions: CONVEX_HULL_PHP.regions,
+    highlightMap: CONVEX_HULL_PHP.highlightMap,
+    source: CONVEX_HULL_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: CONVEX_HULL_KOTLIN.lines,
+    regions: CONVEX_HULL_KOTLIN.regions,
+    highlightMap: CONVEX_HULL_KOTLIN.highlightMap,
+    source: CONVEX_HULL_KOTLIN.source,
   },
 };

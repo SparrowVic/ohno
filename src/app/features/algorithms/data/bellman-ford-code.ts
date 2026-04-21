@@ -96,6 +96,88 @@ const BELLMAN_FORD_TS = buildStructuredCode(`
   //#endregion bellman-ford
 `);
 
+const BELLMAN_FORD_JS = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  /**
+   * @typedef {{ id: string }} GraphNode
+   * @typedef {{ from: string, to: string, weight: number }} WeightedEdge
+   * @typedef {{ nodes: GraphNode[], edges: WeightedEdge[] }} WeightedGraphData
+   */
+  //#endregion graph-types
+
+  /**
+   * Compute shortest paths even when edge weights may be negative.
+   * Input: directed weighted graph and a source node id.
+   * Returns: distance map, predecessor map, and a negative-cycle flag.
+   */
+  //#region bellman-ford function open
+  //@step 2
+  function bellmanFord(graph, source) {
+      const distance = new Map();
+      const parent = new Map();
+
+      for (const node of graph.nodes) {
+          distance.set(node.id, Number.POSITIVE_INFINITY);
+          parent.set(node.id, null);
+      }
+
+      distance.set(source, 0);
+
+      for (let pass = 1; pass < graph.nodes.length; pass += 1) {
+          //@step 5
+          let changed = false;
+
+          for (const edge of graph.edges) {
+              if (!Number.isFinite(distance.get(edge.from) ?? Number.POSITIVE_INFINITY)) {
+                  continue;
+              }
+
+              //@step 7
+              const candidate =
+                  (distance.get(edge.from) ?? Number.POSITIVE_INFINITY) + edge.weight;
+
+              //@step 8
+              if (candidate >= (distance.get(edge.to) ?? Number.POSITIVE_INFINITY)) {
+                  continue;
+              }
+
+              //@step 9
+              distance.set(edge.to, candidate);
+              parent.set(edge.to, edge.from);
+              changed = true;
+          }
+
+          //@step 12
+          if (!changed) {
+              break;
+          }
+      }
+
+      let hasNegativeCycle = false;
+      for (const edge of graph.edges) {
+          if (!Number.isFinite(distance.get(edge.from) ?? Number.POSITIVE_INFINITY)) {
+              continue;
+          }
+
+          //@step 14
+          if (
+              (distance.get(edge.from) ?? Number.POSITIVE_INFINITY) + edge.weight <
+              (distance.get(edge.to) ?? Number.POSITIVE_INFINITY)
+          ) {
+              hasNegativeCycle = true;
+              break;
+          }
+      }
+
+      //@step 16
+      return { distance, parent, hasNegativeCycle };
+  }
+  //#endregion bellman-ford
+  `,
+  'javascript',
+);
+
 const BELLMAN_FORD_PY = buildStructuredCode(
   `
   from dataclasses import dataclass
@@ -470,6 +552,512 @@ const BELLMAN_FORD_CPP = buildStructuredCode(
   'cpp',
 );
 
+const BELLMAN_FORD_GO = buildStructuredCode(
+  `
+  package graphs
+
+  import "math"
+
+  //#region graph-types interface collapsed
+  type GraphNode struct {
+      ID string
+  }
+
+  type WeightedEdge struct {
+      From   string
+      To     string
+      Weight float64
+  }
+
+  type WeightedGraphData struct {
+      Nodes []GraphNode
+      Edges []WeightedEdge
+  }
+
+  type BellmanFordResult struct {
+      Distance         map[string]float64
+      Parent           map[string]*string
+      HasNegativeCycle bool
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes shortest paths even when edge weights may be negative.
+   * Input: directed weighted graph and a source node id.
+   * Returns: distance map, predecessor map, and a negative-cycle flag.
+   */
+  //#region bellman-ford function open
+  //@step 2
+  func BellmanFord(graph WeightedGraphData, source string) BellmanFordResult {
+      distance := map[string]float64{}
+      parent := map[string]*string{}
+
+      for _, node := range graph.Nodes {
+          distance[node.ID] = math.Inf(1)
+          parent[node.ID] = nil
+      }
+
+      distance[source] = 0
+
+      for pass := 1; pass < len(graph.Nodes); pass += 1 {
+          //@step 5
+          changed := false
+
+          for _, edge := range graph.Edges {
+              if math.IsInf(distance[edge.From], 1) {
+                  continue
+              }
+
+              //@step 7
+              candidate := distance[edge.From] + edge.Weight
+
+              //@step 8
+              if candidate >= distance[edge.To] {
+                  continue
+              }
+
+              //@step 9
+              distance[edge.To] = candidate
+              parentValue := edge.From
+              parent[edge.To] = &parentValue
+              changed = true
+          }
+
+          //@step 12
+          if !changed {
+              break
+          }
+      }
+
+      hasNegativeCycle := false
+      for _, edge := range graph.Edges {
+          if math.IsInf(distance[edge.From], 1) {
+              continue
+          }
+
+          //@step 14
+          if distance[edge.From]+edge.Weight < distance[edge.To] {
+              hasNegativeCycle = true
+              break
+          }
+      }
+
+      //@step 16
+      return BellmanFordResult{
+          Distance: distance,
+          Parent: parent,
+          HasNegativeCycle: hasNegativeCycle,
+      }
+  }
+  //#endregion bellman-ford
+  `,
+  'go',
+);
+
+const BELLMAN_FORD_RUST = buildStructuredCode(
+  `
+  use std::collections::HashMap;
+
+  //#region graph-types interface collapsed
+  #[derive(Clone)]
+  struct GraphNode {
+      id: String,
+  }
+
+  #[derive(Clone)]
+  struct WeightedEdge {
+      from: String,
+      to: String,
+      weight: f64,
+  }
+
+  struct WeightedGraphData {
+      nodes: Vec<GraphNode>,
+      edges: Vec<WeightedEdge>,
+  }
+
+  struct BellmanFordResult {
+      distance: HashMap<String, f64>,
+      parent: HashMap<String, Option<String>>,
+      has_negative_cycle: bool,
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes shortest paths even when edge weights may be negative.
+   * Input: directed weighted graph and a source node id.
+   * Returns: distance map, predecessor map, and a negative-cycle flag.
+   */
+  //#region bellman-ford function open
+  //@step 2
+  fn bellman_ford(graph: &WeightedGraphData, source: &str) -> BellmanFordResult {
+      let mut distance = HashMap::new();
+      let mut parent = HashMap::new();
+
+      for node in &graph.nodes {
+          distance.insert(node.id.clone(), f64::INFINITY);
+          parent.insert(node.id.clone(), None);
+      }
+
+      distance.insert(source.to_string(), 0.0);
+
+      for _pass in 1..graph.nodes.len() {
+          //@step 5
+          let mut changed = false;
+
+          for edge in &graph.edges {
+              if distance.get(&edge.from).copied().unwrap_or(f64::INFINITY).is_infinite() {
+                  continue;
+              }
+
+              //@step 7
+              let candidate =
+                  distance.get(&edge.from).copied().unwrap_or(f64::INFINITY) + edge.weight;
+
+              //@step 8
+              if candidate >= distance.get(&edge.to).copied().unwrap_or(f64::INFINITY) {
+                  continue;
+              }
+
+              //@step 9
+              distance.insert(edge.to.clone(), candidate);
+              parent.insert(edge.to.clone(), Some(edge.from.clone()));
+              changed = true;
+          }
+
+          //@step 12
+          if !changed {
+              break;
+          }
+      }
+
+      let mut has_negative_cycle = false;
+      for edge in &graph.edges {
+          if distance.get(&edge.from).copied().unwrap_or(f64::INFINITY).is_infinite() {
+              continue;
+          }
+
+          //@step 14
+          if distance.get(&edge.from).copied().unwrap_or(f64::INFINITY) + edge.weight
+              < distance.get(&edge.to).copied().unwrap_or(f64::INFINITY)
+          {
+              has_negative_cycle = true;
+              break;
+          }
+      }
+
+      //@step 16
+      BellmanFordResult {
+          distance,
+          parent,
+          has_negative_cycle,
+      }
+  }
+  //#endregion bellman-ford
+  `,
+  'rust',
+);
+
+const BELLMAN_FORD_SWIFT = buildStructuredCode(
+  `
+  import Foundation
+
+  //#region graph-types interface collapsed
+  struct GraphNode {
+      let id: String
+  }
+
+  struct WeightedEdge {
+      let from: String
+      let to: String
+      let weight: Double
+  }
+
+  struct WeightedGraphData {
+      let nodes: [GraphNode]
+      let edges: [WeightedEdge]
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes shortest paths even when edge weights may be negative.
+   * Input: directed weighted graph and a source node id.
+   * Returns: distance map, predecessor map, and a negative-cycle flag.
+   */
+  //#region bellman-ford function open
+  //@step 2
+  func bellmanFord(
+      graph: WeightedGraphData,
+      source: String,
+  ) -> (
+      distance: [String: Double],
+      parent: [String: String?],
+      hasNegativeCycle: Bool
+  ) {
+      var distance: [String: Double] = [:]
+      var parent: [String: String?] = [:]
+
+      for node in graph.nodes {
+          distance[node.id] = Double.infinity
+          parent[node.id] = nil
+      }
+
+      distance[source] = 0
+
+      for _ in 1..<graph.nodes.count {
+          //@step 5
+          var changed = false
+
+          for edge in graph.edges {
+              if !(distance[edge.from] ?? Double.infinity).isFinite {
+                  continue
+              }
+
+              //@step 7
+              let candidate = (distance[edge.from] ?? Double.infinity) + edge.weight
+
+              //@step 8
+              if candidate >= (distance[edge.to] ?? Double.infinity) {
+                  continue
+              }
+
+              //@step 9
+              distance[edge.to] = candidate
+              parent[edge.to] = edge.from
+              changed = true
+          }
+
+          //@step 12
+          if !changed {
+              break
+          }
+      }
+
+      var hasNegativeCycle = false
+      for edge in graph.edges {
+          if !(distance[edge.from] ?? Double.infinity).isFinite {
+              continue
+          }
+
+          //@step 14
+          if (distance[edge.from] ?? Double.infinity) + edge.weight < (distance[edge.to] ?? Double.infinity) {
+              hasNegativeCycle = true
+              break
+          }
+      }
+
+      //@step 16
+      return (distance, parent, hasNegativeCycle)
+  }
+  //#endregion bellman-ford
+  `,
+  'swift',
+);
+
+const BELLMAN_FORD_PHP = buildStructuredCode(
+  `
+  <?php
+
+  //#region graph-types interface collapsed
+  final class GraphNode
+  {
+      public function __construct(public string $id) {}
+  }
+
+  final class WeightedEdge
+  {
+      public function __construct(
+          public string $from,
+          public string $to,
+          public float $weight,
+      ) {}
+  }
+
+  final class WeightedGraphData
+  {
+      /**
+       * @param list<GraphNode> $nodes
+       * @param list<WeightedEdge> $edges
+       */
+      public function __construct(
+          public array $nodes,
+          public array $edges,
+      ) {}
+  }
+  //#endregion graph-types
+
+  /**
+   * Computes shortest paths even when edge weights may be negative.
+   * Input: directed weighted graph and a source node id.
+   * Returns: distance map, predecessor map, and a negative-cycle flag.
+   *
+   * @return array{
+   *   distance: array<string, float>,
+   *   parent: array<string, string|null>,
+   *   hasNegativeCycle: bool
+   * }
+   */
+  //#region bellman-ford function open
+  //@step 2
+  function bellmanFord(WeightedGraphData $graph, string $source): array
+  {
+      $distance = [];
+      $parent = [];
+
+      foreach ($graph->nodes as $node) {
+          $distance[$node->id] = INF;
+          $parent[$node->id] = null;
+      }
+
+      $distance[$source] = 0.0;
+
+      for ($pass = 1; $pass < count($graph->nodes); $pass += 1) {
+          //@step 5
+          $changed = false;
+
+          foreach ($graph->edges as $edge) {
+              if (!is_finite($distance[$edge->from] ?? INF)) {
+                  continue;
+              }
+
+              //@step 7
+              $candidate = ($distance[$edge->from] ?? INF) + $edge->weight;
+
+              //@step 8
+              if ($candidate >= ($distance[$edge->to] ?? INF)) {
+                  continue;
+              }
+
+              //@step 9
+              $distance[$edge->to] = $candidate;
+              $parent[$edge->to] = $edge->from;
+              $changed = true;
+          }
+
+          //@step 12
+          if (!$changed) {
+              break;
+          }
+      }
+
+      $hasNegativeCycle = false;
+      foreach ($graph->edges as $edge) {
+          if (!is_finite($distance[$edge->from] ?? INF)) {
+              continue;
+          }
+
+          //@step 14
+          if (($distance[$edge->from] ?? INF) + $edge->weight < ($distance[$edge->to] ?? INF)) {
+              $hasNegativeCycle = true;
+              break;
+          }
+      }
+
+      //@step 16
+      return [
+          'distance' => $distance,
+          'parent' => $parent,
+          'hasNegativeCycle' => $hasNegativeCycle,
+      ];
+  }
+  //#endregion bellman-ford
+  `,
+  'php',
+);
+
+const BELLMAN_FORD_KOTLIN = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  data class GraphNode(val id: String)
+
+  data class WeightedEdge(
+      val from: String,
+      val to: String,
+      val weight: Double,
+  )
+
+  data class WeightedGraphData(
+      val nodes: List<GraphNode>,
+      val edges: List<WeightedEdge>,
+  )
+
+  data class BellmanFordResult(
+      val distance: Map<String, Double>,
+      val parent: Map<String, String?>,
+      val hasNegativeCycle: Boolean,
+  )
+  //#endregion graph-types
+
+  /**
+   * Computes shortest paths even when edge weights may be negative.
+   * Input: directed weighted graph and a source node id.
+   * Returns: distance map, predecessor map, and a negative-cycle flag.
+   */
+  //#region bellman-ford function open
+  //@step 2
+  fun bellmanFord(graph: WeightedGraphData, source: String): BellmanFordResult {
+      val distance = mutableMapOf<String, Double>()
+      val parent = mutableMapOf<String, String?>()
+
+      for (node in graph.nodes) {
+          distance[node.id] = Double.POSITIVE_INFINITY
+          parent[node.id] = null
+      }
+
+      distance[source] = 0.0
+
+      for (pass in 1 until graph.nodes.size) {
+          //@step 5
+          var changed = false
+
+          for (edge in graph.edges) {
+              if (!(distance[edge.from] ?: Double.POSITIVE_INFINITY).isFinite()) {
+                  continue
+              }
+
+              //@step 7
+              val candidate = (distance[edge.from] ?: Double.POSITIVE_INFINITY) + edge.weight
+
+              //@step 8
+              if (candidate >= (distance[edge.to] ?: Double.POSITIVE_INFINITY)) {
+                  continue
+              }
+
+              //@step 9
+              distance[edge.to] = candidate
+              parent[edge.to] = edge.from
+              changed = true
+          }
+
+          //@step 12
+          if (!changed) {
+              break
+          }
+      }
+
+      var hasNegativeCycle = false
+      for (edge in graph.edges) {
+          if (!(distance[edge.from] ?: Double.POSITIVE_INFINITY).isFinite()) {
+              continue
+          }
+
+          //@step 14
+          if ((distance[edge.from] ?: Double.POSITIVE_INFINITY) + edge.weight <
+              (distance[edge.to] ?: Double.POSITIVE_INFINITY)
+          ) {
+              hasNegativeCycle = true
+              break
+          }
+      }
+
+      //@step 16
+      return BellmanFordResult(distance, parent, hasNegativeCycle)
+  }
+  //#endregion bellman-ford
+  `,
+  'kotlin',
+);
+
 export const BELLMAN_FORD_CODE = BELLMAN_FORD_TS.lines;
 export const BELLMAN_FORD_CODE_REGIONS = BELLMAN_FORD_TS.regions;
 export const BELLMAN_FORD_CODE_HIGHLIGHT_MAP = BELLMAN_FORD_TS.highlightMap;
@@ -480,6 +1068,13 @@ export const BELLMAN_FORD_CODE_VARIANTS: CodeVariantMap = {
     regions: BELLMAN_FORD_TS.regions,
     highlightMap: BELLMAN_FORD_TS.highlightMap,
     source: BELLMAN_FORD_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: BELLMAN_FORD_JS.lines,
+    regions: BELLMAN_FORD_JS.regions,
+    highlightMap: BELLMAN_FORD_JS.highlightMap,
+    source: BELLMAN_FORD_JS.source,
   },
   python: {
     language: 'python',
@@ -508,5 +1103,40 @@ export const BELLMAN_FORD_CODE_VARIANTS: CodeVariantMap = {
     regions: BELLMAN_FORD_CPP.regions,
     highlightMap: BELLMAN_FORD_CPP.highlightMap,
     source: BELLMAN_FORD_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: BELLMAN_FORD_GO.lines,
+    regions: BELLMAN_FORD_GO.regions,
+    highlightMap: BELLMAN_FORD_GO.highlightMap,
+    source: BELLMAN_FORD_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: BELLMAN_FORD_RUST.lines,
+    regions: BELLMAN_FORD_RUST.regions,
+    highlightMap: BELLMAN_FORD_RUST.highlightMap,
+    source: BELLMAN_FORD_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: BELLMAN_FORD_SWIFT.lines,
+    regions: BELLMAN_FORD_SWIFT.regions,
+    highlightMap: BELLMAN_FORD_SWIFT.highlightMap,
+    source: BELLMAN_FORD_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: BELLMAN_FORD_PHP.lines,
+    regions: BELLMAN_FORD_PHP.regions,
+    highlightMap: BELLMAN_FORD_PHP.highlightMap,
+    source: BELLMAN_FORD_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: BELLMAN_FORD_KOTLIN.lines,
+    regions: BELLMAN_FORD_KOTLIN.regions,
+    highlightMap: BELLMAN_FORD_KOTLIN.highlightMap,
+    source: BELLMAN_FORD_KOTLIN.source,
   },
 };

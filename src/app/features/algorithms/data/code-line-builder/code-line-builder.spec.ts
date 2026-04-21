@@ -33,6 +33,18 @@ describe('code-line-builder', () => {
     ]);
   });
 
+  it('maps multiple step directives to the same emitted line', () => {
+    const structured = buildStructuredCode(`
+      function demo() {
+        //@step 3
+        //@step 4
+        call();
+      }
+    `);
+
+    expect(structured.highlightMap).toEqual({ 3: 2, 4: 2 });
+  });
+
   it('throws on mismatched and unclosed regions', () => {
     expect(() =>
       buildStructuredCode(`

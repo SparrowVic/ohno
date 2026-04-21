@@ -368,6 +368,429 @@ const SUBSET_SUM_CPP = buildStructuredCode(
   'cpp',
 );
 
+const SUBSET_SUM_JS = buildStructuredCode(
+  `
+  /**
+   * Decide whether a subset reaches the target sum and reconstruct one witness subset.
+   * Input: values array and target sum.
+   * Returns: reachability flag and one subset if reachable.
+   */
+  //#region subset-sum function open
+  function subsetSum(values, target) {
+      //@step 2
+      const dp = Array.from({ length: values.length + 1 }, () =>
+          Array.from({ length: target + 1 }, () => false),
+      );
+      dp[0][0] = true;
+
+      for (let row = 1; row <= values.length; row += 1) {
+          const value = values[row - 1];
+
+          for (let sum = 0; sum <= target; sum += 1) {
+              const skip = dp[row - 1][sum];
+              const take = value <= sum ? dp[row - 1][sum - value] : false;
+
+              //@step 5
+              const reachable = skip || take;
+
+              //@step 8
+              dp[row][sum] = reachable;
+          }
+      }
+
+      //@step 15
+      if (!dp[values.length][target]) {
+          return { reachable: false, subset: [] };
+      }
+
+      const subset = [];
+      let row = values.length;
+      let sum = target;
+
+      while (row > 0 && sum >= 0) {
+          const value = values[row - 1];
+
+          if (dp[row - 1][sum]) {
+              //@step 13
+              row -= 1;
+              continue;
+          }
+
+          if (sum >= value && dp[row - 1][sum - value]) {
+              //@step 11
+              subset.push(value);
+              sum -= value;
+          }
+
+          row -= 1;
+      }
+
+      //@step 15
+      return {
+          reachable: true,
+          subset: subset.reverse(),
+      };
+  }
+  //#endregion subset-sum
+  `,
+  'javascript',
+);
+
+const SUBSET_SUM_GO = buildStructuredCode(
+  `
+  package dp
+
+  //#region subset-result interface collapsed
+  type SubsetSumResult struct {
+      Reachable bool
+      Subset []int
+  }
+  //#endregion subset-result
+
+  /**
+   * Decides whether a subset reaches the target sum and reconstructs one witness subset.
+   * Input: values array and target sum.
+   * Returns: reachability flag and one subset if reachable.
+   */
+  //#region subset-sum function open
+  func SubsetSum(values []int, target int) SubsetSumResult {
+      //@step 2
+      dp := make([][]bool, len(values) + 1)
+      for row := 0; row <= len(values); row += 1 {
+          dp[row] = make([]bool, target + 1)
+      }
+      dp[0][0] = true
+
+      for row := 1; row <= len(values); row += 1 {
+          value := values[row - 1]
+
+          for sum := 0; sum <= target; sum += 1 {
+              skip := dp[row - 1][sum]
+              take := value <= sum && dp[row - 1][sum - value]
+
+              //@step 5
+              reachable := skip || take
+
+              //@step 8
+              dp[row][sum] = reachable
+          }
+      }
+
+      //@step 15
+      if !dp[len(values)][target] {
+          return SubsetSumResult{Reachable: false, Subset: []int{}}
+      }
+
+      subset := make([]int, 0)
+      row := len(values)
+      sum := target
+
+      for row > 0 && sum >= 0 {
+          value := values[row - 1]
+
+          if dp[row - 1][sum] {
+              //@step 13
+              row -= 1
+              continue
+          }
+
+          if sum >= value && dp[row - 1][sum - value] {
+              //@step 11
+              subset = append(subset, value)
+              sum -= value
+          }
+
+          row -= 1
+      }
+
+      for left, right := 0, len(subset) - 1; left < right; left, right = left + 1, right - 1 {
+          subset[left], subset[right] = subset[right], subset[left]
+      }
+
+      //@step 15
+      return SubsetSumResult{Reachable: true, Subset: subset}
+  }
+  //#endregion subset-sum
+  `,
+  'go',
+);
+
+const SUBSET_SUM_RUST = buildStructuredCode(
+  `
+  //#region subset-result interface collapsed
+  struct SubsetSumResult {
+      reachable: bool,
+      subset: Vec<i32>,
+  }
+  //#endregion subset-result
+
+  /**
+   * Decides whether a subset reaches the target sum and reconstructs one witness subset.
+   * Input: values array and target sum.
+   * Returns: reachability flag and one subset if reachable.
+   */
+  //#region subset-sum function open
+  fn subset_sum(values: &[i32], target: usize) -> SubsetSumResult {
+      //@step 2
+      let mut dp = vec![vec![false; target + 1]; values.len() + 1];
+      dp[0][0] = true;
+
+      for row in 1..=values.len() {
+          let value = values[row - 1] as usize;
+
+          for sum in 0..=target {
+              let skip = dp[row - 1][sum];
+              let take = value <= sum && dp[row - 1][sum - value];
+
+              //@step 5
+              let reachable = skip || take;
+
+              //@step 8
+              dp[row][sum] = reachable;
+          }
+      }
+
+      //@step 15
+      if !dp[values.len()][target] {
+          return SubsetSumResult { reachable: false, subset: Vec::new() };
+      }
+
+      let mut subset = Vec::new();
+      let mut row = values.len();
+      let mut sum = target;
+
+      while row > 0 {
+          let value = values[row - 1] as usize;
+
+          if dp[row - 1][sum] {
+              //@step 13
+              row -= 1;
+              continue;
+          }
+
+          if sum >= value && dp[row - 1][sum - value] {
+              //@step 11
+              subset.push(values[row - 1]);
+              sum -= value;
+          }
+
+          row -= 1;
+      }
+
+      subset.reverse();
+
+      //@step 15
+      SubsetSumResult { reachable: true, subset }
+  }
+  //#endregion subset-sum
+  `,
+  'rust',
+);
+
+const SUBSET_SUM_SWIFT = buildStructuredCode(
+  `
+  //#region subset-result interface collapsed
+  struct SubsetSumResult {
+      let reachable: Bool
+      let subset: [Int]
+  }
+  //#endregion subset-result
+
+  /**
+   * Decides whether a subset reaches the target sum and reconstructs one witness subset.
+   * Input: values array and target sum.
+   * Returns: reachability flag and one subset if reachable.
+   */
+  //#region subset-sum function open
+  func subsetSum(_ values: [Int], target: Int) -> SubsetSumResult {
+      //@step 2
+      var dp = Array(repeating: Array(repeating: false, count: target + 1), count: values.count + 1)
+      dp[0][0] = true
+
+      for row in 1...values.count {
+          let value = values[row - 1]
+
+          for sum in 0...target {
+              let skip = dp[row - 1][sum]
+              let take = value <= sum ? dp[row - 1][sum - value] : false
+
+              //@step 5
+              let reachable = skip || take
+
+              //@step 8
+              dp[row][sum] = reachable
+          }
+      }
+
+      //@step 15
+      if !dp[values.count][target] {
+          return SubsetSumResult(reachable: false, subset: [])
+      }
+
+      var subset: [Int] = []
+      var row = values.count
+      var sum = target
+
+      while row > 0 && sum >= 0 {
+          let value = values[row - 1]
+
+          if dp[row - 1][sum] {
+              //@step 13
+              row -= 1
+              continue
+          }
+
+          if sum >= value && dp[row - 1][sum - value] {
+              //@step 11
+              subset.append(value)
+              sum -= value
+          }
+
+          row -= 1
+      }
+
+      //@step 15
+      return SubsetSumResult(reachable: true, subset: subset.reversed())
+  }
+  //#endregion subset-sum
+  `,
+  'swift',
+);
+
+const SUBSET_SUM_PHP = buildStructuredCode(
+  `
+  /**
+   * Decides whether a subset reaches the target sum and reconstructs one witness subset.
+   * Input: values array and target sum.
+   * Returns: reachability flag and one subset if reachable.
+   */
+  //#region subset-sum function open
+  function subsetSum(array $values, int $target): array
+  {
+      //@step 2
+      $dp = array_fill(0, count($values) + 1, array_fill(0, $target + 1, false));
+      $dp[0][0] = true;
+
+      for ($row = 1; $row <= count($values); $row += 1) {
+          $value = $values[$row - 1];
+
+          for ($sum = 0; $sum <= $target; $sum += 1) {
+              $skip = $dp[$row - 1][$sum];
+              $take = $value <= $sum ? $dp[$row - 1][$sum - $value] : false;
+
+              //@step 5
+              $reachable = $skip || $take;
+
+              //@step 8
+              $dp[$row][$sum] = $reachable;
+          }
+      }
+
+      //@step 15
+      if (!$dp[count($values)][$target]) {
+          return ['reachable' => false, 'subset' => []];
+      }
+
+      $subset = [];
+      $row = count($values);
+      $sum = $target;
+
+      while ($row > 0 && $sum >= 0) {
+          $value = $values[$row - 1];
+
+          if ($dp[$row - 1][$sum]) {
+              //@step 13
+              $row -= 1;
+              continue;
+          }
+
+          if ($sum >= $value && $dp[$row - 1][$sum - $value]) {
+              //@step 11
+              $subset[] = $value;
+              $sum -= $value;
+          }
+
+          $row -= 1;
+      }
+
+      //@step 15
+      return ['reachable' => true, 'subset' => array_reverse($subset)];
+  }
+  //#endregion subset-sum
+  `,
+  'php',
+);
+
+const SUBSET_SUM_KOTLIN = buildStructuredCode(
+  `
+  //#region subset-result interface collapsed
+  data class SubsetSumResult(
+      val reachable: Boolean,
+      val subset: List<Int>,
+  )
+  //#endregion subset-result
+
+  /**
+   * Decides whether a subset reaches the target sum and reconstructs one witness subset.
+   * Input: values array and target sum.
+   * Returns: reachability flag and one subset if reachable.
+   */
+  //#region subset-sum function open
+  fun subsetSum(values: List<Int>, target: Int): SubsetSumResult {
+      //@step 2
+      val dp = Array(values.size + 1) { BooleanArray(target + 1) }
+      dp[0][0] = true
+
+      for (row in 1..values.size) {
+          val value = values[row - 1]
+
+          for (sum in 0..target) {
+              val skip = dp[row - 1][sum]
+              val take = value <= sum && dp[row - 1][sum - value]
+
+              //@step 5
+              val reachable = skip || take
+
+              //@step 8
+              dp[row][sum] = reachable
+          }
+      }
+
+      //@step 15
+      if (!dp[values.size][target]) {
+          return SubsetSumResult(reachable = false, subset = emptyList())
+      }
+
+      val subset = mutableListOf<Int>()
+      var row = values.size
+      var sum = target
+
+      while (row > 0 && sum >= 0) {
+          val value = values[row - 1]
+
+          if (dp[row - 1][sum]) {
+              //@step 13
+              row -= 1
+              continue
+          }
+
+          if (sum >= value && dp[row - 1][sum - value]) {
+              //@step 11
+              subset += value
+              sum -= value
+          }
+
+          row -= 1
+      }
+
+      //@step 15
+      return SubsetSumResult(reachable = true, subset = subset.reversed())
+  }
+  //#endregion subset-sum
+  `,
+  'kotlin',
+);
+
 export const SUBSET_SUM_CODE = SUBSET_SUM_TS.lines;
 export const SUBSET_SUM_CODE_REGIONS = SUBSET_SUM_TS.regions;
 export const SUBSET_SUM_CODE_HIGHLIGHT_MAP = SUBSET_SUM_TS.highlightMap;
@@ -378,6 +801,13 @@ export const SUBSET_SUM_CODE_VARIANTS: CodeVariantMap = {
     regions: SUBSET_SUM_TS.regions,
     highlightMap: SUBSET_SUM_TS.highlightMap,
     source: SUBSET_SUM_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: SUBSET_SUM_JS.lines,
+    regions: SUBSET_SUM_JS.regions,
+    highlightMap: SUBSET_SUM_JS.highlightMap,
+    source: SUBSET_SUM_JS.source,
   },
   python: {
     language: 'python',
@@ -406,5 +836,40 @@ export const SUBSET_SUM_CODE_VARIANTS: CodeVariantMap = {
     regions: SUBSET_SUM_CPP.regions,
     highlightMap: SUBSET_SUM_CPP.highlightMap,
     source: SUBSET_SUM_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: SUBSET_SUM_GO.lines,
+    regions: SUBSET_SUM_GO.regions,
+    highlightMap: SUBSET_SUM_GO.highlightMap,
+    source: SUBSET_SUM_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: SUBSET_SUM_RUST.lines,
+    regions: SUBSET_SUM_RUST.regions,
+    highlightMap: SUBSET_SUM_RUST.highlightMap,
+    source: SUBSET_SUM_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: SUBSET_SUM_SWIFT.lines,
+    regions: SUBSET_SUM_SWIFT.regions,
+    highlightMap: SUBSET_SUM_SWIFT.highlightMap,
+    source: SUBSET_SUM_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: SUBSET_SUM_PHP.lines,
+    regions: SUBSET_SUM_PHP.regions,
+    highlightMap: SUBSET_SUM_PHP.highlightMap,
+    source: SUBSET_SUM_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: SUBSET_SUM_KOTLIN.lines,
+    regions: SUBSET_SUM_KOTLIN.regions,
+    highlightMap: SUBSET_SUM_KOTLIN.highlightMap,
+    source: SUBSET_SUM_KOTLIN.source,
   },
 };

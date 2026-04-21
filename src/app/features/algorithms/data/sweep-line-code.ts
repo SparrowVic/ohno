@@ -478,6 +478,320 @@ const SWEEP_LINE_CPP = buildStructuredCode(
   'cpp',
 );
 
+const SWEEP_LINE_JS = buildStructuredCode(
+  `
+  //@step 1
+  function unionArea(rectangles) {
+    const events = buildEvents(rectangles);
+    const active = [];
+    let previousX = events[0]?.x ?? 0;
+    let area = 0;
+
+    for (const event of events) {
+      area += mergedYLength(active) * Math.max(0, event.x - previousX);
+      previousX = event.x;
+
+      //@step 3
+      if (event.kind === 'start') {
+        active.push(event.rect);
+        continue;
+      }
+
+      //@step 4
+      removeRect(active, event.rect.id);
+    }
+
+    //@step 5
+    return area;
+  }
+
+  function buildEvents(rectangles) {
+    return rectangles
+      .flatMap((rect) => [
+        { x: rect.x, kind: 'start', rect },
+        { x: rect.x + rect.width, kind: 'end', rect },
+      ])
+      .sort((left, right) => left.x - right.x || (left.kind === 'start' ? -1 : 1));
+  }
+  `,
+  'javascript',
+);
+
+const SWEEP_LINE_GO = buildStructuredCode(
+  `
+  package geometry
+
+  import "sort"
+
+  type Rect struct {
+      ID     int
+      X      float64
+      Y      float64
+      Width  float64
+      Height float64
+  }
+
+  type SweepEvent struct {
+      X    float64
+      Kind string
+      Rect Rect
+  }
+
+  //@step 1
+  func UnionArea(rectangles []Rect) float64 {
+      events := buildEvents(rectangles)
+      active := make([]Rect, 0)
+      previousX := 0.0
+      if len(events) > 0 {
+          previousX = events[0].X
+      }
+      area := 0.0
+
+      for _, event := range events {
+          area += mergedYLength(active) * max(0.0, event.X-previousX)
+          previousX = event.X
+
+          //@step 3
+          if event.Kind == "start" {
+              active = append(active, event.Rect)
+              continue
+          }
+
+          //@step 4
+          active = removeRect(active, event.Rect.ID)
+      }
+
+      //@step 5
+      return area
+  }
+
+  func buildEvents(rectangles []Rect) []SweepEvent {
+      events := make([]SweepEvent, 0, len(rectangles)*2)
+      for _, rect := range rectangles {
+          events = append(events, SweepEvent{X: rect.X, Kind: "start", Rect: rect})
+          events = append(events, SweepEvent{X: rect.X + rect.Width, Kind: "end", Rect: rect})
+      }
+      sort.Slice(events, func(i, j int) bool {
+          if events[i].X == events[j].X {
+              return events[i].Kind == "start"
+          }
+          return events[i].X < events[j].X
+      })
+      return events
+  }
+  `,
+  'go',
+);
+
+const SWEEP_LINE_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy)]
+  struct Rect {
+      id: usize,
+      x: f64,
+      y: f64,
+      width: f64,
+      height: f64,
+  }
+
+  struct SweepEvent {
+      x: f64,
+      kind: &'static str,
+      rect: Rect,
+  }
+
+  //@step 1
+  fn union_area(rectangles: &[Rect]) -> f64 {
+      let mut events = build_events(rectangles);
+      events.sort_by(|left, right| left.x.total_cmp(&right.x));
+      let mut active = Vec::new();
+      let mut previous_x = events.first().map(|event| event.x).unwrap_or(0.0);
+      let mut area = 0.0;
+
+      for event in events {
+          area += merged_y_length(&active) * (event.x - previous_x).max(0.0);
+          previous_x = event.x;
+
+          //@step 3
+          if event.kind == "start" {
+              active.push(event.rect);
+              continue;
+          }
+
+          //@step 4
+          remove_rect(&mut active, event.rect.id);
+      }
+
+      //@step 5
+      area
+  }
+
+  fn build_events(rectangles: &[Rect]) -> Vec<SweepEvent> {
+      rectangles
+          .iter()
+          .flat_map(|rect| {
+              [
+                  SweepEvent { x: rect.x, kind: "start", rect: *rect },
+                  SweepEvent { x: rect.x + rect.width, kind: "end", rect: *rect },
+              ]
+          })
+          .collect()
+  }
+  `,
+  'rust',
+);
+
+const SWEEP_LINE_SWIFT = buildStructuredCode(
+  `
+  struct Rect {
+      let id: Int
+      let x: Double
+      let y: Double
+      let width: Double
+      let height: Double
+  }
+
+  struct SweepEvent {
+      let x: Double
+      let kind: String
+      let rect: Rect
+  }
+
+  //@step 1
+  func unionArea(_ rectangles: [Rect]) -> Double {
+      let events = buildEvents(rectangles)
+      var active: [Rect] = []
+      var previousX = events.first?.x ?? 0
+      var area = 0.0
+
+      for event in events {
+          area += mergedYLength(active) * max(0, event.x - previousX)
+          previousX = event.x
+
+          //@step 3
+          if event.kind == "start" {
+              active.append(event.rect)
+              continue
+          }
+
+          //@step 4
+          removeRect(&active, id: event.rect.id)
+      }
+
+      //@step 5
+      return area
+  }
+
+  func buildEvents(_ rectangles: [Rect]) -> [SweepEvent] {
+      rectangles
+          .flatMap { rect in
+              [
+                  SweepEvent(x: rect.x, kind: "start", rect: rect),
+                  SweepEvent(x: rect.x + rect.width, kind: "end", rect: rect),
+              ]
+          }
+          .sorted { $0.x == $1.x ? $0.kind == "start" : $0.x < $1.x }
+  }
+  `,
+  'swift',
+);
+
+const SWEEP_LINE_PHP = buildStructuredCode(
+  `
+  final class Rect
+  {
+      public function __construct(
+          public int $id,
+          public float $x,
+          public float $y,
+          public float $width,
+          public float $height,
+      ) {}
+  }
+
+  //@step 1
+  function unionArea(array $rectangles): float
+  {
+      $events = buildEvents($rectangles);
+      $active = [];
+      $previousX = $events[0]['x'] ?? 0.0;
+      $area = 0.0;
+
+      foreach ($events as $event) {
+          $area += mergedYLength($active) * max(0.0, $event['x'] - $previousX);
+          $previousX = $event['x'];
+
+          //@step 3
+          if ($event['kind'] === 'start') {
+              $active[] = $event['rect'];
+              continue;
+          }
+
+          //@step 4
+          $active = removeRect($active, $event['rect']->id);
+      }
+
+      //@step 5
+      return $area;
+  }
+
+  function buildEvents(array $rectangles): array
+  {
+      $events = [];
+      foreach ($rectangles as $rect) {
+          $events[] = ['x' => $rect->x, 'kind' => 'start', 'rect' => $rect];
+          $events[] = ['x' => $rect->x + $rect->width, 'kind' => 'end', 'rect' => $rect];
+      }
+      usort($events, fn (array $left, array $right): int => [$left['x'], $left['kind'] !== 'start'] <=> [$right['x'], $right['kind'] !== 'start']);
+      return $events;
+  }
+  `,
+  'php',
+);
+
+const SWEEP_LINE_KOTLIN = buildStructuredCode(
+  `
+  data class Rect(val id: Int, val x: Double, val y: Double, val width: Double, val height: Double)
+  data class SweepEvent(val x: Double, val kind: String, val rect: Rect)
+
+  //@step 1
+  fun unionArea(rectangles: List<Rect>): Double {
+      val events = buildEvents(rectangles)
+      val active = mutableListOf<Rect>()
+      var previousX = events.firstOrNull()?.x ?: 0.0
+      var area = 0.0
+
+      for (event in events) {
+          area += mergedYLength(active) * kotlin.math.max(0.0, event.x - previousX)
+          previousX = event.x
+
+          //@step 3
+          if (event.kind == "start") {
+              active += event.rect
+              continue
+          }
+
+          //@step 4
+          removeRect(active, event.rect.id)
+      }
+
+      //@step 5
+      return area
+  }
+
+  fun buildEvents(rectangles: List<Rect>): List<SweepEvent> =
+      rectangles
+          .flatMap { rect ->
+              listOf(
+                  SweepEvent(rect.x, "start", rect),
+                  SweepEvent(rect.x + rect.width, "end", rect),
+              )
+          }
+          .sortedWith(compareBy<SweepEvent> { it.x }.thenBy { if (it.kind == "start") 0 else 1 })
+  `,
+  'kotlin',
+);
+
 export const SWEEP_LINE_CODE = SWEEP_LINE_TS.lines;
 export const SWEEP_LINE_CODE_REGIONS = SWEEP_LINE_TS.regions;
 export const SWEEP_LINE_CODE_HIGHLIGHT_MAP = SWEEP_LINE_TS.highlightMap;
@@ -488,6 +802,13 @@ export const SWEEP_LINE_CODE_VARIANTS: CodeVariantMap = {
     regions: SWEEP_LINE_TS.regions,
     highlightMap: SWEEP_LINE_TS.highlightMap,
     source: SWEEP_LINE_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: SWEEP_LINE_JS.lines,
+    regions: SWEEP_LINE_JS.regions,
+    highlightMap: SWEEP_LINE_JS.highlightMap,
+    source: SWEEP_LINE_JS.source,
   },
   python: {
     language: 'python',
@@ -516,5 +837,40 @@ export const SWEEP_LINE_CODE_VARIANTS: CodeVariantMap = {
     regions: SWEEP_LINE_CPP.regions,
     highlightMap: SWEEP_LINE_CPP.highlightMap,
     source: SWEEP_LINE_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: SWEEP_LINE_GO.lines,
+    regions: SWEEP_LINE_GO.regions,
+    highlightMap: SWEEP_LINE_GO.highlightMap,
+    source: SWEEP_LINE_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: SWEEP_LINE_RUST.lines,
+    regions: SWEEP_LINE_RUST.regions,
+    highlightMap: SWEEP_LINE_RUST.highlightMap,
+    source: SWEEP_LINE_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: SWEEP_LINE_SWIFT.lines,
+    regions: SWEEP_LINE_SWIFT.regions,
+    highlightMap: SWEEP_LINE_SWIFT.highlightMap,
+    source: SWEEP_LINE_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: SWEEP_LINE_PHP.lines,
+    regions: SWEEP_LINE_PHP.regions,
+    highlightMap: SWEEP_LINE_PHP.highlightMap,
+    source: SWEEP_LINE_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: SWEEP_LINE_KOTLIN.lines,
+    regions: SWEEP_LINE_KOTLIN.regions,
+    highlightMap: SWEEP_LINE_KOTLIN.highlightMap,
+    source: SWEEP_LINE_KOTLIN.source,
   },
 };

@@ -114,6 +114,22 @@
   z-index: 1;
 }
 
+/* Vertical separator between the line-number gutter (line numbers + fold
+   toggles) and the code content — mirrors the gutter/body divider used
+   in VS Code and JetBrains editors. Sits just inside the 66px padding
+   where code actually starts. */
+.code-render::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .code-empty {
   padding: 20px 16px;
   text-align: center;
@@ -180,6 +196,22 @@
   color: var(--text-secondary);
 }
 
+/* Hover highlight on non-active lines — a neutral whitish tint with a
+   thin accent rail on the left. The active-execution line keeps its
+   lime treatment; the `:not(--active)` guard prevents the gentler
+   hover style from over-writing it when the cursor happens to be on
+   the currently-executing line. */
+:host ::ng-deep .code-panel__render-line:hover:not(.code-panel__render-line--active) {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.035) 0%,
+      rgba(255, 255, 255, 0.012) 48%,
+      transparent 100%
+    );
+  box-shadow: inset 2px 0 0 rgba(var(--chrome-accent-alt-rgb), 0.42);
+}
+
 :host ::ng-deep .code-panel__render-line--hidden {
   display: none;
 }
@@ -203,10 +235,25 @@
   background: transparent;
   color: var(--text-tertiary);
   transform: translateY(-50%);
+  /* Hidden by default — IDE-style: the toggle only reveals on hover
+     of the line (or keyboard focus), unless the region is currently
+     collapsed, in which case it stays visible to signal there's
+     folded code to expand. */
+  opacity: 0;
+  pointer-events: none;
   transition:
+    opacity 140ms ease,
     color 140ms ease,
     background 140ms ease,
     transform 140ms ease;
+}
+
+:host ::ng-deep .code-panel__render-line:hover .code-panel__fold-toggle,
+:host ::ng-deep .code-panel__render-line--collapsed .code-panel__fold-toggle,
+:host ::ng-deep .code-render--gutter-hover .code-panel__fold-toggle,
+:host ::ng-deep .code-panel__fold-toggle:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 :host ::ng-deep .code-panel__fold-toggle:hover {
@@ -233,21 +280,52 @@
   font-style: italic;
 }
 
-/* Active (currently-executed) line — glows with the brand accent */
+/* Active (currently-executed) line — a lime-accent spotlight across
+   the WHOLE row so the user can spot it at a glance. Solid base tint
+   + gradient overlay + crisp left rail + breathing halo + lime line
+   number. No border outline (clashed with rounded corners) and no
+   horizontal nudge (the old translateX felt like a glitch). */
 :host ::ng-deep .code-panel__render-line--active {
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--accent-rgb), 0.2) 0%,
-      rgba(var(--accent-rgb), 0.09) 34%,
-      rgba(var(--accent-rgb), 0.02) 72%,
-      transparent
-    );
-  border-color: rgba(var(--accent-rgb), 0.22);
+  background-color: rgba(var(--accent-rgb), 0.14) !important;
+  background-image: linear-gradient(
+    90deg,
+    rgba(var(--accent-rgb), 0.32) 0%,
+    rgba(var(--accent-rgb), 0.18) 35%,
+    rgba(var(--accent-rgb), 0.1) 75%,
+    rgba(var(--accent-rgb), 0.08) 100%
+  ) !important;
+  border-color: transparent !important;
   box-shadow:
-    inset 2px 0 0 rgba(var(--accent-rgb), 0.95),
-    0 0 16px rgba(var(--accent-rgb), 0.14);
-  transform: translateX(3px);
+    inset 3px 0 0 rgb(var(--accent-rgb)),
+    inset 0 0 0 0.5px rgba(var(--accent-rgb), 0.22),
+    0 0 24px -4px rgba(var(--accent-rgb), 0.36);
+  animation: code-active-breathe 2.4s var(--ease-out-expo) infinite;
+}
+
+:host ::ng-deep .code-panel__render-line--active::before {
+  color: var(--accent-strong);
+  opacity: 1;
+}
+
+@keyframes code-active-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 3px 0 0 rgb(var(--accent-rgb)),
+      inset 0 0 0 0.5px rgba(var(--accent-rgb), 0.18),
+      0 0 18px -4px rgba(var(--accent-rgb), 0.26);
+  }
+  50% {
+    box-shadow:
+      inset 3px 0 0 rgb(var(--accent-rgb)),
+      inset 0 0 0 0.5px rgba(var(--accent-rgb), 0.32),
+      0 0 32px -2px rgba(var(--accent-rgb), 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host ::ng-deep .code-panel__render-line--active {
+    animation: none;
+  }
 }
 
 :host ::ng-deep .code-panel__render-line--active::before {

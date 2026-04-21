@@ -449,6 +449,289 @@ const VORONOI_DIAGRAM_CPP = buildStructuredCode(
   'cpp',
 );
 
+const VORONOI_DIAGRAM_JS = buildStructuredCode(
+  `
+  //@step 1
+  function buildVoronoiDiagram(sites, bounds = [4, 4, 96, 96]) {
+    const delaunay = Delaunay.from(sites, (site) => site.x, (site) => site.y);
+    const voronoi = delaunay.voronoi(bounds);
+    const cells = sites.map((site, index) => ({
+      site,
+      polygon: normalizeCell(voronoi.cellPolygon(index) ?? []),
+    }));
+
+    //@step 3
+    const clipped = cells.map((cell) => ({
+      ...cell,
+      polygon: clipPolygonToBounds(cell.polygon, bounds),
+    }));
+
+    //@step 4
+    const validCells = clipped.filter((cell) => cell.polygon.length >= 3);
+
+    //@step 5
+    return validCells;
+  }
+  `,
+  'javascript',
+);
+
+const VORONOI_DIAGRAM_GO = buildStructuredCode(
+  `
+  package geometry
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  type Bounds struct {
+      MinX float64
+      MinY float64
+      MaxX float64
+      MaxY float64
+  }
+
+  type Cell struct {
+      Site    Point
+      Polygon []Point
+  }
+
+  type VoronoiBackend interface {
+      CellPolygon(index int) [][2]float64
+  }
+
+  type DelaunayBuilder interface {
+      Voronoi(sites []Point, bounds Bounds) VoronoiBackend
+  }
+
+  //@step 1
+  func BuildVoronoiDiagram(sites []Point, builder DelaunayBuilder, bounds Bounds) []Cell {
+      voronoi := builder.Voronoi(sites, bounds)
+      cells := make([]Cell, 0, len(sites))
+      for index, site := range sites {
+          cells = append(cells, Cell{
+              Site:    site,
+              Polygon: normalizeCell(voronoi.CellPolygon(index)),
+          })
+      }
+
+      //@step 3
+      clipped := make([]Cell, 0, len(cells))
+      for _, cell := range cells {
+          clipped = append(clipped, Cell{Site: cell.Site, Polygon: clipPolygonToBounds(cell.Polygon, bounds)})
+      }
+
+      //@step 4
+      validCells := make([]Cell, 0)
+      for _, cell := range clipped {
+          if len(cell.Polygon) >= 3 {
+              validCells = append(validCells, cell)
+          }
+      }
+
+      //@step 5
+      return validCells
+  }
+  `,
+  'go',
+);
+
+const VORONOI_DIAGRAM_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  #[derive(Clone, Copy)]
+  struct Bounds {
+      min_x: f64,
+      min_y: f64,
+      max_x: f64,
+      max_y: f64,
+  }
+
+  struct Cell {
+      site: Point,
+      polygon: Vec<Point>,
+  }
+
+  trait VoronoiBackend {
+      fn cell_polygon(&self, index: usize) -> Option<Vec<(f64, f64)>>;
+  }
+
+  trait DelaunayBuilder {
+      fn voronoi(&self, sites: &[Point], bounds: Bounds) -> Box<dyn VoronoiBackend>;
+  }
+
+  //@step 1
+  fn build_voronoi_diagram(sites: &[Point], builder: &dyn DelaunayBuilder, bounds: Bounds) -> Vec<Cell> {
+      let voronoi = builder.voronoi(sites, bounds);
+      let cells: Vec<Cell> = sites
+          .iter()
+          .enumerate()
+          .map(|(index, site)| Cell {
+              site: *site,
+              polygon: normalize_cell(voronoi.cell_polygon(index).unwrap_or_default()),
+          })
+          .collect();
+
+      //@step 3
+      let clipped: Vec<Cell> = cells
+          .into_iter()
+          .map(|cell| Cell {
+              site: cell.site,
+              polygon: clip_polygon_to_bounds(&cell.polygon, bounds),
+          })
+          .collect();
+
+      //@step 4
+      let valid_cells: Vec<Cell> = clipped
+          .into_iter()
+          .filter(|cell| cell.polygon.len() >= 3)
+          .collect();
+
+      //@step 5
+      valid_cells
+  }
+  `,
+  'rust',
+);
+
+const VORONOI_DIAGRAM_SWIFT = buildStructuredCode(
+  `
+  struct Point {
+      let x: Double
+      let y: Double
+  }
+
+  struct Bounds {
+      let minX: Double
+      let minY: Double
+      let maxX: Double
+      let maxY: Double
+  }
+
+  struct Cell {
+      let site: Point
+      let polygon: [Point]
+  }
+
+  protocol VoronoiBackend {
+      func cellPolygon(_ index: Int) -> [(Double, Double)]?
+  }
+
+  protocol DelaunayBuilder {
+      func voronoi(_ sites: [Point], _ bounds: Bounds) -> VoronoiBackend
+  }
+
+  //@step 1
+  func buildVoronoiDiagram(_ sites: [Point], builder: DelaunayBuilder, bounds: Bounds) -> [Cell] {
+      let voronoi = builder.voronoi(sites, bounds)
+      let cells = sites.enumerated().map { index, site in
+          Cell(site: site, polygon: normalizeCell(voronoi.cellPolygon(index) ?? []))
+      }
+
+      //@step 3
+      let clipped = cells.map { cell in
+          Cell(site: cell.site, polygon: clipPolygonToBounds(cell.polygon, bounds: bounds))
+      }
+
+      //@step 4
+      let validCells = clipped.filter { $0.polygon.count >= 3 }
+
+      //@step 5
+      return validCells
+  }
+  `,
+  'swift',
+);
+
+const VORONOI_DIAGRAM_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(public float $x, public float $y) {}
+  }
+
+  final class Bounds
+  {
+      public function __construct(
+          public float $minX,
+          public float $minY,
+          public float $maxX,
+          public float $maxY,
+      ) {}
+  }
+
+  final class Cell
+  {
+      public function __construct(public Point $site, public array $polygon) {}
+  }
+
+  //@step 1
+  function buildVoronoiDiagram(array $sites, object $builder, Bounds $bounds): array
+  {
+      $voronoi = $builder->voronoi($sites, $bounds);
+      $cells = [];
+      foreach ($sites as $index => $site) {
+          $cells[] = new Cell($site, normalizeCell($voronoi->cellPolygon($index) ?? []));
+      }
+
+      //@step 3
+      $clipped = array_map(
+          fn (Cell $cell): Cell => new Cell($cell->site, clipPolygonToBounds($cell->polygon, $bounds)),
+          $cells,
+      );
+
+      //@step 4
+      $validCells = array_values(array_filter($clipped, fn (Cell $cell): bool => count($cell->polygon) >= 3));
+
+      //@step 5
+      return $validCells;
+  }
+  `,
+  'php',
+);
+
+const VORONOI_DIAGRAM_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+  data class Bounds(val minX: Double, val minY: Double, val maxX: Double, val maxY: Double)
+  data class Cell(val site: Point, val polygon: List<Point>)
+
+  interface VoronoiBackend {
+      fun cellPolygon(index: Int): List<Pair<Double, Double>>?
+  }
+
+  interface DelaunayBuilder {
+      fun voronoi(sites: List<Point>, bounds: Bounds): VoronoiBackend
+  }
+
+  //@step 1
+  fun buildVoronoiDiagram(sites: List<Point>, builder: DelaunayBuilder, bounds: Bounds): List<Cell> {
+      val voronoi = builder.voronoi(sites, bounds)
+      val cells = sites.mapIndexed { index, site ->
+          Cell(site, normalizeCell(voronoi.cellPolygon(index) ?: emptyList()))
+      }
+
+      //@step 3
+      val clipped = cells.map { cell ->
+          Cell(cell.site, clipPolygonToBounds(cell.polygon, bounds))
+      }
+
+      //@step 4
+      val validCells = clipped.filter { it.polygon.size >= 3 }
+
+      //@step 5
+      return validCells
+  }
+  `,
+  'kotlin',
+);
+
 export const VORONOI_DIAGRAM_CODE = VORONOI_DIAGRAM_TS.lines;
 export const VORONOI_DIAGRAM_CODE_REGIONS = VORONOI_DIAGRAM_TS.regions;
 export const VORONOI_DIAGRAM_CODE_HIGHLIGHT_MAP = VORONOI_DIAGRAM_TS.highlightMap;
@@ -459,6 +742,13 @@ export const VORONOI_DIAGRAM_CODE_VARIANTS: CodeVariantMap = {
     regions: VORONOI_DIAGRAM_TS.regions,
     highlightMap: VORONOI_DIAGRAM_TS.highlightMap,
     source: VORONOI_DIAGRAM_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: VORONOI_DIAGRAM_JS.lines,
+    regions: VORONOI_DIAGRAM_JS.regions,
+    highlightMap: VORONOI_DIAGRAM_JS.highlightMap,
+    source: VORONOI_DIAGRAM_JS.source,
   },
   python: {
     language: 'python',
@@ -487,5 +777,40 @@ export const VORONOI_DIAGRAM_CODE_VARIANTS: CodeVariantMap = {
     regions: VORONOI_DIAGRAM_CPP.regions,
     highlightMap: VORONOI_DIAGRAM_CPP.highlightMap,
     source: VORONOI_DIAGRAM_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: VORONOI_DIAGRAM_GO.lines,
+    regions: VORONOI_DIAGRAM_GO.regions,
+    highlightMap: VORONOI_DIAGRAM_GO.highlightMap,
+    source: VORONOI_DIAGRAM_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: VORONOI_DIAGRAM_RUST.lines,
+    regions: VORONOI_DIAGRAM_RUST.regions,
+    highlightMap: VORONOI_DIAGRAM_RUST.highlightMap,
+    source: VORONOI_DIAGRAM_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: VORONOI_DIAGRAM_SWIFT.lines,
+    regions: VORONOI_DIAGRAM_SWIFT.regions,
+    highlightMap: VORONOI_DIAGRAM_SWIFT.highlightMap,
+    source: VORONOI_DIAGRAM_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: VORONOI_DIAGRAM_PHP.lines,
+    regions: VORONOI_DIAGRAM_PHP.regions,
+    highlightMap: VORONOI_DIAGRAM_PHP.highlightMap,
+    source: VORONOI_DIAGRAM_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: VORONOI_DIAGRAM_KOTLIN.lines,
+    regions: VORONOI_DIAGRAM_KOTLIN.regions,
+    highlightMap: VORONOI_DIAGRAM_KOTLIN.highlightMap,
+    source: VORONOI_DIAGRAM_KOTLIN.source,
   },
 };

@@ -78,6 +78,79 @@ const COIN_CHANGE_TS = buildStructuredCode(`
   //#endregion coin-change
 `);
 
+const COIN_CHANGE_JS = buildStructuredCode(
+  `
+  /**
+   * Solve the unbounded coin change problem with table DP and backtracking.
+   * Input: available coin denominations and target amount.
+   * Returns: minimum coin count together with one optimal multiset.
+   */
+  //#region coin-change function open
+  function coinChange(coins, amount) {
+      //@step 2
+      const dp = Array.from({ length: coins.length + 1 }, (_, row) =>
+          Array.from({ length: amount + 1 }, (__, currentAmount) =>
+              currentAmount === 0 ? 0 : row === 0 ? Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY,
+          ),
+      );
+
+      for (let row = 1; row <= coins.length; row += 1) {
+          const coin = coins[row - 1];
+
+          for (let currentAmount = 1; currentAmount <= amount; currentAmount += 1) {
+              const skip = dp[row - 1][currentAmount];
+              const take =
+                  coin <= currentAmount && Number.isFinite(dp[row][currentAmount - coin])
+                      ? dp[row][currentAmount - coin] + 1
+                      : Number.POSITIVE_INFINITY;
+
+              //@step 5
+              const best = Math.min(skip, take);
+
+              //@step 8
+              dp[row][currentAmount] = best;
+          }
+      }
+
+      //@step 15
+      if (!Number.isFinite(dp[coins.length][amount])) {
+          return { minCoins: -1, coins: [] };
+      }
+
+      const chosenCoins = [];
+      let row = coins.length;
+      let currentAmount = amount;
+
+      while (currentAmount > 0 && row > 0) {
+          const coin = coins[row - 1];
+          const current = dp[row][currentAmount];
+          const skip = dp[row - 1][currentAmount];
+          const take =
+              coin <= currentAmount && Number.isFinite(dp[row][currentAmount - coin])
+                  ? dp[row][currentAmount - coin] + 1
+                  : Number.POSITIVE_INFINITY;
+
+          if (take <= current && take < skip) {
+              //@step 11
+              chosenCoins.push(coin);
+              currentAmount -= coin;
+          } else {
+              //@step 13
+              row -= 1;
+          }
+      }
+
+      //@step 15
+      return {
+          minCoins: dp[coins.length][amount],
+          coins: chosenCoins.reverse(),
+      };
+  }
+  //#endregion coin-change
+  `,
+  'javascript',
+);
+
 const COIN_CHANGE_PY = buildStructuredCode(
   `
   from math import inf
@@ -419,6 +492,418 @@ const COIN_CHANGE_CPP = buildStructuredCode(
   'cpp',
 );
 
+const COIN_CHANGE_GO = buildStructuredCode(
+  `
+  package dp
+
+  //#region coin-result interface collapsed
+  type CoinChangeResult struct {
+      MinCoins int
+      Coins    []int
+  }
+  //#endregion coin-result
+
+  /**
+   * Solve the unbounded coin change problem with table DP and backtracking.
+   * Input: available coin denominations and target amount.
+   * Returns: minimum coin count together with one optimal multiset.
+   */
+  //#region coin-change function open
+  func CoinChange(coins []int, amount int) CoinChangeResult {
+      //@step 2
+      dp := make([][]int, len(coins) + 1)
+      for row := range dp {
+          dp[row] = make([]int, amount + 1)
+          for currentAmount := 1; currentAmount <= amount; currentAmount += 1 {
+              dp[row][currentAmount] = inf()
+          }
+      }
+
+      for row := 1; row <= len(coins); row += 1 {
+          coin := coins[row - 1]
+
+          for currentAmount := 1; currentAmount <= amount; currentAmount += 1 {
+              skip := dp[row - 1][currentAmount]
+              take := inf()
+              if coin <= currentAmount && dp[row][currentAmount - coin] != inf() {
+                  take = dp[row][currentAmount - coin] + 1
+              }
+
+              //@step 5
+              best := minInt(skip, take)
+
+              //@step 8
+              dp[row][currentAmount] = best
+          }
+      }
+
+      //@step 15
+      if dp[len(coins)][amount] == inf() {
+          return CoinChangeResult{MinCoins: -1, Coins: []int{}}
+      }
+
+      chosenCoins := make([]int, 0)
+      row := len(coins)
+      currentAmount := amount
+
+      for currentAmount > 0 && row > 0 {
+          coin := coins[row - 1]
+          current := dp[row][currentAmount]
+          skip := dp[row - 1][currentAmount]
+          take := inf()
+          if coin <= currentAmount && dp[row][currentAmount - coin] != inf() {
+              take = dp[row][currentAmount - coin] + 1
+          }
+
+          if take <= current && take < skip {
+              //@step 11
+              chosenCoins = append(chosenCoins, coin)
+              currentAmount -= coin
+          } else {
+              //@step 13
+              row -= 1
+          }
+      }
+
+      for left, right := 0, len(chosenCoins) - 1; left < right; left, right = left + 1, right - 1 {
+          chosenCoins[left], chosenCoins[right] = chosenCoins[right], chosenCoins[left]
+      }
+
+      //@step 15
+      return CoinChangeResult{MinCoins: dp[len(coins)][amount], Coins: chosenCoins}
+  }
+  //#endregion coin-change
+
+  //#region helpers helper collapsed
+  func minInt(a int, b int) int {
+      if a < b {
+          return a
+      }
+      return b
+  }
+
+  func inf() int {
+      return 1 << 60
+  }
+  //#endregion helpers
+  `,
+  'go',
+);
+
+const COIN_CHANGE_RUST = buildStructuredCode(
+  `
+  //#region coin-result interface collapsed
+  struct CoinChangeResult {
+      min_coins: i32,
+      coins: Vec<i32>,
+  }
+  //#endregion coin-result
+
+  /**
+   * Solve the unbounded coin change problem with table DP and backtracking.
+   * Input: available coin denominations and target amount.
+   * Returns: minimum coin count together with one optimal multiset.
+   */
+  //#region coin-change function open
+  fn coin_change(coins: &[i32], amount: usize) -> CoinChangeResult {
+      //@step 2
+      let mut dp = vec![vec![i32::MAX / 4; amount + 1]; coins.len() + 1];
+      for row in 0..=coins.len() {
+          dp[row][0] = 0;
+      }
+
+      for row in 1..=coins.len() {
+          let coin = coins[row - 1] as usize;
+
+          for current_amount in 1..=amount {
+              let skip = dp[row - 1][current_amount];
+              let take =
+                  if coin <= current_amount && dp[row][current_amount - coin] < i32::MAX / 4 {
+                      dp[row][current_amount - coin] + 1
+                  } else {
+                      i32::MAX / 4
+                  };
+
+              //@step 5
+              let best = skip.min(take);
+
+              //@step 8
+              dp[row][current_amount] = best;
+          }
+      }
+
+      //@step 15
+      if dp[coins.len()][amount] >= i32::MAX / 4 {
+          return CoinChangeResult { min_coins: -1, coins: vec![] };
+      }
+
+      let mut chosen_coins = Vec::new();
+      let mut row = coins.len();
+      let mut current_amount = amount;
+
+      while current_amount > 0 && row > 0 {
+          let coin = coins[row - 1] as usize;
+          let current = dp[row][current_amount];
+          let skip = dp[row - 1][current_amount];
+          let take =
+              if coin <= current_amount && dp[row][current_amount - coin] < i32::MAX / 4 {
+                  dp[row][current_amount - coin] + 1
+              } else {
+                  i32::MAX / 4
+              };
+
+          if take <= current && take < skip {
+              //@step 11
+              chosen_coins.push(coins[row - 1]);
+              current_amount -= coin;
+          } else {
+              //@step 13
+              row -= 1;
+          }
+      }
+
+      chosen_coins.reverse();
+
+      //@step 15
+      CoinChangeResult {
+          min_coins: dp[coins.len()][amount],
+          coins: chosen_coins,
+      }
+  }
+  //#endregion coin-change
+  `,
+  'rust',
+);
+
+const COIN_CHANGE_SWIFT = buildStructuredCode(
+  `
+  //#region coin-result interface collapsed
+  struct CoinChangeResult {
+      let minCoins: Int
+      let coins: [Int]
+  }
+  //#endregion coin-result
+
+  /**
+   * Solve the unbounded coin change problem with table DP and backtracking.
+   * Input: available coin denominations and target amount.
+   * Returns: minimum coin count together with one optimal multiset.
+   */
+  //#region coin-change function open
+  func coinChange(_ coins: [Int], amount: Int) -> CoinChangeResult {
+      //@step 2
+      var dp = Array(
+          repeating: Array(repeating: Int.max / 4, count: amount + 1),
+          count: coins.count + 1
+      )
+      for row in 0...coins.count {
+          dp[row][0] = 0
+      }
+
+      for row in 1...coins.count {
+          let coin = coins[row - 1]
+
+          for currentAmount in 1...amount {
+              let skip = dp[row - 1][currentAmount]
+              let take =
+                  coin <= currentAmount && dp[row][currentAmount - coin] < Int.max / 4
+                      ? dp[row][currentAmount - coin] + 1
+                      : Int.max / 4
+
+              //@step 5
+              let best = min(skip, take)
+
+              //@step 8
+              dp[row][currentAmount] = best
+          }
+      }
+
+      //@step 15
+      if dp[coins.count][amount] >= Int.max / 4 {
+          return CoinChangeResult(minCoins: -1, coins: [])
+      }
+
+      var chosenCoins: [Int] = []
+      var row = coins.count
+      var currentAmount = amount
+
+      while currentAmount > 0 && row > 0 {
+          let coin = coins[row - 1]
+          let current = dp[row][currentAmount]
+          let skip = dp[row - 1][currentAmount]
+          let take =
+              coin <= currentAmount && dp[row][currentAmount - coin] < Int.max / 4
+                  ? dp[row][currentAmount - coin] + 1
+                  : Int.max / 4
+
+          if take <= current && take < skip {
+              //@step 11
+              chosenCoins.append(coin)
+              currentAmount -= coin
+          } else {
+              //@step 13
+              row -= 1
+          }
+      }
+
+      //@step 15
+      return CoinChangeResult(minCoins: dp[coins.count][amount], coins: chosenCoins.reversed())
+  }
+  //#endregion coin-change
+  `,
+  'swift',
+);
+
+const COIN_CHANGE_PHP = buildStructuredCode(
+  `
+  <?php
+
+  /**
+   * Solve the unbounded coin change problem with table DP and backtracking.
+   * Input: available coin denominations and target amount.
+   * Returns: minimum coin count together with one optimal multiset.
+   */
+  //#region coin-change function open
+  function coinChange(array $coins, int $amount): array
+  {
+      //@step 2
+      $dp = array_fill(0, count($coins) + 1, array_fill(0, $amount + 1, PHP_INT_MAX));
+      for ($row = 0; $row <= count($coins); $row += 1) {
+          $dp[$row][0] = 0;
+      }
+
+      for ($row = 1; $row <= count($coins); $row += 1) {
+          $coin = $coins[$row - 1];
+
+          for ($currentAmount = 1; $currentAmount <= $amount; $currentAmount += 1) {
+              $skip = $dp[$row - 1][$currentAmount];
+              $take =
+                  $coin <= $currentAmount && $dp[$row][$currentAmount - $coin] !== PHP_INT_MAX
+                      ? $dp[$row][$currentAmount - $coin] + 1
+                      : PHP_INT_MAX;
+
+              //@step 5
+              $best = min($skip, $take);
+
+              //@step 8
+              $dp[$row][$currentAmount] = $best;
+          }
+      }
+
+      //@step 15
+      if ($dp[count($coins)][$amount] === PHP_INT_MAX) {
+          return ['minCoins' => -1, 'coins' => []];
+      }
+
+      $chosenCoins = [];
+      $row = count($coins);
+      $currentAmount = $amount;
+
+      while ($currentAmount > 0 && $row > 0) {
+          $coin = $coins[$row - 1];
+          $current = $dp[$row][$currentAmount];
+          $skip = $dp[$row - 1][$currentAmount];
+          $take =
+              $coin <= $currentAmount && $dp[$row][$currentAmount - $coin] !== PHP_INT_MAX
+                  ? $dp[$row][$currentAmount - $coin] + 1
+                  : PHP_INT_MAX;
+
+          if ($take <= $current && $take < $skip) {
+              //@step 11
+              $chosenCoins[] = $coin;
+              $currentAmount -= $coin;
+          } else {
+              //@step 13
+              $row -= 1;
+          }
+      }
+
+      //@step 15
+      return [
+          'minCoins' => $dp[count($coins)][$amount],
+          'coins' => array_reverse($chosenCoins),
+      ];
+  }
+  //#endregion coin-change
+  `,
+  'php',
+);
+
+const COIN_CHANGE_KOTLIN = buildStructuredCode(
+  `
+  data class CoinChangeResult(val minCoins: Int, val coins: List<Int>)
+
+  /**
+   * Solve the unbounded coin change problem with table DP and backtracking.
+   * Input: available coin denominations and target amount.
+   * Returns: minimum coin count together with one optimal multiset.
+   */
+  //#region coin-change function open
+  fun coinChange(coins: List<Int>, amount: Int): CoinChangeResult {
+      //@step 2
+      val dp = Array(coins.size + 1) { IntArray(amount + 1) { Int.MAX_VALUE } }
+      for (row in 0..coins.size) {
+          dp[row][0] = 0
+      }
+
+      for (row in 1..coins.size) {
+          val coin = coins[row - 1]
+
+          for (currentAmount in 1..amount) {
+              val skip = dp[row - 1][currentAmount]
+              val take =
+                  if (coin <= currentAmount && dp[row][currentAmount - coin] != Int.MAX_VALUE) {
+                      dp[row][currentAmount - coin] + 1
+                  } else {
+                      Int.MAX_VALUE
+                  }
+
+              //@step 5
+              val best = minOf(skip, take)
+
+              //@step 8
+              dp[row][currentAmount] = best
+          }
+      }
+
+      //@step 15
+      if (dp[coins.size][amount] == Int.MAX_VALUE) {
+          return CoinChangeResult(-1, emptyList())
+      }
+
+      val chosenCoins = mutableListOf<Int>()
+      var row = coins.size
+      var currentAmount = amount
+
+      while (currentAmount > 0 && row > 0) {
+          val coin = coins[row - 1]
+          val current = dp[row][currentAmount]
+          val skip = dp[row - 1][currentAmount]
+          val take =
+              if (coin <= currentAmount && dp[row][currentAmount - coin] != Int.MAX_VALUE) {
+                  dp[row][currentAmount - coin] + 1
+              } else {
+                  Int.MAX_VALUE
+              }
+
+          if (take <= current && take < skip) {
+              //@step 11
+              chosenCoins += coin
+              currentAmount -= coin
+          } else {
+              //@step 13
+              row -= 1
+          }
+      }
+
+      //@step 15
+      return CoinChangeResult(dp[coins.size][amount], chosenCoins.asReversed())
+  }
+  //#endregion coin-change
+  `,
+  'kotlin',
+);
+
 export const COIN_CHANGE_CODE = COIN_CHANGE_TS.lines;
 export const COIN_CHANGE_CODE_REGIONS = COIN_CHANGE_TS.regions;
 export const COIN_CHANGE_CODE_HIGHLIGHT_MAP = COIN_CHANGE_TS.highlightMap;
@@ -429,6 +914,13 @@ export const COIN_CHANGE_CODE_VARIANTS: CodeVariantMap = {
     regions: COIN_CHANGE_TS.regions,
     highlightMap: COIN_CHANGE_TS.highlightMap,
     source: COIN_CHANGE_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: COIN_CHANGE_JS.lines,
+    regions: COIN_CHANGE_JS.regions,
+    highlightMap: COIN_CHANGE_JS.highlightMap,
+    source: COIN_CHANGE_JS.source,
   },
   python: {
     language: 'python',
@@ -457,5 +949,40 @@ export const COIN_CHANGE_CODE_VARIANTS: CodeVariantMap = {
     regions: COIN_CHANGE_CPP.regions,
     highlightMap: COIN_CHANGE_CPP.highlightMap,
     source: COIN_CHANGE_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: COIN_CHANGE_GO.lines,
+    regions: COIN_CHANGE_GO.regions,
+    highlightMap: COIN_CHANGE_GO.highlightMap,
+    source: COIN_CHANGE_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: COIN_CHANGE_RUST.lines,
+    regions: COIN_CHANGE_RUST.regions,
+    highlightMap: COIN_CHANGE_RUST.highlightMap,
+    source: COIN_CHANGE_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: COIN_CHANGE_SWIFT.lines,
+    regions: COIN_CHANGE_SWIFT.regions,
+    highlightMap: COIN_CHANGE_SWIFT.highlightMap,
+    source: COIN_CHANGE_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: COIN_CHANGE_PHP.lines,
+    regions: COIN_CHANGE_PHP.regions,
+    highlightMap: COIN_CHANGE_PHP.highlightMap,
+    source: COIN_CHANGE_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: COIN_CHANGE_KOTLIN.lines,
+    regions: COIN_CHANGE_KOTLIN.regions,
+    highlightMap: COIN_CHANGE_KOTLIN.highlightMap,
+    source: COIN_CHANGE_KOTLIN.source,
   },
 };

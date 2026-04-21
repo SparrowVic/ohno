@@ -94,6 +94,89 @@ const CYCLE_DETECTION_TS = buildStructuredCode(`
   //#endregion build-adjacency
 `);
 
+const CYCLE_DETECTION_JS = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  /**
+   * @typedef {{ id: string }} GraphNode
+   * @typedef {{ from: string, to: string }} GraphEdge
+   * @typedef {{ nodes: GraphNode[], edges: GraphEdge[] }} GraphData
+   * @typedef {'new' | 'stack' | 'done'} VisitState
+   */
+  //#endregion graph-types
+
+  /**
+   * Detect whether a directed graph contains a cycle.
+   * Input: directed graph.
+   * Returns: true if any DFS walk reaches a node already on the recursion stack.
+   */
+  //#region cycle-detection function open
+  function hasDirectedCycle(graph) {
+      const adjacency = buildAdjacency(graph);
+      const state = new Map();
+
+      for (const node of graph.nodes) {
+          //@step 4
+          state.set(node.id, 'new');
+      }
+
+      for (const node of graph.nodes) {
+          if (state.get(node.id) === 'new' && dfs(node.id, adjacency, state)) {
+              return true;
+          }
+      }
+
+      //@step 9
+      return false;
+  }
+  //#endregion cycle-detection
+
+  //#region dfs helper collapsed
+  function dfs(nodeId, adjacency, state) {
+      //@step 11
+      state.set(nodeId, 'stack');
+
+      //@step 12
+      for (const neighbor of adjacency.get(nodeId) ?? []) {
+          //@step 13
+          if (state.get(neighbor) === 'stack') {
+              return true;
+          }
+
+          //@step 14
+          if (state.get(neighbor) === 'new') {
+              //@step 15
+              if (dfs(neighbor, adjacency, state)) {
+                  return true;
+              }
+          }
+      }
+
+      //@step 18
+      state.set(nodeId, 'done');
+      return false;
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  function buildAdjacency(graph) {
+      const adjacency = new Map();
+
+      for (const node of graph.nodes) {
+          adjacency.set(node.id, []);
+      }
+
+      for (const edge of graph.edges) {
+          adjacency.get(edge.from)?.push(edge.to);
+      }
+
+      return adjacency;
+  }
+  //#endregion build-adjacency
+  `,
+  'javascript',
+);
+
 const CYCLE_DETECTION_PY = buildStructuredCode(
   `
   from dataclasses import dataclass
@@ -475,6 +558,494 @@ const CYCLE_DETECTION_CPP = buildStructuredCode(
   'cpp',
 );
 
+const CYCLE_DETECTION_GO = buildStructuredCode(
+  `
+  package graphs
+
+  //#region graph-types interface collapsed
+  type GraphNode struct {
+      ID string
+  }
+
+  type GraphEdge struct {
+      From string
+      To   string
+  }
+
+  type GraphData struct {
+      Nodes []GraphNode
+      Edges []GraphEdge
+  }
+  //#endregion graph-types
+
+  /**
+   * Detects whether a directed graph contains a cycle.
+   * Input: directed graph.
+   * Returns: true if any DFS walk reaches a node already on the recursion stack.
+   */
+  //#region cycle-detection function open
+  func HasDirectedCycle(graph GraphData) bool {
+      adjacency := buildAdjacency(graph)
+      state := map[string]string{}
+
+      for _, node := range graph.Nodes {
+          //@step 4
+          state[node.ID] = "new"
+      }
+
+      for _, node := range graph.Nodes {
+          if state[node.ID] == "new" && dfs(node.ID, adjacency, state) {
+              return true
+          }
+      }
+
+      //@step 9
+      return false
+  }
+  //#endregion cycle-detection
+
+  //#region dfs helper collapsed
+  func dfs(nodeID string, adjacency map[string][]string, state map[string]string) bool {
+      //@step 11
+      state[nodeID] = "stack"
+
+      //@step 12
+      for _, neighbor := range adjacency[nodeID] {
+          //@step 13
+          if state[neighbor] == "stack" {
+              return true
+          }
+
+          //@step 14
+          if state[neighbor] == "new" {
+              //@step 15
+              if dfs(neighbor, adjacency, state) {
+                  return true
+              }
+          }
+      }
+
+      //@step 18
+      state[nodeID] = "done"
+      return false
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  func buildAdjacency(graph GraphData) map[string][]string {
+      adjacency := make(map[string][]string)
+
+      for _, node := range graph.Nodes {
+          adjacency[node.ID] = []string{}
+      }
+
+      for _, edge := range graph.Edges {
+          adjacency[edge.From] = append(adjacency[edge.From], edge.To)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'go',
+);
+
+const CYCLE_DETECTION_RUST = buildStructuredCode(
+  `
+  use std::collections::HashMap;
+
+  //#region graph-types interface collapsed
+  #[derive(Clone)]
+  struct GraphNode {
+      id: String,
+  }
+
+  #[derive(Clone)]
+  struct GraphEdge {
+      from: String,
+      to: String,
+  }
+
+  struct GraphData {
+      nodes: Vec<GraphNode>,
+      edges: Vec<GraphEdge>,
+  }
+  //#endregion graph-types
+
+  /**
+   * Detects whether a directed graph contains a cycle.
+   * Input: directed graph.
+   * Returns: true if any DFS walk reaches a node already on the recursion stack.
+   */
+  //#region cycle-detection function open
+  fn has_directed_cycle(graph: &GraphData) -> bool {
+      let adjacency = build_adjacency(graph);
+      let mut state = HashMap::new();
+
+      for node in &graph.nodes {
+          //@step 4
+          state.insert(node.id.clone(), "new".to_string());
+      }
+
+      for node in &graph.nodes {
+          if state.get(&node.id).map(String::as_str) == Some("new")
+              && dfs(&node.id, &adjacency, &mut state)
+          {
+              return true;
+          }
+      }
+
+      //@step 9
+      false
+  }
+  //#endregion cycle-detection
+
+  //#region dfs helper collapsed
+  fn dfs(
+      node_id: &str,
+      adjacency: &HashMap<String, Vec<String>>,
+      state: &mut HashMap<String, String>,
+  ) -> bool {
+      //@step 11
+      state.insert(node_id.to_string(), "stack".to_string());
+
+      //@step 12
+      for neighbor in adjacency.get(node_id).cloned().unwrap_or_default() {
+          //@step 13
+          if state.get(&neighbor).map(String::as_str) == Some("stack") {
+              return true;
+          }
+
+          //@step 14
+          if state.get(&neighbor).map(String::as_str) == Some("new") {
+              //@step 15
+              if dfs(&neighbor, adjacency, state) {
+                  return true;
+              }
+          }
+      }
+
+      //@step 18
+      state.insert(node_id.to_string(), "done".to_string());
+      false
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  fn build_adjacency(graph: &GraphData) -> HashMap<String, Vec<String>> {
+      let mut adjacency = HashMap::new();
+
+      for node in &graph.nodes {
+          adjacency.insert(node.id.clone(), Vec::new());
+      }
+
+      for edge in &graph.edges {
+          adjacency.entry(edge.from.clone()).or_insert_with(Vec::new).push(edge.to.clone());
+      }
+
+      adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'rust',
+);
+
+const CYCLE_DETECTION_SWIFT = buildStructuredCode(
+  `
+  import Foundation
+
+  //#region graph-types interface collapsed
+  struct GraphNode {
+      let id: String
+  }
+
+  struct GraphEdge {
+      let from: String
+      let to: String
+  }
+
+  struct GraphData {
+      let nodes: [GraphNode]
+      let edges: [GraphEdge]
+  }
+
+  typealias VisitState = String
+  //#endregion graph-types
+
+  /**
+   * Detects whether a directed graph contains a cycle.
+   * Input: directed graph.
+   * Returns: true if any DFS walk reaches a node already on the recursion stack.
+   */
+  //#region cycle-detection function open
+  func hasDirectedCycle(graph: GraphData) -> Bool {
+      let adjacency = buildAdjacency(graph: graph)
+      var state: [String: VisitState] = [:]
+
+      for node in graph.nodes {
+          //@step 4
+          state[node.id] = "new"
+      }
+
+      for node in graph.nodes {
+          if state[node.id] == "new" && dfs(nodeId: node.id, adjacency: adjacency, state: &state) {
+              return true
+          }
+      }
+
+      //@step 9
+      return false
+  }
+  //#endregion cycle-detection
+
+  //#region dfs helper collapsed
+  func dfs(
+      nodeId: String,
+      adjacency: [String: [String]],
+      state: inout [String: VisitState],
+  ) -> Bool {
+      //@step 11
+      state[nodeId] = "stack"
+
+      //@step 12
+      for neighbor in adjacency[nodeId] ?? [] {
+          //@step 13
+          if state[neighbor] == "stack" {
+              return true
+          }
+
+          //@step 14
+          if state[neighbor] == "new" {
+              //@step 15
+              if dfs(nodeId: neighbor, adjacency: adjacency, state: &state) {
+                  return true
+              }
+          }
+      }
+
+      //@step 18
+      state[nodeId] = "done"
+      return false
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  func buildAdjacency(graph: GraphData) -> [String: [String]] {
+      var adjacency: [String: [String]] = [:]
+
+      for node in graph.nodes {
+          adjacency[node.id] = []
+      }
+
+      for edge in graph.edges {
+          adjacency[edge.from, default: []].append(edge.to)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'swift',
+);
+
+const CYCLE_DETECTION_PHP = buildStructuredCode(
+  `
+  <?php
+
+  //#region graph-types interface collapsed
+  final class GraphNode
+  {
+      public function __construct(public string $id) {}
+  }
+
+  final class GraphEdge
+  {
+      public function __construct(
+          public string $from,
+          public string $to,
+      ) {}
+  }
+
+  final class GraphData
+  {
+      /**
+       * @param list<GraphNode> $nodes
+       * @param list<GraphEdge> $edges
+       */
+      public function __construct(
+          public array $nodes,
+          public array $edges,
+      ) {}
+  }
+  //#endregion graph-types
+
+  /**
+   * Detects whether a directed graph contains a cycle.
+   * Input: directed graph.
+   * Returns: true if any DFS walk reaches a node already on the recursion stack.
+   */
+  //#region cycle-detection function open
+  function hasDirectedCycle(GraphData $graph): bool
+  {
+      $adjacency = buildAdjacency($graph);
+      $state = [];
+
+      foreach ($graph->nodes as $node) {
+          //@step 4
+          $state[$node->id] = 'new';
+      }
+
+      foreach ($graph->nodes as $node) {
+          if (($state[$node->id] ?? null) === 'new' && dfs($node->id, $adjacency, $state)) {
+              return true;
+          }
+      }
+
+      //@step 9
+      return false;
+  }
+  //#endregion cycle-detection
+
+  //#region dfs helper collapsed
+  function dfs(string $nodeId, array $adjacency, array &$state): bool
+  {
+      //@step 11
+      $state[$nodeId] = 'stack';
+
+      //@step 12
+      foreach ($adjacency[$nodeId] ?? [] as $neighbor) {
+          //@step 13
+          if (($state[$neighbor] ?? null) === 'stack') {
+              return true;
+          }
+
+          //@step 14
+          if (($state[$neighbor] ?? null) === 'new') {
+              //@step 15
+              if (dfs($neighbor, $adjacency, $state)) {
+                  return true;
+              }
+          }
+      }
+
+      //@step 18
+      $state[$nodeId] = 'done';
+      return false;
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  function buildAdjacency(GraphData $graph): array
+  {
+      $adjacency = [];
+
+      foreach ($graph->nodes as $node) {
+          $adjacency[$node->id] = [];
+      }
+
+      foreach ($graph->edges as $edge) {
+          $adjacency[$edge->from][] = $edge->to;
+      }
+
+      return $adjacency;
+  }
+  //#endregion build-adjacency
+  `,
+  'php',
+);
+
+const CYCLE_DETECTION_KOTLIN = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  data class GraphNode(val id: String)
+
+  data class GraphEdge(
+      val from: String,
+      val to: String,
+  )
+
+  data class GraphData(
+      val nodes: List<GraphNode>,
+      val edges: List<GraphEdge>,
+  )
+  //#endregion graph-types
+
+  /**
+   * Detects whether a directed graph contains a cycle.
+   * Input: directed graph.
+   * Returns: true if any DFS walk reaches a node already on the recursion stack.
+   */
+  //#region cycle-detection function open
+  fun hasDirectedCycle(graph: GraphData): Boolean {
+      val adjacency = buildAdjacency(graph)
+      val state = mutableMapOf<String, String>()
+
+      for (node in graph.nodes) {
+          //@step 4
+          state[node.id] = "new"
+      }
+
+      for (node in graph.nodes) {
+          if (state[node.id] == "new" && dfs(node.id, adjacency, state)) {
+              return true
+          }
+      }
+
+      //@step 9
+      return false
+  }
+  //#endregion cycle-detection
+
+  //#region dfs helper collapsed
+  fun dfs(
+      nodeId: String,
+      adjacency: Map<String, List<String>>,
+      state: MutableMap<String, String>,
+  ): Boolean {
+      //@step 11
+      state[nodeId] = "stack"
+
+      //@step 12
+      for (neighbor in adjacency[nodeId].orEmpty()) {
+          //@step 13
+          if (state[neighbor] == "stack") {
+              return true
+          }
+
+          //@step 14
+          if (state[neighbor] == "new") {
+              //@step 15
+              if (dfs(neighbor, adjacency, state)) {
+                  return true
+              }
+          }
+      }
+
+      //@step 18
+      state[nodeId] = "done"
+      return false
+  }
+  //#endregion dfs
+
+  //#region build-adjacency helper collapsed
+  fun buildAdjacency(graph: GraphData): MutableMap<String, MutableList<String>> {
+      val adjacency = mutableMapOf<String, MutableList<String>>()
+
+      for (node in graph.nodes) {
+          adjacency[node.id] = mutableListOf()
+      }
+
+      for (edge in graph.edges) {
+          adjacency.getOrPut(edge.from) { mutableListOf() }.add(edge.to)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'kotlin',
+);
+
 export const CYCLE_DETECTION_CODE = CYCLE_DETECTION_TS.lines;
 export const CYCLE_DETECTION_CODE_REGIONS = CYCLE_DETECTION_TS.regions;
 export const CYCLE_DETECTION_CODE_HIGHLIGHT_MAP = CYCLE_DETECTION_TS.highlightMap;
@@ -485,6 +1056,13 @@ export const CYCLE_DETECTION_CODE_VARIANTS: CodeVariantMap = {
     regions: CYCLE_DETECTION_TS.regions,
     highlightMap: CYCLE_DETECTION_TS.highlightMap,
     source: CYCLE_DETECTION_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: CYCLE_DETECTION_JS.lines,
+    regions: CYCLE_DETECTION_JS.regions,
+    highlightMap: CYCLE_DETECTION_JS.highlightMap,
+    source: CYCLE_DETECTION_JS.source,
   },
   python: {
     language: 'python',
@@ -513,5 +1091,40 @@ export const CYCLE_DETECTION_CODE_VARIANTS: CodeVariantMap = {
     regions: CYCLE_DETECTION_CPP.regions,
     highlightMap: CYCLE_DETECTION_CPP.highlightMap,
     source: CYCLE_DETECTION_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: CYCLE_DETECTION_GO.lines,
+    regions: CYCLE_DETECTION_GO.regions,
+    highlightMap: CYCLE_DETECTION_GO.highlightMap,
+    source: CYCLE_DETECTION_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: CYCLE_DETECTION_RUST.lines,
+    regions: CYCLE_DETECTION_RUST.regions,
+    highlightMap: CYCLE_DETECTION_RUST.highlightMap,
+    source: CYCLE_DETECTION_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: CYCLE_DETECTION_SWIFT.lines,
+    regions: CYCLE_DETECTION_SWIFT.regions,
+    highlightMap: CYCLE_DETECTION_SWIFT.highlightMap,
+    source: CYCLE_DETECTION_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: CYCLE_DETECTION_PHP.lines,
+    regions: CYCLE_DETECTION_PHP.regions,
+    highlightMap: CYCLE_DETECTION_PHP.highlightMap,
+    source: CYCLE_DETECTION_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: CYCLE_DETECTION_KOTLIN.lines,
+    regions: CYCLE_DETECTION_KOTLIN.regions,
+    highlightMap: CYCLE_DETECTION_KOTLIN.highlightMap,
+    source: CYCLE_DETECTION_KOTLIN.source,
   },
 };

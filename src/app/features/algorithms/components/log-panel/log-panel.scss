@@ -113,12 +113,28 @@
   border-radius: 10px;
   transition:
     background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart),
     transform var(--duration-fast) var(--ease-out-quart);
+}
+
+/* Zebra striping — every second entry gets a whisper of lightness so
+   long traces stay scannable without overpowering the warning-tinted
+   hover or the lime "latest" row. */
+.log__entry:nth-of-type(even) {
+  background: rgba(255, 255, 255, 0.014);
 }
 
 .log__entry:hover {
   background:
-    linear-gradient(90deg, rgba(var(--viz-warning-rgb), 0.08), rgba(var(--viz-warning-rgb), 0.02) 60%, transparent);
+    linear-gradient(
+      90deg,
+      rgba(var(--viz-warning-rgb), 0.12) 0%,
+      rgba(var(--viz-warning-rgb), 0.04) 55%,
+      transparent 100%
+    );
+  box-shadow:
+    inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.55),
+    0 0 14px rgba(var(--viz-warning-rgb), 0.08);
 }
 
 .log__entry--last {

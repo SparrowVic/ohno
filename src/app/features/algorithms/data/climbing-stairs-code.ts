@@ -34,6 +34,42 @@ const CLIMBING_STAIRS_TS = buildStructuredCode(`
   //#endregion climbing-stairs
 `);
 
+const CLIMBING_STAIRS_JS = buildStructuredCode(
+  `
+  /**
+   * Counts how many distinct ways there are to climb n stairs
+   * when each move can advance by 1 or 2 steps.
+   * Input: non-negative stair count n.
+   * Returns: number of valid climb sequences.
+   */
+  //#region climbing-stairs function open
+  function climbStairs(n) {
+      if (n <= 1) {
+          return 1;
+      }
+
+      //@step 2
+      const ways = Array.from({ length: n + 1 }, () => 0);
+      ways[0] = 1;
+      ways[1] = 1;
+
+      for (let stair = 2; stair <= n; stair += 1) {
+          //@step 4
+          const fromOneStepBelow = ways[stair - 1];
+          const fromTwoStepsBelow = ways[stair - 2];
+
+          //@step 5
+          ways[stair] = fromOneStepBelow + fromTwoStepsBelow;
+      }
+
+      //@step 6
+      return ways[n];
+  }
+  //#endregion climbing-stairs
+  `,
+  'javascript',
+);
+
 const CLIMBING_STAIRS_PY = buildStructuredCode(
   `
   """
@@ -180,6 +216,191 @@ const CLIMBING_STAIRS_CPP = buildStructuredCode(
   'cpp',
 );
 
+const CLIMBING_STAIRS_GO = buildStructuredCode(
+  `
+  package dp
+
+  /**
+   * Counts how many distinct ways there are to climb n stairs
+   * when each move can advance by 1 or 2 steps.
+   * Input: non-negative stair count n.
+   * Returns: number of valid climb sequences.
+   */
+  //#region climbing-stairs function open
+  func ClimbStairs(n int) int {
+      if n <= 1 {
+          return 1
+      }
+
+      //@step 2
+      ways := make([]int, n + 1)
+      ways[0] = 1
+      ways[1] = 1
+
+      for stair := 2; stair <= n; stair += 1 {
+          //@step 4
+          fromOneStepBelow := ways[stair - 1]
+          fromTwoStepsBelow := ways[stair - 2]
+
+          //@step 5
+          ways[stair] = fromOneStepBelow + fromTwoStepsBelow
+      }
+
+      //@step 6
+      return ways[n]
+  }
+  //#endregion climbing-stairs
+  `,
+  'go',
+);
+
+const CLIMBING_STAIRS_RUST = buildStructuredCode(
+  `
+  /**
+   * Counts how many distinct ways there are to climb n stairs
+   * when each move can advance by 1 or 2 steps.
+   * Input: non-negative stair count n.
+   * Returns: number of valid climb sequences.
+   */
+  //#region climbing-stairs function open
+  fn climb_stairs(n: usize) -> usize {
+      if n <= 1 {
+          return 1;
+      }
+
+      //@step 2
+      let mut ways = vec![0; n + 1];
+      ways[0] = 1;
+      ways[1] = 1;
+
+      for stair in 2..=n {
+          //@step 4
+          let from_one_step_below = ways[stair - 1];
+          let from_two_steps_below = ways[stair - 2];
+
+          //@step 5
+          ways[stair] = from_one_step_below + from_two_steps_below;
+      }
+
+      //@step 6
+      ways[n]
+  }
+  //#endregion climbing-stairs
+  `,
+  'rust',
+);
+
+const CLIMBING_STAIRS_SWIFT = buildStructuredCode(
+  `
+  /**
+   * Counts how many distinct ways there are to climb n stairs
+   * when each move can advance by 1 or 2 steps.
+   * Input: non-negative stair count n.
+   * Returns: number of valid climb sequences.
+   */
+  //#region climbing-stairs function open
+  func climbStairs(_ n: Int) -> Int {
+      if n <= 1 {
+          return 1
+      }
+
+      //@step 2
+      var ways = Array(repeating: 0, count: n + 1)
+      ways[0] = 1
+      ways[1] = 1
+
+      for stair in 2...n {
+          //@step 4
+          let fromOneStepBelow = ways[stair - 1]
+          let fromTwoStepsBelow = ways[stair - 2]
+
+          //@step 5
+          ways[stair] = fromOneStepBelow + fromTwoStepsBelow
+      }
+
+      //@step 6
+      return ways[n]
+  }
+  //#endregion climbing-stairs
+  `,
+  'swift',
+);
+
+const CLIMBING_STAIRS_PHP = buildStructuredCode(
+  `
+  <?php
+
+  /**
+   * Counts how many distinct ways there are to climb n stairs
+   * when each move can advance by 1 or 2 steps.
+   * Input: non-negative stair count n.
+   * Returns: number of valid climb sequences.
+   */
+  //#region climbing-stairs function open
+  function climbStairs(int $n): int
+  {
+      if ($n <= 1) {
+          return 1;
+      }
+
+      //@step 2
+      $ways = array_fill(0, $n + 1, 0);
+      $ways[0] = 1;
+      $ways[1] = 1;
+
+      for ($stair = 2; $stair <= $n; $stair += 1) {
+          //@step 4
+          $fromOneStepBelow = $ways[$stair - 1];
+          $fromTwoStepsBelow = $ways[$stair - 2];
+
+          //@step 5
+          $ways[$stair] = $fromOneStepBelow + $fromTwoStepsBelow;
+      }
+
+      //@step 6
+      return $ways[$n];
+  }
+  //#endregion climbing-stairs
+  `,
+  'php',
+);
+
+const CLIMBING_STAIRS_KOTLIN = buildStructuredCode(
+  `
+  /**
+   * Counts how many distinct ways there are to climb n stairs
+   * when each move can advance by 1 or 2 steps.
+   * Input: non-negative stair count n.
+   * Returns: number of valid climb sequences.
+   */
+  //#region climbing-stairs function open
+  fun climbStairs(n: Int): Int {
+      if (n <= 1) {
+          return 1
+      }
+
+      //@step 2
+      val ways = IntArray(n + 1)
+      ways[0] = 1
+      ways[1] = 1
+
+      for (stair in 2..n) {
+          //@step 4
+          val fromOneStepBelow = ways[stair - 1]
+          val fromTwoStepsBelow = ways[stair - 2]
+
+          //@step 5
+          ways[stair] = fromOneStepBelow + fromTwoStepsBelow
+      }
+
+      //@step 6
+      return ways[n]
+  }
+  //#endregion climbing-stairs
+  `,
+  'kotlin',
+);
+
 export const CLIMBING_STAIRS_CODE = CLIMBING_STAIRS_TS.lines;
 export const CLIMBING_STAIRS_CODE_REGIONS = CLIMBING_STAIRS_TS.regions;
 export const CLIMBING_STAIRS_CODE_HIGHLIGHT_MAP = CLIMBING_STAIRS_TS.highlightMap;
@@ -190,6 +411,13 @@ export const CLIMBING_STAIRS_CODE_VARIANTS: CodeVariantMap = {
     regions: CLIMBING_STAIRS_TS.regions,
     highlightMap: CLIMBING_STAIRS_TS.highlightMap,
     source: CLIMBING_STAIRS_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: CLIMBING_STAIRS_JS.lines,
+    regions: CLIMBING_STAIRS_JS.regions,
+    highlightMap: CLIMBING_STAIRS_JS.highlightMap,
+    source: CLIMBING_STAIRS_JS.source,
   },
   python: {
     language: 'python',
@@ -218,5 +446,40 @@ export const CLIMBING_STAIRS_CODE_VARIANTS: CodeVariantMap = {
     regions: CLIMBING_STAIRS_CPP.regions,
     highlightMap: CLIMBING_STAIRS_CPP.highlightMap,
     source: CLIMBING_STAIRS_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: CLIMBING_STAIRS_GO.lines,
+    regions: CLIMBING_STAIRS_GO.regions,
+    highlightMap: CLIMBING_STAIRS_GO.highlightMap,
+    source: CLIMBING_STAIRS_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: CLIMBING_STAIRS_RUST.lines,
+    regions: CLIMBING_STAIRS_RUST.regions,
+    highlightMap: CLIMBING_STAIRS_RUST.highlightMap,
+    source: CLIMBING_STAIRS_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: CLIMBING_STAIRS_SWIFT.lines,
+    regions: CLIMBING_STAIRS_SWIFT.regions,
+    highlightMap: CLIMBING_STAIRS_SWIFT.highlightMap,
+    source: CLIMBING_STAIRS_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: CLIMBING_STAIRS_PHP.lines,
+    regions: CLIMBING_STAIRS_PHP.regions,
+    highlightMap: CLIMBING_STAIRS_PHP.highlightMap,
+    source: CLIMBING_STAIRS_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: CLIMBING_STAIRS_KOTLIN.lines,
+    regions: CLIMBING_STAIRS_KOTLIN.regions,
+    highlightMap: CLIMBING_STAIRS_KOTLIN.highlightMap,
+    source: CLIMBING_STAIRS_KOTLIN.source,
   },
 };

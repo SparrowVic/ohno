@@ -33,6 +33,41 @@ const FIBONACCI_TS = buildStructuredCode(`
   //#endregion fibonacci
 `);
 
+const FIBONACCI_JS = buildStructuredCode(
+  `
+  /**
+   * Computes the n-th Fibonacci number with bottom-up dynamic programming.
+   * Input: non-negative index n.
+   * Returns: fib[n].
+   */
+  //#region fibonacci function open
+  function fibonacciTab(n) {
+      if (n <= 1) {
+          return n;
+      }
+
+      //@step 2
+      const fib = Array.from({ length: n + 1 }, () => 0);
+      fib[0] = 0;
+      fib[1] = 1;
+
+      for (let index = 2; index <= n; index += 1) {
+          //@step 4
+          const previous = fib[index - 1];
+          const beforePrevious = fib[index - 2];
+
+          //@step 5
+          fib[index] = previous + beforePrevious;
+      }
+
+      //@step 6
+      return fib[n];
+  }
+  //#endregion fibonacci
+  `,
+  'javascript',
+);
+
 const FIBONACCI_PY = buildStructuredCode(
   `
   """
@@ -175,6 +210,186 @@ const FIBONACCI_CPP = buildStructuredCode(
   'cpp',
 );
 
+const FIBONACCI_GO = buildStructuredCode(
+  `
+  package dp
+
+  /**
+   * Computes the n-th Fibonacci number with bottom-up dynamic programming.
+   * Input: non-negative index n.
+   * Returns: fib[n].
+   */
+  //#region fibonacci function open
+  func FibonacciTab(n int) int {
+      if n <= 1 {
+          return n
+      }
+
+      //@step 2
+      fib := make([]int, n + 1)
+      fib[0] = 0
+      fib[1] = 1
+
+      for index := 2; index <= n; index += 1 {
+          //@step 4
+          previous := fib[index - 1]
+          beforePrevious := fib[index - 2]
+
+          //@step 5
+          fib[index] = previous + beforePrevious
+      }
+
+      //@step 6
+      return fib[n]
+  }
+  //#endregion fibonacci
+  `,
+  'go',
+);
+
+const FIBONACCI_RUST = buildStructuredCode(
+  `
+  /**
+   * Computes the n-th Fibonacci number with bottom-up dynamic programming.
+   * Input: non-negative index n.
+   * Returns: fib[n].
+   */
+  //#region fibonacci function open
+  fn fibonacci_tab(n: usize) -> usize {
+      if n <= 1 {
+          return n;
+      }
+
+      //@step 2
+      let mut fib = vec![0; n + 1];
+      fib[0] = 0;
+      fib[1] = 1;
+
+      for index in 2..=n {
+          //@step 4
+          let previous = fib[index - 1];
+          let before_previous = fib[index - 2];
+
+          //@step 5
+          fib[index] = previous + before_previous;
+      }
+
+      //@step 6
+      fib[n]
+  }
+  //#endregion fibonacci
+  `,
+  'rust',
+);
+
+const FIBONACCI_SWIFT = buildStructuredCode(
+  `
+  /**
+   * Computes the n-th Fibonacci number with bottom-up dynamic programming.
+   * Input: non-negative index n.
+   * Returns: fib[n].
+   */
+  //#region fibonacci function open
+  func fibonacciTab(_ n: Int) -> Int {
+      if n <= 1 {
+          return n
+      }
+
+      //@step 2
+      var fib = Array(repeating: 0, count: n + 1)
+      fib[0] = 0
+      fib[1] = 1
+
+      for index in 2...n {
+          //@step 4
+          let previous = fib[index - 1]
+          let beforePrevious = fib[index - 2]
+
+          //@step 5
+          fib[index] = previous + beforePrevious
+      }
+
+      //@step 6
+      return fib[n]
+  }
+  //#endregion fibonacci
+  `,
+  'swift',
+);
+
+const FIBONACCI_PHP = buildStructuredCode(
+  `
+  <?php
+
+  /**
+   * Computes the n-th Fibonacci number with bottom-up dynamic programming.
+   * Input: non-negative index n.
+   * Returns: fib[n].
+   */
+  //#region fibonacci function open
+  function fibonacciTab(int $n): int
+  {
+      if ($n <= 1) {
+          return $n;
+      }
+
+      //@step 2
+      $fib = array_fill(0, $n + 1, 0);
+      $fib[0] = 0;
+      $fib[1] = 1;
+
+      for ($index = 2; $index <= $n; $index += 1) {
+          //@step 4
+          $previous = $fib[$index - 1];
+          $beforePrevious = $fib[$index - 2];
+
+          //@step 5
+          $fib[$index] = $previous + $beforePrevious;
+      }
+
+      //@step 6
+      return $fib[$n];
+  }
+  //#endregion fibonacci
+  `,
+  'php',
+);
+
+const FIBONACCI_KOTLIN = buildStructuredCode(
+  `
+  /**
+   * Computes the n-th Fibonacci number with bottom-up dynamic programming.
+   * Input: non-negative index n.
+   * Returns: fib[n].
+   */
+  //#region fibonacci function open
+  fun fibonacciTab(n: Int): Int {
+      if (n <= 1) {
+          return n
+      }
+
+      //@step 2
+      val fib = IntArray(n + 1)
+      fib[0] = 0
+      fib[1] = 1
+
+      for (index in 2..n) {
+          //@step 4
+          val previous = fib[index - 1]
+          val beforePrevious = fib[index - 2]
+
+          //@step 5
+          fib[index] = previous + beforePrevious
+      }
+
+      //@step 6
+      return fib[n]
+  }
+  //#endregion fibonacci
+  `,
+  'kotlin',
+);
+
 export const FIBONACCI_DP_CODE = FIBONACCI_TS.lines;
 export const FIBONACCI_DP_CODE_REGIONS = FIBONACCI_TS.regions;
 export const FIBONACCI_DP_CODE_HIGHLIGHT_MAP = FIBONACCI_TS.highlightMap;
@@ -185,6 +400,13 @@ export const FIBONACCI_DP_CODE_VARIANTS: CodeVariantMap = {
     regions: FIBONACCI_TS.regions,
     highlightMap: FIBONACCI_TS.highlightMap,
     source: FIBONACCI_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: FIBONACCI_JS.lines,
+    regions: FIBONACCI_JS.regions,
+    highlightMap: FIBONACCI_JS.highlightMap,
+    source: FIBONACCI_JS.source,
   },
   python: {
     language: 'python',
@@ -213,5 +435,40 @@ export const FIBONACCI_DP_CODE_VARIANTS: CodeVariantMap = {
     regions: FIBONACCI_CPP.regions,
     highlightMap: FIBONACCI_CPP.highlightMap,
     source: FIBONACCI_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: FIBONACCI_GO.lines,
+    regions: FIBONACCI_GO.regions,
+    highlightMap: FIBONACCI_GO.highlightMap,
+    source: FIBONACCI_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: FIBONACCI_RUST.lines,
+    regions: FIBONACCI_RUST.regions,
+    highlightMap: FIBONACCI_RUST.highlightMap,
+    source: FIBONACCI_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: FIBONACCI_SWIFT.lines,
+    regions: FIBONACCI_SWIFT.regions,
+    highlightMap: FIBONACCI_SWIFT.highlightMap,
+    source: FIBONACCI_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: FIBONACCI_PHP.lines,
+    regions: FIBONACCI_PHP.regions,
+    highlightMap: FIBONACCI_PHP.highlightMap,
+    source: FIBONACCI_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: FIBONACCI_KOTLIN.lines,
+    regions: FIBONACCI_KOTLIN.regions,
+    highlightMap: FIBONACCI_KOTLIN.highlightMap,
+    source: FIBONACCI_KOTLIN.source,
   },
 };

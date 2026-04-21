@@ -40,6 +40,7 @@ import { GridTraceState } from '../../models/grid';
 import { MatrixTraceState } from '../../models/matrix';
 import { NetworkTraceState } from '../../models/network';
 import { SearchTraceState } from '../../models/search';
+import { SortTraceState } from '../../models/sort-trace';
 import { StringTraceState } from '../../models/string';
 import { ClosestPairTracePanel } from '../closest-pair-trace-panel/closest-pair-trace-panel';
 import { CodePanel } from '../code-panel/code-panel';
@@ -57,6 +58,7 @@ import { MatrixTracePanel } from '../matrix-trace-panel/matrix-trace-panel';
 import { MinkowskiSumTracePanel } from '../minkowski-sum-trace-panel/minkowski-sum-trace-panel';
 import { NetworkTracePanel } from '../network-trace-panel/network-trace-panel';
 import { SearchTracePanel } from '../search-trace-panel/search-trace-panel';
+import { SortTracePanel } from '../sort-trace-panel/sort-trace-panel';
 import { StringTracePanel } from '../string-trace-panel/string-trace-panel';
 import { SweepLineTracePanel } from '../sweep-line-trace-panel/sweep-line-trace-panel';
 import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
@@ -103,6 +105,7 @@ const MAX_WIDTH = 680;
     MinkowskiSumTracePanel,
     NetworkTracePanel,
     SearchTracePanel,
+    SortTracePanel,
     StringTracePanel,
     SweepLineTracePanel,
     NgTemplateOutlet,
@@ -126,6 +129,7 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly matrixState = input<MatrixTraceState | null>(null);
   readonly networkState = input<NetworkTraceState | null>(null);
   readonly searchState = input<SearchTraceState | null>(null);
+  readonly sortState = input<SortTraceState | null>(null);
   readonly stringState = input<StringTraceState | null>(null);
   readonly geometryState = input<GeometryStepState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
@@ -141,6 +145,7 @@ export class SidePanel implements OnInit, OnDestroy {
     this.matrixState() ||
     this.networkState() ||
     this.searchState() ||
+    this.sortState() ||
     this.geometryState() ||
     this.stringState()
       ? [TRACE_TAB, ...BASE_SIDE_TABS]
@@ -207,6 +212,7 @@ export class SidePanel implements OnInit, OnDestroy {
         this.matrixState() !== null ||
         this.networkState() !== null ||
         this.searchState() !== null ||
+        this.sortState() !== null ||
         this.stringState() !== null ||
         this.geometryState() !== null;
 

@@ -1,0 +1,311 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.trace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  container-type: inline-size;
+  gap: 10px;
+}
+
+.trace__header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ============================================================ */
+/* Algorithm hint — one-shot teaching card at the top            */
+/* ============================================================ */
+.trace__hint {
+  --segmented-panel-section-gap: 6px;
+  --segmented-panel-section-padding: 12px 14px 13px;
+  border-color: rgb(var(--accent-rgb) / 0.18);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.05), rgb(var(--accent-rgb) / 0.015)),
+    rgba(255, 255, 255, 0.012);
+}
+
+.trace__hint-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+
+.trace__hint-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgb(var(--accent-rgb) / 0.14);
+  color: var(--accent-strong);
+  font-size: 13px;
+  border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
+  box-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.14);
+}
+
+.trace__hint-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.trace__hint-idea {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.trace__hint-watch {
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================ */
+/* Facts row — four equal summary cells with subtle dividers    */
+/* ============================================================ */
+.trace__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  --segmented-panel-section-gap: 7px;
+  --segmented-panel-section-padding: 11px 12px 12px;
+}
+
+.trace__facts app-segmented-panel-section {
+  position: relative;
+}
+
+.trace__facts app-segmented-panel-section:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================================ */
+/* Calculation panel — phase-tinted decision card                */
+/* ============================================================ */
+.trace__calc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  --segmented-panel-section-gap: 6px;
+  --segmented-panel-section-padding: 11px 12px 12px;
+  transition:
+    border-color var(--duration-base) var(--ease-soft),
+    background var(--duration-base) var(--ease-soft);
+}
+
+.trace__calc app-segmented-panel-section {
+  position: relative;
+}
+
+.trace__calc app-segmented-panel-section:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Tone-driven border/background on the decision card, matching the
+   phase pill. Subtle so the text stays legible. */
+.trace[data-tone='compare'] .trace__calc {
+  border-color: rgb(var(--viz-warning-rgb) / 0.22);
+  background: rgb(var(--viz-warning-rgb) / 0.04);
+}
+
+.trace[data-tone='swap'] .trace__calc {
+  border-color: rgb(var(--viz-danger-rgb) / 0.22);
+  background: rgb(var(--viz-danger-rgb) / 0.04);
+}
+
+.trace[data-tone='settle'] .trace__calc {
+  border-color: rgb(var(--viz-route-rgb) / 0.22);
+  background: rgb(var(--viz-route-rgb) / 0.04);
+}
+
+.trace[data-tone='distribute'] .trace__calc {
+  border-color: rgb(var(--viz-window-rgb) / 0.22);
+  background: rgb(var(--viz-window-rgb) / 0.04);
+}
+
+.trace[data-tone='complete'] .trace__calc {
+  border-color: rgb(var(--viz-success-rgb) / 0.24);
+  background: rgb(var(--viz-success-rgb) / 0.05);
+}
+
+.trace__calc-expression {
+  min-height: 26px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.trace__calc-note {
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================ */
+/* Bucket stream — radix / bucket-sort distribution              */
+/* ============================================================ */
+.trace__streams {
+  display: grid;
+  grid-template-columns: 1fr;
+  --segmented-panel-section-padding: 10px 12px 11px;
+}
+
+.trace__stream-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.trace__stream-chip {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgb(var(--viz-window-rgb) / 0.14);
+  color: var(--viz-window-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
+}
+
+.trace__stream-chip--active {
+  background: rgb(var(--viz-success-rgb) / 0.18);
+  color: var(--viz-success-ink);
+  box-shadow: 0 0 12px rgb(var(--viz-success-rgb) / 0.3);
+}
+
+/* ============================================================ */
+/* Table wrapper                                                 */
+/* ============================================================ */
+.trace__table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.trace__empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.trace__empty-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--viz-warning-rgb) / 0.5);
+  box-shadow: 0 0 8px rgb(var(--viz-warning-rgb) / 0.3);
+}
+
+/* ============================================================ */
+/* Responsive — narrow side panels                               */
+/* ============================================================ */
+@container (max-width: 560px) {
+  .trace__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trace__facts app-segmented-panel-section {
+    &::before {
+      display: none;
+    }
+
+    &:nth-child(odd)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &:nth-child(n + 3)::before {
+      display: block;
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 0;
+      height: 1px;
+      width: auto;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .trace__calc {
+    grid-template-columns: 1fr;
+  }
+
+  .trace__calc app-segmented-panel-section:not(:first-child)::before {
+    display: none;
+  }
+
+  .trace__calc app-segmented-panel-section:not(:first-child)::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+@container (max-width: 430px) {
+  .trace__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .trace__facts app-segmented-panel-section {
+    &::after {
+      display: none !important;
+    }
+
+    &:nth-child(n + 2)::before {
+      display: block;
+      content: '';
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 0;
+      height: 1px;
+      width: auto;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+}

@@ -552,6 +552,420 @@ const CLOSEST_PAIR_CPP = buildStructuredCode(
   'cpp',
 );
 
+const CLOSEST_PAIR_JS = buildStructuredCode(
+  `
+  //@step 1
+  function closestPair(points) {
+    if (points.length < 2) {
+      return null;
+    }
+
+    //@step 2
+    const sortedByX = [...points].sort((left, right) => left.x - right.x || left.y - right.y);
+    const sortedByY = [...points].sort((left, right) => left.y - right.y || left.x - right.x);
+
+    function solve(px, py) {
+      //@step 6
+      if (px.length <= 3) {
+        return bruteForce(px);
+      }
+
+      //@step 7
+      const mid = Math.floor(px.length / 2);
+      const leftPx = px.slice(0, mid);
+      const rightPx = px.slice(mid);
+      const splitX = px[mid].x;
+      const leftSet = new Set(leftPx);
+      const leftPy = py.filter((point) => leftSet.has(point));
+      const rightPy = py.filter((point) => !leftSet.has(point));
+
+      //@step 8
+      let best = minPair(solve(leftPx, leftPy), solve(rightPx, rightPy));
+      if (!best) {
+        return null;
+      }
+
+      //@step 9
+      const strip = py.filter((point) => Math.abs(point.x - splitX) < best.distance);
+
+      for (let i = 0; i < strip.length; i += 1) {
+        //@step 10
+        for (let j = i + 1; j < strip.length && j <= i + 7 && strip[j].y - strip[i].y < best.distance; j += 1) {
+          best = minPair(best, pairOf(strip[i], strip[j]));
+        }
+      }
+
+      return best;
+    }
+
+    //@step 11
+    return solve(sortedByX, sortedByY);
+  }
+  `,
+  'javascript',
+);
+
+const CLOSEST_PAIR_GO = buildStructuredCode(
+  `
+  package geometry
+
+  import (
+      "math"
+      "sort"
+  )
+
+  type Point struct {
+      X float64
+      Y float64
+  }
+
+  type PairResult struct {
+      Left     Point
+      Right    Point
+      Distance float64
+  }
+
+  //@step 1
+  func ClosestPair(points []Point) *PairResult {
+      if len(points) < 2 {
+          return nil
+      }
+
+      //@step 2
+      sortedByX := append([]Point{}, points...)
+      sortedByY := append([]Point{}, points...)
+      sort.Slice(sortedByX, func(i, j int) bool { return sortedByX[i].X < sortedByX[j].X || sortedByX[i].X == sortedByX[j].X && sortedByX[i].Y < sortedByX[j].Y })
+      sort.Slice(sortedByY, func(i, j int) bool { return sortedByY[i].Y < sortedByY[j].Y || sortedByY[i].Y == sortedByY[j].Y && sortedByY[i].X < sortedByY[j].X })
+
+      var solve func([]Point, []Point) *PairResult
+      solve = func(px []Point, py []Point) *PairResult {
+          //@step 6
+          if len(px) <= 3 {
+              return bruteForce(px)
+          }
+
+          //@step 7
+          mid := len(px) / 2
+          leftPx, rightPx := px[:mid], px[mid:]
+          splitX := px[mid].X
+          leftSet := map[[2]float64]bool{}
+          for _, point := range leftPx {
+              leftSet[[2]float64{point.X, point.Y}] = true
+          }
+          leftPy := make([]Point, 0)
+          rightPy := make([]Point, 0)
+          for _, point := range py {
+              if leftSet[[2]float64{point.X, point.Y}] {
+                  leftPy = append(leftPy, point)
+              } else {
+                  rightPy = append(rightPy, point)
+              }
+          }
+
+          //@step 8
+          best := minPair(solve(leftPx, leftPy), solve(rightPx, rightPy))
+          if best == nil {
+              return nil
+          }
+
+          //@step 9
+          strip := make([]Point, 0)
+          for _, point := range py {
+              if math.Abs(point.X-splitX) < best.Distance {
+                  strip = append(strip, point)
+              }
+          }
+
+          for i := 0; i < len(strip); i++ {
+              //@step 10
+              for j := i + 1; j < len(strip) && j <= i+7 && strip[j].Y-strip[i].Y < best.Distance; j++ {
+                  best = minPair(best, pairOf(strip[i], strip[j]))
+              }
+          }
+
+          return best
+      }
+
+      //@step 11
+      return solve(sortedByX, sortedByY)
+  }
+  `,
+  'go',
+);
+
+const CLOSEST_PAIR_RUST = buildStructuredCode(
+  `
+  #[derive(Clone, Copy, PartialEq)]
+  struct Point {
+      x: f64,
+      y: f64,
+  }
+
+  #[derive(Clone, Copy)]
+  struct PairResult {
+      pair: (Point, Point),
+      distance: f64,
+  }
+
+  //@step 1
+  fn closest_pair(points: &[Point]) -> Option<PairResult> {
+      if points.len() < 2 {
+          return None;
+      }
+
+      //@step 2
+      let mut sorted_by_x = points.to_vec();
+      sorted_by_x.sort_by(|left, right| left.x.total_cmp(&right.x).then(left.y.total_cmp(&right.y)));
+      let mut sorted_by_y = points.to_vec();
+      sorted_by_y.sort_by(|left, right| left.y.total_cmp(&right.y).then(left.x.total_cmp(&right.x)));
+
+      fn solve(px: &[Point], py: &[Point]) -> Option<PairResult> {
+          //@step 6
+          if px.len() <= 3 {
+              return brute_force(px);
+          }
+
+          //@step 7
+          let mid = px.len() / 2;
+          let (left_px, right_px) = px.split_at(mid);
+          let split_x = px[mid].x;
+          let left_set: std::collections::HashSet<(u64, u64)> =
+              left_px.iter().map(|point| (point.x.to_bits(), point.y.to_bits())).collect();
+          let left_py: Vec<Point> = py
+              .iter()
+              .copied()
+              .filter(|point| left_set.contains(&(point.x.to_bits(), point.y.to_bits())))
+              .collect();
+          let right_py: Vec<Point> = py
+              .iter()
+              .copied()
+              .filter(|point| !left_set.contains(&(point.x.to_bits(), point.y.to_bits())))
+              .collect();
+
+          //@step 8
+          let mut best = min_pair(solve(left_px, &left_py), solve(right_px, &right_py))?;
+
+          //@step 9
+          let strip: Vec<Point> = py
+              .iter()
+              .copied()
+              .filter(|point| (point.x - split_x).abs() < best.distance)
+              .collect();
+
+          for i in 0..strip.len() {
+              //@step 10
+              for j in (i + 1)..strip.len().min(i + 8) {
+                  if strip[j].y - strip[i].y >= best.distance {
+                      break;
+                  }
+                  best = min_pair(Some(best), Some(pair_of(strip[i], strip[j]))).unwrap();
+              }
+          }
+
+          Some(best)
+      }
+
+      //@step 11
+      solve(&sorted_by_x, &sorted_by_y)
+  }
+  `,
+  'rust',
+);
+
+const CLOSEST_PAIR_SWIFT = buildStructuredCode(
+  `
+  struct Point: Hashable {
+      let x: Double
+      let y: Double
+  }
+
+  struct PairResult {
+      let pair: (Point, Point)
+      let distance: Double
+  }
+
+  //@step 1
+  func closestPair(_ points: [Point]) -> PairResult? {
+      if points.count < 2 {
+          return nil
+      }
+
+      //@step 2
+      let sortedByX = points.sorted { $0.x == $1.x ? $0.y < $1.y : $0.x < $1.x }
+      let sortedByY = points.sorted { $0.y == $1.y ? $0.x < $1.x : $0.y < $1.y }
+
+      func solve(_ px: [Point], _ py: [Point]) -> PairResult? {
+          //@step 6
+          if px.count <= 3 {
+              return bruteForce(px)
+          }
+
+          //@step 7
+          let mid = px.count / 2
+          let leftPx = Array(px[..<mid])
+          let rightPx = Array(px[mid...])
+          let splitX = px[mid].x
+          let leftSet = Set(leftPx)
+          let leftPy = py.filter(leftSet.contains)
+          let rightPy = py.filter { !leftSet.contains($0) }
+
+          //@step 8
+          guard var best = minPair(solve(leftPx, leftPy), solve(rightPx, rightPy)) else {
+              return nil
+          }
+
+          //@step 9
+          let strip = py.filter { abs($0.x - splitX) < best.distance }
+
+          for i in strip.indices {
+              //@step 10
+              for j in (i + 1)..<min(strip.count, i + 8) {
+                  if strip[j].y - strip[i].y >= best.distance {
+                      break
+                  }
+                  best = minPair(best, pairOf(strip[i], strip[j]))!
+              }
+          }
+
+          return best
+      }
+
+      //@step 11
+      return solve(sortedByX, sortedByY)
+  }
+  `,
+  'swift',
+);
+
+const CLOSEST_PAIR_PHP = buildStructuredCode(
+  `
+  final class Point
+  {
+      public function __construct(public float $x, public float $y) {}
+  }
+
+  final class PairResult
+  {
+      public function __construct(
+          public Point $left,
+          public Point $right,
+          public float $distance,
+      ) {}
+  }
+
+  //@step 1
+  function closestPair(array $points): ?PairResult
+  {
+      if (count($points) < 2) {
+          return null;
+      }
+
+      //@step 2
+      $sortedByX = $points;
+      usort($sortedByX, fn (Point $left, Point $right): int => [$left->x, $left->y] <=> [$right->x, $right->y]);
+      $sortedByY = $points;
+      usort($sortedByY, fn (Point $left, Point $right): int => [$left->y, $left->x] <=> [$right->y, $right->x]);
+
+      $solve = function (array $px, array $py) use (&$solve): ?PairResult {
+          //@step 6
+          if (count($px) <= 3) {
+              return bruteForce($px);
+          }
+
+          //@step 7
+          $mid = intdiv(count($px), 2);
+          $leftPx = array_slice($px, 0, $mid);
+          $rightPx = array_slice($px, $mid);
+          $splitX = $px[$mid]->x;
+          $leftSet = [];
+          foreach ($leftPx as $point) {
+              $leftSet[spl_object_id($point)] = true;
+          }
+          $leftPy = array_values(array_filter($py, fn (Point $point): bool => isset($leftSet[spl_object_id($point)])));
+          $rightPy = array_values(array_filter($py, fn (Point $point): bool => !isset($leftSet[spl_object_id($point)])));
+
+          //@step 8
+          $best = minPair($solve($leftPx, $leftPy), $solve($rightPx, $rightPy));
+          if ($best === null) {
+              return null;
+          }
+
+          //@step 9
+          $strip = array_values(array_filter($py, fn (Point $point): bool => abs($point->x - $splitX) < $best->distance));
+
+          for ($i = 0; $i < count($strip); $i += 1) {
+              //@step 10
+              for ($j = $i + 1; $j < count($strip) && $j <= $i + 7 && $strip[$j]->y - $strip[$i]->y < $best->distance; $j += 1) {
+                  $best = minPair($best, pairOf($strip[$i], $strip[$j]));
+              }
+          }
+
+          return $best;
+      };
+
+      //@step 11
+      return $solve($sortedByX, $sortedByY);
+  }
+  `,
+  'php',
+);
+
+const CLOSEST_PAIR_KOTLIN = buildStructuredCode(
+  `
+  data class Point(val x: Double, val y: Double)
+  data class PairResult(val pair: Pair<Point, Point>, val distance: Double)
+
+  //@step 1
+  fun closestPair(points: List<Point>): PairResult? {
+      if (points.size < 2) {
+          return null
+      }
+
+      //@step 2
+      val sortedByX = points.sortedWith(compareBy<Point> { it.x }.thenBy { it.y })
+      val sortedByY = points.sortedWith(compareBy<Point> { it.y }.thenBy { it.x })
+
+      fun solve(px: List<Point>, py: List<Point>): PairResult? {
+          //@step 6
+          if (px.size <= 3) {
+              return bruteForce(px)
+          }
+
+          //@step 7
+          val mid = px.size / 2
+          val leftPx = px.take(mid)
+          val rightPx = px.drop(mid)
+          val splitX = px[mid].x
+          val leftSet = leftPx.toSet()
+          val leftPy = py.filter(leftSet::contains)
+          val rightPy = py.filterNot(leftSet::contains)
+
+          //@step 8
+          var best = minPair(solve(leftPx, leftPy), solve(rightPx, rightPy)) ?: return null
+
+          //@step 9
+          val strip = py.filter { kotlin.math.abs(it.x - splitX) < best.distance }
+
+          for (i in strip.indices) {
+              //@step 10
+              for (j in i + 1 until minOf(strip.size, i + 8)) {
+                  if (strip[j].y - strip[i].y >= best.distance) {
+                      break
+                  }
+                  best = minPair(best, pairOf(strip[i], strip[j]))!!
+              }
+          }
+
+          return best
+      }
+
+      //@step 11
+      return solve(sortedByX, sortedByY)
+  }
+  `,
+  'kotlin',
+);
+
 export const CLOSEST_PAIR_OF_POINTS_CODE = CLOSEST_PAIR_TS.lines;
 export const CLOSEST_PAIR_OF_POINTS_CODE_REGIONS = CLOSEST_PAIR_TS.regions;
 export const CLOSEST_PAIR_OF_POINTS_CODE_HIGHLIGHT_MAP = CLOSEST_PAIR_TS.highlightMap;
@@ -562,6 +976,13 @@ export const CLOSEST_PAIR_OF_POINTS_CODE_VARIANTS: CodeVariantMap = {
     regions: CLOSEST_PAIR_TS.regions,
     highlightMap: CLOSEST_PAIR_TS.highlightMap,
     source: CLOSEST_PAIR_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: CLOSEST_PAIR_JS.lines,
+    regions: CLOSEST_PAIR_JS.regions,
+    highlightMap: CLOSEST_PAIR_JS.highlightMap,
+    source: CLOSEST_PAIR_JS.source,
   },
   python: {
     language: 'python',
@@ -590,5 +1011,40 @@ export const CLOSEST_PAIR_OF_POINTS_CODE_VARIANTS: CodeVariantMap = {
     regions: CLOSEST_PAIR_CPP.regions,
     highlightMap: CLOSEST_PAIR_CPP.highlightMap,
     source: CLOSEST_PAIR_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: CLOSEST_PAIR_GO.lines,
+    regions: CLOSEST_PAIR_GO.regions,
+    highlightMap: CLOSEST_PAIR_GO.highlightMap,
+    source: CLOSEST_PAIR_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: CLOSEST_PAIR_RUST.lines,
+    regions: CLOSEST_PAIR_RUST.regions,
+    highlightMap: CLOSEST_PAIR_RUST.highlightMap,
+    source: CLOSEST_PAIR_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: CLOSEST_PAIR_SWIFT.lines,
+    regions: CLOSEST_PAIR_SWIFT.regions,
+    highlightMap: CLOSEST_PAIR_SWIFT.highlightMap,
+    source: CLOSEST_PAIR_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: CLOSEST_PAIR_PHP.lines,
+    regions: CLOSEST_PAIR_PHP.regions,
+    highlightMap: CLOSEST_PAIR_PHP.highlightMap,
+    source: CLOSEST_PAIR_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: CLOSEST_PAIR_KOTLIN.lines,
+    regions: CLOSEST_PAIR_KOTLIN.regions,
+    highlightMap: CLOSEST_PAIR_KOTLIN.highlightMap,
+    source: CLOSEST_PAIR_KOTLIN.source,
   },
 };

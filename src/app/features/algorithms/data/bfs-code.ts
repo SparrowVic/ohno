@@ -81,6 +81,75 @@ const BFS_TS = buildStructuredCode(`
   //#endregion build-adjacency
 `);
 
+const BFS_JS = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  /**
+   * @typedef {{ id: string }} GraphNode
+   * @typedef {{ from: string, to: string }} GraphEdge
+   * @typedef {{ nodes: GraphNode[], edges: GraphEdge[] }} GraphData
+   */
+  //#endregion graph-types
+
+  /**
+   * Traverse a graph in breadth-first order.
+   * Input: directed graph and a source node id.
+   * Returns: BFS level map and visitation order.
+   */
+  //#region bfs function open
+  //@step 2
+  function bfs(graph, source) {
+      const adjacency = buildAdjacency(graph);
+      const queue = [source];
+      const visited = new Set([source]);
+      const level = new Map([[source, 0]]);
+      const order = [];
+
+      while (queue.length > 0) {
+          //@step 6
+          const current = queue.shift();
+
+          //@step 7
+          for (const neighbor of adjacency.get(current) ?? []) {
+              //@step 8
+              if (visited.has(neighbor)) {
+                  continue;
+              }
+
+              visited.add(neighbor);
+
+              //@step 10
+              level.set(neighbor, (level.get(current) ?? 0) + 1);
+              queue.push(neighbor);
+          }
+
+          //@step 13
+          order.push(current);
+      }
+
+      return { level, order };
+  }
+  //#endregion bfs
+
+  //#region build-adjacency helper collapsed
+  function buildAdjacency(graph) {
+      const adjacency = new Map();
+
+      for (const node of graph.nodes) {
+          adjacency.set(node.id, []);
+      }
+
+      for (const edge of graph.edges) {
+          adjacency.get(edge.from)?.push(edge.to);
+      }
+
+      return adjacency;
+  }
+  //#endregion build-adjacency
+  `,
+  'javascript',
+);
+
 const BFS_PY = buildStructuredCode(
   `
   from collections import deque
@@ -419,6 +488,439 @@ const BFS_CPP = buildStructuredCode(
   'cpp',
 );
 
+const BFS_GO = buildStructuredCode(
+  `
+  package graphs
+
+  //#region graph-types interface collapsed
+  type GraphNode struct {
+      ID string
+  }
+
+  type GraphEdge struct {
+      From string
+      To   string
+  }
+
+  type GraphData struct {
+      Nodes []GraphNode
+      Edges []GraphEdge
+  }
+
+  type BfsResult struct {
+      Level map[string]int
+      Order []string
+  }
+  //#endregion graph-types
+
+  /**
+   * Traverses a graph in breadth-first order.
+   * Input: directed graph and a source node id.
+   * Returns: BFS level map and visitation order.
+   */
+  //#region bfs function open
+  //@step 2
+  func Bfs(graph GraphData, source string) BfsResult {
+      adjacency := buildAdjacency(graph)
+      queue := []string{source}
+      visited := map[string]struct{}{source: {}}
+      level := map[string]int{source: 0}
+      order := []string{}
+
+      for len(queue) > 0 {
+          //@step 6
+          current := queue[0]
+          queue = queue[1:]
+
+          //@step 7
+          for _, neighbor := range adjacency[current] {
+              //@step 8
+              if _, seen := visited[neighbor]; seen {
+                  continue
+              }
+
+              visited[neighbor] = struct{}{}
+
+              //@step 10
+              level[neighbor] = level[current] + 1
+              queue = append(queue, neighbor)
+          }
+
+          //@step 13
+          order = append(order, current)
+      }
+
+      return BfsResult{Level: level, Order: order}
+  }
+  //#endregion bfs
+
+  //#region build-adjacency helper collapsed
+  func buildAdjacency(graph GraphData) map[string][]string {
+      adjacency := make(map[string][]string)
+
+      for _, node := range graph.Nodes {
+          adjacency[node.ID] = []string{}
+      }
+
+      for _, edge := range graph.Edges {
+          adjacency[edge.From] = append(adjacency[edge.From], edge.To)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'go',
+);
+
+const BFS_RUST = buildStructuredCode(
+  `
+  use std::collections::{HashMap, HashSet, VecDeque};
+
+  //#region graph-types interface collapsed
+  #[derive(Clone)]
+  struct GraphNode {
+      id: String,
+  }
+
+  #[derive(Clone)]
+  struct GraphEdge {
+      from: String,
+      to: String,
+  }
+
+  struct GraphData {
+      nodes: Vec<GraphNode>,
+      edges: Vec<GraphEdge>,
+  }
+
+  struct BfsResult {
+      level: HashMap<String, i32>,
+      order: Vec<String>,
+  }
+  //#endregion graph-types
+
+  /**
+   * Traverses a graph in breadth-first order.
+   * Input: directed graph and a source node id.
+   * Returns: BFS level map and visitation order.
+   */
+  //#region bfs function open
+  //@step 2
+  fn bfs(graph: &GraphData, source: &str) -> BfsResult {
+      let adjacency = build_adjacency(graph);
+      let mut queue = VecDeque::from([source.to_string()]);
+      let mut visited = HashSet::from([source.to_string()]);
+      let mut level = HashMap::from([(source.to_string(), 0)]);
+      let mut order = Vec::new();
+
+      while !queue.is_empty() {
+          //@step 6
+          let current = queue.pop_front().unwrap();
+
+          //@step 7
+          for neighbor in adjacency.get(&current).cloned().unwrap_or_default() {
+              //@step 8
+              if visited.contains(&neighbor) {
+                  continue;
+              }
+
+              visited.insert(neighbor.clone());
+
+              //@step 10
+              level.insert(neighbor.clone(), level.get(&current).copied().unwrap_or(0) + 1);
+              queue.push_back(neighbor);
+          }
+
+          //@step 13
+          order.push(current);
+      }
+
+      BfsResult { level, order }
+  }
+  //#endregion bfs
+
+  //#region build-adjacency helper collapsed
+  fn build_adjacency(graph: &GraphData) -> HashMap<String, Vec<String>> {
+      let mut adjacency = HashMap::new();
+
+      for node in &graph.nodes {
+          adjacency.insert(node.id.clone(), Vec::new());
+      }
+
+      for edge in &graph.edges {
+          adjacency.entry(edge.from.clone()).or_insert_with(Vec::new).push(edge.to.clone());
+      }
+
+      adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'rust',
+);
+
+const BFS_SWIFT = buildStructuredCode(
+  `
+  import Foundation
+
+  //#region graph-types interface collapsed
+  struct GraphNode {
+      let id: String
+  }
+
+  struct GraphEdge {
+      let from: String
+      let to: String
+  }
+
+  struct GraphData {
+      let nodes: [GraphNode]
+      let edges: [GraphEdge]
+  }
+
+  struct BfsResult {
+      let level: [String: Int]
+      let order: [String]
+  }
+  //#endregion graph-types
+
+  /**
+   * Traverses a graph in breadth-first order.
+   * Input: directed graph and a source node id.
+   * Returns: BFS level map and visitation order.
+   */
+  //#region bfs function open
+  //@step 2
+  func bfs(graph: GraphData, source: String) -> BfsResult {
+      let adjacency = buildAdjacency(graph: graph)
+      var queue = [source]
+      var visited: Set<String> = [source]
+      var level = [source: 0]
+      var order: [String] = []
+
+      while !queue.isEmpty {
+          //@step 6
+          let current = queue.removeFirst()
+
+          //@step 7
+          for neighbor in adjacency[current] ?? [] {
+              //@step 8
+              if visited.contains(neighbor) {
+                  continue
+              }
+
+              visited.insert(neighbor)
+
+              //@step 10
+              level[neighbor] = (level[current] ?? 0) + 1
+              queue.append(neighbor)
+          }
+
+          //@step 13
+          order.append(current)
+      }
+
+      return BfsResult(level: level, order: order)
+  }
+  //#endregion bfs
+
+  //#region build-adjacency helper collapsed
+  func buildAdjacency(graph: GraphData) -> [String: [String]] {
+      var adjacency: [String: [String]] = [:]
+
+      for node in graph.nodes {
+          adjacency[node.id] = []
+      }
+
+      for edge in graph.edges {
+          adjacency[edge.from, default: []].append(edge.to)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'swift',
+);
+
+const BFS_PHP = buildStructuredCode(
+  `
+  <?php
+
+  //#region graph-types interface collapsed
+  final class GraphNode
+  {
+      public function __construct(public string $id) {}
+  }
+
+  final class GraphEdge
+  {
+      public function __construct(
+          public string $from,
+          public string $to,
+      ) {}
+  }
+
+  final class GraphData
+  {
+      /**
+       * @param list<GraphNode> $nodes
+       * @param list<GraphEdge> $edges
+       */
+      public function __construct(
+          public array $nodes,
+          public array $edges,
+      ) {}
+  }
+  //#endregion graph-types
+
+  /**
+   * Traverses a graph in breadth-first order.
+   * Input: directed graph and a source node id.
+   * Returns: BFS level map and visitation order.
+   *
+   * @return array{
+   *   level: array<string, int>,
+   *   order: list<string>
+   * }
+   */
+  //#region bfs function open
+  //@step 2
+  function bfs(GraphData $graph, string $source): array
+  {
+      $adjacency = buildAdjacency($graph);
+      $queue = [$source];
+      $visited = [$source => true];
+      $level = [$source => 0];
+      $order = [];
+
+      while ($queue !== []) {
+          //@step 6
+          $current = array_shift($queue);
+
+          //@step 7
+          foreach ($adjacency[$current] ?? [] as $neighbor) {
+              //@step 8
+              if (isset($visited[$neighbor])) {
+                  continue;
+              }
+
+              $visited[$neighbor] = true;
+
+              //@step 10
+              $level[$neighbor] = ($level[$current] ?? 0) + 1;
+              $queue[] = $neighbor;
+          }
+
+          //@step 13
+          $order[] = $current;
+      }
+
+      return ['level' => $level, 'order' => $order];
+  }
+  //#endregion bfs
+
+  //#region build-adjacency helper collapsed
+  function buildAdjacency(GraphData $graph): array
+  {
+      $adjacency = [];
+
+      foreach ($graph->nodes as $node) {
+          $adjacency[$node->id] = [];
+      }
+
+      foreach ($graph->edges as $edge) {
+          $adjacency[$edge->from][] = $edge->to;
+      }
+
+      return $adjacency;
+  }
+  //#endregion build-adjacency
+  `,
+  'php',
+);
+
+const BFS_KOTLIN = buildStructuredCode(
+  `
+  //#region graph-types interface collapsed
+  data class GraphNode(val id: String)
+
+  data class GraphEdge(
+      val from: String,
+      val to: String,
+  )
+
+  data class GraphData(
+      val nodes: List<GraphNode>,
+      val edges: List<GraphEdge>,
+  )
+
+  data class BfsResult(
+      val level: Map<String, Int>,
+      val order: List<String>,
+  )
+  //#endregion graph-types
+
+  /**
+   * Traverses a graph in breadth-first order.
+   * Input: directed graph and a source node id.
+   * Returns: BFS level map and visitation order.
+   */
+  //#region bfs function open
+  //@step 2
+  fun bfs(graph: GraphData, source: String): BfsResult {
+      val adjacency = buildAdjacency(graph)
+      val queue = ArrayDeque<String>()
+      queue.addLast(source)
+      val visited = mutableSetOf(source)
+      val level = mutableMapOf(source to 0)
+      val order = mutableListOf<String>()
+
+      while (queue.isNotEmpty()) {
+          //@step 6
+          val current = queue.removeFirst()
+
+          //@step 7
+          for (neighbor in adjacency[current].orEmpty()) {
+              //@step 8
+              if (neighbor in visited) {
+                  continue
+              }
+
+              visited += neighbor
+
+              //@step 10
+              level[neighbor] = (level[current] ?: 0) + 1
+              queue.addLast(neighbor)
+          }
+
+          //@step 13
+          order += current
+      }
+
+      return BfsResult(level, order)
+  }
+  //#endregion bfs
+
+  //#region build-adjacency helper collapsed
+  fun buildAdjacency(graph: GraphData): MutableMap<String, MutableList<String>> {
+      val adjacency = mutableMapOf<String, MutableList<String>>()
+
+      for (node in graph.nodes) {
+          adjacency[node.id] = mutableListOf()
+      }
+
+      for (edge in graph.edges) {
+          adjacency.getOrPut(edge.from) { mutableListOf() }.add(edge.to)
+      }
+
+      return adjacency
+  }
+  //#endregion build-adjacency
+  `,
+  'kotlin',
+);
+
 export const BFS_CODE = BFS_TS.lines;
 export const BFS_CODE_REGIONS = BFS_TS.regions;
 export const BFS_CODE_HIGHLIGHT_MAP = BFS_TS.highlightMap;
@@ -429,6 +931,13 @@ export const BFS_CODE_VARIANTS: CodeVariantMap = {
     regions: BFS_TS.regions,
     highlightMap: BFS_TS.highlightMap,
     source: BFS_TS.source,
+  },
+  javascript: {
+    language: 'javascript',
+    lines: BFS_JS.lines,
+    regions: BFS_JS.regions,
+    highlightMap: BFS_JS.highlightMap,
+    source: BFS_JS.source,
   },
   python: {
     language: 'python',
@@ -457,5 +966,40 @@ export const BFS_CODE_VARIANTS: CodeVariantMap = {
     regions: BFS_CPP.regions,
     highlightMap: BFS_CPP.highlightMap,
     source: BFS_CPP.source,
+  },
+  go: {
+    language: 'go',
+    lines: BFS_GO.lines,
+    regions: BFS_GO.regions,
+    highlightMap: BFS_GO.highlightMap,
+    source: BFS_GO.source,
+  },
+  rust: {
+    language: 'rust',
+    lines: BFS_RUST.lines,
+    regions: BFS_RUST.regions,
+    highlightMap: BFS_RUST.highlightMap,
+    source: BFS_RUST.source,
+  },
+  swift: {
+    language: 'swift',
+    lines: BFS_SWIFT.lines,
+    regions: BFS_SWIFT.regions,
+    highlightMap: BFS_SWIFT.highlightMap,
+    source: BFS_SWIFT.source,
+  },
+  php: {
+    language: 'php',
+    lines: BFS_PHP.lines,
+    regions: BFS_PHP.regions,
+    highlightMap: BFS_PHP.highlightMap,
+    source: BFS_PHP.source,
+  },
+  kotlin: {
+    language: 'kotlin',
+    lines: BFS_KOTLIN.lines,
+    regions: BFS_KOTLIN.regions,
+    highlightMap: BFS_KOTLIN.highlightMap,
+    source: BFS_KOTLIN.source,
   },
 };
