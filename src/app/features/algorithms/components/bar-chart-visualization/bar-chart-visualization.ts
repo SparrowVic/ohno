@@ -29,23 +29,63 @@ interface Bar {
   group: SVGGElement;
   shadow: SVGEllipseElement;
   rect: SVGRectElement;
-  sheen: SVGRectElement;
-  cap: SVGRectElement;
   text: SVGTextElement;
-}
-
-interface GradientStop {
-  readonly offset: string;
-  readonly color: string;
 }
 
 type BarState = 'default' | 'comparing' | 'swapping' | 'sorted';
 
+interface StateStyle {
+  readonly fill: string;
+  readonly stroke: string;
+  readonly textFill: string;
+  readonly textOpacity: number;
+  readonly shadowFill: string;
+  readonly shadowOpacity: number;
+}
+
+/** Single source of truth for each visual state. Each bar is a SOLID
+ *  fill + thin stroke — no vertical gradient, no sheen, no top cap.
+ *  Colors alias directly onto the app's identity palette so the
+ *  sorting scene reads as the same UI (cyan = attending,
+ *  pink = acting, lime = done). */
+const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
+  default: {
+    fill: 'rgb(var(--viz-state-default-rgb) / 0.72)',
+    stroke: 'rgb(var(--viz-state-default-rgb) / 0.88)',
+    textFill: 'var(--text-primary)',
+    textOpacity: 0.82,
+    shadowFill: 'rgba(2, 6, 23, 0.48)',
+    shadowOpacity: 0.36,
+  },
+  comparing: {
+    fill: 'rgb(var(--viz-state-compare-rgb) / 0.92)',
+    stroke: 'var(--viz-state-compare)',
+    textFill: 'var(--viz-state-compare)',
+    textOpacity: 1,
+    shadowFill: 'var(--viz-state-compare)',
+    shadowOpacity: 0.22,
+  },
+  swapping: {
+    fill: 'rgb(var(--viz-state-swap-rgb) / 0.92)',
+    stroke: 'var(--viz-state-swap)',
+    textFill: 'var(--viz-state-swap)',
+    textOpacity: 1,
+    shadowFill: 'var(--viz-state-swap)',
+    shadowOpacity: 0.24,
+  },
+  sorted: {
+    fill: 'rgb(var(--viz-state-sorted-rgb) / 0.92)',
+    stroke: 'var(--viz-state-sorted)',
+    textFill: 'var(--viz-state-sorted)',
+    textOpacity: 1,
+    shadowFill: 'var(--viz-state-sorted)',
+    shadowOpacity: 0.2,
+  },
+};
+
 const TOP_PADDING = 44;
 const BOTTOM_PADDING = 30;
 const MIN_BAR_WIDTH = 4;
-
-let nextChartId = 0;
 
 @Component({
   selector: 'app-bar-chart-visualization',
@@ -60,14 +100,10 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   readonly speed = input<number>(5);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
-  private readonly gradientNamespace = `bar-chart-${nextChartId++}`;
 
   private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
   private backdropGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private guideLinesGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null =
-    null;
   private barsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private floorGlow: SVGRectElement | null = null;
   private baselineLine: SVGLineElement | null = null;
   private bars: Bar[] = [];
   private width = 0;
@@ -105,19 +141,11 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       .attr('height', '100%')
       .attr('preserveAspectRatio', 'none');
 
-    const defs = this.svg.append('defs');
-    this.createDefs(defs);
-
     this.backdropGroup = this.svg.append('g').attr('pointer-events', 'none');
-    this.floorGlow = this.backdropGroup
-      .append('rect')
-      .attr('fill', `url(#${this.gradientId('floor-glow')})`)
-      .node() as SVGRectElement;
-    this.guideLinesGroup = this.backdropGroup.append('g').attr('pointer-events', 'none');
     this.baselineLine = this.backdropGroup
       .append('line')
-      .attr('stroke', 'rgba(255, 255, 255, 0.14)')
-      .attr('stroke-width', 1.25)
+      .attr('stroke', 'rgba(255, 255, 255, 0.08)')
+      .attr('stroke-width', 1)
       .attr('stroke-linecap', 'round')
       .node() as SVGLineElement;
 
@@ -187,9 +215,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     this.svg?.remove();
     this.svg = null;
     this.backdropGroup = null;
-    this.guideLinesGroup = null;
     this.barsGroup = null;
-    this.floorGlow = null;
     this.baselineLine = null;
     this.initialized = false;
     this.lastStep = null;
@@ -233,33 +259,20 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       .attr('opacity', 0.34)
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center');
+    const defaultStyle = BAR_STATE_STYLES.default;
     const rect = g
       .append('rect')
-      .attr('fill', this.fillForState('default'))
-      .attr('stroke', this.strokeForState('default'))
-      .attr('stroke-width', 1.15)
+      .attr('fill', defaultStyle.fill)
+      .attr('stroke', defaultStyle.stroke)
+      .attr('stroke-width', 1)
       .style('shape-rendering', 'geometricPrecision')
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center bottom');
-    const sheen = g
-      .append('rect')
-      .attr('fill', `url(#${this.gradientId('bar-sheen')})`)
-      .attr('opacity', this.sheenOpacityForState('default'))
-      .style('mix-blend-mode', 'screen')
-      .style('transform-box', 'fill-box')
-      .style('transform-origin', 'center top');
-    const cap = g
-      .append('rect')
-      .attr('fill', 'rgba(255, 255, 255, 0.28)')
-      .attr('opacity', this.capOpacityForState('default'))
-      .style('mix-blend-mode', 'screen')
-      .style('transform-box', 'fill-box')
-      .style('transform-origin', 'center top');
     const text = g
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--text-primary)')
-      .attr('opacity', this.textOpacityForState('default'))
+      .attr('fill', defaultStyle.textFill)
+      .attr('opacity', defaultStyle.textOpacity)
       .style('font-family', 'var(--font-mono)')
       .style('font-weight', '600')
       .style('letter-spacing', '0.02em')
@@ -278,8 +291,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       group: g.node() as SVGGElement,
       shadow: shadow.node() as SVGEllipseElement,
       rect: rect.node() as SVGRectElement,
-      sheen: sheen.node() as SVGRectElement,
-      cap: cap.node() as SVGRectElement,
       text: text.node() as SVGTextElement,
     };
   }
@@ -302,14 +313,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     const floorY = this.baselineY();
     const left = this.horizontalPadding();
     const right = Math.max(left, this.width - left);
-    const top = Math.max(18, TOP_PADDING - 14);
-
-    if (this.floorGlow) {
-      this.floorGlow.setAttribute('x', String(left));
-      this.floorGlow.setAttribute('y', String(floorY - 24));
-      this.floorGlow.setAttribute('width', String(Math.max(0, right - left)));
-      this.floorGlow.setAttribute('height', String(Math.max(42, this.height - floorY + 48)));
-    }
 
     if (this.baselineLine) {
       this.baselineLine.setAttribute('x1', String(left));
@@ -317,26 +320,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       this.baselineLine.setAttribute('y1', String(floorY + 1));
       this.baselineLine.setAttribute('y2', String(floorY + 1));
     }
-
-    const guideYs = [0.2, 0.45, 0.7].map((ratio) => top + (floorY - top) * ratio);
-    this.guideLinesGroup
-      ?.selectAll<SVGLineElement, number>('line')
-      .data(guideYs)
-      .join(
-        (enter) =>
-          enter
-            .append('line')
-            .attr('stroke', 'rgba(255, 255, 255, 0.06)')
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '4 10')
-            .attr('stroke-linecap', 'round'),
-        (update) => update,
-        (exit) => exit.remove(),
-      )
-      .attr('x1', left)
-      .attr('x2', right)
-      .attr('y1', (y) => y)
-      .attr('y2', (y) => y);
   }
 
   private horizontalPadding(): number {
@@ -393,10 +376,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     const barHeight = this.heightFor(bar.value);
     const y = floorY - barHeight;
     const radius = this.radiusFor(barWidth, barHeight);
-    const sheenX = Math.max(1, barWidth * 0.16);
-    const sheenWidth = Math.max(3, Math.min(barWidth * 0.42, barWidth - sheenX - 1));
-    const sheenHeight = Math.max(8, Math.min(barHeight * 0.48, 34));
-    const capHeight = Math.max(2, Math.min(8, barHeight * 0.055));
     const labelSize = clamp(barWidth * 0.42, 10, 14);
     const labelY = Math.max(labelSize + 6, y - 10);
     const shadowWidth = Math.max(10, barWidth * 0.72);
@@ -417,22 +396,6 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     bar.rect.setAttribute('rx', String(radius));
     bar.rect.setAttribute('ry', String(radius));
     bar.rect.removeAttribute('transform');
-
-    bar.sheen.setAttribute('x', String(sheenX));
-    bar.sheen.setAttribute('y', String(y + 2));
-    bar.sheen.setAttribute('width', String(sheenWidth));
-    bar.sheen.setAttribute('height', String(sheenHeight));
-    bar.sheen.setAttribute('rx', String(Math.max(2, radius * 0.72)));
-    bar.sheen.setAttribute('ry', String(Math.max(2, radius * 0.72)));
-    bar.sheen.removeAttribute('transform');
-
-    bar.cap.setAttribute('x', '1.5');
-    bar.cap.setAttribute('y', String(y + 2));
-    bar.cap.setAttribute('width', String(Math.max(0, barWidth - 3)));
-    bar.cap.setAttribute('height', String(capHeight));
-    bar.cap.setAttribute('rx', String(Math.max(1.5, capHeight / 2)));
-    bar.cap.setAttribute('ry', String(Math.max(1.5, capHeight / 2)));
-    bar.cap.removeAttribute('transform');
 
     bar.text.setAttribute('x', String(barWidth / 2));
     bar.text.setAttribute('y', String(labelY));
@@ -467,13 +430,10 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
           'transform',
           `translate(0, ${-y * 0.92}) scale(${shadowScaleX}, ${shadowScaleY})`,
         );
-        bar.sheen.setAttribute('opacity', String(0.42 + arc * 0.16));
-        bar.cap.setAttribute('opacity', String(0.48 + arc * 0.18));
       },
       onComplete: () => {
         target.setAttribute('transform', `translate(${toX}, 0)`);
         bar.shadow.removeAttribute('transform');
-        this.restoreOverlayOpacities(bar);
       },
     });
   }
@@ -496,15 +456,13 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   }
 
   private applyStateStyles(bar: Bar, state: BarState): void {
-    bar.rect.setAttribute('fill', this.fillForState(state));
-    bar.rect.setAttribute('stroke', this.strokeForState(state));
-    bar.rect.setAttribute('stroke-opacity', state === 'default' ? '0.82' : '1');
-    bar.text.setAttribute('fill', this.textFillForState(state));
-    bar.text.setAttribute('opacity', String(this.textOpacityForState(state)));
-    bar.shadow.setAttribute('fill', this.shadowFillForState(state));
-    bar.shadow.setAttribute('opacity', String(this.shadowOpacityForState(state)));
-    bar.sheen.setAttribute('opacity', String(this.sheenOpacityForState(state)));
-    bar.cap.setAttribute('opacity', String(this.capOpacityForState(state)));
+    const style = BAR_STATE_STYLES[state];
+    bar.rect.setAttribute('fill', style.fill);
+    bar.rect.setAttribute('stroke', style.stroke);
+    bar.text.setAttribute('fill', style.textFill);
+    bar.text.setAttribute('opacity', String(style.textOpacity));
+    bar.shadow.setAttribute('fill', style.shadowFill);
+    bar.shadow.setAttribute('opacity', String(style.shadowOpacity));
   }
 
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
@@ -532,33 +490,14 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       if (!bar) continue;
       pulseSvgElement(bar.rect, {
         duration: motion.compareMs,
-        scale: 1.06,
+        scale: 1.05,
         origin: 'center bottom',
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 18px var(--compare-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-      pulseSvgElement(bar.sheen, {
-        duration: motion.compareMs,
-        scale: 1.08,
-        opacity: [0.5, 0.88, 0.5],
-        origin: 'center top',
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 12px var(--compare-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
+        filter: glowFilter('var(--viz-state-compare)', 16),
       });
       pulseSvgElement(bar.text, {
         duration: motion.compareMs,
-        scale: 1.1,
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 10px var(--compare-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
+        scale: 1.08,
+        filter: glowFilter('var(--viz-state-compare)', 10),
       });
     }
   }
@@ -573,33 +512,13 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
         delay,
         scale: 1.04,
         origin: 'center bottom',
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 18px var(--sorted-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-      pulseSvgElement(bar.sheen, {
-        duration: motion.settleMs,
-        delay,
-        scale: 1.06,
-        opacity: [0.46, 0.82, 0.46],
-        origin: 'center top',
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 12px var(--sorted-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
+        filter: glowFilter('var(--viz-state-sorted)', 18),
       });
       pulseSvgElement(bar.text, {
         duration: motion.settleMs,
         delay,
         scale: 1.08,
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 10px var(--sorted-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
+        filter: glowFilter('var(--viz-state-sorted)', 10),
       });
     });
   }
@@ -613,23 +532,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
         delay,
         scale: 1.05,
         origin: 'center bottom',
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 20px var(--sorted-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-      pulseSvgElement(bar.sheen, {
-        duration: motion.settleMs,
-        delay,
-        scale: 1.08,
-        opacity: [0.46, 0.88, 0.46],
-        origin: 'center top',
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 12px var(--sorted-color))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
+        filter: glowFilter('var(--viz-state-sorted)', 22),
       });
     });
   }
@@ -650,181 +553,19 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     return createMotionProfile(this.speed());
   }
 
-  private restoreOverlayOpacities(bar: Bar): void {
-    const state = (bar.group.getAttribute('data-state') as BarState | null) ?? 'default';
-    bar.sheen.setAttribute('opacity', String(this.sheenOpacityForState(state)));
-    bar.cap.setAttribute('opacity', String(this.capOpacityForState(state)));
-  }
-
-  private fillForState(state: BarState): string {
-    switch (state) {
-      case 'comparing':
-        return `url(#${this.gradientId('bar-compare-fill')})`;
-      case 'swapping':
-        return `url(#${this.gradientId('bar-swap-fill')})`;
-      case 'sorted':
-        return `url(#${this.gradientId('bar-sorted-fill')})`;
-      default:
-        return `url(#${this.gradientId('bar-default-fill')})`;
-    }
-  }
-
-  private strokeForState(state: BarState): string {
-    switch (state) {
-      case 'comparing':
-        return 'var(--compare-color)';
-      case 'swapping':
-        return 'var(--swap-color)';
-      case 'sorted':
-        return 'var(--sorted-color)';
-      default:
-        return 'rgb(var(--viz-accent-rgb) / 0.52)';
-    }
-  }
-
-  private textFillForState(state: BarState): string {
-    switch (state) {
-      case 'comparing':
-        return 'var(--compare-color)';
-      case 'swapping':
-        return 'var(--swap-color)';
-      case 'sorted':
-        return 'var(--sorted-color)';
-      default:
-        return 'var(--text-primary)';
-    }
-  }
-
-  private textOpacityForState(state: BarState): number {
-    switch (state) {
-      case 'default':
-        return 0.78;
-      default:
-        return 1;
-    }
-  }
-
-  private shadowFillForState(state: BarState): string {
-    switch (state) {
-      case 'comparing':
-        return 'var(--compare-color)';
-      case 'swapping':
-        return 'var(--swap-color)';
-      case 'sorted':
-        return 'var(--sorted-color)';
-      default:
-        return 'rgba(2, 6, 23, 0.46)';
-    }
-  }
-
-  private shadowOpacityForState(state: BarState): number {
-    switch (state) {
-      case 'comparing':
-        return 0.18;
-      case 'swapping':
-        return 0.2;
-      case 'sorted':
-        return 0.16;
-      default:
-        return 0.34;
-    }
-  }
-
-  private sheenOpacityForState(state: BarState): number {
-    switch (state) {
-      case 'comparing':
-        return 0.5;
-      case 'swapping':
-        return 0.56;
-      case 'sorted':
-        return 0.46;
-      default:
-        return 0.34;
-    }
-  }
-
-  private capOpacityForState(state: BarState): number {
-    switch (state) {
-      case 'comparing':
-        return 0.58;
-      case 'swapping':
-        return 0.64;
-      case 'sorted':
-        return 0.54;
-      default:
-        return 0.42;
-    }
-  }
-
-  private createDefs(defs: d3Selection.Selection<SVGDefsElement, unknown, null, undefined>): void {
-    this.appendLinearGradient(defs, 'bar-default-fill', '0%', '0%', '0%', '100%', [
-      { offset: '0%', color: 'rgb(var(--viz-accent-rgb) / 0.94)' },
-      { offset: '56%', color: 'rgb(var(--viz-accent-rgb) / 0.72)' },
-      { offset: '100%', color: 'rgb(var(--viz-accent-rgb) / 0.24)' },
-    ]);
-    this.appendLinearGradient(defs, 'bar-compare-fill', '0%', '0%', '0%', '100%', [
-      { offset: '0%', color: 'rgb(var(--medium-rgb) / 1)' },
-      { offset: '56%', color: 'rgb(var(--medium-rgb) / 0.8)' },
-      { offset: '100%', color: 'rgb(var(--medium-rgb) / 0.28)' },
-    ]);
-    this.appendLinearGradient(defs, 'bar-swap-fill', '0%', '0%', '0%', '100%', [
-      { offset: '0%', color: 'rgb(var(--hard-rgb) / 1)' },
-      { offset: '54%', color: 'rgb(var(--hard-rgb) / 0.82)' },
-      { offset: '100%', color: 'rgb(var(--hard-rgb) / 0.32)' },
-    ]);
-    this.appendLinearGradient(defs, 'bar-sorted-fill', '0%', '0%', '0%', '100%', [
-      { offset: '0%', color: 'rgb(var(--easy-rgb) / 0.98)' },
-      { offset: '58%', color: 'rgb(var(--easy-rgb) / 0.82)' },
-      { offset: '100%', color: 'rgb(var(--easy-rgb) / 0.28)' },
-    ]);
-    this.appendLinearGradient(defs, 'bar-sheen', '0%', '0%', '76%', '100%', [
-      { offset: '0%', color: 'rgba(255, 255, 255, 0.36)' },
-      { offset: '24%', color: 'rgba(255, 255, 255, 0.18)' },
-      { offset: '100%', color: 'rgba(255, 255, 255, 0)' },
-    ]);
-
-    const floorGlow = defs
-      .append('radialGradient')
-      .attr('id', this.gradientId('floor-glow'))
-      .attr('cx', '50%')
-      .attr('cy', '18%')
-      .attr('r', '78%');
-    [
-      { offset: '0%', color: 'rgb(var(--viz-accent-rgb) / 0.2)' },
-      { offset: '48%', color: 'rgb(var(--viz-window-rgb) / 0.1)' },
-      { offset: '100%', color: 'rgba(255, 255, 255, 0)' },
-    ].forEach((stop) => {
-      floorGlow.append('stop').attr('offset', stop.offset).attr('stop-color', stop.color);
-    });
-  }
-
-  private appendLinearGradient(
-    defs: d3Selection.Selection<SVGDefsElement, unknown, null, undefined>,
-    name: string,
-    x1: string,
-    y1: string,
-    x2: string,
-    y2: string,
-    stops: readonly GradientStop[],
-  ): void {
-    const gradient = defs
-      .append('linearGradient')
-      .attr('id', this.gradientId(name))
-      .attr('x1', x1)
-      .attr('y1', y1)
-      .attr('x2', x2)
-      .attr('y2', y2);
-
-    stops.forEach((stop) => {
-      gradient.append('stop').attr('offset', stop.offset).attr('stop-color', stop.color);
-    });
-  }
-
-  private gradientId(name: string): string {
-    return `${this.gradientNamespace}-${name}`;
-  }
 }
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
+}
+
+/** Build the 3-frame `drop-shadow` filter keyframes used for state
+ *  pulses. The middle frame carries the color + blur radius; the
+ *  edges are transparent so the glow fades in and out smoothly. */
+function glowFilter(color: string, radius: number): readonly [string, string, string] {
+  return [
+    'drop-shadow(0 0 0 transparent)',
+    `drop-shadow(0 0 ${radius}px ${color})`,
+    'drop-shadow(0 0 0 transparent)',
+  ];
 }

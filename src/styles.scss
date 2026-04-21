@@ -146,13 +146,27 @@
   --ultra-hard-bg: rgba(255, 138, 66, 0.15);
 
   /* ======================================================================
-     CODE / VIZ STATE.
+     CODE / VIZ STATE — aligned with the app palette so the sorting
+     scene reads as part of the same UI: cyan = attending,
+     pink = acting, lime = done.
      ====================================================================== */
   --code-bg: rgba(11, 13, 18, 0.96);
   --line-highlight: rgba(var(--accent-rgb), 0.09);
-  --swap-color: #ff8585;
-  --sorted-color: #7ce0a4;
-  --compare-color: #dcbd73;
+
+  --viz-state-default: var(--viz-accent);
+  --viz-state-default-rgb: var(--viz-accent-rgb);
+  --viz-state-compare: var(--chrome-accent-alt);
+  --viz-state-compare-rgb: var(--chrome-accent-alt-rgb);
+  --viz-state-swap: var(--chrome-accent-warm);
+  --viz-state-swap-rgb: var(--chrome-accent-warm-rgb);
+  --viz-state-sorted: var(--accent);
+  --viz-state-sorted-rgb: var(--accent-rgb);
+
+  /* Legacy aliases — kept so consumers referencing these names stay
+     working. The color identity now matches the state tokens above. */
+  --compare-color: var(--viz-state-compare);
+  --swap-color: var(--viz-state-swap);
+  --sorted-color: var(--viz-state-sorted);
 
   /* ======================================================================
      ELEVATION — single, composable ladder. Avoid ad-hoc shadows.

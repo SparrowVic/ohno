@@ -648,18 +648,18 @@ import {
 } from '../../utils/string-scenarios/string-scenarios';
 
 const BAR_LEGEND: readonly LegendItem[] = [
-  { label: 'Unsorted', color: 'var(--accent)', opacity: 0.5 },
-  { label: 'Comparing', color: 'var(--compare-color)' },
-  { label: 'Swapping', color: 'var(--swap-color)' },
-  { label: 'Sorted', color: 'var(--sorted-color)' },
+  { label: 'Unsorted', color: 'var(--viz-state-default)', opacity: 0.55 },
+  { label: 'Comparing', color: 'var(--viz-state-compare)' },
+  { label: 'Swapping', color: 'var(--viz-state-swap)' },
+  { label: 'Sorted', color: 'var(--viz-state-sorted)' },
 ];
 
 const BLOCK_LEGEND: readonly LegendItem[] = [
-  { label: 'Unsorted', color: 'var(--accent)', opacity: 0.5 },
-  { label: 'Comparing', color: 'var(--compare-color)' },
-  { label: 'Swapping', color: 'var(--swap-color)' },
-  { label: 'Sorted', color: 'var(--sorted-color)' },
-  { label: 'Boundary', color: 'var(--accent)' },
+  { label: 'Unsorted', color: 'var(--viz-state-default)', opacity: 0.55 },
+  { label: 'Comparing', color: 'var(--viz-state-compare)' },
+  { label: 'Swapping', color: 'var(--viz-state-swap)' },
+  { label: 'Sorted', color: 'var(--viz-state-sorted)' },
+  { label: 'Boundary', color: 'var(--viz-state-sorted)' },
 ];
 
 const VIZ_ACCENT = VIZ_COLOR.accent;
