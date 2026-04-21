@@ -14,7 +14,15 @@ import { SegmentedPanel } from '../../../../shared/components/segmented-panel/se
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { SORT_ALGORITHM_HINTS, SortAlgorithmHint } from './sort-algorithm-hints';
+import {
+  SORT_ALGORITHM_TUTORIALS,
+  SortAlgorithmTutorial,
+} from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
+
+interface SortTraceHint {
+  readonly keyIdea: string;
+  readonly watch: string;
+}
 
 interface TagLegendItem {
   readonly id: SortTraceTag;
@@ -49,13 +57,17 @@ export class SortTracePanel {
   readonly legend = TAG_LEGEND;
   readonly lightbulbIcon = faLightbulb;
 
-  /** Algorithm-specific teaching hint. Null for algorithms that
-   *  don't have an entry in the catalog — the card is hidden in that
-   *  case so the Trace tab stays clean. */
-  readonly hint = computed<SortAlgorithmHint | null>(() => {
+  /** Algorithm-specific teaching hint surfaced next to the Trace.
+   *  Only carries the Trace-relevant fields (key idea + what to watch
+   *  on the canvas) — the fuller tutorial and "pattern" family label
+   *  live in the Info tab, so we don't repeat them here. Null for
+   *  algorithms that don't have an entry in the catalog. */
+  readonly hint = computed<SortTraceHint | null>(() => {
     const id = this.algorithmId();
     if (!id) return null;
-    return SORT_ALGORITHM_HINTS[id] ?? null;
+    const tutorial: SortAlgorithmTutorial | undefined = SORT_ALGORITHM_TUTORIALS[id];
+    if (!tutorial) return null;
+    return { keyIdea: tutorial.keyIdea, watch: tutorial.watch };
   });
 
   readonly phaseLabel = computed(() => this.state()?.phaseLabel ?? '—');

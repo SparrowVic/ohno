@@ -219,3 +219,212 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================================
+   TUTORIAL — "How it works" card with numbered steps + trade-offs
+   ============================================================================ */
+
+.info__tutorial {
+  position: relative;
+  padding: 16px 18px 18px;
+  border-radius: 18px;
+  border: 0.5px solid rgba(var(--accent-rgb), 0.22);
+  background:
+    linear-gradient(180deg, rgba(var(--accent-rgb), 0.05), rgba(var(--accent-rgb), 0.01)),
+    rgba(14, 18, 24, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    var(--elevation-1);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.info__tutorial::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--accent-rgb), 0.8),
+    rgba(var(--accent-rgb), 0.3) 100%
+  );
+  box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.3);
+}
+
+.info__tutorial-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.info__tutorial-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-right: auto;
+}
+
+.info__tutorial-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 0.5px solid rgba(var(--accent-rgb), 0.32);
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent-strong);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.info__tutorial-idea {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  text-wrap: pretty;
+}
+
+/* ---------------- Numbered steps ---------------- */
+
+.info__steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: grid;
+  gap: 8px;
+  counter-reset: info-step;
+}
+
+.info__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.05);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.005)),
+    rgba(255, 255, 255, 0.008);
+}
+
+.info__step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  background: rgba(var(--accent-rgb), 0.14);
+  border: 0.5px solid rgba(var(--accent-rgb), 0.28);
+  flex-shrink: 0;
+}
+
+.info__step-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ---------------- Trade-offs (strengths / weaknesses) ---------------- */
+
+.info__tradeoffs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.info__tradeoff {
+  position: relative;
+  padding: 11px 12px 12px;
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.info__tradeoff--plus {
+  border-color: rgba(var(--viz-success-rgb), 0.22);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-success-rgb), 0.06), rgba(var(--viz-success-rgb), 0.015)),
+    rgba(255, 255, 255, 0.01);
+}
+
+.info__tradeoff--minus {
+  border-color: rgba(var(--viz-warning-rgb), 0.2);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.05), rgba(var(--viz-warning-rgb), 0.012)),
+    rgba(255, 255, 255, 0.01);
+}
+
+.info__tradeoff-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.info__tradeoff--plus .info__tradeoff-label {
+  color: var(--viz-success-ink);
+}
+
+.info__tradeoff--minus .info__tradeoff-label {
+  color: var(--viz-warning-ink);
+}
+
+.info__tradeoff-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.info__tradeoff-list li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.info__tradeoff-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+}
+
+.info__tradeoff--plus .info__tradeoff-list li::before {
+  background: rgb(var(--viz-success-rgb) / 0.75);
+  box-shadow: 0 0 6px rgba(var(--viz-success-rgb), 0.4);
+}
+
+.info__tradeoff--minus .info__tradeoff-list li::before {
+  background: rgb(var(--viz-warning-rgb) / 0.75);
+  box-shadow: 0 0 6px rgba(var(--viz-warning-rgb), 0.4);
+}
+
+@container (max-width: 520px) {
+  .info__tradeoffs {
+    grid-template-columns: 1fr;
+  }
+}

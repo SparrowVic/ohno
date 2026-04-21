@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { AlgorithmItem } from '../../models/algorithm';
+import {
+  SORT_ALGORITHM_TUTORIALS,
+  SortAlgorithmTutorial,
+} from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
 import { UiTag } from '../../../../shared/components/ui-tag/ui-tag';
 
 interface ComplexityCard {
@@ -37,6 +41,14 @@ export class InfoPanel {
     ];
   });
   readonly tags = computed(() => this.algorithm().tags);
+
+  /** Full tutorial for sorting algorithms — rendered as a separate
+   *  section below the profile so the Info tab doubles as a concise
+   *  reference / learning page. Null for algorithms without a
+   *  catalog entry; those keep the minimal profile-only view. */
+  readonly tutorial = computed<SortAlgorithmTutorial | null>(() => {
+    return SORT_ALGORITHM_TUTORIALS[this.algorithm().id] ?? null;
+  });
 
   private metaCard(algo: AlgorithmItem): ComplexityCard {
     if (algo.stable !== undefined) {

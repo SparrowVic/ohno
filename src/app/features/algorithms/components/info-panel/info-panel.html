@@ -19,4 +19,45 @@
       </div>
     }
   </div>
+
+  @if (tutorial(); as tutorial) {
+    <div class="info__tutorial">
+      <div class="info__tutorial-head">
+        <span class="info__eyebrow">Tutorial</span>
+        <h3 class="info__tutorial-title">How it works</h3>
+        <span class="info__tutorial-badge">{{ tutorial.pattern }}</span>
+      </div>
+
+      <p class="info__tutorial-idea">{{ tutorial.keyIdea }}</p>
+
+      <ol class="info__steps" aria-label="Algorithm steps">
+        @for (step of tutorial.howItWorks; track $index) {
+          <li class="info__step">
+            <span class="info__step-num">{{ $index + 1 }}</span>
+            <span class="info__step-text">{{ step }}</span>
+          </li>
+        }
+      </ol>
+
+      <div class="info__tradeoffs">
+        <div class="info__tradeoff info__tradeoff--plus">
+          <span class="info__tradeoff-label">Strengths</span>
+          <ul class="info__tradeoff-list">
+            @for (item of tutorial.strengths; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+
+        <div class="info__tradeoff info__tradeoff--minus">
+          <span class="info__tradeoff-label">Trade-offs</span>
+          <ul class="info__tradeoff-list">
+            @for (item of tutorial.weaknesses; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  }
 </section>
