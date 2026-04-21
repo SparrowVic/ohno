@@ -926,6 +926,17 @@ export const I18N_KEY = {
             compare: t('features.algorithms.tracePanels.sort.pairBadges.compare'),
             swap: t('features.algorithms.tracePanels.sort.pairBadges.swap'),
           },
+          phases: {
+            idle: t('features.algorithms.tracePanels.sort.phases.idle'),
+            init: t('features.algorithms.tracePanels.sort.phases.init'),
+            compare: t('features.algorithms.tracePanels.sort.phases.compare'),
+            swap: t('features.algorithms.tracePanels.sort.phases.swap'),
+            focusDigit: t('features.algorithms.tracePanels.sort.phases.focusDigit'),
+            distribute: t('features.algorithms.tracePanels.sort.phases.distribute'),
+            gather: t('features.algorithms.tracePanels.sort.phases.gather'),
+            passComplete: t('features.algorithms.tracePanels.sort.phases.passComplete'),
+            complete: t('features.algorithms.tracePanels.sort.phases.complete'),
+          },
           columns: {
             index: t('features.algorithms.tracePanels.sort.columns.index'),
             value: t('features.algorithms.tracePanels.sort.columns.value'),
@@ -946,6 +957,103 @@ export const I18N_KEY = {
         },
       },
       visualizations: {
+        dp: {
+          guideEyebrow: t('features.algorithms.visualizations.dp.guideEyebrow'),
+          guideTitle: t('features.algorithms.visualizations.dp.guideTitle'),
+          guideDesc: t('features.algorithms.visualizations.dp.guideDesc'),
+          presetLabEyebrow: t('features.algorithms.visualizations.dp.presetLabEyebrow'),
+          scenarioEyebrow: t('features.algorithms.visualizations.dp.scenarioEyebrow'),
+          stageEyebrow: t('features.algorithms.visualizations.dp.stageEyebrow'),
+          stageTitle: t('features.algorithms.visualizations.dp.stageTitle'),
+          emptyLabel: t('features.algorithms.visualizations.dp.emptyLabel'),
+          knapsack: {
+            guideEyebrow: t('features.algorithms.visualizations.dp.knapsack.guideEyebrow'),
+            guideTitle: t('features.algorithms.visualizations.dp.knapsack.guideTitle'),
+            currentItemLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.currentItemLabel',
+            ),
+            weightShortLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.weightShortLabel',
+            ),
+            valueShortLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.valueShortLabel',
+            ),
+            baseCasesValue: t('features.algorithms.visualizations.dp.knapsack.baseCasesValue'),
+            baseCasesMeta: t('features.algorithms.visualizations.dp.knapsack.baseCasesMeta'),
+            followActiveRowLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.followActiveRowLabel',
+            ),
+            baseRowValue: t('features.algorithms.visualizations.dp.knapsack.baseRowValue'),
+            lockCapacityColumnLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.lockCapacityColumnLabel',
+            ),
+            applyCurrentMoveLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.applyCurrentMoveLabel',
+            ),
+            decisionEyebrow: t(
+              'features.algorithms.visualizations.dp.knapsack.decisionEyebrow',
+            ),
+            decisionTitle: t('features.algorithms.visualizations.dp.knapsack.decisionTitle'),
+            waitingTransitionLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.waitingTransitionLabel',
+            ),
+            noWinningBranchLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.noWinningBranchLabel',
+            ),
+            outcomeEyebrow: t('features.algorithms.visualizations.dp.knapsack.outcomeEyebrow'),
+            outcomeTitle: t('features.algorithms.visualizations.dp.knapsack.outcomeTitle'),
+            currentPackLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.currentPackLabel',
+            ),
+            packEmptyLabel: t('features.algorithms.visualizations.dp.knapsack.packEmptyLabel'),
+            labEyebrow: t('features.algorithms.visualizations.dp.knapsack.labEyebrow'),
+            scenarioEyebrow: t(
+              'features.algorithms.visualizations.dp.knapsack.scenarioEyebrow',
+            ),
+            inputShelfEyebrow: t(
+              'features.algorithms.visualizations.dp.knapsack.inputShelfEyebrow',
+            ),
+            inputShelfTitle: t('features.algorithms.visualizations.dp.knapsack.inputShelfTitle'),
+            rowLabel: t('features.algorithms.visualizations.dp.knapsack.rowLabel'),
+            workspaceEyebrow: t(
+              'features.algorithms.visualizations.dp.knapsack.workspaceEyebrow',
+            ),
+            workspaceTitle: t('features.algorithms.visualizations.dp.knapsack.workspaceTitle'),
+            activeCellLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.activeCellLabel',
+            ),
+            sourceCellsLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.sourceCellsLabel',
+            ),
+            backtrackPathLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.backtrackPathLabel',
+            ),
+            capacityLaneLabel: t(
+              'features.algorithms.visualizations.dp.knapsack.capacityLaneLabel',
+            ),
+            boardLabel: t('features.algorithms.visualizations.dp.knapsack.boardLabel'),
+            metrics: {
+              bestValue: t('features.algorithms.visualizations.dp.knapsack.metrics.bestValue'),
+              packed: t('features.algorithms.visualizations.dp.knapsack.metrics.packed'),
+              table: t('features.algorithms.visualizations.dp.knapsack.metrics.table'),
+            },
+            branches: {
+              skipLabel: t('features.algorithms.visualizations.dp.knapsack.branches.skipLabel'),
+              takeLabel: t('features.algorithms.visualizations.dp.knapsack.branches.takeLabel'),
+              blockedValue: t(
+                'features.algorithms.visualizations.dp.knapsack.branches.blockedValue',
+              ),
+              skipNote: t('features.algorithms.visualizations.dp.knapsack.branches.skipNote'),
+              takeNote: t('features.algorithms.visualizations.dp.knapsack.branches.takeNote'),
+              needsWeightNote: t(
+                'features.algorithms.visualizations.dp.knapsack.branches.needsWeightNote',
+              ),
+              needPreviousStateNote: t(
+                'features.algorithms.visualizations.dp.knapsack.branches.needPreviousStateNote',
+              ),
+            },
+          },
+        },
         search: {
           guideEyebrow: t('features.algorithms.visualizations.search.guideEyebrow'),
           guideTitle: t('features.algorithms.visualizations.search.guideTitle'),
@@ -1021,6 +1129,29 @@ export const I18N_KEY = {
           decisionFallback: t('features.algorithms.visualizations.network.decisionFallback'),
           queueFallback: t('features.algorithms.visualizations.network.queueFallback'),
           queueEmptyLabel: t('features.algorithms.visualizations.network.queueEmptyLabel'),
+        },
+        string: {
+          guideEyebrow: t('features.algorithms.visualizations.string.guideEyebrow'),
+          computationLabel: t('features.algorithms.visualizations.string.computationLabel'),
+          computationEmptyNote: t(
+            'features.algorithms.visualizations.string.computationEmptyNote',
+          ),
+          labEyebrow: t('features.algorithms.visualizations.string.labEyebrow'),
+          presetEyebrow: t('features.algorithms.visualizations.string.presetEyebrow'),
+          stageEyebrow: t('features.algorithms.visualizations.string.stageEyebrow'),
+          emptyLabel: t('features.algorithms.visualizations.string.emptyLabel'),
+          labels: {
+            text: t('features.algorithms.visualizations.string.labels.text'),
+            pattern: t('features.algorithms.visualizations.string.labels.pattern'),
+            combined: t('features.algorithms.visualizations.string.labels.combined'),
+            source: t('features.algorithms.visualizations.string.labels.source'),
+            input: t('features.algorithms.visualizations.string.labels.input'),
+          },
+          rle: {
+            waitingForFirstRun: t(
+              'features.algorithms.visualizations.string.rle.waitingForFirstRun',
+            ),
+          },
         },
       },
     },

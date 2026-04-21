@@ -11,7 +11,10 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import {
   BurrowsWheelerTraceState,
   HuffmanTraceState,
@@ -64,12 +67,14 @@ import {
 
 @Component({
   selector: 'app-string-visualization',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './string-visualization.html',
   styleUrl: './string-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StringVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  protected readonly I18N_KEY = I18N_KEY;
+  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);

@@ -343,6 +343,404 @@
           "triggerLabel": "Cechy"
         }
       },
+      "scenarios": {
+        "dp": {
+          "bitmaskDp": {
+            "crews": {
+              "description": "Koszty przypisania załóg do zadań tworzą kilka bliskich alternatyw.",
+              "label": "Załogi"
+            },
+            "labs": {
+              "description": "Gęstsza macierz kosztów podkreśla, dlaczego każda maska koduje użyte zadania.",
+              "label": "Laboratoria"
+            },
+            "robots": {
+              "description": "Przypisywanie robotów do stacji ładowania pokazuje, jak maski podzbiorów wypełniają się od rzadkich do gęstych.",
+              "label": "Roboty"
+            }
+          },
+          "burstBalloons": {
+            "classic": {
+              "description": "Zwarty zestaw zysków z monet dobrze pokazuje, dlaczego ostatni balon w przedziale ma znaczenie.",
+              "label": "Klasyczny"
+            },
+            "dense": {
+              "description": "Nieco większa plansza podkreśla ponowne użycie przedziałów i zapisywanie podziałów.",
+              "label": "Gęsty"
+            },
+            "zigzag": {
+              "description": "Naprzemienne wysokie i niskie wartości sprawiają, że decyzje o podziale są bardzo wyraziste.",
+              "label": "Zygzak"
+            }
+          },
+          "cht": {
+            "metro": {
+              "description": "Nieco bardziej szumiąca sekwencja odległości pokazuje, dlaczego starsze proste stają się zbędne.",
+              "label": "Metro"
+            },
+            "pulse": {
+              "description": "Kompaktowe punkty utrzymują przejścia między prostymi czytelne w wąskim widoku.",
+              "label": "Puls"
+            },
+            "track": {
+              "description": "Monotoniczne wartości x sprawiają, że kolejność zapytań i przycinanie obwiedni są bardzo czytelne.",
+              "label": "Tor"
+            }
+          },
+          "climbingStairs": {
+            "metro": {
+              "description": "Miejskie etykiety przystanków pokazują rekurencję jako zwięzły problem dojazdu.",
+              "label": "Metro"
+            },
+            "summit": {
+              "description": "Nieco wyższa wspinaczka mocniej podkreśla wzrost w stylu Fibonacciego.",
+              "label": "Szczyt"
+            },
+            "tower": {
+              "description": "Czysty przykład liczenia schodów, gdzie każdy stopień dziedziczy dwie poprzednie wartości.",
+              "label": "Wieża"
+            }
+          },
+          "coinChange": {
+            "arcade": {
+              "description": "Średnie nominały tworzą kilka konkurujących ścieżek z minimalną liczbą monet.",
+              "label": "Żetony arcade"
+            },
+            "market": {
+              "description": "Małe i duże monety pokazują ponowne użycie tego samego wiersza w DP bez ograniczeń.",
+              "label": "Reszta na targu"
+            },
+            "metro": {
+              "description": "Klasyczny zestaw monet, w którym pozornie zachłanny wybór nie zawsze jest optymalny.",
+              "label": "Bilet metra"
+            }
+          },
+          "divideConquer": {
+            "freight": {
+              "description": "Cięższe ogony rozkładu przesuwają zakres optymalnego podziału stabilnie w prawo.",
+              "label": "Ładunek"
+            },
+            "pods": {
+              "description": "Zbalansowane liczby ułatwiają dostrzeżenie monotonicznych optymalnych podziałów.",
+              "label": "Pody"
+            },
+            "shifts": {
+              "description": "Dzielenie obciążeń między zespoły tworzy czytelną narrację kosztu partycji.",
+              "label": "Zmiany"
+            }
+          },
+          "editDistance": {
+            "code": {
+              "description": "Programistyczne tokeny pokazują, jak edycje grupują się wokół zmian nazw.",
+              "label": "Refaktoryzacja kodu"
+            },
+            "plural": {
+              "description": "Zmiany kształtu słowa sprawiają, że edycje sufiksów i przeniesienia są łatwe do śledzenia.",
+              "label": "Gramatyka"
+            },
+            "typo": {
+              "description": "Klasyczne literówki dobrze pokazują przejścia zamiany, wstawienia i usunięcia.",
+              "label": "Poprawka literówki"
+            }
+          },
+          "fibonacci": {
+            "classic": {
+              "description": "Standardowy ciąg Fibonacciego idealnie pokazuje addytywny wzrost DP.",
+              "label": "Klasyczny"
+            },
+            "growth": {
+              "description": "Nieco większe n zamienia rekurencję w wyraźnie przyspieszającą falę.",
+              "label": "Wzrost"
+            },
+            "signal": {
+              "description": "Krótsze wyrazy utrzymują fokus na tym, jak cache wypełnia się od lewej do prawej.",
+              "label": "Sygnał"
+            }
+          },
+          "knapsack": {
+            "camp": {
+              "description": "Zbalansowane wagi i wartości, idealne do pokazania decyzji pomiń kontra weź.",
+              "label": "Plecak obozowy"
+            },
+            "heist": {
+              "description": "Kilka efektownych przedmiotów o wysokiej wartości konkuruje o ciasny limit pojemności.",
+              "label": "Zestaw na skok"
+            },
+            "lab": {
+              "description": "Gęsty naukowy ładunek, w którym średnie przedmioty często wygrywają z jednym drogim wyborem.",
+              "label": "Skrzynia laboratoryjna"
+            }
+          },
+          "knuth": {
+            "archives": {
+              "description": "Nierówne rozmiary plików sprawiają, że zapisane okno podziału jest ciekawsze.",
+              "label": "Archiwa"
+            },
+            "chapters": {
+              "description": "Koszty łączenia sąsiadujących plików tworzą zwarty DP przedziałowy z wąskimi oknami optimum.",
+              "label": "Rozdziały"
+            },
+            "packets": {
+              "description": "Krótki łańcuch scalenia utrzymuje optymalizację Knutha zwartą i czytelną.",
+              "label": "Pakiety"
+            }
+          },
+          "lcs": {
+            "dna": {
+              "description": "Krótkie sekwencje nukleotydów sprawiają, że dopasowania po przekątnej są bardzo czytelne.",
+              "label": "DNA"
+            },
+            "signals": {
+              "description": "Sekwencje literowych kodów tworzą konkurujące decyzje DP: w lewo kontra do góry.",
+              "label": "Sygnały"
+            },
+            "words": {
+              "description": "Czytelne pary słów ułatwiają zrozumienie końcowego podciągu.",
+              "label": "Słowa"
+            }
+          },
+          "lis": {
+            "rebound": {
+              "description": "Późne odbicie wartości tworzy bardziej dramatyczną ścieżkę odtwarzania.",
+              "label": "Odbicie"
+            },
+            "skyline": {
+              "description": "Głównie rosnące wartości z kilkoma przerwami ułatwiają wypatrzenie końcowego podciągu.",
+              "label": "Skyline"
+            },
+            "wave": {
+              "description": "Naprzemienne wzrosty i spadki zmuszają algorytm do ciągłej zmiany najlepszego poprzednika.",
+              "label": "Fala"
+            }
+          },
+          "lps": {
+            "phrase": {
+              "description": "Czytelne słowa ułatwiają śledzenie dopasowań skrajnych znaków.",
+              "label": "Fraza"
+            },
+            "radar": {
+              "description": "Symetria liter tworzy wyraźny, czytelny szkielet palindromu.",
+              "label": "Radar"
+            },
+            "signal": {
+              "description": "Najlepszy palindrom jest ukryty między kilkoma pomijanymi pozycjami.",
+              "label": "Sygnał"
+            }
+          },
+          "matrixChain": {
+            "balanced": {
+              "description": "Wymiary pozostają umiarkowane i tworzą równomierne trójkątne wypełnianie DP.",
+              "label": "Zbalansowany"
+            },
+            "classic": {
+              "description": "Podręcznikowy łańcuch dobrze pokazuje, dlaczego punkty podziału są tak ważne.",
+              "label": "Klasyczny"
+            },
+            "swing": {
+              "description": "Naprzemienne małe i ogromne wymiary sprawiają, że złe podziały gwałtownie podnoszą koszt.",
+              "label": "Skokowy"
+            }
+          },
+          "profile": {
+            "corridor": {
+              "description": "Nieco dłuższa plansza ułatwia porównywanie powracających profili i liczności.",
+              "label": "Korytarz"
+            },
+            "lab": {
+              "description": "Kompaktowe stany profilu pokazują, jak frontier DP ponownie używa tego samego słownika masek.",
+              "label": "Siatka laboratorium"
+            },
+            "tiles": {
+              "description": "Klasyczne układanie domino pokazuje, jak maski frontu przechodzą z jednej kolumny do następnej.",
+              "label": "Płytki"
+            }
+          },
+          "regex": {
+            "alias": {
+              "description": "Mieszanka kropki i gwiazdki pokazuje zarówno dopasowania dosłowne, jak i powtarzane zakresy.",
+              "label": "Alias"
+            },
+            "logs": {
+              "description": "Gęstszy wzorzec ułatwia porównanie gałęzi zero-wystąpień kontra zużyj-jeden.",
+              "label": "Logi"
+            },
+            "pulse": {
+              "description": "Krótkie ciągi utrzymują mechanikę gwiazdki regexu czytelną i zwartą.",
+              "label": "Puls"
+            }
+          },
+          "sos": {
+            "cache": {
+              "description": "Gęstsza tablica bazowa sprawia, że propagacja sum po podzbiorach jest bardziej wyrazista.",
+              "label": "Cache"
+            },
+            "radar": {
+              "description": "Składniki masek bitowych są skupione, więc każdy etap SOS rozświetla inne rodziny.",
+              "label": "Radar"
+            },
+            "signals": {
+              "description": "Wartości podzbiorów ułatwiają zobaczenie, jak nadzbiory chłoną wszystkie swoje submaski.",
+              "label": "Sygnały"
+            }
+          },
+          "subsetSum": {
+            "lab": {
+              "description": "Gęstszy zestaw sprawia, że tabela boolowska zapala się skupiskami.",
+              "label": "Budżet laboratorium"
+            },
+            "laser": {
+              "description": "Liczby są zbalansowane, więc kilka gałęzi bliskich celu rywalizuje ze sobą.",
+              "label": "Siatka laserów"
+            },
+            "trail": {
+              "description": "Wagi przekąsek tworzą jeden czysty podzbiór i kilka kuszących ślepych uliczek.",
+              "label": "Mieszanka szlaku"
+            }
+          },
+          "travelingSalesman": {
+            "coast": {
+              "description": "Nieco dłuższa trasa pokazuje, dlaczego maski podzbiorów muszą pamiętać miasto końcowe.",
+              "label": "Skok wybrzeżem"
+            },
+            "drone": {
+              "description": "Wagi krawędzi różnią się mocniej, więc złe przejścia po podzbiorach bardziej rzucają się w oczy.",
+              "label": "Trasa drona"
+            },
+            "metro": {
+              "description": "Zwarta, symetryczna mapa miast tworzy wyraźną optymalną trasę Hamiltona.",
+              "label": "Pętla metra"
+            }
+          },
+          "treeDp": {
+            "campus": {
+              "description": "Szersze drzewo tworzy czytelną agregację postorder na kilku dzieciach.",
+              "label": "Kampus"
+            },
+            "orchard": {
+              "description": "Wartości owoców na rozgałęzionym drzewie ułatwiają śledzenie wyborów weź kontra pomiń.",
+              "label": "Sad"
+            },
+            "vault": {
+              "description": "Wyższe nagrody na liściach czynią odtwarzanie zbioru niezależnego bardziej dramatycznym.",
+              "label": "Skarbiec"
+            }
+          },
+          "wildcard": {
+            "codes": {
+              "description": "Gęste, symboliczne ciągi dobrze eksponują stany gwiazdki: pomijanie kontra zużycie.",
+              "label": "Kody"
+            },
+            "globs": {
+              "description": "Proste wzorce ? i * wyraźnie pokazują ruch gwiazdki w poziomie i pionie.",
+              "label": "Wildcardy"
+            },
+            "routes": {
+              "description": "Łańcuchy przypominające ścieżki ułatwiają rozumienie zasięgu wildcardów.",
+              "label": "Trasy"
+            }
+          }
+        },
+        "string": {
+          "bwt": {
+            "banana": {
+              "description": "Kanoniczne demo BWT: krótkie, zapamiętywalne i idealne do zgrupowanych serii w wyniku.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Silniejsze powtórzenia dobrze pokazują, dlaczego BWT pomaga późniejszej kompresji RLE.",
+              "label": "Mississippi"
+            },
+            "panama": {
+              "description": "Czytelny ciąg pochodzący z frazy, w którym rotacje wyraźnie grupują powtarzające się litery.",
+              "label": "Panama"
+            }
+          },
+          "huffman": {
+            "classic": {
+              "description": "Skośny rozkład częstości",
+              "label": "Klasyczny"
+            },
+            "natural": {
+              "description": "Rozkład podobny do języka naturalnego",
+              "label": "Naturalny"
+            },
+            "uniform": {
+              "description": "Prawie równe częstości",
+              "label": "Równomierny"
+            }
+          },
+          "kmp": {
+            "dna": {
+              "description": "Krótki wzorzec w stylu genomowym z powtarzającymi się prefiksami i sufiksami.",
+              "label": "DNA"
+            },
+            "overlap": {
+              "description": "Klasyczny przypadek samonakładania, gdzie skoki fail ratują wiele ponownych prób.",
+              "label": "Nakładanie"
+            },
+            "signal": {
+              "description": "Czytelna, powtarzalna fraza, która sprawia, że skoki są dobrze widoczne.",
+              "label": "Sygnał"
+            }
+          },
+          "manacher": {
+            "banana": {
+              "description": "Palindromy o nieparzystej długości układają się w czystą, lustrzaną tęczę.",
+              "label": "Blask banana"
+            },
+            "mixed": {
+              "description": "Palindromy parzyste i nieparzyste rywalizują, więc najdłuższa odpowiedź nie jest oczywista od razu.",
+              "label": "Mieszany"
+            },
+            "symmetry": {
+              "description": "Gęsta lustrzana struktura ułatwia zobaczenie ponownego użycia środka i wzrostu granic.",
+              "label": "Symetria"
+            }
+          },
+          "rabinKarp": {
+            "alarm": {
+              "description": "Mały moduł powoduje dość częste kolizje hashy, żeby dobrze pokazać weryfikację.",
+              "label": "Fałszywy alarm"
+            },
+            "forensics": {
+              "description": "Powtarzalny ciąg, w którym aktualizacje rolling hash łatwiej śledzić niż pełne skany.",
+              "label": "Forensyka"
+            },
+            "neon": {
+              "description": "Czytelny strumień powtarzających się etykiet z wyraźnym oknem dopasowania.",
+              "label": "Neonowy feed"
+            }
+          },
+          "rle": {
+            "mixed": {
+              "description": "Mieszanka krótkich i długich przebiegów",
+              "label": "Mieszany"
+            },
+            "runs": {
+              "description": "Ciąg z wyraźnymi powtarzającymi się sekwencjami",
+              "label": "Długie przebiegi"
+            },
+            "worst": {
+              "description": "Ciąg, w którym RLE nie daje korzyści kompresji",
+              "label": "Brak zysku"
+            }
+          },
+          "zAlgorithm": {
+            "classic": {
+              "description": "Konkatenacja wzorca tworzy czytelne ponowne użycie Z-boxa i kilka dokładnych trafień.",
+              "label": "Klasyczny"
+            },
+            "genome": {
+              "description": "Wiele nakładających się prefiksów zamienia panoramę Z w gęsty miejski krajobraz.",
+              "label": "Genom"
+            },
+            "log": {
+              "description": "Czytelny tekst z długimi powtarzającymi się prefiksami i widocznymi słupkami pełnego wzorca.",
+              "label": "Strumień logów"
+            }
+          }
+        }
+      },
       "sidePanel": {
         "ariaLabel": "Zakładki inspectora",
         "tabs": {
@@ -892,6 +1290,17 @@
             "swap": "zamiana"
           },
           "phaseLabel": "Faza",
+          "phases": {
+            "compare": "Porównanie",
+            "complete": "Posortowane",
+            "distribute": "Rozdzielanie",
+            "focusDigit": "Skupienie na cyfrze",
+            "gather": "Zbieranie",
+            "idle": "Gotowe",
+            "init": "Start",
+            "passComplete": "Przebieg zakończony",
+            "swap": "Zamiana"
+          },
           "sortedLabel": "Posortowane",
           "statuses": {
             "comparing": "porównywanie",
@@ -1070,6 +1479,521 @@
         }
       },
       "tutorials": {
+        "graph": {
+          "aStarPathfinding": {
+            "howItWorks": {
+              "step1": "Wstaw start do kolejki priorytetowej z f = h(start).",
+              "step2": "Wyjmij węzeł z najmniejszym f; jeśli to cel, odtwórz ścieżkę.",
+              "step3": "W przeciwnym razie relaksuj każdego sąsiada z g = current.g + koszt krawędzi oraz f = g + h(neighbour).",
+              "step4": "Powtarzaj, aż z kolejki wyjdzie cel albo kolejka się opróżni."
+            },
+            "keyIdea": "Nadaj priorytet węzłom według f = g (koszt dotąd) + h (heurystyczna odległość do celu) i rozwijaj najpierw najlepszy kandydat.",
+            "pattern": "Najkrótsza ścieżka · Heurystyka",
+            "strengths": {
+              "item1": "Bywa dramatycznie szybszy od Dijkstry, gdy heurystyka dobrze prowadzi do celu.",
+              "item2": "Nadal daje optimum, jeśli heurystyka jest dopuszczalna (nigdy nie przeszacowuje prawdziwej odległości)."
+            },
+            "watch": "Front przykleja się do kierunku celu, bo węzły ze słabym wynikiem h spokojnie czekają w kolejce.",
+            "weaknesses": {
+              "item1": "Słaba heurystyka degraduje go do Dijkstry (albo gorzej).",
+              "item2": "Jest pamięciożerny, bo każdy osiągnięty węzeł zostaje w zbiorze otwartym."
+            }
+          },
+          "bellmanFord": {
+            "howItWorks": {
+              "step1": "Ustaw wszystkie odległości na nieskończoność poza źródłem (0).",
+              "step2": "Wykonaj V − 1 przebiegów — w każdym zrelaksuj każdą krawędź dokładnie raz.",
+              "step3": "Zrób jeszcze jeden przebieg: każda odległość, która nadal maleje, dowodzi osiągalnego cyklu ujemnego.",
+              "step4": "Jeśli nic już się nie zmienia, odległości są poprawnymi najkrótszymi ścieżkami."
+            },
+            "keyIdea": "Relaksuj każdą krawędź do V − 1 razy; jeśli dodatkowy przebieg dalej zmienia odległość, masz cykl ujemny.",
+            "pattern": "Najkrótsza ścieżka · Ujemne OK",
+            "strengths": {
+              "item1": "Obsługuje ujemne wagi krawędzi i wykrywa cykle ujemne.",
+              "item2": "Jest koncepcyjnie prosty — nie wymaga kolejki priorytetowej."
+            },
+            "watch": "W każdym przebiegu omiatasz całą listę krawędzi — odległości skracają się wszędzie, nie tylko wokół jednego punktu.",
+            "weaknesses": {
+              "item1": "Czas O(V · E) — wolniejszy od Dijkstry na grafach bez ujemnych wag.",
+              "item2": "Słabo nadaje się do inkrementalnych zmian — dodanie krawędzi wymaga ponownego przejścia przebiegów."
+            }
+          },
+          "bfs": {
+            "howItWorks": {
+              "step1": "Oznacz źródło jako odwiedzone i wrzuć je do kolejki FIFO.",
+              "step2": "Zdejmij element z początku kolejki i sprawdź każdego sąsiada, którego jeszcze nie widziano.",
+              "step3": "Każdego nowego sąsiada oznacz jako odwiedzonego, zapisz liczbę skoków i dodaj na koniec kolejki.",
+              "step4": "Powtarzaj, aż kolejka będzie pusta."
+            },
+            "keyIdea": "Eksploruj graf falami: najpierw odkryj wszystkich sąsiadów źródła, potem wszystkich ich sąsiadów i tak dalej.",
+            "pattern": "Przechodzenie · Poziomami",
+            "strengths": {
+              "item1": "Znajduje najkrótszą ścieżkę (w liczbie skoków) w nieważonych grafach w O(V + E).",
+              "item2": "Łatwo o nim myśleć — kolejka dosłownie śledzi następną falę pracy."
+            },
+            "watch": "Front rozszerza się koncentrycznymi pierścieniami — każda fala to jeszcze jeden skok od źródła.",
+            "weaknesses": {
+              "item1": "Ignoruje wagi krawędzi, więc nie jest algorytmem najkrótszej ścieżki dla grafów ważonych.",
+              "item2": "Może zużyć dużo pamięci w ogromnych grafach, bo cały front siedzi jednocześnie w kolejce."
+            }
+          },
+          "bipartiteCheck": {
+            "howItWorks": {
+              "step1": "Wybierz nieodwiedzony węzeł, nadaj mu kolor A i wrzuć do kolejki.",
+              "step2": "Zdejmij węzeł; każdemu niepokolorowanemu sąsiadowi nadaj przeciwny kolor i dodaj go do kolejki.",
+              "step3": "Jeśli sąsiad ma już ten sam kolor co bieżący węzeł, graf NIE jest dwudzielny.",
+              "step4": "Powtarzaj od każdego pozostałego nieodwiedzonego węzła dla grafów niespójnych."
+            },
+            "keyIdea": "Spróbuj pokolorować każdy węzeł jednym z dwóch kolorów tak, aby żadna krawędź nie łączyła węzłów tego samego koloru.",
+            "pattern": "Strukturalne · 2-kolorowanie",
+            "strengths": {
+              "item1": "Czas O(V + E) — jeden BFS na składową.",
+              "item2": "To także przydatny klocek do problemów skojarzeń."
+            },
+            "watch": "Kolory rozlewają się BFS-em od każdego ziarna; krawędź łącząca ten sam kolor pojawia się dokładnie wtedy, gdy graf nie może być dwudzielny.",
+            "weaknesses": {
+              "item1": "Jest ściśle binarne — nie da się tego rozszerzyć do k-kolorowania bez zmiany podejścia.",
+              "item2": "Krawędź konfliktu dowodzi niedwudzielności, ale nie lokalizuje wszystkich cykli nieparzystych."
+            }
+          },
+          "bridgesArticulationPoints": {
+            "howItWorks": {
+              "step1": "Uruchom DFS, zapisując dla każdego węzła czas odkrycia i low-link (najwcześniejszy osiągalny przez back-edge).",
+              "step2": "Krawędź (u, v) jest mostem, gdy low[v] > disc[u] — nie ma back-edge dającego alternatywną drogę.",
+              "step3": "Węzeł u jest punktem artykulacji, gdy jest korzeniem DFS z co najmniej dwojgiem dzieci albo gdy jakieś dziecko ma low ≥ disc[u].",
+              "step4": "Zgłoś każdy znaleziony most i punkt artykulacji."
+            },
+            "keyIdea": "DFS śledzi czasy odkrycia i wartości low-link; krawędź jest mostem, a węzeł punktem artykulacji, gdy ich usunięcie rozspójnia graf.",
+            "pattern": "Struktura krytyczna",
+            "strengths": {
+              "item1": "Jeden DFS w O(V + E) znajduje zarówno mosty, jak i punkty artykulacji.",
+              "item2": "Bezpośrednio identyfikuje strukturalne słabości sieci."
+            },
+            "watch": "Czerwone węzły i krawędzie zaznaczają krytyczne elementy — usuń je, a graf się rozpadnie.",
+            "weaknesses": {
+              "item1": "Księgowanie low-link jest delikatne i łatwo je zepsuć.",
+              "item2": "Bez zmian nie uogólnia się na grafy skierowane."
+            }
+          },
+          "chromaticNumber": {
+            "howItWorks": {
+              "step1": "Próbuj kolejno k = 1, potem 2, 3, …",
+              "step2": "Dla każdego k próbuj kolorować węzły po kolei, nadając najmniejszy dozwolony kolor.",
+              "step3": "Przy konflikcie cofnij się i spróbuj innego przypisania.",
+              "step4": "Pierwsze k, które się uda, to liczba chromatyczna."
+            },
+            "keyIdea": "Szukaj najmniejszego k, dla którego graf da się pokolorować k kolorami tak, by żadna krawędź nie łączyła tego samego koloru.",
+            "pattern": "Kolorowanie · Minimalna paleta",
+            "strengths": {
+              "item1": "Koncepcyjnie proste — backtracking na problemie spełniania ograniczeń.",
+              "item2": "Działa na dowolnych grafach, nie tylko na specjalnych rodzinach."
+            },
+            "watch": "Kolory są przydzielane po kolei; czerwona krawędź oznacza konflikt, który zmusza wyszukiwanie do cofnięcia i próby innej palety.",
+            "weaknesses": {
+              "item1": "Liczba chromatyczna jest NP-trudna — w najgorszym przypadku wykładnicza.",
+              "item2": "Dobre przycinanie (np. kolorowanie od najwyższego stopnia) jest kluczowe dla sensownego czasu działania."
+            }
+          },
+          "connectedComponents": {
+            "howItWorks": {
+              "step1": "Przejdź po liście węzłów. Jeśli kolejny węzeł nie jest odwiedzony, uruchom od niego przejście.",
+              "step2": "DFS albo BFS oznacza każdy osiągnięty węzeł jako należący do tej składowej.",
+              "step3": "Gdy przejście się kończy, zwiększ licznik składowych i przejdź do następnego nieodwiedzonego węzła.",
+              "step4": "Gdy każdy węzeł jest odwiedzony, masz pełne grupowanie na składowe."
+            },
+            "keyIdea": "Powtarzaj DFS/BFS od każdego nieodwiedzonego węzła; wszystko, co osiągniesz, tworzy jedną składową spójną.",
+            "pattern": "Strukturalne · Składowe",
+            "strengths": {
+              "item1": "O(V + E), prosta implementacja.",
+              "item2": "Union-Find daje niemal stałoczasową alternatywę online, jeśli krawędzie napływają w czasie."
+            },
+            "watch": "Każde niewidziane ziarno tworzy nowy kolorowy obszar — liczba kolorów to liczba składowych.",
+            "weaknesses": {
+              "item1": "Nie zachowuje kolejności — składowe są odkrywane w arbitralnym porządku.",
+              "item2": "Wymaga pełnego grafu w pamięci."
+            }
+          },
+          "cycleDetection": {
+            "howItWorks": {
+              "step1": "Śledź trzy kolory dla węzłów: biały (niewidziany), szary (na stosie DFS), czarny (w pełni przetworzony).",
+              "step2": "DFS: przy wejściu oznacz szaro, przy wyjściu na czarno.",
+              "step3": "Jeśli DFS widzi krawędź do szarego węzła — to back-edge i dowód cyklu skierowanego.",
+              "step4": "Dla grafów nieskierowanych każda krawędź do widzianego węzła, który nie jest rodzicem, tworzy cykl."
+            },
+            "keyIdea": "Uruchom DFS i śledź, czy każdy węzeł leży na bieżącej ścieżce; znalezienie back-edge do węzła na ścieżce dowodzi cyklu.",
+            "pattern": "Strukturalne · Świadek cyklu",
+            "strengths": {
+              "item1": "O(V + E) i bardzo proste w implementacji.",
+              "item2": "Zgłasza prawdziwy cykl, a nie tylko odpowiedź tak/nie."
+            },
+            "watch": "Węzły świecą jako „na stosie”, gdy schodzisz w dół; back-edge domyka pętlę świadka.",
+            "weaknesses": {
+              "item1": "Głębokość rekurencji DFS może być problemem w głębokich grafach.",
+              "item2": "Wymaga innej logiki dla grafów skierowanych i nieskierowanych."
+            }
+          },
+          "dfs": {
+            "howItWorks": {
+              "step1": "Zacznij od źródła, oznacz je jako odwiedzone i wrzuć na stos (albo użyj rekurencji).",
+              "step2": "Wybierz nieodwiedzonego sąsiada i zanurz się w niego — powtarzaj rekurencyjnie.",
+              "step3": "Gdy wierzchołek nie ma już nieodwiedzonych sąsiadów, wróć do rodzica.",
+              "step4": "Kontynuuj, aż cała osiągalna składowa zostanie przeszukana."
+            },
+            "keyIdea": "Schodź tak głęboko, jak się da, jedną gałęzią, zanim zaczniesz się cofać i próbować następnej.",
+            "pattern": "Przechodzenie · W głąb",
+            "strengths": {
+              "item1": "Działa w O(V + E) i używa tylko O(h) miejsca na stosie, gdzie h to głębokość eksploracji.",
+              "item2": "Naturalnie pasuje do wykrywania cykli, porządku topologicznego, SCC i mostów."
+            },
+            "watch": "Najpierw rozwija się długi łańcuch; dopiero gdy dojdzie do ślepego końca, wyszukiwanie wraca i odbija w bok.",
+            "weaknesses": {
+              "item1": "NIE znajduje najkrótszych ścieżek — wynik zależy od tego, którego sąsiada wybierzesz najpierw.",
+              "item2": "Głębokie grafy mogą wysadzić stos wywołań, jeśli implementacja rekurencyjna nie jest ostrożna."
+            }
+          },
+          "dijkstra": {
+            "howItWorks": {
+              "step1": "Ustaw wszystkie odległości na nieskończoność poza źródłem (0).",
+              "step2": "Wyjmij z kopca minimum nieustalony węzeł o najmniejszej odległości.",
+              "step3": "Dla każdej wychodzącej krawędzi wykonaj relaksację: jeśli droga przez bieżący węzeł jest tańsza, zaktualizuj sąsiada.",
+              "step4": "Powtarzaj, aż każdy osiągalny węzeł zostanie ustalony."
+            },
+            "keyIdea": "Zachłannie ustalaj nieodwiedzony węzeł z najmniejszą tymczasową odległością, a potem relaksuj jego wychodzące krawędzie.",
+            "pattern": "Najkrótsza ścieżka · Ważone",
+            "strengths": {
+              "item1": "Daje optymalne drzewo najkrótszych ścieżek w O((V + E) log V) z kopcem binarnym.",
+              "item2": "Kończy wcześniej, jeśli potrzebujesz tylko odległości do jednego celu."
+            },
+            "watch": "Ustalony węzeł jest zawsze aktualnie najlepszym wyborem — po ustaleniu jego odległość staje się ostateczna.",
+            "weaknesses": {
+              "item1": "Zakłada nieujemne wagi krawędzi — pojedyncza ujemna krawędź psuje poprawność.",
+              "item2": "Dla gęstych grafów prostsze implementacje O(V²) bywają korzystniejsze niż kopiec."
+            }
+          },
+          "dinicMaxFlow": {
+            "howItWorks": {
+              "step1": "Uruchom BFS w grafie residualnym od źródła do ujścia, przypisując poziom każdemu węzłowi.",
+              "step2": "Jeśli ujście jest nieosiągalne, kończysz.",
+              "step3": "Puść DFS tylko po krawędziach przechodzących ściśle poziom po poziomie, przepychając blocking flow.",
+              "step4": "Przelicz graf poziomów i powtarzaj, aż ujście będzie nieosiągalne."
+            },
+            "keyIdea": "Zbuduj graf poziomów BFS-em, a potem przepchnij „blocking flow” przez wszystkie najkrótsze ścieżki augmentujące naraz za pomocą DFS.",
+            "pattern": "Maksymalny przepływ · Warstwowe blokowanie",
+            "strengths": {
+              "item1": "Ogólnie O(V²E), a dla grafów dwudzielnych / pojemności jednostkowych O(E · √V) — zwykle szybszy od Edmondsa-Karpa.",
+              "item2": "DFS dla blocking flow nasyca wiele ścieżek w jednej fazie."
+            },
+            "watch": "Węzły grupują się w poziomy BFS; DFS nasyca każdą najkrótszą ścieżkę s→t w jednej fazie, zanim graf poziomów zostanie przebudowany.",
+            "weaknesses": {
+              "item1": "Bardziej złożony w implementacji niż zwykły Ford-Fulkerson czy Edmonds-Karp.",
+              "item2": "Nie uwzględnia kosztów — dla problemów ważonych trzeba przejść do min-cost flow."
+            }
+          },
+          "dominatorTree": {
+            "howItWorks": {
+              "step1": "Oblicz odwrotny post-order CFG od węzła wejściowego.",
+              "step2": "Zainicjalizuj dom[entry] = entry; wszystko inne jako nieznane.",
+              "step3": "Iteruj: dom[B] = przecięcie zbiorów dom wszystkich poprzedników B, plus samo B.",
+              "step4": "Gdy dom przestanie się zmieniać, bezpośredni dominator B to najbliższy ściśle dominujący węzeł."
+            },
+            "keyIdea": "W grafie przepływu sterowania węzeł D dominuje B, jeśli każda ścieżka od wejścia do B przechodzi przez D — zbuduj drzewo bezpośrednich dominatorów.",
+            "pattern": "Przepływ sterowania · Dominacja",
+            "strengths": {
+              "item1": "W praktyce prawie liniowe z algorytmem Cooper-Harvey-Kennedy.",
+              "item2": "Kluczowe dla optymalizacji w kompilatorach — pętle, SSA, code motion."
+            },
+            "watch": "Krawędzie dominatorów pojawiają się, gdy zestaw dominatorów każdego bloku się ustabilizuje.",
+            "weaknesses": {
+              "item1": "Ma sens tylko na redukowalnych grafach przepływu sterowania albo przy szybszym Lengauer-Tarjanie.",
+              "item2": "Ma subtelne przypadki brzegowe wokół nieosiągalnego kodu i węzłów wyjścia."
+            }
+          },
+          "edmondsKarp": {
+            "howItWorks": {
+              "step1": "Zbuduj graf residualny (oryginalne pojemności minus aktualny przepływ).",
+              "step2": "Uruchom BFS od źródła do ujścia w grafie residualnym.",
+              "step3": "Znajdź przepustowość wąskiego gardła na ścieżce i przepchnij dokładnie tyle przepływu.",
+              "step4": "Zaktualizuj pojemności residualne. Powtarzaj, aż nie będzie ścieżki augmentującej."
+            },
+            "keyIdea": "Wielokrotnie znajduj najkrótszą ścieżkę augmentującą przez BFS w grafie residualnym i przepychaj nią przepływ, aż żadna już nie zostanie.",
+            "pattern": "Maksymalny przepływ · BFS augmentujący",
+            "strengths": {
+              "item1": "Wielomianowy czas O(V · E²) — przewidywalna górna granica.",
+              "item2": "BFS daje mniej faz niż arbitralne wybory ścieżek w Fordzie-Fulkersonie."
+            },
+            "watch": "Każdy BFS podświetla najkrótszą ścieżkę od źródła do ujścia; gdy zostanie narysowana, nasyca się i znika.",
+            "weaknesses": {
+              "item1": "Na gęstych sieciach wolniejszy od Dinica.",
+              "item2": "Nie obsługuje kosztów — nadaje się tylko do czystego max flow."
+            }
+          },
+          "eulerPathCircuit": {
+            "howItWorks": {
+              "step1": "Sprawdź warunki stopni: cykl Eulera wymaga samych parzystych stopni, ścieżka Eulera dokładnie dwóch nieparzystych końców.",
+              "step2": "Zacznij w dowolnym węźle o parzystym stopniu (albo w nieparzystym końcu dla ścieżki) i podążaj krawędziami, zużywając każdą raz.",
+              "step3": "Jeśli trafisz w ślepy zaułek, doszyj nowy podcykl od dowolnego wcześniej odwiedzonego węzła, który ma jeszcze nieużyte krawędzie.",
+              "step4": "Wplataj podcykle do głównego śladu, aż każda krawędź zostanie zużyta."
+            },
+            "keyIdea": "Znajdź przejście używające każdej krawędzi dokładnie raz, zszywając większy ślad z mniejszych podcykli (Hierholzer).",
+            "pattern": "Ślad · Każda krawędź raz",
+            "strengths": {
+              "item1": "Liniowy czas O(E) z algorytmem Hierholzera.",
+              "item2": "Działa także na grafach skierowanych przy analogicznych warunkach stopni wejściowych i wyjściowych."
+            },
+            "watch": "Fioletowe krawędzie wydłużają aktywny spacer; turkusowe są już zablokowane w finalnym śladzie, gdy ten rośnie.",
+            "weaknesses": {
+              "item1": "Istnieje tylko dla grafów spełniających warunki stopni — inaczej żaden ślad nie istnieje.",
+              "item2": "Trzeba bardzo uważnie śledzić nieużyte krawędzie — naiwne oznaczanie odwiedzonych może źle poprowadzić trasę."
+            }
+          },
+          "floodFill": {
+            "howItWorks": {
+              "step1": "Wybierz komórkę ziarna i zapamiętaj jej oryginalny kolor.",
+              "step2": "Dodaj ją do kolejki (BFS) albo stosu (DFS).",
+              "step3": "Zdejmij komórkę, przemaluj ją i dodaj każdego 4- lub 8-sąsiada, który nadal ma oryginalny kolor.",
+              "step4": "Zatrzymaj się, gdy kolejka / stos będzie pusty — region jest już w całości wypełniony."
+            },
+            "keyIdea": "Zaczynając od komórki ziarna, zamaluj każdą połączoną komórkę mającą ten sam kolor, aż cały region zostanie wypełniony.",
+            "pattern": "Siatka · Wypełnianie regionu",
+            "strengths": {
+              "item1": "Liniowe względem rozmiaru regionu.",
+              "item2": "Banalnie dostosować je do różnych sąsiedztw (4-kierunkowe, 8-kierunkowe, przekątne)."
+            },
+            "watch": "Wypełnienie rozchodzi się falami od ziarna — jak wiadro farby w edytorze obrazów.",
+            "weaknesses": {
+              "item1": "Duże regiony na głębokich siatkach wysadzają stos rekurencji — lepiej użyć jawnej kolejki lub stosu.",
+              "item2": "Nie zachowuje antyaliasowanych granic — działa na ostrych regionach."
+            }
+          },
+          "floydWarshall": {
+            "howItWorks": {
+              "step1": "Zacznij od dist[i][j] = waga krawędzi (albo nieskończoność, jeśli krawędzi nie ma).",
+              "step2": "Dla każdego kandydata na pośrednika k aktualizuj dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]).",
+              "step3": "Po wszystkich V przebiegach dist przechowuje długości najkrótszych ścieżek dla każdej pary.",
+              "step4": "Aby odtwarzać ścieżki, aktualizuj równolegle macierz parent/next."
+            },
+            "keyIdea": "W każdym zewnętrznym przebiegu dopuść ścieżki przez jeszcze jeden węzeł pośredni k; weź minimum z „bezpośrednio i→j” oraz „i→k→j”.",
+            "pattern": "Najkrótsze ścieżki wszystkich par",
+            "strengths": {
+              "item1": "Po preprocessingu O(V³) odpowiada na każde pytanie o najkrótszą ścieżkę w O(1) — świetne dla gęstych grafów albo wielu zapytań.",
+              "item2": "Obsługuje ujemne wagi (ale nadal nie cykle ujemne)."
+            },
+            "watch": "W każdym przebiegu dla k stabilizują się wiersz i kolumna pivota, a poprawki rozchodzą się po reszcie tabeli.",
+            "weaknesses": {
+              "item1": "Czas O(V³) i pamięć O(V²) — niepraktyczne dla bardzo dużego V.",
+              "item2": "Nie nadaje się, gdy potrzebujesz tylko jednego źródła — wtedy szybsze są Dijkstra albo Bellman-Ford."
+            }
+          },
+          "hopcroftKarp": {
+            "howItWorks": {
+              "step1": "Uruchom BFS od każdego wolnego lewego wierzchołka, budując naprzemienne warstwy z krawędzi skojarzonych i nieskojarzonych.",
+              "step2": "Zatrzymaj BFS na pierwszej warstwie zawierającej wolny prawy wierzchołek.",
+              "step3": "Przejdź DFS-em z powrotem po warstwach, augmentując po rozłącznych wierzchołkowo najkrótszych ścieżkach.",
+              "step4": "Powtarzaj, aż BFS przestanie dochodzić do wolnego prawego wierzchołka."
+            },
+            "keyIdea": "Dla grafów dwudzielnych szukaj w każdej fazie wielu najkrótszych, rozłącznych wierzchołkowo ścieżek augmentujących przez parę BFS + DFS.",
+            "pattern": "Skojarzenie dwudzielne · Warstwowe",
+            "strengths": {
+              "item1": "O(E · √V) — najszybszy znany algorytm dla skojarzenia dwudzielnego.",
+              "item2": "Naturalnie pasuje do przypisań, pokryć dwudzielnych i problemów planowania zadań."
+            },
+            "watch": "BFS buduje naprzemienne warstwy między wolnymi lewymi i prawymi wierzchołkami; DFS przewleka przez nie ścieżki augmentujące.",
+            "weaknesses": {
+              "item1": "Działa tylko na grafach dwudzielnych.",
+              "item2": "Warstwowe księgowanie zwiększa złożoność implementacji względem prostszych metod przepływowych."
+            }
+          },
+          "hungarianAlgorithm": {
+            "howItWorks": {
+              "step1": "Odejmij minimum każdego wiersza od tego wiersza, a potem minimum każdej kolumny od tej kolumny.",
+              "step2": "Pokryj wszystkie zera minimalną liczbą linii poziomych / pionowych.",
+              "step3": "Jeśli liczba linii = n, przypisz zera tak, by utworzyć doskonałe skojarzenie — gotowe.",
+              "step4": "W przeciwnym razie znajdź najmniejszą niepokrytą wartość, odejmij ją od niepokrytych wierszy, dodaj do podwójnie pokrytych kolumn i spróbuj ponownie."
+            },
+            "keyIdea": "Rozwiąż minimalnokosztowe przypisanie dwudzielne przez redukcję macierzy kosztów, pokrywanie zer najmniejszą liczbą linii i korekty, aż zmieści się pełne skojarzenie.",
+            "pattern": "Przypisanie · Redukcja macierzy",
+            "strengths": {
+              "item1": "Wielomianowe O(n³) — dramatycznie lepsze niż brute force O(n!).",
+              "item2": "Daje optymalne przypisanie, a nie przybliżenie."
+            },
+            "watch": "Linie pokrycia przecinają macierz; gdy ich liczba zrówna się z n, możesz wybrać poprawne przypisanie z zer.",
+            "weaknesses": {
+              "item1": "Krok pokrywania linii jest subtelny i łatwo go zaimplementować błędnie.",
+              "item2": "Działa na kwadratowych macierzach kosztów — dla prostokątnych trzeba dodać wiersze lub kolumny fikcyjne."
+            }
+          },
+          "kosarajuScc": {
+            "howItWorks": {
+              "step1": "Uruchom DFS na oryginalnym grafie i odkładaj każdy węzeł na stos, gdy kończy pracę.",
+              "step2": "Odwróć wszystkie krawędzie.",
+              "step3": "Zdejmuj węzły ze stosu; gdy zdejmiesz nieodwiedzony, uruchom DFS w grafie odwróconym — osiągnięty zbiór to jedno SCC.",
+              "step4": "Powtarzaj, aż stos będzie pusty."
+            },
+            "keyIdea": "Pierwszy DFS zapisuje kolejność kończenia, a drugi DFS na grafie odwróconym, w odwrotnej kolejności kończenia, zdejmuje po jednym SCC na przejście.",
+            "pattern": "SCC · Dwuprzebiegowy DFS",
+            "strengths": {
+              "item1": "Koncepcyjnie czyste: dwa zwykłe przebiegi DFS, bez śledzenia low-link.",
+              "item2": "Łatwe do wyjaśnienia i debugowania."
+            },
+            "watch": "Przebieg 1 buduje stos czasów kończenia. Przebieg 2 idzie po odwróconych krawędziach — każde wywołanie DFS odkrywa dokładnie jedno SCC.",
+            "weaknesses": {
+              "item1": "Potrzebuje odwróconego grafu — dodatkowy czas i pamięć.",
+              "item2": "Dwa przebiegi zamiast jednego jak u Tarjana."
+            }
+          },
+          "kruskalsMst": {
+            "howItWorks": {
+              "step1": "Posortuj wszystkie krawędzie rosnąco po wadze.",
+              "step2": "Przejdź po liście; dla każdej krawędzi sprawdź, czy jej końce należą do różnych składowych.",
+              "step3": "Jeśli tak — zaakceptuj ją (dodaj do MST i złącz składowe). Jeśli nie — odrzuć.",
+              "step4": "Zatrzymaj się po zaakceptowaniu V − 1 krawędzi — to jest MST."
+            },
+            "keyIdea": "Posortuj wszystkie krawędzie po wadze; bierz najtańszą, która nie zamyka cyklu, sprawdzając to przez Union-Find.",
+            "pattern": "MST · Sortowanie krawędzi",
+            "strengths": {
+              "item1": "Czas O(E log E), zdominowany przez sortowanie; po posortowaniu dalsza część jest liniowa.",
+              "item2": "Działa czysto na grafach niespójnych (dostajesz minimalny las rozpinający)."
+            },
+            "watch": "Krawędzie pojawiają się w kolejności — zaakceptowane wchodzą do MST, odrzucone zamknęłyby cykl.",
+            "weaknesses": {
+              "item1": "Do optymalnej szybkości potrzebuje sprawnej struktury zbiorów rozłącznych.",
+              "item2": "Sortowanie całej listy krawędzi to strata pracy, jeśli znaczenie ma tylko krótki prefiks."
+            }
+          },
+          "minCostMaxFlow": {
+            "howItWorks": {
+              "step1": "Zbuduj graf residualny z pojemnościami ORAZ kosztami krawędzi (ujemnymi na krawędziach odwrotnych).",
+              "step2": "Znajdź najtańszą ścieżkę s→t przez SPFA / Bellmana-Forda, aby dopuścić ujemne koszty odwrotne.",
+              "step3": "Przepchnij przez nią przepływ równy wąskiemu gardłu, naliczając koszt × wąskie gardło.",
+              "step4": "Powtarzaj, aż nie będzie ścieżki augmentującej; suma kosztów × przepływów to wynik."
+            },
+            "keyIdea": "Znajdź maksymalny przepływ o minimalnym łącznym koszcie krawędzi — wielokrotnie przepychaj przepływ po najtańszej ścieżce augmentującej.",
+            "pattern": "Przepływ · Z kosztami",
+            "strengths": {
+              "item1": "W jednej procedurze znajduje zarówno max flow, jak i minimalny całkowity koszt.",
+              "item2": "Naturalnie pasuje do zadań przypisań, transportu i łańcuchów dostaw."
+            },
+            "watch": "Każda augmentacja podświetla aktualnie najtańszą trasę s→t (SPFA albo Bellman-Ford na kosztach residualnych).",
+            "weaknesses": {
+              "item1": "Wolniejszy od zwykłego max flow: na każdą augmentację przypada krok najkrótszej ścieżki.",
+              "item2": "Ujemne koszty na krawędziach odwrotnych wymagają SPFA albo przeważania w stylu Johnsona."
+            }
+          },
+          "primsMst": {
+            "howItWorks": {
+              "step1": "Wybierz dowolny startowy węzeł i dodaj go do drzewa.",
+              "step2": "Wrzuć do kopca minimum każdą krawędź wychodzącą z drzewa, kluczując wagą.",
+              "step3": "Wyjmij najtańszą krawędź; jeśli jej dalszy koniec nie należy jeszcze do drzewa, dodaj i tę krawędź, i ten węzeł.",
+              "step4": "Powtarzaj, aż każdy węzeł będzie w drzewie — to jest MST."
+            },
+            "keyIdea": "Zacznij od dowolnego węzła i wielokrotnie dodawaj najtańszą krawędź wychodzącą z drzewa do nowego węzła.",
+            "pattern": "MST · Rozrastanie od ziarna",
+            "strengths": {
+              "item1": "O(E log V) z kopcem — szybkie dla gęstych grafów.",
+              "item2": "Łatwo równoleglić pracę na froncie."
+            },
+            "watch": "Rosnące drzewo zawsze wisi na jednej spójnej plamie — kandydatami są krawędzie przecinające jej granicę.",
+            "weaknesses": {
+              "item1": "Działa tylko na spójnych grafach — w przeciwnym razie obejmuje tylko jedną składową.",
+              "item2": "Implementacja jest bardziej złożona niż w Kruskalu, jeśli nie masz już gotowego kopca."
+            }
+          },
+          "steinerTree": {
+            "howItWorks": {
+              "step1": "Wylicz podzbiory terminali (do 2^t podzbiorów dla t terminali).",
+              "step2": "DP: najtańsze drzewo spinające dany podzbiór, ukorzenione w danym węźle.",
+              "step3": "Łącz mniejsze podzbiory przez scalenia drzew i rozszerzenia po krawędziach (Dreyfus-Wagner).",
+              "step4": "Odpowiedź = najtańsze drzewo spinające pełny zbiór terminali, po wszystkich możliwych korzeniach."
+            },
+            "keyIdea": "Znajdź najtańsze drzewo łączące wybrany podzbiór terminali, dopuszczając po drodze opcjonalne węzły Steinera.",
+            "pattern": "Opcjonalne łączniki · DP",
+            "strengths": {
+              "item1": "Dokładne rozwiązanie — bez heurystycznego przybliżania.",
+              "item2": "Wielomianowe względem rozmiaru grafu przy stałej liczbie terminali (Dreyfus-Wagner ma O(3^t · V + 2^t · E log V))."
+            },
+            "watch": "Niebieskie terminale muszą się połączyć; zielone węzły są opcjonalnymi pomocnikami; turkusowe krawędzie budują rosnące drzewo terminali.",
+            "weaknesses": {
+              "item1": "Wykładnicze względem liczby terminali — praktyczne tylko do około 20 terminali.",
+              "item2": "Implementacja jest ciężka w porównaniu z MST czy najkrótszą ścieżką."
+            }
+          },
+          "tarjanScc": {
+            "howItWorks": {
+              "step1": "Uruchom DFS, nadając każdemu węzłowi index (kolejność odkrycia) i low-link (najniższy osiągalny index).",
+              "step2": "Wrzucaj każdy nowo odkryty węzeł na stos SCC.",
+              "step3": "Gdy kończysz węzeł, którego low-link równa się jego własnemu indexowi, zdejmij ze stosu wszystko aż do niego — to jedno SCC.",
+              "step4": "Kontynuuj, aż każdy węzeł zostanie przetworzony."
+            },
+            "keyIdea": "Wykonaj jeden DFS i śledź wartość low-link dla każdego węzła; gdy low-link == index, przy bieżącym korzeniu zamyka się SCC.",
+            "pattern": "SCC · Jednoprzebiegowy DFS",
+            "strengths": {
+              "item1": "Jeden DFS — O(V + E).",
+              "item2": "Nie potrzebuje odwróconego grafu."
+            },
+            "watch": "Węzły siedzą na pomocniczym stosie podczas DFS; całe SCC spada z niego jednym ruchem, gdy korzeń się kończy.",
+            "weaknesses": {
+              "item1": "Księgowanie low-link jest łatwe do popsucia; błędy off-by-one są częste.",
+              "item2": "Koncepcyjnie jest gęstszy od Kosaraju — trudniej go uczyć."
+            }
+          },
+          "topologicalSortKahn": {
+            "howItWorks": {
+              "step1": "Policz stopień wejściowy każdego węzła.",
+              "step2": "Wrzuć do kolejki wszystkie węzły o stopniu wejściowym 0.",
+              "step3": "Zdejmij węzeł, dopisz go do wyniku i zmniejsz stopień wejściowy każdego wychodzącego sąsiada.",
+              "step4": "Dodaj do kolejki każdego sąsiada, którego stopień wejściowy właśnie spadł do 0. Kończysz, gdy kolejka jest pusta."
+            },
+            "keyIdea": "Wielokrotnie usuwaj węzeł o zerowym stopniu wejściowym; jego krawędzie znikają, uwalniając kolejne węzły gotowe do zdjęcia.",
+            "pattern": "DAG · Porządek według stopni wejściowych",
+            "strengths": {
+              "item1": "O(V + E), iteracyjne, bez rekurencji.",
+              "item2": "Naturalnie wykrywa cykle — jeśli wynik ma mniej niż V węzłów, cykl istnieje."
+            },
+            "watch": "Kolejka „gotowych” węzłów kurczy się i znowu napełnia, gdy zależności zostają spełnione.",
+            "weaknesses": {
+              "item1": "Jest zdefiniowane tylko dla DAG-ów — grafy cykliczne nie mają porządku topologicznego.",
+              "item2": "Zwrócona kolejność to tylko jedna z wielu poprawnych; bez tie-breaka nie jest deterministyczna."
+            }
+          },
+          "treeTraversals": {
+            "howItWorks": {
+              "step1": "Pre-order: węzeł → lewe poddrzewo → prawe poddrzewo (kopiowanie z góry na dół).",
+              "step2": "In-order: lewe poddrzewo → węzeł → prawe poddrzewo (posortowany wynik dla BST).",
+              "step3": "Post-order: lewe → prawe → węzeł (bezpieczne dla usuwania / sprzątania).",
+              "step4": "Level-order: fala po fali z kolejką (drzewny odpowiednik BFS)."
+            },
+            "keyIdea": "Odwiedzaj każdy węzeł drzewa w wybranym porządku — pre-order, in-order, post-order albo level-order (BFS).",
+            "pattern": "Przechodzenie · Porządki drzewa",
+            "strengths": {
+              "item1": "Liniowe O(n) czasu i O(h) pamięci dla przejść DFS; O(w) pamięci dla level-order.",
+              "item2": "Każde przejście odsłania inną naturalną własność struktury drzewa."
+            },
+            "watch": "Liczy się kolejność odwiedzin — obserwuj, który węzeł wypisuje etykietę jako pierwszy, przed lub po dzieciach.",
+            "weaknesses": {
+              "item1": "Rekurencyjne przejścia DFS mogą wysadzić stos przy bardzo głębokich drzewach — wtedy lepszy jest jawny stos.",
+              "item2": "Kolejność ma znaczenie — zamiana lewego i prawego dziecka może po cichu zepsuć odbiorców oczekujących konkretnego porządku."
+            }
+          },
+          "unionFind": {
+            "howItWorks": {
+              "step1": "Każdy element startuje jako własny zbiór — jego wskaźnik rodzica wskazuje na niego samego.",
+              "step2": "Find(x): idź wskaźnikami rodzica, aż trafisz w korzeń. Skompresuj ścieżkę, by kolejne find były szybsze.",
+              "step3": "Union(a, b): znajdź oba korzenie; podepnij mniejsze drzewo pod większy korzeń.",
+              "step4": "Po odpowiednio wielu operacjach niemal wszystkie węzły wskazują bezpośrednio na korzeń."
+            },
+            "keyIdea": "Utrzymuj las zbiorów rozłącznych z dwiema operacjami: znajdź korzeń zbioru i złącz dwa zbiory w jeden.",
+            "pattern": "Struktura · Zbiory rozłączne",
+            "strengths": {
+              "item1": "Z kompresją ścieżki i union by rank operacje są efektywnie O(α(n)) — prawie stałe.",
+              "item2": "Idealne do Kruskala, zapytań o spójność i offlineowych testów spójności."
+            },
+            "watch": "Find wspina się do korzenia; union podpina jeden korzeń pod drugi, a kompresja ścieżki spłaszcza łańcuch.",
+            "weaknesses": {
+              "item1": "Nie wspiera usuwania ani dzielenia — drzewa mogą się tylko scalać.",
+              "item2": "Kompresja ścieżki mutuje strukturę podczas pozornie tylko odczytowego find."
+            }
+          }
+        },
         "sort": {
           "bubbleSort": {
             "howItWorks": {
@@ -1283,6 +2207,63 @@
         }
       },
       "visualizations": {
+        "dp": {
+          "emptyLabel": "Brak śladu DP dla tego kroku.",
+          "guideDesc": "Skup się na aktywnym wierszu, kolumnie lub przedziale, a potem użyj podświetlonych chipów, żeby zobaczyć, które podproblemy zasilają następny zapis.",
+          "guideEyebrow": "Przewodnik DP",
+          "guideTitle": "Najpierw odczytaj aktywny stan",
+          "knapsack": {
+            "activeCellLabel": "aktywna komórka",
+            "applyCurrentMoveLabel": "Zastosuj bieżący ruch",
+            "backtrackPathLabel": "ścieżka backtrackingu",
+            "baseCasesMeta": "wiersz 0 lub pojemność 0",
+            "baseCasesValue": "Przypadki bazowe",
+            "baseRowValue": "Wiersz bazowy",
+            "boardLabel": "przedmioty × pojemność",
+            "branches": {
+              "blockedValue": "zablokowane",
+              "needPreviousStateNote": "wymaga poprzedniego stanu + wartości przedmiotu",
+              "needsWeightNote": "wymaga wagi {{weight}}",
+              "skipLabel": "Gałąź pomiń",
+              "skipNote": "użyj ponownie dp[{{row}}][{{col}}]",
+              "takeLabel": "Gałąź weź",
+              "takeNote": "odczytaj dp[{{row}}][{{col}}] + {{value}}"
+            },
+            "capacityLaneLabel": "Pas pojemności",
+            "currentItemLabel": "Bieżący przedmiot",
+            "currentPackLabel": "Aktualny pakiet",
+            "decisionEyebrow": "Soczewka decyzji",
+            "decisionTitle": "Pomiń kontra weź",
+            "followActiveRowLabel": "Śledź aktywny wiersz",
+            "guideEyebrow": "Przewodnik wizualny",
+            "guideTitle": "Gdzie patrzeć teraz",
+            "inputShelfEyebrow": "Półka wejściowa",
+            "inputShelfTitle": "Przedmioty zasilają wiersze",
+            "labEyebrow": "Laboratorium plecaka",
+            "lockCapacityColumnLabel": "Zablokuj kolumnę pojemności",
+            "metrics": {
+              "bestValue": "Najlepsza wartość",
+              "packed": "Spakowane",
+              "table": "Tabela"
+            },
+            "noWinningBranchLabel": "Brak zwycięskiej gałęzi.",
+            "outcomeEyebrow": "Wynik",
+            "outcomeTitle": "Stan plecaka",
+            "packEmptyLabel": "Wybrane przedmioty pojawią się tutaj podczas backtrackingu.",
+            "rowLabel": "wiersz {{row}}",
+            "scenarioEyebrow": "Scenariusz",
+            "sourceCellsLabel": "komórki źródłowe",
+            "valueShortLabel": "wartość",
+            "waitingTransitionLabel": "Oczekiwanie na kolejne porównanie.",
+            "weightShortLabel": "waga",
+            "workspaceEyebrow": "Obszar roboczy",
+            "workspaceTitle": "Tabela DP gra główną rolę"
+          },
+          "presetLabEyebrow": "Laboratorium presetów",
+          "scenarioEyebrow": "Scenariusz",
+          "stageEyebrow": "Scena",
+          "stageTitle": "Przestrzeń DP"
+        },
         "grid": {
           "decisionFallback": "obserwuj, jak plansza zmienia się krok po kroku",
           "frontierLabel": "Frontier",
@@ -1358,6 +2339,25 @@
           "stageTitle": "Tablica pod inspekcją",
           "targetLabel": "Cel",
           "windowLabel": "Okno"
+        },
+        "string": {
+          "computationEmptyNote": "Ten krok to czyste przejście stanu bez dodatkowego wzoru do wyjaśnienia.",
+          "computationLabel": "Obliczenie",
+          "emptyLabel": "Brak śladu String Lab dla tego kroku.",
+          "guideEyebrow": "Przewodnik po stringach",
+          "labEyebrow": "Laboratorium stringów",
+          "labels": {
+            "combined": "Połączony",
+            "input": "Wejście",
+            "pattern": "Wzorzec",
+            "source": "Źródło",
+            "text": "Tekst"
+          },
+          "presetEyebrow": "Preset",
+          "rle": {
+            "waitingForFirstRun": "Oczekiwanie na pierwszy przebieg…"
+          },
+          "stageEyebrow": "Scena"
         }
       }
     },

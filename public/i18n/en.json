@@ -343,6 +343,404 @@
           "triggerLabel": "Traits"
         }
       },
+      "scenarios": {
+        "dp": {
+          "bitmaskDp": {
+            "crews": {
+              "description": "Crew-to-task costs create several close assignment alternatives.",
+              "label": "Crews"
+            },
+            "labs": {
+              "description": "A denser cost matrix highlights why each mask encodes used jobs.",
+              "label": "Labs"
+            },
+            "robots": {
+              "description": "Assigning robots to charging bays shows subset masks filling from sparse to dense.",
+              "label": "Robots"
+            }
+          },
+          "burstBalloons": {
+            "classic": {
+              "description": "A compact coin-yield set shows why the last balloon in an interval matters.",
+              "label": "Classic"
+            },
+            "dense": {
+              "description": "A slightly larger board emphasizes interval reuse and split storage.",
+              "label": "Dense"
+            },
+            "zigzag": {
+              "description": "High-low alternation makes the split decisions visually dramatic.",
+              "label": "Zigzag"
+            }
+          },
+          "cht": {
+            "metro": {
+              "description": "A slightly noisier distance sequence shows why older lines become obsolete.",
+              "label": "Metro"
+            },
+            "pulse": {
+              "description": "Compact points keep the line transitions readable in a strip view.",
+              "label": "Pulse"
+            },
+            "track": {
+              "description": "Monotone x-values make query order and hull pruning visually clean.",
+              "label": "Track"
+            }
+          },
+          "climbingStairs": {
+            "metro": {
+              "description": "Urban stop labels frame the recurrence as a compact commuter problem.",
+              "label": "Metro"
+            },
+            "summit": {
+              "description": "A slightly taller climb makes the Fibonacci-like growth feel more dramatic.",
+              "label": "Summit"
+            },
+            "tower": {
+              "description": "A clean staircase count where each landing inherits the two previous counts.",
+              "label": "Tower"
+            }
+          },
+          "coinChange": {
+            "arcade": {
+              "description": "Medium denominations create several competing minimum-coin paths.",
+              "label": "Arcade Tokens"
+            },
+            "market": {
+              "description": "Small and large coins mix to show reuse of the same row in unbounded DP.",
+              "label": "Market Change"
+            },
+            "metro": {
+              "description": "Classic coin set where one greedy-looking pick is not always optimal.",
+              "label": "Metro Fare"
+            }
+          },
+          "divideConquer": {
+            "freight": {
+              "description": "Heavier tails force the optimal split range to move steadily right.",
+              "label": "Freight"
+            },
+            "pods": {
+              "description": "Balanced numbers make monotone optimal splits easy to spot.",
+              "label": "Pods"
+            },
+            "shifts": {
+              "description": "Segmenting workloads into teams gives a clear partition-cost narrative.",
+              "label": "Shifts"
+            }
+          },
+          "editDistance": {
+            "code": {
+              "description": "Programmer-ish tokens reveal how edits cluster around naming changes.",
+              "label": "Code Refactor"
+            },
+            "plural": {
+              "description": "Word-shape changes make suffix edits and carry moves easy to follow.",
+              "label": "Grammar"
+            },
+            "typo": {
+              "description": "Classic misspellings show replace, insert and delete transitions cleanly.",
+              "label": "Typo Fix"
+            }
+          },
+          "fibonacci": {
+            "classic": {
+              "description": "The standard Fibonacci sequence is ideal for showing additive DP growth.",
+              "label": "Classic"
+            },
+            "growth": {
+              "description": "A slightly larger n turns the recurrence into a visibly accelerating wave.",
+              "label": "Growth"
+            },
+            "signal": {
+              "description": "Shorter terms keep the focus on how the cache fills from left to right.",
+              "label": "Signal"
+            }
+          },
+          "knapsack": {
+            "camp": {
+              "description": "Balanced weights and values, ideal for showing skip vs take decisions.",
+              "label": "Camp Pack"
+            },
+            "heist": {
+              "description": "Several flashy high-value items compete for a tight capacity budget.",
+              "label": "Heist Loadout"
+            },
+            "lab": {
+              "description": "Dense scientific cargo where medium items often beat one expensive choice.",
+              "label": "Lab Crate"
+            }
+          },
+          "knuth": {
+            "archives": {
+              "description": "Uneven file sizes make the saved split window more interesting.",
+              "label": "Archives"
+            },
+            "chapters": {
+              "description": "Adjacent file-merge costs produce a compact interval DP with narrow opt windows.",
+              "label": "Chapters"
+            },
+            "packets": {
+              "description": "A short merge chain keeps the Knuth optimization readable and dense.",
+              "label": "Packets"
+            }
+          },
+          "lcs": {
+            "dna": {
+              "description": "Short nucleotide strings make diagonal matches visually obvious.",
+              "label": "DNA"
+            },
+            "signals": {
+              "description": "Letter-code sequences create competing left vs top DP decisions.",
+              "label": "Signals"
+            },
+            "words": {
+              "description": "Readable word pairs make the final subsequence easy to understand.",
+              "label": "Words"
+            }
+          },
+          "lis": {
+            "rebound": {
+              "description": "Late recovery values create a more dramatic backtrack route.",
+              "label": "Rebound"
+            },
+            "skyline": {
+              "description": "Mostly rising values with a few breaks make the final subsequence easy to spot.",
+              "label": "Skyline"
+            },
+            "wave": {
+              "description": "Alternating rises and dips force the algorithm to keep revising its best predecessor.",
+              "label": "Wave"
+            }
+          },
+          "lps": {
+            "phrase": {
+              "description": "Readable words make matching outer characters easier to follow.",
+              "label": "Phrase"
+            },
+            "radar": {
+              "description": "Letter symmetry creates a visibly clean palindromic backbone.",
+              "label": "Radar"
+            },
+            "signal": {
+              "description": "The best palindrome is hidden across several skipped positions.",
+              "label": "Signal"
+            }
+          },
+          "matrixChain": {
+            "balanced": {
+              "description": "Dimensions stay moderate and produce a steady triangular DP fill.",
+              "label": "Balanced"
+            },
+            "classic": {
+              "description": "The textbook chain exposes why split points matter so much.",
+              "label": "Classic"
+            },
+            "swing": {
+              "description": "Alternating small and huge dimensions make bad split costs explode.",
+              "label": "Swing"
+            }
+          },
+          "profile": {
+            "corridor": {
+              "description": "A slightly longer board makes recurring profiles and counts easy to compare.",
+              "label": "Corridor"
+            },
+            "lab": {
+              "description": "Compact profile states expose how a frontier DP reuses the same mask vocabulary.",
+              "label": "Lab Grid"
+            },
+            "tiles": {
+              "description": "Classic domino tilings show how frontier masks move from one column to the next.",
+              "label": "Tiles"
+            }
+          },
+          "regex": {
+            "alias": {
+              "description": "Dot and star mix to show both literal matches and repeated spans.",
+              "label": "Alias"
+            },
+            "logs": {
+              "description": "A denser pattern makes zero-occurrence vs consume-one branches easy to compare.",
+              "label": "Logs"
+            },
+            "pulse": {
+              "description": "Short strings keep the regex star mechanic readable and compact.",
+              "label": "Pulse"
+            }
+          },
+          "sos": {
+            "cache": {
+              "description": "A denser base array makes the sum-over-subsets propagation feel more dramatic.",
+              "label": "Cache"
+            },
+            "radar": {
+              "description": "Bitmask contributions are clustered, so each SOS stage lights up different families.",
+              "label": "Radar"
+            },
+            "signals": {
+              "description": "Subset values make it easy to see how supersets absorb all of their submasks.",
+              "label": "Signals"
+            }
+          },
+          "subsetSum": {
+            "lab": {
+              "description": "A denser set makes the boolean table light up in clusters.",
+              "label": "Lab Budget"
+            },
+            "laser": {
+              "description": "Numbers are balanced so multiple near-target branches compete.",
+              "label": "Laser Grid"
+            },
+            "trail": {
+              "description": "Snack weights create one clean subset and a few tempting dead ends.",
+              "label": "Trail Mix"
+            }
+          },
+          "travelingSalesman": {
+            "coast": {
+              "description": "A slightly larger route shows why subset masks need to remember the end city.",
+              "label": "Coast Hop"
+            },
+            "drone": {
+              "description": "Edge weights vary more sharply, so bad subset transitions stand out.",
+              "label": "Drone Route"
+            },
+            "metro": {
+              "description": "A compact symmetric city map that produces a clear optimal Hamiltonian tour.",
+              "label": "Metro Loop"
+            }
+          },
+          "treeDp": {
+            "campus": {
+              "description": "A wider tree creates clear postorder aggregation across several children.",
+              "label": "Campus"
+            },
+            "orchard": {
+              "description": "Fruit values on a branching tree make include-vs-skip choices easy to follow.",
+              "label": "Orchard"
+            },
+            "vault": {
+              "description": "Heavier leaf rewards make the independent-set backtrack more dramatic.",
+              "label": "Vault"
+            }
+          },
+          "wildcard": {
+            "codes": {
+              "description": "Dense symbol-like strings make skipped vs consumed star states stand out.",
+              "label": "Codes"
+            },
+            "globs": {
+              "description": "Simple ? and * patterns show horizontal vs vertical star movement clearly.",
+              "label": "Globs"
+            },
+            "routes": {
+              "description": "Path-like strings make wildcard spans easy to reason about.",
+              "label": "Routes"
+            }
+          }
+        },
+        "string": {
+          "bwt": {
+            "banana": {
+              "description": "The canonical BWT demo: short, memorable, and perfect for grouped output runs.",
+              "label": "Banana"
+            },
+            "mississippi": {
+              "description": "Heavier repetition shows why BWT helps later run-length compression.",
+              "label": "Mississippi"
+            },
+            "panama": {
+              "description": "Readable phrase-derived string where rotations visibly cluster repeated letters.",
+              "label": "Panama"
+            }
+          },
+          "huffman": {
+            "classic": {
+              "description": "Skewed frequency distribution",
+              "label": "Classic"
+            },
+            "natural": {
+              "description": "Natural-language-like distribution",
+              "label": "Natural"
+            },
+            "uniform": {
+              "description": "Nearly equal frequencies",
+              "label": "Uniform"
+            }
+          },
+          "kmp": {
+            "dna": {
+              "description": "Short genome-style pattern with repeated prefixes and suffixes.",
+              "label": "DNA"
+            },
+            "overlap": {
+              "description": "Classic self-overlap case where failure jumps save many retries.",
+              "label": "Overlap"
+            },
+            "signal": {
+              "description": "Readable repeated phrase that makes jumps visually obvious.",
+              "label": "Signal"
+            }
+          },
+          "manacher": {
+            "banana": {
+              "description": "Odd-length palindromes layer into a clean mirrored rainbow.",
+              "label": "Banana Glow"
+            },
+            "mixed": {
+              "description": "Odd and even palindromes compete, so the longest answer is not obvious up front.",
+              "label": "Mixed"
+            },
+            "symmetry": {
+              "description": "Dense mirrored structure makes center reuse and boundary growth easy to see.",
+              "label": "Symmetry"
+            }
+          },
+          "rabinKarp": {
+            "alarm": {
+              "description": "Small modulus makes rolling hashes collide often enough to teach verification.",
+              "label": "False Alarm"
+            },
+            "forensics": {
+              "description": "A repetitive string where rolling updates are easier to track than full rescans.",
+              "label": "Forensics"
+            },
+            "neon": {
+              "description": "Readable repeated label stream with a clear matching window.",
+              "label": "Neon Feed"
+            }
+          },
+          "rle": {
+            "mixed": {
+              "description": "Mixture of short and long runs",
+              "label": "Mixed"
+            },
+            "runs": {
+              "description": "String with clear repeating runs",
+              "label": "Long runs"
+            },
+            "worst": {
+              "description": "String where RLE has no compression benefit",
+              "label": "No gain"
+            }
+          },
+          "zAlgorithm": {
+            "classic": {
+              "description": "Pattern concatenation produces clear Z-box reuse and a couple of exact hits.",
+              "label": "Classic"
+            },
+            "genome": {
+              "description": "Many overlapping prefixes turn the Z skyline into a dense cityscape.",
+              "label": "Genome"
+            },
+            "log": {
+              "description": "Readable text with long repeated prefixes and visible full-pattern bars.",
+              "label": "Log Stream"
+            }
+          }
+        }
+      },
       "sidePanel": {
         "ariaLabel": "Inspector tabs",
         "tabs": {
@@ -892,6 +1290,17 @@
             "swap": "swap"
           },
           "phaseLabel": "Phase",
+          "phases": {
+            "compare": "Compare",
+            "complete": "Sorted",
+            "distribute": "Distribute",
+            "focusDigit": "Focus digit",
+            "gather": "Gather",
+            "idle": "Ready",
+            "init": "Init",
+            "passComplete": "Pass complete",
+            "swap": "Swap"
+          },
           "sortedLabel": "Sorted",
           "statuses": {
             "comparing": "comparing",
@@ -1070,6 +1479,521 @@
         }
       },
       "tutorials": {
+        "graph": {
+          "aStarPathfinding": {
+            "howItWorks": {
+              "step1": "Put the start into a priority queue with f = h(start).",
+              "step2": "Pop the node with the smallest f; if it is the goal, reconstruct the path.",
+              "step3": "Otherwise, relax each neighbour with g = current.g + edge cost and f = g + h(neighbour).",
+              "step4": "Repeat until the goal is popped or the queue empties."
+            },
+            "keyIdea": "Prioritise nodes by f = g (cost so far) + h (heuristic estimate of distance to goal) and expand the best first.",
+            "pattern": "Shortest path · Heuristic",
+            "strengths": {
+              "item1": "Dramatically faster than Dijkstra when the heuristic points toward the goal.",
+              "item2": "Still optimal if the heuristic is admissible (never overestimates the true distance)."
+            },
+            "watch": "The frontier hugs the goal direction because nodes with a bad h-score sit quietly in the queue.",
+            "weaknesses": {
+              "item1": "A bad heuristic degrades it to Dijkstra (or worse).",
+              "item2": "Memory-hungry because every reached node stays in the open set."
+            }
+          },
+          "bellmanFord": {
+            "howItWorks": {
+              "step1": "Set every distance to infinity except the source (0).",
+              "step2": "Run V − 1 passes — in each pass relax every edge once.",
+              "step3": "Do one extra pass: any distance that still decreases proves a reachable negative cycle.",
+              "step4": "If no decrease happens, distances are correct shortest paths."
+            },
+            "keyIdea": "Relax every edge up to V − 1 times; if one more pass still changes a distance, you have a negative cycle.",
+            "pattern": "Shortest path · Negatives OK",
+            "strengths": {
+              "item1": "Handles negative edge weights and detects negative cycles.",
+              "item2": "Conceptually simple — no priority queue required."
+            },
+            "watch": "The whole edge list is swept each pass — distances shorten everywhere, not just around one focus node.",
+            "weaknesses": {
+              "item1": "O(V · E) time — slower than Dijkstra on non-negative graphs.",
+              "item2": "Not naturally incremental — adding an edge means replaying passes."
+            }
+          },
+          "bfs": {
+            "howItWorks": {
+              "step1": "Mark the source visited and push it into a FIFO queue.",
+              "step2": "Pop the head; look at every neighbour that is still unseen.",
+              "step3": "Mark each fresh neighbour visited, record the hop count, and push it to the back of the queue.",
+              "step4": "Repeat until the queue empties."
+            },
+            "keyIdea": "Explore the graph in waves: discover all neighbours of the source, then all of their neighbours, and so on.",
+            "pattern": "Traversal · Level order",
+            "strengths": {
+              "item1": "Finds the shortest path (in hops) on unweighted graphs in O(V + E).",
+              "item2": "Easy to reason about — the queue literally tracks the next wave of work."
+            },
+            "watch": "The frontier expands in concentric rings — each wave is one more hop from the source.",
+            "weaknesses": {
+              "item1": "Ignores edge weights, so it is not a shortest-path algorithm on weighted graphs.",
+              "item2": "Can exhaust memory on huge graphs because every frontier node sits in the queue at once."
+            }
+          },
+          "bipartiteCheck": {
+            "howItWorks": {
+              "step1": "Pick an unvisited node, colour it A, push on a queue.",
+              "step2": "Pop a node; colour every uncoloured neighbour the opposite colour and enqueue it.",
+              "step3": "If a neighbour is already the same colour as the current node, the graph is NOT bipartite.",
+              "step4": "Repeat from any remaining unvisited node for disconnected graphs."
+            },
+            "keyIdea": "Try to colour every node with one of two colours so that no edge connects same-coloured nodes.",
+            "pattern": "Structural · 2-colouring",
+            "strengths": {
+              "item1": "O(V + E) time — single BFS per component.",
+              "item2": "Doubles as a useful building block for matching problems."
+            },
+            "watch": "Colours spread via BFS from each seed; a same-colour edge appears the moment the graph cannot be bipartite.",
+            "weaknesses": {
+              "item1": "Strictly binary — cannot generalise to k-colouring without changing approach.",
+              "item2": "A conflict edge proves non-bipartite but does not locate all odd cycles."
+            }
+          },
+          "bridgesArticulationPoints": {
+            "howItWorks": {
+              "step1": "DFS the graph, recording discovery time and low-link (earliest reachable via back-edges) per node.",
+              "step2": "Edge (u, v) is a bridge if low[v] > disc[u] — no back-edge gives an alternative route.",
+              "step3": "Node u is an articulation point if it is the DFS root with ≥ 2 children, or if some child has low ≥ disc[u].",
+              "step4": "Report every bridge and articulation point found."
+            },
+            "keyIdea": "DFS tracks discovery times and low-link values; an edge is a bridge and a node is an articulation point when removal disconnects the graph.",
+            "pattern": "Critical structure",
+            "strengths": {
+              "item1": "Single O(V + E) DFS finds both bridges and articulation points.",
+              "item2": "Directly identifies structural vulnerabilities in a network."
+            },
+            "watch": "Red nodes and edges flag the critical pieces — remove them and the graph falls apart.",
+            "weaknesses": {
+              "item1": "Low-link bookkeeping is delicate and easy to get wrong.",
+              "item2": "Does not generalise to directed graphs without changes."
+            }
+          },
+          "chromaticNumber": {
+            "howItWorks": {
+              "step1": "Try k = 1, then 2, 3, … in turn.",
+              "step2": "For each k, attempt to colour nodes one by one, assigning the smallest legal colour.",
+              "step3": "On a conflict, back-track and try a different assignment.",
+              "step4": "The first k that succeeds is the chromatic number."
+            },
+            "keyIdea": "Search for the smallest k such that the graph can be coloured with k colours so no edge connects same-coloured nodes.",
+            "pattern": "Colouring · Minimum palette",
+            "strengths": {
+              "item1": "Conceptually straightforward — backtracking on a constraint-satisfaction problem.",
+              "item2": "Works on arbitrary graphs, not just special families."
+            },
+            "watch": "Colours assign one-by-one; a red edge flags a conflict forcing the search to back-track and try another palette.",
+            "weaknesses": {
+              "item1": "Chromatic number is NP-hard — exponential in the worst case.",
+              "item2": "Good pruning (e.g., colour by highest degree first) is essential for tolerable runtime."
+            }
+          },
+          "connectedComponents": {
+            "howItWorks": {
+              "step1": "Walk the node list. If the next node is unvisited, start a traversal from it.",
+              "step2": "DFS or BFS marks every node it reaches as belonging to this component.",
+              "step3": "When the traversal ends, increment the component counter and move to the next unvisited node.",
+              "step4": "Once every node is visited, you have grouped them all into components."
+            },
+            "keyIdea": "Repeat DFS/BFS starting from each unvisited node; everything reached forms one connected component.",
+            "pattern": "Structural · Components",
+            "strengths": {
+              "item1": "O(V + E), straightforward implementation.",
+              "item2": "Union-Find offers a near-constant online alternative if edges stream in over time."
+            },
+            "watch": "Each unseen seed spawns a new coloured region — the number of colours is the component count.",
+            "weaknesses": {
+              "item1": "Does not preserve order — components are discovered in arbitrary order.",
+              "item2": "Needs the full graph in memory."
+            }
+          },
+          "cycleDetection": {
+            "howItWorks": {
+              "step1": "Track three colours per node: white (unseen), grey (on the DFS stack), black (fully processed).",
+              "step2": "DFS: on entry mark grey, on exit mark black.",
+              "step3": "If DFS sees an edge to a grey node — that is a back edge and proves a directed cycle.",
+              "step4": "For undirected graphs, any non-parent edge to a seen node is a cycle."
+            },
+            "keyIdea": "Run DFS and track whether each node is on the current path; finding a back-edge to a path node proves a cycle.",
+            "pattern": "Structural · Cycle witness",
+            "strengths": {
+              "item1": "O(V + E) and very simple to implement.",
+              "item2": "Reports an actual cycle, not just a yes/no answer."
+            },
+            "watch": "Nodes light up as \"on stack\" while the search descends; a back-edge completes the witness loop.",
+            "weaknesses": {
+              "item1": "DFS recursion depth can be a problem on deep graphs.",
+              "item2": "Needs different logic for directed versus undirected graphs."
+            }
+          },
+          "dfs": {
+            "howItWorks": {
+              "step1": "Start at the source, mark it visited and push it on a stack (or recurse).",
+              "step2": "Pick an unvisited neighbour and dive into it — repeat recursively.",
+              "step3": "When a node has no unvisited neighbours, backtrack to its parent.",
+              "step4": "Continue until the whole reachable component has been explored."
+            },
+            "keyIdea": "Go as deep as possible down one branch before backtracking and trying the next.",
+            "pattern": "Traversal · Deep dive",
+            "strengths": {
+              "item1": "O(V + E) and uses just O(h) stack space where h is the depth of the exploration.",
+              "item2": "Natural fit for cycle detection, topological order, SCCs and bridge-finding."
+            },
+            "watch": "A long chain unfurls first; only when it dead-ends does the search jump back and branch sideways.",
+            "weaknesses": {
+              "item1": "Does NOT find shortest paths — order depends on which neighbour you pick first.",
+              "item2": "Deep graphs can blow the call stack if implemented recursively without care."
+            }
+          },
+          "dijkstra": {
+            "howItWorks": {
+              "step1": "Set every distance to infinity except the source (0).",
+              "step2": "Pull the unsettled node with the smallest distance from a min-heap.",
+              "step3": "For each outgoing edge, relax: if going through the current node is cheaper, update the neighbour.",
+              "step4": "Repeat until every reachable node has been settled."
+            },
+            "keyIdea": "Greedily settle the unreached node with the smallest tentative distance, then relax its outgoing edges.",
+            "pattern": "Shortest path · Weighted",
+            "strengths": {
+              "item1": "Optimal shortest-path tree in O((V + E) log V) with a binary heap.",
+              "item2": "Stops early if you only need the distance to one target."
+            },
+            "watch": "The settled node is always the current best pick — once settled, its distance is final.",
+            "weaknesses": {
+              "item1": "Assumes non-negative edge weights — a single negative edge can break correctness.",
+              "item2": "Dense graphs benefit more from simpler O(V²) implementations than from a heap."
+            }
+          },
+          "dinicMaxFlow": {
+            "howItWorks": {
+              "step1": "BFS the residual graph from source to sink, assigning each node a level.",
+              "step2": "If the sink is unreachable, you're done.",
+              "step3": "DFS forward through edges that go strictly level by level, pushing blocking flow.",
+              "step4": "Recompute the level graph and repeat until the sink is unreachable."
+            },
+            "keyIdea": "Build a level graph with BFS, then push \"blocking flow\" through all shortest augmenting paths at once via DFS.",
+            "pattern": "Max flow · Layered blocking",
+            "strengths": {
+              "item1": "O(V²E) in general, O(E · √V) on bipartite / unit-capacity graphs — faster than Edmonds-Karp on most inputs.",
+              "item2": "Blocking-flow DFS saturates many paths per phase."
+            },
+            "watch": "Nodes group into BFS levels; DFS saturates every s→t shortest path in one phase before the level graph rebuilds.",
+            "weaknesses": {
+              "item1": "More complex to implement than plain Ford-Fulkerson or Edmonds-Karp.",
+              "item2": "Cost-oblivious — extend to min-cost flow for weighted problems."
+            }
+          },
+          "dominatorTree": {
+            "howItWorks": {
+              "step1": "Compute the reverse post-order of the CFG from the entry node.",
+              "step2": "Initialise dom[entry] = entry; everything else unknown.",
+              "step3": "Iterate: dom[B] = intersection of dom sets of all B's predecessors, plus B itself.",
+              "step4": "When dom stops changing, the immediate dominator of B is the nearest strictly-dominating node."
+            },
+            "keyIdea": "In a control-flow graph, node D dominates B if every path from entry to B goes through D — build a tree of immediate dominators.",
+            "pattern": "Control flow · Dominance",
+            "strengths": {
+              "item1": "Near-linear in practice with the Cooper-Harvey-Kennedy algorithm.",
+              "item2": "Core to compiler optimisations — loops, SSA construction, code-motion."
+            },
+            "watch": "Dominator edges appear once every block's dominator set has stabilised.",
+            "weaknesses": {
+              "item1": "Only meaningful on reducible control-flow graphs or with Lengauer-Tarjan for speed.",
+              "item2": "Subtle edge-cases around unreachable code and exit nodes."
+            }
+          },
+          "edmondsKarp": {
+            "howItWorks": {
+              "step1": "Build the residual graph (original capacities minus current flow).",
+              "step2": "BFS from source to sink in the residual graph.",
+              "step3": "Find the bottleneck capacity along the path and push that much flow.",
+              "step4": "Update residual capacities. Repeat until no augmenting path exists."
+            },
+            "keyIdea": "Repeatedly find a shortest augmenting path via BFS in the residual graph and push flow along it until none remains.",
+            "pattern": "Max flow · BFS augmenting",
+            "strengths": {
+              "item1": "O(V · E²) polynomial time — predictable upper bound.",
+              "item2": "BFS gives fewer phases than Ford-Fulkerson's arbitrary path picks."
+            },
+            "watch": "Each BFS lights up a shortest path from source to sink; once drawn, it gets saturated and disappears.",
+            "weaknesses": {
+              "item1": "Slower than Dinic on dense networks.",
+              "item2": "Does not handle costs — fine for plain max flow only."
+            }
+          },
+          "eulerPathCircuit": {
+            "howItWorks": {
+              "step1": "Check degree conditions: Euler circuit needs all-even degrees, Euler path needs exactly two odd endpoints.",
+              "step2": "Start at any even-degree node (or an odd endpoint for a path) and follow edges, consuming each once.",
+              "step3": "If you hit a dead end, back-stitch a new sub-cycle from any revisited node with remaining unused edges.",
+              "step4": "Splice sub-cycles into the main trail until every edge is consumed."
+            },
+            "keyIdea": "Find a walk that uses every edge exactly once, stitching the trail out of smaller sub-cycles (Hierholzer).",
+            "pattern": "Trail · Every edge once",
+            "strengths": {
+              "item1": "O(E) linear time with Hierholzer's algorithm.",
+              "item2": "Works on directed graphs with the analogous in-degree / out-degree conditions."
+            },
+            "watch": "Purple edges extend the live walk; teal edges are locked into the final trail as it grows.",
+            "weaknesses": {
+              "item1": "Only exists on graphs meeting the degree conditions — otherwise no trail exists.",
+              "item2": "Must track unused edges carefully — naive visited-edge tracking can mis-route."
+            }
+          },
+          "floodFill": {
+            "howItWorks": {
+              "step1": "Pick a seed cell and record its original colour.",
+              "step2": "Add the seed to a queue (BFS) or stack (DFS).",
+              "step3": "Pop a cell, repaint it, and enqueue every 4- or 8-neighbour that still has the original colour.",
+              "step4": "Stop when the queue / stack is empty — the region is fully painted."
+            },
+            "keyIdea": "Starting from a seed cell, paint every connected cell that matches the seed colour until the region is filled.",
+            "pattern": "Grid · Region paint",
+            "strengths": {
+              "item1": "Linear in the region size.",
+              "item2": "Trivial to adapt to different adjacency (4-way, 8-way, diagonals)."
+            },
+            "watch": "The fill expands in waves from the seed — like a paint bucket in an image editor.",
+            "weaknesses": {
+              "item1": "Large regions on deep grids blow the recursion stack — prefer an explicit queue / stack.",
+              "item2": "Does not preserve anti-aliased boundaries — works on sharp-edged regions."
+            }
+          },
+          "floydWarshall": {
+            "howItWorks": {
+              "step1": "Start with dist[i][j] = edge weight (or infinity if no edge).",
+              "step2": "For each candidate intermediate k, update dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]).",
+              "step3": "After all V passes, dist holds every shortest path length between every pair.",
+              "step4": "To recover paths, keep a parent/next matrix updated alongside."
+            },
+            "keyIdea": "Allow paths through one more intermediate node k per outer pass; take the minimum of \"direct i→j\" and \"i→k→j\".",
+            "pattern": "All-pairs shortest path",
+            "strengths": {
+              "item1": "Answers every shortest-path query in O(1) after O(V³) preprocessing — great when the graph is dense or queries are frequent.",
+              "item2": "Handles negative weights (though still not negative cycles)."
+            },
+            "watch": "With each k pass, the pivot row and column fix their values and improvements ripple through the rest of the table.",
+            "weaknesses": {
+              "item1": "O(V³) time and O(V²) memory — impractical for very large V.",
+              "item2": "Not suited if you need one source only — Dijkstra or Bellman-Ford is faster."
+            }
+          },
+          "hopcroftKarp": {
+            "howItWorks": {
+              "step1": "BFS from every free left vertex, building alternating layers of matched / unmatched edges.",
+              "step2": "Stop the BFS at the first layer containing a free right vertex.",
+              "step3": "DFS back through the layers, augmenting along vertex-disjoint shortest paths.",
+              "step4": "Repeat until BFS can no longer reach a free right vertex."
+            },
+            "keyIdea": "For bipartite graphs, find many shortest vertex-disjoint augmenting paths per phase using a BFS + DFS pair.",
+            "pattern": "Bipartite matching · Layered",
+            "strengths": {
+              "item1": "O(E · √V) — the fastest known algorithm for bipartite matching.",
+              "item2": "Natural fit for assignment, bipartite covers and job-scheduling problems."
+            },
+            "watch": "BFS builds alternating layers between free left and right vertices; DFS threads augmenting paths through them.",
+            "weaknesses": {
+              "item1": "Only works on bipartite graphs.",
+              "item2": "Layered bookkeeping adds implementation complexity over simpler flow-based matching."
+            }
+          },
+          "hungarianAlgorithm": {
+            "howItWorks": {
+              "step1": "Subtract each row's minimum from that row; then each column's minimum from that column.",
+              "step2": "Cover all zeros with the minimum number of horizontal / vertical lines.",
+              "step3": "If lines = n, assign zeros to form a perfect matching — done.",
+              "step4": "Otherwise find the smallest uncovered value, subtract it from uncovered rows, add it to doubly-covered columns, and retry."
+            },
+            "keyIdea": "Solve minimum-cost bipartite assignment by reducing the cost matrix, covering all zeros with the fewest lines, and adjusting until a perfect matching fits.",
+            "pattern": "Assignment · Matrix reduction",
+            "strengths": {
+              "item1": "O(n³) polynomial — dramatically better than brute-force O(n!).",
+              "item2": "Produces an optimal assignment, not an approximation."
+            },
+            "watch": "Cover lines cross the matrix; when the count equals n you can pick a valid assignment of zeros.",
+            "weaknesses": {
+              "item1": "The line-cover step is subtle to implement correctly.",
+              "item2": "Works on square cost matrices — pad with dummy rows/cols for rectangular inputs."
+            }
+          },
+          "kosarajuScc": {
+            "howItWorks": {
+              "step1": "DFS the original graph and push each node on a stack as it finishes.",
+              "step2": "Reverse every edge.",
+              "step3": "Pop nodes off the stack; whenever you pop an unvisited node, DFS it in the reversed graph — the reached set is one SCC.",
+              "step4": "Repeat until the stack is empty."
+            },
+            "keyIdea": "First DFS records finish order; second DFS on the reversed graph, in reverse finish order, peels off one SCC per traversal.",
+            "pattern": "SCC · Two-pass DFS",
+            "strengths": {
+              "item1": "Conceptually clean: two ordinary DFS runs, no low-link tracking.",
+              "item2": "Easy to explain and debug."
+            },
+            "watch": "Pass 1 builds a stack of finish times. Pass 2 walks reversed edges — each DFS call discovers exactly one SCC.",
+            "weaknesses": {
+              "item1": "Needs the reversed graph — extra time + memory.",
+              "item2": "Two passes versus Tarjan's one."
+            }
+          },
+          "kruskalsMst": {
+            "howItWorks": {
+              "step1": "Sort every edge by weight (ascending).",
+              "step2": "Walk the list; for each edge, check if its endpoints are in different components.",
+              "step3": "If yes — accept it (add to MST, union the components). If no — reject it.",
+              "step4": "Stop once V − 1 edges have been accepted — that is the MST."
+            },
+            "keyIdea": "Sort all edges by weight; pick the cheapest one that does not close a cycle, using Union-Find to check.",
+            "pattern": "MST · Sort edges",
+            "strengths": {
+              "item1": "O(E log E) time, dominated by the sort; linear once edges are sorted.",
+              "item2": "Works cleanly on disconnected graphs (you get a minimum spanning forest)."
+            },
+            "watch": "Edges are offered in order — accepted ones join the MST, rejected ones would have closed a cycle.",
+            "weaknesses": {
+              "item1": "Needs a fast disjoint-set structure to hit optimal speed.",
+              "item2": "Sorting the full edge list is wasted work if only a small prefix matters."
+            }
+          },
+          "minCostMaxFlow": {
+            "howItWorks": {
+              "step1": "Build the residual graph with capacities AND edge costs (negative on reverse edges).",
+              "step2": "Find the cheapest s→t path via SPFA / Bellman-Ford (to allow negative reverse costs).",
+              "step3": "Push the bottleneck flow along it, charging the cost × bottleneck.",
+              "step4": "Repeat until no augmenting path exists; sum of costs × flows is the answer."
+            },
+            "keyIdea": "Find the max flow whose total edge cost is minimum — repeatedly push flow along the cheapest augmenting path.",
+            "pattern": "Flow · With costs",
+            "strengths": {
+              "item1": "Finds both the max flow and the minimum total cost in one procedure.",
+              "item2": "Fits naturally on assignment, transportation and supply-chain problems."
+            },
+            "watch": "Each augmentation lights up the currently-cheapest s→t route (SPFA or Bellman-Ford on residual costs).",
+            "weaknesses": {
+              "item1": "Slower than plain max-flow: shortest-path step per augmentation.",
+              "item2": "Negative costs in reverse edges require SPFA or Johnson-style reweighting."
+            }
+          },
+          "primsMst": {
+            "howItWorks": {
+              "step1": "Pick any start node; add it to the tree.",
+              "step2": "Put every edge leaving the tree into a min-heap, keyed by weight.",
+              "step3": "Pop the cheapest edge; if its far endpoint is not in the tree yet, add both the edge and that endpoint.",
+              "step4": "Repeat until every node is in the tree — you now have the MST."
+            },
+            "keyIdea": "Start from any node and repeatedly add the cheapest edge that leaves the tree and reaches a new node.",
+            "pattern": "MST · Grow from seed",
+            "strengths": {
+              "item1": "O(E log V) with a heap — fast on dense graphs.",
+              "item2": "Easy to parallelise along the frontier."
+            },
+            "watch": "The growing tree always hangs off one connected blob — edges crossing the boundary are the candidates.",
+            "weaknesses": {
+              "item1": "Only works on connected graphs — otherwise you only span one component.",
+              "item2": "Implementation is more involved than Kruskal if you do not already have a heap."
+            }
+          },
+          "steinerTree": {
+            "howItWorks": {
+              "step1": "Enumerate subsets of terminals (up to 2^t subsets for t terminals).",
+              "step2": "DP: cheapest tree spanning a given subset, rooted at a given node.",
+              "step3": "Combine smaller subsets via tree merges and edge extensions (Dreyfus-Wagner).",
+              "step4": "Answer = cheapest tree spanning the full terminal set, over all possible roots."
+            },
+            "keyIdea": "Find the cheapest tree that connects a chosen subset of terminal nodes, allowing optional Steiner helpers along the way.",
+            "pattern": "Optional connectors · DP",
+            "strengths": {
+              "item1": "Exact solution — no heuristic approximation.",
+              "item2": "Polynomial in graph size for a fixed number of terminals (Dreyfus-Wagner is O(3^t · V + 2^t · E log V))."
+            },
+            "watch": "Blue terminals must all connect; green nodes are optional helpers; teal edges form the growing terminal tree.",
+            "weaknesses": {
+              "item1": "Exponential in the number of terminals — impractical beyond ~20 terminals.",
+              "item2": "Implementation is heavy compared to MST or shortest-path."
+            }
+          },
+          "tarjanScc": {
+            "howItWorks": {
+              "step1": "DFS the graph, assigning each node an index (discovery order) and a low-link (lowest index reachable).",
+              "step2": "Push each newly discovered node on an SCC stack.",
+              "step3": "When you finish a node whose low-link equals its own index, pop everything above it off the stack — that is one SCC.",
+              "step4": "Continue until every node is processed."
+            },
+            "keyIdea": "Run a single DFS and track each node's low-link value; whenever low-link == index, an SCC closes at the current root.",
+            "pattern": "SCC · One-pass DFS",
+            "strengths": {
+              "item1": "Single DFS — O(V + E).",
+              "item2": "Does not need the reversed graph."
+            },
+            "watch": "Nodes sit on an auxiliary stack during DFS; a whole SCC gets popped off in one burst when its root finishes.",
+            "weaknesses": {
+              "item1": "Low-link bookkeeping is easy to get wrong; off-by-one bugs are common.",
+              "item2": "Conceptually denser than Kosaraju — harder to teach."
+            }
+          },
+          "topologicalSortKahn": {
+            "howItWorks": {
+              "step1": "Compute the in-degree of every node.",
+              "step2": "Put every in-degree-0 node into a queue.",
+              "step3": "Pop a node, append it to the result, and decrement in-degree on each outgoing neighbour.",
+              "step4": "Push any neighbour whose in-degree just hit 0. Stop when the queue empties."
+            },
+            "keyIdea": "Repeatedly remove a node with zero in-degree; its edges vanish, freeing more zero-in-degree nodes to be taken next.",
+            "pattern": "DAG · In-degree ordering",
+            "strengths": {
+              "item1": "O(V + E), iterative, no recursion.",
+              "item2": "Detects cycles naturally — if the result is shorter than V, a cycle exists."
+            },
+            "watch": "A queue of \"ready\" nodes shrinks and refills as dependencies are satisfied.",
+            "weaknesses": {
+              "item1": "Only defined on DAGs — cyclic graphs have no topological order.",
+              "item2": "The returned order is one valid order out of many; not deterministic unless you tie-break."
+            }
+          },
+          "treeTraversals": {
+            "howItWorks": {
+              "step1": "Pre-order: node → left subtree → right subtree (top-down copy).",
+              "step2": "In-order: left subtree → node → right subtree (sorted output on a BST).",
+              "step3": "Post-order: left → right → node (safe for delete / cleanup).",
+              "step4": "Level-order: queue-based wave by wave (the tree equivalent of BFS)."
+            },
+            "keyIdea": "Visit every node of a tree in a chosen order — pre-order, in-order, post-order, or level-order (BFS).",
+            "pattern": "Traversal · Tree orders",
+            "strengths": {
+              "item1": "Linear O(n) time and O(h) space for DFS-style traversals; O(w) space for level-order.",
+              "item2": "Every traversal exposes a different natural structural property of the tree."
+            },
+            "watch": "The visit order is what matters — watch which node prints its label first, before or after its children.",
+            "weaknesses": {
+              "item1": "Recursive DFS traversals can blow the stack on very deep trees — switch to iterative + explicit stack.",
+              "item2": "Order matters — swapping left/right can silently break downstream consumers expecting a specific traversal."
+            }
+          },
+          "unionFind": {
+            "howItWorks": {
+              "step1": "Each element starts as its own set — its parent pointer points to itself.",
+              "step2": "Find(x): follow parent pointers until you hit a root. Compress the path so future finds are faster.",
+              "step3": "Union(a, b): find both roots; hang the smaller tree under the larger root.",
+              "step4": "After enough ops, nearly all nodes point directly at the root."
+            },
+            "keyIdea": "Maintain a forest of disjoint sets with two ops: find the root of a set, and union two sets into one.",
+            "pattern": "Structure · Disjoint sets",
+            "strengths": {
+              "item1": "With path compression and union by rank, operations are effectively O(α(n)) — near constant.",
+              "item2": "Perfect fit for Kruskal, connectivity queries and offline connectivity checks."
+            },
+            "watch": "Find walks up to the root; union re-parents one root under the other and path-compression flattens the chain.",
+            "weaknesses": {
+              "item1": "Does not support deletion or split — the tree only ever merges.",
+              "item2": "Path-compression mutates structure during read-only-looking find calls."
+            }
+          }
+        },
         "sort": {
           "bubbleSort": {
             "howItWorks": {
@@ -1283,6 +2207,63 @@
         }
       },
       "visualizations": {
+        "dp": {
+          "emptyLabel": "No DP trace available for this step.",
+          "guideDesc": "Lock onto the active row, column or interval, then use the highlighted chips to understand which subproblems feed the next write.",
+          "guideEyebrow": "DP Guide",
+          "guideTitle": "Read the active state first",
+          "knapsack": {
+            "activeCellLabel": "active cell",
+            "applyCurrentMoveLabel": "Apply the current move",
+            "backtrackPathLabel": "backtrack path",
+            "baseCasesMeta": "row 0 or capacity 0",
+            "baseCasesValue": "Base cases",
+            "baseRowValue": "Base row",
+            "boardLabel": "items × capacity",
+            "branches": {
+              "blockedValue": "blocked",
+              "needPreviousStateNote": "need previous state + item value",
+              "needsWeightNote": "needs weight {{weight}}",
+              "skipLabel": "Skip branch",
+              "skipNote": "reuse dp[{{row}}][{{col}}]",
+              "takeLabel": "Take branch",
+              "takeNote": "read dp[{{row}}][{{col}}] + {{value}}"
+            },
+            "capacityLaneLabel": "Capacity lane",
+            "currentItemLabel": "Current item",
+            "currentPackLabel": "Current pack",
+            "decisionEyebrow": "Decision Lens",
+            "decisionTitle": "Skip vs take",
+            "followActiveRowLabel": "Follow the active row",
+            "guideEyebrow": "Visual Guide",
+            "guideTitle": "Where to look now",
+            "inputShelfEyebrow": "Input Shelf",
+            "inputShelfTitle": "Items feed the rows",
+            "labEyebrow": "Knapsack Lab",
+            "lockCapacityColumnLabel": "Lock the capacity column",
+            "metrics": {
+              "bestValue": "Best value",
+              "packed": "Packed",
+              "table": "Table"
+            },
+            "noWinningBranchLabel": "No winning branch yet.",
+            "outcomeEyebrow": "Outcome",
+            "outcomeTitle": "Backpack status",
+            "packEmptyLabel": "Selected items appear here during backtracking.",
+            "rowLabel": "row {{row}}",
+            "scenarioEyebrow": "Scenario",
+            "sourceCellsLabel": "source cells",
+            "valueShortLabel": "value",
+            "waitingTransitionLabel": "Waiting for the next comparison.",
+            "weightShortLabel": "weight",
+            "workspaceEyebrow": "Workspace",
+            "workspaceTitle": "DP table is the hero"
+          },
+          "presetLabEyebrow": "Preset Lab",
+          "scenarioEyebrow": "Scenario",
+          "stageEyebrow": "Stage",
+          "stageTitle": "DP workspace"
+        },
         "grid": {
           "decisionFallback": "watch the board evolve step by step",
           "frontierLabel": "Frontier",
@@ -1358,6 +2339,25 @@
           "stageTitle": "Array under inspection",
           "targetLabel": "Target",
           "windowLabel": "Window"
+        },
+        "string": {
+          "computationEmptyNote": "This step is a pure state transition with no extra formula to explain.",
+          "computationLabel": "Computation",
+          "emptyLabel": "No String Lab trace available for this step.",
+          "guideEyebrow": "String Guide",
+          "labEyebrow": "String Lab",
+          "labels": {
+            "combined": "Combined",
+            "input": "Input",
+            "pattern": "Pattern",
+            "source": "Source",
+            "text": "Text"
+          },
+          "presetEyebrow": "Preset",
+          "rle": {
+            "waitingForFirstRun": "Waiting for first run…"
+          },
+          "stageEyebrow": "Stage"
         }
       }
     },

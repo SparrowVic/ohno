@@ -11,29 +11,47 @@
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
         >
           <div class="trace__summary-combo">
-            <span class="trace__summary-mode-value">{{ dpState.modeLabel }}</span>
+            <span class="trace__summary-mode-value">{{
+              looksLikeI18nKey(dpState.modeLabel) ? (dpState.modeLabel | transloco) : dpState.modeLabel
+            }}</span>
 
             @if (dpState.presetLabel) {
               <span class="trace__summary-preset">
                 <span class="trace__summary-preset-label">{{
                   I18N_KEY.features.algorithms.tracePanels.dp.presetLabel | transloco
                 }}</span>
-                <span class="trace__summary-preset-value">{{ dpState.presetLabel }}</span>
+                <span class="trace__summary-preset-value">{{
+                  looksLikeI18nKey(dpState.presetLabel)
+                    ? (dpState.presetLabel | transloco)
+                    : dpState.presetLabel
+                }}</span>
               </span>
             }
           </div>
         </app-segmented-panel-section>
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
-          [value]="dpState.phaseLabel"
+          [value]="
+            looksLikeI18nKey(dpState.phaseLabel) ? (dpState.phaseLabel | transloco) : dpState.phaseLabel
+          "
         />
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.activeLabel | transloco"
-          [value]="dpState.activeLabel ?? '—'"
+          [value]="
+            dpState.activeLabel
+              ? looksLikeI18nKey(dpState.activeLabel)
+                ? (dpState.activeLabel | transloco)
+                : dpState.activeLabel
+              : '—'
+          "
         />
         <app-segmented-panel-section
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
-          [value]="dpState.resultLabel"
+          [value]="
+            looksLikeI18nKey(dpState.resultLabel)
+              ? (dpState.resultLabel | transloco)
+              : dpState.resultLabel
+          "
         />
       </app-segmented-panel>
 
@@ -47,21 +65,35 @@
           class="trace__calc-section trace__calc-section--preset"
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.dp.presetNoteLabel | transloco"
         >
-          <div class="trace__calc-expression">{{ dpState.presetDescription }}</div>
-          <div class="trace__calc-decision">{{ dpState.pathLabel }}</div>
+          <div class="trace__calc-expression">{{
+            looksLikeI18nKey(dpState.presetDescription)
+              ? (dpState.presetDescription | transloco)
+              : dpState.presetDescription
+          }}</div>
+          <div class="trace__calc-decision">{{
+            looksLikeI18nKey(dpState.pathLabel) ? (dpState.pathLabel | transloco) : dpState.pathLabel
+          }}</div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section
           class="trace__calc-section"
           [class.trace__calc-section--muted]="!dpState.computation"
           [eyebrow]="
-            dpState.computation?.label ||
+            (dpState.computation?.label
+              ? looksLikeI18nKey(dpState.computation?.label)
+                ? (dpState.computation?.label | transloco)
+                : dpState.computation?.label
+              : null) ||
             (I18N_KEY.features.algorithms.tracePanels.dp.currentTransitionLabel | transloco)
           "
         >
           <div class="trace__calc-expression">
             {{
-              dpState.computation?.expression ||
+              (dpState.computation?.expression
+                ? looksLikeI18nKey(dpState.computation?.expression)
+                  ? (dpState.computation?.expression | transloco)
+                  : dpState.computation?.expression
+                : null) ||
                 (I18N_KEY.features.algorithms.tracePanels.dp.waitingTransitionLabel | transloco)
             }}
           </div>
@@ -74,7 +106,11 @@
           </div>
           <div class="trace__calc-decision">
             {{
-              dpState.computation?.decision ||
+              (dpState.computation?.decision
+                ? looksLikeI18nKey(dpState.computation?.decision)
+                  ? (dpState.computation?.decision | transloco)
+                  : dpState.computation?.decision
+                : null) ||
                 (I18N_KEY.features.algorithms.tracePanels.dp.noActiveTransitionLabel | transloco)
             }}
           </div>
@@ -86,7 +122,11 @@
         [attr.aria-label]="I18N_KEY.features.algorithms.tracePanels.dp.railsAriaLabel | transloco"
       >
         <app-segmented-panel-section
-          [eyebrow]="dpState.primaryItemsLabel"
+          [eyebrow]="
+            looksLikeI18nKey(dpState.primaryItemsLabel)
+              ? (dpState.primaryItemsLabel | transloco)
+              : dpState.primaryItemsLabel
+          "
           [badge]="dpState.primaryItems.length"
         >
           <div class="trace__rail-items">
@@ -96,14 +136,20 @@
               }}</span>
             } @else {
               @for (item of dpState.primaryItems; track item) {
-                <span class="trace__chip">{{ item }}</span>
+                <span class="trace__chip">{{
+                  looksLikeI18nKey(item) ? (item | transloco) : item
+                }}</span>
               }
             }
           </div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section
-          [eyebrow]="dpState.secondaryItemsLabel"
+          [eyebrow]="
+            looksLikeI18nKey(dpState.secondaryItemsLabel)
+              ? (dpState.secondaryItemsLabel | transloco)
+              : dpState.secondaryItemsLabel
+          "
           [badge]="dpState.secondaryItems.length"
         >
           <div class="trace__rail-items">
@@ -113,7 +159,9 @@
               }}</span>
             } @else {
               @for (item of dpState.secondaryItems; track item) {
-                <span class="trace__chip trace__chip--soft">{{ item }}</span>
+                <span class="trace__chip trace__chip--soft">{{
+                  looksLikeI18nKey(item) ? (item | transloco) : item
+                }}</span>
               }
             }
           </div>

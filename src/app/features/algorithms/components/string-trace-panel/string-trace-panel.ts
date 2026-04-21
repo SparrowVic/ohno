@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import {
   BurrowsWheelerTraceState,
   HuffmanTraceState,
@@ -37,6 +38,7 @@ export class StringTracePanel {
   private readonly transloco = inject(TranslocoService);
 
   protected readonly I18N_KEY = I18N_KEY;
+  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly state = input.required<StringTraceState | null>();
 
   readonly kmpState = computed<KmpTraceState | null>(() => {

@@ -6,48 +6,100 @@
   @if (state(); as stringState) {
     <aside class="viz-flow__guide">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">String Guide</span>
-        <h3 class="viz-flow__title">{{ stringState.modeLabel }}</h3>
-        <p class="viz-flow__desc">{{ stringState.decisionLabel }}</p>
+        <span class="viz-flow__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.string.guideEyebrow | transloco
+        }}</span>
+        <h3 class="viz-flow__title">{{
+          looksLikeI18nKey(stringState.modeLabel)
+            ? (stringState.modeLabel | transloco)
+            : stringState.modeLabel
+        }}</h3>
+        <p class="viz-flow__desc">{{
+          looksLikeI18nKey(stringState.decisionLabel)
+            ? (stringState.decisionLabel | transloco)
+            : stringState.decisionLabel
+        }}</p>
       </div>
 
       <div class="string-lab__hud">
         <div class="hud-card">
-          <span class="hud-card__label">Mode</span>
-          <span class="hud-card__value">{{ stringState.modeLabel }}</span>
+          <span class="hud-card__label">{{
+            I18N_KEY.features.algorithms.tracePanels.string.modeLabel | transloco
+          }}</span>
+          <span class="hud-card__value">{{
+            looksLikeI18nKey(stringState.modeLabel)
+              ? (stringState.modeLabel | transloco)
+              : stringState.modeLabel
+          }}</span>
         </div>
         <div class="hud-card">
-          <span class="hud-card__label">Phase</span>
-          <span class="hud-card__value">{{ stringState.phaseLabel }}</span>
+          <span class="hud-card__label">{{
+            I18N_KEY.features.algorithms.tracePanels.string.phaseLabel | transloco
+          }}</span>
+          <span class="hud-card__value">{{
+            looksLikeI18nKey(stringState.phaseLabel)
+              ? (stringState.phaseLabel | transloco)
+              : stringState.phaseLabel
+          }}</span>
         </div>
         <div class="hud-card">
-          <span class="hud-card__label">Active</span>
-          <span class="hud-card__value">{{ stringState.activeLabel }}</span>
+          <span class="hud-card__label">{{
+            I18N_KEY.features.algorithms.tracePanels.string.activeLabel | transloco
+          }}</span>
+          <span class="hud-card__value">{{
+            looksLikeI18nKey(stringState.activeLabel)
+              ? (stringState.activeLabel | transloco)
+              : stringState.activeLabel
+          }}</span>
         </div>
         <div class="hud-card">
-          <span class="hud-card__label">Result</span>
-          <span class="hud-card__value">{{ stringState.resultLabel }}</span>
+          <span class="hud-card__label">{{
+            I18N_KEY.features.algorithms.tracePanels.string.resultLabel | transloco
+          }}</span>
+          <span class="hud-card__value">{{
+            looksLikeI18nKey(stringState.resultLabel)
+              ? (stringState.resultLabel | transloco)
+              : stringState.resultLabel
+          }}</span>
         </div>
         <div class="hud-card hud-card--wide">
-          <span class="hud-card__label">Decision</span>
-          <span class="hud-card__value">{{ stringState.decisionLabel }}</span>
+          <span class="hud-card__label">{{
+            I18N_KEY.features.algorithms.tracePanels.string.decisionLabel | transloco
+          }}</span>
+          <span class="hud-card__value">{{
+            looksLikeI18nKey(stringState.decisionLabel)
+              ? (stringState.decisionLabel | transloco)
+              : stringState.decisionLabel
+          }}</span>
         </div>
       </div>
 
       <div class="string-lab__calc">
         @if (stringState.computation; as computation) {
           <div class="calc-card">
-            <span class="calc-card__label">{{ computation.label }}</span>
-            <span class="calc-card__expression">{{ computation.expression }}</span>
+            <span class="calc-card__label">{{
+              looksLikeI18nKey(computation.label) ? (computation.label | transloco) : computation.label
+            }}</span>
+            <span class="calc-card__expression">{{
+              looksLikeI18nKey(computation.expression)
+                ? (computation.expression | transloco)
+                : computation.expression
+            }}</span>
             @if (computation.result) {
               <span class="calc-card__result">{{ computation.result }}</span>
             }
-            <span class="calc-card__note">{{ computation.note }}</span>
+            <span class="calc-card__note">{{
+              looksLikeI18nKey(computation.note) ? (computation.note | transloco) : computation.note
+            }}</span>
           </div>
         } @else {
           <div class="calc-card calc-card--empty">
-            <span class="calc-card__label">Computation</span>
-            <span class="calc-card__note">This step is a pure state transition with no extra formula to explain.</span>
+            <span class="calc-card__label">{{
+              I18N_KEY.features.algorithms.visualizations.string.computationLabel | transloco
+            }}</span>
+            <span class="calc-card__note">{{
+              I18N_KEY.features.algorithms.visualizations.string.computationEmptyNote | transloco
+            }}</span>
           </div>
         }
       </div>
@@ -55,16 +107,36 @@
 
     <section class="viz-flow__brief">
       <div class="viz-flow__section-head">
-        <span class="viz-flow__eyebrow">String Lab</span>
-        <h3 class="viz-flow__title">{{ stringState.presetLabel }}</h3>
-        <p class="viz-flow__desc">{{ stringState.presetDescription }}</p>
+        <span class="viz-flow__eyebrow">{{
+          I18N_KEY.features.algorithms.visualizations.string.labEyebrow | transloco
+        }}</span>
+        <h3 class="viz-flow__title">{{
+          looksLikeI18nKey(stringState.presetLabel)
+            ? (stringState.presetLabel | transloco)
+            : stringState.presetLabel
+        }}</h3>
+        <p class="viz-flow__desc">{{
+          looksLikeI18nKey(stringState.presetDescription)
+            ? (stringState.presetDescription | transloco)
+            : stringState.presetDescription
+        }}</p>
       </div>
 
       <div class="playground-bar">
         <div class="playground-bar__copy">
-          <span class="playground-bar__eyebrow">Preset</span>
-          <span class="playground-bar__title">{{ stringState.phaseLabel }}</span>
-          <span class="playground-bar__desc">{{ stringState.activeLabel }}</span>
+          <span class="playground-bar__eyebrow">{{
+            I18N_KEY.features.algorithms.visualizations.string.presetEyebrow | transloco
+          }}</span>
+          <span class="playground-bar__title">{{
+            looksLikeI18nKey(stringState.phaseLabel)
+              ? (stringState.phaseLabel | transloco)
+              : stringState.phaseLabel
+          }}</span>
+          <span class="playground-bar__desc">{{
+            looksLikeI18nKey(stringState.activeLabel)
+              ? (stringState.activeLabel | transloco)
+              : stringState.activeLabel
+          }}</span>
         </div>
         <div class="playground-bar__presets">
           @for (option of presetOptions(); track option.id) {
@@ -74,7 +146,7 @@
               [class.preset-chip--active]="presetId() === option.id"
               (click)="selectPreset(option.id)"
             >
-              {{ option.label }}
+              {{ looksLikeI18nKey(option.label) ? (option.label | transloco) : option.label }}
             </button>
           }
         </div>
@@ -83,8 +155,12 @@
       <div class="string-lab__insights">
         @for (insight of stringState.insights; track insight.label) {
           <div class="insight-card insight-card--{{ insight.tone }}">
-            <span class="insight-card__label">{{ insight.label }}</span>
-            <span class="insight-card__value">{{ insight.value }}</span>
+            <span class="insight-card__label">{{
+              looksLikeI18nKey(insight.label) ? (insight.label | transloco) : insight.label
+            }}</span>
+            <span class="insight-card__value">{{
+              looksLikeI18nKey(insight.value) ? (insight.value | transloco) : insight.value
+            }}</span>
           </div>
         }
       </div>
@@ -93,10 +169,20 @@
     <section class="viz-flow__stage">
       <div class="viz-flow__stage-head">
         <div class="viz-flow__section-head">
-          <span class="viz-flow__eyebrow">Stage</span>
-          <h3 class="viz-flow__title">{{ stringState.modeLabel }}</h3>
+          <span class="viz-flow__eyebrow">{{
+            I18N_KEY.features.algorithms.visualizations.string.stageEyebrow | transloco
+          }}</span>
+          <h3 class="viz-flow__title">{{
+            looksLikeI18nKey(stringState.modeLabel)
+              ? (stringState.modeLabel | transloco)
+              : stringState.modeLabel
+          }}</h3>
         </div>
-        <span class="viz-flow__pill viz-flow__pill--soft">{{ stringState.phaseLabel }}</span>
+        <span class="viz-flow__pill viz-flow__pill--soft">{{
+          looksLikeI18nKey(stringState.phaseLabel)
+            ? (stringState.phaseLabel | transloco)
+            : stringState.phaseLabel
+        }}</span>
       </div>
 
       <div class="viz-flow__stage-body">
@@ -105,7 +191,9 @@
         @if (kmpState(); as kmp) {
           <div class="string-stage">
             <div class="string-row">
-              <span class="string-row__label">Text</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
+              }}</span>
               <div class="cell-track">
                 @for (char of kmp.text; track $index; let index = $index) {
                   <div
@@ -120,7 +208,9 @@
             </div>
 
             <div class="string-row">
-              <span class="string-row__label">Pattern</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
+              }}</span>
               <div class="cell-track cell-track--floating">
                 <div
                   class="float-track"
@@ -140,7 +230,9 @@
             </div>
 
             <div class="string-row">
-              <span class="string-row__label">Failure</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.tracePanels.string.kmp.failureTableLabel | transloco
+              }}</span>
               <div class="cell-track cell-track--floating">
                 <div
                   class="float-track"
@@ -157,12 +249,14 @@
             </div>
 
             <div class="string-jump">
-              <span class="string-jump__label">Jump</span>
+              <span class="string-jump__label">{{
+                I18N_KEY.features.algorithms.tracePanels.string.kmp.jumpLabel | transloco
+              }}</span>
               <span class="string-jump__value">
                 @if (kmp.fallbackFrom !== null && kmp.fallbackTo !== null) {
                   j: {{ kmp.fallbackFrom }} → {{ kmp.fallbackTo }}
                 } @else {
-                  No failure jump on this step
+                  {{ I18N_KEY.features.algorithms.tracePanels.string.kmp.noJumpLabel | transloco }}
                 }
               </span>
             </div>
@@ -174,7 +268,9 @@
         @if (rabinState(); as rabin) {
           <div class="string-stage">
             <div class="string-row">
-              <span class="string-row__label">Text</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
+              }}</span>
               <div class="cell-track">
                 @for (char of rabin.text; track $index; let index = $index) {
                   <div class="{{ rabinTextClass(index) }}">
@@ -186,7 +282,9 @@
             </div>
 
             <div class="string-row">
-              <span class="string-row__label">Pattern</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
+              }}</span>
               <div class="cell-track">
                 @for (char of rabin.pattern; track $index; let index = $index) {
                   <div class="{{ rabinPatternClass(index) }}">
@@ -199,35 +297,65 @@
 
             <div class="hash-strip">
               <div class="hash-card">
-                <span class="hash-card__label">Pattern hash</span>
+                <span class="hash-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.patternLabel
+                    | transloco
+                }}</span>
                 <span class="hash-card__value">{{ rabin.patternHash }}</span>
               </div>
               <div class="hash-card hash-card--window">
-                <span class="hash-card__label">Window hash</span>
+                <span class="hash-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.windowLabel
+                    | transloco
+                }}</span>
                 <span class="hash-card__value">{{ rabin.windowHash }}</span>
               </div>
               <div class="hash-card">
-                <span class="hash-card__label">Window</span>
+                <span class="hash-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.rollingWindowLabel
+                    | transloco
+                }}</span>
                 <span class="hash-card__value">{{ rabin.windowStart }}..{{ rabin.windowStart + rabin.windowLength - 1 }}</span>
               </div>
               <div class="hash-card hash-card--alert">
-                <span class="hash-card__label">Verification</span>
+                <span class="hash-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.statusLabel
+                    | transloco
+                }}</span>
                 <span class="hash-card__value">
                   @if (rabin.collision) {
-                    False alarm
+                    {{
+                      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.collisionStatusLabel
+                        | transloco
+                    }}
                   } @else if (rabin.verifying) {
-                    Checking chars
+                    {{
+                      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.verifyStatusLabel
+                        | transloco
+                    }}
                   } @else {
-                    Hash only
+                    {{
+                      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.hashOnlyStatusLabel
+                        | transloco
+                    }}
                   }
                 </span>
               </div>
             </div>
 
             <div class="hash-meta">
-              <span class="meta-pill">out: {{ rabin.outgoingChar ?? '—' }}</span>
-              <span class="meta-pill meta-pill--accent">in: {{ rabin.incomingChar ?? '—' }}</span>
-              <span class="meta-pill meta-pill--soft">base {{ rabin.base }} / mod {{ rabin.mod }}</span>
+              <span class="meta-pill"
+                >{{ I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.outgoingLabel | transloco }}:
+                {{ rabin.outgoingChar ?? '—' }}</span
+              >
+              <span class="meta-pill meta-pill--accent"
+                >{{ I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.incomingLabel | transloco }}:
+                {{ rabin.incomingChar ?? '—' }}</span
+              >
+              <span class="meta-pill meta-pill--soft"
+                >{{ I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.baseModLabel | transloco }}
+                {{ rabin.base }} / {{ rabin.mod }}</span
+              >
             </div>
           </div>
         }
@@ -237,7 +365,9 @@
         @if (zState(); as zStateValue) {
           <div class="string-stage string-stage--z">
             <div class="string-row">
-              <span class="string-row__label">Combined</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.combined | transloco
+              }}</span>
               <div class="cell-track">
                 @for (char of zStateValue.combined; track $index; let index = $index) {
                   <div class="{{ zCharClass(index) }}">
@@ -269,7 +399,9 @@
           <div class="string-stage string-stage--manacher">
 
             <div class="string-row">
-              <span class="string-row__label">Source</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
+              }}</span>
               <div class="cell-track">
                 @for (char of manacher.source; track $index; let index = $index) {
                   <div class="str-cell str-cell--accent">
@@ -369,7 +501,9 @@
           <div class="string-stage string-stage--bwt">
             <div class="bwt-summary">
               <div class="bwt-summary__card">
-                <span class="bwt-summary__label">Input</span>
+                <span class="bwt-summary__label">{{
+                  I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
+                }}</span>
                 <span class="bwt-summary__value">{{ bwt.source }}</span>
               </div>
               <div class="bwt-summary__card">
@@ -413,7 +547,9 @@
         @if (rleState(); as rle) {
           <div class="string-stage string-stage--rle">
             <div class="string-row">
-              <span class="string-row__label">Input</span>
+              <span class="string-row__label">{{
+                I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
+              }}</span>
               <div class="cell-track">
                 @for (char of rle.source; track $index; let index = $index) {
                   <div class="{{ rleCellClass(rle, index) }}">
@@ -426,27 +562,37 @@
 
             <div class="rle-stats-row">
               <div class="rle-stat-card">
-                <span class="rle-stat-card__label">Current char</span>
+                <span class="rle-stat-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rle.charLabel | transloco
+                }}</span>
                 <span class="rle-stat-card__value">{{ rle.groupChar || '—' }}</span>
               </div>
               <div class="rle-stat-card rle-stat-card--count">
-                <span class="rle-stat-card__label">Count</span>
+                <span class="rle-stat-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rle.countLabel | transloco
+                }}</span>
                 <span class="rle-stat-card__value">{{ rle.groupCount || 0 }}</span>
               </div>
               <div class="rle-stat-card rle-stat-card--ratio">
-                <span class="rle-stat-card__label">Size ratio</span>
+                <span class="rle-stat-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rle.ratioLabel | transloco
+                }}</span>
                 <span class="rle-stat-card__value">
                   {{ rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—' }}
                 </span>
               </div>
               <div class="rle-stat-card">
-                <span class="rle-stat-card__label">Runs done</span>
+                <span class="rle-stat-card__label">{{
+                  I18N_KEY.features.algorithms.tracePanels.string.rle.runsDoneLabel | transloco
+                }}</span>
                 <span class="rle-stat-card__value">{{ rle.completedRuns.length }}</span>
               </div>
             </div>
 
             <div class="rle-output-wrap">
-              <span class="rle-output-label">Output</span>
+              <span class="rle-output-label">{{
+                I18N_KEY.features.algorithms.tracePanels.string.rle.outputLabel | transloco
+              }}</span>
               <div class="rle-chips-row">
                 @for (run of rle.completedRuns; track run.id) {
                   <div class="rle-chip rle-chip--done">
@@ -461,7 +607,10 @@
                   </div>
                 }
                 @if (rle.completedRuns.length === 0 && rle.groupCount === 0) {
-                  <span class="rle-empty">Waiting for first run…</span>
+                  <span class="rle-empty">{{
+                    I18N_KEY.features.algorithms.visualizations.string.rle.waitingForFirstRun
+                      | transloco
+                  }}</span>
                 }
               </div>
             </div>
@@ -564,6 +713,8 @@
       </div>
     </section>
   } @else {
-    <div class="string-lab__empty">No String Lab trace available for this step.</div>
+    <div class="string-lab__empty">{{
+      I18N_KEY.features.algorithms.visualizations.string.emptyLabel | transloco
+    }}</div>
   }
 </section>

@@ -11,7 +11,10 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { DpCell, DpPresetOption, DpTraceState } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
@@ -42,9 +45,10 @@ interface KnapsackMetric {
 
 interface KnapsackBranch {
   readonly kind: 'skip' | 'take';
-  readonly label: string;
+  readonly label: I18nKey;
   readonly value: string;
-  readonly note: string;
+  readonly note: I18nKey;
+  readonly noteParams?: Record<string, string | number | undefined>;
   readonly status: 'available' | 'winner' | 'blocked';
 }
 
@@ -59,12 +63,14 @@ const FOCUS_CELL_STATUSES = new Set<DpCell['status']>([
 
 @Component({
   selector: 'app-dp-visualization',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './dp-visualization.html',
   styleUrl: './dp-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  protected readonly I18N_KEY = I18N_KEY;
+  protected readonly looksLikeI18nKey = looksLikeI18nKey;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
@@ -144,17 +150,17 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
 
     return [
       {
-        label: 'Best value',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.bestValue,
         value: metricValue(state, 'Best value') ?? state.resultLabel,
         tone: 'success',
       },
       {
-        label: 'Packed',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.packed,
         value: metricValue(state, 'Picked') ?? '0',
         tone: 'warning',
       },
       {
-        label: 'Table',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.metrics.table,
         value: metricValue(state, 'Table') ?? state.dimensionsLabel,
         tone: 'info',
       },
@@ -184,20 +190,32 @@ export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationR
     return [
       {
         kind: 'skip',
-        label: 'Skip branch',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.skipLabel,
         value: skipValue ?? '—',
-        note: `reuse dp[${active.row - 1}][${active.col}]`,
+        note: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.skipNote,
+        noteParams: { row: active.row - 1, col: active.col },
         status: winner === 'skip' ? 'winner' : 'available',
       },
       {
         kind: 'take',
-        label: 'Take branch',
-        value: takeAvailable ? (takeValue ?? '—') : 'blocked',
+        label: I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.takeLabel,
+        value: takeAvailable
+          ? (takeValue ?? '—')
+          : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.blockedValue,
         note: hasConcreteItem
           ? active.col >= itemWeight
-            ? `read dp[${active.row - 1}][${active.col - itemWeight}] + ${itemValue}`
-            : `needs weight ${itemWeight}`
-          : 'need previous state + item value',
+            ? I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.takeNote
+            : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.needsWeightNote
+          : I18N_KEY.features.algorithms.visualizations.dp.knapsack.branches.needPreviousStateNote,
+        noteParams: hasConcreteItem
+          ? active.col >= itemWeight
+            ? {
+                row: active.row - 1,
+                col: active.col - itemWeight,
+                value: itemValue,
+              }
+            : { weight: itemWeight }
+          : undefined,
         status: !takeAvailable ? 'blocked' : winner === 'take' ? 'winner' : 'available',
       },
     ];
