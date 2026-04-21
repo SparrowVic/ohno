@@ -198,6 +198,7 @@ export const I18N_KEY = {
           newRegexPair: t('features.algorithms.toolbar.actions.newRegexPair'),
           newRollingHashCase: t('features.algorithms.toolbar.actions.newRollingHashCase'),
           newRootedTree: t('features.algorithms.toolbar.actions.newRootedTree'),
+          newTreeShape: t('features.algorithms.toolbar.actions.newTreeShape'),
           newRunSequence: t('features.algorithms.toolbar.actions.newRunSequence'),
           newScanField: t('features.algorithms.toolbar.actions.newScanField'),
           newScenario: t('features.algorithms.toolbar.actions.newScenario'),
@@ -284,6 +285,7 @@ export const I18N_KEY = {
           terminalDpTree: t('features.algorithms.toolbar.variants.terminalDpTree'),
           treeBuilder: t('features.algorithms.toolbar.variants.treeBuilder'),
           treeGraph: t('features.algorithms.toolbar.variants.treeGraph'),
+          treeWalk: t('features.algorithms.toolbar.variants.treeWalk'),
           triangleMesh: t('features.algorithms.toolbar.variants.triangleMesh'),
           twoPassScc: t('features.algorithms.toolbar.variants.twoPassScc'),
           twoSideCheck: t('features.algorithms.toolbar.variants.twoSideCheck'),
@@ -1126,6 +1128,17 @@ export const I18N_KEY = {
             progress: t('features.algorithms.visualizations.minkowskiSum.action.progress'),
             activeAndProgress: t(
               'features.algorithms.visualizations.minkowskiSum.action.activeAndProgress',
+            ),
+          },
+          overview: {
+            inputALabel: t('features.algorithms.visualizations.minkowskiSum.overview.inputALabel'),
+            obstacleLabel: t(
+              'features.algorithms.visualizations.minkowskiSum.overview.obstacleLabel',
+            ),
+            inputBLabel: t('features.algorithms.visualizations.minkowskiSum.overview.inputBLabel'),
+            robotLabel: t('features.algorithms.visualizations.minkowskiSum.overview.robotLabel'),
+            reflectedLabel: t(
+              'features.algorithms.visualizations.minkowskiSum.overview.reflectedLabel',
             ),
           },
         },

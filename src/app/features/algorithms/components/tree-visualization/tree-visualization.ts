@@ -11,7 +11,9 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { SortStep } from '../../models/sort-step';
 import { TreePresetOption, TreeTraversalTraceState } from '../../models/tree';
@@ -27,12 +29,13 @@ import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
 
 @Component({
   selector: 'app-tree-visualization',
-  imports: [VizHeader, VizPanel, VizPresetPicker],
+  imports: [TranslocoPipe, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './tree-visualization.html',
   styleUrl: './tree-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TreeVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);

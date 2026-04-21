@@ -56,7 +56,9 @@
         @if (stripKind() === 'stack') {
           <section class="tree-strip tree-strip--stack">
             <header class="tree-strip__head">
-              <span class="tree-strip__label">stack</span>
+              <span class="tree-strip__label">{{
+                I18N_KEY.features.algorithms.tracePanels.tree.stackLabel | transloco
+              }}</span>
               <span class="tree-strip__count">{{ stackItems().length }}</span>
             </header>
             <div class="tree-strip__items">
@@ -76,7 +78,9 @@
         } @else if (stripKind() === 'queue') {
           <section class="tree-strip tree-strip--queue">
             <header class="tree-strip__head">
-              <span class="tree-strip__label">queue</span>
+              <span class="tree-strip__label">{{
+                I18N_KEY.features.algorithms.tracePanels.tree.queueLabel | transloco
+              }}</span>
               <span class="tree-strip__count">{{ queueItems().length }}</span>
             </header>
             <div class="tree-strip__items">
@@ -97,7 +101,9 @@
 
         <section class="tree-output">
           <header class="tree-strip__head">
-            <span class="tree-strip__label">output</span>
+            <span class="tree-strip__label">{{
+              I18N_KEY.features.algorithms.tracePanels.tree.outputLabel | transloco
+            }}</span>
             <span class="tree-strip__count">
               {{ tree.visitedCount }} / {{ tree.totalNodes }}
             </span>

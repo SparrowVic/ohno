@@ -6,8 +6,14 @@
       <div class="mkv__gallery">
         <article class="mkv__card">
           <div class="mkv__card-head">
-            <span class="mkv__eyebrow">Input A</span>
-            <span class="mkv__title">Obstacle</span>
+            <span class="mkv__eyebrow">{{
+              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.inputALabel
+                | transloco
+            }}</span>
+            <span class="mkv__title">{{
+              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.obstacleLabel
+                | transloco
+            }}</span>
           </div>
           <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             @if (obstacle(); as polygon) {
@@ -18,8 +24,14 @@
 
         <article class="mkv__card">
           <div class="mkv__card-head">
-            <span class="mkv__eyebrow">Input B</span>
-            <span class="mkv__title">Robot</span>
+            <span class="mkv__eyebrow">{{
+              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.inputBLabel
+                | transloco
+            }}</span>
+            <span class="mkv__title">{{
+              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.robotLabel
+                | transloco
+            }}</span>
           </div>
           <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             @if (robot(); as polygon) {
@@ -30,7 +42,10 @@
 
         <article class="mkv__card">
           <div class="mkv__card-head">
-            <span class="mkv__eyebrow">Reflected</span>
+            <span class="mkv__eyebrow">{{
+              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.reflectedLabel
+                | transloco
+            }}</span>
             <span class="mkv__title">-B</span>
           </div>
           <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">

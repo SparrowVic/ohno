@@ -204,19 +204,32 @@ export class AlgorithmDetail {
     () => this.currentSnapshot()?.geometry ?? null,
   );
 
+  readonly graphFocusKind = computed<'shortest-path' | 'bfs-route' | 'dfs-branch' | null>(() => {
+    if (!this.graphTrace()) return null;
+
+    switch (this.algorithm()?.id) {
+      case 'dijkstra':
+      case 'bellman-ford':
+        return 'shortest-path';
+      case 'bfs':
+        return 'bfs-route';
+      case 'dfs':
+        return 'dfs-branch';
+      default:
+        return null;
+    }
+  });
   readonly graphRouteModeLabel = computed(() => {
-    const trace = this.graphTrace();
-    if (!trace) return null;
-    if (trace.metricLabel === 'Distance') {
-      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.shortestPathLabel);
+    switch (this.graphFocusKind()) {
+      case 'shortest-path':
+        return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.shortestPathLabel);
+      case 'bfs-route':
+        return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.bfsRouteLabel);
+      case 'dfs-branch':
+        return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.dfsBranchLabel);
+      default:
+        return null;
     }
-    if (trace.metricLabel === 'Level') {
-      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.bfsRouteLabel);
-    }
-    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
-      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.dfsBranchLabel);
-    }
-    return null;
   });
   readonly graphFocusTargetLabel = computed(() => {
     const trace = this.graphTrace();
@@ -233,16 +246,16 @@ export class AlgorithmDetail {
   readonly graphFocusHint = computed(() => {
     const trace = this.graphTrace();
     if (!trace || !this.graphRouteModeLabel()) return null;
-    if (trace.metricLabel === 'Distance') {
-      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.shortestPathHint);
+    switch (this.graphFocusKind()) {
+      case 'shortest-path':
+        return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.shortestPathHint);
+      case 'bfs-route':
+        return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.bfsRouteHint);
+      case 'dfs-branch':
+        return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.dfsBranchHint);
+      default:
+        return null;
     }
-    if (trace.metricLabel === 'Level') {
-      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.bfsRouteHint);
-    }
-    if (trace.metricLabel === 'Depth' && trace.detailLabel === 'Depth path') {
-      return this.translate(I18N_KEY.features.algorithms.detail.graphFocus.dfsBranchHint);
-    }
-    return null;
   });
 
   readonly activeLineNumber = computed<number | null>(() => {

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
@@ -23,12 +24,13 @@ interface Bounds {
 
 @Component({
   selector: 'app-minkowski-sum-visualization',
-  imports: [VizHeader, VizPanel],
+  imports: [TranslocoPipe, VizHeader, VizPanel],
   templateUrl: './minkowski-sum-visualization.html',
   styleUrl: './minkowski-sum-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MinkowskiSumVisualization {
+  protected readonly I18N_KEY = I18N_KEY;
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
