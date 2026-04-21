@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { matrixChainMultiplicationGenerator } from './matrix-chain-multiplication';
 import type { SortStep } from '../../models/sort-step';
 import type { MatrixChainScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: MatrixChainScenario): SortStep[] {
   return [...matrixChainMultiplicationGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('matrix-chain-multiplication', () => {
@@ -20,10 +30,17 @@ describe('matrix-chain-multiplication', () => {
 
     expect(steps[0]?.phase).toBe('init');
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('cost = 4500');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.matrixChain.labels.resultCost',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe(4500);
     expect(steps.at(-1)?.dp?.pathLabel).toBe('((A1 · A2) · A3)');
     expect(
-      steps.some((step) => step.dp?.phaseLabel === 'Trace optimal split'),
+      steps.some(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.matrixChain.phases.traceSplit',
+      ),
     ).toBe(true);
   });
 
@@ -36,10 +53,14 @@ describe('matrix-chain-multiplication', () => {
       dimensions: [5, 10],
     });
 
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('cost = 0');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe(0);
     expect(steps.at(-1)?.dp?.pathLabel).toBe('A1');
     expect(
-      steps.filter((step) => step.dp?.phaseLabel === 'Trace leaf interval').length,
+      steps.filter(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.matrixChain.phases.traceLeaf',
+      ).length,
     ).toBe(1);
   });
 });

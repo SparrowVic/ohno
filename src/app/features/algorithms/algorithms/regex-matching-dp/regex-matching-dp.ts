@@ -1,7 +1,107 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { RegexMatchingScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.regexMatching.modeLabel'),
+  phases: {
+    initializeBorder: t('features.algorithms.runtime.dp.regexMatching.phases.initializeBorder'),
+    propagateStarGroup: t(
+      'features.algorithms.runtime.dp.regexMatching.phases.propagateStarGroup',
+    ),
+    inspectStarGroup: t(
+      'features.algorithms.runtime.dp.regexMatching.phases.inspectStarGroup',
+    ),
+    commitStarState: t('features.algorithms.runtime.dp.regexMatching.phases.commitStarState'),
+    inspectToken: t('features.algorithms.runtime.dp.regexMatching.phases.inspectToken'),
+    commitToken: t('features.algorithms.runtime.dp.regexMatching.phases.commitToken'),
+    noMatch: t('features.algorithms.runtime.dp.regexMatching.phases.noMatch'),
+    traceStarConsume: t('features.algorithms.runtime.dp.regexMatching.phases.traceStarConsume'),
+    traceStarEmpty: t('features.algorithms.runtime.dp.regexMatching.phases.traceStarEmpty'),
+    traceDirect: t('features.algorithms.runtime.dp.regexMatching.phases.traceDirect'),
+    complete: t('features.algorithms.runtime.dp.regexMatching.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.regexMatching.descriptions.initialize'),
+    propagateStarGroup: t(
+      'features.algorithms.runtime.dp.regexMatching.descriptions.propagateStarGroup',
+    ),
+    inspectStarGroup: t(
+      'features.algorithms.runtime.dp.regexMatching.descriptions.inspectStarGroup',
+    ),
+    commitStarState: t(
+      'features.algorithms.runtime.dp.regexMatching.descriptions.commitStarState',
+    ),
+    inspectDot: t('features.algorithms.runtime.dp.regexMatching.descriptions.inspectDot'),
+    inspectLiteral: t('features.algorithms.runtime.dp.regexMatching.descriptions.inspectLiteral'),
+    commitToken: t('features.algorithms.runtime.dp.regexMatching.descriptions.commitToken'),
+    noMatch: t('features.algorithms.runtime.dp.regexMatching.descriptions.noMatch'),
+    traceStarConsume: t(
+      'features.algorithms.runtime.dp.regexMatching.descriptions.traceStarConsume',
+    ),
+    traceStarEmpty: t(
+      'features.algorithms.runtime.dp.regexMatching.descriptions.traceStarEmpty',
+    ),
+    traceDirect: t('features.algorithms.runtime.dp.regexMatching.descriptions.traceDirect'),
+    complete: t('features.algorithms.runtime.dp.regexMatching.descriptions.complete'),
+  },
+  insights: {
+    textLabel: t('features.algorithms.runtime.dp.regexMatching.insights.textLabel'),
+    patternLabel: t('features.algorithms.runtime.dp.regexMatching.insights.patternLabel'),
+    starsLabel: t('features.algorithms.runtime.dp.regexMatching.insights.starsLabel'),
+    matchLabel: t('features.algorithms.runtime.dp.regexMatching.insights.matchLabel'),
+    gridLabel: t('features.algorithms.runtime.dp.regexMatching.insights.gridLabel'),
+  },
+  labels: {
+    starGroupVsChar: t('features.algorithms.runtime.dp.regexMatching.labels.starGroupVsChar'),
+    charVsToken: t('features.algorithms.runtime.dp.regexMatching.labels.charVsToken'),
+    dpCell: t('features.algorithms.runtime.dp.regexMatching.labels.dpCell'),
+    pathValue: t('features.algorithms.runtime.dp.regexMatching.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.regexMatching.labels.pathPending'),
+    activeCell: t('features.algorithms.runtime.dp.regexMatching.labels.activeCell'),
+    textItemsLabel: t('features.algorithms.runtime.dp.regexMatching.labels.textItemsLabel'),
+    patternItemsLabel: t('features.algorithms.runtime.dp.regexMatching.labels.patternItemsLabel'),
+    resultMatch: t('features.algorithms.runtime.dp.regexMatching.labels.resultMatch'),
+    regexConsumes: t('features.algorithms.runtime.dp.regexMatching.labels.regexConsumes'),
+    regexEmpty: t('features.algorithms.runtime.dp.regexMatching.labels.regexEmpty'),
+    tokenMatches: t('features.algorithms.runtime.dp.regexMatching.labels.tokenMatches'),
+  },
+  decisions: {
+    zeroOccurrencesAccepted: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.zeroOccurrencesAccepted',
+    ),
+    emptyPrefixBlocked: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.emptyPrefixBlocked',
+    ),
+    starMustConsume: t('features.algorithms.runtime.dp.regexMatching.decisions.starMustConsume'),
+    groupCanStayEmpty: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.groupCanStayEmpty',
+    ),
+    bothStarBranchesFail: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.bothStarBranchesFail',
+    ),
+    regexPrefixValid: t('features.algorithms.runtime.dp.regexMatching.decisions.regexPrefixValid'),
+    stateBlocked: t('features.algorithms.runtime.dp.regexMatching.decisions.stateBlocked'),
+    diagonalRegexMatch: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.diagonalRegexMatch',
+    ),
+    literalBranchFails: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.literalBranchFails',
+    ),
+    tokenMatchedDiagonally: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.tokenMatchedDiagonally',
+    ),
+    moveUpKeepStar: t('features.algorithms.runtime.dp.regexMatching.decisions.moveUpKeepStar'),
+    jumpLeftTwo: t('features.algorithms.runtime.dp.regexMatching.decisions.jumpLeftTwo'),
+    consumeTextAndRegex: t(
+      'features.algorithms.runtime.dp.regexMatching.decisions.consumeTextAndRegex',
+    ),
+  },
+} as const;
 
 export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Generator<SortStep> {
   const text = scenario.source.split('');
@@ -20,9 +120,9 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
     table,
     backtrackCells,
     routeTokens,
-    description: 'Seed dp[0][0] = true and prepare the top row for star groups that can match an empty prefix.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize regex border',
+    phaseLabel: I18N.phases.initializeBorder,
     phase: 'init',
   });
 
@@ -40,15 +140,17 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
       activeCell: [0, col],
       candidateCells: [[0, col - 2]],
       activeCellStatus: table[0]![col]! ? 'chosen' : 'blocked',
-      description: `Regex star group ${pattern[col - 2]}* may skip itself and keep the empty prefix matched.`,
+      description: i18nText(I18N.descriptions.propagateStarGroup, {
+        token: pattern[col - 2] ?? '',
+      }),
       activeCodeLine: 2,
-      phaseLabel: 'Propagate empty star group',
+      phaseLabel: I18N.phases.propagateStarGroup,
       phase: 'settle-node',
       computation: {
-        label: `dp[0][${col}]`,
+        label: i18nText(I18N.labels.dpCell, { row: 0, col }),
         expression: `dp[0][${col - 2}]`,
         result: boolLabel(table[0]![col]!),
-        decision: table[0]![col]! ? 'zero occurrences accepted' : 'empty prefix still blocked',
+        decision: table[0]![col]! ? I18N.decisions.zeroOccurrencesAccepted : I18N.decisions.emptyPrefixBlocked,
       },
     });
   }
@@ -75,15 +177,23 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
             ...(col >= 2 ? ([[row, col - 2]] as const) : []),
             ...(col >= 2 ? ([[row - 1, col]] as const) : []),
           ],
-          description: `Star after ${prevToken} can either vanish or absorb another ${char}.`,
+          description: i18nText(I18N.descriptions.inspectStarGroup, {
+            token: prevToken,
+            char,
+          }),
           activeCodeLine: 5,
-          phaseLabel: 'Inspect star group',
+          phaseLabel: I18N.phases.inspectStarGroup,
           phase: 'compare',
           computation: {
-            label: `${prevToken}* vs ${char}`,
+            label: i18nText(I18N.labels.starGroupVsChar, { token: prevToken, char }),
             expression: `${boolLabel(zeroOccurrences)} OR ${boolLabel(consumeOne)}`,
             result: boolLabel(zeroOccurrences || consumeOne),
-            decision: consumeOne && !zeroOccurrences ? 'star must consume more text' : zeroOccurrences ? 'group can stay empty' : 'both star branches fail',
+            decision:
+              consumeOne && !zeroOccurrences
+                ? I18N.decisions.starMustConsume
+                : zeroOccurrences
+                  ? I18N.decisions.groupCanStayEmpty
+                  : I18N.decisions.bothStarBranchesFail,
           },
         });
 
@@ -102,15 +212,15 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
             ...(col >= 2 ? ([[row - 1, col]] as const) : []),
           ],
           activeCellStatus: table[row]![col]! ? (consumeOne && !zeroOccurrences ? 'improved' : 'chosen') : 'blocked',
-          description: `Commit whether regex star group keeps the prefix match alive.`,
+          description: I18N.descriptions.commitStarState,
           activeCodeLine: 6,
-          phaseLabel: 'Commit star state',
+          phaseLabel: I18N.phases.commitStarState,
           phase: 'settle-node',
           computation: {
-            label: `dp[${row}][${col}]`,
+            label: i18nText(I18N.labels.dpCell, { row, col }),
             expression: `${boolLabel(zeroOccurrences)} | ${boolLabel(consumeOne)}`,
             result: boolLabel(table[row]![col]!),
-            decision: table[row]![col]! ? 'regex prefix stays valid' : 'state blocked',
+            decision: table[row]![col]! ? I18N.decisions.regexPrefixValid : I18N.decisions.stateBlocked,
           },
         });
         continue;
@@ -127,17 +237,18 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
         routeTokens,
         activeCell: [row, col],
         candidateCells: [[row - 1, col - 1]],
-        description: token === '.'
-          ? `Dot wildcard matches any single character, so only the diagonal predecessor matters.`
-          : `Literal token ${token} only works if it matches ${char}.`,
+        description:
+          token === '.'
+            ? I18N.descriptions.inspectDot
+            : i18nText(I18N.descriptions.inspectLiteral, { token, char }),
         activeCodeLine: 7,
-        phaseLabel: 'Inspect direct token',
+        phaseLabel: I18N.phases.inspectToken,
         phase: 'compare',
         computation: {
-          label: `${token} vs ${char}`,
+          label: i18nText(I18N.labels.charVsToken, { token, char }),
           expression: `dp[${row - 1}][${col - 1}] AND match`,
           result: boolLabel(diagonal),
-          decision: diagonal ? 'diagonal regex match survives' : 'literal / dot branch fails',
+          decision: diagonal ? I18N.decisions.diagonalRegexMatch : I18N.decisions.literalBranchFails,
         },
       });
 
@@ -153,15 +264,15 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
         activeCell: [row, col],
         candidateCells: [[row - 1, col - 1]],
         activeCellStatus: diagonal ? 'match' : 'blocked',
-        description: `Commit whether token ${token} covers text character ${char}.`,
+        description: i18nText(I18N.descriptions.commitToken, { token, char }),
         activeCodeLine: 8,
-        phaseLabel: 'Commit direct token',
+        phaseLabel: I18N.phases.commitToken,
         phase: 'settle-node',
         computation: {
-          label: `dp[${row}][${col}]`,
+          label: i18nText(I18N.labels.dpCell, { row, col }),
           expression: `${boolLabel(table[row - 1]![col - 1]!)} & ${boolLabel(matchesRegexToken(token, char))}`,
           result: boolLabel(table[row]![col]!),
-          decision: table[row]![col]! ? 'token matched diagonally' : 'state blocked',
+          decision: table[row]![col]! ? I18N.decisions.tokenMatchedDiagonally : I18N.decisions.stateBlocked,
         },
       });
     }
@@ -176,9 +287,9 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
       table,
       backtrackCells,
       routeTokens,
-      description: 'The full text does not satisfy the regex pattern.',
+      description: I18N.descriptions.noMatch,
       activeCodeLine: 10,
-      phaseLabel: 'No full match',
+      phaseLabel: I18N.phases.noMatch,
       phase: 'complete',
     });
     return;
@@ -194,7 +305,8 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
     if (col > 0 && token === '*') {
       const prevToken = pattern[col - 2] ?? '';
       const zeroOccurrences = col >= 2 && table[row]![col - 2]!;
-      const consumeOne = row > 0 && col >= 2 && matchesRegexToken(prevToken, char!) && table[row - 1]![col]!;
+      const consumeOne =
+        row > 0 && col >= 2 && matchesRegexToken(prevToken, char!) && table[row - 1]![col]!;
 
       if (consumeOne) {
         routeTokens.unshift(`${prevToken}*→${char}`);
@@ -207,15 +319,18 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
           routeTokens,
           activeCell: [row, col],
           activeCellStatus: 'backtrack',
-          description: `Regex group ${prevToken}* consumes ${char} and stays active for more characters.`,
+          description: i18nText(I18N.descriptions.traceStarConsume, {
+            token: prevToken,
+            char,
+          }),
           activeCodeLine: 9,
-          phaseLabel: 'Trace star consume',
+          phaseLabel: I18N.phases.traceStarConsume,
           phase: 'relax',
           computation: {
-            label: `${prevToken}*`,
-            expression: `consume ${char}`,
+            label: i18nText(I18N.labels.regexConsumes, { token: prevToken, char }),
+            expression: `dp[${row - 1}][${col}]`,
             result: routeLabel(routeTokens),
-            decision: 'move upward and keep star column',
+            decision: I18N.decisions.moveUpKeepStar,
           },
         });
         row -= 1;
@@ -233,15 +348,15 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
           routeTokens,
           activeCell: [row, col],
           activeCellStatus: 'backtrack',
-          description: `Regex group ${prevToken}* collapses to zero occurrences here.`,
+          description: i18nText(I18N.descriptions.traceStarEmpty, { token: prevToken }),
           activeCodeLine: 9,
-          phaseLabel: 'Trace empty star group',
+          phaseLabel: I18N.phases.traceStarEmpty,
           phase: 'skip-relax',
           computation: {
-            label: `${prevToken}*`,
+            label: i18nText(I18N.labels.regexEmpty, { token: prevToken }),
             expression: 'zero occurrences',
             result: routeLabel(routeTokens),
-            decision: 'jump left by two pattern columns',
+            decision: I18N.decisions.jumpLeftTwo,
           },
         });
         col -= 2;
@@ -260,15 +375,15 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
         routeTokens,
         activeCell: [row, col],
         activeCellStatus: 'backtrack',
-        description: `Token ${token} matches ${char}, so trace diagonally to the previous prefix state.`,
+        description: i18nText(I18N.descriptions.traceDirect, { token, char }),
         activeCodeLine: 9,
-        phaseLabel: 'Trace direct match',
+        phaseLabel: I18N.phases.traceDirect,
         phase: 'relax',
         computation: {
-          label: `${token} vs ${char}`,
+          label: i18nText(I18N.labels.tokenMatches, { token, char }),
           expression: 'diagonal',
           result: routeLabel(routeTokens),
-          decision: 'consume one text char and one regex token',
+          decision: I18N.decisions.consumeTextAndRegex,
         },
       });
       row -= 1;
@@ -286,9 +401,12 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
     table,
     backtrackCells,
     routeTokens,
-    description: `Recovered one valid regex derivation for "${scenario.source}" against "${scenario.target}".`,
+    description: i18nText(I18N.descriptions.complete, {
+      source: scenario.source,
+      pattern: scenario.target,
+    }),
     activeCodeLine: 10,
-    phaseLabel: 'Regex route ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -300,9 +418,9 @@ function createStep(args: {
   readonly table: readonly (readonly boolean[])[];
   readonly backtrackCells: ReadonlySet<string>;
   readonly routeTokens: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
@@ -338,7 +456,12 @@ function createStep(args: {
       const isBase = row === 0 || col === 0;
       const token = col === 0 ? null : args.pattern[col - 1]!;
       const char = row === 0 ? null : args.text[row - 1]!;
-      const diagonalMatch = row > 0 && col > 0 && token !== '*' && matchesRegexToken(token!, char!) && args.table[row]![col]!;
+      const diagonalMatch =
+        row > 0 &&
+        col > 0 &&
+        token !== '*' &&
+        matchesRegexToken(token!, char!) &&
+        args.table[row]![col]!;
       const tags: DpTraceTag[] = [];
       if (isBase) tags.push('base');
       if (diagonalMatch) tags.push('match');
@@ -381,26 +504,38 @@ function createStep(args: {
 
   const matched = args.table[args.text.length]![args.pattern.length]!;
   const insights: DpInsight[] = [
-    { label: 'Text', value: String(args.text.length), tone: 'accent' },
-    { label: 'Pattern', value: String(args.pattern.length), tone: 'info' },
-    { label: 'Stars', value: String(args.pattern.filter((token) => token === '*').length), tone: 'warning' },
-    { label: 'Match', value: boolLabel(matched), tone: matched ? 'success' : 'warning' },
-    { label: 'Grid', value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
+    { label: I18N.insights.textLabel, value: String(args.text.length), tone: 'accent' },
+    { label: I18N.insights.patternLabel, value: String(args.pattern.length), tone: 'info' },
+    {
+      label: I18N.insights.starsLabel,
+      value: String(args.pattern.filter((token) => token === '*').length),
+      tone: 'warning',
+    },
+    {
+      label: I18N.insights.matchLabel,
+      value: boolLabel(matched),
+      tone: matched ? 'success' : 'warning',
+    },
+    {
+      label: I18N.insights.gridLabel,
+      value: `${args.table.length} × ${args.table[0]!.length}`,
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'regex-matching-dp',
-    modeLabel: 'Regex Matching DP',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `match = ${boolLabel(matched)}`,
+    resultLabel: i18nText(I18N.labels.resultMatch, { value: boolLabel(matched) }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
     activeLabel: args.activeCell ? regexActiveLabel(args.text, args.pattern, args.activeCell[0], args.activeCell[1]) : null,
     pathLabel: routeLabel(args.routeTokens),
-    primaryItemsLabel: 'Text',
+    primaryItemsLabel: I18N.labels.textItemsLabel,
     primaryItems: args.text.map((char, index) => `${index + 1}:${char}`),
-    secondaryItemsLabel: 'Regex pattern',
+    secondaryItemsLabel: I18N.labels.patternItemsLabel,
     secondaryItems: args.pattern.map((char, index) => `${index + 1}:${char}`),
     insights,
     rowHeaders,
@@ -421,12 +556,19 @@ function boolLabel(value: boolean): string {
   return value ? 'T' : 'F';
 }
 
-function routeLabel(tokens: readonly string[]): string {
-  return tokens.length > 0 ? `Route: ${tokens.join(' · ')}` : 'Route: pending';
+function routeLabel(tokens: readonly string[]): TranslatableText {
+  return tokens.length > 0
+    ? i18nText(I18N.labels.pathValue, { route: tokens.join(' · ') })
+    : I18N.labels.pathPending;
 }
 
-function regexActiveLabel(text: readonly string[], pattern: readonly string[], row: number, col: number): string {
+function regexActiveLabel(
+  text: readonly string[],
+  pattern: readonly string[],
+  row: number,
+  col: number,
+): TranslatableText {
   const left = row === 0 ? '∅' : text[row - 1]!;
   const right = col === 0 ? '∅' : pattern[col - 1]!;
-  return `${left} × ${right}`;
+  return i18nText(I18N.labels.activeCell, { left, right });
 }

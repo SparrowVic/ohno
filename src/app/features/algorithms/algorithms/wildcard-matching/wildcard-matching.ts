@@ -1,7 +1,122 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { WildcardMatchingScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.wildcardMatching.modeLabel'),
+  phases: {
+    initializeBorder: t('features.algorithms.runtime.dp.wildcardMatching.phases.initializeBorder'),
+    propagateLeadingStar: t(
+      'features.algorithms.runtime.dp.wildcardMatching.phases.propagateLeadingStar',
+    ),
+    inspectStar: t('features.algorithms.runtime.dp.wildcardMatching.phases.inspectStar'),
+    commitStar: t('features.algorithms.runtime.dp.wildcardMatching.phases.commitStar'),
+    inspectToken: t('features.algorithms.runtime.dp.wildcardMatching.phases.inspectToken'),
+    commitToken: t('features.algorithms.runtime.dp.wildcardMatching.phases.commitToken'),
+    noMatch: t('features.algorithms.runtime.dp.wildcardMatching.phases.noMatch'),
+    traceStarConsume: t(
+      'features.algorithms.runtime.dp.wildcardMatching.phases.traceStarConsume',
+    ),
+    traceStarEmpty: t('features.algorithms.runtime.dp.wildcardMatching.phases.traceStarEmpty'),
+    traceDiagonal: t('features.algorithms.runtime.dp.wildcardMatching.phases.traceDiagonal'),
+    complete: t('features.algorithms.runtime.dp.wildcardMatching.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.initialize'),
+    propagateLeadingStar: t(
+      'features.algorithms.runtime.dp.wildcardMatching.descriptions.propagateLeadingStar',
+    ),
+    inspectStar: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.inspectStar'),
+    commitStar: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.commitStar'),
+    inspectQuestion: t(
+      'features.algorithms.runtime.dp.wildcardMatching.descriptions.inspectQuestion',
+    ),
+    inspectLiteral: t(
+      'features.algorithms.runtime.dp.wildcardMatching.descriptions.inspectLiteral',
+    ),
+    commitToken: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.commitToken'),
+    noMatch: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.noMatch'),
+    traceStarConsume: t(
+      'features.algorithms.runtime.dp.wildcardMatching.descriptions.traceStarConsume',
+    ),
+    traceStarEmpty: t(
+      'features.algorithms.runtime.dp.wildcardMatching.descriptions.traceStarEmpty',
+    ),
+    traceDiagonal: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.traceDiagonal'),
+    complete: t('features.algorithms.runtime.dp.wildcardMatching.descriptions.complete'),
+  },
+  insights: {
+    textLabel: t('features.algorithms.runtime.dp.wildcardMatching.insights.textLabel'),
+    patternLabel: t('features.algorithms.runtime.dp.wildcardMatching.insights.patternLabel'),
+    starsLabel: t('features.algorithms.runtime.dp.wildcardMatching.insights.starsLabel'),
+    matchLabel: t('features.algorithms.runtime.dp.wildcardMatching.insights.matchLabel'),
+    gridLabel: t('features.algorithms.runtime.dp.wildcardMatching.insights.gridLabel'),
+  },
+  labels: {
+    leadingStarEmpty: t('features.algorithms.runtime.dp.wildcardMatching.labels.leadingStarEmpty'),
+    emptyValue: t('features.algorithms.runtime.dp.wildcardMatching.labels.emptyValue'),
+    consumeValue: t('features.algorithms.runtime.dp.wildcardMatching.labels.consumeValue'),
+    questionWildcard: t('features.algorithms.runtime.dp.wildcardMatching.labels.questionWildcard'),
+    charVsToken: t('features.algorithms.runtime.dp.wildcardMatching.labels.charVsToken'),
+    starVsChar: t('features.algorithms.runtime.dp.wildcardMatching.labels.starVsChar'),
+    dpCell: t('features.algorithms.runtime.dp.wildcardMatching.labels.dpCell'),
+    pathValue: t('features.algorithms.runtime.dp.wildcardMatching.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.wildcardMatching.labels.pathPending'),
+    activeCell: t('features.algorithms.runtime.dp.wildcardMatching.labels.activeCell'),
+    textItemsLabel: t('features.algorithms.runtime.dp.wildcardMatching.labels.textItemsLabel'),
+    patternItemsLabel: t(
+      'features.algorithms.runtime.dp.wildcardMatching.labels.patternItemsLabel',
+    ),
+    resultMatch: t('features.algorithms.runtime.dp.wildcardMatching.labels.resultMatch'),
+    starConsumes: t('features.algorithms.runtime.dp.wildcardMatching.labels.starConsumes'),
+    starEmpty: t('features.algorithms.runtime.dp.wildcardMatching.labels.starEmpty'),
+    tokenMatches: t('features.algorithms.runtime.dp.wildcardMatching.labels.tokenMatches'),
+  },
+  decisions: {
+    starSpansEmptyPrefix: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.starSpansEmptyPrefix',
+    ),
+    prefixStopsMatching: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.prefixStopsMatching',
+    ),
+    starMustConsume: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.starMustConsume',
+    ),
+    starCanStayEmpty: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.starCanStayEmpty',
+    ),
+    stateRemainsFalse: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.stateRemainsFalse',
+    ),
+    starTransitionReachable: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.starTransitionReachable',
+    ),
+    bothStarBranchesFailed: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.bothStarBranchesFailed',
+    ),
+    diagonalMatchSurvives: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.diagonalMatchSurvives',
+    ),
+    directTransitionFails: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.directTransitionFails',
+    ),
+    diagonalMatchStored: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.diagonalMatchStored',
+    ),
+    stateBlocked: t('features.algorithms.runtime.dp.wildcardMatching.decisions.stateBlocked'),
+    moveUpKeepStar: t('features.algorithms.runtime.dp.wildcardMatching.decisions.moveUpKeepStar'),
+    moveLeftPastStar: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.moveLeftPastStar',
+    ),
+    consumeTextAndPattern: t(
+      'features.algorithms.runtime.dp.wildcardMatching.decisions.consumeTextAndPattern',
+    ),
+  },
+} as const;
 
 export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): Generator<SortStep> {
   const text = scenario.source.split('');
@@ -20,9 +135,9 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
     table,
     backtrackCells,
     routeTokens,
-    description: 'Seed dp[0][0] = true and prepare the first row for leading wildcard stars.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize wildcard border',
+    phaseLabel: I18N.phases.initializeBorder,
     phase: 'init',
   });
 
@@ -39,16 +154,16 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
       activeCell: [0, col],
       candidateCells: [[0, col - 1]],
       activeCellStatus: table[0]![col]! ? 'chosen' : 'blocked',
-      secondaryItems: ['leading star can match empty prefix'],
-      description: `Leading '*' keeps the empty text prefix matchable through pattern column ${col}.`,
+      secondaryItems: [I18N.labels.leadingStarEmpty],
+      description: i18nText(I18N.descriptions.propagateLeadingStar, { col }),
       activeCodeLine: 2,
-      phaseLabel: 'Propagate leading star',
+      phaseLabel: I18N.phases.propagateLeadingStar,
       phase: 'settle-node',
       computation: {
-        label: `dp[0][${col}]`,
+        label: i18nText(I18N.labels.dpCell, { row: 0, col }),
         expression: `dp[0][${col - 1}]`,
         result: boolLabel(table[0]![col]!),
-        decision: table[0]![col]! ? 'star spans empty prefix' : 'prefix stops matching',
+        decision: table[0]![col]! ? I18N.decisions.starSpansEmptyPrefix : I18N.decisions.prefixStopsMatching,
       },
     });
   }
@@ -71,16 +186,24 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
           routeTokens,
           activeCell: [row, col],
           candidateCells: [[row, col - 1], [row - 1, col]],
-          secondaryItems: [`empty = ${boolLabel(emptyMatch)}`, `consume = ${boolLabel(consumeMatch)}`],
-          description: `Star at pattern column ${col} can either absorb ${char} or stay empty.`,
+          secondaryItems: [
+            i18nText(I18N.labels.emptyValue, { value: boolLabel(emptyMatch) }),
+            i18nText(I18N.labels.consumeValue, { value: boolLabel(consumeMatch) }),
+          ],
+          description: i18nText(I18N.descriptions.inspectStar, { col, char }),
           activeCodeLine: 5,
-          phaseLabel: 'Inspect star transition',
+          phaseLabel: I18N.phases.inspectStar,
           phase: 'compare',
           computation: {
-            label: `* vs ${char}`,
+            label: i18nText(I18N.labels.starVsChar, { char }),
             expression: `dp[${row}][${col - 1}] OR dp[${row - 1}][${col}]`,
             result: boolLabel(emptyMatch || consumeMatch),
-            decision: consumeMatch && !emptyMatch ? 'star must consume one more character' : emptyMatch ? 'star can stay empty' : 'state remains false',
+            decision:
+              consumeMatch && !emptyMatch
+                ? I18N.decisions.starMustConsume
+                : emptyMatch
+                  ? I18N.decisions.starCanStayEmpty
+                  : I18N.decisions.stateRemainsFalse,
           },
         });
 
@@ -96,15 +219,15 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
           activeCell: [row, col],
           candidateCells: [[row, col - 1], [row - 1, col]],
           activeCellStatus: table[row]![col]! ? (consumeMatch && !emptyMatch ? 'improved' : 'chosen') : 'blocked',
-          description: `Commit whether star keeps the prefix match alive at dp[${row}][${col}].`,
+          description: i18nText(I18N.descriptions.commitStar, { row, col }),
           activeCodeLine: 6,
-          phaseLabel: 'Commit star state',
+          phaseLabel: I18N.phases.commitStar,
           phase: 'settle-node',
           computation: {
-            label: `dp[${row}][${col}]`,
+            label: i18nText(I18N.labels.dpCell, { row, col }),
             expression: `${boolLabel(emptyMatch)} | ${boolLabel(consumeMatch)}`,
             result: boolLabel(table[row]![col]!),
-            decision: table[row]![col]! ? 'star transition stays reachable' : 'both star branches failed',
+            decision: table[row]![col]! ? I18N.decisions.starTransitionReachable : I18N.decisions.bothStarBranchesFailed,
           },
         });
         continue;
@@ -122,18 +245,23 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
         routeTokens,
         activeCell: [row, col],
         candidateCells: [[row - 1, col - 1]],
-        secondaryItems: [token === '?' ? '? wildcard' : `${char} vs ${token}`],
-        description: token === '?'
-          ? `Question mark matches any single character, so it checks the diagonal predecessor.`
-          : `Literal pattern token ${token} only works here if it equals ${char}.`,
+        secondaryItems: [
+          token === '?'
+            ? I18N.labels.questionWildcard
+            : i18nText(I18N.labels.charVsToken, { char, token }),
+        ],
+        description:
+          token === '?'
+            ? I18N.descriptions.inspectQuestion
+            : i18nText(I18N.descriptions.inspectLiteral, { token, char }),
         activeCodeLine: 7,
-        phaseLabel: 'Inspect direct token',
+        phaseLabel: I18N.phases.inspectToken,
         phase: 'compare',
         computation: {
-          label: `${char} × ${token}`,
+          label: i18nText(I18N.labels.charVsToken, { char, token }),
           expression: `dp[${row - 1}][${col - 1}] AND match`,
           result: boolLabel(diagonal),
-          decision: diagonal ? 'diagonal match survives' : 'literal / ? transition fails',
+          decision: diagonal ? I18N.decisions.diagonalMatchSurvives : I18N.decisions.directTransitionFails,
         },
       });
 
@@ -149,15 +277,15 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
         activeCell: [row, col],
         candidateCells: [[row - 1, col - 1]],
         activeCellStatus: diagonal ? (directMatch ? 'match' : 'chosen') : 'blocked',
-        description: `Commit whether ${token} can cover text position ${row}.`,
+        description: i18nText(I18N.descriptions.commitToken, { token, row }),
         activeCodeLine: 8,
-        phaseLabel: 'Commit token state',
+        phaseLabel: I18N.phases.commitToken,
         phase: 'settle-node',
         computation: {
-          label: `dp[${row}][${col}]`,
+          label: i18nText(I18N.labels.dpCell, { row, col }),
           expression: `${boolLabel(table[row - 1]![col - 1]!)} & ${boolLabel(directMatch)}`,
           result: boolLabel(table[row]![col]!),
-          decision: table[row]![col]! ? 'diagonal match stored' : 'state blocked',
+          decision: table[row]![col]! ? I18N.decisions.diagonalMatchStored : I18N.decisions.stateBlocked,
         },
       });
     }
@@ -172,9 +300,9 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
       table,
       backtrackCells,
       routeTokens,
-      description: 'Full text and pattern do not match under wildcard rules.',
+      description: I18N.descriptions.noMatch,
       activeCodeLine: 10,
-      phaseLabel: 'No full match',
+      phaseLabel: I18N.phases.noMatch,
       phase: 'complete',
     });
     return;
@@ -202,15 +330,15 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
           routeTokens,
           activeCell: [row, col],
           activeCellStatus: 'backtrack',
-          description: `Star absorbs character ${char} and stays in the same pattern column.`,
+          description: i18nText(I18N.descriptions.traceStarConsume, { char }),
           activeCodeLine: 9,
-          phaseLabel: 'Trace star consume',
+          phaseLabel: I18N.phases.traceStarConsume,
           phase: 'relax',
           computation: {
-            label: `* consumes ${char}`,
+            label: i18nText(I18N.labels.starConsumes, { char }),
             expression: `dp[${row - 1}][${col}]`,
             result: routeLabel(routeTokens),
-            decision: 'move upward and keep star active',
+            decision: I18N.decisions.moveUpKeepStar,
           },
         });
         row -= 1;
@@ -228,15 +356,15 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
           routeTokens,
           activeCell: [row, col],
           activeCellStatus: 'backtrack',
-          description: 'Star also works as an empty span here, so move left in the pattern.',
+          description: I18N.descriptions.traceStarEmpty,
           activeCodeLine: 9,
-          phaseLabel: 'Trace star empty branch',
+          phaseLabel: I18N.phases.traceStarEmpty,
           phase: 'skip-relax',
           computation: {
-            label: 'Star stays empty',
+            label: I18N.labels.starEmpty,
             expression: `dp[${row}][${col - 1}]`,
             result: routeLabel(routeTokens),
-            decision: 'move left past star token',
+            decision: I18N.decisions.moveLeftPastStar,
           },
         });
         col -= 1;
@@ -257,15 +385,15 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
           routeTokens,
           activeCell: [row, col],
           activeCellStatus: 'backtrack',
-          description: `Token ${token} matches ${char}, so move diagonally to the predecessor state.`,
+          description: i18nText(I18N.descriptions.traceDiagonal, { token, char }),
           activeCodeLine: 9,
-          phaseLabel: 'Trace diagonal match',
+          phaseLabel: I18N.phases.traceDiagonal,
           phase: 'relax',
           computation: {
-            label: `${token} matches ${char}`,
+            label: i18nText(I18N.labels.tokenMatches, { token, char }),
             expression: `dp[${row - 1}][${col - 1}]`,
             result: routeLabel(routeTokens),
-            decision: 'consume one text char and one pattern token',
+            decision: I18N.decisions.consumeTextAndPattern,
           },
         });
         row -= 1;
@@ -293,9 +421,12 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
     table,
     backtrackCells,
     routeTokens,
-    description: `Recovered one valid wildcard route for "${scenario.source}" against "${scenario.target}".`,
+    description: i18nText(I18N.descriptions.complete, {
+      source: scenario.source,
+      pattern: scenario.target,
+    }),
     activeCodeLine: 10,
-    phaseLabel: 'Wildcard route ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -307,14 +438,14 @@ function createStep(args: {
   readonly table: readonly (readonly boolean[])[];
   readonly backtrackCells: ReadonlySet<string>;
   readonly routeTokens: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'match' | 'improved' | 'chosen' | 'blocked' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
+  readonly secondaryItems?: readonly TranslatableText[];
   readonly computation?: DpComputation | null;
 }): SortStep {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
@@ -389,26 +520,38 @@ function createStep(args: {
 
   const matched = args.table[args.text.length]![args.pattern.length]!;
   const insights: DpInsight[] = [
-    { label: 'Text', value: String(args.text.length), tone: 'accent' },
-    { label: 'Pattern', value: String(args.pattern.length), tone: 'info' },
-    { label: 'Stars', value: String(args.pattern.filter((char) => char === '*').length), tone: 'warning' },
-    { label: 'Match', value: boolLabel(matched), tone: matched ? 'success' : 'warning' },
-    { label: 'Grid', value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
+    { label: I18N.insights.textLabel, value: String(args.text.length), tone: 'accent' },
+    { label: I18N.insights.patternLabel, value: String(args.pattern.length), tone: 'info' },
+    {
+      label: I18N.insights.starsLabel,
+      value: String(args.pattern.filter((char) => char === '*').length),
+      tone: 'warning',
+    },
+    {
+      label: I18N.insights.matchLabel,
+      value: boolLabel(matched),
+      tone: matched ? 'success' : 'warning',
+    },
+    {
+      label: I18N.insights.gridLabel,
+      value: `${args.table.length} × ${args.table[0]!.length}`,
+      tone: 'info',
+    },
   ];
 
   return createDpStep({
     mode: 'wildcard-matching',
-    modeLabel: 'Wildcard Matching',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `match = ${boolLabel(matched)}`,
+    resultLabel: i18nText(I18N.labels.resultMatch, { value: boolLabel(matched) }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
     activeLabel: args.activeCell ? activeCellLabel(args.text, args.pattern, args.activeCell[0], args.activeCell[1]) : null,
     pathLabel: routeLabel(args.routeTokens),
-    primaryItemsLabel: 'Text',
+    primaryItemsLabel: I18N.labels.textItemsLabel,
     primaryItems: args.text.map((char, index) => `${index + 1}:${char}`),
-    secondaryItemsLabel: 'Pattern',
+    secondaryItemsLabel: I18N.labels.patternItemsLabel,
     secondaryItems: args.secondaryItems ?? args.pattern.map((char, index) => `${index + 1}:${char}`),
     insights,
     rowHeaders,
@@ -426,8 +569,10 @@ function boolLabel(value: boolean): string {
   return value ? 'T' : 'F';
 }
 
-function routeLabel(tokens: readonly string[]): string {
-  return tokens.length > 0 ? `Route: ${tokens.join(' · ')}` : 'Route: pending';
+function routeLabel(tokens: readonly string[]): TranslatableText {
+  return tokens.length > 0
+    ? i18nText(I18N.labels.pathValue, { route: tokens.join(' · ') })
+    : I18N.labels.pathPending;
 }
 
 function activeCellLabel(
@@ -435,8 +580,8 @@ function activeCellLabel(
   pattern: readonly string[],
   row: number,
   col: number,
-): string {
+): TranslatableText {
   const left = row === 0 ? '∅' : text[row - 1]!;
   const right = col === 0 ? '∅' : pattern[col - 1]!;
-  return `${left} × ${right}`;
+  return i18nText(I18N.labels.activeCell, { left, right });
 }

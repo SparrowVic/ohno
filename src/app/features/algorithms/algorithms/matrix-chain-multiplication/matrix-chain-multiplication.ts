@@ -1,7 +1,66 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { MatrixChainScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.matrixChain.modeLabel'),
+  phases: {
+    initializeDiagonal: t('features.algorithms.runtime.dp.matrixChain.phases.initializeDiagonal'),
+    inspectCandidate: t('features.algorithms.runtime.dp.matrixChain.phases.inspectCandidate'),
+    commitInterval: t('features.algorithms.runtime.dp.matrixChain.phases.commitInterval'),
+    traceLeaf: t('features.algorithms.runtime.dp.matrixChain.phases.traceLeaf'),
+    traceSplit: t('features.algorithms.runtime.dp.matrixChain.phases.traceSplit'),
+    complete: t('features.algorithms.runtime.dp.matrixChain.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.matrixChain.descriptions.initialize'),
+    inspectCandidate: t(
+      'features.algorithms.runtime.dp.matrixChain.descriptions.inspectCandidate',
+    ),
+    commitInterval: t('features.algorithms.runtime.dp.matrixChain.descriptions.commitInterval'),
+    complete: t('features.algorithms.runtime.dp.matrixChain.descriptions.complete'),
+    traceLeaf: t('features.algorithms.runtime.dp.matrixChain.descriptions.traceLeaf'),
+    traceSplit: t('features.algorithms.runtime.dp.matrixChain.descriptions.traceSplit'),
+  },
+  insights: {
+    matricesLabel: t('features.algorithms.runtime.dp.matrixChain.insights.matricesLabel'),
+    dimensionsLabel: t('features.algorithms.runtime.dp.matrixChain.insights.dimensionsLabel'),
+    bestCostLabel: t('features.algorithms.runtime.dp.matrixChain.insights.bestCostLabel'),
+    solvedCellsLabel: t('features.algorithms.runtime.dp.matrixChain.insights.solvedCellsLabel'),
+    shapeLabel: t('features.algorithms.runtime.dp.matrixChain.insights.shapeLabel'),
+  },
+  labels: {
+    leftValue: t('features.algorithms.runtime.dp.matrixChain.labels.leftValue'),
+    rightValue: t('features.algorithms.runtime.dp.matrixChain.labels.rightValue'),
+    mergeValue: t('features.algorithms.runtime.dp.matrixChain.labels.mergeValue'),
+    splitLabel: t('features.algorithms.runtime.dp.matrixChain.labels.splitLabel'),
+    cellLabel: t('features.algorithms.runtime.dp.matrixChain.labels.cellLabel'),
+    resultCost: t('features.algorithms.runtime.dp.matrixChain.labels.resultCost'),
+    resultPending: t('features.algorithms.runtime.dp.matrixChain.labels.resultPending'),
+    activeInterval: t('features.algorithms.runtime.dp.matrixChain.labels.activeInterval'),
+    matrixDimensionsLabel: t(
+      'features.algorithms.runtime.dp.matrixChain.labels.matrixDimensionsLabel',
+    ),
+    currentSplitLensLabel: t(
+      'features.algorithms.runtime.dp.matrixChain.labels.currentSplitLensLabel',
+    ),
+    optimalValue: t('features.algorithms.runtime.dp.matrixChain.labels.optimalValue'),
+    leafMatrix: t('features.algorithms.runtime.dp.matrixChain.labels.leafMatrix'),
+    traceInterval: t('features.algorithms.runtime.dp.matrixChain.labels.traceInterval'),
+    upperTriangle: t('features.algorithms.runtime.dp.matrixChain.labels.upperTriangle'),
+  },
+  decisions: {
+    newBestSplit: t('features.algorithms.runtime.dp.matrixChain.decisions.newBestSplit'),
+    keepOlderSplit: t('features.algorithms.runtime.dp.matrixChain.decisions.keepOlderSplit'),
+    leafInterval: t('features.algorithms.runtime.dp.matrixChain.decisions.leafInterval'),
+    expandChildren: t('features.algorithms.runtime.dp.matrixChain.decisions.expandChildren'),
+    splitSaved: t('features.algorithms.runtime.dp.matrixChain.decisions.splitSaved'),
+  },
+} as const;
 
 export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenario): Generator<SortStep> {
   const matrixCount = scenario.dimensions.length - 1;
@@ -16,9 +75,9 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
     cost,
     split,
     solutionCells,
-    description: 'Start with zero cost on the diagonal: multiplying one matrix alone costs nothing.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize diagonal',
+    phaseLabel: I18N.phases.initializeDiagonal,
     phase: 'init',
   });
 
@@ -42,16 +101,24 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
           activeCell: [i, j],
           candidateCells: [[i, k], [k + 1, j]],
           activeCellStatus: 'active',
-          secondaryItems: [`left = ${left}`, `right = ${right}`, `merge = ${merge}`],
-          description: `Try split k = ${k + 1} for interval A${i + 1}..A${j + 1}.`,
+          secondaryItems: [
+            i18nText(I18N.labels.leftValue, { value: left }),
+            i18nText(I18N.labels.rightValue, { value: right }),
+            i18nText(I18N.labels.mergeValue, { value: merge }),
+          ],
+          description: i18nText(I18N.descriptions.inspectCandidate, {
+            split: k + 1,
+            left: i + 1,
+            right: j + 1,
+          }),
           activeCodeLine: 7,
-          phaseLabel: 'Inspect split candidate',
+          phaseLabel: I18N.phases.inspectCandidate,
           phase: 'compare',
           computation: {
-            label: `Split k = ${k + 1}`,
+            label: i18nText(I18N.labels.splitLabel, { split: k + 1 }),
             expression: `${left} + ${right} + ${scenario.dimensions[i]}·${scenario.dimensions[k + 1]}·${scenario.dimensions[j + 1]}`,
             result: String(candidate),
-            decision: candidate < best ? 'new best split' : 'keep older split',
+            decision: candidate < best ? I18N.decisions.newBestSplit : I18N.decisions.keepOlderSplit,
           },
         });
 
@@ -71,15 +138,20 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
         solutionCells,
         activeCell: [i, j],
         activeCellStatus: 'improved',
-        description: `Store m[${i + 1},${j + 1}] = ${best} using split k = ${(bestSplit ?? i) + 1}.`,
+        description: i18nText(I18N.descriptions.commitInterval, {
+          left: i + 1,
+          right: j + 1,
+          value: best,
+          split: (bestSplit ?? i) + 1,
+        }),
         activeCodeLine: 10,
-        phaseLabel: 'Commit best interval',
+        phaseLabel: I18N.phases.commitInterval,
         phase: 'settle-node',
         computation: {
-          label: `m[${i + 1},${j + 1}]`,
+          label: i18nText(I18N.labels.cellLabel, { row: i + 1, col: j + 1 }),
           expression: `best split = ${(bestSplit ?? i) + 1}`,
           result: String(best),
-          decision: parenthesizationFor(split, 0, matrixCount - 1),
+          decision: i18nText(I18N.decisions.splitSaved, { left: i + 1, right: j + 1 }),
         },
       });
     }
@@ -92,9 +164,12 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
     cost,
     split,
     solutionCells,
-    description: `Optimal parenthesization is ${parenthesizationFor(split, 0, matrixCount - 1)} with cost ${cost[0]![matrixCount - 1] ?? 0}.`,
+    description: i18nText(I18N.descriptions.complete, {
+      plan: parenthesizationFor(split, 0, matrixCount - 1),
+      cost: cost[0]![matrixCount - 1] ?? 0,
+    }),
     activeCodeLine: 12,
-    phaseLabel: 'Optimal chain ready',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 
@@ -108,15 +183,15 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
         solutionCells,
         activeCell: [i, j],
         activeCellStatus: 'backtrack',
-        description: `A${i + 1} is a leaf matrix in the optimal multiplication tree.`,
+        description: i18nText(I18N.descriptions.traceLeaf, { index: i + 1 }),
         activeCodeLine: 11,
-        phaseLabel: 'Trace leaf interval',
+        phaseLabel: I18N.phases.traceLeaf,
         phase: 'relax',
         computation: {
-          label: `A${i + 1}`,
+          label: i18nText(I18N.labels.leafMatrix, { index: i + 1 }),
           expression: 'single matrix',
           result: '0',
-          decision: 'leaf interval',
+          decision: I18N.decisions.leafInterval,
         },
       });
       return;
@@ -131,15 +206,19 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
       activeCell: [i, j],
       candidateCells: [[i, k], [k + 1, j]],
       activeCellStatus: 'backtrack',
-      description: `Optimal interval A${i + 1}..A${j + 1} splits at k = ${k + 1}.`,
+      description: i18nText(I18N.descriptions.traceSplit, {
+        left: i + 1,
+        right: j + 1,
+        split: k + 1,
+      }),
       activeCodeLine: 11,
-      phaseLabel: 'Trace optimal split',
+      phaseLabel: I18N.phases.traceSplit,
       phase: 'relax',
       computation: {
-        label: `Trace A${i + 1}..A${j + 1}`,
+        label: i18nText(I18N.labels.traceInterval, { left: i + 1, right: j + 1 }),
         expression: `split = ${k + 1}`,
         result: parenthesizationFor(split, i, j),
-        decision: 'expand left and right child intervals',
+        decision: I18N.decisions.expandChildren,
       },
     });
 
@@ -153,14 +232,14 @@ function createStep(args: {
   readonly cost: readonly (readonly (number | null)[])[];
   readonly split: readonly (readonly (number | null)[])[];
   readonly solutionCells: ReadonlySet<string>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'improved' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
+  readonly secondaryItems?: readonly TranslatableText[];
   readonly computation?: DpComputation | null;
 }): SortStep {
   const matrixCount = args.scenario.dimensions.length - 1;
@@ -220,27 +299,43 @@ function createStep(args: {
 
   const bestCost = args.cost[0]![matrixCount - 1];
   const insights: DpInsight[] = [
-    { label: 'Matrices', value: String(matrixCount), tone: 'accent' },
-    { label: 'Dims', value: args.scenario.dimensions.join(' · '), tone: 'info' },
-    { label: 'Best cost', value: bestCost === null ? 'pending' : String(bestCost), tone: 'success' },
-    { label: 'Solved cells', value: String(cells.filter((cell) => cell.valueLabel !== '∞' && cell.valueLabel !== '—').length), tone: 'warning' },
-    { label: 'Shape', value: 'upper triangle', tone: 'info' },
+    { label: I18N.insights.matricesLabel, value: String(matrixCount), tone: 'accent' },
+    { label: I18N.insights.dimensionsLabel, value: args.scenario.dimensions.join(' · '), tone: 'info' },
+    {
+      label: I18N.insights.bestCostLabel,
+      value: bestCost === null ? I18N.labels.resultPending : String(bestCost),
+      tone: 'success',
+    },
+    {
+      label: I18N.insights.solvedCellsLabel,
+      value: String(cells.filter((cell) => cell.valueLabel !== '∞' && cell.valueLabel !== '—').length),
+      tone: 'warning',
+    },
+    { label: I18N.insights.shapeLabel, value: I18N.labels.upperTriangle, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'matrix-chain',
-    modeLabel: 'Matrix Chain Multiplication',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: bestCost === null ? 'pending' : `cost = ${bestCost}`,
+    resultLabel: bestCost === null ? I18N.labels.resultPending : i18nText(I18N.labels.resultCost, { value: bestCost }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${matrixCount} × ${matrixCount}`,
-    activeLabel: args.activeCell ? `A${args.activeCell[0] + 1}..A${args.activeCell[1] + 1}` : null,
+    activeLabel:
+      args.activeCell
+        ? i18nText(I18N.labels.activeInterval, {
+            left: args.activeCell[0] + 1,
+            right: args.activeCell[1] + 1,
+          })
+        : null,
     pathLabel: parenthesizationFor(args.split, 0, matrixCount - 1),
-    primaryItemsLabel: 'Matrix dimensions',
+    primaryItemsLabel: I18N.labels.matrixDimensionsLabel,
     primaryItems: Array.from({ length: matrixCount }, (_, index) => `A${index + 1} ${args.scenario.dimensions[index]}×${args.scenario.dimensions[index + 1]}`),
-    secondaryItemsLabel: 'Current split lens',
-    secondaryItems: args.secondaryItems ?? [`optimal = ${parenthesizationFor(args.split, 0, matrixCount - 1)}`],
+    secondaryItemsLabel: I18N.labels.currentSplitLensLabel,
+    secondaryItems:
+      args.secondaryItems ??
+      [i18nText(I18N.labels.optimalValue, { value: parenthesizationFor(args.split, 0, matrixCount - 1) })],
     insights,
     rowHeaders: headers,
     colHeaders: headers,

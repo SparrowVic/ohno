@@ -345,6 +345,98 @@
       },
       "runtime": {
         "dp": {
+          "burstBalloons": {
+            "decisions": {
+              "appendFinisher": "append interval finisher to burst order",
+              "expandSubintervals": "expand left and right subintervals first",
+              "keepPreviousSplit": "keep previous split",
+              "newBestLastBalloon": "new best last balloon",
+              "splitSaved": "split saved for interval #{{left}}..#{{right}}"
+            },
+            "descriptions": {
+              "appendBurst": "After both sides are solved, balloon #{{pivot}} bursts last for interval #{{left}}..#{{right}}.",
+              "commitScore": "Store best coin haul for interval #{{left}}..#{{right}} with balloon #{{pivot}} as the last burst.",
+              "complete": "Recovered one optimal burst order with {{coins}} coins.",
+              "initialize": "Pad the array with sentinel 1s so every interval can treat its chosen last balloon uniformly.",
+              "inspectCandidate": "Try keeping balloon #{{pivot}} as the last one burst inside interval #{{left}}..#{{right}}.",
+              "traceSplit": "Optimal interval #{{left}}..#{{right}} leaves balloon #{{pivot}} for the final pop in this subproblem."
+            },
+            "insights": {
+              "balloonsLabel": "Balloons",
+              "bestCoinsLabel": "Best coins",
+              "burstOrderLabel": "Burst order",
+              "shapeLabel": "Shape",
+              "valuesLabel": "Values"
+            },
+            "labels": {
+              "activeInterval": "#{{left}}..#{{right}}",
+              "balloonValuesLabel": "Balloon values",
+              "burstLabel": "Burst #{{pivot}}",
+              "burstValue": "burst = {{value}}",
+              "dpCell": "dp[{{left}}][{{right}}]",
+              "intervalComputation": "Interval #{{left}}..#{{right}}",
+              "intervalLensLabel": "Interval lens",
+              "lastPivot": "last #{{pivot}}",
+              "leftValue": "left = {{value}}",
+              "orderSizeValue": "order size = {{size}}",
+              "pathPending": "Order: pending",
+              "pathValue": "Order: {{order}}",
+              "pending": "pending",
+              "resultCoins": "coins = {{value}}",
+              "resultPending": "coins pending",
+              "rightValue": "right = {{value}}",
+              "sentinelsValue": "sentinels = 1 | {{values}} | 1",
+              "traceInterval": "Trace #{{left}}..#{{right}}",
+              "upperTriangle": "upper triangle"
+            },
+            "modeLabel": "Burst Balloons",
+            "phases": {
+              "appendBurst": "Append burst to route",
+              "commitScore": "Commit best interval score",
+              "complete": "Burst plan ready",
+              "initializeCanvas": "Initialize interval canvas",
+              "inspectCandidate": "Inspect last-burst candidate",
+              "traceSplit": "Trace saved split"
+            }
+          },
+          "climbingStairs": {
+            "decisions": {
+              "addArrivals": "add one-step and two-step arrivals",
+              "recurrenceCommitted": "recurrence committed"
+            },
+            "descriptions": {
+              "commitCount": "Store the total number of ways to stand on stair {{step}}.",
+              "complete": "Finished counting all valid 1-step and 2-step climbs up to stair {{step}}.",
+              "initialize": "Seed the ground step and the first stair with one way each.",
+              "inspectParents": "Ways to reach stair {{step}} come from stair {{prev}} and stair {{prevPrev}}."
+            },
+            "insights": {
+              "baseLabel": "Base",
+              "lastPairLabel": "Last pair",
+              "stairsLabel": "Stairs",
+              "stripLabel": "Strip",
+              "waysLabel": "Ways"
+            },
+            "labels": {
+              "activeStep": "step {{step}}",
+              "baseValue": "1 / 1",
+              "computedWaysLabel": "Computed ways",
+              "landingIndicesLabel": "Landing indices",
+              "lastPairValue": "{{left}} + {{right}}",
+              "pathValue": "Sequence: {{sequence}}",
+              "resultValue": "ways = {{value}}",
+              "seedValue": "seed",
+              "stepFormula": "ways[{{step}}]",
+              "stripValue": "1 × {{length}}"
+            },
+            "modeLabel": "Climbing Stairs",
+            "phases": {
+              "commitCount": "Commit stair count",
+              "complete": "Count ready",
+              "initializeLandings": "Initialize first landings",
+              "inspectParents": "Inspect recurrence parents"
+            }
+          },
           "coinChange": {
             "decisions": {
               "carryPreviousBest": "carry previous best",
@@ -402,6 +494,104 @@
               "optimalChangeReady": "Optimal change ready"
             }
           },
+          "editDistance": {
+            "decisions": {
+              "carryDiagonalMatch": "carry diagonal match when possible",
+              "carryMatch": "carry match",
+              "chooseCheapestEdit": "choose cheapest edit",
+              "freeDiagonalCarry": "free diagonal carry",
+              "minimumEditStored": "minimum edit stored",
+              "moveLeft": "move left",
+              "moveUpward": "move upward",
+              "replaceAndContinue": "replace and continue"
+            },
+            "descriptions": {
+              "backtrackCarry": "{{char}} already matches, so move diagonally without cost.",
+              "backtrackDelete": "Deleting {{char}} gives the optimal predecessor.",
+              "backtrackInsert": "Inserting {{char}} gives the optimal predecessor from the left.",
+              "backtrackReplace": "Best path replaces {{leftChar}} with {{rightChar}}, then moves diagonally.",
+              "commitDistance": "Write dp[{{row}}][{{col}}] = {{value}}.",
+              "compareOperations": "Compare replace, delete and insert costs for {{leftChar}} -> {{rightChar}}.",
+              "complete": "Edit distance is {{distance}} with operations: {{operations}}.",
+              "initialize": "Seed the top row and left column with insert/delete counts."
+            },
+            "insights": {
+              "distanceLabel": "Distance",
+              "gridLabel": "Grid",
+              "opsLabel": "Ops",
+              "sourceLabel": "Source",
+              "targetLabel": "Target"
+            },
+            "labels": {
+              "activeCell": "{{left}} -> {{right}}",
+              "charPair": "{{leftChar}} -> {{rightChar}}",
+              "compareDelete": "delete = {{value}}",
+              "compareInsert": "insert = {{value}}",
+              "compareReplace": "replace = {{value}}",
+              "coords": "({{row}}, {{col}})",
+              "deleteOperation": "delete {{char}}",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "insertOperation": "insert {{char}}",
+              "keepOperation": "keep {{char}}",
+              "noEditsValue": "no edits",
+              "pathPending": "edit script pending",
+              "pathValue": "Edits: {{operations}}",
+              "pendingOpsValue": "pending",
+              "replaceOperation": "replace {{from}} -> {{to}}",
+              "resultDistance": "dist = {{value}}",
+              "sourceWordLabel": "Source word",
+              "targetOpsLabel": "Target / ops"
+            },
+            "modeLabel": "Edit Distance",
+            "phases": {
+              "backtrackCarry": "Backtrack carry",
+              "backtrackDelete": "Backtrack delete",
+              "backtrackInsert": "Backtrack insert",
+              "backtrackReplace": "Backtrack replace",
+              "commitDistance": "Commit edit distance",
+              "compareOperations": "Compare edit operations",
+              "complete": "Edit script ready",
+              "initializeBorders": "Initialize borders"
+            }
+          },
+          "fibonacci": {
+            "decisions": {
+              "cacheFilledForFutureTerms": "cache filled for future terms",
+              "combineAdjacentCachedTerms": "combine adjacent cached terms"
+            },
+            "descriptions": {
+              "commitTerm": "Store F({{index}}) in the table so later terms can reuse it instantly.",
+              "complete": "Tabulation finishes with F({{index}}) ready at the end of the strip.",
+              "initialize": "Seed F(0) = 0 and F(1) = 1 before tabulating larger terms.",
+              "inspectParents": "F({{index}}) is the sum of the two previous Fibonacci terms."
+            },
+            "insights": {
+              "baseLabel": "Base",
+              "growthLabel": "Growth",
+              "nLabel": "n",
+              "resultLabel": "F(n)",
+              "stripLabel": "Strip"
+            },
+            "labels": {
+              "activeTerm": "term {{index}}",
+              "baseValue": "0 / 1",
+              "cachedValuesLabel": "Cached values",
+              "growthPair": "{{left}} -> {{right}}",
+              "pathValue": "Sequence: {{sequence}}",
+              "resultValue": "F({{index}}) = {{value}}",
+              "seedValue": "seed",
+              "stripValue": "1 × {{length}}",
+              "termFormula": "F({{index}})",
+              "termIndicesLabel": "Term indices"
+            },
+            "modeLabel": "Fibonacci DP",
+            "phases": {
+              "commitTerm": "Commit Fibonacci term",
+              "complete": "Fibonacci ready",
+              "initializeBaseTerms": "Initialize base terms",
+              "inspectParents": "Inspect recurrence parents"
+            }
+          },
           "knapsack01": {
             "decisions": {
               "forcedSkip": "forced skip",
@@ -456,61 +646,6 @@
               "compareSkipTake": "Compare skip vs take",
               "initializeBaseRow": "Initialize base row",
               "optimalSolutionReady": "Optimal solution ready"
-            }
-          },
-          "subsetSum": {
-            "decisions": {
-              "includeValueInSubset": "include value in subset",
-              "reachable": "reachable",
-              "skipAlreadyReaches": "skip branch already reaches it",
-              "skipValue": "skip value",
-              "stillImpossible": "still impossible",
-              "sumStaysUnreachable": "sum stays unreachable",
-              "takeOpensNewReachableSum": "take branch opens new reachable sum"
-            },
-            "descriptions": {
-              "backtrackSkip": "Sum {{sum}} was already reachable without {{value}}, so move upward and skip it.",
-              "backtrackTake": "{{value}} participates in the winning subset, so jump to sum {{sum}}.",
-              "compareBranches": "Check whether sum {{sum}} is reachable by skipping {{value}} or taking it.",
-              "complete": "Recovered one subset that reaches {{target}}.",
-              "forcedSkip": "{{value}} is larger than sum {{sum}}, so only the skip branch is legal.",
-              "impossible": "Target sum {{target}} is impossible with the available numbers.",
-              "initialize": "Seed sum 0 as reachable and mark every other sum unreachable before considering any numbers.",
-              "storeReachability": "Store reachability of sum {{sum}} after processing first {{row}} number(s)."
-            },
-            "insights": {
-              "chosenLabel": "Chosen",
-              "gridLabel": "Grid",
-              "reachableLabel": "Reachable",
-              "targetLabel": "Target",
-              "valuesLabel": "Values"
-            },
-            "labels": {
-              "activeCell": "row {{row}} · sum {{sum}}",
-              "booleanReachability": "boolean reachability",
-              "currentLensLabel": "Current lens",
-              "dpCellComputation": "dp[{{row}}][{{sum}}]",
-              "numbersLabel": "Numbers",
-              "resultTarget": "target = {{value}}",
-              "rowValue": "row {{row}}",
-              "skipValue": "skip = {{value}}",
-              "skipValueComputation": "Skip {{value}}",
-              "subsetPath": "Subset: {{values}}",
-              "subsetPending": "Subset: pending",
-              "takeUnavailable": "take unavailable",
-              "takeValue": "take = {{value}}",
-              "takeValueComputation": "Take {{value}}",
-              "valueForSumComputation": "{{value}} for sum {{sum}}"
-            },
-            "modeLabel": "Subset Sum",
-            "phases": {
-              "backtrackSkip": "Backtrack skip",
-              "backtrackTake": "Backtrack take",
-              "checkSubsetBranches": "Check subset branches",
-              "commitReachableState": "Commit reachable state",
-              "initializeBooleanTable": "Initialize boolean table",
-              "noSubsetFound": "No subset found",
-              "subsetReady": "Subset ready"
             }
           },
           "longestCommonSubsequence": {
@@ -626,62 +761,384 @@
               "lockIndexResult": "Lock index result"
             }
           },
-          "burstBalloons": {
+          "matrixChain": {
             "decisions": {
-              "appendFinisher": "append interval finisher to burst order",
-              "expandSubintervals": "expand left and right subintervals first",
-              "keepPreviousSplit": "keep previous split",
-              "newBestLastBalloon": "new best last balloon",
-              "splitSaved": "split saved for interval #{{left}}..#{{right}}"
+              "expandChildren": "expand left and right child intervals",
+              "keepOlderSplit": "keep older split",
+              "leafInterval": "leaf interval",
+              "newBestSplit": "new best split",
+              "splitSaved": "split saved"
             },
             "descriptions": {
-              "appendBurst": "After both sides are solved, balloon #{{pivot}} bursts last for interval #{{left}}..#{{right}}.",
-              "commitScore": "Store best coin haul for interval #{{left}}..#{{right}} with balloon #{{pivot}} as the last burst.",
-              "complete": "Recovered one optimal burst order with {{coins}} coins.",
-              "initialize": "Pad the array with sentinel 1s so every interval can treat its chosen last balloon uniformly.",
-              "inspectCandidate": "Try keeping balloon #{{pivot}} as the last one burst inside interval #{{left}}..#{{right}}.",
-              "traceSplit": "Optimal interval #{{left}}..#{{right}} leaves balloon #{{pivot}} for the final pop in this subproblem."
+              "commitInterval": "Store m[{{left}},{{right}}] = {{value}} using split k = {{split}}.",
+              "complete": "Optimal parenthesization is {{plan}} with cost {{cost}}.",
+              "initialize": "Start with zero cost on the diagonal: multiplying one matrix alone costs nothing.",
+              "inspectCandidate": "Try split k = {{split}} for interval A{{left}}..A{{right}}.",
+              "traceLeaf": "A{{index}} is a leaf matrix in the optimal multiplication tree.",
+              "traceSplit": "Optimal interval A{{left}}..A{{right}} splits at k = {{split}}."
             },
             "insights": {
-              "balloonsLabel": "Balloons",
-              "bestCoinsLabel": "Best coins",
-              "burstOrderLabel": "Burst order",
+              "bestCostLabel": "Best cost",
+              "dimensionsLabel": "Dims",
+              "matricesLabel": "Matrices",
               "shapeLabel": "Shape",
+              "solvedCellsLabel": "Solved cells"
+            },
+            "labels": {
+              "activeInterval": "A{{left}}..A{{right}}",
+              "cellLabel": "m[{{row}}][{{col}}]",
+              "currentSplitLensLabel": "Current split lens",
+              "leafMatrix": "A{{index}}",
+              "leftValue": "left = {{value}}",
+              "matrixDimensionsLabel": "Matrix dimensions",
+              "mergeValue": "merge = {{value}}",
+              "optimalValue": "optimal = {{value}}",
+              "resultCost": "cost = {{value}}",
+              "resultPending": "pending",
+              "rightValue": "right = {{value}}",
+              "splitLabel": "Split k = {{split}}",
+              "traceInterval": "Trace A{{left}}..A{{right}}",
+              "upperTriangle": "upper triangle"
+            },
+            "modeLabel": "Matrix Chain Multiplication",
+            "phases": {
+              "commitInterval": "Commit best interval",
+              "complete": "Optimal chain ready",
+              "initializeDiagonal": "Initialize diagonal",
+              "inspectCandidate": "Inspect split candidate",
+              "traceLeaf": "Trace leaf interval",
+              "traceSplit": "Trace optimal split"
+            }
+          },
+          "regexMatching": {
+            "decisions": {
+              "bothStarBranchesFail": "both star branches fail",
+              "consumeTextAndRegex": "consume one text char and one regex token",
+              "diagonalRegexMatch": "diagonal regex match survives",
+              "emptyPrefixBlocked": "empty prefix still blocked",
+              "groupCanStayEmpty": "group can stay empty",
+              "jumpLeftTwo": "jump left by two pattern columns",
+              "literalBranchFails": "literal / dot branch fails",
+              "moveUpKeepStar": "move upward and keep star column",
+              "regexPrefixValid": "regex prefix stays valid",
+              "starMustConsume": "star must consume more text",
+              "stateBlocked": "state blocked",
+              "tokenMatchedDiagonally": "token matched diagonally",
+              "zeroOccurrencesAccepted": "zero occurrences accepted"
+            },
+            "descriptions": {
+              "commitStarState": "Commit whether regex star group keeps the prefix match alive.",
+              "commitToken": "Commit whether token {{token}} covers text character {{char}}.",
+              "complete": "Recovered one valid regex derivation for \"{{source}}\" against \"{{pattern}}\".",
+              "initialize": "Seed dp[0][0] = true and prepare the top row for star groups that can match an empty prefix.",
+              "inspectDot": "Dot wildcard matches any single character, so only the diagonal predecessor matters.",
+              "inspectLiteral": "Literal token {{token}} only works if it matches {{char}}.",
+              "inspectStarGroup": "Star after {{token}} can either vanish or absorb another {{char}}.",
+              "noMatch": "The full text does not satisfy the regex pattern.",
+              "propagateStarGroup": "Regex star group {{token}}* may skip itself and keep the empty prefix matched.",
+              "traceDirect": "Token {{token}} matches {{char}}, so trace diagonally to the previous prefix state.",
+              "traceStarConsume": "Regex group {{token}}* consumes {{char}} and stays active for more characters.",
+              "traceStarEmpty": "Regex group {{token}}* collapses to zero occurrences here."
+            },
+            "insights": {
+              "gridLabel": "Grid",
+              "matchLabel": "Match",
+              "patternLabel": "Pattern",
+              "starsLabel": "Stars",
+              "textLabel": "Text"
+            },
+            "labels": {
+              "activeCell": "{{left}} × {{right}}",
+              "charVsToken": "{{token}} vs {{char}}",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "pathPending": "Route: pending",
+              "pathValue": "Route: {{route}}",
+              "patternItemsLabel": "Regex pattern",
+              "regexConsumes": "{{token}}* consumes {{char}}",
+              "regexEmpty": "{{token}}* stays empty",
+              "resultMatch": "match = {{value}}",
+              "starGroupVsChar": "{{token}}* vs {{char}}",
+              "textItemsLabel": "Text",
+              "tokenMatches": "{{token}} matches {{char}}"
+            },
+            "modeLabel": "Regex Matching DP",
+            "phases": {
+              "commitStarState": "Commit star state",
+              "commitToken": "Commit direct token",
+              "complete": "Regex route ready",
+              "initializeBorder": "Initialize regex border",
+              "inspectStarGroup": "Inspect star group",
+              "inspectToken": "Inspect direct token",
+              "noMatch": "No full match",
+              "propagateStarGroup": "Propagate empty star group",
+              "traceDirect": "Trace direct match",
+              "traceStarConsume": "Trace star consume",
+              "traceStarEmpty": "Trace empty star group"
+            }
+          },
+          "subsetSum": {
+            "decisions": {
+              "includeValueInSubset": "include value in subset",
+              "reachable": "reachable",
+              "skipAlreadyReaches": "skip branch already reaches it",
+              "skipValue": "skip value",
+              "stillImpossible": "still impossible",
+              "sumStaysUnreachable": "sum stays unreachable",
+              "takeOpensNewReachableSum": "take branch opens new reachable sum"
+            },
+            "descriptions": {
+              "backtrackSkip": "Sum {{sum}} was already reachable without {{value}}, so move upward and skip it.",
+              "backtrackTake": "{{value}} participates in the winning subset, so jump to sum {{sum}}.",
+              "compareBranches": "Check whether sum {{sum}} is reachable by skipping {{value}} or taking it.",
+              "complete": "Recovered one subset that reaches {{target}}.",
+              "forcedSkip": "{{value}} is larger than sum {{sum}}, so only the skip branch is legal.",
+              "impossible": "Target sum {{target}} is impossible with the available numbers.",
+              "initialize": "Seed sum 0 as reachable and mark every other sum unreachable before considering any numbers.",
+              "storeReachability": "Store reachability of sum {{sum}} after processing first {{row}} number(s)."
+            },
+            "insights": {
+              "chosenLabel": "Chosen",
+              "gridLabel": "Grid",
+              "reachableLabel": "Reachable",
+              "targetLabel": "Target",
               "valuesLabel": "Values"
             },
             "labels": {
-              "activeInterval": "#{{left}}..#{{right}}",
-              "balloonValuesLabel": "Balloon values",
-              "burstLabel": "Burst #{{pivot}}",
-              "burstValue": "burst = {{value}}",
-              "dpCell": "dp[{{left}}][{{right}}]",
-              "intervalComputation": "Interval #{{left}}..#{{right}}",
-              "intervalLensLabel": "Interval lens",
-              "lastPivot": "last #{{pivot}}",
-              "leftValue": "left = {{value}}",
-              "orderSizeValue": "order size = {{size}}",
-              "pathPending": "Order: pending",
-              "pathValue": "Order: {{order}}",
-              "pending": "pending",
-              "resultCoins": "coins = {{value}}",
-              "resultPending": "coins pending",
-              "rightValue": "right = {{value}}",
-              "sentinelsValue": "sentinels = 1 | {{values}} | 1",
-              "traceInterval": "Trace #{{left}}..#{{right}}",
-              "upperTriangle": "upper triangle"
+              "activeCell": "row {{row}} · sum {{sum}}",
+              "booleanReachability": "boolean reachability",
+              "currentLensLabel": "Current lens",
+              "dpCellComputation": "dp[{{row}}][{{sum}}]",
+              "numbersLabel": "Numbers",
+              "resultTarget": "target = {{value}}",
+              "rowValue": "row {{row}}",
+              "skipValue": "skip = {{value}}",
+              "skipValueComputation": "Skip {{value}}",
+              "subsetPath": "Subset: {{values}}",
+              "subsetPending": "Subset: pending",
+              "takeUnavailable": "take unavailable",
+              "takeValue": "take = {{value}}",
+              "takeValueComputation": "Take {{value}}",
+              "valueForSumComputation": "{{value}} for sum {{sum}}"
             },
-            "modeLabel": "Burst Balloons",
+            "modeLabel": "Subset Sum",
             "phases": {
-              "appendBurst": "Append burst to route",
-              "commitScore": "Commit best interval score",
-              "complete": "Burst plan ready",
-              "initializeCanvas": "Initialize interval canvas",
-              "inspectCandidate": "Inspect last-burst candidate",
-              "traceSplit": "Trace saved split"
+              "backtrackSkip": "Backtrack skip",
+              "backtrackTake": "Backtrack take",
+              "checkSubsetBranches": "Check subset branches",
+              "commitReachableState": "Commit reachable state",
+              "initializeBooleanTable": "Initialize boolean table",
+              "noSubsetFound": "No subset found",
+              "subsetReady": "Subset ready"
+            }
+          },
+          "wildcardMatching": {
+            "decisions": {
+              "bothStarBranchesFailed": "both star branches failed",
+              "consumeTextAndPattern": "consume one text char and one pattern token",
+              "diagonalMatchStored": "diagonal match stored",
+              "diagonalMatchSurvives": "diagonal match survives",
+              "directTransitionFails": "literal / ? transition fails",
+              "moveLeftPastStar": "move left past star token",
+              "moveUpKeepStar": "move upward and keep star active",
+              "prefixStopsMatching": "prefix stops matching",
+              "starCanStayEmpty": "star can stay empty",
+              "starMustConsume": "star must consume one more character",
+              "starSpansEmptyPrefix": "star spans empty prefix",
+              "starTransitionReachable": "star transition stays reachable",
+              "stateBlocked": "state blocked",
+              "stateRemainsFalse": "state remains false"
+            },
+            "descriptions": {
+              "commitStar": "Commit whether star keeps the prefix match alive at dp[{{row}}][{{col}}].",
+              "commitToken": "Commit whether {{token}} can cover text position {{row}}.",
+              "complete": "Recovered one valid wildcard route for \"{{source}}\" against \"{{pattern}}\".",
+              "initialize": "Seed dp[0][0] = true and prepare the first row for leading wildcard stars.",
+              "inspectLiteral": "Literal pattern token {{token}} only works here if it equals {{char}}.",
+              "inspectQuestion": "Question mark matches any single character, so it checks the diagonal predecessor.",
+              "inspectStar": "Star at pattern column {{col}} can either absorb {{char}} or stay empty.",
+              "noMatch": "Full text and pattern do not match under wildcard rules.",
+              "propagateLeadingStar": "Leading \"*\" keeps the empty text prefix matchable through pattern column {{col}}.",
+              "traceDiagonal": "Token {{token}} matches {{char}}, so move diagonally to the predecessor state.",
+              "traceStarConsume": "Star absorbs character {{char}} and stays in the same pattern column.",
+              "traceStarEmpty": "Star also works as an empty span here, so move left in the pattern."
+            },
+            "insights": {
+              "gridLabel": "Grid",
+              "matchLabel": "Match",
+              "patternLabel": "Pattern",
+              "starsLabel": "Stars",
+              "textLabel": "Text"
+            },
+            "labels": {
+              "activeCell": "{{left}} × {{right}}",
+              "charVsToken": "{{char}} vs {{token}}",
+              "consumeValue": "consume = {{value}}",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "emptyValue": "empty = {{value}}",
+              "leadingStarEmpty": "leading star can match empty prefix",
+              "pathPending": "Route: pending",
+              "pathValue": "Route: {{route}}",
+              "patternItemsLabel": "Pattern",
+              "questionWildcard": "? wildcard",
+              "resultMatch": "match = {{value}}",
+              "starConsumes": "* consumes {{char}}",
+              "starEmpty": "Star stays empty",
+              "starVsChar": "* vs {{char}}",
+              "textItemsLabel": "Text",
+              "tokenMatches": "{{token}} matches {{char}}"
+            },
+            "modeLabel": "Wildcard Matching",
+            "phases": {
+              "commitStar": "Commit star state",
+              "commitToken": "Commit token state",
+              "complete": "Wildcard route ready",
+              "initializeBorder": "Initialize wildcard border",
+              "inspectStar": "Inspect star transition",
+              "inspectToken": "Inspect direct token",
+              "noMatch": "No full match",
+              "propagateLeadingStar": "Propagate leading star",
+              "traceDiagonal": "Trace diagonal match",
+              "traceStarConsume": "Trace star consume",
+              "traceStarEmpty": "Trace star empty branch"
             }
           }
         },
         "string": {
+          "burrowsWheelerTransform": {
+            "computation": {
+              "expressions": {
+                "bwtOutput": "L = last column of sorted rotations",
+                "rowPosition": "row → position {{position}}",
+                "runComparison": "{{inputRuns}} input runs → {{outputRuns}} BWT runs"
+              },
+              "labels": {
+                "bwtOutput": "BWT output",
+                "insertionPoint": "Insertion point",
+                "rotationMatrix": "Rotation matrix",
+                "rowCompare": "Row compare",
+                "runComparison": "Run comparison"
+              },
+              "notes": {
+                "bwtOutput": "This rearrangement is reversible, but far friendlier to downstream run-length style compression.",
+                "insertionPoint": "One more rotation snaps into its final sorted slot.",
+                "rotationMatrix": "The BWT sorts cyclic rotations, not suffixes.",
+                "rowCompare": "We use insertion-sort-like steps here purely to make the matrix movement readable.",
+                "runComparison": "Fewer, longer runs are exactly why BWT is so effective before RLE or entropy coding."
+              }
+            },
+            "decisions": {
+              "differentStartingPoints": "Every row is the same string viewed from a different starting point.",
+              "lastColumnOutput": "The last column is the Burrows-Wheeler output; the first column helps explain the sorted matrix structure.",
+              "lexicographicClusters": "Lexicographic order is what makes the last column cluster similar characters together.",
+              "transformPreparesCompression": "The transform did not compress by itself, but it concentrated repeated symbols so later stages can do it better.",
+              "upperMatrixSorted": "The upper part of the matrix is already in final lexicographic order."
+            },
+            "descriptions": {
+              "collectLastColumn": "Read the last column L = \"{{lastColumn}}\". Similar characters are now grouped much tighter than in the input.",
+              "compareRows": "Compare \"{{current}}\" with \"{{previous}}\" to place the next rotation lexicographically.",
+              "complete": "BWT finished. Output \"{{lastColumn}}\" creates {{outputRuns}} runs vs {{inputRuns}} in the original string.",
+              "generateRotations": "Generate all {{count}} cyclic rotations of \"{{source}}\".",
+              "rowPlaced": "Row \"{{row}}\" is now placed at sorted position {{position}}."
+            },
+            "insights": {
+              "firstColumnLabel": "F column",
+              "gainValue": "{{ratio}}x",
+              "lastColumnLabel": "L column",
+              "lengthLabel": "Length",
+              "noneValue": "—",
+              "rowsValue": "{{count}} rows",
+              "runGainLabel": "Run gain"
+            },
+            "labels": {
+              "bwtReady": "BWT ready",
+              "densityValue": "{{ratio}}x denser",
+              "insertRow": "insert row {{index}}",
+              "matrixUnsorted": "Matrix unsorted",
+              "readColumns": "Read F and L",
+              "rotationsCount": "{{count}} rotations",
+              "rowsOrdered": "{{current}} / {{total}} rows ordered",
+              "shiftUpward": "shift upward",
+              "sortedPrefix": "sorted prefix {{current}} / {{total}}",
+              "sortedPrefixCount": "sorted prefix {{count}}"
+            },
+            "modeLabel": "Rotation matrix",
+            "phases": {
+              "collectColumns": "Collect columns",
+              "complete": "Complete",
+              "rotate": "Rotate",
+              "rowCommitted": "Row committed",
+              "sortRows": "Sort rows"
+            }
+          },
+          "huffmanCoding": {
+            "computation": {
+              "expressions": {
+                "codeFromPath": "code['{{char}}'] = root-to-leaf path"
+              },
+              "labels": {
+                "characterFrequency": "Character frequency",
+                "initialHeap": "Initial heap",
+                "newInternalNode": "New internal node",
+                "popTwoMinimums": "Pop two minimums",
+                "prefixCode": "Prefix code"
+              },
+              "notes": {
+                "characterFrequency": "Higher frequency means a shorter prefix code and fewer bits per occurrence.",
+                "initialHeap": "Each leaf will become the bottom layer of the Huffman tree.",
+                "newInternalNode": "Left child gets '0', right child gets '1' in the code prefix.",
+                "popTwoMinimums": "The merged node frequency is the sum of its two children.",
+                "prefixCodeFinal": "Total: {{original}} → {{compressed}} bits ({{savings}}% savings).",
+                "prefixCodeSymbol": "freq={{freq}} × {{bits}} bits = {{total}} bits for this symbol."
+              },
+              "results": {
+                "codeBits": "code = '{{code}}', bits = {{bits}}",
+                "frequencyValue": "freq = {{freq}}",
+                "heapSize": "size = {{size}}",
+                "newNodeFrequency": "new node freq = {{left}} + {{right}} = {{total}}"
+              }
+            },
+            "decisions": {
+              "frequentShorterCodes": "Characters that appear more frequently will get shorter codes.",
+              "mergeSmallestFirst": "Always merge the two nodes with the smallest frequencies first.",
+              "minHeapReady": "The min-heap always gives us the two lowest-frequency nodes to merge first.",
+              "pushMergedNode": "Push the merged node back into the heap for the next round.",
+              "rootReady": "Only one node left — this is the Huffman tree root!",
+              "tracePath": "Trace the path from root to leaf '{{char}}': left = '0', right = '1'."
+            },
+            "descriptions": {
+              "assignCode": "Assign code '{{code}}' ({{bits}} bits) to '{{char}}' (freq={{freq}}).",
+              "buildHeap": "Build initial min-heap from {{count}} leaf nodes, one per unique character.",
+              "countFrequency": "Count frequency: '{{char}}' has count {{freq}} in \"{{source}}\".",
+              "createdInternalNode": "Created internal node with freq={{freq}}. Heap now has {{heapSize}} node(s).",
+              "popMinimums": "Merge step {{step}}: pop minimum '{{leftChar}}' ({{leftFreq}}) and '{{rightChar}}' ({{rightFreq}})."
+            },
+            "insights": {
+              "codesAssignedLabel": "Codes assigned",
+              "heapSizeLabel": "Heap size",
+              "noneValue": "—",
+              "savingsLabel": "Savings",
+              "savingsValue": "{{percent}}%",
+              "uniqueCharsLabel": "Unique chars"
+            },
+            "labels": {
+              "codeAssignment": "'{{char}}' → '{{code}}'",
+              "codesProgress": "{{current}} of {{total}} codes",
+              "compressedBits": "{{bits}} compressed bits",
+              "countedProgress": "{{current}} of {{total}} chars counted",
+              "heapSize": "Heap size = {{size}}",
+              "leafNodes": "{{count}} leaf nodes",
+              "newNodeFrequency": "New node freq = {{freq}}",
+              "readyToMerge": "Ready to merge"
+            },
+            "modeLabel": "Huffman tree",
+            "phases": {
+              "assignCodes": "Assign codes",
+              "buildHeap": "Build heap",
+              "countFrequencies": "Count frequencies",
+              "mergeNodes": "Merge nodes",
+              "popMinimums": "Pop minimums"
+            }
+          },
           "kmp": {
             "computation": {
               "labels": {
@@ -829,203 +1286,6 @@
               "shiftWindow": "Shift window"
             }
           },
-          "burrowsWheelerTransform": {
-            "computation": {
-              "expressions": {
-                "bwtOutput": "L = last column of sorted rotations",
-                "rowPosition": "row → position {{position}}",
-                "runComparison": "{{inputRuns}} input runs → {{outputRuns}} BWT runs"
-              },
-              "labels": {
-                "bwtOutput": "BWT output",
-                "insertionPoint": "Insertion point",
-                "rotationMatrix": "Rotation matrix",
-                "rowCompare": "Row compare",
-                "runComparison": "Run comparison"
-              },
-              "notes": {
-                "bwtOutput": "This rearrangement is reversible, but far friendlier to downstream run-length style compression.",
-                "insertionPoint": "One more rotation snaps into its final sorted slot.",
-                "rotationMatrix": "The BWT sorts cyclic rotations, not suffixes.",
-                "rowCompare": "We use insertion-sort-like steps here purely to make the matrix movement readable.",
-                "runComparison": "Fewer, longer runs are exactly why BWT is so effective before RLE or entropy coding."
-              }
-            },
-            "decisions": {
-              "differentStartingPoints": "Every row is the same string viewed from a different starting point.",
-              "lastColumnOutput": "The last column is the Burrows-Wheeler output; the first column helps explain the sorted matrix structure.",
-              "lexicographicClusters": "Lexicographic order is what makes the last column cluster similar characters together.",
-              "transformPreparesCompression": "The transform did not compress by itself, but it concentrated repeated symbols so later stages can do it better.",
-              "upperMatrixSorted": "The upper part of the matrix is already in final lexicographic order."
-            },
-            "descriptions": {
-              "collectLastColumn": "Read the last column L = \"{{lastColumn}}\". Similar characters are now grouped much tighter than in the input.",
-              "compareRows": "Compare \"{{current}}\" with \"{{previous}}\" to place the next rotation lexicographically.",
-              "complete": "BWT finished. Output \"{{lastColumn}}\" creates {{outputRuns}} runs vs {{inputRuns}} in the original string.",
-              "generateRotations": "Generate all {{count}} cyclic rotations of \"{{source}}\".",
-              "rowPlaced": "Row \"{{row}}\" is now placed at sorted position {{position}}."
-            },
-            "insights": {
-              "firstColumnLabel": "F column",
-              "gainValue": "{{ratio}}x",
-              "lastColumnLabel": "L column",
-              "lengthLabel": "Length",
-              "noneValue": "—",
-              "rowsValue": "{{count}} rows",
-              "runGainLabel": "Run gain"
-            },
-            "labels": {
-              "bwtReady": "BWT ready",
-              "densityValue": "{{ratio}}x denser",
-              "insertRow": "insert row {{index}}",
-              "matrixUnsorted": "Matrix unsorted",
-              "readColumns": "Read F and L",
-              "rotationsCount": "{{count}} rotations",
-              "rowsOrdered": "{{current}} / {{total}} rows ordered",
-              "shiftUpward": "shift upward",
-              "sortedPrefix": "sorted prefix {{current}} / {{total}}",
-              "sortedPrefixCount": "sorted prefix {{count}}"
-            },
-            "modeLabel": "Rotation matrix",
-            "phases": {
-              "collectColumns": "Collect columns",
-              "complete": "Complete",
-              "rotate": "Rotate",
-              "rowCommitted": "Row committed",
-              "sortRows": "Sort rows"
-            }
-          },
-          "huffmanCoding": {
-            "computation": {
-              "expressions": {
-                "codeFromPath": "code['{{char}}'] = root-to-leaf path"
-              },
-              "labels": {
-                "characterFrequency": "Character frequency",
-                "initialHeap": "Initial heap",
-                "newInternalNode": "New internal node",
-                "popTwoMinimums": "Pop two minimums",
-                "prefixCode": "Prefix code"
-              },
-              "notes": {
-                "characterFrequency": "Higher frequency means a shorter prefix code and fewer bits per occurrence.",
-                "initialHeap": "Each leaf will become the bottom layer of the Huffman tree.",
-                "newInternalNode": "Left child gets '0', right child gets '1' in the code prefix.",
-                "popTwoMinimums": "The merged node frequency is the sum of its two children.",
-                "prefixCodeFinal": "Total: {{original}} → {{compressed}} bits ({{savings}}% savings).",
-                "prefixCodeSymbol": "freq={{freq}} × {{bits}} bits = {{total}} bits for this symbol."
-              },
-              "results": {
-                "codeBits": "code = '{{code}}', bits = {{bits}}",
-                "frequencyValue": "freq = {{freq}}",
-                "heapSize": "size = {{size}}",
-                "newNodeFrequency": "new node freq = {{left}} + {{right}} = {{total}}"
-              }
-            },
-            "decisions": {
-              "frequentShorterCodes": "Characters that appear more frequently will get shorter codes.",
-              "mergeSmallestFirst": "Always merge the two nodes with the smallest frequencies first.",
-              "minHeapReady": "The min-heap always gives us the two lowest-frequency nodes to merge first.",
-              "pushMergedNode": "Push the merged node back into the heap for the next round.",
-              "rootReady": "Only one node left — this is the Huffman tree root!",
-              "tracePath": "Trace the path from root to leaf '{{char}}': left = '0', right = '1'."
-            },
-            "descriptions": {
-              "assignCode": "Assign code '{{code}}' ({{bits}} bits) to '{{char}}' (freq={{freq}}).",
-              "buildHeap": "Build initial min-heap from {{count}} leaf nodes, one per unique character.",
-              "countFrequency": "Count frequency: '{{char}}' has count {{freq}} in \"{{source}}\".",
-              "createdInternalNode": "Created internal node with freq={{freq}}. Heap now has {{heapSize}} node(s).",
-              "popMinimums": "Merge step {{step}}: pop minimum '{{leftChar}}' ({{leftFreq}}) and '{{rightChar}}' ({{rightFreq}})."
-            },
-            "insights": {
-              "codesAssignedLabel": "Codes assigned",
-              "heapSizeLabel": "Heap size",
-              "noneValue": "—",
-              "savingsLabel": "Savings",
-              "savingsValue": "{{percent}}%",
-              "uniqueCharsLabel": "Unique chars"
-            },
-            "labels": {
-              "codeAssignment": "'{{char}}' → '{{code}}'",
-              "codesProgress": "{{current}} of {{total}} codes",
-              "compressedBits": "{{bits}} compressed bits",
-              "countedProgress": "{{current}} of {{total}} chars counted",
-              "heapSize": "Heap size = {{size}}",
-              "leafNodes": "{{count}} leaf nodes",
-              "newNodeFrequency": "New node freq = {{freq}}",
-              "readyToMerge": "Ready to merge"
-            },
-            "modeLabel": "Huffman tree",
-            "phases": {
-              "assignCodes": "Assign codes",
-              "buildHeap": "Build heap",
-              "countFrequencies": "Count frequencies",
-              "mergeNodes": "Merge nodes",
-              "popMinimums": "Pop minimums"
-            }
-          },
-          "runLengthEncoding": {
-            "computation": {
-              "labels": {
-                "compressionRatio": "Compression ratio",
-                "emitRun": "Emit run",
-                "extendRun": "Extend run",
-                "input": "Input",
-                "newRun": "New run"
-              },
-              "notes": {
-                "compressionSaves": "Output is shorter than the input — RLE provided compression.",
-                "emitRun": "One (count, char) pair replaces an entire run in the output stream.",
-                "extendRun": "Each matching character increments the run counter by one.",
-                "input": "We will compress runs of repeated characters into count-char pairs.",
-                "newRun": "Starting count for this run. Will extend while the next char matches.",
-                "noCompressionGain": "Output is not shorter — RLE works best with long repeated runs."
-              },
-              "results": {
-                "countValue": "count = {{count}}",
-                "inputLength": "length = {{count}}",
-                "outputValue": "output = \"{{output}}\"",
-                "ratioValue": "{{ratio}} ({{percent}}%)"
-              }
-            },
-            "decisions": {
-              "compressionSaves": "Compression saves space — the encoded output is shorter than the original.",
-              "eachRunPair": "Each run of identical characters becomes a single (char, count) pair.",
-              "emitRun": "The run ended at position {{endIndex}}. Emit ({{count}}, '{{char}}') to the output.",
-              "extendRun": "text[{{index}}] = '{{char}}' = groupChar '{{groupChar}}' → extend the run.",
-              "newRun": "'{{char}}' begins a new run. Count how many consecutive '{{char}}' chars follow.",
-              "noCompressionGain": "No compression gain — the encoded output is as long as or longer than the original."
-            },
-            "descriptions": {
-              "complete": "RLE complete. {{runs}} runs found. Output: \"{{output}}\" ({{outputLength}} chars vs {{inputLength}} original → {{percent}}% ratio).",
-              "emit": "Emit run: '{{char}}' × {{count}}. Output becomes \"{{output}}\".",
-              "extend": "Position {{index}}: '{{char}}' matches '{{groupChar}}'. Extending run (count = {{count}}).",
-              "scan": "Position {{index}}: found '{{char}}'. Starting a new run.",
-              "start": "Start RLE on \"{{text}}\" ({{length}} chars). We scan left to right, grouping consecutive identical characters."
-            },
-            "insights": {
-              "charsValue": "{{count}} chars",
-              "inputLengthLabel": "Input length",
-              "noneValue": "—",
-              "outputSoFarLabel": "Output so far",
-              "ratioLabel": "Ratio",
-              "ratioValue": "{{percent}}%",
-              "runsCountLabel": "Runs count"
-            },
-            "labels": {
-              "emitActive": "run '{{char}}'×{{count}}",
-              "noRunsYet": "No runs yet",
-              "runCount": "run count = {{count}}"
-            },
-            "modeLabel": "Run scanner",
-            "phases": {
-              "complete": "Complete",
-              "emit": "Emit",
-              "extend": "Extend",
-              "scan": "Scan",
-              "setup": "Setup"
-            }
-          },
           "rabinKarp": {
             "computation": {
               "labels": {
@@ -1096,6 +1356,68 @@
               "verifiedMatch": "Verified match",
               "verifyCollision": "Verify collision",
               "verifyHit": "Verify hit"
+            }
+          },
+          "runLengthEncoding": {
+            "computation": {
+              "labels": {
+                "compressionRatio": "Compression ratio",
+                "emitRun": "Emit run",
+                "extendRun": "Extend run",
+                "input": "Input",
+                "newRun": "New run"
+              },
+              "notes": {
+                "compressionSaves": "Output is shorter than the input — RLE provided compression.",
+                "emitRun": "One (count, char) pair replaces an entire run in the output stream.",
+                "extendRun": "Each matching character increments the run counter by one.",
+                "input": "We will compress runs of repeated characters into count-char pairs.",
+                "newRun": "Starting count for this run. Will extend while the next char matches.",
+                "noCompressionGain": "Output is not shorter — RLE works best with long repeated runs."
+              },
+              "results": {
+                "countValue": "count = {{count}}",
+                "inputLength": "length = {{count}}",
+                "outputValue": "output = \"{{output}}\"",
+                "ratioValue": "{{ratio}} ({{percent}}%)"
+              }
+            },
+            "decisions": {
+              "compressionSaves": "Compression saves space — the encoded output is shorter than the original.",
+              "eachRunPair": "Each run of identical characters becomes a single (char, count) pair.",
+              "emitRun": "The run ended at position {{endIndex}}. Emit ({{count}}, '{{char}}') to the output.",
+              "extendRun": "text[{{index}}] = '{{char}}' = groupChar '{{groupChar}}' → extend the run.",
+              "newRun": "'{{char}}' begins a new run. Count how many consecutive '{{char}}' chars follow.",
+              "noCompressionGain": "No compression gain — the encoded output is as long as or longer than the original."
+            },
+            "descriptions": {
+              "complete": "RLE complete. {{runs}} runs found. Output: \"{{output}}\" ({{outputLength}} chars vs {{inputLength}} original → {{percent}}% ratio).",
+              "emit": "Emit run: '{{char}}' × {{count}}. Output becomes \"{{output}}\".",
+              "extend": "Position {{index}}: '{{char}}' matches '{{groupChar}}'. Extending run (count = {{count}}).",
+              "scan": "Position {{index}}: found '{{char}}'. Starting a new run.",
+              "start": "Start RLE on \"{{text}}\" ({{length}} chars). We scan left to right, grouping consecutive identical characters."
+            },
+            "insights": {
+              "charsValue": "{{count}} chars",
+              "inputLengthLabel": "Input length",
+              "noneValue": "—",
+              "outputSoFarLabel": "Output so far",
+              "ratioLabel": "Ratio",
+              "ratioValue": "{{percent}}%",
+              "runsCountLabel": "Runs count"
+            },
+            "labels": {
+              "emitActive": "run '{{char}}'×{{count}}",
+              "noRunsYet": "No runs yet",
+              "runCount": "run count = {{count}}"
+            },
+            "modeLabel": "Run scanner",
+            "phases": {
+              "complete": "Complete",
+              "emit": "Emit",
+              "extend": "Extend",
+              "scan": "Scan",
+              "setup": "Setup"
             }
           },
           "zAlgorithm": {
@@ -3221,6 +3543,7 @@
       }
     }
   },
+  "features.algorithms.runtime.dp.burstBalloons.labels.intervalRange": "Missing value for 'features.algorithms.runtime.dp.burstBalloons.labels.intervalRange'",
   "shared": {
     "codeLanguageDial": {
       "ariaLabel": "Code language switcher",

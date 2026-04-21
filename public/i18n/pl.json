@@ -345,6 +345,98 @@
       },
       "runtime": {
         "dp": {
+          "burstBalloons": {
+            "decisions": {
+              "appendFinisher": "dopisz domykający balon do kolejności pękania",
+              "expandSubintervals": "najpierw rozwiń lewe i prawe podprzedziały",
+              "keepPreviousSplit": "zachowaj poprzedni podział",
+              "newBestLastBalloon": "nowy najlepszy ostatni balon",
+              "splitSaved": "podział zapisany dla przedziału #{{left}}..#{{right}}"
+            },
+            "descriptions": {
+              "appendBurst": "Po rozwiązaniu obu stron balon #{{pivot}} pęka jako ostatni w przedziale #{{left}}..#{{right}}.",
+              "commitScore": "Zapisz najlepszy wynik monet dla przedziału #{{left}}..#{{right}}, gdy balon #{{pivot}} pęka jako ostatni.",
+              "complete": "Odtworzono jedną optymalną kolejność pękania z wynikiem {{coins}} monet.",
+              "initialize": "Dodaj wartowników 1, żeby każdy przedział mógł jednakowo traktować wybrany ostatni balon.",
+              "inspectCandidate": "Sprawdź, czy balon #{{pivot}} może być ostatnim pękającym w przedziale #{{left}}..#{{right}}.",
+              "traceSplit": "Optymalny przedział #{{left}}..#{{right}} zostawia balon #{{pivot}} na finalne pęknięcie w tym podproblemie."
+            },
+            "insights": {
+              "balloonsLabel": "Balony",
+              "bestCoinsLabel": "Najlepsze monety",
+              "burstOrderLabel": "Kolejność pękania",
+              "shapeLabel": "Kształt",
+              "valuesLabel": "Wartości"
+            },
+            "labels": {
+              "activeInterval": "#{{left}}..#{{right}}",
+              "balloonValuesLabel": "Wartości balonów",
+              "burstLabel": "Pęknij #{{pivot}}",
+              "burstValue": "burst = {{value}}",
+              "dpCell": "dp[{{left}}][{{right}}]",
+              "intervalComputation": "Przedział #{{left}}..#{{right}}",
+              "intervalLensLabel": "Soczewka przedziału",
+              "lastPivot": "last #{{pivot}}",
+              "leftValue": "left = {{value}}",
+              "orderSizeValue": "rozmiar kolejności = {{size}}",
+              "pathPending": "Kolejność: oczekiwanie",
+              "pathValue": "Kolejność: {{order}}",
+              "pending": "oczekiwanie",
+              "resultCoins": "coins = {{value}}",
+              "resultPending": "coins pending",
+              "rightValue": "right = {{value}}",
+              "sentinelsValue": "wartownicy = 1 | {{values}} | 1",
+              "traceInterval": "Śledź #{{left}}..#{{right}}",
+              "upperTriangle": "górny trójkąt"
+            },
+            "modeLabel": "Burst Balloons",
+            "phases": {
+              "appendBurst": "Dopisanie pęknięcia do trasy",
+              "commitScore": "Zapis najlepszego wyniku przedziału",
+              "complete": "Gotowy plan pękania",
+              "initializeCanvas": "Inicjalizacja płótna przedziałów",
+              "inspectCandidate": "Sprawdzenie kandydata na ostatni balon",
+              "traceSplit": "Śledzenie zapisanego podziału"
+            }
+          },
+          "climbingStairs": {
+            "decisions": {
+              "addArrivals": "dodaj dojścia o 1 i 2 stopnie",
+              "recurrenceCommitted": "rekurencja zapisana"
+            },
+            "descriptions": {
+              "commitCount": "Zapisz łączną liczbę sposobów dojścia na stopień {{step}}.",
+              "complete": "Zakończono liczenie wszystkich poprawnych wejść o 1 i 2 stopnie aż do stopnia {{step}}.",
+              "initialize": "Ustaw poziom 0 i pierwszy stopień z jedną drogą dojścia każdy.",
+              "inspectParents": "Sposoby dojścia na stopień {{step}} pochodzą ze stopni {{prev}} i {{prevPrev}}."
+            },
+            "insights": {
+              "baseLabel": "Baza",
+              "lastPairLabel": "Ostatnia para",
+              "stairsLabel": "Schody",
+              "stripLabel": "Pasek",
+              "waysLabel": "Sposoby"
+            },
+            "labels": {
+              "activeStep": "stopień {{step}}",
+              "baseValue": "1 / 1",
+              "computedWaysLabel": "Wyliczone sposoby",
+              "landingIndicesLabel": "Indeksy lądowań",
+              "lastPairValue": "{{left}} + {{right}}",
+              "pathValue": "Sekwencja: {{sequence}}",
+              "resultValue": "sposoby = {{value}}",
+              "seedValue": "start",
+              "stepFormula": "ways[{{step}}]",
+              "stripValue": "1 × {{length}}"
+            },
+            "modeLabel": "Wchodzenie po schodach",
+            "phases": {
+              "commitCount": "Zapisz liczbę sposobów",
+              "complete": "Liczba sposobów gotowa",
+              "initializeLandings": "Zainicjalizuj pierwsze lądowania",
+              "inspectParents": "Sprawdź rodziców rekurencji"
+            }
+          },
           "coinChange": {
             "decisions": {
               "carryPreviousBest": "przenieś poprzedni najlepszy wynik",
@@ -402,6 +494,104 @@
               "optimalChangeReady": "Gotowa optymalna reszta"
             }
           },
+          "editDistance": {
+            "decisions": {
+              "carryDiagonalMatch": "przenieś dopasowanie po przekątnej, jeśli się da",
+              "carryMatch": "przenieś dopasowanie",
+              "chooseCheapestEdit": "wybierz najtańszą edycję",
+              "freeDiagonalCarry": "darmowe przeniesienie po przekątnej",
+              "minimumEditStored": "zapisano minimalną edycję",
+              "moveLeft": "idź w lewo",
+              "moveUpward": "idź w górę",
+              "replaceAndContinue": "zamień i kontynuuj"
+            },
+            "descriptions": {
+              "backtrackCarry": "{{char}} już się zgadza, więc idź po przekątnej bez kosztu.",
+              "backtrackDelete": "Usunięcie {{char}} daje optymalnego poprzednika.",
+              "backtrackInsert": "Wstawienie {{char}} daje optymalnego poprzednika z lewej.",
+              "backtrackReplace": "Najlepsza ścieżka zamienia {{leftChar}} na {{rightChar}}, a potem idzie po przekątnej.",
+              "commitDistance": "Zapisz dp[{{row}}][{{col}}] = {{value}}.",
+              "compareOperations": "Porównaj koszty zamiany, usunięcia i wstawienia dla {{leftChar}} -> {{rightChar}}.",
+              "complete": "Odległość edycyjna wynosi {{distance}}, a operacje to: {{operations}}.",
+              "initialize": "Ustaw górny wiersz i lewą kolumnę według liczby wstawek oraz usunięć."
+            },
+            "insights": {
+              "distanceLabel": "Odległość",
+              "gridLabel": "Siatka",
+              "opsLabel": "Operacje",
+              "sourceLabel": "Źródło",
+              "targetLabel": "Cel"
+            },
+            "labels": {
+              "activeCell": "{{left}} -> {{right}}",
+              "charPair": "{{leftChar}} -> {{rightChar}}",
+              "compareDelete": "usunięcie = {{value}}",
+              "compareInsert": "wstawienie = {{value}}",
+              "compareReplace": "zamiana = {{value}}",
+              "coords": "({{row}}, {{col}})",
+              "deleteOperation": "usuń {{char}}",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "insertOperation": "wstaw {{char}}",
+              "keepOperation": "zachowaj {{char}}",
+              "noEditsValue": "brak edycji",
+              "pathPending": "skrypt edycji w przygotowaniu",
+              "pathValue": "Edycje: {{operations}}",
+              "pendingOpsValue": "w toku",
+              "replaceOperation": "zamień {{from}} -> {{to}}",
+              "resultDistance": "dist = {{value}}",
+              "sourceWordLabel": "Słowo źródłowe",
+              "targetOpsLabel": "Cel / operacje"
+            },
+            "modeLabel": "Odległość edycyjna",
+            "phases": {
+              "backtrackCarry": "Cofnij dopasowanie",
+              "backtrackDelete": "Cofnij usunięcie",
+              "backtrackInsert": "Cofnij wstawienie",
+              "backtrackReplace": "Cofnij zamianę",
+              "commitDistance": "Zapisz odległość edycyjną",
+              "compareOperations": "Porównaj operacje edycji",
+              "complete": "Skrypt edycji gotowy",
+              "initializeBorders": "Zainicjalizuj brzegi"
+            }
+          },
+          "fibonacci": {
+            "decisions": {
+              "cacheFilledForFutureTerms": "cache uzupełniony dla kolejnych wyrazów",
+              "combineAdjacentCachedTerms": "połącz sąsiednie wartości z cache"
+            },
+            "descriptions": {
+              "commitTerm": "Zapisz F({{index}}) w tabeli, aby kolejne wyrazy mogły od razu go użyć.",
+              "complete": "Tablicowanie kończy się z gotowym F({{index}}) na końcu paska.",
+              "initialize": "Ustaw F(0) = 0 i F(1) = 1 przed tablicowaniem większych wyrazów.",
+              "inspectParents": "F({{index}}) to suma dwóch poprzednich wyrazów Fibonacciego."
+            },
+            "insights": {
+              "baseLabel": "Baza",
+              "growthLabel": "Wzrost",
+              "nLabel": "n",
+              "resultLabel": "F(n)",
+              "stripLabel": "Pasek"
+            },
+            "labels": {
+              "activeTerm": "wyraz {{index}}",
+              "baseValue": "0 / 1",
+              "cachedValuesLabel": "Wartości w cache",
+              "growthPair": "{{left}} -> {{right}}",
+              "pathValue": "Sekwencja: {{sequence}}",
+              "resultValue": "F({{index}}) = {{value}}",
+              "seedValue": "start",
+              "stripValue": "1 × {{length}}",
+              "termFormula": "F({{index}})",
+              "termIndicesLabel": "Indeksy wyrazów"
+            },
+            "modeLabel": "DP Fibonacciego",
+            "phases": {
+              "commitTerm": "Zapisz wyraz Fibonacciego",
+              "complete": "Fibonacci gotowy",
+              "initializeBaseTerms": "Zainicjalizuj wyrazy bazowe",
+              "inspectParents": "Sprawdź rodziców rekurencji"
+            }
+          },
           "knapsack01": {
             "decisions": {
               "forcedSkip": "wymuszone pominięcie",
@@ -456,61 +646,6 @@
               "compareSkipTake": "Porównanie pomiń kontra weź",
               "initializeBaseRow": "Inicjalizacja wiersza bazowego",
               "optimalSolutionReady": "Gotowe optymalne rozwiązanie"
-            }
-          },
-          "subsetSum": {
-            "decisions": {
-              "includeValueInSubset": "dodaj wartość do podzbioru",
-              "reachable": "osiągalne",
-              "skipAlreadyReaches": "gałąź pomiń już to osiąga",
-              "skipValue": "pomiń wartość",
-              "stillImpossible": "nadal niemożliwe",
-              "sumStaysUnreachable": "suma pozostaje nieosiągalna",
-              "takeOpensNewReachableSum": "gałąź weź otwiera nową osiągalną sumę"
-            },
-            "descriptions": {
-              "backtrackSkip": "Suma {{sum}} była już osiągalna bez {{value}}, więc przejdź w górę i je pomiń.",
-              "backtrackTake": "{{value}} należy do zwycięskiego podzbioru, więc skocz do sumy {{sum}}.",
-              "compareBranches": "Sprawdź, czy suma {{sum}} jest osiągalna przez pominięcie {{value}} albo jego wzięcie.",
-              "complete": "Odtworzono jeden podzbiór, który osiąga {{target}}.",
-              "forcedSkip": "{{value}} jest większe niż suma {{sum}}, więc legalna jest tylko gałąź pomiń.",
-              "impossible": "Docelowa suma {{target}} jest niemożliwa do osiągnięcia z dostępnych liczb.",
-              "initialize": "Ustaw sumę 0 jako osiągalną i oznacz wszystkie pozostałe sumy jako nieosiągalne przed rozważeniem jakichkolwiek liczb.",
-              "storeReachability": "Zapisz osiągalność sumy {{sum}} po przetworzeniu pierwszych {{row}} liczb."
-            },
-            "insights": {
-              "chosenLabel": "Wybrane",
-              "gridLabel": "Siatka",
-              "reachableLabel": "Osiągalne",
-              "targetLabel": "Cel",
-              "valuesLabel": "Wartości"
-            },
-            "labels": {
-              "activeCell": "wiersz {{row}} · suma {{sum}}",
-              "booleanReachability": "boolowska osiągalność",
-              "currentLensLabel": "Bieżąca soczewka",
-              "dpCellComputation": "dp[{{row}}][{{sum}}]",
-              "numbersLabel": "Liczby",
-              "resultTarget": "target = {{value}}",
-              "rowValue": "wiersz {{row}}",
-              "skipValue": "skip = {{value}}",
-              "skipValueComputation": "Pomiń {{value}}",
-              "subsetPath": "Podzbiór: {{values}}",
-              "subsetPending": "Podzbiór: oczekiwanie",
-              "takeUnavailable": "gałąź take niedostępna",
-              "takeValue": "take = {{value}}",
-              "takeValueComputation": "Weź {{value}}",
-              "valueForSumComputation": "{{value}} dla sumy {{sum}}"
-            },
-            "modeLabel": "Subset Sum",
-            "phases": {
-              "backtrackSkip": "Backtrack pomiń",
-              "backtrackTake": "Backtrack weź",
-              "checkSubsetBranches": "Sprawdzenie gałęzi podzbioru",
-              "commitReachableState": "Zapis osiągalnego stanu",
-              "initializeBooleanTable": "Inicjalizacja tabeli boolowskiej",
-              "noSubsetFound": "Nie znaleziono podzbioru",
-              "subsetReady": "Podzbiór gotowy"
             }
           },
           "longestCommonSubsequence": {
@@ -626,62 +761,384 @@
               "lockIndexResult": "Zamknięcie wyniku indeksu"
             }
           },
-          "burstBalloons": {
+          "matrixChain": {
             "decisions": {
-              "appendFinisher": "dopisz domykający balon do kolejności pękania",
-              "expandSubintervals": "najpierw rozwiń lewe i prawe podprzedziały",
-              "keepPreviousSplit": "zachowaj poprzedni podział",
-              "newBestLastBalloon": "nowy najlepszy ostatni balon",
-              "splitSaved": "podział zapisany dla przedziału #{{left}}..#{{right}}"
+              "expandChildren": "rozwiń lewe i prawe dziecko",
+              "keepOlderSplit": "zachowaj starszy podział",
+              "leafInterval": "przedział-liść",
+              "newBestSplit": "nowy najlepszy podział",
+              "splitSaved": "podział zapisany"
             },
             "descriptions": {
-              "appendBurst": "Po rozwiązaniu obu stron balon #{{pivot}} pęka jako ostatni w przedziale #{{left}}..#{{right}}.",
-              "commitScore": "Zapisz najlepszy wynik monet dla przedziału #{{left}}..#{{right}}, gdy balon #{{pivot}} pęka jako ostatni.",
-              "complete": "Odtworzono jedną optymalną kolejność pękania z wynikiem {{coins}} monet.",
-              "initialize": "Dodaj wartowników 1, żeby każdy przedział mógł jednakowo traktować wybrany ostatni balon.",
-              "inspectCandidate": "Sprawdź, czy balon #{{pivot}} może być ostatnim pękającym w przedziale #{{left}}..#{{right}}.",
-              "traceSplit": "Optymalny przedział #{{left}}..#{{right}} zostawia balon #{{pivot}} na finalne pęknięcie w tym podproblemie."
+              "commitInterval": "Zapisz m[{{left}},{{right}}] = {{value}} z podziałem k = {{split}}.",
+              "complete": "Optymalne nawiasowanie to {{plan}} przy koszcie {{cost}}.",
+              "initialize": "Zacznij od zera na przekątnej: mnożenie jednej macierzy nic nie kosztuje.",
+              "inspectCandidate": "Sprawdź podział k = {{split}} dla przedziału A{{left}}..A{{right}}.",
+              "traceLeaf": "A{{index}} jest macierzą-liściem w optymalnym drzewie mnożenia.",
+              "traceSplit": "Optymalny przedział A{{left}}..A{{right}} dzieli się w k = {{split}}."
             },
             "insights": {
-              "balloonsLabel": "Balony",
-              "bestCoinsLabel": "Najlepsze monety",
-              "burstOrderLabel": "Kolejność pękania",
+              "bestCostLabel": "Najlepszy koszt",
+              "dimensionsLabel": "Wymiary",
+              "matricesLabel": "Macierze",
               "shapeLabel": "Kształt",
+              "solvedCellsLabel": "Rozwiązane pola"
+            },
+            "labels": {
+              "activeInterval": "A{{left}}..A{{right}}",
+              "cellLabel": "m[{{row}}][{{col}}]",
+              "currentSplitLensLabel": "Bieżące podziały",
+              "leafMatrix": "A{{index}}",
+              "leftValue": "lewo = {{value}}",
+              "matrixDimensionsLabel": "Wymiary macierzy",
+              "mergeValue": "scalenie = {{value}}",
+              "optimalValue": "optymalne = {{value}}",
+              "resultCost": "koszt = {{value}}",
+              "resultPending": "oczekuje",
+              "rightValue": "prawo = {{value}}",
+              "splitLabel": "Podział k = {{split}}",
+              "traceInterval": "Śledź A{{left}}..A{{right}}",
+              "upperTriangle": "górny trójkąt"
+            },
+            "modeLabel": "Mnożenie łańcucha macierzy",
+            "phases": {
+              "commitInterval": "Zapisz najlepszy przedział",
+              "complete": "Optymalny łańcuch gotowy",
+              "initializeDiagonal": "Zainicjalizuj przekątną",
+              "inspectCandidate": "Sprawdź kandydat podziału",
+              "traceLeaf": "Śledź liść przedziału",
+              "traceSplit": "Śledź optymalny podział"
+            }
+          },
+          "regexMatching": {
+            "decisions": {
+              "bothStarBranchesFail": "obie gałęzie gwiazdki zawodzą",
+              "consumeTextAndRegex": "zużyj jeden znak tekstu i jeden token regexu",
+              "diagonalRegexMatch": "dopasowanie regexu po przekątnej przetrwało",
+              "emptyPrefixBlocked": "pusty prefiks nadal zablokowany",
+              "groupCanStayEmpty": "grupa może zostać pusta",
+              "jumpLeftTwo": "skocz w lewo o dwie kolumny wzorca",
+              "literalBranchFails": "gałąź dosłowna / kropki zawodzi",
+              "moveUpKeepStar": "idź w górę i zachowaj kolumnę gwiazdki",
+              "regexPrefixValid": "prefiks regexu pozostaje poprawny",
+              "starMustConsume": "gwiazdka musi pochłonąć więcej tekstu",
+              "stateBlocked": "stan zablokowany",
+              "tokenMatchedDiagonally": "token dopasowany po przekątnej",
+              "zeroOccurrencesAccepted": "zaakceptowano zero wystąpień"
+            },
+            "descriptions": {
+              "commitStarState": "Zapisz, czy grupa regexu z gwiazdką utrzymuje żywy prefiks dopasowania.",
+              "commitToken": "Zapisz, czy token {{token}} pokrywa znak tekstu {{char}}.",
+              "complete": "Odtworzono jedną poprawną derywację regexu dla \"{{source}}\" względem \"{{pattern}}\".",
+              "initialize": "Ustaw dp[0][0] = true i przygotuj górny wiersz dla grup z gwiazdką, które mogą dopasować pusty prefiks.",
+              "inspectDot": "Kropka dopasowuje dowolny pojedynczy znak, więc liczy się tylko poprzednik po przekątnej.",
+              "inspectLiteral": "Dosłowny token {{token}} działa tylko wtedy, gdy pasuje do {{char}}.",
+              "inspectStarGroup": "Gwiazdka po {{token}} może albo zniknąć, albo pochłonąć kolejny znak {{char}}.",
+              "noMatch": "Pełny tekst nie spełnia wzorca regex.",
+              "propagateStarGroup": "Grupa regexu {{token}}* może sama siebie pominąć i utrzymać dopasowany pusty prefiks.",
+              "traceDirect": "Token {{token}} pasuje do {{char}}, więc śledź po przekątnej do poprzedniego prefiksu.",
+              "traceStarConsume": "Grupa regexu {{token}}* pochłania {{char}} i pozostaje aktywna dla kolejnych znaków.",
+              "traceStarEmpty": "Grupa regexu {{token}}* zwija się tutaj do zera wystąpień."
+            },
+            "insights": {
+              "gridLabel": "Siatka",
+              "matchLabel": "Dopasowanie",
+              "patternLabel": "Wzorzec",
+              "starsLabel": "Gwiazdki",
+              "textLabel": "Tekst"
+            },
+            "labels": {
+              "activeCell": "{{left}} × {{right}}",
+              "charVsToken": "{{token}} vs {{char}}",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "pathPending": "Trasa: oczekuje",
+              "pathValue": "Trasa: {{route}}",
+              "patternItemsLabel": "Wzorzec regex",
+              "regexConsumes": "{{token}}* pochłania {{char}}",
+              "regexEmpty": "{{token}}* zostaje puste",
+              "resultMatch": "match = {{value}}",
+              "starGroupVsChar": "{{token}}* vs {{char}}",
+              "textItemsLabel": "Tekst",
+              "tokenMatches": "{{token}} pasuje do {{char}}"
+            },
+            "modeLabel": "DP dopasowania regex",
+            "phases": {
+              "commitStarState": "Zapisz stan gwiazdki",
+              "commitToken": "Zapisz bezpośredni token",
+              "complete": "Trasa regexu gotowa",
+              "initializeBorder": "Zainicjalizuj brzeg regexu",
+              "inspectStarGroup": "Sprawdź grupę z gwiazdką",
+              "inspectToken": "Sprawdź bezpośredni token",
+              "noMatch": "Brak pełnego dopasowania",
+              "propagateStarGroup": "Propaguj pustą grupę z gwiazdką",
+              "traceDirect": "Śledź bezpośrednie dopasowanie",
+              "traceStarConsume": "Śledź pochłanianie przez gwiazdkę",
+              "traceStarEmpty": "Śledź pustą grupę z gwiazdką"
+            }
+          },
+          "subsetSum": {
+            "decisions": {
+              "includeValueInSubset": "dodaj wartość do podzbioru",
+              "reachable": "osiągalne",
+              "skipAlreadyReaches": "gałąź pomiń już to osiąga",
+              "skipValue": "pomiń wartość",
+              "stillImpossible": "nadal niemożliwe",
+              "sumStaysUnreachable": "suma pozostaje nieosiągalna",
+              "takeOpensNewReachableSum": "gałąź weź otwiera nową osiągalną sumę"
+            },
+            "descriptions": {
+              "backtrackSkip": "Suma {{sum}} była już osiągalna bez {{value}}, więc przejdź w górę i je pomiń.",
+              "backtrackTake": "{{value}} należy do zwycięskiego podzbioru, więc skocz do sumy {{sum}}.",
+              "compareBranches": "Sprawdź, czy suma {{sum}} jest osiągalna przez pominięcie {{value}} albo jego wzięcie.",
+              "complete": "Odtworzono jeden podzbiór, który osiąga {{target}}.",
+              "forcedSkip": "{{value}} jest większe niż suma {{sum}}, więc legalna jest tylko gałąź pomiń.",
+              "impossible": "Docelowa suma {{target}} jest niemożliwa do osiągnięcia z dostępnych liczb.",
+              "initialize": "Ustaw sumę 0 jako osiągalną i oznacz wszystkie pozostałe sumy jako nieosiągalne przed rozważeniem jakichkolwiek liczb.",
+              "storeReachability": "Zapisz osiągalność sumy {{sum}} po przetworzeniu pierwszych {{row}} liczb."
+            },
+            "insights": {
+              "chosenLabel": "Wybrane",
+              "gridLabel": "Siatka",
+              "reachableLabel": "Osiągalne",
+              "targetLabel": "Cel",
               "valuesLabel": "Wartości"
             },
             "labels": {
-              "activeInterval": "#{{left}}..#{{right}}",
-              "balloonValuesLabel": "Wartości balonów",
-              "burstLabel": "Pęknij #{{pivot}}",
-              "burstValue": "burst = {{value}}",
-              "dpCell": "dp[{{left}}][{{right}}]",
-              "intervalComputation": "Przedział #{{left}}..#{{right}}",
-              "intervalLensLabel": "Soczewka przedziału",
-              "lastPivot": "last #{{pivot}}",
-              "leftValue": "left = {{value}}",
-              "orderSizeValue": "rozmiar kolejności = {{size}}",
-              "pathPending": "Kolejność: oczekiwanie",
-              "pathValue": "Kolejność: {{order}}",
-              "pending": "oczekiwanie",
-              "resultCoins": "coins = {{value}}",
-              "resultPending": "coins pending",
-              "rightValue": "right = {{value}}",
-              "sentinelsValue": "wartownicy = 1 | {{values}} | 1",
-              "traceInterval": "Śledź #{{left}}..#{{right}}",
-              "upperTriangle": "górny trójkąt"
+              "activeCell": "wiersz {{row}} · suma {{sum}}",
+              "booleanReachability": "boolowska osiągalność",
+              "currentLensLabel": "Bieżąca soczewka",
+              "dpCellComputation": "dp[{{row}}][{{sum}}]",
+              "numbersLabel": "Liczby",
+              "resultTarget": "target = {{value}}",
+              "rowValue": "wiersz {{row}}",
+              "skipValue": "skip = {{value}}",
+              "skipValueComputation": "Pomiń {{value}}",
+              "subsetPath": "Podzbiór: {{values}}",
+              "subsetPending": "Podzbiór: oczekiwanie",
+              "takeUnavailable": "gałąź take niedostępna",
+              "takeValue": "take = {{value}}",
+              "takeValueComputation": "Weź {{value}}",
+              "valueForSumComputation": "{{value}} dla sumy {{sum}}"
             },
-            "modeLabel": "Burst Balloons",
+            "modeLabel": "Subset Sum",
             "phases": {
-              "appendBurst": "Dopisanie pęknięcia do trasy",
-              "commitScore": "Zapis najlepszego wyniku przedziału",
-              "complete": "Gotowy plan pękania",
-              "initializeCanvas": "Inicjalizacja płótna przedziałów",
-              "inspectCandidate": "Sprawdzenie kandydata na ostatni balon",
-              "traceSplit": "Śledzenie zapisanego podziału"
+              "backtrackSkip": "Backtrack pomiń",
+              "backtrackTake": "Backtrack weź",
+              "checkSubsetBranches": "Sprawdzenie gałęzi podzbioru",
+              "commitReachableState": "Zapis osiągalnego stanu",
+              "initializeBooleanTable": "Inicjalizacja tabeli boolowskiej",
+              "noSubsetFound": "Nie znaleziono podzbioru",
+              "subsetReady": "Podzbiór gotowy"
+            }
+          },
+          "wildcardMatching": {
+            "decisions": {
+              "bothStarBranchesFailed": "obie gałęzie gwiazdki zawiodły",
+              "consumeTextAndPattern": "zużyj jeden znak tekstu i jeden token wzorca",
+              "diagonalMatchStored": "zapisano dopasowanie po przekątnej",
+              "diagonalMatchSurvives": "dopasowanie po przekątnej przetrwało",
+              "directTransitionFails": "przejście dosłowne / ? zawodzi",
+              "moveLeftPastStar": "idź w lewo za token gwiazdki",
+              "moveUpKeepStar": "idź w górę i trzymaj aktywną gwiazdkę",
+              "prefixStopsMatching": "prefiks przestaje się dopasowywać",
+              "starCanStayEmpty": "gwiazdka może zostać pusta",
+              "starMustConsume": "gwiazdka musi pochłonąć jeszcze jeden znak",
+              "starSpansEmptyPrefix": "gwiazdka obejmuje pusty prefiks",
+              "starTransitionReachable": "przejście gwiazdki pozostaje osiągalne",
+              "stateBlocked": "stan zablokowany",
+              "stateRemainsFalse": "stan pozostaje fałszywy"
+            },
+            "descriptions": {
+              "commitStar": "Zapisz, czy gwiazdka utrzymuje żywy prefiks dopasowania w dp[{{row}}][{{col}}].",
+              "commitToken": "Zapisz, czy {{token}} może pokryć pozycję {{row}} tekstu.",
+              "complete": "Odtworzono jedną poprawną ścieżkę wildcard dla \"{{source}}\" względem \"{{pattern}}\".",
+              "initialize": "Ustaw dp[0][0] = true i przygotuj pierwszy wiersz na początkowe gwiazdki wildcard.",
+              "inspectLiteral": "Dosłowny token wzorca {{token}} działa tutaj tylko wtedy, gdy jest równy {{char}}.",
+              "inspectQuestion": "Znak zapytania dopasowuje dowolny pojedynczy znak, więc sprawdza poprzednika po przekątnej.",
+              "inspectStar": "Gwiazdka w kolumnie wzorca {{col}} może albo pochłonąć {{char}}, albo pozostać pusta.",
+              "noMatch": "Pełny tekst i wzorzec nie dopasowują się według reguł wildcard.",
+              "propagateLeadingStar": "Początkowa \"*\" utrzymuje pusty prefiks tekstu jako dopasowywalny do kolumny wzorca {{col}}.",
+              "traceDiagonal": "Token {{token}} pasuje do {{char}}, więc przejdź po przekątnej do poprzednika.",
+              "traceStarConsume": "Gwiazdka pochłania znak {{char}} i zostaje w tej samej kolumnie wzorca.",
+              "traceStarEmpty": "Gwiazdka działa tu także jako pusty fragment, więc przejdź w lewo we wzorcu."
+            },
+            "insights": {
+              "gridLabel": "Siatka",
+              "matchLabel": "Dopasowanie",
+              "patternLabel": "Wzorzec",
+              "starsLabel": "Gwiazdki",
+              "textLabel": "Tekst"
+            },
+            "labels": {
+              "activeCell": "{{left}} × {{right}}",
+              "charVsToken": "{{char}} vs {{token}}",
+              "consumeValue": "pochłonięcie = {{value}}",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "emptyValue": "puste = {{value}}",
+              "leadingStarEmpty": "początkowa gwiazdka może pokryć pusty prefiks",
+              "pathPending": "Trasa: oczekuje",
+              "pathValue": "Trasa: {{route}}",
+              "patternItemsLabel": "Wzorzec",
+              "questionWildcard": "? wildcard",
+              "resultMatch": "match = {{value}}",
+              "starConsumes": "* pochłania {{char}}",
+              "starEmpty": "Gwiazdka zostaje pusta",
+              "starVsChar": "* vs {{char}}",
+              "textItemsLabel": "Tekst",
+              "tokenMatches": "{{token}} pasuje do {{char}}"
+            },
+            "modeLabel": "Dopasowanie wildcard",
+            "phases": {
+              "commitStar": "Zapisz stan gwiazdki",
+              "commitToken": "Zapisz stan tokenu",
+              "complete": "Ścieżka wildcard gotowa",
+              "initializeBorder": "Zainicjalizuj brzeg wildcard",
+              "inspectStar": "Sprawdź przejście gwiazdki",
+              "inspectToken": "Sprawdź bezpośredni token",
+              "noMatch": "Brak pełnego dopasowania",
+              "propagateLeadingStar": "Propaguj początkową gwiazdkę",
+              "traceDiagonal": "Śledź dopasowanie po przekątnej",
+              "traceStarConsume": "Śledź pochłanianie przez gwiazdkę",
+              "traceStarEmpty": "Śledź pustą gałąź gwiazdki"
             }
           }
         },
         "string": {
+          "burrowsWheelerTransform": {
+            "computation": {
+              "expressions": {
+                "bwtOutput": "L = ostatnia kolumna posortowanych rotacji",
+                "rowPosition": "wiersz → pozycja {{position}}",
+                "runComparison": "{{inputRuns}} serii wejściowych → {{outputRuns}} serii BWT"
+              },
+              "labels": {
+                "bwtOutput": "Wynik BWT",
+                "insertionPoint": "Punkt wstawienia",
+                "rotationMatrix": "Macierz rotacji",
+                "rowCompare": "Porównanie wierszy",
+                "runComparison": "Porównanie serii"
+              },
+              "notes": {
+                "bwtOutput": "To przestawienie jest odwracalne, a przy tym dużo przyjaźniejsze dla dalszej kompresji w stylu RLE.",
+                "insertionPoint": "Jeszcze jedna rotacja wskakuje na swoje ostateczne miejsce w sortowaniu.",
+                "rotationMatrix": "BWT sortuje rotacje cykliczne, a nie sufiksy.",
+                "rowCompare": "Używamy tu kroków podobnych do insertion sorta tylko po to, żeby ruch macierzy był czytelny.",
+                "runComparison": "Mniej, ale dłuższych serii to dokładnie powód, dla którego BWT działa tak dobrze przed RLE lub kodowaniem entropijnym."
+              }
+            },
+            "decisions": {
+              "differentStartingPoints": "Każdy wiersz to ten sam ciąg oglądany od innego punktu startowego.",
+              "lastColumnOutput": "Ostatnia kolumna to wynik Burrowsa-Wheelera; pierwsza kolumna pomaga zrozumieć strukturę posortowanej macierzy.",
+              "lexicographicClusters": "Porządek leksykograficzny sprawia, że ostatnia kolumna grupuje podobne znaki obok siebie.",
+              "transformPreparesCompression": "Transformacja sama niczego nie kompresuje, ale skupia powtarzające się symbole, żeby kolejne etapy zrobiły to lepiej.",
+              "upperMatrixSorted": "Górna część macierzy jest już w ostatecznym porządku leksykograficznym."
+            },
+            "descriptions": {
+              "collectLastColumn": "Odczytaj ostatnią kolumnę L = \"{{lastColumn}}\". Podobne znaki są teraz zgrupowane znacznie ciaśniej niż na wejściu.",
+              "compareRows": "Porównaj \"{{current}}\" z \"{{previous}}\", żeby ustawić następną rotację leksykograficznie.",
+              "complete": "BWT zakończone. Wynik \"{{lastColumn}}\" tworzy {{outputRuns}} serii wobec {{inputRuns}} w oryginalnym ciągu.",
+              "generateRotations": "Wygeneruj wszystkie {{count}} cykliczne rotacje ciągu \"{{source}}\".",
+              "rowPlaced": "Wiersz \"{{row}}\" został teraz ustawiony na posortowanej pozycji {{position}}."
+            },
+            "insights": {
+              "firstColumnLabel": "Kolumna F",
+              "gainValue": "{{ratio}}x",
+              "lastColumnLabel": "Kolumna L",
+              "lengthLabel": "Długość",
+              "noneValue": "—",
+              "rowsValue": "{{count}} wierszy",
+              "runGainLabel": "Zysk serii"
+            },
+            "labels": {
+              "bwtReady": "BWT gotowe",
+              "densityValue": "{{ratio}}x gęściej",
+              "insertRow": "wstaw wiersz {{index}}",
+              "matrixUnsorted": "Macierz nieposortowana",
+              "readColumns": "Odczytaj F i L",
+              "rotationsCount": "{{count}} rotacji",
+              "rowsOrdered": "{{current}} / {{total}} wierszy ułożonych",
+              "shiftUpward": "przesuń w górę",
+              "sortedPrefix": "posortowany prefiks {{current}} / {{total}}",
+              "sortedPrefixCount": "posortowany prefiks {{count}}"
+            },
+            "modeLabel": "Macierz rotacji",
+            "phases": {
+              "collectColumns": "Zbieranie kolumn",
+              "complete": "Zakończono",
+              "rotate": "Rotacje",
+              "rowCommitted": "Zapisany wiersz",
+              "sortRows": "Sortowanie wierszy"
+            }
+          },
+          "huffmanCoding": {
+            "computation": {
+              "expressions": {
+                "codeFromPath": "code['{{char}}'] = ścieżka od korzenia do liścia"
+              },
+              "labels": {
+                "characterFrequency": "Częstość znaku",
+                "initialHeap": "Kopiec początkowy",
+                "newInternalNode": "Nowy węzeł wewnętrzny",
+                "popTwoMinimums": "Zdejmij dwa minima",
+                "prefixCode": "Kod prefiksowy"
+              },
+              "notes": {
+                "characterFrequency": "Większa częstość oznacza krótszy kod prefiksowy i mniej bitów na wystąpienie.",
+                "initialHeap": "Każdy liść stanie się dolną warstwą drzewa Huffmana.",
+                "newInternalNode": "Lewe dziecko dostaje '0', prawe dziecko dostaje '1' w prefiksie kodu.",
+                "popTwoMinimums": "Częstość scalonego węzła to suma częstości jego dwóch dzieci.",
+                "prefixCodeFinal": "Suma: {{original}} → {{compressed}} bitów ({{savings}}% oszczędności).",
+                "prefixCodeSymbol": "freq={{freq}} × {{bits}} bitów = {{total}} bitów dla tego symbolu."
+              },
+              "results": {
+                "codeBits": "code = '{{code}}', bity = {{bits}}",
+                "frequencyValue": "freq = {{freq}}",
+                "heapSize": "rozmiar = {{size}}",
+                "newNodeFrequency": "częstość nowego węzła = {{left}} + {{right}} = {{total}}"
+              }
+            },
+            "decisions": {
+              "frequentShorterCodes": "Znaki pojawiające się częściej dostaną krótsze kody.",
+              "mergeSmallestFirst": "Zawsze scalaj najpierw dwa węzły o najmniejszych częstościach.",
+              "minHeapReady": "Kopiec minimalny zawsze podaje dwa węzły o najniższej częstości do scalenia.",
+              "pushMergedNode": "Włóż scalony węzeł z powrotem do kopca przed następną rundą.",
+              "rootReady": "Został tylko jeden węzeł — to korzeń drzewa Huffmana!",
+              "tracePath": "Prześledź ścieżkę od korzenia do liścia '{{char}}': lewo = '0', prawo = '1'."
+            },
+            "descriptions": {
+              "assignCode": "Przypisz kod '{{code}}' ({{bits}} bitów) do '{{char}}' (freq={{freq}}).",
+              "buildHeap": "Zbuduj początkowy kopiec minimalny z {{count}} liści, po jednym na każdy unikalny znak.",
+              "countFrequency": "Policz częstość: '{{char}}' ma liczność {{freq}} w \"{{source}}\".",
+              "createdInternalNode": "Utworzono węzeł wewnętrzny o freq={{freq}}. Kopiec ma teraz {{heapSize}} węzłów.",
+              "popMinimums": "Krok scalania {{step}}: zdejmij minima '{{leftChar}}' ({{leftFreq}}) i '{{rightChar}}' ({{rightFreq}})."
+            },
+            "insights": {
+              "codesAssignedLabel": "Przypisane kody",
+              "heapSizeLabel": "Rozmiar kopca",
+              "noneValue": "—",
+              "savingsLabel": "Oszczędność",
+              "savingsValue": "{{percent}}%",
+              "uniqueCharsLabel": "Unikalne znaki"
+            },
+            "labels": {
+              "codeAssignment": "'{{char}}' → '{{code}}'",
+              "codesProgress": "{{current}} z {{total}} kodów",
+              "compressedBits": "{{bits}} skompresowanych bitów",
+              "countedProgress": "{{current}} z {{total}} znaków policzonych",
+              "heapSize": "Rozmiar kopca = {{size}}",
+              "leafNodes": "{{count}} węzłów liści",
+              "newNodeFrequency": "Częstość nowego węzła = {{freq}}",
+              "readyToMerge": "Gotowe do scalania"
+            },
+            "modeLabel": "Drzewo Huffmana",
+            "phases": {
+              "assignCodes": "Nadawanie kodów",
+              "buildHeap": "Budowa kopca",
+              "countFrequencies": "Liczenie częstości",
+              "mergeNodes": "Scalanie węzłów",
+              "popMinimums": "Zdjęcie minimów"
+            }
+          },
           "kmp": {
             "computation": {
               "labels": {
@@ -829,203 +1286,6 @@
               "shiftWindow": "Przesunięcie okna"
             }
           },
-          "burrowsWheelerTransform": {
-            "computation": {
-              "expressions": {
-                "bwtOutput": "L = ostatnia kolumna posortowanych rotacji",
-                "rowPosition": "wiersz → pozycja {{position}}",
-                "runComparison": "{{inputRuns}} serii wejściowych → {{outputRuns}} serii BWT"
-              },
-              "labels": {
-                "bwtOutput": "Wynik BWT",
-                "insertionPoint": "Punkt wstawienia",
-                "rotationMatrix": "Macierz rotacji",
-                "rowCompare": "Porównanie wierszy",
-                "runComparison": "Porównanie serii"
-              },
-              "notes": {
-                "bwtOutput": "To przestawienie jest odwracalne, a przy tym dużo przyjaźniejsze dla dalszej kompresji w stylu RLE.",
-                "insertionPoint": "Jeszcze jedna rotacja wskakuje na swoje ostateczne miejsce w sortowaniu.",
-                "rotationMatrix": "BWT sortuje rotacje cykliczne, a nie sufiksy.",
-                "rowCompare": "Używamy tu kroków podobnych do insertion sorta tylko po to, żeby ruch macierzy był czytelny.",
-                "runComparison": "Mniej, ale dłuższych serii to dokładnie powód, dla którego BWT działa tak dobrze przed RLE lub kodowaniem entropijnym."
-              }
-            },
-            "decisions": {
-              "differentStartingPoints": "Każdy wiersz to ten sam ciąg oglądany od innego punktu startowego.",
-              "lastColumnOutput": "Ostatnia kolumna to wynik Burrowsa-Wheelera; pierwsza kolumna pomaga zrozumieć strukturę posortowanej macierzy.",
-              "lexicographicClusters": "Porządek leksykograficzny sprawia, że ostatnia kolumna grupuje podobne znaki obok siebie.",
-              "transformPreparesCompression": "Transformacja sama niczego nie kompresuje, ale skupia powtarzające się symbole, żeby kolejne etapy zrobiły to lepiej.",
-              "upperMatrixSorted": "Górna część macierzy jest już w ostatecznym porządku leksykograficznym."
-            },
-            "descriptions": {
-              "collectLastColumn": "Odczytaj ostatnią kolumnę L = \"{{lastColumn}}\". Podobne znaki są teraz zgrupowane znacznie ciaśniej niż na wejściu.",
-              "compareRows": "Porównaj \"{{current}}\" z \"{{previous}}\", żeby ustawić następną rotację leksykograficznie.",
-              "complete": "BWT zakończone. Wynik \"{{lastColumn}}\" tworzy {{outputRuns}} serii wobec {{inputRuns}} w oryginalnym ciągu.",
-              "generateRotations": "Wygeneruj wszystkie {{count}} cykliczne rotacje ciągu \"{{source}}\".",
-              "rowPlaced": "Wiersz \"{{row}}\" został teraz ustawiony na posortowanej pozycji {{position}}."
-            },
-            "insights": {
-              "firstColumnLabel": "Kolumna F",
-              "gainValue": "{{ratio}}x",
-              "lastColumnLabel": "Kolumna L",
-              "lengthLabel": "Długość",
-              "noneValue": "—",
-              "rowsValue": "{{count}} wierszy",
-              "runGainLabel": "Zysk serii"
-            },
-            "labels": {
-              "bwtReady": "BWT gotowe",
-              "densityValue": "{{ratio}}x gęściej",
-              "insertRow": "wstaw wiersz {{index}}",
-              "matrixUnsorted": "Macierz nieposortowana",
-              "readColumns": "Odczytaj F i L",
-              "rotationsCount": "{{count}} rotacji",
-              "rowsOrdered": "{{current}} / {{total}} wierszy ułożonych",
-              "shiftUpward": "przesuń w górę",
-              "sortedPrefix": "posortowany prefiks {{current}} / {{total}}",
-              "sortedPrefixCount": "posortowany prefiks {{count}}"
-            },
-            "modeLabel": "Macierz rotacji",
-            "phases": {
-              "collectColumns": "Zbieranie kolumn",
-              "complete": "Zakończono",
-              "rotate": "Rotacje",
-              "rowCommitted": "Zapisany wiersz",
-              "sortRows": "Sortowanie wierszy"
-            }
-          },
-          "huffmanCoding": {
-            "computation": {
-              "expressions": {
-                "codeFromPath": "code['{{char}}'] = ścieżka od korzenia do liścia"
-              },
-              "labels": {
-                "characterFrequency": "Częstość znaku",
-                "initialHeap": "Kopiec początkowy",
-                "newInternalNode": "Nowy węzeł wewnętrzny",
-                "popTwoMinimums": "Zdejmij dwa minima",
-                "prefixCode": "Kod prefiksowy"
-              },
-              "notes": {
-                "characterFrequency": "Większa częstość oznacza krótszy kod prefiksowy i mniej bitów na wystąpienie.",
-                "initialHeap": "Każdy liść stanie się dolną warstwą drzewa Huffmana.",
-                "newInternalNode": "Lewe dziecko dostaje '0', prawe dziecko dostaje '1' w prefiksie kodu.",
-                "popTwoMinimums": "Częstość scalonego węzła to suma częstości jego dwóch dzieci.",
-                "prefixCodeFinal": "Suma: {{original}} → {{compressed}} bitów ({{savings}}% oszczędności).",
-                "prefixCodeSymbol": "freq={{freq}} × {{bits}} bitów = {{total}} bitów dla tego symbolu."
-              },
-              "results": {
-                "codeBits": "code = '{{code}}', bity = {{bits}}",
-                "frequencyValue": "freq = {{freq}}",
-                "heapSize": "rozmiar = {{size}}",
-                "newNodeFrequency": "częstość nowego węzła = {{left}} + {{right}} = {{total}}"
-              }
-            },
-            "decisions": {
-              "frequentShorterCodes": "Znaki pojawiające się częściej dostaną krótsze kody.",
-              "mergeSmallestFirst": "Zawsze scalaj najpierw dwa węzły o najmniejszych częstościach.",
-              "minHeapReady": "Kopiec minimalny zawsze podaje dwa węzły o najniższej częstości do scalenia.",
-              "pushMergedNode": "Włóż scalony węzeł z powrotem do kopca przed następną rundą.",
-              "rootReady": "Został tylko jeden węzeł — to korzeń drzewa Huffmana!",
-              "tracePath": "Prześledź ścieżkę od korzenia do liścia '{{char}}': lewo = '0', prawo = '1'."
-            },
-            "descriptions": {
-              "assignCode": "Przypisz kod '{{code}}' ({{bits}} bitów) do '{{char}}' (freq={{freq}}).",
-              "buildHeap": "Zbuduj początkowy kopiec minimalny z {{count}} liści, po jednym na każdy unikalny znak.",
-              "countFrequency": "Policz częstość: '{{char}}' ma liczność {{freq}} w \"{{source}}\".",
-              "createdInternalNode": "Utworzono węzeł wewnętrzny o freq={{freq}}. Kopiec ma teraz {{heapSize}} węzłów.",
-              "popMinimums": "Krok scalania {{step}}: zdejmij minima '{{leftChar}}' ({{leftFreq}}) i '{{rightChar}}' ({{rightFreq}})."
-            },
-            "insights": {
-              "codesAssignedLabel": "Przypisane kody",
-              "heapSizeLabel": "Rozmiar kopca",
-              "noneValue": "—",
-              "savingsLabel": "Oszczędność",
-              "savingsValue": "{{percent}}%",
-              "uniqueCharsLabel": "Unikalne znaki"
-            },
-            "labels": {
-              "codeAssignment": "'{{char}}' → '{{code}}'",
-              "codesProgress": "{{current}} z {{total}} kodów",
-              "compressedBits": "{{bits}} skompresowanych bitów",
-              "countedProgress": "{{current}} z {{total}} znaków policzonych",
-              "heapSize": "Rozmiar kopca = {{size}}",
-              "leafNodes": "{{count}} węzłów liści",
-              "newNodeFrequency": "Częstość nowego węzła = {{freq}}",
-              "readyToMerge": "Gotowe do scalania"
-            },
-            "modeLabel": "Drzewo Huffmana",
-            "phases": {
-              "assignCodes": "Nadawanie kodów",
-              "buildHeap": "Budowa kopca",
-              "countFrequencies": "Liczenie częstości",
-              "mergeNodes": "Scalanie węzłów",
-              "popMinimums": "Zdjęcie minimów"
-            }
-          },
-          "runLengthEncoding": {
-            "computation": {
-              "labels": {
-                "compressionRatio": "Współczynnik kompresji",
-                "emitRun": "Emisja serii",
-                "extendRun": "Rozszerz serię",
-                "input": "Wejście",
-                "newRun": "Nowa seria"
-              },
-              "notes": {
-                "compressionSaves": "Wyjście jest krótsze od wejścia — RLE dało kompresję.",
-                "emitRun": "Jedna para (liczba, znak) zastępuje całą serię w strumieniu wyjściowym.",
-                "extendRun": "Każdy pasujący znak zwiększa licznik serii o jeden.",
-                "input": "Skompresujemy serie powtarzających się znaków do par liczba-znak.",
-                "newRun": "To startowy licznik dla tej serii. Będzie rosnąć, dopóki kolejny znak pasuje.",
-                "noCompressionGain": "Wyjście nie jest krótsze — RLE działa najlepiej na długich powtórzeniach."
-              },
-              "results": {
-                "countValue": "liczba = {{count}}",
-                "inputLength": "długość = {{count}}",
-                "outputValue": "wyjście = \"{{output}}\"",
-                "ratioValue": "{{ratio}} ({{percent}}%)"
-              }
-            },
-            "decisions": {
-              "compressionSaves": "Kompresja oszczędza miejsce — zakodowane wyjście jest krótsze od oryginału.",
-              "eachRunPair": "Każda seria identycznych znaków zamienia się w jedną parę (znak, liczba).",
-              "emitRun": "Seria skończyła się na pozycji {{endIndex}}. Wyemituj ({{count}}, '{{char}}') do wyjścia.",
-              "extendRun": "text[{{index}}] = '{{char}}' = groupChar '{{groupChar}}' → rozszerz serię.",
-              "newRun": "'{{char}}' zaczyna nową serię. Policz, ile kolejnych '{{char}}' występuje z rzędu.",
-              "noCompressionGain": "Brak zysku z kompresji — zakodowane wyjście jest tak samo długie lub dłuższe od oryginału."
-            },
-            "descriptions": {
-              "complete": "RLE zakończone. Znaleziono {{runs}} serii. Wynik: \"{{output}}\" ({{outputLength}} znaków vs {{inputLength}} na wejściu → {{percent}}% współczynnika).",
-              "emit": "Wyemituj serię: '{{char}}' × {{count}}. Wyjście staje się \"{{output}}\".",
-              "extend": "Pozycja {{index}}: '{{char}}' zgadza się z '{{groupChar}}'. Rozszerzamy serię (count = {{count}}).",
-              "scan": "Pozycja {{index}}: znaleziono '{{char}}'. Start nowej serii.",
-              "start": "Uruchom RLE na \"{{text}}\" ({{length}} znaków). Skanujemy od lewej do prawej, grupując kolejne identyczne znaki."
-            },
-            "insights": {
-              "charsValue": "{{count}} znaków",
-              "inputLengthLabel": "Długość wejścia",
-              "noneValue": "—",
-              "outputSoFarLabel": "Wyjście dotąd",
-              "ratioLabel": "Współczynnik",
-              "ratioValue": "{{percent}}%",
-              "runsCountLabel": "Liczba serii"
-            },
-            "labels": {
-              "emitActive": "seria '{{char}}'×{{count}}",
-              "noRunsYet": "Jeszcze bez serii",
-              "runCount": "liczba serii = {{count}}"
-            },
-            "modeLabel": "Skaner serii",
-            "phases": {
-              "complete": "Zakończono",
-              "emit": "Emisja",
-              "extend": "Rozszerzanie",
-              "scan": "Skanowanie",
-              "setup": "Przygotowanie"
-            }
-          },
           "rabinKarp": {
             "computation": {
               "labels": {
@@ -1096,6 +1356,68 @@
               "verifiedMatch": "Zweryfikowane dopasowanie",
               "verifyCollision": "Weryfikacja kolizji",
               "verifyHit": "Weryfikacja trafienia"
+            }
+          },
+          "runLengthEncoding": {
+            "computation": {
+              "labels": {
+                "compressionRatio": "Współczynnik kompresji",
+                "emitRun": "Emisja serii",
+                "extendRun": "Rozszerz serię",
+                "input": "Wejście",
+                "newRun": "Nowa seria"
+              },
+              "notes": {
+                "compressionSaves": "Wyjście jest krótsze od wejścia — RLE dało kompresję.",
+                "emitRun": "Jedna para (liczba, znak) zastępuje całą serię w strumieniu wyjściowym.",
+                "extendRun": "Każdy pasujący znak zwiększa licznik serii o jeden.",
+                "input": "Skompresujemy serie powtarzających się znaków do par liczba-znak.",
+                "newRun": "To startowy licznik dla tej serii. Będzie rosnąć, dopóki kolejny znak pasuje.",
+                "noCompressionGain": "Wyjście nie jest krótsze — RLE działa najlepiej na długich powtórzeniach."
+              },
+              "results": {
+                "countValue": "liczba = {{count}}",
+                "inputLength": "długość = {{count}}",
+                "outputValue": "wyjście = \"{{output}}\"",
+                "ratioValue": "{{ratio}} ({{percent}}%)"
+              }
+            },
+            "decisions": {
+              "compressionSaves": "Kompresja oszczędza miejsce — zakodowane wyjście jest krótsze od oryginału.",
+              "eachRunPair": "Każda seria identycznych znaków zamienia się w jedną parę (znak, liczba).",
+              "emitRun": "Seria skończyła się na pozycji {{endIndex}}. Wyemituj ({{count}}, '{{char}}') do wyjścia.",
+              "extendRun": "text[{{index}}] = '{{char}}' = groupChar '{{groupChar}}' → rozszerz serię.",
+              "newRun": "'{{char}}' zaczyna nową serię. Policz, ile kolejnych '{{char}}' występuje z rzędu.",
+              "noCompressionGain": "Brak zysku z kompresji — zakodowane wyjście jest tak samo długie lub dłuższe od oryginału."
+            },
+            "descriptions": {
+              "complete": "RLE zakończone. Znaleziono {{runs}} serii. Wynik: \"{{output}}\" ({{outputLength}} znaków vs {{inputLength}} na wejściu → {{percent}}% współczynnika).",
+              "emit": "Wyemituj serię: '{{char}}' × {{count}}. Wyjście staje się \"{{output}}\".",
+              "extend": "Pozycja {{index}}: '{{char}}' zgadza się z '{{groupChar}}'. Rozszerzamy serię (count = {{count}}).",
+              "scan": "Pozycja {{index}}: znaleziono '{{char}}'. Start nowej serii.",
+              "start": "Uruchom RLE na \"{{text}}\" ({{length}} znaków). Skanujemy od lewej do prawej, grupując kolejne identyczne znaki."
+            },
+            "insights": {
+              "charsValue": "{{count}} znaków",
+              "inputLengthLabel": "Długość wejścia",
+              "noneValue": "—",
+              "outputSoFarLabel": "Wyjście dotąd",
+              "ratioLabel": "Współczynnik",
+              "ratioValue": "{{percent}}%",
+              "runsCountLabel": "Liczba serii"
+            },
+            "labels": {
+              "emitActive": "seria '{{char}}'×{{count}}",
+              "noRunsYet": "Jeszcze bez serii",
+              "runCount": "liczba serii = {{count}}"
+            },
+            "modeLabel": "Skaner serii",
+            "phases": {
+              "complete": "Zakończono",
+              "emit": "Emisja",
+              "extend": "Rozszerzanie",
+              "scan": "Skanowanie",
+              "setup": "Przygotowanie"
             }
           },
           "zAlgorithm": {
@@ -3221,6 +3543,7 @@
       }
     }
   },
+  "features.algorithms.runtime.dp.burstBalloons.labels.intervalRange": "Missing value for 'features.algorithms.runtime.dp.burstBalloons.labels.intervalRange'",
   "shared": {
     "codeLanguageDial": {
       "ariaLabel": "Przełącznik języka kodu",
