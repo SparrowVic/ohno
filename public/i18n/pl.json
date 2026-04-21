@@ -512,6 +512,173 @@
               "noSubsetFound": "Nie znaleziono podzbioru",
               "subsetReady": "Podzbiór gotowy"
             }
+          },
+          "longestCommonSubsequence": {
+            "decisions": {
+              "bestNeighborStored": "zapisano lepszego sąsiada",
+              "carryLargerNeighbor": "przenieś większego sąsiada",
+              "characterAdded": "znak dodany do LCS",
+              "diagonalStored": "zapisano przekątną zgodność",
+              "extendDiagonal": "wydłuż wspólny podciąg po przekątnej",
+              "followLeft": "idź lewą gałęzią",
+              "followTop": "idź górną gałęzią"
+            },
+            "descriptions": {
+              "backtrackLeft": "Lewy sąsiad jest większy, więc idź w lewo.",
+              "backtrackMatch": "{{sourceChar}} zgadza się z {{targetChar}}, więc dodaj go i przejdź po przekątnej.",
+              "backtrackUpward": "Górny sąsiad jest co najmniej tak dobry, więc idź w górę.",
+              "commitCell": "Zapisz dp[{{row}}][{{col}}] = {{value}}.",
+              "compareCharacters": "Porównaj {{leftChar}} z {{topChar}}.",
+              "complete": "Backtracking kończy się najdłuższym wspólnym podciągiem \"{{sequence}}\".",
+              "initialize": "Zainicjalizuj tabelę LCS zerami w górnym wierszu i lewej kolumnie."
+            },
+            "insights": {
+              "gridLabel": "Siatka",
+              "lcsLengthLabel": "Długość LCS",
+              "pathCharsLabel": "Znaki na ścieżce",
+              "sourceLabel": "Źródło",
+              "targetLabel": "Cel"
+            },
+            "labels": {
+              "activeCell": "{{cell}}",
+              "backtrackChar": "Śledź {{char}}",
+              "backtrackLeft": "Śledź w lewo",
+              "backtrackUp": "Śledź w górę",
+              "charPair": "{{leftChar}} × {{topChar}}",
+              "coords": "({{row}}, {{col}})",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "ellipsis": "...",
+              "leftValue": "left = {{value}}",
+              "matchItem": "zgodność {{char}}",
+              "pathPending": "LCS: oczekiwanie",
+              "pathValue": "LCS: {{value}}",
+              "resultLength": "len = {{value}}",
+              "sourceStringLabel": "Łańcuch źródłowy",
+              "targetStringLabel": "Łańcuch docelowy",
+              "topValue": "top = {{value}}"
+            },
+            "modeLabel": "Longest Common Subsequence",
+            "phases": {
+              "backtrackLeft": "Śledzenie w lewo",
+              "backtrackMatch": "Śledzenie zgodności",
+              "backtrackUpward": "Śledzenie w górę",
+              "commitCell": "Zapis komórki LCS",
+              "compareCharacters": "Porównanie znaków",
+              "complete": "LCS gotowe",
+              "initializeBorders": "Inicjalizacja granic DP"
+            }
+          },
+          "longestIncreasingSubsequence": {
+            "decisions": {
+              "bestPredecessorKept": "zachowano najlepszego poprzednika",
+              "jumpToPredecessor": "skocz do poprzednika",
+              "keepPreviousBest": "zachowaj poprzedni najlepszy wynik",
+              "lengthValue": "długość {{value}}",
+              "newBestPredecessor": "nowy najlepszy poprzednik",
+              "routeFlowsThrough": "trasa teraz przechodzi przez {{value}}",
+              "sequenceOrigin": "osiągnięto początek sekwencji",
+              "singleValue": "jednoelementowy podciąg",
+              "skipCandidate": "pomiń kandydata"
+            },
+            "descriptions": {
+              "backtrack": "Śledź LIS wstecz przez indeks {{index}}.",
+              "blocked": "Wartość {{from}} nie może rozszerzyć {{to}}, bo sekwencja przestałaby rosnąć.",
+              "canExtend": "Wartość {{from}} może rozszerzyć {{to}}, więc porównaj długość LIS {{length}} + 1.",
+              "chooseEndpoint": "Wybierz indeks {{index}} jako koniec LIS, bo ma najmocniejszą długość.",
+              "commitPredecessor": "Zaktualizuj LIS kończący się na indeksie {{index}} do długości {{length}} przez poprzednik o indeksie {{predecessor}}.",
+              "complete": "Odtworzono jeden najdłuższy rosnący podciąg o długości {{length}}.",
+              "initialize": "Zainicjalizuj każdą pozycję długością podciągu równą 1, bo każda wartość sama w sobie tworzy poprawny LIS.",
+              "lockResult": "Zamknij najlepszy LIS kończący się dokładnie na indeksie {{index}}."
+            },
+            "insights": {
+              "bestLengthLabel": "Najlepsza długość",
+              "chosenRouteLabel": "Wybrana trasa",
+              "peakValueLabel": "Najwyższa wartość",
+              "stripLabel": "Pasek",
+              "valuesLabel": "Wartości"
+            },
+            "labels": {
+              "activeIndex": "idx {{index}} = {{value}}",
+              "bestEndpoint": "Najlepszy koniec",
+              "blocked": "zablokowane",
+              "currentLengthsLabel": "Bieżące długości",
+              "edgeLabel": "{{from}} -> {{to}}",
+              "finishValue": "zamknij {{value}}",
+              "idxValue": "i{{index}}",
+              "inputValuesLabel": "Wartości wejściowe",
+              "lenIndex": "len[{{index}}]",
+              "pathPending": "LIS: oczekiwanie",
+              "pathValue": "LIS: {{values}}",
+              "prevValue": "prev {{value}}",
+              "resultLength": "len = {{value}}",
+              "startValue": "start",
+              "stripValue": "3 × n",
+              "traceValue": "Śledź {{value}}"
+            },
+            "modeLabel": "Longest Increasing Subsequence",
+            "phases": {
+              "backtrackPath": "Śledzenie ścieżki LIS",
+              "chooseEndpoint": "Wybór najlepszego końca",
+              "commitPredecessor": "Zapis lepszego poprzednika",
+              "complete": "LIS gotowe",
+              "initializeSingletons": "Inicjalizacja długości pojedynczych",
+              "inspectPredecessor": "Sprawdzenie poprzednika",
+              "lockIndexResult": "Zamknięcie wyniku indeksu"
+            }
+          },
+          "burstBalloons": {
+            "decisions": {
+              "appendFinisher": "dopisz domykający balon do kolejności pękania",
+              "expandSubintervals": "najpierw rozwiń lewe i prawe podprzedziały",
+              "keepPreviousSplit": "zachowaj poprzedni podział",
+              "newBestLastBalloon": "nowy najlepszy ostatni balon",
+              "splitSaved": "podział zapisany dla przedziału #{{left}}..#{{right}}"
+            },
+            "descriptions": {
+              "appendBurst": "Po rozwiązaniu obu stron balon #{{pivot}} pęka jako ostatni w przedziale #{{left}}..#{{right}}.",
+              "commitScore": "Zapisz najlepszy wynik monet dla przedziału #{{left}}..#{{right}}, gdy balon #{{pivot}} pęka jako ostatni.",
+              "complete": "Odtworzono jedną optymalną kolejność pękania z wynikiem {{coins}} monet.",
+              "initialize": "Dodaj wartowników 1, żeby każdy przedział mógł jednakowo traktować wybrany ostatni balon.",
+              "inspectCandidate": "Sprawdź, czy balon #{{pivot}} może być ostatnim pękającym w przedziale #{{left}}..#{{right}}.",
+              "traceSplit": "Optymalny przedział #{{left}}..#{{right}} zostawia balon #{{pivot}} na finalne pęknięcie w tym podproblemie."
+            },
+            "insights": {
+              "balloonsLabel": "Balony",
+              "bestCoinsLabel": "Najlepsze monety",
+              "burstOrderLabel": "Kolejność pękania",
+              "shapeLabel": "Kształt",
+              "valuesLabel": "Wartości"
+            },
+            "labels": {
+              "activeInterval": "#{{left}}..#{{right}}",
+              "balloonValuesLabel": "Wartości balonów",
+              "burstLabel": "Pęknij #{{pivot}}",
+              "burstValue": "burst = {{value}}",
+              "dpCell": "dp[{{left}}][{{right}}]",
+              "intervalComputation": "Przedział #{{left}}..#{{right}}",
+              "intervalLensLabel": "Soczewka przedziału",
+              "lastPivot": "last #{{pivot}}",
+              "leftValue": "left = {{value}}",
+              "orderSizeValue": "rozmiar kolejności = {{size}}",
+              "pathPending": "Kolejność: oczekiwanie",
+              "pathValue": "Kolejność: {{order}}",
+              "pending": "oczekiwanie",
+              "resultCoins": "coins = {{value}}",
+              "resultPending": "coins pending",
+              "rightValue": "right = {{value}}",
+              "sentinelsValue": "wartownicy = 1 | {{values}} | 1",
+              "traceInterval": "Śledź #{{left}}..#{{right}}",
+              "upperTriangle": "górny trójkąt"
+            },
+            "modeLabel": "Burst Balloons",
+            "phases": {
+              "appendBurst": "Dopisanie pęknięcia do trasy",
+              "commitScore": "Zapis najlepszego wyniku przedziału",
+              "complete": "Gotowy plan pękania",
+              "initializeCanvas": "Inicjalizacja płótna przedziałów",
+              "inspectCandidate": "Sprawdzenie kandydata na ostatni balon",
+              "traceSplit": "Śledzenie zapisanego podziału"
+            }
           }
         },
         "string": {

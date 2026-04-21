@@ -1,7 +1,106 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { LcsScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.longestCommonSubsequence.modeLabel'),
+  phases: {
+    initializeBorders: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.phases.initializeBorders',
+    ),
+    compareCharacters: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.phases.compareCharacters',
+    ),
+    commitCell: t('features.algorithms.runtime.dp.longestCommonSubsequence.phases.commitCell'),
+    backtrackMatch: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.phases.backtrackMatch',
+    ),
+    backtrackUpward: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.phases.backtrackUpward',
+    ),
+    backtrackLeft: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.phases.backtrackLeft',
+    ),
+    complete: t('features.algorithms.runtime.dp.longestCommonSubsequence.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.initialize'),
+    compareCharacters: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.compareCharacters',
+    ),
+    commitCell: t('features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.commitCell'),
+    backtrackMatch: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.backtrackMatch',
+    ),
+    backtrackUpward: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.backtrackUpward',
+    ),
+    backtrackLeft: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.backtrackLeft',
+    ),
+    complete: t('features.algorithms.runtime.dp.longestCommonSubsequence.descriptions.complete'),
+  },
+  insights: {
+    sourceLabel: t('features.algorithms.runtime.dp.longestCommonSubsequence.insights.sourceLabel'),
+    targetLabel: t('features.algorithms.runtime.dp.longestCommonSubsequence.insights.targetLabel'),
+    lcsLengthLabel: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.insights.lcsLengthLabel',
+    ),
+    pathCharsLabel: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.insights.pathCharsLabel',
+    ),
+    gridLabel: t('features.algorithms.runtime.dp.longestCommonSubsequence.insights.gridLabel'),
+  },
+  labels: {
+    matchItem: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.matchItem'),
+    topValue: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.topValue'),
+    leftValue: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.leftValue'),
+    sourceStringLabel: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.labels.sourceStringLabel',
+    ),
+    targetStringLabel: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.labels.targetStringLabel',
+    ),
+    activeCell: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.activeCell'),
+    resultLength: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.resultLength'),
+    pathValue: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.pathValue'),
+    pathPending: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.pathPending'),
+    charPair: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.charPair'),
+    dpCell: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.dpCell'),
+    backtrackChar: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.labels.backtrackChar',
+    ),
+    backtrackUp: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.backtrackUp'),
+    backtrackLeft: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.labels.backtrackLeft',
+    ),
+    coords: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.coords'),
+    ellipsis: t('features.algorithms.runtime.dp.longestCommonSubsequence.labels.ellipsis'),
+  },
+  decisions: {
+    extendDiagonal: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.decisions.extendDiagonal',
+    ),
+    carryLargerNeighbor: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.decisions.carryLargerNeighbor',
+    ),
+    diagonalStored: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.decisions.diagonalStored',
+    ),
+    bestNeighborStored: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.decisions.bestNeighborStored',
+    ),
+    characterAdded: t(
+      'features.algorithms.runtime.dp.longestCommonSubsequence.decisions.characterAdded',
+    ),
+    followTop: t('features.algorithms.runtime.dp.longestCommonSubsequence.decisions.followTop'),
+    followLeft: t('features.algorithms.runtime.dp.longestCommonSubsequence.decisions.followLeft'),
+  },
+} as const;
 
 export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Generator<SortStep> {
   const source = scenario.source.split('');
@@ -19,9 +118,9 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
     table,
     backtrackCells,
     sequence,
-    description: 'Initialize the LCS table with zeroes on the top row and left column.',
+    description: I18N.descriptions.initialize,
     activeCodeLine: 2,
-    phaseLabel: 'Initialize DP borders',
+    phaseLabel: I18N.phases.initializeBorders,
     phase: 'init',
   });
 
@@ -40,20 +139,28 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
         sequence,
         activeCell: [row, col],
         candidateCells: charsMatch ? [[row - 1, col - 1]] : [[row - 1, col], [row, col - 1]],
-        secondaryItems: charsMatch ? [`match ${leftChar}`] : [`top = ${table[row - 1]![col]!}`, `left = ${table[row]![col - 1]!}`],
-        description: `Compare ${leftChar} against ${topChar}.`,
+        secondaryItems: charsMatch
+          ? [i18nText(I18N.labels.matchItem, { char: leftChar })]
+          : [
+              i18nText(I18N.labels.topValue, { value: table[row - 1]![col]! }),
+              i18nText(I18N.labels.leftValue, { value: table[row]![col - 1]! }),
+            ],
+        description: i18nText(I18N.descriptions.compareCharacters, {
+          leftChar,
+          topChar,
+        }),
         activeCodeLine: 5,
-        phaseLabel: 'Compare characters',
+        phaseLabel: I18N.phases.compareCharacters,
         phase: 'compare',
         computation: {
-          label: `${leftChar} × ${topChar}`,
+          label: i18nText(I18N.labels.charPair, { leftChar, topChar }),
           expression: charsMatch
             ? `dp[${row - 1}][${col - 1}] + 1`
             : `max(dp[${row - 1}][${col}], dp[${row}][${col - 1}])`,
           result: charsMatch
             ? String(table[row - 1]![col - 1]! + 1)
             : String(Math.max(table[row - 1]![col]!, table[row]![col - 1]!)),
-          decision: charsMatch ? 'extend common subsequence diagonally' : 'carry larger neighbor',
+          decision: charsMatch ? I18N.decisions.extendDiagonal : I18N.decisions.carryLargerNeighbor,
         },
       });
 
@@ -71,17 +178,21 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
         activeCell: [row, col],
         candidateCells: charsMatch ? [[row - 1, col - 1]] : [[row - 1, col], [row, col - 1]],
         activeCellStatus: charsMatch ? 'match' : 'chosen',
-        description: `Write dp[${row}][${col}] = ${table[row]![col]!}.`,
+        description: i18nText(I18N.descriptions.commitCell, {
+          row,
+          col,
+          value: table[row]![col]!,
+        }),
         activeCodeLine: charsMatch ? 6 : 8,
-        phaseLabel: 'Commit LCS cell',
+        phaseLabel: I18N.phases.commitCell,
         phase: 'settle-node',
         computation: {
-          label: `dp[${row}][${col}]`,
+          label: i18nText(I18N.labels.dpCell, { row, col }),
           expression: charsMatch
             ? `${table[row - 1]![col - 1]!} + 1`
             : `${table[row - 1]![col]!} vs ${table[row]![col - 1]!}`,
           result: String(table[row]![col]!),
-          decision: charsMatch ? 'diagonal match stored' : 'best neighbor stored',
+          decision: charsMatch ? I18N.decisions.diagonalStored : I18N.decisions.bestNeighborStored,
         },
       });
     }
@@ -102,16 +213,19 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
         sequence,
         activeCell: [row, col],
         activeCellStatus: 'backtrack',
-        pathLabel: `LCS: ${sequence.join('')}`,
-        description: `${source[row - 1]} matches ${target[col - 1]}, so include it and move diagonally.`,
+        pathLabel: lcsPathLabel(sequence),
+        description: i18nText(I18N.descriptions.backtrackMatch, {
+          sourceChar: source[row - 1],
+          targetChar: target[col - 1],
+        }),
         activeCodeLine: 11,
-        phaseLabel: 'Backtrack match',
+        phaseLabel: I18N.phases.backtrackMatch,
         phase: 'relax',
         computation: {
-          label: `Backtrack ${source[row - 1]}`,
-          expression: 'diagonal move',
-          result: `(${row - 1}, ${col - 1})`,
-          decision: 'character added to LCS',
+          label: i18nText(I18N.labels.backtrackChar, { char: source[row - 1] }),
+          expression: '↖',
+          result: i18nText(I18N.labels.coords, { row: row - 1, col: col - 1 }),
+          decision: I18N.decisions.characterAdded,
         },
       });
       row -= 1;
@@ -129,16 +243,16 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
         sequence,
         activeCell: [row, col],
         activeCellStatus: 'backtrack',
-        pathLabel: `LCS: ${sequence.join('') || '...'}`,
-        description: `Top neighbor is at least as strong, so move upward.`,
+        pathLabel: lcsPathLabel(sequence, true),
+        description: I18N.descriptions.backtrackUpward,
         activeCodeLine: 13,
-        phaseLabel: 'Backtrack upward',
+        phaseLabel: I18N.phases.backtrackUpward,
         phase: 'skip-relax',
         computation: {
-          label: 'Backtrack up',
+          label: I18N.labels.backtrackUp,
           expression: `${table[row - 1]![col]!} >= ${table[row]![col - 1]!}`,
-          result: `(${row - 1}, ${col})`,
-          decision: 'follow top branch',
+          result: i18nText(I18N.labels.coords, { row: row - 1, col }),
+          decision: I18N.decisions.followTop,
         },
       });
       row -= 1;
@@ -152,16 +266,16 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
         sequence,
         activeCell: [row, col],
         activeCellStatus: 'backtrack',
-        pathLabel: `LCS: ${sequence.join('') || '...'}`,
-        description: `Left neighbor is larger, so move left.`,
+        pathLabel: lcsPathLabel(sequence, true),
+        description: I18N.descriptions.backtrackLeft,
         activeCodeLine: 14,
-        phaseLabel: 'Backtrack left',
+        phaseLabel: I18N.phases.backtrackLeft,
         phase: 'skip-relax',
         computation: {
-          label: 'Backtrack left',
+          label: I18N.labels.backtrackLeft,
           expression: `${table[row]![col - 1]!} > ${table[row - 1]![col]!}`,
-          result: `(${row}, ${col - 1})`,
-          decision: 'follow left branch',
+          result: i18nText(I18N.labels.coords, { row, col: col - 1 }),
+          decision: I18N.decisions.followLeft,
         },
       });
       col -= 1;
@@ -175,10 +289,12 @@ export function* longestCommonSubsequenceGenerator(scenario: LcsScenario): Gener
     table,
     backtrackCells,
     sequence,
-    pathLabel: `LCS: ${sequence.join('') || '∅'}`,
-    description: `Backtracking finishes with longest common subsequence "${sequence.join('') || '∅'}".`,
+    pathLabel: lcsPathLabel(sequence),
+    description: i18nText(I18N.descriptions.complete, {
+      sequence: sequence.join('') || '∅',
+    }),
     activeCodeLine: 16,
-    phaseLabel: 'LCS complete',
+    phaseLabel: I18N.phases.complete,
     phase: 'complete',
   });
 }
@@ -190,15 +306,15 @@ function createStep(args: {
   readonly table: readonly (readonly number[])[];
   readonly backtrackCells: ReadonlySet<string>;
   readonly sequence: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'chosen' | 'match' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
-  readonly pathLabel?: string;
+  readonly secondaryItems?: readonly TranslatableText[];
+  readonly pathLabel?: TranslatableText;
   readonly computation?: DpComputation | null;
 }): SortStep {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
@@ -260,26 +376,34 @@ function createStep(args: {
   }
 
   const insights: DpInsight[] = [
-    { label: 'Source', value: String(args.source.length), tone: 'accent' },
-    { label: 'Target', value: String(args.target.length), tone: 'info' },
-    { label: 'LCS length', value: String(args.table[args.source.length]![args.target.length]!), tone: 'success' },
-    { label: 'Path chars', value: String(args.sequence.length), tone: 'warning' },
-    { label: 'Grid', value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
+    { label: I18N.insights.sourceLabel, value: String(args.source.length), tone: 'accent' },
+    { label: I18N.insights.targetLabel, value: String(args.target.length), tone: 'info' },
+    {
+      label: I18N.insights.lcsLengthLabel,
+      value: String(args.table[args.source.length]![args.target.length]!),
+      tone: 'success',
+    },
+    { label: I18N.insights.pathCharsLabel, value: String(args.sequence.length), tone: 'warning' },
+    { label: I18N.insights.gridLabel, value: `${args.table.length} × ${args.table[0]!.length}`, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'longest-common-subsequence',
-    modeLabel: 'Longest Common Subsequence',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `len = ${args.table[args.source.length]![args.target.length]!}`,
+    resultLabel: i18nText(I18N.labels.resultLength, {
+      value: args.table[args.source.length]![args.target.length]!,
+    }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
-    activeLabel: args.activeCell ? `${cellsLabel(args, args.activeCell[0], args.activeCell[1])}` : null,
-    pathLabel: args.pathLabel ?? `LCS: ${args.sequence.join('') || 'pending'}`,
-    primaryItemsLabel: 'Source string',
+    activeLabel: args.activeCell ? i18nText(I18N.labels.activeCell, {
+      cell: cellsLabel(args, args.activeCell[0], args.activeCell[1]),
+    }) : null,
+    pathLabel: args.pathLabel ?? lcsPathLabel(args.sequence, true),
+    primaryItemsLabel: I18N.labels.sourceStringLabel,
     primaryItems: args.source.map((char, index) => `${index + 1}:${char}`),
-    secondaryItemsLabel: 'Target string',
+    secondaryItemsLabel: I18N.labels.targetStringLabel,
     secondaryItems: args.secondaryItems ?? args.target.map((char, index) => `${index + 1}:${char}`),
     insights,
     rowHeaders,
@@ -297,4 +421,15 @@ function cellsLabel(args: { source: readonly string[]; target: readonly string[]
   const left = row === 0 ? '∅' : args.source[row - 1]!;
   const right = col === 0 ? '∅' : args.target[col - 1]!;
   return `${left} × ${right}`;
+}
+
+function lcsPathLabel(
+  sequence: readonly string[],
+  pending = false,
+): TranslatableText {
+  return sequence.length > 0
+    ? i18nText(I18N.labels.pathValue, { value: sequence.join('') })
+    : pending
+      ? i18nText(I18N.labels.pathValue, { value: '...' })
+      : i18nText(I18N.labels.pathValue, { value: '∅' });
 }

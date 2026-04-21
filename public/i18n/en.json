@@ -512,6 +512,173 @@
               "noSubsetFound": "No subset found",
               "subsetReady": "Subset ready"
             }
+          },
+          "longestCommonSubsequence": {
+            "decisions": {
+              "bestNeighborStored": "best neighbor stored",
+              "carryLargerNeighbor": "carry larger neighbor",
+              "characterAdded": "character added to LCS",
+              "diagonalStored": "diagonal match stored",
+              "extendDiagonal": "extend common subsequence diagonally",
+              "followLeft": "follow left branch",
+              "followTop": "follow top branch"
+            },
+            "descriptions": {
+              "backtrackLeft": "Left neighbor is larger, so move left.",
+              "backtrackMatch": "{{sourceChar}} matches {{targetChar}}, so include it and move diagonally.",
+              "backtrackUpward": "Top neighbor is at least as strong, so move upward.",
+              "commitCell": "Write dp[{{row}}][{{col}}] = {{value}}.",
+              "compareCharacters": "Compare {{leftChar}} against {{topChar}}.",
+              "complete": "Backtracking finishes with longest common subsequence \"{{sequence}}\".",
+              "initialize": "Initialize the LCS table with zeroes on the top row and left column."
+            },
+            "insights": {
+              "gridLabel": "Grid",
+              "lcsLengthLabel": "LCS length",
+              "pathCharsLabel": "Path chars",
+              "sourceLabel": "Source",
+              "targetLabel": "Target"
+            },
+            "labels": {
+              "activeCell": "{{cell}}",
+              "backtrackChar": "Backtrack {{char}}",
+              "backtrackLeft": "Backtrack left",
+              "backtrackUp": "Backtrack up",
+              "charPair": "{{leftChar}} × {{topChar}}",
+              "coords": "({{row}}, {{col}})",
+              "dpCell": "dp[{{row}}][{{col}}]",
+              "ellipsis": "...",
+              "leftValue": "left = {{value}}",
+              "matchItem": "match {{char}}",
+              "pathPending": "LCS: pending",
+              "pathValue": "LCS: {{value}}",
+              "resultLength": "len = {{value}}",
+              "sourceStringLabel": "Source string",
+              "targetStringLabel": "Target string",
+              "topValue": "top = {{value}}"
+            },
+            "modeLabel": "Longest Common Subsequence",
+            "phases": {
+              "backtrackLeft": "Backtrack left",
+              "backtrackMatch": "Backtrack match",
+              "backtrackUpward": "Backtrack upward",
+              "commitCell": "Commit LCS cell",
+              "compareCharacters": "Compare characters",
+              "complete": "LCS complete",
+              "initializeBorders": "Initialize DP borders"
+            }
+          },
+          "longestIncreasingSubsequence": {
+            "decisions": {
+              "bestPredecessorKept": "best predecessor kept",
+              "jumpToPredecessor": "jump to predecessor",
+              "keepPreviousBest": "keep previous best",
+              "lengthValue": "length {{value}}",
+              "newBestPredecessor": "new best predecessor",
+              "routeFlowsThrough": "route now flows through {{value}}",
+              "sequenceOrigin": "sequence origin reached",
+              "singleValue": "single-value subsequence",
+              "skipCandidate": "skip candidate"
+            },
+            "descriptions": {
+              "backtrack": "Trace LIS backwards through index {{index}}.",
+              "blocked": "Value {{from}} cannot extend into {{to}} because the sequence would stop increasing.",
+              "canExtend": "Value {{from}} can extend into {{to}}, so compare LIS length {{length}} + 1.",
+              "chooseEndpoint": "Pick index {{index}} as the LIS endpoint because it has the strongest length.",
+              "commitPredecessor": "Update LIS ending at index {{index}} to length {{length}} via predecessor index {{predecessor}}.",
+              "complete": "Recovered one longest increasing subsequence with length {{length}}.",
+              "initialize": "Initialize every position with subsequence length 1, because each value is a valid LIS by itself.",
+              "lockResult": "Finalize the best LIS that ends exactly at index {{index}}."
+            },
+            "insights": {
+              "bestLengthLabel": "Best length",
+              "chosenRouteLabel": "Chosen route",
+              "peakValueLabel": "Peak value",
+              "stripLabel": "Strip",
+              "valuesLabel": "Values"
+            },
+            "labels": {
+              "activeIndex": "idx {{index}} = {{value}}",
+              "bestEndpoint": "Best endpoint",
+              "blocked": "blocked",
+              "currentLengthsLabel": "Current lengths",
+              "edgeLabel": "{{from}} -> {{to}}",
+              "finishValue": "finish {{value}}",
+              "idxValue": "i{{index}}",
+              "inputValuesLabel": "Input values",
+              "lenIndex": "len[{{index}}]",
+              "pathPending": "LIS: pending",
+              "pathValue": "LIS: {{values}}",
+              "prevValue": "prev {{value}}",
+              "resultLength": "len = {{value}}",
+              "startValue": "start",
+              "stripValue": "3 × n",
+              "traceValue": "Trace {{value}}"
+            },
+            "modeLabel": "Longest Increasing Subsequence",
+            "phases": {
+              "backtrackPath": "Backtrack LIS path",
+              "chooseEndpoint": "Choose best endpoint",
+              "commitPredecessor": "Commit better predecessor",
+              "complete": "LIS ready",
+              "initializeSingletons": "Initialize singleton lengths",
+              "inspectPredecessor": "Inspect predecessor",
+              "lockIndexResult": "Lock index result"
+            }
+          },
+          "burstBalloons": {
+            "decisions": {
+              "appendFinisher": "append interval finisher to burst order",
+              "expandSubintervals": "expand left and right subintervals first",
+              "keepPreviousSplit": "keep previous split",
+              "newBestLastBalloon": "new best last balloon",
+              "splitSaved": "split saved for interval #{{left}}..#{{right}}"
+            },
+            "descriptions": {
+              "appendBurst": "After both sides are solved, balloon #{{pivot}} bursts last for interval #{{left}}..#{{right}}.",
+              "commitScore": "Store best coin haul for interval #{{left}}..#{{right}} with balloon #{{pivot}} as the last burst.",
+              "complete": "Recovered one optimal burst order with {{coins}} coins.",
+              "initialize": "Pad the array with sentinel 1s so every interval can treat its chosen last balloon uniformly.",
+              "inspectCandidate": "Try keeping balloon #{{pivot}} as the last one burst inside interval #{{left}}..#{{right}}.",
+              "traceSplit": "Optimal interval #{{left}}..#{{right}} leaves balloon #{{pivot}} for the final pop in this subproblem."
+            },
+            "insights": {
+              "balloonsLabel": "Balloons",
+              "bestCoinsLabel": "Best coins",
+              "burstOrderLabel": "Burst order",
+              "shapeLabel": "Shape",
+              "valuesLabel": "Values"
+            },
+            "labels": {
+              "activeInterval": "#{{left}}..#{{right}}",
+              "balloonValuesLabel": "Balloon values",
+              "burstLabel": "Burst #{{pivot}}",
+              "burstValue": "burst = {{value}}",
+              "dpCell": "dp[{{left}}][{{right}}]",
+              "intervalComputation": "Interval #{{left}}..#{{right}}",
+              "intervalLensLabel": "Interval lens",
+              "lastPivot": "last #{{pivot}}",
+              "leftValue": "left = {{value}}",
+              "orderSizeValue": "order size = {{size}}",
+              "pathPending": "Order: pending",
+              "pathValue": "Order: {{order}}",
+              "pending": "pending",
+              "resultCoins": "coins = {{value}}",
+              "resultPending": "coins pending",
+              "rightValue": "right = {{value}}",
+              "sentinelsValue": "sentinels = 1 | {{values}} | 1",
+              "traceInterval": "Trace #{{left}}..#{{right}}",
+              "upperTriangle": "upper triangle"
+            },
+            "modeLabel": "Burst Balloons",
+            "phases": {
+              "appendBurst": "Append burst to route",
+              "commitScore": "Commit best interval score",
+              "complete": "Burst plan ready",
+              "initializeCanvas": "Initialize interval canvas",
+              "inspectCandidate": "Inspect last-burst candidate",
+              "traceSplit": "Trace saved split"
+            }
           }
         },
         "string": {

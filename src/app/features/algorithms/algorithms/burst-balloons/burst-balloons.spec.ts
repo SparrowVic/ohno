@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { burstBalloonsGenerator } from './burst-balloons';
 import type { SortStep } from '../../models/sort-step';
 import type { BurstBalloonsScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: BurstBalloonsScenario): SortStep[] {
   return [...burstBalloonsGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('burst-balloons', () => {
@@ -20,10 +30,20 @@ describe('burst-balloons', () => {
 
     expect(steps[0]?.phase).toBe('init');
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('coins = 10');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Order: #1 → #2');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.burstBalloons.labels.resultCoins',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe(10);
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.burstBalloons.labels.pathValue',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.order).toBe('#1 → #2');
     expect(
-      steps.filter((step) => step.dp?.phaseLabel === 'Append burst to route').length,
+      steps.filter(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.burstBalloons.phases.appendBurst',
+      ).length,
     ).toBe(2);
   });
 
@@ -36,10 +56,14 @@ describe('burst-balloons', () => {
       balloons: [7],
     });
 
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('coins = 7');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Order: #1');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe(7);
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.order).toBe('#1');
     expect(
-      steps.filter((step) => step.dp?.phaseLabel === 'Trace saved split').length,
+      steps.filter(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.burstBalloons.phases.traceSplit',
+      ).length,
     ).toBe(1);
   });
 });
