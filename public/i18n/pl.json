@@ -344,6 +344,176 @@
         }
       },
       "runtime": {
+        "dp": {
+          "coinChange": {
+            "decisions": {
+              "carryPreviousBest": "przenieś poprzedni najlepszy wynik",
+              "moveUpward": "przejdź w górę",
+              "reuseCoinInUnboundedRow": "użyj ponownie monety w nieograniczonym wierszu",
+              "reuseSameDenominationRow": "zostań w tym samym wierszu nominału",
+              "skipBranchKept": "zostaje gałąź pomiń",
+              "takeBranchChosen": "wygrywa gałąź weź"
+            },
+            "descriptions": {
+              "backtrackSkip": "Pomiń nominał {{coin}} i przejdź do poprzedniego wiersza.",
+              "backtrackTake": "Weź monetę {{coin}} i zostań w tym samym wierszu, bo monety są nieograniczone.",
+              "compareSkipTake": "Dla kwoty {{amount}} porównaj pominięcie monety {{coin}} z jej ponownym użyciem w tym samym wierszu.",
+              "complete": "Minimalna liczba monet dla kwoty {{target}} to {{best}}.",
+              "forcedSkip": "Moneta {{coin}} nie pomaga przy kwocie {{amount}}, więc zostaje tylko gałąź pomiń.",
+              "initialize": "Ustaw kwotę 0 na 0 monet i oznacz wszystkie pozostałe kwoty jako nieosiągalne przed przetwarzaniem nominałów.",
+              "storeBest": "Zapisz minimalną liczbę monet dla kwoty {{amount}} po użyciu pierwszych {{row}} nominałów.",
+              "unreachable": "Kwota {{target}} jest nieosiągalna przy dostępnych nominałach."
+            },
+            "insights": {
+              "coinsLabel": "Monety",
+              "gridLabel": "Siatka",
+              "minCountLabel": "Min. liczba",
+              "pickedLabel": "Wybrane",
+              "targetLabel": "Cel"
+            },
+            "labels": {
+              "activeCell": "wiersz monety {{row}} · kwota {{amount}}",
+              "amountValue": "kwota {{amount}}",
+              "bestValue": "best = {{value}}",
+              "coinAmountComputation": "{{coin}} dla kwoty {{amount}}",
+              "coinPath": "Monety: {{coins}}",
+              "coinValue": "moneta {{coin}}",
+              "coinsPending": "Monety: oczekiwanie",
+              "currentLensLabel": "Bieżąca soczewka",
+              "denominationsLabel": "Nominały",
+              "dpCellComputation": "dp[{{row}}][{{amount}}]",
+              "resultMinCoins": "min coins = {{value}}",
+              "rowValue": "wiersz {{row}}",
+              "skipCoinComputation": "Pomiń {{coin}}",
+              "skipValue": "skip = {{value}}",
+              "takeCoinComputation": "Weź {{coin}}",
+              "takeUnavailable": "gałąź take niedostępna",
+              "takeValue": "take = {{value}}",
+              "unboundedRowHint": "nieograniczony wybór zostaje w tym samym wierszu"
+            },
+            "modeLabel": "Coin Change",
+            "phases": {
+              "backtrackSkip": "Backtrack pomiń",
+              "backtrackTake": "Backtrack weź",
+              "commitBestCoinCount": "Zapis najlepszego wyniku",
+              "compareSkipTake": "Porównanie pomiń kontra weź",
+              "initializeUnreachable": "Inicjalizacja nieosiągalnych stanów",
+              "noSolution": "Brak rozwiązania",
+              "optimalChangeReady": "Gotowa optymalna reszta"
+            }
+          },
+          "knapsack01": {
+            "decisions": {
+              "forcedSkip": "wymuszone pominięcie",
+              "itemSelected": "przedmiot wybrany",
+              "itemSkipped": "przedmiot pominięty",
+              "keepSkipBranch": "zostaw gałąź pomiń",
+              "keepTakeBranch": "zostaw gałąź weź",
+              "skipBranchStaysBest": "najlepsza pozostaje gałąź pomiń",
+              "takeBranchWins": "wygrywa gałąź weź"
+            },
+            "descriptions": {
+              "backtrackChosen": "{{item}} należy do optymalnego plecaka, więc skocz po przekątnej o jego wagę {{weight}}.",
+              "backtrackSkip": "{{item}} nie należy do optymalnego plecaka przy tej pojemności, więc przejdź w górę.",
+              "commitCell": "Zapisz dp[{{row}}][{{cap}}] = {{value}}.",
+              "compareSkipTake": "Przy pojemności {{cap}} porównaj pominięcie {{item}} z jego wzięciem.",
+              "complete": "Optymalna wartość plecaka to {{value}} przy {{count}} wybranych przedmiotach.",
+              "forcedSkip": "{{item}} jest za ciężki dla pojemności {{cap}}, więc legalna jest tylko gałąź pomiń.",
+              "initialize": "Zainicjalizuj tabelę {{rows}} × {{cols}}. Wiersz 0 i pojemność 0 tworzą przypadki bazowe."
+            },
+            "insights": {
+              "bestValueLabel": "Najlepsza wartość",
+              "capacityLabel": "Pojemność",
+              "itemsLabel": "Przedmioty",
+              "pickedLabel": "Wybrane",
+              "tableLabel": "Tabela"
+            },
+            "labels": {
+              "activeCell": "wiersz {{row}} · pojemność {{cap}}",
+              "backtrackItem": "Odtwarzaj {{item}}",
+              "bestSoFar": "best so far = {{value}}",
+              "capValue": "pojemność {{cap}}",
+              "currentLensLabel": "Bieżąca soczewka",
+              "dpCellComputation": "dp[{{row}}][{{cap}}]",
+              "entersCandidate": "{{item}} wchodzi do kandydującego pakietu",
+              "itemAtCapacity": "{{item}} przy pojemności {{cap}}",
+              "itemsListLabel": "Przedmioty",
+              "packPath": "Plecak: {{items}}",
+              "packPending": "Plecak: jeszcze bez odtworzenia",
+              "resultBest": "best = {{value}}",
+              "rowValue": "wiersz {{row}}",
+              "skipValue": "skip = {{value}}",
+              "skippedHere": "{{item}} pominięty tutaj",
+              "tableFill": "wypełnianie tabeli",
+              "takeUnavailable": "gałąź take niedostępna",
+              "takeValue": "take = {{value}}"
+            },
+            "modeLabel": "Knapsack 0/1",
+            "phases": {
+              "backtrackChosenItem": "Backtrack wybranego przedmiotu",
+              "backtrackSkip": "Backtrack pomiń",
+              "commitTableCell": "Zapis komórki tabeli",
+              "compareSkipTake": "Porównanie pomiń kontra weź",
+              "initializeBaseRow": "Inicjalizacja wiersza bazowego",
+              "optimalSolutionReady": "Gotowe optymalne rozwiązanie"
+            }
+          },
+          "subsetSum": {
+            "decisions": {
+              "includeValueInSubset": "dodaj wartość do podzbioru",
+              "reachable": "osiągalne",
+              "skipAlreadyReaches": "gałąź pomiń już to osiąga",
+              "skipValue": "pomiń wartość",
+              "stillImpossible": "nadal niemożliwe",
+              "sumStaysUnreachable": "suma pozostaje nieosiągalna",
+              "takeOpensNewReachableSum": "gałąź weź otwiera nową osiągalną sumę"
+            },
+            "descriptions": {
+              "backtrackSkip": "Suma {{sum}} była już osiągalna bez {{value}}, więc przejdź w górę i je pomiń.",
+              "backtrackTake": "{{value}} należy do zwycięskiego podzbioru, więc skocz do sumy {{sum}}.",
+              "compareBranches": "Sprawdź, czy suma {{sum}} jest osiągalna przez pominięcie {{value}} albo jego wzięcie.",
+              "complete": "Odtworzono jeden podzbiór, który osiąga {{target}}.",
+              "forcedSkip": "{{value}} jest większe niż suma {{sum}}, więc legalna jest tylko gałąź pomiń.",
+              "impossible": "Docelowa suma {{target}} jest niemożliwa do osiągnięcia z dostępnych liczb.",
+              "initialize": "Ustaw sumę 0 jako osiągalną i oznacz wszystkie pozostałe sumy jako nieosiągalne przed rozważeniem jakichkolwiek liczb.",
+              "storeReachability": "Zapisz osiągalność sumy {{sum}} po przetworzeniu pierwszych {{row}} liczb."
+            },
+            "insights": {
+              "chosenLabel": "Wybrane",
+              "gridLabel": "Siatka",
+              "reachableLabel": "Osiągalne",
+              "targetLabel": "Cel",
+              "valuesLabel": "Wartości"
+            },
+            "labels": {
+              "activeCell": "wiersz {{row}} · suma {{sum}}",
+              "booleanReachability": "boolowska osiągalność",
+              "currentLensLabel": "Bieżąca soczewka",
+              "dpCellComputation": "dp[{{row}}][{{sum}}]",
+              "numbersLabel": "Liczby",
+              "resultTarget": "target = {{value}}",
+              "rowValue": "wiersz {{row}}",
+              "skipValue": "skip = {{value}}",
+              "skipValueComputation": "Pomiń {{value}}",
+              "subsetPath": "Podzbiór: {{values}}",
+              "subsetPending": "Podzbiór: oczekiwanie",
+              "takeUnavailable": "gałąź take niedostępna",
+              "takeValue": "take = {{value}}",
+              "takeValueComputation": "Weź {{value}}",
+              "valueForSumComputation": "{{value}} dla sumy {{sum}}"
+            },
+            "modeLabel": "Subset Sum",
+            "phases": {
+              "backtrackSkip": "Backtrack pomiń",
+              "backtrackTake": "Backtrack weź",
+              "checkSubsetBranches": "Sprawdzenie gałęzi podzbioru",
+              "commitReachableState": "Zapis osiągalnego stanu",
+              "initializeBooleanTable": "Inicjalizacja tabeli boolowskiej",
+              "noSubsetFound": "Nie znaleziono podzbioru",
+              "subsetReady": "Podzbiór gotowy"
+            }
+          }
+        },
         "string": {
           "kmp": {
             "computation": {
@@ -490,6 +660,203 @@
               "mirrorReuse": "Użycie lustra",
               "setup": "Przygotowanie",
               "shiftWindow": "Przesunięcie okna"
+            }
+          },
+          "burrowsWheelerTransform": {
+            "computation": {
+              "expressions": {
+                "bwtOutput": "L = ostatnia kolumna posortowanych rotacji",
+                "rowPosition": "wiersz → pozycja {{position}}",
+                "runComparison": "{{inputRuns}} serii wejściowych → {{outputRuns}} serii BWT"
+              },
+              "labels": {
+                "bwtOutput": "Wynik BWT",
+                "insertionPoint": "Punkt wstawienia",
+                "rotationMatrix": "Macierz rotacji",
+                "rowCompare": "Porównanie wierszy",
+                "runComparison": "Porównanie serii"
+              },
+              "notes": {
+                "bwtOutput": "To przestawienie jest odwracalne, a przy tym dużo przyjaźniejsze dla dalszej kompresji w stylu RLE.",
+                "insertionPoint": "Jeszcze jedna rotacja wskakuje na swoje ostateczne miejsce w sortowaniu.",
+                "rotationMatrix": "BWT sortuje rotacje cykliczne, a nie sufiksy.",
+                "rowCompare": "Używamy tu kroków podobnych do insertion sorta tylko po to, żeby ruch macierzy był czytelny.",
+                "runComparison": "Mniej, ale dłuższych serii to dokładnie powód, dla którego BWT działa tak dobrze przed RLE lub kodowaniem entropijnym."
+              }
+            },
+            "decisions": {
+              "differentStartingPoints": "Każdy wiersz to ten sam ciąg oglądany od innego punktu startowego.",
+              "lastColumnOutput": "Ostatnia kolumna to wynik Burrowsa-Wheelera; pierwsza kolumna pomaga zrozumieć strukturę posortowanej macierzy.",
+              "lexicographicClusters": "Porządek leksykograficzny sprawia, że ostatnia kolumna grupuje podobne znaki obok siebie.",
+              "transformPreparesCompression": "Transformacja sama niczego nie kompresuje, ale skupia powtarzające się symbole, żeby kolejne etapy zrobiły to lepiej.",
+              "upperMatrixSorted": "Górna część macierzy jest już w ostatecznym porządku leksykograficznym."
+            },
+            "descriptions": {
+              "collectLastColumn": "Odczytaj ostatnią kolumnę L = \"{{lastColumn}}\". Podobne znaki są teraz zgrupowane znacznie ciaśniej niż na wejściu.",
+              "compareRows": "Porównaj \"{{current}}\" z \"{{previous}}\", żeby ustawić następną rotację leksykograficznie.",
+              "complete": "BWT zakończone. Wynik \"{{lastColumn}}\" tworzy {{outputRuns}} serii wobec {{inputRuns}} w oryginalnym ciągu.",
+              "generateRotations": "Wygeneruj wszystkie {{count}} cykliczne rotacje ciągu \"{{source}}\".",
+              "rowPlaced": "Wiersz \"{{row}}\" został teraz ustawiony na posortowanej pozycji {{position}}."
+            },
+            "insights": {
+              "firstColumnLabel": "Kolumna F",
+              "gainValue": "{{ratio}}x",
+              "lastColumnLabel": "Kolumna L",
+              "lengthLabel": "Długość",
+              "noneValue": "—",
+              "rowsValue": "{{count}} wierszy",
+              "runGainLabel": "Zysk serii"
+            },
+            "labels": {
+              "bwtReady": "BWT gotowe",
+              "densityValue": "{{ratio}}x gęściej",
+              "insertRow": "wstaw wiersz {{index}}",
+              "matrixUnsorted": "Macierz nieposortowana",
+              "readColumns": "Odczytaj F i L",
+              "rotationsCount": "{{count}} rotacji",
+              "rowsOrdered": "{{current}} / {{total}} wierszy ułożonych",
+              "shiftUpward": "przesuń w górę",
+              "sortedPrefix": "posortowany prefiks {{current}} / {{total}}",
+              "sortedPrefixCount": "posortowany prefiks {{count}}"
+            },
+            "modeLabel": "Macierz rotacji",
+            "phases": {
+              "collectColumns": "Zbieranie kolumn",
+              "complete": "Zakończono",
+              "rotate": "Rotacje",
+              "rowCommitted": "Zapisany wiersz",
+              "sortRows": "Sortowanie wierszy"
+            }
+          },
+          "huffmanCoding": {
+            "computation": {
+              "expressions": {
+                "codeFromPath": "code['{{char}}'] = ścieżka od korzenia do liścia"
+              },
+              "labels": {
+                "characterFrequency": "Częstość znaku",
+                "initialHeap": "Kopiec początkowy",
+                "newInternalNode": "Nowy węzeł wewnętrzny",
+                "popTwoMinimums": "Zdejmij dwa minima",
+                "prefixCode": "Kod prefiksowy"
+              },
+              "notes": {
+                "characterFrequency": "Większa częstość oznacza krótszy kod prefiksowy i mniej bitów na wystąpienie.",
+                "initialHeap": "Każdy liść stanie się dolną warstwą drzewa Huffmana.",
+                "newInternalNode": "Lewe dziecko dostaje '0', prawe dziecko dostaje '1' w prefiksie kodu.",
+                "popTwoMinimums": "Częstość scalonego węzła to suma częstości jego dwóch dzieci.",
+                "prefixCodeFinal": "Suma: {{original}} → {{compressed}} bitów ({{savings}}% oszczędności).",
+                "prefixCodeSymbol": "freq={{freq}} × {{bits}} bitów = {{total}} bitów dla tego symbolu."
+              },
+              "results": {
+                "codeBits": "code = '{{code}}', bity = {{bits}}",
+                "frequencyValue": "freq = {{freq}}",
+                "heapSize": "rozmiar = {{size}}",
+                "newNodeFrequency": "częstość nowego węzła = {{left}} + {{right}} = {{total}}"
+              }
+            },
+            "decisions": {
+              "frequentShorterCodes": "Znaki pojawiające się częściej dostaną krótsze kody.",
+              "mergeSmallestFirst": "Zawsze scalaj najpierw dwa węzły o najmniejszych częstościach.",
+              "minHeapReady": "Kopiec minimalny zawsze podaje dwa węzły o najniższej częstości do scalenia.",
+              "pushMergedNode": "Włóż scalony węzeł z powrotem do kopca przed następną rundą.",
+              "rootReady": "Został tylko jeden węzeł — to korzeń drzewa Huffmana!",
+              "tracePath": "Prześledź ścieżkę od korzenia do liścia '{{char}}': lewo = '0', prawo = '1'."
+            },
+            "descriptions": {
+              "assignCode": "Przypisz kod '{{code}}' ({{bits}} bitów) do '{{char}}' (freq={{freq}}).",
+              "buildHeap": "Zbuduj początkowy kopiec minimalny z {{count}} liści, po jednym na każdy unikalny znak.",
+              "countFrequency": "Policz częstość: '{{char}}' ma liczność {{freq}} w \"{{source}}\".",
+              "createdInternalNode": "Utworzono węzeł wewnętrzny o freq={{freq}}. Kopiec ma teraz {{heapSize}} węzłów.",
+              "popMinimums": "Krok scalania {{step}}: zdejmij minima '{{leftChar}}' ({{leftFreq}}) i '{{rightChar}}' ({{rightFreq}})."
+            },
+            "insights": {
+              "codesAssignedLabel": "Przypisane kody",
+              "heapSizeLabel": "Rozmiar kopca",
+              "noneValue": "—",
+              "savingsLabel": "Oszczędność",
+              "savingsValue": "{{percent}}%",
+              "uniqueCharsLabel": "Unikalne znaki"
+            },
+            "labels": {
+              "codeAssignment": "'{{char}}' → '{{code}}'",
+              "codesProgress": "{{current}} z {{total}} kodów",
+              "compressedBits": "{{bits}} skompresowanych bitów",
+              "countedProgress": "{{current}} z {{total}} znaków policzonych",
+              "heapSize": "Rozmiar kopca = {{size}}",
+              "leafNodes": "{{count}} węzłów liści",
+              "newNodeFrequency": "Częstość nowego węzła = {{freq}}",
+              "readyToMerge": "Gotowe do scalania"
+            },
+            "modeLabel": "Drzewo Huffmana",
+            "phases": {
+              "assignCodes": "Nadawanie kodów",
+              "buildHeap": "Budowa kopca",
+              "countFrequencies": "Liczenie częstości",
+              "mergeNodes": "Scalanie węzłów",
+              "popMinimums": "Zdjęcie minimów"
+            }
+          },
+          "runLengthEncoding": {
+            "computation": {
+              "labels": {
+                "compressionRatio": "Współczynnik kompresji",
+                "emitRun": "Emisja serii",
+                "extendRun": "Rozszerz serię",
+                "input": "Wejście",
+                "newRun": "Nowa seria"
+              },
+              "notes": {
+                "compressionSaves": "Wyjście jest krótsze od wejścia — RLE dało kompresję.",
+                "emitRun": "Jedna para (liczba, znak) zastępuje całą serię w strumieniu wyjściowym.",
+                "extendRun": "Każdy pasujący znak zwiększa licznik serii o jeden.",
+                "input": "Skompresujemy serie powtarzających się znaków do par liczba-znak.",
+                "newRun": "To startowy licznik dla tej serii. Będzie rosnąć, dopóki kolejny znak pasuje.",
+                "noCompressionGain": "Wyjście nie jest krótsze — RLE działa najlepiej na długich powtórzeniach."
+              },
+              "results": {
+                "countValue": "liczba = {{count}}",
+                "inputLength": "długość = {{count}}",
+                "outputValue": "wyjście = \"{{output}}\"",
+                "ratioValue": "{{ratio}} ({{percent}}%)"
+              }
+            },
+            "decisions": {
+              "compressionSaves": "Kompresja oszczędza miejsce — zakodowane wyjście jest krótsze od oryginału.",
+              "eachRunPair": "Każda seria identycznych znaków zamienia się w jedną parę (znak, liczba).",
+              "emitRun": "Seria skończyła się na pozycji {{endIndex}}. Wyemituj ({{count}}, '{{char}}') do wyjścia.",
+              "extendRun": "text[{{index}}] = '{{char}}' = groupChar '{{groupChar}}' → rozszerz serię.",
+              "newRun": "'{{char}}' zaczyna nową serię. Policz, ile kolejnych '{{char}}' występuje z rzędu.",
+              "noCompressionGain": "Brak zysku z kompresji — zakodowane wyjście jest tak samo długie lub dłuższe od oryginału."
+            },
+            "descriptions": {
+              "complete": "RLE zakończone. Znaleziono {{runs}} serii. Wynik: \"{{output}}\" ({{outputLength}} znaków vs {{inputLength}} na wejściu → {{percent}}% współczynnika).",
+              "emit": "Wyemituj serię: '{{char}}' × {{count}}. Wyjście staje się \"{{output}}\".",
+              "extend": "Pozycja {{index}}: '{{char}}' zgadza się z '{{groupChar}}'. Rozszerzamy serię (count = {{count}}).",
+              "scan": "Pozycja {{index}}: znaleziono '{{char}}'. Start nowej serii.",
+              "start": "Uruchom RLE na \"{{text}}\" ({{length}} znaków). Skanujemy od lewej do prawej, grupując kolejne identyczne znaki."
+            },
+            "insights": {
+              "charsValue": "{{count}} znaków",
+              "inputLengthLabel": "Długość wejścia",
+              "noneValue": "—",
+              "outputSoFarLabel": "Wyjście dotąd",
+              "ratioLabel": "Współczynnik",
+              "ratioValue": "{{percent}}%",
+              "runsCountLabel": "Liczba serii"
+            },
+            "labels": {
+              "emitActive": "seria '{{char}}'×{{count}}",
+              "noRunsYet": "Jeszcze bez serii",
+              "runCount": "liczba serii = {{count}}"
+            },
+            "modeLabel": "Skaner serii",
+            "phases": {
+              "complete": "Zakończono",
+              "emit": "Emisja",
+              "extend": "Rozszerzanie",
+              "scan": "Skanowanie",
+              "setup": "Przygotowanie"
             }
           },
           "rabinKarp": {

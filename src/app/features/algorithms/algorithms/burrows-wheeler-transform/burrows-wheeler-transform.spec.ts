@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import type { BurrowsWheelerScenario } from '../../utils/string-scenarios/string-scenarios';
 import { burrowsWheelerTransformGenerator } from './burrows-wheeler-transform';
 
 function collectSteps(scenario: BurrowsWheelerScenario): SortStep[] {
   return [...burrowsWheelerTransformGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('burrows-wheeler-transform', () => {
@@ -23,7 +29,13 @@ describe('burrows-wheeler-transform', () => {
     expect(finalStep?.string?.firstColumn).toBe('$AAABNN');
     expect(finalStep?.string?.runGroups).toHaveLength(5);
     expect(finalStep?.string?.compressionRatio).toBeCloseTo(1.4);
-    expect(steps.some((step) => step.string?.phaseLabel === 'Sort rows')).toBe(true);
+    expect(
+      steps.some(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.burrowsWheelerTransform.phases.sortRows',
+      ),
+    ).toBe(true);
   });
 
   it('keeps the run count flat when the input has no repeated clustering benefit', () => {

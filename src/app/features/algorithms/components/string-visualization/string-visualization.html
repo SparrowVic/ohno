@@ -52,7 +52,7 @@
             <span class="calc-card__label">{{ computation.label | i18nText }}</span>
             <span class="calc-card__expression">{{ computation.expression | i18nText }}</span>
             @if (computation.result) {
-              <span class="calc-card__result">{{ computation.result }}</span>
+              <span class="calc-card__result">{{ computation.result | i18nText }}</span>
             }
             <span class="calc-card__note">{{ computation.note | i18nText }}</span>
           </div>

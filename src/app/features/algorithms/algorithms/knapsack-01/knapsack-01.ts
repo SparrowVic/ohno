@@ -1,7 +1,73 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { KnapsackScenario } from '../../utils/dp-scenarios/dp-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.dp.knapsack01.modeLabel'),
+  phases: {
+    initializeBaseRow: t('features.algorithms.runtime.dp.knapsack01.phases.initializeBaseRow'),
+    compareSkipTake: t('features.algorithms.runtime.dp.knapsack01.phases.compareSkipTake'),
+    commitTableCell: t('features.algorithms.runtime.dp.knapsack01.phases.commitTableCell'),
+    backtrackChosenItem: t(
+      'features.algorithms.runtime.dp.knapsack01.phases.backtrackChosenItem',
+    ),
+    backtrackSkip: t('features.algorithms.runtime.dp.knapsack01.phases.backtrackSkip'),
+    optimalSolutionReady: t(
+      'features.algorithms.runtime.dp.knapsack01.phases.optimalSolutionReady',
+    ),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.dp.knapsack01.descriptions.initialize'),
+    compareSkipTake: t('features.algorithms.runtime.dp.knapsack01.descriptions.compareSkipTake'),
+    forcedSkip: t('features.algorithms.runtime.dp.knapsack01.descriptions.forcedSkip'),
+    commitCell: t('features.algorithms.runtime.dp.knapsack01.descriptions.commitCell'),
+    backtrackChosen: t('features.algorithms.runtime.dp.knapsack01.descriptions.backtrackChosen'),
+    backtrackSkip: t('features.algorithms.runtime.dp.knapsack01.descriptions.backtrackSkip'),
+    complete: t('features.algorithms.runtime.dp.knapsack01.descriptions.complete'),
+  },
+  insights: {
+    capacityLabel: t('features.algorithms.runtime.dp.knapsack01.insights.capacityLabel'),
+    itemsLabel: t('features.algorithms.runtime.dp.knapsack01.insights.itemsLabel'),
+    bestValueLabel: t('features.algorithms.runtime.dp.knapsack01.insights.bestValueLabel'),
+    pickedLabel: t('features.algorithms.runtime.dp.knapsack01.insights.pickedLabel'),
+    tableLabel: t('features.algorithms.runtime.dp.knapsack01.insights.tableLabel'),
+  },
+  labels: {
+    resultBest: t('features.algorithms.runtime.dp.knapsack01.labels.resultBest'),
+    packPath: t('features.algorithms.runtime.dp.knapsack01.labels.packPath'),
+    packPending: t('features.algorithms.runtime.dp.knapsack01.labels.packPending'),
+    activeCell: t('features.algorithms.runtime.dp.knapsack01.labels.activeCell'),
+    itemsListLabel: t('features.algorithms.runtime.dp.knapsack01.labels.itemsListLabel'),
+    currentLensLabel: t('features.algorithms.runtime.dp.knapsack01.labels.currentLensLabel'),
+    tableFill: t('features.algorithms.runtime.dp.knapsack01.labels.tableFill'),
+    skipValue: t('features.algorithms.runtime.dp.knapsack01.labels.skipValue'),
+    takeValue: t('features.algorithms.runtime.dp.knapsack01.labels.takeValue'),
+    takeUnavailable: t('features.algorithms.runtime.dp.knapsack01.labels.takeUnavailable'),
+    bestSoFar: t('features.algorithms.runtime.dp.knapsack01.labels.bestSoFar'),
+    entersCandidate: t('features.algorithms.runtime.dp.knapsack01.labels.entersCandidate'),
+    skippedHere: t('features.algorithms.runtime.dp.knapsack01.labels.skippedHere'),
+    itemAtCapacity: t('features.algorithms.runtime.dp.knapsack01.labels.itemAtCapacity'),
+    dpCellComputation: t('features.algorithms.runtime.dp.knapsack01.labels.dpCellComputation'),
+    backtrackItem: t('features.algorithms.runtime.dp.knapsack01.labels.backtrackItem'),
+    capValue: t('features.algorithms.runtime.dp.knapsack01.labels.capValue'),
+    rowValue: t('features.algorithms.runtime.dp.knapsack01.labels.rowValue'),
+  },
+  decisions: {
+    takeBranchWins: t('features.algorithms.runtime.dp.knapsack01.decisions.takeBranchWins'),
+    skipBranchStaysBest: t(
+      'features.algorithms.runtime.dp.knapsack01.decisions.skipBranchStaysBest',
+    ),
+    forcedSkip: t('features.algorithms.runtime.dp.knapsack01.decisions.forcedSkip'),
+    keepTakeBranch: t('features.algorithms.runtime.dp.knapsack01.decisions.keepTakeBranch'),
+    keepSkipBranch: t('features.algorithms.runtime.dp.knapsack01.decisions.keepSkipBranch'),
+    itemSelected: t('features.algorithms.runtime.dp.knapsack01.decisions.itemSelected'),
+    itemSkipped: t('features.algorithms.runtime.dp.knapsack01.decisions.itemSkipped'),
+  },
+} as const;
 
 export function* knapsack01Generator(scenario: KnapsackScenario): Generator<SortStep> {
   const itemCount = scenario.items.length;
@@ -17,9 +83,12 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
     table,
     chosenItems,
     backtrackCells,
-    description: `Initialize a ${itemCount + 1} × ${capacity + 1} table. Row 0 and capacity 0 form the base cases.`,
+    description: i18nText(I18N.descriptions.initialize, {
+      rows: itemCount + 1,
+      cols: capacity + 1,
+    }),
     activeCodeLine: 2,
-    phaseLabel: 'Initialize base row',
+    phaseLabel: I18N.phases.initializeBaseRow,
     phase: 'init',
   });
 
@@ -44,26 +113,26 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
             ]
           : [[row - 1, cap]],
         secondaryItems: [
-          `skip = ${skipValue}`,
-          canTake ? `take = ${takeValue}` : `take unavailable`,
+          i18nText(I18N.labels.skipValue, { value: skipValue }),
+          canTake ? i18nText(I18N.labels.takeValue, { value: takeValue }) : I18N.labels.takeUnavailable,
         ],
         description: canTake
-          ? `At capacity ${cap}, compare skipping ${item.label} with taking it.`
-          : `${item.label} is too heavy for capacity ${cap}, so only the skip branch is legal.`,
+          ? i18nText(I18N.descriptions.compareSkipTake, { cap, item: item.label })
+          : i18nText(I18N.descriptions.forcedSkip, { item: item.label, cap }),
         activeCodeLine: 5,
-        phaseLabel: 'Compare skip vs take',
+        phaseLabel: I18N.phases.compareSkipTake,
         phase: 'compare',
         computation: {
-          label: `${item.label} at capacity ${cap}`,
+          label: i18nText(I18N.labels.itemAtCapacity, { item: item.label, cap }),
           expression: canTake
             ? `max(dp[${row - 1}][${cap}] = ${skipValue}, dp[${row - 1}][${cap - item.weight}] + ${item.value} = ${takeValue})`
             : `item weight ${item.weight} > capacity ${cap}`,
           result: canTake ? String(Math.max(skipValue, takeValue ?? 0)) : String(skipValue),
           decision: canTake
             ? takeValue! > skipValue
-              ? 'take branch wins'
-              : 'skip branch stays best'
-            : 'forced skip',
+              ? I18N.decisions.takeBranchWins
+              : I18N.decisions.skipBranchStaysBest
+            : I18N.decisions.forcedSkip,
         },
       });
 
@@ -90,23 +159,27 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
               ? 'chosen'
               : 'blocked',
         secondaryItems: [
-          `best so far = ${table[row]![cap]!}`,
+          i18nText(I18N.labels.bestSoFar, { value: table[row]![cap]! }),
           canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue
-            ? `${item.label} enters candidate pack`
-            : `${item.label} skipped here`,
+            ? i18nText(I18N.labels.entersCandidate, { item: item.label })
+            : i18nText(I18N.labels.skippedHere, { item: item.label }),
         ],
-        description: `Write dp[${row}][${cap}] = ${table[row]![cap]!}.`,
+        description: i18nText(I18N.descriptions.commitCell, {
+          row,
+          cap,
+          value: table[row]![cap]!,
+        }),
         activeCodeLine: 8,
-        phaseLabel: 'Commit table cell',
+        phaseLabel: I18N.phases.commitTableCell,
         phase: 'settle-node',
         computation: {
-          label: `dp[${row}][${cap}]`,
+          label: i18nText(I18N.labels.dpCellComputation, { row, cap }),
           expression: canTake ? `${skipValue} vs ${takeValue}` : `${skipValue} only`,
           result: String(table[row]![cap]!),
           decision:
             canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue
-              ? 'keep take branch'
-              : 'keep skip branch',
+              ? I18N.decisions.keepTakeBranch
+              : I18N.decisions.keepSkipBranch,
         },
       });
     }
@@ -130,16 +203,19 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
         backtrackCells,
         activeCell: [row, cap],
         activeCellStatus: 'backtrack',
-        pathLabel: `Take ${item.label}`,
-        description: `${item.label} belongs to the optimal backpack, so jump diagonally by its weight ${item.weight}.`,
+        pathLabel: packedItemsLabel(scenario, chosenItems),
+        description: i18nText(I18N.descriptions.backtrackChosen, {
+          item: item.label,
+          weight: item.weight,
+        }),
         activeCodeLine: 11,
-        phaseLabel: 'Backtrack chosen item',
+        phaseLabel: I18N.phases.backtrackChosenItem,
         phase: 'relax',
         computation: {
-          label: `Backtrack ${item.label}`,
+          label: i18nText(I18N.labels.backtrackItem, { item: item.label }),
           expression: `${current} = ${takeValue}`,
-          result: `cap ${cap - item.weight}`,
-          decision: 'item selected',
+          result: i18nText(I18N.labels.capValue, { cap: cap - item.weight }),
+          decision: I18N.decisions.itemSelected,
         },
       });
       cap -= item.weight;
@@ -151,16 +227,16 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
         backtrackCells,
         activeCell: [row, cap],
         activeCellStatus: 'backtrack',
-        pathLabel: `Skip ${item.label}`,
-        description: `${item.label} is not part of the optimal backpack at this capacity, so move upward.`,
+        pathLabel: packedItemsLabel(scenario, chosenItems),
+        description: i18nText(I18N.descriptions.backtrackSkip, { item: item.label }),
         activeCodeLine: 13,
-        phaseLabel: 'Backtrack skip',
+        phaseLabel: I18N.phases.backtrackSkip,
         phase: 'skip-relax',
         computation: {
-          label: `Backtrack ${item.label}`,
+          label: i18nText(I18N.labels.backtrackItem, { item: item.label }),
           expression: `${current} = ${skipValue}`,
-          result: `row ${row - 1}`,
-          decision: 'item skipped',
+          result: i18nText(I18N.labels.rowValue, { row: row - 1 }),
+          decision: I18N.decisions.itemSkipped,
         },
       });
     }
@@ -173,9 +249,12 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
     chosenItems,
     backtrackCells,
     pathLabel: packedItemsLabel(scenario, chosenItems),
-    description: `Optimal backpack value is ${table[itemCount]![capacity]!} with ${chosenItems.size} selected item(s).`,
+    description: i18nText(I18N.descriptions.complete, {
+      value: table[itemCount]![capacity]!,
+      count: chosenItems.size,
+    }),
     activeCodeLine: 15,
-    phaseLabel: 'Optimal solution ready',
+    phaseLabel: I18N.phases.optimalSolutionReady,
     phase: 'complete',
   });
 }
@@ -185,15 +264,15 @@ function createStep(args: {
   readonly table: readonly (readonly number[])[];
   readonly chosenItems: ReadonlySet<number>;
   readonly backtrackCells: ReadonlySet<string>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly phase: SortStep['phase'];
   readonly activeCell?: readonly [number, number];
   readonly candidateCells?: readonly (readonly [number, number])[];
   readonly activeCellStatus?: 'active' | 'improved' | 'chosen' | 'blocked' | 'backtrack';
-  readonly secondaryItems?: readonly string[];
-  readonly pathLabel?: string;
+  readonly secondaryItems?: readonly TranslatableText[];
+  readonly pathLabel?: TranslatableText;
   readonly computation?: DpComputation | null;
 }): SortStep {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
@@ -292,35 +371,39 @@ function createStep(args: {
   }
 
   const insights: DpInsight[] = [
-    { label: 'Capacity', value: String(args.scenario.capacity), tone: 'accent' },
-    { label: 'Items', value: String(args.scenario.items.length), tone: 'info' },
+    { label: I18N.insights.capacityLabel, value: String(args.scenario.capacity), tone: 'accent' },
+    { label: I18N.insights.itemsLabel, value: String(args.scenario.items.length), tone: 'info' },
     {
-      label: 'Best value',
+      label: I18N.insights.bestValueLabel,
       value: String(args.table[args.scenario.items.length]![args.scenario.capacity]!),
       tone: 'success',
     },
-    { label: 'Picked', value: String(args.chosenItems.size), tone: 'warning' },
-    { label: 'Table', value: `${args.table.length} × ${args.scenario.capacity + 1}`, tone: 'info' },
+    { label: I18N.insights.pickedLabel, value: String(args.chosenItems.size), tone: 'warning' },
+    { label: I18N.insights.tableLabel, value: `${args.table.length} × ${args.scenario.capacity + 1}`, tone: 'info' },
   ];
 
   return createDpStep({
     mode: 'knapsack-01',
-    modeLabel: 'Knapsack 0/1',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
-    resultLabel: `best = ${args.table[args.scenario.items.length]![args.scenario.capacity]!}`,
+    resultLabel: i18nText(I18N.labels.resultBest, {
+      value: args.table[args.scenario.items.length]![args.scenario.capacity]!,
+    }),
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
     dimensionsLabel: `${args.table.length} × ${args.scenario.capacity + 1}`,
-    activeLabel: args.activeCell ? `row ${args.activeCell[0]} · cap ${args.activeCell[1]}` : null,
+    activeLabel: args.activeCell
+      ? i18nText(I18N.labels.activeCell, { row: args.activeCell[0], cap: args.activeCell[1] })
+      : null,
     pathLabel: args.pathLabel ?? packedItemsLabel(args.scenario, args.chosenItems),
-    primaryItemsLabel: 'Items',
+    primaryItemsLabel: I18N.labels.itemsListLabel,
     primaryItems: args.scenario.items.map((item) => `${item.label} w${item.weight}/v${item.value}`),
-    secondaryItemsLabel: 'Current lens',
+    secondaryItemsLabel: I18N.labels.currentLensLabel,
     secondaryItems:
       args.secondaryItems ??
       (args.chosenItems.size > 0
         ? [...args.chosenItems].map((index) => args.scenario.items[index]!.label)
-        : ['table fill']),
+        : [I18N.labels.tableFill]),
     insights,
     rowHeaders,
     colHeaders,
@@ -333,9 +416,14 @@ function createStep(args: {
   });
 }
 
-function packedItemsLabel(scenario: KnapsackScenario, chosenItems: ReadonlySet<number>): string {
+function packedItemsLabel(
+  scenario: KnapsackScenario,
+  chosenItems: ReadonlySet<number>,
+): TranslatableText {
   const labels = [...chosenItems]
     .sort((left, right) => left - right)
     .map((index) => scenario.items[index]!.label);
-  return labels.length > 0 ? `Pack: ${labels.join(', ')}` : 'Pack: not traced yet';
+  return labels.length > 0
+    ? i18nText(I18N.labels.packPath, { items: labels.join(', ') })
+    : I18N.labels.packPending;
 }

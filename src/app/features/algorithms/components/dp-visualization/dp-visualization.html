@@ -547,7 +547,7 @@
             <span class="viz-flow__mini-key">{{ computation.label | i18nText }}</span>
             <span class="viz-flow__mini-val">{{ computation.expression | i18nText }}</span>
             @if (computation.result) {
-              <span class="viz-flow__mini-val">= {{ computation.result }}</span>
+              <span class="viz-flow__mini-val">= {{ computation.result | i18nText }}</span>
             }
             <span class="viz-flow__desc">{{ computation.decision | i18nText }}</span>
           </div>

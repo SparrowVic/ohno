@@ -64,7 +64,7 @@
             }}
           </div>
           @if (stringState.computation?.result; as result) {
-            <div class="trace__calc-result">{{ result }}</div>
+            <div class="trace__calc-result">{{ result | i18nText }}</div>
           } @else {
             <div class="trace__calc-result trace__calc-result--muted">—</div>
           }

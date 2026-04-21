@@ -1,14 +1,108 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { RleRun, RleTraceState } from '../../models/string';
 import { RleScenario } from '../../utils/string-scenarios/string-scenarios';
 
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.runLengthEncoding.modeLabel'),
+  phases: {
+    setup: t('features.algorithms.runtime.string.runLengthEncoding.phases.setup'),
+    scan: t('features.algorithms.runtime.string.runLengthEncoding.phases.scan'),
+    extend: t('features.algorithms.runtime.string.runLengthEncoding.phases.extend'),
+    emit: t('features.algorithms.runtime.string.runLengthEncoding.phases.emit'),
+    complete: t('features.algorithms.runtime.string.runLengthEncoding.phases.complete'),
+  },
+  insights: {
+    inputLengthLabel: t(
+      'features.algorithms.runtime.string.runLengthEncoding.insights.inputLengthLabel',
+    ),
+    runsCountLabel: t(
+      'features.algorithms.runtime.string.runLengthEncoding.insights.runsCountLabel',
+    ),
+    outputSoFarLabel: t(
+      'features.algorithms.runtime.string.runLengthEncoding.insights.outputSoFarLabel',
+    ),
+    ratioLabel: t('features.algorithms.runtime.string.runLengthEncoding.insights.ratioLabel'),
+    charsValue: t('features.algorithms.runtime.string.runLengthEncoding.insights.charsValue'),
+    noneValue: t('features.algorithms.runtime.string.runLengthEncoding.insights.noneValue'),
+    ratioValue: t('features.algorithms.runtime.string.runLengthEncoding.insights.ratioValue'),
+  },
+  descriptions: {
+    start: t('features.algorithms.runtime.string.runLengthEncoding.descriptions.start'),
+    scan: t('features.algorithms.runtime.string.runLengthEncoding.descriptions.scan'),
+    extend: t('features.algorithms.runtime.string.runLengthEncoding.descriptions.extend'),
+    emit: t('features.algorithms.runtime.string.runLengthEncoding.descriptions.emit'),
+    complete: t('features.algorithms.runtime.string.runLengthEncoding.descriptions.complete'),
+  },
+  decisions: {
+    eachRunPair: t('features.algorithms.runtime.string.runLengthEncoding.decisions.eachRunPair'),
+    newRun: t('features.algorithms.runtime.string.runLengthEncoding.decisions.newRun'),
+    extendRun: t('features.algorithms.runtime.string.runLengthEncoding.decisions.extendRun'),
+    emitRun: t('features.algorithms.runtime.string.runLengthEncoding.decisions.emitRun'),
+    compressionSaves: t(
+      'features.algorithms.runtime.string.runLengthEncoding.decisions.compressionSaves',
+    ),
+    noCompressionGain: t(
+      'features.algorithms.runtime.string.runLengthEncoding.decisions.noCompressionGain',
+    ),
+  },
+  computation: {
+    labels: {
+      input: t('features.algorithms.runtime.string.runLengthEncoding.computation.labels.input'),
+      newRun: t('features.algorithms.runtime.string.runLengthEncoding.computation.labels.newRun'),
+      extendRun: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.labels.extendRun',
+      ),
+      emitRun: t('features.algorithms.runtime.string.runLengthEncoding.computation.labels.emitRun'),
+      compressionRatio: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.labels.compressionRatio',
+      ),
+    },
+    results: {
+      inputLength: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.results.inputLength',
+      ),
+      countValue: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.results.countValue',
+      ),
+      outputValue: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.results.outputValue',
+      ),
+      ratioValue: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.results.ratioValue',
+      ),
+    },
+    notes: {
+      input: t('features.algorithms.runtime.string.runLengthEncoding.computation.notes.input'),
+      newRun: t('features.algorithms.runtime.string.runLengthEncoding.computation.notes.newRun'),
+      extendRun: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.notes.extendRun',
+      ),
+      emitRun: t('features.algorithms.runtime.string.runLengthEncoding.computation.notes.emitRun'),
+      compressionSaves: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.notes.compressionSaves',
+      ),
+      noCompressionGain: t(
+        'features.algorithms.runtime.string.runLengthEncoding.computation.notes.noCompressionGain',
+      ),
+    },
+  },
+  labels: {
+    noRunsYet: t('features.algorithms.runtime.string.runLengthEncoding.labels.noRunsYet'),
+    emitActive: t('features.algorithms.runtime.string.runLengthEncoding.labels.emitActive'),
+    runCount: t('features.algorithms.runtime.string.runLengthEncoding.labels.runCount'),
+  },
+} as const;
+
 function makeState(args: {
   readonly scenario: RleScenario;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly scanIndex: number | null;
   readonly groupStart: number;
   readonly groupChar: string;
@@ -22,7 +116,7 @@ function makeState(args: {
   const source = args.scenario.source;
   return {
     mode: 'rle',
-    modeLabel: 'Run scanner',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -31,19 +125,32 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Input length', value: `${source.length} chars`, tone: 'info' },
-      { label: 'Runs count', value: String(args.completedRuns.length), tone: 'accent' },
       {
-        label: 'Output so far',
-        value: args.output ? `${args.output.length} chars` : '—',
+        label: I18N.insights.inputLengthLabel,
+        value: i18nText(I18N.insights.charsValue, { count: source.length }),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.runsCountLabel,
+        value: String(args.completedRuns.length),
+        tone: 'accent',
+      },
+      {
+        label: I18N.insights.outputSoFarLabel,
+        value:
+          args.output.length > 0
+            ? i18nText(I18N.insights.charsValue, { count: args.output.length })
+            : I18N.insights.noneValue,
         tone: 'warning',
       },
       {
-        label: 'Ratio',
+        label: I18N.insights.ratioLabel,
         value:
           args.compressionRatio !== null
-            ? `${(args.compressionRatio * 100).toFixed(0)}%`
-            : '—',
+            ? i18nText(I18N.insights.ratioValue, {
+                percent: (args.compressionRatio * 100).toFixed(0),
+              })
+            : I18N.insights.noneValue,
         tone: args.compressionRatio !== null && args.compressionRatio < 1 ? 'success' : 'info',
       },
     ],
@@ -70,14 +177,17 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
   // Init step
   yield createStringStep({
     activeCodeLine: 1,
-    description: `Start RLE on "${text}" (${text.length} chars). We scan left to right, grouping consecutive identical characters.`,
+    description: i18nText(I18N.descriptions.start, {
+      text,
+      length: text.length,
+    }),
     phase: 'init',
     string: makeState({
       scenario,
-      phaseLabel: 'Setup',
+      phaseLabel: I18N.phases.setup,
       activeLabel: 'i = 0',
-      resultLabel: 'No runs yet',
-      decisionLabel: 'Each run of identical characters becomes a single (char, count) pair.',
+      resultLabel: I18N.labels.noRunsYet,
+      decisionLabel: I18N.decisions.eachRunPair,
       scanIndex: null,
       groupStart: 0,
       groupChar: '',
@@ -87,10 +197,10 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
       phase: 'scan',
       compressionRatio: null,
       computation: {
-        label: 'Input',
+        label: I18N.computation.labels.input,
         expression: `text = "${text}"`,
-        result: `length = ${text.length}`,
-        note: 'We will compress runs of repeated characters into count-char pairs.',
+        result: i18nText(I18N.computation.results.inputLength, { count: text.length }),
+        note: I18N.computation.notes.input,
       },
     }),
   });
@@ -103,14 +213,17 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
     // Scan step: start of a new run
     yield createStringStep({
       activeCodeLine: 4,
-      description: `Position ${i}: found '${groupChar}'. Starting a new run.`,
+      description: i18nText(I18N.descriptions.scan, {
+        index: i,
+        char: groupChar,
+      }),
       phase: 'compare',
       string: makeState({
         scenario,
-        phaseLabel: 'Scan',
+        phaseLabel: I18N.phases.scan,
         activeLabel: `i = ${i}`,
-        resultLabel: completedRuns.length > 0 ? output : '—',
-        decisionLabel: `'${groupChar}' begins a new run. Count how many consecutive '${groupChar}' chars follow.`,
+        resultLabel: completedRuns.length > 0 ? output : I18N.insights.noneValue,
+        decisionLabel: i18nText(I18N.decisions.newRun, { char: groupChar }),
         scanIndex: i,
         groupStart,
         groupChar,
@@ -120,10 +233,10 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
         phase: 'scan',
         compressionRatio: null,
         computation: {
-          label: 'New run',
+          label: I18N.computation.labels.newRun,
           expression: `text[${i}] = '${groupChar}'`,
-          result: 'count = 1',
-          note: 'Starting count for this run. Will extend while next char matches.',
+          result: i18nText(I18N.computation.results.countValue, { count: 1 }),
+          note: I18N.computation.notes.newRun,
         },
       }),
     });
@@ -136,14 +249,23 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
       count++;
       yield createStringStep({
         activeCodeLine: 6,
-        description: `Position ${j}: '${text[j]}' matches '${groupChar}'. Extending run (count = ${count}).`,
+        description: i18nText(I18N.descriptions.extend, {
+          index: j,
+          char: text[j],
+          groupChar,
+          count,
+        }),
         phase: 'compare',
         string: makeState({
           scenario,
-          phaseLabel: 'Extend',
+          phaseLabel: I18N.phases.extend,
           activeLabel: `j = ${j}`,
-          resultLabel: completedRuns.length > 0 ? output : '—',
-          decisionLabel: `text[${j}] = '${text[j]}' = groupChar '${groupChar}' → extend the run.`,
+          resultLabel: completedRuns.length > 0 ? output : I18N.insights.noneValue,
+          decisionLabel: i18nText(I18N.decisions.extendRun, {
+            index: j,
+            char: text[j],
+            groupChar,
+          }),
           scanIndex: j,
           groupStart,
           groupChar,
@@ -153,10 +275,10 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
           phase: 'extend',
           compressionRatio: null,
           computation: {
-            label: 'Extend run',
+            label: I18N.computation.labels.extendRun,
             expression: `text[${j}] = '${text[j]}' = '${groupChar}'`,
-            result: `count = ${count}`,
-            note: 'Each matching character increments the run counter by one.',
+            result: i18nText(I18N.computation.results.countValue, { count }),
+            note: I18N.computation.notes.extendRun,
           },
         }),
       });
@@ -171,14 +293,22 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
 
     yield createStringStep({
       activeCodeLine: 8,
-      description: `Emit run: '${groupChar}' × ${count}. Output becomes "${output}".`,
+      description: i18nText(I18N.descriptions.emit, {
+        char: groupChar,
+        count,
+        output,
+      }),
       phase: 'pass-complete',
       string: makeState({
         scenario,
-        phaseLabel: 'Emit',
-        activeLabel: `run '${groupChar}'×${count}`,
+        phaseLabel: I18N.phases.emit,
+        activeLabel: i18nText(I18N.labels.emitActive, { char: groupChar, count }),
         resultLabel: output,
-        decisionLabel: `The run ended at position ${j - 1}. Emit (${count}, '${groupChar}') to the output.`,
+        decisionLabel: i18nText(I18N.decisions.emitRun, {
+          endIndex: j - 1,
+          count,
+          char: groupChar,
+        }),
         scanIndex: j < text.length ? j : null,
         groupStart: j,
         groupChar: '',
@@ -188,10 +318,10 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
         phase: 'emit',
         compressionRatio: null,
         computation: {
-          label: 'Emit run',
+          label: I18N.computation.labels.emitRun,
           expression: `runs.push(('${groupChar}', ${count}))`,
-          result: `output = "${output}"`,
-          note: 'One (count, char) pair replaces an entire run in the output stream.',
+          result: i18nText(I18N.computation.results.outputValue, { output }),
+          note: I18N.computation.notes.emitRun,
         },
       }),
     });
@@ -204,17 +334,23 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
   // Complete step
   yield createStringStep({
     activeCodeLine: 8,
-    description: `RLE complete. ${completedRuns.length} run${completedRuns.length !== 1 ? 's' : ''} found. Output: "${output}" (${output.length} chars vs ${text.length} original → ${(compressionRatio * 100).toFixed(0)}% ratio).`,
+    description: i18nText(I18N.descriptions.complete, {
+      runs: completedRuns.length,
+      output,
+      outputLength: output.length,
+      inputLength: text.length,
+      percent: (compressionRatio * 100).toFixed(0),
+    }),
     phase: 'complete',
     string: makeState({
       scenario,
-      phaseLabel: 'Complete',
-      activeLabel: `${completedRuns.length} runs`,
+      phaseLabel: I18N.phases.complete,
+      activeLabel: i18nText(I18N.labels.runCount, { count: completedRuns.length }),
       resultLabel: output,
       decisionLabel:
         compressionRatio < 1
-          ? 'Compression saves space — the encoded output is shorter than the original.'
-          : 'No compression gain — the encoded output is as long as or longer than the original.',
+          ? I18N.decisions.compressionSaves
+          : I18N.decisions.noCompressionGain,
       scanIndex: null,
       groupStart: text.length,
       groupChar: '',
@@ -224,13 +360,16 @@ export function* runLengthEncodingGenerator(scenario: RleScenario): Generator<So
       phase: 'complete',
       compressionRatio,
       computation: {
-        label: 'Compression ratio',
+        label: I18N.computation.labels.compressionRatio,
         expression: `${output.length} / ${text.length}`,
-        result: `${compressionRatio.toFixed(2)} (${(compressionRatio * 100).toFixed(0)}%)`,
+        result: i18nText(I18N.computation.results.ratioValue, {
+          ratio: compressionRatio.toFixed(2),
+          percent: (compressionRatio * 100).toFixed(0),
+        }),
         note:
           compressionRatio < 1
-            ? 'Output is shorter than the input — RLE provided compression.'
-            : 'Output is not shorter — RLE works best with long repeated runs.',
+            ? I18N.computation.notes.compressionSaves
+            : I18N.computation.notes.noCompressionGain,
       },
     }),
   });

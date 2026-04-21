@@ -84,7 +84,7 @@ export interface DpInsight {
 export interface DpComputation {
   readonly label: TranslatableText;
   readonly expression: TranslatableText;
-  readonly result: string | null;
+  readonly result: TranslatableText | null;
   readonly decision: TranslatableText;
 }
 

@@ -67,7 +67,7 @@
           </div>
           <div class="trace__calc-result">
             @if (dpState.computation?.result; as result) {
-              = {{ result }}
+              = {{ result | i18nText }}
             } @else {
               —
             }

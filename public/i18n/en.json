@@ -344,6 +344,176 @@
         }
       },
       "runtime": {
+        "dp": {
+          "coinChange": {
+            "decisions": {
+              "carryPreviousBest": "carry previous best",
+              "moveUpward": "move upward",
+              "reuseCoinInUnboundedRow": "reuse coin in unbounded row",
+              "reuseSameDenominationRow": "reuse same denomination row",
+              "skipBranchKept": "skip branch kept",
+              "takeBranchChosen": "take branch chosen"
+            },
+            "descriptions": {
+              "backtrackSkip": "Skip denomination {{coin}} and move to the previous row.",
+              "backtrackTake": "Take coin {{coin}} and stay on the same row because coins are unbounded.",
+              "compareSkipTake": "At amount {{amount}}, compare skipping coin {{coin}} with taking it again from the same row.",
+              "complete": "Minimum coins for amount {{target}} is {{best}}.",
+              "forcedSkip": "Coin {{coin}} cannot help amount {{amount}}, so only the skip branch survives.",
+              "initialize": "Initialize amount 0 with 0 coins and mark every other amount as unreachable before processing denominations.",
+              "storeBest": "Store minimum coins for amount {{amount}} using first {{row}} denomination(s).",
+              "unreachable": "Target {{target}} is unreachable with the available denominations."
+            },
+            "insights": {
+              "coinsLabel": "Coins",
+              "gridLabel": "Grid",
+              "minCountLabel": "Min count",
+              "pickedLabel": "Picked",
+              "targetLabel": "Target"
+            },
+            "labels": {
+              "activeCell": "coin row {{row}} · amount {{amount}}",
+              "amountValue": "amount {{amount}}",
+              "bestValue": "best = {{value}}",
+              "coinAmountComputation": "{{coin}} for amount {{amount}}",
+              "coinPath": "Coins: {{coins}}",
+              "coinValue": "coin {{coin}}",
+              "coinsPending": "Coins: pending",
+              "currentLensLabel": "Current lens",
+              "denominationsLabel": "Denominations",
+              "dpCellComputation": "dp[{{row}}][{{amount}}]",
+              "resultMinCoins": "min coins = {{value}}",
+              "rowValue": "row {{row}}",
+              "skipCoinComputation": "Skip {{coin}}",
+              "skipValue": "skip = {{value}}",
+              "takeCoinComputation": "Take {{coin}}",
+              "takeUnavailable": "take unavailable",
+              "takeValue": "take = {{value}}",
+              "unboundedRowHint": "unbounded take stays on same row"
+            },
+            "modeLabel": "Coin Change",
+            "phases": {
+              "backtrackSkip": "Backtrack skip",
+              "backtrackTake": "Backtrack take",
+              "commitBestCoinCount": "Commit best coin count",
+              "compareSkipTake": "Compare skip vs take",
+              "initializeUnreachable": "Initialize unreachable states",
+              "noSolution": "No solution",
+              "optimalChangeReady": "Optimal change ready"
+            }
+          },
+          "knapsack01": {
+            "decisions": {
+              "forcedSkip": "forced skip",
+              "itemSelected": "item selected",
+              "itemSkipped": "item skipped",
+              "keepSkipBranch": "keep skip branch",
+              "keepTakeBranch": "keep take branch",
+              "skipBranchStaysBest": "skip branch stays best",
+              "takeBranchWins": "take branch wins"
+            },
+            "descriptions": {
+              "backtrackChosen": "{{item}} belongs to the optimal backpack, so jump diagonally by its weight {{weight}}.",
+              "backtrackSkip": "{{item}} is not part of the optimal backpack at this capacity, so move upward.",
+              "commitCell": "Write dp[{{row}}][{{cap}}] = {{value}}.",
+              "compareSkipTake": "At capacity {{cap}}, compare skipping {{item}} with taking it.",
+              "complete": "Optimal backpack value is {{value}} with {{count}} selected item(s).",
+              "forcedSkip": "{{item}} is too heavy for capacity {{cap}}, so only the skip branch is legal.",
+              "initialize": "Initialize a {{rows}} × {{cols}} table. Row 0 and capacity 0 form the base cases."
+            },
+            "insights": {
+              "bestValueLabel": "Best value",
+              "capacityLabel": "Capacity",
+              "itemsLabel": "Items",
+              "pickedLabel": "Picked",
+              "tableLabel": "Table"
+            },
+            "labels": {
+              "activeCell": "row {{row}} · cap {{cap}}",
+              "backtrackItem": "Backtrack {{item}}",
+              "bestSoFar": "best so far = {{value}}",
+              "capValue": "cap {{cap}}",
+              "currentLensLabel": "Current lens",
+              "dpCellComputation": "dp[{{row}}][{{cap}}]",
+              "entersCandidate": "{{item}} enters candidate pack",
+              "itemAtCapacity": "{{item}} at capacity {{cap}}",
+              "itemsListLabel": "Items",
+              "packPath": "Pack: {{items}}",
+              "packPending": "Pack: not traced yet",
+              "resultBest": "best = {{value}}",
+              "rowValue": "row {{row}}",
+              "skipValue": "skip = {{value}}",
+              "skippedHere": "{{item}} skipped here",
+              "tableFill": "table fill",
+              "takeUnavailable": "take unavailable",
+              "takeValue": "take = {{value}}"
+            },
+            "modeLabel": "Knapsack 0/1",
+            "phases": {
+              "backtrackChosenItem": "Backtrack chosen item",
+              "backtrackSkip": "Backtrack skip",
+              "commitTableCell": "Commit table cell",
+              "compareSkipTake": "Compare skip vs take",
+              "initializeBaseRow": "Initialize base row",
+              "optimalSolutionReady": "Optimal solution ready"
+            }
+          },
+          "subsetSum": {
+            "decisions": {
+              "includeValueInSubset": "include value in subset",
+              "reachable": "reachable",
+              "skipAlreadyReaches": "skip branch already reaches it",
+              "skipValue": "skip value",
+              "stillImpossible": "still impossible",
+              "sumStaysUnreachable": "sum stays unreachable",
+              "takeOpensNewReachableSum": "take branch opens new reachable sum"
+            },
+            "descriptions": {
+              "backtrackSkip": "Sum {{sum}} was already reachable without {{value}}, so move upward and skip it.",
+              "backtrackTake": "{{value}} participates in the winning subset, so jump to sum {{sum}}.",
+              "compareBranches": "Check whether sum {{sum}} is reachable by skipping {{value}} or taking it.",
+              "complete": "Recovered one subset that reaches {{target}}.",
+              "forcedSkip": "{{value}} is larger than sum {{sum}}, so only the skip branch is legal.",
+              "impossible": "Target sum {{target}} is impossible with the available numbers.",
+              "initialize": "Seed sum 0 as reachable and mark every other sum unreachable before considering any numbers.",
+              "storeReachability": "Store reachability of sum {{sum}} after processing first {{row}} number(s)."
+            },
+            "insights": {
+              "chosenLabel": "Chosen",
+              "gridLabel": "Grid",
+              "reachableLabel": "Reachable",
+              "targetLabel": "Target",
+              "valuesLabel": "Values"
+            },
+            "labels": {
+              "activeCell": "row {{row}} · sum {{sum}}",
+              "booleanReachability": "boolean reachability",
+              "currentLensLabel": "Current lens",
+              "dpCellComputation": "dp[{{row}}][{{sum}}]",
+              "numbersLabel": "Numbers",
+              "resultTarget": "target = {{value}}",
+              "rowValue": "row {{row}}",
+              "skipValue": "skip = {{value}}",
+              "skipValueComputation": "Skip {{value}}",
+              "subsetPath": "Subset: {{values}}",
+              "subsetPending": "Subset: pending",
+              "takeUnavailable": "take unavailable",
+              "takeValue": "take = {{value}}",
+              "takeValueComputation": "Take {{value}}",
+              "valueForSumComputation": "{{value}} for sum {{sum}}"
+            },
+            "modeLabel": "Subset Sum",
+            "phases": {
+              "backtrackSkip": "Backtrack skip",
+              "backtrackTake": "Backtrack take",
+              "checkSubsetBranches": "Check subset branches",
+              "commitReachableState": "Commit reachable state",
+              "initializeBooleanTable": "Initialize boolean table",
+              "noSubsetFound": "No subset found",
+              "subsetReady": "Subset ready"
+            }
+          }
+        },
         "string": {
           "kmp": {
             "computation": {
@@ -490,6 +660,203 @@
               "mirrorReuse": "Mirror reuse",
               "setup": "Setup",
               "shiftWindow": "Shift window"
+            }
+          },
+          "burrowsWheelerTransform": {
+            "computation": {
+              "expressions": {
+                "bwtOutput": "L = last column of sorted rotations",
+                "rowPosition": "row → position {{position}}",
+                "runComparison": "{{inputRuns}} input runs → {{outputRuns}} BWT runs"
+              },
+              "labels": {
+                "bwtOutput": "BWT output",
+                "insertionPoint": "Insertion point",
+                "rotationMatrix": "Rotation matrix",
+                "rowCompare": "Row compare",
+                "runComparison": "Run comparison"
+              },
+              "notes": {
+                "bwtOutput": "This rearrangement is reversible, but far friendlier to downstream run-length style compression.",
+                "insertionPoint": "One more rotation snaps into its final sorted slot.",
+                "rotationMatrix": "The BWT sorts cyclic rotations, not suffixes.",
+                "rowCompare": "We use insertion-sort-like steps here purely to make the matrix movement readable.",
+                "runComparison": "Fewer, longer runs are exactly why BWT is so effective before RLE or entropy coding."
+              }
+            },
+            "decisions": {
+              "differentStartingPoints": "Every row is the same string viewed from a different starting point.",
+              "lastColumnOutput": "The last column is the Burrows-Wheeler output; the first column helps explain the sorted matrix structure.",
+              "lexicographicClusters": "Lexicographic order is what makes the last column cluster similar characters together.",
+              "transformPreparesCompression": "The transform did not compress by itself, but it concentrated repeated symbols so later stages can do it better.",
+              "upperMatrixSorted": "The upper part of the matrix is already in final lexicographic order."
+            },
+            "descriptions": {
+              "collectLastColumn": "Read the last column L = \"{{lastColumn}}\". Similar characters are now grouped much tighter than in the input.",
+              "compareRows": "Compare \"{{current}}\" with \"{{previous}}\" to place the next rotation lexicographically.",
+              "complete": "BWT finished. Output \"{{lastColumn}}\" creates {{outputRuns}} runs vs {{inputRuns}} in the original string.",
+              "generateRotations": "Generate all {{count}} cyclic rotations of \"{{source}}\".",
+              "rowPlaced": "Row \"{{row}}\" is now placed at sorted position {{position}}."
+            },
+            "insights": {
+              "firstColumnLabel": "F column",
+              "gainValue": "{{ratio}}x",
+              "lastColumnLabel": "L column",
+              "lengthLabel": "Length",
+              "noneValue": "—",
+              "rowsValue": "{{count}} rows",
+              "runGainLabel": "Run gain"
+            },
+            "labels": {
+              "bwtReady": "BWT ready",
+              "densityValue": "{{ratio}}x denser",
+              "insertRow": "insert row {{index}}",
+              "matrixUnsorted": "Matrix unsorted",
+              "readColumns": "Read F and L",
+              "rotationsCount": "{{count}} rotations",
+              "rowsOrdered": "{{current}} / {{total}} rows ordered",
+              "shiftUpward": "shift upward",
+              "sortedPrefix": "sorted prefix {{current}} / {{total}}",
+              "sortedPrefixCount": "sorted prefix {{count}}"
+            },
+            "modeLabel": "Rotation matrix",
+            "phases": {
+              "collectColumns": "Collect columns",
+              "complete": "Complete",
+              "rotate": "Rotate",
+              "rowCommitted": "Row committed",
+              "sortRows": "Sort rows"
+            }
+          },
+          "huffmanCoding": {
+            "computation": {
+              "expressions": {
+                "codeFromPath": "code['{{char}}'] = root-to-leaf path"
+              },
+              "labels": {
+                "characterFrequency": "Character frequency",
+                "initialHeap": "Initial heap",
+                "newInternalNode": "New internal node",
+                "popTwoMinimums": "Pop two minimums",
+                "prefixCode": "Prefix code"
+              },
+              "notes": {
+                "characterFrequency": "Higher frequency means a shorter prefix code and fewer bits per occurrence.",
+                "initialHeap": "Each leaf will become the bottom layer of the Huffman tree.",
+                "newInternalNode": "Left child gets '0', right child gets '1' in the code prefix.",
+                "popTwoMinimums": "The merged node frequency is the sum of its two children.",
+                "prefixCodeFinal": "Total: {{original}} → {{compressed}} bits ({{savings}}% savings).",
+                "prefixCodeSymbol": "freq={{freq}} × {{bits}} bits = {{total}} bits for this symbol."
+              },
+              "results": {
+                "codeBits": "code = '{{code}}', bits = {{bits}}",
+                "frequencyValue": "freq = {{freq}}",
+                "heapSize": "size = {{size}}",
+                "newNodeFrequency": "new node freq = {{left}} + {{right}} = {{total}}"
+              }
+            },
+            "decisions": {
+              "frequentShorterCodes": "Characters that appear more frequently will get shorter codes.",
+              "mergeSmallestFirst": "Always merge the two nodes with the smallest frequencies first.",
+              "minHeapReady": "The min-heap always gives us the two lowest-frequency nodes to merge first.",
+              "pushMergedNode": "Push the merged node back into the heap for the next round.",
+              "rootReady": "Only one node left — this is the Huffman tree root!",
+              "tracePath": "Trace the path from root to leaf '{{char}}': left = '0', right = '1'."
+            },
+            "descriptions": {
+              "assignCode": "Assign code '{{code}}' ({{bits}} bits) to '{{char}}' (freq={{freq}}).",
+              "buildHeap": "Build initial min-heap from {{count}} leaf nodes, one per unique character.",
+              "countFrequency": "Count frequency: '{{char}}' has count {{freq}} in \"{{source}}\".",
+              "createdInternalNode": "Created internal node with freq={{freq}}. Heap now has {{heapSize}} node(s).",
+              "popMinimums": "Merge step {{step}}: pop minimum '{{leftChar}}' ({{leftFreq}}) and '{{rightChar}}' ({{rightFreq}})."
+            },
+            "insights": {
+              "codesAssignedLabel": "Codes assigned",
+              "heapSizeLabel": "Heap size",
+              "noneValue": "—",
+              "savingsLabel": "Savings",
+              "savingsValue": "{{percent}}%",
+              "uniqueCharsLabel": "Unique chars"
+            },
+            "labels": {
+              "codeAssignment": "'{{char}}' → '{{code}}'",
+              "codesProgress": "{{current}} of {{total}} codes",
+              "compressedBits": "{{bits}} compressed bits",
+              "countedProgress": "{{current}} of {{total}} chars counted",
+              "heapSize": "Heap size = {{size}}",
+              "leafNodes": "{{count}} leaf nodes",
+              "newNodeFrequency": "New node freq = {{freq}}",
+              "readyToMerge": "Ready to merge"
+            },
+            "modeLabel": "Huffman tree",
+            "phases": {
+              "assignCodes": "Assign codes",
+              "buildHeap": "Build heap",
+              "countFrequencies": "Count frequencies",
+              "mergeNodes": "Merge nodes",
+              "popMinimums": "Pop minimums"
+            }
+          },
+          "runLengthEncoding": {
+            "computation": {
+              "labels": {
+                "compressionRatio": "Compression ratio",
+                "emitRun": "Emit run",
+                "extendRun": "Extend run",
+                "input": "Input",
+                "newRun": "New run"
+              },
+              "notes": {
+                "compressionSaves": "Output is shorter than the input — RLE provided compression.",
+                "emitRun": "One (count, char) pair replaces an entire run in the output stream.",
+                "extendRun": "Each matching character increments the run counter by one.",
+                "input": "We will compress runs of repeated characters into count-char pairs.",
+                "newRun": "Starting count for this run. Will extend while the next char matches.",
+                "noCompressionGain": "Output is not shorter — RLE works best with long repeated runs."
+              },
+              "results": {
+                "countValue": "count = {{count}}",
+                "inputLength": "length = {{count}}",
+                "outputValue": "output = \"{{output}}\"",
+                "ratioValue": "{{ratio}} ({{percent}}%)"
+              }
+            },
+            "decisions": {
+              "compressionSaves": "Compression saves space — the encoded output is shorter than the original.",
+              "eachRunPair": "Each run of identical characters becomes a single (char, count) pair.",
+              "emitRun": "The run ended at position {{endIndex}}. Emit ({{count}}, '{{char}}') to the output.",
+              "extendRun": "text[{{index}}] = '{{char}}' = groupChar '{{groupChar}}' → extend the run.",
+              "newRun": "'{{char}}' begins a new run. Count how many consecutive '{{char}}' chars follow.",
+              "noCompressionGain": "No compression gain — the encoded output is as long as or longer than the original."
+            },
+            "descriptions": {
+              "complete": "RLE complete. {{runs}} runs found. Output: \"{{output}}\" ({{outputLength}} chars vs {{inputLength}} original → {{percent}}% ratio).",
+              "emit": "Emit run: '{{char}}' × {{count}}. Output becomes \"{{output}}\".",
+              "extend": "Position {{index}}: '{{char}}' matches '{{groupChar}}'. Extending run (count = {{count}}).",
+              "scan": "Position {{index}}: found '{{char}}'. Starting a new run.",
+              "start": "Start RLE on \"{{text}}\" ({{length}} chars). We scan left to right, grouping consecutive identical characters."
+            },
+            "insights": {
+              "charsValue": "{{count}} chars",
+              "inputLengthLabel": "Input length",
+              "noneValue": "—",
+              "outputSoFarLabel": "Output so far",
+              "ratioLabel": "Ratio",
+              "ratioValue": "{{percent}}%",
+              "runsCountLabel": "Runs count"
+            },
+            "labels": {
+              "emitActive": "run '{{char}}'×{{count}}",
+              "noRunsYet": "No runs yet",
+              "runCount": "run count = {{count}}"
+            },
+            "modeLabel": "Run scanner",
+            "phases": {
+              "complete": "Complete",
+              "emit": "Emit",
+              "extend": "Extend",
+              "scan": "Scan",
+              "setup": "Setup"
             }
           },
           "rabinKarp": {

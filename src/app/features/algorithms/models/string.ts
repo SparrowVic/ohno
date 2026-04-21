@@ -15,7 +15,7 @@ export interface StringInsight {
 export interface StringComputation {
   readonly label: TranslatableText;
   readonly expression: TranslatableText;
-  readonly result: string | null;
+  readonly result: TranslatableText | null;
   readonly note: TranslatableText;
 }
 

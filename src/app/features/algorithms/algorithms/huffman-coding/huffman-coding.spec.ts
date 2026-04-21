@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
 import type { HuffmanScenario } from '../../utils/string-scenarios/string-scenarios';
 import { huffmanCodingGenerator } from './huffman-coding';
 
 function collectSteps(scenario: HuffmanScenario): SortStep[] {
   return [...huffmanCodingGenerator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
 }
 
 describe('huffman-coding', () => {
@@ -19,7 +25,9 @@ describe('huffman-coding', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.string?.phaseLabel).toBe('Assign codes');
+    expect(keyOf(finalStep?.string?.phaseLabel)).toBe(
+      'features.algorithms.runtime.string.huffmanCoding.phases.assignCodes',
+    );
     expect(finalStep?.string?.codeTable).toEqual([
       { char: 'A', freq: 3, code: '1' },
       { char: 'B', freq: 2, code: '01' },
@@ -27,7 +35,13 @@ describe('huffman-coding', () => {
     ]);
     expect(finalStep?.string?.totalOriginalBits).toBe(48);
     expect(finalStep?.string?.totalCompressedBits).toBe(9);
-    expect(steps.filter((step) => step.string?.phaseLabel === 'Merge nodes')).toHaveLength(2);
+    expect(
+      steps.filter(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.huffmanCoding.phases.mergeNodes',
+      ),
+    ).toHaveLength(2);
   });
 
   it('handles the two-symbol base case with one merge and one-bit codes', () => {
@@ -45,6 +59,12 @@ describe('huffman-coding', () => {
       { char: 'B', freq: 1, code: '1' },
     ]);
     expect(finalStep?.string?.totalCompressedBits).toBe(2);
-    expect(steps.filter((step) => step.string?.phaseLabel === 'Merge nodes')).toHaveLength(1);
+    expect(
+      steps.filter(
+        (step) =>
+          keyOf(step.string?.phaseLabel) ===
+          'features.algorithms.runtime.string.huffmanCoding.phases.mergeNodes',
+      ),
+    ).toHaveLength(1);
   });
 });

@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { knapsack01Generator } from './knapsack-01';
 import type { SortStep } from '../../models/sort-step';
 import type { KnapsackScenario } from '../../utils/dp-scenarios/dp-scenarios';
 
 function collectSteps(scenario: KnapsackScenario): SortStep[] {
   return [...knapsack01Generator(scenario)];
+}
+
+function keyOf(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  return isI18nText(value) ? value.key : null;
+}
+
+function paramsOf(value: unknown): Record<string, unknown> | null {
+  return isI18nText(value) ? { ...(value.params ?? {}) } : null;
 }
 
 describe('knapsack-01', () => {
@@ -25,10 +35,20 @@ describe('knapsack-01', () => {
 
     expect(steps[0]?.phase).toBe('init');
     expect(steps.at(-1)?.phase).toBe('complete');
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('best = 22');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Pack: Rope, Stove');
+    expect(keyOf(steps.at(-1)?.dp?.resultLabel)).toBe(
+      'features.algorithms.runtime.dp.knapsack01.labels.resultBest',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe(22);
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.knapsack01.labels.packPath',
+    );
+    expect(paramsOf(steps.at(-1)?.dp?.pathLabel)?.items).toBe('Rope, Stove');
     expect(
-      steps.filter((step) => step.dp?.phaseLabel === 'Backtrack chosen item').length,
+      steps.filter(
+        (step) =>
+          keyOf(step.dp?.phaseLabel) ===
+          'features.algorithms.runtime.dp.knapsack01.phases.backtrackChosenItem',
+      ).length,
     ).toBe(2);
   });
 
@@ -44,8 +64,10 @@ describe('knapsack-01', () => {
       ],
     });
 
-    expect(steps.at(-1)?.dp?.resultLabel).toBe('best = 0');
-    expect(steps.at(-1)?.dp?.pathLabel).toBe('Pack: not traced yet');
+    expect(paramsOf(steps.at(-1)?.dp?.resultLabel)?.value).toBe(0);
+    expect(keyOf(steps.at(-1)?.dp?.pathLabel)).toBe(
+      'features.algorithms.runtime.dp.knapsack01.labels.packPending',
+    );
     expect(
       steps.some((step) =>
         step.dp?.cells.some((cell) => cell.metaLabel === 'too heavy' && cell.status === 'blocked'),

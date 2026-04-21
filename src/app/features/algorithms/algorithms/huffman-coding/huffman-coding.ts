@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import {
@@ -9,6 +12,118 @@ import {
   HuffmanTreeNode,
 } from '../../models/string';
 import { HuffmanScenario } from '../../utils/string-scenarios/string-scenarios';
+
+const I18N = {
+  modeLabel: t('features.algorithms.runtime.string.huffmanCoding.modeLabel'),
+  phases: {
+    countFrequencies: t(
+      'features.algorithms.runtime.string.huffmanCoding.phases.countFrequencies',
+    ),
+    buildHeap: t('features.algorithms.runtime.string.huffmanCoding.phases.buildHeap'),
+    popMinimums: t('features.algorithms.runtime.string.huffmanCoding.phases.popMinimums'),
+    mergeNodes: t('features.algorithms.runtime.string.huffmanCoding.phases.mergeNodes'),
+    assignCodes: t('features.algorithms.runtime.string.huffmanCoding.phases.assignCodes'),
+  },
+  insights: {
+    uniqueCharsLabel: t(
+      'features.algorithms.runtime.string.huffmanCoding.insights.uniqueCharsLabel',
+    ),
+    heapSizeLabel: t('features.algorithms.runtime.string.huffmanCoding.insights.heapSizeLabel'),
+    codesAssignedLabel: t(
+      'features.algorithms.runtime.string.huffmanCoding.insights.codesAssignedLabel',
+    ),
+    savingsLabel: t('features.algorithms.runtime.string.huffmanCoding.insights.savingsLabel'),
+    savingsValue: t('features.algorithms.runtime.string.huffmanCoding.insights.savingsValue'),
+    noneValue: t('features.algorithms.runtime.string.huffmanCoding.insights.noneValue'),
+  },
+  descriptions: {
+    countFrequency: t(
+      'features.algorithms.runtime.string.huffmanCoding.descriptions.countFrequency',
+    ),
+    buildHeap: t('features.algorithms.runtime.string.huffmanCoding.descriptions.buildHeap'),
+    popMinimums: t('features.algorithms.runtime.string.huffmanCoding.descriptions.popMinimums'),
+    createdInternalNode: t(
+      'features.algorithms.runtime.string.huffmanCoding.descriptions.createdInternalNode',
+    ),
+    assignCode: t('features.algorithms.runtime.string.huffmanCoding.descriptions.assignCode'),
+  },
+  decisions: {
+    frequentShorterCodes: t(
+      'features.algorithms.runtime.string.huffmanCoding.decisions.frequentShorterCodes',
+    ),
+    minHeapReady: t('features.algorithms.runtime.string.huffmanCoding.decisions.minHeapReady'),
+    mergeSmallestFirst: t(
+      'features.algorithms.runtime.string.huffmanCoding.decisions.mergeSmallestFirst',
+    ),
+    rootReady: t('features.algorithms.runtime.string.huffmanCoding.decisions.rootReady'),
+    pushMergedNode: t('features.algorithms.runtime.string.huffmanCoding.decisions.pushMergedNode'),
+    tracePath: t('features.algorithms.runtime.string.huffmanCoding.decisions.tracePath'),
+  },
+  computation: {
+    labels: {
+      characterFrequency: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.labels.characterFrequency',
+      ),
+      initialHeap: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.labels.initialHeap',
+      ),
+      popTwoMinimums: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.labels.popTwoMinimums',
+      ),
+      newInternalNode: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.labels.newInternalNode',
+      ),
+      prefixCode: t('features.algorithms.runtime.string.huffmanCoding.computation.labels.prefixCode'),
+    },
+    expressions: {
+      codeFromPath: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.expressions.codeFromPath',
+      ),
+    },
+    results: {
+      heapSize: t('features.algorithms.runtime.string.huffmanCoding.computation.results.heapSize'),
+      newNodeFrequency: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.results.newNodeFrequency',
+      ),
+      frequencyValue: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.results.frequencyValue',
+      ),
+      codeBits: t('features.algorithms.runtime.string.huffmanCoding.computation.results.codeBits'),
+    },
+    notes: {
+      characterFrequency: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.notes.characterFrequency',
+      ),
+      initialHeap: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.notes.initialHeap',
+      ),
+      popTwoMinimums: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.notes.popTwoMinimums',
+      ),
+      newInternalNode: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.notes.newInternalNode',
+      ),
+      prefixCodeFinal: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.notes.prefixCodeFinal',
+      ),
+      prefixCodeSymbol: t(
+        'features.algorithms.runtime.string.huffmanCoding.computation.notes.prefixCodeSymbol',
+      ),
+    },
+  },
+  labels: {
+    countedProgress: t('features.algorithms.runtime.string.huffmanCoding.labels.countedProgress'),
+    leafNodes: t('features.algorithms.runtime.string.huffmanCoding.labels.leafNodes'),
+    readyToMerge: t('features.algorithms.runtime.string.huffmanCoding.labels.readyToMerge'),
+    newNodeFrequency: t(
+      'features.algorithms.runtime.string.huffmanCoding.labels.newNodeFrequency',
+    ),
+    heapSize: t('features.algorithms.runtime.string.huffmanCoding.labels.heapSize'),
+    compressedBits: t('features.algorithms.runtime.string.huffmanCoding.labels.compressedBits'),
+    codesProgress: t('features.algorithms.runtime.string.huffmanCoding.labels.codesProgress'),
+    codeAssignment: t('features.algorithms.runtime.string.huffmanCoding.labels.codeAssignment'),
+  },
+} as const;
 
 interface MutableNode {
   id: string;
@@ -91,12 +206,16 @@ function buildEdges(nodes: Map<string, MutableNode>): readonly HuffmanEdge[] {
   return edges;
 }
 
+function printableNodeChar(char: string | null): string {
+  return char ?? '∅';
+}
+
 function makeState(args: {
   readonly scenario: HuffmanScenario;
-  readonly phaseLabel: string;
-  readonly activeLabel: string;
-  readonly resultLabel: string;
-  readonly decisionLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly activeLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
+  readonly decisionLabel: TranslatableText;
   readonly phase: HuffmanTraceState['phase'];
   readonly charFreqs: readonly HuffmanFreq[];
   readonly heapItems: readonly HuffmanHeapItem[];
@@ -111,7 +230,7 @@ function makeState(args: {
 }): HuffmanTraceState {
   return {
     mode: 'huffman',
-    modeLabel: 'Huffman tree',
+    modeLabel: I18N.modeLabel,
     phaseLabel: args.phaseLabel,
     presetLabel: args.scenario.presetLabel,
     presetDescription: args.scenario.presetDescription,
@@ -120,15 +239,29 @@ function makeState(args: {
     decisionLabel: args.decisionLabel,
     computation: args.computation,
     insights: [
-      { label: 'Unique chars', value: String(args.charFreqs.length), tone: 'info' },
-      { label: 'Heap size', value: String(args.heapItems.length), tone: 'accent' },
-      { label: 'Codes assigned', value: String(args.codeTable.length), tone: 'success' },
       {
-        label: 'Savings',
+        label: I18N.insights.uniqueCharsLabel,
+        value: String(args.charFreqs.length),
+        tone: 'info',
+      },
+      {
+        label: I18N.insights.heapSizeLabel,
+        value: String(args.heapItems.length),
+        tone: 'accent',
+      },
+      {
+        label: I18N.insights.codesAssignedLabel,
+        value: String(args.codeTable.length),
+        tone: 'success',
+      },
+      {
+        label: I18N.insights.savingsLabel,
         value:
           args.totalOriginalBits > 0
-            ? `${((1 - args.totalCompressedBits / args.totalOriginalBits) * 100).toFixed(0)}%`
-            : '—',
+            ? i18nText(I18N.insights.savingsValue, {
+                percent: ((1 - args.totalCompressedBits / args.totalOriginalBits) * 100).toFixed(0),
+              })
+            : I18N.insights.noneValue,
         tone: 'warning',
       },
     ],
@@ -279,14 +412,21 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
 
     yield createStringStep({
       activeCodeLine: 2,
-      description: `Count frequency: '${ch}' appears ${freq} time${freq !== 1 ? 's' : ''} in "${source}".`,
+      description: i18nText(I18N.descriptions.countFrequency, {
+        char: ch,
+        freq,
+        source,
+      }),
       phase: fi === 0 ? 'init' : 'compare',
       string: makeState({
         scenario,
-        phaseLabel: 'Count frequencies',
+        phaseLabel: I18N.phases.countFrequencies,
         activeLabel: `'${ch}' = ${freq}`,
-        resultLabel: `${fi + 1} of ${sortedFreqs.length} chars counted`,
-        decisionLabel: 'Characters that appear more frequently will get shorter codes.',
+        resultLabel: i18nText(I18N.labels.countedProgress, {
+          current: fi + 1,
+          total: sortedFreqs.length,
+        }),
+        decisionLabel: I18N.decisions.frequentShorterCodes,
         phase: 'freq',
         charFreqs: activeCharFreqs,
         heapItems: [],
@@ -298,10 +438,10 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
         totalOriginalBits,
         totalCompressedBits,
         computation: {
-          label: 'Character frequency',
+          label: I18N.computation.labels.characterFrequency,
           expression: `freq['${ch}'] = count('${ch}', "${source}")`,
           result: String(freq),
-          note: 'Higher frequency → shorter prefix code → fewer bits per occurrence.',
+          note: I18N.computation.notes.characterFrequency,
         },
       }),
     });
@@ -319,14 +459,16 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
 
   yield createStringStep({
     activeCodeLine: 3,
-    description: `Build initial min-heap from ${sortedFreqs.length} leaf nodes, one per unique character.`,
+    description: i18nText(I18N.descriptions.buildHeap, {
+      count: sortedFreqs.length,
+    }),
     phase: 'pass-complete',
     string: makeState({
       scenario,
-      phaseLabel: 'Build heap',
-      activeLabel: `${sortedFreqs.length} leaf nodes`,
-      resultLabel: 'Ready to merge',
-      decisionLabel: 'The min-heap always gives us the two lowest-frequency nodes to merge first.',
+      phaseLabel: I18N.phases.buildHeap,
+      activeLabel: i18nText(I18N.labels.leafNodes, { count: sortedFreqs.length }),
+      resultLabel: I18N.labels.readyToMerge,
+      decisionLabel: I18N.decisions.minHeapReady,
       phase: 'heap',
       charFreqs: allCharFreqs,
       heapItems: initialHeapItems,
@@ -338,10 +480,10 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
       totalOriginalBits,
       totalCompressedBits,
       computation: {
-        label: 'Initial heap',
+        label: I18N.computation.labels.initialHeap,
         expression: `heap = [${sortedFreqs.map(([ch, f]) => `'${ch}'(${f})`).join(', ')}]`,
-        result: `size = ${sortedFreqs.length}`,
-        note: 'Each leaf will become the bottom layer of the Huffman tree.',
+        result: i18nText(I18N.computation.results.heapSize, { size: sortedFreqs.length }),
+        note: I18N.computation.notes.initialHeap,
       },
     }),
   });
@@ -373,14 +515,20 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
 
     yield createStringStep({
       activeCodeLine: 5,
-      description: `Merge step ${mi + 1}: pop minimum '${leftNode.char ?? '∅'}' (${leftNode.freq}) and '${rightNode.char ?? '∅'}' (${rightNode.freq}).`,
+      description: i18nText(I18N.descriptions.popMinimums, {
+        step: mi + 1,
+        leftChar: printableNodeChar(leftNode.char),
+        leftFreq: leftNode.freq,
+        rightChar: printableNodeChar(rightNode.char),
+        rightFreq: rightNode.freq,
+      }),
       phase: 'compare',
       string: makeState({
         scenario,
-        phaseLabel: 'Pop minimums',
+        phaseLabel: I18N.phases.popMinimums,
         activeLabel: `L=${leftNode.freq}, R=${rightNode.freq}`,
-        resultLabel: `New node freq = ${step.newFreq}`,
-        decisionLabel: 'Always merge the two nodes with the smallest frequencies first.',
+        resultLabel: i18nText(I18N.labels.newNodeFrequency, { freq: step.newFreq }),
+        decisionLabel: I18N.decisions.mergeSmallestFirst,
         phase: 'merge',
         charFreqs: allCharFreqs,
         heapItems: heapWithLR,
@@ -392,10 +540,14 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
         totalOriginalBits,
         totalCompressedBits,
         computation: {
-          label: 'Pop two minimums',
+          label: I18N.computation.labels.popTwoMinimums,
           expression: `L=${leftNode.freq}, R=${rightNode.freq}`,
-          result: `new node freq = ${leftNode.freq} + ${rightNode.freq} = ${step.newFreq}`,
-          note: 'The merged node frequency is the sum of its two children.',
+          result: i18nText(I18N.computation.results.newNodeFrequency, {
+            left: leftNode.freq,
+            right: rightNode.freq,
+            total: step.newFreq,
+          }),
+          note: I18N.computation.notes.popTwoMinimums,
         },
       }),
     });
@@ -425,17 +577,20 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
 
     yield createStringStep({
       activeCodeLine: 7,
-      description: `Created internal node with freq=${step.newFreq}. Heap now has ${currentHeapIds.length} node${currentHeapIds.length !== 1 ? 's' : ''}.`,
+      description: i18nText(I18N.descriptions.createdInternalNode, {
+        freq: step.newFreq,
+        heapSize: currentHeapIds.length,
+      }),
       phase: 'pass-complete',
       string: makeState({
         scenario,
-        phaseLabel: 'Merge nodes',
-        activeLabel: `new node freq=${step.newFreq}`,
-        resultLabel: `Heap size = ${currentHeapIds.length}`,
+        phaseLabel: I18N.phases.mergeNodes,
+        activeLabel: i18nText(I18N.labels.newNodeFrequency, { freq: step.newFreq }),
+        resultLabel: i18nText(I18N.labels.heapSize, { size: currentHeapIds.length }),
         decisionLabel:
           currentHeapIds.length === 1
-            ? 'Only one node left — this is the Huffman tree root!'
-            : 'Push the merged node back into the heap for the next round.',
+            ? I18N.decisions.rootReady
+            : I18N.decisions.pushMergedNode,
         phase: 'merge',
         charFreqs: allCharFreqs,
         heapItems: heapAfterItems,
@@ -447,10 +602,10 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
         totalOriginalBits,
         totalCompressedBits,
         computation: {
-          label: 'New internal node',
+          label: I18N.computation.labels.newInternalNode,
           expression: `merge(${leftNode.freq}, ${rightNode.freq})`,
-          result: `freq = ${step.newFreq}`,
-          note: `Left child gets '0', right child gets '1' in the code prefix.`,
+          result: i18nText(I18N.computation.results.frequencyValue, { freq: step.newFreq }),
+          note: I18N.computation.notes.newInternalNode,
         },
       }),
     });
@@ -472,14 +627,24 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
 
     yield createStringStep({
       activeCodeLine: 10,
-      description: `Assign code '${entry.code}' (${entry.code.length} bits) to '${entry.char}' (freq=${entry.freq}).`,
+      description: i18nText(I18N.descriptions.assignCode, {
+        code: entry.code,
+        bits: entry.code.length,
+        char: entry.char,
+        freq: entry.freq,
+      }),
       phase: isLast ? 'complete' : 'compare',
       string: makeState({
         scenario,
-        phaseLabel: 'Assign codes',
-        activeLabel: `'${entry.char}' → '${entry.code}'`,
-        resultLabel: isLast ? `${totalCompressedBits} compressed bits` : `${ci + 1} of ${fullCodeTable.length} codes`,
-        decisionLabel: `Trace the path from root to leaf '${entry.char}': left = '0', right = '1'.`,
+        phaseLabel: I18N.phases.assignCodes,
+        activeLabel: i18nText(I18N.labels.codeAssignment, {
+          char: entry.char,
+          code: entry.code,
+        }),
+        resultLabel: isLast
+          ? i18nText(I18N.labels.compressedBits, { bits: totalCompressedBits })
+          : i18nText(I18N.labels.codesProgress, { current: ci + 1, total: fullCodeTable.length }),
+        decisionLabel: i18nText(I18N.decisions.tracePath, { char: entry.char }),
         phase: 'codes',
         charFreqs: allCharFreqs,
         heapItems: finalHeapItems,
@@ -491,12 +656,23 @@ export function* huffmanCodingGenerator(scenario: HuffmanScenario): Generator<So
         totalOriginalBits,
         totalCompressedBits,
         computation: {
-          label: 'Prefix code',
-          expression: `code['${entry.char}'] = root-to-leaf path`,
-          result: `'${entry.code}' (${entry.code.length} bit${entry.code.length !== 1 ? 's' : ''})`,
+          label: I18N.computation.labels.prefixCode,
+          expression: i18nText(I18N.computation.expressions.codeFromPath, { char: entry.char }),
+          result: i18nText(I18N.computation.results.codeBits, {
+            code: entry.code,
+            bits: entry.code.length,
+          }),
           note: isLast
-            ? `Total: ${totalOriginalBits} → ${totalCompressedBits} bits (${((1 - totalCompressedBits / totalOriginalBits) * 100).toFixed(0)}% savings).`
-            : `freq=${entry.freq} × ${entry.code.length} bits = ${entry.freq * entry.code.length} bits for this symbol.`,
+            ? i18nText(I18N.computation.notes.prefixCodeFinal, {
+                original: totalOriginalBits,
+                compressed: totalCompressedBits,
+                savings: ((1 - totalCompressedBits / totalOriginalBits) * 100).toFixed(0),
+              })
+            : i18nText(I18N.computation.notes.prefixCodeSymbol, {
+                freq: entry.freq,
+                bits: entry.code.length,
+                total: entry.freq * entry.code.length,
+              }),
         },
       }),
     });
