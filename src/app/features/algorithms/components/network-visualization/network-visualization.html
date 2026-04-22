@@ -2,7 +2,12 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (state()) {
-    <svg #container class="network" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet">
+    <svg
+      #container
+      class="network"
+      [attr.viewBox]="viewBox()"
+      preserveAspectRatio="xMidYMid meet"
+    >
       <defs>
         <linearGradient id="networkEdgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="var(--viz-route)" />
@@ -47,10 +52,10 @@
             [attr.y2]="node(edge.toId)?.y ?? 0"
           />
           <g class="edge-label" [attr.transform]="edgeTransform(edge)">
-            <rect x="-28" y="-17" width="56" height="34" rx="12" />
+            <rect x="-22" y="-13" width="44" height="26" rx="6" />
             <text class="edge-label__primary" y="-1">{{ edge.primaryText }}</text>
             @if (edge.secondaryText) {
-              <text class="edge-label__secondary" y="11">{{ edge.secondaryText }}</text>
+              <text class="edge-label__secondary" y="10">{{ edge.secondaryText }}</text>
             }
           </g>
         </g>
@@ -63,18 +68,18 @@
           [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
           [attr.data-node-id]="node.id"
         >
-          <circle class="node__halo" r="35" />
-          <circle class="node__body" r="26" />
-          <text class="node__label" y="6">{{ node.label }}</text>
+          <circle class="node__halo" r="30" />
+          <circle class="node__body" r="22" />
+          <text class="node__label" y="5">{{ node.label }}</text>
 
-          <g class="node__metric" transform="translate(0 -45)">
-            <rect x="-24" y="-12" width="48" height="24" rx="12" />
-            <text y="4">{{ levelLabel(node) }}</text>
+          <g class="node__metric" transform="translate(0 -36)">
+            <rect x="-22" y="-11" width="44" height="22" rx="7" />
+            <text y="3">{{ levelLabel(node) }}</text>
           </g>
 
-          <g class="node__link" transform="translate(0 46)">
-            <rect x="-38" y="-12" width="76" height="24" rx="12" />
-            <text y="4">{{ linkLabel(node) }}</text>
+          <g class="node__link" transform="translate(0 38)">
+            <rect x="-32" y="-10" width="64" height="20" rx="6" />
+            <text y="3">{{ linkLabel(node) }}</text>
           </g>
         </g>
       }

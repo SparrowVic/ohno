@@ -51,6 +51,28 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
   readonly nodes = computed(() => this.state()?.nodes ?? []);
   readonly edges = computed(() => this.state()?.edges ?? []);
 
+  /** Tight-fit viewBox recomputed every step — flow networks can
+   *  shift layout between BFS passes, so a fixed 0 0 960 600 box
+   *  clipped nodes near the edges. Padding (68px) accounts for the
+   *  node halo + the metric / link chips that sit above and below
+   *  the body circle. */
+  readonly viewBox = computed(() => {
+    const nodes = this.nodes();
+    if (nodes.length === 0) return '0 0 960 600';
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const node of nodes) {
+      if (node.x < minX) minX = node.x;
+      if (node.x > maxX) maxX = node.x;
+      if (node.y < minY) minY = node.y;
+      if (node.y > maxY) maxY = node.y;
+    }
+    const pad = 68;
+    return `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
+  });
+
   private readonly modeLabel = computed(
     () =>
       this.state()?.modeLabel ??
