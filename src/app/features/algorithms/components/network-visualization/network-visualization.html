@@ -13,45 +13,42 @@
           <stop offset="0%" stop-color="var(--viz-route)" />
           <stop offset="100%" stop-color="var(--viz-window)" />
         </linearGradient>
-        <marker
-          id="networkArrowDefault"
-          markerWidth="10"
-          markerHeight="10"
-          refX="8"
-          refY="5"
-          orient="auto"
-        >
-          <path d="M0 0L10 5L0 10Z" fill="rgba(255,255,255,0.44)" />
-        </marker>
-        <marker
-          id="networkArrowHot"
-          markerWidth="10"
-          markerHeight="10"
-          refX="8"
-          refY="5"
-          orient="auto"
-        >
-          <path d="M0 0L10 5L0 10Z" fill="rgba(240,180,41,0.82)" />
-        </marker>
+        @for (marker of arrowMarkers; track marker.id) {
+          <marker
+            [attr.id]="marker.id"
+            markerWidth="9"
+            markerHeight="9"
+            refX="8"
+            refY="4.5"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <path d="M0 0L9 4.5L0 9Z" [attr.fill]="marker.fill" />
+          </marker>
+        }
+        <filter id="networkNodeGlow">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
       @for (edge of edges(); track edge.id) {
         <g class="edge-group" [attr.data-edge-id]="edge.id">
           <line
             class="edge-line edge-line--{{ edge.status }}"
-            [attr.marker-end]="
-              edge.directed
-                ? edge.status === 'active' || edge.status === 'augment'
-                  ? 'url(#networkArrowHot)'
-                  : 'url(#networkArrowDefault)'
-                : null
-            "
-            [attr.x1]="node(edge.fromId)?.x ?? 0"
-            [attr.y1]="node(edge.fromId)?.y ?? 0"
-            [attr.x2]="node(edge.toId)?.x ?? 0"
-            [attr.y2]="node(edge.toId)?.y ?? 0"
+            [attr.marker-end]="edgeMarker(edge)"
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
           />
-          <g class="edge-label" [attr.transform]="edgeTransform(edge)">
+          <g
+            class="edge-label"
+            [attr.transform]="'translate(' + edge.midX + ' ' + edge.midY + ')'"
+          >
             <rect x="-22" y="-13" width="44" height="26" rx="6" />
             <text class="edge-label__primary" y="-1">{{ edge.primaryText }}</text>
             @if (edge.secondaryText) {
@@ -69,7 +66,7 @@
           [attr.data-node-id]="node.id"
         >
           <circle class="node__halo" r="30" />
-          <circle class="node__body" r="22" />
+          <circle class="node__body" r="22" filter="url(#networkNodeGlow)" />
           <text class="node__label" y="5">{{ node.label }}</text>
 
           <g class="node__metric" transform="translate(0 -36)">
