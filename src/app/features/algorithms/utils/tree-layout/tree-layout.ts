@@ -23,9 +23,16 @@ export interface TreeLayoutBounds {
   readonly height: number;
 }
 
-const HORIZONTAL_GAP = 52;
-const LEVEL_HEIGHT = 72;
-const PADDING = 28;
+/** Logical gap between adjacent leaves. Sized so that r=22 node
+ *  bodies still get visible breathing room at the deepest supported
+ *  tree (depth 5 = 16 leaves): 16 × 62 = 992 logical units, giving
+ *  each leaf ~18px of clear space between body circles. */
+const HORIZONTAL_GAP = 62;
+/** Vertical separation between depth levels. Matches the DSU forest
+ *  LEVEL_GAP so tree-traversals and Union-Find read at the same
+ *  rhythm. */
+const LEVEL_HEIGHT = 82;
+const PADDING = 36;
 
 /** Compute an x/y position for every node in the seed list. Layout
  *  is a simple Reingold–Tilford variant: leaves get sequential x
