@@ -23,11 +23,46 @@ export const DSU_GRAPH_FOREST_GROUP_INSET = 40;
 export const DSU_GRAPH_CIRCLE_CENTER_X = 480;
 export const DSU_GRAPH_CIRCLE_CENTER_Y = 310;
 export const DSU_GRAPH_CIRCLE_MIN_RADIUS = 140;
-export const DSU_GRAPH_CIRCLE_NODE_SPACING = 42;
+/** Arc length between adjacent ring nodes, in logical units. Keeps
+ *  node separation constant regardless of count — the ring radius
+ *  grows with `count` so every scenario stays readable. */
+export const DSU_GRAPH_CIRCLE_ARC_SPACING = 92;
 
 export interface DsuGraphPosition {
   readonly x: number;
   readonly y: number;
+}
+
+/** Padding added around positioned nodes when computing a viewBox.
+ *  Covers node radius, halo glow and any metadata labels that sit
+ *  above or below the body circle. */
+export const DSU_GRAPH_VIEWBOX_PADDING = 56;
+
+/** Tight-fit viewBox for whatever nodes the current layout produced.
+ *  Falls back to a sensible default when no positions are available
+ *  yet (e.g. the first render before the generator has emitted). The
+ *  viewport is expressed in the SVG's logical units; the component
+ *  plugs it into `[attr.viewBox]` so the canvas scales responsively
+ *  and nothing clips off the top / bottom / sides. */
+export function computeDsuGraphViewBox(
+  positions: ReadonlyMap<string, DsuGraphPosition>,
+): string {
+  if (positions.size === 0) return '0 0 960 620';
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (const { x, y } of positions.values()) {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  const left = minX - DSU_GRAPH_VIEWBOX_PADDING;
+  const top = minY - DSU_GRAPH_VIEWBOX_PADDING;
+  const width = maxX - minX + DSU_GRAPH_VIEWBOX_PADDING * 2;
+  const height = maxY - minY + DSU_GRAPH_VIEWBOX_PADDING * 2;
+  return `${left} ${top} ${width} ${height}`;
 }
 
 /** Status flag carried by a rendered edge. Union-Find synthesises
@@ -95,10 +130,14 @@ export function layoutDsuForest(
     }
 
     const widestCount = Math.max(1, ...byLevel.map((level) => level.length));
-    const groupWidth = Math.max(
-      widestCount * DSU_GRAPH_FOREST_SIBLING_GAP,
-      DSU_GRAPH_FOREST_SIBLING_GAP,
+    // Sibling gap shrinks a little when a level is crowded — keeps
+    // fan-outs from running off the canvas while fan-ins of 2-3 still
+    // get the full airy spacing. Floor at 44 so nodes never collide.
+    const siblingGap = Math.max(
+      44,
+      Math.min(DSU_GRAPH_FOREST_SIBLING_GAP, 520 / Math.max(widestCount, 3)),
     );
+    const groupWidth = Math.max(widestCount * siblingGap, siblingGap);
 
     byLevel.forEach((levelIds, levelIndex) => {
       const levelY = DSU_GRAPH_FOREST_ROOT_Y + levelIndex * DSU_GRAPH_FOREST_LEVEL_GAP;
@@ -119,7 +158,10 @@ export function layoutDsuForest(
 }
 
 /** Lay a Kruskal candidate graph out as a simple ring. Node order is
- *  preserved so the input list's identity is reflected spatially. */
+ *  preserved so the input list's identity is reflected spatially.
+ *  Radius follows the arc-spacing law (2πr = count × spacing) so node
+ *  gaps stay constant regardless of ring size — this also keeps the
+ *  ring inside the canvas without wasting vertical space. */
 export function layoutDsuCircle(
   nodes: readonly DsuNodeTrace[],
 ): ReadonlyMap<string, DsuGraphPosition> {
@@ -127,7 +169,10 @@ export function layoutDsuCircle(
   const count = nodes.length;
   if (count === 0) return positions;
 
-  const radius = Math.max(DSU_GRAPH_CIRCLE_MIN_RADIUS, count * DSU_GRAPH_CIRCLE_NODE_SPACING);
+  const radius = Math.max(
+    DSU_GRAPH_CIRCLE_MIN_RADIUS,
+    (count * DSU_GRAPH_CIRCLE_ARC_SPACING) / (2 * Math.PI),
+  );
 
   nodes.forEach((node, index) => {
     const theta = (2 * Math.PI * index) / count - Math.PI / 2; // start at top

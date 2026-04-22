@@ -13,6 +13,7 @@ import {
   DsuGraphPosition,
   DsuGraphRenderedEdge,
   buildDsuRenderedEdge,
+  computeDsuGraphViewBox,
   layoutDsuCircle,
   layoutDsuForest,
   unionFindEdgeStatusFromChild,
@@ -75,6 +76,11 @@ export class DsuGraphVisualization {
       ? layoutDsuForest(state.nodes, state.groups)
       : layoutDsuCircle(state.nodes);
   });
+
+  /** Tight-fit SVG viewBox — recomputed each step so forests of any
+   *  depth and rings of any count stay fully visible without nodes
+   *  getting clipped off the top, bottom or sides of the canvas. */
+  readonly viewBox = computed(() => computeDsuGraphViewBox(this.nodePositions()));
 
   readonly renderedNodes = computed<readonly RenderedNode[]>(() => {
     const state = this.state();
