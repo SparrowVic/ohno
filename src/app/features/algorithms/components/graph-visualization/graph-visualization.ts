@@ -12,7 +12,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
-import { WeightedGraphData } from '../../models/graph';
+import { GraphNodeSnapshot, WeightedGraphData } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
@@ -23,6 +23,8 @@ import { VizPanel } from '../viz-panel/viz-panel';
 const NODE_RADIUS = 22;
 /** Extra breathing room between the arrow tip and the node border. */
 const ARROW_TIP_INSET = 2;
+const NODE_CHIP_TEXT_WIDTH = 6.2;
+const NODE_CHIP_PADDING_X = 12;
 
 interface ArrowMarker {
   readonly id: string;
@@ -294,8 +296,20 @@ export class GraphVisualization {
     return distance === null ? '∞' : String(distance);
   }
 
+  distanceChipWidth(node: GraphNodeSnapshot): number {
+    return this.estimateNodeChipWidth(this.formatDistance(node.distance), 52);
+  }
+
   secondaryText(nodeId: string): string {
     return this.nodes().find((node) => node.id === nodeId)?.secondaryText ?? '—';
+  }
+
+  secondaryChipText(nodeId: string): string {
+    return `${this.secondaryLabel()} ${this.secondaryText(nodeId)}`.trim();
+  }
+
+  secondaryChipWidth(nodeId: string): number {
+    return this.estimateNodeChipWidth(this.secondaryChipText(nodeId), 52);
   }
 
   isEdgeMuted(edgeId: string): boolean {
@@ -407,5 +421,12 @@ export class GraphVisualization {
       hops++;
     }
     return path;
+  }
+
+  /** SVG rects cannot auto-size to text, so we estimate width from the
+   *  mono label length and keep a minimum equal to the legacy chip size. */
+  private estimateNodeChipWidth(text: string, minWidth: number): number {
+    const glyphCount = Array.from(text).length;
+    return Math.max(minWidth, Math.ceil(glyphCount * NODE_CHIP_TEXT_WIDTH + NODE_CHIP_PADDING_X * 2));
   }
 }

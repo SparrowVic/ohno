@@ -32,6 +32,8 @@ import { VizPanel } from '../viz-panel/viz-panel';
 const NETWORK_NODE_RADIUS = 22;
 /** Extra breathing room between the arrow tip and the node border. */
 const NETWORK_ARROW_TIP_INSET = 2;
+const NETWORK_CHIP_TEXT_WIDTH = 6.2;
+const NETWORK_CHIP_PADDING_X = 12;
 
 interface ArrowMarker {
   readonly id: string;
@@ -284,8 +286,16 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     return node.level === null ? 'L—' : `L${node.level}`;
   }
 
+  metricChipWidth(node: NetworkNodeSnapshot): number {
+    return this.estimateChipWidth(this.levelLabel(node), 44);
+  }
+
   linkLabel(node: NetworkNodeSnapshot): string {
     return node.linkLabel ?? '—';
+  }
+
+  linkChipWidth(node: NetworkNodeSnapshot): number {
+    return this.estimateChipWidth(this.linkLabel(node), 64);
   }
 
   node(nodeId: string): NetworkNodeSnapshot | undefined {
@@ -349,5 +359,12 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
   private translate(key: I18nKey, params?: Record<string, string | number>): string {
     this.language.activeLang();
     return this.transloco.translate(key, params);
+  }
+
+  /** SVG chips need explicit geometry, so widen the rect to match the
+   *  mono text instead of letting longer labels spill past the fill. */
+  private estimateChipWidth(text: string, minWidth: number): number {
+    const glyphCount = Array.from(text).length;
+    return Math.max(minWidth, Math.ceil(glyphCount * NETWORK_CHIP_TEXT_WIDTH + NETWORK_CHIP_PADDING_X * 2));
   }
 }
