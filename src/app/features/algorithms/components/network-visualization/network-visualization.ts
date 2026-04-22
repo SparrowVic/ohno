@@ -143,14 +143,17 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     return 'url(#networkArrowDefault)';
   }
 
-  /** Tight-fit viewBox recomputed every step — flow networks can
-   *  shift layout between BFS passes, so a fixed 0 0 960 600 box
-   *  clipped nodes near the edges. Padding (68px) accounts for the
-   *  node halo + the metric / link chips that sit above and below
-   *  the body circle. */
+  /** SVG viewBox with a minimum floor matching graph-viz's default
+   *  (960 × 620). Fixed-viewport families keep node chrome at the
+   *  same on-screen size across algorithms: if the layout fits the
+   *  floor the content is centered inside it, and only graphs that
+   *  actually overflow get a larger viewport. Without this, a small
+   *  8-node flow network would scale its r=22 circles up to look
+   *  almost twice the size of a Dijkstra node in the same panel. */
   readonly viewBox = computed(() => {
     const nodes = this.nodes();
-    if (nodes.length === 0) return '0 0 960 600';
+    if (nodes.length === 0) return '0 0 960 620';
+
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
@@ -161,8 +164,15 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
       if (node.y < minY) minY = node.y;
       if (node.y > maxY) maxY = node.y;
     }
+
     const pad = 68;
-    return `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
+    const contentWidth = maxX - minX + pad * 2;
+    const contentHeight = maxY - minY + pad * 2;
+    const width = Math.max(contentWidth, 960);
+    const height = Math.max(contentHeight, 620);
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    return `${cx - width / 2} ${cy - height / 2} ${width} ${height}`;
   });
 
   private readonly modeLabel = computed(

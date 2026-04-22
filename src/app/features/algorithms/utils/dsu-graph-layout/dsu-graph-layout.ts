@@ -38,16 +38,24 @@ export interface DsuGraphPosition {
  *  above or below the body circle. */
 export const DSU_GRAPH_VIEWBOX_PADDING = 56;
 
-/** Tight-fit viewBox for whatever nodes the current layout produced.
- *  Falls back to a sensible default when no positions are available
- *  yet (e.g. the first render before the generator has emitted). The
- *  viewport is expressed in the SVG's logical units; the component
- *  plugs it into `[attr.viewBox]` so the canvas scales responsively
- *  and nothing clips off the top / bottom / sides. */
+/** Minimum viewBox dimensions — match graph-viz's reference canvas so
+ *  DSU visualizations share the same on-screen component scale with
+ *  the rest of the graph family. Without a floor, small forests or
+ *  rings scale up their nodes to fill the panel. */
+export const DSU_GRAPH_MIN_VIEWBOX_WIDTH = 960;
+export const DSU_GRAPH_MIN_VIEWBOX_HEIGHT = 620;
+
+/** viewBox around the current layout with a minimum-size floor. Small
+ *  graphs center inside the reference canvas (nodes stay at their
+ *  reference size); graphs that overflow it get a larger viewport so
+ *  nothing clips. Falls back to the reference canvas when no
+ *  positions are available yet. */
 export function computeDsuGraphViewBox(
   positions: ReadonlyMap<string, DsuGraphPosition>,
 ): string {
-  if (positions.size === 0) return '0 0 960 620';
+  if (positions.size === 0) {
+    return `0 0 ${DSU_GRAPH_MIN_VIEWBOX_WIDTH} ${DSU_GRAPH_MIN_VIEWBOX_HEIGHT}`;
+  }
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
@@ -58,11 +66,13 @@ export function computeDsuGraphViewBox(
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
   }
-  const left = minX - DSU_GRAPH_VIEWBOX_PADDING;
-  const top = minY - DSU_GRAPH_VIEWBOX_PADDING;
-  const width = maxX - minX + DSU_GRAPH_VIEWBOX_PADDING * 2;
-  const height = maxY - minY + DSU_GRAPH_VIEWBOX_PADDING * 2;
-  return `${left} ${top} ${width} ${height}`;
+  const contentWidth = maxX - minX + DSU_GRAPH_VIEWBOX_PADDING * 2;
+  const contentHeight = maxY - minY + DSU_GRAPH_VIEWBOX_PADDING * 2;
+  const width = Math.max(contentWidth, DSU_GRAPH_MIN_VIEWBOX_WIDTH);
+  const height = Math.max(contentHeight, DSU_GRAPH_MIN_VIEWBOX_HEIGHT);
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  return `${cx - width / 2} ${cy - height / 2} ${width} ${height}`;
 }
 
 /** Status flag carried by a rendered edge. Union-Find synthesises
