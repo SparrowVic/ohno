@@ -87,14 +87,17 @@
 
         @if (showNodeLabels()) {
           <g class="node__distance" transform="translate(0 -36)">
-            <rect x="-26" y="-11" width="52" height="22" rx="7" />
+            @let distanceWidth = distanceChipWidth(node);
+            <rect [attr.x]="-distanceWidth / 2" y="-11" [attr.width]="distanceWidth" height="22" rx="7" />
             <text class="node__metric-label" y="-14">{{ metricLabel() }}</text>
             <text y="3">{{ formatDistance(node.distance) }}</text>
           </g>
 
           <g class="node__previous" transform="translate(0 38)">
-            <rect x="-26" y="-10" width="52" height="20" rx="6" />
-            <text y="3">{{ secondaryLabel() }} {{ secondaryText(node.id) }}</text>
+            @let secondaryTextValue = secondaryChipText(node.id);
+            @let secondaryWidth = secondaryChipWidth(node.id);
+            <rect [attr.x]="-secondaryWidth / 2" y="-10" [attr.width]="secondaryWidth" height="20" rx="6" />
+            <text y="3">{{ secondaryTextValue }}</text>
           </g>
         }
       </g>

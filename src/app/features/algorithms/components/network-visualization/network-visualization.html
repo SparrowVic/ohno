@@ -70,13 +70,16 @@
           <text class="node__label" y="5">{{ node.label }}</text>
 
           <g class="node__metric" transform="translate(0 -36)">
-            <rect x="-22" y="-11" width="44" height="22" rx="7" />
+            @let metricWidth = metricChipWidth(node);
+            <rect [attr.x]="-metricWidth / 2" y="-11" [attr.width]="metricWidth" height="22" rx="7" />
             <text y="3">{{ levelLabel(node) }}</text>
           </g>
 
           <g class="node__link" transform="translate(0 38)">
-            <rect x="-32" y="-10" width="64" height="20" rx="6" />
-            <text y="3">{{ linkLabel(node) }}</text>
+            @let linkText = linkLabel(node);
+            @let linkWidth = linkChipWidth(node);
+            <rect [attr.x]="-linkWidth / 2" y="-10" [attr.width]="linkWidth" height="20" rx="6" />
+            <text y="3">{{ linkText }}</text>
           </g>
         </g>
       }
