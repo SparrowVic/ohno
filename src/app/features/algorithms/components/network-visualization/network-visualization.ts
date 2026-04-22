@@ -68,6 +68,7 @@ interface RenderedNetworkEdge {
   readonly midY: number;
 }
 
+
 @Component({
   selector: 'app-network-visualization',
   imports: [TranslocoPipe, VizHeader, VizPanel],
