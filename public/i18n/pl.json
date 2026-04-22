@@ -384,6 +384,131 @@
             }
           }
         },
+        "callTreeLab": {
+          "backtracking": {
+            "boardFooter": "{{placed}} / {{n}} hetmanów na planszy",
+            "boardTitle": "Plansza N-hetmanów",
+            "decisions": {
+              "cellAttacked": "Pole atakowane — pomijamy.",
+              "cellSafe": "Pole bezpieczne — schodzimy niżej.",
+              "descend": "Rekurencja w kolejny wiersz.",
+              "exhausted": "Żadna kolumna nie działa — cofamy dalej.",
+              "placed": "Hetman postawiony — rekurencja w kolejny wiersz.",
+              "solved": "Każdy wiersz ma hetmana — koniec.",
+              "tryCol": "Próba kolejnej kolumny w tym wierszu.",
+              "unwind": "Cofamy i próbujemy kolejnej kolumny."
+            },
+            "descriptions": {
+              "backtrack": "Wiersz {{row}}, kolumna {{col}} nie prowadzi do celu — cofamy i próbujemy kolejną.",
+              "complete": "Przeszukiwanie zakończone.",
+              "conflict": "W wierszu {{row}}, kolumnie {{col}} atak innego hetmana.",
+              "noSolution": "Wyczerpaliśmy kolumny — brak poprawnego rozstawienia.",
+              "place": "Wiersz {{row}}, kolumna {{col}} bezpieczne — stawiamy hetmana.",
+              "probe": "Próbujemy kolumny {{col}} w wierszu {{row}}.",
+              "setup": "Rozmieszczamy hetmanów na planszy {{n}}×{{n}} — jeden na wiersz.",
+              "solution": "Wszystkich {{n}} hetmanów rozstawionych — rozwiązanie!"
+            },
+            "modeLabel": "Backtracking (N-hetmanów)",
+            "phases": {
+              "backtrack": "Cofnięcie",
+              "complete": "Zakończone",
+              "conflict": "Konflikt",
+              "place": "Postawienie",
+              "probe": "Próba",
+              "setup": "Przygotowanie",
+              "solution": "Rozwiązanie"
+            },
+            "resultFailure": "Nie istnieje poprawne rozstawienie.",
+            "resultSuccess": "Rozwiązanie znalezione: kolumny [{{cols}}].",
+            "stats": {
+              "attempts": "Próby",
+              "backtracks": "Cofnięcia",
+              "col": "kol",
+              "placedCount": "Postawione",
+              "row": "wiersz"
+            }
+          },
+          "mcts": {
+            "decisions": {
+              "bubbleUp": "Przepuszczamy wizyty + nagrodę przez wszystkich przodków.",
+              "descend": "Schodzimy zgodnie z UCB1.",
+              "done": "Iteracje skończone — wybieramy najczęściej odwiedzane dziecko korzenia.",
+              "expand": "Tworzymy jedno nowe dziecko dla wybranego rodzica.",
+              "explore": "UCB1 równoważy eksploatację i eksplorację.",
+              "simulate": "Deterministyczny rollout — pobieramy nagrodę liścia."
+            },
+            "descriptions": {
+              "backprop": "Propagacja nagrody {{reward}} w górę przez głębokość {{depth}}.",
+              "complete": "Finalny wybór: ramię #{{arm}} — wizyt {{visits}}, średnia {{mean}}.",
+              "expand": "Ekspansja ramienia #{{arm}} na głębokości {{depth}}.",
+              "selectPick": "Wybór ramienia #{{arm}} — najwyższe UCB = {{ucb}}.",
+              "selectStart": "Iteracja {{iter}} — start selekcji od korzenia.",
+              "setup": "Uruchamiamy {{iterations}} iteracji MCTS z c = {{c}}.",
+              "simulate": "Symulacja playout — nagroda = {{reward}}."
+            },
+            "modeLabel": "Monte Carlo Tree Search",
+            "phases": {
+              "backprop": "Backprop",
+              "complete": "Zakończone",
+              "expand": "Ekspansja",
+              "select": "Selekcja",
+              "setup": "Przygotowanie",
+              "simulate": "Symulacja"
+            },
+            "resultFormat": "Najlepsze ramię #{{arm}} — wizyt {{visits}}, średnia {{mean}}",
+            "stats": {
+              "bestArm": "Najlepsze ramię",
+              "explored": "Węzły",
+              "iteration": "Iter",
+              "reward": "μ",
+              "ucb": "UCB",
+              "visits": "N"
+            }
+          },
+          "minimax": {
+            "decisions": {
+              "cutAlpha": "Cięcie α — pozostałe rodzeństwa nie poprawią MIN.",
+              "cutBeta": "Cięcie β — pozostałe rodzeństwa nie poprawią MAX.",
+              "descend": "Schodzimy w kolejne dziecko.",
+              "done": "Korzeń ustalony.",
+              "leafReturn": "Liść — zwracamy wartość statyczną.",
+              "maxUp": "MAX podnosi swój best/α po zwrocie z dziecka.",
+              "minDown": "MIN obniża swój best/β po zwrocie z dziecka.",
+              "settle": "Wszystkie dzieci odwiedzone — zwracamy best."
+            },
+            "descriptions": {
+              "complete": "Wartość korzenia {{value}} — ocenione {{evaluated}}, odcięte {{pruned}}.",
+              "enter": "Wchodzimy w {{player}}(d={{depth}}, α={{alpha}}, β={{beta}}).",
+              "leaf": "Wartość liścia = {{value}}.",
+              "prune": "α ({{alpha}}) ≥ β ({{beta}}) — odcinamy {{skipped}} liści podrzędnego drzewa.",
+              "settle": "{{player}} kończy z wynikiem {{value}}.",
+              "setup": "Przeszukujemy drzewo gry — głębokość {{depth}}, rozgałęzienie {{branching}}.",
+              "updateMax": "MAX zbiera {{value}} → best = {{best}}, α = {{alpha}}.",
+              "updateMin": "MIN zbiera {{value}} → best = {{best}}, β = {{beta}}."
+            },
+            "modeLabel": "Minimax (α/β)",
+            "phases": {
+              "complete": "Zakończone",
+              "descend": "Schodzenie",
+              "evaluate": "Ewaluacja",
+              "prune": "Przycięcie",
+              "settle": "Ustalenie",
+              "setup": "Przygotowanie",
+              "update": "Aktualizacja"
+            },
+            "resultFormat": "Wartość minimax w korzeniu = {{value}}",
+            "stats": {
+              "alpha": "α",
+              "best": "Best",
+              "beta": "β",
+              "evaluated": "Ocenione",
+              "leaf": "liść",
+              "player": "gracz",
+              "pruned": "Odcięte",
+              "value": "wart"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "decisions": {
@@ -2851,6 +2976,50 @@
             }
           }
         },
+        "callTreeLab": {
+          "backtracking": {
+            "challenge": {
+              "description": "6-hetmanów — gęstsze drzewo z kilkoma ślepymi uliczkami przed sukcesem.",
+              "label": "6 hetmanów"
+            },
+            "classic": {
+              "description": "5-hetmanów — nieco więcej rozgałęzień, wciąż pełne rozwiązanie.",
+              "label": "5 hetmanów"
+            },
+            "tiny": {
+              "description": "4-hetmani — najmniejsza klasyczna plansza z czystym rozwiązaniem.",
+              "label": "4 hetmany"
+            }
+          },
+          "mcts": {
+            "classic": {
+              "description": "10 iteracji na drzewie 2-ramiennym — wizyty narastają, ranking się stabilizuje.",
+              "label": "Klasyczny 2-ramienny"
+            },
+            "deep": {
+              "description": "12 iteracji na drzewie 3-ramiennym — test obciążeniowy dla równowagi UCB.",
+              "label": "Głębszy 3-ramienny"
+            },
+            "shallow": {
+              "description": "6 iteracji na drzewie 2-ramiennym — widać, jak eksploracja zaczyna faworyzować najlepsze ramię.",
+              "label": "Płytki start"
+            }
+          },
+          "minimax": {
+            "balanced": {
+              "description": "Drzewo binarne z 8 liśćmi — na tyle proste, że policzysz ręcznie.",
+              "label": "Zbalansowane 2×3"
+            },
+            "prunable": {
+              "description": "Drzewo 3-arne skonstruowane tak, by α i β odcinały kilka poddrzew.",
+              "label": "Odcinalne 3×2"
+            },
+            "wide": {
+              "description": "Szersze drzewo 3-arne (27 liści) pokazuje, jak odcinanie narasta z głębokością.",
+              "label": "Szerokie 3×3"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "crews": {
@@ -3611,6 +3780,14 @@
           "emptyLabel": "Brak śladu stosu wywołań dla tego kroku.",
           "iterationLabel": "Iteracja",
           "returnsLabel": "Ostatnie powroty",
+          "statsLabel": "Statystyki"
+        },
+        "callTreeLab": {
+          "activeLabel": "Aktywny węzeł",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu drzewa wywołań dla tego kroku.",
+          "iterationLabel": "Iteracja",
+          "pathLabel": "Aktywna ścieżka",
           "statsLabel": "Statystyki"
         },
         "closestPair": {

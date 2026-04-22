@@ -1101,6 +1101,14 @@ export const I18N_KEY = {
           returnsLabel: t('features.algorithms.tracePanels.callStackLab.returnsLabel'),
           emptyLabel: t('features.algorithms.tracePanels.callStackLab.emptyLabel'),
         },
+        callTreeLab: {
+          iterationLabel: t('features.algorithms.tracePanels.callTreeLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.callTreeLab.decisionLabel'),
+          activeLabel: t('features.algorithms.tracePanels.callTreeLab.activeLabel'),
+          statsLabel: t('features.algorithms.tracePanels.callTreeLab.statsLabel'),
+          pathLabel: t('features.algorithms.tracePanels.callTreeLab.pathLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.callTreeLab.emptyLabel'),
+        },
       },
       visualizations: {
         search: {

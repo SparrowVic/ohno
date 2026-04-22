@@ -556,6 +556,21 @@ import {
   DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
   createRecursiveFibonacciScenario,
 } from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
+import {
+  CallTreeLabPresetOption,
+  NQueensScenario,
+  MinimaxScenario,
+  McTsScenario,
+  N_QUEENS_PRESETS,
+  MINIMAX_PRESETS,
+  MCTS_PRESETS,
+  DEFAULT_N_QUEENS_PRESET_ID,
+  DEFAULT_MINIMAX_PRESET_ID,
+  DEFAULT_MCTS_PRESET_ID,
+  createNQueensScenario,
+  createMinimaxScenario,
+  createMcTsScenario,
+} from '../../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
 import { fibonacciIterativeGenerator } from '../../algorithms/fibonacci-iterative/fibonacci-iterative';
 import { factorialGenerator } from '../../algorithms/factorial/factorial';
 import { euclideanGcdGenerator } from '../../algorithms/euclidean-gcd/euclidean-gcd';
@@ -566,6 +581,9 @@ import { reverseStringArrayGenerator } from '../../algorithms/reverse-string-arr
 import { kadaneGenerator } from '../../algorithms/kadane/kadane';
 import { sieveOfEratosthenesGenerator } from '../../algorithms/sieve-of-eratosthenes/sieve-of-eratosthenes';
 import { recursionCallStackGenerator } from '../../algorithms/recursion-call-stack/recursion-call-stack';
+import { backtrackingGenerator } from '../../algorithms/backtracking/backtracking';
+import { minimaxAlphaBetaGenerator } from '../../algorithms/minimax-alpha-beta/minimax-alpha-beta';
+import { mctsGenerator } from '../../algorithms/mcts/mcts';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -626,6 +644,24 @@ import {
   RECURSION_CALL_STACK_CODE_REGIONS,
   RECURSION_CALL_STACK_CODE_VARIANTS,
 } from '../../data/recursion-call-stack-code';
+import {
+  BACKTRACKING_CODE,
+  BACKTRACKING_CODE_HIGHLIGHT_MAP,
+  BACKTRACKING_CODE_REGIONS,
+  BACKTRACKING_CODE_VARIANTS,
+} from '../../data/backtracking-code';
+import {
+  MINIMAX_ALPHA_BETA_CODE,
+  MINIMAX_ALPHA_BETA_CODE_HIGHLIGHT_MAP,
+  MINIMAX_ALPHA_BETA_CODE_REGIONS,
+  MINIMAX_ALPHA_BETA_CODE_VARIANTS,
+} from '../../data/minimax-alpha-beta-code';
+import {
+  MCTS_CODE,
+  MCTS_CODE_HIGHLIGHT_MAP,
+  MCTS_CODE_REGIONS,
+  MCTS_CODE_VARIANTS,
+} from '../../data/mcts-code';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../../models/detail';
 import { HOPCROFT_KARP_CODE, HOPCROFT_KARP_CODE_VARIANTS } from '../../data/hopcroft-karp-code';
@@ -1390,6 +1426,10 @@ const CALL_STACK_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'call-stack-lab', label: 'Call Stack Lab' },
 ];
 
+const CALL_TREE_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'call-tree-lab', label: 'Call Tree Lab' },
+];
+
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
 ];
@@ -1626,6 +1666,14 @@ interface CallStackLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgor
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface CallTreeLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'call-tree-lab';
+  readonly presetOptions: readonly CallTreeLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 export type AlgorithmViewConfig =
   | ArrayAlgorithmViewConfig
   | GraphAlgorithmViewConfig
@@ -1641,7 +1689,8 @@ export type AlgorithmViewConfig =
   | NumberLabAlgorithmViewConfig<any>
   | PointerLabAlgorithmViewConfig<any>
   | SieveGridAlgorithmViewConfig<any>
-  | CallStackLabAlgorithmViewConfig<any>;
+  | CallStackLabAlgorithmViewConfig<any>
+  | CallTreeLabAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -2392,6 +2441,63 @@ const RECURSION_CALL_STACK_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultPresetId: DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
   createScenario: (size, presetId) => createRecursiveFibonacciScenario(size, presetId),
   generator: recursionCallStackGenerator,
+};
+
+const BACKTRACKING_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-tree-lab',
+  codeLines: BACKTRACKING_CODE,
+  codeRegions: BACKTRACKING_CODE_REGIONS,
+  codeHighlightMap: BACKTRACKING_CODE_HIGHLIGHT_MAP,
+  codeVariants: BACKTRACKING_CODE_VARIANTS,
+  variantOptions: CALL_TREE_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-tree-lab',
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  sizeUnit: 'board',
+  randomizeLabel: 'New scenario',
+  legendItems: () => [],
+  presetOptions: N_QUEENS_PRESETS,
+  defaultPresetId: DEFAULT_N_QUEENS_PRESET_ID,
+  createScenario: (size, presetId) => createNQueensScenario(size, presetId),
+  generator: backtrackingGenerator,
+};
+
+const MINIMAX_ALPHA_BETA_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-tree-lab',
+  codeLines: MINIMAX_ALPHA_BETA_CODE,
+  codeRegions: MINIMAX_ALPHA_BETA_CODE_REGIONS,
+  codeHighlightMap: MINIMAX_ALPHA_BETA_CODE_HIGHLIGHT_MAP,
+  codeVariants: MINIMAX_ALPHA_BETA_CODE_VARIANTS,
+  variantOptions: CALL_TREE_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-tree-lab',
+  sizeOptions: [8, 9, 16],
+  defaultSize: 9,
+  sizeUnit: 'leaves',
+  randomizeLabel: 'New game tree',
+  legendItems: () => [],
+  presetOptions: MINIMAX_PRESETS,
+  defaultPresetId: DEFAULT_MINIMAX_PRESET_ID,
+  createScenario: (size, presetId) => createMinimaxScenario(size, presetId),
+  generator: minimaxAlphaBetaGenerator,
+};
+
+const MCTS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-tree-lab',
+  codeLines: MCTS_CODE,
+  codeRegions: MCTS_CODE_REGIONS,
+  codeHighlightMap: MCTS_CODE_HIGHLIGHT_MAP,
+  codeVariants: MCTS_CODE_VARIANTS,
+  variantOptions: CALL_TREE_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-tree-lab',
+  sizeOptions: [6, 10, 12],
+  defaultSize: 10,
+  sizeUnit: 'iterations',
+  randomizeLabel: 'New playout',
+  legendItems: () => [],
+  presetOptions: MCTS_PRESETS,
+  defaultPresetId: DEFAULT_MCTS_PRESET_ID,
+  createScenario: (size, presetId) => createMcTsScenario(size, presetId),
+  generator: mctsGenerator,
 };
 
 const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3356,6 +3462,9 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'kadane') return KADANE_VIEW_CONFIG;
   if (id === 'sieve-of-eratosthenes') return SIEVE_OF_ERATOSTHENES_VIEW_CONFIG;
   if (id === 'recursion-call-stack') return RECURSION_CALL_STACK_VIEW_CONFIG;
+  if (id === 'backtracking') return BACKTRACKING_VIEW_CONFIG;
+  if (id === 'minimax-alpha-beta') return MINIMAX_ALPHA_BETA_VIEW_CONFIG;
+  if (id === 'monte-carlo-tree-search') return MCTS_VIEW_CONFIG;
   return BUBBLE_VIEW_CONFIG;
 }
 

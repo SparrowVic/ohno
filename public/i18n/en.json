@@ -384,6 +384,131 @@
             }
           }
         },
+        "callTreeLab": {
+          "backtracking": {
+            "boardFooter": "{{placed}} / {{n}} queens placed",
+            "boardTitle": "N-Queens board",
+            "decisions": {
+              "cellAttacked": "Cell is attacked — skip.",
+              "cellSafe": "Cell is safe — descend.",
+              "descend": "Recurse into the next row.",
+              "exhausted": "No column works at this row — backtrack further.",
+              "placed": "Queen placed — recurse into next row.",
+              "solved": "Every row has a queen — done.",
+              "tryCol": "Try the next column in this row.",
+              "unwind": "Unwind and try the next column."
+            },
+            "descriptions": {
+              "backtrack": "Row {{row}}, col {{col}} leads nowhere — undo and try next column.",
+              "complete": "Search complete.",
+              "conflict": "Row {{row}}, col {{col}} is attacked by an existing queen.",
+              "noSolution": "Exhausted every column — no placement is valid.",
+              "place": "Row {{row}}, col {{col}} is safe — place the queen.",
+              "probe": "Try column {{col}} on row {{row}}.",
+              "setup": "Place queens on an {{n}}×{{n}} board — one per row.",
+              "solution": "All {{n}} queens placed — solution!"
+            },
+            "modeLabel": "Backtracking (N-Queens)",
+            "phases": {
+              "backtrack": "Backtrack",
+              "complete": "Complete",
+              "conflict": "Conflict",
+              "place": "Place",
+              "probe": "Probe",
+              "setup": "Setup",
+              "solution": "Solution"
+            },
+            "resultFailure": "No valid placement exists.",
+            "resultSuccess": "Solution found: columns [{{cols}}].",
+            "stats": {
+              "attempts": "Attempts",
+              "backtracks": "Backtracks",
+              "col": "col",
+              "placedCount": "Placed",
+              "row": "row"
+            }
+          },
+          "mcts": {
+            "decisions": {
+              "bubbleUp": "Bubble visits + reward to every ancestor.",
+              "descend": "Descend following UCB1.",
+              "done": "Iterations complete — pick most-visited root child.",
+              "expand": "Create one new child for the selected parent.",
+              "explore": "UCB1 balances exploitation vs. exploration.",
+              "simulate": "Deterministic rollout — fetch leaf reward."
+            },
+            "descriptions": {
+              "backprop": "Backpropagate reward {{reward}} up through depth {{depth}}.",
+              "complete": "Final pick: arm #{{arm}} — visits {{visits}}, mean {{mean}}.",
+              "expand": "Expand arm #{{arm}} at depth {{depth}}.",
+              "selectPick": "Pick arm #{{arm}} — highest UCB = {{ucb}}.",
+              "selectStart": "Iteration {{iter}} — start selection at the root.",
+              "setup": "Run {{iterations}} MCTS iterations with c = {{c}}.",
+              "simulate": "Simulate playout — reward = {{reward}}."
+            },
+            "modeLabel": "Monte Carlo Tree Search",
+            "phases": {
+              "backprop": "Backprop",
+              "complete": "Complete",
+              "expand": "Expand",
+              "select": "Select",
+              "setup": "Setup",
+              "simulate": "Simulate"
+            },
+            "resultFormat": "Best arm #{{arm}} — visits {{visits}}, mean {{mean}}",
+            "stats": {
+              "bestArm": "Best arm",
+              "explored": "Nodes",
+              "iteration": "Iter",
+              "reward": "μ",
+              "ucb": "UCB",
+              "visits": "N"
+            }
+          },
+          "minimax": {
+            "decisions": {
+              "cutAlpha": "α-cut — remaining siblings cannot improve MIN.",
+              "cutBeta": "β-cut — remaining siblings cannot improve MAX.",
+              "descend": "Descend into the next child.",
+              "done": "Root resolved.",
+              "leafReturn": "Leaf — return its static value.",
+              "maxUp": "MAX raises its best/α from the child's return.",
+              "minDown": "MIN lowers its best/β from the child's return.",
+              "settle": "All children visited — return best."
+            },
+            "descriptions": {
+              "complete": "Root value {{value}} — evaluated {{evaluated}}, pruned {{pruned}}.",
+              "enter": "Enter {{player}}(d={{depth}}, α={{alpha}}, β={{beta}}).",
+              "leaf": "Leaf value = {{value}}.",
+              "prune": "α ({{alpha}}) ≥ β ({{beta}}) — prune {{skipped}} subtree leaves.",
+              "settle": "{{player}} settled at {{value}}.",
+              "setup": "Search game tree — depth {{depth}}, branching {{branching}}.",
+              "updateMax": "MAX picks up {{value}} → best = {{best}}, α = {{alpha}}.",
+              "updateMin": "MIN picks up {{value}} → best = {{best}}, β = {{beta}}."
+            },
+            "modeLabel": "Minimax (α/β)",
+            "phases": {
+              "complete": "Complete",
+              "descend": "Descend",
+              "evaluate": "Evaluate",
+              "prune": "Prune",
+              "settle": "Settle",
+              "setup": "Setup",
+              "update": "Update"
+            },
+            "resultFormat": "Root minimax value = {{value}}",
+            "stats": {
+              "alpha": "α",
+              "best": "Best",
+              "beta": "β",
+              "evaluated": "Evaluated",
+              "leaf": "leaf",
+              "player": "player",
+              "pruned": "Pruned",
+              "value": "val"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "decisions": {
@@ -2851,6 +2976,50 @@
             }
           }
         },
+        "callTreeLab": {
+          "backtracking": {
+            "challenge": {
+              "description": "6-Queens — denser tree with multiple dead ends before success.",
+              "label": "6-Queens"
+            },
+            "classic": {
+              "description": "5-Queens — a bit more branching, still fully solvable.",
+              "label": "5-Queens"
+            },
+            "tiny": {
+              "description": "4-Queens — smallest classic board with a clean solution.",
+              "label": "4-Queens"
+            }
+          },
+          "mcts": {
+            "classic": {
+              "description": "10 iterations on a 2-arm tree — visits accumulate and the ranking stabilises.",
+              "label": "Classic 2-arm"
+            },
+            "deep": {
+              "description": "12 iterations on a 3-arm tree — stress test for UCB's balance.",
+              "label": "Deeper 3-arm"
+            },
+            "shallow": {
+              "description": "6 iterations on a 2-arm tree — watch exploration start to favour the best arm.",
+              "label": "Shallow explore"
+            }
+          },
+          "minimax": {
+            "balanced": {
+              "description": "Binary game tree with eight leaves — simple enough to verify by hand.",
+              "label": "Balanced 2×3"
+            },
+            "prunable": {
+              "description": "3-ary tree tuned so α and β cut several sibling subtrees.",
+              "label": "Prunable 3×2"
+            },
+            "wide": {
+              "description": "Wider 3-ary tree (27 leaves) shows how pruning compounds with depth.",
+              "label": "Wide 3×3"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "crews": {
@@ -3611,6 +3780,14 @@
           "emptyLabel": "No call-stack trace available for this step.",
           "iterationLabel": "Iteration",
           "returnsLabel": "Recent returns",
+          "statsLabel": "Stats"
+        },
+        "callTreeLab": {
+          "activeLabel": "Active node",
+          "decisionLabel": "Decision",
+          "emptyLabel": "No call-tree trace available for this step.",
+          "iterationLabel": "Iteration",
+          "pathLabel": "Active path",
           "statsLabel": "Stats"
         },
         "closestPair": {

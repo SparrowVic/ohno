@@ -6,6 +6,7 @@ import { GridTraceState } from './grid';
 import { MatrixTraceState } from './matrix';
 import { NetworkTraceState } from './network';
 import { CallStackLabTraceState } from './call-stack-lab';
+import { CallTreeLabTraceState } from './call-tree-lab';
 import { NumberLabTraceState } from './number-lab';
 import { PointerLabTraceState } from './pointer-lab';
 import { SearchTraceState } from './search';
@@ -72,4 +73,5 @@ export interface SortStep {
   readonly pointerLab?: PointerLabTraceState | null;
   readonly sieveGrid?: SieveGridTraceState | null;
   readonly callStackLab?: CallStackLabTraceState | null;
+  readonly callTreeLab?: CallTreeLabTraceState | null;
 }

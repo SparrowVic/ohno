@@ -51,10 +51,12 @@ import { NumberLabTraceState } from '../models/number-lab';
 import { PointerLabTraceState } from '../models/pointer-lab';
 import { SieveGridTraceState } from '../models/sieve-grid';
 import { CallStackLabTraceState } from '../models/call-stack-lab';
+import { CallTreeLabTraceState } from '../models/call-tree-lab';
 import { NumberLabPresetOption } from '../utils/number-lab-scenarios/number-lab-scenarios';
 import { PointerLabPresetOption } from '../utils/pointer-lab-scenarios/pointer-lab-scenarios';
 import { SieveGridPresetOption } from '../utils/sieve-grid-scenarios/sieve-grid-scenarios';
 import { CallStackLabPresetOption } from '../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
+import { CallTreeLabPresetOption } from '../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
@@ -67,6 +69,7 @@ interface RebuildOptions {
   readonly pointerLabPresetId?: string | null;
   readonly sieveGridPresetId?: string | null;
   readonly callStackLabPresetId?: string | null;
+  readonly callTreeLabPresetId?: string | null;
 }
 
 @Component({
@@ -110,6 +113,7 @@ export class AlgorithmDetail {
   private readonly pointerLabPresetSig = signal<string | null>(null);
   private readonly sieveGridPresetSig = signal<string | null>(null);
   private readonly callStackLabPresetSig = signal<string | null>(null);
+  private readonly callTreeLabPresetSig = signal<string | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
@@ -149,6 +153,7 @@ export class AlgorithmDetail {
   readonly pointerLabPresetId = this.pointerLabPresetSig.asReadonly();
   readonly sieveGridPresetId = this.sieveGridPresetSig.asReadonly();
   readonly callStackLabPresetId = this.callStackLabPresetSig.asReadonly();
+  readonly callTreeLabPresetId = this.callTreeLabPresetSig.asReadonly();
   readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
@@ -186,6 +191,10 @@ export class AlgorithmDetail {
   readonly callStackLabPresetOptions = computed<readonly CallStackLabPresetOption[]>(() => {
     const config = this.config();
     return config?.kind === 'call-stack-lab' ? config.presetOptions : [];
+  });
+  readonly callTreeLabPresetOptions = computed<readonly CallTreeLabPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'call-tree-lab' ? config.presetOptions : [];
   });
   readonly sizeUnitLabel = computed(() => {
     const unit = this.config()?.sizeUnit ?? 'elements';
@@ -244,6 +253,9 @@ export class AlgorithmDetail {
   );
   readonly callStackLabTrace = computed<CallStackLabTraceState | null>(
     () => this.currentSnapshot()?.callStackLab ?? null,
+  );
+  readonly callTreeLabTrace = computed<CallTreeLabTraceState | null>(
+    () => this.currentSnapshot()?.callTreeLab ?? null,
   );
   readonly pointerLabTrace = computed<PointerLabTraceState | null>(
     () => this.currentSnapshot()?.pointerLab ?? null,
@@ -368,6 +380,9 @@ export class AlgorithmDetail {
         this.callStackLabPresetSig.set(
           config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
         );
+        this.callTreeLabPresetSig.set(
+          config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
+        );
 
         this.rebuildVisualization(config, config.defaultSize, {
           dpPresetId: config.kind === 'dp' ? config.defaultPresetId : null,
@@ -379,6 +394,8 @@ export class AlgorithmDetail {
           sieveGridPresetId: config.kind === 'sieve-grid' ? config.defaultPresetId : null,
           callStackLabPresetId:
             config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
+          callTreeLabPresetId:
+            config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
         });
       });
     });
@@ -534,6 +551,19 @@ export class AlgorithmDetail {
     this.rebuildVisualization(config, this.sizeSig(), { callStackLabPresetId: value });
   }
 
+  onCallTreeLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'call-tree-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.callTreeLabPresetSig()
+    )
+      return;
+
+    this.callTreeLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { callTreeLabPresetId: value });
+  }
+
   private resetUnavailableState(): void {
     this.resetPlaybackState();
     this.graphSig.set(null);
@@ -544,6 +574,7 @@ export class AlgorithmDetail {
     this.pointerLabPresetSig.set(null);
     this.sieveGridPresetSig.set(null);
     this.callStackLabPresetSig.set(null);
+    this.callTreeLabPresetSig.set(null);
     this.engine.reset();
   }
 
@@ -636,6 +667,17 @@ export class AlgorithmDetail {
         const presetId =
           options.callStackLabPresetId ??
           this.callStackLabPresetSig() ??
+          config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'call-tree-lab': {
+        const presetId =
+          options.callTreeLabPresetId ??
+          this.callTreeLabPresetSig() ??
           config.defaultPresetId;
         const scenario = config.createScenario(size, presetId);
         this.arraySig.set([]);

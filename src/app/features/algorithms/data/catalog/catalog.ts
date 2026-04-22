@@ -1322,6 +1322,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'backtracking',
     tags: ['search', 'constraints', 'state space'],
+    complexity: {
+      timeBest: 'O(n!)',
+      timeAverage: 'O(n!)',
+      timeWorst: 'O(n!)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'kadane',
@@ -1358,6 +1365,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'game-theory',
     tags: ['game tree', 'pruning', 'adversarial'],
+    complexity: {
+      timeBest: 'O(b^(d/2))',
+      timeAverage: 'O(b^(3d/4))',
+      timeWorst: 'O(b^d)',
+      space: 'O(d)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'monte-carlo-tree-search',
@@ -1367,6 +1381,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'game-theory',
     tags: ['MCTS', 'simulation', 'exploration'],
+    complexity: {
+      timeBest: 'O(i · d)',
+      timeAverage: 'O(i · d)',
+      timeWorst: 'O(i · d)',
+      space: 'O(i)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'reservoir-sampling',

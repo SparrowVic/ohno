@@ -136,5 +136,15 @@
         (presetChange)="callStackLabPresetChange.emit($event)"
       />
     }
+    @case ('call-tree-lab') {
+      <app-call-tree-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="callTreeLabPresetOptions()"
+        [presetId]="callTreeLabPresetId()"
+        (presetChange)="callTreeLabPresetChange.emit($event)"
+      />
+    }
   }
 </div>

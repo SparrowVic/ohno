@@ -32,10 +32,12 @@ import { NumberLabVisualization } from '../number-lab-visualization/number-lab-v
 import { PointerLabVisualization } from '../pointer-lab-visualization/pointer-lab-visualization';
 import { SieveGridVisualization } from '../sieve-grid-visualization/sieve-grid-visualization';
 import { CallStackLabVisualization } from '../call-stack-lab-visualization/call-stack-lab-visualization';
+import { CallTreeLabVisualization } from '../call-tree-lab-visualization/call-tree-lab-visualization';
 import { NumberLabPresetOption } from '../../utils/number-lab-scenarios/number-lab-scenarios';
 import { PointerLabPresetOption } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
 import { SieveGridPresetOption } from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
 import { CallStackLabPresetOption } from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
+import { CallTreeLabPresetOption } from '../../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
 import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualization';
 
 @Component({
@@ -67,6 +69,7 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     PointerLabVisualization,
     SieveGridVisualization,
     CallStackLabVisualization,
+    CallTreeLabVisualization,
     VoronoiVisualization,
   ],
   templateUrl: './visualization-canvas.html',
@@ -94,6 +97,8 @@ export class VisualizationCanvas {
   readonly sieveGridPresetId = input<string | null>(null);
   readonly callStackLabPresetOptions = input<readonly CallStackLabPresetOption[]>([]);
   readonly callStackLabPresetId = input<string | null>(null);
+  readonly callTreeLabPresetOptions = input<readonly CallTreeLabPresetOption[]>([]);
+  readonly callTreeLabPresetId = input<string | null>(null);
   readonly graphFocusTargetChange = output<string | null>();
   readonly dpPresetChange = output<string>();
   readonly stringPresetChange = output<string>();
@@ -102,4 +107,5 @@ export class VisualizationCanvas {
   readonly pointerLabPresetChange = output<string>();
   readonly sieveGridPresetChange = output<string>();
   readonly callStackLabPresetChange = output<string>();
+  readonly callTreeLabPresetChange = output<string>();
 }

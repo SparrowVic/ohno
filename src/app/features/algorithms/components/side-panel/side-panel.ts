@@ -49,6 +49,7 @@ import { NumberLabTraceState } from '../../models/number-lab';
 import { PointerLabTraceState } from '../../models/pointer-lab';
 import { SieveGridTraceState } from '../../models/sieve-grid';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
+import { CallTreeLabTraceState } from '../../models/call-tree-lab';
 import { ClosestPairTracePanel } from '../closest-pair-trace-panel/closest-pair-trace-panel';
 import { CodePanel } from '../code-panel/code-panel';
 import { DelaunayTracePanel } from '../delaunay-trace-panel/delaunay-trace-panel';
@@ -73,6 +74,7 @@ import { NumberLabTracePanel } from '../number-lab-trace-panel/number-lab-trace-
 import { PointerLabTracePanel } from '../pointer-lab-trace-panel/pointer-lab-trace-panel';
 import { SieveGridTracePanel } from '../sieve-grid-trace-panel/sieve-grid-trace-panel';
 import { CallStackLabTracePanel } from '../call-stack-lab-trace-panel/call-stack-lab-trace-panel';
+import { CallTreeLabTracePanel } from '../call-tree-lab-trace-panel/call-tree-lab-trace-panel';
 import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
@@ -117,6 +119,7 @@ const MAX_WIDTH = 680;
     PointerLabTracePanel,
     SieveGridTracePanel,
     CallStackLabTracePanel,
+    CallTreeLabTracePanel,
     NgTemplateOutlet,
     VoronoiTracePanel,
   ],
@@ -146,6 +149,7 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly pointerLabState = input<PointerLabTraceState | null>(null);
   readonly sieveGridState = input<SieveGridTraceState | null>(null);
   readonly callStackLabState = input<CallStackLabTraceState | null>(null);
+  readonly callTreeLabState = input<CallTreeLabTraceState | null>(null);
   readonly geometryState = input<GeometryStepState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
   readonly graphFocusPathLabel = input<string | null>(null);
@@ -168,7 +172,8 @@ export class SidePanel implements OnInit, OnDestroy {
       this.numberLabState() ||
       this.pointerLabState() ||
       this.sieveGridState() ||
-      this.callStackLabState()
+      this.callStackLabState() ||
+      this.callTreeLabState()
         ? (['trace', ...BASE_SIDE_TAB_IDS] as const)
         : BASE_SIDE_TAB_IDS;
 

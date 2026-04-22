@@ -33,4 +33,5 @@ export type VisualizationVariant =
   | 'number-lab'
   | 'pointer-lab'
   | 'sieve-grid'
-  | 'call-stack-lab';
+  | 'call-stack-lab'
+  | 'call-tree-lab';
