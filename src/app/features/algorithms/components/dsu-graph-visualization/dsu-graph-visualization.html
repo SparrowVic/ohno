@@ -2,7 +2,11 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (state()) {
-    <svg class="dsu-graph__svg" viewBox="0 0 960 620" preserveAspectRatio="xMidYMid meet">
+    <svg
+      class="dsu-graph__svg"
+      [attr.viewBox]="viewBox()"
+      preserveAspectRatio="xMidYMid meet"
+    >
       <defs>
         @for (marker of arrowMarkers; track marker.id) {
           <marker

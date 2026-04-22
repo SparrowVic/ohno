@@ -44,4 +44,16 @@ export class SweepLineVisualization {
     if (phase === 'event') return 'compare';
     return 'default';
   });
+
+  /** Rectangle tone — sweep-line scans a collection of rectangles and
+   *  the tone reflects whether each rect is pending, currently being
+   *  opened / closed, or already settled in the area calculation. */
+  rectToneClass(tone: 'pending' | 'active' | 'done' | 'focus'): string {
+    switch (tone) {
+      case 'active': return 'active';
+      case 'focus':  return 'accent';
+      case 'done':   return 'muted';
+      default:       return '';
+    }
+  }
 }

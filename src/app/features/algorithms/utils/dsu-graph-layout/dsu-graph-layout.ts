@@ -23,11 +23,56 @@ export const DSU_GRAPH_FOREST_GROUP_INSET = 40;
 export const DSU_GRAPH_CIRCLE_CENTER_X = 480;
 export const DSU_GRAPH_CIRCLE_CENTER_Y = 310;
 export const DSU_GRAPH_CIRCLE_MIN_RADIUS = 140;
-export const DSU_GRAPH_CIRCLE_NODE_SPACING = 42;
+/** Arc length between adjacent ring nodes, in logical units. Keeps
+ *  node separation constant regardless of count — the ring radius
+ *  grows with `count` so every scenario stays readable. */
+export const DSU_GRAPH_CIRCLE_ARC_SPACING = 92;
 
 export interface DsuGraphPosition {
   readonly x: number;
   readonly y: number;
+}
+
+/** Padding added around positioned nodes when computing a viewBox.
+ *  Covers node radius, halo glow and any metadata labels that sit
+ *  above or below the body circle. */
+export const DSU_GRAPH_VIEWBOX_PADDING = 56;
+
+/** Minimum viewBox dimensions — match graph-viz's reference canvas so
+ *  DSU visualizations share the same on-screen component scale with
+ *  the rest of the graph family. Without a floor, small forests or
+ *  rings scale up their nodes to fill the panel. */
+export const DSU_GRAPH_MIN_VIEWBOX_WIDTH = 960;
+export const DSU_GRAPH_MIN_VIEWBOX_HEIGHT = 620;
+
+/** viewBox around the current layout with a minimum-size floor. Small
+ *  graphs center inside the reference canvas (nodes stay at their
+ *  reference size); graphs that overflow it get a larger viewport so
+ *  nothing clips. Falls back to the reference canvas when no
+ *  positions are available yet. */
+export function computeDsuGraphViewBox(
+  positions: ReadonlyMap<string, DsuGraphPosition>,
+): string {
+  if (positions.size === 0) {
+    return `0 0 ${DSU_GRAPH_MIN_VIEWBOX_WIDTH} ${DSU_GRAPH_MIN_VIEWBOX_HEIGHT}`;
+  }
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (const { x, y } of positions.values()) {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  const contentWidth = maxX - minX + DSU_GRAPH_VIEWBOX_PADDING * 2;
+  const contentHeight = maxY - minY + DSU_GRAPH_VIEWBOX_PADDING * 2;
+  const width = Math.max(contentWidth, DSU_GRAPH_MIN_VIEWBOX_WIDTH);
+  const height = Math.max(contentHeight, DSU_GRAPH_MIN_VIEWBOX_HEIGHT);
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  return `${cx - width / 2} ${cy - height / 2} ${width} ${height}`;
 }
 
 /** Status flag carried by a rendered edge. Union-Find synthesises
@@ -95,10 +140,14 @@ export function layoutDsuForest(
     }
 
     const widestCount = Math.max(1, ...byLevel.map((level) => level.length));
-    const groupWidth = Math.max(
-      widestCount * DSU_GRAPH_FOREST_SIBLING_GAP,
-      DSU_GRAPH_FOREST_SIBLING_GAP,
+    // Sibling gap shrinks a little when a level is crowded — keeps
+    // fan-outs from running off the canvas while fan-ins of 2-3 still
+    // get the full airy spacing. Floor at 44 so nodes never collide.
+    const siblingGap = Math.max(
+      44,
+      Math.min(DSU_GRAPH_FOREST_SIBLING_GAP, 520 / Math.max(widestCount, 3)),
     );
+    const groupWidth = Math.max(widestCount * siblingGap, siblingGap);
 
     byLevel.forEach((levelIds, levelIndex) => {
       const levelY = DSU_GRAPH_FOREST_ROOT_Y + levelIndex * DSU_GRAPH_FOREST_LEVEL_GAP;
@@ -119,7 +168,10 @@ export function layoutDsuForest(
 }
 
 /** Lay a Kruskal candidate graph out as a simple ring. Node order is
- *  preserved so the input list's identity is reflected spatially. */
+ *  preserved so the input list's identity is reflected spatially.
+ *  Radius follows the arc-spacing law (2πr = count × spacing) so node
+ *  gaps stay constant regardless of ring size — this also keeps the
+ *  ring inside the canvas without wasting vertical space. */
 export function layoutDsuCircle(
   nodes: readonly DsuNodeTrace[],
 ): ReadonlyMap<string, DsuGraphPosition> {
@@ -127,7 +179,10 @@ export function layoutDsuCircle(
   const count = nodes.length;
   if (count === 0) return positions;
 
-  const radius = Math.max(DSU_GRAPH_CIRCLE_MIN_RADIUS, count * DSU_GRAPH_CIRCLE_NODE_SPACING);
+  const radius = Math.max(
+    DSU_GRAPH_CIRCLE_MIN_RADIUS,
+    (count * DSU_GRAPH_CIRCLE_ARC_SPACING) / (2 * Math.PI),
+  );
 
   nodes.forEach((node, index) => {
     const theta = (2 * Math.PI * index) / count - Math.PI / 2; // start at top

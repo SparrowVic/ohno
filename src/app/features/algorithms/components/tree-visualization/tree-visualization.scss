@@ -67,7 +67,7 @@
 
 .tree-node__body {
   fill: #1f2430;
-  stroke: rgba(255, 255, 255, 0.14);
+  stroke: rgba(255, 255, 255, 0.08);
   stroke-width: 1.5;
   transition:
     fill 220ms ease,
@@ -84,13 +84,13 @@
 }
 
 .tree-node__label {
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .tree-node__value {
-  font-size: 8px;
+  font-size: 9.5px;
   fill: var(--text-tertiary);
   font-weight: 600;
 }

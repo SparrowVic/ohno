@@ -88,6 +88,20 @@ export class MinkowskiSumVisualization {
     return `translate(${projected.x}, ${projected.y})`;
   }
 
+  /** Map Minkowski's polygon tones to the shared `.geo-poly--*` palette.
+   *  Input shapes (A / B) get accent / warm tones; reflected B stays
+   *  preview-dashed; the final C-space hull reads as the result. */
+  polygonToneClass(tone: GeometryPolygonRegion['tone']): string {
+    switch (tone) {
+      case 'shape-a':         return 'accent';
+      case 'shape-b':         return 'warm';
+      case 'shape-reflected': return 'preview';
+      case 'result':          return 'result';
+      case 'result-preview':  return 'preview';
+      default:                return 'preview';
+    }
+  }
+
   private findPolygon(id: string): GeometryPolygonRegion | undefined {
     return this.geoState()?.polygons.find((polygon) => polygon.id === id);
   }

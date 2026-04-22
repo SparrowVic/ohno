@@ -121,4 +121,30 @@ export class ClosestPairVisualization {
         return Math.max(0.04, 0.08 - depth * 0.01);
     }
   }
+
+  /** Map the generator's status string to the shared `.geo-point--*`
+   *  tone modifier. Keeps the generator's vocabulary (compare, best,
+   *  strip, left, right, dimmed, default) pointing at the right
+   *  visual recipe without polluting the template with switch logic. */
+  pointToneClass(status: GeometryPoint['status']): string {
+    switch (status) {
+      case 'compare': return 'active';
+      case 'best':    return 'hit';
+      case 'strip':   return 'route';
+      case 'left':    return 'accent';
+      case 'right':   return 'warm';
+      case 'dimmed':  return 'muted';
+      default:        return 'default';
+    }
+  }
+
+  /** Same mapping for the pair line connecting two points. */
+  pairToneClass(tone: GeometryPairLine['tone']): string {
+    switch (tone) {
+      case 'candidate': return 'candidate';
+      case 'best':      return 'best';
+      case 'final':     return 'final';
+      default:          return 'active';
+    }
+  }
 }

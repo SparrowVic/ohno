@@ -96,19 +96,29 @@ export class TreeVisualization implements AfterViewInit, OnDestroy, Visualizatio
     }
   });
 
-  /** SVG viewBox — recomputed every step in case the generator
-   *  rearranges the tree (future-proofing). Falls back to a sensible
-   *  default when the state is empty. */
+  /** SVG viewBox with a minimum-size floor (960 × 620) matching the
+   *  rest of the graph family. Small trees stay centered inside the
+   *  reference canvas so node chrome renders at the same on-screen
+   *  size as Dijkstra / Dinic / Union-Find; deep trees that overflow
+   *  the floor still expand the viewport so nothing clips. */
   readonly viewBox = computed(() => {
     const state = this.state();
-    if (!state || state.nodes.length === 0) return '0 0 400 200';
+    if (!state || state.nodes.length === 0) return '0 0 960 620';
     const xs = state.nodes.map((n) => n.x);
     const ys = state.nodes.map((n) => n.y);
-    const minX = Math.min(...xs) - 32;
-    const maxX = Math.max(...xs) + 32;
-    const minY = Math.min(...ys) - 38;
-    const maxY = Math.max(...ys) + 38;
-    return `${minX} ${minY} ${maxX - minX} ${maxY - minY}`;
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const pad = 52;
+    const contentWidth = maxX - minX + pad * 2;
+    const contentHeight = maxY - minY + pad * 2;
+    const width = Math.max(contentWidth, 960);
+    const height = Math.max(contentHeight, 620);
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    return `${cx - width / 2} ${cy - height / 2} ${width} ${height}`;
   });
 
   readonly nodePositions = computed(() => {
@@ -212,13 +222,19 @@ export class TreeVisualization implements AfterViewInit, OnDestroy, Visualizatio
     const motion = createMotionProfile(this.speed());
     const currentId = current.currentNodeId;
     if (currentId && currentId !== previous?.currentNodeId) {
-      const nodeEl = this.containerRef().nativeElement.querySelector<SVGGElement>(
-        `[data-tree-node="${currentId}"]`,
+      // Target the inner body circle, NOT the parent `<g>`. The `<g>`
+      // carries a `transform="translate(...)"` attribute that would be
+      // overridden by the Web Animations API's `transform: scale(...)`
+      // keyframes — the node would jump to (0,0) for the pulse
+      // duration before snapping back. Circles have no transform
+      // attribute, so scaling around their fill-box centre is safe.
+      const nodeEl = this.containerRef().nativeElement.querySelector<SVGCircleElement>(
+        `[data-tree-node="${currentId}"] .tree-node__body`,
       );
       if (nodeEl) {
         pulseSvgElement(nodeEl, {
           duration: motion.compareMs,
-          scale: 1.05,
+          scale: 1.08,
           filter: [
             'drop-shadow(0 0 0 transparent)',
             'drop-shadow(0 0 10px rgb(var(--chrome-accent-warm-rgb) / 0.5))',

@@ -41,11 +41,11 @@
             [attr.data-tree-node]="node.id"
             [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
           >
-            <circle class="tree-node__halo" r="22" />
-            <circle class="tree-node__body" r="16" filter="url(#tree-node-glow)" />
+            <circle class="tree-node__halo" r="30" />
+            <circle class="tree-node__body" r="22" filter="url(#tree-node-glow)" />
             <text class="tree-node__label" y="5">{{ node.label }}</text>
             @if (node.value !== null) {
-              <text class="tree-node__value" y="28">{{ node.value }}</text>
+              <text class="tree-node__value" y="36">{{ node.value }}</text>
             }
           </g>
         }

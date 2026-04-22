@@ -61,4 +61,16 @@ export class DelaunayVisualization {
   polygonPoints(region: GeometryPolygonRegion): string {
     return region.vertices.map((vertex) => `${vertex.x},${100 - vertex.y}`).join(' ');
   }
+
+  /** Map Delaunay's triangle tones to the shared `.geo-poly--*`
+   *  palette. `triangle-current` reads as "under circumcircle test",
+   *  `mesh` / `triangle` are committed parts of the final mesh. */
+  triangleToneClass(tone: GeometryPolygonRegion['tone']): string {
+    switch (tone) {
+      case 'triangle-current': return 'active';
+      case 'mesh':
+      case 'triangle':         return 'hull';
+      default:                 return 'preview';
+    }
+  }
 }

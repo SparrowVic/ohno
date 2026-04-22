@@ -2,21 +2,21 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (geoState()) {
-    <div class="chv__stage">
-      <svg class="chv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="geo-stage">
+      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <pattern id="chv-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <circle cx="0" cy="0" r="0.4" fill="rgba(255,255,255,0.07)" />
+          <pattern id="chv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="0" cy="0" r="0.4" fill="rgba(255, 255, 255, 0.07)" />
           </pattern>
         </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#chv-dots)" />
+        <rect x="-6" y="-6" width="112" height="112" fill="url(#chv-grid)" />
 
         @if (isComplete()) {
-          <polygon [attr.points]="hullPolyPoints()" class="chv__hull-poly" />
+          <polygon [attr.points]="hullPolyPoints()" class="geo-poly geo-poly--hull" />
         }
 
         @if (turnTriPoints(); as triPts) {
-          <polygon [attr.points]="triPts" class="chv__turn-tri" />
+          <polygon [attr.points]="triPts" class="geo-poly geo-poly--turn" />
         }
 
         @for (edge of edges(); track edge.fromId + '-' + edge.toId) {
@@ -25,22 +25,32 @@
             [attr.y1]="ptSvgY(edge.fromId)"
             [attr.x2]="ptSvgX(edge.toId)"
             [attr.y2]="ptSvgY(edge.toId)"
-            [class]="'chv__edge chv__edge--' + edge.kind"
+            class="geo-line geo-line--{{ edgeToneClass(edge.kind) }}"
           />
         }
 
         @for (pt of points(); track pt.id) {
           <g [attr.transform]="ptTransform(pt)">
             @if (showGlow(pt)) {
-              <circle [class]="'chv__glow chv__glow--' + pt.status" r="8" />
+              <circle
+                class="geo-point__glow geo-point__glow--{{ pointToneClass(pt.status) }}"
+                r="6.4"
+              />
             }
-            <circle [class]="'chv__pt chv__pt--' + pt.status" r="4.2" />
+            <circle
+              class="geo-point geo-point--{{ pointToneClass(pt.status) }}"
+              r="3.6"
+            />
 
             @if (pt.sortIndex !== null && pt.sortIndex !== undefined && pt.sortIndex > 0) {
-              <text class="chv__sort-badge" y="-7" text-anchor="middle">{{ pt.sortIndex }}</text>
+              <text class="geo-label chv__sort-badge" y="-6" text-anchor="middle">
+                {{ pt.sortIndex }}
+              </text>
             }
 
-            <text class="chv__pt-id" text-anchor="middle" dominant-baseline="middle">{{ pt.id }}</text>
+            <text class="geo-point__id" text-anchor="middle" dominant-baseline="middle">
+              {{ pt.id }}
+            </text>
           </g>
         }
       </svg>

@@ -1,8 +1,8 @@
-:host {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
+/* Minkowski-sum is the one geometry viz with a gallery + summation
+   layout rather than a single canvas. The gallery cards and the
+   summation canvas styling are local; everything inside the canvas
+   (polygons, vertex points) ships from the shared partial. */
+@use '../geo-canvas/geometry-viz';
 
 .mkv__stage {
   display: flex;
@@ -20,6 +20,9 @@
   flex-shrink: 0;
 }
 
+/* Small preview card — quiet neutral frame, title + eyebrow, square
+   aspect SVG. Mini SVGs render without a grid background (the tiny
+   cards would look noisy with one). */
 .mkv__card {
   display: flex;
   flex-direction: column;
@@ -53,54 +56,21 @@
 .mkv__mini {
   width: 100%;
   aspect-ratio: 1;
-}
-
-.mkv__sum {
-  width: 100%;
-  flex: 1;
-  min-height: 0;
   display: block;
 }
 
-.mkv__poly {
-  stroke-linejoin: round;
-
-  &--a {
-    fill: rgb(var(--viz-danger-rgb) / 0.08);
-    stroke: rgb(var(--viz-danger-rgb) / 0.5);
-    stroke-width: 2.2;
-  }
-
-  &--b {
-    fill: rgb(var(--viz-accent-rgb) / 0.08);
-    stroke: rgb(var(--viz-accent-rgb) / 0.5);
-    stroke-width: 2.2;
-  }
-
-  &--reflected {
-    fill: rgb(var(--viz-window-rgb) / 0.08);
-    stroke: rgb(var(--viz-window-rgb) / 0.52);
-    stroke-width: 2.2;
-  }
-
-  &--preview {
-    fill: rgb(var(--viz-hit-rgb) / 0.08);
-    stroke: rgb(var(--viz-hit-rgb) / 0.58);
-    stroke-width: 1.6;
-    stroke-dasharray: 3 2;
-  }
-
-  &--result {
-    fill: rgb(var(--viz-route-rgb) / 0.1);
-    stroke: rgb(var(--viz-route-rgb) / 0.62);
-    stroke-width: 1.8;
-  }
+/* Summation canvas — the C-space hull result renders here at the
+   shared 100×100 geometry scale. */
+.mkv__sum-wrap {
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
-.mkv__vertex-glow {
-  fill: rgb(var(--viz-hit-rgb) / 0.18);
-}
-
-.mkv__vertex {
-  fill: #fff1aa;
+.mkv__sum {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+  display: block;
 }

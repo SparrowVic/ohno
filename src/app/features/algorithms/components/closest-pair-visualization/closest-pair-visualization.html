@@ -2,53 +2,71 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (geoState(); as geo) {
-    <div class="cpv__stage">
-      <svg class="cpv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="geo-stage">
+      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="cpv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.3" />
+            <path
+              d="M 10 0 L 0 0 0 10"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.055)"
+              stroke-width="0.3"
+            />
           </pattern>
         </defs>
-
         <rect x="-6" y="-6" width="112" height="112" fill="url(#cpv-grid)" />
 
-        @for (band of bands(); track band.tone + ':' + band.x0 + ':' + band.x1 + ':' + (band.label ?? '')) {
+        @for (
+          band of bands();
+          track band.tone + ':' + band.x0 + ':' + band.x1 + ':' + (band.label ?? '')
+        ) {
           <rect
             [attr.x]="band.x0"
             y="0"
             [attr.width]="band.x1 - band.x0"
             height="100"
-            [class]="'cpv__band cpv__band--' + band.tone"
+            class="cpv-band cpv-band--{{ band.tone }}"
             [attr.opacity]="bandOpacity(band)"
           />
         }
 
-        @for (divider of dividers(); track divider.tone + ':' + divider.x + ':' + (divider.label ?? '')) {
+        @for (
+          divider of dividers();
+          track divider.tone + ':' + divider.x + ':' + (divider.label ?? '')
+        ) {
           <line
             [attr.x1]="divider.x"
             y1="0"
             [attr.x2]="divider.x"
             y2="100"
-            [class]="'cpv__divider cpv__divider--' + divider.tone"
+            class="geo-divider geo-divider--{{ divider.tone }}"
           />
           @if (divider.label) {
-            <text class="cpv__divider-label" [attr.x]="divider.x" y="4" text-anchor="middle">
+            <text
+              class="geo-divider__label"
+              [attr.x]="divider.x"
+              y="4"
+              text-anchor="middle"
+            >
               {{ divider.label }}
             </text>
           }
         }
 
-        @for (pair of pairLines(); track pair.tone + ':' + pair.pointIds[0] + ':' + pair.pointIds[1]) {
+        @for (
+          pair of pairLines();
+          track pair.tone + ':' + pair.pointIds[0] + ':' + pair.pointIds[1]
+        ) {
           <line
             [attr.x1]="ptSvgX(pair.pointIds[0])"
             [attr.y1]="ptSvgY(pair.pointIds[0])"
             [attr.x2]="ptSvgX(pair.pointIds[1])"
             [attr.y2]="ptSvgY(pair.pointIds[1])"
-            [class]="'cpv__pair cpv__pair--' + pair.tone"
+            class="geo-line geo-line--{{ pairToneClass(pair.tone) }}"
           />
           <g [attr.transform]="'translate(' + pairMidX(pair) + ',' + pairMidY(pair) + ')'">
-            <rect class="cpv__pair-pill" x="-9" y="-3.8" rx="3.6" ry="3.6" width="18" height="7.6" />
-            <text class="cpv__pair-label" text-anchor="middle" dominant-baseline="middle">
+            <rect class="geo-label-pill" x="-9" y="-3.8" rx="3.6" ry="3.6" width="18" height="7.6" />
+            <text class="geo-label" text-anchor="middle" dominant-baseline="middle">
               {{ pair.distance.toFixed(2) }}
             </text>
           </g>
@@ -57,10 +75,18 @@
         @for (point of points(); track point.id) {
           <g [attr.transform]="ptTransform(point)">
             @if (showGlow(point)) {
-              <circle [class]="'cpv__glow cpv__glow--' + point.status" r="6.4" />
+              <circle
+                class="geo-point__glow geo-point__glow--{{ pointToneClass(point.status) }}"
+                r="6.4"
+              />
             }
-            <circle [class]="'cpv__point cpv__point--' + point.status" r="3.6" />
-            <text class="cpv__point-id" text-anchor="middle" dominant-baseline="middle">{{ point.id }}</text>
+            <circle
+              class="geo-point geo-point--{{ pointToneClass(point.status) }}"
+              r="3.6"
+            />
+            <text class="geo-point__id" text-anchor="middle" dominant-baseline="middle">
+              {{ point.id }}
+            </text>
           </g>
         }
       </svg>
