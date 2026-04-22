@@ -1223,6 +1223,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['sequence', 'iteration', 'basics'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'factorial',
@@ -1232,6 +1234,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['math', 'iteration', 'recursion'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'euclidean-gcd',
@@ -1241,6 +1245,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['number theory', 'modulo', 'gcd'],
+    complexity: {
+      timeBest: 'O(1)',
+      timeAverage: 'O(log min(a, b))',
+      timeWorst: 'O(log min(a, b))',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'sieve-of-eratosthenes',
@@ -1259,6 +1270,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['arrays', 'window', 'pointers'],
+    complexity: { timeBest: 'O(1)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'sliding-window',
@@ -1268,6 +1281,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['arrays', 'window', 'incremental'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'palindrome-check',
@@ -1277,6 +1292,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['strings', 'two pointers', 'symmetry'],
+    complexity: { timeBest: 'O(1)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'reverse-string-array',
@@ -1286,7 +1303,9 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['in-place', 'two pointers', 'basics'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
     inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'backtracking',

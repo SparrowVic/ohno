@@ -1,0 +1,71 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as lab) {
+    <div class="number-lab">
+      <!-- Registers deck — live named scalars as mono chips. Tones
+           tell the user at a glance which one just moved. -->
+      <section class="number-lab__registers">
+        @for (reg of lab.registers; track reg.id) {
+          <article class="number-lab__register number-lab__register--{{ reg.tone }}">
+            <span class="number-lab__register-label">{{ reg.label }}</span>
+            <span class="number-lab__register-value">{{ reg.value }}</span>
+            @if (reg.hint; as hint) {
+              <span class="number-lab__register-hint">{{ hint }}</span>
+            }
+          </article>
+        }
+      </section>
+
+      <!-- Formula card — the rule fired on this exact step, broken
+           into coloured operand / operator parts. -->
+      @if (lab.formula; as formula) {
+        <section class="number-lab__formula">
+          <div class="number-lab__formula-row">
+            @for (part of formula.lhs; track $index) {
+              <span class="number-lab__part number-lab__part--{{ part.role }}">{{ part.text }}</span>
+            }
+            <span class="number-lab__part number-lab__part--operator">=</span>
+            @for (part of formula.rhs; track $index) {
+              <span class="number-lab__part number-lab__part--{{ part.role }}">{{ part.text }}</span>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- History tape — emitted values in order. Newest chip pulses. -->
+      @if (lab.history.length > 0) {
+        <section class="number-lab__history">
+          <header class="number-lab__history-head">
+            <span class="number-lab__history-label">n</span>
+            <span class="number-lab__history-value">value</span>
+          </header>
+          <div class="number-lab__history-tape">
+            @for (entry of lab.history; track entry.id) {
+              <article
+                class="number-lab__history-chip"
+                [class.number-lab__history-chip--current]="entry.isCurrent"
+              >
+                <span class="number-lab__history-chip-label">{{ entry.label }}</span>
+                <span class="number-lab__history-chip-value">{{ entry.value }}</span>
+              </article>
+            }
+          </div>
+        </section>
+      }
+
+      @if (lab.resultLabel; as result) {
+        <footer class="number-lab__result">
+          <span class="number-lab__result-label">result</span>
+          <span class="number-lab__result-value">{{ result }}</span>
+        </footer>
+      }
+    </div>
+  }
+</app-viz-panel>

@@ -57,6 +57,10 @@
         <app-string-trace-panel [state]="stringState()" />
       } @else if (treeState()) {
         <app-tree-trace-panel [state]="treeState()" />
+      } @else if (numberLabState()) {
+        <app-number-lab-trace-panel [state]="numberLabState()" />
+      } @else if (pointerLabState()) {
+        <app-pointer-lab-trace-panel [state]="pointerLabState()" />
       } @else if (closestPairGeometryState()) {
         <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
       } @else if (lineIntersectionGeometryState()) {

@@ -47,6 +47,10 @@ import { deriveSortTrace } from '../utils/derive-sort-trace/derive-sort-trace';
 import { SortStep } from '../models/sort-step';
 import { StringPresetOption, StringTraceState } from '../models/string';
 import { TreePresetOption, TreeTraversalTraceState } from '../models/tree';
+import { NumberLabTraceState } from '../models/number-lab';
+import { PointerLabTraceState } from '../models/pointer-lab';
+import { NumberLabPresetOption } from '../utils/number-lab-scenarios/number-lab-scenarios';
+import { PointerLabPresetOption } from '../utils/pointer-lab-scenarios/pointer-lab-scenarios';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
@@ -55,6 +59,8 @@ interface RebuildOptions {
   readonly dpPresetId?: string | null;
   readonly stringPresetId?: string | null;
   readonly treePresetId?: string | null;
+  readonly numberLabPresetId?: string | null;
+  readonly pointerLabPresetId?: string | null;
 }
 
 @Component({
@@ -94,6 +100,8 @@ export class AlgorithmDetail {
   private readonly dpPresetSig = signal<string | null>(null);
   private readonly stringPresetSig = signal<string | null>(null);
   private readonly treePresetSig = signal<string | null>(null);
+  private readonly numberLabPresetSig = signal<string | null>(null);
+  private readonly pointerLabPresetSig = signal<string | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
@@ -129,6 +137,8 @@ export class AlgorithmDetail {
   readonly dpPresetId = this.dpPresetSig.asReadonly();
   readonly stringPresetId = this.stringPresetSig.asReadonly();
   readonly treePresetId = this.treePresetSig.asReadonly();
+  readonly numberLabPresetId = this.numberLabPresetSig.asReadonly();
+  readonly pointerLabPresetId = this.pointerLabPresetSig.asReadonly();
   readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
@@ -150,6 +160,14 @@ export class AlgorithmDetail {
   readonly treePresetOptions = computed<readonly TreePresetOption[]>(() => {
     const config = this.config();
     return config?.kind === 'tree' ? config.presetOptions : [];
+  });
+  readonly numberLabPresetOptions = computed<readonly NumberLabPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'number-lab' ? config.presetOptions : [];
+  });
+  readonly pointerLabPresetOptions = computed<readonly PointerLabPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'pointer-lab' ? config.presetOptions : [];
   });
   readonly sizeUnitLabel = computed(() => {
     const unit = this.config()?.sizeUnit ?? 'elements';
@@ -199,6 +217,12 @@ export class AlgorithmDetail {
   );
   readonly treeTrace = computed<TreeTraversalTraceState | null>(
     () => this.currentSnapshot()?.tree ?? null,
+  );
+  readonly numberLabTrace = computed<NumberLabTraceState | null>(
+    () => this.currentSnapshot()?.numberLab ?? null,
+  );
+  readonly pointerLabTrace = computed<PointerLabTraceState | null>(
+    () => this.currentSnapshot()?.pointerLab ?? null,
   );
   readonly geometryTrace = computed<GeometryStepState | null>(
     () => this.currentSnapshot()?.geometry ?? null,
@@ -308,11 +332,20 @@ export class AlgorithmDetail {
         this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
         this.stringPresetSig.set(config.kind === 'string' ? config.defaultPresetId : null);
         this.treePresetSig.set(config.kind === 'tree' ? config.defaultPresetId : null);
+        this.numberLabPresetSig.set(
+          config.kind === 'number-lab' ? config.defaultPresetId : null,
+        );
+        this.pointerLabPresetSig.set(
+          config.kind === 'pointer-lab' ? config.defaultPresetId : null,
+        );
 
         this.rebuildVisualization(config, config.defaultSize, {
           dpPresetId: config.kind === 'dp' ? config.defaultPresetId : null,
           stringPresetId: config.kind === 'string' ? config.defaultPresetId : null,
           treePresetId: config.kind === 'tree' ? config.defaultPresetId : null,
+          numberLabPresetId: config.kind === 'number-lab' ? config.defaultPresetId : null,
+          pointerLabPresetId:
+            config.kind === 'pointer-lab' ? config.defaultPresetId : null,
         });
       });
     });
@@ -416,12 +449,40 @@ export class AlgorithmDetail {
     this.rebuildVisualization(config, this.sizeSig(), { treePresetId: value });
   }
 
+  onNumberLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'number-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.numberLabPresetSig()
+    )
+      return;
+
+    this.numberLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { numberLabPresetId: value });
+  }
+
+  onPointerLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'pointer-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.pointerLabPresetSig()
+    )
+      return;
+
+    this.pointerLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { pointerLabPresetId: value });
+  }
+
   private resetUnavailableState(): void {
     this.resetPlaybackState();
     this.graphSig.set(null);
     this.dpPresetSig.set(null);
     this.stringPresetSig.set(null);
     this.treePresetSig.set(null);
+    this.numberLabPresetSig.set(null);
+    this.pointerLabPresetSig.set(null);
     this.engine.reset();
   }
 
@@ -477,6 +538,24 @@ export class AlgorithmDetail {
       }
       case 'tree': {
         const presetId = options.treePresetId ?? this.treePresetSig() ?? config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'number-lab': {
+        const presetId =
+          options.numberLabPresetId ?? this.numberLabPresetSig() ?? config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'pointer-lab': {
+        const presetId =
+          options.pointerLabPresetId ?? this.pointerLabPresetSig() ?? config.defaultPresetId;
         const scenario = config.createScenario(size, presetId);
         this.arraySig.set([]);
         this.graphSig.set(null);

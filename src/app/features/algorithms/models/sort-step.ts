@@ -5,6 +5,8 @@ import { GraphStepState } from './graph';
 import { GridTraceState } from './grid';
 import { MatrixTraceState } from './matrix';
 import { NetworkTraceState } from './network';
+import { NumberLabTraceState } from './number-lab';
+import { PointerLabTraceState } from './pointer-lab';
 import { SearchTraceState } from './search';
 import { StringTraceState } from './string';
 import { TreeTraversalTraceState } from './tree';
@@ -64,4 +66,6 @@ export interface SortStep {
   readonly string?: StringTraceState | null;
   readonly geometry?: GeometryStepState | null;
   readonly tree?: TreeTraversalTraceState | null;
+  readonly numberLab?: NumberLabTraceState | null;
+  readonly pointerLab?: PointerLabTraceState | null;
 }

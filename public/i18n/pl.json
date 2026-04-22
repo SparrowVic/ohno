@@ -1569,6 +1569,218 @@
             }
           }
         },
+        "numberLab": {
+          "factorial": {
+            "decisions": {
+              "advance": "Następna iteracja i.",
+              "done": "Licznik osiągnął n.",
+              "multiply": "Mnożymy akumulator przez licznik.",
+              "zero": "Przypadek bazowy 0! = 1."
+            },
+            "descriptions": {
+              "advance": "Licznik mija i = {{k}}.",
+              "complete": "{{n}}! = {{value}} — koniec.",
+              "multiply": "acc ← {{prev}} × {{k}} = {{product}}",
+              "setup": "Liczymy {{n}}! z narastającym akumulatorem.",
+              "zero": "0! = 1 z definicji."
+            },
+            "hints": {
+              "counter": "licznik pętli",
+              "product": "bieżący iloczyn"
+            },
+            "modeLabel": "Silnia",
+            "phases": {
+              "advance": "Następne i",
+              "complete": "Zakończone",
+              "multiply": "Mnożenie",
+              "setup": "Przygotowanie"
+            },
+            "resultFormat": "{{n}}! = {{value}}"
+          },
+          "fibonacci": {
+            "decisions": {
+              "advance": "Przesunięcie: prev ← curr, curr ← next.",
+              "baseCase": "Wartości startowe — rekurencja się jeszcze nie odpaliła.",
+              "done": "Osiągnęliśmy szukany indeks.",
+              "sumPrev": "F(n) = F(n−1) + F(n−2) — sumujemy dwie poprzednie."
+            },
+            "descriptions": {
+              "advance": "Przesuwamy okno po F({{index}}).",
+              "baseF0": "Emitujemy przypadek bazowy F(0) = 0.",
+              "baseF1": "Emitujemy przypadek bazowy F(1) = 1.",
+              "complete": "F({{n}}) = {{value}} — koniec.",
+              "emit": "Wyznaczamy F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}.",
+              "setup": "Przygotowujemy okno iteracji dla F({{n}})."
+            },
+            "hints": {
+              "nextSum": "prev + curr",
+              "rollWindow": "przesuwa się co krok",
+              "terminal": "indeks docelowy"
+            },
+            "modeLabel": "Fibonacci (iteracyjnie)",
+            "phases": {
+              "advance": "Przesunięcie okna",
+              "base": "Przypadek bazowy",
+              "complete": "Zakończone",
+              "emit": "Sumowanie",
+              "setup": "Przygotowanie"
+            },
+            "registers": {
+              "curr": "F(n)",
+              "n": "szukane n",
+              "next": "F(n+1)",
+              "prev": "F(n−1)"
+            },
+            "resultFormat": "F({{n}}) = {{value}}"
+          },
+          "gcd": {
+            "decisions": {
+              "done": "b = 0 — a trzyma nwd.",
+              "remainder": "Wyznaczamy resztę z bieżącej pary.",
+              "swap": "Przesunięcie: a ← b, b ← r."
+            },
+            "descriptions": {
+              "complete": "Para zbiega do nwd = {{gcd}} gdy b = 0.",
+              "remainder": "r ← {{a}} mod {{b}} = {{r}}",
+              "setup": "Liczymy nwd({{a}}, {{b}}).",
+              "swap": "Przesuwamy: a ← {{a}}, b ← {{b}}."
+            },
+            "hints": {
+              "a": "dzielna",
+              "b": "dzielnik",
+              "r": "reszta"
+            },
+            "modeLabel": "NWD — algorytm Euklidesa",
+            "phases": {
+              "complete": "Zakończone",
+              "remainder": "Reszta",
+              "setup": "Przygotowanie",
+              "swap": "Przesunięcie pary"
+            },
+            "resultFormat": "nwd = {{gcd}}"
+          }
+        },
+        "pointerLab": {
+          "palindrome": {
+            "decisions": {
+              "done": "Wskaźniki się zbiegły bez niezgodności.",
+              "match": "Zgodność — ruszamy do środka.",
+              "mismatch": "Pierwsza niezgodność odrzuca palindrom.",
+              "probe": "Porównanie odbitych znaków."
+            },
+            "descriptions": {
+              "confirmed": "Wszystkie pary zgodne — palindrom potwierdzony.",
+              "converge": "Oba wskaźniki przesuwamy do środka.",
+              "match": "{{left}} = {{right}} — znaki zgodne.",
+              "mismatch": "{{left}} ≠ {{right}} — palindrom odrzucony.",
+              "setup": "Porównujemy końce \"{{word}}\" symetrycznie."
+            },
+            "modeLabel": "Palindrom",
+            "phases": {
+              "compare": "Porównanie",
+              "confirmed": "Palindrom",
+              "converge": "Zbieżność",
+              "rejected": "Niezgodność",
+              "setup": "Przygotowanie"
+            },
+            "resultNot": "\"{{word}}\" nie jest palindromem.",
+            "resultOk": "\"{{word}}\" czyta się tak samo z obu stron.",
+            "stats": {
+              "verdictLabel": "Werdykt",
+              "verdictNot": "nie palindrom",
+              "verdictPalindrome": "palindrom",
+              "verdictPending": "sprawdzam…",
+              "wordLabel": "Słowo"
+            }
+          },
+          "reverse": {
+            "decisions": {
+              "converge": "Oba wskaźniki do środka.",
+              "done": "Wskaźniki się minęły — odwrócenie zakończone.",
+              "probe": "Odbicie końców i zamiana.",
+              "swap": "Zamiana lewy ↔ prawy w miejscu."
+            },
+            "descriptions": {
+              "advance": "Zbieżność — końce ustawione na {{left}} / {{right}}.",
+              "complete": "Odwrócona sekwencja: {{reversed}}.",
+              "setup": "Odwracamy \"{{input}}\" w miejscu odbitymi wskaźnikami.",
+              "swap": "Zamiana końców: {{left}} ↔ {{right}}."
+            },
+            "modeLabel": "Odwrócenie",
+            "phases": {
+              "advance": "Zbieżność",
+              "complete": "Zakończone",
+              "setup": "Przygotowanie",
+              "swap": "Zamiana"
+            },
+            "resultFormat": "Odwrócone: {{reversed}}",
+            "stats": {
+              "originalLabel": "Oryginał",
+              "swapsLabel": "Zamiany"
+            }
+          },
+          "slidingWindow": {
+            "decisions": {
+              "bestUpdate": "Suma okna bije aktualny rekord.",
+              "done": "Przeszliśmy wszystkie okna.",
+              "fillFirst": "Zapełniamy pierwsze okno.",
+              "keepBest": "Suma okna nie bije rekordu — trzymamy.",
+              "rollForward": "Przesuwamy okno o jedno pole w prawo."
+            },
+            "descriptions": {
+              "bestUpdate": "Najlepsza suma: {{sum}} w [{{left}}..{{right}}].",
+              "complete": "Najlepsze okno {{best}} w [{{left}}..{{right}}].",
+              "keepBest": "Suma {{sum}} ≤ rekord {{best}} — trzymamy poprzednią.",
+              "slide": "Przesunięcie: wypada {{out}}, wchodzi {{in}} → suma = {{sum}}.",
+              "warmup": "Wypełniamy pierwsze okno szerokości {{k}}, suma = {{sum}}."
+            },
+            "modeLabel": "Przesuwne okno",
+            "phases": {
+              "bestUpdate": "Nowy rekord",
+              "complete": "Zakończone",
+              "slide": "Przesunięcie",
+              "warmup": "Rozbieg"
+            },
+            "resultFormat": "Najlepsza suma {{best}} @ [{{left}}..{{right}}]",
+            "stats": {
+              "best": "Najlepsza",
+              "windowSize": "Szerokość",
+              "windowSum": "Suma okna"
+            }
+          },
+          "twoPointers": {
+            "decisions": {
+              "match": "Para dokładnie trafia w cel.",
+              "noPair": "Nie ma pary w posortowanej tablicy.",
+              "probe": "Porównujemy bieżącą parę.",
+              "tooBig": "Suma nad celem — maleje od prawej.",
+              "tooSmall": "Suma pod celem — rosnąca lewa strona."
+            },
+            "descriptions": {
+              "compare": "{{left}} + {{right}} = {{sum}} względem celu {{target}}.",
+              "hit": "Para ({{left}}, {{right}}) sumuje się do {{target}}.",
+              "miss": "Wskaźniki minęły się bez trafienia {{target}}.",
+              "setup": "Ustawiamy wskaźniki na cel {{target}} w {{size}} wartościach.",
+              "shrinkLeft": "Suma zbyt mała — przesuwamy lewy wskaźnik.",
+              "shrinkRight": "Suma zbyt duża — cofamy prawy wskaźnik."
+            },
+            "modeLabel": "Dwa wskaźniki",
+            "phases": {
+              "compare": "Porównanie",
+              "hit": "Dopasowanie",
+              "miss": "Brak pary",
+              "setup": "Przygotowanie",
+              "shrinkLeft": "Lewa +1",
+              "shrinkRight": "Prawa −1"
+            },
+            "resultHit": "Znaleziono ({{left}}, {{right}}) = {{target}}",
+            "resultMiss": "Żadna para nie sumuje się do celu.",
+            "stats": {
+              "sumLabel": "Bieżąca suma",
+              "targetLabel": "Cel"
+            }
+          }
+        },
         "search": {
           "binarySearch": {
             "decisions": {
@@ -2810,6 +3022,96 @@
             }
           }
         },
+        "numberLab": {
+          "factorial": {
+            "growing": {
+              "description": "Patrz, jak 10! rośnie — akumulator szybko zbiera wartość.",
+              "label": "Rosnący iloczyn"
+            },
+            "small": {
+              "description": "Przejdź 6! krok po kroku — zwięzły, pełny ślad.",
+              "label": "Krótki przebieg"
+            }
+          },
+          "fibonacci": {
+            "classic": {
+              "description": "Policz F(10) z przesuwnym oknem dwóch wartości.",
+              "label": "Klasyczny ciąg"
+            },
+            "deep": {
+              "description": "Pchnij okno dalej — F(15) — i zobacz tempo wzrostu.",
+              "label": "Głębszy przebieg"
+            }
+          },
+          "gcd": {
+            "coprime": {
+              "description": "nwd(35, 17) — szybko ląduje na 1.",
+              "label": "Para względnie pierwsza"
+            },
+            "large": {
+              "description": "nwd(1071, 462) — kilka rund reszty, zanim zbiega.",
+              "label": "Większa para"
+            },
+            "shared": {
+              "description": "nwd(48, 36) ma wyraźny wspólny dzielnik do znalezienia.",
+              "label": "Wspólny czynnik"
+            }
+          }
+        },
+        "pointerLab": {
+          "palindrome": {
+            "classic": {
+              "description": "Palindrom nieparzystej długości — porównania zbiegają do środka.",
+              "label": "Klasyczny kajak"
+            },
+            "nope": {
+              "description": "Wygląda na palindrom, ale zawodzi już na pierwszej lustrzanej parze.",
+              "label": "Palette"
+            },
+            "odd": {
+              "description": "Krótki 5-znakowy palindrom — lustra trafiają się symetrycznie.",
+              "label": "Radar"
+            }
+          },
+          "reverse": {
+            "digits": {
+              "description": "Sześć cyfr zamienianych symetrycznie w miejscu.",
+              "label": "Odwrót cyfr"
+            },
+            "word": {
+              "description": "Odwróć \"flower\" znak po znaku.",
+              "label": "Odwrót słowa"
+            }
+          },
+          "slidingWindow": {
+            "dips": {
+              "description": "Mieszany przebieg — najlepsze okno siedzi w środku ciągu.",
+              "label": "Dołki i skoki"
+            },
+            "gains": {
+              "description": "Wartości rosną, gdy okno przesuwa się w prawo.",
+              "label": "Równy wzrost"
+            },
+            "tail": {
+              "description": "Najlepsze okno mieszka na końcu — trzeba skanować do końca.",
+              "label": "Ładunek na końcu"
+            }
+          },
+          "twoPointers": {
+            "classic": {
+              "description": "Posortowana tablica z czystym trafieniem w środkowym zakresie.",
+              "label": "Klasyczna para"
+            },
+            "edgeHit": {
+              "description": "Dopasowanie blisko brzegów — wskaźniki gnają do środka.",
+              "label": "Trafienie na brzegu"
+            },
+            "noMatch": {
+              "description": "Cel poza osiągalnym zakresem — wskaźniki się mijają.",
+              "label": "Brak dopasowania"
+            }
+          }
+        },
         "string": {
           "ahoCorasick": {
             "alerts": {
@@ -3527,6 +3829,19 @@
             "source": "Kotwica źródła"
           },
           "waitingStepLabel": "Oczekiwanie na następny krok BFS / DFS / powiększania."
+        },
+        "numberLab": {
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu dla tego kroku.",
+          "historyLabel": "Historia",
+          "iterationLabel": "Iteracja",
+          "registersLabel": "Rejestry"
+        },
+        "pointerLab": {
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu dla tego kroku.",
+          "pointersLabel": "Wskaźniki",
+          "statsLabel": "Statystyki"
         },
         "search": {
           "calculationAriaLabel": "Podsumowanie obliczeń wyszukiwania",

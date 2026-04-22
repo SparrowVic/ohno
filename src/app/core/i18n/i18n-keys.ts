@@ -1073,6 +1073,19 @@ export const I18N_KEY = {
           outputLabel: t('features.algorithms.tracePanels.tree.outputLabel'),
           emptyLabel: t('features.algorithms.tracePanels.tree.emptyLabel'),
         },
+        numberLab: {
+          iterationLabel: t('features.algorithms.tracePanels.numberLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.numberLab.decisionLabel'),
+          registersLabel: t('features.algorithms.tracePanels.numberLab.registersLabel'),
+          historyLabel: t('features.algorithms.tracePanels.numberLab.historyLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.numberLab.emptyLabel'),
+        },
+        pointerLab: {
+          decisionLabel: t('features.algorithms.tracePanels.pointerLab.decisionLabel'),
+          pointersLabel: t('features.algorithms.tracePanels.pointerLab.pointersLabel'),
+          statsLabel: t('features.algorithms.tracePanels.pointerLab.statsLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.pointerLab.emptyLabel'),
+        },
       },
       visualizations: {
         search: {

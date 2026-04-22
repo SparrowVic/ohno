@@ -1569,6 +1569,218 @@
             }
           }
         },
+        "numberLab": {
+          "factorial": {
+            "decisions": {
+              "advance": "Advance counter i.",
+              "done": "Counter reached n.",
+              "multiply": "Multiply the accumulator by the new counter.",
+              "zero": "Base case 0! = 1."
+            },
+            "descriptions": {
+              "advance": "Move counter past i = {{k}}.",
+              "complete": "{{n}}! = {{value}} — done.",
+              "multiply": "acc ← {{prev}} × {{k}} = {{product}}",
+              "setup": "Compute {{n}}! using a running accumulator.",
+              "zero": "0! = 1 by definition."
+            },
+            "hints": {
+              "counter": "loop counter",
+              "product": "running product"
+            },
+            "modeLabel": "Factorial",
+            "phases": {
+              "advance": "Next i",
+              "complete": "Complete",
+              "multiply": "Multiply",
+              "setup": "Setup"
+            },
+            "resultFormat": "{{n}}! = {{value}}"
+          },
+          "fibonacci": {
+            "decisions": {
+              "advance": "Shift prev ← curr, curr ← next.",
+              "baseCase": "Starter values — no recurrence yet.",
+              "done": "Reached the requested index.",
+              "sumPrev": "F(n) = F(n−1) + F(n−2) — sum the previous two."
+            },
+            "descriptions": {
+              "advance": "Roll the window after F({{index}}).",
+              "baseF0": "Emit the base case F(0) = 0.",
+              "baseF1": "Emit the base case F(1) = 1.",
+              "complete": "F({{n}}) = {{value}} — done.",
+              "emit": "Compute F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}.",
+              "setup": "Prepare rolling window to compute F({{n}})."
+            },
+            "hints": {
+              "nextSum": "prev + curr",
+              "rollWindow": "rolls on each step",
+              "terminal": "goal index"
+            },
+            "modeLabel": "Fibonacci (iterative)",
+            "phases": {
+              "advance": "Roll window",
+              "base": "Base case",
+              "complete": "Complete",
+              "emit": "Combine",
+              "setup": "Setup"
+            },
+            "registers": {
+              "curr": "F(n)",
+              "n": "target n",
+              "next": "F(n+1)",
+              "prev": "F(n−1)"
+            },
+            "resultFormat": "F({{n}}) = {{value}}"
+          },
+          "gcd": {
+            "decisions": {
+              "done": "b = 0 — a holds the gcd.",
+              "remainder": "Compute the remainder of the current pair.",
+              "swap": "Shift the window: a ← b, b ← r."
+            },
+            "descriptions": {
+              "complete": "gcd collapses to {{gcd}} once b = 0.",
+              "remainder": "r ← {{a}} mod {{b}} = {{r}}",
+              "setup": "Compute gcd({{a}}, {{b}}).",
+              "swap": "Shift pair: a ← {{a}}, b ← {{b}}."
+            },
+            "hints": {
+              "a": "dividend",
+              "b": "divisor",
+              "r": "remainder"
+            },
+            "modeLabel": "Euclidean GCD",
+            "phases": {
+              "complete": "Complete",
+              "remainder": "Remainder",
+              "setup": "Setup",
+              "swap": "Swap pair"
+            },
+            "resultFormat": "gcd = {{gcd}}"
+          }
+        },
+        "pointerLab": {
+          "palindrome": {
+            "decisions": {
+              "done": "Pointers crossed without mismatches.",
+              "match": "Characters match — continue inward.",
+              "mismatch": "First mismatch rejects the palindrome.",
+              "probe": "Compare mirrored characters."
+            },
+            "descriptions": {
+              "confirmed": "All mirrored pairs matched — palindrome confirmed.",
+              "converge": "Advance both pointers inward.",
+              "match": "{{left}} = {{right}} — characters match.",
+              "mismatch": "{{left}} ≠ {{right}} — palindrome broken.",
+              "setup": "Compare the ends of \"{{word}}\" symmetrically."
+            },
+            "modeLabel": "Palindrome check",
+            "phases": {
+              "compare": "Compare",
+              "confirmed": "Palindrome",
+              "converge": "Converge",
+              "rejected": "Mismatch",
+              "setup": "Setup"
+            },
+            "resultNot": "\"{{word}}\" is not a palindrome.",
+            "resultOk": "\"{{word}}\" reads the same both ways.",
+            "stats": {
+              "verdictLabel": "Verdict",
+              "verdictNot": "not a palindrome",
+              "verdictPalindrome": "palindrome",
+              "verdictPending": "checking…",
+              "wordLabel": "Word"
+            }
+          },
+          "reverse": {
+            "decisions": {
+              "converge": "Move both pointers inward.",
+              "done": "Pointers crossed — reversal done.",
+              "probe": "Mirror the ends and swap.",
+              "swap": "Swap left ↔ right in place."
+            },
+            "descriptions": {
+              "advance": "Converge — ends settled to {{left}} / {{right}}.",
+              "complete": "Reversed sequence: {{reversed}}.",
+              "setup": "Reverse \"{{input}}\" in place with mirrored pointers.",
+              "swap": "Swap ends: {{left}} ↔ {{right}}."
+            },
+            "modeLabel": "Reverse",
+            "phases": {
+              "advance": "Advance",
+              "complete": "Complete",
+              "setup": "Setup",
+              "swap": "Swap"
+            },
+            "resultFormat": "Reversed: {{reversed}}",
+            "stats": {
+              "originalLabel": "Original",
+              "swapsLabel": "Swaps"
+            }
+          },
+          "slidingWindow": {
+            "decisions": {
+              "bestUpdate": "Window sum beats the current best.",
+              "done": "Scanned all windows.",
+              "fillFirst": "Prefill the initial window.",
+              "keepBest": "Window sum does not beat the best — keep it.",
+              "rollForward": "Roll the window one cell forward."
+            },
+            "descriptions": {
+              "bestUpdate": "Best sum updated to {{sum}} at [{{left}}..{{right}}].",
+              "complete": "Best window {{best}} at [{{left}}..{{right}}].",
+              "keepBest": "Sum {{sum}} ≤ best {{best}} — keep previous.",
+              "slide": "Slide: drop {{out}}, add {{in}} → sum = {{sum}}.",
+              "warmup": "Fill the first window of width {{k}}, sum = {{sum}}."
+            },
+            "modeLabel": "Sliding window",
+            "phases": {
+              "bestUpdate": "New best",
+              "complete": "Complete",
+              "slide": "Slide",
+              "warmup": "Warm-up"
+            },
+            "resultFormat": "Best sum {{best}} @ [{{left}}..{{right}}]",
+            "stats": {
+              "best": "Best",
+              "windowSize": "Width",
+              "windowSum": "Window sum"
+            }
+          },
+          "twoPointers": {
+            "decisions": {
+              "match": "Pair sums exactly to the target.",
+              "noPair": "No pair exists in the sorted array.",
+              "probe": "Compare the current pair.",
+              "tooBig": "Sum over target — shrink from the right.",
+              "tooSmall": "Sum under target — grow the left side."
+            },
+            "descriptions": {
+              "compare": "{{left}} + {{right}} = {{sum}} vs target {{target}}.",
+              "hit": "Pair ({{left}}, {{right}}) sums to {{target}}.",
+              "miss": "Pointers crossed without reaching {{target}}.",
+              "setup": "Initialise pointers for target {{target}} across {{size}} values.",
+              "shrinkLeft": "Sum too small — advance the left pointer.",
+              "shrinkRight": "Sum too big — retreat the right pointer."
+            },
+            "modeLabel": "Two pointers",
+            "phases": {
+              "compare": "Compare",
+              "hit": "Match",
+              "miss": "No match",
+              "setup": "Setup",
+              "shrinkLeft": "Advance L",
+              "shrinkRight": "Retreat R"
+            },
+            "resultHit": "Found ({{left}}, {{right}}) = {{target}}",
+            "resultMiss": "No pair sums to the target.",
+            "stats": {
+              "sumLabel": "Current sum",
+              "targetLabel": "Target"
+            }
+          }
+        },
         "search": {
           "binarySearch": {
             "decisions": {
@@ -2810,6 +3022,96 @@
             }
           }
         },
+        "numberLab": {
+          "factorial": {
+            "growing": {
+              "description": "Watch 10! balloon — observe the accumulator shoot up.",
+              "label": "Growing product"
+            },
+            "small": {
+              "description": "Walk 6! step by step — a compact full trace.",
+              "label": "Small run"
+            }
+          },
+          "fibonacci": {
+            "classic": {
+              "description": "Compute F(10) with a rolling two-value window.",
+              "label": "Classic sequence"
+            },
+            "deep": {
+              "description": "Push the window further — F(15) — to see the growth rate.",
+              "label": "Deeper run"
+            }
+          },
+          "gcd": {
+            "coprime": {
+              "description": "gcd(35, 17) → quickly lands on 1.",
+              "label": "Coprime pair"
+            },
+            "large": {
+              "description": "gcd(1071, 462) → several remainder rounds to converge.",
+              "label": "Larger pair"
+            },
+            "shared": {
+              "description": "gcd(48, 36) has a clear common divisor to find.",
+              "label": "Shared factor"
+            }
+          }
+        },
+        "pointerLab": {
+          "palindrome": {
+            "classic": {
+              "description": "Odd-length palindrome — compares converge to the centre.",
+              "label": "Classic kayak"
+            },
+            "nope": {
+              "description": "Looks palindrome-ish but fails at the first mirrored pair.",
+              "label": "Palette"
+            },
+            "odd": {
+              "description": "Short 5-char palindrome — mirrors match symmetrically.",
+              "label": "Radar"
+            }
+          },
+          "reverse": {
+            "digits": {
+              "description": "Six digits swapped symmetrically in place.",
+              "label": "Digits flip"
+            },
+            "word": {
+              "description": "Reverse \"flower\" character by character.",
+              "label": "Word flip"
+            }
+          },
+          "slidingWindow": {
+            "dips": {
+              "description": "Mixed run — best window sits mid-sequence.",
+              "label": "Dips + spikes"
+            },
+            "gains": {
+              "description": "Values rise as the window slides right.",
+              "label": "Steady gains"
+            },
+            "tail": {
+              "description": "Best window lives at the end — keep scanning.",
+              "label": "Tail payload"
+            }
+          },
+          "twoPointers": {
+            "classic": {
+              "description": "Sorted array with a clean mid-range match.",
+              "label": "Classic pair"
+            },
+            "edgeHit": {
+              "description": "Match sits near the ends — watch pointers rush inward.",
+              "label": "Edge hit"
+            },
+            "noMatch": {
+              "description": "Target outside the achievable range — pointers cross.",
+              "label": "No match"
+            }
+          }
+        },
         "string": {
           "ahoCorasick": {
             "alerts": {
@@ -3527,6 +3829,19 @@
             "source": "Source anchor"
           },
           "waitingStepLabel": "Waiting for the next BFS / DFS / augment step."
+        },
+        "numberLab": {
+          "decisionLabel": "Decision",
+          "emptyLabel": "No trace available for this step.",
+          "historyLabel": "History",
+          "iterationLabel": "Iteration",
+          "registersLabel": "Registers"
+        },
+        "pointerLab": {
+          "decisionLabel": "Decision",
+          "emptyLabel": "No trace available for this step.",
+          "pointersLabel": "Pointers",
+          "statsLabel": "Stats"
         },
         "search": {
           "calculationAriaLabel": "Search calculation summary",

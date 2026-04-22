@@ -96,10 +96,16 @@
             [stringPresetId]="stringPresetId()"
             [treePresetOptions]="treePresetOptions()"
             [treePresetId]="treePresetId()"
+            [numberLabPresetOptions]="numberLabPresetOptions()"
+            [numberLabPresetId]="numberLabPresetId()"
+            [pointerLabPresetOptions]="pointerLabPresetOptions()"
+            [pointerLabPresetId]="pointerLabPresetId()"
             (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
             (dpPresetChange)="onDpPresetChange($event)"
             (stringPresetChange)="onStringPresetChange($event)"
             (treePresetChange)="onTreePresetChange($event)"
+            (numberLabPresetChange)="onNumberLabPresetChange($event)"
+            (pointerLabPresetChange)="onPointerLabPresetChange($event)"
           />
           <app-legend-bar [items]="legendItems()" />
         </div>
@@ -121,6 +127,8 @@
           [sortState]="sortTrace()"
           [stringState]="stringTrace()"
           [treeState]="treeTrace()"
+          [numberLabState]="numberLabTrace()"
+          [pointerLabState]="pointerLabTrace()"
           [geometryState]="geometryTrace()"
           [graphFocusTargetLabel]="graphFocusTargetLabel()"
           [graphFocusPathLabel]="graphFocusPathLabel()"

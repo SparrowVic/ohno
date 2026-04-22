@@ -96,5 +96,25 @@
         (presetChange)="treePresetChange.emit($event)"
       />
     }
+    @case ('number-lab') {
+      <app-number-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="numberLabPresetOptions()"
+        [presetId]="numberLabPresetId()"
+        (presetChange)="numberLabPresetChange.emit($event)"
+      />
+    }
+    @case ('pointer-lab') {
+      <app-pointer-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="pointerLabPresetOptions()"
+        [presetId]="pointerLabPresetId()"
+        (presetChange)="pointerLabPresetChange.emit($event)"
+      />
+    }
   }
 </div>

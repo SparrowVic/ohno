@@ -504,6 +504,89 @@ import { NetworkTraceState } from '../../models/network';
 import { SearchTraceState } from '../../models/search';
 import { StringPresetOption, StringTraceState } from '../../models/string';
 import { TreePresetOption } from '../../models/tree';
+import {
+  NumberLabPresetOption,
+  FibonacciScenario as FibonacciIterScenario,
+  FactorialScenario,
+  EuclideanGcdScenario,
+  FIBONACCI_PRESETS as FIBONACCI_ITER_PRESETS,
+  FACTORIAL_PRESETS,
+  EUCLIDEAN_GCD_PRESETS,
+  DEFAULT_FIBONACCI_PRESET_ID as DEFAULT_FIBONACCI_ITER_PRESET_ID,
+  DEFAULT_FACTORIAL_PRESET_ID,
+  DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
+  createFibonacciScenario as createFibonacciIterScenario,
+  createFactorialScenario,
+  createEuclideanGcdScenario,
+} from '../../utils/number-lab-scenarios/number-lab-scenarios';
+import {
+  PointerLabPresetOption,
+  TwoPointersScenario,
+  SlidingWindowScenario,
+  PalindromeCheckScenario,
+  ReverseScenario,
+  TWO_POINTERS_PRESETS,
+  SLIDING_WINDOW_PRESETS,
+  PALINDROME_PRESETS,
+  REVERSE_PRESETS,
+  DEFAULT_TWO_POINTERS_PRESET_ID,
+  DEFAULT_SLIDING_WINDOW_PRESET_ID,
+  DEFAULT_PALINDROME_PRESET_ID,
+  DEFAULT_REVERSE_PRESET_ID,
+  createTwoPointersScenario,
+  createSlidingWindowScenario,
+  createPalindromeScenario,
+  createReverseScenario,
+} from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
+import { fibonacciIterativeGenerator } from '../../algorithms/fibonacci-iterative/fibonacci-iterative';
+import { factorialGenerator } from '../../algorithms/factorial/factorial';
+import { euclideanGcdGenerator } from '../../algorithms/euclidean-gcd/euclidean-gcd';
+import { twoPointersGenerator } from '../../algorithms/two-pointers/two-pointers';
+import { slidingWindowGenerator } from '../../algorithms/sliding-window/sliding-window';
+import { palindromeCheckGenerator } from '../../algorithms/palindrome-check/palindrome-check';
+import { reverseStringArrayGenerator } from '../../algorithms/reverse-string-array/reverse-string-array';
+import {
+  FIBONACCI_CODE,
+  FIBONACCI_CODE_HIGHLIGHT_MAP,
+  FIBONACCI_CODE_REGIONS,
+  FIBONACCI_CODE_VARIANTS,
+} from '../../data/fibonacci-iterative-code';
+import {
+  FACTORIAL_CODE,
+  FACTORIAL_CODE_HIGHLIGHT_MAP,
+  FACTORIAL_CODE_REGIONS,
+  FACTORIAL_CODE_VARIANTS,
+} from '../../data/factorial-code';
+import {
+  EUCLIDEAN_GCD_CODE,
+  EUCLIDEAN_GCD_CODE_HIGHLIGHT_MAP,
+  EUCLIDEAN_GCD_CODE_REGIONS,
+  EUCLIDEAN_GCD_CODE_VARIANTS,
+} from '../../data/euclidean-gcd-code';
+import {
+  TWO_POINTERS_CODE,
+  TWO_POINTERS_CODE_HIGHLIGHT_MAP,
+  TWO_POINTERS_CODE_REGIONS,
+  TWO_POINTERS_CODE_VARIANTS,
+} from '../../data/two-pointers-code';
+import {
+  SLIDING_WINDOW_CODE,
+  SLIDING_WINDOW_CODE_HIGHLIGHT_MAP,
+  SLIDING_WINDOW_CODE_REGIONS,
+  SLIDING_WINDOW_CODE_VARIANTS,
+} from '../../data/sliding-window-code';
+import {
+  PALINDROME_CODE,
+  PALINDROME_CODE_HIGHLIGHT_MAP,
+  PALINDROME_CODE_REGIONS,
+  PALINDROME_CODE_VARIANTS,
+} from '../../data/palindrome-check-code';
+import {
+  REVERSE_CODE,
+  REVERSE_CODE_HIGHLIGHT_MAP,
+  REVERSE_CODE_REGIONS,
+  REVERSE_CODE_VARIANTS,
+} from '../../data/reverse-string-array-code';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../../models/detail';
 import { HOPCROFT_KARP_CODE, HOPCROFT_KARP_CODE_VARIANTS } from '../../data/hopcroft-karp-code';
@@ -1252,6 +1335,14 @@ const TREE_TRAVERSALS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'tree', label: 'Tree Walk' },
 ];
 
+const NUMBER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'number-lab', label: 'Number Lab' },
+];
+
+const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'pointer-lab', label: 'Pointer Lab' },
+];
+
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
 ];
@@ -1456,6 +1547,22 @@ interface TreeAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmView
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface NumberLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'number-lab';
+  readonly presetOptions: readonly NumberLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
+interface PointerLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'pointer-lab';
+  readonly presetOptions: readonly PointerLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 export type AlgorithmViewConfig =
   | ArrayAlgorithmViewConfig
   | GraphAlgorithmViewConfig
@@ -1467,7 +1574,9 @@ export type AlgorithmViewConfig =
   | DsuAlgorithmViewConfig<any>
   | NetworkAlgorithmViewConfig<any>
   | GeometryAlgorithmViewConfig<any>
-  | TreeAlgorithmViewConfig<any>;
+  | TreeAlgorithmViewConfig<any>
+  | NumberLabAlgorithmViewConfig<any>
+  | PointerLabAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -2029,6 +2138,139 @@ const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
   sizeUnit: 'chars',
   randomizeLabel: 'New frequency set',
 });
+
+const FIBONACCI_ITER_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'number-lab',
+  codeLines: FIBONACCI_CODE,
+  codeRegions: FIBONACCI_CODE_REGIONS,
+  codeHighlightMap: FIBONACCI_CODE_HIGHLIGHT_MAP,
+  codeVariants: FIBONACCI_CODE_VARIANTS,
+  variantOptions: NUMBER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'number-lab',
+  sizeOptions: [6, 10, 15],
+  defaultSize: 10,
+  sizeUnit: 'iterations',
+  randomizeLabel: 'New Fibonacci run',
+  legendItems: () => [],
+  presetOptions: FIBONACCI_ITER_PRESETS,
+  defaultPresetId: DEFAULT_FIBONACCI_ITER_PRESET_ID,
+  createScenario: (size, presetId) => createFibonacciIterScenario(size, presetId),
+  generator: fibonacciIterativeGenerator,
+};
+
+const FACTORIAL_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'number-lab',
+  codeLines: FACTORIAL_CODE,
+  codeRegions: FACTORIAL_CODE_REGIONS,
+  codeHighlightMap: FACTORIAL_CODE_HIGHLIGHT_MAP,
+  codeVariants: FACTORIAL_CODE_VARIANTS,
+  variantOptions: NUMBER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'number-lab',
+  sizeOptions: [4, 6, 10],
+  defaultSize: 6,
+  sizeUnit: 'iterations',
+  randomizeLabel: 'New factorial run',
+  legendItems: () => [],
+  presetOptions: FACTORIAL_PRESETS,
+  defaultPresetId: DEFAULT_FACTORIAL_PRESET_ID,
+  createScenario: (size, presetId) => createFactorialScenario(size, presetId),
+  generator: factorialGenerator,
+};
+
+const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'number-lab',
+  codeLines: EUCLIDEAN_GCD_CODE,
+  codeRegions: EUCLIDEAN_GCD_CODE_REGIONS,
+  codeHighlightMap: EUCLIDEAN_GCD_CODE_HIGHLIGHT_MAP,
+  codeVariants: EUCLIDEAN_GCD_CODE_VARIANTS,
+  variantOptions: NUMBER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'number-lab',
+  sizeOptions: [1, 2, 3],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New GCD pair',
+  legendItems: () => [],
+  presetOptions: EUCLIDEAN_GCD_PRESETS,
+  defaultPresetId: DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
+  createScenario: (size, presetId) => createEuclideanGcdScenario(size, presetId),
+  generator: euclideanGcdGenerator,
+};
+
+const TWO_POINTERS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'pointer-lab',
+  codeLines: TWO_POINTERS_CODE,
+  codeRegions: TWO_POINTERS_CODE_REGIONS,
+  codeHighlightMap: TWO_POINTERS_CODE_HIGHLIGHT_MAP,
+  codeVariants: TWO_POINTERS_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New sorted array',
+  legendItems: () => [],
+  presetOptions: TWO_POINTERS_PRESETS,
+  defaultPresetId: DEFAULT_TWO_POINTERS_PRESET_ID,
+  createScenario: (size, presetId) => createTwoPointersScenario(size, presetId),
+  generator: twoPointersGenerator,
+};
+
+const SLIDING_WINDOW_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'pointer-lab',
+  codeLines: SLIDING_WINDOW_CODE,
+  codeRegions: SLIDING_WINDOW_CODE_REGIONS,
+  codeHighlightMap: SLIDING_WINDOW_CODE_HIGHLIGHT_MAP,
+  codeVariants: SLIDING_WINDOW_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [6, 8, 10],
+  defaultSize: 8,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New stream',
+  legendItems: () => [],
+  presetOptions: SLIDING_WINDOW_PRESETS,
+  defaultPresetId: DEFAULT_SLIDING_WINDOW_PRESET_ID,
+  createScenario: (size, presetId) => createSlidingWindowScenario(size, presetId),
+  generator: slidingWindowGenerator,
+};
+
+const PALINDROME_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'pointer-lab',
+  codeLines: PALINDROME_CODE,
+  codeRegions: PALINDROME_CODE_REGIONS,
+  codeHighlightMap: PALINDROME_CODE_HIGHLIGHT_MAP,
+  codeVariants: PALINDROME_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [5, 7, 9],
+  defaultSize: 5,
+  sizeUnit: 'characters',
+  randomizeLabel: 'New word',
+  legendItems: () => [],
+  presetOptions: PALINDROME_PRESETS,
+  defaultPresetId: DEFAULT_PALINDROME_PRESET_ID,
+  createScenario: (size, presetId) => createPalindromeScenario(size, presetId),
+  generator: palindromeCheckGenerator,
+};
+
+const REVERSE_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'pointer-lab',
+  codeLines: REVERSE_CODE,
+  codeRegions: REVERSE_CODE_REGIONS,
+  codeHighlightMap: REVERSE_CODE_HIGHLIGHT_MAP,
+  codeVariants: REVERSE_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [6, 8, 10],
+  defaultSize: 6,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New sequence',
+  legendItems: () => [],
+  presetOptions: REVERSE_PRESETS,
+  defaultPresetId: DEFAULT_REVERSE_PRESET_ID,
+  createScenario: (size, presetId) => createReverseScenario(size, presetId),
+  generator: reverseStringArrayGenerator,
+};
 
 const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'tree',
@@ -2982,6 +3224,13 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'voronoi-diagram') return VORONOI_VIEW_CONFIG;
   if (id === 'delaunay-triangulation') return DELAUNAY_VIEW_CONFIG;
   if (id === 'tree-traversals') return TREE_TRAVERSALS_VIEW_CONFIG;
+  if (id === 'fibonacci-iterative') return FIBONACCI_ITER_VIEW_CONFIG;
+  if (id === 'factorial') return FACTORIAL_VIEW_CONFIG;
+  if (id === 'euclidean-gcd') return EUCLIDEAN_GCD_VIEW_CONFIG;
+  if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
+  if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
+  if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;
+  if (id === 'reverse-string-array') return REVERSE_VIEW_CONFIG;
   return BUBBLE_VIEW_CONFIG;
 }
 

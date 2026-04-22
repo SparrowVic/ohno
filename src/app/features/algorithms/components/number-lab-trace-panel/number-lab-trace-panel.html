@@ -1,0 +1,81 @@
+<div class="trace">
+  @if (state(); as lab) {
+    <div class="trace__header">
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="lab.modeLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="lab.phaseLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.numberLab.iterationLabel | transloco"
+          [value]="lab.iteration"
+          [valueMono]="true"
+        />
+        @if (hasResult()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+            [value]="lab.resultLabel! | i18nText"
+          />
+        }
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.numberLab.decisionLabel | transloco
+          "
+          [value]="lab.decisionLabel | i18nText"
+        />
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__streams">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.numberLab.registersLabel | transloco"
+          [badge]="lab.registers.length"
+        >
+          <div class="trace__register-grid">
+            @for (reg of lab.registers; track reg.id) {
+              <div class="trace__register trace__register--{{ reg.tone }}">
+                <span class="trace__register-label">{{ reg.label }}</span>
+                <span class="trace__register-value">{{ reg.value }}</span>
+                @if (reg.hint; as hint) {
+                  <span class="trace__register-hint">{{ hint | i18nText }}</span>
+                }
+              </div>
+            }
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.numberLab.historyLabel | transloco"
+          [badge]="lab.history.length"
+        >
+          <div class="trace__history">
+            @if (lab.history.length === 0) {
+              <span class="trace__empty-note">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
+            } @else {
+              @for (entry of lab.history; track entry.id) {
+                <span
+                  class="trace__history-chip"
+                  [class.trace__history-chip--current]="entry.isCurrent"
+                  >{{ entry.label }} → <b>{{ entry.value }}</b></span
+                >
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    </div>
+  } @else {
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      {{ I18N_KEY.features.algorithms.tracePanels.numberLab.emptyLabel | transloco }}
+    </div>
+  }
+</div>

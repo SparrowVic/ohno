@@ -28,6 +28,10 @@ import { StringVisualization } from '../string-visualization/string-visualizatio
 import { SweepLineVisualization } from '../sweep-line-visualization/sweep-line-visualization';
 import { TreePresetOption } from '../../models/tree';
 import { TreeVisualization } from '../tree-visualization/tree-visualization';
+import { NumberLabVisualization } from '../number-lab-visualization/number-lab-visualization';
+import { PointerLabVisualization } from '../pointer-lab-visualization/pointer-lab-visualization';
+import { NumberLabPresetOption } from '../../utils/number-lab-scenarios/number-lab-scenarios';
+import { PointerLabPresetOption } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
 import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualization';
 
 @Component({
@@ -55,6 +59,8 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     StringVisualization,
     SweepLineVisualization,
     TreeVisualization,
+    NumberLabVisualization,
+    PointerLabVisualization,
     VoronoiVisualization,
   ],
   templateUrl: './visualization-canvas.html',
@@ -74,8 +80,14 @@ export class VisualizationCanvas {
   readonly stringPresetId = input<string | null>(null);
   readonly treePresetOptions = input<readonly TreePresetOption[]>([]);
   readonly treePresetId = input<string | null>(null);
+  readonly numberLabPresetOptions = input<readonly NumberLabPresetOption[]>([]);
+  readonly numberLabPresetId = input<string | null>(null);
+  readonly pointerLabPresetOptions = input<readonly PointerLabPresetOption[]>([]);
+  readonly pointerLabPresetId = input<string | null>(null);
   readonly graphFocusTargetChange = output<string | null>();
   readonly dpPresetChange = output<string>();
   readonly stringPresetChange = output<string>();
   readonly treePresetChange = output<string>();
+  readonly numberLabPresetChange = output<string>();
+  readonly pointerLabPresetChange = output<string>();
 }
