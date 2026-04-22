@@ -301,11 +301,14 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     const previousCurrent = previous?.nodes.find((node) => node.status === 'current')?.id ?? null;
     const nextCurrent = current.nodes.find((node) => node.status === 'current')?.id ?? null;
     if (nextCurrent && nextCurrent !== previousCurrent) {
-      const nodeEl = this.findSvgElement(`[data-node-id="${nextCurrent}"]`);
+      // Target the inner body circle — the wrapping `<g>` carries a
+      // translate() transform that would be clobbered by the pulse
+      // keyframes, snapping the node to (0,0) for the duration.
+      const nodeEl = this.findSvgElement(`[data-node-id="${nextCurrent}"] .node__body`);
       if (nodeEl) {
         pulseSvgElement(nodeEl, {
           duration: motion.compareMs,
-          scale: 1.025,
+          scale: 1.08,
           filter: [
             'drop-shadow(0 0 0 transparent)',
             'drop-shadow(0 0 8px rgba(240,180,41,0.14))',
@@ -321,7 +324,10 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
       if (!prior || prior === edge.status) continue;
       if (edge.status !== 'augment' && edge.status !== 'matched' && edge.status !== 'flow')
         continue;
-      const edgeEl = this.findSvgElement(`[data-edge-id="${edge.id}"]`);
+      // Target the line directly — same reason as above: the group
+      // has a translate'd edge-label child and pulsing the `<g>` would
+      // dislocate both the line and its label chip.
+      const edgeEl = this.findSvgElement(`[data-edge-id="${edge.id}"] .edge-line`);
       if (!edgeEl) continue;
       pulseSvgElement(edgeEl, {
         duration: motion.settleMs,

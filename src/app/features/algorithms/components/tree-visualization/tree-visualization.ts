@@ -222,13 +222,19 @@ export class TreeVisualization implements AfterViewInit, OnDestroy, Visualizatio
     const motion = createMotionProfile(this.speed());
     const currentId = current.currentNodeId;
     if (currentId && currentId !== previous?.currentNodeId) {
-      const nodeEl = this.containerRef().nativeElement.querySelector<SVGGElement>(
-        `[data-tree-node="${currentId}"]`,
+      // Target the inner body circle, NOT the parent `<g>`. The `<g>`
+      // carries a `transform="translate(...)"` attribute that would be
+      // overridden by the Web Animations API's `transform: scale(...)`
+      // keyframes — the node would jump to (0,0) for the pulse
+      // duration before snapping back. Circles have no transform
+      // attribute, so scaling around their fill-box centre is safe.
+      const nodeEl = this.containerRef().nativeElement.querySelector<SVGCircleElement>(
+        `[data-tree-node="${currentId}"] .tree-node__body`,
       );
       if (nodeEl) {
         pulseSvgElement(nodeEl, {
           duration: motion.compareMs,
-          scale: 1.05,
+          scale: 1.08,
           filter: [
             'drop-shadow(0 0 0 transparent)',
             'drop-shadow(0 0 10px rgb(var(--chrome-accent-warm-rgb) / 0.5))',
