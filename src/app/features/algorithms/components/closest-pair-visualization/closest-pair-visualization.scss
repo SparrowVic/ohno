@@ -1,26 +1,13 @@
-:host {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
+/* Shared point / line / divider / label primitives. The host shell
+   (padding, overflow, SVG sizing) ships from `<app-geo-canvas>` so
+   nothing else is needed at :host level. */
+@use '../geo-canvas/geometry-viz';
 
-.cpv__stage {
-  position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  padding: 14px;
-}
-
-.cpv__svg {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  overflow: visible;
-}
-
-.cpv__band {
+/* Closest-pair is the only viz that renders depth-tinted vertical
+   bands for the left / right / strip regions. Keep those here — the
+   shared partial doesn't carry band tones because no other geometry
+   viz uses them. */
+.cpv-band {
   transition: opacity 180ms ease;
 
   &--region {
@@ -38,133 +25,4 @@
   &--strip {
     fill: rgb(var(--viz-route-rgb) / 0.72);
   }
-}
-
-.cpv__divider {
-  stroke-linecap: round;
-  transition: stroke 180ms ease;
-
-  &--split {
-    stroke: rgba(226, 232, 240, 0.52);
-    stroke-width: 0.55;
-    stroke-dasharray: 2.4 1.8;
-  }
-
-  &--strip {
-    stroke: rgb(var(--viz-route-rgb) / 0.72);
-    stroke-width: 0.5;
-    stroke-dasharray: 1.6 1.2;
-  }
-}
-
-.cpv__divider-label {
-  font-size: 2.4px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  fill: rgba(255, 255, 255, 0.48);
-  font-weight: 700;
-  font-family: ui-monospace, monospace;
-}
-
-.cpv__pair {
-  stroke-linecap: round;
-  transition:
-    stroke 180ms ease,
-    opacity 180ms ease;
-
-  &--candidate {
-    stroke: var(--viz-warning);
-    stroke-width: 1;
-    stroke-dasharray: 2.8 1.5;
-  }
-
-  &--best {
-    stroke: var(--viz-success);
-    stroke-width: 1.2;
-  }
-
-  &--final {
-    stroke: var(--viz-hit);
-    stroke-width: 1.35;
-  }
-}
-
-.cpv__pair-pill {
-  fill: rgba(3, 7, 18, 0.82);
-  stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 0.32;
-}
-
-.cpv__pair-label {
-  font-size: 2.7px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  fill: rgba(255, 255, 255, 0.9);
-  font-family: ui-monospace, monospace;
-}
-
-.cpv__glow {
-  opacity: 0.16;
-
-  &--strip {
-    fill: rgb(var(--viz-route-rgb) / 0.6);
-  }
-
-  &--compare {
-    fill: rgb(var(--viz-warning-rgb) / 0.7);
-  }
-
-  &--best {
-    fill: rgb(var(--viz-hit-rgb) / 0.72);
-  }
-}
-
-.cpv__point {
-  stroke-width: 0.55;
-  transition:
-    fill 180ms ease,
-    stroke 180ms ease;
-
-  &--default {
-    fill: rgba(255, 255, 255, 0.1);
-    stroke: rgba(255, 255, 255, 0.28);
-  }
-
-  &--dimmed {
-    fill: rgba(148, 163, 184, 0.08);
-    stroke: rgba(148, 163, 184, 0.16);
-  }
-
-  &--left {
-    fill: var(--viz-accent);
-    stroke: rgb(var(--viz-accent-rgb) / 0.4);
-  }
-
-  &--right {
-    fill: #fb923c;
-    stroke: rgba(251, 146, 60, 0.38);
-  }
-
-  &--strip {
-    fill: var(--viz-route);
-    stroke: rgb(var(--viz-route-rgb) / 0.42);
-  }
-
-  &--compare {
-    fill: var(--viz-warning);
-    stroke: rgb(var(--viz-warning-rgb) / 0.46);
-  }
-
-  &--best {
-    fill: var(--viz-hit);
-    stroke: rgb(var(--viz-hit-rgb) / 0.5);
-  }
-}
-
-.cpv__point-id {
-  font-size: 2.9px;
-  font-weight: 800;
-  fill: rgba(255, 255, 255, 0.95);
-  font-family: ui-monospace, monospace;
-  pointer-events: none;
 }

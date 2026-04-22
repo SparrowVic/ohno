@@ -2,17 +2,25 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (geoState(); as geo) {
-    <div class="hpv__stage">
-      <svg class="hpv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="geo-stage">
+      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="hpv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
+            <path
+              d="M 10 0 L 0 0 0 10"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.055)"
+              stroke-width="0.3"
+            />
           </pattern>
         </defs>
         <rect x="-6" y="-6" width="112" height="112" fill="url(#hpv-grid)" />
 
         @for (polygon of geo.polygons; track polygon.id) {
-          <polygon [attr.points]="polygonPoints(polygon)" [class]="'hpv__poly hpv__poly--' + polygon.tone" />
+          <polygon
+            [attr.points]="polygonPoints(polygon)"
+            class="geo-poly geo-poly--{{ polygonToneClass(polygon.tone) }}"
+          />
         }
 
         @for (constraint of geo.constraints; track constraint.id) {
@@ -21,14 +29,14 @@
             [attr.y1]="100 - constraint.start.y"
             [attr.x2]="constraint.end.x"
             [attr.y2]="100 - constraint.end.y"
-            [class]="'hpv__line hpv__line--' + constraint.tone"
+            class="geo-line geo-line--{{ constraintToneClass(constraint.tone) }}"
           />
         }
 
         @for (marker of geo.markers; track marker.id) {
           <g [attr.transform]="'translate(' + marker.x + ',' + (100 - marker.y) + ')'">
-            <circle class="hpv__vertex-glow" r="3.7" />
-            <circle class="hpv__vertex" r="1.9" />
+            <circle class="geo-point__glow" r="3.7" />
+            <circle class="geo-point geo-point--route" r="1.9" />
           </g>
         }
       </svg>

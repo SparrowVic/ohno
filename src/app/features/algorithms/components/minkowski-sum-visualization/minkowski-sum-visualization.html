@@ -17,7 +17,10 @@
           </div>
           <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             @if (obstacle(); as polygon) {
-              <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--a" />
+              <polygon
+                [attr.points]="galleryPoints(polygon)"
+                class="geo-poly geo-poly--accent"
+              />
             }
           </svg>
         </article>
@@ -35,7 +38,10 @@
           </div>
           <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             @if (robot(); as polygon) {
-              <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--b" />
+              <polygon
+                [attr.points]="galleryPoints(polygon)"
+                class="geo-poly geo-poly--warm"
+              />
             }
           </svg>
         </article>
@@ -50,26 +56,43 @@
           </div>
           <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             @if (reflected(); as polygon) {
-              <polygon [attr.points]="galleryPoints(polygon)" class="mkv__poly mkv__poly--reflected" />
+              <polygon
+                [attr.points]="galleryPoints(polygon)"
+                class="geo-poly geo-poly--preview"
+              />
             }
           </svg>
         </article>
       </div>
 
-      <svg class="mkv__sum" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-        @if (result(); as polygon) {
-          <polygon
-            [attr.points]="stagePoints(polygon)"
-            [class]="'mkv__poly ' + (polygon.tone === 'result' ? 'mkv__poly--result' : 'mkv__poly--preview')"
-          />
-          @for (vertex of polygon.vertices; track $index) {
-            <g [attr.transform]="stageVertexTransform(vertex)">
-              <circle class="mkv__vertex-glow" r="4.2" />
-              <circle class="mkv__vertex" r="2" />
-            </g>
+      <div class="mkv__sum-wrap">
+        <svg class="mkv__sum" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <pattern id="mkv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+              <path
+                d="M 10 0 L 0 0 0 10"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.055)"
+                stroke-width="0.3"
+              />
+            </pattern>
+          </defs>
+          <rect x="-6" y="-6" width="112" height="112" fill="url(#mkv-grid)" />
+
+          @if (result(); as polygon) {
+            <polygon
+              [attr.points]="stagePoints(polygon)"
+              class="geo-poly geo-poly--{{ polygonToneClass(polygon.tone) }}"
+            />
+            @for (vertex of polygon.vertices; track $index) {
+              <g [attr.transform]="stageVertexTransform(vertex)">
+                <circle class="geo-point__glow geo-point__glow--success" r="6.4" />
+                <circle class="geo-point geo-point--success" r="3.6" />
+              </g>
+            }
           }
-        }
-      </svg>
+        </svg>
+      </div>
     </div>
   }
 </app-viz-panel>

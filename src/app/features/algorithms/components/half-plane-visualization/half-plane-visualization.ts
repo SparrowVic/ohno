@@ -60,4 +60,26 @@ export class HalfPlaneVisualization {
   polygonPoints(region: GeometryPolygonRegion): string {
     return region.vertices.map((vertex) => `${vertex.x},${100 - vertex.y}`).join(' ');
   }
+
+  /** Feasible regions build up as constraints are applied. Map them to
+   *  the shared polygon palette — feasible final = hull-ish, previous
+   *  = preview dashed outline, forbidden = danger tone. */
+  polygonToneClass(tone: GeometryPolygonRegion['tone']): string {
+    switch (tone) {
+      case 'feasible':  return 'route';
+      case 'previous':  return 'preview';
+      case 'forbidden': return 'warm';
+      default:          return 'preview';
+    }
+  }
+
+  /** Constraint lines ride the same tone vocabulary as edges. */
+  constraintToneClass(tone: 'pending' | 'active' | 'applied' | 'blocking'): string {
+    switch (tone) {
+      case 'active':   return 'active';
+      case 'applied':  return 'best';
+      case 'blocking': return 'danger';
+      default:         return 'muted';
+    }
+  }
 }

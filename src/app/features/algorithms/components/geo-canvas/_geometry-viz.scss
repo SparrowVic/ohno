@@ -1,0 +1,330 @@
+/* Shared shell wrappers — every geometry viz paints inside a 14px
+   padded frame that holds a single SVG at `viewBox="-6 -6 112 112"`.
+   Kept here so a layout tweak lands across the whole family. */
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.geo-stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  padding: 14px;
+}
+
+.geo-svg {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+  display: block;
+}
+
+/* Shared recipes for geometry visualizations. Every viz in this family
+   renders on the same 0..100 logical grid, so all radii and font sizes
+   below are in SVG user-space units. Import this partial from a viz
+   SCSS file with `@use '../geo-canvas/geometry-viz' as geo;` — the `*`
+   forwarding keeps the `.geo-*` selectors unqualified so templates can
+   apply them directly.
+
+   Why one partial, not a per-viz copy: the 8 geometry vizes had their
+   own namespaced classes (`.cpv__`, `.chv__`, …) that encoded the same
+   primitive (a point with a glow halo, a line with tone variants, a
+   polygon fill). The tone palette and size rhythm were drifting out of
+   sync as each viz got tweaked; pulling them here keeps the family
+   visually aligned without sacrificing per-viz encapsulation — each
+   viz still ships its own `.scss` with algorithm-specific tones.
+*/
+
+/* ------------------------------------------------------------- */
+/* Typography — all sizes in SVG user-space units (1 unit ≈ 1% of */
+/* viewBox width). Keep these in one place so a label tweak lands  */
+/* across the whole family.                                        */
+/* ------------------------------------------------------------- */
+$geo-font-id: 3px;        /* node / point id chip ("A", "12") */
+$geo-font-meta: 2.6px;     /* small meta labels (sort index, badge) */
+$geo-font-eyebrow: 2.4px;  /* uppercase dividers + group labels */
+
+/* ------------------------------------------------------------- */
+/* Point chrome — body radius + glow halo. Aligned with graph-viz  */
+/* rhythm (body ~ 60% of halo) so points read at the same density  */
+/* regardless of which algorithm is on screen.                     */
+/* ------------------------------------------------------------- */
+$geo-point-r: 3.6;
+$geo-point-glow-r: 6.4;
+$geo-point-stroke: 0.55;
+
+/* ------------------------------------------------------------- */
+/* Line strokes — a quiet base (0.55) that builds up with intent:  */
+/* the "acting now" weight is ~2x the base.                        */
+/* ------------------------------------------------------------- */
+$geo-line-base: 0.55;
+$geo-line-active: 1.1;
+$geo-line-strong: 1.35;
+
+/* ------------------------------------------------------------- */
+/* Grid visibility — the shared geo-canvas component sets the grid  */
+/* opacity once (0.055). Viz overlays can still paint on top.      */
+/* ------------------------------------------------------------- */
+
+/* ============================================================= */
+/*  POINT (generic)                                                */
+/* ============================================================= */
+/* Use inside a `<g transform="translate(x,y)">`: a glow (under)
+   and a body (over). Tone modifiers paint the fill / stroke; the
+   base recipe stays neutral so any viz can extend. */
+.geo-point {
+  stroke-width: #{$geo-point-stroke};
+  transition:
+    fill 180ms ease,
+    stroke 180ms ease;
+  fill: rgba(255, 255, 255, 0.1);
+  stroke: rgba(255, 255, 255, 0.28);
+
+  &--muted {
+    fill: rgba(148, 163, 184, 0.08);
+    stroke: rgba(148, 163, 184, 0.16);
+  }
+
+  &--accent {
+    fill: var(--viz-accent);
+    stroke: rgb(var(--viz-accent-rgb) / 0.4);
+  }
+
+  &--warm {
+    fill: #fb923c;
+    stroke: rgba(251, 146, 60, 0.38);
+  }
+
+  &--active {
+    fill: var(--viz-warning);
+    stroke: rgb(var(--viz-warning-rgb) / 0.46);
+  }
+
+  &--route {
+    fill: var(--viz-route);
+    stroke: rgb(var(--viz-route-rgb) / 0.42);
+  }
+
+  &--success {
+    fill: var(--viz-success);
+    stroke: rgb(var(--viz-success-rgb) / 0.5);
+  }
+
+  &--hit {
+    fill: var(--viz-hit);
+    stroke: rgb(var(--viz-hit-rgb) / 0.5);
+  }
+
+  &--danger {
+    fill: rgb(var(--viz-danger-rgb) / 0.28);
+    stroke: rgb(var(--viz-danger-rgb) / 0.38);
+  }
+}
+
+.geo-point__glow {
+  opacity: 0.16;
+  fill: transparent;
+  pointer-events: none;
+
+  &--accent {
+    fill: var(--viz-accent);
+    opacity: 0.18;
+  }
+  &--warm {
+    fill: #fb923c;
+    opacity: 0.18;
+  }
+  &--active {
+    fill: var(--viz-warning);
+    opacity: 0.2;
+  }
+  &--route {
+    fill: var(--viz-route);
+    opacity: 0.18;
+  }
+  &--success {
+    fill: var(--viz-success);
+    opacity: 0.2;
+  }
+  &--hit {
+    fill: var(--viz-hit);
+    opacity: 0.22;
+  }
+}
+
+.geo-point__id {
+  font-size: #{$geo-font-id};
+  font-weight: 800;
+  fill: rgba(255, 255, 255, 0.95);
+  font-family: ui-monospace, monospace;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================= */
+/*  LINE / EDGE (generic)                                          */
+/* ============================================================= */
+.geo-line {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-width: #{$geo-line-base};
+  stroke: rgba(255, 255, 255, 0.18);
+  transition:
+    stroke 180ms ease,
+    stroke-width 180ms ease,
+    opacity 180ms ease;
+
+  &--muted {
+    stroke: rgba(148, 163, 184, 0.22);
+    stroke-width: 0.45;
+  }
+
+  &--candidate {
+    stroke: var(--viz-warning);
+    stroke-width: 0.9;
+    stroke-dasharray: 2.8 1.5;
+  }
+
+  &--active {
+    stroke: var(--viz-warning);
+    stroke-width: #{$geo-line-active};
+    stroke-dasharray: 2.5 1.5;
+  }
+
+  &--stack {
+    stroke: rgb(var(--viz-window-rgb) / 0.55);
+    stroke-width: 0.9;
+    stroke-dasharray: 2.5 1.5;
+  }
+
+  &--best,
+  &--hull {
+    stroke: var(--viz-success);
+    stroke-width: #{$geo-line-active};
+  }
+
+  &--final {
+    stroke: var(--viz-hit);
+    stroke-width: #{$geo-line-strong};
+  }
+
+  &--route {
+    stroke: var(--viz-route);
+    stroke-width: #{$geo-line-active};
+  }
+
+  &--danger {
+    stroke: rgb(var(--viz-danger-rgb) / 0.7);
+    stroke-width: 0.8;
+    stroke-dasharray: 1.8 1.2;
+  }
+}
+
+/* ============================================================= */
+/*  DIVIDER / SWEEP (strong vertical or horizontal accent line)    */
+/* ============================================================= */
+.geo-sweep {
+  stroke: rgb(var(--viz-route-rgb) / 0.75);
+  stroke-width: 0.5;
+  stroke-dasharray: 1.6 1.2;
+  stroke-linecap: round;
+}
+
+.geo-divider {
+  stroke-linecap: round;
+  transition: stroke 180ms ease;
+
+  &--split {
+    stroke: rgba(226, 232, 240, 0.52);
+    stroke-width: 0.5;
+    stroke-dasharray: 2.4 1.8;
+  }
+
+  &--strip {
+    stroke: rgb(var(--viz-route-rgb) / 0.72);
+    stroke-width: 0.5;
+    stroke-dasharray: 1.6 1.2;
+  }
+}
+
+.geo-divider__label {
+  font-size: #{$geo-font-eyebrow};
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: rgba(255, 255, 255, 0.48);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+
+/* ============================================================= */
+/*  POLYGON (filled region)                                        */
+/* ============================================================= */
+.geo-poly {
+  stroke-linejoin: round;
+  stroke-width: 0.4;
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: rgba(255, 255, 255, 0.14);
+  transition:
+    fill 180ms ease,
+    stroke 180ms ease,
+    opacity 180ms ease;
+
+  &--hull,
+  &--result {
+    fill: rgb(var(--viz-success-rgb) / 0.08);
+    stroke: rgb(var(--viz-success-rgb) / 0.28);
+  }
+
+  &--active,
+  &--turn {
+    fill: rgb(var(--viz-warning-rgb) / 0.08);
+    stroke: rgb(var(--viz-warning-rgb) / 0.25);
+    stroke-dasharray: 1.5 1;
+  }
+
+  &--accent {
+    fill: rgb(var(--viz-accent-rgb) / 0.1);
+    stroke: rgb(var(--viz-accent-rgb) / 0.35);
+  }
+
+  &--warm {
+    fill: rgba(251, 146, 60, 0.12);
+    stroke: rgba(251, 146, 60, 0.42);
+  }
+
+  &--route {
+    fill: rgb(var(--viz-route-rgb) / 0.08);
+    stroke: rgb(var(--viz-route-rgb) / 0.32);
+  }
+
+  &--preview {
+    fill: rgba(255, 255, 255, 0.03);
+    stroke: rgba(255, 255, 255, 0.18);
+    stroke-dasharray: 1.8 1.2;
+  }
+}
+
+/* ============================================================= */
+/*  LABEL PILL (small value chip over a line or point)             */
+/* ============================================================= */
+.geo-label-pill {
+  fill: rgba(3, 7, 18, 0.85);
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 0.3;
+}
+
+.geo-label {
+  font-size: #{$geo-font-meta};
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  fill: rgba(255, 255, 255, 0.9);
+  font-family: ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}

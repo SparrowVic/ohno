@@ -2,17 +2,28 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (geoState(); as geo) {
-    <div class="liv__stage">
-      <svg class="liv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="geo-stage">
+      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="liv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
+            <path
+              d="M 10 0 L 0 0 0 10"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.055)"
+              stroke-width="0.3"
+            />
           </pattern>
         </defs>
         <rect x="-6" y="-6" width="112" height="112" fill="url(#liv-grid)" />
 
         @if (geo.sweepX !== null) {
-          <line [attr.x1]="geo.sweepX" y1="0" [attr.x2]="geo.sweepX" y2="100" class="liv__sweep" />
+          <line
+            [attr.x1]="geo.sweepX"
+            y1="0"
+            [attr.x2]="geo.sweepX"
+            y2="100"
+            class="geo-sweep"
+          />
         }
 
         @for (segment of segments(); track segment.id) {
@@ -21,14 +32,20 @@
             [attr.y1]="100 - segment.start.y"
             [attr.x2]="segment.end.x"
             [attr.y2]="100 - segment.end.y"
-            [class]="'liv__segment liv__segment--' + segment.tone"
+            class="geo-line geo-line--{{ segmentToneClass(segment.tone) }}"
           />
         }
 
         @for (marker of intersections(); track marker.id) {
           <g [attr.transform]="'translate(' + marker.x + ',' + (100 - marker.y) + ')'">
-            <circle [class]="'liv__hit liv__hit--' + marker.tone" r="3.4" />
-            <circle class="liv__hit-core" r="1.5" />
+            <circle
+              class="geo-point__glow geo-point__glow--{{ hitToneClass(marker.tone) }}"
+              r="6.4"
+            />
+            <circle
+              class="geo-point geo-point--{{ hitToneClass(marker.tone) }}"
+              r="3.6"
+            />
           </g>
         }
       </svg>

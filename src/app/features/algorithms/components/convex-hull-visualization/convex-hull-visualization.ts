@@ -126,4 +126,22 @@ export class ConvexHullVisualization {
       pt.status === 'hull'
     );
   }
+
+  /** Map generator statuses to shared `.geo-point--*` tone variants. */
+  pointToneClass(status: GeometryPoint['status']): string {
+    switch (status) {
+      case 'pivot':    return 'accent';
+      case 'checking': return 'active';
+      case 'stack':    return 'route';
+      case 'hull':     return 'success';
+      case 'sorted':   return 'muted';
+      case 'rejected': return 'danger';
+      default:         return 'default';
+    }
+  }
+
+  /** Edge kind → `.geo-line--*` variant. */
+  edgeToneClass(kind: string): string {
+    return kind === 'hull' ? 'hull' : 'stack';
+  }
 }

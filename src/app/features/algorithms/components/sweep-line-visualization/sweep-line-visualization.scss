@@ -1,62 +1,47 @@
-:host {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
+/* Sweep-line area calculator uses the shared `.geo-sweep` for the
+   sweep cursor; rectangles + the right-edge span bar chart are
+   algorithm-specific primitives and stay here. */
+@use '../geo-canvas/geometry-viz';
 
-.slv__stage {
-  position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  padding: 14px;
-}
-
-.slv__svg {
-  width: 100%;
-  flex: 1;
-  display: block;
-}
-
-.slv__progress {
-  fill: rgb(var(--viz-route-rgb) / 0.05);
-}
-
-.slv__rect {
-  stroke-width: 0.5;
-  rx: 2;
-  ry: 2;
-
-  &--pending {
-    fill: rgba(148, 163, 184, 0.08);
-    stroke: rgba(148, 163, 184, 0.22);
-  }
+/* Rectangle being swept across — tone reflects where it stands in the
+   event queue. The `--active` variant pulses with warm accent, done
+   fades into the background. */
+.slv-rect {
+  fill: rgba(255, 255, 255, 0.04);
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.3;
+  transition:
+    fill 180ms ease,
+    stroke 180ms ease,
+    opacity 180ms ease;
 
   &--active {
-    fill: rgb(var(--viz-route-rgb) / 0.08);
-    stroke: rgb(var(--viz-route-rgb) / 0.38);
+    fill: rgb(var(--viz-warning-rgb) / 0.14);
+    stroke: rgb(var(--viz-warning-rgb) / 0.62);
   }
 
-  &--focus {
-    fill: rgb(var(--viz-warning-rgb) / 0.08);
-    stroke: rgb(var(--viz-warning-rgb) / 0.44);
+  &--accent {
+    fill: rgb(var(--viz-accent-rgb) / 0.12);
+    stroke: rgb(var(--viz-accent-rgb) / 0.55);
   }
 
-  &--done {
-    fill: rgb(var(--viz-route-rgb) / 0.06);
-    stroke: rgb(var(--viz-route-rgb) / 0.22);
+  &--muted {
+    fill: rgba(148, 163, 184, 0.05);
+    stroke: rgba(148, 163, 184, 0.2);
+    opacity: 0.68;
   }
 }
 
-.slv__sweep {
-  stroke: #fff176;
-  stroke-width: 0.65;
-  stroke-dasharray: 2.2 1.5;
+/* Cumulative covered-area bar that grows as the sweep advances. */
+.slv-progress {
+  fill: rgb(var(--viz-route-rgb) / 0.05);
+  pointer-events: none;
 }
 
-.slv__span {
-  fill: rgb(var(--viz-hit-rgb) / 0.32);
-  stroke: rgb(var(--viz-hit-rgb) / 0.52);
-  stroke-width: 0.28;
+/* Right-edge stacked bars showing the active y-intervals under the
+   sweep line. Thin, route-toned rectangles. */
+.slv-span {
+  fill: rgb(var(--viz-route-rgb) / 0.55);
+  stroke: rgb(var(--viz-route-rgb) / 0.72);
+  stroke-width: 0.25;
 }

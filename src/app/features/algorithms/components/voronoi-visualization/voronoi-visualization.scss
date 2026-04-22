@@ -1,61 +1,18 @@
-:host {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
+/* Voronoi cells get their colour from a per-id hue-rotated palette
+   (set via `[attr.fill]`), so the cell class is intentionally thin —
+   just the stroke recipe + an accent ring for the currently-frozen
+   cell. Everything else (points, sweep) uses the shared primitives. */
+@use '../geo-canvas/geometry-viz';
 
-.vrv__stage {
-  position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  padding: 14px;
-}
-
-.vrv__svg {
-  width: 100%;
-  flex: 1;
-  display: block;
-}
-
-.vrv__sweep {
-  stroke: rgba(255, 122, 69, 0.84);
-  stroke-width: 0.75;
-  stroke-dasharray: 3 2;
-}
-
-.vrv__cell {
-  stroke-width: 0.6;
-  transition: opacity 160ms ease;
+.vrv-cell {
+  stroke-width: 0.4;
+  stroke-linejoin: round;
+  transition:
+    fill 220ms ease,
+    stroke 220ms ease;
 
   &--active {
-    stroke-width: 0.95;
-    opacity: 1;
-  }
-}
-
-.vrv__site-glow {
-  opacity: 0.16;
-
-  &--idle {
-    fill: rgba(255, 255, 255, 0.18);
-  }
-
-  &--active {
-    fill: rgba(255, 122, 69, 0.5);
-  }
-}
-
-.vrv__site {
-  stroke-width: 0.55;
-
-  &--idle {
-    fill: rgba(255, 255, 255, 0.92);
-    stroke: rgba(255, 255, 255, 0.24);
-  }
-
-  &--active {
-    fill: #ff7a45;
-    stroke: rgba(255, 122, 69, 0.44);
+    stroke-width: 0.7;
+    filter: drop-shadow(0 0 1.2px rgba(255, 255, 255, 0.18));
   }
 }

@@ -2,36 +2,51 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (geoState(); as geo) {
-    <div class="vrv__stage">
-      <svg class="vrv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="geo-stage">
+      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="vrv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="0.3" />
+            <path
+              d="M 10 0 L 0 0 0 10"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.055)"
+              stroke-width="0.3"
+            />
           </pattern>
         </defs>
         <rect x="-6" y="-6" width="112" height="112" fill="url(#vrv-grid)" />
 
         @if (geo.sweepY !== null) {
-          <line x1="0" [attr.y1]="100 - geo.sweepY" x2="100" [attr.y2]="100 - geo.sweepY" class="vrv__sweep" />
+          <line
+            x1="0"
+            [attr.y1]="100 - geo.sweepY"
+            x2="100"
+            [attr.y2]="100 - geo.sweepY"
+            class="geo-sweep"
+          />
         }
 
         @for (cell of geo.cells; track cell.id) {
           <polygon
             [attr.points]="polygonPoints(cell)"
-            class="vrv__cell"
+            class="vrv-cell"
+            [class.vrv-cell--active]="cell.tone === 'cell-active'"
             [attr.fill]="cellColor(cell.id)"
             [attr.stroke]="cellStroke(cell.id)"
-            [class.vrv__cell--active]="cell.tone === 'cell-active'"
           />
         }
 
         @for (point of geo.points; track point.id) {
           <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
             <circle
-              [class]="'vrv__site ' + (geo.activeSiteId === point.id ? 'vrv__site--active' : 'vrv__site--idle')"
-              r="3.3"
+              class="geo-point__glow geo-point__glow--{{ geo.activeSiteId === point.id ? 'active' : '' }}"
+              r="6.4"
+              [attr.opacity]="geo.activeSiteId === point.id ? 0.22 : 0.1"
             />
-            <circle [class]="'vrv__site-glow ' + (geo.activeSiteId === point.id ? 'vrv__site-glow--active' : 'vrv__site-glow--idle')" r="6" />
+            <circle
+              class="geo-point geo-point--{{ geo.activeSiteId === point.id ? 'active' : 'default' }}"
+              r="3.6"
+            />
           </g>
         }
       </svg>

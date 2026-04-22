@@ -50,4 +50,33 @@ export class LineIntersectionVisualization {
     if (phase === 'activate' || phase === 'retire') return 'swap';
     return 'default';
   });
+
+  /** Segment tone → `.geo-line--*`. Line-intersection's segments
+   *  ride the Bentley-Ottmann event stream: `pending` → quiet,
+   *  `active` → under sweep consideration, `focus` → crossing
+   *  candidate, `hit` → intersection just reported, `done` → retired. */
+  segmentToneClass(tone: 'pending' | 'active' | 'focus' | 'hit' | 'done'): string {
+    switch (tone) {
+      case 'active': return 'active';
+      case 'focus':  return 'candidate';
+      case 'hit':    return 'best';
+      case 'done':   return 'muted';
+      default:       return '';
+    }
+  }
+
+  /** Intersection marker tone — uses the point palette. Markers on
+   *  the sweep use the generic geometry-marker vocabulary
+   *  (`intersection`, `current`, `candidate`, …). */
+  hitToneClass(
+    tone: 'intersection' | 'current' | 'vertex' | 'candidate' | 'terminal' | 'robot' | 'result',
+  ): string {
+    switch (tone) {
+      case 'intersection': return 'hit';
+      case 'current':      return 'active';
+      case 'candidate':    return 'accent';
+      case 'result':       return 'success';
+      default:             return 'route';
+    }
+  }
 }

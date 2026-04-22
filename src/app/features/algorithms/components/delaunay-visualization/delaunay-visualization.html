@@ -2,17 +2,25 @@
   <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
 
   @if (geoState(); as geo) {
-    <div class="dlv__stage">
-      <svg class="dlv__svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+    <div class="geo-stage">
+      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
         <defs>
           <pattern id="dlv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.3" />
+            <path
+              d="M 10 0 L 0 0 0 10"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.055)"
+              stroke-width="0.3"
+            />
           </pattern>
         </defs>
         <rect x="-6" y="-6" width="112" height="112" fill="url(#dlv-grid)" />
 
         @for (triangle of geo.triangles; track triangle.id) {
-          <polygon [attr.points]="polygonPoints(triangle)" [class]="'dlv__triangle dlv__triangle--' + triangle.tone" />
+          <polygon
+            [attr.points]="polygonPoints(triangle)"
+            class="geo-poly geo-poly--{{ triangleToneClass(triangle.tone) }}"
+          />
         }
 
         @for (edge of geo.edges; track edge.id) {
@@ -21,7 +29,7 @@
             [attr.y1]="100 - edge.start.y"
             [attr.x2]="edge.end.x"
             [attr.y2]="100 - edge.end.y"
-            class="dlv__edge"
+            class="geo-line"
           />
         }
 
@@ -30,14 +38,21 @@
             [attr.cx]="circle.cx"
             [attr.cy]="100 - circle.cy"
             [attr.r]="circle.r"
-            [class]="'dlv__circle dlv__circle--' + circle.tone"
+            class="dlv-circumcircle dlv-circumcircle--{{ circle.tone }}"
           />
         }
 
         @for (point of geo.points; track point.id) {
           <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
-            <circle [class]="'dlv__point ' + (point.status === 'compare' ? 'dlv__point--active' : 'dlv__point--idle')" r="3.2" />
-            <circle [class]="'dlv__point-glow ' + (point.status === 'compare' ? 'dlv__point-glow--active' : 'dlv__point-glow--idle')" r="5.8" />
+            <circle
+              class="geo-point__glow geo-point__glow--{{ point.status === 'compare' ? 'active' : '' }}"
+              r="6.4"
+              [attr.opacity]="point.status === 'compare' ? 0.2 : 0.08"
+            />
+            <circle
+              class="geo-point geo-point--{{ point.status === 'compare' ? 'active' : 'default' }}"
+              r="3.6"
+            />
           </g>
         }
       </svg>
