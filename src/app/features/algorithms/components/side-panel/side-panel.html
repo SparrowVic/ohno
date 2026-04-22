@@ -61,6 +61,10 @@
         <app-number-lab-trace-panel [state]="numberLabState()" />
       } @else if (pointerLabState()) {
         <app-pointer-lab-trace-panel [state]="pointerLabState()" />
+      } @else if (sieveGridState()) {
+        <app-sieve-grid-trace-panel [state]="sieveGridState()" />
+      } @else if (callStackLabState()) {
+        <app-call-stack-lab-trace-panel [state]="callStackLabState()" />
       } @else if (closestPairGeometryState()) {
         <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
       } @else if (lineIntersectionGeometryState()) {

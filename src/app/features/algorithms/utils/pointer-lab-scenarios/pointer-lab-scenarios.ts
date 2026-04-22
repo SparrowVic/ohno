@@ -10,7 +10,8 @@ export type PointerLabScenario =
   | TwoPointersScenario
   | SlidingWindowScenario
   | PalindromeCheckScenario
-  | ReverseScenario;
+  | ReverseScenario
+  | KadaneScenario;
 
 interface BaseScenario {
   readonly presetId: string;
@@ -42,6 +43,13 @@ export interface ReverseScenario extends BaseScenario {
   readonly values: readonly string[];
 }
 
+export interface KadaneScenario extends BaseScenario {
+  readonly kind: 'kadane';
+  /** Integer array — generator expects at least one negative value to
+   *  motivate the "reset vs. extend" decision. */
+  readonly values: readonly number[];
+}
+
 interface PresetKeys {
   readonly label: string;
   readonly description: string;
@@ -70,6 +78,12 @@ const K = {
   reverse: {
     word: presetKeys('features.algorithms.scenarios.pointerLab.reverse.word'),
     digits: presetKeys('features.algorithms.scenarios.pointerLab.reverse.digits'),
+  },
+  kadane: {
+    classic: presetKeys('features.algorithms.scenarios.pointerLab.kadane.classic'),
+    mostlyNegative: presetKeys('features.algorithms.scenarios.pointerLab.kadane.mostlyNegative'),
+    allNegative: presetKeys('features.algorithms.scenarios.pointerLab.kadane.allNegative'),
+    zigzag: presetKeys('features.algorithms.scenarios.pointerLab.kadane.zigzag'),
   },
 } as const;
 
@@ -230,4 +244,60 @@ export function createReverseScenario(_size: number, presetId: string | null): R
     presetDescription: K.reverse.word.description,
     values: ['f', 'l', 'o', 'w', 'e', 'r'],
   };
+}
+
+// ---- KADANE ------------------------------------------------------------
+export const KADANE_PRESETS: readonly PointerLabPresetOption[] = [
+  { id: 'classic', label: K.kadane.classic.label, description: K.kadane.classic.description },
+  {
+    id: 'mostlyNegative',
+    label: K.kadane.mostlyNegative.label,
+    description: K.kadane.mostlyNegative.description,
+  },
+  {
+    id: 'allNegative',
+    label: K.kadane.allNegative.label,
+    description: K.kadane.allNegative.description,
+  },
+  { id: 'zigzag', label: K.kadane.zigzag.label, description: K.kadane.zigzag.description },
+];
+export const DEFAULT_KADANE_PRESET_ID = 'classic';
+
+export function createKadaneScenario(_size: number, presetId: string | null): KadaneScenario {
+  const id = presetId ?? DEFAULT_KADANE_PRESET_ID;
+  switch (id) {
+    case 'mostlyNegative':
+      return {
+        kind: 'kadane',
+        presetId: 'mostlyNegative',
+        presetLabel: K.kadane.mostlyNegative.label,
+        presetDescription: K.kadane.mostlyNegative.description,
+        values: [-3, -1, 4, -1, -2, -5, 2, -4],
+      };
+    case 'allNegative':
+      return {
+        kind: 'kadane',
+        presetId: 'allNegative',
+        presetLabel: K.kadane.allNegative.label,
+        presetDescription: K.kadane.allNegative.description,
+        values: [-8, -3, -6, -2, -5, -7],
+      };
+    case 'zigzag':
+      return {
+        kind: 'kadane',
+        presetId: 'zigzag',
+        presetLabel: K.kadane.zigzag.label,
+        presetDescription: K.kadane.zigzag.description,
+        values: [4, -1, 5, -8, 3, -2, 7, -3, 2],
+      };
+    case 'classic':
+    default:
+      return {
+        kind: 'kadane',
+        presetId: 'classic',
+        presetLabel: K.kadane.classic.label,
+        presetDescription: K.kadane.classic.description,
+        values: [-2, 1, -3, 4, -1, 2, 1, -5, 4],
+      };
+  }
 }

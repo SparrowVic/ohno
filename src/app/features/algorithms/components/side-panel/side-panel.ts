@@ -47,6 +47,8 @@ import { StringTraceState } from '../../models/string';
 import { TreeTraversalTraceState } from '../../models/tree';
 import { NumberLabTraceState } from '../../models/number-lab';
 import { PointerLabTraceState } from '../../models/pointer-lab';
+import { SieveGridTraceState } from '../../models/sieve-grid';
+import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { ClosestPairTracePanel } from '../closest-pair-trace-panel/closest-pair-trace-panel';
 import { CodePanel } from '../code-panel/code-panel';
 import { DelaunayTracePanel } from '../delaunay-trace-panel/delaunay-trace-panel';
@@ -69,6 +71,8 @@ import { SweepLineTracePanel } from '../sweep-line-trace-panel/sweep-line-trace-
 import { TreeTracePanel } from '../tree-trace-panel/tree-trace-panel';
 import { NumberLabTracePanel } from '../number-lab-trace-panel/number-lab-trace-panel';
 import { PointerLabTracePanel } from '../pointer-lab-trace-panel/pointer-lab-trace-panel';
+import { SieveGridTracePanel } from '../sieve-grid-trace-panel/sieve-grid-trace-panel';
+import { CallStackLabTracePanel } from '../call-stack-lab-trace-panel/call-stack-lab-trace-panel';
 import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
@@ -111,6 +115,8 @@ const MAX_WIDTH = 680;
     TreeTracePanel,
     NumberLabTracePanel,
     PointerLabTracePanel,
+    SieveGridTracePanel,
+    CallStackLabTracePanel,
     NgTemplateOutlet,
     VoronoiTracePanel,
   ],
@@ -138,6 +144,8 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly treeState = input<TreeTraversalTraceState | null>(null);
   readonly numberLabState = input<NumberLabTraceState | null>(null);
   readonly pointerLabState = input<PointerLabTraceState | null>(null);
+  readonly sieveGridState = input<SieveGridTraceState | null>(null);
+  readonly callStackLabState = input<CallStackLabTraceState | null>(null);
   readonly geometryState = input<GeometryStepState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
   readonly graphFocusPathLabel = input<string | null>(null);
@@ -158,7 +166,9 @@ export class SidePanel implements OnInit, OnDestroy {
       this.stringState() ||
       this.treeState() ||
       this.numberLabState() ||
-      this.pointerLabState()
+      this.pointerLabState() ||
+      this.sieveGridState() ||
+      this.callStackLabState()
         ? (['trace', ...BASE_SIDE_TAB_IDS] as const)
         : BASE_SIDE_TAB_IDS;
 

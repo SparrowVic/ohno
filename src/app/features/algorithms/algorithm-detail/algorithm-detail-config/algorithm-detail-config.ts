@@ -525,19 +525,37 @@ import {
   SlidingWindowScenario,
   PalindromeCheckScenario,
   ReverseScenario,
+  KadaneScenario,
   TWO_POINTERS_PRESETS,
   SLIDING_WINDOW_PRESETS,
   PALINDROME_PRESETS,
   REVERSE_PRESETS,
+  KADANE_PRESETS,
   DEFAULT_TWO_POINTERS_PRESET_ID,
   DEFAULT_SLIDING_WINDOW_PRESET_ID,
   DEFAULT_PALINDROME_PRESET_ID,
   DEFAULT_REVERSE_PRESET_ID,
+  DEFAULT_KADANE_PRESET_ID,
   createTwoPointersScenario,
   createSlidingWindowScenario,
   createPalindromeScenario,
   createReverseScenario,
+  createKadaneScenario,
 } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
+import {
+  SieveGridPresetOption,
+  SieveEratosthenesScenario,
+  ERATOSTHENES_PRESETS,
+  DEFAULT_ERATOSTHENES_PRESET_ID,
+  createEratosthenesScenario,
+} from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
+import {
+  CallStackLabPresetOption,
+  RecursiveFibonacciScenario,
+  RECURSIVE_FIBONACCI_PRESETS,
+  DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
+  createRecursiveFibonacciScenario,
+} from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
 import { fibonacciIterativeGenerator } from '../../algorithms/fibonacci-iterative/fibonacci-iterative';
 import { factorialGenerator } from '../../algorithms/factorial/factorial';
 import { euclideanGcdGenerator } from '../../algorithms/euclidean-gcd/euclidean-gcd';
@@ -545,6 +563,9 @@ import { twoPointersGenerator } from '../../algorithms/two-pointers/two-pointers
 import { slidingWindowGenerator } from '../../algorithms/sliding-window/sliding-window';
 import { palindromeCheckGenerator } from '../../algorithms/palindrome-check/palindrome-check';
 import { reverseStringArrayGenerator } from '../../algorithms/reverse-string-array/reverse-string-array';
+import { kadaneGenerator } from '../../algorithms/kadane/kadane';
+import { sieveOfEratosthenesGenerator } from '../../algorithms/sieve-of-eratosthenes/sieve-of-eratosthenes';
+import { recursionCallStackGenerator } from '../../algorithms/recursion-call-stack/recursion-call-stack';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -587,6 +608,24 @@ import {
   REVERSE_CODE_REGIONS,
   REVERSE_CODE_VARIANTS,
 } from '../../data/reverse-string-array-code';
+import {
+  KADANE_CODE,
+  KADANE_CODE_HIGHLIGHT_MAP,
+  KADANE_CODE_REGIONS,
+  KADANE_CODE_VARIANTS,
+} from '../../data/kadane-code';
+import {
+  SIEVE_OF_ERATOSTHENES_CODE,
+  SIEVE_OF_ERATOSTHENES_CODE_HIGHLIGHT_MAP,
+  SIEVE_OF_ERATOSTHENES_CODE_REGIONS,
+  SIEVE_OF_ERATOSTHENES_CODE_VARIANTS,
+} from '../../data/sieve-of-eratosthenes-code';
+import {
+  RECURSION_CALL_STACK_CODE,
+  RECURSION_CALL_STACK_CODE_HIGHLIGHT_MAP,
+  RECURSION_CALL_STACK_CODE_REGIONS,
+  RECURSION_CALL_STACK_CODE_VARIANTS,
+} from '../../data/recursion-call-stack-code';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../../models/detail';
 import { HOPCROFT_KARP_CODE, HOPCROFT_KARP_CODE_VARIANTS } from '../../data/hopcroft-karp-code';
@@ -1343,6 +1382,14 @@ const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'pointer-lab', label: 'Pointer Lab' },
 ];
 
+const SIEVE_GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'sieve-grid', label: 'Sieve Grid' },
+];
+
+const CALL_STACK_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'call-stack-lab', label: 'Call Stack Lab' },
+];
+
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
 ];
@@ -1563,6 +1610,22 @@ interface PointerLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorit
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
+interface SieveGridAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'sieve-grid';
+  readonly presetOptions: readonly SieveGridPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
+interface CallStackLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'call-stack-lab';
+  readonly presetOptions: readonly CallStackLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
 export type AlgorithmViewConfig =
   | ArrayAlgorithmViewConfig
   | GraphAlgorithmViewConfig
@@ -1576,7 +1639,9 @@ export type AlgorithmViewConfig =
   | GeometryAlgorithmViewConfig<any>
   | TreeAlgorithmViewConfig<any>
   | NumberLabAlgorithmViewConfig<any>
-  | PointerLabAlgorithmViewConfig<any>;
+  | PointerLabAlgorithmViewConfig<any>
+  | SieveGridAlgorithmViewConfig<any>
+  | CallStackLabAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -2270,6 +2335,63 @@ const REVERSE_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultPresetId: DEFAULT_REVERSE_PRESET_ID,
   createScenario: (size, presetId) => createReverseScenario(size, presetId),
   generator: reverseStringArrayGenerator,
+};
+
+const KADANE_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'pointer-lab',
+  codeLines: KADANE_CODE,
+  codeRegions: KADANE_CODE_REGIONS,
+  codeHighlightMap: KADANE_CODE_HIGHLIGHT_MAP,
+  codeVariants: KADANE_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [6, 9, 12],
+  defaultSize: 9,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New sequence',
+  legendItems: () => [],
+  presetOptions: KADANE_PRESETS,
+  defaultPresetId: DEFAULT_KADANE_PRESET_ID,
+  createScenario: (size, presetId) => createKadaneScenario(size, presetId),
+  generator: kadaneGenerator,
+};
+
+const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'sieve-grid',
+  codeLines: SIEVE_OF_ERATOSTHENES_CODE,
+  codeRegions: SIEVE_OF_ERATOSTHENES_CODE_REGIONS,
+  codeHighlightMap: SIEVE_OF_ERATOSTHENES_CODE_HIGHLIGHT_MAP,
+  codeVariants: SIEVE_OF_ERATOSTHENES_CODE_VARIANTS,
+  variantOptions: SIEVE_GRID_VARIANT_OPTIONS,
+  defaultVariant: 'sieve-grid',
+  sizeOptions: [30, 40, 60, 80, 120],
+  defaultSize: 60,
+  sizeUnit: 'integers',
+  randomizeLabel: 'New range',
+  legendItems: () => [],
+  presetOptions: ERATOSTHENES_PRESETS,
+  defaultPresetId: DEFAULT_ERATOSTHENES_PRESET_ID,
+  createScenario: (size, presetId) => createEratosthenesScenario(size, presetId),
+  generator: sieveOfEratosthenesGenerator,
+};
+
+const RECURSION_CALL_STACK_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-stack-lab',
+  codeLines: RECURSION_CALL_STACK_CODE,
+  codeRegions: RECURSION_CALL_STACK_CODE_REGIONS,
+  codeHighlightMap: RECURSION_CALL_STACK_CODE_HIGHLIGHT_MAP,
+  codeVariants: RECURSION_CALL_STACK_CODE_VARIANTS,
+  variantOptions: CALL_STACK_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-stack-lab',
+  sizeOptions: [3, 4, 5, 6, 7],
+  defaultSize: 5,
+  sizeUnit: 'n',
+  randomizeLabel: 'New depth',
+  legendItems: () => [],
+  presetOptions: RECURSIVE_FIBONACCI_PRESETS,
+  defaultPresetId: DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
+  createScenario: (size, presetId) => createRecursiveFibonacciScenario(size, presetId),
+  generator: recursionCallStackGenerator,
 };
 
 const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3231,6 +3353,9 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;
   if (id === 'reverse-string-array') return REVERSE_VIEW_CONFIG;
+  if (id === 'kadane') return KADANE_VIEW_CONFIG;
+  if (id === 'sieve-of-eratosthenes') return SIEVE_OF_ERATOSTHENES_VIEW_CONFIG;
+  if (id === 'recursion-call-stack') return RECURSION_CALL_STACK_VIEW_CONFIG;
   return BUBBLE_VIEW_CONFIG;
 }
 

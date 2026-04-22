@@ -1,0 +1,100 @@
+<div class="trace">
+  @if (state(); as stack) {
+    <div class="trace__header">
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="stack.modeLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="stack.phaseLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.callStackLab.iterationLabel | transloco"
+          [value]="stack.iteration"
+          [valueMono]="true"
+        />
+        @if (hasResult()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+            [value]="stack.resultLabel! | i18nText"
+          />
+        }
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.callStackLab.decisionLabel | transloco
+          "
+          [value]="stack.decisionLabel | i18nText"
+        />
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__streams">
+        @if (activeFrame(); as frame) {
+          <app-segmented-panel-section
+            [eyebrow]="
+              I18N_KEY.features.algorithms.tracePanels.callStackLab.activeLabel | transloco
+            "
+          >
+            <div class="trace__active">
+              <span class="trace__active-title">{{ frame.title }}</span>
+              @if (frame.locals.length > 0) {
+                <div class="trace__active-locals">
+                  @for (local of frame.locals; track local.label) {
+                    <span class="trace__active-local trace__active-local--{{ local.tone }}">
+                      <span class="trace__active-local-label">{{ local.label }}</span>
+                      <span class="trace__active-local-value">{{ local.value }}</span>
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.callStackLab.statsLabel | transloco
+          "
+          [badge]="stack.stats.length"
+        >
+          <div class="trace__pivot-row">
+            @for (stat of stack.stats; track stat.label) {
+              <div class="trace__pivot-chip trace__pivot-chip--{{ stat.tone }}">
+                <span class="trace__pivot-chip-label">{{ stat.label | i18nText }}</span>
+                <span class="trace__pivot-chip-value">{{ stat.value | i18nText }}</span>
+              </div>
+            }
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.callStackLab.returnsLabel | transloco
+          "
+          [badge]="stack.recentReturns.length"
+        >
+          <div class="trace__history">
+            @if (stack.recentReturns.length === 0) {
+              <span class="trace__empty-note">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
+            } @else {
+              @for (ret of stack.recentReturns; track ret.id) {
+                <span class="trace__history-chip">{{ ret.title }} → <b>{{ ret.returnValue }}</b></span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    </div>
+  } @else {
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      {{ I18N_KEY.features.algorithms.tracePanels.callStackLab.emptyLabel | transloco }}
+    </div>
+  }
+</div>

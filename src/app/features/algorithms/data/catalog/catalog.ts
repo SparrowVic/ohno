@@ -1261,6 +1261,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['primes', 'number theory', 'array marking'],
+    complexity: {
+      timeBest: 'O(n log log n)',
+      timeAverage: 'O(n log log n)',
+      timeWorst: 'O(n log log n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'two-pointers',
@@ -1324,6 +1331,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['max subarray', 'linear', 'DP-lite'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'recursion-call-stack',
@@ -1333,6 +1342,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'recursion',
     tags: ['stack frames', 'recursion', 'visualization'],
+    complexity: {
+      timeBest: 'O(2ⁿ)',
+      timeAverage: 'O(2ⁿ)',
+      timeWorst: 'O(2ⁿ)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'minimax-alpha-beta',

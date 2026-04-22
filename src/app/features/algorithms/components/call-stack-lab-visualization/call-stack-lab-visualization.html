@@ -1,0 +1,87 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as stack) {
+    <div class="cslab">
+      <!-- Stats strip — total calls, max depth, current depth. -->
+      <section class="cslab__stats">
+        @for (stat of stack.stats; track stat.label) {
+          <div class="cslab__stat cslab__stat--{{ stat.tone }}">
+            <span class="cslab__stat-label">{{ stat.label }}</span>
+            <span class="cslab__stat-value">{{ stat.value }}</span>
+          </div>
+        }
+      </section>
+
+      <!-- Stack column — top-of-stack on top. Frames animate in from
+           the top and out when returning. Each frame shows its
+           signature, locals, and a return-value callout when popping. -->
+      <section class="cslab__stage">
+        <div class="cslab__stack">
+          @if (framesTopDown().length === 0) {
+            <div class="cslab__empty">∅ stack</div>
+          }
+          @for (frame of framesTopDown(); track frame.id) {
+            <article
+              class="cslab__frame cslab__frame--{{ frame.phase }}"
+              [class.cslab__frame--active]="$first"
+            >
+              <header class="cslab__frame-head">
+                <span class="cslab__frame-depth">#{{ frame.depth }}</span>
+                <span class="cslab__frame-title">{{ frame.title }}</span>
+                @if (frame.returnValue !== null) {
+                  <span class="cslab__frame-return">→ {{ frame.returnValue }}</span>
+                }
+              </header>
+              @if (frame.subtitle; as subtitle) {
+                <span class="cslab__frame-subtitle">{{ subtitle }}</span>
+              }
+              @if (frame.locals.length > 0) {
+                <div class="cslab__frame-locals">
+                  @for (local of frame.locals; track local.label) {
+                    <span class="cslab__local cslab__local--{{ local.tone }}">
+                      <span class="cslab__local-label">{{ local.label }}</span>
+                      <span class="cslab__local-value">{{ local.value }}</span>
+                    </span>
+                  }
+                </div>
+              }
+            </article>
+          }
+        </div>
+
+        <!-- Return rail — breadcrumb of recent pops so the user can
+             visualise the unwind without scrolling the log. -->
+        <aside class="cslab__rail">
+          <header class="cslab__rail-head">returns</header>
+          @if (stack.recentReturns.length === 0) {
+            <div class="cslab__rail-empty">—</div>
+          } @else {
+            <ol class="cslab__rail-list">
+              @for (ret of stack.recentReturns; track ret.id) {
+                <li class="cslab__rail-item" [style.opacity]="1 - ret.age * 0.14">
+                  <span class="cslab__rail-title">{{ ret.title }}</span>
+                  <span class="cslab__rail-arrow">→</span>
+                  <span class="cslab__rail-value">{{ ret.returnValue }}</span>
+                </li>
+              }
+            </ol>
+          }
+        </aside>
+      </section>
+
+      @if (stack.resultLabel; as result) {
+        <footer class="cslab__result">
+          <span class="cslab__result-label">result</span>
+          <span class="cslab__result-value">{{ result }}</span>
+        </footer>
+      }
+    </div>
+  }
+</app-viz-panel>

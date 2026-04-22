@@ -1,0 +1,60 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as sieve) {
+    <div class="sieve">
+      <!-- Pivot strip: the active prime being used to cross out
+           multiples, plus the √n bound and the live primes tally. -->
+      <section class="sieve__pivot">
+        <div class="sieve__pivot-main">
+          <span class="sieve__pivot-label">p</span>
+          <span class="sieve__pivot-value" [class.sieve__pivot-value--idle]="sieve.activePrime === null">
+            {{ sieve.activePrime ?? '—' }}
+          </span>
+        </div>
+        <div class="sieve__pivot-meta">
+          <span class="sieve__pivot-bound">
+            <span class="sieve__pivot-bound-label">√n</span>
+            <span class="sieve__pivot-bound-value">{{ sieve.bound }}</span>
+          </span>
+          @for (stat of sieve.stats; track stat.label) {
+            <span class="sieve__pivot-stat sieve__pivot-stat--{{ stat.tone }}">
+              <span class="sieve__pivot-stat-label">{{ stat.label }}</span>
+              <span class="sieve__pivot-stat-value">{{ stat.value }}</span>
+            </span>
+          }
+        </div>
+      </section>
+
+      <!-- Number grid: each integer in a cell with a status tint.
+           Cells for values below the sieve's start are hidden as
+           skipped shells so the grid stays aligned from the top. -->
+      <section
+        class="sieve__grid"
+        [style.grid-template-columns]="'repeat(' + columnCount() + ', minmax(0, 1fr))'"
+      >
+        @for (cell of sieve.cells; track cell.value) {
+          <article class="sieve__cell sieve__cell--{{ cell.state }}">
+            <span class="sieve__cell-value">{{ cell.value }}</span>
+            @if (cell.factorLabel; as factor) {
+              <span class="sieve__cell-factor">{{ factor }}</span>
+            }
+          </article>
+        }
+      </section>
+
+      @if (sieve.resultLabel; as result) {
+        <footer class="sieve__result">
+          <span class="sieve__result-label">primes</span>
+          <span class="sieve__result-value">{{ result }}</span>
+        </footer>
+      }
+    </div>
+  }
+</app-viz-panel>

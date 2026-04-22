@@ -116,5 +116,25 @@
         (presetChange)="pointerLabPresetChange.emit($event)"
       />
     }
+    @case ('sieve-grid') {
+      <app-sieve-grid-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="sieveGridPresetOptions()"
+        [presetId]="sieveGridPresetId()"
+        (presetChange)="sieveGridPresetChange.emit($event)"
+      />
+    }
+    @case ('call-stack-lab') {
+      <app-call-stack-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="callStackLabPresetOptions()"
+        [presetId]="callStackLabPresetId()"
+        (presetChange)="callStackLabPresetChange.emit($event)"
+      />
+    }
   }
 </div>

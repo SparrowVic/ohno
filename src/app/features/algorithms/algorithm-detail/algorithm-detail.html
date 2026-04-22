@@ -100,12 +100,18 @@
             [numberLabPresetId]="numberLabPresetId()"
             [pointerLabPresetOptions]="pointerLabPresetOptions()"
             [pointerLabPresetId]="pointerLabPresetId()"
+            [sieveGridPresetOptions]="sieveGridPresetOptions()"
+            [sieveGridPresetId]="sieveGridPresetId()"
+            [callStackLabPresetOptions]="callStackLabPresetOptions()"
+            [callStackLabPresetId]="callStackLabPresetId()"
             (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
             (dpPresetChange)="onDpPresetChange($event)"
             (stringPresetChange)="onStringPresetChange($event)"
             (treePresetChange)="onTreePresetChange($event)"
             (numberLabPresetChange)="onNumberLabPresetChange($event)"
             (pointerLabPresetChange)="onPointerLabPresetChange($event)"
+            (sieveGridPresetChange)="onSieveGridPresetChange($event)"
+            (callStackLabPresetChange)="onCallStackLabPresetChange($event)"
           />
           <app-legend-bar [items]="legendItems()" />
         </div>
@@ -129,6 +135,8 @@
           [treeState]="treeTrace()"
           [numberLabState]="numberLabTrace()"
           [pointerLabState]="pointerLabTrace()"
+          [sieveGridState]="sieveGridTrace()"
+          [callStackLabState]="callStackLabTrace()"
           [geometryState]="geometryTrace()"
           [graphFocusTargetLabel]="graphFocusTargetLabel()"
           [graphFocusPathLabel]="graphFocusPathLabel()"

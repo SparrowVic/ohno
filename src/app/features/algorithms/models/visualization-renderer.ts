@@ -31,4 +31,6 @@ export type VisualizationVariant =
   | 'delaunay'
   | 'tree'
   | 'number-lab'
-  | 'pointer-lab';
+  | 'pointer-lab'
+  | 'sieve-grid'
+  | 'call-stack-lab';

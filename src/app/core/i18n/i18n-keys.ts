@@ -1086,6 +1086,21 @@ export const I18N_KEY = {
           statsLabel: t('features.algorithms.tracePanels.pointerLab.statsLabel'),
           emptyLabel: t('features.algorithms.tracePanels.pointerLab.emptyLabel'),
         },
+        sieveGrid: {
+          iterationLabel: t('features.algorithms.tracePanels.sieveGrid.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.sieveGrid.decisionLabel'),
+          pivotLabel: t('features.algorithms.tracePanels.sieveGrid.pivotLabel'),
+          primesLabel: t('features.algorithms.tracePanels.sieveGrid.primesLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.sieveGrid.emptyLabel'),
+        },
+        callStackLab: {
+          iterationLabel: t('features.algorithms.tracePanels.callStackLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.callStackLab.decisionLabel'),
+          activeLabel: t('features.algorithms.tracePanels.callStackLab.activeLabel'),
+          statsLabel: t('features.algorithms.tracePanels.callStackLab.statsLabel'),
+          returnsLabel: t('features.algorithms.tracePanels.callStackLab.returnsLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.callStackLab.emptyLabel'),
+        },
       },
       visualizations: {
         search: {

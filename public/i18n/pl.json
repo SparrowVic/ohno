@@ -344,6 +344,46 @@
         }
       },
       "runtime": {
+        "callStackLab": {
+          "recursiveFibonacci": {
+            "decisions": {
+              "base": "n ≤ 1 — zwracamy bezpośrednio.",
+              "bothDone": "Oba wywołania wróciły — łączymy.",
+              "done": "Wywołanie korzenia zakończone.",
+              "leftDone": "Lewe podwywołanie wróciło.",
+              "pop": "Ściągamy ramkę i propagujemy wynik w górę.",
+              "push": "Wrzucamy świeżą ramkę na stos.",
+              "rightDone": "Prawe podwywołanie wróciło."
+            },
+            "descriptions": {
+              "callLeft": "fib({{n}}) odpala lewe wywołanie fib({{k}}).",
+              "callRight": "fib({{n}}) odpala prawe wywołanie fib({{k}}).",
+              "combine": "fib({{n}}) = {{left}} + {{right}} = {{value}}.",
+              "complete": "fib({{n}}) skończyło z wynikiem {{value}}.",
+              "enter": "Wchodzimy do fib({{n}}).",
+              "gotLeft": "fib({{n}}) otrzymało left = {{value}}.",
+              "gotRight": "fib({{n}}) otrzymało right = {{value}}.",
+              "return": "Zwracamy {{value}} z fib({{n}}).",
+              "returnBase": "Przypadek bazowy fib({{n}}) zwraca {{value}}."
+            },
+            "modeLabel": "Stos wywołań rekurencji",
+            "phases": {
+              "base": "Przypadek bazowy",
+              "combine": "Łączenie",
+              "complete": "Zakończone",
+              "descendLeft": "Schodzimy w lewo",
+              "descendRight": "Schodzimy w prawo",
+              "enter": "Wejście",
+              "return": "Powrót"
+            },
+            "resultFormat": "fib({{n}}) = {{value}}",
+            "stats": {
+              "calls": "Wywołania",
+              "depth": "Głębokość",
+              "maxDepth": "Maks. głębokość"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "decisions": {
@@ -1661,6 +1701,38 @@
           }
         },
         "pointerLab": {
+          "kadane": {
+            "decisions": {
+              "bestUp": "Bieżąca suma bije dotychczasowy rekord.",
+              "done": "Przeszliśmy wszystkie indeksy.",
+              "extendWindow": "Rozszerzamy bieżące okno o nową wartość.",
+              "keepBest": "Bieżąca suma nie bije rekordu — zostawiamy go.",
+              "resetWindow": "Restart — poprzednia suma to balast.",
+              "seed": "Start od pierwszej wartości."
+            },
+            "descriptions": {
+              "bestUpdate": "Nowy rekord {{sum}} w przedziale [{{left}}..{{right}}].",
+              "complete": "Najlepsza suma podtablicy {{sum}} @ [{{left}}..{{right}}].",
+              "extend": "Dodajemy {{value}} → current = {{sum}} @ [{{left}}..{{right}}].",
+              "init": "Zasiew: current = best = {{value}} na indeksie 0.",
+              "keepBest": "Current {{current}} ≤ best {{best}} — trzymamy rekord.",
+              "restart": "Reset na indeksie {{index}} — startujemy od {{value}}."
+            },
+            "modeLabel": "Algorytm Kadane'a",
+            "phases": {
+              "bestUpdate": "Nowy rekord",
+              "complete": "Zakończone",
+              "extend": "Rozszerzenie",
+              "init": "Start",
+              "restart": "Restart"
+            },
+            "resultFormat": "Największa suma podtablicy = {{sum}} @ [{{left}}..{{right}}]",
+            "stats": {
+              "best": "Rekord",
+              "current": "Bieżąca",
+              "index": "i"
+            }
+          },
           "palindrome": {
             "decisions": {
               "done": "Wskaźniki się zbiegły bez niezgodności.",
@@ -1872,6 +1944,43 @@
               "found": "Znaleziono trafienie",
               "notFound": "Brak celu",
               "ready": "Gotowe do skanowania"
+            }
+          }
+        },
+        "sieveGrid": {
+          "eratosthenes": {
+            "decisions": {
+              "aboveBound": "p · p > n — przechodzimy do zbierania wyników.",
+              "alreadyComposite": "Już wykreślone — pomijamy.",
+              "collect": "Przeżyło wszystkie przebiegi — zbieramy jako pierwszą.",
+              "complete": "Koniec sita do n.",
+              "crossMultiple": "Oznaczamy wielokrotność p jako złożoną.",
+              "finishedPrime": "Wykreślono wszystkie wielokrotności p.",
+              "pickFreshPrime": "Świeża liczba pierwsza — startujemy wykreślanie wielokrotności."
+            },
+            "descriptions": {
+              "collectPrime": "{{i}} przetrwało — dodajemy do listy liczb pierwszych.",
+              "complete": "Znaleziono {{count}} liczb pierwszych ≤ {{n}}.",
+              "finishPrime": "Wykreślono wszystkie wielokrotności {{p}}.",
+              "mark": "Oznaczamy {{k}} = {{p}} × (k / p) jako złożoną.",
+              "pickPrime": "{{p}} jest pierwsza — wykreślamy wielokrotności od p².",
+              "setup": "Inicjujemy sito długości {{n}} + 1.",
+              "skipComposite": "{{p}} było już wykreślone — pomijamy."
+            },
+            "modeLabel": "Sito Eratostenesa",
+            "phases": {
+              "collect": "Zbiórka",
+              "complete": "Zakończone",
+              "mark": "Wykreślanie",
+              "pick": "Wybór pierwszej",
+              "setup": "Przygotowanie",
+              "skip": "Pomijanie"
+            },
+            "resultFormat": "{{count}} liczb pierwszych: {{list}}",
+            "stats": {
+              "candidate": "Kandydat",
+              "crossed": "Wykreślone",
+              "found": "Pierwsze"
             }
           }
         },
@@ -2726,6 +2835,22 @@
         }
       },
       "scenarios": {
+        "callStackLab": {
+          "fibonacci": {
+            "bushy": {
+              "description": "fib(6) — gęstsze drzewo pokazuje wykładniczy wybuch duplikatów.",
+              "label": "Gęste drzewo"
+            },
+            "classic": {
+              "description": "fib(5) — kanoniczne demo drzewa wywołań.",
+              "label": "Klasyczna głębokość"
+            },
+            "tiny": {
+              "description": "fib(3) — najmniejsze drzewo, na którym widać rozgałęzienie.",
+              "label": "Malutkie drzewo"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "crews": {
@@ -3059,6 +3184,24 @@
           }
         },
         "pointerLab": {
+          "kadane": {
+            "allNegative": {
+              "description": "Wszystkie wartości ujemne — trzeba wybrać najmniej złą.",
+              "label": "Same ujemne"
+            },
+            "classic": {
+              "description": "Mieszanka znaków z wyraźnym zwycięskim środkowym biegiem — klasyka.",
+              "label": "Klasyczna mieszanka"
+            },
+            "mostlyNegative": {
+              "description": "Głównie ujemny szum z jednym jasnym pikiem do złapania.",
+              "label": "Samotny pik"
+            },
+            "zigzag": {
+              "description": "Naprzemienne szczyty i dołki — decyzje extend vs restart padają często.",
+              "label": "Zygzak"
+            }
+          },
           "palindrome": {
             "classic": {
               "description": "Palindrom nieparzystej długości — porównania zbiegają do środka.",
@@ -3109,6 +3252,22 @@
             "noMatch": {
               "description": "Cel poza osiągalnym zakresem — wskaźniki się mijają.",
               "label": "Brak dopasowania"
+            }
+          }
+        },
+        "sieveGrid": {
+          "eratosthenes": {
+            "classic": {
+              "description": "Podręcznikowe sito dla ~60 liczb — czysty do śledzenia gołym okiem.",
+              "label": "Klasyczny 60"
+            },
+            "compact": {
+              "description": "Krótki przebieg — n ≈ 30, wszystko mieści się na jednym ekranie.",
+              "label": "Kompaktowy"
+            },
+            "wide": {
+              "description": "Rozciągnij do ~120 liczb, żeby zobaczyć rzedniecie log-log sita.",
+              "label": "Szeroki przegląd"
             }
           }
         },
@@ -3446,6 +3605,14 @@
         "ariaLabel": "Wskazówka śladu"
       },
       "tracePanels": {
+        "callStackLab": {
+          "activeLabel": "Aktywna ramka",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu stosu wywołań dla tego kroku.",
+          "iterationLabel": "Iteracja",
+          "returnsLabel": "Ostatnie powroty",
+          "statsLabel": "Statystyki"
+        },
         "closestPair": {
           "activeComparisonLabel": "Aktywne porównanie",
           "bestLabel": "Najlepszy",
@@ -3880,6 +4047,13 @@
           "visitedOrderLabel": "Kolejność odwiedzin",
           "waitingDecisionLabel": "oczekiwanie na kolejny ruch",
           "windowLabel": "Okno"
+        },
+        "sieveGrid": {
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu sita dla tego kroku.",
+          "iterationLabel": "Iteracja",
+          "pivotLabel": "Aktywna liczba",
+          "primesLabel": "Znalezione liczby pierwsze"
         },
         "sort": {
           "boundaryLabel": "Granica",
@@ -5053,6 +5227,7 @@
       }
     }
   },
+  "features.algorithms.runtime.callStackLab.recursiveFibonacci.descriptions.base": "Missing value for 'features.algorithms.runtime.callStackLab.recursiveFibonacci.descriptions.base'",
   "features.algorithms.runtime.dp.burstBalloons.labels.intervalRange": "Missing value for 'features.algorithms.runtime.dp.burstBalloons.labels.intervalRange'",
   "shared": {
     "codeLanguageDial": {

@@ -344,6 +344,46 @@
         }
       },
       "runtime": {
+        "callStackLab": {
+          "recursiveFibonacci": {
+            "decisions": {
+              "base": "n ≤ 1 — return directly.",
+              "bothDone": "Both sub-calls returned — combine.",
+              "done": "Root call resolved.",
+              "leftDone": "Left sub-call returned.",
+              "pop": "Pop the frame, propagate its result.",
+              "push": "Push a fresh frame on the stack.",
+              "rightDone": "Right sub-call returned."
+            },
+            "descriptions": {
+              "callLeft": "fib({{n}}) spawns left call fib({{k}}).",
+              "callRight": "fib({{n}}) spawns right call fib({{k}}).",
+              "combine": "fib({{n}}) = {{left}} + {{right}} = {{value}}.",
+              "complete": "fib({{n}}) resolved to {{value}}.",
+              "enter": "Enter fib({{n}}).",
+              "gotLeft": "fib({{n}}) received left = {{value}}.",
+              "gotRight": "fib({{n}}) received right = {{value}}.",
+              "return": "Return {{value}} from fib({{n}}).",
+              "returnBase": "Base case fib({{n}}) returns {{value}}."
+            },
+            "modeLabel": "Recursion call stack",
+            "phases": {
+              "base": "Base case",
+              "combine": "Combine",
+              "complete": "Complete",
+              "descendLeft": "Descend left",
+              "descendRight": "Descend right",
+              "enter": "Enter",
+              "return": "Return"
+            },
+            "resultFormat": "fib({{n}}) = {{value}}",
+            "stats": {
+              "calls": "Calls",
+              "depth": "Depth",
+              "maxDepth": "Max depth"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "decisions": {
@@ -1661,6 +1701,38 @@
           }
         },
         "pointerLab": {
+          "kadane": {
+            "decisions": {
+              "bestUp": "Current sum beats the recorded best.",
+              "done": "Scanned every index.",
+              "extendWindow": "Extend the current window with the new value.",
+              "keepBest": "Current sum does not beat the best — keep it.",
+              "resetWindow": "Restart fresh — the previous sum is dead weight.",
+              "seed": "Seed with the first value."
+            },
+            "descriptions": {
+              "bestUpdate": "New best sum {{sum}} at [{{left}}..{{right}}].",
+              "complete": "Best subarray sum {{sum}} at [{{left}}..{{right}}].",
+              "extend": "Add {{value}} → current = {{sum}} @ [{{left}}..{{right}}].",
+              "init": "Seed current = best = {{value}} at index 0.",
+              "keepBest": "Current {{current}} ≤ best {{best}} — keep previous best.",
+              "restart": "Reset at index {{index}} — start fresh from {{value}}."
+            },
+            "modeLabel": "Kadane's algorithm",
+            "phases": {
+              "bestUpdate": "New best",
+              "complete": "Complete",
+              "extend": "Extend",
+              "init": "Init",
+              "restart": "Restart"
+            },
+            "resultFormat": "Max subarray sum = {{sum}} @ [{{left}}..{{right}}]",
+            "stats": {
+              "best": "Best",
+              "current": "Current",
+              "index": "i"
+            }
+          },
           "palindrome": {
             "decisions": {
               "done": "Pointers crossed without mismatches.",
@@ -1872,6 +1944,43 @@
               "found": "Match found",
               "notFound": "Target missing",
               "ready": "Ready to scan"
+            }
+          }
+        },
+        "sieveGrid": {
+          "eratosthenes": {
+            "decisions": {
+              "aboveBound": "p · p > n — switch to final collection.",
+              "alreadyComposite": "Already crossed — skip.",
+              "collect": "Survived all passes — collect as prime.",
+              "complete": "Done sieving up to n.",
+              "crossMultiple": "Mark a multiple of p as composite.",
+              "finishedPrime": "All multiples of p crossed.",
+              "pickFreshPrime": "Fresh prime — start crossing its multiples."
+            },
+            "descriptions": {
+              "collectPrime": "{{i}} survived — add it to the primes list.",
+              "complete": "Found {{count}} primes ≤ {{n}}.",
+              "finishPrime": "Done crossing multiples of {{p}}.",
+              "mark": "Mark {{k}} = {{p}} × (k / p) as composite.",
+              "pickPrime": "{{p}} is prime — cross its multiples starting at p².",
+              "setup": "Initialise a sieve of length {{n}} + 1.",
+              "skipComposite": "{{p}} was already crossed — skip."
+            },
+            "modeLabel": "Sieve of Eratosthenes",
+            "phases": {
+              "collect": "Collect",
+              "complete": "Complete",
+              "mark": "Cross",
+              "pick": "Pick prime",
+              "setup": "Setup",
+              "skip": "Skip"
+            },
+            "resultFormat": "{{count}} primes: {{list}}",
+            "stats": {
+              "candidate": "Candidate",
+              "crossed": "Crossed",
+              "found": "Primes"
             }
           }
         },
@@ -2726,6 +2835,22 @@
         }
       },
       "scenarios": {
+        "callStackLab": {
+          "fibonacci": {
+            "bushy": {
+              "description": "fib(6) — denser tree exposes the exponential blow-up of duplicates.",
+              "label": "Bushy tree"
+            },
+            "classic": {
+              "description": "fib(5) — the canonical call-tree demo.",
+              "label": "Classic depth"
+            },
+            "tiny": {
+              "description": "fib(3) — smallest tree that still shows the branching pattern.",
+              "label": "Tiny tree"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "crews": {
@@ -3059,6 +3184,24 @@
           }
         },
         "pointerLab": {
+          "kadane": {
+            "allNegative": {
+              "description": "Every value is negative — the best pick is the least-bad one.",
+              "label": "All negative"
+            },
+            "classic": {
+              "description": "Signed mix where a clear mid-run wins — the textbook case.",
+              "label": "Classic mix"
+            },
+            "mostlyNegative": {
+              "description": "Mostly negative noise with a single bright spike to collect.",
+              "label": "Lone spike"
+            },
+            "zigzag": {
+              "description": "Alternating peaks and dips — extend vs. restart decisions fire often.",
+              "label": "Zigzag"
+            }
+          },
           "palindrome": {
             "classic": {
               "description": "Odd-length palindrome — compares converge to the centre.",
@@ -3109,6 +3252,22 @@
             "noMatch": {
               "description": "Target outside the achievable range — pointers cross.",
               "label": "No match"
+            }
+          }
+        },
+        "sieveGrid": {
+          "eratosthenes": {
+            "classic": {
+              "description": "Textbook sieve over ~60 integers — clean enough to follow by eye.",
+              "label": "Classic 60"
+            },
+            "compact": {
+              "description": "A short run — n ≈ 30 keeps every prime visible on one screen.",
+              "label": "Compact run"
+            },
+            "wide": {
+              "description": "Stretch to ~120 integers to see the sieve's log-log thinning.",
+              "label": "Wide sweep"
             }
           }
         },
@@ -3446,6 +3605,14 @@
         "ariaLabel": "Trace hint"
       },
       "tracePanels": {
+        "callStackLab": {
+          "activeLabel": "Active frame",
+          "decisionLabel": "Decision",
+          "emptyLabel": "No call-stack trace available for this step.",
+          "iterationLabel": "Iteration",
+          "returnsLabel": "Recent returns",
+          "statsLabel": "Stats"
+        },
         "closestPair": {
           "activeComparisonLabel": "Active comparison",
           "bestLabel": "Best",
@@ -3880,6 +4047,13 @@
           "visitedOrderLabel": "Visited order",
           "waitingDecisionLabel": "waiting for next move",
           "windowLabel": "Window"
+        },
+        "sieveGrid": {
+          "decisionLabel": "Decision",
+          "emptyLabel": "No sieve trace available for this step.",
+          "iterationLabel": "Iteration",
+          "pivotLabel": "Pivot",
+          "primesLabel": "Primes found"
         },
         "sort": {
           "boundaryLabel": "Boundary",
@@ -5053,6 +5227,7 @@
       }
     }
   },
+  "features.algorithms.runtime.callStackLab.recursiveFibonacci.descriptions.base": "Missing value for 'features.algorithms.runtime.callStackLab.recursiveFibonacci.descriptions.base'",
   "features.algorithms.runtime.dp.burstBalloons.labels.intervalRange": "Missing value for 'features.algorithms.runtime.dp.burstBalloons.labels.intervalRange'",
   "shared": {
     "codeLanguageDial": {
