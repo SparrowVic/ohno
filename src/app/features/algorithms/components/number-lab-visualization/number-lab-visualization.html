@@ -17,17 +17,17 @@
             <span class="number-lab__register-label">{{ reg.label }}</span>
             <span class="number-lab__register-value">{{ reg.value }}</span>
             @if (reg.hint; as hint) {
-              <span class="number-lab__register-hint">{{ hint }}</span>
+              <span class="number-lab__register-hint">{{ hint | i18nText }}</span>
             }
           </article>
         }
       </section>
 
-      <!-- Formula card — the rule fired on this exact step, broken
-           into coloured operand / operator parts. -->
-      @if (lab.formula; as formula) {
-        <section class="number-lab__formula">
-          <div class="number-lab__formula-row">
+      <!-- Formula card — always rendered with reserved space so the
+           layout below doesn't shift when the rule fires. -->
+      <section class="number-lab__formula" [class.number-lab__formula--empty]="!lab.formula">
+        <div class="number-lab__formula-row">
+          @if (lab.formula; as formula) {
             @for (part of formula.lhs; track $index) {
               <span class="number-lab__part number-lab__part--{{ part.role }}">{{ part.text }}</span>
             }
@@ -35,18 +35,23 @@
             @for (part of formula.rhs; track $index) {
               <span class="number-lab__part number-lab__part--{{ part.role }}">{{ part.text }}</span>
             }
-          </div>
-        </section>
-      }
+          } @else {
+            <span class="number-lab__formula-placeholder">—</span>
+          }
+        </div>
+      </section>
 
-      <!-- History tape — emitted values in order. Newest chip pulses. -->
-      @if (lab.history.length > 0) {
-        <section class="number-lab__history">
-          <header class="number-lab__history-head">
-            <span class="number-lab__history-label">n</span>
-            <span class="number-lab__history-value">value</span>
-          </header>
-          <div class="number-lab__history-tape">
+      <!-- History tape — always rendered; placeholder shown before
+           any value has been emitted so the grid row keeps its size. -->
+      <section class="number-lab__history">
+        <header class="number-lab__history-head">
+          <span class="number-lab__history-label">n</span>
+          <span class="number-lab__history-value">value</span>
+        </header>
+        <div class="number-lab__history-tape">
+          @if (lab.history.length === 0) {
+            <span class="number-lab__history-placeholder">—</span>
+          } @else {
             @for (entry of lab.history; track entry.id) {
               <article
                 class="number-lab__history-chip"
@@ -56,16 +61,26 @@
                 <span class="number-lab__history-chip-value">{{ entry.value }}</span>
               </article>
             }
-          </div>
-        </section>
-      }
+          }
+        </div>
+      </section>
 
-      @if (lab.resultLabel; as result) {
-        <footer class="number-lab__result">
-          <span class="number-lab__result-label">result</span>
-          <span class="number-lab__result-value">{{ result }}</span>
-        </footer>
-      }
+      <!-- Result footer — always rendered. Value fills in when the
+           algorithm finishes; until then a neutral placeholder holds
+           the slot so the stage below doesn't jump. -->
+      <footer
+        class="number-lab__result"
+        [class.number-lab__result--pending]="!lab.resultLabel"
+      >
+        <span class="number-lab__result-label">result</span>
+        <span class="number-lab__result-value">
+          @if (lab.resultLabel; as result) {
+            {{ result | i18nText }}
+          } @else {
+            —
+          }
+        </span>
+      </footer>
     </div>
   }
 </app-viz-panel>

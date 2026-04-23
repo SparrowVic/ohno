@@ -136,6 +136,20 @@ export function* mctsGenerator(scenario: McTsScenario): Generator<SortStep> {
       };
     });
     const root = nodes.length > 0 ? nodes[0] : null;
+    // Compute best-arm eagerly so the stat is always rendered — this
+    // keeps the strip from reshaping when visits first appear.
+    let bestArmValue: string = '—';
+    let bestArmTone: CallTreeStat['tone'] = 'info';
+    if (root) {
+      const children = nodes.filter((n) => n.parentId === root.id);
+      const best = children
+        .filter((c) => c.visits > 0)
+        .sort((a, b) => b.visits - a.visits)[0];
+      if (best) {
+        bestArmValue = `#${best.armIndex + 1} (${best.visits})`;
+        bestArmTone = 'success';
+      }
+    }
     const stats: CallTreeStat[] = [
       {
         label: I18N.stats.iteration,
@@ -143,20 +157,8 @@ export function* mctsGenerator(scenario: McTsScenario): Generator<SortStep> {
         tone: 'accent',
       },
       { label: I18N.stats.explored, value: String(nodes.length - 1), tone: 'info' },
+      { label: I18N.stats.bestArm, value: bestArmValue, tone: bestArmTone },
     ];
-    if (root) {
-      const children = nodes.filter((n) => n.parentId === root.id);
-      if (children.length > 0) {
-        const best = [...children].sort((a, b) => b.visits - a.visits)[0];
-        if (best && best.visits > 0) {
-          stats.push({
-            label: I18N.stats.bestArm,
-            value: `#${best.armIndex + 1} (${best.visits})`,
-            tone: 'success',
-          });
-        }
-      }
-    }
     return {
       mode: 'mcts',
       modeLabel: mode,

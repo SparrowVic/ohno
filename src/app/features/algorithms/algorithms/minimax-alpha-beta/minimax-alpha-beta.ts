@@ -139,14 +139,18 @@ export function* minimaxAlphaBetaGenerator(scenario: MinimaxScenario): Generator
               ],
       };
     });
+    const root = nodes.length > 0 ? nodes[0] : null;
+    // Keep the stat count stable across steps so the strip doesn't
+    // reshape mid-run — best starts as "—" and fills in at the end.
     const stats: CallTreeStat[] = [
       { label: I18N.stats.evaluated, value: String(evaluated), tone: 'accent' },
       { label: I18N.stats.pruned, value: String(pruned), tone: 'danger' },
+      {
+        label: I18N.stats.best,
+        value: root && root.value !== null ? String(root.value) : '—',
+        tone: root && root.value !== null ? 'success' : 'info',
+      },
     ];
-    const root = nodes.length > 0 ? nodes[0] : null;
-    if (root && root.value !== null) {
-      stats.push({ label: I18N.stats.best, value: String(root.value), tone: 'success' });
-    }
     return {
       mode: 'minimax',
       modeLabel: mode,

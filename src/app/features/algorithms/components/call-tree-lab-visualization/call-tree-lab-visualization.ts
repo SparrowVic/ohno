@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { CallTreeLabTraceState, CallTreeNode } from '../../models/call-tree-lab';
 import { SortStep } from '../../models/sort-step';
 import {
@@ -48,7 +49,7 @@ export interface TreeEdgeGeom {
  */
 @Component({
   selector: 'app-call-tree-lab-visualization',
-  imports: [VizHeader, VizPanel, VizPresetPicker],
+  imports: [I18nTextPipe, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './call-tree-lab-visualization.html',
   styleUrl: './call-tree-lab-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

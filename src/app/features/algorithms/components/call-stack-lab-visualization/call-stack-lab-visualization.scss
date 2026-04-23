@@ -122,6 +122,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-height: 86px;
   padding: 12px 14px;
   border-radius: 12px;
   border: 0.5px solid rgba(255, 255, 255, 0.07);
@@ -175,7 +176,8 @@
   display: flex;
   align-items: baseline;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-height: 22px;
 }
 
 .cslab__frame-depth {
@@ -380,12 +382,28 @@
   display: flex;
   align-items: baseline;
   gap: 14px;
+  min-height: 58px;
   padding: 14px 18px;
   border-radius: 14px;
   border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
   background:
     linear-gradient(180deg, rgb(var(--accent-rgb) / 0.12), rgb(var(--accent-rgb) / 0.04)),
     rgba(13, 16, 24, 0.55);
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    opacity var(--duration-fast) var(--ease-soft);
+
+  &--pending {
+    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.025);
+    opacity: 0.7;
+  }
+}
+
+.cslab__result--pending .cslab__result-label,
+.cslab__result--pending .cslab__result-value {
+  color: var(--text-tertiary);
 }
 
 .cslab__result-label {

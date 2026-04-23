@@ -14,8 +14,8 @@
       <section class="ctlab__stats">
         @for (stat of tree.stats; track stat.label) {
           <div class="ctlab__stat ctlab__stat--{{ stat.tone }}">
-            <span class="ctlab__stat-label">{{ stat.label }}</span>
-            <span class="ctlab__stat-value">{{ stat.value }}</span>
+            <span class="ctlab__stat-label">{{ stat.label | i18nText }}</span>
+            <span class="ctlab__stat-value">{{ stat.value | i18nText }}</span>
           </div>
         }
       </section>
@@ -24,7 +24,7 @@
            Pinned above the tree so the two views read top-down. -->
       @if (tree.sidecar; as board) {
         <section class="ctlab__sidecar">
-          <header class="ctlab__sidecar-head">{{ board.title }}</header>
+          <header class="ctlab__sidecar-head">{{ board.title | i18nText }}</header>
           <div
             class="ctlab__board"
             [style.grid-template-columns]="'repeat(' + board.cols + ', 1fr)'"
@@ -38,7 +38,7 @@
             }
           </div>
           @if (board.footer) {
-            <footer class="ctlab__sidecar-footer">{{ board.footer }}</footer>
+            <footer class="ctlab__sidecar-footer">{{ board.footer | i18nText }}</footer>
           }
         </section>
       }
@@ -97,14 +97,14 @@
                   }
                 </header>
                 @if (node.subtitle) {
-                  <span class="ctlab__node-subtitle">{{ node.subtitle }}</span>
+                  <span class="ctlab__node-subtitle">{{ node.subtitle | i18nText }}</span>
                 }
                 @if (node.stats.length > 0) {
                   <div class="ctlab__node-stats">
                     @for (stat of node.stats; track stat.label) {
                       <span class="ctlab__node-stat ctlab__node-stat--{{ stat.tone }}">
-                        <span class="ctlab__node-stat-label">{{ stat.label }}</span>
-                        <span class="ctlab__node-stat-value">{{ stat.value }}</span>
+                        <span class="ctlab__node-stat-label">{{ stat.label | i18nText }}</span>
+                        <span class="ctlab__node-stat-value">{{ stat.value | i18nText }}</span>
                       </span>
                     }
                   </div>
@@ -115,12 +115,19 @@
         }
       </section>
 
-      @if (tree.resultLabel; as result) {
-        <footer class="ctlab__result">
-          <span class="ctlab__result-label">result</span>
-          <span class="ctlab__result-value">{{ result }}</span>
-        </footer>
-      }
+      <footer
+        class="ctlab__result"
+        [class.ctlab__result--pending]="!tree.resultLabel"
+      >
+        <span class="ctlab__result-label">result</span>
+        <span class="ctlab__result-value">
+          @if (tree.resultLabel; as result) {
+            {{ result | i18nText }}
+          } @else {
+            —
+          }
+        </span>
+      </footer>
     </div>
   }
 </app-viz-panel>

@@ -25,8 +25,8 @@
           </span>
           @for (stat of sieve.stats; track stat.label) {
             <span class="sieve__pivot-stat sieve__pivot-stat--{{ stat.tone }}">
-              <span class="sieve__pivot-stat-label">{{ stat.label }}</span>
-              <span class="sieve__pivot-stat-value">{{ stat.value }}</span>
+              <span class="sieve__pivot-stat-label">{{ stat.label | i18nText }}</span>
+              <span class="sieve__pivot-stat-value">{{ stat.value | i18nText }}</span>
             </span>
           }
         </div>
@@ -49,12 +49,19 @@
         }
       </section>
 
-      @if (sieve.resultLabel; as result) {
-        <footer class="sieve__result">
-          <span class="sieve__result-label">primes</span>
-          <span class="sieve__result-value">{{ result }}</span>
-        </footer>
-      }
+      <footer
+        class="sieve__result"
+        [class.sieve__result--pending]="!sieve.resultLabel"
+      >
+        <span class="sieve__result-label">primes</span>
+        <span class="sieve__result-value">
+          @if (sieve.resultLabel; as result) {
+            {{ result | i18nText }}
+          } @else {
+            —
+          }
+        </span>
+      </footer>
     </div>
   }
 </app-viz-panel>

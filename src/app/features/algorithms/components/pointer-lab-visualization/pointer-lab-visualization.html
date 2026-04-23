@@ -68,24 +68,34 @@
         </div>
       </div>
 
-      <!-- Stats strip — aggregate values (sum, best, match verdict). -->
-      @if (lab.stats.length > 0) {
-        <section class="pointer-lab__stats">
-          @for (stat of lab.stats; track $index) {
-            <article class="pointer-lab__stat pointer-lab__stat--{{ stat.tone }}">
-              <span class="pointer-lab__stat-label">{{ stat.label }}</span>
-              <span class="pointer-lab__stat-value">{{ stat.value }}</span>
-            </article>
-          }
-        </section>
-      }
+      <!-- Stats strip — always rendered; stats list is stable per run,
+           but we wrap in a min-height container to absorb per-step
+           value-width differences without nudging the row below. -->
+      <section class="pointer-lab__stats">
+        @for (stat of lab.stats; track $index) {
+          <article class="pointer-lab__stat pointer-lab__stat--{{ stat.tone }}">
+            <span class="pointer-lab__stat-label">{{ stat.label | i18nText }}</span>
+            <span class="pointer-lab__stat-value">{{ stat.value | i18nText }}</span>
+          </article>
+        }
+      </section>
 
-      @if (lab.resultLabel; as result) {
-        <footer class="pointer-lab__result">
-          <span class="pointer-lab__result-label">result</span>
-          <span class="pointer-lab__result-value">{{ result }}</span>
-        </footer>
-      }
+      <!-- Result footer — always rendered so it doesn't jump in at the
+           end of the run. Content swaps between placeholder and real
+           value; the slot stays the same height. -->
+      <footer
+        class="pointer-lab__result"
+        [class.pointer-lab__result--pending]="!lab.resultLabel"
+      >
+        <span class="pointer-lab__result-label">result</span>
+        <span class="pointer-lab__result-value">
+          @if (lab.resultLabel; as result) {
+            {{ result | i18nText }}
+          } @else {
+            —
+          }
+        </span>
+      </footer>
     </div>
   }
 </app-viz-panel>

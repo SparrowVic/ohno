@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { SortStep } from '../../models/sort-step';
 import { CallStackLabPresetOption } from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
@@ -24,7 +25,7 @@ import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
  */
 @Component({
   selector: 'app-call-stack-lab-visualization',
-  imports: [VizHeader, VizPanel, VizPresetPicker],
+  imports: [I18nTextPipe, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './call-stack-lab-visualization.html',
   styleUrl: './call-stack-lab-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

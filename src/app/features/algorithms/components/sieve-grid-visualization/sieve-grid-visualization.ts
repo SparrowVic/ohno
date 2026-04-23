@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
 import { SieveGridPresetOption } from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
@@ -20,7 +21,7 @@ import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
  */
 @Component({
   selector: 'app-sieve-grid-visualization',
-  imports: [VizHeader, VizPanel, VizPresetPicker],
+  imports: [I18nTextPipe, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './sieve-grid-visualization.html',
   styleUrl: './sieve-grid-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

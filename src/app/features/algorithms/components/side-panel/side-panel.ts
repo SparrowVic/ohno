@@ -245,6 +245,12 @@ export class SidePanel implements OnInit, OnDestroy {
         this.searchState() !== null ||
         this.sortState() !== null ||
         this.stringState() !== null ||
+        this.treeState() !== null ||
+        this.numberLabState() !== null ||
+        this.pointerLabState() !== null ||
+        this.sieveGridState() !== null ||
+        this.callStackLabState() !== null ||
+        this.callTreeLabState() !== null ||
         this.geometryState() !== null;
 
       if (!hasTrace && this.activeTabState() === 'trace') {
