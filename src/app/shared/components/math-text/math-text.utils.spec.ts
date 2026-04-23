@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { autoTextToTex, looksMathishContent } from './math-text.utils';
+import {
+  autoTextToTex,
+  looksMathishContent,
+  splitMathTextSegments,
+} from './math-text.utils';
 
 describe('math-text.utils', () => {
   it('detects complexity notation as math-ish content', () => {
@@ -22,5 +26,15 @@ describe('math-text.utils', () => {
     expect(autoTextToTex('O(log min(a, b))')).toBe(
       '\\mathsf{O}\\left(\\log \\min\\left(a, b\\right)\\right)',
     );
+  });
+
+  it('splits explicitly marked inline math segments', () => {
+    expect(splitMathTextSegments('Enter [[math]]fib(6)[[/math]] and [[math]]fib(5)[[/math]].')).toEqual([
+      { kind: 'text', content: 'Enter ' },
+      { kind: 'math', content: 'fib(6)' },
+      { kind: 'text', content: ' and ' },
+      { kind: 'math', content: 'fib(5)' },
+      { kind: 'text', content: '.' },
+    ]);
   });
 });

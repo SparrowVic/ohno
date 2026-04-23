@@ -356,15 +356,15 @@
               "rightDone": "Prawe podwywołanie wróciło."
             },
             "descriptions": {
-              "callLeft": "fib({{n}}) odpala lewe wywołanie fib({{k}}).",
-              "callRight": "fib({{n}}) odpala prawe wywołanie fib({{k}}).",
-              "combine": "fib({{n}}) = {{left}} + {{right}} = {{value}}.",
-              "complete": "fib({{n}}) skończyło z wynikiem {{value}}.",
-              "enter": "Wchodzimy do fib({{n}}).",
-              "gotLeft": "fib({{n}}) otrzymało left = {{value}}.",
-              "gotRight": "fib({{n}}) otrzymało right = {{value}}.",
-              "return": "Zwracamy {{value}} z fib({{n}}).",
-              "returnBase": "Przypadek bazowy fib({{n}}) zwraca {{value}}."
+              "callLeft": "[[math]]fib({{n}})[[/math]] odpala lewe wywołanie [[math]]fib({{k}})[[/math]].",
+              "callRight": "[[math]]fib({{n}})[[/math]] odpala prawe wywołanie [[math]]fib({{k}})[[/math]].",
+              "combine": "[[math]]fib({{n}}) = {{left}} + {{right}} = {{value}}[[/math]].",
+              "complete": "[[math]]fib({{n}}) = {{value}}[[/math]] i koniec.",
+              "enter": "Wchodzimy do [[math]]fib({{n}})[[/math]].",
+              "gotLeft": "[[math]]fib({{n}})[[/math]] otrzymało [[math]]left = {{value}}[[/math]].",
+              "gotRight": "[[math]]fib({{n}})[[/math]] otrzymało [[math]]right = {{value}}[[/math]].",
+              "return": "Zwracamy [[math]]{{value}}[[/math]] z [[math]]fib({{n}})[[/math]].",
+              "returnBase": "Przypadek bazowy [[math]]fib({{n}}) = {{value}}[[/math]]."
             },
             "modeLabel": "Stos wywołań rekurencji",
             "phases": {
@@ -441,9 +441,9 @@
               "backprop": "Propagacja nagrody {{reward}} w górę przez głębokość {{depth}}.",
               "complete": "Finalny wybór: ramię #{{arm}} — wizyt {{visits}}, średnia {{mean}}.",
               "expand": "Ekspansja ramienia #{{arm}} na głębokości {{depth}}.",
-              "selectPick": "Wybór ramienia #{{arm}} — najwyższe UCB = {{ucb}}.",
+              "selectPick": "Wybór ramienia #{{arm}} — najwyższe [[math]]UCB = {{ucb}}[[/math]].",
               "selectStart": "Iteracja {{iter}} — start selekcji od korzenia.",
-              "setup": "Uruchamiamy {{iterations}} iteracji MCTS z c = {{c}}.",
+              "setup": "Uruchamiamy {{iterations}} iteracji MCTS z [[math]]c = {{c}}[[/math]].",
               "simulate": "Symulacja playout — nagroda = {{reward}}."
             },
             "modeLabel": "Monte Carlo Tree Search",
@@ -478,13 +478,13 @@
             },
             "descriptions": {
               "complete": "Wartość korzenia {{value}} — ocenione {{evaluated}}, odcięte {{pruned}}.",
-              "enter": "Wchodzimy w {{player}}(d={{depth}}, α={{alpha}}, β={{beta}}).",
-              "leaf": "Wartość liścia = {{value}}.",
-              "prune": "α ({{alpha}}) ≥ β ({{beta}}) — odcinamy {{skipped}} liści podrzędnego drzewa.",
+              "enter": "Wchodzimy w [[math]]{{player}}(d={{depth}}, α={{alpha}}, β={{beta}})[[/math]].",
+              "leaf": "Wartość liścia [[math]]={{value}}[[/math]].",
+              "prune": "[[math]]α({{alpha}}) ≥ β({{beta}})[[/math]] — odcinamy {{skipped}} liści podrzędnego drzewa.",
               "settle": "{{player}} kończy z wynikiem {{value}}.",
               "setup": "Przeszukujemy drzewo gry — głębokość {{depth}}, rozgałęzienie {{branching}}.",
-              "updateMax": "MAX zbiera {{value}} → best = {{best}}, α = {{alpha}}.",
-              "updateMin": "MIN zbiera {{value}} → best = {{best}}, β = {{beta}}."
+              "updateMax": "MAX zbiera {{value}} → [[math]]best = {{best}}, α = {{alpha}}[[/math]].",
+              "updateMin": "MIN zbiera {{value}} → [[math]]best = {{best}}, β = {{beta}}[[/math]]."
             },
             "modeLabel": "Minimax (α/β)",
             "phases": {
@@ -906,10 +906,10 @@
               "combineAdjacentCachedTerms": "połącz sąsiednie wartości z cache"
             },
             "descriptions": {
-              "commitTerm": "Zapisz F({{index}}) w tabeli, aby kolejne wyrazy mogły od razu go użyć.",
-              "complete": "Tablicowanie kończy się z gotowym F({{index}}) na końcu paska.",
-              "initialize": "Ustaw F(0) = 0 i F(1) = 1 przed tablicowaniem większych wyrazów.",
-              "inspectParents": "F({{index}}) to suma dwóch poprzednich wyrazów Fibonacciego."
+              "commitTerm": "Zapisz [[math]]F({{index}})[[/math]] w tabeli, aby kolejne wyrazy mogły od razu go użyć.",
+              "complete": "Tablicowanie kończy się z gotowym [[math]]F({{index}})[[/math]] na końcu paska.",
+              "initialize": "Ustaw [[math]]F(0) = 0[[/math]] i [[math]]F(1) = 1[[/math]] przed tablicowaniem większych wyrazów.",
+              "inspectParents": "[[math]]F({{index}})[[/math]] to suma dwóch poprzednich wyrazów Fibonacciego."
             },
             "insights": {
               "baseLabel": "Baza",
@@ -1744,10 +1744,10 @@
             },
             "descriptions": {
               "advance": "Licznik mija i = {{k}}.",
-              "complete": "{{n}}! = {{value}} — koniec.",
-              "multiply": "acc ← {{prev}} × {{k}} = {{product}}",
-              "setup": "Liczymy {{n}}! z narastającym akumulatorem.",
-              "zero": "0! = 1 z definicji."
+              "complete": "[[math]]{{n}}! = {{value}}[[/math]] — koniec.",
+              "multiply": "[[math]]acc ← {{prev}} × {{k}} = {{product}}[[/math]]",
+              "setup": "Liczymy [[math]]{{n}}![[/math]] z narastającym akumulatorem.",
+              "zero": "[[math]]0! = 1[[/math]] z definicji."
             },
             "hints": {
               "counter": "licznik pętli",
@@ -1770,12 +1770,12 @@
               "sumPrev": "F(n) = F(n−1) + F(n−2) — sumujemy dwie poprzednie."
             },
             "descriptions": {
-              "advance": "Przesuwamy okno po F({{index}}).",
-              "baseF0": "Emitujemy przypadek bazowy F(0) = 0.",
-              "baseF1": "Emitujemy przypadek bazowy F(1) = 1.",
-              "complete": "F({{n}}) = {{value}} — koniec.",
-              "emit": "Wyznaczamy F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}.",
-              "setup": "Przygotowujemy okno iteracji dla F({{n}})."
+              "advance": "Przesuwamy okno po [[math]]F({{index}})[[/math]].",
+              "baseF0": "Emitujemy przypadek bazowy [[math]]F(0) = 0[[/math]].",
+              "baseF1": "Emitujemy przypadek bazowy [[math]]F(1) = 1[[/math]].",
+              "complete": "[[math]]F({{n}}) = {{value}}[[/math]] — koniec.",
+              "emit": "Wyznaczamy [[math]]F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}[[/math]].",
+              "setup": "Przygotowujemy okno iteracji dla [[math]]F({{n}})[[/math]]."
             },
             "hints": {
               "nextSum": "prev + curr",
@@ -1805,10 +1805,10 @@
               "swap": "Przesunięcie: a ← b, b ← r."
             },
             "descriptions": {
-              "complete": "Para zbiega do nwd = {{gcd}} gdy b = 0.",
-              "remainder": "r ← {{a}} mod {{b}} = {{r}}",
-              "setup": "Liczymy nwd({{a}}, {{b}}).",
-              "swap": "Przesuwamy: a ← {{a}}, b ← {{b}}."
+              "complete": "[[math]]nwd = {{gcd}}[[/math]] gdy [[math]]b = 0[[/math]].",
+              "remainder": "[[math]]r ← {{a}} mod {{b}} = {{r}}[[/math]]",
+              "setup": "Liczymy [[math]]nwd({{a}}, {{b}})[[/math]].",
+              "swap": "Przesuwamy: [[math]]a ← {{a}}, b ← {{b}}[[/math]]."
             },
             "hints": {
               "a": "dzielna",
@@ -2084,13 +2084,13 @@
               "pickFreshPrime": "Świeża liczba pierwsza — startujemy wykreślanie wielokrotności."
             },
             "descriptions": {
-              "collectPrime": "{{i}} przetrwało — dodajemy do listy liczb pierwszych.",
+              "collectPrime": "[[math]]{{i}}[[/math]] przetrwało — dodajemy do listy liczb pierwszych.",
               "complete": "Znaleziono {{count}} liczb pierwszych ≤ {{n}}.",
-              "finishPrime": "Wykreślono wszystkie wielokrotności {{p}}.",
-              "mark": "Oznaczamy {{k}} = {{p}} × (k / p) jako złożoną.",
-              "pickPrime": "{{p}} jest pierwsza — wykreślamy wielokrotności od p².",
+              "finishPrime": "Wykreślono wszystkie wielokrotności [[math]]{{p}}[[/math]].",
+              "mark": "Oznaczamy [[math]]{{k}} = {{p}} × (k / p)[[/math]] jako złożoną.",
+              "pickPrime": "[[math]]{{p}}[[/math]] jest pierwsza — wykreślamy wielokrotności od [[math]]{{p}}²[[/math]].",
               "setup": "Inicjujemy sito długości {{n}} + 1.",
-              "skipComposite": "{{p}} było już wykreślone — pomijamy."
+              "skipComposite": "[[math]]{{p}}[[/math]] było już wykreślone — pomijamy."
             },
             "modeLabel": "Sito Eratostenesa",
             "phases": {
@@ -2658,10 +2658,10 @@
               "completeMatches": "Rabin-Karp zakończony. Zweryfikowane dopasowania na indeksach {{matches}}.",
               "completeNoMatch": "Rabin-Karp zakończył działanie. Nie znaleziono żadnego zweryfikowanego wystąpienia wzorca.",
               "falseAlarm": "Fałszywy alarm w oknie {{start}}: rolling hash zderzył się, ale znaki nie pasują w całości.",
-              "prepare": "Przygotuj Rabin-Karp dla wzorca \"{{pattern}}\" z bazą {{base}} i mod {{mod}}.",
+              "prepare": "Przygotuj Rabin-Karp dla wzorca \"{{pattern}}\" z [[math]]base = {{base}}[[/math]] i [[math]]mod = {{mod}}[[/math]].",
               "rollHash": "Przetocz hash do przodu: usuń \"{{outgoingChar}}\" i dodaj \"{{incomingChar}}\".",
               "verifiedMatch": "Zweryfikowano pełne dopasowanie na indeksie {{start}}.",
-              "verifyChars": "Zweryfikuj text[{{textIndex}}] = \"{{textChar}}\" względem pattern[{{patternIndex}}] = \"{{patternChar}}\"."
+              "verifyChars": "Zweryfikuj [[math]]text[{{textIndex}}] = \"{{textChar}}\"[[/math]] względem [[math]]pattern[{{patternIndex}}] = \"{{patternChar}}\"[[/math]]."
             },
             "insights": {
               "baseLabel": "Baza",

@@ -11,11 +11,12 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { LogEntry } from '../../models/detail';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-log-panel',
-  imports: [I18nTextPipe, TranslocoPipe],
+  imports: [I18nTextPipe, MathText, TranslocoPipe],
   templateUrl: './log-panel.html',
   styleUrl: './log-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -6,9 +6,12 @@ import katex from 'katex';
 import {
   autoTextToTex,
   escapePlainText,
+  hasMarkedMathSegments,
   looksMathishContent,
   MathRenderMode,
+  MathTextSegment,
   MathTextVariant,
+  splitMathTextSegments,
 } from './math-text.utils';
 
 /**
@@ -49,6 +52,10 @@ export class MathText {
       return this.renderPlain(content);
     }
 
+    if (hasMarkedMathSegments(content) || this.mode() === 'mixed') {
+      return this.renderMixed(content);
+    }
+
     if (this.mode() === 'auto' && !looksMathishContent(content)) {
       return this.renderPlain(content);
     }
@@ -57,18 +64,54 @@ export class MathText {
   });
 
   private renderKatex(tex: string, fallback: string | null): SafeHtml {
+    const html = this.renderKatexMarkup(tex, this.displayMode());
+    if (html !== null) {
+      return this.sanitizer.bypassSecurityTrustHtml(
+        `<span class="math-text__rendered">${html}</span>`,
+      );
+    }
+
+    return this.renderPlain(fallback ?? tex);
+  }
+
+  private renderMixed(content: string): SafeHtml {
+    const segments = splitMathTextSegments(content);
+    if (segments.length === 1 && segments[0]?.kind === 'text') {
+      if (this.mode() === 'mixed' && looksMathishContent(content)) {
+        return this.renderKatex(autoTextToTex(content), content);
+      }
+      return this.renderPlain(content);
+    }
+
+    const html = segments.map((segment) => this.renderMixedSegment(segment)).join('');
+    return this.sanitizer.bypassSecurityTrustHtml(
+      `<span class="math-text__rendered math-text__rendered--mixed">${html}</span>`,
+    );
+  }
+
+  private renderMixedSegment(segment: MathTextSegment): string {
+    if (segment.kind === 'text') {
+      return `<span class="math-text__segment math-text__segment--plain">${escapePlainText(segment.content)}</span>`;
+    }
+
+    const html = this.renderKatexMarkup(autoTextToTex(segment.content), false);
+    if (html === null) {
+      return `<span class="math-text__segment math-text__segment--plain">${escapePlainText(segment.content)}</span>`;
+    }
+
+    return `<span class="math-text__segment math-text__segment--math">${html}</span>`;
+  }
+
+  private renderKatexMarkup(tex: string, displayMode: boolean): string | null {
     try {
-      const html = katex.renderToString(tex, {
-        displayMode: this.displayMode(),
+      return katex.renderToString(tex, {
+        displayMode,
         output: 'htmlAndMathml',
         strict: 'ignore',
         throwOnError: true,
       });
-      return this.sanitizer.bypassSecurityTrustHtml(
-        `<span class="math-text__rendered">${html}</span>`,
-      );
     } catch {
-      return this.renderPlain(fallback ?? tex);
+      return null;
     }
   }
 

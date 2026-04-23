@@ -36,6 +36,15 @@
   overflow: visible;
 }
 
+.math-text__rendered--mixed {
+  display: inline;
+  white-space: normal;
+}
+
+.math-text__rendered--mixed::after {
+  display: none;
+}
+
 .math-text--display .math-text__rendered {
   overflow-x: auto;
   overflow-y: hidden;
@@ -80,6 +89,16 @@
   display: inline-block;
 }
 
+.math-text__segment--plain {
+  display: inline;
+}
+
+.math-text__segment--math {
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: baseline;
+}
+
 .math-text--display {
   --math-text-scale: 1.12;
 }
@@ -113,6 +132,33 @@
 
 .math-text--variant-formula.math-text--display {
   --math-text-scale: 1.22;
+}
+
+.math-text--variant-log {
+  --math-text-log-rgb: var(--viz-warning-rgb);
+  --math-text-scale: 1.04;
+  --math-text-glow: rgba(var(--math-text-log-rgb), 0.08);
+  --math-text-tracking: 0.003em;
+}
+
+.math-text--variant-log .math-text__segment--math {
+  padding: 0.02em 0.22em 0.08em;
+  border-radius: 0.42em;
+  background:
+    linear-gradient(180deg, rgba(var(--math-text-log-rgb), 0.16), rgba(var(--math-text-log-rgb), 0.06)),
+    rgba(255, 255, 255, 0.015);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--math-text-log-rgb), 0.2),
+    0 0 12px rgba(var(--math-text-log-rgb), 0.08);
+}
+
+.math-text--variant-log .math-text__segment--math .katex {
+  font-size: calc(1em * 1.04);
+}
+
+.math-text--variant-log .math-text__segment--math .mathsf {
+  font-family: KaTeX_SansSerif, KaTeX_Main, sans-serif;
+  font-weight: 700;
 }
 
 .math-text--variant-chip .math-text__rendered .mathsf,

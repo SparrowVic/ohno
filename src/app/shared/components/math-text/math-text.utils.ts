@@ -68,8 +68,55 @@ const SYMBOL_REPLACEMENTS: readonly [string, string][] = [
   ['–', '-'],
 ];
 
-export type MathRenderMode = 'auto' | 'math' | 'text';
-export type MathTextVariant = 'default' | 'metric' | 'chip' | 'formula' | 'copy';
+export type MathRenderMode = 'auto' | 'math' | 'text' | 'mixed';
+export type MathTextVariant = 'default' | 'metric' | 'chip' | 'formula' | 'copy' | 'log';
+
+export interface MathTextSegment {
+  readonly kind: 'text' | 'math';
+  readonly content: string;
+}
+
+const MATH_MARKUP_OPEN = '[[math]]';
+const MATH_MARKUP_CLOSE = '[[/math]]';
+
+export function hasMarkedMathSegments(value: string): boolean {
+  const openIndex = value.indexOf(MATH_MARKUP_OPEN);
+  if (openIndex < 0) return false;
+
+  const closeIndex = value.indexOf(MATH_MARKUP_CLOSE, openIndex + MATH_MARKUP_OPEN.length);
+  return closeIndex >= 0;
+}
+
+export function splitMathTextSegments(value: string): readonly MathTextSegment[] {
+  if (!hasMarkedMathSegments(value)) {
+    return [{ kind: 'text', content: value }];
+  }
+
+  const segments: MathTextSegment[] = [];
+  let cursor = 0;
+
+  while (cursor < value.length) {
+    const openIndex = value.indexOf(MATH_MARKUP_OPEN, cursor);
+    if (openIndex < 0) {
+      pushMathTextSegment(segments, 'text', value.slice(cursor));
+      break;
+    }
+
+    pushMathTextSegment(segments, 'text', value.slice(cursor, openIndex));
+
+    const mathStart = openIndex + MATH_MARKUP_OPEN.length;
+    const closeIndex = value.indexOf(MATH_MARKUP_CLOSE, mathStart);
+    if (closeIndex < 0) {
+      pushMathTextSegment(segments, 'text', value.slice(openIndex));
+      break;
+    }
+
+    pushMathTextSegment(segments, 'math', value.slice(mathStart, closeIndex).trim());
+    cursor = closeIndex + MATH_MARKUP_CLOSE.length;
+  }
+
+  return segments.length > 0 ? segments : [{ kind: 'text', content: value }];
+}
 
 export function looksMathishContent(value: string): boolean {
   const normalized = value.trim();
@@ -276,4 +323,13 @@ function escapeTexText(value: string): string {
     .replaceAll('{', '\\{')
     .replaceAll('}', '\\}')
     .replaceAll('%', '\\%');
+}
+
+function pushMathTextSegment(
+  segments: MathTextSegment[],
+  kind: MathTextSegment['kind'],
+  content: string,
+): void {
+  if (!content) return;
+  segments.push({ kind, content });
 }

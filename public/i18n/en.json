@@ -356,15 +356,15 @@
               "rightDone": "Right sub-call returned."
             },
             "descriptions": {
-              "callLeft": "fib({{n}}) spawns left call fib({{k}}).",
-              "callRight": "fib({{n}}) spawns right call fib({{k}}).",
-              "combine": "fib({{n}}) = {{left}} + {{right}} = {{value}}.",
-              "complete": "fib({{n}}) resolved to {{value}}.",
-              "enter": "Enter fib({{n}}).",
-              "gotLeft": "fib({{n}}) received left = {{value}}.",
-              "gotRight": "fib({{n}}) received right = {{value}}.",
-              "return": "Return {{value}} from fib({{n}}).",
-              "returnBase": "Base case fib({{n}}) returns {{value}}."
+              "callLeft": "[[math]]fib({{n}})[[/math]] spawns left call [[math]]fib({{k}})[[/math]].",
+              "callRight": "[[math]]fib({{n}})[[/math]] spawns right call [[math]]fib({{k}})[[/math]].",
+              "combine": "[[math]]fib({{n}}) = {{left}} + {{right}} = {{value}}[[/math]].",
+              "complete": "[[math]]fib({{n}}) = {{value}}[[/math]] resolved.",
+              "enter": "Enter [[math]]fib({{n}})[[/math]].",
+              "gotLeft": "[[math]]fib({{n}})[[/math]] received [[math]]left = {{value}}[[/math]].",
+              "gotRight": "[[math]]fib({{n}})[[/math]] received [[math]]right = {{value}}[[/math]].",
+              "return": "Return [[math]]{{value}}[[/math]] from [[math]]fib({{n}})[[/math]].",
+              "returnBase": "Base case [[math]]fib({{n}}) = {{value}}[[/math]]."
             },
             "modeLabel": "Recursion call stack",
             "phases": {
@@ -441,9 +441,9 @@
               "backprop": "Backpropagate reward {{reward}} up through depth {{depth}}.",
               "complete": "Final pick: arm #{{arm}} — visits {{visits}}, mean {{mean}}.",
               "expand": "Expand arm #{{arm}} at depth {{depth}}.",
-              "selectPick": "Pick arm #{{arm}} — highest UCB = {{ucb}}.",
+              "selectPick": "Pick arm #{{arm}} — highest [[math]]UCB = {{ucb}}[[/math]].",
               "selectStart": "Iteration {{iter}} — start selection at the root.",
-              "setup": "Run {{iterations}} MCTS iterations with c = {{c}}.",
+              "setup": "Run {{iterations}} MCTS iterations with [[math]]c = {{c}}[[/math]].",
               "simulate": "Simulate playout — reward = {{reward}}."
             },
             "modeLabel": "Monte Carlo Tree Search",
@@ -478,13 +478,13 @@
             },
             "descriptions": {
               "complete": "Root value {{value}} — evaluated {{evaluated}}, pruned {{pruned}}.",
-              "enter": "Enter {{player}}(d={{depth}}, α={{alpha}}, β={{beta}}).",
-              "leaf": "Leaf value = {{value}}.",
-              "prune": "α ({{alpha}}) ≥ β ({{beta}}) — prune {{skipped}} subtree leaves.",
+              "enter": "Enter [[math]]{{player}}(d={{depth}}, α={{alpha}}, β={{beta}})[[/math]].",
+              "leaf": "Leaf value [[math]]={{value}}[[/math]].",
+              "prune": "[[math]]α({{alpha}}) ≥ β({{beta}})[[/math]] — prune {{skipped}} subtree leaves.",
               "settle": "{{player}} settled at {{value}}.",
               "setup": "Search game tree — depth {{depth}}, branching {{branching}}.",
-              "updateMax": "MAX picks up {{value}} → best = {{best}}, α = {{alpha}}.",
-              "updateMin": "MIN picks up {{value}} → best = {{best}}, β = {{beta}}."
+              "updateMax": "MAX picks up {{value}} → [[math]]best = {{best}}, α = {{alpha}}[[/math]].",
+              "updateMin": "MIN picks up {{value}} → [[math]]best = {{best}}, β = {{beta}}[[/math]]."
             },
             "modeLabel": "Minimax (α/β)",
             "phases": {
@@ -906,10 +906,10 @@
               "combineAdjacentCachedTerms": "combine adjacent cached terms"
             },
             "descriptions": {
-              "commitTerm": "Store F({{index}}) in the table so later terms can reuse it instantly.",
-              "complete": "Tabulation finishes with F({{index}}) ready at the end of the strip.",
-              "initialize": "Seed F(0) = 0 and F(1) = 1 before tabulating larger terms.",
-              "inspectParents": "F({{index}}) is the sum of the two previous Fibonacci terms."
+              "commitTerm": "Store [[math]]F({{index}})[[/math]] in the table so later terms can reuse it instantly.",
+              "complete": "Tabulation finishes with [[math]]F({{index}})[[/math]] ready at the end of the strip.",
+              "initialize": "Seed [[math]]F(0) = 0[[/math]] and [[math]]F(1) = 1[[/math]] before tabulating larger terms.",
+              "inspectParents": "[[math]]F({{index}})[[/math]] is the sum of the two previous Fibonacci terms."
             },
             "insights": {
               "baseLabel": "Base",
@@ -1744,10 +1744,10 @@
             },
             "descriptions": {
               "advance": "Move counter past i = {{k}}.",
-              "complete": "{{n}}! = {{value}} — done.",
-              "multiply": "acc ← {{prev}} × {{k}} = {{product}}",
-              "setup": "Compute {{n}}! using a running accumulator.",
-              "zero": "0! = 1 by definition."
+              "complete": "[[math]]{{n}}! = {{value}}[[/math]] — done.",
+              "multiply": "[[math]]acc ← {{prev}} × {{k}} = {{product}}[[/math]]",
+              "setup": "Compute [[math]]{{n}}![[/math]] using a running accumulator.",
+              "zero": "[[math]]0! = 1[[/math]] by definition."
             },
             "hints": {
               "counter": "loop counter",
@@ -1770,12 +1770,12 @@
               "sumPrev": "F(n) = F(n−1) + F(n−2) — sum the previous two."
             },
             "descriptions": {
-              "advance": "Roll the window after F({{index}}).",
-              "baseF0": "Emit the base case F(0) = 0.",
-              "baseF1": "Emit the base case F(1) = 1.",
-              "complete": "F({{n}}) = {{value}} — done.",
-              "emit": "Compute F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}.",
-              "setup": "Prepare rolling window to compute F({{n}})."
+              "advance": "Roll the window after [[math]]F({{index}})[[/math]].",
+              "baseF0": "Emit the base case [[math]]F(0) = 0[[/math]].",
+              "baseF1": "Emit the base case [[math]]F(1) = 1[[/math]].",
+              "complete": "[[math]]F({{n}}) = {{value}}[[/math]] — done.",
+              "emit": "Compute [[math]]F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}[[/math]].",
+              "setup": "Prepare a rolling window to compute [[math]]F({{n}})[[/math]]."
             },
             "hints": {
               "nextSum": "prev + curr",
@@ -1805,10 +1805,10 @@
               "swap": "Shift the window: a ← b, b ← r."
             },
             "descriptions": {
-              "complete": "gcd collapses to {{gcd}} once b = 0.",
-              "remainder": "r ← {{a}} mod {{b}} = {{r}}",
-              "setup": "Compute gcd({{a}}, {{b}}).",
-              "swap": "Shift pair: a ← {{a}}, b ← {{b}}."
+              "complete": "[[math]]gcd = {{gcd}}[[/math]] once [[math]]b = 0[[/math]].",
+              "remainder": "[[math]]r ← {{a}} mod {{b}} = {{r}}[[/math]]",
+              "setup": "Compute [[math]]gcd({{a}}, {{b}})[[/math]].",
+              "swap": "Shift pair: [[math]]a ← {{a}}, b ← {{b}}[[/math]]."
             },
             "hints": {
               "a": "dividend",
@@ -2084,13 +2084,13 @@
               "pickFreshPrime": "Fresh prime — start crossing its multiples."
             },
             "descriptions": {
-              "collectPrime": "{{i}} survived — add it to the primes list.",
+              "collectPrime": "[[math]]{{i}}[[/math]] survived — add it to the primes list.",
               "complete": "Found {{count}} primes ≤ {{n}}.",
-              "finishPrime": "Done crossing multiples of {{p}}.",
-              "mark": "Mark {{k}} = {{p}} × (k / p) as composite.",
-              "pickPrime": "{{p}} is prime — cross its multiples starting at p².",
+              "finishPrime": "Done crossing multiples of [[math]]{{p}}[[/math]].",
+              "mark": "Mark [[math]]{{k}} = {{p}} × (k / p)[[/math]] as composite.",
+              "pickPrime": "[[math]]{{p}}[[/math]] is prime — cross its multiples starting at [[math]]{{p}}²[[/math]].",
               "setup": "Initialise a sieve of length {{n}} + 1.",
-              "skipComposite": "{{p}} was already crossed — skip."
+              "skipComposite": "[[math]]{{p}}[[/math]] was already crossed — skip."
             },
             "modeLabel": "Sieve of Eratosthenes",
             "phases": {
@@ -2658,10 +2658,10 @@
               "completeMatches": "Rabin-Karp finished. Verified matches at indices {{matches}}.",
               "completeNoMatch": "Rabin-Karp finished. No verified pattern occurrence was found.",
               "falseAlarm": "False alarm at window {{start}}: the rolling hash collided, but the characters do not fully match.",
-              "prepare": "Prepare Rabin-Karp for pattern \"{{pattern}}\" with base {{base}} and mod {{mod}}.",
+              "prepare": "Prepare Rabin-Karp for pattern \"{{pattern}}\" with [[math]]base = {{base}}[[/math]] and [[math]]mod = {{mod}}[[/math]].",
               "rollHash": "Roll the hash forward: drop \"{{outgoingChar}}\" and add \"{{incomingChar}}\".",
               "verifiedMatch": "Verified full match at index {{start}}.",
-              "verifyChars": "Verify text[{{textIndex}}] = \"{{textChar}}\" against pattern[{{patternIndex}}] = \"{{patternChar}}\"."
+              "verifyChars": "Verify [[math]]text[{{textIndex}}] = \"{{textChar}}\"[[/math]] against [[math]]pattern[{{patternIndex}}] = \"{{patternChar}}\"[[/math]]."
             },
             "insights": {
               "baseLabel": "Base",

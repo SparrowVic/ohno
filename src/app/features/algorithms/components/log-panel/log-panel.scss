@@ -236,6 +236,8 @@
 }
 
 .log__desc {
+  --math-text-log-rgb: var(--viz-warning-rgb);
+  display: block;
   color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: 11.5px;
@@ -243,6 +245,11 @@
   min-width: 0;
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
+}
+
+.log__entry--last .log__desc {
+  --math-text-log-rgb: var(--accent-rgb);
+  color: var(--text-primary);
 }
 
 @container (max-width: 420px) {
