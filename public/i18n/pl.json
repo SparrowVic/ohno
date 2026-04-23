@@ -3717,11 +3717,20 @@
       },
       "sidePanel": {
         "ariaLabel": "Zakładki inspectora",
+        "codeForTaskLabel": "Kod dla zadania:",
         "tabs": {
           "code": "Kod",
           "info": "Info",
           "log": "Log",
           "trace": "Ślad"
+        }
+      },
+      "tasks": {
+        "gcd": {
+          "values": {
+            "a": "a",
+            "b": "b"
+          }
         }
       },
       "toolbar": {
@@ -3784,6 +3793,18 @@
           "randomize": "Losuj"
         },
         "counterLabel": "Krok {{current}} / {{total}}",
+        "customizeValues": {
+          "aboveMaximumLabel": "Wartość przekracza dozwolone maksimum.",
+          "applyLabel": "Zastosuj",
+          "belowMinimumLabel": "Wartość poniżej dozwolonego minimum.",
+          "cancelLabel": "Anuluj",
+          "fieldTypeUnsupportedLabel": "Typ pola jeszcze nie obsługiwany.",
+          "mustBeNonZeroLabel": "Wartość nie może być zerem.",
+          "notAnIntegerLabel": "Wpisz liczbę całkowitą.",
+          "requiredLabel": "Pole wymagane.",
+          "title": "Własne wartości"
+        },
+        "customizeValuesAriaLabel": "Dostosuj wartości",
         "datasetSizeLabel": "Rozmiar danych",
         "nextStepLabel": "Następny krok",
         "pausePlaybackLabel": "Wstrzymaj odtwarzanie",
@@ -3866,6 +3887,7 @@
           "twoSideCheck": "Kontrola dwóch stron",
           "vectorMerge": "Scalanie wektorów"
         },
+        "taskLabel": "Zadanie",
         "viewLabel": "Widok"
       },
       "traceHint": {

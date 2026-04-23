@@ -1,5 +1,7 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { Task } from '../../models/task';
+
 export interface ExtendedEuclideanPresetOption {
   readonly id: string;
   readonly label: string;
@@ -44,17 +46,72 @@ export const EXTENDED_EUCLIDEAN_PRESETS: readonly ExtendedEuclideanPresetOption[
 
 export const DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID = 'classic';
 
+export interface ExtendedEuclideanValues {
+  readonly a: number;
+  readonly b: number;
+}
+
+/** Task-shape source of truth for Extended Euclidean. For now all three
+ *  tasks share the same `bezout` code snippet — same algorithm, three
+ *  different input pairs. The additional problem-type variants
+ *  (modular inverse, `ax + by = c` linear Diophantine) are tracked in
+ *  the migration spec and will arrive as tasks with their own
+ *  `codeSnippetId`s once their generator branches are authored. */
+export const EXTENDED_EUCLIDEAN_TASKS: readonly Task<ExtendedEuclideanValues>[] = [
+  {
+    id: 'short',
+    name: K.short.label,
+    defaultValues: { a: 60, b: 48 },
+    inputSchema: {
+      a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
+      b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+    },
+    codeSnippetId: 'extended-euclidean',
+  },
+  {
+    id: 'classic',
+    name: K.classic.label,
+    defaultValues: { a: 240, b: 46 },
+    inputSchema: {
+      a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
+      b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+    },
+    codeSnippetId: 'extended-euclidean',
+  },
+  {
+    id: 'large',
+    name: K.large.label,
+    defaultValues: { a: 1071, b: 462 },
+    inputSchema: {
+      a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
+      b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+    },
+    codeSnippetId: 'extended-euclidean',
+  },
+];
+export const DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID = 'classic';
+
 export function createExtendedEuclideanScenario(
   _size: number,
   presetId: string | null,
+  customValues?: ExtendedEuclideanValues,
 ): ExtendedEuclideanScenario {
   const id = presetId ?? DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID;
+  const base = resolveExtendedEuclideanBase(id);
+  return {
+    kind: 'extended-euclidean',
+    presetId: base.presetId,
+    presetLabel: base.presetLabel,
+    presetDescription: base.presetDescription,
+    a: customValues?.a ?? base.a,
+    b: customValues?.b ?? base.b,
+  };
+}
+
+function resolveExtendedEuclideanBase(id: string): Omit<ExtendedEuclideanScenario, 'kind'> {
   switch (id) {
     case 'short':
-      /* 60 / 48 → gcd 12, a single back-sub. Entry-level scenario for
-       *  students meeting Bézout for the first time. */
       return {
-        kind: 'extended-euclidean',
         presetId: 'short',
         presetLabel: K.short.label,
         presetDescription: K.short.description,
@@ -62,11 +119,7 @@ export function createExtendedEuclideanScenario(
         b: 48,
       };
     case 'large':
-      /* 1071 / 462 — mirrors Euclidean's "large" preset so students can
-       *  watch the extra back-substitution unfold on top of a chain
-       *  they already recognise from the dashboard view. */
       return {
-        kind: 'extended-euclidean',
         presetId: 'large',
         presetLabel: K.large.label,
         presetDescription: K.large.description,
@@ -75,11 +128,7 @@ export function createExtendedEuclideanScenario(
       };
     case 'classic':
     default:
-      /* 240 / 46 — the textbook example. Five-step forward chain
-       *  produces a richly layered back-substitution (Bézout
-       *  coefficients emerge only after four rewrites). */
       return {
-        kind: 'extended-euclidean',
         presetId: 'classic',
         presetLabel: K.classic.label,
         presetDescription: K.classic.description,

@@ -145,6 +145,7 @@ export const I18N_KEY = {
       },
       sidePanel: {
         ariaLabel: t('features.algorithms.sidePanel.ariaLabel'),
+        codeForTaskLabel: t('features.algorithms.sidePanel.codeForTaskLabel'),
         tabs: {
           trace: t('features.algorithms.sidePanel.tabs.trace'),
           code: t('features.algorithms.sidePanel.tabs.code'),
@@ -161,6 +162,21 @@ export const I18N_KEY = {
         runStateLabel: t('features.algorithms.toolbar.runStateLabel'),
         counterLabel: t('features.algorithms.toolbar.counterLabel'),
         viewLabel: t('features.algorithms.toolbar.viewLabel'),
+        taskLabel: t('features.algorithms.toolbar.taskLabel'),
+        customizeValuesAriaLabel: t('features.algorithms.toolbar.customizeValuesAriaLabel'),
+        customizeValues: {
+          title: t('features.algorithms.toolbar.customizeValues.title'),
+          applyLabel: t('features.algorithms.toolbar.customizeValues.applyLabel'),
+          cancelLabel: t('features.algorithms.toolbar.customizeValues.cancelLabel'),
+          requiredLabel: t('features.algorithms.toolbar.customizeValues.requiredLabel'),
+          notAnIntegerLabel: t('features.algorithms.toolbar.customizeValues.notAnIntegerLabel'),
+          belowMinimumLabel: t('features.algorithms.toolbar.customizeValues.belowMinimumLabel'),
+          aboveMaximumLabel: t('features.algorithms.toolbar.customizeValues.aboveMaximumLabel'),
+          mustBeNonZeroLabel: t('features.algorithms.toolbar.customizeValues.mustBeNonZeroLabel'),
+          fieldTypeUnsupportedLabel: t(
+            'features.algorithms.toolbar.customizeValues.fieldTypeUnsupportedLabel',
+          ),
+        },
         datasetSizeLabel: t('features.algorithms.toolbar.datasetSizeLabel'),
         speedLabel: t('features.algorithms.toolbar.speedLabel'),
         actions: {

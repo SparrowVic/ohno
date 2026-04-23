@@ -1,0 +1,101 @@
+@use '../control-chrome' as chrome;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.lab-number {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Chromed container — same surface treatment as `LabSelect`'s trigger.
+   Label eyebrow and the actual input sit stacked inside this single
+   bordered box, so number inputs visually align with the rest of the
+   lab-control family (select, slider, multi-select). */
+.lab-number__field {
+  @include chrome.control-field;
+
+  display: flex;
+  align-items: center;
+  min-height: var(--control-height);
+  padding: 4px var(--control-padding-inline);
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart);
+
+  &:hover {
+    @include chrome.control-field-hover;
+  }
+
+  /* Elevate focus styling to the whole box when the inner input is
+     focused — mirrors how select trigger reacts to :focus-visible. */
+  &:has(.lab-number__input:focus-visible) {
+    @include chrome.control-field-focus;
+  }
+}
+
+.lab-number--invalid .lab-number__field {
+  border-color: rgba(var(--viz-danger-rgb), 0.5);
+}
+
+.lab-number__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.lab-number__label {
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+.lab-number__field:hover .lab-number__label {
+  color: var(--text-secondary);
+}
+
+.lab-number__input {
+  /* Borderless — the surrounding field carries the chrome. */
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  line-height: 1.2;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.lab-number__error {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--viz-danger);
+}

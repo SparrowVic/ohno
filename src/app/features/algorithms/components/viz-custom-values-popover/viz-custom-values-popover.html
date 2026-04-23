@@ -1,0 +1,36 @@
+<app-lab-popover (close)="close.emit()">
+  <header class="custom-values__header">
+    <h3 class="custom-values__title">
+      {{ I18N_KEY.features.algorithms.toolbar.customizeValues.title | transloco }}
+    </h3>
+  </header>
+
+  <form class="custom-values__form" (submit)="$event.preventDefault(); onApply()">
+    @for (field of fields(); track field.key) {
+      <app-lab-number-input
+        [label]="field.label"
+        [error]="field.error ? (field.error | i18nText) : null"
+        [formControl]="field.control"
+      />
+    }
+
+    @if (crossFieldError(); as err) {
+      <p class="custom-values__cross-error" role="alert">
+        {{ err | i18nText }}
+      </p>
+    }
+
+    <footer class="custom-values__actions">
+      <button type="button" class="custom-values__btn custom-values__btn--ghost" (click)="onCancel()">
+        {{ I18N_KEY.features.algorithms.toolbar.customizeValues.cancelLabel | transloco }}
+      </button>
+      <button
+        type="submit"
+        class="custom-values__btn custom-values__btn--primary"
+        [disabled]="!canApply()"
+      >
+        {{ I18N_KEY.features.algorithms.toolbar.customizeValues.applyLabel | transloco }}
+      </button>
+    </footer>
+  </form>
+</app-lab-popover>

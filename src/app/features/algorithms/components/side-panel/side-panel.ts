@@ -14,6 +14,9 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LogEntry } from '../../models/detail';
 import { DpTraceState } from '../../models/dp';
@@ -99,6 +102,8 @@ const MAX_WIDTH = 680;
     ClosestPairTracePanel,
     CodePanel,
     DelaunayTracePanel,
+    I18nTextPipe,
+    MathText,
     DpTracePanel,
     DsuTracePanel,
     GeometryTracePanel,
@@ -137,6 +142,11 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly codeRegions = input<readonly CodeRegion[]>([]);
   readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
+  /** Name of the currently-selected task (if the algorithm has
+   *  migrated to the unified task model). Rendered as a muted
+   *  eyebrow above the code snippet so the student knows which
+   *  variant of the algorithm they're reading. */
+  readonly activeTaskName = input<TranslatableText | null>(null);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
   readonly dpState = input<DpTraceState | null>(null);

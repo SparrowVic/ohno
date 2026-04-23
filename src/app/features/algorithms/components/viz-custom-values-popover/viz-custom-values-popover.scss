@@ -1,0 +1,91 @@
+:host {
+  /* Positioned by the caller (toolbar task dock) — this component
+     is purely the form body; chrome comes from `app-lab-popover`. */
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 4;
+  pointer-events: auto;
+  min-width: 260px;
+}
+
+.custom-values__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.custom-values__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(var(--chrome-accent-rgb), 0.86);
+  text-transform: uppercase;
+}
+
+.custom-values__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-values__cross-error {
+  margin: 2px 0 0;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(var(--viz-danger-rgb), 0.08);
+  border: 0.5px solid rgba(var(--viz-danger-rgb), 0.3);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--viz-danger);
+}
+
+.custom-values__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.custom-values__btn {
+  height: var(--control-height-sm);
+  padding: 0 14px;
+  border-radius: var(--control-radius-sm);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
+}
+
+.custom-values__btn--ghost {
+  background: transparent;
+  border: 0.5px solid var(--border-hover);
+  color: var(--text-secondary);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+  }
+}
+
+.custom-values__btn--primary {
+  background: rgba(var(--accent-rgb), 0.16);
+  border: 0.5px solid rgba(var(--accent-rgb), 0.42);
+  color: var(--accent-strong);
+
+  &:hover:not(:disabled) {
+    background: rgba(var(--accent-rgb), 0.24);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}

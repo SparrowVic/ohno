@@ -450,6 +450,11 @@
 
 .side-content__panel--code {
   overflow: visible;
+  /* Stack children vertically so the task-eyebrow sits above the code
+     panel instead of being pushed into a second column by the flex
+     row default on `.side-content__panel`. */
+  flex-direction: column;
+  gap: 10px;
 }
 
 @keyframes side-panel-enter {
@@ -487,4 +492,36 @@
     animation: none !important;
     transition: none;
   }
+}
+
+/* Eyebrow above the Code tab content — tells the student which task's
+   implementation they're reading. Only renders when the algorithm has
+   migrated to the unified task model. */
+.side-panel__code-eyebrow {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(var(--viz-warning-rgb), 0.06);
+  border: 0.5px solid rgba(var(--viz-warning-rgb), 0.22);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.side-panel__code-eyebrow-label {
+  color: var(--text-tertiary);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.side-panel__code-eyebrow-task {
+  color: rgb(var(--viz-warning-rgb));
+  font-weight: 500;
 }

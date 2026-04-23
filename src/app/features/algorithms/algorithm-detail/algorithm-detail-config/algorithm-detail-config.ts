@@ -503,6 +503,7 @@ import { MatrixTraceState } from '../../models/matrix';
 import { NetworkTraceState } from '../../models/network';
 import { SearchTraceState } from '../../models/search';
 import { StringPresetOption, StringTraceState } from '../../models/string';
+import { Task } from '../../models/task';
 import { TreePresetOption } from '../../models/tree';
 import {
   NumberLabPresetOption,
@@ -512,9 +513,12 @@ import {
   FIBONACCI_PRESETS as FIBONACCI_ITER_PRESETS,
   FACTORIAL_PRESETS,
   EUCLIDEAN_GCD_PRESETS,
+  EUCLIDEAN_GCD_TASKS,
+  EuclideanGcdValues,
   DEFAULT_FIBONACCI_PRESET_ID as DEFAULT_FIBONACCI_ITER_PRESET_ID,
   DEFAULT_FACTORIAL_PRESET_ID,
   DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
+  DEFAULT_EUCLIDEAN_GCD_TASK_ID,
   createFibonacciScenario as createFibonacciIterScenario,
   createFactorialScenario,
   createEuclideanGcdScenario,
@@ -587,8 +591,11 @@ import { mctsGenerator } from '../../algorithms/mcts/mcts';
 import { extendedEuclideanGenerator } from '../../algorithms/extended-euclidean/extended-euclidean';
 import {
   ExtendedEuclideanScenario,
+  ExtendedEuclideanValues,
   EXTENDED_EUCLIDEAN_PRESETS,
+  EXTENDED_EUCLIDEAN_TASKS,
   DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
+  DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
   createExtendedEuclideanScenario,
 } from '../../utils/extended-euclidean-scenarios/extended-euclidean-scenarios';
 import {
@@ -1663,12 +1670,23 @@ interface TreeAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmView
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
-interface NumberLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+interface NumberLabAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
   readonly kind: 'number-lab';
   readonly presetOptions: readonly NumberLabPresetOption[];
   readonly defaultPresetId: string;
-  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  /** New unified task model. When present, the toolbar task picker
+   *  takes over and the per-viz `presetOptions` are treated as legacy
+   *  source of truth only for algorithms that haven't migrated yet.
+   *  During migration both coexist. */
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
 }
 
 interface PointerLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
@@ -2320,7 +2338,10 @@ const FACTORIAL_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: factorialGenerator,
 };
 
-const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
+const EUCLIDEAN_GCD_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  EuclideanGcdScenario,
+  EuclideanGcdValues
+> = {
   kind: 'number-lab',
   codeLines: EUCLIDEAN_GCD_CODE,
   codeRegions: EUCLIDEAN_GCD_CODE_REGIONS,
@@ -2328,18 +2349,24 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: EUCLIDEAN_GCD_CODE_VARIANTS,
   variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
-  /* Scenario presets are the only meaningful input axis — the (a, b)
-   *  pair is picked via the chip row in the viz header. Dataset-size
-   *  has no effect on this algorithm, so we collapse to a single
-   *  option and the toolbar hides the select entirely. */
+  /* Size has no meaning here — the (a, b) pair comes from the task
+   *  picker + customize-values popover. Single-option hides the
+   *  toolbar's size select. */
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New GCD pair',
   legendItems: () => [],
+  /* `presetOptions` stays populated for now so the legacy scratchpad
+   *  per-viz picker keeps working during migration; once the toolbar
+   *  task picker is live it'll be hidden via an empty array at the
+   *  algorithm-detail level. */
   presetOptions: EUCLIDEAN_GCD_PRESETS,
   defaultPresetId: DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
-  createScenario: (size, presetId) => createEuclideanGcdScenario(size, presetId),
+  tasks: EUCLIDEAN_GCD_TASKS,
+  defaultTaskId: DEFAULT_EUCLIDEAN_GCD_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createEuclideanGcdScenario(size, presetId, customValues),
   generator: euclideanGcdGenerator,
 };
 
@@ -2349,7 +2376,10 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
  *  interesting to add. Reuses the `number-lab` kind dispatcher so the
  *  rebuild logic can wire the scenario factory + generator exactly
  *  like other (a, b)-pair algorithms. */
-const EXTENDED_EUCLIDEAN_VIEW_CONFIG: AlgorithmViewConfig = {
+const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  ExtendedEuclideanScenario,
+  ExtendedEuclideanValues
+> = {
   kind: 'number-lab',
   codeLines: EXTENDED_EUCLIDEAN_CODE,
   codeRegions: EXTENDED_EUCLIDEAN_CODE_REGIONS,
@@ -2357,9 +2387,8 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: EXTENDED_EUCLIDEAN_CODE_VARIANTS,
   variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
-  /* Same reasoning as EUCLIDEAN_GCD_VIEW_CONFIG — preset chips are
-   *  the only meaningful input; the size selector would just dress
-   *  the scenario choice in a worse UI. Single-option hides it. */
+  /* Size has no meaning here — the (a, b) pair comes from the task
+   *  picker + customize-values popover. */
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
@@ -2367,7 +2396,10 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: AlgorithmViewConfig = {
   legendItems: () => [],
   presetOptions: EXTENDED_EUCLIDEAN_PRESETS,
   defaultPresetId: DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
-  createScenario: (size, presetId) => createExtendedEuclideanScenario(size, presetId),
+  tasks: EXTENDED_EUCLIDEAN_TASKS,
+  defaultTaskId: DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createExtendedEuclideanScenario(size, presetId, customValues),
   generator: extendedEuclideanGenerator,
 };
 

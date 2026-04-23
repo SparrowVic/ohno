@@ -3717,11 +3717,20 @@
       },
       "sidePanel": {
         "ariaLabel": "Inspector tabs",
+        "codeForTaskLabel": "Code for task:",
         "tabs": {
           "code": "Code",
           "info": "Info",
           "log": "Log",
           "trace": "Trace"
+        }
+      },
+      "tasks": {
+        "gcd": {
+          "values": {
+            "a": "a",
+            "b": "b"
+          }
         }
       },
       "toolbar": {
@@ -3784,6 +3793,18 @@
           "randomize": "Randomize"
         },
         "counterLabel": "Step {{current}} / {{total}}",
+        "customizeValues": {
+          "aboveMaximumLabel": "Value is above the allowed maximum.",
+          "applyLabel": "Apply",
+          "belowMinimumLabel": "Value is below the allowed minimum.",
+          "cancelLabel": "Cancel",
+          "fieldTypeUnsupportedLabel": "Field type not yet supported.",
+          "mustBeNonZeroLabel": "Value must be non-zero.",
+          "notAnIntegerLabel": "Enter an integer.",
+          "requiredLabel": "Value required.",
+          "title": "Custom values"
+        },
+        "customizeValuesAriaLabel": "Customize values",
         "datasetSizeLabel": "Dataset size",
         "nextStepLabel": "Next step",
         "pausePlaybackLabel": "Pause playback",
@@ -3866,6 +3887,7 @@
           "twoSideCheck": "Two-Side Check",
           "vectorMerge": "Vector Merge"
         },
+        "taskLabel": "Task",
         "viewLabel": "View"
       },
       "traceHint": {

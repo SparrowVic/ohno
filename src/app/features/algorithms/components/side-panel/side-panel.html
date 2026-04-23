@@ -92,6 +92,16 @@
       }
     }
     @case ('code') {
+      @if (activeTaskName(); as taskName) {
+        <p class="side-panel__code-eyebrow">
+          <span class="side-panel__code-eyebrow-label">
+            {{ I18N_KEY.features.algorithms.sidePanel.codeForTaskLabel | transloco }}
+          </span>
+          <span class="side-panel__code-eyebrow-task">
+            <app-math-text mode="mixed" [content]="taskName | i18nText" />
+          </span>
+        </p>
+      }
       <app-code-panel
         [lines]="codeLines()"
         [regions]="codeRegions()"

@@ -74,6 +74,9 @@
             [variantOptions]="translatedVariantOptions()"
             [sizeUnit]="sizeUnitLabel()"
             [randomizeLabel]="randomizeLabel()"
+            [tasks]="tasks()"
+            [activeTaskId]="activeTaskId()"
+            [currentTaskValues]="currentTaskValues()"
             (resetClick)="onReset()"
             (stepBackClick)="onStepBack()"
             (playToggle)="onPlayToggle()"
@@ -82,6 +85,8 @@
             (sizeChange)="onSizeChange($event)"
             (randomizeClick)="onRandomize()"
             (variantChange)="onVariantChange($event)"
+            (taskChange)="onTaskChange($event)"
+            (customValuesChange)="onCustomValuesChange($event)"
           />
           <app-visualization-canvas
             [variant]="variant()"
@@ -125,6 +130,7 @@
           [codeRegions]="codeRegions()"
           [codeVariants]="codeVariants()"
           [activeLineNumber]="activeLineNumber()"
+          [activeTaskName]="activeTaskNameForSidePanel()"
           [logEntries]="logEntries()"
           [traceState]="graphTrace()"
           [dpState]="dpTrace()"

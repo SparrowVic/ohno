@@ -3,29 +3,41 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
   output,
+  signal,
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
+import { Task } from '../../models/task';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
 import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-select/lab-select';
+import { VizCustomValuesPopover } from '../viz-custom-values-popover/viz-custom-values-popover';
 
 @Component({
   selector: 'app-visualization-toolbar',
-  imports: [LabSelect, LabSlider, ReactiveFormsModule, TranslocoPipe],
+  imports: [
+    LabSelect,
+    LabSlider,
+    ReactiveFormsModule,
+    TranslocoPipe,
+    VizCustomValuesPopover,
+  ],
   templateUrl: './visualization-toolbar.html',
   styleUrl: './visualization-toolbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualizationToolbar {
   protected readonly I18N_KEY = I18N_KEY;
+  private readonly transloco = inject(TranslocoService);
   readonly isPlaying = input.required<boolean>();
   readonly speed = input.required<number>();
   readonly currentStep = input.required<number>();
@@ -36,10 +48,30 @@ export class VisualizationToolbar {
   readonly variantOptions = input<readonly VisualizationOption[]>([]);
   readonly sizeUnit = input<string>('elements');
   readonly randomizeLabel = input<string>('Randomize');
+  /** Unified task list (toolbar-level task picker, replacing the 8 per-viz
+   *  preset pickers for algorithms that have migrated). Null / empty list
+   *  hides the picker entirely — stays invisible for un-migrated families
+   *  during the transition period. */
+  readonly tasks = input<readonly Task<Record<string, unknown>>[] | null>(null);
+  readonly activeTaskId = input<string | null>(null);
+  readonly currentTaskValues = input<Record<string, unknown> | null>(null);
 
   readonly canStepBack = computed(() => this.currentStep() > 0);
   readonly canStepForward = computed(() => this.currentStep() < this.totalSteps());
   readonly hasVariantChoice = computed(() => this.variantOptions().length > 1);
+  readonly hasTaskChoice = computed(() => (this.tasks()?.length ?? 0) > 0);
+  readonly activeTask = computed<Task<Record<string, unknown>> | null>(() => {
+    const list = this.tasks();
+    const id = this.activeTaskId();
+    if (!list || !id) return null;
+    return list.find((t) => t.id === id) ?? null;
+  });
+  readonly hasCustomValuesFields = computed(() => {
+    const schema = this.activeTask()?.inputSchema;
+    return schema ? Object.keys(schema).length > 0 : false;
+  });
+
+  readonly customValuesOpen = signal(false);
   /** Hide the dataset-size select when the algorithm doesn't offer a
    *  meaningful choice — a one-option pulldown was confusing students
    *  on preset-only flows (GCD, Extended Euclidean) where they'd
@@ -62,10 +94,27 @@ export class VisualizationToolbar {
       label: `${option} ${this.sizeUnit()}`,
     })),
   );
+  readonly taskSelectOptions = computed<readonly LabSelectOption<string>[]>(() => {
+    const list = this.tasks() ?? [];
+    // Task labels often arrive as i18n keys — resolve them to strings
+    // here so the select renders plain text without demanding a pipe
+    // on every option.
+    return list.map((task) => {
+      const raw = task.name;
+      const label =
+        typeof raw === 'string'
+          ? looksLikeI18nKey(raw)
+            ? this.transloco.translate(raw)
+            : raw
+          : String(raw);
+      return { value: task.id, label };
+    });
+  });
 
   readonly speedControl = new FormControl(5, { nonNullable: true });
   readonly variantControl = new FormControl<VisualizationVariant>('bar', { nonNullable: true });
   readonly sizeControl = new FormControl(16, { nonNullable: true });
+  readonly taskControl = new FormControl<string>('', { nonNullable: true });
 
   readonly resetClick = output<void>();
   readonly stepBackClick = output<void>();
@@ -75,6 +124,8 @@ export class VisualizationToolbar {
   readonly sizeChange = output<number>();
   readonly randomizeClick = output<void>();
   readonly variantChange = output<VisualizationVariant>();
+  readonly taskChange = output<string>();
+  readonly customValuesChange = output<Record<string, unknown>>();
 
   constructor() {
     effect(() => {
@@ -104,6 +155,15 @@ export class VisualizationToolbar {
       });
     });
 
+    effect(() => {
+      const taskId = this.activeTaskId();
+      untracked(() => {
+        if (taskId !== null && this.taskControl.value !== taskId) {
+          this.taskControl.setValue(taskId, { emitEvent: false });
+        }
+      });
+    });
+
     this.speedControl.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((value) => this.speedChange.emit(value));
@@ -115,11 +175,32 @@ export class VisualizationToolbar {
     this.variantControl.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((value) => this.variantChange.emit(value));
+
+    this.taskControl.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((value) => {
+        if (value) this.taskChange.emit(value);
+      });
   }
 
   transportLabelKey(): I18nKey {
     return this.isPlaying()
       ? I18N_KEY.features.algorithms.toolbar.pausePlaybackLabel
       : I18N_KEY.features.algorithms.toolbar.startPlaybackLabel;
+  }
+
+  toggleCustomValues(event: MouseEvent): void {
+    // Stop propagation so the popover's own outside-click handler
+    // (registered on document:click) doesn't immediately re-close it.
+    event.stopPropagation();
+    this.customValuesOpen.update((open) => !open);
+  }
+
+  closeCustomValues(): void {
+    if (this.customValuesOpen()) this.customValuesOpen.set(false);
+  }
+
+  onCustomValuesApply(values: Record<string, unknown>): void {
+    this.customValuesChange.emit(values);
   }
 }

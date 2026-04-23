@@ -1,5 +1,7 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { Task } from '../../models/task';
+
 export interface NumberLabPresetOption {
   readonly id: string;
   readonly label: string;
@@ -124,15 +126,70 @@ export const EUCLIDEAN_GCD_PRESETS: readonly NumberLabPresetOption[] = [
 ];
 export const DEFAULT_EUCLIDEAN_GCD_PRESET_ID = 'shared';
 
+export interface EuclideanGcdValues {
+  readonly a: number;
+  readonly b: number;
+}
+
+/** Task-shape source of truth for Euclidean GCD. All three tasks share
+ *  one code snippet (`euclidean-gcd`) — they're the same algorithm with
+ *  different input pairs. User can override the (a, b) pair through the
+ *  customize-values popover; customizations re-use this structure. */
+export const EUCLIDEAN_GCD_TASKS: readonly Task<EuclideanGcdValues>[] = [
+  {
+    id: 'coprime',
+    name: K.gcd.coprime.label,
+    defaultValues: { a: 35, b: 17 },
+    inputSchema: {
+      a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
+      b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+    },
+    codeSnippetId: 'euclidean-gcd',
+  },
+  {
+    id: 'shared',
+    name: K.gcd.shared.label,
+    defaultValues: { a: 48, b: 36 },
+    inputSchema: {
+      a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
+      b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+    },
+    codeSnippetId: 'euclidean-gcd',
+  },
+  {
+    id: 'large',
+    name: K.gcd.large.label,
+    defaultValues: { a: 1071, b: 462 },
+    inputSchema: {
+      a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
+      b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+    },
+    codeSnippetId: 'euclidean-gcd',
+  },
+];
+export const DEFAULT_EUCLIDEAN_GCD_TASK_ID = 'shared';
+
 export function createEuclideanGcdScenario(
   _size: number,
   presetId: string | null,
+  customValues?: EuclideanGcdValues,
 ): EuclideanGcdScenario {
   const id = presetId ?? DEFAULT_EUCLIDEAN_GCD_PRESET_ID;
+  const base = resolveEuclideanGcdBase(id);
+  return {
+    kind: 'euclidean-gcd',
+    presetId: base.presetId,
+    presetLabel: base.presetLabel,
+    presetDescription: base.presetDescription,
+    a: customValues?.a ?? base.a,
+    b: customValues?.b ?? base.b,
+  };
+}
+
+function resolveEuclideanGcdBase(id: string): Omit<EuclideanGcdScenario, 'kind'> {
   switch (id) {
     case 'coprime':
       return {
-        kind: 'euclidean-gcd',
         presetId: 'coprime',
         presetLabel: K.gcd.coprime.label,
         presetDescription: K.gcd.coprime.description,
@@ -141,17 +198,15 @@ export function createEuclideanGcdScenario(
       };
     case 'large':
       return {
-        kind: 'euclidean-gcd',
         presetId: 'large',
         presetLabel: K.gcd.large.label,
         presetDescription: K.gcd.large.description,
-        a: 462,
-        b: 1071,
+        a: 1071,
+        b: 462,
       };
     case 'shared':
     default:
       return {
-        kind: 'euclidean-gcd',
         presetId: 'shared',
         presetLabel: K.gcd.shared.label,
         presetDescription: K.gcd.shared.description,
