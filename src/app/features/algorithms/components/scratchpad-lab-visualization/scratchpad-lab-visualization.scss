@@ -93,7 +93,8 @@
   transition:
     opacity var(--duration-base) var(--ease-out-expo),
     transform var(--duration-base) var(--ease-out-expo),
-    background var(--duration-fast) var(--ease-soft);
+    background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-fast) var(--ease-soft);
 
   /* Notebook-style row guide — the only structural rule in the
      viewport. Faint dashed line that helps the eye track right
@@ -114,6 +115,32 @@
   &--current::after,
   &--result::after {
     display: none;
+  }
+}
+
+/* Hover affordance — a soft warm wash that invites the eye without
+   stealing attention from the current-line highlight. Applies only to
+   settled (past) lines; current/result rows already own a strong
+   surface treatment, so we skip the hover there. Divider rows and the
+   goal/rule header block don't take pointer focus either. */
+@media (hover: hover) {
+  .scratchpad__line--settled:hover {
+    background: rgba(var(--viz-warning-rgb), 0.055);
+    box-shadow: inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.28);
+  }
+
+  .scratchpad__line--settled.scratchpad__line--goal:hover,
+  .scratchpad__line--settled.scratchpad__line--note:hover {
+    /* Goal + rule sit above the derivation as context; hover makes less
+       sense there and competes with the goal's size. */
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scratchpad__line {
+    transition: none;
   }
 }
 

@@ -140,6 +140,11 @@ type LineBuilder = {
   readonly indent: number;
   readonly marker: string | null;
   readonly caption: ScratchpadLine['caption'];
+  /** Phase-entry captions that should stay visible on settled lines —
+   *  first forward row, terminal forward row, gcd announce, back-seed,
+   *  verify, result. Looping captions (middle forward rows, back-sub
+   *  iterations) leave this falsy so they only show while `current`. */
+  readonly captionPinned?: boolean;
   readonly content: ScratchpadLine['content'];
   readonly instruction: ScratchpadLine['instruction'];
   readonly annotation: ScratchpadLine['annotation'];
@@ -204,6 +209,7 @@ export function* extendedEuclideanGenerator(
       indent: 0,
       marker: null,
       caption: null,
+      captionPinned: true,
       content: i18nText(I18N.goal, { a: originalA, b: originalB }),
       instruction: null,
       annotation: null,
@@ -266,6 +272,7 @@ export function* extendedEuclideanGenerator(
         indent: builder.indent,
         marker: builder.marker,
         caption: builder.caption,
+        captionPinned: builder.captionPinned,
         content: builder.content,
         instruction: builder.instruction,
         annotation: builder.annotation,
@@ -299,6 +306,7 @@ export function* extendedEuclideanGenerator(
     indent: 0,
     marker: SECTION_MARKERS.forward,
     caption: I18N.captions.forwardStart,
+    captionPinned: true,
     content: i18nText(I18N.forwardEquation, {
       a: first.dividend,
       q: first.quotient,
@@ -348,6 +356,7 @@ export function* extendedEuclideanGenerator(
       indent: 0,
       marker: null,
       caption: isTerminal ? I18N.captions.forwardStop : I18N.captions.forwardContinue,
+      captionPinned: isTerminal,
       content: i18nText(I18N.forwardEquation, {
         a: step.dividend,
         q: step.quotient,
@@ -388,6 +397,7 @@ export function* extendedEuclideanGenerator(
     indent: 0,
     marker: SECTION_MARKERS.gcd,
     caption: I18N.captions.gcdFound,
+    captionPinned: true,
     content: i18nText(I18N.gcdFound, { gcd: gcdValue }),
     instruction: null,
     annotation: null,
@@ -457,6 +467,7 @@ export function* extendedEuclideanGenerator(
       indent: 1,
       marker: SECTION_MARKERS.back,
       caption: I18N.captions.backSeed,
+      captionPinned: true,
       content: i18nText(I18N.backSeed, {
         gcd: gcdValue,
         expression: seedContent,
@@ -600,6 +611,7 @@ export function* extendedEuclideanGenerator(
     indent: 0,
     marker: SECTION_MARKERS.verify,
     caption: I18N.captions.verify,
+    captionPinned: true,
     content: i18nText(I18N.bezoutResult, {
       s: sForA,
       a: originalA,
@@ -620,6 +632,7 @@ export function* extendedEuclideanGenerator(
     indent: 0.6,
     marker: SECTION_MARKERS.result,
     caption: I18N.captions.result,
+    captionPinned: true,
     content: i18nText(I18N.bezoutResult, {
       s: sForA,
       a: originalA,

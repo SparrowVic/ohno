@@ -65,6 +65,14 @@ export interface ScratchpadLine {
    *  without scrolling back through the run. Can be hidden via the
    *  viz-options menu ("Show step titles"). */
   readonly caption: TranslatableText | null;
+  /** When true, keep the caption visible on settled (past) lines too.
+   *  Use for phase-entry captions that mark meaningful transitions —
+   *  `goal`, the first forward row, the terminal forward row, the
+   *  gcd-found announcement, back-seed, verify, result. Default
+   *  (false / undefined) means the caption only renders while the
+   *  line is `current` — fine for looping lines whose caption repeats
+   *  ("Forward division, next pair") and would clutter if it stayed. */
+  readonly captionPinned?: boolean;
   /** Main content — mixed text + math (usually with [[math]] markers
    *  so KaTeX lights up the formulas). */
   readonly content: TranslatableText;

@@ -147,6 +147,11 @@ type LineBuilder = {
   readonly indent: number;
   readonly marker: string | null;
   readonly caption: ScratchpadLine['caption'];
+  /** True for phase-entry captions that should persist on settled
+   *  lines — goal, first pair, decision, result. Looping captions
+   *  (substitute lines in the while-loop) leave it falsy so they
+   *  only surface while `current`. */
+  readonly captionPinned?: boolean;
   readonly content: ScratchpadLine['content'];
   readonly instruction: ScratchpadLine['instruction'];
   readonly annotation: ScratchpadLine['annotation'];
@@ -190,6 +195,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       indent: 0,
       marker: null,
       caption: null,
+      captionPinned: true,
       content: i18nText(I18N.scratchpad.goal, { a, b }),
       instruction: null,
       annotation: null,
@@ -230,6 +236,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       indent: 0,
       marker: SECTION_MARKERS.start,
       caption: I18N.scratchpad.captions.setup,
+      captionPinned: true,
       content: i18nText(I18N.scratchpad.firstPair, { a, b }),
       instruction: null,
       annotation: null,
@@ -266,6 +273,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
         indent: builder.indent,
         marker: builder.marker,
         caption: builder.caption,
+        captionPinned: builder.captionPinned,
         content: builder.content,
         instruction: builder.instruction,
         annotation: builder.annotation,
@@ -399,6 +407,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
         indent: 0,
         marker: SECTION_MARKERS.decision,
         caption: I18N.scratchpad.captions.decision,
+        captionPinned: true,
         content: i18nText(I18N.scratchpad.bZeroDecision, { a }),
         instruction: null,
         annotation: null,
@@ -413,6 +422,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
         indent: 0.6,
         marker: '✓',
         caption: I18N.scratchpad.captions.result,
+        captionPinned: true,
         content: i18nText(I18N.scratchpad.resultLine, { gcd: a }),
         instruction: null,
         annotation: null,

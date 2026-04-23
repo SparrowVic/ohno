@@ -37,12 +37,19 @@
               [attr.data-line-id]="line.id"
               [style.--scratchpad-indent]="line.indent"
             >
-              <!-- Caption (tutor's pencil note above the line) rides with
-                   the current line only. On settled lines it added noise
-                   — the same "Przesuwamy parę" repeated on every forward
-                   row drowns out the one line that actually matters right
-                   now. Still toggleable entirely via the viz-options menu. -->
-              @if (showCaptions() && line.caption && line.state === 'current') {
+              <!-- Caption policy: always show on the current line; on
+                   settled lines only show when `captionPinned` is true
+                   (phase-entry markers — goal, first/terminal forward
+                   row, gcd announce, back-seed, verify, result). Keeps
+                   repetitive loop-body captions from cluttering long
+                   derivations while preserving one-shot narrative
+                   anchors. Entire behaviour gated by the viz-options
+                   "Show step titles" toggle. -->
+              @if (
+                showCaptions()
+                && line.caption
+                && (line.state === 'current' || line.captionPinned)
+              ) {
                 <span class="scratchpad__line-caption">
                   <app-math-text mode="mixed" [content]="line.caption | i18nText" />
                 </span>
