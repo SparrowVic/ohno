@@ -48,7 +48,7 @@
         [uppercase]="true"
       />
     </div>
-    <p class="card__desc">{{ algorithm().description }}</p>
+    <p class="card__desc"><app-math-text [content]="algorithm().description" variant="copy" /></p>
   </div>
 
   <div class="card__preview" [class.card__preview--disabled]="!isImplemented()" aria-hidden="true">
@@ -66,7 +66,7 @@
     @for (metric of metrics(); track metric.label) {
       <div class="card__metric">
         <dt>{{ metric.label }}</dt>
-        <dd>{{ metric.value }}</dd>
+        <dd><app-math-text [content]="metric.value" variant="metric" /></dd>
       </div>
     }
   </dl>

@@ -34,7 +34,12 @@
             >
               <header class="cslab__frame-head">
                 <span class="cslab__frame-depth">#{{ frame.depth }}</span>
-                <span class="cslab__frame-title">{{ frame.title }}</span>
+                <app-math-text
+                  class="cslab__frame-title"
+                  [content]="frame.title"
+                  mode="math"
+                  variant="formula"
+                />
                 @if (frame.returnValue !== null) {
                   <span class="cslab__frame-return">→ {{ frame.returnValue }}</span>
                 }
@@ -66,7 +71,7 @@
             <ol class="cslab__rail-list">
               @for (ret of stack.recentReturns; track ret.id) {
                 <li class="cslab__rail-item" [style.opacity]="1 - ret.age * 0.14">
-                  <span class="cslab__rail-title">{{ ret.title }}</span>
+                  <app-math-text class="cslab__rail-title" [content]="ret.title" mode="math" variant="formula" />
                   <span class="cslab__rail-arrow">→</span>
                   <span class="cslab__rail-value">{{ ret.returnValue }}</span>
                 </li>
@@ -81,13 +86,11 @@
         [class.cslab__result--pending]="!stack.resultLabel"
       >
         <span class="cslab__result-label">result</span>
-        <span class="cslab__result-value">
-          @if (stack.resultLabel; as result) {
-            {{ result | i18nText }}
-          } @else {
-            —
-          }
-        </span>
+        @if (stack.resultLabel; as result) {
+          <app-math-text class="cslab__result-value" [content]="result | i18nText" variant="formula" />
+        } @else {
+          <span class="cslab__result-value">—</span>
+        }
       </footer>
     </div>
   }

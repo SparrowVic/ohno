@@ -82,6 +82,8 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-tertiary);
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--accent-rgb), 0.08);
 }
 
 .trace__register-value {
@@ -91,6 +93,8 @@
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
+  --math-text-scale: 1.14;
+  --math-text-glow: rgba(var(--accent-rgb), 0.12);
 }
 
 .trace__register-hint {
@@ -107,6 +111,9 @@
 }
 
 .trace__history-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
   padding: 3px 8px;
   border-radius: 999px;
   font-family: var(--font-mono);
@@ -117,6 +124,8 @@
   font-variant-numeric: tabular-nums;
 
   b {
+    display: inline-flex;
+    align-items: baseline;
     font-weight: 800;
     color: var(--text-primary);
   }
@@ -129,6 +138,11 @@
       color: var(--accent-strong);
     }
   }
+}
+
+.trace__history-chip app-math-text {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--accent-rgb), 0.1);
 }
 
 .trace__empty,

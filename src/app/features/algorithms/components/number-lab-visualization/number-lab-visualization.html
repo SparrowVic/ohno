@@ -14,7 +14,7 @@
       <section class="number-lab__registers">
         @for (reg of lab.registers; track reg.id) {
           <article class="number-lab__register number-lab__register--{{ reg.tone }}">
-            <span class="number-lab__register-label">{{ reg.label }}</span>
+            <app-math-text class="number-lab__register-label" [content]="reg.label" variant="chip" />
             <span class="number-lab__register-value">{{ reg.value }}</span>
             @if (reg.hint; as hint) {
               <span class="number-lab__register-hint">{{ hint | i18nText }}</span>
@@ -29,11 +29,17 @@
         <div class="number-lab__formula-row">
           @if (lab.formula; as formula) {
             @for (part of formula.lhs; track $index) {
-              <span class="number-lab__part number-lab__part--{{ part.role }}">{{ part.text }}</span>
+              <span class="number-lab__part number-lab__part--{{ part.role }}">
+                <app-math-text [content]="part.text" mode="math" variant="formula" />
+              </span>
             }
-            <span class="number-lab__part number-lab__part--operator">=</span>
+            <span class="number-lab__part number-lab__part--operator">
+              <app-math-text content="=" mode="math" variant="formula" />
+            </span>
             @for (part of formula.rhs; track $index) {
-              <span class="number-lab__part number-lab__part--{{ part.role }}">{{ part.text }}</span>
+              <span class="number-lab__part number-lab__part--{{ part.role }}">
+                <app-math-text [content]="part.text" mode="math" variant="formula" />
+              </span>
             }
           } @else {
             <span class="number-lab__formula-placeholder">—</span>
@@ -57,7 +63,11 @@
                 class="number-lab__history-chip"
                 [class.number-lab__history-chip--current]="entry.isCurrent"
               >
-                <span class="number-lab__history-chip-label">{{ entry.label }}</span>
+                <app-math-text
+                  class="number-lab__history-chip-label"
+                  [content]="entry.label"
+                  variant="chip"
+                />
                 <span class="number-lab__history-chip-value">{{ entry.value }}</span>
               </article>
             }
@@ -73,13 +83,11 @@
         [class.number-lab__result--pending]="!lab.resultLabel"
       >
         <span class="number-lab__result-label">result</span>
-        <span class="number-lab__result-value">
-          @if (lab.resultLabel; as result) {
-            {{ result | i18nText }}
-          } @else {
-            —
-          }
-        </span>
+        @if (lab.resultLabel; as result) {
+          <app-math-text class="number-lab__result-value" [content]="result | i18nText" variant="formula" />
+        } @else {
+          <span class="number-lab__result-value">—</span>
+        }
       </footer>
     </div>
   }

@@ -265,6 +265,11 @@
   text-wrap: pretty;
 }
 
+.card__desc app-math-text {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgb(var(--card-accent-rgb, 199 229 106) / 0.08);
+}
+
 /* ---- PREVIEW AREA ---- */
 
 .card__preview {
@@ -469,12 +474,18 @@
 }
 
 .card__metric dd {
-  font-family: var(--font-mono);
+  display: flex;
+  align-items: baseline;
   font-size: 12px;
   color: var(--text-primary);
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
+}
+
+.card__metric dd app-math-text {
+  --math-text-scale: 1.14;
+  --math-text-glow: rgb(var(--card-accent-rgb, 199 229 106) / 0.14);
 }
 
 /* ---- FOOTER / CTA ---- */

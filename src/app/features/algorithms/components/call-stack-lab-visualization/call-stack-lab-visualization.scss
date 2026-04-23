@@ -189,12 +189,16 @@
 }
 
 .cslab__frame-title {
-  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+  overflow: hidden;
   font-size: 15px;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .cslab__frame--active .cslab__frame-title {
@@ -357,6 +361,9 @@
 }
 
 .cslab__rail-title {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
   font-size: 11px;
   font-weight: 700;
   color: var(--text-primary);
@@ -416,7 +423,8 @@
 }
 
 .cslab__result-value {
-  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: baseline;
   font-size: 22px;
   font-weight: 800;
   color: var(--accent-strong);

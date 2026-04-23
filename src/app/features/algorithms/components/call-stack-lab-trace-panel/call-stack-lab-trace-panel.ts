@@ -6,10 +6,11 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 
 @Component({
   selector: 'app-call-stack-lab-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
+  imports: [I18nTextPipe, MathText, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './call-stack-lab-trace-panel.html',
   styleUrl: './call-stack-lab-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,4 +24,8 @@ export class CallStackLabTracePanel {
     const frames = this.state()?.frames ?? [];
     return frames.length > 0 ? frames[frames.length - 1] : null;
   });
+
+  protected stringify(value: unknown): string {
+    return value === null || value === undefined ? '' : String(value);
+  }
 }

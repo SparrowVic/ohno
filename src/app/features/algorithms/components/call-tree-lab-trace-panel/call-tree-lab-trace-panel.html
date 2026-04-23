@@ -40,7 +40,7 @@
             "
           >
             <div class="trace__active">
-              <span class="trace__active-title">{{ node.title }}</span>
+              <app-math-text class="trace__active-title" [content]="node.title" mode="math" />
               @if (node.subtitle) {
                 <span class="trace__active-subtitle">{{ node.subtitle | i18nText }}</span>
               }
@@ -48,8 +48,8 @@
                 <div class="trace__active-stats">
                   @for (stat of node.stats; track stat.label) {
                     <span class="trace__chip trace__chip--{{ stat.tone }}">
-                      <span class="trace__chip-label">{{ stat.label | i18nText }}</span>
-                      <span class="trace__chip-value">{{ stat.value | i18nText }}</span>
+                      <app-math-text class="trace__chip-label" [content]="stat.label | i18nText" />
+                      <app-math-text class="trace__chip-value" [content]="stat.value | i18nText" />
                     </span>
                   }
                 </div>
@@ -65,8 +65,8 @@
           <div class="trace__chips">
             @for (stat of tree.stats; track stat.label) {
               <span class="trace__chip trace__chip--{{ stat.tone }}">
-                <span class="trace__chip-label">{{ stat.label | i18nText }}</span>
-                <span class="trace__chip-value">{{ stat.value | i18nText }}</span>
+                <app-math-text class="trace__chip-label" [content]="stat.label | i18nText" />
+                <app-math-text class="trace__chip-value" [content]="stat.value | i18nText" />
               </span>
             }
           </div>
@@ -85,7 +85,7 @@
               @for (id of tree.activePath; track id; let last = $last) {
                 @for (node of tree.nodes; track node.id) {
                   @if (node.id === id) {
-                    <span class="trace__path-chip">{{ node.title }}</span>
+                    <app-math-text class="trace__path-chip" [content]="node.title" mode="math" />
                     @if (!last) {
                       <span class="trace__path-sep" aria-hidden="true">→</span>
                     }

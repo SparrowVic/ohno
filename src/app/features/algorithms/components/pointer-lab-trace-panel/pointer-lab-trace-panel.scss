@@ -90,6 +90,8 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--viz-accent-rgb), 0.1);
 }
 
 .trace__pointer-index {
@@ -98,6 +100,8 @@
   font-weight: 700;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
+  --math-text-scale: 1.12;
+  --math-text-glow: rgba(var(--viz-accent-rgb), 0.12);
 }
 
 .trace__stats {
@@ -136,6 +140,8 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-tertiary);
+  --math-text-scale: 1.06;
+  --math-text-glow: rgba(var(--viz-window-rgb), 0.08);
 }
 
 .trace__stat-value {
@@ -145,6 +151,8 @@
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--viz-window-rgb), 0.1);
 }
 
 .trace__empty {

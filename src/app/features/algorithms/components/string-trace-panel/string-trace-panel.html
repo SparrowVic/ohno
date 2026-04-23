@@ -46,7 +46,9 @@
           class="trace__calc-section trace__calc-section--preset"
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.string.presetNoteLabel | transloco"
         >
-          <div class="trace__calc-expression">{{ stringState.presetDescription | i18nText }}</div>
+          <div class="trace__calc-expression">
+            <app-math-text [content]="stringState.presetDescription | i18nText" />
+          </div>
         </app-segmented-panel-section>
 
         <app-segmented-panel-section
@@ -58,13 +60,15 @@
           "
         >
           <div class="trace__calc-expression">
-            {{
-              (stringState.computation?.expression | i18nText) ||
+            <app-math-text
+              [content]="
+                (stringState.computation?.expression | i18nText) ||
                 (I18N_KEY.features.algorithms.tracePanels.string.waitingEventLabel | transloco)
-            }}
+              "
+            />
           </div>
           @if (stringState.computation?.result; as result) {
-            <div class="trace__calc-result">{{ result | i18nText }}</div>
+            <div class="trace__calc-result"><app-math-text [content]="result | i18nText" /></div>
           } @else {
             <div class="trace__calc-result trace__calc-result--muted">—</div>
           }
@@ -99,7 +103,7 @@
             @for (insight of stringState.insights; track insight.label) {
               <span class="trace__insight-chip trace__insight-chip--{{ insight.tone }}">
                 <span class="trace__insight-label">{{ insight.label | i18nText }}</span>
-                <span class="trace__insight-value">{{ insight.value | i18nText }}</span>
+                <app-math-text class="trace__insight-value" [content]="insight.value | i18nText" />
               </span>
             }
           </div>
@@ -142,7 +146,7 @@
                   index === kmp.patternIndex || index === kmp.comparePatternIndex
                 "
               >
-                {{ index }}:{{ value }}
+                <app-math-text [content]="index + ':' + value" />
               </span>
             }
           </div>
@@ -156,25 +160,25 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.kmp.alignmentLabel | transloco
               }}</span>
-              <strong>{{ kmp.alignment }}</strong>
+              <strong><app-math-text [content]="stringify(kmp.alignment)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.kmp.textIndexLabel | transloco
               }}</span>
-              <strong>{{ kmp.textIndex ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(kmp.textIndex ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.kmp.patternIndexLabel | transloco
               }}</span>
-              <strong>{{ kmp.patternIndex ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(kmp.patternIndex ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.kmp.jumpLabel | transloco
               }}</span>
-              <strong>{{ jumpLabel(kmp) }}</strong>
+              <strong><app-math-text [content]="jumpLabel(kmp)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -198,26 +202,26 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.patternLabel | transloco
               }}</span>
-              <strong>{{ rabin.patternHash }}</strong>
+              <strong><app-math-text [content]="stringify(rabin.patternHash)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.windowLabel | transloco
               }}</span>
-              <strong>{{ rabin.windowHash }}</strong>
+              <strong><app-math-text [content]="stringify(rabin.windowHash)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.baseModLabel | transloco
               }}</span>
-              <strong>{{ rabin.base }} / {{ rabin.mod }}</strong>
+              <strong><app-math-text [content]="rabin.base + ' / ' + rabin.mod" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.verifyStepLabel
                   | transloco
               }}</span>
-              <strong>{{ rabin.verificationIndex ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(rabin.verificationIndex ?? '—')" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -232,25 +236,25 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.startLabel | transloco
               }}</span>
-              <strong>{{ rabin.windowStart }}</strong>
+              <strong><app-math-text [content]="stringify(rabin.windowStart)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.outgoingLabel | transloco
               }}</span>
-              <strong>{{ rabin.outgoingChar ?? '—' }}</strong>
+              <strong><app-math-text [content]="rabin.outgoingChar ?? '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.incomingLabel | transloco
               }}</span>
-              <strong>{{ rabin.incomingChar ?? '—' }}</strong>
+              <strong><app-math-text [content]="rabin.incomingChar ?? '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.statusLabel | transloco
               }}</span>
-              <strong>{{ rabinStatusLabel(rabin) }}</strong>
+              <strong><app-math-text [content]="rabinStatusLabel(rabin)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -276,7 +280,7 @@
                 class="value-chip"
                 [class.value-chip--active]="index === zStateValue.activeIndex"
               >
-                {{ index }}:{{ value }}
+                <app-math-text [content]="index + ':' + value" />
               </span>
             }
           </div>
@@ -292,27 +296,31 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.leftLabel | transloco
               }}</span>
-              <strong>{{ zStateValue.boxLeft ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(zStateValue.boxLeft ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.rightLabel | transloco
               }}</span>
-              <strong>{{ zStateValue.boxRight ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(zStateValue.boxRight ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.prefixCompareLabel
                   | transloco
               }}</span>
-              <strong>{{ zStateValue.comparePrefixIndex ?? '—' }}</strong>
+              <strong
+                ><app-math-text [content]="stringify(zStateValue.comparePrefixIndex ?? '—')"
+              /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.zAlgorithm.textCompareLabel
                   | transloco
               }}</span>
-              <strong>{{ zStateValue.compareMatchIndex ?? '—' }}</strong>
+              <strong
+                ><app-math-text [content]="stringify(zStateValue.compareMatchIndex ?? '—')"
+              /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -337,28 +345,31 @@
                 I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.currentStateLabel
                   | transloco
               }}</span>
-              <strong>{{ aho.activeNodeId }}</strong>
+              <strong><app-math-text [content]="aho.activeNodeId" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.currentCharLabel
                   | transloco
               }}</span>
-              <strong>{{ aho.currentChar ?? '—' }}</strong>
+              <strong><app-math-text [content]="aho.currentChar ?? '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.failurePathLabel
                   | transloco
               }}</span>
-              <strong>{{ aho.failurePath.length > 0 ? aho.failurePath.join(' -> ') : '—' }}</strong>
+              <strong
+                ><app-math-text
+                  [content]="aho.failurePath.length > 0 ? aho.failurePath.join(' -> ') : '—'"
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.ahoCorasick.matchCountLabel
                   | transloco
               }}</span>
-              <strong>{{ aho.matches.length }}</strong>
+              <strong><app-math-text [content]="stringify(aho.matches.length)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -376,7 +387,7 @@
               }}</span>
             } @else {
               @for (match of ahoMatchPreview(aho); track match) {
-                <span class="value-chip value-chip--soft">{{ match }}</span>
+                <span class="value-chip value-chip--soft"><app-math-text [content]="match" /></span>
               }
             }
           </div>
@@ -405,7 +416,7 @@
                   index === manacher.currentCenter || index === manacher.longestCenter
                 "
               >
-                {{ index }}:{{ value }}
+                <app-math-text [content]="index + ':' + value" />
               </span>
             }
           </div>
@@ -421,27 +432,28 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.manacher.centerLabel | transloco
               }}</span>
-              <strong>{{ manacher.currentCenter ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(manacher.currentCenter ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.manacher.mirrorLabel | transloco
               }}</span>
-              <strong>{{ manacher.mirrorIndex ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(manacher.mirrorIndex ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.manacher.boundsLabel | transloco
               }}</span>
               <strong
-                >{{ manacher.leftBoundary ?? '—' }}..{{ manacher.rightBoundary ?? '—' }}</strong
-              >
+                ><app-math-text
+                  [content]="(manacher.leftBoundary ?? '—') + '..' + (manacher.rightBoundary ?? '—')"
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.manacher.longestLabel | transloco
               }}</span>
-              <strong>{{ manacher.longestPalindrome || '—' }}</strong>
+              <strong><app-math-text [content]="manacher.longestPalindrome || '—'" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -466,20 +478,20 @@
                 I18N_KEY.features.algorithms.tracePanels.string.suffixArray.stepSizeLabel
                   | transloco
               }}</span>
-              <strong>{{ suffixArray.stepSize }}</strong>
+              <strong><app-math-text [content]="stringify(suffixArray.stepSize)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel
                   | transloco
               }}</span>
-              <strong>{{ suffixArray.distinctRanks }}</strong>
+              <strong><app-math-text [content]="stringify(suffixArray.distinctRanks)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.suffixArray.orderLabel | transloco
               }}</span>
-              <strong>{{ suffixOrderPreview(suffixArray.suffixArray) }}</strong>
+              <strong><app-math-text [content]="suffixOrderPreview(suffixArray.suffixArray)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -493,7 +505,7 @@
           <div class="value-strip">
             @for (row of suffixArray.rows; track row.id) {
               <span class="value-chip" [class.value-chip--active]="suffixArray.activeSuffixes.includes(row.startIndex)">
-                {{ row.startIndex }}:r{{ row.rank }}
+                <app-math-text [content]="row.startIndex + ':r' + row.rank" />
               </span>
             }
           </div>
@@ -521,25 +533,28 @@
                 I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.activePairLabel
                   | transloco
               }}</span>
-              <strong>{{
-                suffixLcp.activeSuffixes.length === 2
-                  ? suffixLcp.activeSuffixes[0] + ' / ' + suffixLcp.activeSuffixes[1]
-                  : '—'
-              }}</strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    suffixLcp.activeSuffixes.length === 2
+                      ? suffixLcp.activeSuffixes[0] + ' / ' + suffixLcp.activeSuffixes[1]
+                      : '—'
+                  "
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.compareWithLabel
                   | transloco
               }}</span>
-              <strong>{{ suffixLcp.compareWith ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(suffixLcp.compareWith ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.suffixArrayLcp.overlapLabel
                   | transloco
               }}</span>
-              <strong>{{ suffixLcp.currentMatchLength }}</strong>
+              <strong><app-math-text [content]="stringify(suffixLcp.currentMatchLength)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -552,7 +567,7 @@
         >
           <div class="value-strip">
             @for (value of lcpPreview(suffixLcp); track value) {
-              <span class="value-chip value-chip--soft">{{ value }}</span>
+              <span class="value-chip value-chip--soft"><app-math-text [content]="value" /></span>
             }
           </div>
         </app-segmented-panel-section>
@@ -579,28 +594,28 @@
                 I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.currentCharLabel
                   | transloco
               }}</span>
-              <strong>{{ palTree.currentChar ?? '—' }}</strong>
+              <strong><app-math-text [content]="palTree.currentChar ?? '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.activeNodeLabel
                   | transloco
               }}</span>
-              <strong>{{ palTree.activeNodeId }}</strong>
+              <strong><app-math-text [content]="palTree.activeNodeId" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.processedLabel
                   | transloco
               }}</span>
-              <strong>{{ palTree.processedIndex + 1 }}</strong>
+              <strong><app-math-text [content]="stringify(palTree.processedIndex + 1)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.distinctLabel
                   | transloco
               }}</span>
-              <strong>{{ palTree.distinctCount }}</strong>
+              <strong><app-math-text [content]="stringify(palTree.distinctCount)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -613,7 +628,7 @@
         >
           <div class="value-strip">
             @for (node of palNodePreview(palTree); track node) {
-              <span class="value-chip value-chip--soft">{{ node }}</span>
+              <span class="value-chip value-chip--soft"><app-math-text [content]="node" /></span>
             }
           </div>
         </app-segmented-panel-section>
@@ -639,27 +654,27 @@
                 I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.inputLabel
                   | transloco
               }}</span>
-              <strong>{{ bwt.source }}</strong>
+              <strong><app-math-text [content]="bwt.source" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.firstColumnLabel
                   | transloco
               }}</span>
-              <strong>{{ bwt.firstColumn || '—' }}</strong>
+              <strong><app-math-text [content]="bwt.firstColumn || '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.lastColumnLabel
                   | transloco
               }}</span>
-              <strong>{{ bwt.lastColumn || '—' }}</strong>
+              <strong><app-math-text [content]="bwt.lastColumn || '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.burrowsWheeler.gainLabel | transloco
               }}</span>
-              <strong>{{ formatRatio(bwt.compressionRatio) }}</strong>
+              <strong><app-math-text [content]="formatRatio(bwt.compressionRatio)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -679,7 +694,7 @@
               }}</span>
             } @else {
               @for (group of groupPreview(bwt); track group) {
-                <span class="value-chip value-chip--soft">{{ group }}</span>
+                <span class="value-chip value-chip--soft"><app-math-text [content]="group" /></span>
               }
             }
           </div>
@@ -702,25 +717,25 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.positionLabel | transloco
               }}</span>
-              <strong>{{ rle.scanIndex ?? '—' }}</strong>
+              <strong><app-math-text [content]="stringify(rle.scanIndex ?? '—')" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.charLabel | transloco
               }}</span>
-              <strong>'{{ rle.groupChar || '—' }}'</strong>
+              <strong><app-math-text [content]="'\'' + (rle.groupChar || '—') + '\''" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.countLabel | transloco
               }}</span>
-              <strong>{{ rle.groupCount }}</strong>
+              <strong><app-math-text [content]="stringify(rle.groupCount)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.phaseLabel | transloco
               }}</span>
-              <strong>{{ rle.phase }}</strong>
+              <strong><app-math-text [content]="rle.phase" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -734,32 +749,40 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.runsDoneLabel | transloco
               }}</span>
-              <strong>{{ rle.completedRuns.length }}</strong>
+              <strong><app-math-text [content]="stringify(rle.completedRuns.length)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.outputLabel | transloco
               }}</span>
-              <strong>{{ rle.output || '—' }}</strong>
+              <strong><app-math-text [content]="rle.output || '—'" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.ratioLabel | transloco
               }}</span>
-              <strong>{{
-                rle.compressionRatio !== null ? (rle.compressionRatio * 100).toFixed(0) + '%' : '—'
-              }}</strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    rle.compressionRatio !== null
+                      ? (rle.compressionRatio * 100).toFixed(0) + '%'
+                      : '—'
+                  "
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.rle.originalLabel | transloco
               }}</span>
-              <strong>
-                {{ rle.source.length }}
-                {{
-                  I18N_KEY.features.algorithms.tracePanels.string.rle.charsSuffixLabel | transloco
-                }}
-              </strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    rle.source.length +
+                    ' ' +
+                    (I18N_KEY.features.algorithms.tracePanels.string.rle.charsSuffixLabel
+                      | transloco)
+                  "
+                /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -782,26 +805,26 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.sizeLabel | transloco
               }}</span>
-              <strong>{{ huffman.heapItems.length }}</strong>
+              <strong><app-math-text [content]="stringify(huffman.heapItems.length)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.phaseLabel | transloco
               }}</span>
-              <strong>{{ huffman.phase }}</strong>
+              <strong><app-math-text [content]="huffman.phase" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.uniqueCharsLabel | transloco
               }}</span>
-              <strong>{{ huffman.charFreqs.length }}</strong>
+              <strong><app-math-text [content]="stringify(huffman.charFreqs.length)" /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.codesAssignedLabel
                   | transloco
               }}</span>
-              <strong>{{ huffman.codeTable.length }}</strong>
+              <strong><app-math-text [content]="stringify(huffman.codeTable.length)" /></strong>
             </div>
           </div>
         </app-segmented-panel-section>
@@ -816,49 +839,59 @@
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.originalLabel | transloco
               }}</span>
-              <strong>
-                {{ huffman.totalOriginalBits }}
-                {{
-                  I18N_KEY.features.algorithms.tracePanels.string.huffman.bitsSuffixLabel
-                    | transloco
-                }}
-              </strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    huffman.totalOriginalBits +
+                    ' ' +
+                    (I18N_KEY.features.algorithms.tracePanels.string.huffman.bitsSuffixLabel
+                      | transloco)
+                  "
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.compressedLabel | transloco
               }}</span>
-              <strong>
-                {{ huffman.totalCompressedBits }}
-                {{
-                  I18N_KEY.features.algorithms.tracePanels.string.huffman.bitsSuffixLabel
-                    | transloco
-                }}
-              </strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    huffman.totalCompressedBits +
+                    ' ' +
+                    (I18N_KEY.features.algorithms.tracePanels.string.huffman.bitsSuffixLabel
+                      | transloco)
+                  "
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.savingsLabel | transloco
               }}</span>
-              <strong>{{
-                huffman.totalOriginalBits > 0
-                  ? ((1 - huffman.totalCompressedBits / huffman.totalOriginalBits) * 100).toFixed(
-                      0
-                    ) + '%'
-                  : '—'
-              }}</strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    huffman.totalOriginalBits > 0
+                      ? ((1 - huffman.totalCompressedBits / huffman.totalOriginalBits) * 100).toFixed(
+                          0
+                        ) + '%'
+                      : '—'
+                  "
+                /></strong>
             </div>
             <div>
               <span>{{
                 I18N_KEY.features.algorithms.tracePanels.string.huffman.ratioLabel | transloco
               }}</span>
-              <strong>{{
-                formatRatio(
-                  huffman.totalOriginalBits > 0
-                    ? huffman.totalCompressedBits / huffman.totalOriginalBits
-                    : null
-                )
-              }}</strong>
+              <strong
+                ><app-math-text
+                  [content]="
+                    formatRatio(
+                      huffman.totalOriginalBits > 0
+                        ? huffman.totalCompressedBits / huffman.totalOriginalBits
+                        : null
+                    )
+                  "
+                /></strong>
             </div>
           </div>
         </app-segmented-panel-section>

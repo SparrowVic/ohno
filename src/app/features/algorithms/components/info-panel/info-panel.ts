@@ -8,6 +8,7 @@ import { AlgorithmItem } from '../../models/algorithm';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { SORT_ALGORITHM_TUTORIALS } from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
 import { UiTag } from '../../../../shared/components/ui-tag/ui-tag';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 
 interface AlgorithmTutorial {
   readonly pattern: string;
@@ -33,7 +34,7 @@ function humanize(value: string): string {
 
 @Component({
   selector: 'app-info-panel',
-  imports: [UiTag, TranslocoPipe],
+  imports: [MathText, UiTag, TranslocoPipe],
   templateUrl: './info-panel.html',
   styleUrl: './info-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

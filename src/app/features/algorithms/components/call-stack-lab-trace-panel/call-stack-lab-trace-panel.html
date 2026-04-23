@@ -40,13 +40,16 @@
             "
           >
             <div class="trace__active">
-              <span class="trace__active-title">{{ frame.title }}</span>
+              <app-math-text class="trace__active-title" [content]="frame.title" mode="math" />
               @if (frame.locals.length > 0) {
                 <div class="trace__active-locals">
                   @for (local of frame.locals; track local.label) {
                     <span class="trace__active-local trace__active-local--{{ local.tone }}">
-                      <span class="trace__active-local-label">{{ local.label }}</span>
-                      <span class="trace__active-local-value">{{ local.value }}</span>
+                      <app-math-text class="trace__active-local-label" [content]="local.label" />
+                      <app-math-text
+                        class="trace__active-local-value"
+                        [content]="stringify(local.value)"
+                      />
                     </span>
                   }
                 </div>
@@ -64,8 +67,8 @@
           <div class="trace__pivot-row">
             @for (stat of stack.stats; track stat.label) {
               <div class="trace__pivot-chip trace__pivot-chip--{{ stat.tone }}">
-                <span class="trace__pivot-chip-label">{{ stat.label | i18nText }}</span>
-                <span class="trace__pivot-chip-value">{{ stat.value | i18nText }}</span>
+                <app-math-text class="trace__pivot-chip-label" [content]="stat.label | i18nText" />
+                <app-math-text class="trace__pivot-chip-value" [content]="stat.value | i18nText" />
               </div>
             }
           </div>
@@ -84,7 +87,11 @@
               }}</span>
             } @else {
               @for (ret of stack.recentReturns; track ret.id) {
-                <span class="trace__history-chip">{{ ret.title }} → <b>{{ ret.returnValue }}</b></span>
+                <span class="trace__history-chip"
+                  ><app-math-text [content]="ret.title" mode="math" />
+                  <span aria-hidden="true">→</span>
+                  <b><app-math-text [content]="stringify(ret.returnValue)" /></b></span
+                >
               }
             }
           </div>

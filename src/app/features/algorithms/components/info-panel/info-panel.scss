@@ -114,6 +114,14 @@
   text-wrap: pretty;
 }
 
+.info__desc app-math-text,
+.info__tutorial-idea app-math-text,
+.info__step-text app-math-text,
+.info__tradeoff-list app-math-text {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--chrome-accent-rgb), 0.08);
+}
+
 /* ============================================================================
    TAG CLOUD
    ============================================================================ */
@@ -204,7 +212,8 @@
 
 .info__value {
   position: relative;
-  font-family: var(--font-mono);
+  display: flex;
+  align-items: baseline;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.15;
@@ -212,6 +221,11 @@
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   word-break: break-word;
+}
+
+.info__value app-math-text {
+  --math-text-scale: 1.16;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.12);
 }
 
 @container (max-width: 520px) {
@@ -280,6 +294,11 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.info__tutorial-badge app-math-text {
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--accent-rgb), 0.1);
 }
 
 .info__tutorial-idea {

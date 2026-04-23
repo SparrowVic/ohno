@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY, I18nKey } from '../../../core/i18n/i18n-keys';
+import { MathText } from '../math-text/math-text';
 import { UiTag, UiTagModel } from '../ui-tag/ui-tag';
 
 export type TableColumnKind = 'text' | 'mono' | 'number' | 'tag' | 'tags';
@@ -40,7 +41,7 @@ export interface TableLegendItem {
 
 @Component({
   selector: 'app-table',
-  imports: [UiTag, TranslocoPipe],
+  imports: [MathText, UiTag, TranslocoPipe],
   templateUrl: './table.html',
   styleUrl: './table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

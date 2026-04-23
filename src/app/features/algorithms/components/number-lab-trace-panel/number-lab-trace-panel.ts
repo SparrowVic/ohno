@@ -6,10 +6,11 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { NumberLabTraceState } from '../../models/number-lab';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 
 @Component({
   selector: 'app-number-lab-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
+  imports: [I18nTextPipe, MathText, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './number-lab-trace-panel.html',
   styleUrl: './number-lab-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,4 +20,8 @@ export class NumberLabTracePanel {
   readonly state = input<NumberLabTraceState | null>(null);
 
   readonly hasResult = computed(() => !!this.state()?.resultLabel);
+
+  protected stringify(value: unknown): string {
+    return value === null || value === undefined ? '' : String(value);
+  }
 }

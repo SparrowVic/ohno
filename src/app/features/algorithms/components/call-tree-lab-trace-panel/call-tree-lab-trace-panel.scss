@@ -61,6 +61,8 @@
   color: var(--viz-warning);
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
+  --math-text-scale: 1.12;
+  --math-text-glow: rgba(var(--viz-warning-rgb), 0.14);
 }
 
 .trace__active-subtitle {
@@ -110,17 +112,23 @@
 }
 
 .trace__chip-label {
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-tertiary);
+  --math-text-scale: 1.06;
+  --math-text-glow: rgba(var(--viz-window-rgb), 0.08);
 }
 
 .trace__chip-value {
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--viz-window-rgb), 0.1);
 }
 
 .trace__chip--success .trace__chip-value {
@@ -141,6 +149,8 @@
 }
 
 .trace__path-chip {
+  display: inline-flex;
+  align-items: baseline;
   padding: 3px 8px;
   border-radius: 999px;
   font-family: var(--font-mono);
@@ -150,6 +160,8 @@
   background: rgb(var(--viz-warning-rgb) / 0.1);
   border: 0.5px solid rgb(var(--viz-warning-rgb) / 0.22);
   font-variant-numeric: tabular-nums;
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--viz-warning-rgb), 0.12);
 }
 
 .trace__path-sep {

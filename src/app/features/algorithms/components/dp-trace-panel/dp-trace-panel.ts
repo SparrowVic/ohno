@@ -23,6 +23,7 @@ import { DpCell, DpTraceState, DpTraceTag } from '../../models/dp';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
@@ -120,7 +121,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-dp-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
+  imports: [I18nTextPipe, MathText, SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
   templateUrl: './dp-trace-panel.html',
   styleUrl: './dp-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

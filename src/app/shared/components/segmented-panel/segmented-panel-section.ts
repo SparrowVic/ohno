@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import { MathText } from '../math-text/math-text';
 
 @Component({
   selector: 'app-segmented-panel-section',
+  imports: [MathText],
   templateUrl: './segmented-panel-section.html',
   styleUrl: './segmented-panel-section.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,4 +17,9 @@ export class SegmentedPanelSection {
   readonly value = input<string | number | null>(null);
   readonly badge = input<string | number | null>(null);
   readonly valueMono = input(false);
+
+  readonly valueText = computed(() => {
+    const value = this.value();
+    return value === null || value === undefined ? null : String(value);
+  });
 }

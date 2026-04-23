@@ -6,10 +6,11 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { CallTreeLabTraceState } from '../../models/call-tree-lab';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 
 @Component({
   selector: 'app-call-tree-lab-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
+  imports: [I18nTextPipe, MathText, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
   templateUrl: './call-tree-lab-trace-panel.html',
   styleUrl: './call-tree-lab-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

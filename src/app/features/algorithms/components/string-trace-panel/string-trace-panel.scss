@@ -183,6 +183,11 @@
   overflow-wrap: anywhere;
 }
 
+.trace__calc-expression app-math-text {
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--accent-rgb), 0.08);
+}
+
 .trace__calc-section--preset .trace__calc-expression {
   min-height: 0;
 }
@@ -195,6 +200,11 @@
     color: var(--text-tertiary);
     font-weight: 600;
   }
+}
+
+.trace__calc-result app-math-text {
+  --math-text-scale: 1.12;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.12);
 }
 
 .trace__calc-note {
@@ -267,6 +277,11 @@
   text-overflow: ellipsis;
 }
 
+.trace__insight-value {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.08);
+}
+
 .trace__legend-chip {
   padding-inline: 8px;
 }
@@ -281,6 +296,11 @@
   background: rgb(var(--viz-window-rgb) / 0.11);
   border-color: rgb(var(--viz-window-rgb) / 0.2);
   color: var(--viz-window-ink);
+}
+
+.value-chip app-math-text {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.08);
 }
 
 .trace__detail-grid {
@@ -326,6 +346,11 @@
     color: var(--text-primary);
     overflow-wrap: anywhere;
   }
+}
+
+.kv-list strong app-math-text {
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--accent-rgb), 0.08);
 }
 
 .trace__detail-empty {

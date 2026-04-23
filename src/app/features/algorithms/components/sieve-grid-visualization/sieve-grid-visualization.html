@@ -20,7 +20,7 @@
         </div>
         <div class="sieve__pivot-meta">
           <span class="sieve__pivot-bound">
-            <span class="sieve__pivot-bound-label">√n</span>
+            <app-math-text class="sieve__pivot-bound-label" content="√n" mode="math" variant="formula" />
             <span class="sieve__pivot-bound-value">{{ sieve.bound }}</span>
           </span>
           @for (stat of sieve.stats; track stat.label) {

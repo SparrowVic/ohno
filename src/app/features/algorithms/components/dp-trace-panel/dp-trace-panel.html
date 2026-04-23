@@ -47,7 +47,9 @@
           class="trace__calc-section trace__calc-section--preset"
           [eyebrow]="I18N_KEY.features.algorithms.tracePanels.dp.presetNoteLabel | transloco"
         >
-          <div class="trace__calc-expression">{{ dpState.presetDescription | i18nText }}</div>
+          <div class="trace__calc-expression">
+            <app-math-text [content]="dpState.presetDescription | i18nText" />
+          </div>
           <div class="trace__calc-decision">{{ dpState.pathLabel | i18nText }}</div>
         </app-segmented-panel-section>
 
@@ -60,14 +62,17 @@
           "
         >
           <div class="trace__calc-expression">
-            {{
-              (dpState.computation?.expression | i18nText) ||
+            <app-math-text
+              [content]="
+                (dpState.computation?.expression | i18nText) ||
                 (I18N_KEY.features.algorithms.tracePanels.dp.waitingTransitionLabel | transloco)
-            }}
+              "
+            />
           </div>
           <div class="trace__calc-result">
             @if (dpState.computation?.result; as result) {
-              = {{ result | i18nText }}
+              <span aria-hidden="true">=</span>
+              <app-math-text [content]="result | i18nText" />
             } @else {
               —
             }
@@ -96,7 +101,7 @@
               }}</span>
             } @else {
               @for (item of dpState.primaryItems; track item) {
-                <span class="trace__chip">{{ item | i18nText }}</span>
+                <span class="trace__chip"><app-math-text [content]="item | i18nText" /></span>
               }
             }
           </div>
@@ -113,7 +118,9 @@
               }}</span>
             } @else {
               @for (item of dpState.secondaryItems; track item) {
-                <span class="trace__chip trace__chip--soft">{{ item | i18nText }}</span>
+                <span class="trace__chip trace__chip--soft"
+                  ><app-math-text [content]="item | i18nText"
+                /></span>
               }
             }
           </div>

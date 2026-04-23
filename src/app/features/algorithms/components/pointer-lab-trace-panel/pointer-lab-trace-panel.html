@@ -40,8 +40,8 @@
           <div class="trace__pointer-grid">
             @for (ptr of lab.pointers; track ptr.id) {
               <div class="trace__pointer trace__pointer--{{ ptr.tone }}">
-                <span class="trace__pointer-label">{{ ptr.label }}</span>
-                <span class="trace__pointer-index">{{ ptr.index }}</span>
+                <app-math-text class="trace__pointer-label" [content]="ptr.label" />
+                <app-math-text class="trace__pointer-index" [content]="stringify(ptr.index)" />
               </div>
             }
           </div>
@@ -55,8 +55,8 @@
             <div class="trace__stats">
               @for (stat of lab.stats; track $index) {
                 <div class="trace__stat trace__stat--{{ stat.tone }}">
-                  <span class="trace__stat-label">{{ stat.label | i18nText }}</span>
-                  <span class="trace__stat-value">{{ stat.value | i18nText }}</span>
+                  <app-math-text class="trace__stat-label" [content]="stat.label | i18nText" />
+                  <app-math-text class="trace__stat-value" [content]="stat.value | i18nText" />
                 </div>
               }
             </div>

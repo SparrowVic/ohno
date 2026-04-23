@@ -40,8 +40,8 @@
           <div class="trace__register-grid">
             @for (reg of lab.registers; track reg.id) {
               <div class="trace__register trace__register--{{ reg.tone }}">
-                <span class="trace__register-label">{{ reg.label }}</span>
-                <span class="trace__register-value">{{ reg.value }}</span>
+                <app-math-text class="trace__register-label" [content]="reg.label" />
+                <app-math-text class="trace__register-value" [content]="stringify(reg.value)" />
                 @if (reg.hint; as hint) {
                   <span class="trace__register-hint">{{ hint | i18nText }}</span>
                 }
@@ -64,7 +64,9 @@
                 <span
                   class="trace__history-chip"
                   [class.trace__history-chip--current]="entry.isCurrent"
-                  >{{ entry.label }} → <b>{{ entry.value }}</b></span
+                  ><app-math-text [content]="entry.label" />
+                  <span aria-hidden="true">→</span>
+                  <b><app-math-text [content]="stringify(entry.value)" /></b></span
                 >
               }
             }

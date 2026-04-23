@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
+import { MathText } from '../math-text/math-text';
+
 export type UiTagTone =
   | 'neutral'
   | 'easy'
@@ -36,7 +38,7 @@ export interface UiTagModel {
 
 @Component({
   selector: 'app-ui-tag',
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, MathText],
   templateUrl: './ui-tag.html',
   styleUrl: './ui-tag.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,5 +70,9 @@ export class UiTag {
   readonly hasLabel = computed(() => {
     const label = this.label();
     return label !== null && label !== undefined && String(label).length > 0;
+  });
+  readonly labelText = computed(() => {
+    const label = this.label();
+    return label !== null && label !== undefined ? String(label) : null;
   });
 }

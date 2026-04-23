@@ -14,8 +14,8 @@
       <section class="ctlab__stats">
         @for (stat of tree.stats; track stat.label) {
           <div class="ctlab__stat ctlab__stat--{{ stat.tone }}">
-            <span class="ctlab__stat-label">{{ stat.label | i18nText }}</span>
-            <span class="ctlab__stat-value">{{ stat.value | i18nText }}</span>
+            <app-math-text class="ctlab__stat-label" [content]="stat.label | i18nText" variant="chip" />
+            <app-math-text class="ctlab__stat-value" [content]="stat.value | i18nText" variant="metric" />
           </div>
         }
       </section>
@@ -91,7 +91,7 @@
                 [style.min-height.px]="nodeHeightPx"
               >
                 <header class="ctlab__node-head">
-                  <span class="ctlab__node-title">{{ node.title }}</span>
+                  <app-math-text class="ctlab__node-title" [content]="node.title" variant="formula" />
                   @if (node.badge) {
                     <span class="ctlab__node-badge">{{ node.badge }}</span>
                   }
@@ -103,8 +103,8 @@
                   <div class="ctlab__node-stats">
                     @for (stat of node.stats; track stat.label) {
                       <span class="ctlab__node-stat ctlab__node-stat--{{ stat.tone }}">
-                        <span class="ctlab__node-stat-label">{{ stat.label | i18nText }}</span>
-                        <span class="ctlab__node-stat-value">{{ stat.value | i18nText }}</span>
+                        <app-math-text class="ctlab__node-stat-label" [content]="stat.label | i18nText" variant="chip" />
+                        <app-math-text class="ctlab__node-stat-value" [content]="stat.value | i18nText" variant="metric" />
                       </span>
                     }
                   </div>
@@ -120,13 +120,11 @@
         [class.ctlab__result--pending]="!tree.resultLabel"
       >
         <span class="ctlab__result-label">result</span>
-        <span class="ctlab__result-value">
-          @if (tree.resultLabel; as result) {
-            {{ result | i18nText }}
-          } @else {
-            —
-          }
-        </span>
+        @if (tree.resultLabel; as result) {
+          <app-math-text class="ctlab__result-value" [content]="result | i18nText" variant="formula" />
+        } @else {
+          <span class="ctlab__result-value">—</span>
+        }
       </footer>
     </div>
   }

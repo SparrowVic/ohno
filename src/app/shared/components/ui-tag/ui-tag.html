@@ -31,6 +31,6 @@
   }
 
   @if (hasLabel()) {
-    <span class="ui-tag__label">{{ label() }}</span>
+    <app-math-text class="ui-tag__label" [content]="labelText()" variant="chip" />
   }
 </span>

@@ -232,11 +232,10 @@
 
 .ctlab__edge-label {
   fill: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-family: KaTeX_Main, var(--font-mono);
   font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 /* ----- Node card ----- */
@@ -320,6 +319,9 @@
 }
 
 .ctlab__node-title {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
   font-size: 12px;
   font-weight: 800;
   color: var(--text-primary);
@@ -463,7 +465,8 @@
 }
 
 .ctlab__result-value {
-  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: baseline;
   font-size: 16px;
   font-weight: 700;
   color: var(--accent-strong);

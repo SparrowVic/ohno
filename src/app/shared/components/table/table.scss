@@ -67,6 +67,13 @@
     color var(--duration-fast) var(--ease-soft);
 }
 
+.table tbody td app-math-text {
+  --math-text-scale: 1.06;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.05);
+  min-width: 0;
+  max-width: 100%;
+}
+
 .table--compact tbody td {
   padding-top: 7px;
   padding-bottom: 7px;
