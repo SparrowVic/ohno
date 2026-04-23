@@ -1978,6 +1978,42 @@
             }
           }
         },
+        "scratchpadLab": {
+          "gcd": {
+            "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — przesuwamy parę i idziemy dalej.",
+            "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
+            "captions": {
+              "decision": "Sprawdzamy warunek pętli — [[math]]b[[/math]] osiągnęło zero.",
+              "result": "Zamykamy końcową wartość [[math]]\\gcd[[/math]] w ramce.",
+              "setup": "Zapisujemy cel i regułę algorytmu.",
+              "substitute": "Podstawiamy [[math]]\\gcd(a, b) → \\gcd(b, a \\bmod b)[[/math]]."
+            },
+            "decisions": {
+              "bIsZero": "[[math]]b = 0[[/math]] — pętla się kończy.",
+              "complete": "Wartość [[math]]\\gcd[[/math]] jest ustalona.",
+              "computing": "Liczymy resztę z bieżącej pary.",
+              "settingUp": "Zapisujemy cel i regułę algorytmu.",
+              "substituting": "Podstawiamy [[math]]\\gcd(a, b) → \\gcd(b, a \\bmod b)[[/math]]."
+            },
+            "firstPair": "[[math]]\\gcd({{a}}, {{b}})[[/math]]",
+            "goal": "Znajdź [[math]]\\gcd({{a}}, {{b}})[[/math]].",
+            "invariant": "Niezmiennik: [[math]]\\gcd(a, b)[[/math]] nie zmienia się w żadnym kroku.",
+            "modeLabel": "Algorytm Euklidesa (tablica)",
+            "phases": {
+              "complete": "Koniec",
+              "compute": "Liczymy resztę",
+              "decide": "Decyzja",
+              "setup": "Przygotowanie",
+              "substitute": "Podstawienie"
+            },
+            "remainderAnnotation": "[[math]]{{prevA}} \\bmod {{prevB}} = {{r}}[[/math]]",
+            "remainderInstruction": "Policz [[math]]{{a}} \\bmod {{b}}[[/math]]",
+            "resultLine": "= [[math]]{{gcd}}[[/math]]",
+            "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}[[/math]]",
+            "rule": "Algorytm Euklidesa: [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], powtarzaj aż [[math]]b = 0[[/math]].",
+            "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]"
+          }
+        },
         "search": {
           "binarySearch": {
             "decisions": {
@@ -4187,6 +4223,14 @@
           "pointersLabel": "Wskaźniki",
           "statsLabel": "Statystyki"
         },
+        "scratchpadLab": {
+          "currentLineLabel": "Bieżąca linia",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu tablicy dla tego kroku.",
+          "historyLabel": "Wyprowadzenie",
+          "iterationLabel": "Iteracja",
+          "marginsLabel": "Notatki na marginesie"
+        },
         "search": {
           "calculationAriaLabel": "Podsumowanie obliczeń wyszukiwania",
           "columns": {
@@ -5208,6 +5252,14 @@
           }
         }
       },
+      "vizOptions": {
+        "scratchpadLab": {
+          "captionsLabel": "Pokaż tytuły kroków",
+          "captionsDescription": "Przypinamy opis kroku prowadzącego nad każdą linię, żeby długie wyprowadzenia dało się czytać bez przewijania paska u góry.",
+          "instructionsLabel": "Pokaż wskazówki",
+          "instructionsDescription": "Tag w trybie rozkazującym (np. \"Policz 48 mod 36\") zostaje przypięty do linii, którą wyprodukował."
+        }
+      },
       "visualizations": {
         "closestPair": {
           "action": {
@@ -5437,6 +5489,10 @@
     "table": {
       "emptyLabel": "Brak wierszy",
       "legendLabel": "Legenda"
+    },
+    "vizOptionsMenu": {
+      "title": "Opcje widoku",
+      "triggerLabel": "Opcje widoku"
     }
   }
 }

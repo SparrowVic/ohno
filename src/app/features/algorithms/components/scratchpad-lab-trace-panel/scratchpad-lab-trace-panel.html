@@ -1,0 +1,111 @@
+<div class="trace">
+  @if (state(); as pad) {
+    <div class="trace__header">
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="pad.modeLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="pad.phaseLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.scratchpadLab.iterationLabel | transloco"
+          [value]="pad.iteration"
+          [valueMono]="true"
+        />
+        @if (hasResult()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+            [value]="pad.resultLabel! | i18nText"
+          />
+        }
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.scratchpadLab.decisionLabel | transloco
+          "
+          [value]="pad.decisionLabel | i18nText"
+        />
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__streams">
+        @if (currentLine(); as line) {
+          <app-segmented-panel-section
+            [eyebrow]="
+              I18N_KEY.features.algorithms.tracePanels.scratchpadLab.currentLineLabel | transloco
+            "
+          >
+            <div class="trace__current">
+              @if (line.marker; as marker) {
+                <span class="trace__current-marker"><app-math-text [content]="marker" /></span>
+              }
+              <span class="trace__current-body">
+                <app-math-text mode="mixed" [content]="line.content | i18nText" />
+              </span>
+              @if (line.annotation; as annotation) {
+                <span class="trace__current-annotation">
+                  <app-math-text mode="mixed" [content]="annotation | i18nText" />
+                </span>
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+
+        @if (pad.margins.length > 0) {
+          <app-segmented-panel-section
+            [eyebrow]="
+              I18N_KEY.features.algorithms.tracePanels.scratchpadLab.marginsLabel | transloco
+            "
+            [badge]="pad.margins.length"
+          >
+            <div class="trace__margins">
+              @for (margin of pad.margins; track margin.id) {
+                <span class="trace__sticky trace__sticky--{{ margin.tone }}">
+                  <app-math-text mode="mixed" [content]="margin.text | i18nText" />
+                </span>
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.scratchpadLab.historyLabel | transloco
+          "
+          [badge]="derivationLines().length"
+        >
+          <div class="trace__history">
+            @if (derivationLines().length === 0) {
+              <span class="trace__empty-note">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
+            } @else {
+              @for (line of derivationLines(); track line.id) {
+                <span
+                  class="trace__history-chip trace__history-chip--{{ line.kind }}"
+                  [class.trace__history-chip--current]="line.state === 'current'"
+                >
+                  @if (line.marker) {
+                    <span class="trace__history-marker">
+                      <app-math-text [content]="line.marker" />
+                    </span>
+                  }
+                  <app-math-text mode="mixed" [content]="line.content | i18nText" />
+                </span>
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    </div>
+  } @else {
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      {{ I18N_KEY.features.algorithms.tracePanels.scratchpadLab.emptyLabel | transloco }}
+    </div>
+  }
+</div>

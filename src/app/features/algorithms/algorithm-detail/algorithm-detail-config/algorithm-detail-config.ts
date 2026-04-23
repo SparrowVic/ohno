@@ -1414,6 +1414,14 @@ const NUMBER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'number-lab', label: 'Number Lab' },
 ];
 
+/** Variant pair offered for math-heavy algorithms that should default
+ *  to the chalkboard (derivational) view but can also be explored in
+ *  the register dashboard. Students toggle from the toolbar. */
+const NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'scratchpad-lab', label: 'Chalkboard' },
+  { value: 'number-lab', label: 'Number Lab' },
+];
+
 const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'pointer-lab', label: 'Pointer Lab' },
 ];
@@ -2297,8 +2305,8 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
   codeRegions: EUCLIDEAN_GCD_CODE_REGIONS,
   codeHighlightMap: EUCLIDEAN_GCD_CODE_HIGHLIGHT_MAP,
   codeVariants: EUCLIDEAN_GCD_CODE_VARIANTS,
-  variantOptions: NUMBER_LAB_VARIANT_OPTIONS,
-  defaultVariant: 'number-lab',
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
   sizeOptions: [1, 2, 3],
   defaultSize: 1,
   sizeUnit: 'scenario',

@@ -67,6 +67,8 @@
         <app-call-stack-lab-trace-panel [state]="callStackLabState()" />
       } @else if (callTreeLabState()) {
         <app-call-tree-lab-trace-panel [state]="callTreeLabState()" />
+      } @else if (scratchpadLabState()) {
+        <app-scratchpad-lab-trace-panel [state]="scratchpadLabState()" />
       } @else if (closestPairGeometryState()) {
         <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
       } @else if (lineIntersectionGeometryState()) {

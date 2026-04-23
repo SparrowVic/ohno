@@ -34,4 +34,5 @@ export type VisualizationVariant =
   | 'pointer-lab'
   | 'sieve-grid'
   | 'call-stack-lab'
-  | 'call-tree-lab';
+  | 'call-tree-lab'
+  | 'scratchpad-lab';

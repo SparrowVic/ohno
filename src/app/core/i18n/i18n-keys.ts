@@ -56,6 +56,10 @@ export const I18N_KEY = {
       emptyLabel: t('shared.table.emptyLabel'),
       legendLabel: t('shared.table.legendLabel'),
     },
+    vizOptionsMenu: {
+      triggerLabel: t('shared.vizOptionsMenu.triggerLabel'),
+      title: t('shared.vizOptionsMenu.title'),
+    },
   },
   catalog: {
     algorithms: {
@@ -1108,6 +1112,28 @@ export const I18N_KEY = {
           statsLabel: t('features.algorithms.tracePanels.callTreeLab.statsLabel'),
           pathLabel: t('features.algorithms.tracePanels.callTreeLab.pathLabel'),
           emptyLabel: t('features.algorithms.tracePanels.callTreeLab.emptyLabel'),
+        },
+        scratchpadLab: {
+          iterationLabel: t('features.algorithms.tracePanels.scratchpadLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.scratchpadLab.decisionLabel'),
+          currentLineLabel: t('features.algorithms.tracePanels.scratchpadLab.currentLineLabel'),
+          marginsLabel: t('features.algorithms.tracePanels.scratchpadLab.marginsLabel'),
+          historyLabel: t('features.algorithms.tracePanels.scratchpadLab.historyLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.scratchpadLab.emptyLabel'),
+        },
+      },
+      vizOptions: {
+        scratchpadLab: {
+          captionsLabel: t('features.algorithms.vizOptions.scratchpadLab.captionsLabel'),
+          captionsDescription: t(
+            'features.algorithms.vizOptions.scratchpadLab.captionsDescription',
+          ),
+          instructionsLabel: t(
+            'features.algorithms.vizOptions.scratchpadLab.instructionsLabel',
+          ),
+          instructionsDescription: t(
+            'features.algorithms.vizOptions.scratchpadLab.instructionsDescription',
+          ),
         },
       },
       visualizations: {

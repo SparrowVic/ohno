@@ -52,6 +52,7 @@ import { PointerLabTraceState } from '../models/pointer-lab';
 import { SieveGridTraceState } from '../models/sieve-grid';
 import { CallStackLabTraceState } from '../models/call-stack-lab';
 import { CallTreeLabTraceState } from '../models/call-tree-lab';
+import { ScratchpadLabTraceState } from '../models/scratchpad-lab';
 import { NumberLabPresetOption } from '../utils/number-lab-scenarios/number-lab-scenarios';
 import { PointerLabPresetOption } from '../utils/pointer-lab-scenarios/pointer-lab-scenarios';
 import { SieveGridPresetOption } from '../utils/sieve-grid-scenarios/sieve-grid-scenarios';
@@ -256,6 +257,9 @@ export class AlgorithmDetail {
   );
   readonly callTreeLabTrace = computed<CallTreeLabTraceState | null>(
     () => this.currentSnapshot()?.callTreeLab ?? null,
+  );
+  readonly scratchpadLabTrace = computed<ScratchpadLabTraceState | null>(
+    () => this.currentSnapshot()?.scratchpadLab ?? null,
   );
   readonly pointerLabTrace = computed<PointerLabTraceState | null>(
     () => this.currentSnapshot()?.pointerLab ?? null,

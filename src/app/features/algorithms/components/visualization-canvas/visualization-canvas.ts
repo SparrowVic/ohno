@@ -33,6 +33,7 @@ import { PointerLabVisualization } from '../pointer-lab-visualization/pointer-la
 import { SieveGridVisualization } from '../sieve-grid-visualization/sieve-grid-visualization';
 import { CallStackLabVisualization } from '../call-stack-lab-visualization/call-stack-lab-visualization';
 import { CallTreeLabVisualization } from '../call-tree-lab-visualization/call-tree-lab-visualization';
+import { ScratchpadLabVisualization } from '../scratchpad-lab-visualization/scratchpad-lab-visualization';
 import { NumberLabPresetOption } from '../../utils/number-lab-scenarios/number-lab-scenarios';
 import { PointerLabPresetOption } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
 import { SieveGridPresetOption } from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
@@ -70,6 +71,7 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     SieveGridVisualization,
     CallStackLabVisualization,
     CallTreeLabVisualization,
+    ScratchpadLabVisualization,
     VoronoiVisualization,
   ],
   templateUrl: './visualization-canvas.html',

@@ -1978,6 +1978,42 @@
             }
           }
         },
+        "scratchpadLab": {
+          "gcd": {
+            "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — shift pair and continue.",
+            "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
+            "captions": {
+              "decision": "Check the loop condition — [[math]]b[[/math]] reached zero.",
+              "result": "Box the final [[math]]\\gcd[[/math]] value.",
+              "setup": "Write down the goal and the algorithm rule.",
+              "substitute": "Substitute [[math]]\\gcd(a, b) → \\gcd(b, a \\bmod b)[[/math]]."
+            },
+            "decisions": {
+              "bIsZero": "[[math]]b = 0[[/math]] — the loop terminates.",
+              "complete": "Final value of [[math]]\\gcd[[/math]] is settled.",
+              "computing": "Computing the remainder of the current pair.",
+              "settingUp": "Writing the goal and the algorithm rule.",
+              "substituting": "Substituting [[math]]\\gcd(a, b) → \\gcd(b, a \\bmod b)[[/math]]."
+            },
+            "firstPair": "[[math]]\\gcd({{a}}, {{b}})[[/math]]",
+            "goal": "Find [[math]]\\gcd({{a}}, {{b}})[[/math]].",
+            "invariant": "Invariant: [[math]]\\gcd(a, b)[[/math]] stays the same at every step.",
+            "modeLabel": "Euclidean algorithm (chalkboard)",
+            "phases": {
+              "complete": "Done",
+              "compute": "Compute remainder",
+              "decide": "Decide",
+              "setup": "Setup",
+              "substitute": "Substitute"
+            },
+            "remainderAnnotation": "[[math]]{{prevA}} \\bmod {{prevB}} = {{r}}[[/math]]",
+            "remainderInstruction": "Compute [[math]]{{a}} \\bmod {{b}}[[/math]]",
+            "resultLine": "= [[math]]{{gcd}}[[/math]]",
+            "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}[[/math]]",
+            "rule": "Euclidean algorithm: [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], repeat until [[math]]b = 0[[/math]].",
+            "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]"
+          }
+        },
         "search": {
           "binarySearch": {
             "decisions": {
@@ -4187,6 +4223,14 @@
           "pointersLabel": "Pointers",
           "statsLabel": "Stats"
         },
+        "scratchpadLab": {
+          "currentLineLabel": "Current line",
+          "decisionLabel": "Decision",
+          "emptyLabel": "No chalkboard trace for this step.",
+          "historyLabel": "Derivation",
+          "iterationLabel": "Iteration",
+          "marginsLabel": "Margin notes"
+        },
         "search": {
           "calculationAriaLabel": "Search calculation summary",
           "columns": {
@@ -5208,6 +5252,14 @@
           }
         }
       },
+      "vizOptions": {
+        "scratchpadLab": {
+          "captionsLabel": "Show step titles",
+          "captionsDescription": "Keep the tutor's step description pinned above each line so long derivations stay readable without scrubbing.",
+          "instructionsLabel": "Show instructions",
+          "instructionsDescription": "Keep the imperative tag (e.g. \"Compute 48 mod 36\") attached to the line it produced."
+        }
+      },
       "visualizations": {
         "closestPair": {
           "action": {
@@ -5437,6 +5489,10 @@
     "table": {
       "emptyLabel": "No rows",
       "legendLabel": "Legend"
+    },
+    "vizOptionsMenu": {
+      "title": "View options",
+      "triggerLabel": "View options"
     }
   }
 }

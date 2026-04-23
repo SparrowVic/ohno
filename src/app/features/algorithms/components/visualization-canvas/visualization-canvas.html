@@ -146,5 +146,15 @@
         (presetChange)="callTreeLabPresetChange.emit($event)"
       />
     }
+    @case ('scratchpad-lab') {
+      <app-scratchpad-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="numberLabPresetOptions()"
+        [presetId]="numberLabPresetId()"
+        (presetChange)="numberLabPresetChange.emit($event)"
+      />
+    }
   }
 </div>

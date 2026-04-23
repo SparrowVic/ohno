@@ -1,0 +1,462 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ================================================================ */
+/*  SCRATCHPAD — chalkboard / notebook derivation viewer             */
+/* ================================================================ */
+/* The metaphor is a tutor writing the derivation out line by line.
+   Narrative elements (goal, captions, notes, decisions, sticky tags)
+   use Caveat — a readable digital-notebook hand — so the canvas feels
+   like a shared whiteboard. Actual formulas stay in KaTeX / mono so
+   the math reads with precision. Per-row dashed guides keep the eye
+   tracking from body → annotation on long derivations without the
+   need for a full-canvas ruling overlay. */
+
+.scratchpad {
+  position: relative;
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  padding: 16px 20px;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+  container-type: inline-size;
+
+  /* Subtle off-white wash — the mood of paper under warm room light,
+     without a competing background grid. Per-row guides handle
+     alignment; ambient texture stays minimal so KaTeX stays crisp. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014), rgba(255, 255, 255, 0.003)),
+    rgba(var(--viz-warning-rgb), 0.014);
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ================================================================ */
+/*  GLOBAL MARGIN (top-of-page sticky notes)                         */
+/* ================================================================ */
+
+.scratchpad__global-margin {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+/* ================================================================ */
+/*  PAGE — lines column                                              */
+/* ================================================================ */
+
+.scratchpad__page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  padding: 2px 0;
+}
+
+.scratchpad__divider {
+  border: 0;
+  height: 1px;
+  margin: 6px 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.14) 15%,
+    rgba(255, 255, 255, 0.14) 85%,
+    transparent
+  );
+  opacity: 0.6;
+}
+
+/* Each line = 2-row × 4-col grid.
+   Row 1: caption (spans all cols) — teacher's pencil note above body.
+   Row 2: [marker 44px | body 1fr | instruction auto | annotation 200px].
+   Unused rows collapse (`auto`). Per-row dashed guide underneath
+   makes lateral scanning (body ↔ annotation) reliable. */
+.scratchpad__line {
+  --scratchpad-indent: 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto minmax(0, 210px);
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  column-gap: 12px;
+  row-gap: 1px;
+  padding: 5px 10px 6px calc(10px + var(--scratchpad-indent) * 28px);
+  border-radius: 9px;
+  position: relative;
+  transition:
+    opacity var(--duration-base) var(--ease-out-expo),
+    transform var(--duration-base) var(--ease-out-expo),
+    background var(--duration-fast) var(--ease-soft);
+
+  /* Notebook-style row guide — the only structural rule in the
+     viewport. Faint dashed line that helps the eye track right
+     toward the annotation column without losing the wrong row. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 0;
+    border-bottom: 0.5px dashed rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+
+  /* Lines with a distinct surface of their own (current highlight,
+     result box) don't need the guide rule beneath — it would compete
+     with their edge. */
+  &--current::after,
+  &--result::after {
+    display: none;
+  }
+}
+
+.scratchpad__line-caption {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-family: var(--font-notebook);
+  font-size: 13px;
+  line-height: 1.15;
+  font-weight: 500;
+  color: var(--text-quaternary);
+  letter-spacing: 0.005em;
+  padding-left: 56px;
+  overflow-wrap: anywhere;
+  transition: color var(--duration-fast) var(--ease-soft);
+
+  /* Tiny pencil-mark prefix so captions read as tutor annotations
+     rather than system labels. Pure cosmetic, always present. */
+  &::before {
+    content: '✎ ';
+    margin-right: 2px;
+    opacity: 0.55;
+  }
+}
+
+.scratchpad__line--current .scratchpad__line-caption {
+  color: rgba(var(--viz-warning-rgb), 1);
+  opacity: 0.95;
+}
+
+.scratchpad__line-marker {
+  grid-column: 1;
+  grid-row: 2;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  font-family: var(--font-notebook);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  letter-spacing: 0;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.scratchpad__line--current .scratchpad__line-marker {
+  color: rgb(var(--viz-warning-rgb));
+}
+
+.scratchpad__line--decision .scratchpad__line-marker {
+  color: rgb(var(--viz-warning-rgb));
+  font-size: 17px;
+}
+
+.scratchpad__line--result .scratchpad__line-marker {
+  color: var(--accent-strong);
+  font-size: 20px;
+}
+
+/* ------ body (per-kind typography) ------ */
+.scratchpad__line-body {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.scratchpad__line--goal .scratchpad__line-body {
+  font-family: var(--font-notebook);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.scratchpad__line--note .scratchpad__line-body {
+  font-family: var(--font-notebook);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.scratchpad__line--equation .scratchpad__line-body,
+.scratchpad__line--substitute .scratchpad__line-body {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+
+.scratchpad__line--decision .scratchpad__line-body {
+  font-family: var(--font-notebook);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--viz-warning);
+  line-height: 1.3;
+}
+
+.scratchpad__line--result {
+  padding: 10px 14px 11px calc(14px + var(--scratchpad-indent) * 28px);
+  margin-top: 4px;
+  margin-bottom: 2px;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--accent-rgb), 0.4);
+  background:
+    linear-gradient(180deg, rgba(var(--accent-rgb), 0.14), rgba(var(--accent-rgb), 0.04)),
+    rgba(13, 16, 24, 0.45);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.08);
+}
+
+.scratchpad__line--result .scratchpad__line-body {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-strong);
+  line-height: 1.15;
+}
+
+/* ------ instruction chip (persistent imperative tag) ------ */
+.scratchpad__line-instruction {
+  grid-column: 3;
+  grid-row: 2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 2px 10px 3px;
+  border-radius: 999px;
+  border: 0.5px solid rgba(var(--viz-warning-rgb), 0.4);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.2), rgba(var(--viz-warning-rgb), 0.06)),
+    rgba(13, 16, 24, 0.42);
+  font-family: var(--font-notebook);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgb(var(--viz-warning-rgb));
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  max-width: 100%;
+  line-height: 1.25;
+
+  &::before {
+    content: '→';
+    font-size: 11px;
+    color: rgb(var(--viz-warning-rgb));
+    opacity: 0.85;
+  }
+}
+
+.scratchpad__line--settled .scratchpad__line-instruction {
+  border-color: rgba(var(--viz-warning-rgb), 0.22);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.08), rgba(var(--viz-warning-rgb), 0.02)),
+    rgba(13, 16, 24, 0.3);
+}
+
+/* ------ annotation (right-column computation result) ------ */
+.scratchpad__line-annotation {
+  grid-column: 4;
+  grid-row: 2;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-align: right;
+  padding-left: 10px;
+  border-left: 1px dashed rgba(255, 255, 255, 0.12);
+  font-variant-numeric: tabular-nums;
+}
+
+.scratchpad__line--current .scratchpad__line-annotation {
+  color: var(--text-secondary);
+  border-left-color: rgba(var(--viz-warning-rgb), 0.32);
+}
+
+/* Per-line margin row — rendered below the grid when anchored sticky
+   notes live beside the line. Indented so they sit under the body. */
+.scratchpad__line-margin {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  margin-left: 56px;
+}
+
+/* Line entrance animation + current-state surface. */
+.scratchpad__line--entering {
+  animation: scratchpad-enter 360ms var(--ease-out-expo) both;
+}
+
+.scratchpad__line--current {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--viz-warning-rgb), 0.14),
+    rgba(var(--viz-warning-rgb), 0.04) 45%,
+    transparent 85%
+  );
+  box-shadow: inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.6);
+}
+
+.scratchpad__line--settled {
+  opacity: 0.82;
+}
+
+@keyframes scratchpad-enter {
+  0% {
+    opacity: 0;
+    transform: translate(-8px, -3px);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scratchpad__line--entering {
+    animation: none;
+  }
+}
+
+/* Narrow-container fallback — instruction and annotation drop below
+   the body so nothing gets clipped on sidebar-constrained widths. */
+@container (max-width: 680px) {
+  .scratchpad__line {
+    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+  }
+  .scratchpad__line-caption {
+    grid-column: 1 / -1;
+    padding-left: 46px;
+  }
+  .scratchpad__line-instruction {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 4px;
+  }
+  .scratchpad__line-annotation {
+    grid-column: 2;
+    grid-row: 4;
+    text-align: left;
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    padding-top: 4px;
+    margin-top: 2px;
+  }
+}
+
+/* ================================================================ */
+/*  STICKY NOTES (margins)                                           */
+/* ================================================================ */
+
+.scratchpad__sticky {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-family: var(--font-notebook);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  max-width: 100%;
+
+  &--invariant {
+    background:
+      linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.2), rgba(var(--viz-warning-rgb), 0.06)),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--viz-warning-rgb), 0.3);
+    color: rgb(var(--viz-warning-rgb));
+  }
+
+  &--hint {
+    background:
+      linear-gradient(180deg, rgba(var(--viz-accent-rgb), 0.16), rgba(var(--viz-accent-rgb), 0.04)),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--viz-accent-rgb), 0.32);
+    color: var(--viz-accent);
+  }
+
+  &--warning {
+    background:
+      linear-gradient(180deg, rgba(var(--viz-danger-rgb), 0.16), rgba(var(--viz-danger-rgb), 0.04)),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--viz-danger-rgb), 0.32);
+    color: var(--viz-danger);
+  }
+
+  &--success {
+    background:
+      linear-gradient(180deg, rgba(var(--accent-rgb), 0.16), rgba(var(--accent-rgb), 0.04)),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--accent-rgb), 0.32);
+    color: var(--accent-strong);
+  }
+}
+
+.scratchpad__sticky-body {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.scratchpad__sticky--inline {
+  font-size: 13px;
+  padding: 3px 9px;
+}
+
+/* ================================================================ */
+/*  SIGNOFF (completion footer)                                      */
+/* ================================================================ */
+
+.scratchpad__signoff {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 0.5px solid rgba(var(--accent-rgb), 0.25);
+  background: rgba(var(--accent-rgb), 0.06);
+  font-family: var(--font-notebook);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--accent-strong);
+  min-height: 38px;
+  line-height: 1.2;
+}
+
+.scratchpad__signoff-mark {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--accent-strong);
+}
