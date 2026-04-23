@@ -63,6 +63,29 @@ import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
 
+/** Family-agnostic predicate — true whenever the algorithm's config has
+ *  migrated to the unified task model (non-empty `tasks` array). Lets
+ *  the toolbar / dispatcher share one code path across number-lab,
+ *  sieve-grid, pointer-lab, tree, dp, string, call-stack-lab,
+ *  call-tree-lab without a giant switch. */
+type ConfigWithTasks = AlgorithmViewConfig & {
+  readonly tasks: readonly Task<Record<string, unknown>>[];
+  readonly defaultTaskId?: string;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: Record<string, unknown>,
+  ) => unknown;
+};
+
+function configHasTasks(
+  config: AlgorithmViewConfig | null | undefined,
+): config is ConfigWithTasks {
+  if (!config) return false;
+  const tasks = (config as { tasks?: readonly Task<unknown>[] }).tasks;
+  return Array.isArray(tasks) && tasks.length > 0;
+}
+
 interface RebuildOptions {
   readonly dpPresetId?: string | null;
   readonly stringPresetId?: string | null;
@@ -199,25 +222,22 @@ export class AlgorithmDetail {
     const config = this.config();
     // Suppress the legacy per-viz preset picker when the algorithm has
     // migrated to the new toolbar-level task picker. Returning an empty
-    // array hides the chip row inside the number-lab viz-header (its
-    // template gates on `options().length > 0`).
-    if (config?.kind === 'number-lab' && config.tasks && config.tasks.length > 0) {
-      return [];
-    }
+    // array hides the chip row inside the viz-header (its template
+    // gates on `options().length > 0`).
+    if (configHasTasks(config) && config.kind === 'number-lab') return [];
     return config?.kind === 'number-lab' ? config.presetOptions : [];
   });
 
-  /** Unified task options for the toolbar picker. Null when the
-   *  current algorithm hasn't migrated to the new task model yet. All
-   *  realistic task shapes are record-like (keys of the schema map to
-   *  the values object), so we widen to `Record<string, unknown>`
-   *  rather than leaking `unknown` to downstream consumers. */
+  /** Unified task options for the toolbar picker. Null when the current
+   *  algorithm hasn't migrated. `configHasTasks` is a family-agnostic
+   *  type guard — any config kind that exposes a non-empty `tasks`
+   *  array wires into the same toolbar UX. All realistic task shapes
+   *  are record-like, so we widen to `Record<string, unknown>` rather
+   *  than leaking `unknown` to downstream consumers. */
   readonly tasks = computed<readonly Task<Record<string, unknown>>[] | null>(() => {
     const config = this.config();
-    if (config?.kind !== 'number-lab') return null;
-    return (
-      (config.tasks as readonly Task<Record<string, unknown>>[] | undefined) ?? null
-    );
+    if (!configHasTasks(config)) return null;
+    return config.tasks as readonly Task<Record<string, unknown>>[];
   });
   readonly activeTask = computed<Task<Record<string, unknown>> | null>(() => {
     const list = this.tasks();
@@ -241,10 +261,12 @@ export class AlgorithmDetail {
   });
   readonly pointerLabPresetOptions = computed<readonly PointerLabPresetOption[]>(() => {
     const config = this.config();
+    if (configHasTasks(config) && config.kind === 'pointer-lab') return [];
     return config?.kind === 'pointer-lab' ? config.presetOptions : [];
   });
   readonly sieveGridPresetOptions = computed<readonly SieveGridPresetOption[]>(() => {
     const config = this.config();
+    if (configHasTasks(config) && config.kind === 'sieve-grid') return [];
     return config?.kind === 'sieve-grid' ? config.presetOptions : [];
   });
   readonly callStackLabPresetOptions = computed<readonly CallStackLabPresetOption[]>(() => {
@@ -445,10 +467,9 @@ export class AlgorithmDetail {
         this.callTreeLabPresetSig.set(
           config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
         );
-        const taskSeedId =
-          config.kind === 'number-lab' && config.tasks && config.tasks.length > 0
-            ? config.defaultTaskId ?? config.tasks[0]?.id ?? null
-            : null;
+        const taskSeedId = configHasTasks(config)
+          ? config.defaultTaskId ?? config.tasks[0]?.id ?? null
+          : null;
         this.activeTaskIdSig.set(taskSeedId);
         this.customValuesSig.set(null);
 
@@ -582,13 +603,14 @@ export class AlgorithmDetail {
     this.rebuildVisualization(config, this.sizeSig(), { numberLabPresetId: value });
   }
 
-  /** Toolbar-level task picker changed. Clears custom values since
-   *  they were scoped to the previous task. */
+  /** Toolbar-level task picker changed. Works across any config kind
+   *  that has migrated to the task model — number-lab, sieve-grid,
+   *  pointer-lab, tree, etc. Clears custom values since they were
+   *  scoped to the previous task. */
   onTaskChange(taskId: string): void {
     const config = this.config();
-    if (!config || config.kind !== 'number-lab') return;
-    const tasks = config.tasks;
-    if (!tasks || !tasks.some((task) => task.id === taskId)) return;
+    if (!configHasTasks(config)) return;
+    if (!config.tasks.some((task) => task.id === taskId)) return;
     if (taskId === this.activeTaskIdSig()) return;
 
     this.activeTaskIdSig.set(taskId);
@@ -600,7 +622,7 @@ export class AlgorithmDetail {
    *  active task. Triggers a rerun with the overrides in place. */
   onCustomValuesChange(values: unknown): void {
     const config = this.config();
-    if (!config || config.kind !== 'number-lab') return;
+    if (!configHasTasks(config)) return;
     const taskId = this.activeTaskIdSig();
     if (!taskId) return;
 
@@ -676,6 +698,46 @@ export class AlgorithmDetail {
     this.engine.reset();
   }
 
+  /** Shared task-path builder — used by every config kind that has a
+   *  `tasks` array. The per-family `createScenario` handles producing
+   *  the right scenario shape; this helper just resolves the task id +
+   *  effective values and feeds them in. */
+  private rebuildFromTask(
+    config: ConfigWithTasks,
+    size: number,
+    options: RebuildOptions,
+  ): void {
+    const taskId =
+      options.taskId ??
+      this.activeTaskIdSig() ??
+      config.defaultTaskId ??
+      config.tasks[0]?.id ??
+      null;
+    const task = taskId
+      ? findTask(config.tasks, taskId)
+      : null;
+    const customValues =
+      options.customValues !== undefined
+        ? options.customValues
+        : this.customValuesSig();
+    const effectiveValues = (customValues ?? task?.defaultValues ?? undefined) as
+      | Record<string, unknown>
+      | undefined;
+    // For migrated algorithms task.id doubles as the preset id so
+    // scenario-factory metadata stays consistent with the legacy
+    // flow. Fallback to the first task id if nothing else is set.
+    const resolvedPresetId =
+      taskId ??
+      ((config as { defaultPresetId?: string }).defaultPresetId ?? config.tasks[0]?.id ?? '');
+    const scenario = config.createScenario(size, resolvedPresetId, effectiveValues);
+    this.arraySig.set([]);
+    this.graphSig.set(null);
+    this.loadScenario(
+      scenario,
+      config.generator as (scenario: unknown) => Generator<SortStep>,
+    );
+  }
+
   private rebuildVisualization(
     config: AlgorithmViewConfig,
     size: number,
@@ -683,6 +745,15 @@ export class AlgorithmDetail {
   ): void {
     this.sizeSig.set(size);
     this.graphFocusTargetIdSig.set(null);
+
+    // Unified task path — if the algorithm's config has migrated to the
+    // task model, resolve scenario from task.defaultValues (or user
+    // custom overrides) and skip the legacy preset-id dispatch below.
+    // Works across number-lab, sieve-grid, pointer-lab, tree, etc.
+    if (configHasTasks(config)) {
+      this.rebuildFromTask(config, size, options);
+      return;
+    }
 
     switch (config.kind) {
       case 'graph': {
@@ -735,36 +806,8 @@ export class AlgorithmDetail {
         return;
       }
       case 'number-lab': {
-        // Task-path (preferred when config has migrated). The task
-        // supplies its own `defaultValues`; user-customized values take
-        // precedence via `options.customValues`. We pass the task id as
-        // the preset id so scenario-factory metadata (labels etc.)
-        // stays consistent with the legacy preset flow.
-        if (config.tasks && config.tasks.length > 0) {
-          const taskId =
-            options.taskId ??
-            this.activeTaskIdSig() ??
-            config.defaultTaskId ??
-            config.tasks[0]?.id ??
-            null;
-          const task = taskId
-            ? (findTask(config.tasks as readonly Task<unknown>[], taskId) ?? null)
-            : null;
-          const customValues =
-            options.customValues !== undefined
-              ? options.customValues
-              : this.customValuesSig();
-          const effectiveValues = customValues ?? task?.defaultValues ?? undefined;
-          const scenario = config.createScenario(
-            size,
-            taskId ?? config.defaultPresetId,
-            effectiveValues,
-          );
-          this.arraySig.set([]);
-          this.graphSig.set(null);
-          this.loadScenario(scenario, config.generator);
-          return;
-        }
+        // Legacy preset-only path — only reached when config hasn't
+        // migrated to the task model (the task path is taken earlier).
         const presetId =
           options.numberLabPresetId ?? this.numberLabPresetSig() ?? config.defaultPresetId;
         const scenario = config.createScenario(size, presetId);

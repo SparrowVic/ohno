@@ -3731,6 +3731,19 @@
             "a": "a",
             "b": "b"
           }
+        },
+        "pointerLab": {
+          "slidingWindow": {
+            "windowSize": "szerokość okna"
+          },
+          "twoPointers": {
+            "target": "cel"
+          }
+        },
+        "sieveEratosthenes": {
+          "values": {
+            "upper": "do N"
+          }
         }
       },
       "toolbar": {

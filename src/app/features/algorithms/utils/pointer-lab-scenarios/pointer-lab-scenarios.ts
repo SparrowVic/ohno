@@ -1,5 +1,7 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { Task } from '../../models/task';
+
 export interface PointerLabPresetOption {
   readonly id: string;
   readonly label: string;
@@ -95,15 +97,66 @@ export const TWO_POINTERS_PRESETS: readonly PointerLabPresetOption[] = [
 ];
 export const DEFAULT_TWO_POINTERS_PRESET_ID = 'classic';
 
+/** `target` is the only customizable scalar — the sorted array stays
+ *  fixed per preset. Student can test "does my chosen target exist in
+ *  THIS array?" without having to rebuild the array itself. */
+export interface TwoPointersValues {
+  readonly target: number;
+}
+
+const TWO_POINTERS_TARGET_SCHEMA = {
+  target: {
+    kind: 'int' as const,
+    label: t('features.algorithms.tasks.pointerLab.twoPointers.target'),
+  },
+};
+
+export const TWO_POINTERS_TASKS: readonly Task<TwoPointersValues>[] = [
+  {
+    id: 'classic',
+    name: K.twoPointers.classic.label,
+    defaultValues: { target: 14 },
+    inputSchema: TWO_POINTERS_TARGET_SCHEMA,
+    codeSnippetId: 'two-pointers',
+  },
+  {
+    id: 'edgeHit',
+    name: K.twoPointers.edgeHit.label,
+    defaultValues: { target: 13 },
+    inputSchema: TWO_POINTERS_TARGET_SCHEMA,
+    codeSnippetId: 'two-pointers',
+  },
+  {
+    id: 'noMatch',
+    name: K.twoPointers.noMatch.label,
+    defaultValues: { target: 15 },
+    inputSchema: TWO_POINTERS_TARGET_SCHEMA,
+    codeSnippetId: 'two-pointers',
+  },
+];
+export const DEFAULT_TWO_POINTERS_TASK_ID = 'classic';
+
 export function createTwoPointersScenario(
   _size: number,
   presetId: string | null,
+  customValues?: TwoPointersValues,
 ): TwoPointersScenario {
   const id = presetId ?? DEFAULT_TWO_POINTERS_PRESET_ID;
+  const base = resolveTwoPointersBase(id);
+  return {
+    kind: 'two-pointers',
+    presetId: base.presetId,
+    presetLabel: base.presetLabel,
+    presetDescription: base.presetDescription,
+    values: base.values,
+    target: customValues?.target ?? base.target,
+  };
+}
+
+function resolveTwoPointersBase(id: string): Omit<TwoPointersScenario, 'kind'> {
   switch (id) {
     case 'edgeHit':
       return {
-        kind: 'two-pointers',
         presetId: 'edgeHit',
         presetLabel: K.twoPointers.edgeHit.label,
         presetDescription: K.twoPointers.edgeHit.description,
@@ -112,7 +165,6 @@ export function createTwoPointersScenario(
       };
     case 'noMatch':
       return {
-        kind: 'two-pointers',
         presetId: 'noMatch',
         presetLabel: K.twoPointers.noMatch.label,
         presetDescription: K.twoPointers.noMatch.description,
@@ -122,7 +174,6 @@ export function createTwoPointersScenario(
     case 'classic':
     default:
       return {
-        kind: 'two-pointers',
         presetId: 'classic',
         presetLabel: K.twoPointers.classic.label,
         presetDescription: K.twoPointers.classic.description,
@@ -140,15 +191,65 @@ export const SLIDING_WINDOW_PRESETS: readonly PointerLabPresetOption[] = [
 ];
 export const DEFAULT_SLIDING_WINDOW_PRESET_ID = 'gains';
 
+export interface SlidingWindowValues {
+  readonly windowSize: number;
+}
+
+const SLIDING_WINDOW_SIZE_SCHEMA = {
+  windowSize: {
+    kind: 'int' as const,
+    label: t('features.algorithms.tasks.pointerLab.slidingWindow.windowSize'),
+    min: 1,
+    max: 10,
+  },
+};
+
+export const SLIDING_WINDOW_TASKS: readonly Task<SlidingWindowValues>[] = [
+  {
+    id: 'gains',
+    name: K.slidingWindow.gains.label,
+    defaultValues: { windowSize: 3 },
+    inputSchema: SLIDING_WINDOW_SIZE_SCHEMA,
+    codeSnippetId: 'sliding-window',
+  },
+  {
+    id: 'dips',
+    name: K.slidingWindow.dips.label,
+    defaultValues: { windowSize: 3 },
+    inputSchema: SLIDING_WINDOW_SIZE_SCHEMA,
+    codeSnippetId: 'sliding-window',
+  },
+  {
+    id: 'tail',
+    name: K.slidingWindow.tail.label,
+    defaultValues: { windowSize: 3 },
+    inputSchema: SLIDING_WINDOW_SIZE_SCHEMA,
+    codeSnippetId: 'sliding-window',
+  },
+];
+export const DEFAULT_SLIDING_WINDOW_TASK_ID = 'gains';
+
 export function createSlidingWindowScenario(
   _size: number,
   presetId: string | null,
+  customValues?: SlidingWindowValues,
 ): SlidingWindowScenario {
   const id = presetId ?? DEFAULT_SLIDING_WINDOW_PRESET_ID;
+  const base = resolveSlidingWindowBase(id);
+  return {
+    kind: 'sliding-window',
+    presetId: base.presetId,
+    presetLabel: base.presetLabel,
+    presetDescription: base.presetDescription,
+    values: base.values,
+    windowSize: customValues?.windowSize ?? base.windowSize,
+  };
+}
+
+function resolveSlidingWindowBase(id: string): Omit<SlidingWindowScenario, 'kind'> {
   switch (id) {
     case 'dips':
       return {
-        kind: 'sliding-window',
         presetId: 'dips',
         presetLabel: K.slidingWindow.dips.label,
         presetDescription: K.slidingWindow.dips.description,
@@ -157,7 +258,6 @@ export function createSlidingWindowScenario(
       };
     case 'tail':
       return {
-        kind: 'sliding-window',
         presetId: 'tail',
         presetLabel: K.slidingWindow.tail.label,
         presetDescription: K.slidingWindow.tail.description,
@@ -167,7 +267,6 @@ export function createSlidingWindowScenario(
     case 'gains':
     default:
       return {
-        kind: 'sliding-window',
         presetId: 'gains',
         presetLabel: K.slidingWindow.gains.label,
         presetDescription: K.slidingWindow.gains.description,
@@ -185,9 +284,40 @@ export const PALINDROME_PRESETS: readonly PointerLabPresetOption[] = [
 ];
 export const DEFAULT_PALINDROME_PRESET_ID = 'classic';
 
+/** `word` is a string — v1 popover only supports int fields, so the
+ *  schema stays empty and the ✎ button auto-hides. Adds back in v2
+ *  once string fields land (candidate for every algorithm here). */
+export type PalindromeValues = Record<string, never>;
+
+export const PALINDROME_TASKS: readonly Task<PalindromeValues>[] = [
+  {
+    id: 'classic',
+    name: K.palindrome.classic.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'palindrome-check',
+  },
+  {
+    id: 'odd',
+    name: K.palindrome.odd.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'palindrome-check',
+  },
+  {
+    id: 'nope',
+    name: K.palindrome.nope.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'palindrome-check',
+  },
+];
+export const DEFAULT_PALINDROME_TASK_ID = 'classic';
+
 export function createPalindromeScenario(
   _size: number,
   presetId: string | null,
+  _customValues?: PalindromeValues,
 ): PalindromeCheckScenario {
   const id = presetId ?? DEFAULT_PALINDROME_PRESET_ID;
   switch (id) {
@@ -226,7 +356,31 @@ export const REVERSE_PRESETS: readonly PointerLabPresetOption[] = [
 ];
 export const DEFAULT_REVERSE_PRESET_ID = 'word';
 
-export function createReverseScenario(_size: number, presetId: string | null): ReverseScenario {
+export type ReverseValues = Record<string, never>;
+
+export const REVERSE_TASKS: readonly Task<ReverseValues>[] = [
+  {
+    id: 'word',
+    name: K.reverse.word.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'reverse',
+  },
+  {
+    id: 'digits',
+    name: K.reverse.digits.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'reverse',
+  },
+];
+export const DEFAULT_REVERSE_TASK_ID = 'word';
+
+export function createReverseScenario(
+  _size: number,
+  presetId: string | null,
+  _customValues?: ReverseValues,
+): ReverseScenario {
   const id = presetId ?? DEFAULT_REVERSE_PRESET_ID;
   if (id === 'digits') {
     return {
@@ -263,7 +417,45 @@ export const KADANE_PRESETS: readonly PointerLabPresetOption[] = [
 ];
 export const DEFAULT_KADANE_PRESET_ID = 'classic';
 
-export function createKadaneScenario(_size: number, presetId: string | null): KadaneScenario {
+export type KadaneValues = Record<string, never>;
+
+export const KADANE_TASKS: readonly Task<KadaneValues>[] = [
+  {
+    id: 'classic',
+    name: K.kadane.classic.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'kadane',
+  },
+  {
+    id: 'mostlyNegative',
+    name: K.kadane.mostlyNegative.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'kadane',
+  },
+  {
+    id: 'allNegative',
+    name: K.kadane.allNegative.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'kadane',
+  },
+  {
+    id: 'zigzag',
+    name: K.kadane.zigzag.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'kadane',
+  },
+];
+export const DEFAULT_KADANE_TASK_ID = 'classic';
+
+export function createKadaneScenario(
+  _size: number,
+  presetId: string | null,
+  _customValues?: KadaneValues,
+): KadaneScenario {
   const id = presetId ?? DEFAULT_KADANE_PRESET_ID;
   switch (id) {
     case 'mostlyNegative':

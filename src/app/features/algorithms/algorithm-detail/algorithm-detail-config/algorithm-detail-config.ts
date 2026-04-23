@@ -526,20 +526,35 @@ import {
 import {
   PointerLabPresetOption,
   TwoPointersScenario,
+  TwoPointersValues,
   SlidingWindowScenario,
+  SlidingWindowValues,
   PalindromeCheckScenario,
+  PalindromeValues,
   ReverseScenario,
+  ReverseValues,
   KadaneScenario,
+  KadaneValues,
   TWO_POINTERS_PRESETS,
   SLIDING_WINDOW_PRESETS,
   PALINDROME_PRESETS,
   REVERSE_PRESETS,
   KADANE_PRESETS,
+  TWO_POINTERS_TASKS,
+  SLIDING_WINDOW_TASKS,
+  PALINDROME_TASKS,
+  REVERSE_TASKS,
+  KADANE_TASKS,
   DEFAULT_TWO_POINTERS_PRESET_ID,
   DEFAULT_SLIDING_WINDOW_PRESET_ID,
   DEFAULT_PALINDROME_PRESET_ID,
   DEFAULT_REVERSE_PRESET_ID,
   DEFAULT_KADANE_PRESET_ID,
+  DEFAULT_TWO_POINTERS_TASK_ID,
+  DEFAULT_SLIDING_WINDOW_TASK_ID,
+  DEFAULT_PALINDROME_TASK_ID,
+  DEFAULT_REVERSE_TASK_ID,
+  DEFAULT_KADANE_TASK_ID,
   createTwoPointersScenario,
   createSlidingWindowScenario,
   createPalindromeScenario,
@@ -549,8 +564,11 @@ import {
 import {
   SieveGridPresetOption,
   SieveEratosthenesScenario,
+  EratosthenesValues,
   ERATOSTHENES_PRESETS,
+  ERATOSTHENES_TASKS,
   DEFAULT_ERATOSTHENES_PRESET_ID,
+  DEFAULT_ERATOSTHENES_TASK_ID,
   createEratosthenesScenario,
 } from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
 import {
@@ -1689,20 +1707,34 @@ interface NumberLabAlgorithmViewConfig<TScenario = any, TValues = any>
   readonly defaultTaskId?: string;
 }
 
-interface PointerLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+interface PointerLabAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
   readonly kind: 'pointer-lab';
   readonly presetOptions: readonly PointerLabPresetOption[];
   readonly defaultPresetId: string;
-  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
 }
 
-interface SieveGridAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+interface SieveGridAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
   readonly kind: 'sieve-grid';
   readonly presetOptions: readonly SieveGridPresetOption[];
   readonly defaultPresetId: string;
-  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
 }
 
 interface CallStackLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
@@ -2403,7 +2435,10 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: extendedEuclideanGenerator,
 };
 
-const TWO_POINTERS_VIEW_CONFIG: AlgorithmViewConfig = {
+const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  TwoPointersScenario,
+  TwoPointersValues
+> = {
   kind: 'pointer-lab',
   codeLines: TWO_POINTERS_CODE,
   codeRegions: TWO_POINTERS_CODE_REGIONS,
@@ -2411,18 +2446,24 @@ const TWO_POINTERS_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: TWO_POINTERS_CODE_VARIANTS,
   variantOptions: POINTER_LAB_VARIANT_OPTIONS,
   defaultVariant: 'pointer-lab',
-  sizeOptions: [6, 8, 10],
-  defaultSize: 8,
+  sizeOptions: [1],
+  defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New sorted array',
   legendItems: () => [],
   presetOptions: TWO_POINTERS_PRESETS,
   defaultPresetId: DEFAULT_TWO_POINTERS_PRESET_ID,
-  createScenario: (size, presetId) => createTwoPointersScenario(size, presetId),
+  tasks: TWO_POINTERS_TASKS,
+  defaultTaskId: DEFAULT_TWO_POINTERS_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createTwoPointersScenario(size, presetId, customValues),
   generator: twoPointersGenerator,
 };
 
-const SLIDING_WINDOW_VIEW_CONFIG: AlgorithmViewConfig = {
+const SLIDING_WINDOW_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  SlidingWindowScenario,
+  SlidingWindowValues
+> = {
   kind: 'pointer-lab',
   codeLines: SLIDING_WINDOW_CODE,
   codeRegions: SLIDING_WINDOW_CODE_REGIONS,
@@ -2430,18 +2471,24 @@ const SLIDING_WINDOW_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: SLIDING_WINDOW_CODE_VARIANTS,
   variantOptions: POINTER_LAB_VARIANT_OPTIONS,
   defaultVariant: 'pointer-lab',
-  sizeOptions: [6, 8, 10],
-  defaultSize: 8,
+  sizeOptions: [1],
+  defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New stream',
   legendItems: () => [],
   presetOptions: SLIDING_WINDOW_PRESETS,
   defaultPresetId: DEFAULT_SLIDING_WINDOW_PRESET_ID,
-  createScenario: (size, presetId) => createSlidingWindowScenario(size, presetId),
+  tasks: SLIDING_WINDOW_TASKS,
+  defaultTaskId: DEFAULT_SLIDING_WINDOW_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createSlidingWindowScenario(size, presetId, customValues),
   generator: slidingWindowGenerator,
 };
 
-const PALINDROME_VIEW_CONFIG: AlgorithmViewConfig = {
+const PALINDROME_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  PalindromeCheckScenario,
+  PalindromeValues
+> = {
   kind: 'pointer-lab',
   codeLines: PALINDROME_CODE,
   codeRegions: PALINDROME_CODE_REGIONS,
@@ -2449,18 +2496,24 @@ const PALINDROME_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: PALINDROME_CODE_VARIANTS,
   variantOptions: POINTER_LAB_VARIANT_OPTIONS,
   defaultVariant: 'pointer-lab',
-  sizeOptions: [5, 7, 9],
-  defaultSize: 5,
+  sizeOptions: [1],
+  defaultSize: 1,
   sizeUnit: 'characters',
   randomizeLabel: 'New word',
   legendItems: () => [],
   presetOptions: PALINDROME_PRESETS,
   defaultPresetId: DEFAULT_PALINDROME_PRESET_ID,
-  createScenario: (size, presetId) => createPalindromeScenario(size, presetId),
+  tasks: PALINDROME_TASKS,
+  defaultTaskId: DEFAULT_PALINDROME_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createPalindromeScenario(size, presetId, customValues),
   generator: palindromeCheckGenerator,
 };
 
-const REVERSE_VIEW_CONFIG: AlgorithmViewConfig = {
+const REVERSE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  ReverseScenario,
+  ReverseValues
+> = {
   kind: 'pointer-lab',
   codeLines: REVERSE_CODE,
   codeRegions: REVERSE_CODE_REGIONS,
@@ -2468,18 +2521,24 @@ const REVERSE_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: REVERSE_CODE_VARIANTS,
   variantOptions: POINTER_LAB_VARIANT_OPTIONS,
   defaultVariant: 'pointer-lab',
-  sizeOptions: [6, 8, 10],
-  defaultSize: 6,
+  sizeOptions: [1],
+  defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New sequence',
   legendItems: () => [],
   presetOptions: REVERSE_PRESETS,
   defaultPresetId: DEFAULT_REVERSE_PRESET_ID,
-  createScenario: (size, presetId) => createReverseScenario(size, presetId),
+  tasks: REVERSE_TASKS,
+  defaultTaskId: DEFAULT_REVERSE_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createReverseScenario(size, presetId, customValues),
   generator: reverseStringArrayGenerator,
 };
 
-const KADANE_VIEW_CONFIG: AlgorithmViewConfig = {
+const KADANE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  KadaneScenario,
+  KadaneValues
+> = {
   kind: 'pointer-lab',
   codeLines: KADANE_CODE,
   codeRegions: KADANE_CODE_REGIONS,
@@ -2487,18 +2546,24 @@ const KADANE_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: KADANE_CODE_VARIANTS,
   variantOptions: POINTER_LAB_VARIANT_OPTIONS,
   defaultVariant: 'pointer-lab',
-  sizeOptions: [6, 9, 12],
-  defaultSize: 9,
+  sizeOptions: [1],
+  defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New sequence',
   legendItems: () => [],
   presetOptions: KADANE_PRESETS,
   defaultPresetId: DEFAULT_KADANE_PRESET_ID,
-  createScenario: (size, presetId) => createKadaneScenario(size, presetId),
+  tasks: KADANE_TASKS,
+  defaultTaskId: DEFAULT_KADANE_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createKadaneScenario(size, presetId, customValues),
   generator: kadaneGenerator,
 };
 
-const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: AlgorithmViewConfig = {
+const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: SieveGridAlgorithmViewConfig<
+  SieveEratosthenesScenario,
+  EratosthenesValues
+> = {
   kind: 'sieve-grid',
   codeLines: SIEVE_OF_ERATOSTHENES_CODE,
   codeRegions: SIEVE_OF_ERATOSTHENES_CODE_REGIONS,
@@ -2506,14 +2571,19 @@ const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: SIEVE_OF_ERATOSTHENES_CODE_VARIANTS,
   variantOptions: SIEVE_GRID_VARIANT_OPTIONS,
   defaultVariant: 'sieve-grid',
-  sizeOptions: [30, 40, 60, 80, 120],
-  defaultSize: 60,
+  /* `upper` now lives on the task — the size select becomes redundant,
+   *  so we collapse to a single option which the toolbar auto-hides. */
+  sizeOptions: [1],
+  defaultSize: 1,
   sizeUnit: 'integers',
   randomizeLabel: 'New range',
   legendItems: () => [],
   presetOptions: ERATOSTHENES_PRESETS,
   defaultPresetId: DEFAULT_ERATOSTHENES_PRESET_ID,
-  createScenario: (size, presetId) => createEratosthenesScenario(size, presetId),
+  tasks: ERATOSTHENES_TASKS,
+  defaultTaskId: DEFAULT_ERATOSTHENES_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createEratosthenesScenario(size, presetId, customValues),
   generator: sieveOfEratosthenesGenerator,
 };
 
