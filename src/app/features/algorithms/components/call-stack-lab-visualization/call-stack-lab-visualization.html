@@ -13,8 +13,16 @@
       <section class="cslab__stats">
         @for (stat of stack.stats; track stat.label) {
           <div class="cslab__stat cslab__stat--{{ stat.tone }}">
-            <span class="cslab__stat-label">{{ stat.label | i18nText }}</span>
-            <span class="cslab__stat-value">{{ stat.value | i18nText }}</span>
+            <app-math-text
+              class="cslab__stat-label"
+              [content]="stat.label | i18nText"
+              variant="chip"
+            />
+            <app-math-text
+              class="cslab__stat-value"
+              [content]="stat.value | i18nText"
+              variant="metric"
+            />
           </div>
         }
       </section>
@@ -33,7 +41,10 @@
               [class.cslab__frame--active]="$first"
             >
               <header class="cslab__frame-head">
-                <span class="cslab__frame-depth">#{{ frame.depth }}</span>
+                <span class="cslab__frame-depth"
+                  ><span aria-hidden="true">#</span
+                  ><app-math-text [content]="frame.depth.toString()" variant="chip"
+                /></span>
                 <app-math-text
                   class="cslab__frame-title"
                   [content]="frame.title"
@@ -41,7 +52,10 @@
                   variant="formula"
                 />
                 @if (frame.returnValue !== null) {
-                  <span class="cslab__frame-return">→ {{ frame.returnValue }}</span>
+                  <span class="cslab__frame-return"
+                    ><span aria-hidden="true">→&nbsp;</span
+                    ><app-math-text [content]="frame.returnValue" variant="chip"
+                  /></span>
                 }
               </header>
               @if (frame.subtitle; as subtitle) {
@@ -51,8 +65,16 @@
                 <div class="cslab__frame-locals">
                   @for (local of frame.locals; track local.label) {
                     <span class="cslab__local cslab__local--{{ local.tone }}">
-                      <span class="cslab__local-label">{{ local.label }}</span>
-                      <span class="cslab__local-value">{{ local.value }}</span>
+                      <app-math-text
+                        class="cslab__local-label"
+                        [content]="local.label"
+                        variant="chip"
+                      />
+                      <app-math-text
+                        class="cslab__local-value"
+                        [content]="local.value"
+                        variant="chip"
+                      />
                     </span>
                   }
                 </div>
@@ -73,7 +95,11 @@
                 <li class="cslab__rail-item" [style.opacity]="1 - ret.age * 0.14">
                   <app-math-text class="cslab__rail-title" [content]="ret.title" mode="math" variant="formula" />
                   <span class="cslab__rail-arrow">→</span>
-                  <span class="cslab__rail-value">{{ ret.returnValue }}</span>
+                  <app-math-text
+                    class="cslab__rail-value"
+                    [content]="ret.returnValue"
+                    variant="chip"
+                  />
                 </li>
               }
             </ol>

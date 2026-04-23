@@ -141,6 +141,16 @@
   --math-text-tracking: 0.003em;
 }
 
+/* Used in dense grids / cells where we want the KaTeX font family for
+   visual consistency but no scale bump or glow — otherwise small cells
+   overflow or look oversized. */
+.math-text--variant-cell {
+  --math-text-scale: 1;
+  --math-text-glow: transparent;
+  --math-text-tracking: 0;
+  --math-text-highlight-opacity: 0;
+}
+
 .math-text--variant-log .math-text__segment--math {
   padding: 0.02em 0.22em 0.08em;
   border-radius: 0.42em;
@@ -162,7 +172,8 @@
 }
 
 .math-text--variant-chip .math-text__rendered .mathsf,
-.math-text--variant-metric .math-text__rendered .mathsf {
+.math-text--variant-metric .math-text__rendered .mathsf,
+.math-text--variant-cell .math-text__rendered .mathsf {
   font-family: KaTeX_SansSerif, KaTeX_Main, sans-serif;
   font-weight: 700;
 }
@@ -170,7 +181,9 @@
 .math-text--variant-chip .math-text__rendered .mathit,
 .math-text--variant-chip .math-text__rendered .mathnormal,
 .math-text--variant-metric .math-text__rendered .mathit,
-.math-text--variant-metric .math-text__rendered .mathnormal {
+.math-text--variant-metric .math-text__rendered .mathnormal,
+.math-text--variant-cell .math-text__rendered .mathit,
+.math-text--variant-cell .math-text__rendered .mathnormal {
   font-family: KaTeX_SansSerif, KaTeX_Main, sans-serif;
   font-style: normal;
 }

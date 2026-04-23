@@ -61,15 +61,34 @@ const SYMBOL_REPLACEMENTS: readonly [string, string][] = [
   ['÷', '\\div'],
   ['≥', '\\ge'],
   ['≤', '\\le'],
+  ['≠', '\\ne'],
+  ['≡', '\\equiv'],
   ['→', '\\to'],
   ['⊕', '\\oplus'],
   ['∅', '\\varnothing'],
+  ['∈', '\\in'],
+  ['∉', '\\notin'],
+  ['∪', '\\cup'],
+  ['∩', '\\cap'],
+  ['⊂', '\\subset'],
+  ['⊆', '\\subseteq'],
+  ['⌊', '\\lfloor'],
+  ['⌋', '\\rfloor'],
+  ['⌈', '\\lceil'],
+  ['⌉', '\\rceil'],
   ['−', '-'],
   ['–', '-'],
 ];
 
 export type MathRenderMode = 'auto' | 'math' | 'text' | 'mixed';
-export type MathTextVariant = 'default' | 'metric' | 'chip' | 'formula' | 'copy' | 'log';
+export type MathTextVariant =
+  | 'default'
+  | 'metric'
+  | 'chip'
+  | 'formula'
+  | 'copy'
+  | 'log'
+  | 'cell';
 
 export interface MathTextSegment {
   readonly kind: 'text' | 'math';
@@ -130,14 +149,19 @@ export function looksMathishContent(value: string): boolean {
   }
 
   return (
-    /[αβ∞√×÷≥≤₀-₉₊₋₌₍₎ₐₑₕᵢₖₗₘₙₒₚᵣₛₜᵤᵥₓ]/u.test(normalized)
+    /[αβ∞√×÷≥≤≠≡∈∉∪∩⊂⊆⌊⌋⌈⌉₀-₉₊₋₌₍₎ₐₑₕᵢₖₗₘₙₒₚᵣₛₜᵤᵥₓ]/u.test(normalized)
     || /[ΘΩ·⊕∅²³ⁿ]/u.test(normalized)
     || /^[A-Za-z]\([^()]*\)$/.test(normalized)
     || /^[A-Za-z]{2,}\([^()]*\)$/.test(normalized)
     || /^\d+!$/.test(normalized)
     || /^[A-Za-z]$/.test(normalized)
+    /* Bare integers or decimals — pure numeric cells (sieve grid,
+       call-stack frame depth, stat values) should render in the same
+       KaTeX sans-serif as the surrounding labels so rows read as one
+       typographic system. */
+    || /^-?\d+(?:\.\d+)?$/.test(normalized)
     || /^(?:O|Θ|Ω)\(/u.test(normalized)
-    || /\b(?:acc|fib|gcd|mod|nwd|UCB|MAX|MIN|cross)\b/.test(normalized)
+    || /\b(?:acc|fib|gcd|mod|nwd|UCB1?|MAX|MIN|cross)\b/.test(normalized)
     || /[=+\-*/]/.test(normalized)
   );
 }
@@ -160,8 +184,13 @@ export function autoTextToTex(value: string): string {
     return complexityNotation;
   }
 
+  /* Order matters here — `\bUCB\b` wouldn't by itself match "UCB1"
+     thanks to the word boundary, but once "UCB1" has already been
+     rewritten to `\mathrm{UCB}_{1}` the bare `UCB` inside the braces
+     would get re-wrapped. Flip so the UCB macro is applied first. */
   tex = tex
-    .replace(/\bUCB\b(?!\s*\()/g, '\\mathrm{UCB}')
+    .replace(/\bUCB\b(?!\s*\(|1)/g, '\\mathrm{UCB}')
+    .replace(/\bUCB1\b/g, '\\mathrm{UCB}_{1}')
     .replace(/\bMAX\b(?!\s*\()/g, '\\mathrm{MAX}')
     .replace(/\bMIN\b(?!\s*\()/g, '\\mathrm{MIN}')
     .replace(/\bacc\b(?!\s*\()/g, '\\mathrm{acc}')
@@ -194,6 +223,25 @@ export function autoTextToTex(value: string): string {
     if (name === 'nwd') return `\\operatorname{nwd}\\left(${args}\\right)`;
     return `\\operatorname{${name}}\\left(${args}\\right)`;
   });
+
+  /* Digit-after-macro: TeX / KaTeX extends `\cdot2` into an undefined
+     `\cdot2` macro, so we need explicit whitespace. Digits can never be
+     part of a macro name, so this pass is regex-safe across any macro
+     we emit. */
+  tex = tex.replace(
+    /\\(subseteq|subset|varnothing|lfloor|rfloor|lceil|rceil|notin|infty|equiv|alpha|beta|oplus|cdot|times|cup|cap|div|to|ne|ge|le|in)(\d)/g,
+    '\\$1 $2',
+  );
+
+  /* Letter-after-macro is trickier because a greedy `\\[a-zA-Z]+` would
+     backtrack across legit macro names (e.g. `\left` contains `\le`).
+     Only the bracket macros tend to be followed by variable letters in
+     practice (`⌊n/2⌋`), and their names are distinct prefixes so the
+     whitelist stays safe. */
+  tex = tex.replace(
+    /\\(lfloor|rfloor|lceil|rceil|varnothing)([A-Za-z])/g,
+    '\\$1 $2',
+  );
 
   return tex;
 }

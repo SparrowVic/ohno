@@ -37,4 +37,29 @@ describe('math-text.utils', () => {
       { kind: 'text', content: '.' },
     ]);
   });
+
+  it('treats bare numbers as math so grid cells render via KaTeX', () => {
+    // Sieve grid number cells fall here — without this, "14" would
+    // render in monospace while adjacent single-letter cells (palindrome
+    // "a") would go through KaTeX, producing mixed typography.
+    expect(looksMathishContent('14')).toBe(true);
+    expect(looksMathishContent('0')).toBe(true);
+    expect(looksMathishContent('-3')).toBe(true);
+    expect(looksMathishContent('0.85')).toBe(true);
+    expect(looksMathishContent('Compare')).toBe(false);
+  });
+
+  it('converts UCB1 to subscripted macro without clobbering bare UCB', () => {
+    expect(autoTextToTex('UCB1 = {{ucb}}')).toBe('\\mathrm{UCB}_{1} = {{ucb}}');
+    expect(autoTextToTex('UCB score')).toBe('\\mathrm{UCB} score');
+  });
+
+  it('maps modular / set-theory operators used from Stage 4 onwards', () => {
+    // Stage 4 (CRT, Miller-Rabin, Pollard) lean heavily on these.
+    expect(autoTextToTex('a ≠ b')).toBe('a \\ne b');
+    expect(autoTextToTex('a ≡ b')).toBe('a \\equiv b');
+    expect(autoTextToTex('x ∈ S')).toBe('x \\in S');
+    expect(autoTextToTex('⌊n/2⌋')).toBe('\\lfloor n/2\\rfloor');
+    expect(autoTextToTex('A ∪ B')).toBe('A \\cup B');
+  });
 });

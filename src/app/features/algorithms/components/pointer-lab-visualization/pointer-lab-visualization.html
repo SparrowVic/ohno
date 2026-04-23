@@ -44,7 +44,11 @@
               [attr.data-cell-index]="cell.index"
             >
               <span class="pointer-lab__cell-index">{{ cell.index }}</span>
-              <span class="pointer-lab__cell-value">{{ cell.value }}</span>
+              <app-math-text
+                class="pointer-lab__cell-value"
+                [content]="cell.value"
+                variant="cell"
+              />
               @if (cell.overlay; as overlay) {
                 <span class="pointer-lab__cell-overlay">{{ overlay }}</span>
               }
@@ -74,8 +78,16 @@
       <section class="pointer-lab__stats">
         @for (stat of lab.stats; track $index) {
           <article class="pointer-lab__stat pointer-lab__stat--{{ stat.tone }}">
-            <span class="pointer-lab__stat-label">{{ stat.label | i18nText }}</span>
-            <span class="pointer-lab__stat-value">{{ stat.value | i18nText }}</span>
+            <app-math-text
+              class="pointer-lab__stat-label"
+              [content]="stat.label | i18nText"
+              variant="chip"
+            />
+            <app-math-text
+              class="pointer-lab__stat-value"
+              [content]="stat.value | i18nText"
+              variant="chip"
+            />
           </article>
         }
       </section>
@@ -88,13 +100,15 @@
         [class.pointer-lab__result--pending]="!lab.resultLabel"
       >
         <span class="pointer-lab__result-label">result</span>
-        <span class="pointer-lab__result-value">
-          @if (lab.resultLabel; as result) {
-            {{ result | i18nText }}
-          } @else {
-            —
-          }
-        </span>
+        @if (lab.resultLabel; as result) {
+          <app-math-text
+            class="pointer-lab__result-value"
+            [content]="result | i18nText"
+            variant="formula"
+          />
+        } @else {
+          <span class="pointer-lab__result-value">—</span>
+        }
       </footer>
     </div>
   }

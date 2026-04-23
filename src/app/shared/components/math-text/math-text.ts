@@ -15,6 +15,43 @@ import {
 } from './math-text.utils';
 
 /**
+ * Module-level cache for KaTeX-rendered HTML. `katex.renderToString` is
+ * non-trivial (parse → build tree → serialise HTML + MathML) and log
+ * playbacks re-run through 100+ descriptions per tick. Memoising on
+ * `tex + displayMode` keeps CD cycles cheap without losing correctness
+ * (KaTeX output is deterministic for a given input pair).
+ *
+ * Caps the map so a very long session cannot leak memory — once we hit
+ * MAX we drop the oldest entry. Typical traces see ≤ a few hundred
+ * distinct formulas, well under the cap.
+ */
+const KATEX_CACHE_MAX = 512;
+const katexCache = new Map<string, string>();
+
+function renderKatexCached(tex: string, displayMode: boolean): string | null {
+  const key = `${displayMode ? 'D' : 'I'}|${tex}`;
+  const cached = katexCache.get(key);
+  if (cached !== undefined) return cached;
+
+  try {
+    const html = katex.renderToString(tex, {
+      displayMode,
+      output: 'htmlAndMathml',
+      strict: 'ignore',
+      throwOnError: true,
+    });
+    if (katexCache.size >= KATEX_CACHE_MAX) {
+      const firstKey = katexCache.keys().next().value;
+      if (firstKey !== undefined) katexCache.delete(firstKey);
+    }
+    katexCache.set(key, html);
+    return html;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Small KaTeX wrapper used across algorithm visualizations.
  *
  * It accepts either explicit TeX or simple math-ish text from the
@@ -103,16 +140,7 @@ export class MathText {
   }
 
   private renderKatexMarkup(tex: string, displayMode: boolean): string | null {
-    try {
-      return katex.renderToString(tex, {
-        displayMode,
-        output: 'htmlAndMathml',
-        strict: 'ignore',
-        throwOnError: true,
-      });
-    } catch {
-      return null;
-    }
+    return renderKatexCached(tex, displayMode);
   }
 
   private renderPlain(content: string): SafeHtml {

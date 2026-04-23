@@ -386,7 +386,7 @@
         },
         "callTreeLab": {
           "backtracking": {
-            "boardFooter": "{{placed}} / {{n}} queens placed",
+            "boardFooter": "[[math]]{{placed}} / {{n}}[[/math]] queens placed",
             "boardTitle": "N-Queens board",
             "decisions": {
               "cellAttacked": "Cell is attacked — skip.",
@@ -399,14 +399,14 @@
               "unwind": "Unwind and try the next column."
             },
             "descriptions": {
-              "backtrack": "Row {{row}}, col {{col}} leads nowhere — undo and try next column.",
+              "backtrack": "Row [[math]]{{row}}[[/math]], col [[math]]{{col}}[[/math]] leads nowhere — undo and try next column.",
               "complete": "Search complete.",
-              "conflict": "Row {{row}}, col {{col}} is attacked by an existing queen.",
+              "conflict": "Row [[math]]{{row}}[[/math]], col [[math]]{{col}}[[/math]] is attacked by an existing queen.",
               "noSolution": "Exhausted every column — no placement is valid.",
-              "place": "Row {{row}}, col {{col}} is safe — place the queen.",
-              "probe": "Try column {{col}} on row {{row}}.",
-              "setup": "Place queens on an {{n}}×{{n}} board — one per row.",
-              "solution": "All {{n}} queens placed — solution!"
+              "place": "Row [[math]]{{row}}[[/math]], col [[math]]{{col}}[[/math]] is safe — place the queen.",
+              "probe": "Try column [[math]]{{col}}[[/math]] on row [[math]]{{row}}[[/math]].",
+              "setup": "Place queens on an [[math]]{{n}} × {{n}}[[/math]] board — one per row.",
+              "solution": "All [[math]]{{n}}[[/math]] queens placed — solution!"
             },
             "modeLabel": "Backtracking (N-Queens)",
             "phases": {
@@ -419,7 +419,7 @@
               "solution": "Solution"
             },
             "resultFailure": "No valid placement exists.",
-            "resultSuccess": "Solution found: columns [{{cols}}].",
+            "resultSuccess": "Solution found: columns [[math]][{{cols}}][[/math]].",
             "stats": {
               "attempts": "Attempts",
               "backtracks": "Backtracks",
@@ -1836,12 +1836,12 @@
               "seed": "Seed with the first value."
             },
             "descriptions": {
-              "bestUpdate": "New best sum {{sum}} at [{{left}}..{{right}}].",
-              "complete": "Best subarray sum {{sum}} at [{{left}}..{{right}}].",
-              "extend": "Add {{value}} → current = {{sum}} @ [{{left}}..{{right}}].",
-              "init": "Seed current = best = {{value}} at index 0.",
-              "keepBest": "Current {{current}} ≤ best {{best}} — keep previous best.",
-              "restart": "Reset at index {{index}} — start fresh from {{value}}."
+              "bestUpdate": "New best [[math]]sum = {{sum}}[[/math]] at [[math]][{{left}}..{{right}}][[/math]].",
+              "complete": "Best subarray [[math]]sum = {{sum}}[[/math]] at [[math]][{{left}}..{{right}}][[/math]].",
+              "extend": "Add [[math]]{{value}}[[/math]] → [[math]]current = {{sum}}[[/math]] @ [[math]][{{left}}..{{right}}][[/math]].",
+              "init": "Seed [[math]]current = best = {{value}}[[/math]] at index 0.",
+              "keepBest": "[[math]]{{current}} ≤ {{best}}[[/math]] — keep previous best.",
+              "restart": "Reset at index [[math]]{{index}}[[/math]] — start fresh from [[math]]{{value}}[[/math]]."
             },
             "modeLabel": "Kadane's algorithm",
             "phases": {
@@ -1868,8 +1868,8 @@
             "descriptions": {
               "confirmed": "All mirrored pairs matched — palindrome confirmed.",
               "converge": "Advance both pointers inward.",
-              "match": "{{left}} = {{right}} — characters match.",
-              "mismatch": "{{left}} ≠ {{right}} — palindrome broken.",
+              "match": "[[math]]{{left}} = {{right}}[[/math]] — characters match.",
+              "mismatch": "[[math]]{{left}} ≠ {{right}}[[/math]] — palindrome broken.",
               "setup": "Compare the ends of \"{{word}}\" symmetrically."
             },
             "modeLabel": "Palindrome check",
@@ -1898,10 +1898,10 @@
               "swap": "Swap left ↔ right in place."
             },
             "descriptions": {
-              "advance": "Converge — ends settled to {{left}} / {{right}}.",
-              "complete": "Reversed sequence: {{reversed}}.",
+              "advance": "Converge — ends settled to [[math]]{{left}} / {{right}}[[/math]].",
+              "complete": "Reversed sequence: [[math]]{{reversed}}[[/math]].",
               "setup": "Reverse \"{{input}}\" in place with mirrored pointers.",
-              "swap": "Swap ends: {{left}} ↔ {{right}}."
+              "swap": "Swap ends: [[math]]{{left}} ↔ {{right}}[[/math]]."
             },
             "modeLabel": "Reverse",
             "phases": {
@@ -1925,11 +1925,11 @@
               "rollForward": "Roll the window one cell forward."
             },
             "descriptions": {
-              "bestUpdate": "Best sum updated to {{sum}} at [{{left}}..{{right}}].",
-              "complete": "Best window {{best}} at [{{left}}..{{right}}].",
-              "keepBest": "Sum {{sum}} ≤ best {{best}} — keep previous.",
-              "slide": "Slide: drop {{out}}, add {{in}} → sum = {{sum}}.",
-              "warmup": "Fill the first window of width {{k}}, sum = {{sum}}."
+              "bestUpdate": "Best [[math]]sum = {{sum}}[[/math]] at [[math]][{{left}}..{{right}}][[/math]].",
+              "complete": "Best window [[math]]{{best}}[[/math]] at [[math]][{{left}}..{{right}}][[/math]].",
+              "keepBest": "[[math]]{{sum}} ≤ {{best}}[[/math]] — keep previous.",
+              "slide": "Slide: drop [[math]]{{out}}[[/math]], add [[math]]{{in}}[[/math]] → [[math]]sum = {{sum}}[[/math]].",
+              "warmup": "Fill the first window of width [[math]]{{k}}[[/math]], [[math]]sum = {{sum}}[[/math]]."
             },
             "modeLabel": "Sliding window",
             "phases": {
@@ -1954,10 +1954,10 @@
               "tooSmall": "Sum under target — grow the left side."
             },
             "descriptions": {
-              "compare": "{{left}} + {{right}} = {{sum}} vs target {{target}}.",
-              "hit": "Pair ({{left}}, {{right}}) sums to {{target}}.",
-              "miss": "Pointers crossed without reaching {{target}}.",
-              "setup": "Initialise pointers for target {{target}} across {{size}} values.",
+              "compare": "[[math]]{{left}} + {{right}} = {{sum}}[[/math]] vs target [[math]]{{target}}[[/math]].",
+              "hit": "Pair [[math]]({{left}}, {{right}})[[/math]] sums to [[math]]{{target}}[[/math]].",
+              "miss": "Pointers crossed without reaching [[math]]{{target}}[[/math]].",
+              "setup": "Initialise pointers for target [[math]]{{target}}[[/math]] across {{size}} values.",
               "shrinkLeft": "Sum too small — advance the left pointer.",
               "shrinkRight": "Sum too big — retreat the right pointer."
             },
@@ -2085,11 +2085,11 @@
             },
             "descriptions": {
               "collectPrime": "[[math]]{{i}}[[/math]] survived — add it to the primes list.",
-              "complete": "Found {{count}} primes ≤ {{n}}.",
+              "complete": "Found [[math]]{{count}}[[/math]] primes [[math]]≤ {{n}}[[/math]].",
               "finishPrime": "Done crossing multiples of [[math]]{{p}}[[/math]].",
               "mark": "Mark [[math]]{{k}} = {{p}} × (k / p)[[/math]] as composite.",
               "pickPrime": "[[math]]{{p}}[[/math]] is prime — cross its multiples starting at [[math]]{{p}}²[[/math]].",
-              "setup": "Initialise a sieve of length {{n}} + 1.",
+              "setup": "Initialise a sieve of length [[math]]{{n}} + 1[[/math]].",
               "skipComposite": "[[math]]{{p}}[[/math]] was already crossed — skip."
             },
             "modeLabel": "Sieve of Eratosthenes",

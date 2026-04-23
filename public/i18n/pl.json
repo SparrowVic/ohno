@@ -386,7 +386,7 @@
         },
         "callTreeLab": {
           "backtracking": {
-            "boardFooter": "{{placed}} / {{n}} hetmanów na planszy",
+            "boardFooter": "[[math]]{{placed}} / {{n}}[[/math]] hetmanów na planszy",
             "boardTitle": "Plansza N-hetmanów",
             "decisions": {
               "cellAttacked": "Pole atakowane — pomijamy.",
@@ -399,14 +399,14 @@
               "unwind": "Cofamy i próbujemy kolejnej kolumny."
             },
             "descriptions": {
-              "backtrack": "Wiersz {{row}}, kolumna {{col}} nie prowadzi do celu — cofamy i próbujemy kolejną.",
+              "backtrack": "Wiersz [[math]]{{row}}[[/math]], kolumna [[math]]{{col}}[[/math]] nie prowadzi do celu — cofamy i próbujemy kolejną.",
               "complete": "Przeszukiwanie zakończone.",
-              "conflict": "W wierszu {{row}}, kolumnie {{col}} atak innego hetmana.",
+              "conflict": "W wierszu [[math]]{{row}}[[/math]], kolumnie [[math]]{{col}}[[/math]] atak innego hetmana.",
               "noSolution": "Wyczerpaliśmy kolumny — brak poprawnego rozstawienia.",
-              "place": "Wiersz {{row}}, kolumna {{col}} bezpieczne — stawiamy hetmana.",
-              "probe": "Próbujemy kolumny {{col}} w wierszu {{row}}.",
-              "setup": "Rozmieszczamy hetmanów na planszy {{n}}×{{n}} — jeden na wiersz.",
-              "solution": "Wszystkich {{n}} hetmanów rozstawionych — rozwiązanie!"
+              "place": "Wiersz [[math]]{{row}}[[/math]], kolumna [[math]]{{col}}[[/math]] bezpieczne — stawiamy hetmana.",
+              "probe": "Próbujemy kolumny [[math]]{{col}}[[/math]] w wierszu [[math]]{{row}}[[/math]].",
+              "setup": "Rozmieszczamy hetmanów na planszy [[math]]{{n}} × {{n}}[[/math]] — jeden na wiersz.",
+              "solution": "Wszystkich [[math]]{{n}}[[/math]] hetmanów rozstawionych — rozwiązanie!"
             },
             "modeLabel": "Backtracking (N-hetmanów)",
             "phases": {
@@ -419,7 +419,7 @@
               "solution": "Rozwiązanie"
             },
             "resultFailure": "Nie istnieje poprawne rozstawienie.",
-            "resultSuccess": "Rozwiązanie znalezione: kolumny [{{cols}}].",
+            "resultSuccess": "Rozwiązanie znalezione: kolumny [[math]][{{cols}}][[/math]].",
             "stats": {
               "attempts": "Próby",
               "backtracks": "Cofnięcia",
@@ -1836,12 +1836,12 @@
               "seed": "Start od pierwszej wartości."
             },
             "descriptions": {
-              "bestUpdate": "Nowy rekord {{sum}} w przedziale [{{left}}..{{right}}].",
-              "complete": "Najlepsza suma podtablicy {{sum}} @ [{{left}}..{{right}}].",
-              "extend": "Dodajemy {{value}} → current = {{sum}} @ [{{left}}..{{right}}].",
-              "init": "Zasiew: current = best = {{value}} na indeksie 0.",
-              "keepBest": "Current {{current}} ≤ best {{best}} — trzymamy rekord.",
-              "restart": "Reset na indeksie {{index}} — startujemy od {{value}}."
+              "bestUpdate": "Nowy rekord [[math]]sum = {{sum}}[[/math]] w przedziale [[math]][{{left}}..{{right}}][[/math]].",
+              "complete": "Najlepsza suma podtablicy [[math]]{{sum}}[[/math]] @ [[math]][{{left}}..{{right}}][[/math]].",
+              "extend": "Dodajemy [[math]]{{value}}[[/math]] → [[math]]current = {{sum}}[[/math]] @ [[math]][{{left}}..{{right}}][[/math]].",
+              "init": "Zasiew: [[math]]current = best = {{value}}[[/math]] na indeksie 0.",
+              "keepBest": "[[math]]{{current}} ≤ {{best}}[[/math]] — trzymamy rekord.",
+              "restart": "Reset na indeksie [[math]]{{index}}[[/math]] — startujemy od [[math]]{{value}}[[/math]]."
             },
             "modeLabel": "Algorytm Kadane'a",
             "phases": {
@@ -1868,8 +1868,8 @@
             "descriptions": {
               "confirmed": "Wszystkie pary zgodne — palindrom potwierdzony.",
               "converge": "Oba wskaźniki przesuwamy do środka.",
-              "match": "{{left}} = {{right}} — znaki zgodne.",
-              "mismatch": "{{left}} ≠ {{right}} — palindrom odrzucony.",
+              "match": "[[math]]{{left}} = {{right}}[[/math]] — znaki zgodne.",
+              "mismatch": "[[math]]{{left}} ≠ {{right}}[[/math]] — palindrom odrzucony.",
               "setup": "Porównujemy końce \"{{word}}\" symetrycznie."
             },
             "modeLabel": "Palindrom",
@@ -1898,10 +1898,10 @@
               "swap": "Zamiana lewy ↔ prawy w miejscu."
             },
             "descriptions": {
-              "advance": "Zbieżność — końce ustawione na {{left}} / {{right}}.",
-              "complete": "Odwrócona sekwencja: {{reversed}}.",
+              "advance": "Zbieżność — końce ustawione na [[math]]{{left}} / {{right}}[[/math]].",
+              "complete": "Odwrócona sekwencja: [[math]]{{reversed}}[[/math]].",
               "setup": "Odwracamy \"{{input}}\" w miejscu odbitymi wskaźnikami.",
-              "swap": "Zamiana końców: {{left}} ↔ {{right}}."
+              "swap": "Zamiana końców: [[math]]{{left}} ↔ {{right}}[[/math]]."
             },
             "modeLabel": "Odwrócenie",
             "phases": {
@@ -1925,11 +1925,11 @@
               "rollForward": "Przesuwamy okno o jedno pole w prawo."
             },
             "descriptions": {
-              "bestUpdate": "Najlepsza suma: {{sum}} w [{{left}}..{{right}}].",
-              "complete": "Najlepsze okno {{best}} w [{{left}}..{{right}}].",
-              "keepBest": "Suma {{sum}} ≤ rekord {{best}} — trzymamy poprzednią.",
-              "slide": "Przesunięcie: wypada {{out}}, wchodzi {{in}} → suma = {{sum}}.",
-              "warmup": "Wypełniamy pierwsze okno szerokości {{k}}, suma = {{sum}}."
+              "bestUpdate": "Najlepsza [[math]]sum = {{sum}}[[/math]] w [[math]][{{left}}..{{right}}][[/math]].",
+              "complete": "Najlepsze okno [[math]]{{best}}[[/math]] w [[math]][{{left}}..{{right}}][[/math]].",
+              "keepBest": "[[math]]{{sum}} ≤ {{best}}[[/math]] — trzymamy poprzednią.",
+              "slide": "Przesunięcie: wypada [[math]]{{out}}[[/math]], wchodzi [[math]]{{in}}[[/math]] → [[math]]sum = {{sum}}[[/math]].",
+              "warmup": "Wypełniamy pierwsze okno szerokości [[math]]{{k}}[[/math]], [[math]]sum = {{sum}}[[/math]]."
             },
             "modeLabel": "Przesuwne okno",
             "phases": {
@@ -1954,10 +1954,10 @@
               "tooSmall": "Suma pod celem — rosnąca lewa strona."
             },
             "descriptions": {
-              "compare": "{{left}} + {{right}} = {{sum}} względem celu {{target}}.",
-              "hit": "Para ({{left}}, {{right}}) sumuje się do {{target}}.",
-              "miss": "Wskaźniki minęły się bez trafienia {{target}}.",
-              "setup": "Ustawiamy wskaźniki na cel {{target}} w {{size}} wartościach.",
+              "compare": "[[math]]{{left}} + {{right}} = {{sum}}[[/math]] względem celu [[math]]{{target}}[[/math]].",
+              "hit": "Para [[math]]({{left}}, {{right}})[[/math]] sumuje się do [[math]]{{target}}[[/math]].",
+              "miss": "Wskaźniki minęły się bez trafienia [[math]]{{target}}[[/math]].",
+              "setup": "Ustawiamy wskaźniki na cel [[math]]{{target}}[[/math]] w {{size}} wartościach.",
               "shrinkLeft": "Suma zbyt mała — przesuwamy lewy wskaźnik.",
               "shrinkRight": "Suma zbyt duża — cofamy prawy wskaźnik."
             },
@@ -2085,11 +2085,11 @@
             },
             "descriptions": {
               "collectPrime": "[[math]]{{i}}[[/math]] przetrwało — dodajemy do listy liczb pierwszych.",
-              "complete": "Znaleziono {{count}} liczb pierwszych ≤ {{n}}.",
+              "complete": "Znaleziono [[math]]{{count}}[[/math]] liczb pierwszych [[math]]≤ {{n}}[[/math]].",
               "finishPrime": "Wykreślono wszystkie wielokrotności [[math]]{{p}}[[/math]].",
               "mark": "Oznaczamy [[math]]{{k}} = {{p}} × (k / p)[[/math]] jako złożoną.",
               "pickPrime": "[[math]]{{p}}[[/math]] jest pierwsza — wykreślamy wielokrotności od [[math]]{{p}}²[[/math]].",
-              "setup": "Inicjujemy sito długości {{n}} + 1.",
+              "setup": "Inicjujemy sito długości [[math]]{{n}} + 1[[/math]].",
               "skipComposite": "[[math]]{{p}}[[/math]] było już wykreślone — pomijamy."
             },
             "modeLabel": "Sito Eratostenesa",

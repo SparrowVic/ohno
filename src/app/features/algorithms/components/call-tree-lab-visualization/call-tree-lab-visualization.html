@@ -15,7 +15,7 @@
         @for (stat of tree.stats; track stat.label) {
           <div class="ctlab__stat ctlab__stat--{{ stat.tone }}">
             <app-math-text class="ctlab__stat-label" [content]="stat.label | i18nText" variant="chip" />
-            <app-math-text class="ctlab__stat-value" [content]="stat.value | i18nText" variant="metric" />
+            <app-math-text class="ctlab__stat-value" [content]="stat.value | i18nText" variant="formula" />
           </div>
         }
       </section>
@@ -24,7 +24,9 @@
            Pinned above the tree so the two views read top-down. -->
       @if (tree.sidecar; as board) {
         <section class="ctlab__sidecar">
-          <header class="ctlab__sidecar-head">{{ board.title | i18nText }}</header>
+          <header class="ctlab__sidecar-head">
+            <app-math-text [content]="board.title | i18nText" variant="chip" />
+          </header>
           <div
             class="ctlab__board"
             [style.grid-template-columns]="'repeat(' + board.cols + ', 1fr)'"
@@ -38,7 +40,9 @@
             }
           </div>
           @if (board.footer) {
-            <footer class="ctlab__sidecar-footer">{{ board.footer | i18nText }}</footer>
+            <footer class="ctlab__sidecar-footer">
+              <app-math-text [content]="board.footer | i18nText" variant="chip" />
+            </footer>
           }
         </section>
       }
@@ -103,8 +107,8 @@
                   <div class="ctlab__node-stats">
                     @for (stat of node.stats; track stat.label) {
                       <span class="ctlab__node-stat ctlab__node-stat--{{ stat.tone }}">
-                        <app-math-text class="ctlab__node-stat-label" [content]="stat.label | i18nText" variant="chip" />
-                        <app-math-text class="ctlab__node-stat-value" [content]="stat.value | i18nText" variant="metric" />
+                        <app-math-text class="ctlab__node-stat-label" [content]="stat.label | i18nText" variant="cell" />
+                        <app-math-text class="ctlab__node-stat-value" [content]="stat.value | i18nText" variant="chip" />
                       </span>
                     }
                   </div>

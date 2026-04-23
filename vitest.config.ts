@@ -4,7 +4,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['src/app/features/algorithms/**/*.spec.ts'],
+    include: [
+      'src/app/features/algorithms/**/*.spec.ts',
+      'src/app/shared/**/*.spec.ts',
+    ],
     restoreMocks: true,
     clearMocks: true,
     coverage: {

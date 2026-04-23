@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { PointerLabTraceState } from '../../models/pointer-lab';
 import { SortStep } from '../../models/sort-step';
 import { PointerLabPresetOption } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
@@ -21,7 +22,7 @@ import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
  */
 @Component({
   selector: 'app-pointer-lab-visualization',
-  imports: [I18nTextPipe, VizHeader, VizPanel, VizPresetPicker],
+  imports: [I18nTextPipe, MathText, VizHeader, VizPanel, VizPresetPicker],
   templateUrl: './pointer-lab-visualization.html',
   styleUrl: './pointer-lab-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

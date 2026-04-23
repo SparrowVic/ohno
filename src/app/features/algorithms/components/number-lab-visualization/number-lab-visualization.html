@@ -15,7 +15,11 @@
         @for (reg of lab.registers; track reg.id) {
           <article class="number-lab__register number-lab__register--{{ reg.tone }}">
             <app-math-text class="number-lab__register-label" [content]="reg.label" variant="chip" />
-            <span class="number-lab__register-value">{{ reg.value }}</span>
+            <app-math-text
+              class="number-lab__register-value"
+              [content]="reg.value"
+              variant="metric"
+            />
             @if (reg.hint; as hint) {
               <span class="number-lab__register-hint">{{ hint | i18nText }}</span>
             }
@@ -68,7 +72,11 @@
                   [content]="entry.label"
                   variant="chip"
                 />
-                <span class="number-lab__history-chip-value">{{ entry.value }}</span>
+                <app-math-text
+                  class="number-lab__history-chip-value"
+                  [content]="entry.value"
+                  variant="chip"
+                />
               </article>
             }
           }
