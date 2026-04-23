@@ -1987,7 +1987,7 @@
             "forwardHeader": "Przebieg w przód",
             "forwardEquation": "[[math]]{{a}} = {{q}} \\cdot {{b}} + {{r}}[[/math]]",
             "forwardAnnotation": "[[math]]{{a}} \\bmod {{b}} = {{r}}[[/math]]",
-            "forwardInstruction": "Podziel [[math]]{{a}}[[/math]] przez [[math]]{{b}}[[/math]]",
+            "forwardInstruction": "Rozpisz [[math]]{{a}} = q \\cdot {{b}} + r[[/math]]",
             "forwardStopDecision": "Reszta spadła do [[math]]0[[/math]] — koniec",
             "gcdFound": "[[math]]\\gcd = {{gcd}}[[/math]]",
             "backHeader": "Podstawianie wsteczne",

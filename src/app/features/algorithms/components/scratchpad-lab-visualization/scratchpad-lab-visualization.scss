@@ -117,33 +117,29 @@
   }
 }
 
+/* Editorial margin-note voice — only rendered on the current line.
+   Leading em-dash mirrors a printed sidenote in a scholarly margin. */
 .scratchpad__line-caption {
   grid-column: 1 / -1;
   grid-row: 1;
   font-family: var(--font-notebook);
-  font-size: 13px;
-  line-height: 1.15;
-  font-weight: 500;
-  color: var(--text-quaternary);
-  letter-spacing: 0.005em;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: rgba(var(--viz-warning-rgb), 0.95);
   padding-left: 56px;
   overflow-wrap: anywhere;
-  transition: color var(--duration-fast) var(--ease-soft);
 
-  /* Tiny pencil-mark prefix so captions read as tutor annotations
-     rather than system labels. Pure cosmetic, always present. */
   &::before {
-    content: '✎ ';
-    margin-right: 2px;
-    opacity: 0.55;
+    content: '— ';
+    opacity: 0.75;
   }
 }
 
-.scratchpad__line--current .scratchpad__line-caption {
-  color: rgba(var(--viz-warning-rgb), 1);
-  opacity: 0.95;
-}
-
+/* Section glyphs (①⟹②③✓) — these are Unicode symbols, not latin, so
+   font-family falls through to the system serif stack. Weight + size
+   give them the presence of a hand-lettered section header. */
 .scratchpad__line-marker {
   grid-column: 1;
   grid-row: 2;
@@ -151,10 +147,9 @@
   align-items: baseline;
   justify-content: flex-end;
   font-family: var(--font-notebook);
-  font-size: 19px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--text-tertiary);
-  letter-spacing: 0;
   white-space: nowrap;
   line-height: 1;
 }
@@ -165,7 +160,7 @@
 
 .scratchpad__line--decision .scratchpad__line-marker {
   color: rgb(var(--viz-warning-rgb));
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .scratchpad__line--result .scratchpad__line-marker {
@@ -186,18 +181,20 @@
 
 .scratchpad__line--goal .scratchpad__line-body {
   font-family: var(--font-notebook);
-  font-size: 21px;
-  font-weight: 600;
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
   color: var(--text-primary);
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .scratchpad__line--note .scratchpad__line-body {
   font-family: var(--font-notebook);
-  font-size: 15px;
-  font-weight: 500;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 400;
   color: var(--text-secondary);
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .scratchpad__line--equation .scratchpad__line-body,
@@ -210,10 +207,11 @@
 
 .scratchpad__line--decision .scratchpad__line-body {
   font-family: var(--font-notebook);
-  font-size: 17px;
-  font-weight: 600;
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 500;
   color: var(--viz-warning);
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .scratchpad__line--result {
@@ -221,17 +219,14 @@
   margin-top: 4px;
   margin-bottom: 2px;
   border-radius: 12px;
-  border: 1px solid rgba(var(--accent-rgb), 0.4);
-  background:
-    linear-gradient(180deg, rgba(var(--accent-rgb), 0.14), rgba(var(--accent-rgb), 0.04)),
-    rgba(13, 16, 24, 0.45);
-  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.34);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 .scratchpad__line--result .scratchpad__line-body {
   font-family: var(--font-mono);
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--accent-strong);
   line-height: 1.15;
 }
@@ -242,24 +237,26 @@
   grid-row: 2;
   display: inline-flex;
   align-items: baseline;
-  gap: 5px;
-  padding: 2px 10px 3px;
+  gap: 6px;
+  padding: 3px 11px 4px;
   border-radius: 999px;
   border: 0.5px solid rgba(var(--viz-warning-rgb), 0.4);
   background:
     linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.2), rgba(var(--viz-warning-rgb), 0.06)),
     rgba(13, 16, 24, 0.42);
   font-family: var(--font-notebook);
-  font-size: 13.5px;
-  font-weight: 500;
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 400;
   color: rgb(var(--viz-warning-rgb));
-  letter-spacing: 0.01em;
   white-space: nowrap;
   max-width: 100%;
-  line-height: 1.25;
+  line-height: 1.3;
 
   &::before {
     content: '→';
+    font-family: var(--font-sans);
+    font-style: normal;
     font-size: 11px;
     color: rgb(var(--viz-warning-rgb));
     opacity: 0.85;
@@ -273,25 +270,44 @@
     rgba(13, 16, 24, 0.3);
 }
 
-/* ------ annotation (right-column computation result) ------ */
+/* Annotation reads as a tutor's margin note rather than a second,
+   shrunken copy of the body. We prepend a cursive `∴` ("therefore") in
+   Caveat as a teacher's hand, then let the math content sit in mono so
+   the equation stays legible. No vertical rule — the glyph and the
+   right-aligned indent are enough structural signal. */
 .scratchpad__line-annotation {
   grid-column: 4;
   grid-row: 2;
   min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--text-tertiary);
   line-height: 1.4;
   overflow-wrap: anywhere;
   text-align: right;
-  padding-left: 10px;
-  border-left: 1px dashed rgba(255, 255, 255, 0.12);
+  padding-left: 14px;
   font-variant-numeric: tabular-nums;
+}
+
+.scratchpad__line-annotation-mark {
+  flex: 0 0 auto;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1;
+  color: rgba(var(--viz-warning-rgb), 0.7);
 }
 
 .scratchpad__line--current .scratchpad__line-annotation {
   color: var(--text-secondary);
-  border-left-color: rgba(var(--viz-warning-rgb), 0.32);
+}
+
+.scratchpad__line--current .scratchpad__line-annotation-mark {
+  color: rgba(var(--viz-warning-rgb), 0.9);
 }
 
 /* Per-line margin row — rendered below the grid when anchored sticky
@@ -365,8 +381,8 @@
   .scratchpad__line-annotation {
     grid-column: 2;
     grid-row: 4;
+    justify-content: flex-start;
     text-align: left;
-    border-left: 0;
     padding-left: 0;
     border-top: 1px dashed rgba(255, 255, 255, 0.12);
     padding-top: 4px;
@@ -382,12 +398,13 @@
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  padding: 5px 11px;
+  padding: 5px 12px;
   border-radius: 8px;
   font-family: var(--font-notebook);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.25;
+  font-style: italic;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
   border: 0.5px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
   max-width: 100%;
@@ -401,11 +418,14 @@
   }
 
   &--hint {
+    /* Warm tan matches the persistent instruction chip on the line, so
+       the transient margin preview and the settled chip speak the same
+       visual vocabulary ("imperative / teacher's direction"). */
     background:
-      linear-gradient(180deg, rgba(var(--viz-accent-rgb), 0.16), rgba(var(--viz-accent-rgb), 0.04)),
+      linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.16), rgba(var(--viz-warning-rgb), 0.04)),
       rgba(13, 16, 24, 0.55);
-    border-color: rgba(var(--viz-accent-rgb), 0.32);
-    color: var(--viz-accent);
+    border-color: rgba(var(--viz-warning-rgb), 0.32);
+    color: rgb(var(--viz-warning-rgb));
   }
 
   &--warning {
@@ -431,8 +451,8 @@
 }
 
 .scratchpad__sticky--inline {
-  font-size: 13px;
-  padding: 3px 9px;
+  font-size: 14px;
+  padding: 3px 10px;
 }
 
 /* ================================================================ */
@@ -443,20 +463,23 @@
   display: flex;
   align-items: baseline;
   gap: 10px;
-  padding: 8px 14px;
+  padding: 9px 16px;
   border-radius: 10px;
   border: 0.5px solid rgba(var(--accent-rgb), 0.25);
   background: rgba(var(--accent-rgb), 0.06);
   font-family: var(--font-notebook);
-  font-size: 16px;
-  font-weight: 500;
+  font-style: italic;
+  font-size: 17px;
+  font-weight: 400;
   color: var(--accent-strong);
-  min-height: 38px;
-  line-height: 1.2;
+  min-height: 40px;
+  line-height: 1.3;
 }
 
 .scratchpad__signoff-mark {
-  font-size: 17px;
-  font-weight: 800;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--accent-strong);
 }

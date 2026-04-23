@@ -25,7 +25,7 @@ This is belt-and-suspenders on top of Claude Code's existing context handling. O
 - **KaTeX 0.16** via [src/app/shared/components/math-text/](src/app/shared/components/math-text/).
 - **Shiki 4** via [src/app/shared/code-highlight.service.ts](src/app/shared/code-highlight.service.ts), consumed by [src/app/features/algorithms/components/code-panel/](src/app/features/algorithms/components/code-panel/).
 - **Font Awesome Pro 7** — requires `FONTAWESOME_PACKAGE_TOKEN` env var for `npm ci`.
-- Fonts: Sora (sans), IBM Plex Mono (mono), **Caveat** (chalkboard/scratchpad narrative chrome).
+- Fonts: Sora (sans), IBM Plex Mono (mono), **Newsreader italic** (scratchpad narrative chrome — editorial margin-note voice). Caveat is still loaded but is no longer the default for scratchpad scenes; available if a future scene specifically wants a cursive hand.
 
 Node `^20.19.0 || ^22.12.0`, npm `>=10`.
 
@@ -125,7 +125,7 @@ const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
 ## Conventions by family
 
 - **Sorting family (bar-chart, block-swap, radix-*):** flat aesthetic. Solid fill, hairline stroke, semantic state colors, `tabular-nums` on any numeric label rendered outside SVG. See the "flat-redesign" polish list in project notes.
-- **Number-theory / pure-math (Euclidean GCD, Extended Euclidean, …):** chalkboard aesthetic via `scratchpad-lab-visualization`. Caveat font for narrative chrome, line types `goal | rule | equations | substitute | decision | result`, phaseLabel tones `setup | compute | substitute | decide | complete`, margin annotations split into `invariant` (permanent) and `transient` (computation hints).
+- **Number-theory / pure-math (Euclidean GCD, Extended Euclidean, …):** editorial margin-note aesthetic via `scratchpad-lab-visualization`. Newsreader italic for narrative chrome (captions, goal, rule, instruction chips, annotation marks, signoff); KaTeX / mono for math bodies. Line types `goal | rule | equations | substitute | decision | result`, phaseLabel tones `setup | compute | substitute | decide | complete`, margin annotations split into `invariant` (permanent) and `transient` (computation hints).
 - **Graph / DP / geometry / grid:** each has a dedicated trace state type and trace panel. Keep per-family visual language consistent across algorithms in that family.
 
 ## Commands

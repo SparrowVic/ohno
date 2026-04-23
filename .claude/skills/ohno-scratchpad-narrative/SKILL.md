@@ -122,7 +122,7 @@ yield withScratchpad(createNumberLabStep({ … }), scratchpadSnapshot({ … }));
 
 ## Visual language rules
 
-- **Caveat font** for markers, captions, instructions, annotations — the "chalk / notebook hand". Body text stays Sora (legibility at small sizes).
+- **Newsreader italic** (via `var(--font-notebook)` + `font-style: italic`) for markers, captions, instructions, annotation marks, signoff — the editorial margin-note voice. Body text for equations stays mono / KaTeX. (Caveat was the earlier choice for the "chalk hand" feel; walked back because it read as Figma-mockup-cheap at larger sizes and on dense ultrawide layouts. The cursive stack is still defined — don't reach for it by default.)
 - **Math in `content`** uses `[[math]] … [[/math]]` (or per the helpers in this file — check existing usage) so KaTeX lights up inline.
 - **Indent** reads as a ladder — keep it monotonic within a logical block; reset to 0 across dividers.
 - **Don't pile margins.** Max 1 invariant (top) + 1 current hint (per line) on screen at once.

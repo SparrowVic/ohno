@@ -34,14 +34,15 @@
           } @else {
             <article
               class="scratchpad__line scratchpad__line--{{ line.kind }} scratchpad__line--{{ line.state }}"
+              [attr.data-line-id]="line.id"
               [style.--scratchpad-indent]="line.indent"
             >
-              <!-- Step-title caption frozen at the moment the line was
-                   emitted — gives students a "what were we doing?"
-                   anchor so scrolling back through long derivations
-                   doesn't require rewinding the top bar. Toggleable
-                   via the viz-options menu. -->
-              @if (showCaptions() && line.caption) {
+              <!-- Caption (tutor's pencil note above the line) rides with
+                   the current line only. On settled lines it added noise
+                   — the same "Przesuwamy parę" repeated on every forward
+                   row drowns out the one line that actually matters right
+                   now. Still toggleable entirely via the viz-options menu. -->
+              @if (showCaptions() && line.caption && line.state === 'current') {
                 <span class="scratchpad__line-caption">
                   <app-math-text mode="mixed" [content]="line.caption | i18nText" />
                 </span>
@@ -63,11 +64,12 @@
                   <app-math-text mode="mixed" [content]="line.instruction | i18nText" />
                 </span>
               }
-              <span class="scratchpad__line-annotation">
-                @if (line.annotation; as annotation) {
+              @if (line.annotation; as annotation) {
+                <span class="scratchpad__line-annotation">
+                  <span class="scratchpad__line-annotation-mark" aria-hidden="true">∴</span>
                   <app-math-text mode="mixed" [content]="annotation | i18nText" />
-                }
-              </span>
+                </span>
+              }
               <!-- Sticky notes anchored directly to this line — used
                    now for transient previews (e.g. "→ Policz 48 mod
                    36" during the compute step before the substitute

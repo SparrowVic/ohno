@@ -152,18 +152,18 @@ type LineBuilder = {
   readonly annotation: ScratchpadLine['annotation'];
 };
 
-/* Section-level markers. We number *stages of reasoning*, not every
- *  line, so the notebook reads the way a tutor writes on the board:
- *    ① Start with the pair
- *        = gcd(…)        ← derivation continues without its own number
- *        = gcd(…)
- *    ② Check the loop condition
- *    ✓  Final answer
- *  Students can spot the structure of the argument at a glance and
- *  long derivations don't drown in ordinals. */
+/* Section-level markers, shared vocabulary with extended-euclidean:
+ *    ①   — phase start (the initial pair)
+ *    ⟹  — "therefore" (loop condition met, stop — logical consequence,
+ *          not a new phase, so we reuse the arrow EEA uses to announce
+ *          "gcd = last remainder" rather than giving this line a second
+ *          ordinal)
+ *    ✓   — final answer
+ *  Keeping the same glyphs with the same meanings across the number-
+ *  theory family means students don't relearn the alphabet each time. */
 const SECTION_MARKERS = {
   start: '①',
-  decision: '②',
+  decision: '⟹',
   result: '✓',
 } as const;
 
@@ -371,9 +371,11 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     history.push(historyEntry(step, a, b, true));
     const finished = b === 0;
 
-    // Push the substitute line — inherits the instruction from the
-    // upcoming-margin so students see the same imperative tag as
-    // persistent context on the finished line.
+    // The imperative "→ Policz a mod b" chip only makes sense while the
+    // operation is pending (carried as a transient margin above, anchored
+    // to the pair line). Once we emit the substitute line the operation
+    // is already done, so we keep only the annotation ("a mod b = r")
+    // as a record of what produced the line. No persistent instruction.
     lineBuilders.push({
       id: substituteLineId,
       kind: 'substitute',
@@ -384,7 +386,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       marker: null,
       caption: I18N.scratchpad.captions.substitute,
       content: i18nText(I18N.scratchpad.substitute, { a, b }),
-      instruction: i18nText(I18N.scratchpad.remainderInstruction, { a: prevA, b: prevB }),
+      instruction: null,
       annotation: i18nText(I18N.scratchpad.remainderAnnotation, { prevA, prevB, r }),
     });
 

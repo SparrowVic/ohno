@@ -330,6 +330,14 @@ export function* extendedEuclideanGenerator(
   });
 
   // ---------- Remaining forward rows ----------
+  // Middle forward rows drop the imperative chip: once the equation is
+  // on the board, "→ Rozpisz a = q·b + r" on a completed line reads as
+  // temporally wrong (the action is already done, the annotation below
+  // records what fell out). The first row (`fwd-0`) keeps its chip as a
+  // "start here" anchor while the board is otherwise empty; the terminal
+  // row keeps a chip because its text is the stop-decision label
+  // ("Reszta spadła do 0 — koniec"), not an imperative about the
+  // computation on that line.
   for (let i = 1; i < forwardSteps.length; i++) {
     const step = forwardSteps[i];
     const lineId = `fwd-${i}`;
@@ -348,10 +356,7 @@ export function* extendedEuclideanGenerator(
       }),
       instruction: isTerminal
         ? i18nText(I18N.forwardStopDecision, { a: step.dividend, b: step.divisor })
-        : i18nText(I18N.forwardInstruction, {
-            a: step.dividend,
-            b: step.divisor,
-          }),
+        : null,
       annotation: i18nText(I18N.forwardAnnotation, {
         a: step.dividend,
         b: step.divisor,

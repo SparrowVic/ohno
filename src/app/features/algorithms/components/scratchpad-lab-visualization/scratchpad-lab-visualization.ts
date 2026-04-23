@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   OnInit,
   computed,
   effect,
@@ -121,6 +122,7 @@ export class ScratchpadLabVisualization implements OnInit {
   private static readonly STORAGE_KEY = 'ohno:scratchpad-lab:options:v1';
 
   private readonly doc = inject(DOCUMENT);
+  private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly showCaptions = signal(true);
   readonly showInstructions = signal(true);
 
@@ -156,6 +158,30 @@ export class ScratchpadLabVisualization implements OnInit {
         /* localStorage can be disabled — fall back to in-memory only. */
       }
     });
+
+    // Auto-follow the current line. On long derivations (Extended
+    // Euclidean easily runs 15+ lines) the current line falls off-viewport
+    // as new lines append; without this the student has to scroll by
+    // hand every step.
+    effect(() => {
+      const snapshot = this.state();
+      if (!snapshot) return;
+      const currentId = snapshot.lines.find((l) => l.state === 'current')?.id;
+      if (!currentId) return;
+      // Wait for the render commit before querying the DOM — the effect
+      // fires with the new signal value but Angular hasn't flushed the
+      // template yet, so a synchronous querySelector would resolve
+      // against the previous snapshot's nodes.
+      queueMicrotask(() => {
+        const el = this.hostEl.nativeElement.querySelector<HTMLElement>(
+          `[data-line-id="${CSS.escape(currentId)}"]`,
+        );
+        el?.scrollIntoView({
+          block: 'nearest',
+          behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+        });
+      });
+    });
   }
 
   ngOnInit(): void {
@@ -177,4 +203,9 @@ export class ScratchpadLabVisualization implements OnInit {
     if (change.id === 'captions') this.showCaptions.set(change.checked);
     else if (change.id === 'instructions') this.showInstructions.set(change.checked);
   }
+}
+
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }

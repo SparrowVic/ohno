@@ -165,7 +165,7 @@ Tokens: `--ring-focus` (triple-layer cyan), `--ring-focus-soft` (quieter alterna
 ```
 --font-sans      'Sora', 'Inter', 'Segoe UI', sans-serif
 --font-mono      'IBM Plex Mono', 'SF Mono', ui-monospace, monospace
---font-notebook  'Caveat', 'Segoe Script', 'Bradley Hand', cursive   ← chalkboard-only
+--font-notebook  'Newsreader', 'Iowan Old Style', 'Hoefler Text', Georgia, serif   ← scratchpad narrative chrome; pair with `font-style: italic`
 ```
 
 Numeric labels should use `font-variant-numeric: tabular-nums;` to prevent horizontal jitter during live updates.

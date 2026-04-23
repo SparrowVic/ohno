@@ -39,15 +39,17 @@ Bar-chart, block-swap, radix. Post-redesign language:
 
 See open polish backlog: `ohno-viz-polish-checklist` skill.
 
-### 3. Chalkboard (scratchpad narrative)
+### 3. Scratchpad / editorial margin-note (narrative math)
 
-Euclidean GCD, Extended Euclidean, Miller-Rabin, CRT, Gaussian elim. This is the **tutor-at-a-whiteboard** idiom:
+Euclidean GCD, Extended Euclidean, Miller-Rabin, CRT, Gaussian elim. This is the **tutor writing in the margin of a scholarly text** idiom — Tufte sidenotes rather than chalk on a blackboard:
 
-- **Caveat font** for markers, captions, instructions, annotations — the printed-hand cursive.
+- **Newsreader italic** for narrative chrome (markers, captions, goal, rule, instruction chips, annotation marks, signoff). Screen-optimized serif that scales cleanly up to dense/ultrawide layouts; holds its presence next to KaTeX math without feeling cheap the way a cursive hand can at larger sizes.
 - Lines grow as the algorithm progresses, each typed (goal / note / equation / substitute / decision / result / divider).
 - Margins carry invariants and hints — the stuff the student needs to keep in mind.
 - Math renders with KaTeX inline (`[[math]] … [[/math]]` markers).
 - Tone is teaching, not performing. A line lands, the student reads it, then it settles.
+
+Earlier iterations used Caveat cursive ("chalkboard hand"). That direction was walked back on 2026-04-23 because at larger sizes and on high-DPI displays Caveat reads as a Figma-mockup placeholder rather than authentic tutor handwriting. Caveat remains loaded (`--font-notebook` fallback chain still ships it) in case a future scene genuinely needs a cursive hand; don't reach for it by default.
 
 See `ohno-scratchpad-narrative` skill.
 
@@ -100,7 +102,7 @@ See `ohno-scratchpad-narrative` skill.
 Things the user has validated or asked for repeatedly:
 
 - **Semantic state colors everywhere** — same cyan/pink/lime language across all viz families, so students transfer the visual vocabulary.
-- **Caveat for narrative chrome** — the chalkboard font unlocks a warmer tone without going cutesy.
+- **Newsreader italic for narrative chrome** — editorial serif italic reads as a scholar's margin note, holds up at any viewport size. (Historical: Caveat cursive was the earlier choice; see `ohno-scratchpad-narrative` for why it was walked back.)
 - **Hairline strokes + subtle drop shadow** over heavy fills. Flat > textured.
 - **One signature motion per scene** — a sweep, a pulse, a partition line — rather than many small flourishes.
 - **Margin annotations** (small, cursive, anchored) instead of tooltips.
