@@ -1,6 +1,7 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { TreePresetOption, TreeTraversalOrder } from '../../models/tree';
+import { Task } from '../../models/task';
 import { TreeSeedNode } from '../tree-layout/tree-layout';
 
 export interface TreeTraversalScenario {
@@ -57,6 +58,44 @@ export const TREE_TRAVERSALS_PRESETS: readonly TreePresetOption[] = [
 ];
 
 export const DEFAULT_TREE_TRAVERSALS_PRESET_ID = 'preorder-balanced';
+
+/** Tree traversal scenarios don't have customizable scalar values
+ *  (`depth` is tree-shape, not a knob; the seed tree is constructed
+ *  by the preset). Empty schema auto-hides the ✎ button — students
+ *  pick a preset-task and get the run; no custom editor needed. */
+export type TreeTraversalValues = Record<string, never>;
+
+export const TREE_TRAVERSALS_TASKS: readonly Task<TreeTraversalValues>[] = [
+  {
+    id: 'preorder-balanced',
+    name: PRESET_KEYS.preorderBalanced.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'tree-traversals',
+  },
+  {
+    id: 'inorder-bst',
+    name: PRESET_KEYS.inorderBst.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'tree-traversals',
+  },
+  {
+    id: 'postorder-sizes',
+    name: PRESET_KEYS.postorderSizes.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'tree-traversals',
+  },
+  {
+    id: 'level-order-wave',
+    name: PRESET_KEYS.levelOrderWave.label,
+    defaultValues: {},
+    inputSchema: {},
+    codeSnippetId: 'tree-traversals',
+  },
+];
+export const DEFAULT_TREE_TRAVERSALS_TASK_ID = 'preorder-balanced';
 
 /** Build a balanced binary tree of `depth` levels. Labels are A..Z
  *  in a level-order walk so the displayed label order matches how the
@@ -118,6 +157,7 @@ function depthForSize(size: number): number {
 export function createTreeTraversalScenario(
   size: number,
   presetId: string | null,
+  _customValues?: TreeTraversalValues,
 ): TreeTraversalScenario {
   const id = presetId ?? DEFAULT_TREE_TRAVERSALS_PRESET_ID;
   const depth = depthForSize(size);

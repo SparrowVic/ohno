@@ -891,8 +891,11 @@ import {
 } from '../../utils/string-scenarios/string-scenarios';
 import {
   DEFAULT_TREE_TRAVERSALS_PRESET_ID,
+  DEFAULT_TREE_TRAVERSALS_TASK_ID,
   TREE_TRAVERSALS_PRESETS,
+  TREE_TRAVERSALS_TASKS,
   TreeTraversalScenario,
+  TreeTraversalValues,
   createTreeTraversalScenario,
 } from '../../utils/tree-scenarios/tree-scenarios';
 import { treeTraversalsGenerator } from '../../algorithms/tree-traversals/tree-traversals';
@@ -1680,12 +1683,19 @@ interface GeometryAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithm
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
-interface TreeAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+interface TreeAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
   readonly kind: 'tree';
   readonly presetOptions: readonly TreePresetOption[];
   readonly defaultPresetId: string;
-  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
 }
 
 interface NumberLabAlgorithmViewConfig<TScenario = any, TValues = any>
@@ -2663,7 +2673,10 @@ const MCTS_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: mctsGenerator,
 };
 
-const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
+const TREE_TRAVERSALS_VIEW_CONFIG: TreeAlgorithmViewConfig<
+  TreeTraversalScenario,
+  TreeTraversalValues
+> = {
   kind: 'tree',
   codeLines: TREE_TRAVERSALS_CODE,
   codeRegions: TREE_TRAVERSALS_CODE_REGIONS,
@@ -2671,6 +2684,8 @@ const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: TREE_TRAVERSALS_CODE_VARIANTS,
   variantOptions: TREE_TRAVERSALS_VARIANT_OPTIONS,
   defaultVariant: 'tree',
+  /* Size (tree depth) stays as an independent scale knob in the
+   *  toolbar — tasks only name the traversal order + tree shape. */
   sizeOptions: [7, 15, 31],
   defaultSize: 15,
   sizeUnit: 'nodes',
@@ -2678,7 +2693,10 @@ const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
   legendItems: () => [],
   presetOptions: TREE_TRAVERSALS_PRESETS,
   defaultPresetId: DEFAULT_TREE_TRAVERSALS_PRESET_ID,
-  createScenario: (size, presetId) => createTreeTraversalScenario(size, presetId),
+  tasks: TREE_TRAVERSALS_TASKS,
+  defaultTaskId: DEFAULT_TREE_TRAVERSALS_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createTreeTraversalScenario(size, presetId, customValues),
   generator: (scenario: TreeTraversalScenario) => treeTraversalsGenerator(scenario),
 };
 

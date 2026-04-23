@@ -216,6 +216,7 @@ export class AlgorithmDetail {
   });
   readonly treePresetOptions = computed<readonly TreePresetOption[]>(() => {
     const config = this.config();
+    if (configHasTasks(config) && config.kind === 'tree') return [];
     return config?.kind === 'tree' ? config.presetOptions : [];
   });
   readonly numberLabPresetOptions = computed<readonly NumberLabPresetOption[]>(() => {
