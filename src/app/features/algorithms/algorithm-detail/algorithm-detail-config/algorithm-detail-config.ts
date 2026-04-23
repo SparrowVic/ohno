@@ -2328,7 +2328,11 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: EUCLIDEAN_GCD_CODE_VARIANTS,
   variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
-  sizeOptions: [1, 2, 3],
+  /* Scenario presets are the only meaningful input axis — the (a, b)
+   *  pair is picked via the chip row in the viz header. Dataset-size
+   *  has no effect on this algorithm, so we collapse to a single
+   *  option and the toolbar hides the select entirely. */
+  sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New GCD pair',
@@ -2353,7 +2357,10 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: EXTENDED_EUCLIDEAN_CODE_VARIANTS,
   variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
-  sizeOptions: [1, 2, 3],
+  /* Same reasoning as EUCLIDEAN_GCD_VIEW_CONFIG — preset chips are
+   *  the only meaningful input; the size selector would just dress
+   *  the scenario choice in a worse UI. Single-option hides it. */
+  sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New pair',

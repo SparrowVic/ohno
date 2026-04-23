@@ -40,6 +40,11 @@ export class VisualizationToolbar {
   readonly canStepBack = computed(() => this.currentStep() > 0);
   readonly canStepForward = computed(() => this.currentStep() < this.totalSteps());
   readonly hasVariantChoice = computed(() => this.variantOptions().length > 1);
+  /** Hide the dataset-size select when the algorithm doesn't offer a
+   *  meaningful choice — a one-option pulldown was confusing students
+   *  on preset-only flows (GCD, Extended Euclidean) where they'd
+   *  expect the control to switch scenarios but nothing changed. */
+  readonly hasSizeChoice = computed(() => this.sizeOptions().length > 1);
   readonly progressRatio = computed(() => {
     const total = this.totalSteps();
     if (total <= 0) return 0;

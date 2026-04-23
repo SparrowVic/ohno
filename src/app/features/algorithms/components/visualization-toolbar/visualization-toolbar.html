@@ -83,11 +83,13 @@
         [formControl]="variantControl"
       />
     }
-    <app-lab-select
-      [label]="I18N_KEY.features.algorithms.toolbar.datasetSizeLabel | transloco"
-      [options]="sizeSelectOptions()"
-      [formControl]="sizeControl"
-    />
+    @if (hasSizeChoice()) {
+      <app-lab-select
+        [label]="I18N_KEY.features.algorithms.toolbar.datasetSizeLabel | transloco"
+        [options]="sizeSelectOptions()"
+        [formControl]="sizeControl"
+      />
+    }
     <app-lab-slider
       [label]="I18N_KEY.features.algorithms.toolbar.speedLabel | transloco"
       [min]="1"
