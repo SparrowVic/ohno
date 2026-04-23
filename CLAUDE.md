@@ -2,6 +2,18 @@
 
 Ohno is an Angular 21 playground for algorithm & data-structure visualizations. Dark, editorial, educational. Custom UI — **no Tailwind, no Angular Material, no Storybook, no NgModules.**
 
+## Context hygiene (MUST do in long sessions)
+
+This file stays loaded across a session, but in long multi-day conversations, rules can drift out of top-of-mind even when the text is still in context. To stay consistent:
+
+- **Re-read this file (Read tool, full) at the START of every new logical task** — a new feature, a new algorithm, a new UI component, a non-trivial refactor, a resumption after a long break in an unrelated area. Cost is ~300 tokens; benefit is a re-anchored rulebook. Do this even if you "remember" the rules — memory drifts, the file doesn't.
+- **Re-read the relevant skill (`.claude/skills/ohno-*/SKILL.md`) when its trigger fires.** Don't rely on recall — the skill's detailed patterns are what keep new code shaped like the existing codebase.
+- **If you catch yourself uncertain about a specific rule** (e.g., "signals or `@Input()`?", "where do tokens live?", "is there a reduced-motion helper?") — don't guess. Open this file or the relevant skill. The 2-second re-read beats shipping a regression.
+- **Before emitting the design-reviewer reminder** (see "Proactive reminders" below), re-read that section to match the exact format.
+- **When the user returns after a break** and the prior conversation is very long, treat the first new request as a new task and re-read this file upfront.
+
+This is belt-and-suspenders on top of Claude Code's existing context handling. Overhead is small; consistency gain is big.
+
 ## Stack (pinned)
 
 - **Angular 21.2.x** — standalone components, signals, new control flow, strict templates.
