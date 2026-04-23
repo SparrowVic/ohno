@@ -144,6 +144,38 @@ CI: GitHub Actions, needs repo secret `FONTAWESOME_PACKAGE_TOKEN`.
 - For any UI change: open the affected view in the dev server, check 360 / 768 / 1280 widths, keyboard focus path, `prefers-reduced-motion` (DevTools rendering tab).
 - If you changed user-visible strings: `npm run i18n:extract` and update both `pl.json` and `en.json`.
 
+## Proactive reminders (MUST emit when applicable)
+
+The user has a standing preference: **you are responsible for remembering to flag the design-reviewer agent** at the right moments, because the user may forget. When any of the triggers below fires, emit the reminder in the final user-facing message of your turn, **in ALL CAPS, on its own line, between two horizontal rule separators so it's impossible to miss.**
+
+Reminder text to use verbatim:
+
+```
+---
+🔎 PRZYPOMNIENIE: TA ZMIANA DOTKNĘŁA UI/WIZUALIZACJI. ZANIM ZROBISZ COMMIT, ROZWAŻ WYWOŁANIE AGENTA **ohno-design-reviewer** ABY ZROBIŁ AUDYT ZMIAN PRZECIW REGUŁOM DESIGN SYSTEMU.
+---
+```
+
+**Emit the reminder when your task changed ANY of:**
+
+- any file under [src/app/features/algorithms/components/](src/app/features/algorithms/components/) — visualizations, code-panel, log-panel, legend-bar, visualization-toolbar, viz-options-menu, trace panels.
+- [src/styles.scss](src/styles.scss) — token additions, repoints, or structural changes.
+- any `.scss` file anywhere in `src/app/` (component styles, chrome, shell, navbar, sidebar).
+- any `.html` template that added/moved interactive UI (buttons, inputs, controls, icon-buttons, menus).
+- any new Angular `@Component` that renders UI (not pure services / pipes / utilities).
+- [src/app/core/layout/](src/app/core/layout/) — shell, navbar, sidebar, language switcher.
+- [src/app/shared/components/](src/app/shared/components/) — reusable UI primitives.
+
+**Do NOT emit the reminder when** your task touched **only**:
+- algorithm logic under [src/app/features/algorithms/algorithms/](src/app/features/algorithms/algorithms/) (pure `*.ts` generators + their `*.spec.ts`), with no component/SCSS changes.
+- test files, config files, docs, `proj-info/`, `.github/`, build scripts.
+- i18n JSON (`public/i18n/*.json`) without any template/component change.
+- memory files, `.claude/**/*.md`, `CLAUDE.md` itself.
+
+**When the reminder fires, place it AFTER your summary of what was done and BEFORE any follow-up suggestions.** Never silently skip it because "the change was small" — small changes are exactly where regressions hide.
+
+If the user invokes the reviewer explicitly in the same turn, don't emit the reminder — it's redundant.
+
 ## Deep-dive skills (in `.claude/skills/`)
 
 Invoke the matching skill via `Skill` when the task fits — each is scoped to one concern and pulls detailed patterns + code references on demand:
