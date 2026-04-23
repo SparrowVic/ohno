@@ -1460,5 +1460,12 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['gcd', 'Bézout', 'mod inverse'],
+    complexity: {
+      timeBest: 'O(log min(a, b))',
+      timeAverage: 'O(log min(a, b))',
+      timeWorst: 'O(log min(a, b))',
+      space: 'O(log min(a, b))',
+    },
+    implemented: true,
   }),
 ] as const;

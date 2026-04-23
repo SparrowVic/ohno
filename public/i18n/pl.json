@@ -1979,6 +1979,54 @@
           }
         },
         "scratchpadLab": {
+          "extendedEuclidean": {
+            "modeLabel": "Rozszerzony algorytm Euklidesa (tablica)",
+            "goal": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że [[math]]s \\cdot {{a}} + t \\cdot {{b}} = \\gcd({{a}}, {{b}})[[/math]].",
+            "rule": "Puść łańcuch dzielenia Euklidesa do przodu aż [[math]]r = 0[[/math]], potem podstawiaj wstecznie reszty, aby zbudować tożsamość Bézouta.",
+            "invariant": "Każda linia forward [[math]]a = q \\cdot b + r[[/math]] zostaje dostępna do dalszych podstawień.",
+            "forwardHeader": "Przebieg w przód",
+            "forwardEquation": "[[math]]{{a}} = {{q}} \\cdot {{b}} + {{r}}[[/math]]",
+            "forwardAnnotation": "[[math]]{{a}} \\bmod {{b}} = {{r}}[[/math]]",
+            "forwardInstruction": "Podziel [[math]]{{a}}[[/math]] przez [[math]]{{b}}[[/math]]",
+            "forwardStopDecision": "Reszta spadła do [[math]]0[[/math]] — koniec",
+            "gcdFound": "[[math]]\\gcd = {{gcd}}[[/math]]",
+            "backHeader": "Podstawianie wsteczne",
+            "backSeed": "[[math]]{{expression}}[[/math]]",
+            "backSeedInstruction": "Odczytaj z [[math]]{{a}} = q \\cdot {{b}} + r[[/math]]",
+            "backSubLine": "[[math]]{{expression}}[[/math]]",
+            "backSubInstruction": "Użyj [[math]]{{a}} = {{q}} \\cdot {{b}} + r[[/math]]",
+            "backSubAnnotation": "[[math]]{{coefA}} \\cdot {{a}} + {{coefB}} \\cdot {{b}}[[/math]]",
+            "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
+            "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
+            "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "captions": {
+              "forwardStart": "Rozpoczynamy łańcuch dzielenia w przód.",
+              "forwardContinue": "Przesuwamy parę i dzielimy dalej.",
+              "forwardStop": "Reszta wynosi zero — łańcuch kończy się.",
+              "gcdFound": "Ostatnia niezerowa reszta to [[math]]\\gcd[[/math]].",
+              "backSeed": "Przepisz ostatnie nietrywialne równanie jako [[math]]r = a - q \\cdot b[[/math]].",
+              "backSubstitute": "Podstaw wcześniejsze równanie, aby wyeliminować jeden z termów.",
+              "verify": "Sprawdź, że [[math]]s \\cdot a + t \\cdot b = \\gcd[[/math]].",
+              "result": "Współczynniki Bézouta ustalone."
+            },
+            "phases": {
+              "setup": "Przygotowanie",
+              "forward": "Przebieg w przód",
+              "gcd": "Odczyt gcd",
+              "back": "Podstawianie wstecz",
+              "verify": "Weryfikacja",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "preparing": "Zapisujemy cel i regułę algorytmu.",
+              "forwardDiv": "Dzielimy bieżącą parę, aby znaleźć resztę.",
+              "forwardStop": "Reszta wynosi [[math]]0[[/math]] — zatrzymujemy przebieg w przód.",
+              "readingGcd": "Ostatnia niezerowa reszta to [[math]]\\gcd[[/math]].",
+              "unwinding": "Podstawiamy wcześniejsze równanie forward do bieżącego wyrażenia.",
+              "verifying": "Podstawiamy [[math]]s, t[[/math]] z powrotem, aby potwierdzić tożsamość Bézouta.",
+              "done": "Współczynniki Bézouta ustalone."
+            }
+          },
           "gcd": {
             "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — przesuwamy parę i idziemy dalej.",
             "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
@@ -3350,6 +3398,20 @@
               "description": "Łańcuchy przypominające ścieżki ułatwiają rozumienie zasięgu wildcardów.",
               "label": "Trasy"
             }
+          }
+        },
+        "extendedEuclidean": {
+          "short": {
+            "label": "Krótki łańcuch",
+            "description": "[[math]]\\gcd(60, 48)[[/math]] — jednokrokowa substytucja, pierwsze spotkanie z Bézoutem."
+          },
+          "classic": {
+            "label": "Klasyczny podręcznikowy",
+            "description": "[[math]]\\gcd(240, 46)[[/math]] — pięć kroków forward daje bogaty, wielopoziomowy back-sub."
+          },
+          "large": {
+            "label": "Większa para",
+            "description": "[[math]]\\gcd(1071, 462)[[/math]] — ta sama para co \"Większa\" w Euklidesie, więc możesz prześledzić współczynniki Bézouta na znanym łańcuchu."
           }
         },
         "numberLab": {

@@ -1979,6 +1979,54 @@
           }
         },
         "scratchpadLab": {
+          "extendedEuclidean": {
+            "modeLabel": "Extended Euclidean (chalkboard)",
+            "goal": "Find integers [[math]]s, t[[/math]] such that [[math]]s \\cdot {{a}} + t \\cdot {{b}} = \\gcd({{a}}, {{b}})[[/math]].",
+            "rule": "Run the Euclidean division chain forward until [[math]]r = 0[[/math]], then back-substitute each remainder to build Bézout's identity.",
+            "invariant": "Each forward line [[math]]a = q \\cdot b + r[[/math]] stays usable later for substitution.",
+            "forwardHeader": "Forward pass",
+            "forwardEquation": "[[math]]{{a}} = {{q}} \\cdot {{b}} + {{r}}[[/math]]",
+            "forwardAnnotation": "[[math]]{{a}} \\bmod {{b}} = {{r}}[[/math]]",
+            "forwardInstruction": "Divide [[math]]{{a}}[[/math]] by [[math]]{{b}}[[/math]]",
+            "forwardStopDecision": "Remainder hit [[math]]0[[/math]] — stop",
+            "gcdFound": "[[math]]\\gcd = {{gcd}}[[/math]]",
+            "backHeader": "Back-substitution",
+            "backSeed": "[[math]]{{expression}}[[/math]]",
+            "backSeedInstruction": "Read off from [[math]]{{a}} = q \\cdot {{b}} + r[[/math]]",
+            "backSubLine": "[[math]]{{expression}}[[/math]]",
+            "backSubInstruction": "Use [[math]]{{a}} = {{q}} \\cdot {{b}} + r[[/math]]",
+            "backSubAnnotation": "[[math]]{{coefA}} \\cdot {{a}} + {{coefB}} \\cdot {{b}}[[/math]]",
+            "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
+            "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
+            "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "captions": {
+              "forwardStart": "Start the forward division chain.",
+              "forwardContinue": "Shift the pair and divide again.",
+              "forwardStop": "Remainder is zero — the chain terminates.",
+              "gcdFound": "The last non-zero remainder is the [[math]]\\gcd[[/math]].",
+              "backSeed": "Rewrite the last non-trivial equation as [[math]]r = a - q \\cdot b[[/math]].",
+              "backSubstitute": "Substitute an earlier equation to eliminate one term.",
+              "verify": "Check that [[math]]s \\cdot a + t \\cdot b = \\gcd[[/math]].",
+              "result": "Bézout coefficients pinned down."
+            },
+            "phases": {
+              "setup": "Setup",
+              "forward": "Forward pass",
+              "gcd": "Read gcd",
+              "back": "Back-substitute",
+              "verify": "Verify",
+              "complete": "Done"
+            },
+            "decisions": {
+              "preparing": "Writing the goal and the algorithm rule.",
+              "forwardDiv": "Dividing the current pair to find the remainder.",
+              "forwardStop": "Remainder is [[math]]0[[/math]] — stop the forward pass.",
+              "readingGcd": "Last non-zero remainder is the [[math]]\\gcd[[/math]].",
+              "unwinding": "Substituting an earlier forward equation into the running expression.",
+              "verifying": "Plugging [[math]]s, t[[/math]] back to confirm Bézout's identity.",
+              "done": "Bézout coefficients are settled."
+            }
+          },
           "gcd": {
             "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — shift pair and continue.",
             "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
@@ -3350,6 +3398,20 @@
               "description": "Path-like strings make wildcard spans easy to reason about.",
               "label": "Routes"
             }
+          }
+        },
+        "extendedEuclidean": {
+          "short": {
+            "label": "Short chain",
+            "description": "[[math]]\\gcd(60, 48)[[/math]] — one-step back-substitution for your first Bézout."
+          },
+          "classic": {
+            "label": "Classic textbook",
+            "description": "[[math]]\\gcd(240, 46)[[/math]] — five forward steps unwind into a richly layered back-sub."
+          },
+          "large": {
+            "label": "Larger pair",
+            "description": "[[math]]\\gcd(1071, 462)[[/math]] — mirrors the Euclidean \"larger pair\" preset so you can trace the Bézout coefficients on top of a familiar chain."
           }
         },
         "numberLab": {

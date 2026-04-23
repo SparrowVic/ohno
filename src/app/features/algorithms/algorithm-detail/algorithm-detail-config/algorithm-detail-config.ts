@@ -584,6 +584,13 @@ import { recursionCallStackGenerator } from '../../algorithms/recursion-call-sta
 import { backtrackingGenerator } from '../../algorithms/backtracking/backtracking';
 import { minimaxAlphaBetaGenerator } from '../../algorithms/minimax-alpha-beta/minimax-alpha-beta';
 import { mctsGenerator } from '../../algorithms/mcts/mcts';
+import { extendedEuclideanGenerator } from '../../algorithms/extended-euclidean/extended-euclidean';
+import {
+  ExtendedEuclideanScenario,
+  EXTENDED_EUCLIDEAN_PRESETS,
+  DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
+  createExtendedEuclideanScenario,
+} from '../../utils/extended-euclidean-scenarios/extended-euclidean-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -602,6 +609,12 @@ import {
   EUCLIDEAN_GCD_CODE_REGIONS,
   EUCLIDEAN_GCD_CODE_VARIANTS,
 } from '../../data/euclidean-gcd-code';
+import {
+  EXTENDED_EUCLIDEAN_CODE,
+  EXTENDED_EUCLIDEAN_CODE_HIGHLIGHT_MAP,
+  EXTENDED_EUCLIDEAN_CODE_REGIONS,
+  EXTENDED_EUCLIDEAN_CODE_VARIANTS,
+} from '../../data/extended-euclidean-code';
 import {
   TWO_POINTERS_CODE,
   TWO_POINTERS_CODE_HIGHLIGHT_MAP,
@@ -1420,6 +1433,14 @@ const NUMBER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
 const NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'scratchpad-lab', label: 'Chalkboard' },
   { value: 'number-lab', label: 'Number Lab' },
+];
+
+/** Chalkboard-only option for algorithms whose derivational story is
+ *  the whole point (Extended Euclidean, Miller-Rabin, CRT, …) — the
+ *  dashboard view would only restate the registers without adding
+ *  pedagogical value, so we skip it. */
+const SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'scratchpad-lab', label: 'Chalkboard' },
 ];
 
 const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -2316,6 +2337,31 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultPresetId: DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
   createScenario: (size, presetId) => createEuclideanGcdScenario(size, presetId),
   generator: euclideanGcdGenerator,
+};
+
+/** Extended Euclidean — chalkboard-only. Two-phase derivation (forward
+ *  division chain + back-substitution for Bézout coefficients) is the
+ *  whole pedagogical story; a register dashboard would have nothing
+ *  interesting to add. Reuses the `number-lab` kind dispatcher so the
+ *  rebuild logic can wire the scenario factory + generator exactly
+ *  like other (a, b)-pair algorithms. */
+const EXTENDED_EUCLIDEAN_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'number-lab',
+  codeLines: EXTENDED_EUCLIDEAN_CODE,
+  codeRegions: EXTENDED_EUCLIDEAN_CODE_REGIONS,
+  codeHighlightMap: EXTENDED_EUCLIDEAN_CODE_HIGHLIGHT_MAP,
+  codeVariants: EXTENDED_EUCLIDEAN_CODE_VARIANTS,
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1, 2, 3],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New pair',
+  legendItems: () => [],
+  presetOptions: EXTENDED_EUCLIDEAN_PRESETS,
+  defaultPresetId: DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
+  createScenario: (size, presetId) => createExtendedEuclideanScenario(size, presetId),
+  generator: extendedEuclideanGenerator,
 };
 
 const TWO_POINTERS_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3463,6 +3509,7 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'fibonacci-iterative') return FIBONACCI_ITER_VIEW_CONFIG;
   if (id === 'factorial') return FACTORIAL_VIEW_CONFIG;
   if (id === 'euclidean-gcd') return EUCLIDEAN_GCD_VIEW_CONFIG;
+  if (id === 'extended-euclidean') return EXTENDED_EUCLIDEAN_VIEW_CONFIG;
   if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;
