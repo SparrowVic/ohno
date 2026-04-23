@@ -118,21 +118,21 @@
   }
 }
 
-/* Hover affordance — a soft warm wash that invites the eye without
-   stealing attention from the current-line highlight. Applies only to
-   settled (past) lines; current/result rows already own a strong
-   surface treatment, so we skip the hover there. Divider rows and the
-   goal/rule header block don't take pointer focus either. */
+/* Hover on settled lines pulls the row out of its 82%-dimmed "past"
+   state back to full opacity with a warm wash — reads as "take a
+   second look at this step". Current/result rows already own a
+   surface, so hover skips them; goal/rule sit above the derivation as
+   context and don't benefit from the pull-in. */
 @media (hover: hover) {
   .scratchpad__line--settled:hover {
-    background: rgba(var(--viz-warning-rgb), 0.055);
-    box-shadow: inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.28);
+    opacity: 1;
+    background: rgba(var(--viz-warning-rgb), 0.09);
+    box-shadow: inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.45);
   }
 
   .scratchpad__line--settled.scratchpad__line--goal:hover,
   .scratchpad__line--settled.scratchpad__line--note:hover {
-    /* Goal + rule sit above the derivation as context; hover makes less
-       sense there and competes with the goal's size. */
+    opacity: 0.82;
     background: transparent;
     box-shadow: none;
   }
