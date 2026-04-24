@@ -1,71 +1,140 @@
 import { describe, expect, it } from 'vitest';
 
-import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { fftNttGenerator } from './fft-ntt';
+import type { ScratchpadLine } from '../../models/scratchpad-lab';
 import type { SortStep } from '../../models/sort-step';
-import type { FftNttScenario } from '../../utils/scenarios/number-lab/fft-ntt-scenarios';
+import {
+  createFftNttScenario,
+  DEFAULT_FFT_NTT_TASK_ID,
+  FFT_NTT_TASKS,
+} from '../../utils/scenarios/number-lab/fft-ntt-scenarios';
 
-function run(input: readonly number[]): SortStep[] {
-  const scenario: FftNttScenario = {
-    kind: 'fft-ntt',
-    presetId: 'spec',
-    presetLabel: 'spec',
-    presetDescription: 'spec',
-    taskPrompt: null,
-    input,
-  };
-  return [...fftNttGenerator(scenario)];
+function run(presetId: string = DEFAULT_FFT_NTT_TASK_ID): SortStep[] {
+  return [...fftNttGenerator(createFftNttScenario(0, presetId))];
 }
 
-function signoffKey(step: SortStep | undefined): string | null {
-  const label = step?.scratchpadLab?.resultLabel;
-  if (!label) return null;
-  if (typeof label === 'string') return label;
-  return isI18nText(label) ? label.key : null;
+function finalLines(steps: readonly SortStep[]): readonly ScratchpadLine[] {
+  return steps.at(-1)?.scratchpadLab?.lines ?? [];
 }
 
-function signoffSpectrum(step: SortStep | undefined): string | null {
-  const label = step?.scratchpadLab?.resultLabel;
-  if (!label || !isI18nText(label)) return null;
-  const params = label.params;
-  return typeof params?.['spectrum'] === 'string'
-    ? (params['spectrum'] as string)
-    : null;
+function contentOf(line: ScratchpadLine): string {
+  return typeof line.content === 'string' ? line.content : '';
+}
+
+function expectContains(lines: readonly ScratchpadLine[], fragment: string): void {
+  expect(lines.map(contentOf).some((content) => content.includes(fragment))).toBe(true);
 }
 
 describe('fft-ntt', () => {
-  it('computes the canonical 4-point DFT of [1, 2, 3, 4] to [10, -2+2i, -2, -2-2i]', () => {
-    const steps = run([1, 2, 3, 4]);
-    expect(signoffKey(steps.at(-1))).toBe(
-      'features.algorithms.runtime.scratchpadLab.fftNtt.result.signoff',
-    );
-    const spectrum = signoffSpectrum(steps.at(-1));
-    expect(spectrum).toContain('10');
-    expect(spectrum).toContain('-2 + 2i');
-    expect(spectrum).toContain('-2 - 2i');
+  it('uses short NTT convolution as the default task', () => {
+    expect(DEFAULT_FFT_NTT_TASK_ID).toBe('short');
+    expect(FFT_NTT_TASKS.map((task) => task.id)).toEqual([
+      'short',
+      'recursive-fft-split',
+      'cyclic-vs-linear-trap',
+      'big-integer-convolution',
+      'primitive-root-check',
+    ]);
   });
 
-  it('returns a real-valued DC bin equal to the sum of inputs for any power-of-two input', () => {
-    const steps = run([2, 4, 6, 8, 10, 12, 14, 16]);
-    // DC bin = sum = 72.
-    const spectrum = signoffSpectrum(steps.at(-1));
-    expect(spectrum).toContain('72');
+  it('exposes per-task popup fields', () => {
+    expect(Object.keys(FFT_NTT_TASKS[0].inputSchema ?? {})).toEqual([
+      'mod',
+      'n',
+      'omega',
+      'A',
+      'B',
+    ]);
+    expect(Object.keys(FFT_NTT_TASKS[1].inputSchema ?? {})).toEqual(['n', 'omega', 'A']);
+    expect(Object.keys(FFT_NTT_TASKS[2].inputSchema ?? {})).toEqual([
+      'mod',
+      'A',
+      'B',
+      'bad_n',
+      'good_n',
+      'omega4',
+      'omega8',
+    ]);
+    expect(Object.keys(FFT_NTT_TASKS[3].inputSchema ?? {})).toEqual([
+      'left',
+      'right',
+      'base',
+      'mod',
+      'n',
+      'omega',
+    ]);
+    expect(Object.keys(FFT_NTT_TASKS[4].inputSchema ?? {})).toEqual([
+      'mod',
+      'n',
+      'omega_bad',
+      'omega_good',
+    ]);
   });
 
-  it('rejects non-power-of-two input lengths with the invalid-result branch', () => {
-    const steps = run([1, 2, 3]);
-    const lastLine = steps.at(-1)?.scratchpadLab?.lines.at(-1);
-    expect(lastLine?.id).toBe('result-invalid');
+  it('renders the short NTT convolution flow like the task sheet', () => {
+    const steps = run('short');
+    const last = steps.at(-1)?.scratchpadLab;
+    const lines = finalLines(steps);
+
+    expect(last?.margins).toEqual([]);
+    expect(last?.resultLabel).toBeNull();
+    expect(lines.find((line) => line.id === 'section-result')).toMatchObject({
+      marker: '✓',
+      content: 'Wynik',
+    });
+    expectContains(lines, '4^2 \\;\\mathrm{mod}\\; 17 = 16 = -1');
+    expectContains(lines, 'NTT(A) = [6, 6, 2, 7]');
+    expectContains(lines, 'NTT(B) = [9, 7, 16, 1]');
+    expectContains(lines, 'C_hat = [3, 8, 15, 7]');
+    expectContains(lines, 'INTT(C_hat) = [4, 13, 5, 15]');
+    expectContains(lines, 'C(x) = 4 + 13x + 5x^2 + 15x^3');
+    expectContains(lines, '[4, 13, 22, 15] \\;\\mathrm{mod}\\; 17 = [4, 13, 5, 15]');
   });
 
-  it('emits one butterfly line per (stage, block, j) triple for a 4-point run', () => {
-    const steps = run([1, 2, 3, 4]);
-    const lastLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
-    const butterflies = lastLines.filter((l) =>
-      /^stage-\d+-block-\d+-j-\d+$/.test(l.id),
-    );
-    // N=4: stage 1 has 2 blocks × 1 butterfly = 2; stage 2 has 1
-    // block × 2 butterflies = 2. Total = 4.
-    expect(butterflies.length).toBe(4);
+  it('renders the recursive FFT split flow', () => {
+    const lines = finalLines(run('recursive-fft-split'));
+
+    expectContains(lines, 'A_even = [1, 3]');
+    expectContains(lines, 'A_odd = [2, 4]');
+    expectContains(lines, 'FFT([1, 3]) = [4, -2]');
+    expectContains(lines, 'FFT([2, 4]) = [6, -2]');
+    expectContains(lines, 'X_1 = E_1 + \\omega^1 * O_1 = -2 + i * (-2) = -2 - 2i');
+    expectContains(lines, 'FFT([1, 2, 3, 4]) = [10, -2 - 2i, -2, -2 + 2i]');
+  });
+
+  it('renders the cyclic versus linear convolution trap', () => {
+    const lines = finalLines(run('cyclic-vs-linear-trap'));
+
+    expectContains(lines, 'NTT(A) = [10, 7, 15, 6]');
+    expectContains(lines, 'NTT(B) = [4, 0, 0, 0]');
+    expectContains(lines, 'INTT(C_hat) = [10, 10, 10, 10]');
+    expectContains(lines, 'len(A) + len(B) - 1 = 4 + 4 - 1 = 7');
+    expectContains(lines, 'INTT(NTT(A) * NTT(B)) = [1, 3, 6, 10, 9, 7, 4, 0]');
+    expectContains(lines, 'A * B = [1, 3, 6, 10, 9, 7, 4]');
+  });
+
+  it('renders big integer multiplication by digit convolution', () => {
+    const lines = finalLines(run('big-integer-convolution'));
+
+    expectContains(lines, '123 \\to [3, 2, 1, 0]');
+    expectContains(lines, '12 \\to [2, 1, 0, 0]');
+    expectContains(lines, 'NTT([3, 2, 1, 0]) = [6, 10, 2, 11]');
+    expectContains(lines, 'C_hat = [1, 9, 2, 12]');
+    expectContains(lines, 'INTT(C_hat) = [6, 7, 4, 1]');
+    expectContains(lines, 'c_3 = 1 \\to digit 1, carry 0');
+    expectContains(lines, '123 * 12 = 1476');
+  });
+
+  it('renders primitive root validation and collision repair', () => {
+    const lines = finalLines(run('primitive-root-check'));
+
+    expectContains(lines, '4^8 \\;\\mathrm{mod}\\; 17 = 1');
+    expectContains(lines, '4^4 \\;\\mathrm{mod}\\; 17 = 1');
+    expectContains(lines, 'NTT_bad(A) = [1, 1, 1, 1, 1, 1, 1, 1]');
+    expectContains(lines, 'NTT_bad(B) = [1, 1, 1, 1, 1, 1, 1, 1]');
+    expectContains(lines, '2^4 \\;\\mathrm{mod}\\; 17 = 16 = -1');
+    expectContains(lines, 'NTT_good(B) = [1, 16, 1, 16, 1, 16, 1, 16]');
+    expectContains(lines, '\\omega = 4 \\to niepoprawny pierwiastek dla n = 8');
+    expectContains(lines, '\\omega = 2 \\to poprawny pierwiastek dla n = 8');
   });
 });
