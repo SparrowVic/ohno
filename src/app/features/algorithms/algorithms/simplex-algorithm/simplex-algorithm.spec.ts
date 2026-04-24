@@ -1,106 +1,112 @@
 import { describe, expect, it } from 'vitest';
 
-import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { simplexAlgorithmGenerator } from './simplex-algorithm';
+import type { ScratchpadLine } from '../../models/scratchpad-lab';
 import type { SortStep } from '../../models/sort-step';
-import type { SimplexAlgorithmScenario } from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
+import {
+  createSimplexAlgorithmScenario,
+  DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
+  SIMPLEX_ALGORITHM_TASKS,
+} from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
 
-function run(
-  objective: readonly number[],
-  constraints: readonly (readonly number[])[],
-  rhs: readonly number[],
-): SortStep[] {
-  const scenario: SimplexAlgorithmScenario = {
-    kind: 'simplex-algorithm',
-    presetId: 'spec',
-    presetLabel: 'spec',
-    presetDescription: 'spec',
-    taskPrompt: null,
-    objective,
-    constraintMatrix: constraints,
-    rhs,
-  };
-  return [...simplexAlgorithmGenerator(scenario)];
+function run(presetId: string = DEFAULT_SIMPLEX_ALGORITHM_TASK_ID): SortStep[] {
+  return [...simplexAlgorithmGenerator(createSimplexAlgorithmScenario(0, presetId))];
 }
 
-function signoffKey(step: SortStep | undefined): string | null {
-  const label = step?.scratchpadLab?.resultLabel;
-  if (!label) return null;
-  if (typeof label === 'string') return label;
-  return isI18nText(label) ? label.key : null;
+function finalLines(steps: readonly SortStep[]): readonly ScratchpadLine[] {
+  return steps.at(-1)?.scratchpadLab?.lines ?? [];
 }
 
-function signoffParams(step: SortStep | undefined): Record<string, unknown> | null {
-  const label = step?.scratchpadLab?.resultLabel;
-  if (!label || !isI18nText(label)) return null;
-  return { ...(label.params ?? {}) };
+function contentOf(line: ScratchpadLine): string {
+  return typeof line.content === 'string' ? line.content : '';
+}
+
+function expectContains(lines: readonly ScratchpadLine[], fragment: string): void {
+  expect(lines.map(contentOf).some((content) => content.includes(fragment))).toBe(true);
 }
 
 describe('simplex-algorithm', () => {
-  it('solves the canonical max 40x + 30y s.t. x+y ≤ 12, 2x+y ≤ 16 to (4, 8, z=400)', () => {
-    const steps = run(
-      [40, 30],
-      [
-        [1, 1],
-        [2, 1],
-      ],
-      [12, 16],
-    );
-    expect(signoffKey(steps.at(-1))).toBe(
-      'features.algorithms.runtime.scratchpadLab.simplex.result.signoff',
-    );
-    const params = signoffParams(steps.at(-1));
-    expect(params?.['objective']).toBe('400');
-    expect(params?.['solution']).toContain('x = 4');
-    expect(params?.['solution']).toContain('y = 8');
+  it('uses the basic max-profit task as default', () => {
+    expect(DEFAULT_SIMPLEX_ALGORITHM_TASK_ID).toBe('short');
+    expect(SIMPLEX_ALGORITHM_TASKS.map((task) => task.id)).toEqual([
+      'short',
+      'slack-non-binding',
+      'degenerate-tie',
+      'alternative-optimum',
+      'unbounded-ray',
+    ]);
   });
 
-  it('picks the y-column first when y has the larger reduced cost', () => {
-    // max y s.t. x+y ≤ 5, x ≤ 3 → optimum (0, 5, z = 5).
-    const steps = run(
-      [0, 1],
-      [
-        [1, 1],
-        [1, 0],
-      ],
-      [5, 3],
-    );
-    const params = signoffParams(steps.at(-1));
-    expect(params?.['objective']).toBe('5');
-    expect(params?.['solution']).toContain('y = 5');
+  it('keeps objective and constraints as editable popup fields for every task', () => {
+    for (const task of SIMPLEX_ALGORITHM_TASKS) {
+      expect(Object.keys(task.inputSchema ?? {})).toEqual(['objective', 'constraints']);
+    }
   });
 
-  it('reports unbounded when no positive pivot exists', () => {
-    // max x s.t. -x + y ≤ 1, x - y ≤ 1, x,y ≥ 0 — the feasible
-    // region extends to infinity along x=y, so x can grow without
-    // bound.
-    const steps = run(
-      [1, 0],
-      [
-        [-1, 1],
-        [1, -1],
-      ],
-      [1, 1],
-    );
-    expect(signoffKey(steps.at(-1))).toBe(
-      'features.algorithms.runtime.scratchpadLab.simplex.result.signoffFailure',
-    );
+  it('renders the short two-pivot optimum', () => {
+    const steps = run('short');
+    const last = steps.at(-1)?.scratchpadLab;
+    const lines = finalLines(steps);
+
+    expect(last?.margins).toEqual([]);
+    expect(last?.resultLabel).toBeNull();
+    expect(lines.find((line) => line.id === 'section-result')).toMatchObject({
+      marker: '✓',
+      content: 'Wynik',
+    });
+    expectContains(lines, 'max\\ z = 40x + 30y');
+    expectContains(lines, 'wchodzi\\ x');
+    expectContains(lines, 's_2: 16 / 2 = 8');
+    expectContains(lines, 'wchodzi\\ y');
+    expectContains(lines, 's_1: 4 / 0.5 = 8');
+    expectContains(lines, 'x = 4,\\; y = 8');
+    expectContains(lines, 'z = 400');
   });
 
-  it('emits one tableau snapshot per pivot plus the initial tableau', () => {
-    const steps = run(
-      [40, 30],
-      [
-        [1, 1],
-        [2, 1],
-      ],
-      [12, 16],
-    );
-    const lastLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
-    const snapshots = lastLines.filter(
-      (l) => l.id === 'initial' || /^iter-\d+-pivot$/.test(l.id),
-    );
-    // Initial + 2 pivots = 3 snapshots for this LP.
-    expect(snapshots.length).toBe(3);
+  it('renders a non-binding constraint via positive slack', () => {
+    const lines = finalLines(run('slack-non-binding'));
+
+    expectContains(lines, 'max\\ z = 3x + 5y');
+    expectContains(lines, 's_1 = 2');
+    expectContains(lines, 's_2 = 0');
+    expectContains(lines, 's_3 = 0');
+    expectContains(lines, 's_1 > 0');
+    expectContains(lines, 'x = 2,\\; y = 6');
+    expectContains(lines, 'z = 36');
+  });
+
+  it('renders degeneracy and a min-ratio tie', () => {
+    const lines = finalLines(run('degenerate-tie'));
+
+    expectContains(lines, 'Remis w teście ilorazów');
+    expectContains(lines, 's_1, s_3 mają iloraz 2');
+    expectContains(lines, 's_3: 0 / 1 = 0');
+    expectContains(lines, 'Iloraz 0 oznacza pivot zdegenerowany');
+    expectContains(lines, 'x = 2,\\; y = 0');
+    expectContains(lines, 'z = 4');
+  });
+
+  it('renders alternative optimum detection', () => {
+    const lines = finalLines(run('alternative-optimum'));
+
+    expectContains(lines, 'koszty\\ zredukowane = [0, 0, 1, 0, 0]');
+    expectContains(lines, 'koszt\\ zredukowany\\ s_2 = 0');
+    expectContains(lines, 'może wejść do bazy bez zmiany wartości z');
+    expectContains(lines, 'x = 3,\\; y = 1');
+    expectContains(lines, 'z = 4');
+  });
+
+  it('renders the unbounded case without a finite result', () => {
+    const lines = finalLines(run('unbounded-ray'));
+
+    expect(lines.find((line) => line.id === 'section-no-result')).toMatchObject({
+      marker: '×',
+      content: 'Brak skończonego optimum',
+    });
+    expectContains(lines, 'wchodzi\\ x');
+    expectContains(lines, 's_1: -1 \\le 0 \\to pomiń');
+    expectContains(lines, 's_2: 0 \\le 0 \\to pomiń');
+    expectContains(lines, 'kolumna\\ x = [-1, 0]');
+    expectContains(lines, 'funkcja\\ celu\\ jest\\ nieograniczona');
   });
 });

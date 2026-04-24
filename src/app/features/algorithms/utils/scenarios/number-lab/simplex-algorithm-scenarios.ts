@@ -1,10 +1,13 @@
-import { TranslatableText } from '../../../../../core/i18n/translatable-text';
-import { notebookInstructionText } from '../../../models/notebook-task';
+import type { TranslatableText } from '../../../../../core/i18n/translatable-text';
 import {
   DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
   SIMPLEX_ALGORITHM_TASKS,
-  SimplexAlgorithmTask,
   parseLinearProgram,
+} from './simplex-algorithm';
+import type {
+  SimplexAlgorithmTask,
+  SimplexAlgorithmTaskValues,
+  SimplexNotebookFlow,
 } from './simplex-algorithm';
 
 export interface SimplexAlgorithmPresetOption {
@@ -24,6 +27,7 @@ export interface SimplexAlgorithmScenario extends BaseScenario {
   readonly objective: readonly number[];
   readonly constraintMatrix: readonly (readonly number[])[];
   readonly rhs: readonly number[];
+  readonly notebookFlow: SimplexNotebookFlow;
   readonly taskPrompt: TranslatableText | null;
 }
 
@@ -50,81 +54,120 @@ export function createSimplexAlgorithmScenario(
       (candidate) => candidate.id === DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
     ) ??
     SIMPLEX_ALGORITHM_TASKS[0];
-  const values = customValues ?? task.defaultValues;
+  const values: SimplexAlgorithmTaskValues = {
+    ...task.defaultValues,
+    ...customValues,
+  };
   const parsed =
     parseLinearProgram(values.objective, values.constraints) ??
-    parseLinearProgram(
-      task.defaultValues.objective,
-      task.defaultValues.constraints,
-    );
-  const fallback: SimplexAlgorithmScenario = {
-    kind: 'simplex-algorithm',
-    presetId: task.id,
-    presetLabel: typeof task.name === 'string' ? task.name : task.id,
-    presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, {
-      objective: '0',
-      constraints: '',
-    }),
-    objective: [1],
-    constraintMatrix: [[1]],
-    rhs: [0],
-  };
-  if (!parsed) return fallback;
+    parseLinearProgram(task.defaultValues.objective, task.defaultValues.constraints);
+  const fallbackParsed = parsed ??
+    parseLinearProgram('40 30', '1 1 | 12; 2 1 | 16') ?? {
+      objective: [1],
+      constraintMatrix: [[1]],
+      rhs: [0],
+    };
+
   return {
     kind: 'simplex-algorithm',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, {
-      objective: formatObjectiveForPrompt(parsed.objective),
-      constraints: formatConstraintsForPrompt(
-        parsed.constraintMatrix,
-        parsed.rhs,
-      ),
-    }),
-    objective: parsed.objective,
-    constraintMatrix: parsed.constraintMatrix,
-    rhs: parsed.rhs,
+    taskPrompt: buildTaskPrompt(task.notebookFlow, fallbackParsed),
+    notebookFlow: task.notebookFlow,
+    objective: fallbackParsed.objective,
+    constraintMatrix: fallbackParsed.constraintMatrix,
+    rhs: fallbackParsed.rhs,
   };
+}
+
+function buildTaskPrompt(
+  flow: SimplexNotebookFlow,
+  parsed: {
+    readonly objective: readonly number[];
+    readonly constraintMatrix: readonly (readonly number[])[];
+    readonly rhs: readonly number[];
+  },
+): TranslatableText {
+  const objective = formatObjectiveForPrompt(parsed.objective);
+  const constraints = formatConstraintsForPrompt(parsed.constraintMatrix, parsed.rhs);
+  switch (flow.kind) {
+    case 'basic-max-profit':
+      return [
+        'Rozwiąż metodą simplex klasyczny problem maksymalizacji:',
+        '',
+        objective,
+        constraints,
+        '',
+        'Pokaż wybór kolumny wchodzącej, test ilorazów, pivoty i odczyt optimum.',
+      ].join('\n');
+    case 'slack-non-binding':
+      return [
+        'Rozwiąż LP metodą simplex i wskaż zasób, który nie zostanie w pełni wykorzystany:',
+        '',
+        objective,
+        constraints,
+        '',
+        'Po optimum odczytaj dodatni slack jako niewiążące ograniczenie.',
+      ].join('\n');
+    case 'degenerate-tie':
+      return [
+        'Rozwiąż LP z remisem w teście ilorazów i degeneracją:',
+        '',
+        objective,
+        constraints,
+        '',
+        'Zwróć uwagę na pivot z ilorazem 0 i brak poprawy wartości celu.',
+      ].join('\n');
+    case 'alternative-optimum':
+      return [
+        'Rozwiąż LP i sprawdź, czy optimum jest jednoznaczne:',
+        '',
+        objective,
+        constraints,
+        '',
+        'Na końcu sprawdź zerowy koszt zredukowany zmiennej niebazowej.',
+      ].join('\n');
+    case 'unbounded-ray':
+      return [
+        'Wykryj przypadek nieograniczony metodą simplex:',
+        '',
+        objective,
+        constraints,
+        '',
+        'Jeśli kolumna wchodząca nie ma dodatnich elementów, test ilorazów nie wybiera wiersza wychodzącego.',
+      ].join('\n');
+  }
 }
 
 const VARIABLE_NAMES = ['x', 'y', 'z', 'w', 'v', 'u'] as const;
 
 function formatObjectiveForPrompt(objective: readonly number[]): string {
-  const parts: string[] = [];
-  for (let j = 0; j < objective.length; j++) {
-    const coeff = objective[j];
-    if (coeff === 0) continue;
-    const absCoeff = Math.abs(coeff);
-    const sign = coeff < 0 ? '-' : parts.length === 0 ? '' : '+';
-    const coeffStr = absCoeff === 1 ? '' : formatNumber(absCoeff);
-    const name = VARIABLE_NAMES[j] ?? `x_{${j + 1}}`;
-    parts.push(`${sign} ${coeffStr}${name}`);
-  }
-  const body = parts.join(' ').trim() || '0';
-  return `[[math]]z = ${body}[[/math]]`;
+  return `[[math]]max\\ z = ${formatLinearCombination(objective)}[[/math]]`;
 }
 
 function formatConstraintsForPrompt(
   matrix: readonly (readonly number[])[],
   rhs: readonly number[],
 ): string {
-  const lines = matrix.map((row, i) => {
-    const parts: string[] = [];
-    for (let j = 0; j < row.length; j++) {
-      const coeff = row[j];
-      if (coeff === 0) continue;
-      const absCoeff = Math.abs(coeff);
-      const sign = coeff < 0 ? '-' : parts.length === 0 ? '' : '+';
-      const coeffStr = absCoeff === 1 ? '' : formatNumber(absCoeff);
-      const name = VARIABLE_NAMES[j] ?? `x_{${j + 1}}`;
-      parts.push(`${sign} ${coeffStr}${name}`);
-    }
-    const lhs = parts.join(' ').trim() || '0';
-    return `${lhs} \\leq ${formatNumber(rhs[i])}`;
-  });
-  return `[[math]]${lines.join(', \\quad ')}[[/math]]`;
+  const lines = matrix.map(
+    (row, i) => `[[math]]${formatLinearCombination(row)} \\le ${formatNumber(rhs[i])}[[/math]]`,
+  );
+  return lines.join('\n');
+}
+
+function formatLinearCombination(coefficients: readonly number[]): string {
+  const parts: string[] = [];
+  for (let j = 0; j < coefficients.length; j++) {
+    const coeff = coefficients[j];
+    if (coeff === 0) continue;
+    const absCoeff = Math.abs(coeff);
+    const sign = coeff < 0 ? '-' : parts.length === 0 ? '' : '+';
+    const coeffStr = absCoeff === 1 ? '' : formatNumber(absCoeff);
+    const name = VARIABLE_NAMES[j] ?? `x_{${j + 1}}`;
+    parts.push(`${sign} ${coeffStr}${name}`.trim());
+  }
+  return parts.join(' ') || '0';
 }
 
 function formatNumber(value: number): string {
