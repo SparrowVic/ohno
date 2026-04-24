@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { createExtendedEuclideanScenario } from '../../utils/scenarios/number-lab/extended-euclidean-scenarios';
 import { extendedEuclideanGenerator } from './extended-euclidean';
 import type { SortStep } from '../../models/sort-step';
@@ -21,18 +20,6 @@ function scenario(
     taskPrompt: null,
     ...values,
   };
-}
-
-function signoffKey(step: SortStep | undefined): string | null {
-  const label = step?.scratchpadLab?.resultLabel;
-  if (!label || !isI18nText(label)) return null;
-  return label.key;
-}
-
-function signoffParams(step: SortStep | undefined): Record<string, unknown> | null {
-  const label = step?.scratchpadLab?.resultLabel;
-  if (!label || !isI18nText(label)) return null;
-  return { ...(label.params ?? {}) };
 }
 
 function lineIds(step: SortStep | undefined): string[] {
@@ -76,10 +63,7 @@ describe('extendedEuclideanGenerator', () => {
 
   it('derives RSA private exponent d = 11 for phi(n) = 192 and e = 35', () => {
     const steps = run(scenario({ a: 192, b: 35, notebookFlow: { kind: 'rsa-inverse', n: 221 } }));
-    expect(signoffKey(steps.at(-1))).toBe(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.signoff',
-    );
-    expect(signoffParams(steps.at(-1))).toMatchObject({ n: 221, e: 35, phi: 192, d: 11 });
+    expect(steps.at(-1)?.scratchpadLab?.resultLabel).toBeNull();
 
     expect(lineIds(steps.at(-1))).toEqual(
       expect.arrayContaining([
@@ -118,17 +102,10 @@ describe('extendedEuclideanGenerator', () => {
     const steps = run(
       scenario({ a: 221, b: 143, notebookFlow: { kind: 'modular-equation', rhs: 55 } }),
     );
-    expect(signoffKey(steps.at(-1))).toBe(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.noSolutionSignoff',
-    );
-    expect(signoffParams(steps.at(-1))).toMatchObject({
-      coefficient: 143,
-      modulus: 221,
-      rhs: 55,
-      gcd: 13,
-    });
+    expect(steps.at(-1)?.scratchpadLab?.resultLabel).toBeNull();
     const finalLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
     expect(finalLines.some((line) => line.id.startsWith('back-'))).toBe(false);
+    expect(finalLines.some((line) => line.id === 'modular-equation-no-solution-result')).toBe(true);
   });
 
   it('scales Bézout coefficients into the Diophantine general solution', () => {
@@ -139,14 +116,14 @@ describe('extendedEuclideanGenerator', () => {
         notebookFlow: { kind: 'linear-diophantine', target: 12, minimize: true },
       }),
     );
-    expect(signoffKey(steps.at(-1))).toBe(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.signoff',
+    expect(steps.at(-1)?.scratchpadLab?.resultLabel).toBeNull();
+    expect(lineIds(steps.at(-1))).toEqual(
+      expect.arrayContaining([
+        'diophantine-general-x',
+        'diophantine-general-y',
+        'diophantine-minimal-x',
+        'diophantine-minimal',
+      ]),
     );
-    expect(signoffParams(steps.at(-1))).toMatchObject({
-      x: 1,
-      y: -2,
-      xFormula: '1 + 3k',
-      yFormula: '-2 - 7k',
-    });
   });
 });

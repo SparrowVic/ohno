@@ -57,7 +57,6 @@ const I18N = {
   ),
   bezoutResult: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.bezoutResult'),
   verify: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.verify'),
-  resultSignoff: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultSignoff'),
   section: {
     forward: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.forward'),
     gcd: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.gcd'),
@@ -111,7 +110,6 @@ const I18N = {
   rsaIdentityLine: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.identityLine',
   ),
-  rsaSignoff: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.signoff'),
   rsaNoInverseSignoff: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.noInverseSignoff',
   ),
@@ -153,9 +151,6 @@ const I18N = {
   ),
   modularAllSolutions: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.allSolutions',
-  ),
-  modularSignoff: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.signoff',
   ),
   modularNoSolutionSignoff: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.noSolutionSignoff',
@@ -351,7 +346,6 @@ export function* extendedEuclideanGenerator(
     readonly tone: ScratchpadLabTraceState['tone'];
     readonly currentLineId: string;
     readonly transientMargin: ScratchpadMargin | null;
-    readonly resultLabel: ScratchpadLabTraceState['resultLabel'];
   }): ScratchpadLabTraceState {
     const currentIdx = lineBuilders.findIndex((l) => l.id === opts.currentLineId);
     const lines: ScratchpadLine[] = lineBuilders.map((builder, index) => {
@@ -381,7 +375,7 @@ export function* extendedEuclideanGenerator(
       tone: opts.tone,
       lines,
       margins,
-      resultLabel: opts.resultLabel,
+      resultLabel: null,
       iteration: stepIndex,
     };
   }
@@ -394,7 +388,6 @@ export function* extendedEuclideanGenerator(
       readonly phase: ScratchpadLabTraceState['phaseLabel'];
       readonly decision: ScratchpadLabTraceState['decisionLabel'];
       readonly tone: ScratchpadLabTraceState['tone'];
-      readonly resultLabel?: ScratchpadLabTraceState['resultLabel'];
     },
   ): SortStep {
     lineBuilders.push(builder);
@@ -408,7 +401,6 @@ export function* extendedEuclideanGenerator(
         tone: opts.tone,
         currentLineId: builder.id,
         transientMargin: null,
-        resultLabel: opts.resultLabel ?? null,
       }),
     });
   }
@@ -440,7 +432,6 @@ export function* extendedEuclideanGenerator(
       readonly phase: ScratchpadLabTraceState['phaseLabel'];
       readonly decision: ScratchpadLabTraceState['decisionLabel'];
       readonly tone: ScratchpadLabTraceState['tone'];
-      readonly resultLabel?: ScratchpadLabTraceState['resultLabel'];
     },
   ): SortStep {
     return appendStep(builder, {
@@ -600,7 +591,6 @@ export function* extendedEuclideanGenerator(
           phase: I18N.phases.complete,
           decision: I18N.decisions.noSolution,
           tone: 'complete',
-          resultLabel: signoff,
         },
       );
       return;
@@ -666,7 +656,6 @@ export function* extendedEuclideanGenerator(
           phase: I18N.phases.complete,
           decision: I18N.decisions.noSolution,
           tone: 'complete',
-          resultLabel: signoff,
         },
       );
       return;
@@ -749,7 +738,6 @@ export function* extendedEuclideanGenerator(
           phase: I18N.phases.complete,
           decision: I18N.decisions.noSolution,
           tone: 'complete',
-          resultLabel: signoff,
         },
       );
       return;
@@ -965,12 +953,6 @@ export function* extendedEuclideanGenerator(
         tone: 'complete',
       },
     );
-    const signoff = i18nText(I18N.rsaSignoff, {
-      n: flow.n,
-      e: originalB,
-      phi: originalA,
-      d,
-    });
     yield appendPaperStep(
       sectionLine('rsa-interpretation-label', I18N.resultLabels.interpretation),
       {
@@ -1011,7 +993,6 @@ export function* extendedEuclideanGenerator(
         phase: I18N.phases.complete,
         decision: I18N.decisions.interpreting,
         tone: 'complete',
-        resultLabel: signoff,
       },
     );
     return;
@@ -1111,7 +1092,7 @@ export function* extendedEuclideanGenerator(
       tone: 'conclude',
     });
 
-    let signoff = i18nText(I18N.diophantineSignoff, {
+    const signoff = i18nText(I18N.diophantineSignoff, {
       x: x0,
       y: y0,
       xFormula: formatGeneralTerm(x0, stepX),
@@ -1119,12 +1100,6 @@ export function* extendedEuclideanGenerator(
     });
     if (flow.minimize) {
       const best = findSmallestRepresentative(x0, y0, stepX, stepY);
-      signoff = i18nText(I18N.diophantineSignoff, {
-        x: best.x,
-        y: best.y,
-        xFormula: formatGeneralTerm(x0, stepX),
-        yFormula: formatGeneralTerm(y0, stepY),
-      });
       yield appendPaperStep(sectionLine('section-minimization', I18N.section.minimization), {
         activeCodeLine: 7,
         phase: I18N.phases.complete,
@@ -1203,7 +1178,6 @@ export function* extendedEuclideanGenerator(
           phase: I18N.phases.complete,
           decision: I18N.decisions.done,
           tone: 'complete',
-          resultLabel: signoff,
         },
       );
       return;
@@ -1220,7 +1194,6 @@ export function* extendedEuclideanGenerator(
         phase: I18N.phases.complete,
         decision: I18N.decisions.done,
         tone: 'complete',
-        resultLabel: signoff,
       },
     );
     return;
@@ -1290,12 +1263,6 @@ export function* extendedEuclideanGenerator(
       modulus: originalA,
       solutions: allSolutions,
     });
-    const signoff = i18nText(I18N.modularSignoff, {
-      coefficient: originalB,
-      rhs: flow.rhs,
-      modulus: originalA,
-      solutions: allSolutions,
-    });
     yield appendPaperStep(
       paperLine({
         id: 'modular-equation-result',
@@ -1307,19 +1274,11 @@ export function* extendedEuclideanGenerator(
         phase: I18N.phases.complete,
         decision: I18N.decisions.done,
         tone: 'complete',
-        resultLabel: signoff,
       },
     );
     return;
   }
 
-  const signoff = i18nText(I18N.resultSignoff, {
-    a: originalA,
-    b: originalB,
-    gcd: gcdValue,
-    s: sForA,
-    t: tForB,
-  });
   yield appendPaperStep(resultSectionLine(), {
     activeCodeLine: 7,
     phase: I18N.phases.verify,
@@ -1362,7 +1321,6 @@ export function* extendedEuclideanGenerator(
       phase: I18N.phases.complete,
       decision: I18N.decisions.done,
       tone: 'complete',
-      resultLabel: signoff,
     },
   );
 }
