@@ -1,12 +1,12 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { TranslatableText } from '../../../../../core/i18n/translatable-text';
-import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   DEFAULT_EUCLIDEAN_GCD_TASK_ID,
   EUCLIDEAN_GCD_TASKS,
-  GcdTask,
+  parseNumberList,
 } from './euclidean-gcd';
+import type { GcdNotebookFlow, GcdTask, GcdTaskValues } from './euclidean-gcd';
 
 export interface NumberLabPresetOption {
   readonly id: string;
@@ -17,10 +17,7 @@ export interface NumberLabPresetOption {
 /** Discriminated-union scenario shape. Each algorithm family in the
  *  number-lab group picks its own kind; the view-config dispatches to
  *  the right generator based on `kind`. */
-export type NumberLabScenario =
-  | FibonacciScenario
-  | FactorialScenario
-  | EuclideanGcdScenario;
+export type NumberLabScenario = FibonacciScenario | FactorialScenario | EuclideanGcdScenario;
 
 interface BaseScenario {
   readonly presetId: string;
@@ -43,10 +40,20 @@ export interface EuclideanGcdScenario extends BaseScenario {
   readonly kind: 'euclidean-gcd';
   readonly a: number;
   readonly b: number;
+  readonly values: EuclideanGcdResolvedValues;
+  readonly notebookFlow: GcdNotebookFlow;
   /** Exam-style prompt pulled from the active task (NotebookTask
    *  `instruction` field). Rendered as a "Task:" block atop the
    *  scratchpad. Null when the task did not declare a prompt. */
   readonly taskPrompt: TranslatableText | null;
+}
+
+export interface EuclideanGcdResolvedValues {
+  readonly a: number;
+  readonly b: number;
+  readonly values: readonly number[];
+  readonly numerator: number;
+  readonly denominator: number;
 }
 
 interface PresetKeys {
@@ -151,15 +158,98 @@ export function createEuclideanGcdScenario(
     EUCLIDEAN_GCD_TASKS.find((candidate) => candidate.id === id) ??
     EUCLIDEAN_GCD_TASKS.find((candidate) => candidate.id === DEFAULT_EUCLIDEAN_GCD_TASK_ID) ??
     EUCLIDEAN_GCD_TASKS[0];
-  const a = customValues?.a ?? task.defaultValues.a;
-  const b = customValues?.b ?? task.defaultValues.b;
+  const values: GcdTaskValues = { ...task.defaultValues, ...customValues };
+  const resolved = resolveGcdValues(values, task.defaultValues);
   return {
     kind: 'euclidean-gcd',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, { a, b }),
-    a,
-    b,
+    taskPrompt: buildGcdTaskPrompt(task.notebookFlow, resolved),
+    notebookFlow: task.notebookFlow,
+    values: resolved,
+    a: resolved.a,
+    b: resolved.b,
   };
+}
+
+function resolveGcdValues(
+  values: GcdTaskValues,
+  defaults: GcdTaskValues,
+): EuclideanGcdResolvedValues {
+  const list = listValue(values.values, defaults.values, [252, 198, 126, 90]);
+  const numerator = numberValue(values.numerator, numberValue(defaults.numerator, 4620));
+  const denominator = numberValue(values.denominator, numberValue(defaults.denominator, 1078));
+  return {
+    a: numberValue(values.a, numberValue(defaults.a, list[0] ?? numerator)),
+    b: numberValue(values.b, numberValue(defaults.b, list[1] ?? denominator)),
+    values: list,
+    numerator,
+    denominator,
+  };
+}
+
+function buildGcdTaskPrompt(
+  flow: GcdNotebookFlow,
+  values: EuclideanGcdResolvedValues,
+): TranslatableText {
+  switch (flow.kind) {
+    case 'basic':
+      return [
+        'Oblicz:',
+        '',
+        `[[math]]gcd(${values.a}, ${values.b})[[/math]]`,
+        '',
+        'używając klasycznego algorytmu Euklidesa z dzieleniem z resztą.',
+      ].join('\n');
+    case 'fibonacci-worst-case':
+      return [
+        'Oblicz:',
+        '',
+        `[[math]]gcd(${values.a}, ${values.b})[[/math]]`,
+        '',
+        'Pokaż pełny łańcuch dzielenia. Zauważ, że kolejne liczby Fibonacciego dają bardzo długi przebieg algorytmu Euklidesa.',
+      ].join('\n');
+    case 'multi-number-fold':
+      return [
+        'Oblicz największy wspólny dzielnik liczb:',
+        '',
+        `[[math]]${values.values.join(', ')}[[/math]]`,
+        '',
+        'Użyj własności:',
+        '',
+        '[[math]]gcd(a, b, c, d) = gcd(gcd(gcd(a, b), c), d)[[/math]]',
+      ].join('\n');
+    case 'fraction-reduction':
+      return [
+        'Skróć ułamek:',
+        '',
+        `[[math]]${values.numerator} / ${values.denominator}[[/math]]`,
+        '',
+        `Najpierw oblicz [[math]]gcd(${values.numerator}, ${values.denominator})[[/math]], a potem podziel licznik i mianownik przez otrzymany NWD.`,
+      ].join('\n');
+    case 'subtractive-to-division':
+      return [
+        'Oblicz:',
+        '',
+        `[[math]]gcd(${values.a}, ${values.b})[[/math]]`,
+        '',
+        `Najpierw pokaż wersję przez powtarzane odejmowanie, a potem zapisz ten sam proces krócej jako dzielenie z resztą. Na końcu zinterpretuj wynik jako największy rozmiar kwadratowego kafelka dla prostokąta [[math]]${values.a} x ${values.b}[[/math]].`,
+      ].join('\n');
+  }
+}
+
+function listValue(
+  input: string | undefined,
+  fallbackInput: string | undefined,
+  hardFallback: readonly number[],
+): readonly number[] {
+  const parsed = parseNumberList(input);
+  if (parsed.length > 0) return parsed;
+  const fallback = parseNumberList(fallbackInput);
+  return fallback.length > 0 ? fallback : hardFallback;
+}
+
+function numberValue(value: number | undefined, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }

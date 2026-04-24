@@ -1,26 +1,69 @@
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import type { NotebookTask } from '../../../../models/notebook-task';
+import type { TaskInputSchema } from '../../../../models/task';
 
-import { NotebookTask } from '../../../../models/notebook-task';
-import { TaskInputSchema } from '../../../../models/task';
-
-/** Input pair for the Euclidean GCD. Both values are required positive
- *  integers; validation against zero is handled by the runtime before
- *  invoking the generator. */
 export interface GcdTaskValues {
-  readonly a: number;
-  readonly b: number;
+  readonly a?: number;
+  readonly b?: number;
+  readonly values?: string;
+  readonly numerator?: number;
+  readonly denominator?: number;
 }
 
-export type GcdTask = NotebookTask<GcdTaskValues>;
+export type GcdNotebookFlow =
+  | { readonly kind: 'basic' }
+  | { readonly kind: 'fibonacci-worst-case' }
+  | { readonly kind: 'multi-number-fold' }
+  | { readonly kind: 'fraction-reduction' }
+  | { readonly kind: 'subtractive-to-division' };
 
-/** Shared schema reused by every GCD task — the customize-values
- *  popover always exposes the same two integer fields, so there is no
- *  reason to re-declare them per task. */
-export const GCD_TASK_INPUT_SCHEMA: TaskInputSchema<GcdTaskValues> = {
-  a: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.a'), min: 1 },
-  b: { kind: 'int', label: t('features.algorithms.tasks.gcd.values.b'), min: 1 },
+export interface GcdTask extends NotebookTask<GcdTaskValues> {
+  readonly notebookFlow: GcdNotebookFlow;
+}
+
+const A_FIELD = { kind: 'int' as const, label: 'a', min: 1 };
+const B_FIELD = { kind: 'int' as const, label: 'b', min: 1 };
+
+export const GCD_PAIR_INPUT_SCHEMA: TaskInputSchema<GcdTaskValues> = {
+  a: A_FIELD,
+  b: B_FIELD,
 };
 
-/** Snippet id shared by GCD tasks whose code walkthrough is already
- *  authored. New-but-code-less tasks use `null` instead. */
+export const GCD_MULTI_NUMBER_INPUT_SCHEMA: TaskInputSchema<GcdTaskValues> = {
+  values: {
+    kind: 'string',
+    label: 'values',
+    minLength: 1,
+    maxLength: 240,
+  },
+};
+
+export const GCD_FRACTION_INPUT_SCHEMA: TaskInputSchema<GcdTaskValues> = {
+  numerator: {
+    kind: 'int',
+    label: 'numerator',
+    min: 1,
+  },
+  denominator: {
+    kind: 'int',
+    label: 'denominator',
+    min: 1,
+  },
+};
+
+export const GCD_TASK_INPUT_SCHEMA = GCD_PAIR_INPUT_SCHEMA;
+
 export const GCD_CODE_SNIPPET_ID = 'euclidean-gcd';
+
+export function parseNumberList(input: string | undefined): readonly number[] {
+  if (!input?.trim()) return [];
+  return input
+    .replace(/[\[\],]/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .map((token) => Number.parseInt(token, 10))
+    .filter((value) => Number.isFinite(value) && value > 0);
+}
+
+export function formatNumberList(values: readonly number[]): string {
+  return `[${values.join(', ')}]`;
+}

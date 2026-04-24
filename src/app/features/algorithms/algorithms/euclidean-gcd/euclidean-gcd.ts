@@ -1,17 +1,10 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
-import { i18nText } from '../../../../core/i18n/translatable-text';
-import {
-  NumberLabFormula,
-  NumberLabHistoryEntry,
-  NumberLabRegister,
-  NumberLabTraceState,
-} from '../../models/number-lab';
+import { NumberLabRegister, NumberLabTone, NumberLabTraceState } from '../../models/number-lab';
 import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
-  ScratchpadMargin,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import { EuclideanGcdScenario } from '../../utils/scenarios/number-lab/number-lab-scenarios';
@@ -20,253 +13,47 @@ import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.numberLab.gcd.modeLabel'),
-  phases: {
-    setup: t('features.algorithms.runtime.numberLab.gcd.phases.setup'),
-    remainder: t('features.algorithms.runtime.numberLab.gcd.phases.remainder'),
-    swap: t('features.algorithms.runtime.numberLab.gcd.phases.swap'),
-    complete: t('features.algorithms.runtime.numberLab.gcd.phases.complete'),
-  },
-  descriptions: {
-    setup: t('features.algorithms.runtime.numberLab.gcd.descriptions.setup'),
-    remainder: t('features.algorithms.runtime.numberLab.gcd.descriptions.remainder'),
-    swap: t('features.algorithms.runtime.numberLab.gcd.descriptions.swap'),
-    complete: t('features.algorithms.runtime.numberLab.gcd.descriptions.complete'),
-  },
-  decisions: {
-    remainder: t('features.algorithms.runtime.numberLab.gcd.decisions.remainder'),
-    swap: t('features.algorithms.runtime.numberLab.gcd.decisions.swap'),
-    done: t('features.algorithms.runtime.numberLab.gcd.decisions.done'),
-  },
-  hints: {
-    a: t('features.algorithms.runtime.numberLab.gcd.hints.a'),
-    b: t('features.algorithms.runtime.numberLab.gcd.hints.b'),
-    r: t('features.algorithms.runtime.numberLab.gcd.hints.r'),
-  },
-  scratchpad: {
-    scratchpadModeLabel: t('features.algorithms.runtime.scratchpadLab.gcd.modeLabel'),
-    goal: t('features.algorithms.runtime.scratchpadLab.gcd.goal'),
-    rule: t('features.algorithms.runtime.scratchpadLab.gcd.rule'),
-    invariant: t('features.algorithms.runtime.scratchpadLab.gcd.invariant'),
-    firstPair: t('features.algorithms.runtime.scratchpadLab.gcd.firstPair'),
-    substitute: t('features.algorithms.runtime.scratchpadLab.gcd.substitute'),
-    remainderAnnotation: t(
-      'features.algorithms.runtime.scratchpadLab.gcd.remainderAnnotation',
-    ),
-    remainderInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.gcd.remainderInstruction',
-    ),
-    bZeroDecision: t('features.algorithms.runtime.scratchpadLab.gcd.bZeroDecision'),
-    bNonZeroHint: t('features.algorithms.runtime.scratchpadLab.gcd.bNonZeroHint'),
-    resultLine: t('features.algorithms.runtime.scratchpadLab.gcd.resultLine'),
-    resultSignoff: t('features.algorithms.runtime.scratchpadLab.gcd.resultSignoff'),
-    captions: {
-      setup: t('features.algorithms.runtime.scratchpadLab.gcd.captions.setup'),
-      substitute: t('features.algorithms.runtime.scratchpadLab.gcd.captions.substitute'),
-      decision: t('features.algorithms.runtime.scratchpadLab.gcd.captions.decision'),
-      result: t('features.algorithms.runtime.scratchpadLab.gcd.captions.result'),
-    },
-    phases: {
-      setup: t('features.algorithms.runtime.scratchpadLab.gcd.phases.setup'),
-      compute: t('features.algorithms.runtime.scratchpadLab.gcd.phases.compute'),
-      substitute: t('features.algorithms.runtime.scratchpadLab.gcd.phases.substitute'),
-      decide: t('features.algorithms.runtime.scratchpadLab.gcd.phases.decide'),
-      complete: t('features.algorithms.runtime.scratchpadLab.gcd.phases.complete'),
-    },
-    decisions: {
-      settingUp: t('features.algorithms.runtime.scratchpadLab.gcd.decisions.settingUp'),
-      computing: t('features.algorithms.runtime.scratchpadLab.gcd.decisions.computing'),
-      substituting: t('features.algorithms.runtime.scratchpadLab.gcd.decisions.substituting'),
-      bIsZero: t('features.algorithms.runtime.scratchpadLab.gcd.decisions.bIsZero'),
-      complete: t('features.algorithms.runtime.scratchpadLab.gcd.decisions.complete'),
-    },
-  },
+  scratchpadModeLabel: t('features.algorithms.runtime.scratchpadLab.gcd.modeLabel'),
 } as const;
 
-function buildRegisters(
-  a: number,
-  b: number,
-  r: number | null,
-  active: 'a' | 'b' | 'r' | 'none',
-): readonly NumberLabRegister[] {
-  const regs: NumberLabRegister[] = [
-    {
-      id: 'a',
-      label: 'a',
-      value: String(a),
-      hint: I18N.hints.a,
-      tone: active === 'a' ? 'active' : 'default',
-    },
-    {
-      id: 'b',
-      label: 'b',
-      value: String(b),
-      hint: I18N.hints.b,
-      tone: active === 'b' ? 'active' : 'default',
-    },
-  ];
-  if (r !== null) {
-    regs.push({
-      id: 'r',
-      label: 'r',
-      value: String(r),
-      hint: I18N.hints.r,
-      tone: active === 'r' ? 'active' : 'settled',
-    });
-  }
-  return regs;
-}
+const CALCULATION_INDENT = 1;
+const RESULT_MARKER = '✓';
 
-function remainderFormula(a: number, b: number, r: number): NumberLabFormula {
-  return {
-    lhs: [{ text: 'r', role: 'result' }],
-    rhs: [
-      { text: String(a), role: 'operand' },
-      { text: 'mod', role: 'operator' },
-      { text: String(b), role: 'operand' },
-      { text: '=', role: 'operator' },
-      { text: String(r), role: 'active' },
-    ],
-  };
-}
-
-function historyEntry(step: number, a: number, b: number, current: boolean): NumberLabHistoryEntry {
-  return {
-    id: `gcd-${step}`,
-    label: `#${step}`,
-    value: `(${a}, ${b})`,
-    isCurrent: current,
-  };
-}
-
-/** Structured builder for scratchpad lines. Starting with the setup
- *  preamble; substitute lines are appended one-per-iteration so
- *  students see the derivation grow line by line. */
 type LineBuilder = {
   readonly id: string;
   readonly kind: ScratchpadLine['kind'];
   readonly indent: number;
   readonly marker: string | null;
   readonly caption: ScratchpadLine['caption'];
-  /** True for phase-entry captions that should persist on settled
-   *  lines — goal, first pair, decision, result. Looping captions
-   *  (substitute lines in the while-loop) leave it falsy so they
-   *  only surface while `current`. */
   readonly captionPinned?: boolean;
   readonly content: ScratchpadLine['content'];
   readonly instruction: ScratchpadLine['instruction'];
   readonly annotation: ScratchpadLine['annotation'];
 };
 
-/* Section-level markers, shared vocabulary with extended-euclidean:
- *    ①   — phase start (the initial pair)
- *    ⟹  — "therefore" (loop condition met, stop — logical consequence,
- *          not a new phase, so we reuse the arrow EEA uses to announce
- *          "gcd = last remainder" rather than giving this line a second
- *          ordinal)
- *    ✓   — final answer
- *  Keeping the same glyphs with the same meanings across the number-
- *  theory family means students don't relearn the alphabet each time. */
-const SECTION_MARKERS = {
-  start: '①',
-  decision: '⟹',
-  result: '✓',
-} as const;
+interface DivisionStep {
+  readonly dividend: number;
+  readonly divisor: number;
+  readonly quotient: number;
+  readonly remainder: number;
+}
 
 export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generator<SortStep> {
-  let a = Math.max(scenario.a, scenario.b);
-  let b = Math.min(scenario.a, scenario.b);
-  const originalA = a;
-  const originalB = b;
   const presetLabel = scenario.presetLabel;
-  const mode = I18N.modeLabel;
+  const values = scenario.values;
+  const lineBuilders: LineBuilder[] = [];
+  let stepIndex = 0;
+  let currentResult: number | null = null;
 
-  const makeNumberLabState = (
-    partial: Omit<NumberLabTraceState, 'modeLabel' | 'presetLabel'>,
-  ): NumberLabTraceState => ({ modeLabel: mode, presetLabel, ...partial });
-
-  const history: NumberLabHistoryEntry[] = [historyEntry(0, a, b, true)];
-
-  // ------------ Scratchpad state ------------
-  // Lines accumulate across steps; we just change which one is "current".
-  const lineBuilders: LineBuilder[] = [
-    {
-      id: 'goal',
-      kind: 'goal',
-      indent: 0,
-      marker: null,
-      caption: null,
-      captionPinned: true,
-      content: i18nText(I18N.scratchpad.goal, { a, b }),
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-pre',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'rule',
-      kind: 'note',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: I18N.scratchpad.rule,
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-post',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'pair-0',
-      kind: 'equation',
-      indent: 0,
-      marker: SECTION_MARKERS.start,
-      caption: I18N.scratchpad.captions.setup,
-      captionPinned: true,
-      content: i18nText(I18N.scratchpad.firstPair, { a, b }),
-      instruction: null,
-      annotation: null,
-    },
-  ];
-
-  const globalInvariant: ScratchpadMargin = {
-    id: 'invariant',
-    anchorLineId: null,
-    text: I18N.scratchpad.invariant,
-    tone: 'invariant',
-  };
-
-  /** Build the final scratchpad line list, with the newest non-divider
-   *  line marked `current` and earlier lines `settled`. Margin array
-   *  may include a transient margin anchored to the currently-active
-   *  pair line while the remainder is being computed. */
   function snapshot(opts: {
     readonly phase: ScratchpadLabTraceState['phaseLabel'];
     readonly decision: ScratchpadLabTraceState['decisionLabel'];
     readonly tone: ScratchpadLabTraceState['tone'];
-    readonly iteration: number;
-    readonly resultLabel: ScratchpadLabTraceState['resultLabel'];
     readonly currentLineId: string;
-    readonly transientMargin: ScratchpadMargin | null;
   }): ScratchpadLabTraceState {
-    const currentIdx = lineBuilders.findIndex((l) => l.id === opts.currentLineId);
+    const currentIdx = lineBuilders.findIndex((line) => line.id === opts.currentLineId);
     const lines: ScratchpadLine[] = lineBuilders.map((builder, index) => {
-      const isCurrent = index === currentIdx;
-      const state: ScratchpadLineState = isCurrent ? 'current' : 'settled';
+      const state: ScratchpadLineState = index === currentIdx ? 'current' : 'settled';
       return {
         id: builder.id,
         kind: builder.kind,
@@ -281,212 +68,417 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       };
     });
 
-    const margins: ScratchpadMargin[] = [globalInvariant];
-    if (opts.transientMargin) margins.push(opts.transientMargin);
-
     return {
       mode: 'euclidean-gcd',
-      modeLabel: I18N.scratchpad.scratchpadModeLabel,
+      modeLabel: I18N.scratchpadModeLabel,
       phaseLabel: opts.phase,
       decisionLabel: opts.decision,
       presetLabel,
       taskPrompt: scenario.taskPrompt ?? null,
       tone: opts.tone,
       lines,
-      margins,
-      resultLabel: opts.resultLabel,
-      iteration: opts.iteration,
+      margins: [],
+      resultLabel: null,
+      iteration: stepIndex,
     };
   }
 
-  // ------------ Step 0: setup ------------
-  yield withScratchpad(
-    createNumberLabStep({
-      activeCodeLine: 1,
-      description: i18nText(I18N.descriptions.setup, { a, b }),
-      state: makeNumberLabState({
-        phaseLabel: I18N.phases.setup,
-        decisionLabel: I18N.decisions.remainder,
-        tone: 'idle',
-        registers: buildRegisters(a, b, null, 'none'),
-        history,
-        formula: null,
-        resultLabel: null,
-        iteration: 0,
-      }),
-    }),
-    snapshot({
-      phase: I18N.scratchpad.phases.setup,
-      decision: I18N.scratchpad.decisions.settingUp,
-      tone: 'setup',
-      iteration: 0,
-      resultLabel: null,
-      currentLineId: 'pair-0',
-      transientMargin: null,
-    }),
-  );
-
-  let step = 0;
-  while (b !== 0) {
-    step += 1;
-    const r = a % b;
-    const pairLineId = `pair-${step - 1}`;
-    const substituteLineId = `sub-${step}`;
-
-    // ---- Remainder compute ----
-    // Scratchpad pauses on the current pair line and shows a sticky
-    // "→ Policz a mod b" chip on the margin as an "upcoming operation"
-    // preview. At the swap step the same instruction migrates onto the
-    // new substitute line as a persistent chip, so the tag never
-    // disappears — the student always sees *what* produced each line.
-    const upcomingInstructionMargin: ScratchpadMargin = {
-      id: `upcoming-${step}`,
-      anchorLineId: pairLineId,
-      text: i18nText(I18N.scratchpad.remainderInstruction, { a, b }),
-      tone: 'hint',
-    };
-
-    yield withScratchpad(
+  function appendStep(
+    builder: LineBuilder,
+    opts: {
+      readonly activeCodeLine: number;
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+      readonly tone: ScratchpadLabTraceState['tone'];
+    },
+  ): SortStep {
+    lineBuilders.push(builder);
+    stepIndex += 1;
+    return withScratchpad(
       createNumberLabStep({
-        activeCodeLine: 3,
-        description: i18nText(I18N.descriptions.remainder, { a, b, r }),
-        state: makeNumberLabState({
-          phaseLabel: I18N.phases.remainder,
-          decisionLabel: I18N.decisions.remainder,
-          tone: 'update',
-          registers: buildRegisters(a, b, r, 'r'),
-          history: history.map((h) => ({ ...h, isCurrent: false })),
-          formula: remainderFormula(a, b, r),
-          resultLabel: null,
-          iteration: step,
-        }),
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: numberLabState(builder),
       }),
-      snapshot({
-        phase: I18N.scratchpad.phases.compute,
-        decision: I18N.scratchpad.decisions.computing,
-        tone: 'compute',
-        iteration: step,
-        resultLabel: null,
-        currentLineId: pairLineId,
-        transientMargin: upcomingInstructionMargin,
-      }),
+      snapshot({ ...opts, currentLineId: builder.id }),
     );
+  }
 
-    // ---- Swap: append the substitute line revealing the new pair ----
-    const prevA = a;
-    const prevB = b;
-    a = b;
-    b = r;
-    history.push(historyEntry(step, a, b, true));
-    const finished = b === 0;
+  function numberLabState(builder: LineBuilder): NumberLabTraceState {
+    return {
+      modeLabel: I18N.modeLabel,
+      phaseLabel: phaseFor(builder),
+      decisionLabel: decisionFor(builder),
+      tone: numberLabToneFor(builder),
+      registers: buildRegisters(scenario.a, scenario.b, currentResult),
+      history:
+        currentResult === null
+          ? []
+          : [
+              {
+                id: 'gcd-result',
+                label: 'gcd',
+                value: String(currentResult),
+                isCurrent: builder.kind === 'result',
+              },
+            ],
+      formula: null,
+      presetLabel,
+      resultLabel: currentResult === null ? null : `gcd = ${currentResult}`,
+      iteration: stepIndex,
+    };
+  }
 
-    // The imperative "→ Policz a mod b" chip only makes sense while the
-    // operation is pending (carried as a transient margin above, anchored
-    // to the pair line). Once we emit the substitute line the operation
-    // is already done, so we keep only the annotation ("a mod b = r")
-    // as a record of what produced the line. No persistent instruction.
-    lineBuilders.push({
-      id: substituteLineId,
-      kind: 'substitute',
-      // Indented one step in — substitutes are a nested block inside
-      // the pair-0 header, the way nested code reads as a sub-scope.
-      // Gives the classic "hanging = under the previous line" shape.
-      indent: 1,
-      marker: null,
-      caption: I18N.scratchpad.captions.substitute,
-      content: i18nText(I18N.scratchpad.substitute, { a, b }),
+  function paperLine(opts: {
+    readonly id: string;
+    readonly kind: ScratchpadLine['kind'];
+    readonly content: ScratchpadLine['content'];
+    readonly indent?: number;
+    readonly marker?: string | null;
+  }): LineBuilder {
+    const defaultIndent =
+      opts.kind === 'equation' || opts.kind === 'substitute' || opts.kind === 'decision'
+        ? CALCULATION_INDENT
+        : 0;
+    return {
+      id: opts.id,
+      kind: opts.kind,
+      indent: opts.indent ?? defaultIndent,
+      marker: opts.marker ?? null,
+      caption: null,
+      captionPinned: false,
+      content: opts.content,
       instruction: null,
-      annotation: i18nText(I18N.scratchpad.remainderAnnotation, { prevA, prevB, r }),
+      annotation: null,
+    };
+  }
+
+  function section(id: string, content: string): LineBuilder {
+    return paperLine({ id, kind: 'note', content });
+  }
+
+  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'note', content, indent });
+  }
+
+  function math(id: string, expression: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'equation',
+      indent,
+      content: `[[math]]${expression}[[/math]]`,
     });
+  }
 
-    if (finished) {
-      // Append decision + result lines in the same step so the student
-      // sees the concluding beat as a single coherent block.
-      lineBuilders.push({
-        id: 'decision',
-        kind: 'decision',
-        indent: 0,
-        marker: SECTION_MARKERS.decision,
-        caption: I18N.scratchpad.captions.decision,
-        captionPinned: true,
-        content: i18nText(I18N.scratchpad.bZeroDecision, { a }),
-        instruction: null,
-        annotation: null,
-      });
-      lineBuilders.push({
-        id: 'result-line',
-        kind: 'result',
-        // Result box sits a half-step in, same as the final `= 12`
-        // textbook style where the punchline is set off from the
-        // preceding reasoning but doesn't stray as deep as the
-        // cascading substitutes.
-        indent: 0.6,
-        marker: '✓',
-        caption: I18N.scratchpad.captions.result,
-        captionPinned: true,
-        content: i18nText(I18N.scratchpad.resultLine, { gcd: a }),
-        instruction: null,
-        annotation: null,
-      });
+  function resultSection(id = 'section-result', content = 'Wynik'): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'result',
+      marker: RESULT_MARKER,
+      content,
+    });
+  }
 
-      yield withScratchpad(
-        createNumberLabStep({
-          activeCodeLine: 4,
-          description: i18nText(I18N.descriptions.complete, { gcd: a }),
-          state: makeNumberLabState({
-            phaseLabel: I18N.phases.complete,
-            decisionLabel: I18N.decisions.done,
-            tone: 'complete',
-            registers: buildRegisters(a, b, null, 'a'),
-            history: history.map((h, i) => ({ ...h, isCurrent: i === history.length - 1 })),
-            formula: null,
-            resultLabel: i18nText(
-              t('features.algorithms.runtime.numberLab.gcd.resultFormat'),
-              { gcd: a },
-            ),
-            iteration: step,
-          }),
-        }),
-        snapshot({
-          phase: I18N.scratchpad.phases.complete,
-          decision: I18N.scratchpad.decisions.complete,
-          tone: 'complete',
-          iteration: step,
-          resultLabel: i18nText(I18N.scratchpad.resultSignoff, {
-            a: originalA,
-            b: originalB,
-            gcd: a,
-          }),
-          currentLineId: 'result-line',
-          transientMargin: null,
-        }),
+  function* emit(builder: LineBuilder, activeCodeLine = 1): Generator<SortStep> {
+    yield appendStep(builder, {
+      activeCodeLine,
+      phase: phaseFor(builder),
+      decision: decisionFor(builder),
+      tone: scratchpadToneFor(builder),
+    });
+  }
+
+  function* emitDivisionChain(
+    idPrefix: string,
+    steps: readonly DivisionStep[],
+  ): Generator<SortStep> {
+    for (let index = 0; index < steps.length; index++) {
+      yield* emit(math(`${idPrefix}-${index}`, formatDivisionStep(steps[index])));
+    }
+  }
+
+  function* emitBasic(): Generator<SortStep> {
+    const steps = euclideanSteps(values.a, values.b);
+    const result = gcd(values.a, values.b);
+
+    yield* emit(section('section-calculations', 'Obliczenia'));
+    yield* emitDivisionChain('calculation', steps);
+
+    yield* emit(section('section-last-remainder', 'Ostatnia niezerowa reszta'));
+    yield* emit(math('last-remainder', String(result)));
+
+    currentResult = result;
+    yield* emit(resultSection());
+    yield* emit(math('result-gcd', `gcd(${values.a}, ${values.b}) = ${result}`));
+
+    yield* emit(section('section-check', 'Sprawdzenie'));
+    yield* emit(math('check-a', `${values.a} / ${result} = ${values.a / result}`));
+    yield* emit(math('check-b', `${values.b} / ${result} = ${values.b / result}`));
+    yield* emit(
+      note(
+        'check-note',
+        `${result} dzieli obie liczby, a następny krok algorytmu zakończył się resztą 0.`,
+      ),
+    );
+  }
+
+  function* emitFibonacciWorstCase(): Generator<SortStep> {
+    const steps = euclideanSteps(values.a, values.b);
+    const result = gcd(values.a, values.b);
+
+    yield* emit(section('section-calculations', 'Obliczenia'));
+    yield* emitDivisionChain('calculation', steps);
+
+    yield* emit(section('section-last-remainder', 'Ostatnia niezerowa reszta'));
+    yield* emit(math('last-remainder', String(result)));
+
+    currentResult = result;
+    yield* emit(resultSection());
+    yield* emit(math('result-gcd', `gcd(${values.a}, ${values.b}) = ${result}`));
+
+    yield* emit(section('section-length-conclusion', 'Wniosek o długości'));
+    yield* emit(math('length-quotients', 'większość\\ ilorazów = 1'));
+    yield* emit(note('length-note', 'To oznacza wolne zmniejszanie reszt:'));
+    yield* emit(math('length-chain', valuesOfChain(steps).join(', ')));
+  }
+
+  function* emitMultiNumberFold(): Generator<SortStep> {
+    const list = values.values;
+    let accumulator = list[0];
+
+    for (let index = 1; index < list.length; index++) {
+      const next = list[index];
+      const previous = accumulator;
+      const stepNumber = index;
+      yield* emit(
+        section(`section-fold-${stepNumber}`, `Krok ${stepNumber}: gcd(${previous}, ${next})`),
       );
-    } else {
-      yield withScratchpad(
-        createNumberLabStep({
-          activeCodeLine: 4,
-          description: i18nText(I18N.descriptions.swap, { a, b }),
-          state: makeNumberLabState({
-            phaseLabel: I18N.phases.swap,
-            decisionLabel: I18N.decisions.swap,
-            tone: 'settle',
-            registers: buildRegisters(a, b, null, 'none'),
-            history: history.map((h, i) => ({ ...h, isCurrent: i === history.length - 1 })),
-            formula: null,
-            resultLabel: null,
-            iteration: step,
-          }),
-        }),
-        snapshot({
-          phase: I18N.scratchpad.phases.substitute,
-          decision: I18N.scratchpad.decisions.substituting,
-          tone: 'substitute',
-          iteration: step,
-          resultLabel: null,
-          currentLineId: substituteLineId,
-          transientMargin: null,
-        }),
+      const steps = euclideanSteps(previous, next);
+      yield* emitDivisionChain(`fold-${stepNumber}`, steps);
+      accumulator = gcd(previous, next);
+      yield* emit(math(`fold-${stepNumber}-result`, `gcd(${previous}, ${next}) = ${accumulator}`));
+    }
+
+    currentResult = accumulator;
+    yield* emit(resultSection());
+    yield* emit(math('result-gcd', `gcd(${list.join(', ')}) = ${accumulator}`));
+
+    yield* emit(section('section-interpretation', 'Interpretacja'));
+    yield* emit(
+      note(
+        'interpretation-note',
+        'Jeśli liczby oznaczają rozmiary partii danych, największy wspólny rozmiar bloku wynosi:',
+      ),
+    );
+    yield* emit(math('interpretation-block', String(accumulator)));
+    yield* emit(note('interpretation-count-label', 'Liczba bloków:'));
+    for (const value of list) {
+      yield* emit(
+        math(`interpretation-count-${value}`, `${value} / ${accumulator} = ${value / accumulator}`),
       );
     }
   }
+
+  function* emitFractionReduction(): Generator<SortStep> {
+    const numerator = values.numerator;
+    const denominator = values.denominator;
+    const steps = euclideanSteps(numerator, denominator);
+    const result = gcd(numerator, denominator);
+
+    yield* emit(section('section-calculations', 'Obliczenia NWD'));
+    yield* emitDivisionChain('calculation', steps);
+
+    yield* emit(section('section-last-remainder', 'Ostatnia niezerowa reszta'));
+    yield* emit(math('last-remainder', String(result)));
+
+    yield* emit(section('section-gcd', 'NWD'));
+    currentResult = result;
+    yield* emit(math('gcd-result', `gcd(${numerator}, ${denominator}) = ${result}`));
+
+    yield* emit(section('section-reduction', 'Skracanie ułamka'));
+    yield* emit(math('reduce-numerator', `${numerator} / ${result} = ${numerator / result}`));
+    yield* emit(math('reduce-denominator', `${denominator} / ${result} = ${denominator / result}`));
+
+    yield* emit(resultSection());
+    yield* emit(
+      math(
+        'result-fraction',
+        `${numerator} / ${denominator} = ${numerator / result} / ${denominator / result}`,
+      ),
+    );
+  }
+
+  function* emitSubtractiveToDivision(): Generator<SortStep> {
+    const steps = subtractiveSteps(values.a, values.b);
+    const divisionSteps = euclideanSteps(values.a, values.b);
+    const result = gcd(values.a, values.b);
+
+    yield* emit(section('section-subtractive', 'Wersja przez odejmowanie'));
+    for (let index = 0; index < steps.length; index++) {
+      const step = steps[index];
+      yield* emit(math(`subtract-${index}`, `${step.left} - ${step.right} = ${step.result}`));
+    }
+
+    yield* emit(section('section-last-positive', 'Ostatnia dodatnia wartość'));
+    yield* emit(math('last-positive', String(result)));
+
+    yield* emit(section('section-division', 'Ten sam proces przez dzielenie'));
+    if (divisionSteps[0]) {
+      yield* emit(
+        note(
+          'division-note-1',
+          `Pierwsze odejmowania ${divisionSteps[0].divisor} od ${divisionSteps[0].dividend} można zapisać jako:`,
+        ),
+      );
+      yield* emit(math('division-1', formatDivisionStep(divisionSteps[0])));
+    }
+    if (divisionSteps[1]) {
+      yield* emit(
+        note(
+          'division-note-2',
+          `Następne odejmowania ${divisionSteps[1].divisor} od ${divisionSteps[1].dividend} można zapisać jako:`,
+        ),
+      );
+      yield* emit(math('division-2', formatDivisionStep(divisionSteps[1])));
+    }
+
+    yield* emit(section('section-gcd-result', 'Wynik NWD'));
+    currentResult = result;
+    yield* emit(math('gcd-result', `gcd(${values.a}, ${values.b}) = ${result}`));
+
+    yield* emit(section('section-geometry', 'Interpretacja geometryczna'));
+    yield* emit(note('geometry-side-label', 'Największy kwadratowy kafelek ma bok:'));
+    yield* emit(math('geometry-side', String(result)));
+    yield* emit(note('geometry-count-label', 'Liczba kafelków w prostokącie:'));
+    yield* emit(math('geometry-a', `${values.a} / ${result} = ${values.a / result}`));
+    yield* emit(math('geometry-b', `${values.b} / ${result} = ${values.b / result}`));
+    yield* emit(
+      math(
+        'geometry-product',
+        `${values.a / result} * ${values.b / result} = ${(values.a / result) * (values.b / result)}`,
+      ),
+    );
+
+    yield* emit(resultSection('section-final-result', 'Wynik końcowy'));
+    yield* emit(math('final-side', `bok\\ kafelka = ${result}`));
+    yield* emit(
+      math('final-count', `liczba\\ kafelków = ${(values.a / result) * (values.b / result)}`),
+    );
+  }
+
+  switch (scenario.notebookFlow.kind) {
+    case 'basic':
+      yield* emitBasic();
+      break;
+    case 'fibonacci-worst-case':
+      yield* emitFibonacciWorstCase();
+      break;
+    case 'multi-number-fold':
+      yield* emitMultiNumberFold();
+      break;
+    case 'fraction-reduction':
+      yield* emitFractionReduction();
+      break;
+    case 'subtractive-to-division':
+      yield* emitSubtractiveToDivision();
+      break;
+  }
+}
+
+function buildRegisters(a: number, b: number, result: number | null): readonly NumberLabRegister[] {
+  const registers: NumberLabRegister[] = [
+    { id: 'a', label: 'a', value: String(a), hint: null, tone: 'default' },
+    { id: 'b', label: 'b', value: String(b), hint: null, tone: 'default' },
+  ];
+  if (result !== null) {
+    registers.push({
+      id: 'gcd',
+      label: 'gcd',
+      value: String(result),
+      hint: null,
+      tone: 'settled',
+    });
+  }
+  return registers;
+}
+
+function euclideanSteps(a: number, b: number): readonly DivisionStep[] {
+  let dividend = Math.max(a, b);
+  let divisor = Math.min(a, b);
+  const steps: DivisionStep[] = [];
+  while (divisor !== 0) {
+    const quotient = Math.floor(dividend / divisor);
+    const remainder = dividend % divisor;
+    steps.push({ dividend, divisor, quotient, remainder });
+    dividend = divisor;
+    divisor = remainder;
+  }
+  return steps;
+}
+
+function gcd(a: number, b: number): number {
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y !== 0) {
+    [x, y] = [y, x % y];
+  }
+  return x;
+}
+
+function formatDivisionStep(step: DivisionStep): string {
+  return `${step.dividend} = ${step.quotient} * ${step.divisor} + ${step.remainder}`;
+}
+
+function valuesOfChain(steps: readonly DivisionStep[]): readonly number[] {
+  if (steps.length === 0) return [];
+  const values = [steps[0].dividend, steps[0].divisor];
+  for (const step of steps) {
+    if (step.remainder !== 0) values.push(step.remainder);
+  }
+  return values;
+}
+
+function subtractiveSteps(
+  a: number,
+  b: number,
+): readonly { readonly left: number; readonly right: number; readonly result: number }[] {
+  let x = Math.max(a, b);
+  let y = Math.min(a, b);
+  const steps: { readonly left: number; readonly right: number; readonly result: number }[] = [];
+  while (x !== y) {
+    if (x > y) {
+      steps.push({ left: x, right: y, result: x - y });
+      x -= y;
+    } else {
+      steps.push({ left: y, right: x, result: y - x });
+      y -= x;
+    }
+  }
+  steps.push({ left: x, right: y, result: 0 });
+  return steps;
+}
+
+function phaseFor(builder: LineBuilder): string {
+  if (builder.id.includes('result')) return 'Wynik';
+  if (builder.id.includes('check') || builder.id.includes('interpretation')) return 'Sprawdzenie';
+  if (builder.id.includes('last')) return 'Ostatnia niezerowa reszta';
+  return 'Obliczenia';
+}
+
+function decisionFor(builder: LineBuilder): string {
+  if (builder.kind === 'result') return 'Zapisujemy wynik.';
+  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
+  return 'Liczymy kolejny wiersz.';
+}
+
+function scratchpadToneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'setup';
+  return 'compute';
+}
+
+function numberLabToneFor(builder: LineBuilder): NumberLabTone {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'idle';
+  return 'update';
 }
