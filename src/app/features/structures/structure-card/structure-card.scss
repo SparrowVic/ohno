@@ -2,13 +2,6 @@
   display: block;
 }
 
-/* ============================================================================
-   STRUCTURE CARD — twin treatment of algorithm-card: a single accent-wash
-   pinned to the top-right "mood corner", soft blob for ambient category
-   colour, and a restrained hover that lifts and intensifies rather than
-   spinning ornaments.
-   ============================================================================ */
-
 .card {
   position: relative;
   display: flex;
@@ -19,11 +12,6 @@
   border: 0.5px solid rgba(255, 255, 255, 0.06);
   border-radius: 18px;
   background:
-    radial-gradient(
-      ellipse 80% 70% at 100% 0%,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.1),
-      transparent 58%
-    ),
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.006) 40%, transparent 80%),
     var(--surface-2);
   box-shadow:
@@ -35,11 +23,30 @@
      they visually sit a touch "behind" the algorithm cards. */
   filter: saturate(0.92);
   transition:
-    transform 360ms var(--ease-out-expo),
     border-color var(--duration-base) var(--ease-soft),
     background var(--duration-base) var(--ease-soft),
     box-shadow var(--duration-slow) var(--ease-out-expo),
     filter var(--duration-base) var(--ease-soft);
+}
+
+.card__stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.45) 22%,
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.8) 50%,
+    rgb(var(--card-accent-rgb, 199 229 106) / 0.45) 78%,
+    transparent 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity var(--duration-base) var(--ease-soft);
 }
 
 .card::after {
@@ -57,89 +64,31 @@
   z-index: 1;
 }
 
-.card > :not(.card__wash):not(.card__blob):not(.card__shader) {
+.card > :not(.card__stripe) {
   position: relative;
   z-index: 2;
 }
 
-.card__wash,
-.card__blob,
-.card__shader {
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.card__shader {
-  inset: 0;
-  overflow: hidden;
-  border-radius: inherit;
-  clip-path: inset(0 round 18px);
-}
-
-.card__wash {
-  inset: 0;
-  background:
-    linear-gradient(
-      145deg,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.08),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.03) 36%,
-      transparent 62%
-    );
-  opacity: 1;
-  transition: opacity var(--duration-base) var(--ease-soft);
-}
-
-.card__blob {
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(28px);
-  opacity: 0.82;
-  transition:
-    transform 520ms var(--ease-out-expo),
-    opacity var(--duration-base) var(--ease-soft);
-}
-
-.card__blob--primary {
-  top: var(--card-blob-1-y, 10%);
-  left: var(--card-blob-1-x, 12%);
-  width: var(--card-blob-1-width, 220px);
-  height: var(--card-blob-1-height, 180px);
-  background: radial-gradient(
-    ellipse at center,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.24) 0%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.1) 36%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 60%,
-    transparent 82%
-  );
-}
-
-/* ---- HOVER ---- */
+/* ---- HOVER ---- Internal intensification, no card lift. ---- */
 
 .card:hover {
-  transform: translateY(-5px);
-  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.32);
+  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.3);
   filter: saturate(1);
   background:
-    radial-gradient(
-      ellipse 90% 75% at 100% 0%,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.22),
-      transparent 62%
-    ),
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012) 40%, transparent 80%),
     var(--surface-3);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 22px 44px rgba(0, 0, 0, 0.38),
-    0 0 28px rgb(var(--card-accent-rgb, 199 229 106) / 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
+    inset 0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
+    inset 0 0 56px rgb(var(--card-accent-rgb, 199 229 106) / 0.18);
 }
 
-.card:hover::after {
+.card:hover .card__stripe {
   opacity: 1;
 }
 
-.card:hover .card__blob--primary {
-  transform: translate(calc(-50% + 10px), calc(-50% + 6px)) scale(1.1);
+.card:hover::after {
   opacity: 1;
 }
 
@@ -153,7 +102,8 @@
 }
 
 .card:active {
-  transform: translateY(-2px) scale(0.997);
+  transform: scale(0.994);
+  transition: transform var(--duration-fast) var(--ease-out-quart);
 }
 
 .card--disabled {
@@ -161,12 +111,7 @@
   opacity: 0.86;
 }
 
-.card--disabled:hover {
-  transform: translateY(-3px);
-  filter: saturate(0.82);
-}
-
-/* ---- EYEBROW ---- */
+/* ---- EYEBROW + DIFFICULTY PIPS ---- */
 
 .card__eyebrow,
 .card__title-row,
@@ -181,7 +126,7 @@
 .card__section {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -190,29 +135,44 @@
   transition: color var(--duration-base) var(--ease-soft);
 }
 
-.card__section::before {
-  content: '';
-  width: 5px;
-  height: 5px;
+.card__facet {
+  display: inline-flex;
+  align-items: center;
+}
+
+.card__difficulty-pips {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.card__pip {
+  width: 4px;
+  height: 4px;
   border-radius: 999px;
-  background: rgb(var(--card-accent-rgb, 199 229 106));
-  box-shadow:
-    0 0 6px rgb(var(--card-accent-rgb, 199 229 106) / 0.6),
-    0 0 12px rgb(var(--card-accent-rgb, 199 229 106) / 0.28);
+  background: rgba(255, 255, 255, 0.12);
   transition:
+    background var(--duration-base) var(--ease-soft),
     box-shadow var(--duration-base) var(--ease-out-quart),
     transform var(--duration-base) var(--ease-spring);
+}
+
+.card__pip--on {
+  background: rgb(var(--card-accent-rgb, 199 229 106));
+  box-shadow:
+    0 0 4px rgb(var(--card-accent-rgb, 199 229 106) / 0.55),
+    0 0 9px rgb(var(--card-accent-rgb, 199 229 106) / 0.22);
 }
 
 .card:hover .card__section {
   color: var(--text-secondary);
 }
 
-.card:hover .card__section::before {
+.card:hover .card__pip--on {
   box-shadow:
-    0 0 10px rgb(var(--card-accent-rgb, 199 229 106) / 0.9),
-    0 0 18px rgb(var(--card-accent-rgb, 199 229 106) / 0.4);
-  transform: scale(1.25);
+    0 0 6px rgb(var(--card-accent-rgb, 199 229 106) / 0.8),
+    0 0 14px rgb(var(--card-accent-rgb, 199 229 106) / 0.32);
+  transform: scale(1.2);
 }
 
 /* ---- TITLE ---- */
@@ -272,12 +232,12 @@
   min-height: 120px;
   padding: 14px;
   border-radius: 14px;
-  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.18);
+  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.16);
   background:
     linear-gradient(
       var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.14),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.06) 58%,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.1),
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 58%,
       rgba(255, 255, 255, 0.02)
     ),
     rgba(255, 255, 255, 0.025);
@@ -289,7 +249,7 @@
 }
 
 .card:hover .card__preview {
-  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.36);
+  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.38);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.12);
@@ -301,6 +261,14 @@
   display: flex;
   flex: 1;
   min-height: 68px;
+  transform-origin: center center;
+  transform: scale(1);
+  transition: transform 520ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.card:hover .card__preview-art {
+  transform: scale(1.07);
 }
 
 .card__preview::before {
@@ -322,7 +290,7 @@
 }
 
 .card:hover .card__preview::before {
-  transform: translate(calc(-50% - 12px), -50%);
+  transform: translate(calc(-50% - 14px), -50%) scale(1.08);
 }
 
 .card__preview::after {
@@ -338,44 +306,30 @@
   pointer-events: none;
 }
 
-/* ---- INSANE VARIANT ---- */
+/* ---- INSANE VARIANT — stripe carries the category; preview gets a
+       slightly warmer border on hover. ---- */
 
-.card--insane .card__preview {
-  border-color: rgb(255 138 66 / 0.22);
-  background:
-    linear-gradient(
-      var(--card-preview-angle, 168deg),
-      rgb(255 138 66 / 0.12),
-      rgb(255 168 74 / 0.08) 34%,
-      rgb(255 214 120 / 0.06) 64%,
-      rgba(255, 255, 255, 0.02)
-    ),
-    rgba(255, 255, 255, 0.025);
-}
-
-.card--insane .card__preview::before {
-  background: radial-gradient(
-    circle,
-    rgb(255 244 196 / 0.18),
-    rgb(255 148 66 / 0.1) 42%,
-    transparent 72%
+.card--insane .card__stripe {
+  opacity: 0.85;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--card-accent-rgb, 255 122 47) / 0.6) 18%,
+    rgb(var(--card-accent-rgb, 255 122 47) / 1) 50%,
+    rgb(var(--card-accent-rgb, 255 122 47) / 0.6) 82%,
+    transparent 100%
   );
 }
 
-.card--insane:hover {
-  border-color: rgb(255 138 66 / 0.34);
+.card--insane:hover .card__stripe {
+  opacity: 1;
+}
+
+.card--insane:hover .card__preview {
+  border-color: rgb(var(--card-accent-rgb, 255 122 47) / 0.5);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 22px 44px rgba(0, 0, 0, 0.42),
-    0 0 30px rgb(255 138 66 / 0.22);
-}
-
-.card--insane .card__blob--primary {
-  opacity: 0.2;
-}
-
-.card--insane:not(.card--insane-active) .card__blob--primary {
-  opacity: 0.14;
+    0 0 28px rgb(var(--card-accent-rgb, 255 122 47) / 0.2);
 }
 
 .card__preview-meta {
@@ -445,11 +399,11 @@
 }
 
 .card--insane .card__cta {
-  color: rgb(255 220 180);
+  color: rgb(var(--card-accent-rgb, 255 122 47));
 }
 
 .card--insane:hover .card__cta {
-  color: rgb(255 240 220);
+  color: rgb(var(--card-accent-alt-rgb, 255 198 102));
 }
 
 @media (max-width: 720px) {
@@ -468,13 +422,18 @@
 @media (prefers-reduced-motion: reduce) {
   .card,
   .card::after,
-  .card__blob,
+  .card__preview-art,
   .card__preview::before,
   .card__cta,
   .card__cta::after,
   .card__name,
-  .card__section::before {
+  .card__pip,
+  .card__stripe {
     animation: none !important;
     transition: none;
+  }
+
+  .card:hover .card__preview-art {
+    transform: none;
   }
 }

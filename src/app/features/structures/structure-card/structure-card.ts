@@ -1,42 +1,30 @@
-import { NgStyle, isPlatformBrowser } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  ElementRef,
-  Injector,
-  PLATFORM_ID,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { NgStyle } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getStructureFacetLabelKey } from '../../../core/i18n/catalog-labels';
 import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
-import { buildDifficultyThemeVars, getDifficultyTheme } from '../../../shared/difficulty-theme';
-import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
+import { buildDifficultyThemeVars } from '../../../shared/difficulty-theme';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
-import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
 import { UiTag } from '../../../shared/components/ui-tag/ui-tag';
 import { Difficulty } from '../../algorithms/models/algorithm';
 import { StructureCardPreview } from './structure-card-preview/structure-card-preview';
 import { StructureItem } from '../models/structure';
+
+const DIFFICULTY_RANK: Record<Difficulty, number> = {
+  [Difficulty.Easy]: 1,
+  [Difficulty.Medium]: 2,
+  [Difficulty.Hard]: 3,
+  [Difficulty.UltraHard]: 4,
+};
 
 function formatFacetLabel(value: string): string {
   return value
     .split('-')
     .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
     .join(' ');
-}
-
-function rgbToComma(spaceSep: string): string {
-  return spaceSep.trim().replace(/\s+/g, ', ');
 }
 
 function hashSeed(value: string, salt: number): number {
@@ -55,39 +43,9 @@ function numberFromSeed(seed: string, salt: number, min: number, max: number): n
   return min + ratio * (max - min);
 }
 
-function createPrimaryBlobStyle(seed: string, difficulty: Difficulty): Record<string, string> {
-  const theme = getDifficultyTheme(difficulty);
-  const rgb = rgbToComma(theme.accentRgb);
-  const fromRight = hashSeed(seed, 31) % 2 === 0;
-  return {
-    top: `${numberFromSeed(seed, 12, 18, 82).toFixed(1)}%`,
-    left: fromRight
-      ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
-      : `${numberFromSeed(seed, 11, -8, 10).toFixed(1)}%`,
-    width: `${numberFromSeed(seed, 13, 228, 320).toFixed(0)}px`,
-    height: `${numberFromSeed(seed, 14, 196, 286).toFixed(0)}px`,
-    background: `radial-gradient(ellipse at center, rgba(${rgb}, 0.24) 0%, rgba(${rgb}, 0.13) 36%, rgba(${rgb}, 0.05) 58%, transparent 76%)`,
-  };
-}
-
-function createWashStyle(difficulty: Difficulty): Record<string, string> {
-  const theme = getDifficultyTheme(difficulty);
-  const rgb = rgbToComma(theme.accentRgb);
-  return {
-    background: `linear-gradient(145deg, rgba(${rgb}, 0.06) 0%, rgba(${rgb}, 0.03) 32%, transparent 58%, rgba(${rgb}, 0.015) 100%)`,
-  };
-}
-
 function createCardStyleVars(seed: string, difficulty: Difficulty): Record<string, string> {
-  const fromRight = hashSeed(seed, 31) % 2 === 0;
   return {
     ...buildDifficultyThemeVars(difficulty, 'card'),
-    '--card-blob-1-x': fromRight
-      ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
-      : `${numberFromSeed(seed, 11, -8, 10).toFixed(1)}%`,
-    '--card-blob-1-y': `${numberFromSeed(seed, 12, 18, 82).toFixed(1)}%`,
-    '--card-blob-1-width': `${numberFromSeed(seed, 13, 228, 320).toFixed(0)}px`,
-    '--card-blob-1-height': `${numberFromSeed(seed, 14, 196, 286).toFixed(0)}px`,
     '--card-grid-size': `${numberFromSeed(seed, 19, 18, 25).toFixed(0)}px`,
     '--card-preview-angle': `${numberFromSeed(seed, 20, 144, 196).toFixed(0)}deg`,
   };
@@ -95,28 +53,22 @@ function createCardStyleVars(seed: string, difficulty: Difficulty): Record<strin
 
 @Component({
   selector: 'app-structure-card',
-  imports: [StructureCardPreview, NgStyle, ShaderCardEffect, RoadmapOverlayDirective, UiTag],
+  imports: [StructureCardPreview, NgStyle, RoadmapOverlayDirective, UiTag],
   templateUrl: './structure-card.html',
   styleUrl: './structure-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StructureCard implements AfterViewInit {
+export class StructureCard {
   private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly hostRef = inject(ElementRef<HTMLElement>);
-  private readonly injector = inject(Injector);
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly shaderPool = inject(InsaneShaderPoolService);
-  private readonly inViewportState = signal(false);
-  private intersectionObserver: IntersectionObserver | null = null;
 
   readonly structure = input.required<StructureItem>();
-  readonly shaderSeed = computed(() => `structure:${this.structure().id}`);
   readonly isInsane = computed(() => this.structure().difficulty === Difficulty.UltraHard);
-  readonly showShader = computed(
-    () => this.isInsane() && this.inViewportState() && this.shaderPool.has(this.shaderSeed()),
-  );
+  readonly difficultyRank = computed(() => DIFFICULTY_RANK[this.structure().difficulty] ?? 1);
+  readonly difficultyPips = computed(() => {
+    const filled = this.difficultyRank();
+    return [0, 1, 2, 3].map((index) => index < filled);
+  });
   readonly facetLabel = computed(() => {
     const facet = this.structure().subcategory || this.structure().category;
     const key = getStructureFacetLabelKey(facet);
@@ -158,50 +110,6 @@ export class StructureCard implements AfterViewInit {
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.structure().id, this.structure().difficulty),
   );
-  readonly primaryBlobStyle = computed(() =>
-    createPrimaryBlobStyle(this.structure().id, this.structure().difficulty),
-  );
-  readonly washStyle = computed(() => createWashStyle(this.structure().difficulty));
-
-  constructor() {
-    this.destroyRef.onDestroy(() => {
-      this.intersectionObserver?.disconnect();
-      this.shaderPool.deactivate(this.shaderSeed());
-    });
-  }
-
-  ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.intersectionObserver = new IntersectionObserver(
-      ([entry]) => {
-        this.inViewportState.set(entry?.isIntersecting ?? false);
-      },
-      {
-        threshold: 0.04,
-        rootMargin: '120px 0px',
-      },
-    );
-
-    this.intersectionObserver.observe(this.hostRef.nativeElement);
-
-    effect(
-      () => {
-        const shaderId = this.shaderSeed();
-        const shouldActivate = this.isInsane() && this.inViewportState();
-        this.shaderPool.activeIds();
-
-        if (shouldActivate) {
-          this.shaderPool.activate(shaderId);
-        } else {
-          this.shaderPool.deactivate(shaderId);
-        }
-      },
-      { injector: this.injector },
-    );
-  }
 
   private translate(key: string, params?: Record<string, string | number>): string {
     this.language.activeLang();
