@@ -2256,6 +2256,54 @@
               "result": "Final verdict."
             }
           },
+          "reservoirSampling": {
+            "modeLabel": "Reservoir sampling (chalkboard)",
+            "goal": "Draw a uniform sample of [[math]]k = {{k}}[[/math]] items from a stream of [[math]]n = {{n}}[[/math]] values with unknown length.",
+            "rule": "Algorithm R: the first [[math]]k[[/math]] items fill the reservoir unconditionally. For each later item [[math]]i \\geq k[[/math]] draw [[math]]j \\in [0, i][[/math]] uniformly. If [[math]]j < k[[/math]], replace slot [[math]]j[[/math]]; otherwise skip the item.",
+            "invariant": "At any moment after processing [[math]]n[[/math]] items, every seen item is in the reservoir with probability [[math]]k/n[[/math]].",
+            "setup": {
+              "streamLine": "Stream: [[math]]{{stream}}[[/math]]",
+              "streamInstruction": "Reservoir of size [[math]]k = {{k}}[[/math]], stream of length [[math]]n = {{n}}[[/math]].",
+              "reservoirInit": "Reservoir: [[math]]{{reservoir}}[[/math]] (empty)"
+            },
+            "fill": {
+              "line": "Slot {{index}} ← item {{item}}. Reservoir: [[math]]{{reservoir}}[[/math]]",
+              "instruction": "Drop item {{item}} into slot {{slot}} (fill phase)."
+            },
+            "sample": {
+              "header": "Item {{index}}: value [[math]]{{item}}[[/math]], acceptance probability [[math]]{{probability}}[[/math]].",
+              "roll": "Roll: [[math]]u = {{roll}}[[/math]], [[math]]j = \\lfloor u \\cdot {{iPlusOne}} \\rfloor = {{j}}[[/math]].",
+              "rollInstruction": "Compute [[math]]j = \\lfloor u \\cdot {{iPlusOne}} \\rfloor[[/math]].",
+              "accept": "[[math]]j < k[[/math]] → accept: slot {{slot}} ← {{item}}. Reservoir: [[math]]{{reservoir}}[[/math]]",
+              "reject": "[[math]]j = {{j}} \\geq k = {{k}}[[/math]] → skip {{item}}.",
+              "newState": "New state: [[math]]{{reservoir}}[[/math]]"
+            },
+            "result": {
+              "sample": "Final sample: [[math]]{{reservoir}}[[/math]]",
+              "signoff": "[[math]]{{reservoir}}[[/math]]",
+              "emptySignoff": "Empty stream — no sample."
+            },
+            "phases": {
+              "setup": "Setup",
+              "fill": "Fill phase",
+              "sample": "Sampling",
+              "complete": "Done"
+            },
+            "decisions": {
+              "preparing": "Preparing reservoir and stream.",
+              "filling": "Filling the first [[math]]k[[/math]] slots.",
+              "rolling": "Rolling a die for the current item.",
+              "accepting": "[[math]]j < k[[/math]] — replace a reservoir slot.",
+              "rejecting": "[[math]]j \\geq k[[/math]] — skip the item.",
+              "done": "Stream finished — read off the sample."
+            },
+            "captions": {
+              "setup": "Start: stream and an empty reservoir.",
+              "fillPhase": "Fill phase.",
+              "samplePhase": "Sampling phase.",
+              "result": "Final reservoir sample."
+            }
+          },
           "simplex": {
             "modeLabel": "Simplex (chalkboard)",
             "goal": "Maximize the objective [[math]]c^T x[[/math]] subject to [[math]]Ax \\leq b[[/math]], [[math]]x \\geq 0[[/math]] — {{count}} decision variables.",
@@ -4238,6 +4286,23 @@
             "hints": {
               "0": "For prime [[math]]n = 53[[/math]] no [[math]]d \\in (1, n)[[/math]] with [[math]]d \\mid n[[/math]] exists — rho must report failure.",
               "1": "After a few iterations [[math]]x = y = 14[[/math]] and [[math]]\\gcd(0, 53) = 53[[/math]] — the restart trigger."
+            }
+          }
+        },
+        "reservoirSampling": {
+          "values": {
+            "stream": "stream",
+            "streamPlaceholder": "5 3 8 1 9 2 7 4",
+            "reservoirSize": "reservoir size k",
+            "seed": "seed"
+          },
+          "uniformSample": {
+            "title": "Uniform sample k = 3",
+            "summary": "Stream of 8 integers, reservoir of size 3, deterministic seed — show that every item ends up with probability [[math]]3/8[[/math]].",
+            "instruction": "For the stream [[math]]{{stream}}[[/math]] pick a uniform sample of [[math]]k = {{k}}[[/math]] items using reservoir sampling (Algorithm R). Walk the fill phase (first [[math]]k[[/math]] items unconditional) and then each sampling step with seed [[math]]{{seed}}[[/math]]: roll, accept/reject decision.",
+            "hints": {
+              "0": "The fill phase is trivial — the first [[math]]k = {{k}}[[/math]] items go straight into the reservoir, slot by slot.",
+              "1": "In the sampling phase the acceptance probability drops as [[math]]k/(i+1)[[/math]] — it's [[math]]k/(k+1)[[/math]] at [[math]]i = k[[/math]] and falls to [[math]]k/n[[/math]] at [[math]]i = n-1[[/math]]. That's why the final distribution is uniform."
             }
           }
         },

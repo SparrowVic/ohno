@@ -2256,6 +2256,54 @@
               "result": "Finalny werdykt."
             }
           },
+          "reservoirSampling": {
+            "modeLabel": "Próbkowanie rezerwuarowe (tablica)",
+            "goal": "Wylosuj jednostajnie [[math]]k = {{k}}[[/math]] elementów ze strumienia [[math]]n = {{n}}[[/math]] liczb o nieznanej długości.",
+            "rule": "Algorytm R: pierwsze [[math]]k[[/math]] elementów trafia prosto do rezerwuaru. Dla każdego kolejnego elementu [[math]]i \\geq k[[/math]] losuj [[math]]j \\in [0, i][[/math]]. Jeśli [[math]]j < k[[/math]], zastąp slot [[math]]j[[/math]]; w przeciwnym razie pomijaj.",
+            "invariant": "W dowolnym momencie po przetworzeniu [[math]]n[[/math]] elementów każdy widziany element jest w rezerwuarze z prawdopodobieństwem [[math]]k/n[[/math]].",
+            "setup": {
+              "streamLine": "Strumień: [[math]]{{stream}}[[/math]]",
+              "streamInstruction": "Rezerwuar pojemności [[math]]k = {{k}}[[/math]], strumień o długości [[math]]n = {{n}}[[/math]].",
+              "reservoirInit": "Rezerwuar: [[math]]{{reservoir}}[[/math]] (pusty)"
+            },
+            "fill": {
+              "line": "Slot {{index}} ← element {{item}}. Rezerwuar: [[math]]{{reservoir}}[[/math]]",
+              "instruction": "Wrzuć element {{item}} do slotu {{slot}} (faza wypełnienia)."
+            },
+            "sample": {
+              "header": "Element {{index}}: wartość [[math]]{{item}}[[/math]], prawdopodobieństwo akceptacji [[math]]{{probability}}[[/math]].",
+              "roll": "Losowanie: [[math]]u = {{roll}}[[/math]], [[math]]j = \\lfloor u \\cdot {{iPlusOne}} \\rfloor = {{j}}[[/math]].",
+              "rollInstruction": "Policz [[math]]j = \\lfloor u \\cdot {{iPlusOne}} \\rfloor[[/math]].",
+              "accept": "[[math]]j < k[[/math]] → akceptacja: slot {{slot}} ← {{item}}. Rezerwuar: [[math]]{{reservoir}}[[/math]]",
+              "reject": "[[math]]j = {{j}} \\geq k = {{k}}[[/math]] → odrzucamy {{item}}.",
+              "newState": "Nowy stan: [[math]]{{reservoir}}[[/math]]"
+            },
+            "result": {
+              "sample": "Próbka końcowa: [[math]]{{reservoir}}[[/math]]",
+              "signoff": "[[math]]{{reservoir}}[[/math]]",
+              "emptySignoff": "Strumień pusty — brak próbki."
+            },
+            "phases": {
+              "setup": "Start",
+              "fill": "Wypełnianie rezerwuaru",
+              "sample": "Losowanie",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "preparing": "Przygotowujemy rezerwuar i strumień.",
+              "filling": "Wypełniamy [[math]]k[[/math]] początkowych slotów.",
+              "rolling": "Rzucamy kostką dla bieżącego elementu.",
+              "accepting": "[[math]]j < k[[/math]] — zastępujemy slot w rezerwuarze.",
+              "rejecting": "[[math]]j \\geq k[[/math]] — pomijamy element.",
+              "done": "Strumień zakończony — odczytujemy próbkę."
+            },
+            "captions": {
+              "setup": "Start: strumień i pusty rezerwuar.",
+              "fillPhase": "Faza wypełnienia.",
+              "samplePhase": "Faza próbkowania.",
+              "result": "Finalna próbka rezerwuarowa."
+            }
+          },
           "simplex": {
             "modeLabel": "Simplex (tablica)",
             "goal": "Zmaksymalizuj funkcję celu [[math]]c^T x[[/math]] przy ograniczeniach [[math]]Ax \\leq b[[/math]], [[math]]x \\geq 0[[/math]] — {{count}} zmiennych decyzyjnych.",
@@ -4238,6 +4286,23 @@
             "hints": {
               "0": "Dla [[math]]n = 53[[/math]] (liczby pierwszej) nie istnieje [[math]]d \\in (1, n)[[/math]] z [[math]]d \\mid n[[/math]] — rho musi zwrócić błąd.",
               "1": "Po kilku iteracjach [[math]]x = y = 14[[/math]] i [[math]]\\gcd(0, 53) = 53[[/math]] — sygnał restartu ze zmienionym [[math]]c[[/math]]."
+            }
+          }
+        },
+        "reservoirSampling": {
+          "values": {
+            "stream": "strumień",
+            "streamPlaceholder": "5 3 8 1 9 2 7 4",
+            "reservoirSize": "rozmiar k",
+            "seed": "ziarno"
+          },
+          "uniformSample": {
+            "title": "Jednostajna próbka k = 3",
+            "summary": "Strumień 8 liczb, rezerwuar pojemności 3, deterministyczne ziarno — pokaż, że każdy element kończy z prawdopodobieństwem [[math]]3/8[[/math]].",
+            "instruction": "Dla strumienia [[math]]{{stream}}[[/math]] wybierz jednostajną próbkę [[math]]k = {{k}}[[/math]] elementów algorytmem Reservoir Sampling R. Prześledź fazę wypełniania (pierwsze [[math]]k[[/math]] elementów bezwarunkowo), a potem każdy krok z ziarnem [[math]]{{seed}}[[/math]]: rzut kostką, decyzja akceptacja/odrzucenie.",
+            "hints": {
+              "0": "Faza wypełniania jest trywialna — pierwsze [[math]]k = {{k}}[[/math]] elementów idą prosto do rezerwuaru, slot po slocie.",
+              "1": "W fazie próbkowania prawdopodobieństwo akceptacji maleje jak [[math]]k/(i+1)[[/math]] — dla [[math]]i = k[[/math]] wynosi [[math]]k/(k+1)[[/math]], a dla [[math]]i = n-1[[/math]] schodzi do [[math]]k/n[[/math]]. Stąd jednostajność końcowa."
             }
           }
         },

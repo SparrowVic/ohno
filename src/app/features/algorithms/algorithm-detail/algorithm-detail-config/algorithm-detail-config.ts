@@ -666,6 +666,16 @@ import {
   DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
   createSimplexAlgorithmScenario,
 } from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
+import { reservoirSamplingGenerator } from '../../algorithms/reservoir-sampling/reservoir-sampling';
+import {
+  ReservoirSamplingScenario,
+  ReservoirSamplingValues,
+  RESERVOIR_SAMPLING_PRESETS,
+  RESERVOIR_SAMPLING_TASKS,
+  DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
+  DEFAULT_RESERVOIR_SAMPLING_TASK_ID,
+  createReservoirSamplingScenario,
+} from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -2635,6 +2645,35 @@ const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: simplexAlgorithmGenerator,
 };
 
+/** Reservoir sampling — chalkboard-only. Per-item iteration table:
+ *  fill phase fills the first k slots unconditionally, then each
+ *  later item gets a coin flip against `k/(i+1)` driving an
+ *  accept/reject decision. Deterministic LCG seeded from the task
+ *  so the narrative is replayable. */
+const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  ReservoirSamplingScenario,
+  ReservoirSamplingValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New stream',
+  legendItems: () => [],
+  presetOptions: RESERVOIR_SAMPLING_PRESETS,
+  defaultPresetId: DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
+  tasks: RESERVOIR_SAMPLING_TASKS,
+  defaultTaskId: DEFAULT_RESERVOIR_SAMPLING_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createReservoirSamplingScenario(size, presetId, customValues),
+  generator: reservoirSamplingGenerator,
+};
+
 const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   TwoPointersScenario,
   TwoPointersValues
@@ -3832,6 +3871,7 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'pollards-rho') return POLLARDS_RHO_VIEW_CONFIG;
   if (id === 'gaussian-elimination') return GAUSSIAN_ELIMINATION_VIEW_CONFIG;
   if (id === 'simplex-algorithm') return SIMPLEX_ALGORITHM_VIEW_CONFIG;
+  if (id === 'reservoir-sampling') return RESERVOIR_SAMPLING_VIEW_CONFIG;
   if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;

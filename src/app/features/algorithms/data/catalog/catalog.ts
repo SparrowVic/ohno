@@ -1397,6 +1397,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'randomized',
     tags: ['streaming', 'randomized', 'sampling'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(k)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'fft-ntt',

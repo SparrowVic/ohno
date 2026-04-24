@@ -35,7 +35,8 @@ export type ScratchpadLabMode =
   | 'pollards-rho'
   | 'crt'
   | 'gaussian-elimination'
-  | 'simplex';
+  | 'simplex'
+  | 'reservoir-sampling';
 
 export type ScratchpadLineKind =
   | 'goal'
