@@ -2086,6 +2086,52 @@
               "done": "Współczynniki Bézouta ustalone."
             }
           },
+          "gaussianElimination": {
+            "modeLabel": "Eliminacja Gaussa-Jordana (tablica)",
+            "goal": "Sprowadź macierz rozszerzoną do postaci schodkowo-zredukowanej (RREF) i odczytaj rozwiązanie układu {{count}} równań.",
+            "rule": "Dopuszczalne operacje wierszowe: zamiana wierszy, mnożenie wiersza przez niezerową stałą, dodanie wielokrotności jednego wiersza do innego. Każda z nich zachowuje zbiór rozwiązań.",
+            "invariant": "Cel: w każdej kolumnie pivotu dokładnie jeden niezerowy wpis (sam pivot = 1). Po sweepie lewa część macierzy to macierz jednostkowa.",
+            "setup": {
+              "initial": "Zapisz macierz rozszerzoną układu.",
+              "initialAnnotation": "Pionowa kreska oddziela współczynniki od wektora wyrazów wolnych."
+            },
+            "op": {
+              "pivotHeader": "Kolumna pivotu {{col}} — pivot w wierszu {{row}}.",
+              "swap": "Zamień wiersze [[math]]R_{{r1}}[[/math]] ↔ [[math]]R_{{r2}}[[/math]]",
+              "swapInstruction": "Zamień wiersz {{r1}} z wierszem {{r2}}, żeby pivot był niezerowy.",
+              "scale": "[[math]]R_{{row}} \\leftarrow R_{{row}} / {{factor}}[[/math]] (normalizacja do pivotu = 1)",
+              "scaleInstruction": "Podziel wiersz {{row}} przez {{factor}}, żeby pivot wyniósł 1.",
+              "eliminate": "[[math]]R_{{target}} \\leftarrow R_{{target}} - {{factor}} \\cdot R_{{pivot}}[[/math]]",
+              "eliminateInstruction": "Odejmij {{factor}}-krotność wiersza {{pivot}} od wiersza {{target}}.",
+              "skipAlready": "Wpis już zerowy — pomijamy eliminację."
+            },
+            "failure": {
+              "singular": "Nie udało się znaleźć pivotu w jednej z kolumn — układ jest osobliwy (brak jednoznacznego rozwiązania) lub sprzeczny."
+            },
+            "result": {
+              "solution": "[[math]]{{solution}}[[/math]]",
+              "signoff": "[[math]]{{solution}}[[/math]]",
+              "signoffSingular": "Układ osobliwy / sprzeczny"
+            },
+            "phases": {
+              "setup": "Przygotowanie",
+              "forward": "Sweep Gaussa-Jordana",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "starting": "Przygotowujemy pivot.",
+              "swapping": "Zamieniamy wiersze.",
+              "scaling": "Skalujemy wiersz pivotu.",
+              "eliminating": "Zerujemy wpis w pozostałych wierszach.",
+              "done": "RREF uzyskana — odczytujemy rozwiązanie.",
+              "singular": "Macierz osobliwa lub układ sprzeczny."
+            },
+            "captions": {
+              "setup": "Start: macierz rozszerzona.",
+              "pivot": "Nowa kolumna pivotu.",
+              "result": "Finalne rozwiązanie układu."
+            }
+          },
           "gcd": {
             "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — przesuwamy parę i idziemy dalej.",
             "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
@@ -3981,6 +4027,21 @@
             "instruction": "Zapisz [[math]]\\gcd({{a}}, {{b}})[[/math]] jako całkowitą kombinację liczb [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]]. Wystarczy jedna linia back-substytucji — podaj pełną tożsamość [[math]]\\gcd = s \\cdot {{a}} + t \\cdot {{b}}[[/math]] z konkretnymi wartościami [[math]]s, t[[/math]].",
             "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — dwa kroki forward, jedna linia back-sub.",
             "title": "Minimalny back-sub"
+          }
+        },
+        "gaussianElimination": {
+          "values": {
+            "system": "układ",
+            "systemPlaceholder": "1 1 | 5; 1 -1 | 1"
+          },
+          "basic2x2": {
+            "title": "Układ 2×2",
+            "summary": "[[math]]x + y = 5, \\; x - y = 1[[/math]] → [[math]]x = 3, y = 2[[/math]]",
+            "instruction": "Rozwiąż układ równań {{system}} przez eliminację Gaussa-Jordana: sprowadź macierz rozszerzoną do RREF i odczytaj rozwiązanie.",
+            "hints": {
+              "0": "Pierwszy pivot w (1,1) to 1 — wystarczy odjąć wiersz 1 od wiersza 2, żeby zzerować pierwszą kolumnę poniżej.",
+              "1": "Drugi pivot to [[math]]-2[[/math]] — normalizuj przez [[math]]-2[[/math]], potem odejmij od wiersza 1, żeby wyczyścić drugą kolumnę powyżej."
+            }
           }
         },
         "gcd": {

@@ -1415,6 +1415,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['linear algebra', 'matrix', 'row reduction'],
+    complexity: {
+      timeBest: 'O(n³)',
+      timeAverage: 'O(n³)',
+      timeWorst: 'O(n³)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'simplex-algorithm',

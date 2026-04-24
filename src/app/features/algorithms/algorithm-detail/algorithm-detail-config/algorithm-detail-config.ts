@@ -646,6 +646,16 @@ import {
   DEFAULT_POLLARDS_RHO_TASK_ID,
   createPollardsRhoScenario,
 } from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
+import { gaussianEliminationGenerator } from '../../algorithms/gaussian-elimination/gaussian-elimination';
+import {
+  GaussianEliminationScenario,
+  GaussianEliminationValues,
+  GAUSSIAN_ELIMINATION_PRESETS,
+  GAUSSIAN_ELIMINATION_TASKS,
+  DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
+  DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
+  createGaussianEliminationScenario,
+} from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -2557,6 +2567,35 @@ const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: pollardsRhoGenerator,
 };
 
+/** Gaussian elimination — chalkboard-only. Matrix snapshots render
+ *  as KaTeX `\left[\begin{array}...|c\end{array}\right]` blocks, one
+ *  per row operation (swap / scale / eliminate). No code snippet yet
+ *  — each task carries `codeSnippetId: null` so the Code tab shows
+ *  the editorial placeholder. */
+const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  GaussianEliminationScenario,
+  GaussianEliminationValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New system',
+  legendItems: () => [],
+  presetOptions: GAUSSIAN_ELIMINATION_PRESETS,
+  defaultPresetId: DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
+  tasks: GAUSSIAN_ELIMINATION_TASKS,
+  defaultTaskId: DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createGaussianEliminationScenario(size, presetId, customValues),
+  generator: gaussianEliminationGenerator,
+};
+
 const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   TwoPointersScenario,
   TwoPointersValues
@@ -3752,6 +3791,7 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'miller-rabin') return MILLER_RABIN_VIEW_CONFIG;
   if (id === 'chinese-remainder-theorem') return CRT_VIEW_CONFIG;
   if (id === 'pollards-rho') return POLLARDS_RHO_VIEW_CONFIG;
+  if (id === 'gaussian-elimination') return GAUSSIAN_ELIMINATION_VIEW_CONFIG;
   if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;

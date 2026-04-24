@@ -2086,6 +2086,52 @@
               "done": "Bézout coefficients are settled."
             }
           },
+          "gaussianElimination": {
+            "modeLabel": "Gauss-Jordan elimination (chalkboard)",
+            "goal": "Reduce the augmented matrix to reduced row-echelon form (RREF) and read off the solution of the {{count}}-equation system.",
+            "rule": "Allowed row operations: swap rows, scale a row by a non-zero constant, add a multiple of one row to another. Each preserves the solution set.",
+            "invariant": "Target: each pivot column has exactly one non-zero entry (the pivot = 1). After the sweep the left block is the identity.",
+            "setup": {
+              "initial": "Write down the augmented matrix of the system.",
+              "initialAnnotation": "The vertical bar separates coefficients from the right-hand side vector."
+            },
+            "op": {
+              "pivotHeader": "Pivot column {{col}} — pivot in row {{row}}.",
+              "swap": "Swap rows [[math]]R_{{r1}}[[/math]] ↔ [[math]]R_{{r2}}[[/math]]",
+              "swapInstruction": "Swap row {{r1}} with row {{r2}} so the pivot is non-zero.",
+              "scale": "[[math]]R_{{row}} \\leftarrow R_{{row}} / {{factor}}[[/math]] (normalize to pivot = 1)",
+              "scaleInstruction": "Divide row {{row}} by {{factor}} so the pivot becomes 1.",
+              "eliminate": "[[math]]R_{{target}} \\leftarrow R_{{target}} - {{factor}} \\cdot R_{{pivot}}[[/math]]",
+              "eliminateInstruction": "Subtract {{factor}}× row {{pivot}} from row {{target}}.",
+              "skipAlready": "Entry already zero — skip elimination."
+            },
+            "failure": {
+              "singular": "Couldn't find a pivot in one of the columns — the system is singular (no unique solution) or inconsistent."
+            },
+            "result": {
+              "solution": "[[math]]{{solution}}[[/math]]",
+              "signoff": "[[math]]{{solution}}[[/math]]",
+              "signoffSingular": "Singular / inconsistent system"
+            },
+            "phases": {
+              "setup": "Setup",
+              "forward": "Gauss-Jordan sweep",
+              "complete": "Done"
+            },
+            "decisions": {
+              "starting": "Preparing the pivot.",
+              "swapping": "Swapping rows.",
+              "scaling": "Scaling the pivot row.",
+              "eliminating": "Zeroing the entry in the other rows.",
+              "done": "RREF reached — read off the solution.",
+              "singular": "Singular matrix or inconsistent system."
+            },
+            "captions": {
+              "setup": "Start: augmented matrix.",
+              "pivot": "New pivot column.",
+              "result": "Final solution of the system."
+            }
+          },
           "gcd": {
             "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — shift pair and continue.",
             "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
@@ -3981,6 +4027,21 @@
             "instruction": "Express [[math]]\\gcd({{a}}, {{b}})[[/math]] as an integer combination of [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]]. A single back-substitution line is enough — state the full identity [[math]]\\gcd = s \\cdot {{a}} + t \\cdot {{b}}[[/math]] with concrete [[math]]s, t[[/math]].",
             "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — two forward steps, one back-sub line.",
             "title": "Minimal back-sub"
+          }
+        },
+        "gaussianElimination": {
+          "values": {
+            "system": "system",
+            "systemPlaceholder": "1 1 | 5; 1 -1 | 1"
+          },
+          "basic2x2": {
+            "title": "2×2 system",
+            "summary": "[[math]]x + y = 5, \\; x - y = 1[[/math]] → [[math]]x = 3, y = 2[[/math]]",
+            "instruction": "Solve the linear system {{system}} via Gauss-Jordan elimination: reduce the augmented matrix to RREF and read the solution.",
+            "hints": {
+              "0": "The first pivot at (1,1) is 1 — just subtract row 1 from row 2 to zero the first column below.",
+              "1": "The second pivot is [[math]]-2[[/math]] — normalize by [[math]]-2[[/math]], then subtract from row 1 to clear the second column above."
+            }
           }
         },
         "gcd": {
