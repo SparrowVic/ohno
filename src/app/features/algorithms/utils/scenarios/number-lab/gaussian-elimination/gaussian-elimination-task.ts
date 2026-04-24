@@ -29,7 +29,7 @@ export const GAUSSIAN_ELIMINATION_TASK_INPUT_SCHEMA: TaskInputSchema<GaussianEli
       kind: 'string',
       label: t('features.algorithms.tasks.gaussianElimination.values.system'),
       placeholder: t('features.algorithms.tasks.gaussianElimination.values.systemPlaceholder'),
-      pattern: /^\s*[-\d.\s|]+(\s*;\s*[-\d.\s|]+)*\s*$/,
+      pattern: /^\s*[-\d.|]+(?:\s+[-\d.|]+)*(?:\s*;\s*[-\d.|]+(?:\s+[-\d.|]+)*)*\s*$/,
       minLength: 3,
       maxLength: 360,
     },
