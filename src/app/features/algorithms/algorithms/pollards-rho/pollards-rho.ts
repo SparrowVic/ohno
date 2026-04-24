@@ -1,99 +1,21 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
-import { i18nText } from '../../../../core/i18n/translatable-text';
 import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
-  ScratchpadMargin,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
-import { PollardsRhoScenario } from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
+import type { PollardsRhoScenario } from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
-
-/**
- * Pollard's rho factorization — chalkboard narration.
- *
- * Given composite `n`, iterate `f(x) = x² + c mod n` with tortoise-
- * hare pointers: `x ← f(x)`, `y ← f(f(y))`. Compute `gcd(|x - y|, n)`
- * at each step. When the gcd lands in `(1, n)`, we've found a
- * non-trivial factor; when it equals `n`, the tortoise has caught the
- * hare without a gap — restart with a different `c` in practice. For
- * the in-browser run we just report the failure gracefully.
- */
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.pollardsRho.modeLabel'),
-  goal: t('features.algorithms.runtime.scratchpadLab.pollardsRho.goal'),
-  rule: t('features.algorithms.runtime.scratchpadLab.pollardsRho.rule'),
-  invariant: t('features.algorithms.runtime.scratchpadLab.pollardsRho.invariant'),
-  setup: {
-    formula: t('features.algorithms.runtime.scratchpadLab.pollardsRho.setup.formula'),
-    formulaInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.setup.formulaInstruction',
-    ),
-    seeds: t('features.algorithms.runtime.scratchpadLab.pollardsRho.setup.seeds'),
-    seedsAnnotation: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.setup.seedsAnnotation',
-    ),
-  },
-  step: {
-    line: t('features.algorithms.runtime.scratchpadLab.pollardsRho.step.line'),
-    instruction: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.step.instruction',
-    ),
-    annotation: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.step.annotation',
-    ),
-  },
-  result: {
-    success: t('features.algorithms.runtime.scratchpadLab.pollardsRho.result.success'),
-    failure: t('features.algorithms.runtime.scratchpadLab.pollardsRho.result.failure'),
-    exhausted: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.result.exhausted',
-    ),
-    signoffSuccess: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.result.signoffSuccess',
-    ),
-    signoffFailure: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.result.signoffFailure',
-    ),
-  },
-  phases: {
-    setup: t('features.algorithms.runtime.scratchpadLab.pollardsRho.phases.setup'),
-    iterate: t('features.algorithms.runtime.scratchpadLab.pollardsRho.phases.iterate'),
-    complete: t('features.algorithms.runtime.scratchpadLab.pollardsRho.phases.complete'),
-  },
-  decisions: {
-    seeding: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.decisions.seeding',
-    ),
-    iterating: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.decisions.iterating',
-    ),
-    factorFound: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.decisions.factorFound',
-    ),
-    cycleTrap: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.decisions.cycleTrap',
-    ),
-    exhausted: t(
-      'features.algorithms.runtime.scratchpadLab.pollardsRho.decisions.exhausted',
-    ),
-  },
-  captions: {
-    setup: t('features.algorithms.runtime.scratchpadLab.pollardsRho.captions.setup'),
-    step: t('features.algorithms.runtime.scratchpadLab.pollardsRho.captions.step'),
-    result: t('features.algorithms.runtime.scratchpadLab.pollardsRho.captions.result'),
-  },
 } as const;
 
-const SECTION_MARKERS = {
-  setup: '①',
-  step: '②',
-  result: '✓',
-  failure: '✗',
-} as const;
+const CALCULATION_INDENT = 1;
+const RESULT_MARKER = '✓';
+const NO_RESULT_MARKER = '×';
 
 type LineBuilder = {
   readonly id: string;
@@ -107,115 +29,59 @@ type LineBuilder = {
   readonly annotation: ScratchpadLine['annotation'];
 };
 
-function gcd(a: number, b: number): number {
-  let x = Math.abs(a);
-  let y = Math.abs(b);
-  while (y !== 0) {
-    [x, y] = [y, x % y];
-  }
-  return x;
-}
-
-interface IterationRow {
+interface FloydRow {
   readonly index: number;
+  readonly previousX: number;
+  readonly previousY: number;
   readonly x: number;
+  readonly yMid: number;
   readonly y: number;
   readonly diff: number;
-  readonly g: number;
+  readonly gcd: number;
 }
 
-type Outcome =
-  | { readonly kind: 'factor'; readonly rows: readonly IterationRow[]; readonly factor: number }
-  | { readonly kind: 'cycle'; readonly rows: readonly IterationRow[] }
-  | { readonly kind: 'exhausted'; readonly rows: readonly IterationRow[] };
+type FloydOutcome =
+  | {
+      readonly kind: 'factor';
+      readonly rows: readonly FloydRow[];
+      readonly factor: number;
+    }
+  | {
+      readonly kind: 'cycle';
+      readonly rows: readonly FloydRow[];
+    }
+  | {
+      readonly kind: 'exhausted';
+      readonly rows: readonly FloydRow[];
+    };
 
-/** Drive the tortoise-hare iteration up to `maxIterations`. Returns a
- *  record describing how the run ended plus every intermediate row so
- *  the generator can replay them as scratchpad lines. */
-function runTortoiseHare(
-  n: number,
-  c: number,
-  x0: number,
-  maxIterations: number,
-): Outcome {
-  const f = (x: number) => (x * x + c) % n;
-  let x = x0;
-  let y = x0;
-  const rows: IterationRow[] = [];
-  for (let i = 1; i <= maxIterations; i++) {
-    x = f(x);
-    y = f(f(y));
-    const diff = Math.abs(x - y);
-    const g = gcd(diff, n);
-    rows.push({ index: i, x, y, diff, g });
-    if (g > 1 && g < n) {
-      return { kind: 'factor', rows, factor: g };
-    }
-    if (g === n) {
-      return { kind: 'cycle', rows };
-    }
-  }
-  return { kind: 'exhausted', rows };
+interface BrentBatchRow {
+  readonly y: number;
+  readonly diff: number;
+  readonly q: number;
 }
 
-export function* pollardsRhoGenerator(
-  scenario: PollardsRhoScenario,
-): Generator<SortStep> {
-  const { n, c, x0, maxIterations } = scenario;
+interface BrentBatch {
+  readonly r: number;
+  readonly x: number;
+  readonly rows: readonly BrentBatchRow[];
+  readonly gcd: number;
+}
+
+type BrentOutcome =
+  | {
+      readonly kind: 'factor';
+      readonly batches: readonly BrentBatch[];
+      readonly factor: number;
+    }
+  | {
+      readonly kind: 'cycle' | 'exhausted';
+      readonly batches: readonly BrentBatch[];
+    };
+
+export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<SortStep> {
   const presetLabel = scenario.presetLabel;
-  const outcome = runTortoiseHare(n, c, x0, maxIterations);
-
-  const lineBuilders: LineBuilder[] = [
-    {
-      id: 'goal',
-      kind: 'goal',
-      indent: 0,
-      marker: null,
-      caption: null,
-      captionPinned: true,
-      content: i18nText(I18N.goal, { n }),
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-pre',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'rule',
-      kind: 'note',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: I18N.rule,
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-post',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-  ];
-
-  const globalInvariant: ScratchpadMargin = {
-    id: 'invariant',
-    anchorLineId: null,
-    text: I18N.invariant,
-    tone: 'invariant',
-  };
-
+  const lineBuilders: LineBuilder[] = [];
   let stepIndex = 0;
 
   function snapshot(opts: {
@@ -223,10 +89,8 @@ export function* pollardsRhoGenerator(
     readonly decision: ScratchpadLabTraceState['decisionLabel'];
     readonly tone: ScratchpadLabTraceState['tone'];
     readonly currentLineId: string;
-    readonly transientMargin: ScratchpadMargin | null;
-    readonly resultLabel: ScratchpadLabTraceState['resultLabel'];
   }): ScratchpadLabTraceState {
-    const currentIdx = lineBuilders.findIndex((l) => l.id === opts.currentLineId);
+    const currentIdx = lineBuilders.findIndex((line) => line.id === opts.currentLineId);
     const lines: ScratchpadLine[] = lineBuilders.map((builder, index) => {
       const state: ScratchpadLineState = index === currentIdx ? 'current' : 'settled';
       return {
@@ -242,8 +106,7 @@ export function* pollardsRhoGenerator(
         state,
       };
     });
-    const margins: ScratchpadMargin[] = [globalInvariant];
-    if (opts.transientMargin) margins.push(opts.transientMargin);
+
     return {
       mode: 'pollards-rho',
       modeLabel: I18N.modeLabel,
@@ -253,175 +116,643 @@ export function* pollardsRhoGenerator(
       taskPrompt: scenario.taskPrompt ?? null,
       tone: opts.tone,
       lines,
-      margins,
-      resultLabel: opts.resultLabel,
+      margins: [],
+      resultLabel: null,
       iteration: stepIndex,
     };
   }
 
-  // ---------- Setup: formula + seeds ----------
-  lineBuilders.push({
-    id: 'setup-formula',
-    kind: 'equation',
-    indent: 0,
-    marker: SECTION_MARKERS.setup,
-    caption: I18N.captions.setup,
-    captionPinned: true,
-    content: i18nText(I18N.setup.formula, { c, n }),
-    instruction: i18nText(I18N.setup.formulaInstruction, { c, n }),
-    annotation: null,
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 1,
-    description: i18nText(I18N.setup.formulaInstruction, { c, n }),
-    state: snapshot({
-      phase: I18N.phases.setup,
-      decision: I18N.decisions.seeding,
-      tone: 'setup',
-      currentLineId: 'setup-formula',
-      transientMargin: null,
-      resultLabel: null,
-    }),
-  });
-
-  lineBuilders.push({
-    id: 'setup-seeds',
-    kind: 'equation',
-    indent: 0,
-    marker: null,
-    caption: null,
-    content: i18nText(I18N.setup.seeds, { x0 }),
-    instruction: null,
-    annotation: i18nText(I18N.setup.seedsAnnotation, { x0 }),
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 2,
-    description: i18nText(I18N.setup.seeds, { x0 }),
-    state: snapshot({
-      phase: I18N.phases.setup,
-      decision: I18N.decisions.seeding,
-      tone: 'setup',
-      currentLineId: 'setup-seeds',
-      transientMargin: null,
-      resultLabel: null,
-    }),
-  });
-
-  // ---------- Iteration table ----------
-  for (let i = 0; i < outcome.rows.length; i++) {
-    const row = outcome.rows[i];
-    const rowId = `iter-${row.index}`;
-    const isLastRow = i === outcome.rows.length - 1;
-    lineBuilders.push({
-      id: rowId,
-      kind: 'substitute',
-      indent: 1,
-      marker: SECTION_MARKERS.step,
-      caption: I18N.captions.step,
-      captionPinned: isLastRow,
-      content: i18nText(I18N.step.line, {
-        i: row.index,
-        x: row.x,
-        y: row.y,
-        diff: row.diff,
-        g: row.g,
-      }),
-      instruction: i18nText(I18N.step.instruction, { i: row.index }),
-      annotation: i18nText(I18N.step.annotation, { diff: row.diff, n, g: row.g }),
-    });
+  function appendStep(
+    builder: LineBuilder,
+    opts: {
+      readonly activeCodeLine: number;
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+      readonly tone: ScratchpadLabTraceState['tone'];
+    },
+  ): SortStep {
+    lineBuilders.push(builder);
     stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 3,
-      description: i18nText(I18N.step.line, {
-        i: row.index,
-        x: row.x,
-        y: row.y,
-        diff: row.diff,
-        g: row.g,
-      }),
-      state: snapshot({
-        phase: I18N.phases.iterate,
-        decision: I18N.decisions.iterating,
-        tone: 'compute',
-        currentLineId: rowId,
-        transientMargin: null,
-        resultLabel: null,
-      }),
+    return createScratchpadLabStep({
+      activeCodeLine: opts.activeCodeLine,
+      description: builder.content,
+      state: snapshot({ ...opts, currentLineId: builder.id }),
     });
   }
 
-  // ---------- Result ----------
-  if (outcome.kind === 'factor') {
-    lineBuilders.push({
-      id: 'result',
-      kind: 'result',
-      indent: 0,
-      marker: SECTION_MARKERS.result,
-      caption: I18N.captions.result,
-      captionPinned: true,
-      content: i18nText(I18N.result.success, {
-        n,
-        factor: outcome.factor,
-        quotient: Math.floor(n / outcome.factor),
-      }),
+  function paperLine(opts: {
+    readonly id: string;
+    readonly kind: ScratchpadLine['kind'];
+    readonly content: ScratchpadLine['content'];
+    readonly indent?: number;
+    readonly marker?: string | null;
+  }): LineBuilder {
+    const defaultIndent =
+      opts.kind === 'equation' || opts.kind === 'substitute' || opts.kind === 'decision'
+        ? CALCULATION_INDENT
+        : 0;
+    return {
+      id: opts.id,
+      kind: opts.kind,
+      indent: opts.indent ?? defaultIndent,
+      marker: opts.marker ?? null,
+      caption: null,
+      captionPinned: false,
+      content: opts.content,
       instruction: null,
       annotation: null,
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 4,
-      description: i18nText(I18N.result.success, {
-        n,
-        factor: outcome.factor,
-        quotient: Math.floor(n / outcome.factor),
-      }),
-      state: snapshot({
-        phase: I18N.phases.complete,
-        decision: I18N.decisions.factorFound,
-        tone: 'complete',
-        currentLineId: 'result',
-        transientMargin: null,
-        resultLabel: i18nText(I18N.result.signoffSuccess, {
-          n,
-          factor: outcome.factor,
-          quotient: Math.floor(n / outcome.factor),
-        }),
-      }),
-    });
-    return;
+    };
   }
 
-  const failureContent =
-    outcome.kind === 'cycle'
-      ? i18nText(I18N.result.failure, { n, c })
-      : i18nText(I18N.result.exhausted, { n, c, max: maxIterations });
-  const decision =
-    outcome.kind === 'cycle' ? I18N.decisions.cycleTrap : I18N.decisions.exhausted;
+  function section(id: string, content: string): LineBuilder {
+    return paperLine({ id, kind: 'note', content });
+  }
 
-  lineBuilders.push({
-    id: 'result',
-    kind: 'result',
-    indent: 0,
-    marker: SECTION_MARKERS.failure,
-    caption: I18N.captions.result,
-    captionPinned: true,
-    content: failureContent,
-    instruction: null,
-    annotation: null,
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 5,
-    description: failureContent,
-    state: snapshot({
-      phase: I18N.phases.complete,
-      decision,
-      tone: 'complete',
-      currentLineId: 'result',
-      transientMargin: null,
-      resultLabel: i18nText(I18N.result.signoffFailure, { n, c }),
-    }),
-  });
+  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'note', content, indent });
+  }
+
+  function math(id: string, expression: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'equation',
+      indent,
+      content: `[[math]]${expression}[[/math]]`,
+    });
+  }
+
+  function resultSection(): LineBuilder {
+    return paperLine({
+      id: 'section-result',
+      kind: 'result',
+      marker: RESULT_MARKER,
+      content: 'Wynik',
+    });
+  }
+
+  function noResultSection(content = 'Nieudany przebieg'): LineBuilder {
+    return paperLine({
+      id: 'section-no-result',
+      kind: 'result',
+      marker: NO_RESULT_MARKER,
+      content,
+    });
+  }
+
+  function* emit(builder: LineBuilder, activeCodeLine = 1): Generator<SortStep> {
+    yield appendStep(builder, {
+      activeCodeLine,
+      phase: phaseFor(builder),
+      decision: decisionFor(builder),
+      tone: toneFor(builder),
+    });
+  }
+
+  function* emitFloydParameters(opts: {
+    readonly idPrefix: string;
+    readonly n: number;
+    readonly c: number;
+    readonly x0: number;
+    readonly functionName?: string;
+  }): Generator<SortStep> {
+    const functionName = opts.functionName ?? 'f';
+    yield* emit(math(`${opts.idPrefix}-n`, `n = ${opts.n}`));
+    yield* emit(math(`${opts.idPrefix}-x0`, `x_0 = ${opts.x0}`));
+    yield* emit(
+      math(
+        `${opts.idPrefix}-function`,
+        `${functionName}(x) = x^2 + ${opts.c} \\;\\mathrm{mod}\\; ${opts.n}`,
+      ),
+    );
+  }
+
+  function* emitFloydIterations(opts: {
+    readonly idPrefix: string;
+    readonly n: number;
+    readonly functionName: string;
+    readonly rows: readonly FloydRow[];
+  }): Generator<SortStep> {
+    yield* emit(section(`${opts.idPrefix}-iterations`, 'Iteracje'));
+    for (const row of opts.rows) {
+      yield* emit(note(`${opts.idPrefix}-iter-${row.index}-label`, `i = ${row.index}`));
+      yield* emit(
+        math(
+          `${opts.idPrefix}-iter-${row.index}-x`,
+          `x = ${opts.functionName}(${row.previousX}) = ${row.x}`,
+        ),
+      );
+      yield* emit(
+        math(
+          `${opts.idPrefix}-iter-${row.index}-y`,
+          `y = ${opts.functionName}(${opts.functionName}(${row.previousY})) = ${opts.functionName}(${row.yMid}) = ${row.y}`,
+        ),
+      );
+      yield* emit(
+        math(
+          `${opts.idPrefix}-iter-${row.index}-diff`,
+          `\\lvert x - y \\rvert = \\lvert ${row.x} - ${row.y} \\rvert = ${row.diff}`,
+        ),
+      );
+      yield* emit(
+        math(
+          `${opts.idPrefix}-iter-${row.index}-gcd`,
+          `d = \\gcd(${row.diff}, ${opts.n}) = ${row.gcd}`,
+        ),
+      );
+    }
+  }
+
+  function* emitFloydRun(opts: {
+    readonly idPrefix: string;
+    readonly title: string;
+    readonly n: number;
+    readonly c: number;
+    readonly x0: number;
+    readonly functionName?: string;
+  }): Generator<SortStep, FloydOutcome, unknown> {
+    const functionName = opts.functionName ?? 'f';
+    const outcome = runFloyd(opts.n, opts.c, opts.x0, scenario.maxIterations);
+    yield* emit(section(`${opts.idPrefix}-section`, opts.title));
+    yield* emitFloydParameters({ ...opts, functionName });
+    yield* emitFloydIterations({
+      idPrefix: opts.idPrefix,
+      n: opts.n,
+      functionName,
+      rows: outcome.rows,
+    });
+    return outcome;
+  }
+
+  function* emitSplit(opts: {
+    readonly idPrefix: string;
+    readonly n: number;
+    readonly factor: number;
+    readonly includeNonTrivialCheck?: boolean;
+  }): Generator<SortStep> {
+    const quotient = opts.n / opts.factor;
+    yield* emit(section(`${opts.idPrefix}-split`, 'Rozbicie'));
+    if (opts.includeNonTrivialCheck) {
+      yield* emit(math(`${opts.idPrefix}-nontrivial`, `1 < ${opts.factor} < ${opts.n}`));
+      yield* emit(note(`${opts.idPrefix}-factor-label`, 'Znaleziono nietrywialny dzielnik:'));
+      yield* emit(math(`${opts.idPrefix}-factor`, `d = ${opts.factor}`));
+      yield* emit(note(`${opts.idPrefix}-quotient-label`, 'Drugi czynnik:'));
+    } else {
+      yield* emit(math(`${opts.idPrefix}-factor`, `d = ${opts.factor}`));
+    }
+    yield* emit(math(`${opts.idPrefix}-quotient`, `${opts.n} / ${opts.factor} = ${quotient}`));
+  }
+
+  function* emitBasicFloyd(): Generator<SortStep> {
+    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emitFloydParameters({
+      idPrefix: 'basic-params',
+      n: scenario.n,
+      c: scenario.c,
+      x0: scenario.x0,
+    });
+    const outcome = runFloyd(scenario.n, scenario.c, scenario.x0, scenario.maxIterations);
+    yield* emitFloydIterations({
+      idPrefix: 'basic',
+      n: scenario.n,
+      functionName: 'f',
+      rows: outcome.rows,
+    });
+
+    if (outcome.kind !== 'factor') {
+      yield* emit(noResultSection());
+      return;
+    }
+
+    yield* emitSplit({
+      idPrefix: 'basic',
+      n: scenario.n,
+      factor: outcome.factor,
+      includeNonTrivialCheck: true,
+    });
+    yield* emit(resultSection());
+    yield* emit(
+      math('basic-result', `${scenario.n} = ${outcome.factor} * ${scenario.n / outcome.factor}`),
+    );
+  }
+
+  function* emitRetryAfterCycle(): Generator<SortStep> {
+    const firstOutcome = yield* emitFloydRun({
+      idPrefix: 'retry-first',
+      title: 'Próba 1',
+      n: scenario.n,
+      c: scenario.cFail,
+      x0: scenario.x0,
+      functionName: 'f',
+    });
+
+    const lastFirstRow = firstOutcome.rows.at(-1);
+    yield* emit(section('retry-first-conclusion-section', 'Wniosek po próbie 1'));
+    yield* emit(math('retry-first-cycle', `d = ${lastFirstRow?.gcd ?? scenario.n} = n`));
+    yield* emit(
+      note(
+        'retry-first-cycle-note',
+        'To nie jest nietrywialny dzielnik. Trafiliśmy w cykl w taki sposób, że x = y modulo n, więc gcd(0, n) oddaje całe n. Algorytm nie znalazł faktora.',
+      ),
+    );
+
+    const retryOutcome = yield* emitFloydRun({
+      idPrefix: 'retry-second',
+      title: 'Próba 2',
+      n: scenario.n,
+      c: scenario.cRetry,
+      x0: scenario.x0,
+      functionName: 'g',
+    });
+
+    if (retryOutcome.kind !== 'factor') {
+      yield* emit(noResultSection());
+      return;
+    }
+
+    yield* emitSplit({ idPrefix: 'retry-second', n: scenario.n, factor: retryOutcome.factor });
+    yield* emit(resultSection());
+    yield* emit(
+      math(
+        'retry-result',
+        `${scenario.n} = ${retryOutcome.factor} * ${scenario.n / retryOutcome.factor}`,
+      ),
+    );
+  }
+
+  function* emitBrentBatchGcd(): Generator<SortStep> {
+    const outcome = runBrent(
+      scenario.n,
+      scenario.c,
+      scenario.x0,
+      scenario.batchSize,
+      scenario.maxIterations,
+    );
+
+    yield* emit(section('brent-parameters', 'Parametry'));
+    yield* emitFloydParameters({
+      idPrefix: 'brent-params',
+      n: scenario.n,
+      c: scenario.c,
+      x0: scenario.x0,
+    });
+    yield* emit(math('brent-m', `m = ${scenario.batchSize}`));
+
+    const batchesByR = groupBatchesByR(outcome.batches);
+    for (const batch of outcome.batches) {
+      const sameR = batchesByR.get(batch.r) ?? [];
+      const batchIndex = sameR.indexOf(batch);
+      const label =
+        sameR.length > 1
+          ? `Blok r = ${batch.r}, ${batchIndex === 0 ? 'pierwsza' : 'druga'} paczka`
+          : `Blok r = ${batch.r}`;
+      yield* emit(section(`brent-r-${batch.r}-${batchIndex}`, label));
+      yield* emit(math(`brent-r-${batch.r}-${batchIndex}-x`, `x = ${batch.x}`));
+      for (let i = 0; i < batch.rows.length; i++) {
+        const row = batch.rows[i];
+        yield* emit(
+          math(
+            `brent-r-${batch.r}-${batchIndex}-row-${i}`,
+            `y = ${row.y},\\; \\lvert x - y \\rvert = ${row.diff},\\; q = ${row.q} \\;(\\mathrm{mod}\\; ${scenario.n})`,
+          ),
+        );
+      }
+      const q = batch.rows.at(-1)?.q ?? 0;
+      yield* emit(
+        math(`brent-r-${batch.r}-${batchIndex}-gcd`, `\\gcd(${q}, ${scenario.n}) = ${batch.gcd}`),
+      );
+    }
+
+    if (outcome.kind !== 'factor') {
+      yield* emit(noResultSection());
+      return;
+    }
+
+    yield* emitSplit({ idPrefix: 'brent', n: scenario.n, factor: outcome.factor });
+    yield* emit(resultSection());
+    yield* emit(
+      math('brent-result', `${scenario.n} = ${outcome.factor} * ${scenario.n / outcome.factor}`),
+    );
+  }
+
+  function* emitRecursiveFactorization(): Generator<SortStep> {
+    const factors: number[] = [];
+    const queue: number[] = [scenario.n];
+    let callIndex = 0;
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      if (isPrime(current)) {
+        factors.push(current);
+        continue;
+      }
+      callIndex += 1;
+      const outcome = yield* emitFloydRun({
+        idPrefix: `recursive-call-${callIndex}`,
+        title: `${ordinalCall(callIndex)} wywołanie`,
+        n: current,
+        c: scenario.c,
+        x0: scenario.x0,
+      });
+      if (outcome.kind !== 'factor') {
+        factors.push(current);
+        continue;
+      }
+      const quotient = current / outcome.factor;
+      yield* emit(
+        math(
+          `recursive-call-${callIndex}-quotient`,
+          `${current} / ${outcome.factor} = ${quotient}`,
+        ),
+      );
+      yield* emit(
+        note(`recursive-call-${callIndex}-split-label`, `${ordinalSplit(callIndex)} rozbicie:`),
+      );
+      yield* emit(
+        math(`recursive-call-${callIndex}-split`, `${current} = ${outcome.factor} * ${quotient}`),
+      );
+
+      if (isPrime(outcome.factor)) factors.push(outcome.factor);
+      else queue.push(outcome.factor);
+      if (isPrime(quotient)) factors.push(quotient);
+      else queue.push(quotient);
+    }
+
+    yield* emit(resultSection());
+    yield* emit(math('recursive-result-discovery', `${scenario.n} = ${factors.join(' * ')}`));
+    yield* emit(note('recursive-result-sorted-label', 'Po uporządkowaniu:'));
+    yield* emit(
+      math(
+        'recursive-result-sorted',
+        `${scenario.n} = ${[...factors].sort((a, b) => a - b).join(' * ')}`,
+      ),
+    );
+  }
+
+  function* emitCompositeFactorSplit(): Generator<SortStep> {
+    const firstOutcome = yield* emitFloydRun({
+      idPrefix: 'composite-first-call',
+      title: 'Pierwsze wywołanie',
+      n: scenario.n,
+      c: scenario.c,
+      x0: scenario.x0,
+    });
+
+    if (firstOutcome.kind !== 'factor') {
+      yield* emit(noResultSection());
+      return;
+    }
+
+    const firstFactor = firstOutcome.factor;
+    const quotient = scenario.n / firstFactor;
+    yield* emit(section('composite-first-split-section', 'Pierwsze rozbicie'));
+    yield* emit(math('composite-first-factor', `d = ${firstFactor}`));
+    yield* emit(math('composite-first-quotient', `${scenario.n} / ${firstFactor} = ${quotient}`));
+    yield* emit(math('composite-first-product', `${scenario.n} = ${firstFactor} * ${quotient}`));
+
+    const factors: number[] = [];
+    if (isPrime(firstFactor)) {
+      factors.push(firstFactor);
+    } else {
+      yield* emit(
+        note(
+          'composite-factor-not-prime',
+          `Dzielnik ${firstFactor} nie jest pierwszy, więc nie wolno kończyć. No chyba że celem jest oddanie rozwiązania, które wygląda jak niedokończona kanapka.`,
+        ),
+      );
+      const splitFactorOutcome = yield* emitFloydRun({
+        idPrefix: 'composite-factor-call',
+        title: `Rozbicie dzielnika ${firstFactor}`,
+        n: firstFactor,
+        c: scenario.cForCompositeFactor,
+        x0: scenario.x0,
+        functionName: 'g',
+      });
+      if (splitFactorOutcome.kind === 'factor') {
+        const subQuotient = firstFactor / splitFactorOutcome.factor;
+        yield* emit(
+          math(
+            'composite-factor-quotient',
+            `${firstFactor} / ${splitFactorOutcome.factor} = ${subQuotient}`,
+          ),
+        );
+        yield* emit(
+          math(
+            'composite-factor-product',
+            `${firstFactor} = ${splitFactorOutcome.factor} * ${subQuotient}`,
+          ),
+        );
+        factors.push(splitFactorOutcome.factor, subQuotient);
+      } else {
+        factors.push(firstFactor);
+      }
+    }
+
+    if (isPrime(quotient)) {
+      factors.push(quotient);
+    } else {
+      const splitQuotientOutcome = yield* emitFloydRun({
+        idPrefix: 'composite-quotient-call',
+        title: `Rozbicie ilorazu ${quotient}`,
+        n: quotient,
+        c: scenario.c,
+        x0: scenario.x0,
+      });
+      if (splitQuotientOutcome.kind === 'factor') {
+        const subQuotient = quotient / splitQuotientOutcome.factor;
+        yield* emit(
+          math(
+            'composite-quotient-quotient',
+            `${quotient} / ${splitQuotientOutcome.factor} = ${subQuotient}`,
+          ),
+        );
+        yield* emit(
+          math(
+            'composite-quotient-product',
+            `${quotient} = ${splitQuotientOutcome.factor} * ${subQuotient}`,
+          ),
+        );
+        factors.push(splitQuotientOutcome.factor, subQuotient);
+      } else {
+        factors.push(quotient);
+      }
+    }
+
+    yield* emit(resultSection());
+    yield* emit(math('composite-result-discovery', `${scenario.n} = ${factors.join(' * ')}`));
+    yield* emit(note('composite-result-sorted-label', 'Po uporządkowaniu:'));
+    yield* emit(
+      math(
+        'composite-result-sorted',
+        `${scenario.n} = ${[...factors].sort((a, b) => a - b).join(' * ')}`,
+      ),
+    );
+  }
+
+  switch (scenario.notebookFlow.kind) {
+    case 'floyd-basic':
+      yield* emitBasicFloyd();
+      return;
+    case 'retry-after-cycle':
+      yield* emitRetryAfterCycle();
+      return;
+    case 'brent-batch-gcd':
+      yield* emitBrentBatchGcd();
+      return;
+    case 'recursive-factorization':
+      yield* emitRecursiveFactorization();
+      return;
+    case 'composite-factor-split':
+      yield* emitCompositeFactorSplit();
+      return;
+  }
+}
+
+function runFloyd(n: number, c: number, x0: number, maxIterations: number): FloydOutcome {
+  const f = (value: number) => (value * value + c) % n;
+  let x = x0;
+  let y = x0;
+  const rows: FloydRow[] = [];
+
+  for (let index = 1; index <= maxIterations; index++) {
+    const previousX = x;
+    const previousY = y;
+    x = f(x);
+    const yMid = f(y);
+    y = f(yMid);
+    const diff = Math.abs(x - y);
+    const rowGcd = gcd(diff, n);
+    rows.push({ index, previousX, previousY, x, yMid, y, diff, gcd: rowGcd });
+    if (rowGcd > 1 && rowGcd < n) {
+      return { kind: 'factor', rows, factor: rowGcd };
+    }
+    if (rowGcd === n) {
+      return { kind: 'cycle', rows };
+    }
+  }
+
+  return { kind: 'exhausted', rows };
+}
+
+function runBrent(
+  n: number,
+  c: number,
+  x0: number,
+  batchSize: number,
+  maxIterations: number,
+): BrentOutcome {
+  const f = (value: number) => (value * value + c) % n;
+  let y = x0;
+  let r = 1;
+  let g = 1;
+  let iterations = 0;
+  const batches: BrentBatch[] = [];
+
+  while (g === 1 && iterations < maxIterations) {
+    const x = y;
+    for (let i = 0; i < r; i++) {
+      y = f(y);
+    }
+
+    let k = 0;
+    while (k < r && g === 1 && iterations < maxIterations) {
+      let q = 1;
+      const rows: BrentBatchRow[] = [];
+      const limit = Math.min(batchSize, r - k);
+
+      for (let i = 0; i < limit; i++) {
+        y = f(y);
+        const diff = Math.abs(x - y);
+        q = (q * diff) % n;
+        rows.push({ y, diff, q });
+        iterations += 1;
+      }
+
+      g = gcd(q, n);
+      batches.push({ r, x, rows, gcd: g });
+      k += batchSize;
+    }
+
+    r *= 2;
+  }
+
+  if (g > 1 && g < n) return { kind: 'factor', batches, factor: g };
+  if (g === n) return { kind: 'cycle', batches };
+  return { kind: 'exhausted', batches };
+}
+
+function groupBatchesByR(batches: readonly BrentBatch[]): Map<number, BrentBatch[]> {
+  const result = new Map<number, BrentBatch[]>();
+  for (const batch of batches) {
+    const group = result.get(batch.r) ?? [];
+    group.push(batch);
+    result.set(batch.r, group);
+  }
+  return result;
+}
+
+function phaseFor(builder: LineBuilder): string {
+  if (builder.id.includes('result')) return 'Wynik';
+  if (builder.id.includes('split') || builder.id.includes('quotient')) return 'Rozbicie';
+  if (builder.id.includes('iter') || builder.id.includes('brent-r')) return 'Iteracje';
+  if (builder.id.includes('params') || builder.id.includes('parameters')) return 'Parametry';
+  return 'Obliczenia';
+}
+
+function decisionFor(builder: LineBuilder): string {
+  if (builder.id === 'section-no-result') return 'Przebieg nie znalazł faktora.';
+  if (builder.kind === 'result') return 'Zapisujemy wynik.';
+  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
+  return 'Liczymy kolejny wiersz.';
+}
+
+function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
+  if (builder.kind === 'result')
+    return builder.id === 'section-no-result' ? 'conclude' : 'complete';
+  if (builder.kind === 'note') return 'setup';
+  return 'compute';
+}
+
+function ordinalCall(index: number): string {
+  switch (index) {
+    case 1:
+      return 'Pierwsze';
+    case 2:
+      return 'Drugie';
+    case 3:
+      return 'Trzecie';
+    default:
+      return `${index}.`;
+  }
+}
+
+function ordinalSplit(index: number): string {
+  switch (index) {
+    case 1:
+      return 'Pierwsze';
+    case 2:
+      return 'Drugie';
+    case 3:
+      return 'Trzecie';
+    default:
+      return `${index}.`;
+  }
+}
+
+function isPrime(value: number): boolean {
+  if (value < 2) return false;
+  if (value === 2) return true;
+  if (value % 2 === 0) return false;
+  for (let divisor = 3; divisor * divisor <= value; divisor += 2) {
+    if (value % divisor === 0) return false;
+  }
+  return true;
+}
+
+function gcd(a: number, b: number): number {
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y !== 0) {
+    [x, y] = [y, x % y];
+  }
+  return x;
 }

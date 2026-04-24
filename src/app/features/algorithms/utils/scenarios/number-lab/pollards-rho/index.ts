@@ -1,23 +1,29 @@
-import { POLLARDS_RHO_CLASSIC_8051_TASK } from './classic-8051.task';
-import { POLLARDS_RHO_CYCLE_FAILURE_TASK } from './cycle-failure.task';
-import { POLLARDS_RHO_QUICK_FACTOR_TASK } from './quick-factor.task';
-import { PollardsRhoTask } from './pollards-rho-task';
+import { POLLARDS_RHO_BRENT_BATCH_GCD_TASK } from './brent-batch-gcd.task';
+import { POLLARDS_RHO_COMPOSITE_FACTOR_SPLIT_TASK } from './composite-factor-split.task';
+import { POLLARDS_RHO_RECURSIVE_FACTORIZATION_TASK } from './recursive-factorization.task';
+import { POLLARDS_RHO_RETRY_AFTER_CYCLE_TASK } from './retry-after-cycle.task';
+import { POLLARDS_RHO_SHORT_TASK } from './short.task';
+import type { PollardsRhoTask } from './pollards-rho-task';
 
 export {
-  POLLARDS_RHO_TASK_INPUT_SCHEMA,
+  POLLARDS_RHO_BRENT_INPUT_SCHEMA,
+  POLLARDS_RHO_COMPOSITE_SPLIT_INPUT_SCHEMA,
+  POLLARDS_RHO_FLOYD_INPUT_SCHEMA,
   POLLARDS_RHO_MAX_ITERATIONS,
+  POLLARDS_RHO_RETRY_INPUT_SCHEMA,
 } from './pollards-rho-task';
-export type { PollardsRhoTask, PollardsRhoTaskValues } from './pollards-rho-task';
+export type {
+  PollardsRhoNotebookFlow,
+  PollardsRhoTask,
+  PollardsRhoTaskValues,
+} from './pollards-rho-task';
 
-/** Roster of Pollard's rho tasks, ordered from the fastest success
- *  (one iteration) through a textbook mid-size example to the
- *  failure mode where rho cycles without yielding a factor. More
- *  tasks drop next to these as their own `<slug>.task.ts` file and
- *  get an entry below. */
 export const POLLARDS_RHO_TASKS: readonly PollardsRhoTask[] = [
-  POLLARDS_RHO_QUICK_FACTOR_TASK,
-  POLLARDS_RHO_CLASSIC_8051_TASK,
-  POLLARDS_RHO_CYCLE_FAILURE_TASK,
+  POLLARDS_RHO_SHORT_TASK,
+  POLLARDS_RHO_RETRY_AFTER_CYCLE_TASK,
+  POLLARDS_RHO_BRENT_BATCH_GCD_TASK,
+  POLLARDS_RHO_RECURSIVE_FACTORIZATION_TASK,
+  POLLARDS_RHO_COMPOSITE_FACTOR_SPLIT_TASK,
 ];
 
-export const DEFAULT_POLLARDS_RHO_TASK_ID = 'quick-factor';
+export const DEFAULT_POLLARDS_RHO_TASK_ID = 'short';

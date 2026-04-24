@@ -1,42 +1,86 @@
-import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+import type { NotebookTask } from '../../../../models/notebook-task';
+import type { TaskInputSchema } from '../../../../models/task';
 
-import { NotebookTask } from '../../../../models/notebook-task';
-import { TaskInputSchema } from '../../../../models/task';
-
-/** Input values for a Pollard's rho task.
- *  - `n` is the integer being factored.
- *  - `c` is the constant in the iteration `f(x) = x² + c mod n`.
- *  - `x0` is the starting value (also used as `y0`).
- *  The generator caps iterations internally so a failed run (no
- *  factor found, or cycle without a non-trivial gcd) still
- *  terminates gracefully. */
 export interface PollardsRhoTaskValues {
   readonly n: number;
-  readonly c: number;
   readonly x0: number;
+  readonly c?: number;
+  readonly c_fail?: number;
+  readonly c_retry?: number;
+  readonly m?: number;
+  readonly c_for_21?: number;
 }
 
-export type PollardsRhoTask = NotebookTask<PollardsRhoTaskValues>;
+export type PollardsRhoNotebookFlow =
+  | { readonly kind: 'floyd-basic' }
+  | { readonly kind: 'retry-after-cycle' }
+  | { readonly kind: 'brent-batch-gcd' }
+  | { readonly kind: 'recursive-factorization' }
+  | { readonly kind: 'composite-factor-split' };
 
-export const POLLARDS_RHO_TASK_INPUT_SCHEMA: TaskInputSchema<PollardsRhoTaskValues> = {
-  n: {
+export interface PollardsRhoTask extends NotebookTask<PollardsRhoTaskValues> {
+  readonly notebookFlow: PollardsRhoNotebookFlow;
+}
+
+const N_FIELD = {
+  kind: 'int' as const,
+  label: 'n',
+  min: 4,
+};
+
+const X0_FIELD = {
+  kind: 'int' as const,
+  label: 'x0',
+  min: 1,
+};
+
+const C_FIELD = {
+  kind: 'int' as const,
+  label: 'c',
+  min: 1,
+};
+
+export const POLLARDS_RHO_FLOYD_INPUT_SCHEMA: TaskInputSchema<PollardsRhoTaskValues> = {
+  n: N_FIELD,
+  x0: X0_FIELD,
+  c: C_FIELD,
+};
+
+export const POLLARDS_RHO_RETRY_INPUT_SCHEMA: TaskInputSchema<PollardsRhoTaskValues> = {
+  n: N_FIELD,
+  x0: X0_FIELD,
+  c_fail: {
     kind: 'int',
-    label: t('features.algorithms.tasks.pollardsRho.values.n'),
-    min: 4,
-  },
-  c: {
-    kind: 'int',
-    label: t('features.algorithms.tasks.pollardsRho.values.c'),
+    label: 'c_fail',
     min: 1,
   },
-  x0: {
+  c_retry: {
     kind: 'int',
-    label: t('features.algorithms.tasks.pollardsRho.values.x0'),
+    label: 'c_retry',
     min: 1,
   },
 };
 
-/** Maximum tortoise-hare iterations per task. Beyond this the scratchpad
- *  bails out with a "no factor / restart" message so the narrative
- *  never runs indefinitely. */
+export const POLLARDS_RHO_BRENT_INPUT_SCHEMA: TaskInputSchema<PollardsRhoTaskValues> = {
+  n: N_FIELD,
+  x0: X0_FIELD,
+  c: C_FIELD,
+  m: {
+    kind: 'int',
+    label: 'm',
+    min: 1,
+  },
+};
+
+export const POLLARDS_RHO_COMPOSITE_SPLIT_INPUT_SCHEMA: TaskInputSchema<PollardsRhoTaskValues> = {
+  n: N_FIELD,
+  x0: X0_FIELD,
+  c: C_FIELD,
+  c_for_21: {
+    kind: 'int',
+    label: 'c_for_21',
+    min: 1,
+  },
+};
+
 export const POLLARDS_RHO_MAX_ITERATIONS = 50;

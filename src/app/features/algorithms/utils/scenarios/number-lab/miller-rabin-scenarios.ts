@@ -1,10 +1,9 @@
-import { TranslatableText } from '../../../../../core/i18n/translatable-text';
-import { notebookInstructionText } from '../../../models/notebook-task';
-import {
-  DEFAULT_MILLER_RABIN_TASK_ID,
-  MILLER_RABIN_TASKS,
+import type { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { DEFAULT_MILLER_RABIN_TASK_ID, MILLER_RABIN_TASKS } from './miller-rabin';
+import type {
+  MillerRabinNotebookFlow,
   MillerRabinTask,
-  parseWitnesses,
+  MillerRabinTaskValues,
 } from './miller-rabin';
 
 export interface MillerRabinPresetOption {
@@ -21,22 +20,12 @@ interface BaseScenario {
 
 export interface MillerRabinScenario extends BaseScenario {
   readonly kind: 'miller-rabin';
-  /** Odd integer being tested for primality. Must be ≥ 3. */
   readonly n: number;
-  /** Parsed, normalised witness bases — every value satisfies
-   *  `2 ≤ a < n`. Order controls the on-board narration sequence. */
-  readonly witnesses: readonly number[];
-  /** Exam-style prompt pulled from the active task's `instruction`
-   *  field — rendered as a "Task:" block atop the scratchpad. */
+  readonly bases: readonly number[];
+  readonly notebookFlow: MillerRabinNotebookFlow;
   readonly taskPrompt: TranslatableText | null;
 }
 
-/* Task definitions live in `./miller-rabin/` — one file per variant,
- *  each carrying its own title / summary / instruction / hints /
- *  difficulty. The exports below are thin adapters: legacy preset
- *  options are derived from the task list for any per-viz picker,
- *  and the scenario factory resolves a preset id against the same
- *  list instead of a local switch. */
 export const MILLER_RABIN_PRESETS: readonly MillerRabinPresetOption[] = MILLER_RABIN_TASKS.map(
   (task) => ({
     id: task.id,
@@ -59,18 +48,51 @@ export function createMillerRabinScenario(
     MILLER_RABIN_TASKS.find((candidate) => candidate.id === id) ??
     MILLER_RABIN_TASKS.find((candidate) => candidate.id === DEFAULT_MILLER_RABIN_TASK_ID) ??
     MILLER_RABIN_TASKS[0];
-  const values = customValues ?? task.defaultValues;
-  const witnesses = parseWitnesses(values.witnesses, values.n);
+  const values: MillerRabinTaskValues = { ...task.defaultValues, ...customValues };
+  const bases = values.base1 !== undefined ? [values.base1, values.base2 ?? 2] : [values.base ?? 2];
+
   return {
     kind: 'miller-rabin',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, {
-      n: values.n,
-      witnesses: witnesses.join(', '),
-    }),
+    taskPrompt: buildTaskPrompt(task.notebookFlow, values, bases),
+    notebookFlow: task.notebookFlow,
     n: values.n,
-    witnesses,
+    bases,
   };
+}
+
+function buildTaskPrompt(
+  flow: MillerRabinNotebookFlow,
+  values: MillerRabinTaskValues,
+  bases: readonly number[],
+): TranslatableText {
+  switch (flow.kind) {
+    case 'prime-pass':
+      return [
+        `Sprawdź, czy [[math]]${values.n}[[/math]] przechodzi test Millera-Rabina dla bazy [[math]]${bases[0]}[[/math]].`,
+        'Pokaż rozkład [[math]]n - 1[[/math]] oraz kolejne kwadraty modularne.',
+      ].join('\n');
+    case 'single-witness':
+      return [
+        `Sprawdź liczbę [[math]]${values.n}[[/math]] testem Millera-Rabina dla bazy [[math]]${bases[0]}[[/math]].`,
+        'Ustal, czy baza jest świadkiem złożoności.',
+      ].join('\n');
+    case 'strong-liar-multibase':
+      return [
+        `Liczba [[math]]${values.n}[[/math]] przechodzi test Millera-Rabina dla bazy [[math]]${bases[0]}[[/math]], ale nie przechodzi go dla bazy [[math]]${bases[1]}[[/math]].`,
+        'Pokaż oba testy i wyjaśnij, dlaczego jedna baza to za mało.',
+      ].join('\n');
+    case 'gcd-precheck':
+      return [
+        `Przed wykonaniem potęgowania modularnego sprawdź, czy baza [[math]]${bases[0]}[[/math]] jest względnie pierwsza z [[math]]${values.n}[[/math]].`,
+        'Jeśli nie, zakończ test bez liczenia [[math]]a^d \\; (\\mathrm{mod}\\; n)[[/math]].',
+      ].join('\n');
+    case 'sqrt-factor-leak':
+      return [
+        `Dla [[math]]n = ${values.n}[[/math]] i bazy [[math]]${bases[0]}[[/math]] wykonaj test Millera-Rabina.`,
+        'Gdy w ciągu kwadratów pojawi się nietrywialny pierwiastek z [[math]]1[[/math]], użyj [[math]]\\gcd(x - 1, n)[[/math]] oraz [[math]]\\gcd(x + 1, n)[[/math]] do odzyskania czynników.',
+      ].join('\n');
+  }
 }
