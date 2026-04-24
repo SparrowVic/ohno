@@ -1,17 +1,10 @@
-import { NgStyle, NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
+import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  ElementRef,
-  Injector,
-  PLATFORM_ID,
   computed,
-  effect,
   inject,
   input,
-  signal,
 } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
@@ -20,9 +13,7 @@ import { RouterLink } from '@angular/router';
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
-import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.service';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
-import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
 import { UiTag } from '../../../shared/components/ui-tag/ui-tag';
 import { MathText } from '../../../shared/components/math-text/math-text';
 import { AlgorithmCardPreview } from './algorithm-card-preview/algorithm-card-preview';
@@ -31,10 +22,15 @@ import {
   buildSemanticTags,
   CardMetric,
   createCardStyleVars,
-  createPrimaryBlobStyle,
-  createWashStyle,
   formatFacetLabel,
 } from './algorithm-card.utils/algorithm-card.utils';
+
+const DIFFICULTY_RANK: Record<Difficulty, number> = {
+  [Difficulty.Easy]: 1,
+  [Difficulty.Medium]: 2,
+  [Difficulty.Hard]: 3,
+  [Difficulty.UltraHard]: 4,
+};
 
 @Component({
   selector: 'app-algorithm-card',
@@ -42,7 +38,6 @@ import {
     NgStyle,
     NgTemplateOutlet,
     RouterLink,
-    ShaderCardEffect,
     AlgorithmCardPreview,
     RoadmapOverlayDirective,
     MathText,
@@ -52,24 +47,19 @@ import {
   styleUrl: './algorithm-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlgorithmCard implements AfterViewInit {
+export class AlgorithmCard {
   private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly hostRef = inject(ElementRef<HTMLElement>);
-  private readonly injector = inject(Injector);
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly shaderPool = inject(InsaneShaderPoolService);
-  private readonly inViewportState = signal(false);
-  private intersectionObserver: IntersectionObserver | null = null;
 
   readonly algorithm = input.required<AlgorithmItem>();
   readonly cardLink = computed(() => ['/algorithms', this.algorithm().id]);
   readonly isInsane = computed(() => this.algorithm().difficulty === Difficulty.UltraHard);
   readonly isImplemented = computed(() => this.algorithm().implemented);
-  readonly showShader = computed(
-    () => this.isInsane() && this.inViewportState() && this.shaderPool.has(this.algorithm().id),
-  );
+  readonly difficultyRank = computed(() => DIFFICULTY_RANK[this.algorithm().difficulty] ?? 1);
+  readonly difficultyPips = computed(() => {
+    const filled = this.difficultyRank();
+    return [0, 1, 2, 3].map((index) => index < filled);
+  });
   readonly facetLabel = computed(() => {
     const facet = this.algorithm().subcategory || this.algorithm().category;
     const key = getAlgorithmFacetLabelKey(facet);
@@ -115,13 +105,6 @@ export class AlgorithmCard implements AfterViewInit {
   readonly cardStyle = computed<Record<string, string>>(() =>
     createCardStyleVars(this.algorithm().id, this.algorithm().difficulty),
   );
-  readonly insaneShaderColor = '#ff7a2f';
-  readonly insaneShaderPositionX = 0.5;
-  readonly insaneShaderPositionY = 0.052;
-  readonly primaryBlobStyle = computed(() =>
-    createPrimaryBlobStyle(this.algorithm().id, this.algorithm().difficulty),
-  );
-  readonly washStyle = computed(() => createWashStyle(this.algorithm().difficulty));
   readonly metrics = computed<readonly CardMetric[]>(() => {
     return [
       {
@@ -134,46 +117,6 @@ export class AlgorithmCard implements AfterViewInit {
       },
     ];
   });
-
-  constructor() {
-    this.destroyRef.onDestroy(() => {
-      this.intersectionObserver?.disconnect();
-      this.shaderPool.deactivate(this.algorithm().id);
-    });
-  }
-
-  ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.intersectionObserver = new IntersectionObserver(
-      ([entry]) => {
-        this.inViewportState.set(entry?.isIntersecting ?? false);
-      },
-      {
-        threshold: 0.04,
-        rootMargin: '120px 0px',
-      },
-    );
-
-    this.intersectionObserver.observe(this.hostRef.nativeElement);
-
-    effect(
-      () => {
-        const id = this.algorithm().id;
-        const shouldActivate = this.isInsane() && this.inViewportState();
-        this.shaderPool.activeIds();
-
-        if (shouldActivate) {
-          this.shaderPool.activate(id);
-        } else {
-          this.shaderPool.deactivate(id);
-        }
-      },
-      { injector: this.injector },
-    );
-  }
 
   private translate(key: string, params?: Record<string, string | number>): string {
     this.language.activeLang();

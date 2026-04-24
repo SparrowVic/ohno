@@ -13,9 +13,14 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { animate } from 'animejs';
 
+import { APP_LANG } from '../../i18n/app-lang';
 import { AppLanguageService } from '../../i18n/app-language.service';
 import { I18N_KEY } from '../../i18n/i18n-keys';
 import { WorldFlagGlobe } from './world-flag-globe/world-flag-globe';
+
+interface SelectedCountry {
+  readonly code: string;
+}
 
 @Component({
   selector: 'app-language-switcher',
@@ -87,6 +92,12 @@ export class LanguageSwitcher {
 
   close(): void {
     this.open.set(false);
+  }
+
+  onCountrySelected(country: SelectedCountry): void {
+    const nextLang = country.code === 'PL' ? APP_LANG.PL : APP_LANG.EN;
+    this.language.setActiveLang(nextLang);
+    this.close();
   }
 
   @HostListener('document:pointerdown', ['$event'])

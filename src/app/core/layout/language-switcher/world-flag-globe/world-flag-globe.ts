@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   computed,
   inject,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -110,6 +111,7 @@ export class WorldFlagGlobe implements AfterViewInit {
   readonly loading = signal(true);
   readonly loadError = signal(false);
   readonly hoverFlag = computed(() => this.hoveredCountry()?.flag ?? '🌍');
+  readonly countrySelected = output<CountryMarker>();
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
@@ -215,10 +217,14 @@ export class WorldFlagGlobe implements AfterViewInit {
       return;
     }
 
-    animate(this.hoveredMarker, {
+    const marker = this.hoveredMarker;
+    animate(marker, {
       pulseBoost: [0, 1, 0],
       duration: 680,
       ease: 'inOutQuad',
+    });
+    this.zone.run(() => {
+      this.countrySelected.emit(marker.country);
     });
   };
 

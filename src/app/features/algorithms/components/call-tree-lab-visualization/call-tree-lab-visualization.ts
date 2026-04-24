@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { MathText } from '../../../../shared/components/math-text/math-text';
@@ -63,9 +72,24 @@ export class CallTreeLabVisualization {
   readonly presetId = input<string | null>(null);
   readonly presetChange = output<string>();
 
+  private readonly stageRef = viewChild<ElementRef<HTMLElement>>('stage');
+
   readonly state = computed<CallTreeLabTraceState | null>(
     () => this.step()?.callTreeLab ?? null,
   );
+
+  constructor() {
+    effect(() => {
+      const presetId = this.presetId();
+      if (presetId === null) return;
+      queueMicrotask(() => {
+        const stage = this.stageRef()?.nativeElement;
+        if (!stage) return;
+        stage.scrollLeft = Math.max(0, (stage.scrollWidth - stage.clientWidth) / 2);
+        stage.scrollTop = 0;
+      });
+    });
+  }
 
   readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
 
@@ -157,33 +181,48 @@ export class CallTreeLabVisualization {
     return { nodes: positioned, edges, bounds };
   });
 
-  readonly viewBox = computed(() => {
-    const b = this.layout().bounds;
-    return `${b.minX} ${b.minY} ${b.width || 1} ${b.height || 1}`;
-  });
-
   readonly nodeWidthPx = 148;
   readonly nodeHeightPx = 78;
 
-  /** Map the logical bounds to pixel width/height so absolute node
-   *  cards can be placed. We scale so the tree fills a natural width
-   *  up to ~1200px. */
-  readonly layerScale = computed<number>(() => {
-    const width = this.layout().bounds.width;
-    if (width === 0) return 1;
-    // Logical units are already sensibly spaced (see tree-layout
-    // HORIZONTAL_GAP), so 1 logical unit ≈ 1 px works out of the box.
-    return 1;
+  /** Logical-to-pixel multiplier. Tree-layout's HORIZONTAL_GAP (62
+   *  logical units) was sized for tiny SVG circles; HTML node cards
+   *  are 148px wide, so we scale up positions so neighbouring cards
+   *  get real breathing room. */
+  private readonly LOGICAL_PIXEL_SCALE = 2.8;
+
+  /** Logical padding added around bounds so nodes near the edge sit
+   *  fully inside the canvas (the node card's half-width in logical
+   *  units). Keeping SVG viewBox and HTML coords in exact lockstep
+   *  avoids the preserveAspectRatio centering drift that made edges
+   *  and cards disagree before. */
+  private readonly extraLogicalPadX = computed(
+    () => this.nodeWidthPx / 2 / this.LOGICAL_PIXEL_SCALE,
+  );
+  private readonly extraLogicalPadY = computed(
+    () => this.nodeHeightPx / 2 / this.LOGICAL_PIXEL_SCALE,
+  );
+
+  readonly viewBox = computed(() => {
+    const b = this.layout().bounds;
+    const padX = this.extraLogicalPadX();
+    const padY = this.extraLogicalPadY();
+    const width = Math.max(b.width + 2 * padX, 1);
+    const height = Math.max(b.height + 2 * padY, 1);
+    return `${b.minX - padX} ${b.minY - padY} ${width} ${height}`;
   });
 
-  /** Pixel bounds the container needs to allocate. */
+  /** Pixel bounds the container needs to allocate — aspect ratio
+   *  matches viewBox so the SVG fills the canvas with 1 logical unit
+   *  = LOGICAL_PIXEL_SCALE px consistently. */
   readonly pixelWidth = computed(() => {
     const { bounds } = this.layout();
-    return Math.max(320, bounds.width + this.nodeWidthPx * 0.8);
+    const padX = this.extraLogicalPadX();
+    return Math.max(320, (bounds.width + 2 * padX) * this.LOGICAL_PIXEL_SCALE);
   });
   readonly pixelHeight = computed(() => {
     const { bounds } = this.layout();
-    return Math.max(200, bounds.height + this.nodeHeightPx);
+    const padY = this.extraLogicalPadY();
+    return Math.max(200, (bounds.height + 2 * padY) * this.LOGICAL_PIXEL_SCALE);
   });
 
   /** Active path node id set for quick membership checks. */
@@ -195,15 +234,65 @@ export class CallTreeLabVisualization {
 
   nodeLeftPx(node: PositionedTreeNode): number {
     const { bounds } = this.layout();
-    return node.x - bounds.minX - this.nodeWidthPx / 2;
+    return (node.x - bounds.minX) * this.LOGICAL_PIXEL_SCALE;
   }
 
   nodeTopPx(node: PositionedTreeNode): number {
     const { bounds } = this.layout();
-    return node.y - bounds.minY - this.nodeHeightPx / 2;
+    return (node.y - bounds.minY) * this.LOGICAL_PIXEL_SCALE;
   }
 
   isOnPath(nodeId: string): boolean {
     return this.activeSet().has(nodeId);
+  }
+
+  /* ==== Drag-to-pan on the tree stage ============================
+   *  The native scrollbars on `.ctlab__stage` handle trackpad/wheel
+   *  panning, but mouse users benefit from a click-and-drag
+   *  affordance. We attach pointer events via template bindings and
+   *  scroll the stage's scrollTop/Left while a pointer is held down
+   *  on empty canvas (i.e. not on a node card). */
+
+  private panState: {
+    readonly stage: HTMLElement;
+    readonly startX: number;
+    readonly startY: number;
+    readonly startScrollLeft: number;
+    readonly startScrollTop: number;
+    readonly pointerId: number;
+  } | null = null;
+
+  onStagePointerDown(event: PointerEvent): void {
+    if (event.pointerType !== 'mouse') return;
+    if (event.button !== 0) return;
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+    if (target.closest('.ctlab__node')) return;
+    const stage = event.currentTarget as HTMLElement;
+    this.panState = {
+      stage,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: stage.scrollLeft,
+      startScrollTop: stage.scrollTop,
+      pointerId: event.pointerId,
+    };
+    stage.setPointerCapture(event.pointerId);
+    stage.classList.add('ctlab__stage--grabbing');
+  }
+
+  onStagePointerMove(event: PointerEvent): void {
+    const state = this.panState;
+    if (!state || state.pointerId !== event.pointerId) return;
+    state.stage.scrollLeft = state.startScrollLeft - (event.clientX - state.startX);
+    state.stage.scrollTop = state.startScrollTop - (event.clientY - state.startY);
+  }
+
+  onStagePointerUp(event: PointerEvent): void {
+    const state = this.panState;
+    if (!state || state.pointerId !== event.pointerId) return;
+    state.stage.releasePointerCapture(event.pointerId);
+    state.stage.classList.remove('ctlab__stage--grabbing');
+    this.panState = null;
   }
 }

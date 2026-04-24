@@ -1,33 +1,15 @@
 <ng-template #cardContent>
-  <span class="card__wash" [ngStyle]="washStyle()" aria-hidden="true"></span>
-  <span class="card__blob card__blob--primary" [ngStyle]="primaryBlobStyle()" aria-hidden="true"></span>
-  @if (showShader()) {
-    <app-shader-card-effect
-      class="card__shader"
-      [seed]="algorithm().id"
-      [color]="insaneShaderColor"
-      [positionX]="insaneShaderPositionX"
-      [positionY]="insaneShaderPositionY"
-      [speed]="0.46"
-      [scale]="3.35"
-      [effectRadius]="0.88"
-      [effectBoost]="0.34"
-      [edgeMin]="0.06"
-      [edgeMax]="0.88"
-      [falloffPower]="2.35"
-      [noiseScale]="1.12"
-      [widthFactor]="1.22"
-      [waveAmount]="0.11"
-      [branchIntensity]="2.15"
-      [verticalExtent]="1.78"
-      [horizontalExtent]="1.4"
-      [blur]="3.2"
-      [opacity]="0.36"
-    ></app-shader-card-effect>
-  }
+  <span class="card__stripe" aria-hidden="true"></span>
 
   <div class="card__eyebrow">
-    <span class="card__section">{{ facetLabel() }}</span>
+    <span class="card__section">
+      <span class="card__difficulty-pips" aria-hidden="true">
+        @for (filled of difficultyPips(); track $index) {
+          <span class="card__pip" [class.card__pip--on]="filled"></span>
+        }
+      </span>
+      <span class="card__facet">{{ facetLabel() }}</span>
+    </span>
     <app-ui-tag
       [label]="statusLabel()"
       [tone]="isImplemented() ? 'easy' : 'medium'"
@@ -96,7 +78,7 @@
   <a
     class="card"
     [class.card--insane]="isInsane()"
-    [class.card--insane-active]="showShader()"
+    [attr.data-difficulty]="algorithm().difficulty"
     [ngStyle]="cardStyle()"
     [routerLink]="cardLink()"
     queryParamsHandling="preserve"
@@ -111,7 +93,7 @@
   <article
     class="card card--disabled"
     [class.card--insane]="isInsane()"
-    [class.card--insane-active]="showShader()"
+    [attr.data-difficulty]="algorithm().difficulty"
     [ngStyle]="cardStyle()"
     aria-disabled="true"
     [appRoadmapOverlay]="!isImplemented()"
