@@ -26,9 +26,6 @@ import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.modeLabel'),
-  goal: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.goal'),
-  rule: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rule'),
-  invariant: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.invariant'),
   forwardHeader: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardHeader'),
   forwardEquation: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardEquation'),
   forwardAnnotation: t(
@@ -77,6 +74,17 @@ const I18N = {
     ),
     conclusion: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.conclusion'),
   },
+  resultLabels: {
+    check: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultLabels.check'),
+    interpretation: t(
+      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultLabels.interpretation',
+    ),
+    forK: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultLabels.forK'),
+    neighbors: t(
+      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultLabels.neighbors',
+    ),
+    pick: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultLabels.pick'),
+  },
   gcdLine: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.gcdLine'),
   modularRemainderCheck: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularRemainderCheck',
@@ -91,29 +99,21 @@ const I18N = {
   diophantineCandidate: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.candidate',
   ),
-  rsaGoal: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.goal'),
-  rsaRule: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.rule'),
-  rsaInvariant: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.invariant'),
   rsaInverseExists: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.inverseExists',
   ),
   rsaNoInverse: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.noInverse'),
   rsaInverseLine: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.inverseLine'),
-  rsaInterpretation: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.interpretation',
+  rsaPrivateKeyLine: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.privateKeyLine',
+  ),
+  rsaPairLine: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.pairLine'),
+  rsaIdentityLine: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.identityLine',
   ),
   rsaSignoff: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.signoff'),
   rsaNoInverseSignoff: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.noInverseSignoff',
-  ),
-  diophantineGoal: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.goal',
-  ),
-  diophantineRule: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.rule',
-  ),
-  diophantineInvariant: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.invariant',
   ),
   diophantineCheck: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.check',
@@ -138,15 +138,6 @@ const I18N = {
   ),
   diophantineNoSolutionSignoff: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.noSolutionSignoff',
-  ),
-  modularGoal: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.goal',
-  ),
-  modularRule: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.rule',
-  ),
-  modularInvariant: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.invariant',
   ),
   modularCheck: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.check',
@@ -286,6 +277,14 @@ function formatGeneralTerm(base: number, step: number): string {
   return `${base} ${step > 0 ? '+' : '-'} ${stepTerm}`;
 }
 
+function formatSignedNumber(value: number): string {
+  return value < 0 ? `(${value})` : `${value}`;
+}
+
+function formatArithmeticSum(left: number, right: number): string {
+  return `${left} ${right < 0 ? '-' : '+'} ${Math.abs(right)}`;
+}
+
 function findSmallestRepresentative(
   x0: number,
   y0: number,
@@ -316,55 +315,6 @@ function findSmallestRepresentative(
   return best;
 }
 
-function goalForScenario(scenario: ExtendedEuclideanScenario): ScratchpadLine['content'] {
-  const flow = scenario.notebookFlow;
-  switch (flow.kind) {
-    case 'rsa-inverse':
-      return i18nText(I18N.rsaGoal, { phi: scenario.a, e: scenario.b, n: flow.n });
-    case 'linear-diophantine':
-      return i18nText(I18N.diophantineGoal, {
-        a: scenario.a,
-        b: scenario.b,
-        target: flow.target,
-      });
-    case 'modular-equation':
-      return i18nText(I18N.modularGoal, {
-        coefficient: scenario.b,
-        rhs: flow.rhs,
-        modulus: scenario.a,
-      });
-    case 'bezout':
-      return i18nText(I18N.goal, { a: scenario.a, b: scenario.b });
-  }
-}
-
-function ruleForScenario(scenario: ExtendedEuclideanScenario): ScratchpadLine['content'] {
-  const flow = scenario.notebookFlow;
-  switch (flow.kind) {
-    case 'rsa-inverse':
-      return i18nText(I18N.rsaRule, { phi: scenario.a, e: scenario.b });
-    case 'linear-diophantine':
-      return i18nText(I18N.diophantineRule, { target: flow.target });
-    case 'modular-equation':
-      return i18nText(I18N.modularRule, { rhs: flow.rhs });
-    case 'bezout':
-      return I18N.rule;
-  }
-}
-
-function invariantForScenario(scenario: ExtendedEuclideanScenario): ScratchpadMargin['text'] {
-  switch (scenario.notebookFlow.kind) {
-    case 'rsa-inverse':
-      return I18N.rsaInvariant;
-    case 'linear-diophantine':
-      return I18N.diophantineInvariant;
-    case 'modular-equation':
-      return I18N.modularInvariant;
-    case 'bezout':
-      return I18N.invariant;
-  }
-}
-
 export function* extendedEuclideanGenerator(
   scenario: ExtendedEuclideanScenario,
 ): Generator<SortStep> {
@@ -391,57 +341,7 @@ export function* extendedEuclideanGenerator(
 
   const gcdValue = forwardSteps[forwardSteps.length - 1]?.divisor ?? originalB;
 
-  // ---------- Scratchpad skeleton (preamble) ----------
-  const lineBuilders: LineBuilder[] = [
-    {
-      id: 'goal',
-      kind: 'goal',
-      indent: 0,
-      marker: null,
-      caption: null,
-      captionPinned: true,
-      content: goalForScenario(scenario),
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-pre',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'rule',
-      kind: 'note',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: ruleForScenario(scenario),
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-post',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-  ];
-
-  const globalInvariant: ScratchpadMargin = {
-    id: 'invariant',
-    anchorLineId: null,
-    text: invariantForScenario(scenario),
-    tone: 'invariant',
-  };
+  const lineBuilders: LineBuilder[] = [];
 
   let stepIndex = 0;
 
@@ -469,7 +369,7 @@ export function* extendedEuclideanGenerator(
         state,
       };
     });
-    const margins: ScratchpadMargin[] = [globalInvariant];
+    const margins: ScratchpadMargin[] = [];
     if (opts.transientMargin) margins.push(opts.transientMargin);
     return {
       mode: 'extended-euclidean',
@@ -568,6 +468,15 @@ export function* extendedEuclideanGenerator(
       kind: 'note',
       marker,
       content,
+    });
+  }
+
+  function resultSectionLine(): LineBuilder {
+    return paperLine({
+      id: 'section-result',
+      kind: 'result',
+      marker: SECTION_MARKERS.result,
+      content: I18N.section.result,
     });
   }
 
@@ -683,8 +592,7 @@ export function* extendedEuclideanGenerator(
       yield appendPaperStep(
         paperLine({
           id: 'rsa-no-inverse-result',
-          kind: 'result',
-          marker: SECTION_MARKERS.result,
+          kind: 'decision',
           content: signoff,
         }),
         {
@@ -750,8 +658,7 @@ export function* extendedEuclideanGenerator(
       yield appendPaperStep(
         paperLine({
           id: 'diophantine-no-solution-result',
-          kind: 'result',
-          marker: SECTION_MARKERS.result,
+          kind: 'decision',
           content: signoff,
         }),
         {
@@ -834,8 +741,7 @@ export function* extendedEuclideanGenerator(
       yield appendPaperStep(
         paperLine({
           id: 'modular-equation-no-solution-result',
-          kind: 'result',
-          marker: SECTION_MARKERS.result,
+          kind: 'decision',
           content: signoff,
         }),
         {
@@ -977,55 +883,26 @@ export function* extendedEuclideanGenerator(
   const bezoutExpression = formatLinearCombo(sForA, originalA, tForB, originalB);
   const checkValue = sForA * originalA + tForB * originalB;
 
-  const bezoutLine = i18nText(I18N.bezoutResult, {
-    s: sForA,
-    a: originalA,
-    t: tForB,
-    b: originalB,
-    gcd: gcdValue,
-  });
-
-  yield appendPaperStep(
-    sectionLine('section-result', I18N.section.result, SECTION_MARKERS.result),
-    {
-      activeCodeLine: 7,
-      phase: I18N.phases.verify,
-      decision: I18N.decisions.verifying,
-      tone: 'setup',
-    },
-  );
-
-  yield appendPaperStep(
-    paperLine({
-      id: 'bezout',
-      kind: 'decision',
-      content: bezoutLine,
-      annotation: i18nText(I18N.verify, {
-        expression: bezoutExpression,
-        value: checkValue,
-      }),
-    }),
-    {
-      activeCodeLine: 7,
-      phase: I18N.phases.verify,
-      decision: I18N.decisions.verifying,
-      tone: 'conclude',
-    },
-  );
-
   if (flow.kind === 'rsa-inverse') {
     const d = normalizeModulo(tForB, originalA);
     const product = originalB * d;
     const moduloCheck = normalizeModulo(product, originalA);
     const inverseLine = i18nText(I18N.rsaInverseLine, {
+      e: originalB,
       coefficient: tForB,
       phi: originalA,
       d,
     });
+    yield appendPaperStep(resultSectionLine(), {
+      activeCodeLine: 7,
+      phase: I18N.phases.complete,
+      decision: I18N.decisions.interpreting,
+      tone: 'setup',
+    });
     yield appendPaperStep(
       paperLine({
         id: 'rsa-inverse-result',
-        kind: 'result',
+        kind: 'decision',
         content: inverseLine,
       }),
       {
@@ -1035,6 +912,25 @@ export function* extendedEuclideanGenerator(
         tone: 'complete',
       },
     );
+    yield appendPaperStep(
+      paperLine({
+        id: 'rsa-private-key',
+        kind: 'equation',
+        content: i18nText(I18N.rsaPrivateKeyLine, { d }),
+      }),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'complete',
+      },
+    );
+    yield appendPaperStep(sectionLine('rsa-check-label', I18N.resultLabels.check), {
+      activeCodeLine: 7,
+      phase: I18N.phases.complete,
+      decision: I18N.decisions.interpreting,
+      tone: 'setup',
+    });
     yield appendPaperStep(
       paperLine({
         id: 'rsa-product-check',
@@ -1075,17 +971,36 @@ export function* extendedEuclideanGenerator(
       phi: originalA,
       d,
     });
-    yield appendPaperStep(sectionLine('section-interpretation', I18N.section.interpretation), {
-      activeCodeLine: 7,
-      phase: I18N.phases.complete,
-      decision: I18N.decisions.interpreting,
-      tone: 'setup',
-    });
+    yield appendPaperStep(
+      sectionLine('rsa-interpretation-label', I18N.resultLabels.interpretation),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'setup',
+      },
+    );
     yield appendPaperStep(
       paperLine({
-        id: 'rsa-interpretation',
-        kind: 'result',
-        content: i18nText(I18N.rsaInterpretation, {
+        id: 'rsa-pair',
+        kind: 'equation',
+        content: i18nText(I18N.rsaPairLine, {
+          e: originalB,
+          d,
+        }),
+      }),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'complete',
+      },
+    );
+    yield appendPaperStep(
+      paperLine({
+        id: 'rsa-identity',
+        kind: 'equation',
+        content: i18nText(I18N.rsaIdentityLine, {
           n: flow.n,
           e: originalB,
           d,
@@ -1108,47 +1023,31 @@ export function* extendedEuclideanGenerator(
     const y0 = tForB * scale;
     const stepX = originalB / gcdValue;
     const stepY = -originalA / gcdValue;
-    const scaleLine = i18nText(I18N.diophantineScale, {
-      target: flow.target,
-      gcd: gcdValue,
-      scale,
-      s: sForA,
-      t: tForB,
-    });
+    const ax0 = originalA * x0;
+    const by0 = originalB * y0;
     yield appendPaperStep(sectionLine('section-particular', I18N.section.particular), {
       activeCodeLine: 7,
       phase: I18N.phases.verify,
       decision: I18N.decisions.interpreting,
       tone: 'setup',
     });
-    yield appendPaperStep(
-      paperLine({
-        id: 'diophantine-scale',
-        kind: 'substitute',
-        indent: 1,
-        content: scaleLine,
-      }),
-      {
-        activeCodeLine: 7,
-        phase: I18N.phases.verify,
-        decision: I18N.decisions.interpreting,
-        tone: 'substitute',
-      },
-    );
-
-    const particularLine = i18nText(I18N.diophantineParticular, {
-      x: x0,
-      y: y0,
-      a: originalA,
-      b: originalB,
-      target: flow.target,
+    yield appendPaperStep(mathLine('diophantine-x0', `x_0 = ${x0}`), {
+      activeCodeLine: 7,
+      phase: I18N.phases.verify,
+      decision: I18N.decisions.interpreting,
+      tone: 'substitute',
+    });
+    yield appendPaperStep(mathLine('diophantine-y0', `y_0 = ${y0}`), {
+      activeCodeLine: 7,
+      phase: I18N.phases.verify,
+      decision: I18N.decisions.interpreting,
+      tone: 'substitute',
     });
     yield appendPaperStep(
-      paperLine({
-        id: 'diophantine-particular',
-        kind: 'decision',
-        content: particularLine,
-      }),
+      mathLine(
+        'diophantine-particular-check',
+        `${originalA} \\cdot ${formatSignedNumber(x0)} + ${originalB} \\cdot ${formatSignedNumber(y0)} = ${formatArithmeticSum(ax0, by0)} = ${flow.target}`,
+      ),
       {
         activeCodeLine: 7,
         phase: I18N.phases.verify,
@@ -1157,28 +1056,20 @@ export function* extendedEuclideanGenerator(
       },
     );
 
-    const generalLine = i18nText(I18N.diophantineGeneral, {
-      xFormula: formatGeneralTerm(x0, stepX),
-      yFormula: formatGeneralTerm(y0, stepY),
-      stepX,
-      stepY,
-    });
     yield appendPaperStep(sectionLine('section-general', I18N.section.general), {
       activeCodeLine: 7,
       phase: I18N.phases.complete,
       decision: I18N.decisions.interpreting,
       tone: 'setup',
     });
+    yield appendPaperStep(mathLine('diophantine-step-g', `g = ${gcdValue}`), {
+      activeCodeLine: 7,
+      phase: I18N.phases.complete,
+      decision: I18N.decisions.interpreting,
+      tone: 'conclude',
+    });
     yield appendPaperStep(
-      paperLine({
-        id: 'diophantine-step-sizes',
-        kind: 'equation',
-        content: i18nText(I18N.diophantineStepSizes, {
-          gcd: gcdValue,
-          stepX,
-          stepY: Math.abs(stepY),
-        }),
-      }),
+      mathLine('diophantine-step-x', `b / g = ${originalB} / ${gcdValue} = ${stepX}`),
       {
         activeCodeLine: 7,
         phase: I18N.phases.complete,
@@ -1187,11 +1078,7 @@ export function* extendedEuclideanGenerator(
       },
     );
     yield appendPaperStep(
-      paperLine({
-        id: 'diophantine-general',
-        kind: 'equation',
-        content: generalLine,
-      }),
+      mathLine('diophantine-step-y', `a / g = ${originalA} / ${gcdValue} = ${Math.abs(stepY)}`),
       {
         activeCodeLine: 7,
         phase: I18N.phases.complete,
@@ -1199,6 +1086,30 @@ export function* extendedEuclideanGenerator(
         tone: 'conclude',
       },
     );
+    yield appendPaperStep(
+      mathLine('diophantine-general-x', `x = ${formatGeneralTerm(x0, stepX)}`),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'conclude',
+      },
+    );
+    yield appendPaperStep(
+      mathLine('diophantine-general-y', `y = ${formatGeneralTerm(y0, stepY)}`),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'conclude',
+      },
+    );
+    yield appendPaperStep(mathLine('diophantine-general-domain', `k \\in \\mathbb{Z}`), {
+      activeCodeLine: 7,
+      phase: I18N.phases.complete,
+      decision: I18N.decisions.interpreting,
+      tone: 'conclude',
+    });
 
     let signoff = i18nText(I18N.diophantineSignoff, {
       x: x0,
@@ -1208,11 +1119,6 @@ export function* extendedEuclideanGenerator(
     });
     if (flow.minimize) {
       const best = findSmallestRepresentative(x0, y0, stepX, stepY);
-      const minimalLine = i18nText(I18N.diophantineMinimal, {
-        k: best.k,
-        x: best.x,
-        y: best.y,
-      });
       signoff = i18nText(I18N.diophantineSignoff, {
         x: best.x,
         y: best.y,
@@ -1225,7 +1131,37 @@ export function* extendedEuclideanGenerator(
         decision: I18N.decisions.done,
         tone: 'setup',
       });
-      for (const k of [best.k - 1, best.k, best.k + 1]) {
+      yield appendPaperStep(
+        sectionLine('diophantine-best-k-label', i18nText(I18N.resultLabels.forK, { k: best.k })),
+        {
+          activeCodeLine: 7,
+          phase: I18N.phases.complete,
+          decision: I18N.decisions.done,
+          tone: 'setup',
+        },
+      );
+      yield appendPaperStep(mathLine('diophantine-best-x', `x = ${best.x}`), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'complete',
+      });
+      yield appendPaperStep(mathLine('diophantine-best-y', `y = ${best.y}`), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'complete',
+      });
+      yield appendPaperStep(
+        sectionLine('diophantine-neighbors-label', I18N.resultLabels.neighbors),
+        {
+          activeCodeLine: 7,
+          phase: I18N.phases.complete,
+          decision: I18N.decisions.done,
+          tone: 'setup',
+        },
+      );
+      for (const k of [best.k - 1, best.k + 1]) {
         yield appendPaperStep(
           paperLine({
             id: `diophantine-candidate-${k}`,
@@ -1244,12 +1180,23 @@ export function* extendedEuclideanGenerator(
           },
         );
       }
+      yield appendPaperStep(sectionLine('diophantine-pick-label', I18N.resultLabels.pick), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'setup',
+      });
+      yield appendPaperStep(mathLine('diophantine-minimal-x', `x = ${best.x}`), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'complete',
+      });
       yield appendPaperStep(
         paperLine({
           id: 'diophantine-minimal',
-          kind: 'result',
-          marker: SECTION_MARKERS.result,
-          content: minimalLine,
+          kind: 'equation',
+          content: i18nText(I18N.backSubLine, { expression: `y = ${best.y}` }),
         }),
         {
           activeCodeLine: 7,
@@ -1265,8 +1212,7 @@ export function* extendedEuclideanGenerator(
     yield appendPaperStep(
       paperLine({
         id: 'diophantine-result',
-        kind: 'result',
-        marker: SECTION_MARKERS.result,
+        kind: 'decision',
         content: signoff,
       }),
       {
@@ -1293,6 +1239,12 @@ export function* extendedEuclideanGenerator(
       reducedCoefficient,
       reducedRhs,
       reducedModulus,
+    });
+    yield appendPaperStep(resultSectionLine(), {
+      activeCodeLine: 7,
+      phase: I18N.phases.verify,
+      decision: I18N.decisions.interpreting,
+      tone: 'setup',
     });
     yield appendPaperStep(
       paperLine({
@@ -1347,8 +1299,7 @@ export function* extendedEuclideanGenerator(
     yield appendPaperStep(
       paperLine({
         id: 'modular-equation-result',
-        kind: 'result',
-        marker: SECTION_MARKERS.result,
+        kind: 'equation',
         content: allSolutionsLine,
       }),
       {
@@ -1369,13 +1320,42 @@ export function* extendedEuclideanGenerator(
     s: sForA,
     t: tForB,
   });
+  yield appendPaperStep(resultSectionLine(), {
+    activeCodeLine: 7,
+    phase: I18N.phases.verify,
+    decision: I18N.decisions.verifying,
+    tone: 'setup',
+  });
+  yield appendPaperStep(mathLine('result-gcd', `\\gcd(${originalA}, ${originalB}) = ${gcdValue}`), {
+    activeCodeLine: 7,
+    phase: I18N.phases.complete,
+    decision: I18N.decisions.done,
+    tone: 'complete',
+  });
+  yield appendPaperStep(mathLine('result-s', `s = ${sForA}`), {
+    activeCodeLine: 7,
+    phase: I18N.phases.complete,
+    decision: I18N.decisions.done,
+    tone: 'complete',
+  });
+  yield appendPaperStep(mathLine('result-t', `t = ${tForB}`), {
+    activeCodeLine: 7,
+    phase: I18N.phases.complete,
+    decision: I18N.decisions.done,
+    tone: 'complete',
+  });
   yield appendPaperStep(
     paperLine({
       id: 'result-line',
-      kind: 'result',
+      kind: 'equation',
       indent: 0.6,
-      marker: SECTION_MARKERS.result,
-      content: bezoutLine,
+      content: i18nText(I18N.backSubLine, {
+        expression: `${gcdValue} = ${formatLinearCombo(sForA, originalA, tForB, originalB)}`,
+      }),
+      annotation: i18nText(I18N.verify, {
+        expression: bezoutExpression,
+        value: checkValue,
+      }),
     }),
     {
       activeCodeLine: 7,

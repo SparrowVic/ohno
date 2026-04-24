@@ -2070,6 +2070,13 @@
               "interpretation": "Interpretation",
               "conclusion": "Conclusion"
             },
+            "resultLabels": {
+              "check": "Check:",
+              "interpretation": "Interpretation:",
+              "forK": "For [[math]]k = {{k}}[[/math]]:",
+              "neighbors": "Neighboring values have larger absolute values:",
+              "pick": "Choose:"
+            },
             "gcdLine": "[[math]]GCD = {{gcd}}[[/math]]",
             "modularRemainderCheck": "[[math]]{{value}} \\bmod {{divisor}} = {{remainder}}[[/math]]",
             "rsa": {
@@ -2078,9 +2085,12 @@
               "invariant": "We are tracking the coefficient of [[math]]e[[/math]], not the modulus coefficient. Only at the end do we reduce it modulo [[math]]\\varphi(n)[[/math]].",
               "inverseExists": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}}[[/math]], so the inverse modulo [[math]]\\varphi(n)[[/math]] exists.",
               "noInverse": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}} \\neq 1[[/math]], so [[math]]e[[/math]] has no inverse modulo [[math]]\\varphi(n)[[/math]].",
-              "inverseLine": "The coefficient of [[math]]e[[/math]] is [[math]]{{coefficient}}[[/math]], so [[math]]d \\equiv {{coefficient}} \\pmod{ {{phi}} } = {{d}}[[/math]].",
+              "inverseLine": "The coefficient of [[math]]e = {{e}}[[/math]] is [[math]]{{coefficient}}[[/math]], so:",
+              "privateKeyLine": "[[math]]d = {{d}}[[/math]]",
               "productCheck": "[[math]]{{e}} \\cdot {{d}} = {{product}}[[/math]]",
               "moduloCheck": "[[math]]{{product}} \\bmod {{phi}} = {{remainder}}[[/math]]",
+              "pairLine": "[[math]](e, d) = ({{e}}, {{d}})[[/math]]",
+              "identityLine": "[[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]]",
               "interpretation": "In RSA, [[math]](e, d) = ({{e}}, {{d}})[[/math]] satisfies [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
               "signoff": "[[math]]d = {{d}}[[/math]] for [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
               "noInverseSignoff": "No private key: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."

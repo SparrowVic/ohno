@@ -20,11 +20,13 @@
   display: grid;
   flex: 1;
   min-height: 0;
-  /* auto rows stack above the scrolling page: task prompt, global
-     margins, then the 1fr page column, finally the signoff footer.
+  /* Auto rows stack inside one scroll surface: task prompt, global
+     margins, the page column, then the signoff footer.
      Empty auto rows collapse to zero so the grid stays tight when a
      given block isn't emitted. */
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto auto auto;
+  align-content: start;
+  align-items: start;
   gap: 10px;
   padding: 16px 20px;
   overflow: auto;
@@ -498,7 +500,11 @@
 
   &--invariant {
     background:
-      linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.2), rgba(var(--viz-warning-rgb), 0.06)),
+      linear-gradient(
+        180deg,
+        rgba(var(--viz-warning-rgb), 0.2),
+        rgba(var(--viz-warning-rgb), 0.06)
+      ),
       rgba(13, 16, 24, 0.55);
     border-color: rgba(var(--viz-warning-rgb), 0.3);
     color: rgb(var(--viz-warning-rgb));
@@ -509,7 +515,11 @@
        the transient margin preview and the settled chip speak the same
        visual vocabulary ("imperative / teacher's direction"). */
     background:
-      linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.16), rgba(var(--viz-warning-rgb), 0.04)),
+      linear-gradient(
+        180deg,
+        rgba(var(--viz-warning-rgb), 0.16),
+        rgba(var(--viz-warning-rgb), 0.04)
+      ),
       rgba(13, 16, 24, 0.55);
     border-color: rgba(var(--viz-warning-rgb), 0.32);
     color: rgb(var(--viz-warning-rgb));

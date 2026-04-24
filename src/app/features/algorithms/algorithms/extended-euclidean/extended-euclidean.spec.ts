@@ -97,15 +97,21 @@ describe('extendedEuclideanGenerator', () => {
         'back-collect-1',
         'section-result',
         'rsa-inverse-result',
+        'rsa-private-key',
+        'rsa-check-label',
         'rsa-product-check',
         'rsa-modulo-check',
-        'section-interpretation',
-        'rsa-interpretation',
+        'rsa-interpretation-label',
+        'rsa-pair',
+        'rsa-identity',
       ]),
     );
     const finalLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
     expect(finalLines.find((line) => line.id === 'fwd-0')?.caption).toBeNull();
     expect(finalLines.find((line) => line.id === 'back-substitute-1')?.caption).toBeNull();
+    expect(finalLines.find((line) => line.id === 'section-result')?.kind).toBe('result');
+    expect(finalLines.find((line) => line.id === 'rsa-private-key')?.kind).toBe('equation');
+    expect(finalLines.find((line) => line.id === 'rsa-identity')?.kind).toBe('equation');
   });
 
   it('stops the modular-equation trap after gcd divisibility fails', () => {
