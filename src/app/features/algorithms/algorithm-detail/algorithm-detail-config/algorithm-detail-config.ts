@@ -507,8 +507,6 @@ import { Task } from '../../models/task';
 import { TreePresetOption } from '../../models/tree';
 import {
   NumberLabPresetOption,
-  FibonacciScenario as FibonacciIterScenario,
-  FactorialScenario,
   EuclideanGcdScenario,
   FIBONACCI_PRESETS as FIBONACCI_ITER_PRESETS,
   FACTORIAL_PRESETS,
