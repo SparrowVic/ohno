@@ -1,4 +1,5 @@
 import { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   DEFAULT_MILLER_RABIN_TASK_ID,
   MILLER_RABIN_TASKS,
@@ -59,13 +60,17 @@ export function createMillerRabinScenario(
     MILLER_RABIN_TASKS.find((candidate) => candidate.id === DEFAULT_MILLER_RABIN_TASK_ID) ??
     MILLER_RABIN_TASKS[0];
   const values = customValues ?? task.defaultValues;
+  const witnesses = parseWitnesses(values.witnesses, values.n);
   return {
     kind: 'miller-rabin',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: task.instruction ?? null,
+    taskPrompt: notebookInstructionText(task, {
+      n: values.n,
+      witnesses: witnesses.join(', '),
+    }),
     n: values.n,
-    witnesses: parseWitnesses(values.witnesses, values.n),
+    witnesses,
   };
 }

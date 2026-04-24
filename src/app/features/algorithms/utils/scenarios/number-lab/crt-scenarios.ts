@@ -1,4 +1,5 @@
 import { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   CRT_TASKS,
   CrtCongruence,
@@ -51,12 +52,28 @@ export function createCrtScenario(
     CRT_TASKS.find((candidate) => candidate.id === DEFAULT_CRT_TASK_ID) ??
     CRT_TASKS[0];
   const values = customValues ?? task.defaultValues;
+  const congruences = parseCongruences(values.congruences);
+  const M = congruences.reduce((acc, c) => acc * c.modulus, 1);
   return {
     kind: 'crt',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: task.instruction ?? null,
-    congruences: parseCongruences(values.congruences),
+    taskPrompt: notebookInstructionText(task, {
+      congruences: formatCongruencesForPrompt(congruences),
+      M,
+    }),
+    congruences,
   };
+}
+
+/** Render the parsed system as a KaTeX-ready list for the "Zadanie:"
+ *  block — each congruence becomes its own inline `x ≡ r (mod m)` and
+ *  they're comma-joined. Embedding `[[math]]...[[/math]]` inside an
+ *  interpolated param is fine: Transloco substitutes a plain string,
+ *  and MathText parses the markers downstream. */
+function formatCongruencesForPrompt(congruences: readonly CrtCongruence[]): string {
+  return congruences
+    .map((c) => `[[math]]x \\equiv ${c.residue} \\pmod{${c.modulus}}[[/math]]`)
+    .join(', ');
 }

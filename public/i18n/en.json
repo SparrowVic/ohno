@@ -3886,7 +3886,7 @@
           "classic": {
             "title": "Classic example: 3 congruences",
             "summary": "[[math]]x \\equiv 2 \\, (3), \\, 3 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{105}[[/math]]",
-            "instruction": "Solve the system [[math]]x \\equiv 2 \\pmod{3}[[/math]], [[math]]x \\equiv 3 \\pmod{5}[[/math]], [[math]]x \\equiv 2 \\pmod{7}[[/math]]. Present [[math]]x \\pmod{105}[[/math]] via the Chinese Remainder Theorem construction.",
+            "instruction": "Solve the congruence system {{congruences}}. Present [[math]]x \\pmod{ {{M}} }[[/math]] via the Chinese Remainder Theorem construction.",
             "hints": {
               "0": "[[math]]M = 3 \\cdot 5 \\cdot 7 = 105[[/math]], [[math]]M_1 = 35, M_2 = 21, M_3 = 15[[/math]].",
               "1": "Inverses: [[math]]35^{-1} \\equiv 2 \\pmod{3}[[/math]], [[math]]21^{-1} \\equiv 1 \\pmod{5}[[/math]], [[math]]15^{-1} \\equiv 1 \\pmod{7}[[/math]]. Terms: [[math]]140 + 63 + 30 = 233[[/math]], [[math]]233 \\bmod 105 = 23[[/math]]."
@@ -3895,7 +3895,7 @@
           "twoCongruences": {
             "title": "Pair of congruences",
             "summary": "[[math]]x \\equiv 1 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{35}[[/math]]",
-            "instruction": "Find [[math]]x \\pmod{35}[[/math]] such that [[math]]x \\equiv 1 \\pmod{5}[[/math]] and [[math]]x \\equiv 2 \\pmod{7}[[/math]]. Minimal case — one back-substitution line.",
+            "instruction": "Find [[math]]x \\pmod{ {{M}} }[[/math]] satisfying {{congruences}}. Minimal case — one back-substitution line.",
             "hints": {
               "0": "[[math]]M = 35[[/math]], [[math]]M_1 = 7, M_2 = 5[[/math]]. [[math]]7 \\equiv 2 \\pmod{5}[[/math]], inverse [[math]]3[[/math]]; [[math]]5 \\equiv 5 \\pmod{7}[[/math]], inverse [[math]]3[[/math]]. Check [[math]]x = 16[[/math]]."
             }
@@ -3903,7 +3903,7 @@
           "smallestPositive": {
             "title": "Smallest positive solution",
             "summary": "[[math]]x \\equiv 4 \\, (9), \\, 3 \\, (11), \\, 6 \\, (13)[[/math]] — state the smallest positive [[math]]x[[/math]]",
-            "instruction": "Find the smallest positive integer [[math]]x[[/math]] satisfying [[math]]x \\equiv 4 \\pmod{9}[[/math]], [[math]]x \\equiv 3 \\pmod{11}[[/math]], [[math]]x \\equiv 6 \\pmod{13}[[/math]]. Reduce modulo [[math]]M = 9 \\cdot 11 \\cdot 13 = 1287[[/math]].",
+            "instruction": "Find the smallest positive integer [[math]]x[[/math]] satisfying {{congruences}}. Reduce modulo [[math]]M = {{M}}[[/math]].",
             "hints": {
               "0": "[[math]]M_1 = 143, M_2 = 117, M_3 = 99[[/math]]. Reductions [[math]]M_i \\bmod m_i[[/math]]: [[math]]8, 7, 8[[/math]].",
               "1": "Inverses: [[math]]8^{-1} \\equiv 8 \\pmod{9}[[/math]], [[math]]7^{-1} \\equiv 8 \\pmod{11}[[/math]], [[math]]8^{-1} \\equiv 5 \\pmod{13}[[/math]]. Sum of terms [[math]]= 10354[[/math]], [[math]]10354 \\bmod 1287 = 58[[/math]]."
@@ -3916,7 +3916,7 @@
               "0": "Five forward steps: 240, 46, 10, 6, 4, 2, 0 — the final remainder 2 is the [[math]]\\gcd[[/math]].",
               "1": "Back-substitution has at least three nested substitutions — a solid test of coefficient tracking."
             },
-            "instruction": "Solve the linear Diophantine equation [[math]]240x + 46y = 2[[/math]] for integers [[math]]x, y[[/math]] — present one particular solution. Use the Extended Euclidean algorithm.",
+            "instruction": "Solve the linear Diophantine equation [[math]]{{a}} x + {{b}} y = \\gcd({{a}}, {{b}})[[/math]] for integers [[math]](x, y)[[/math]] — present one particular solution. Use the Extended Euclidean algorithm.",
             "summary": "[[math]]\\gcd(240, 46) = 2[[/math]] — five forward steps, rich back-sub.",
             "title": "Classic textbook"
           },
@@ -3926,7 +3926,7 @@
               "1": "Bézout coefficients also come out as Fibonacci numbers (with alternating signs).",
               "2": "This is the canonical worst case — no smaller pair needs a deeper back-sub."
             },
-            "instruction": "Find Bézout coefficients for 89 and 55 — integers [[math]]s, t[[/math]] with [[math]]89s + 55t = 1[[/math]]. Then verify that both [[math]]|s|[[/math]] and [[math]]|t|[[/math]] are themselves Fibonacci numbers.",
+            "instruction": "Find Bézout coefficients for [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]] — integers [[math]]s, t[[/math]] with [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. With the default Fibonacci pair, verify that both [[math]]|s|[[/math]] and [[math]]|t|[[/math]] are themselves Fibonacci numbers.",
             "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — deepest back-sub for this input size.",
             "title": "Deepest back-substitution"
           },
@@ -3934,7 +3934,7 @@
             "hints": {
               "0": "Forward: [[math]]735 = 3 \\cdot 210 + 105[[/math]], then [[math]]210 = 2 \\cdot 105 + 0[[/math]]. Back-sub: [[math]]105 = 1 \\cdot 735 + (-3) \\cdot 210[[/math]]."
             },
-            "instruction": "Given that [[math]]\\gcd(735, 210) = 105[[/math]], find integers [[math]]s, t[[/math]] such that [[math]]735s + 210t = 105[[/math]]. A single back-substitution line suffices.",
+            "instruction": "Find integers [[math]]s, t[[/math]] such that [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. Keep the back-substitution as tight as possible.",
             "summary": "[[math]]\\gcd(735, 210) = 105[[/math]] — large numbers, short chain.",
             "title": "Known gcd, short chain"
           },
@@ -3943,7 +3943,7 @@
               "0": "Same pair as the plain Euclidean 'Larger pair' — you can compare both algorithms on identical input.",
               "1": "Bézout coefficients for [[math]]\\gcd = 21[[/math]] aren't tiny, but they fit on one line."
             },
-            "instruction": "Find Bézout coefficients [[math]]s, t[[/math]] for [[math]]\\gcd(1071, 462) = 21[[/math]], then state one integer solution of the Diophantine equation [[math]]1071x + 462y = 21[[/math]].",
+            "instruction": "Find Bézout coefficients [[math]]s, t[[/math]] for [[math]]\\gcd({{a}}, {{b}})[[/math]], then state one integer solution of the Diophantine equation [[math]]{{a}} x + {{b}} y = \\gcd({{a}}, {{b}})[[/math]].",
             "summary": "[[math]]\\gcd(1071, 462) = 21[[/math]] — same pair as the plain Euclidean 'Larger pair'.",
             "title": "Larger pair"
           },
@@ -3952,7 +3952,7 @@
               "0": "Forward: [[math]]7 \\bmod 5 = 2[[/math]], [[math]]5 \\bmod 2 = 1[[/math]], [[math]]2 \\bmod 1 = 0[[/math]].",
               "1": "Back-sub: [[math]]1 = 5 - 2 \\cdot 2 = 5 - 2 \\cdot (7 - 5) = 3 \\cdot 5 - 2 \\cdot 7[[/math]]. So [[math]]s = -2[[/math]], [[math]]t = 3[[/math]], and [[math]]7^{-1} \\equiv 3 \\pmod{5}[[/math]]."
             },
-            "instruction": "Find the multiplicative inverse of 7 modulo 5 — the integer [[math]]0 \\leq x < 5[[/math]] satisfying [[math]]7x \\equiv 1 \\pmod{5}[[/math]]. Use the Extended Euclidean algorithm, then reduce the obtained coefficient into the range [[math]][0, 5)[[/math]].",
+            "instruction": "Find the multiplicative inverse of [[math]]{{a}}[[/math]] modulo [[math]]{{b}}[[/math]] — the integer [[math]]0 \\leq x < {{b}}[[/math]] satisfying [[math]]{{a}} x \\equiv 1 \\pmod{ {{b}} }[[/math]]. Use the Extended Euclidean algorithm, then reduce the obtained coefficient into the range [[math]][0, {{b}})[[/math]].",
             "summary": "[[math]]7s + 5t = 1[[/math]] — looking for the inverse of 7 modulo 5.",
             "title": "Modular inverse"
           },
@@ -3961,7 +3961,7 @@
               "0": "Six forward steps: [[math]]251 \\to 52 \\to 43 \\to 9 \\to 7 \\to 2 \\to 1 \\to 0[[/math]].",
               "1": "Even with a long chain, the final [[math]]s, t[[/math]] coefficients stay moderate — depth doesn't always mean huge numbers."
             },
-            "instruction": "Prove that 251 and 199 are coprime by computing their Bézout coefficients [[math]]s, t[[/math]] with [[math]]251s + 199t = 1[[/math]]. State the final values of [[math]]s[[/math]] and [[math]]t[[/math]].",
+            "instruction": "Prove that [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]] are coprime by computing their Bézout coefficients [[math]]s, t[[/math]] with [[math]]{{a}} s + {{b}} t = 1[[/math]]. State the final values of [[math]]s[[/math]] and [[math]]t[[/math]].",
             "summary": "[[math]]\\gcd(251, 199) = 1[[/math]] — prime pair, six-step forward chain.",
             "title": "Prime pair"
           },
@@ -3970,7 +3970,7 @@
               "0": "[[math]]60 = 1 \\cdot 48 + 12[[/math]], then [[math]]48 = 4 \\cdot 12 + 0[[/math]].",
               "1": "Back-sub is a single line: [[math]]12 = 1 \\cdot 60 + (-1) \\cdot 48[[/math]]."
             },
-            "instruction": "Find integers [[math]]s, t[[/math]] such that [[math]]60s + 48t = \\gcd(60, 48)[[/math]]. Write down every forward division and present the back-substitution as a single equation.",
+            "instruction": "Find integers [[math]]s, t[[/math]] such that [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. Write down every forward division and present the back-substitution as a single equation.",
             "summary": "[[math]]\\gcd(60, 48) = 12[[/math]] — one-step back-sub.",
             "title": "Short chain"
           },
@@ -3978,7 +3978,7 @@
             "hints": {
               "0": "Back-sub reads [[math]]6 = 30 - 2 \\cdot 12[[/math]] straight off the first forward step: [[math]]s = 1[[/math]], [[math]]t = -2[[/math]]."
             },
-            "instruction": "Express [[math]]\\gcd(30, 12)[[/math]] as an integer combination of 30 and 12. A single back-substitution line is enough — state the full identity [[math]]\\gcd = s \\cdot 30 + t \\cdot 12[[/math]] with concrete [[math]]s, t[[/math]].",
+            "instruction": "Express [[math]]\\gcd({{a}}, {{b}})[[/math]] as an integer combination of [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]]. A single back-substitution line is enough — state the full identity [[math]]\\gcd = s \\cdot {{a}} + t \\cdot {{b}}[[/math]] with concrete [[math]]s, t[[/math]].",
             "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — two forward steps, one back-sub line.",
             "title": "Minimal back-sub"
           }
@@ -3989,7 +3989,7 @@
               "0": "Forward chain: [[math]]252 \\bmod 198 = 54[[/math]], then 198 mod 54 = 36, 54 mod 36 = 18, 36 mod 18 = 0.",
               "1": "Multiplying the shared prime factors ([[math]]2 \\cdot 3^2[[/math]]) gives 18 — the same value Euclid reaches without factoring."
             },
-            "instruction": "Given that [[math]]252 = 2^2 \\cdot 3^2 \\cdot 7[[/math]] and [[math]]198 = 2 \\cdot 3^2 \\cdot 11[[/math]], predict [[math]]\\gcd(252, 198)[[/math]] by picking shared prime factors. Then verify your prediction by running the Euclidean algorithm and comparing the result.",
+            "instruction": "Compute [[math]]\\gcd({{a}}, {{b}})[[/math]] using the Euclidean algorithm. Show that the algorithm arrives at the same answer as picking shared prime factors would — without ever factoring. That is the point of Euclid's method.",
             "summary": "[[math]]\\gcd(252, 198) = 18[[/math]] — rich prime-factor structure.",
             "title": "Abundance of factors"
           },
@@ -3998,7 +3998,7 @@
               "0": "Remainder chain: [[math]]35 = 2 \\cdot 17 + 1[[/math]], then [[math]]17 = 17 \\cdot 1 + 0[[/math]].",
               "1": "Once the remainder hits 1, the next step zeroes it out and the algorithm terminates."
             },
-            "instruction": "Prove that 35 and 17 are coprime by running the Euclidean algorithm to completion and reading off [[math]]\\gcd(35, 17) = 1[[/math]]. State the number of divisions performed.",
+            "instruction": "Prove that [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]] are coprime by running the Euclidean algorithm to completion and reading off [[math]]\\gcd[[/math]]. State the number of divisions performed.",
             "summary": "[[math]]\\gcd(35, 17) = 1[[/math]] — no common factor.",
             "title": "Coprime pair"
           },
@@ -4008,7 +4008,7 @@
               "1": "The step count grows logarithmically in [[math]]\\max(a, b)[[/math]] with base [[math]]\\varphi \\approx 1.618[[/math]].",
               "2": "Lamé's theorem: no pair smaller than consecutive Fibonacci numbers needs more steps."
             },
-            "instruction": "Count the iterations the Euclidean algorithm takes on [[math]]\\gcd(89, 55)[[/math]]. Explain why this pair (consecutive Fibonacci numbers) forces the maximum step count for inputs of this size — Lamé's theorem.",
+            "instruction": "Count the iterations the Euclidean algorithm takes on [[math]]\\gcd({{a}}, {{b}})[[/math]]. Explain why consecutive Fibonacci numbers force the maximum step count for inputs of this size — Lamé's theorem.",
             "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — maximum steps for this size.",
             "title": "Worst case: Fibonacci neighbours"
           },
@@ -4016,7 +4016,7 @@
             "hints": {
               "0": "[[math]]a \\bmod a = 0[[/math]] — the second argument becomes zero immediately."
             },
-            "instruction": "Compute [[math]]\\gcd(42, 42)[[/math]]. Explain how the invariant [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]] behaves when [[math]]a = b[[/math]] — why does the algorithm use [[math]]b = 0[[/math]] as its termination condition?",
+            "instruction": "Compute [[math]]\\gcd({{a}}, {{b}})[[/math]]. Explain how the invariant [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]] behaves when [[math]]a = b[[/math]] — why does the algorithm use [[math]]b = 0[[/math]] as its termination condition?",
             "summary": "[[math]]\\gcd(42, 42) = 42[[/math]] — one step, done.",
             "title": "Identical pair"
           },
@@ -4025,7 +4025,7 @@
               "0": "Six steps, and [[math]]\\gcd = 21[[/math]] ([[math]]= 3 \\cdot 7[[/math]]).",
               "1": "Both arguments are divisible by 21 — the algorithm discovers that without factoring."
             },
-            "instruction": "Reduce the fraction [[math]]\\frac{1071}{462}[[/math]] to its lowest terms. Find [[math]]\\gcd(1071, 462)[[/math]] with the Euclidean algorithm and divide both the numerator and the denominator by it.",
+            "instruction": "Reduce the fraction [[math]]\\frac{ {{a}} }{ {{b}} }[[/math]] to its lowest terms. Find [[math]]\\gcd({{a}}, {{b}})[[/math]] with the Euclidean algorithm and divide both the numerator and the denominator by it.",
             "summary": "[[math]]\\gcd(1071, 462) = 21[[/math]] — medium-length chain.",
             "title": "Larger pair"
           },
@@ -4033,7 +4033,7 @@
             "hints": {
               "0": "[[math]]64 \\bmod 16 = 0[[/math]], so the loop closes after the first division."
             },
-            "instruction": "Compute [[math]]\\gcd(64, 16)[[/math]] and explain why the Euclidean algorithm terminates in a single step. In general: for which pairs [[math]](a, b)[[/math]] does the loop close immediately?",
+            "instruction": "Compute [[math]]\\gcd({{a}}, {{b}})[[/math]] and explain why the Euclidean algorithm terminates in a single step. In general: for which pairs [[math]](a, b)[[/math]] does the loop close immediately?",
             "summary": "[[math]]\\gcd(64, 16) = 16[[/math]] — one iteration.",
             "title": "Powers of two"
           },
@@ -4042,7 +4042,7 @@
               "0": "[[math]]48 = 1 \\cdot 36 + 12[[/math]], then [[math]]36 = 3 \\cdot 12 + 0[[/math]].",
               "1": "The common divisor [[math]]12 = 2^2 \\cdot 3[[/math]] divides both inputs — the algorithm finds it in two steps."
             },
-            "instruction": "Compute [[math]]\\gcd(48, 36)[[/math]]. Then, using the identity [[math]]a \\cdot b = \\gcd(a, b) \\cdot \\operatorname{lcm}(a, b)[[/math]], derive [[math]]\\operatorname{lcm}(48, 36)[[/math]] — without running a separate algorithm.",
+            "instruction": "Compute [[math]]\\gcd({{a}}, {{b}})[[/math]]. Then, using the identity [[math]]a \\cdot b = \\gcd(a, b) \\cdot \\operatorname{lcm}(a, b)[[/math]], derive [[math]]\\operatorname{lcm}({{a}}, {{b}})[[/math]] — without running a separate algorithm.",
             "summary": "[[math]]\\gcd(48, 36) = 12[[/math]] — clear shared factor.",
             "title": "Shared factor"
           },
@@ -4051,7 +4051,7 @@
               "0": "[[math]]101 \\bmod 103 = 101[[/math]] — the pair (a, b) swaps itself with no special case.",
               "1": "After the implicit swap, the next remainder is 2, then 1, then 0."
             },
-            "instruction": "For twin primes 101 and 103 the algorithm starts with [[math]]a < b[[/math]]. Trace the first iteration and argue why the algorithm doesn't need an explicit 'swap [[math]]a[[/math]] with [[math]]b[[/math]]' step to still work correctly.",
+            "instruction": "For the pair [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]] trace the first loop iteration and argue why the Euclidean algorithm doesn't need an explicit 'swap [[math]]a[[/math]] with [[math]]b[[/math]]' step to work correctly regardless of argument order.",
             "summary": "[[math]]\\gcd(101, 103) = 1[[/math]] — starts with [[math]]a < b[[/math]], showing the implicit swap.",
             "title": "Twin primes"
           },
@@ -4067,27 +4067,27 @@
             "witnessesPlaceholder": "2, 3, 7"
           },
           "carmichael": {
-            "title": "Carmichael number — 561",
+            "title": "Carmichael number",
             "summary": "[[math]]561 = 3 \\cdot 11 \\cdot 17[[/math]] — Fermat fails, Miller-Rabin succeeds.",
-            "instruction": "Decide whether [[math]]n = 561[[/math]] is prime using Miller-Rabin with witnesses [[math]]\\{2, 3\\}[[/math]]. 561 is the smallest Carmichael number — a naive Fermat test would report 'probably prime'; Miller-Rabin's square-root-of-unity check catches the compositeness.",
+            "instruction": "Decide whether [[math]]n = {{n}}[[/math]] is prime using Miller-Rabin with witnesses [[math]]{{witnesses}}[[/math]]. The default [[math]]n = 561[[/math]] is the smallest Carmichael number — a naive Fermat test would report 'probably prime'; Miller-Rabin's square-root-of-unity check catches the compositeness.",
             "hints": {
               "0": "Start by factoring [[math]]560 = 2^4 \\cdot 35[[/math]], so [[math]]r = 4[[/math]], [[math]]d = 35[[/math]].",
               "1": "Already for witness [[math]]a = 2[[/math]] the chain lands on [[math]]1[[/math]] without passing through [[math]]n - 1[[/math]] — a 'non-trivial square root of 1', which rules out primality."
             }
           },
           "smallPrime": {
-            "title": "Gentle run — 29",
+            "title": "Gentle run",
             "summary": "Small prime, witness [[math]]a = 2[[/math]] — first contact with the mechanics.",
-            "instruction": "Run Miller-Rabin on [[math]]n = 29[[/math]] with witness [[math]]a = 2[[/math]]. Write the decomposition [[math]]n - 1 = 2^r \\cdot d[[/math]] and follow the square chain until [[math]]x[[/math]] hits [[math]]n - 1[[/math]] or [[math]]1[[/math]].",
+            "instruction": "Run Miller-Rabin on [[math]]n = {{n}}[[/math]] with witnesses [[math]]{{witnesses}}[[/math]]. Write the decomposition [[math]]n - 1 = 2^r \\cdot d[[/math]] and follow the square chain until [[math]]x[[/math]] hits [[math]]n - 1[[/math]] or [[math]]1[[/math]].",
             "hints": {
               "0": "[[math]]28 = 2^2 \\cdot 7[[/math]], so [[math]]r = 2[[/math]], [[math]]d = 7[[/math]].",
               "1": "[[math]]2^7 \\bmod 29 = 128 \\bmod 29 = 12[[/math]]. Square: [[math]]12^2 \\bmod 29 = 144 \\bmod 29 = 28 = n - 1[[/math]] ✓."
             }
           },
           "compositeWitness": {
-            "title": "Compositeness witness — 25",
+            "title": "Compositeness witness",
             "summary": "[[math]]25 = 5^2[[/math]] — find a witness that rules out primality outright.",
-            "instruction": "Show that [[math]]n = 25[[/math]] is composite using Miller-Rabin with witness [[math]]a = 2[[/math]]. Write out the full square chain and point to where the witness proves compositeness. Note: [[math]]a = 7[[/math]] for [[math]]n = 25[[/math]] is a strong liar — the test passes for that witness even though 25 is composite.",
+            "instruction": "Show that [[math]]n = {{n}}[[/math]] is composite using Miller-Rabin with witnesses [[math]]{{witnesses}}[[/math]]. Write out the full square chain and point to where the witness proves compositeness. Note: with the default [[math]]n = 25[[/math]] the witness [[math]]a = 7[[/math]] is a strong liar — the test passes for that witness even though 25 is composite.",
             "hints": {
               "0": "[[math]]24 = 2^3 \\cdot 3[[/math]], [[math]]r = 3[[/math]], [[math]]d = 3[[/math]]. [[math]]2^3 \\bmod 25 = 8[[/math]]; chain [[math]]8, 14, 21[[/math]] — no element is [[math]]1[[/math]] or [[math]]n - 1 = 24[[/math]], so the witness proves compositeness."
             }
@@ -4108,26 +4108,26 @@
             "x0": "x₀"
           },
           "quickFactor": {
-            "title": "Quick factor — 91",
+            "title": "Quick factor",
             "summary": "[[math]]91 = 7 \\cdot 13[[/math]], [[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]] — gcd = 7 on iteration one.",
-            "instruction": "Factor [[math]]n = 91[[/math]] using Pollard's rho with [[math]]f(x) = x^2 + 1 \\bmod 91[[/math]] and [[math]]x_0 = 2[[/math]]. Show that the first tortoise-hare step already yields a non-trivial [[math]]\\gcd[[/math]].",
+            "instruction": "Factor [[math]]n = {{n}}[[/math]] using Pollard's rho with [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]] and [[math]]x_0 = {{x0}}[[/math]]. Show how the tortoise-hare iteration yields a non-trivial [[math]]\\gcd[[/math]].",
             "hints": {
               "0": "[[math]]x_1 = f(2) = 5[[/math]], [[math]]y_1 = f(f(2)) = f(5) = 26[[/math]]. [[math]]|5 - 26| = 21[[/math]], [[math]]\\gcd(21, 91) = 7[[/math]] — factor found."
             }
           },
           "classic8051": {
-            "title": "Textbook 8051",
+            "title": "Textbook example",
             "summary": "[[math]]8051 = 83 \\cdot 97[[/math]], the classic rho example.",
-            "instruction": "Factor [[math]]n = 8051[[/math]] using Pollard's rho with [[math]]f(x) = x^2 + 1 \\bmod 8051[[/math]], [[math]]x_0 = 2[[/math]]. Lay out the iteration table [[math]](x, y, |x - y|, \\gcd)[[/math]] until a factor drops out.",
+            "instruction": "Factor [[math]]n = {{n}}[[/math]] using Pollard's rho with [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]], [[math]]x_0 = {{x0}}[[/math]]. Lay out the iteration table [[math]](x, y, |x - y|, \\gcd)[[/math]] until a factor drops out.",
             "hints": {
               "0": "Iteration 1: [[math]]x = 5, y = 26[[/math]], [[math]]\\gcd(21, 8051) = 1[[/math]] — continue.",
               "1": "Iteration 2 gives [[math]]x = 26, y = 2839[[/math]] and [[math]]\\gcd(2813, 8051) = 97[[/math]] — factor."
             }
           },
           "cycleFailure": {
-            "title": "Cycle without a factor — 53",
+            "title": "Cycle without a factor",
             "summary": "[[math]]n = 53[[/math]] is prime — the pointers collide with [[math]]\\gcd = n[[/math]], restart needed.",
-            "instruction": "Apply Pollard's rho to [[math]]n = 53[[/math]] ([[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]]). Walk the iteration table until the tortoise catches the hare and [[math]]\\gcd = n[[/math]]. Explain why no non-trivial factor exists for a prime [[math]]n[[/math]] and what you'd do in practice (change [[math]]c[[/math]] and restart).",
+            "instruction": "Apply Pollard's rho to [[math]]n = {{n}}[[/math]] with [[math]]f(x) = x^2 + {{c}}[[/math]], [[math]]x_0 = {{x0}}[[/math]]. Walk the iteration table until the tortoise catches the hare and [[math]]\\gcd = n[[/math]]. Explain what that case means and what to do in practice (change [[math]]c[[/math]] and retry).",
             "hints": {
               "0": "For prime [[math]]n = 53[[/math]] no [[math]]d \\in (1, n)[[/math]] with [[math]]d \\mid n[[/math]] exists — rho must report failure.",
               "1": "After a few iterations [[math]]x = y = 14[[/math]] and [[math]]\\gcd(0, 53) = 53[[/math]] — the restart trigger."

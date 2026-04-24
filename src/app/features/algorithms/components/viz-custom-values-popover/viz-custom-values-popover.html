@@ -7,11 +7,22 @@
 
   <form class="custom-values__form" (submit)="$event.preventDefault(); onApply()">
     @for (field of fields(); track field.key) {
-      <app-lab-number-input
-        [label]="field.label"
-        [error]="field.error ? (field.error | i18nText) : null"
-        [formControl]="field.control"
-      />
+      @if (isNumberField(field.field)) {
+        <app-lab-number-input
+          [label]="field.label"
+          [placeholder]="field.placeholder"
+          [error]="field.error ? (field.error | i18nText) : null"
+          [formControl]="$any(field.control)"
+        />
+      } @else if (isStringField(field.field)) {
+        <app-lab-text-input
+          [label]="field.label"
+          [placeholder]="field.placeholder"
+          [error]="field.error ? (field.error | i18nText) : null"
+          [mono]="true"
+          [formControl]="$any(field.control)"
+        />
+      }
     }
 
     @if (crossFieldError(); as err) {

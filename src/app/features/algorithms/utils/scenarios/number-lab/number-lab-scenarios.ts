@@ -1,6 +1,7 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   DEFAULT_EUCLIDEAN_GCD_TASK_ID,
   EUCLIDEAN_GCD_TASKS,
@@ -150,13 +151,15 @@ export function createEuclideanGcdScenario(
     EUCLIDEAN_GCD_TASKS.find((candidate) => candidate.id === id) ??
     EUCLIDEAN_GCD_TASKS.find((candidate) => candidate.id === DEFAULT_EUCLIDEAN_GCD_TASK_ID) ??
     EUCLIDEAN_GCD_TASKS[0];
+  const a = customValues?.a ?? task.defaultValues.a;
+  const b = customValues?.b ?? task.defaultValues.b;
   return {
     kind: 'euclidean-gcd',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: task.instruction ?? null,
-    a: customValues?.a ?? task.defaultValues.a,
-    b: customValues?.b ?? task.defaultValues.b,
+    taskPrompt: notebookInstructionText(task, { a, b }),
+    a,
+    b,
   };
 }

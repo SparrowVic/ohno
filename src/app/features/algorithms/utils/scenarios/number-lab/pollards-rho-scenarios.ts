@@ -1,4 +1,5 @@
 import { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   DEFAULT_POLLARDS_RHO_TASK_ID,
   POLLARDS_RHO_MAX_ITERATIONS,
@@ -55,7 +56,11 @@ export function createPollardsRhoScenario(
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: task.instruction ?? null,
+    taskPrompt: notebookInstructionText(task, {
+      n: values.n,
+      c: values.c,
+      x0: values.x0,
+    }),
     n: values.n,
     c: values.c,
     x0: values.x0,

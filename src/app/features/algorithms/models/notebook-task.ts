@@ -1,4 +1,10 @@
-import { TranslatableText } from '../../../core/i18n/translatable-text';
+import {
+  I18nTextParams,
+  TranslatableText,
+  i18nText,
+  isI18nText,
+} from '../../../core/i18n/translatable-text';
+import { looksLikeI18nKey } from '../../../core/i18n/looks-like-i18n-key';
 import { Task } from './task';
 
 /**
@@ -28,3 +34,33 @@ export type NotebookTaskDifficulty = 'easy' | 'medium' | 'hard';
  *  snippet. The side-panel / code-panel branch on this to render a
  *  "no snippet yet" placeholder instead of the authored variant. */
 export const NOTEBOOK_TASK_NO_SNIPPET: null = null;
+
+/**
+ * Bind the current effective input values into the task's
+ * `instruction` so the "Zadanie:" / "Task:" block in the scratchpad
+ * reflects what the user actually sees on the board.
+ *
+ * Returns a `TranslatableText` with `params` set to `values`, so
+ * `{{n}}`, `{{a}}`, `{{b}}`, `{{witnesses}}`, etc. placeholders in
+ * the instruction string interpolate at render time. Null when the
+ * task didn't declare an instruction.
+ *
+ * Accepts the instruction in any of the three shapes it can legally
+ * take: a raw string (marker key from `t(...)`), an I18nText object
+ * (pre-parameterised), or a plain sentence. The plain-sentence case
+ * returns the string unchanged — there's nothing to interpolate.
+ */
+export function notebookInstructionText<TValues>(
+  task: NotebookTask<TValues>,
+  values: I18nTextParams,
+): TranslatableText | null {
+  const raw = task.instruction;
+  if (raw == null) return null;
+  if (isI18nText(raw)) {
+    return i18nText(raw.key, { ...(raw.params ?? {}), ...values });
+  }
+  if (typeof raw === 'string' && looksLikeI18nKey(raw)) {
+    return i18nText(raw, values);
+  }
+  return raw;
+}

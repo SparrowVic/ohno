@@ -1,4 +1,5 @@
 import { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
   EXTENDED_EUCLIDEAN_TASKS,
@@ -56,13 +57,15 @@ export function createExtendedEuclideanScenario(
       (candidate) => candidate.id === DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
     ) ??
     EXTENDED_EUCLIDEAN_TASKS[0];
+  const a = customValues?.a ?? task.defaultValues.a;
+  const b = customValues?.b ?? task.defaultValues.b;
   return {
     kind: 'extended-euclidean',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: task.instruction ?? null,
-    a: customValues?.a ?? task.defaultValues.a,
-    b: customValues?.b ?? task.defaultValues.b,
+    taskPrompt: notebookInstructionText(task, { a, b }),
+    a,
+    b,
   };
 }
