@@ -2086,6 +2086,46 @@
               "done": "Bézout coefficients are settled."
             }
           },
+          "fftNtt": {
+            "modeLabel": "FFT / NTT (chalkboard)",
+            "goal": "Compute the {{N}}-point discrete Fourier transform: [[math]]X_k = \\sum_{n=0}^{N-1} x_n \\cdot \\omega_N^{k n}[[/math]], where [[math]]\\omega_N = e^{-2\\pi i / N}[[/math]].",
+            "rule": "Radix-2 Cooley-Tukey: bit-reverse permutation, then [[math]]\\log_2 N[[/math]] stages. Each stage runs butterfly [[math]](u, t) \\to (u + t, u - t)[[/math]] with twiddle [[math]]t = \\omega_m^j \\cdot x_{\\text{lower}}[[/math]].",
+            "invariant": "After stage [[math]]s[[/math]] every block of length [[math]]2^s[[/math]] already holds the DFT of its sub-block. After the last stage the whole array is [[math]]X[/math]] of length [[math]]N[/math]].",
+            "setup": {
+              "input": "Input: [[math]]x = [{{input}}][[/math]], [[math]]N = {{N}}[[/math]].",
+              "bitReverse": "After bit-reverse permutation: [[math]]{{result}}[[/math]].",
+              "bitReverseInstruction": "Swap indices so their bits are reversed — prerequisite for the iterative form."
+            },
+            "stage": {
+              "header": "Stage {{stage}}: combining blocks of length [[math]]m = {{m}}[[/math]].",
+              "headerInstruction": "For each block of length [[math]]{{m}}[[/math]] apply butterflies with twiddle [[math]]\\omega_{m}^j[[/math]].",
+              "butterfly": "Butterfly [[math]]({{upperIdx}}, {{lowerIdx}})[[/math]]: [[math]]u = {{u}}[[/math]], [[math]]t = \\omega \\cdot x_{\\text{lower}} = {{t}}[[/math]] → [[math]]({{uPlus}}, \\, {{uMinus}})[[/math]].",
+              "butterflyInstruction": "Compute new [[math]]x_{{upperIdx}} = u + t[[/math]] and [[math]]x_{{lowerIdx}} = u - t[[/math]].",
+              "twiddle": "[[math]]\\omega_{{m}}^{{j}} = {{value}}[[/math]]"
+            },
+            "result": {
+              "spectrum": "DFT: [[math]]X = {{spectrum}}[[/math]]",
+              "signoff": "[[math]]X = {{spectrum}}[[/math]]",
+              "invalid": "Input length [[math]]N = {{N}}[[/math]] is not a power of two — radix-2 FFT needs [[math]]N = 2^k[[/math]]."
+            },
+            "phases": {
+              "setup": "Setup",
+              "butterflies": "Butterfly stages",
+              "complete": "Done"
+            },
+            "decisions": {
+              "permuting": "Bit-reverse permutation.",
+              "stageStart": "Stage start — combining blocks.",
+              "butterfly": "Butterfly [[math]](u, t) \\to (u+t, u-t)[/math]].",
+              "done": "Transform complete.",
+              "invalid": "Length isn't a power of two — radix-2 doesn't apply."
+            },
+            "captions": {
+              "setup": "Start: input and bit-reverse.",
+              "stage": "New stage.",
+              "result": "Final spectrum."
+            }
+          },
           "gaussianElimination": {
             "modeLabel": "Gauss-Jordan elimination (chalkboard)",
             "goal": "Reduce the augmented matrix to reduced row-echelon form (RREF) and read off the solution of the {{count}}-equation system.",
@@ -4121,6 +4161,21 @@
             "instruction": "Express [[math]]\\gcd({{a}}, {{b}})[[/math]] as an integer combination of [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]]. A single back-substitution line is enough — state the full identity [[math]]\\gcd = s \\cdot {{a}} + t \\cdot {{b}}[[/math]] with concrete [[math]]s, t[[/math]].",
             "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — two forward steps, one back-sub line.",
             "title": "Minimal back-sub"
+          }
+        },
+        "fftNtt": {
+          "values": {
+            "input": "input",
+            "inputPlaceholder": "1 2 3 4"
+          },
+          "basic4Point": {
+            "title": "4-point DFT",
+            "summary": "[[math]][1, 2, 3, 4] \\to [10, -2 + 2i, -2, -2 - 2i][/math]] — two butterfly stages, twiddles [[math]]\\{1, -i, -1, i\\}[/math]].",
+            "instruction": "Compute the 4-point DFT of the signal [[math]]{{input}}[[/math]] using radix-2 Cooley-Tukey. Run the bit-reverse permutation, then [[math]]\\log_2 {{N}} = 2[[/math]] butterfly stages. Every [[math]]\\omega_4^j[[/math]] for [[math]]j = 0, 1, 2, 3[[/math]] is one of [[math]]\\{1, -i, -1, i\\}[[/math]].",
+            "hints": {
+              "0": "Bit-reverse for [[math]]N = 4[[/math]]: index permutation [[math]](0, 1, 2, 3) \\to (0, 2, 1, 3)[[/math]]. For input [[math]][1, 2, 3, 4][[/math]] that gives [[math]][1, 3, 2, 4][[/math]].",
+              "1": "Stage 1 (m=2, [[math]]\\omega = -1[[/math]]): butterflies on pairs [[math]](1, 3)[[/math]] and [[math]](2, 4)[[/math]] yield [[math]][4, -2, 6, -2][[/math]]. Stage 2 (m=4) combines [[math]](4, 6)[[/math]] and [[math]](-2, -2)[[/math]] with twiddles [[math]]\\{1, -i\\}[[/math]] — final [[math]][10, -2+2i, -2, -2-2i][[/math]]."
+            }
           }
         },
         "gaussianElimination": {

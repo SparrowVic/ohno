@@ -1413,6 +1413,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['convolution', 'frequency domain', 'polynomials'],
+    complexity: {
+      timeBest: 'O(n log n)',
+      timeAverage: 'O(n log n)',
+      timeWorst: 'O(n log n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'gaussian-elimination',

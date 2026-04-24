@@ -2086,6 +2086,46 @@
               "done": "Współczynniki Bézouta ustalone."
             }
           },
+          "fftNtt": {
+            "modeLabel": "FFT / NTT (tablica)",
+            "goal": "Policz {{N}}-punktową dyskretną transformatę Fouriera: [[math]]X_k = \\sum_{n=0}^{N-1} x_n \\cdot \\omega_N^{k n}[[/math]], gdzie [[math]]\\omega_N = e^{-2\\pi i / N}[[/math]].",
+            "rule": "Radix-2 Cooley-Tukey: permutacja bit-reverse, potem [[math]]\\log_2 N[[/math]] etapów. W każdym etapie łączysz pary poprzez butterfly [[math]](u, t) \\to (u + t, u - t)[[/math]] z twiddle [[math]]t = \\omega_m^j \\cdot x_{\\text{lower}}[[/math]].",
+            "invariant": "Po etapie [[math]]s[[/math]] bloki długości [[math]]2^s[[/math]] są już poprawnymi DFT tych podbloków. Po ostatnim etapie cała tablica to [[math]]X[/math]] o długości [[math]]N[/math]].",
+            "setup": {
+              "input": "Wejście: [[math]]x = [{{input}}][[/math]], [[math]]N = {{N}}[[/math]].",
+              "bitReverse": "Po permutacji bit-reverse: [[math]]{{result}}[[/math]].",
+              "bitReverseInstruction": "Zamień indeksy tak, żeby bity były odwrócone — to warunek iteracyjnej wersji."
+            },
+            "stage": {
+              "header": "Etap {{stage}}: łączymy bloki długości [[math]]m = {{m}}[[/math]].",
+              "headerInstruction": "Dla każdego bloku długości [[math]]{{m}}[[/math]] zastosuj butterflies z twiddle [[math]]\\omega_{m}^j[[/math]].",
+              "butterfly": "Butterfly [[math]]({{upperIdx}}, {{lowerIdx}})[[/math]]: [[math]]u = {{u}}[[/math]], [[math]]t = \\omega \\cdot x_{\\text{lower}} = {{t}}[[/math]] → [[math]]({{uPlus}}, \\, {{uMinus}})[[/math]].",
+              "butterflyInstruction": "Policz nowe [[math]]x_{{upperIdx}} = u + t[[/math]] i [[math]]x_{{lowerIdx}} = u - t[[/math]].",
+              "twiddle": "[[math]]\\omega_{{m}}^{{j}} = {{value}}[[/math]]"
+            },
+            "result": {
+              "spectrum": "DFT: [[math]]X = {{spectrum}}[[/math]]",
+              "signoff": "[[math]]X = {{spectrum}}[[/math]]",
+              "invalid": "Długość wejścia [[math]]N = {{N}}[[/math]] nie jest potęgą dwójki — radix-2 FFT wymaga [[math]]N = 2^k[[/math]]."
+            },
+            "phases": {
+              "setup": "Start",
+              "butterflies": "Etapy butterfly",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "permuting": "Permutacja bit-reverse.",
+              "stageStart": "Start etapu — łączymy bloki.",
+              "butterfly": "Butterfly [[math]](u, t) \\to (u+t, u-t)[/math]].",
+              "done": "Transformata gotowa.",
+              "invalid": "Długość nie jest potęgą dwójki — radix-2 odpada."
+            },
+            "captions": {
+              "setup": "Start: wejście i bit-reverse.",
+              "stage": "Nowy etap.",
+              "result": "Finalny spektrum."
+            }
+          },
           "gaussianElimination": {
             "modeLabel": "Eliminacja Gaussa-Jordana (tablica)",
             "goal": "Sprowadź macierz rozszerzoną do postaci schodkowo-zredukowanej (RREF) i odczytaj rozwiązanie układu {{count}} równań.",
@@ -4121,6 +4161,21 @@
             "instruction": "Zapisz [[math]]\\gcd({{a}}, {{b}})[[/math]] jako całkowitą kombinację liczb [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]]. Wystarczy jedna linia back-substytucji — podaj pełną tożsamość [[math]]\\gcd = s \\cdot {{a}} + t \\cdot {{b}}[[/math]] z konkretnymi wartościami [[math]]s, t[[/math]].",
             "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — dwa kroki forward, jedna linia back-sub.",
             "title": "Minimalny back-sub"
+          }
+        },
+        "fftNtt": {
+          "values": {
+            "input": "wejście",
+            "inputPlaceholder": "1 2 3 4"
+          },
+          "basic4Point": {
+            "title": "4-punktowa DFT",
+            "summary": "[[math]][1, 2, 3, 4] \\to [10, -2 + 2i, -2, -2 - 2i][/math]] — dwa etapy butterfly, twiddle [[math]]\\{1, -i, -1, i\\}[/math]].",
+            "instruction": "Policz 4-punktową DFT sygnału [[math]]{{input}}[[/math]] algorytmem Cooley-Tukey radix-2. Wykonaj permutację bit-reverse, a potem [[math]]\\log_2 {{N}} = 2[[/math]] etapy butterfly. Każde [[math]]\\omega_4^j[[/math]] dla [[math]]j = 0, 1, 2, 3[[/math]] to jedna z wartości [[math]]\\{1, -i, -1, i\\}[[/math]].",
+            "hints": {
+              "0": "Bit-reverse dla [[math]]N = 4[[/math]]: permutacja indeksów [[math]](0, 1, 2, 3) \\to (0, 2, 1, 3)[[/math]]. Dla wejścia [[math]][1, 2, 3, 4][[/math]] daje to [[math]][1, 3, 2, 4][[/math]].",
+              "1": "Etap 1 (m=2, [[math]]\\omega = -1[[/math]]): butterflies na parach [[math]](1, 3)[[/math]] i [[math]](2, 4)[[/math]] dają [[math]][4, -2, 6, -2][[/math]]. Etap 2 (m=4) łączy [[math]](4, 6)[[/math]] i [[math]](-2, -2)[[/math]] z twiddle [[math]]\\{1, -i\\}[[/math]] — finalnie [[math]][10, -2+2i, -2, -2-2i][[/math]]."
+            }
           }
         },
         "gaussianElimination": {

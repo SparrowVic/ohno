@@ -36,7 +36,8 @@ export type ScratchpadLabMode =
   | 'crt'
   | 'gaussian-elimination'
   | 'simplex'
-  | 'reservoir-sampling';
+  | 'reservoir-sampling'
+  | 'fft-ntt';
 
 export type ScratchpadLineKind =
   | 'goal'

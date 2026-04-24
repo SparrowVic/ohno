@@ -676,6 +676,16 @@ import {
   DEFAULT_RESERVOIR_SAMPLING_TASK_ID,
   createReservoirSamplingScenario,
 } from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
+import { fftNttGenerator } from '../../algorithms/fft-ntt/fft-ntt';
+import {
+  FftNttScenario,
+  FftNttValues,
+  FFT_NTT_PRESETS,
+  FFT_NTT_TASKS,
+  DEFAULT_FFT_NTT_PRESET_ID,
+  DEFAULT_FFT_NTT_TASK_ID,
+  createFftNttScenario,
+} from '../../utils/scenarios/number-lab/fft-ntt-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -2674,6 +2684,32 @@ const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: reservoirSamplingGenerator,
 };
 
+/** FFT / NTT — chalkboard-only. Iterative radix-2 Cooley-Tukey: bit-
+ *  reversal permutation, then `log₂ N` butterfly stages. Each
+ *  butterfly is its own scratchpad line showing `(u, t)` and the
+ *  resulting `(u + t, u - t)` pair, with the twiddle factor noted in
+ *  the annotation. Only power-of-two input lengths are accepted. */
+const FFT_NTT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<FftNttScenario, FftNttValues> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New signal',
+  legendItems: () => [],
+  presetOptions: FFT_NTT_PRESETS,
+  defaultPresetId: DEFAULT_FFT_NTT_PRESET_ID,
+  tasks: FFT_NTT_TASKS,
+  defaultTaskId: DEFAULT_FFT_NTT_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createFftNttScenario(size, presetId, customValues),
+  generator: fftNttGenerator,
+};
+
 const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   TwoPointersScenario,
   TwoPointersValues
@@ -3872,6 +3908,7 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'gaussian-elimination') return GAUSSIAN_ELIMINATION_VIEW_CONFIG;
   if (id === 'simplex-algorithm') return SIMPLEX_ALGORITHM_VIEW_CONFIG;
   if (id === 'reservoir-sampling') return RESERVOIR_SAMPLING_VIEW_CONFIG;
+  if (id === 'fft-ntt') return FFT_NTT_VIEW_CONFIG;
   if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;
