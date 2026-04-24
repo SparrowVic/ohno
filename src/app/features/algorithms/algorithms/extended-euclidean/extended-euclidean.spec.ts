@@ -176,4 +176,18 @@ describe('extendedEuclideanGenerator', () => {
       '(-21) \\cdot 89 + 34 \\cdot 55 = -1869 + 1870 = 1',
     );
   });
+
+  it('indents every calculation row under its section label', () => {
+    const steps = run(createExtendedEuclideanScenario(1, 'diophantine-logistics'));
+    const finalLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
+
+    for (const scratchpadLine of finalLines) {
+      if (scratchpadLine.kind === 'equation' || scratchpadLine.kind === 'decision') {
+        expect(scratchpadLine.indent).toBe(1);
+      }
+    }
+
+    expect(finalLines.find((candidate) => candidate.id === 'section-forward')?.indent).toBe(0);
+    expect(finalLines.find((candidate) => candidate.id === 'section-result')?.indent).toBe(0);
+  });
 });

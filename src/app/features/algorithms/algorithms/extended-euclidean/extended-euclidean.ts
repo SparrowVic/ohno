@@ -201,6 +201,7 @@ const I18N = {
 
 const RESULT_SECTION_MARKER = '✓';
 const NO_RESULT_SECTION_MARKER = '×';
+const CALCULATION_INDENT = 1;
 
 type LineBuilder = {
   readonly id: string;
@@ -432,10 +433,14 @@ export function* extendedEuclideanGenerator(
     readonly marker?: string | null;
     readonly annotation?: ScratchpadLine['annotation'];
   }): LineBuilder {
+    const defaultIndent =
+      opts.kind === 'equation' || opts.kind === 'decision' || opts.kind === 'substitute'
+        ? CALCULATION_INDENT
+        : 0;
     return {
       id: opts.id,
       kind: opts.kind,
-      indent: opts.indent ?? 0,
+      indent: opts.indent ?? defaultIndent,
       marker: opts.marker ?? null,
       caption: null,
       content: opts.content,
@@ -459,7 +464,7 @@ export function* extendedEuclideanGenerator(
     });
   }
 
-  function mathLine(id: string, expression: string, indent = 0): LineBuilder {
+  function mathLine(id: string, expression: string, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({
       id,
       kind: 'equation',
@@ -1394,7 +1399,6 @@ export function* extendedEuclideanGenerator(
     paperLine({
       id: 'result-line',
       kind: 'equation',
-      indent: 0.6,
       content: i18nText(I18N.backSubLine, {
         expression: `${gcdValue} = ${formatResultLinearCombo(sForA, originalA, tForB, originalB)}`,
       }),
