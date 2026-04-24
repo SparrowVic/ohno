@@ -2065,6 +2065,7 @@
               "existenceCheck": "Solution existence check",
               "back": "Back-substitution",
               "result": "Result",
+              "noResult": "No solutions",
               "particular": "Particular solution",
               "general": "General solution",
               "minimization": "Minimization",
@@ -2095,8 +2096,7 @@
               "pairLine": "[[math]](e, d) = ({{e}}, {{d}})[[/math]]",
               "identityLine": "[[math]]m^{e \\cdot d} = m \\pmod{ {{n}} }[[/math]]",
               "interpretation": "In RSA, [[math]](e, d) = ({{e}}, {{d}})[[/math]] satisfies [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
-              "signoff": "[[math]]d = {{d}}[[/math]] for [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
-              "noInverseSignoff": "No private key: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."
+              "signoff": "[[math]]d = {{d}}[[/math]] for [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]]."
             },
             "diophantine": {
               "goal": "Solve the linear Diophantine equation [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. First find Bézout for [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]], then scale it.",
@@ -2114,8 +2114,7 @@
               "stepSizes": "[[math]]g = {{gcd}}, \\quad b/g = {{stepX}}, \\quad a/g = {{stepY}}[[/math]]",
               "candidate": "[[math]]k = {{k}} \\Rightarrow x = {{x}}, \\; y = {{y}}[[/math]]",
               "minimal": "[[math]]k = {{k}}[[/math]] gives the smallest absolute values in this family: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
-              "signoff": "Particular solution: [[math]]x = {{x}}, y = {{y}}[[/math]]. General form: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]].",
-              "noSolutionSignoff": "No solutions for [[math]]{{a}}x + {{b}}y = {{target}}[[/math]], because [[math]]\\gcd = {{gcd}}[[/math]] does not divide the right-hand side."
+              "signoff": "Particular solution: [[math]]x = {{x}}, y = {{y}}[[/math]]. General form: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]]."
             },
             "modularEquation": {
               "goal": "Solve the modular equation [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]. Extended Euclidean first checks whether the right-hand side is divisible by [[math]]\\gcd({{coefficient}}, {{modulus}})[[/math]].",
@@ -2128,8 +2127,7 @@
               "reduce": "Divide by [[math]]g[[/math]]: [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} } \\Rightarrow {{reducedCoefficient}}x \\equiv {{reducedRhs}} \\pmod{ {{reducedModulus}} }[[/math]].",
               "solution": "The inverse of [[math]]{{reducedCoefficient}}[[/math]] modulo [[math]]{{reducedModulus}}[[/math]] is [[math]]{{inverse}}[[/math]], so [[math]]x \\equiv {{reducedRhs}} \\cdot {{inverse}} = {{x}} \\pmod{ {{reducedModulus}} }[[/math]].",
               "allSolutions": "Modulo [[math]]{{modulus}}[[/math]], this gives [[math]]x \\equiv {{x}} \\pmod{ {{reducedModulus}} }[[/math]], i.e. [[math]]x \\in \\{ {{solutions}} \\}[[/math]].",
-              "signoff": "Solutions of [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]].",
-              "noSolutionSignoff": "No solutions"
+              "signoff": "Solutions of [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]]."
             },
             "captions": {
               "forwardStart": "Start the forward division chain.",
@@ -4181,7 +4179,7 @@
               "0": "First run the Euclidean chain for [[math]]\\varphi(n) = {{a}}[[/math]] and [[math]]e = {{b}}[[/math]].",
               "1": "After back-substitution, use the coefficient of [[math]]e[[/math]]. Reduce it modulo [[math]]\\varphi(n)[[/math]] to get [[math]]d[[/math]]."
             },
-            "instruction": "In an RSA system, take [[math]]n = {{n}}[[/math]], public exponent [[math]]e = {{b}}[[/math]], and [[math]]\\varphi(n) = {{a}}[[/math]]. Check whether [[math]]e[[/math]] has an inverse modulo [[math]]\\varphi(n)[[/math]]. If it does, compute the private key [[math]]d[[/math]] satisfying [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]] and interpret the result for RSA.",
+            "instruction": "In an RSA system, consider:\n[[math]]n = {{n}}[[/math]], [[math]]e = {{b}}[[/math]], [[math]]\\varphi(n) = {{a}}[[/math]].\n\n1. Check whether [[math]]e[[/math]] has an inverse modulo [[math]]\\varphi(n)[[/math]].\n2. If it does, compute the private key [[math]]d[[/math]] such that:\n[[math]]d \\cdot e = 1 \\; (\\mathrm{mod}\\; \\varphi(n))[[/math]]\n3. Interpret the result for RSA.",
             "summary": "[[math]]e = 35, \\varphi(n) = 192[[/math]] — modular inverse as an RSA private key.",
             "title": "RSA modular inverse"
           },
@@ -4190,7 +4188,7 @@
               "0": "First compute [[math]]\\gcd(84,36)[[/math]]. Only after checking that [[math]]12[[/math]] is a multiple of the gcd should you scale the Bézout coefficients.",
               "1": "For the default values [[math]]84 = 2 \\cdot 36 + 12[[/math]], so back-substitution is short, but the interpretation is a different task type."
             },
-            "instruction": "A logistics company uses two truck types. Type A carries [[math]]{{a}}[[/math]] units and type B carries [[math]]{{b}}[[/math]] units. The model gives [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Find one particular solution, derive the general solution, and choose the representative with the smallest absolute values.",
+            "instruction": "A logistics company uses two truck types:\n- type A carries [[math]]{{a}}[[/math]] units,\n- type B carries [[math]]{{b}}[[/math]] units.\n\nThe mathematical model gives:\n[[math]]{{a}}x + {{b}}y = {{target}}[[/math]]\n\n1. Find one particular solution.\n2. Derive the general solution.\n3. Choose the representative with the smallest absolute values.",
             "summary": "[[math]]84x + 36y = 12[[/math]] — Diophantine equation with a general solution.",
             "title": "Diophantine equation"
           },
@@ -4199,7 +4197,7 @@
               "0": "Do not start by looking for [[math]]143^{-1}[[/math]]. First compute [[math]]\\gcd(143,221)[[/math]].",
               "1": "If [[math]]\\gcd(a,m)[[/math]] does not divide the right-hand side, back-substitution is unnecessary."
             },
-            "instruction": "Solve the congruence [[math]]{{b}}x \\equiv {{rhs}} \\pmod{ {{a}} }[[/math]]. Check whether a solution exists; if it does, find all solutions modulo [[math]]{{a}}[[/math]]. Justify the result with Extended Euclidean, starting from the [[math]]\\gcd({{b}}, {{a}})[[/math]] test.",
+            "instruction": "Solve the congruence:\n[[math]]{{b}}x = {{rhs}} \\; (\\mathrm{mod}\\; {{a}})[[/math]]\n\n1. Check whether a solution exists.\n2. If it does, find all solutions.\n3. Justify the result.",
             "summary": "[[math]]143x \\equiv 55 \\pmod{221}[[/math]] — trap case: the gcd blocks solutions.",
             "title": "Congruence trap"
           },
@@ -4218,7 +4216,7 @@
               "1": "Bézout coefficients also come out as Fibonacci numbers (with alternating signs).",
               "2": "This is the canonical worst case — no smaller pair needs a deeper back-sub."
             },
-            "instruction": "Find Bézout coefficients for [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]] — integers [[math]]s, t[[/math]] with [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. With the default Fibonacci pair, verify that both [[math]]|s|[[/math]] and [[math]]|t|[[/math]] are themselves Fibonacci numbers.",
+            "instruction": "Find Bézout coefficients for consecutive Fibonacci numbers [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]], meaning integers [[math]]s, t[[/math]] such that:\n[[math]]{{a}}s + {{b}}t = \\gcd({{a}}, {{b}})[[/math]]\n\nVerify that the absolute values of the coefficients are also Fibonacci numbers.",
             "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — deepest back-sub for this input size.",
             "title": "Deepest back-substitution"
           },
@@ -4262,7 +4260,7 @@
               "0": "[[math]]60 = 1 \\cdot 48 + 12[[/math]], then [[math]]48 = 4 \\cdot 12 + 0[[/math]].",
               "1": "Back-sub is a single line: [[math]]12 = 1 \\cdot 60 + (-1) \\cdot 48[[/math]]."
             },
-            "instruction": "Find integers [[math]]s, t[[/math]] such that [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. Write down every forward division and present the back-substitution as a single equation.",
+            "instruction": "Find integers [[math]]s, t[[/math]] such that:\n[[math]]{{a}}s + {{b}}t = \\gcd({{a}}, {{b}})[[/math]]\n\nWrite down every forward division and present the back-substitution as a single equation.",
             "summary": "[[math]]\\gcd(60, 48) = 12[[/math]] — one-step back-sub.",
             "title": "Short chain"
           },

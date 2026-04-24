@@ -277,6 +277,8 @@ k = -1 -> x = -2, y = 5
 k = 1  -> x = 4,  y = -9
 ```
 
+### Wynik
+
 Wybieramy:
 
 ```text
@@ -355,7 +357,7 @@ Czyli:
 13 nie dzieli 55
 ```
 
-### Wniosek
+### Brak rozwiązań
 
 ```text
 Brak rozwiazan

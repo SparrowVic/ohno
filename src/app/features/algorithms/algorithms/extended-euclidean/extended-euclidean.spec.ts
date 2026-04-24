@@ -27,8 +27,12 @@ function lineIds(step: SortStep | undefined): string[] {
   return (step?.scratchpadLab?.lines ?? []).map((line) => line.id);
 }
 
+function line(step: SortStep | undefined, id: string) {
+  return step?.scratchpadLab?.lines.find((candidate) => candidate.id === id);
+}
+
 function lineExpression(step: SortStep | undefined, id: string): string | null {
-  const content = step?.scratchpadLab?.lines.find((line) => line.id === id)?.content;
+  const content = line(step, id)?.content;
   if (!isI18nText(content)) return null;
   return typeof content.params?.['expression'] === 'string' ? content.params['expression'] : null;
 }
@@ -121,15 +125,19 @@ describe('extendedEuclideanGenerator', () => {
     expect(steps.at(-1)?.scratchpadLab?.resultLabel).toBeNull();
     const finalLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
     expect(finalLines.some((line) => line.id.startsWith('back-'))).toBe(false);
-    expect(finalLines.some((line) => line.id === 'modular-equation-no-solution-result')).toBe(true);
+    expect(finalLines.some((line) => line.id === 'modular-equation-no-solution-result')).toBe(
+      false,
+    );
     expect(lineIds(steps.at(-1))).toEqual(
       expect.arrayContaining([
         'modular-equation-condition-formula',
         'modular-equation-gcd-check',
         'modular-equation-not-divides',
-        'section-conclusion',
+        'section-no-result',
       ]),
     );
+    expect(line(steps.at(-1), 'section-no-result')?.kind).toBe('result');
+    expect(line(steps.at(-1), 'section-no-result')?.marker).toBe('×');
   });
 
   it('scales Bézout coefficients into the Diophantine general solution', () => {
@@ -149,10 +157,12 @@ describe('extendedEuclideanGenerator', () => {
         'diophantine-general-template-y',
         'diophantine-general-x',
         'diophantine-general-y',
+        'section-result',
         'diophantine-minimal-x',
         'diophantine-minimal',
       ]),
     );
+    expect(line(steps.at(-1), 'section-result')?.marker).toBe('✓');
   });
 
   it('keeps the Fibonacci chain written out like the task sheet', () => {

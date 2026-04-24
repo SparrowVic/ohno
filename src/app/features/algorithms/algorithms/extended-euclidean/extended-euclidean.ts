@@ -66,6 +66,7 @@ const I18N = {
     ),
     back: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.back'),
     result: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.result'),
+    noResult: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.noResult'),
     particular: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.particular'),
     general: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.general'),
     minimization: t(
@@ -115,9 +116,6 @@ const I18N = {
   rsaIdentityLine: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.identityLine',
   ),
-  rsaNoInverseSignoff: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.noInverseSignoff',
-  ),
   diophantineCheck: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.check',
   ),
@@ -151,9 +149,6 @@ const I18N = {
   diophantineSignoff: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.signoff',
   ),
-  diophantineNoSolutionSignoff: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.noSolutionSignoff',
-  ),
   modularCheck: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.check',
   ),
@@ -171,9 +166,6 @@ const I18N = {
   ),
   modularAllSolutions: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.allSolutions',
-  ),
-  modularNoSolutionSignoff: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.noSolutionSignoff',
   ),
   phases: {
     setup: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.setup'),
@@ -208,6 +200,7 @@ const I18N = {
 } as const;
 
 const RESULT_SECTION_MARKER = '✓';
+const NO_RESULT_SECTION_MARKER = '×';
 
 type LineBuilder = {
   readonly id: string;
@@ -497,6 +490,15 @@ export function* extendedEuclideanGenerator(
     });
   }
 
+  function noResultSectionLine(): LineBuilder {
+    return paperLine({
+      id: 'section-no-result',
+      kind: 'result',
+      marker: NO_RESULT_SECTION_MARKER,
+      content: I18N.section.noResult,
+    });
+  }
+
   yield appendPaperStep(sectionLine('section-forward', I18N.section.forward), {
     activeCodeLine: 1,
     phase: I18N.phases.forward,
@@ -587,30 +589,12 @@ export function* extendedEuclideanGenerator(
       },
     );
     if (!inverseExists) {
-      const signoff = i18nText(I18N.rsaNoInverseSignoff, {
-        e: originalB,
-        phi: originalA,
-        gcd: gcdValue,
-      });
-      yield appendPaperStep(sectionLine('section-conclusion', I18N.section.conclusion), {
+      yield appendPaperStep(noResultSectionLine(), {
         activeCodeLine: 7,
         phase: I18N.phases.complete,
         decision: I18N.decisions.noSolution,
         tone: 'setup',
       });
-      yield appendPaperStep(
-        paperLine({
-          id: 'rsa-no-inverse-result',
-          kind: 'decision',
-          content: signoff,
-        }),
-        {
-          activeCodeLine: 7,
-          phase: I18N.phases.complete,
-          decision: I18N.decisions.noSolution,
-          tone: 'complete',
-        },
-      );
       return;
     }
   }
@@ -665,31 +649,12 @@ export function* extendedEuclideanGenerator(
       );
     }
     if (!hasSolution) {
-      const signoff = i18nText(I18N.diophantineNoSolutionSignoff, {
-        a: originalA,
-        b: originalB,
-        target: flow.target,
-        gcd: gcdValue,
-      });
-      yield appendPaperStep(sectionLine('section-conclusion', I18N.section.conclusion), {
+      yield appendPaperStep(noResultSectionLine(), {
         activeCodeLine: 7,
         phase: I18N.phases.complete,
         decision: I18N.decisions.noSolution,
         tone: 'setup',
       });
-      yield appendPaperStep(
-        paperLine({
-          id: 'diophantine-no-solution-result',
-          kind: 'decision',
-          content: signoff,
-        }),
-        {
-          activeCodeLine: 7,
-          phase: I18N.phases.complete,
-          decision: I18N.decisions.noSolution,
-          tone: 'complete',
-        },
-      );
       return;
     }
   }
@@ -788,31 +753,12 @@ export function* extendedEuclideanGenerator(
       );
     }
     if (!hasSolution) {
-      const signoff = i18nText(I18N.modularNoSolutionSignoff, {
-        coefficient: originalB,
-        rhs: flow.rhs,
-        modulus: originalA,
-        gcd: gcdValue,
-      });
-      yield appendPaperStep(sectionLine('section-conclusion', I18N.section.conclusion), {
+      yield appendPaperStep(noResultSectionLine(), {
         activeCodeLine: 7,
         phase: I18N.phases.complete,
         decision: I18N.decisions.noSolution,
         tone: 'setup',
       });
-      yield appendPaperStep(
-        paperLine({
-          id: 'modular-equation-no-solution-result',
-          kind: 'decision',
-          content: signoff,
-        }),
-        {
-          activeCodeLine: 7,
-          phase: I18N.phases.complete,
-          decision: I18N.decisions.noSolution,
-          tone: 'complete',
-        },
-      );
       return;
     }
   }
@@ -1290,6 +1236,12 @@ export function* extendedEuclideanGenerator(
           },
         );
       }
+      yield appendPaperStep(resultSectionLine(), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'setup',
+      });
       yield appendPaperStep(sectionLine('diophantine-pick-label', I18N.resultLabels.pick), {
         activeCodeLine: 7,
         phase: I18N.phases.complete,

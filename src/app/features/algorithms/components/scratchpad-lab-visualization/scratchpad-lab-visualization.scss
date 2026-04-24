@@ -97,6 +97,12 @@
   font-size: 15.5px;
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+:host ::ng-deep .scratchpad__task-body .math-text__rendered--mixed,
+:host ::ng-deep .scratchpad__task-body .math-text__segment--plain {
+  white-space: pre-wrap;
 }
 
 /* ================================================================ */
@@ -318,6 +324,16 @@
   font-weight: 700;
   color: var(--accent-strong);
   line-height: 1.15;
+}
+
+.scratchpad__line--result[data-line-id='section-no-result'] {
+  border-color: rgba(var(--viz-danger-rgb), 0.34);
+  background: rgba(var(--viz-danger-rgb), 0.08);
+}
+
+.scratchpad__line--result[data-line-id='section-no-result'] .scratchpad__line-marker,
+.scratchpad__line--result[data-line-id='section-no-result'] .scratchpad__line-body {
+  color: var(--viz-danger);
 }
 
 /* ------ instruction chip (persistent imperative tag) ------ */

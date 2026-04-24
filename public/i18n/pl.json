@@ -2065,6 +2065,7 @@
               "existenceCheck": "Sprawdzenie istnienia rozwiązań",
               "back": "Cofanie",
               "result": "Wynik",
+              "noResult": "Brak rozwiązań",
               "particular": "Rozwiązanie szczególne",
               "general": "Rozwiązanie ogólne",
               "minimization": "Minimalizacja",
@@ -2095,8 +2096,7 @@
               "pairLine": "[[math]](e, d) = ({{e}}, {{d}})[[/math]]",
               "identityLine": "[[math]]m^{e \\cdot d} = m \\pmod{ {{n}} }[[/math]]",
               "interpretation": "W RSA para [[math]](e, d) = ({{e}}, {{d}})[[/math]] spełnia [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
-              "signoff": "[[math]]d = {{d}}[[/math]] dla [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
-              "noInverseSignoff": "Brak klucza prywatnego: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."
+              "signoff": "[[math]]d = {{d}}[[/math]] dla [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]]."
             },
             "diophantine": {
               "goal": "Rozwiąż równanie diofantyczne [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Najpierw znajdź Bézouta dla [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]], potem przeskaluj wynik.",
@@ -2114,8 +2114,7 @@
               "stepSizes": "[[math]]g = {{gcd}}, \\quad b/g = {{stepX}}, \\quad a/g = {{stepY}}[[/math]]",
               "candidate": "[[math]]k = {{k}} \\Rightarrow x = {{x}}, \\; y = {{y}}[[/math]]",
               "minimal": "[[math]]k = {{k}}[[/math]] daje najmniejsze wartości bezwzględne w tej rodzinie: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
-              "signoff": "Rozwiązanie szczególne: [[math]]x = {{x}}, y = {{y}}[[/math]]. Ogólnie: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]].",
-              "noSolutionSignoff": "Brak rozwiązań dla [[math]]{{a}}x + {{b}}y = {{target}}[[/math]], bo [[math]]\\gcd = {{gcd}}[[/math]] nie dzieli prawej strony."
+              "signoff": "Rozwiązanie szczególne: [[math]]x = {{x}}, y = {{y}}[[/math]]. Ogólnie: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]]."
             },
             "modularEquation": {
               "goal": "Rozwiąż równanie modularne [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]. Rozszerzony Euklides najpierw sprawdza, czy prawa strona jest podzielna przez [[math]]\\gcd({{coefficient}}, {{modulus}})[[/math]].",
@@ -2128,8 +2127,7 @@
               "reduce": "Dzielimy przez [[math]]g[[/math]]: [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} } \\Rightarrow {{reducedCoefficient}}x \\equiv {{reducedRhs}} \\pmod{ {{reducedModulus}} }[[/math]].",
               "solution": "Odwrotność [[math]]{{reducedCoefficient}}[[/math]] modulo [[math]]{{reducedModulus}}[[/math]] to [[math]]{{inverse}}[[/math]], więc [[math]]x \\equiv {{reducedRhs}} \\cdot {{inverse}} = {{x}} \\pmod{ {{reducedModulus}} }[[/math]].",
               "allSolutions": "W modulo [[math]]{{modulus}}[[/math]] dostajemy [[math]]x \\equiv {{x}} \\pmod{ {{reducedModulus}} }[[/math]], czyli [[math]]x \\in \\{ {{solutions}} \\}[[/math]].",
-              "signoff": "Rozwiązania [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]].",
-              "noSolutionSignoff": "Brak rozwiązań"
+              "signoff": "Rozwiązania [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]]."
             },
             "captions": {
               "forwardStart": "Rozpoczynamy łańcuch dzielenia w przód.",
@@ -4181,7 +4179,7 @@
               "0": "Najpierw uruchom zwykły łańcuch Euklidesa dla [[math]]\\varphi(n) = {{a}}[[/math]] oraz [[math]]e = {{b}}[[/math]].",
               "1": "Po back-substytucji interesuje nas współczynnik przy [[math]]e[[/math]]. Zredukuj go modulo [[math]]\\varphi(n)[[/math]], aby dostać [[math]]d[[/math]]."
             },
-            "instruction": "W systemie RSA rozważono [[math]]n = {{n}}[[/math]], publiczny wykładnik [[math]]e = {{b}}[[/math]] oraz [[math]]\\varphi(n) = {{a}}[[/math]]. Sprawdź, czy [[math]]e[[/math]] ma odwrotność modulo [[math]]\\varphi(n)[[/math]]. Jeśli tak, wyznacz klucz prywatny [[math]]d[[/math]] spełniający [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]] i zinterpretuj wynik w kontekście RSA.",
+            "instruction": "W systemie RSA rozważono:\n[[math]]n = {{n}}[[/math]], [[math]]e = {{b}}[[/math]], [[math]]\\varphi(n) = {{a}}[[/math]].\n\n1. Sprawdź, czy [[math]]e[[/math]] posiada odwrotność modulo [[math]]\\varphi(n)[[/math]].\n2. Jeśli tak, wyznacz klucz prywatny [[math]]d[[/math]] taki, że:\n[[math]]d \\cdot e = 1 \\; (\\mathrm{mod}\\; \\varphi(n))[[/math]]\n3. Zinterpretuj wynik w kontekście RSA.",
             "summary": "[[math]]e = 35, \\varphi(n) = 192[[/math]] — odwrotność modulo jako klucz prywatny RSA.",
             "title": "RSA: odwrotność modulo"
           },
@@ -4190,7 +4188,7 @@
               "0": "Najpierw policz [[math]]\\gcd(84,36)[[/math]]. Dopiero po sprawdzeniu, że [[math]]12[[/math]] jest wielokrotnością NWD, skaluj współczynniki Bézouta.",
               "1": "Dla domyślnych danych [[math]]84 = 2 \\cdot 36 + 12[[/math]], więc back-substytucja jest krótka, ale interpretacja rozwiązania jest innym typem zadania."
             },
-            "instruction": "Firma logistyczna używa dwóch typów ciężarówek. Typ A przewozi [[math]]{{a}}[[/math]] jednostki, typ B przewozi [[math]]{{b}}[[/math]] jednostek. Model prowadzi do równania [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Znajdź rozwiązanie szczególne, wyznacz rozwiązanie ogólne i wskaż reprezentanta o najmniejszych wartościach bezwzględnych.",
+            "instruction": "Firma logistyczna używa dwóch typów ciężarówek:\n- typ A przewozi [[math]]{{a}}[[/math]] jednostki,\n- typ B przewozi [[math]]{{b}}[[/math]] jednostek.\n\nModel matematyczny prowadzi do równania:\n[[math]]{{a}}x + {{b}}y = {{target}}[[/math]]\n\n1. Znajdź rozwiązanie szczególne.\n2. Wyznacz rozwiązanie ogólne.\n3. Wskaż rozwiązanie o najmniejszych wartościach bezwzględnych.",
             "summary": "[[math]]84x + 36y = 12[[/math]] — równanie diofantyczne z rozwiązaniem ogólnym.",
             "title": "Równanie diofantyczne"
           },
@@ -4199,7 +4197,7 @@
               "0": "Nie zaczynaj od szukania odwrotności [[math]]143^{-1}[[/math]]. Najpierw policz [[math]]\\gcd(143,221)[[/math]].",
               "1": "Jeśli [[math]]\\gcd(a,m)[[/math]] nie dzieli prawej strony kongruencji, back-substytucja nie jest potrzebna."
             },
-            "instruction": "Rozwiąż kongruencję [[math]]{{b}}x \\equiv {{rhs}} \\pmod{ {{a}} }[[/math]]. Sprawdź, czy rozwiązanie istnieje, a jeśli tak, znajdź wszystkie rozwiązania modulo [[math]]{{a}}[[/math]]. Uzasadnij wynik przez rozszerzony algorytm Euklidesa, zaczynając od samego testu [[math]]\\gcd({{b}}, {{a}})[[/math]].",
+            "instruction": "Rozwiąż kongruencję:\n[[math]]{{b}}x = {{rhs}} \\; (\\mathrm{mod}\\; {{a}})[[/math]]\n\n1. Sprawdź, czy rozwiązanie istnieje.\n2. Jeśli tak, znajdź wszystkie rozwiązania.\n3. Uzasadnij wynik.",
             "summary": "[[math]]143x \\equiv 55 \\pmod{221}[[/math]] — pułapka: NWD blokuje rozwiązania.",
             "title": "Kongruencja: pułapka"
           },
@@ -4218,7 +4216,7 @@
               "1": "Współczynniki Bézouta też okażą się liczbami Fibonacciego (z naprzemiennym znakiem).",
               "2": "To kanoniczny worst case — żadna mniejsza para nie wymaga dłuższego back-subu."
             },
-            "instruction": "Wyznacz współczynniki Bézouta dla [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]], czyli liczby całkowite [[math]]s, t[[/math]] spełniające [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. Przy domyślnej parze Fibonacciego sprawdź, że [[math]]|s|[[/math]] oraz [[math]]|t|[[/math]] same są liczbami Fibonacciego.",
+            "instruction": "Wyznacz współczynniki Bézouta dla kolejnych liczb Fibonacciego [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]], czyli liczby całkowite [[math]]s, t[[/math]] takie, że:\n[[math]]{{a}}s + {{b}}t = \\gcd({{a}}, {{b}})[[/math]]\n\nSprawdź, że wartości bezwzględne współczynników też są liczbami Fibonacciego.",
             "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — najgłębszy back-sub dla tego rozmiaru.",
             "title": "Najdłuższa back-substytucja"
           },
@@ -4262,7 +4260,7 @@
               "0": "[[math]]60 = 1 \\cdot 48 + 12[[/math]], potem [[math]]48 = 4 \\cdot 12 + 0[[/math]].",
               "1": "Back-sub jednoliniowy: [[math]]12 = 1 \\cdot 60 + (-1) \\cdot 48[[/math]]."
             },
-            "instruction": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. Zapisz każde dzielenie forward i rozwiń back-substytucję w jednej linii.",
+            "instruction": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że:\n[[math]]{{a}}s + {{b}}t = \\gcd({{a}}, {{b}})[[/math]]\n\nZapisz każde dzielenie w przód i pokaż back-substytucję w jednej linii.",
             "summary": "[[math]]\\gcd(60, 48) = 12[[/math]] — jednokrokowa substytucja.",
             "title": "Krótki łańcuch"
           },
