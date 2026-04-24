@@ -20,7 +20,11 @@
   display: grid;
   flex: 1;
   min-height: 0;
-  grid-template-rows: auto 1fr auto;
+  /* auto rows stack above the scrolling page: task prompt, global
+     margins, then the 1fr page column, finally the signoff footer.
+     Empty auto rows collapse to zero so the grid stays tight when a
+     given block isn't emitted. */
+  grid-template-rows: auto auto 1fr auto;
   gap: 10px;
   padding: 16px 20px;
   overflow: auto;
@@ -35,6 +39,62 @@
     rgba(var(--viz-warning-rgb), 0.014);
   border-radius: 14px;
   border: 0.5px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ================================================================ */
+/*  TASK PROMPT — the "Zadanie:" / "Task:" block at the top.          */
+/*                                                                    */
+/*  Editorial prose, not a derivation line. Sits above the           */
+/*  derivation the way an exam question sits above the student's     */
+/*  working. Newsreader italic keeps it visually distinct from the   */
+/*  mono / KaTeX bodies below.                                        */
+/* ================================================================ */
+
+.scratchpad__task {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px 16px;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.008)),
+    rgba(var(--chrome-accent-alt-rgb), 0.045);
+  box-shadow: inset 0 0 0 0.5px rgba(var(--chrome-accent-alt-rgb), 0.18);
+  position: relative;
+}
+
+.scratchpad__task::before {
+  content: '';
+  position: absolute;
+  inset: 12px auto 12px 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--chrome-accent-alt-rgb), 0.7),
+    rgba(var(--chrome-accent-alt-rgb), 0.18)
+  );
+  border-radius: 2px;
+}
+
+.scratchpad__task-eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgb(var(--chrome-accent-alt-rgb));
+  opacity: 0.88;
+  padding-left: 10px;
+}
+
+.scratchpad__task-body {
+  margin: 0;
+  padding-left: 10px;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--text-primary);
 }
 
 /* ================================================================ */

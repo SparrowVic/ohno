@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { RleScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { RleScenario } from '../../utils/scenarios/string/string-scenarios';
 import { runLengthEncodingGenerator } from './run-length-encoding';
 
 function collectSteps(scenario: RleScenario): SortStep[] {

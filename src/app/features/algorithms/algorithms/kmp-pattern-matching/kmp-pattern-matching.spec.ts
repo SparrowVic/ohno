@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { KmpScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { KmpScenario } from '../../utils/scenarios/string/string-scenarios';
 import { kmpPatternMatchingGenerator } from './kmp-pattern-matching';
 
 function collectSteps(scenario: KmpScenario): SortStep[] {

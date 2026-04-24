@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { sosDpGenerator } from './sos-dp';
 import type { SortStep } from '../models/sort-step';
-import type { SosDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import type { SosDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: SosDpScenario): SortStep[] {
   return [...sosDpGenerator(scenario)];

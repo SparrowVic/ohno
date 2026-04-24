@@ -1,5 +1,17 @@
 <div class="code-shell">
-  @if (hasLines()) {
+  @if (snippetMissing()) {
+    <div class="code-missing" role="note">
+      <span class="code-missing__eyebrow">
+        {{ I18N_KEY.features.algorithms.codePanel.snippetMissing.eyebrow | transloco }}
+      </span>
+      <p class="code-missing__title">
+        {{ I18N_KEY.features.algorithms.codePanel.snippetMissing.title | transloco }}
+      </p>
+      <p class="code-missing__body">
+        {{ I18N_KEY.features.algorithms.codePanel.snippetMissing.body | transloco }}
+      </p>
+    </div>
+  } @else if (hasLines()) {
     <div class="code-toolbar">
       <app-code-language-dial
         class="code-toolbar__dial"

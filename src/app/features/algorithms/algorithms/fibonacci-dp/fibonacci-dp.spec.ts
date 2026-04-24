@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { fibonacciDpGenerator } from './fibonacci-dp';
 import type { SortStep } from '../../models/sort-step';
-import type { FibonacciScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { FibonacciScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: FibonacciScenario): SortStep[] {
   return [...fibonacciDpGenerator(scenario)];

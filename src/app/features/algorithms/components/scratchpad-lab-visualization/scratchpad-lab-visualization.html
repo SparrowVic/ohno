@@ -10,6 +10,22 @@
 
   @if (state(); as pad) {
     <div class="scratchpad">
+      <!-- Task prompt — the exam-style "Zadanie:" / "Task:" block,
+           pulled from the active NotebookTask's `instruction`. Frames
+           *what the student is being asked to compute / prove* on this
+           run. Rendered as editorial prose so it reads like a textbook
+           prompt rather than a debug label. -->
+      @if (pad.taskPrompt; as prompt) {
+        <section class="scratchpad__task" role="note">
+          <span class="scratchpad__task-eyebrow">
+            {{ I18N_KEY.features.algorithms.scratchpadLab.taskLabel | transloco }}
+          </span>
+          <p class="scratchpad__task-body">
+            <app-math-text mode="mixed" [content]="prompt | i18nText" />
+          </p>
+        </section>
+      }
+
       <!-- Global margin notes (invariants, reminders) — pinned at the
            top of the margin column, visible throughout the run. -->
       @if (globalMargins().length > 0) {

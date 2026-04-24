@@ -9,7 +9,7 @@ import {
   PointerLabWindow,
 } from '../../models/pointer-lab';
 import { SortStep } from '../../models/sort-step';
-import { KadaneScenario } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
+import { KadaneScenario } from '../../utils/scenarios/pointer-lab/pointer-lab-scenarios';
 import { createPointerLabStep } from '../pointer-lab-step';
 
 const I18N = {

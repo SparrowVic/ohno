@@ -3,7 +3,7 @@ import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { GridTraceCell, GridTraceState } from '../../models/grid';
 import { SortStep } from '../../models/sort-step';
-import { cellId, FloodFillScenario, labelForCell, neighbors } from '../../utils/grid-scenarios/grid-scenarios';
+import { cellId, FloodFillScenario, labelForCell, neighbors } from '../../utils/scenarios/grid/grid-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.grid.floodFill.modeLabel'),

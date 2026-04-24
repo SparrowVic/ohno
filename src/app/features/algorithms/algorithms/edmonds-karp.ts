@@ -4,7 +4,7 @@ import {
   NetworkTraceTag,
 } from '../models/network';
 import { SortStep } from '../models/sort-step';
-import { DinicScenario, LayeredNetworkEdge } from '../utils/network-scenarios/network-scenarios';
+import { DinicScenario, LayeredNetworkEdge } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
 
 export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortStep> {

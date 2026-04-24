@@ -5,7 +5,7 @@ import { MathText } from '../../../../shared/components/math-text/math-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
-import { SieveGridPresetOption } from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
+import { SieveGridPresetOption } from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';

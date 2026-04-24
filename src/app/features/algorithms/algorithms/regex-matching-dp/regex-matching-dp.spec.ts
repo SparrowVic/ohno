@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { regexMatchingDpGenerator } from './regex-matching-dp';
 import type { SortStep } from '../../models/sort-step';
-import type { RegexMatchingScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { RegexMatchingScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: RegexMatchingScenario): SortStep[] {
   return [...regexMatchingDpGenerator(scenario)];

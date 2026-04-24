@@ -12,7 +12,7 @@ import {
   CallTreeStat,
 } from '../../models/call-tree-lab';
 import { SortStep } from '../../models/sort-step';
-import { NQueensScenario } from '../../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
+import { NQueensScenario } from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { createCallTreeLabStep } from '../call-tree-lab-step';
 
 const I18N = {

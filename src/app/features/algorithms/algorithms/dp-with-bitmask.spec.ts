@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { dpWithBitmaskGenerator } from './dp-with-bitmask';
 import type { SortStep } from '../models/sort-step';
-import type { BitmaskDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import type { BitmaskDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: BitmaskDpScenario): SortStep[] {
   return [...dpWithBitmaskGenerator(scenario)];

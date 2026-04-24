@@ -9,7 +9,7 @@ import {
   CallTreeStat,
 } from '../../models/call-tree-lab';
 import { SortStep } from '../../models/sort-step';
-import { McTsScenario } from '../../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
+import { McTsScenario } from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { createCallTreeLabStep } from '../call-tree-lab-step';
 
 const I18N = {

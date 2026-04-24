@@ -10,8 +10,8 @@ import {
   layoutTree,
   TreeLayoutBounds,
   TreeLayoutNode,
-} from '../../utils/tree-layout/tree-layout';
-import { CallTreeLabPresetOption } from '../../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
+} from '../../utils/helpers/tree-layout/tree-layout';
+import { CallTreeLabPresetOption } from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';

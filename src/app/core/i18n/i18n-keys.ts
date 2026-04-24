@@ -346,6 +346,11 @@ export const I18N_KEY = {
         expandRegionAriaLabel: t('features.algorithms.codePanel.expandRegionAriaLabel'),
         collapseRegionAriaLabel: t('features.algorithms.codePanel.collapseRegionAriaLabel'),
         collapsedRegionSummary: t('features.algorithms.codePanel.collapsedRegionSummary'),
+        snippetMissing: {
+          eyebrow: t('features.algorithms.codePanel.snippetMissing.eyebrow'),
+          title: t('features.algorithms.codePanel.snippetMissing.title'),
+          body: t('features.algorithms.codePanel.snippetMissing.body'),
+        },
       },
       traceHint: {
         ariaLabel: t('features.algorithms.traceHint.ariaLabel'),
@@ -1151,6 +1156,9 @@ export const I18N_KEY = {
             'features.algorithms.vizOptions.scratchpadLab.instructionsDescription',
           ),
         },
+      },
+      scratchpadLab: {
+        taskLabel: t('features.algorithms.scratchpadLab.taskLabel'),
       },
       visualizations: {
         search: {

@@ -8,7 +8,7 @@ import {
   SieveStatChip,
 } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
-import { SieveEratosthenesScenario } from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
+import { SieveEratosthenesScenario } from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
 import { createSieveGridStep } from '../sieve-grid-step';
 
 const I18N = {

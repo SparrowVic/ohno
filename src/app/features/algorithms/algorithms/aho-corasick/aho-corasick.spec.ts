@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { AhoCorasickScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { AhoCorasickScenario } from '../../utils/scenarios/string/string-scenarios';
 import { ahoCorasickGenerator } from './aho-corasick';
 
 function collectSteps(scenario: AhoCorasickScenario): SortStep[] {

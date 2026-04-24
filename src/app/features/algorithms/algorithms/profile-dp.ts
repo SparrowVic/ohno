@@ -4,7 +4,7 @@ import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { ProfileDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import { ProfileDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 type ProfileTransition = { readonly nextMask: number; readonly label: string };
 

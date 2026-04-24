@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { SortStep } from '../../models/sort-step';
-import type { FloydWarshallScenario } from '../../utils/matrix-scenarios/matrix-scenarios';
+import type { FloydWarshallScenario } from '../../utils/scenarios/matrix/matrix-scenarios';
 import { floydWarshallGenerator } from './floyd-warshall';
 
 function collectSteps(scenario: FloydWarshallScenario): SortStep[] {

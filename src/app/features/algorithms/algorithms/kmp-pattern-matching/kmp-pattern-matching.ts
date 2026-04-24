@@ -4,7 +4,7 @@ import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-t
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { KmpTraceState } from '../../models/string';
-import { KmpScenario } from '../../utils/string-scenarios/string-scenarios';
+import { KmpScenario } from '../../utils/scenarios/string/string-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.kmp.modeLabel'),

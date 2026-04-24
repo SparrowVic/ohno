@@ -147,6 +147,10 @@ export class SidePanel implements OnInit, OnDestroy {
    *  eyebrow above the code snippet so the student knows which
    *  variant of the algorithm they're reading. */
   readonly activeTaskName = input<TranslatableText | null>(null);
+  /** True when the active task references a code snippet that hasn't
+   *  been authored yet — the Code tab renders an editorial placeholder
+   *  instead of the shiki-rendered variants. */
+  readonly codeSnippetMissing = input<boolean>(false);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
   readonly dpState = input<DpTraceState | null>(null);

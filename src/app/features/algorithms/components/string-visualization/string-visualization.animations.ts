@@ -8,7 +8,7 @@ import {
   ZAlgorithmTraceState,
 } from '../../models/string';
 import { SortStep } from '../../models/sort-step';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import { createMotionProfile, pulseElement } from '../../utils/helpers/visualization-motion/visualization-motion';
 
 export function animateStringStepEffects(
   container: HTMLElement,

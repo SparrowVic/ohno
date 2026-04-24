@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { wildcardMatchingGenerator } from './wildcard-matching';
 import type { SortStep } from '../../models/sort-step';
-import type { WildcardMatchingScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { WildcardMatchingScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: WildcardMatchingScenario): SortStep[] {
   return [...wildcardMatchingGenerator(scenario)];

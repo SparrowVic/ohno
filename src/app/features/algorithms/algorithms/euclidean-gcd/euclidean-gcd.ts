@@ -14,7 +14,7 @@ import {
   ScratchpadMargin,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
-import { EuclideanGcdScenario } from '../../utils/number-lab-scenarios/number-lab-scenarios';
+import { EuclideanGcdScenario } from '../../utils/scenarios/number-lab/number-lab-scenarios';
 import { createNumberLabStep } from '../number-lab-step';
 import { withScratchpad } from '../scratchpad-lab-step';
 
@@ -290,6 +290,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       phaseLabel: opts.phase,
       decisionLabel: opts.decision,
       presetLabel,
+      taskPrompt: scenario.taskPrompt ?? null,
       tone: opts.tone,
       lines,
       margins,

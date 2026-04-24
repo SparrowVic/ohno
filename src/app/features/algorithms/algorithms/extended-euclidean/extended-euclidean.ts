@@ -8,7 +8,7 @@ import {
   ScratchpadMargin,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
-import { ExtendedEuclideanScenario } from '../../utils/extended-euclidean-scenarios/extended-euclidean-scenarios';
+import { ExtendedEuclideanScenario } from '../../utils/scenarios/number-lab/extended-euclidean-scenarios';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 /**
@@ -287,6 +287,7 @@ export function* extendedEuclideanGenerator(
       phaseLabel: opts.phase,
       decisionLabel: opts.decision,
       presetLabel,
+      taskPrompt: scenario.taskPrompt ?? null,
       tone: opts.tone,
       lines,
       margins,

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { SuffixArrayScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { SuffixArrayScenario } from '../../utils/scenarios/string/string-scenarios';
 import { suffixArrayConstructionGenerator } from './suffix-array-construction';
 
 function collectSteps(scenario: SuffixArrayScenario): SortStep[] {

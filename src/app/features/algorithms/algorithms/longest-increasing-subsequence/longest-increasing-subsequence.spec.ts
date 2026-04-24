@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { longestIncreasingSubsequenceGenerator } from './longest-increasing-subsequence';
 import type { SortStep } from '../../models/sort-step';
-import type { LisScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { LisScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: LisScenario): SortStep[] {
   return [...longestIncreasingSubsequenceGenerator(scenario)];

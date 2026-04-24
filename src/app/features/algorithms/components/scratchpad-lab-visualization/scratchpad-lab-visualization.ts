@@ -12,6 +12,8 @@ import {
   signal,
 } from '@angular/core';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
@@ -43,7 +45,15 @@ import { VizPresetOption, VizPresetPicker } from '../viz-preset-picker/viz-prese
  */
 @Component({
   selector: 'app-scratchpad-lab-visualization',
-  imports: [I18nTextPipe, MathText, VizHeader, VizOptionsMenu, VizPanel, VizPresetPicker],
+  imports: [
+    I18nTextPipe,
+    MathText,
+    TranslocoPipe,
+    VizHeader,
+    VizOptionsMenu,
+    VizPanel,
+    VizPresetPicker,
+  ],
   templateUrl: './scratchpad-lab-visualization.html',
   styleUrl: './scratchpad-lab-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

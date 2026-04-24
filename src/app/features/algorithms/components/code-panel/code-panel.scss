@@ -139,6 +139,52 @@
 }
 
 /* ============================================================================
+   SNIPPET-MISSING PLACEHOLDER — rendered when the active task has no
+   authored code walkthrough yet. Editorial card rather than a terse
+   "empty" line, so the user understands the feature is coming rather
+   than thinking something broke.
+   ============================================================================ */
+
+.code-missing {
+  margin: 18px 14px;
+  padding: 22px 22px 20px;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.008)),
+    rgba(var(--chrome-accent-alt-rgb), 0.04);
+  box-shadow: inset 0 0 0 0.5px rgba(var(--chrome-accent-alt-rgb), 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.code-missing__eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--chrome-accent-alt-rgb));
+  opacity: 0.86;
+  font-weight: 600;
+}
+
+.code-missing__title {
+  margin: 0;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+.code-missing__body {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
    SHIKI RENDERED LINES
    ============================================================================ */
 

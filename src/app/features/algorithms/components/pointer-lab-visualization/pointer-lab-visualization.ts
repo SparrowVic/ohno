@@ -5,7 +5,7 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { MathText } from '../../../../shared/components/math-text/math-text';
 import { PointerLabTraceState } from '../../models/pointer-lab';
 import { SortStep } from '../../models/sort-step';
-import { PointerLabPresetOption } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
+import { PointerLabPresetOption } from '../../utils/scenarios/pointer-lab/pointer-lab-scenarios';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';

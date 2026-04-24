@@ -5,7 +5,7 @@ import { MathText } from '../../../../shared/components/math-text/math-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { SortStep } from '../../models/sort-step';
-import { CallStackLabPresetOption } from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
+import { CallStackLabPresetOption } from '../../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';

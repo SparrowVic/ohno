@@ -5,7 +5,7 @@ import { MathText } from '../../../../shared/components/math-text/math-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { NumberLabTraceState } from '../../models/number-lab';
 import { SortStep } from '../../models/sort-step';
-import { NumberLabPresetOption } from '../../utils/number-lab-scenarios/number-lab-scenarios';
+import { NumberLabPresetOption } from '../../utils/scenarios/number-lab/number-lab-scenarios';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';

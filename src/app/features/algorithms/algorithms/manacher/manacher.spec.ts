@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { ManacherScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { ManacherScenario } from '../../utils/scenarios/string/string-scenarios';
 import { manacherGenerator } from './manacher';
 
 function collectSteps(scenario: ManacherScenario): SortStep[] {

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { profileDpGenerator } from './profile-dp';
 import type { SortStep } from '../models/sort-step';
-import type { ProfileDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import type { ProfileDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: ProfileDpScenario): SortStep[] {
   return [...profileDpGenerator(scenario)];

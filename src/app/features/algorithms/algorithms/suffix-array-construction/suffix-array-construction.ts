@@ -7,7 +7,7 @@ import {
   StringSuffixRow,
   SuffixArrayConstructionTraceState,
 } from '../../models/string';
-import { SuffixArrayScenario } from '../../utils/string-scenarios/string-scenarios';
+import { SuffixArrayScenario } from '../../utils/scenarios/string/string-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.suffixArray.modeLabel'),

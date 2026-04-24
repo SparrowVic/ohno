@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { kruskalsMstGenerator } from './kruskals-mst';
 import type { SortStep } from '../models/sort-step';
-import type { KruskalScenario } from '../utils/dsu-scenarios/dsu-scenarios';
+import type { KruskalScenario } from '../utils/scenarios/dsu/dsu-scenarios';
 
 function collectSteps(scenario: KruskalScenario): SortStep[] {
   return [...kruskalsMstGenerator(scenario)];

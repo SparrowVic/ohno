@@ -103,6 +103,14 @@ export interface ScratchpadLabTraceState {
   readonly phaseLabel: TranslatableText;
   readonly decisionLabel: TranslatableText;
   readonly presetLabel: TranslatableText;
+  /** Exam-style prompt for the active task — rendered as a prose block
+   *  at the top of the scratchpad, above the derivation, with a
+   *  "Zadanie:" / "Task:" eyebrow. Frames *what the student is being
+   *  asked to do* in this run, even when two tasks share the same
+   *  algorithm run but ask different questions (e.g. "compute gcd"
+   *  vs "prove coprime" vs "simplify fraction"). Null when the active
+   *  task has not declared a prompt. */
+  readonly taskPrompt: TranslatableText | null;
   readonly tone:
     | 'idle'
     | 'setup'

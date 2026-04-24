@@ -522,7 +522,7 @@ import {
   createFibonacciScenario as createFibonacciIterScenario,
   createFactorialScenario,
   createEuclideanGcdScenario,
-} from '../../utils/number-lab-scenarios/number-lab-scenarios';
+} from '../../utils/scenarios/number-lab/number-lab-scenarios';
 import {
   PointerLabPresetOption,
   TwoPointersScenario,
@@ -560,7 +560,7 @@ import {
   createPalindromeScenario,
   createReverseScenario,
   createKadaneScenario,
-} from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
+} from '../../utils/scenarios/pointer-lab/pointer-lab-scenarios';
 import {
   SieveGridPresetOption,
   SieveEratosthenesScenario,
@@ -570,14 +570,14 @@ import {
   DEFAULT_ERATOSTHENES_PRESET_ID,
   DEFAULT_ERATOSTHENES_TASK_ID,
   createEratosthenesScenario,
-} from '../../utils/sieve-grid-scenarios/sieve-grid-scenarios';
+} from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
 import {
   CallStackLabPresetOption,
   RecursiveFibonacciScenario,
   RECURSIVE_FIBONACCI_PRESETS,
   DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
   createRecursiveFibonacciScenario,
-} from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
+} from '../../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
 import {
   CallTreeLabPresetOption,
   NQueensScenario,
@@ -592,7 +592,7 @@ import {
   createNQueensScenario,
   createMinimaxScenario,
   createMcTsScenario,
-} from '../../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
+} from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { fibonacciIterativeGenerator } from '../../algorithms/fibonacci-iterative/fibonacci-iterative';
 import { factorialGenerator } from '../../algorithms/factorial/factorial';
 import { euclideanGcdGenerator } from '../../algorithms/euclidean-gcd/euclidean-gcd';
@@ -615,7 +615,7 @@ import {
   DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
   DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
   createExtendedEuclideanScenario,
-} from '../../utils/extended-euclidean-scenarios/extended-euclidean-scenarios';
+} from '../../utils/scenarios/number-lab/extended-euclidean-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -742,7 +742,7 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { VIZ_COLOR } from '../../utils/visualization-palette/visualization-palette';
+import { VIZ_COLOR } from '../../utils/helpers/visualization-palette/visualization-palette';
 import {
   BITMASK_DP_PRESETS,
   BURST_BALLOONS_PRESETS,
@@ -807,13 +807,13 @@ import {
   TreeDpScenario,
   TravelingSalesmanScenario,
   WildcardMatchingScenario,
-} from '../../utils/dp-scenarios/dp-scenarios';
+} from '../../utils/scenarios/dp/dp-scenarios';
 import {
   createKruskalScenario,
   createUnionFindScenario,
   KruskalScenario,
   UnionFindScenario,
-} from '../../utils/dsu-scenarios/dsu-scenarios';
+} from '../../utils/scenarios/dsu/dsu-scenarios';
 import {
   generateBellmanFordGraph,
   generateBipartiteGraph,
@@ -828,13 +828,13 @@ import {
   generateSccGraph,
   generateSteinerGraph,
   generateTraversalGraph,
-} from '../../utils/dijkstra-graph/dijkstra-graph';
+} from '../../utils/helpers/dijkstra-graph/dijkstra-graph';
 import {
   AStarScenario,
   createAStarScenario,
   createFloodFillScenario,
   FloodFillScenario,
-} from '../../utils/grid-scenarios/grid-scenarios';
+} from '../../utils/scenarios/grid/grid-scenarios';
 import {
   HUNGARIAN_ALGORITHM_CODE,
   HUNGARIAN_ALGORITHM_CODE_VARIANTS,
@@ -844,7 +844,7 @@ import {
   createHungarianScenario,
   FloydWarshallScenario,
   HungarianScenario,
-} from '../../utils/matrix-scenarios/matrix-scenarios';
+} from '../../utils/scenarios/matrix/matrix-scenarios';
 import {
   createEdmondsKarpScenario,
   createDinicScenario,
@@ -853,7 +853,7 @@ import {
   DinicScenario,
   HopcroftKarpScenario,
   MinCostMaxFlowScenario,
-} from '../../utils/network-scenarios/network-scenarios';
+} from '../../utils/scenarios/network/network-scenarios';
 import {
   AHO_CORASICK_PRESETS,
   BWT_PRESETS,
@@ -888,7 +888,7 @@ import {
   createSuffixArrayLcpScenario,
   createSuffixArrayScenario,
   createZAlgorithmScenario,
-} from '../../utils/string-scenarios/string-scenarios';
+} from '../../utils/scenarios/string/string-scenarios';
 import {
   DEFAULT_TREE_TRAVERSALS_PRESET_ID,
   DEFAULT_TREE_TRAVERSALS_TASK_ID,
@@ -897,7 +897,7 @@ import {
   TreeTraversalScenario,
   TreeTraversalValues,
   createTreeTraversalScenario,
-} from '../../utils/tree-scenarios/tree-scenarios';
+} from '../../utils/scenarios/tree/tree-scenarios';
 import { treeTraversalsGenerator } from '../../algorithms/tree-traversals/tree-traversals';
 
 const BAR_LEGEND: readonly LegendItem[] = [

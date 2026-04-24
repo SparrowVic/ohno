@@ -8,7 +8,7 @@ import {
   PointerLabTraceState,
 } from '../../models/pointer-lab';
 import { SortStep } from '../../models/sort-step';
-import { TwoPointersScenario } from '../../utils/pointer-lab-scenarios/pointer-lab-scenarios';
+import { TwoPointersScenario } from '../../utils/scenarios/pointer-lab/pointer-lab-scenarios';
 import { createPointerLabStep } from '../pointer-lab-step';
 
 const I18N = {

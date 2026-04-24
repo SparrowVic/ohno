@@ -1,7 +1,7 @@
 import { Injectable, Signal, computed, signal } from '@angular/core';
 
 import { SortStep } from '../../models/sort-step';
-import { computePlaybackDelay } from '../../utils/visualization-motion/visualization-motion';
+import { computePlaybackDelay } from '../../utils/helpers/visualization-motion/visualization-motion';
 
 export type EngineState = 'idle' | 'running' | 'paused' | 'complete';
 

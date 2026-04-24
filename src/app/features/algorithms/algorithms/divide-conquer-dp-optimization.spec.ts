@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { divideConquerDpOptimizationGenerator } from './divide-conquer-dp-optimization';
 import type { SortStep } from '../models/sort-step';
-import type { DivideConquerDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import type { DivideConquerDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: DivideConquerDpScenario): SortStep[] {
   return [...divideConquerDpOptimizationGenerator(scenario)];

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { subsetSumGenerator } from './subset-sum';
 import type { SortStep } from '../../models/sort-step';
-import type { SubsetSumScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { SubsetSumScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: SubsetSumScenario): SortStep[] {
   return [...subsetSumGenerator(scenario)];

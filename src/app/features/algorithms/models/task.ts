@@ -34,8 +34,11 @@ export interface Task<TValues> {
   readonly validate?: (values: TValues) => TranslatableText | null;
 
   /** Reference to a pre-authored code snippet in the algorithm's
-   *  `codeVariants`. Multiple tasks may share a snippet. */
-  readonly codeSnippetId: string;
+   *  `codeVariants`. Multiple tasks may share a snippet. `null` is the
+   *  explicit "no snippet yet" sentinel — used by newly-added tasks
+   *  whose code walkthrough hasn't been authored; the Code tab renders
+   *  a placeholder in that case. */
+  readonly codeSnippetId: string | null;
 
   /** Optional view-variant preference — if the algorithm exposes
    *  multiple view variants (e.g. number-lab's numeric vs chalkboard),

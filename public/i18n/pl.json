@@ -265,7 +265,12 @@
         "collapseRegionAriaLabel": "Zwiń region kodu",
         "collapsedRegionSummary": "… {{count}} linii",
         "emptyLabel": "Brak dostępnego kodu.",
-        "expandRegionAriaLabel": "Rozwiń region kodu"
+        "expandRegionAriaLabel": "Rozwiń region kodu",
+        "snippetMissing": {
+          "eyebrow": "Snippet w drodze",
+          "title": "Dla tego zadania nie ma jeszcze przeglądu kodu.",
+          "body": "Przejdź do zakładki Trace, żeby śledzić derywację krok po kroku. Kod pojawi się tutaj, gdy zostanie napisany."
+        }
       },
       "detail": {
         "backLabel": "Przeglądaj",
@@ -3715,6 +3720,9 @@
           }
         }
       },
+      "scratchpadLab": {
+        "taskLabel": "Zadanie"
+      },
       "sidePanel": {
         "ariaLabel": "Zakładki inspectora",
         "codeForTaskLabel": "Kod dla zadania:",
@@ -3726,7 +3734,151 @@
         }
       },
       "tasks": {
+        "extendedEuclidean": {
+          "classic": {
+            "hints": {
+              "0": "Pięć kroków forward: 240, 46, 10, 6, 4, 2, 0 — reszta 2 to [[math]]\\gcd[[/math]].",
+              "1": "Back-substytucja ma co najmniej trzy poziomy zagnieżdżenia — dobry test śledzenia współczynników."
+            },
+            "instruction": "Rozwiąż równanie diofantyczne [[math]]240x + 46y = 2[[/math]] w liczbach całkowitych — znajdź jedną parę [[math]](x, y)[[/math]] spełniającą równość. Skorzystaj z rozszerzonego algorytmu Euklidesa.",
+            "summary": "[[math]]\\gcd(240, 46) = 2[[/math]] — pięć kroków forward, bogaty back-sub.",
+            "title": "Klasyczny podręcznikowy"
+          },
+          "fibonacciChain": {
+            "hints": {
+              "0": "Forward produkuje reszty: 34, 21, 13, 8, 5, 3, 2, 1 — sam ciąg Fibonacciego.",
+              "1": "Współczynniki Bézouta też okażą się liczbami Fibonacciego (z naprzemiennym znakiem).",
+              "2": "To kanoniczny worst case — żadna mniejsza para nie wymaga dłuższego back-subu."
+            },
+            "instruction": "Wyznacz współczynniki Bézouta dla 89 i 55, czyli liczby całkowite [[math]]s, t[[/math]] spełniające [[math]]89s + 55t = 1[[/math]]. Następnie sprawdź, że [[math]]|s|[[/math]] oraz [[math]]|t|[[/math]] są samymi liczbami Fibonacciego.",
+            "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — najgłębszy back-sub dla tego rozmiaru.",
+            "title": "Najdłuższa back-substytucja"
+          },
+          "knownGcd": {
+            "hints": {
+              "0": "Forward: [[math]]735 = 3 \\cdot 210 + 105[[/math]], potem [[math]]210 = 2 \\cdot 105 + 0[[/math]]. Back-sub: [[math]]105 = 1 \\cdot 735 + (-3) \\cdot 210[[/math]]."
+            },
+            "instruction": "Wiedząc, że [[math]]\\gcd(735, 210) = 105[[/math]], znajdź liczby całkowite [[math]]s, t[[/math]] takie że [[math]]735s + 210t = 105[[/math]]. Zapisz back-substytucję w jednej linii.",
+            "summary": "[[math]]\\gcd(735, 210) = 105[[/math]] — duże liczby, krótki łańcuch.",
+            "title": "Znane gcd, krótki łańcuch"
+          },
+          "large": {
+            "hints": {
+              "0": "Ta sama para co w zadaniu „Większa para” zwykłego Euklidesa — możesz porównać oba algorytmy na identycznym łańcuchu.",
+              "1": "Współczynniki Bézouta dla [[math]]\\gcd = 21[[/math]] nie są małe, ale mieszczą się w jednej linii."
+            },
+            "instruction": "Znajdź współczynniki Bézouta [[math]]s, t[[/math]] dla [[math]]\\gcd(1071, 462) = 21[[/math]], a następnie podaj jedno rozwiązanie równania diofantycznego [[math]]1071x + 462y = 21[[/math]] w liczbach całkowitych.",
+            "summary": "[[math]]\\gcd(1071, 462) = 21[[/math]] — ta sama para co w zwykłym Euklidesie.",
+            "title": "Większa para"
+          },
+          "modularInverse": {
+            "hints": {
+              "0": "Forward: [[math]]7 \\bmod 5 = 2[[/math]], [[math]]5 \\bmod 2 = 1[[/math]], [[math]]2 \\bmod 1 = 0[[/math]].",
+              "1": "Back-sub: [[math]]1 = 5 - 2 \\cdot 2 = 5 - 2 \\cdot (7 - 5) = 3 \\cdot 5 - 2 \\cdot 7[[/math]]. Stąd [[math]]s = -2[[/math]], [[math]]t = 3[[/math]], a [[math]]7^{-1} \\equiv 3 \\pmod{5}[[/math]]."
+            },
+            "instruction": "Wyznacz odwrotność multiplikatywną 7 modulo 5, tj. liczbę całkowitą [[math]]0 \\leq x < 5[[/math]] taką, że [[math]]7x \\equiv 1 \\pmod{5}[[/math]]. Użyj rozszerzonego algorytmu Euklidesa, a znaleziony współczynnik sprowadź do przedziału [[math]][0, 5)[[/math]].",
+            "summary": "[[math]]7s + 5t = 1[[/math]] — szukamy odwrotności 7 modulo 5.",
+            "title": "Odwrotność modulo"
+          },
+          "primePair": {
+            "hints": {
+              "0": "Sześć kroków forward: [[math]]251 \\to 52 \\to 43 \\to 9 \\to 7 \\to 2 \\to 1 \\to 0[[/math]].",
+              "1": "Mimo długiego łańcucha końcowe [[math]]s, t[[/math]] są umiarkowane — głębokość nie zawsze oznacza wielkie liczby w back-sub."
+            },
+            "instruction": "Udowodnij, że 251 i 199 są względnie pierwsze, wyznaczając ich współczynniki Bézouta [[math]]s, t[[/math]] spełniające [[math]]251s + 199t = 1[[/math]]. Podaj końcowe wartości [[math]]s[[/math]] i [[math]]t[[/math]].",
+            "summary": "[[math]]\\gcd(251, 199) = 1[[/math]] — para liczb pierwszych, sześciokrokowy forward.",
+            "title": "Para liczb pierwszych"
+          },
+          "short": {
+            "hints": {
+              "0": "[[math]]60 = 1 \\cdot 48 + 12[[/math]], potem [[math]]48 = 4 \\cdot 12 + 0[[/math]].",
+              "1": "Back-sub jednoliniowy: [[math]]12 = 1 \\cdot 60 + (-1) \\cdot 48[[/math]]."
+            },
+            "instruction": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że [[math]]60s + 48t = \\gcd(60, 48)[[/math]]. Zapisz każde dzielenie forward i rozwiń back-substytucję w jednej linii.",
+            "summary": "[[math]]\\gcd(60, 48) = 12[[/math]] — jednokrokowa substytucja.",
+            "title": "Krótki łańcuch"
+          },
+          "smallBezout": {
+            "hints": {
+              "0": "Back-sub odczytuje [[math]]6 = 30 - 2 \\cdot 12[[/math]] wprost z pierwszego forward step: [[math]]s = 1[[/math]], [[math]]t = -2[[/math]]."
+            },
+            "instruction": "Zapisz [[math]]\\gcd(30, 12)[[/math]] jako całkowitą kombinację liczb 30 i 12. Wystarczy jedna linia back-substytucji — podaj pełną tożsamość [[math]]\\gcd = s \\cdot 30 + t \\cdot 12[[/math]] z konkretnymi wartościami [[math]]s, t[[/math]].",
+            "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — dwa kroki forward, jedna linia back-sub.",
+            "title": "Minimalny back-sub"
+          }
+        },
         "gcd": {
+          "abundance": {
+            "hints": {
+              "0": "Forward chain: [[math]]252 \\bmod 198 = 54[[/math]], potem 198 mod 54 = 36, 54 mod 36 = 18, 36 mod 18 = 0.",
+              "1": "Jeśli zsumujesz wspólne czynniki pierwsze ([[math]]2 \\cdot 3^2[[/math]]), otrzymasz 18 — tę samą wartość co Euklides, bez faktoryzacji."
+            },
+            "instruction": "Wiedząc, że [[math]]252 = 2^2 \\cdot 3^2 \\cdot 7[[/math]] i [[math]]198 = 2 \\cdot 3^2 \\cdot 11[[/math]], przewiduj [[math]]\\gcd(252, 198)[[/math]] przez wybór wspólnych czynników pierwszych. Następnie zweryfikuj wynik, uruchamiając algorytm Euklidesa i porównując z przewidywaniem.",
+            "summary": "[[math]]\\gcd(252, 198) = 18[[/math]] — bogata struktura czynników pierwszych.",
+            "title": "Nadmiar czynników"
+          },
+          "coprime": {
+            "hints": {
+              "0": "Łańcuch reszt: [[math]]35 = 2 \\cdot 17 + 1[[/math]], potem [[math]]17 = 17 \\cdot 1 + 0[[/math]].",
+              "1": "Gdy reszta osiąga 1, następny krok ją zeruje i kończy algorytm."
+            },
+            "instruction": "Udowodnij, że 35 i 17 są względnie pierwsze, uruchamiając algorytm Euklidesa aż do zakończenia i odczytując [[math]]\\gcd(35, 17) = 1[[/math]]. Podaj liczbę wykonanych dzieleń.",
+            "summary": "[[math]]\\gcd(35, 17) = 1[[/math]] — liczby nie dzielą wspólnego czynnika.",
+            "title": "Para względnie pierwsza"
+          },
+          "fibonacciWorst": {
+            "hints": {
+              "0": "Obserwuj reszty: 34, 21, 13, 8, 5, 3, 2, 1 — sam ciąg Fibonacciego.",
+              "1": "Liczba kroków rośnie logarytmicznie względem [[math]]\\max(a, b)[[/math]] z podstawą [[math]]\\varphi \\approx 1{,}618[[/math]].",
+              "2": "Twierdzenie Lamégo: żadna para mniejsza od sąsiednich Fibonacciego nie wymaga więcej kroków."
+            },
+            "instruction": "Policz, ile iteracji wykonuje algorytm Euklidesa dla [[math]]\\gcd(89, 55)[[/math]]. Wyjaśnij, dlaczego para sąsiadujących liczb Fibonacciego wymusza maksymalną liczbę kroków dla tej wielkości wejścia (twierdzenie Lamégo).",
+            "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — maksymalna liczba kroków dla tej wielkości.",
+            "title": "Najgorszy przypadek: sąsiedzi Fibonacciego"
+          },
+          "identical": {
+            "hints": {
+              "0": "[[math]]a \\bmod a = 0[[/math]] — drugi argument natychmiast staje się zerem."
+            },
+            "instruction": "Oblicz [[math]]\\gcd(42, 42)[[/math]]. Wyjaśnij, jak zachowuje się niezmiennik [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], gdy [[math]]a = b[[/math]] — po co algorytmowi przypadek [[math]]b = 0[[/math]] jako warunek zakończenia?",
+            "summary": "[[math]]\\gcd(42, 42) = 42[[/math]] — jeden krok i koniec.",
+            "title": "Identyczna para"
+          },
+          "large": {
+            "hints": {
+              "0": "Sześć kroków, a [[math]]\\gcd[[/math]] wynosi 21 ([[math]]= 3 \\cdot 7[[/math]]).",
+              "1": "Oba argumenty są podzielne przez 21 — algorytm to odkryje, choć nie widzi faktoryzacji."
+            },
+            "instruction": "Sprowadź ułamek [[math]]\\frac{1071}{462}[[/math]] do postaci nieskracalnej. Wyznacz [[math]]\\gcd(1071, 462)[[/math]] algorytmem Euklidesa i podziel licznik oraz mianownik przez uzyskaną wartość.",
+            "summary": "[[math]]\\gcd(1071, 462) = 21[[/math]] — średniej długości łańcuch.",
+            "title": "Większa para"
+          },
+          "powersOfTwo": {
+            "hints": {
+              "0": "[[math]]64 \\bmod 16 = 0[[/math]], więc pętla zamyka się po pierwszym dzieleniu."
+            },
+            "instruction": "Wyznacz [[math]]\\gcd(64, 16)[[/math]] i wyjaśnij, dlaczego algorytm Euklidesa kończy pracę w jednym kroku. Ogólnie: dla jakich par [[math]](a, b)[[/math]] pętla zamyka się natychmiast?",
+            "summary": "[[math]]\\gcd(64, 16) = 16[[/math]] — jedna iteracja.",
+            "title": "Potęgi dwójki"
+          },
+          "shared": {
+            "hints": {
+              "0": "[[math]]48 = 1 \\cdot 36 + 12[[/math]], potem [[math]]36 = 3 \\cdot 12 + 0[[/math]].",
+              "1": "Wspólny dzielnik [[math]]12 = 2^2 \\cdot 3[[/math]] dzieli obie liczby — algorytm znajduje go w dwóch krokach."
+            },
+            "instruction": "Oblicz [[math]]\\gcd(48, 36)[[/math]]. Następnie, korzystając z tożsamości [[math]]a \\cdot b = \\gcd(a, b) \\cdot \\operatorname{lcm}(a, b)[[/math]], wyznacz [[math]]\\operatorname{lcm}(48, 36)[[/math]] — bez uruchamiania osobnego algorytmu.",
+            "summary": "[[math]]\\gcd(48, 36) = 12[[/math]] — wyraźny wspólny czynnik.",
+            "title": "Wspólny czynnik"
+          },
+          "twinPrimes": {
+            "hints": {
+              "0": "[[math]]101 \\bmod 103 = 101[[/math]] — para (a, b) zamienia się miejscami bez specjalnego przypadku.",
+              "1": "Po „swapie” reszta w kolejnym kroku to 2, potem 1, potem 0."
+            },
+            "instruction": "Dla bliźniaczych liczb pierwszych 101 i 103 zaczynamy pracę z [[math]]a < b[[/math]]. Prześledź pierwszą iterację pętli i uzasadnij, dlaczego algorytm nie potrzebuje jawnego kroku „zamień [[math]]a[[/math]] z [[math]]b[[/math]]”, żeby nadal działał poprawnie.",
+            "summary": "[[math]]\\gcd(101, 103) = 1[[/math]] — start z [[math]]a < b[[/math]], widać implicit swap.",
+            "title": "Bliźniacze liczby pierwsze"
+          },
           "values": {
             "a": "a",
             "b": "b"

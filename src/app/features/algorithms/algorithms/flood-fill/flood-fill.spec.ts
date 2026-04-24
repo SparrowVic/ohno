@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { FloodFillScenario } from '../../utils/grid-scenarios/grid-scenarios';
+import type { FloodFillScenario } from '../../utils/scenarios/grid/grid-scenarios';
 import { floodFillGenerator } from './flood-fill';
 
 function collectSteps(scenario: FloodFillScenario): SortStep[] {

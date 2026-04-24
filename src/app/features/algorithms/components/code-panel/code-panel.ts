@@ -65,6 +65,10 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   readonly regions = input<readonly CodeRegion[]>([]);
   readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
+  /** True when the active task has no authored code snippet yet — the
+   *  panel renders an editorial "coming soon" placeholder instead of
+   *  the normal shiki-rendered code. */
+  readonly snippetMissing = input<boolean>(false);
   protected readonly I18N_KEY = I18N_KEY;
   protected readonly renderRoot = viewChild<ElementRef<HTMLElement>>('renderRoot');
   protected readonly highlightedHtml = signal<SafeHtml>(

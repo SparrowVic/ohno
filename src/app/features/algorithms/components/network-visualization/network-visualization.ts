@@ -22,7 +22,7 @@ import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
   createMotionProfile,
   pulseSvgElement,
-} from '../../utils/visualization-motion/visualization-motion';
+} from '../../utils/helpers/visualization-motion/visualization-motion';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 

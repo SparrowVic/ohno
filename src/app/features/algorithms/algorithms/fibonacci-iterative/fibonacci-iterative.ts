@@ -8,7 +8,7 @@ import {
   NumberLabTraceState,
 } from '../../models/number-lab';
 import { SortStep } from '../../models/sort-step';
-import { FibonacciScenario } from '../../utils/number-lab-scenarios/number-lab-scenarios';
+import { FibonacciScenario } from '../../utils/scenarios/number-lab/number-lab-scenarios';
 import { createNumberLabStep } from '../number-lab-step';
 
 const I18N = {

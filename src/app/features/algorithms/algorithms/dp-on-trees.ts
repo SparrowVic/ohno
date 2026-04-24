@@ -4,7 +4,7 @@ import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { TreeDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import { TreeDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.dpOnTrees.modeLabel'),

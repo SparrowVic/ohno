@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { SuffixArrayLcpScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { SuffixArrayLcpScenario } from '../../utils/scenarios/string/string-scenarios';
 import { suffixArrayLcpKasaiGenerator } from './suffix-array-lcp-kasai';
 
 function collectSteps(scenario: SuffixArrayLcpScenario): SortStep[] {

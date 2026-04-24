@@ -10,7 +10,7 @@ import {
   CallStackStat,
 } from '../../models/call-stack-lab';
 import { SortStep } from '../../models/sort-step';
-import { RecursiveFibonacciScenario } from '../../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
+import { RecursiveFibonacciScenario } from '../../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
 import { createCallStackLabStep } from '../call-stack-lab-step';
 
 const I18N = {

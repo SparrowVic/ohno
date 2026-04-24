@@ -4,7 +4,7 @@ import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-t
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
-import { MatrixChainScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import { MatrixChainScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.matrixChain.modeLabel'),

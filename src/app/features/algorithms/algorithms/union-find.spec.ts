@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { unionFindGenerator } from './union-find';
 import type { SortStep } from '../models/sort-step';
-import type { UnionFindScenario } from '../utils/dsu-scenarios/dsu-scenarios';
+import type { UnionFindScenario } from '../utils/scenarios/dsu/dsu-scenarios';
 
 function collectSteps(scenario: UnionFindScenario): SortStep[] {
   return [...unionFindGenerator(scenario)];

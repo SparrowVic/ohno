@@ -43,7 +43,7 @@ import { MatrixTraceState } from '../models/matrix';
 import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
 import { SortTraceState } from '../models/sort-trace';
-import { deriveSortTrace } from '../utils/derive-sort-trace/derive-sort-trace';
+import { deriveSortTrace } from '../utils/helpers/derive-sort-trace/derive-sort-trace';
 import { SortStep } from '../models/sort-step';
 import { StringPresetOption, StringTraceState } from '../models/string';
 import { TreePresetOption, TreeTraversalTraceState } from '../models/tree';
@@ -54,11 +54,11 @@ import { CallStackLabTraceState } from '../models/call-stack-lab';
 import { CallTreeLabTraceState } from '../models/call-tree-lab';
 import { ScratchpadLabTraceState } from '../models/scratchpad-lab';
 import { Task, findTask } from '../models/task';
-import { NumberLabPresetOption } from '../utils/number-lab-scenarios/number-lab-scenarios';
-import { PointerLabPresetOption } from '../utils/pointer-lab-scenarios/pointer-lab-scenarios';
-import { SieveGridPresetOption } from '../utils/sieve-grid-scenarios/sieve-grid-scenarios';
-import { CallStackLabPresetOption } from '../utils/call-stack-lab-scenarios/call-stack-lab-scenarios';
-import { CallTreeLabPresetOption } from '../utils/call-tree-lab-scenarios/call-tree-lab-scenarios';
+import { NumberLabPresetOption } from '../utils/scenarios/number-lab/number-lab-scenarios';
+import { PointerLabPresetOption } from '../utils/scenarios/pointer-lab/pointer-lab-scenarios';
+import { SieveGridPresetOption } from '../utils/scenarios/sieve-grid/sieve-grid-scenarios';
+import { CallStackLabPresetOption } from '../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
+import { CallTreeLabPresetOption } from '../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
@@ -251,6 +251,14 @@ export class AlgorithmDetail {
    *  Code tab can render a "Code for task: X" eyebrow. Null when the
    *  algorithm hasn't migrated to the task model. */
   readonly activeTaskNameForSidePanel = computed(() => this.activeTask()?.name ?? null);
+
+  /** True when the active task explicitly opts out of a code snippet
+   *  (`codeSnippetId: null`). The side-panel Code tab swaps in an
+   *  editorial placeholder instead of the shiki-rendered variants. */
+  readonly activeTaskCodeSnippetMissing = computed(() => {
+    const task = this.activeTask();
+    return task !== null && task.codeSnippetId === null;
+  });
 
   /** Resolved values feeding the customize popover: user-provided
    *  custom overrides if set, otherwise the active task's defaults. */

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { knapsack01Generator } from './knapsack-01';
 import type { SortStep } from '../../models/sort-step';
-import type { KnapsackScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { KnapsackScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: KnapsackScenario): SortStep[] {
   return [...knapsack01Generator(scenario)];

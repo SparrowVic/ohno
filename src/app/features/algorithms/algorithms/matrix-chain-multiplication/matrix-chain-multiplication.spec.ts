@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { matrixChainMultiplicationGenerator } from './matrix-chain-multiplication';
 import type { SortStep } from '../../models/sort-step';
-import type { MatrixChainScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { MatrixChainScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: MatrixChainScenario): SortStep[] {
   return [...matrixChainMultiplicationGenerator(scenario)];
