@@ -1,124 +1,20 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
-import { i18nText } from '../../../../core/i18n/translatable-text';
 import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
-  ScratchpadMargin,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
-import { ReservoirSamplingScenario } from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
+import type { ReservoirSamplingScenario } from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
-
-/**
- * Reservoir sampling (Algorithm R, Vitter 1985) — chalkboard
- * narration.
- *
- * Pulls a uniform random sample of size `k` from a stream whose
- * length isn't known in advance. Fill phase: the first `k` items
- * go straight into the reservoir. Sample phase: for item index `i`
- * (0-based, `i ≥ k`), draw a uniform integer `j ∈ [0, i]`. If
- * `j < k`, item `i` replaces reservoir slot `j`; otherwise the
- * reservoir is unchanged. Post-invariant: every seen item is
- * equally likely to be in the final sample.
- *
- * We use a deterministic LCG so the viz is repeatable — changing
- * the `seed` re-rolls every coin flip in the iteration table.
- */
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.modeLabel'),
-  goal: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.goal'),
-  rule: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.rule'),
-  invariant: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.invariant'),
-  setup: {
-    streamLine: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.setup.streamLine',
-    ),
-    streamInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.setup.streamInstruction',
-    ),
-    reservoirInit: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.setup.reservoirInit',
-    ),
-  },
-  fill: {
-    line: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.fill.line'),
-    instruction: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.fill.instruction',
-    ),
-  },
-  sample: {
-    header: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.sample.header',
-    ),
-    roll: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sample.roll'),
-    rollInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.sample.rollInstruction',
-    ),
-    accept: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sample.accept'),
-    reject: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sample.reject'),
-    newState: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.sample.newState',
-    ),
-  },
-  result: {
-    sample: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.result.sample'),
-    signoff: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.result.signoff',
-    ),
-    emptySignoff: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.result.emptySignoff',
-    ),
-  },
-  phases: {
-    setup: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.setup'),
-    fill: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.fill'),
-    sample: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.sample'),
-    complete: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.complete',
-    ),
-  },
-  decisions: {
-    preparing: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.decisions.preparing',
-    ),
-    filling: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.decisions.filling',
-    ),
-    rolling: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.decisions.rolling',
-    ),
-    accepting: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.decisions.accepting',
-    ),
-    rejecting: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.decisions.rejecting',
-    ),
-    done: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.decisions.done'),
-  },
-  captions: {
-    setup: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.captions.setup'),
-    fillPhase: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.captions.fillPhase',
-    ),
-    samplePhase: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.captions.samplePhase',
-    ),
-    result: t(
-      'features.algorithms.runtime.scratchpadLab.reservoirSampling.captions.result',
-    ),
-  },
 } as const;
 
-const SECTION_MARKERS = {
-  setup: '①',
-  fill: '②',
-  sample: '③',
-  decision: '⟹',
-  result: '✓',
-} as const;
+const CALCULATION_INDENT = 1;
+const RESULT_MARKER = '✓';
 
 type LineBuilder = {
   readonly id: string;
@@ -132,98 +28,12 @@ type LineBuilder = {
   readonly annotation: ScratchpadLine['annotation'];
 };
 
-/** Deterministic LCG — same constants as Numerical Recipes (1986).
- *  State fits in 32-bit unsigned; `next()` returns a uniform float
- *  in `[0, 1)`. Not for cryptographic use — just for reproducible
- *  visualisations. */
-function lcg(seed: number): () => number {
-  let state = seed >>> 0;
-  return () => {
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-    return state / 4_294_967_296;
-  };
-}
-
-function formatReservoir(reservoir: readonly number[], filled: number): string {
-  const cells = reservoir.map((value, i) => {
-    if (i >= filled) return '\\_';
-    return String(value);
-  });
-  return `[${cells.join(', \\, ')}]`;
-}
-
-function formatProbability(k: number, iPlusOne: number): string {
-  // Render as `k / (i+1) = decimal`, but trim decimals for clean
-  // numerators like 3/3 = 1.
-  const approx = k / iPlusOne;
-  const approxStr = Number.isInteger(approx)
-    ? String(approx)
-    : approx.toFixed(3).replace(/\.?0+$/, '');
-  return `\\frac{${k}}{${iPlusOne}} \\approx ${approxStr}`;
-}
-
 export function* reservoirSamplingGenerator(
   scenario: ReservoirSamplingScenario,
 ): Generator<SortStep> {
   const presetLabel = scenario.presetLabel;
-  const stream = scenario.stream;
-  const k = Math.min(scenario.reservoirSize, stream.length);
-  const random = lcg(scenario.seed);
-
-  const reservoir: number[] = new Array(k).fill(0);
-  let filledCount = 0;
-
-  const lineBuilders: LineBuilder[] = [
-    {
-      id: 'goal',
-      kind: 'goal',
-      indent: 0,
-      marker: null,
-      caption: null,
-      captionPinned: true,
-      content: i18nText(I18N.goal, { k, n: stream.length }),
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-pre',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'rule',
-      kind: 'note',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: I18N.rule,
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-post',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-  ];
-
-  const globalInvariant: ScratchpadMargin = {
-    id: 'invariant',
-    anchorLineId: null,
-    text: I18N.invariant,
-    tone: 'invariant',
-  };
-
+  const values = scenario.values;
+  const lineBuilders: LineBuilder[] = [];
   let stepIndex = 0;
 
   function snapshot(opts: {
@@ -231,9 +41,8 @@ export function* reservoirSamplingGenerator(
     readonly decision: ScratchpadLabTraceState['decisionLabel'];
     readonly tone: ScratchpadLabTraceState['tone'];
     readonly currentLineId: string;
-    readonly resultLabel: ScratchpadLabTraceState['resultLabel'];
   }): ScratchpadLabTraceState {
-    const currentIdx = lineBuilders.findIndex((l) => l.id === opts.currentLineId);
+    const currentIdx = lineBuilders.findIndex((line) => line.id === opts.currentLineId);
     const lines: ScratchpadLine[] = lineBuilders.map((builder, index) => {
       const state: ScratchpadLineState = index === currentIdx ? 'current' : 'settled';
       return {
@@ -249,6 +58,7 @@ export function* reservoirSamplingGenerator(
         state,
       };
     });
+
     return {
       mode: 'reservoir-sampling',
       modeLabel: I18N.modeLabel,
@@ -258,236 +68,428 @@ export function* reservoirSamplingGenerator(
       taskPrompt: scenario.taskPrompt ?? null,
       tone: opts.tone,
       lines,
-      margins: [globalInvariant],
-      resultLabel: opts.resultLabel,
+      margins: [],
+      resultLabel: null,
       iteration: stepIndex,
     };
   }
 
-  // ---------- Step 0: setup (stream + empty reservoir) ----------
-  lineBuilders.push({
-    id: 'setup-stream',
-    kind: 'equation',
-    indent: 0,
-    marker: SECTION_MARKERS.setup,
-    caption: I18N.captions.setup,
-    captionPinned: true,
-    content: i18nText(I18N.setup.streamLine, { stream: stream.join(', ') }),
-    instruction: i18nText(I18N.setup.streamInstruction, { k, n: stream.length }),
-    annotation: i18nText(I18N.setup.reservoirInit, {
-      reservoir: formatReservoir(reservoir, filledCount),
-    }),
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 1,
-    description: i18nText(I18N.setup.streamInstruction, { k, n: stream.length }),
-    state: snapshot({
-      phase: I18N.phases.setup,
-      decision: I18N.decisions.preparing,
-      tone: 'setup',
-      currentLineId: 'setup-stream',
-      resultLabel: null,
-    }),
-  });
-
-  // ---------- Fill phase ----------
-  for (let i = 0; i < k; i++) {
-    reservoir[i] = stream[i];
-    filledCount = i + 1;
-    const fillId = `fill-${i}`;
-    lineBuilders.push({
-      id: fillId,
-      kind: 'substitute',
-      indent: 1,
-      marker: i === 0 ? SECTION_MARKERS.fill : null,
-      caption: i === 0 ? I18N.captions.fillPhase : null,
-      captionPinned: i === 0,
-      content: i18nText(I18N.fill.line, {
-        index: i,
-        item: stream[i],
-        reservoir: formatReservoir(reservoir, filledCount),
-      }),
-      instruction: i18nText(I18N.fill.instruction, { slot: i, item: stream[i] }),
-      annotation: null,
-    });
+  function appendStep(
+    builder: LineBuilder,
+    opts: {
+      readonly activeCodeLine: number;
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+      readonly tone: ScratchpadLabTraceState['tone'];
+    },
+  ): SortStep {
+    lineBuilders.push(builder);
     stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 2,
-      description: i18nText(I18N.fill.line, {
-        index: i,
-        item: stream[i],
-        reservoir: formatReservoir(reservoir, filledCount),
-      }),
-      state: snapshot({
-        phase: I18N.phases.fill,
-        decision: I18N.decisions.filling,
-        tone: 'compute',
-        currentLineId: fillId,
-        resultLabel: null,
-      }),
+    return createScratchpadLabStep({
+      activeCodeLine: opts.activeCodeLine,
+      description: builder.content,
+      state: snapshot({ ...opts, currentLineId: builder.id }),
     });
   }
 
-  // ---------- Sample phase ----------
-  for (let i = k; i < stream.length; i++) {
-    const item = stream[i];
-    const headerId = `sample-${i}-header`;
-    lineBuilders.push({
-      id: headerId,
-      kind: 'note',
-      indent: 0,
-      marker: i === k ? SECTION_MARKERS.sample : null,
-      caption: i === k ? I18N.captions.samplePhase : null,
-      captionPinned: i === k,
-      content: i18nText(I18N.sample.header, {
-        index: i,
-        item,
-        probability: formatProbability(k, i + 1),
-      }),
+  function paperLine(opts: {
+    readonly id: string;
+    readonly kind: ScratchpadLine['kind'];
+    readonly content: ScratchpadLine['content'];
+    readonly indent?: number;
+    readonly marker?: string | null;
+  }): LineBuilder {
+    const defaultIndent =
+      opts.kind === 'equation' || opts.kind === 'substitute' || opts.kind === 'decision'
+        ? CALCULATION_INDENT
+        : 0;
+    return {
+      id: opts.id,
+      kind: opts.kind,
+      indent: opts.indent ?? defaultIndent,
+      marker: opts.marker ?? null,
+      caption: null,
+      captionPinned: false,
+      content: opts.content,
       instruction: null,
       annotation: null,
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 3,
-      description: i18nText(I18N.sample.header, {
-        index: i,
-        item,
-        probability: formatProbability(k, i + 1),
-      }),
-      state: snapshot({
-        phase: I18N.phases.sample,
-        decision: I18N.decisions.rolling,
-        tone: 'compute',
-        currentLineId: headerId,
-        resultLabel: null,
-      }),
-    });
-
-    const roll = random();
-    const j = Math.floor(roll * (i + 1));
-    const rollId = `sample-${i}-roll`;
-    lineBuilders.push({
-      id: rollId,
-      kind: 'substitute',
-      indent: 1,
-      marker: null,
-      caption: null,
-      content: i18nText(I18N.sample.roll, {
-        roll: roll.toFixed(3),
-        iPlusOne: i + 1,
-        j,
-      }),
-      instruction: i18nText(I18N.sample.rollInstruction, { iPlusOne: i + 1 }),
-      annotation: null,
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 4,
-      description: i18nText(I18N.sample.roll, {
-        roll: roll.toFixed(3),
-        iPlusOne: i + 1,
-        j,
-      }),
-      state: snapshot({
-        phase: I18N.phases.sample,
-        decision: I18N.decisions.rolling,
-        tone: 'compute',
-        currentLineId: rollId,
-        resultLabel: null,
-      }),
-    });
-
-    const decisionId = `sample-${i}-decision`;
-    if (j < k) {
-      reservoir[j] = item;
-      lineBuilders.push({
-        id: decisionId,
-        kind: 'decision',
-        indent: 1,
-        marker: SECTION_MARKERS.decision,
-        caption: null,
-        content: i18nText(I18N.sample.accept, {
-          item,
-          slot: j,
-          reservoir: formatReservoir(reservoir, filledCount),
-        }),
-        instruction: null,
-        annotation: i18nText(I18N.sample.newState, {
-          reservoir: formatReservoir(reservoir, filledCount),
-        }),
-      });
-      stepIndex += 1;
-      yield createScratchpadLabStep({
-        activeCodeLine: 5,
-        description: i18nText(I18N.sample.accept, {
-          item,
-          slot: j,
-          reservoir: formatReservoir(reservoir, filledCount),
-        }),
-        state: snapshot({
-          phase: I18N.phases.sample,
-          decision: I18N.decisions.accepting,
-          tone: 'decide',
-          currentLineId: decisionId,
-          resultLabel: null,
-        }),
-      });
-    } else {
-      lineBuilders.push({
-        id: decisionId,
-        kind: 'decision',
-        indent: 1,
-        marker: SECTION_MARKERS.decision,
-        caption: null,
-        content: i18nText(I18N.sample.reject, { j, k, item }),
-        instruction: null,
-        annotation: null,
-      });
-      stepIndex += 1;
-      yield createScratchpadLabStep({
-        activeCodeLine: 5,
-        description: i18nText(I18N.sample.reject, { j, k, item }),
-        state: snapshot({
-          phase: I18N.phases.sample,
-          decision: I18N.decisions.rejecting,
-          tone: 'decide',
-          currentLineId: decisionId,
-          resultLabel: null,
-        }),
-      });
-    }
+    };
   }
 
-  // ---------- Result ----------
-  const reservoirDisplay = formatReservoir(reservoir, filledCount);
-  const signoffText =
-    filledCount === 0
-      ? I18N.result.emptySignoff
-      : i18nText(I18N.result.signoff, { reservoir: reservoirDisplay });
+  function section(id: string, content: string): LineBuilder {
+    return paperLine({ id, kind: 'note', content });
+  }
 
-  lineBuilders.push({
-    id: 'result',
-    kind: 'result',
-    indent: 0,
-    marker: SECTION_MARKERS.result,
-    caption: I18N.captions.result,
-    captionPinned: true,
-    content: i18nText(I18N.result.sample, { reservoir: reservoirDisplay }),
-    instruction: null,
-    annotation: null,
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 6,
-    description: i18nText(I18N.result.sample, { reservoir: reservoirDisplay }),
-    state: snapshot({
-      phase: I18N.phases.complete,
-      decision: I18N.decisions.done,
-      tone: 'complete',
-      currentLineId: 'result',
-      resultLabel: signoffText,
-    }),
-  });
+  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'note', content, indent });
+  }
+
+  function math(id: string, expression: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'equation',
+      indent,
+      content: `[[math]]${expression}[[/math]]`,
+    });
+  }
+
+  function resultSection(): LineBuilder {
+    return paperLine({
+      id: 'section-result',
+      kind: 'result',
+      marker: RESULT_MARKER,
+      content: 'Wynik',
+    });
+  }
+
+  function* emit(builder: LineBuilder, activeCodeLine = 1): Generator<SortStep> {
+    yield appendStep(builder, {
+      activeCodeLine,
+      phase: phaseFor(builder),
+      decision: decisionFor(builder),
+      tone: toneFor(builder),
+    });
+  }
+
+  function* emitKOne(): Generator<SortStep> {
+    const stream = values.stream;
+    const reservoir: string[] = [];
+
+    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(math('parameters-k', `k = ${values.k}`));
+    yield* emit(math('parameters-stream', `stream = ${formatList(stream)}`));
+
+    yield* emit(section('section-run', 'Przebieg'));
+    stream.forEach((item, index) => {
+      const i = index + 1;
+      if (i === 1) {
+        reservoir[0] = item;
+        return;
+      }
+      const draw = values.random[i] ?? 1;
+      const threshold = 1 / i;
+      if (draw < threshold) reservoir[0] = item;
+    });
+
+    const runningReservoir: string[] = [];
+    for (let index = 0; index < stream.length; index++) {
+      const i = index + 1;
+      const item = stream[index];
+      if (i === 1) {
+        runningReservoir[0] = item;
+        yield* emit(
+          math(
+            `run-${i}`,
+            `i = ${i}, element = ${item}, decyzja = start, reservoir = ${formatList(runningReservoir)}`,
+          ),
+        );
+        continue;
+      }
+
+      const draw = values.random[i] ?? 1;
+      const threshold = 1 / i;
+      const accepted = draw < threshold;
+      if (accepted) runningReservoir[0] = item;
+      yield* emit(
+        math(
+          `run-${i}-compare`,
+          `i = ${i}, element = ${item}, random[${i}] = ${formatDraw(draw)}, próg = 1 / ${i} = ${formatThreshold(threshold, i)}`,
+        ),
+      );
+      yield* emit(
+        math(
+          `run-${i}-decision`,
+          `${formatDraw(draw)} ${accepted ? '<' : '>='} ${formatThreshold(threshold, i)} \\to ${accepted ? 'zastąp' : 'nie\\ zastępuj'}, reservoir = ${formatList(runningReservoir)}`,
+        ),
+      );
+    }
+
+    yield* emit(section('section-check', 'Sprawdzenie idei prawdopodobieństwa'));
+    yield* emit(note('check-a-label', 'Dla pierwszego elementu:'));
+    yield* emit(
+      math(
+        'check-a-product',
+        'P(A\\ zostaje\\ do\\ końca) = (1 - 1/2)(1 - 1/3)(1 - 1/4)(1 - 1/5)(1 - 1/6)',
+      ),
+    );
+    yield* emit(
+      math('check-a-result', 'P(A\\ zostaje\\ do\\ końca) = (1/2)(2/3)(3/4)(4/5)(5/6) = 1/6'),
+    );
+    yield* emit(note('check-e-label', 'Dla elementu E:'));
+    yield* emit(math('check-e-selected', 'P(E\\ jest\\ wybrane\\ na\\ i = 5) = 1/5'));
+    yield* emit(math('check-e-survives', 'P(E\\ przetrwa\\ i = 6) = 1 - 1/6 = 5/6'));
+    yield* emit(math('check-e-result', 'P(E\\ w\\ końcowej\\ próbce) = (1/5)(5/6) = 1/6'));
+
+    yield* emit(resultSection());
+    yield* emit(math('result-reservoir', `reservoir = ${formatList(reservoir)}`));
+  }
+
+  function* emitFixedKUpdates(): Generator<SortStep> {
+    const stream = values.stream;
+    const k = values.k;
+    const reservoir = stream.slice(0, k);
+
+    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(math('parameters-k', `k = ${k}`));
+    yield* emit(math('parameters-stream', `stream = ${formatList(stream)}`));
+
+    yield* emit(section('section-init', 'Inicjalizacja'));
+    yield* emit(math('init-reservoir', `reservoir = ${formatList(reservoir)}`));
+
+    yield* emit(section('section-run', 'Przebieg'));
+    for (let index = k; index < stream.length; index++) {
+      const i = index + 1;
+      const item = stream[index];
+      const draw = values.draws[i] ?? i;
+      yield* emit(math(`run-${i}-draw`, `i = ${i}, element = ${item}, j = ${draw}`));
+      if (draw <= k) {
+        reservoir[draw - 1] = item;
+        yield* emit(
+          math(
+            `run-${i}-replace`,
+            `${draw} <= ${k} \\to zastąp\\ pozycję\\ ${draw}, reservoir = ${formatList(reservoir)}`,
+          ),
+        );
+      } else {
+        yield* emit(
+          math(`run-${i}-skip`, `${draw} > ${k} \\to pomiń, reservoir = ${formatList(reservoir)}`),
+        );
+      }
+    }
+
+    yield* emit(resultSection());
+    yield* emit(math('result-reservoir', `reservoir = ${formatList(reservoir)}`));
+  }
+
+  function* emitPredicateReservoir(): Generator<SortStep> {
+    const k = values.k;
+    const reservoir: string[] = [];
+    let realCounter = 0;
+
+    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(math('parameters-k', `k = ${k}`));
+    yield* emit(math('parameters-predicate', `predicate = ${values.predicate}`));
+
+    yield* emit(section('section-run', 'Przebieg'));
+    for (let index = 0; index < values.predicateStream.length; index++) {
+      const streamIndex = index + 1;
+      const item = values.predicateStream[index];
+      const passes = matchesPredicate(item.status, values.predicate);
+      if (!passes) {
+        yield* emit(
+          math(
+            `run-${streamIndex}`,
+            `indeks = ${streamIndex}, element = ${item.label}, predykat = nie, r = ${realCounter}, decyzja = ignoruj, reservoir = ${formatList(reservoir)}`,
+          ),
+        );
+        continue;
+      }
+
+      realCounter += 1;
+      if (realCounter <= k) {
+        reservoir.push(item.label);
+        yield* emit(
+          math(
+            `run-${streamIndex}`,
+            `indeks = ${streamIndex}, element = ${item.label}, predykat = tak, r = ${realCounter}, decyzja = dodaj, reservoir = ${formatList(reservoir)}`,
+          ),
+        );
+        continue;
+      }
+
+      const draw = values.drawsForRealItems[realCounter] ?? realCounter;
+      if (draw <= k) {
+        reservoir[draw - 1] = item.label;
+        yield* emit(
+          math(
+            `run-${streamIndex}`,
+            `indeks = ${streamIndex}, element = ${item.label}, predykat = tak, r = ${realCounter}, j = ${draw}, ${draw} <= ${k} \\to zastąp\\ pozycję\\ ${draw}, reservoir = ${formatList(reservoir)}`,
+          ),
+        );
+      } else {
+        yield* emit(
+          math(
+            `run-${streamIndex}`,
+            `indeks = ${streamIndex}, element = ${item.label}, predykat = tak, r = ${realCounter}, j = ${draw}, ${draw} > ${k} \\to pomiń, reservoir = ${formatList(reservoir)}`,
+          ),
+        );
+      }
+    }
+
+    yield* emit(resultSection());
+    yield* emit(math('result-reservoir', `reservoir = ${formatList(reservoir)}`));
+
+    yield* emit(section('section-conclusion', 'Wniosek'));
+    yield* emit(
+      note(
+        'conclusion-counter',
+        'Losowania są liczone względem liczby elementów spełniających predykat, nie względem całej długości strumienia.',
+      ),
+    );
+  }
+
+  function* emitWeightedReservoir(): Generator<SortStep> {
+    const k = values.k;
+    const keyed = values.weightedItems.map((item, index) => ({
+      ...item,
+      index,
+      key: item.u ** (1 / item.weight),
+    }));
+    const ranking = [...keyed].sort((left, right) => {
+      const diff = right.key - left.key;
+      return diff === 0 ? left.index - right.index : diff;
+    });
+    const selected = ranking.slice(0, k).map((item) => item.label);
+
+    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(math('parameters-k', `k = ${k}`));
+    yield* emit(math('parameters-key', `key = ${values.keyFormula}`));
+    yield* emit(note('parameters-keep', 'wybieramy największe klucze'));
+
+    yield* emit(section('section-keys', 'Obliczenia kluczy'));
+    for (const item of keyed) {
+      yield* emit(
+        math(
+          `key-${item.label}`,
+          `${item.label}: weight = ${formatNumber(item.weight)}, u = ${formatNumber(item.u)}, key = ${formatNumber(item.u)}^{1 / ${formatNumber(item.weight)}} = ${formatKey(item.key)}`,
+        ),
+      );
+    }
+
+    yield* emit(section('section-ranking', 'Ranking'));
+    for (const item of ranking) {
+      yield* emit(math(`ranking-${item.label}`, `${item.label}: ${formatKey(item.key)}`));
+    }
+
+    yield* emit(resultSection());
+    yield* emit(note('result-label', 'Wybieramy dwa największe klucze:'));
+    yield* emit(math('result-reservoir', `reservoir = ${formatList(selected)}`));
+  }
+
+  function* emitDistributedMerge(): Generator<SortStep> {
+    const k = values.k;
+    const shardA = localTop(values.shardA, k);
+    const shardB = localTop(values.shardB, k);
+    const shardC = localTop(values.shardC, k);
+    const candidates = [...shardA, ...shardB, ...shardC].sort(
+      (left, right) => left.priority - right.priority,
+    );
+    const selected = candidates.slice(0, k);
+
+    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(math('parameters-k', `k = ${k}`));
+    yield* emit(note('parameters-priority', 'mniejszy priority = lepszy'));
+
+    yield* emitShard('A', values.shardA, shardA);
+    yield* emitShard('B', values.shardB, shardB);
+    yield* emitShard('C', values.shardC, shardC);
+
+    yield* emit(section('section-merge', 'Scalanie kandydatów'));
+    for (const item of candidates) {
+      yield* emit(math(`merge-${item.label}`, `${item.label}: ${formatPriority(item.priority)}`));
+    }
+
+    yield* emit(resultSection());
+    yield* emit(note('result-global-label', 'Wybieramy dwa najmniejsze priorytety:'));
+    yield* emit(math('result-reservoir', `reservoir = ${formatPriorityList(selected)}`));
+  }
+
+  function* emitShard(
+    label: string,
+    items: readonly { readonly label: string; readonly priority: number }[],
+    local: readonly { readonly label: string; readonly priority: number }[],
+  ): Generator<SortStep> {
+    yield* emit(section(`section-shard-${label}`, `Shard ${label}`));
+    for (const item of items) {
+      yield* emit(
+        math(`shard-${label}-${item.label}`, `${item.label}: ${formatPriority(item.priority)}`),
+      );
+    }
+    yield* emit(math(`shard-${label}-local`, `${label}_local = ${formatPriorityList(local)}`));
+  }
+
+  switch (scenario.notebookFlow.kind) {
+    case 'k-one':
+      yield* emitKOne();
+      break;
+    case 'fixed-k-updates':
+      yield* emitFixedKUpdates();
+      break;
+    case 'predicate-reservoir':
+      yield* emitPredicateReservoir();
+      break;
+    case 'weighted-reservoir':
+      yield* emitWeightedReservoir();
+      break;
+    case 'distributed-merge':
+      yield* emitDistributedMerge();
+      break;
+  }
+}
+
+function phaseFor(builder: LineBuilder): string {
+  if (builder.id.includes('result')) return 'Wynik';
+  if (builder.id.includes('parameter')) return 'Parametry';
+  if (builder.id.includes('run') || builder.id.includes('stream')) return 'Strumień';
+  if (builder.id.includes('key') || builder.id.includes('ranking')) return 'Losowania';
+  if (builder.id.includes('shard') || builder.id.includes('merge')) return 'Stan rezerwuaru';
+  if (builder.id.includes('check') || builder.id.includes('conclusion')) return 'Sprawdzenie';
+  return 'Obliczenia';
+}
+
+function decisionFor(builder: LineBuilder): string {
+  if (builder.kind === 'result') return 'Zapisujemy wynik.';
+  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
+  return 'Liczymy kolejny wiersz.';
+}
+
+function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'setup';
+  return 'compute';
+}
+
+function matchesPredicate(status: string, predicate: string): boolean {
+  const match = predicate.match(/==\s*([A-Za-z0-9_-]+)/);
+  const expected = match?.[1] ?? 'ERROR';
+  return status.trim() === expected;
+}
+
+function localTop<T extends { readonly priority: number }>(
+  items: readonly T[],
+  k: number,
+): readonly T[] {
+  return [...items].sort((left, right) => left.priority - right.priority).slice(0, k);
+}
+
+function formatList(values: readonly string[]): string {
+  return `[${values.join(', ')}]`;
+}
+
+function formatPriorityList(
+  values: readonly { readonly label: string; readonly priority: number }[],
+): string {
+  return `[${values.map((item) => `(${item.label}, ${formatPriority(item.priority)})`).join(', ')}]`;
+}
+
+function formatPriority(value: number): string {
+  return value.toFixed(2);
+}
+
+function formatDraw(value: number): string {
+  return value.toFixed(2);
+}
+
+function formatThreshold(value: number, denominator?: number): string {
+  if (denominator === 3) return '0.333...';
+  if (denominator === 6) return '0.166...';
+  return value.toFixed(2);
+}
+
+function formatKey(value: number): string {
+  return value.toFixed(4);
+}
+
+function formatNumber(value: number): string {
+  return Number.isInteger(value) ? String(value) : String(value);
 }
