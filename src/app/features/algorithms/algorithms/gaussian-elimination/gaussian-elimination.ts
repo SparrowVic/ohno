@@ -1,113 +1,24 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
-import { i18nText } from '../../../../core/i18n/translatable-text';
 import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
-  ScratchpadMargin,
 } from '../../models/scratchpad-lab';
-import { SortStep } from '../../models/sort-step';
-import { GaussianEliminationScenario } from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
+import type { SortStep } from '../../models/sort-step';
+import type { GaussianEliminationScenario } from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
-
-/**
- * Gaussian–Jordan elimination — chalkboard narration.
- *
- * Starts from the augmented matrix `[A | b]` and walks it to reduced
- * row-echelon form by three families of row operations: swap rows,
- * scale a row by a non-zero constant, add a multiple of one row to
- * another. Each matrix snapshot is emitted as a single KaTeX
- * `\left[\begin{array}{...|c}...\end{array}\right]` block so the
- * student sees the structural change as one atomic picture.
- *
- * We use Gauss-Jordan (not plain Gauss) so the final matrix already
- * shows the identity on the left — the solution reads straight off
- * the right-hand side. Matches what's usually taught first.
- */
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.modeLabel'),
-  goal: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.goal'),
-  rule: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.rule'),
-  invariant: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.invariant'),
-  setup: {
-    initial: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.setup.initial'),
-    initialAnnotation: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.setup.initialAnnotation',
-    ),
-  },
-  op: {
-    pivotHeader: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.op.pivotHeader',
-    ),
-    swap: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.op.swap'),
-    swapInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.op.swapInstruction',
-    ),
-    scale: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.op.scale'),
-    scaleInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.op.scaleInstruction',
-    ),
-    eliminate: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.op.eliminate'),
-    eliminateInstruction: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.op.eliminateInstruction',
-    ),
-    skipAlready: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.op.skipAlready',
-    ),
-  },
-  failure: {
-    singular: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.failure.singular'),
-  },
-  result: {
-    solution: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.result.solution',
-    ),
-    signoff: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.result.signoff',
-    ),
-    signoffSingular: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.result.signoffSingular',
-    ),
-  },
-  phases: {
-    setup: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.phases.setup'),
-    forward: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.phases.forward'),
-    complete: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.phases.complete'),
-  },
-  decisions: {
-    starting: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.decisions.starting',
-    ),
-    swapping: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.decisions.swapping',
-    ),
-    scaling: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.decisions.scaling',
-    ),
-    eliminating: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.decisions.eliminating',
-    ),
-    done: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.decisions.done'),
-    singular: t(
-      'features.algorithms.runtime.scratchpadLab.gaussianElimination.decisions.singular',
-    ),
-  },
-  captions: {
-    setup: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.captions.setup'),
-    pivot: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.captions.pivot'),
-    result: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.captions.result'),
-  },
 } as const;
 
-const SECTION_MARKERS = {
-  setup: '①',
-  pivot: '②',
-  decision: '⟹',
-  result: '✓',
-  failure: '✗',
-} as const;
+const EPSILON = 1e-9;
+const CALCULATION_INDENT = 1;
+const RESULT_MARKER = '✓';
+const NO_RESULT_MARKER = '×';
+const VARIABLE_NAMES = ['x', 'y', 'z', 'w', 'v', 'u'] as const;
+const PARAMETER_NAMES = ['t', 'u', 'v', 'p', 'q', 'r'] as const;
 
 type LineBuilder = {
   readonly id: string;
@@ -121,29 +32,19 @@ type LineBuilder = {
   readonly annotation: ScratchpadLine['annotation'];
 };
 
-/** Tolerance for treating a floating-point value as zero after a
- *  sequence of row operations. Rational inputs keep exact integers
- *  so this only matters when a task later feeds fractional coefficients. */
-const EPSILON = 1e-9;
-
-function isZero(value: number): boolean {
-  return Math.abs(value) < EPSILON;
+interface PivotPosition {
+  readonly row: number;
+  readonly col: number;
 }
 
-/** Render the current matrix as a KaTeX augmented-matrix block. */
-function matrixLatex(matrix: readonly (readonly number[])[], variableCount: number): string {
-  const coeffCols = 'c'.repeat(variableCount);
-  const header = `${coeffCols}|c`;
-  const rows = matrix
-    .map((row) => row.map((cell) => formatCell(cell)).join(' & '))
-    .join(' \\\\ ');
-  return `[[math]]\\left[\\begin{array}{${header}} ${rows} \\end{array}\\right][[/math]]`;
+interface Contradiction {
+  readonly row: number;
+  readonly rhs: number;
 }
 
-function formatCell(value: number): string {
-  if (Object.is(value, -0)) return '0';
-  if (Number.isInteger(value)) return String(value);
-  return value.toFixed(3).replace(/\.?0+$/, '');
+interface FreeVariable {
+  readonly col: number;
+  readonly parameter: string;
 }
 
 export function* gaussianEliminationGenerator(
@@ -151,61 +52,11 @@ export function* gaussianEliminationGenerator(
 ): Generator<SortStep> {
   const presetLabel = scenario.presetLabel;
   const variableCount = scenario.variableCount;
-  // Clone the matrix so our in-place row ops don't mutate the scenario.
   const matrix: number[][] = scenario.matrix.map((row) => [...row]);
+  const initialMatrix: number[][] = scenario.matrix.map((row) => [...row]);
   const rowCount = matrix.length;
-
-  const lineBuilders: LineBuilder[] = [
-    {
-      id: 'goal',
-      kind: 'goal',
-      indent: 0,
-      marker: null,
-      caption: null,
-      captionPinned: true,
-      content: i18nText(I18N.goal, { count: variableCount }),
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-pre',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'rule',
-      kind: 'note',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: I18N.rule,
-      instruction: null,
-      annotation: null,
-    },
-    {
-      id: 'divider-post',
-      kind: 'divider',
-      indent: 0,
-      marker: null,
-      caption: null,
-      content: '',
-      instruction: null,
-      annotation: null,
-    },
-  ];
-
-  const globalInvariant: ScratchpadMargin = {
-    id: 'invariant',
-    anchorLineId: null,
-    text: I18N.invariant,
-    tone: 'invariant',
-  };
-
+  const lineBuilders: LineBuilder[] = [];
+  const pivots: PivotPosition[] = [];
   let stepIndex = 0;
 
   function snapshot(opts: {
@@ -213,9 +64,8 @@ export function* gaussianEliminationGenerator(
     readonly decision: ScratchpadLabTraceState['decisionLabel'];
     readonly tone: ScratchpadLabTraceState['tone'];
     readonly currentLineId: string;
-    readonly resultLabel: ScratchpadLabTraceState['resultLabel'];
   }): ScratchpadLabTraceState {
-    const currentIdx = lineBuilders.findIndex((l) => l.id === opts.currentLineId);
+    const currentIdx = lineBuilders.findIndex((line) => line.id === opts.currentLineId);
     const lines: ScratchpadLine[] = lineBuilders.map((builder, index) => {
       const state: ScratchpadLineState = index === currentIdx ? 'current' : 'settled';
       return {
@@ -231,6 +81,7 @@ export function* gaussianEliminationGenerator(
         state,
       };
     });
+
     return {
       mode: 'gaussian-elimination',
       modeLabel: I18N.modeLabel,
@@ -240,260 +91,467 @@ export function* gaussianEliminationGenerator(
       taskPrompt: scenario.taskPrompt ?? null,
       tone: opts.tone,
       lines,
-      margins: [globalInvariant],
-      resultLabel: opts.resultLabel,
+      margins: [],
+      resultLabel: null,
       iteration: stepIndex,
     };
   }
 
-  // ---------- Step 0: initial matrix ----------
-  lineBuilders.push({
-    id: 'initial',
-    kind: 'equation',
-    indent: 0,
-    marker: SECTION_MARKERS.setup,
-    caption: I18N.captions.setup,
-    captionPinned: true,
-    content: matrixLatex(matrix, variableCount),
-    instruction: null,
-    annotation: I18N.setup.initialAnnotation,
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 1,
-    description: I18N.setup.initial,
-    state: snapshot({
-      phase: I18N.phases.setup,
-      decision: I18N.decisions.starting,
-      tone: 'setup',
-      currentLineId: 'initial',
-      resultLabel: null,
-    }),
-  });
+  function appendStep(
+    builder: LineBuilder,
+    opts: {
+      readonly activeCodeLine: number;
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+      readonly tone: ScratchpadLabTraceState['tone'];
+    },
+  ): SortStep {
+    lineBuilders.push(builder);
+    stepIndex += 1;
+    return createScratchpadLabStep({
+      activeCodeLine: opts.activeCodeLine,
+      description: builder.content,
+      state: snapshot({ ...opts, currentLineId: builder.id }),
+    });
+  }
 
-  // ---------- Gauss-Jordan sweep ----------
-  const pivotColumns = Math.min(variableCount, rowCount);
-  let pivotRow = 0;
-  let singular = false;
-
-  for (let col = 0; col < variableCount && pivotRow < rowCount; col++) {
-    // Find a row at or below `pivotRow` with a non-zero entry in `col`.
-    let swapRow = -1;
-    for (let r = pivotRow; r < rowCount; r++) {
-      if (!isZero(matrix[r][col])) {
-        swapRow = r;
-        break;
-      }
-    }
-    if (swapRow === -1) {
-      // No pivot available in this column — system is rank-deficient.
-      singular = true;
-      break;
-    }
-
-    const headerId = `pivot-${col}-header`;
-    lineBuilders.push({
-      id: headerId,
-      kind: 'note',
-      indent: 0,
-      marker: SECTION_MARKERS.pivot,
-      caption: I18N.captions.pivot,
-      captionPinned: true,
-      content: i18nText(I18N.op.pivotHeader, { col: col + 1, row: pivotRow + 1 }),
+  function paperLine(opts: {
+    readonly id: string;
+    readonly kind: ScratchpadLine['kind'];
+    readonly content: ScratchpadLine['content'];
+    readonly indent?: number;
+    readonly marker?: string | null;
+  }): LineBuilder {
+    const defaultIndent =
+      opts.kind === 'equation' || opts.kind === 'substitute' || opts.kind === 'decision'
+        ? CALCULATION_INDENT
+        : 0;
+    return {
+      id: opts.id,
+      kind: opts.kind,
+      indent: opts.indent ?? defaultIndent,
+      marker: opts.marker ?? null,
+      caption: null,
+      captionPinned: false,
+      content: opts.content,
       instruction: null,
       annotation: null,
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 2,
-      description: i18nText(I18N.op.pivotHeader, { col: col + 1, row: pivotRow + 1 }),
-      state: snapshot({
-        phase: I18N.phases.forward,
-        decision: I18N.decisions.starting,
-        tone: 'compute',
-        currentLineId: headerId,
-        resultLabel: null,
-      }),
-    });
+    };
+  }
 
-    // Swap if the non-zero pivot lives in a lower row.
+  function section(id: string, content: string): LineBuilder {
+    return paperLine({ id, kind: 'note', content });
+  }
+
+  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'note', content, indent });
+  }
+
+  function math(id: string, expression: string, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'equation',
+      indent,
+      content: `[[math]]${expression}[[/math]]`,
+    });
+  }
+
+  function resultSection(): LineBuilder {
+    return paperLine({
+      id: 'section-result',
+      kind: 'result',
+      marker: RESULT_MARKER,
+      content: 'Wynik',
+    });
+  }
+
+  function noResultSection(): LineBuilder {
+    return paperLine({
+      id: 'section-no-result',
+      kind: 'result',
+      marker: NO_RESULT_MARKER,
+      content: 'Brak rozwiązania',
+    });
+  }
+
+  function* emit(builder: LineBuilder, activeCodeLine = 1): Generator<SortStep> {
+    yield appendStep(builder, {
+      activeCodeLine,
+      phase: phaseFor(builder),
+      decision: decisionFor(builder),
+      tone: toneFor(builder),
+    });
+  }
+
+  function* emitRowOperation(
+    id: string,
+    operation: string,
+    activeCodeLine = 3,
+  ): Generator<SortStep> {
+    yield* emit(math(`${id}-operation`, operation), activeCodeLine);
+    yield* emit(math(`${id}-matrix`, matrixLatex(matrix, variableCount)), activeCodeLine);
+  }
+
+  yield* emit(section('section-system', 'Układ równań'));
+  for (let row = 0; row < rowCount; row++) {
+    yield* emit(math(`system-row-${row + 1}`, equationLatex(initialMatrix[row], variableCount)));
+  }
+
+  yield* emit(section('section-augmented-matrix', 'Macierz rozszerzona'));
+  yield* emit(math('matrix-initial', matrixLatex(matrix, variableCount)));
+
+  yield* emit(section('section-forward', 'Eliminacja w przód'));
+  let pivotRow = 0;
+  for (let col = 0; col < variableCount && pivotRow < rowCount; col++) {
+    const swapRow = findPivotRow(matrix, pivotRow, col);
+    if (swapRow === -1) continue;
+
     if (swapRow !== pivotRow) {
       [matrix[pivotRow], matrix[swapRow]] = [matrix[swapRow], matrix[pivotRow]];
-      const swapId = `pivot-${col}-swap`;
-      lineBuilders.push({
-        id: swapId,
-        kind: 'substitute',
-        indent: 1,
-        marker: null,
-        caption: null,
-        content: matrixLatex(matrix, variableCount),
-        instruction: i18nText(I18N.op.swapInstruction, {
-          r1: pivotRow + 1,
-          r2: swapRow + 1,
-        }),
-        annotation: i18nText(I18N.op.swap, { r1: pivotRow + 1, r2: swapRow + 1 }),
-      });
-      stepIndex += 1;
-      yield createScratchpadLabStep({
-        activeCodeLine: 3,
-        description: i18nText(I18N.op.swap, { r1: pivotRow + 1, r2: swapRow + 1 }),
-        state: snapshot({
-          phase: I18N.phases.forward,
-          decision: I18N.decisions.swapping,
-          tone: 'substitute',
-          currentLineId: swapId,
-          resultLabel: null,
-        }),
-      });
+      yield* emitRowOperation(
+        `forward-swap-${pivotRow}-${swapRow}`,
+        `R_${pivotRow + 1} \\leftrightarrow R_${swapRow + 1}`,
+      );
     }
 
-    // Normalize the pivot row so the pivot becomes 1.
     const pivotValue = matrix[pivotRow][col];
-    if (!isZero(pivotValue - 1)) {
+    if (!isSame(pivotValue, 1)) {
       for (let j = 0; j < matrix[pivotRow].length; j++) {
         matrix[pivotRow][j] = matrix[pivotRow][j] / pivotValue;
       }
-      const scaleId = `pivot-${col}-scale`;
-      lineBuilders.push({
-        id: scaleId,
-        kind: 'substitute',
-        indent: 1,
-        marker: null,
-        caption: null,
-        content: matrixLatex(matrix, variableCount),
-        instruction: i18nText(I18N.op.scaleInstruction, {
-          row: pivotRow + 1,
-          factor: formatCell(pivotValue),
-        }),
-        annotation: i18nText(I18N.op.scale, {
-          row: pivotRow + 1,
-          factor: formatCell(pivotValue),
-        }),
-      });
-      stepIndex += 1;
-      yield createScratchpadLabStep({
-        activeCodeLine: 4,
-        description: i18nText(I18N.op.scale, {
-          row: pivotRow + 1,
-          factor: formatCell(pivotValue),
-        }),
-        state: snapshot({
-          phase: I18N.phases.forward,
-          decision: I18N.decisions.scaling,
-          tone: 'substitute',
-          currentLineId: scaleId,
-          resultLabel: null,
-        }),
-      });
+      yield* emitRowOperation(
+        `forward-scale-${pivotRow}`,
+        `R_${pivotRow + 1} \\leftarrow R_${pivotRow + 1} / ${formatDivisionScalar(pivotValue)}`,
+      );
     }
 
-    // Eliminate every other row's entry in this column.
-    for (let r = 0; r < rowCount; r++) {
-      if (r === pivotRow) continue;
-      const factor = matrix[r][col];
+    for (let row = pivotRow + 1; row < rowCount; row++) {
+      const factor = matrix[row][col];
       if (isZero(factor)) continue;
-      for (let j = 0; j < matrix[r].length; j++) {
-        matrix[r][j] = matrix[r][j] - factor * matrix[pivotRow][j];
+      for (let j = 0; j < matrix[row].length; j++) {
+        matrix[row][j] = matrix[row][j] - factor * matrix[pivotRow][j];
       }
-      const elimId = `pivot-${col}-elim-${r}`;
-      lineBuilders.push({
-        id: elimId,
-        kind: 'substitute',
-        indent: 1,
-        marker: null,
-        caption: null,
-        content: matrixLatex(matrix, variableCount),
-        instruction: i18nText(I18N.op.eliminateInstruction, {
-          target: r + 1,
-          pivot: pivotRow + 1,
-          factor: formatCell(factor),
-        }),
-        annotation: i18nText(I18N.op.eliminate, {
-          target: r + 1,
-          pivot: pivotRow + 1,
-          factor: formatCell(factor),
-        }),
-      });
-      stepIndex += 1;
-      yield createScratchpadLabStep({
-        activeCodeLine: 5,
-        description: i18nText(I18N.op.eliminate, {
-          target: r + 1,
-          pivot: pivotRow + 1,
-          factor: formatCell(factor),
-        }),
-        state: snapshot({
-          phase: I18N.phases.forward,
-          decision: I18N.decisions.eliminating,
-          tone: 'substitute',
-          currentLineId: elimId,
-          resultLabel: null,
-        }),
-      });
+      yield* emitRowOperation(
+        `forward-eliminate-${pivotRow}-${row}`,
+        rowEliminationLatex(row + 1, pivotRow + 1, factor),
+      );
     }
 
+    pivots.push({ row: pivotRow, col });
     pivotRow += 1;
   }
 
-  // ---------- Result ----------
-  if (singular || pivotRow < pivotColumns) {
-    lineBuilders.push({
-      id: 'result-singular',
-      kind: 'result',
-      indent: 0,
-      marker: SECTION_MARKERS.failure,
-      caption: I18N.captions.result,
-      captionPinned: true,
-      content: I18N.failure.singular,
-      instruction: null,
-      annotation: null,
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 6,
-      description: I18N.failure.singular,
-      state: snapshot({
-        phase: I18N.phases.complete,
-        decision: I18N.decisions.singular,
-        tone: 'complete',
-        currentLineId: 'result-singular',
-        resultLabel: I18N.result.signoffSingular,
-      }),
-    });
+  const forwardContradiction = findContradiction(matrix, variableCount);
+  if (forwardContradiction) {
+    yield* emit(section('section-contradiction', 'Sprzeczność'));
+    yield* emit(math('contradiction-row', `0 = ${formatCell(forwardContradiction.rhs)}`));
+    yield* emit(noResultSection());
+    yield* emit(note('no-solution', 'układ jest sprzeczny'));
     return;
   }
 
-  const solution = matrix.map((row) => row[variableCount]);
-  const solutionLatex = solution
-    .map((value, index) => {
-      const name = VARIABLE_NAMES[index] ?? `x_{${index + 1}}`;
-      return `${name} = ${formatCell(value)}`;
-    })
-    .join(', \\; ');
+  if (pivots.length > 0) {
+    yield* emit(section('section-backward', 'Eliminacja wstecz'));
+    for (let index = pivots.length - 1; index >= 0; index--) {
+      const pivot = pivots[index];
+      for (let row = 0; row < pivot.row; row++) {
+        const factor = matrix[row][pivot.col];
+        if (isZero(factor)) continue;
+        for (let j = 0; j < matrix[row].length; j++) {
+          matrix[row][j] = matrix[row][j] - factor * matrix[pivot.row][j];
+        }
+        yield* emitRowOperation(
+          `backward-eliminate-${pivot.row}-${row}`,
+          rowEliminationLatex(row + 1, pivot.row + 1, factor),
+          4,
+        );
+      }
+    }
+  }
 
-  lineBuilders.push({
-    id: 'result',
-    kind: 'result',
-    indent: 0,
-    marker: SECTION_MARKERS.result,
-    caption: I18N.captions.result,
-    captionPinned: true,
-    content: i18nText(I18N.result.solution, { solution: solutionLatex }),
-    instruction: null,
-    annotation: null,
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 7,
-    description: i18nText(I18N.result.solution, { solution: solutionLatex }),
-    state: snapshot({
-      phase: I18N.phases.complete,
-      decision: I18N.decisions.done,
-      tone: 'complete',
-      currentLineId: 'result',
-      resultLabel: i18nText(I18N.result.signoff, { solution: solutionLatex }),
-    }),
+  const backwardContradiction = findContradiction(matrix, variableCount);
+  if (backwardContradiction) {
+    yield* emit(section('section-contradiction', 'Sprzeczność'));
+    yield* emit(math('contradiction-row', `0 = ${formatCell(backwardContradiction.rhs)}`));
+    yield* emit(noResultSection());
+    yield* emit(note('no-solution', 'układ jest sprzeczny'));
+    return;
+  }
+
+  if (pivots.length < variableCount) {
+    const freeVariables = buildFreeVariables(pivots, variableCount);
+    yield* emit(section('section-free-variables', 'Zmienne wolne'));
+    for (const free of freeVariables) {
+      yield* emit(math(`free-${free.col}`, `${variableName(free.col)} = ${free.parameter}`));
+    }
+    for (const pivot of pivots) {
+      const row = matrix[pivot.row];
+      const lhs = freeEquationLeft(pivot.col, row, freeVariables);
+      yield* emit(math(`free-equation-${pivot.row}`, `${lhs} = ${formatCell(row[variableCount])}`));
+    }
+
+    yield* emit(resultSection());
+    const expressions = parameterizedSolution(matrix, pivots, freeVariables, variableCount);
+    for (const expression of expressions) {
+      yield* emit(
+        math(`result-${expression.variable}`, `${expression.variable} = ${expression.value}`),
+      );
+    }
+    yield* emit(
+      math(
+        'result-parameters',
+        `${freeVariables.map((free) => free.parameter).join(', ')} \\in \\mathbb{R}`,
+      ),
+    );
+    return;
+  }
+
+  const solution = readUniqueSolution(matrix, variableCount);
+  yield* emit(section('section-check', 'Sprawdzenie'));
+  for (let row = 0; row < initialMatrix.length; row++) {
+    yield* emit(
+      math(
+        `check-${row + 1}`,
+        `${substitutedEquationLeft(initialMatrix[row], solution, variableCount)} = ${formatCell(initialMatrix[row][variableCount])}`,
+      ),
+    );
+  }
+
+  yield* emit(resultSection());
+  for (let index = 0; index < solution.length; index++) {
+    yield* emit(math(`result-${index}`, `${variableName(index)} = ${formatCell(solution[index])}`));
+  }
+}
+
+function findPivotRow(
+  matrix: readonly (readonly number[])[],
+  startRow: number,
+  col: number,
+): number {
+  for (let row = startRow; row < matrix.length; row++) {
+    if (!isZero(matrix[row][col])) return row;
+  }
+  return -1;
+}
+
+function findContradiction(
+  matrix: readonly (readonly number[])[],
+  variableCount: number,
+): Contradiction | null {
+  for (let row = 0; row < matrix.length; row++) {
+    const allZero = matrix[row].slice(0, variableCount).every(isZero);
+    const rhs = matrix[row][variableCount];
+    if (allZero && !isZero(rhs)) return { row, rhs };
+  }
+  return null;
+}
+
+function readUniqueSolution(
+  matrix: readonly (readonly number[])[],
+  variableCount: number,
+): readonly number[] {
+  const solution = new Array<number>(variableCount).fill(0);
+  for (let row = 0; row < matrix.length; row++) {
+    const pivotCol = matrix[row].slice(0, variableCount).findIndex((cell) => isSame(cell, 1));
+    if (pivotCol >= 0 && pivotCol < variableCount) {
+      solution[pivotCol] = matrix[row][variableCount];
+    }
+  }
+  return solution;
+}
+
+function buildFreeVariables(
+  pivots: readonly PivotPosition[],
+  variableCount: number,
+): readonly FreeVariable[] {
+  const pivotColumns = new Set(pivots.map((pivot) => pivot.col));
+  const freeVariables: FreeVariable[] = [];
+  for (let col = 0; col < variableCount; col++) {
+    if (pivotColumns.has(col)) continue;
+    freeVariables.push({
+      col,
+      parameter: PARAMETER_NAMES[freeVariables.length] ?? `t_${freeVariables.length + 1}`,
+    });
+  }
+  return freeVariables;
+}
+
+function parameterizedSolution(
+  matrix: readonly (readonly number[])[],
+  pivots: readonly PivotPosition[],
+  freeVariables: readonly FreeVariable[],
+  variableCount: number,
+): readonly { readonly variable: string; readonly value: string }[] {
+  const pivotByCol = new Map<number, PivotPosition>();
+  for (const pivot of pivots) pivotByCol.set(pivot.col, pivot);
+
+  return Array.from({ length: variableCount }, (_, col) => {
+    const variable = variableName(col);
+    const free = freeVariables.find((candidate) => candidate.col === col);
+    if (free) return { variable, value: free.parameter };
+
+    const pivot = pivotByCol.get(col);
+    if (!pivot) return { variable, value: '0' };
+    const row = matrix[pivot.row];
+    const terms = freeVariables
+      .map((candidate) => ({
+        coefficient: -row[candidate.col],
+        parameter: candidate.parameter,
+      }))
+      .filter((term) => !isZero(term.coefficient));
+    return {
+      variable,
+      value: affineExpression(row[variableCount], terms),
+    };
   });
 }
 
-const VARIABLE_NAMES = ['x', 'y', 'z', 'w', 'v', 'u'] as const;
+function matrixLatex(matrix: readonly (readonly number[])[], variableCount: number): string {
+  const coeffCols = 'c'.repeat(variableCount);
+  const header = `${coeffCols}|c`;
+  const rows = matrix.map((row) => row.map((cell) => formatCell(cell)).join(' & ')).join(' \\\\ ');
+  return `\\left[\\begin{array}{${header}} ${rows} \\end{array}\\right]`;
+}
+
+function equationLatex(row: readonly number[], variableCount: number): string {
+  return `${linearCombination(row.slice(0, variableCount))} = ${formatCell(row[variableCount])}`;
+}
+
+function linearCombination(coefficients: readonly number[]): string {
+  const parts: string[] = [];
+  for (let col = 0; col < coefficients.length; col++) {
+    const coeff = coefficients[col];
+    if (isZero(coeff)) continue;
+    const absCoeff = Math.abs(coeff);
+    const sign = coeff < 0 ? '-' : parts.length === 0 ? '' : '+';
+    const coeffStr = isSame(absCoeff, 1) ? '' : formatCell(absCoeff);
+    parts.push(`${sign} ${coeffStr}${variableName(col)}`.trim());
+  }
+  return parts.join(' ') || '0';
+}
+
+function substitutedEquationLeft(
+  row: readonly number[],
+  solution: readonly number[],
+  variableCount: number,
+): string {
+  const parts: string[] = [];
+  for (let col = 0; col < variableCount; col++) {
+    const coeff = row[col];
+    if (isZero(coeff)) continue;
+    const value = solution[col];
+    const absCoeff = Math.abs(coeff);
+    const sign = coeff < 0 ? '-' : parts.length === 0 ? '' : '+';
+    const term = isSame(absCoeff, 1)
+      ? formatSignedFactor(value)
+      : `${formatCell(absCoeff)} \\cdot ${formatSignedFactor(value)}`;
+    parts.push(`${sign} ${term}`.trim());
+  }
+  return parts.join(' ') || '0';
+}
+
+function freeEquationLeft(
+  pivotCol: number,
+  row: readonly number[],
+  freeVariables: readonly FreeVariable[],
+): string {
+  const parts = [variableName(pivotCol)];
+  for (const free of freeVariables) {
+    const coefficient = row[free.col];
+    if (isZero(coefficient)) continue;
+    const sign = coefficient < 0 ? '-' : '+';
+    const absCoeff = Math.abs(coefficient);
+    const coeff = isSame(absCoeff, 1) ? '' : formatCoefficientForTerm(absCoeff);
+    parts.push(`${sign} ${coeff}${variableName(free.col)}`.trim());
+  }
+  return parts.join(' ');
+}
+
+function affineExpression(
+  constant: number,
+  terms: readonly { readonly coefficient: number; readonly parameter: string }[],
+): string {
+  const parts: string[] = [];
+  if (!isZero(constant) || terms.length === 0) parts.push(formatCell(constant));
+  for (const term of terms) {
+    const sign = term.coefficient < 0 ? '-' : parts.length === 0 ? '' : '+';
+    const absCoeff = Math.abs(term.coefficient);
+    const coeff = isSame(absCoeff, 1) ? '' : formatCoefficientForTerm(absCoeff);
+    parts.push(`${sign} ${coeff}${term.parameter}`.trim());
+  }
+  return parts.join(' ');
+}
+
+function rowEliminationLatex(targetRow: number, pivotRow: number, factor: number): string {
+  const operation = factor < 0 ? '+' : '-';
+  const absFactor = Math.abs(factor);
+  const coefficient = isSame(absFactor, 1) ? '' : formatCell(absFactor);
+  return `R_${targetRow} \\leftarrow R_${targetRow} ${operation} ${coefficient}R_${pivotRow}`;
+}
+
+function formatDivisionScalar(value: number): string {
+  const formatted = formatCell(value);
+  return value < 0 || formatted.includes('/') ? `(${formatted})` : formatted;
+}
+
+function formatCoefficientForTerm(value: number): string {
+  const formatted = formatCell(value);
+  return formatted.includes('/') ? `(${formatted})` : formatted;
+}
+
+function formatSignedFactor(value: number): string {
+  return value < 0 ? `(${formatCell(value)})` : formatCell(value);
+}
+
+function variableName(index: number): string {
+  return VARIABLE_NAMES[index] ?? `x_{${index + 1}}`;
+}
+
+function phaseFor(builder: LineBuilder): string {
+  if (builder.id.includes('no-solution') || builder.id.includes('no-result')) {
+    return 'Brak rozwiązania';
+  }
+  if (builder.id.includes('result')) return 'Wynik';
+  if (builder.id.includes('check')) return 'Sprawdzenie';
+  if (builder.id.includes('free')) return 'Zmienne wolne';
+  if (builder.id.includes('contradiction')) return 'Sprzeczność';
+  if (builder.id.includes('backward')) return 'Eliminacja wstecz';
+  if (builder.id.includes('forward')) return 'Eliminacja w przód';
+  if (builder.id.includes('matrix')) return 'Macierz rozszerzona';
+  return 'Układ równań';
+}
+
+function decisionFor(builder: LineBuilder): string {
+  if (builder.kind === 'result') return 'Zapisujemy końcowy wniosek.';
+  if (builder.kind === 'note') return 'Zapisujemy kolejną sekcję rozwiązania.';
+  return 'Dopisujemy kolejny rachunek.';
+}
+
+function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.id.includes('no-solution') || builder.id.includes('contradiction')) {
+    return 'conclude';
+  }
+  if (builder.kind === 'note') return 'setup';
+  return 'compute';
+}
+
+function formatCell(value: number): string {
+  if (isZero(value)) return '0';
+  if (Number.isInteger(value)) return String(value);
+  for (let denominator = 2; denominator <= 24; denominator++) {
+    const numerator = Math.round(value * denominator);
+    if (Math.abs(value - numerator / denominator) < EPSILON) {
+      return `${numerator}/${denominator}`;
+    }
+  }
+  return value.toFixed(4).replace(/\.?0+$/, '');
+}
+
+function isZero(value: number): boolean {
+  return Math.abs(value) < EPSILON;
+}
+
+function isSame(left: number, right: number): boolean {
+  return Math.abs(left - right) < EPSILON;
+}

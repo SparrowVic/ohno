@@ -1,7 +1,7 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
-import { NotebookTask } from '../../../../models/notebook-task';
-import { TaskInputSchema } from '../../../../models/task';
+import type { NotebookTask } from '../../../../models/notebook-task';
+import type { TaskInputSchema } from '../../../../models/task';
 
 /** Values for a Gaussian-elimination task. The augmented matrix is
  *  entered as a free-form string — rows separated by `;`, `|` marks
@@ -12,19 +12,26 @@ export interface GaussianEliminationTaskValues {
   readonly system: string;
 }
 
-export type GaussianEliminationTask = NotebookTask<GaussianEliminationTaskValues>;
+export type GaussianEliminationNotebookFlow =
+  | { readonly kind: 'basic-2x2' }
+  | { readonly kind: 'row-swap' }
+  | { readonly kind: 'fraction-pivots' }
+  | { readonly kind: 'infinite-solutions' }
+  | { readonly kind: 'inconsistent-system' };
+
+export interface GaussianEliminationTask extends NotebookTask<GaussianEliminationTaskValues> {
+  readonly notebookFlow: GaussianEliminationNotebookFlow;
+}
 
 export const GAUSSIAN_ELIMINATION_TASK_INPUT_SCHEMA: TaskInputSchema<GaussianEliminationTaskValues> =
   {
     system: {
       kind: 'string',
       label: t('features.algorithms.tasks.gaussianElimination.values.system'),
-      placeholder: t(
-        'features.algorithms.tasks.gaussianElimination.values.systemPlaceholder',
-      ),
+      placeholder: t('features.algorithms.tasks.gaussianElimination.values.systemPlaceholder'),
       pattern: /^\s*[-\d.\s|]+(\s*;\s*[-\d.\s|]+)*\s*$/,
       minLength: 3,
-      maxLength: 240,
+      maxLength: 360,
     },
   };
 
@@ -65,7 +72,10 @@ export function parseGaussianSystem(input: string): ParsedSystem | null {
 }
 
 function parseNumbers(raw: string): readonly number[] | null {
-  const tokens = raw.trim().split(/\s+/).filter((s) => s.length > 0);
+  const tokens = raw
+    .trim()
+    .split(/\s+/)
+    .filter((s) => s.length > 0);
   if (tokens.length === 0) return null;
   const out: number[] = [];
   for (const tok of tokens) {

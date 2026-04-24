@@ -1,10 +1,11 @@
-import { TranslatableText } from '../../../../../core/i18n/translatable-text';
-import { notebookInstructionText } from '../../../models/notebook-task';
+import type { TranslatableText } from '../../../../../core/i18n/translatable-text';
 import {
-  AugmentedRow,
+  type AugmentedRow,
   DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
   GAUSSIAN_ELIMINATION_TASKS,
-  GaussianEliminationTask,
+  type GaussianEliminationNotebookFlow,
+  type GaussianEliminationTask,
+  type GaussianEliminationTaskValues,
   parseGaussianSystem,
 } from './gaussian-elimination';
 
@@ -27,6 +28,7 @@ export interface GaussianEliminationScenario extends BaseScenario {
   /** Column index at which the vertical divider sits (coefficients
    *  to the left, RHS to the right). Always `matrix[0].length - 1`. */
   readonly variableCount: number;
+  readonly notebookFlow: GaussianEliminationNotebookFlow;
   readonly taskPrompt: TranslatableText | null;
 }
 
@@ -53,32 +55,75 @@ export function createGaussianEliminationScenario(
       (candidate) => candidate.id === DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
     ) ??
     GAUSSIAN_ELIMINATION_TASKS[0];
-  const values = customValues ?? task.defaultValues;
-  const parsed =
-    parseGaussianSystem(values.system) ??
-    parseGaussianSystem(task.defaultValues.system) ??
-    { matrix: [[1, 0]], variableCount: 1 };
+  const values: GaussianEliminationTaskValues = {
+    ...task.defaultValues,
+    ...customValues,
+  };
+  const parsed = parseGaussianSystem(values.system) ??
+    parseGaussianSystem(task.defaultValues.system) ?? { matrix: [[1, 0]], variableCount: 1 };
   return {
     kind: 'gaussian-elimination',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, {
-      system: formatSystemForPrompt(parsed.matrix, parsed.variableCount),
-    }),
+    taskPrompt: buildTaskPrompt(task.notebookFlow, parsed.matrix, parsed.variableCount),
+    notebookFlow: task.notebookFlow,
     matrix: parsed.matrix,
     variableCount: parsed.variableCount,
   };
 }
 
-/** Format the augmented matrix as a readable list of equations for
- *  the "Zadanie:" block — `3x + 2y = 7, x − y = 1`. Works for any
- *  variable count, so 3×3 / 4×4 tasks can reuse the scenario adapter
- *  without touching the prompt renderer. */
-function formatSystemForPrompt(
+function buildTaskPrompt(
+  flow: GaussianEliminationNotebookFlow,
   matrix: readonly AugmentedRow[],
   variableCount: number,
-): string {
+): TranslatableText {
+  const equations = formatSystemForPrompt(matrix, variableCount);
+  switch (flow.kind) {
+    case 'basic-2x2':
+      return [
+        'Rozwiąż układ równań metodą eliminacji Gaussa:',
+        '',
+        equations,
+        '',
+        'Pokaż eliminację w przód, eliminację wstecz, sprawdzenie i wynik.',
+      ].join('\n');
+    case 'row-swap':
+      return [
+        'Rozwiąż układ 3x3 metodą eliminacji Gaussa:',
+        '',
+        equations,
+        '',
+        'Pierwszy pivot w kolumnie x jest zerowy, więc zacznij od zamiany wierszy.',
+      ].join('\n');
+    case 'fraction-pivots':
+      return [
+        'Rozwiąż układ 3x3 metodą Gaussa-Jordana:',
+        '',
+        equations,
+        '',
+        'Zapisz normalizacje pivotów oraz ułamki pojawiające się w macierzy.',
+      ].join('\n');
+    case 'infinite-solutions':
+      return [
+        'Zbadaj układ zależny metodą eliminacji Gaussa:',
+        '',
+        equations,
+        '',
+        'Jeżeli pojawi się zmienna wolna, zapisz rodzinę rozwiązań z parametrem.',
+      ].join('\n');
+    case 'inconsistent-system':
+      return [
+        'Sprawdź, czy układ ma rozwiązanie:',
+        '',
+        equations,
+        '',
+        'Zakończ obliczenia, gdy eliminacja doprowadzi do sprzecznego wiersza.',
+      ].join('\n');
+  }
+}
+
+function formatSystemForPrompt(matrix: readonly AugmentedRow[], variableCount: number): string {
   const varNames = VARIABLE_NAMES;
   const rendered = matrix.map((row) => {
     const parts: string[] = [];
@@ -92,9 +137,9 @@ function formatSystemForPrompt(
     }
     const lhs = parts.join(' ').trim() || '0';
     const rhs = formatNumber(row[variableCount]);
-    return `${lhs} = ${rhs}`;
+    return `[[math]]${lhs} = ${rhs}[[/math]]`;
   });
-  return `[[math]]${rendered.join(', \\quad ')}[[/math]]`;
+  return rendered.join('\n');
 }
 
 const VARIABLE_NAMES = ['x', 'y', 'z', 'w', 'v', 'u'] as const;
