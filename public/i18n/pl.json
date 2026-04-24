@@ -2255,6 +2255,52 @@
               "step": "Krok tortoise-hare.",
               "result": "Finalny werdykt."
             }
+          },
+          "simplex": {
+            "modeLabel": "Simplex (tablica)",
+            "goal": "Zmaksymalizuj funkcję celu [[math]]c^T x[[/math]] przy ograniczeniach [[math]]Ax \\leq b[[/math]], [[math]]x \\geq 0[[/math]] — {{count}} zmiennych decyzyjnych.",
+            "rule": "Każda iteracja: wybierz zmienną wchodzącą (kolumna z najbardziej ujemnym kosztem zredukowanym w wierszu celu), zmienną wychodzącą (test minimalnego ilorazu [[math]]b_i / a_{ij}[[/math]] dla dodatnich pivotów), wykonaj pivot Jordana i zaktualizuj bazę.",
+            "invariant": "Po każdej iteracji baza pozostaje feasibilna (wszystkie RHS ≥ 0). Optymalność: wszystkie koszty zredukowane w wierszu celu ≥ 0.",
+            "setup": {
+              "initial": "Dodaj zmienne dopełniające, żeby przerobić nierówności w równości. Pierwsza macierz ma współczynniki oryginalne po lewej i macierz jednostkową (dla slacków) po prawej.",
+              "initialAnnotation": "Wiersz celu zapisany jako [[math]]-c^T[/math] dla zmiennych oryginalnych; zera w kolumnach slacków.",
+              "basis": "Baza startowa: {{basis}}"
+            },
+            "op": {
+              "entering": "Iteracja {{iteration}}: wchodzi [[math]]{{variable}}[[/math]] (koszt zredukowany {{reducedCost}}).",
+              "enteringInstruction": "Wybierz [[math]]{{variable}}[[/math]] jako zmienną wchodzącą.",
+              "leaving": "Wychodzi [[math]]{{variable}}[[/math]] — iloraz {{ratio}} (wiersz {{row}}).",
+              "leavingInstruction": "Test minimalnego ilorazu wskazuje [[math]]{{variable}}[[/math]] jako zmienną wychodzącą.",
+              "pivot": "Pivot {{iteration}}: [[math]]{{entering}}[[/math]] wchodzi, [[math]]{{leaving}}[[/math]] wychodzi.",
+              "pivotInstruction": "Znormalizuj wiersz {{row}} i wyeliminuj kolumnę [[math]]{{variable}}[[/math]] z pozostałych wierszy.",
+              "basisUpdated": "Nowa baza: {{basis}}"
+            },
+            "failure": {
+              "unbounded": "Test minimalnego ilorazu nie znalazł dodatniego pivotu — problem jest nieograniczony ([[math]]z \\to \\infty[/math]]).",
+              "exhausted": "Osiągnięto limit {{max}} iteracji bez znalezienia optimum."
+            },
+            "result": {
+              "optimal": "Optimum: [[math]]{{solution}}[[/math]], [[math]]z = {{objective}}[[/math]].",
+              "signoff": "[[math]]{{solution}}, \\; z = {{objective}}[[/math]]",
+              "signoffFailure": "Brak skończonego optimum"
+            },
+            "phases": {
+              "setup": "Tableau startowe",
+              "iterate": "Iteracja",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "starting": "Przygotowujemy tableau.",
+              "picking": "Wybieramy zmienną wchodzącą i wychodzącą.",
+              "pivoting": "Wykonujemy pivot.",
+              "optimal": "Wszystkie koszty zredukowane ≥ 0 — optimum osiągnięte.",
+              "unbounded": "Brak dodatniego pivotu — problem nieograniczony."
+            },
+            "captions": {
+              "setup": "Start: tableau z slackami.",
+              "iteration": "Nowa iteracja — wybór pivotu.",
+              "result": "Finalne optimum LP."
+            }
           }
         },
         "search": {
@@ -4198,6 +4244,23 @@
         "sieveEratosthenes": {
           "values": {
             "upper": "do N"
+          }
+        },
+        "simplexAlgorithm": {
+          "values": {
+            "objective": "wektor c",
+            "objectivePlaceholder": "40 30",
+            "constraints": "ograniczenia",
+            "constraintsPlaceholder": "1 1 | 12; 2 1 | 16"
+          },
+          "basicMaxProfit": {
+            "title": "Maksymalizacja zysku",
+            "summary": "[[math]]\\max z = 40x + 30y[/math]] przy [[math]]x+y \\leq 12[/math]], [[math]]2x+y \\leq 16[/math]] → [[math]]x=4, y=8, z=400[/math]]",
+            "instruction": "Rozwiąż problem programowania liniowego — maksymalizuj {{objective}} przy ograniczeniach {{constraints}}, [[math]]x, y \\geq 0[[/math]], używając metody simplex.",
+            "hints": {
+              "0": "W pierwszej iteracji wchodzi [[math]]x[[/math]] (koszt zredukowany [[math]]-40[[/math]], najbardziej ujemny). Test minimalnego ilorazu: [[math]]12/1 = 12[[/math]] vs [[math]]16/2 = 8[[/math]] — wychodzi [[math]]s_2[[/math]].",
+              "1": "W drugiej iteracji wchodzi [[math]]y[[/math]] (koszt zredukowany [[math]]-10[[/math]]). Test: [[math]]4 / 0{.}5 = 8[[/math]] vs [[math]]8 / 0{.}5 = 16[[/math]] — wychodzi [[math]]s_1[[/math]]. Po pivocie wszystkie koszty ≥ 0: optimum [[math]]z = 400[[/math]] przy [[math]]x = 4, y = 8[[/math]]."
+            }
           }
         }
       },

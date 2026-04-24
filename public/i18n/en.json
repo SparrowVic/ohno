@@ -2255,6 +2255,52 @@
               "step": "Tortoise-hare step.",
               "result": "Final verdict."
             }
+          },
+          "simplex": {
+            "modeLabel": "Simplex (chalkboard)",
+            "goal": "Maximize the objective [[math]]c^T x[[/math]] subject to [[math]]Ax \\leq b[[/math]], [[math]]x \\geq 0[[/math]] — {{count}} decision variables.",
+            "rule": "Every iteration: pick the entering variable (column with the most negative reduced cost in the objective row), the leaving variable (min-ratio test [[math]]b_i / a_{ij}[[/math]] over positive pivot entries), then pivot and update the basis.",
+            "invariant": "After each pivot the basis stays feasible (all RHS ≥ 0). Optimality is reached when every reduced cost in the objective row is ≥ 0.",
+            "setup": {
+              "initial": "Add slack variables so the inequalities become equalities. The initial tableau has original coefficients on the left and an identity block for the slacks on the right.",
+              "initialAnnotation": "The objective row is written as [[math]]-c^T[/math]] for original variables; zeros in the slack columns.",
+              "basis": "Starting basis: {{basis}}"
+            },
+            "op": {
+              "entering": "Iteration {{iteration}}: [[math]]{{variable}}[[/math]] enters (reduced cost {{reducedCost}}).",
+              "enteringInstruction": "Pick [[math]]{{variable}}[[/math]] as the entering variable.",
+              "leaving": "[[math]]{{variable}}[[/math]] leaves — ratio {{ratio}} (row {{row}}).",
+              "leavingInstruction": "Min-ratio test points to [[math]]{{variable}}[[/math]] as the leaving variable.",
+              "pivot": "Pivot {{iteration}}: [[math]]{{entering}}[[/math]] enters, [[math]]{{leaving}}[[/math]] leaves.",
+              "pivotInstruction": "Normalize row {{row}} and eliminate column [[math]]{{variable}}[[/math]] from the other rows.",
+              "basisUpdated": "New basis: {{basis}}"
+            },
+            "failure": {
+              "unbounded": "Min-ratio test found no positive pivot — the problem is unbounded ([[math]]z \\to \\infty[/math]]).",
+              "exhausted": "Hit the cap of {{max}} iterations without finding an optimum."
+            },
+            "result": {
+              "optimal": "Optimum: [[math]]{{solution}}[[/math]], [[math]]z = {{objective}}[[/math]].",
+              "signoff": "[[math]]{{solution}}, \\; z = {{objective}}[[/math]]",
+              "signoffFailure": "No finite optimum"
+            },
+            "phases": {
+              "setup": "Initial tableau",
+              "iterate": "Iteration",
+              "complete": "Done"
+            },
+            "decisions": {
+              "starting": "Preparing the tableau.",
+              "picking": "Picking entering and leaving variables.",
+              "pivoting": "Performing the pivot.",
+              "optimal": "All reduced costs ≥ 0 — optimum reached.",
+              "unbounded": "No positive pivot — problem unbounded."
+            },
+            "captions": {
+              "setup": "Start: tableau with slacks.",
+              "iteration": "New iteration — pick a pivot.",
+              "result": "Final LP optimum."
+            }
           }
         },
         "search": {
@@ -4198,6 +4244,23 @@
         "sieveEratosthenes": {
           "values": {
             "upper": "up to N"
+          }
+        },
+        "simplexAlgorithm": {
+          "values": {
+            "objective": "vector c",
+            "objectivePlaceholder": "40 30",
+            "constraints": "constraints",
+            "constraintsPlaceholder": "1 1 | 12; 2 1 | 16"
+          },
+          "basicMaxProfit": {
+            "title": "Profit maximisation",
+            "summary": "[[math]]\\max z = 40x + 30y[/math]] s.t. [[math]]x+y \\leq 12[/math]], [[math]]2x+y \\leq 16[/math]] → [[math]]x=4, y=8, z=400[/math]]",
+            "instruction": "Solve the linear program — maximise {{objective}} subject to {{constraints}}, [[math]]x, y \\geq 0[[/math]], via the simplex method.",
+            "hints": {
+              "0": "First iteration: [[math]]x[[/math]] enters (reduced cost [[math]]-40[[/math]], most negative). Min-ratio test: [[math]]12/1 = 12[[/math]] vs [[math]]16/2 = 8[[/math]] — [[math]]s_2[[/math]] leaves.",
+              "1": "Second iteration: [[math]]y[[/math]] enters (reduced cost [[math]]-10[[/math]]). Ratios: [[math]]4 / 0{.}5 = 8[[/math]] vs [[math]]8 / 0{.}5 = 16[[/math]] — [[math]]s_1[[/math]] leaves. After this pivot every reduced cost ≥ 0: optimum [[math]]z = 400[[/math]] at [[math]]x = 4, y = 8[[/math]]."
+            }
           }
         }
       },

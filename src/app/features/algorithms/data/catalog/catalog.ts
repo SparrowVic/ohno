@@ -1431,6 +1431,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['linear programming', 'optimization', 'pivoting'],
+    complexity: {
+      timeBest: 'O(m · n)',
+      timeAverage: 'O(m · n · k)',
+      timeWorst: 'exponential',
+      space: 'O(m · n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'miller-rabin',

@@ -656,6 +656,16 @@ import {
   DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
   createGaussianEliminationScenario,
 } from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
+import { simplexAlgorithmGenerator } from '../../algorithms/simplex-algorithm/simplex-algorithm';
+import {
+  SimplexAlgorithmScenario,
+  SimplexAlgorithmValues,
+  SIMPLEX_ALGORITHM_PRESETS,
+  SIMPLEX_ALGORITHM_TASKS,
+  DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
+  DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
+  createSimplexAlgorithmScenario,
+} from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -2596,6 +2606,35 @@ const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: gaussianEliminationGenerator,
 };
 
+/** Simplex algorithm — chalkboard-only. Tableau snapshots as
+ *  augmented-matrix KaTeX blocks, one per pivot, with the basis
+ *  annotated alongside so students track which variable sits in
+ *  which row. Shares the matrix-rendering approach with Gaussian
+ *  elimination. */
+const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  SimplexAlgorithmScenario,
+  SimplexAlgorithmValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New LP',
+  legendItems: () => [],
+  presetOptions: SIMPLEX_ALGORITHM_PRESETS,
+  defaultPresetId: DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
+  tasks: SIMPLEX_ALGORITHM_TASKS,
+  defaultTaskId: DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createSimplexAlgorithmScenario(size, presetId, customValues),
+  generator: simplexAlgorithmGenerator,
+};
+
 const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   TwoPointersScenario,
   TwoPointersValues
@@ -3792,6 +3831,7 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'chinese-remainder-theorem') return CRT_VIEW_CONFIG;
   if (id === 'pollards-rho') return POLLARDS_RHO_VIEW_CONFIG;
   if (id === 'gaussian-elimination') return GAUSSIAN_ELIMINATION_VIEW_CONFIG;
+  if (id === 'simplex-algorithm') return SIMPLEX_ALGORITHM_VIEW_CONFIG;
   if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;
