@@ -28,7 +28,7 @@ export const SIMPLEX_ALGORITHM_TASK_INPUT_SCHEMA: TaskInputSchema<SimplexAlgorit
   constraints: {
     kind: 'string',
     label: 'constraints',
-    pattern: /^\s*[-\d.\s|]+(\s*;\s*[-\d.\s|]+)*\s*$/,
+    pattern: /^\s*[-\d.| \t\r\n\f\v]+(?:\s*;\s*[-\d.| \t\r\n\f\v]+)*\s*$/,
     minLength: 3,
     maxLength: 320,
   },
