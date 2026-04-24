@@ -1,12 +1,6 @@
-import { TranslatableText } from '../../../../../core/i18n/translatable-text';
-import { notebookInstructionText } from '../../../models/notebook-task';
-import {
-  CRT_TASKS,
-  CrtCongruence,
-  CrtTask,
-  DEFAULT_CRT_TASK_ID,
-  parseCongruences,
-} from './crt';
+import type { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { CRT_TASKS, DEFAULT_CRT_TASK_ID, parseCongruences } from './crt';
+import type { CrtCongruence, CrtNotebookFlow, CrtTask } from './crt';
 
 export interface CrtPresetOption {
   readonly id: string;
@@ -22,15 +16,11 @@ interface BaseScenario {
 
 export interface CrtScenario extends BaseScenario {
   readonly kind: 'crt';
-  /** Parsed, normalised system of congruences — every residue is in
-   *  `[0, modulus)` and every modulus is ≥ 2. Order controls the
-   *  on-board narration sequence. */
   readonly congruences: readonly CrtCongruence[];
+  readonly notebookFlow: CrtNotebookFlow;
   readonly taskPrompt: TranslatableText | null;
 }
 
-/* Tasks live in `./crt/` — one file per variant, each with its own
- *  title / summary / instruction / hints / difficulty. */
 export const CRT_PRESETS: readonly CrtPresetOption[] = CRT_TASKS.map((task) => ({
   id: task.id,
   label: typeof task.name === 'string' ? task.name : task.id,
@@ -51,29 +41,86 @@ export function createCrtScenario(
     CRT_TASKS.find((candidate) => candidate.id === id) ??
     CRT_TASKS.find((candidate) => candidate.id === DEFAULT_CRT_TASK_ID) ??
     CRT_TASKS[0];
-  const values = customValues ?? task.defaultValues;
-  const congruences = parseCongruences(values.congruences);
-  const M = congruences.reduce((acc, c) => acc * c.modulus, 1);
+  const values: CrtValues = { ...task.defaultValues, ...customValues };
+  const congruences = parseCongruences(values);
+
   return {
     kind: 'crt',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, {
-      congruences: formatCongruencesForPrompt(congruences),
-      M,
-    }),
+    taskPrompt: buildTaskPrompt(task.notebookFlow, congruences),
+    notebookFlow: task.notebookFlow,
     congruences,
   };
 }
 
-/** Render the parsed system as a KaTeX-ready list for the "Zadanie:"
- *  block — each congruence becomes its own inline `x ≡ r (mod m)` and
- *  they're comma-joined. Embedding `[[math]]...[[/math]]` inside an
- *  interpolated param is fine: Transloco substitutes a plain string,
- *  and MathText parses the markers downstream. */
-function formatCongruencesForPrompt(congruences: readonly CrtCongruence[]): string {
-  return congruences
-    .map((c) => `[[math]]x \\equiv ${c.residue} \\pmod{${c.modulus}}[[/math]]`)
-    .join(', ');
+function buildTaskPrompt(
+  flow: CrtNotebookFlow,
+  congruences: readonly CrtCongruence[],
+): TranslatableText {
+  const system = congruences.map(formatPromptCongruence).join('\n');
+  switch (flow.kind) {
+    case 'direct':
+      return [
+        'Znajdz najmniejsza nieujemna liczbe [[math]]x[[/math]], ktora spelnia uklad kongruencji:',
+        '',
+        system,
+        '',
+        'Uzyj bezposredniej konstrukcji CRT i pokaz, skad biora sie skladniki sumy.',
+      ].join('\n');
+    case 'progressive-merge':
+      return [
+        'Trzy procesy cykliczne zwracaja status poprawnosci w roznych momentach.',
+        'Szukamy pierwszego wspolnego momentu [[math]]x[[/math]], dla ktorego:',
+        '',
+        system,
+        '',
+        'Nie uzywaj bezposredniej sumy CRT. Polacz najpierw pierwsze dwa warunki w jedna kongruencje, a potem dolacz trzeci warunek.',
+      ].join('\n');
+    case 'non-coprime-compatible':
+      return [
+        'System logow z trzech maszyn zapisuje znaczniki czasu z roznymi okresami.',
+        'Dwie maszyny maja okresy, ktore nie sa wzglednie pierwsze, wiec zwykla wersja CRT nie wystarczy.',
+        'Znajdz wszystkie [[math]]x[[/math]], ktore spelniaja:',
+        '',
+        system,
+        '',
+        'Najpierw sprawdz zgodnosc kongruencji, potem polacz warunki metoda podstawiania.',
+      ].join('\n');
+    case 'non-coprime-trap':
+      return [
+        'Rozwaz system warunkow:',
+        '',
+        system,
+        '',
+        'Sprawdz, czy system ma rozwiazanie. Nie wykonuj konstrukcji CRT, jezeli warunki sa sprzeczne.',
+      ].join('\n');
+    case 'garner-mixed-radix': {
+      const [first, second, third] = congruences;
+      const m1m2 = first.modulus * second.modulus;
+      const m1m2m3 = m1m2 * third.modulus;
+      return [
+        'Liczba zostala zapisana jako zestaw reszt wzgledem kilku malych modulow.',
+        'Trzeba odtworzyc jedna liczbe [[math]]x[[/math]] z zakresu [[math]]0 \\le x < M[[/math]], ale bez klasycznej sumy CRT.',
+        'Uzyj reprezentacji mieszanej Garnera.',
+        '',
+        'Dane:',
+        '',
+        system,
+        '',
+        'Szukamy postaci:',
+        '',
+        `[[math]]x = c_0 + c_1 * ${first.modulus} + c_2 * ${first.modulus} * ${second.modulus} + c_3 * ${first.modulus} * ${second.modulus} * ${third.modulus}[[/math]]`,
+        '',
+        'czyli:',
+        '',
+        `[[math]]x = c_0 + ${first.modulus}c_1 + ${m1m2}c_2 + ${m1m2m3}c_3[[/math]]`,
+      ].join('\n');
+    }
+  }
+}
+
+function formatPromptCongruence(congruence: CrtCongruence): string {
+  return `[[math]]x = ${congruence.residue} \\;(\\mathrm{mod}\\; ${congruence.modulus})[[/math]]`;
 }

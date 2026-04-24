@@ -1,19 +1,27 @@
-import { CRT_CLASSIC_TASK } from './classic.task';
-import { CRT_SMALLEST_POSITIVE_TASK } from './smallest-positive.task';
-import { CRT_TWO_CONGRUENCES_TASK } from './two-congruences.task';
+import { CRT_GARNER_MIXED_RADIX_TASK } from './garner-mixed-radix.task';
+import { CRT_NON_COPRIME_COMPATIBLE_TASK } from './non-coprime-compatible.task';
+import { CRT_NON_COPRIME_TRAP_TASK } from './non-coprime-trap.task';
+import { CRT_PROGRESSIVE_MERGE_TASK } from './progressive-merge.task';
+import { CRT_SHORT_TASK } from './short.task';
 import { CrtTask } from './crt-task';
 
-export { CRT_TASK_INPUT_SCHEMA, parseCongruences } from './crt-task';
-export type { CrtCongruence, CrtTask, CrtTaskValues } from './crt-task';
+export {
+  CRT_FOUR_CONGRUENCE_INPUT_SCHEMA,
+  CRT_THREE_CONGRUENCE_INPUT_SCHEMA,
+  parseCongruences,
+  validatePairwiseCoprime,
+} from './crt-task';
+export type { CrtCongruence, CrtNotebookFlow, CrtTask, CrtTaskValues } from './crt-task';
 
-/** Roster of CRT tasks, ordered from the minimal two-modulus setup
- *  through the classic three-modulus textbook example up to the
- *  harder `9·11·13` system. More tasks drop next to these as their
- *  own `<slug>.task.ts` file and get an entry below. */
+/** Roster ordered exactly like `TASKS.md`: the basic direct CRT
+ *  example is the initial view, followed by progressively less
+ *  textbook flows. */
 export const CRT_TASKS: readonly CrtTask[] = [
-  CRT_TWO_CONGRUENCES_TASK,
-  CRT_CLASSIC_TASK,
-  CRT_SMALLEST_POSITIVE_TASK,
+  CRT_SHORT_TASK,
+  CRT_PROGRESSIVE_MERGE_TASK,
+  CRT_NON_COPRIME_COMPATIBLE_TASK,
+  CRT_NON_COPRIME_TRAP_TASK,
+  CRT_GARNER_MIXED_RADIX_TASK,
 ];
 
-export const DEFAULT_CRT_TASK_ID = 'classic';
+export const DEFAULT_CRT_TASK_ID = 'short';
