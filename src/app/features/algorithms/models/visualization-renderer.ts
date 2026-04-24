@@ -29,4 +29,10 @@ export type VisualizationVariant =
   | 'sweep-line'
   | 'voronoi'
   | 'delaunay'
-  | 'tree';
+  | 'tree'
+  | 'number-lab'
+  | 'pointer-lab'
+  | 'sieve-grid'
+  | 'call-stack-lab'
+  | 'call-tree-lab'
+  | 'scratchpad-lab';

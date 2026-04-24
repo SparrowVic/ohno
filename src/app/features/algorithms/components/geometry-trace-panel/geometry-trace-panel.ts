@@ -1,18 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { ConvexHullStepState, GeometryPoint } from '../../models/geometry';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
 
 @Component({
   selector: 'app-geometry-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection],
+  imports: [MathText, SegmentedPanel, SegmentedPanelSection],
   templateUrl: './geometry-trace-panel.html',
   styleUrl: './geometry-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeometryTracePanel {
   readonly state = input<ConvexHullStepState | null>(null);
+  readonly crossProductFormula =
+    '\\operatorname{cross}\\left(A, B, C\\right) = \\left(B-A\\right) \\times \\left(C-A\\right)';
 
   readonly stackPoints = computed<readonly (GeometryPoint | undefined)[]>(() => {
     const s = this.state();

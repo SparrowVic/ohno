@@ -17,7 +17,7 @@ import {
   layoutDsuCircle,
   layoutDsuForest,
   unionFindEdgeStatusFromChild,
-} from '../../utils/dsu-graph-layout/dsu-graph-layout';
+} from '../../utils/helpers/dsu-graph-layout/dsu-graph-layout';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 

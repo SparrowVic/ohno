@@ -12,7 +12,7 @@
 
 @if (value() !== null) {
   <div class="segmented-panel-section__value" [class.segmented-panel-section__value--mono]="valueMono()">
-    {{ value() }}
+    <app-math-text [content]="valueText()" variant="metric" />
   </div>
 }
 

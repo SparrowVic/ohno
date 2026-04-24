@@ -1,0 +1,330 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.number-lab {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 18px;
+  padding: 22px 24px;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* ============================================================= */
+/*  REGISTERS                                                     */
+/* ============================================================= */
+/* Live scalar chips — Fibonacci shows Fₙ, Fₙ₋₁, Fₙ₋₂; GCD shows
+   a, b; Factorial shows n, product. Tones are set per-register by
+   the generator so the view doesn't commit to a palette. */
+.number-lab__registers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.number-lab__register {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  min-height: 94px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-fast) var(--ease-soft);
+
+  &--active {
+    border-color: rgb(var(--viz-warning-rgb) / 0.38);
+    background:
+      linear-gradient(180deg, rgb(var(--viz-warning-rgb) / 0.14), rgb(var(--viz-warning-rgb) / 0.04)),
+      rgba(255, 255, 255, 0.02);
+    box-shadow: 0 0 18px rgb(var(--viz-warning-rgb) / 0.22);
+  }
+
+  &--settled {
+    border-color: rgb(var(--accent-rgb) / 0.28);
+    background:
+      linear-gradient(180deg, rgb(var(--accent-rgb) / 0.1), rgb(var(--accent-rgb) / 0.03)),
+      rgba(255, 255, 255, 0.02);
+  }
+
+  &--muted {
+    opacity: 0.55;
+    filter: saturate(0.75);
+  }
+}
+
+.number-lab__register-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.number-lab__register-value {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.number-lab__register--active .number-lab__register-value {
+  color: var(--viz-warning);
+}
+
+.number-lab__register--settled .number-lab__register-value {
+  color: var(--accent-strong);
+}
+
+.number-lab__register-hint {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+}
+
+/* ============================================================= */
+/*  FORMULA                                                       */
+/* ============================================================= */
+/* The rule fired this step — operand / operator / result parts
+   colour-match the register tones so the eye can trace values
+   from the top chips into the formula. */
+.number-lab__formula {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+    rgba(13, 16, 24, 0.55);
+  transition: opacity var(--duration-fast) var(--ease-soft);
+
+  &--empty {
+    opacity: 0.5;
+  }
+}
+
+.number-lab__formula-placeholder {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.number-lab__formula-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.number-lab__part {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-soft);
+
+  &--operand {
+    color: var(--viz-accent-ink);
+  }
+
+  &--active {
+    color: var(--viz-warning);
+    font-weight: 800;
+  }
+
+  &--operator {
+    color: var(--text-tertiary);
+    padding: 0 2px;
+  }
+
+  &--result {
+    color: var(--accent-strong);
+    font-weight: 800;
+  }
+}
+
+.number-lab__part app-math-text {
+  min-width: 0;
+}
+
+/* ============================================================= */
+/*  HISTORY TAPE                                                  */
+/* ============================================================= */
+.number-lab__history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.number-lab__history-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.number-lab__history-tape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 42px;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+  padding-bottom: 2px;
+}
+
+.number-lab__history-placeholder {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-tertiary);
+  padding: 0 4px;
+}
+
+.number-lab__history-chip {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 2px;
+  padding: 8px 10px;
+  min-width: 58px;
+  border-radius: 9px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-fast) var(--ease-soft);
+
+  &--current {
+    border-color: rgb(var(--accent-rgb) / 0.45);
+    background:
+      linear-gradient(180deg, rgb(var(--accent-rgb) / 0.18), rgb(var(--accent-rgb) / 0.04)),
+      rgba(13, 16, 24, 0.55);
+    box-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.26);
+    animation: number-lab-pulse 700ms var(--ease-out-expo);
+  }
+}
+
+.number-lab__history-chip-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.number-lab__history-chip-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.number-lab__history-chip--current .number-lab__history-chip-value {
+  color: var(--accent-strong);
+}
+
+@keyframes number-lab-pulse {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================================= */
+/*  RESULT FOOTER                                                 */
+/* ============================================================= */
+.number-lab__result {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-height: 58px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.12), rgb(var(--accent-rgb) / 0.04)),
+    rgba(13, 16, 24, 0.55);
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    opacity var(--duration-fast) var(--ease-soft);
+
+  &--pending {
+    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.025);
+    opacity: 0.7;
+  }
+}
+
+.number-lab__result--pending .number-lab__result-label {
+  color: var(--text-tertiary);
+}
+
+.number-lab__result--pending .number-lab__result-value {
+  color: var(--text-tertiary);
+}
+
+.number-lab__result-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+.number-lab__result-value {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .number-lab__history-chip--current {
+    animation: none;
+  }
+}

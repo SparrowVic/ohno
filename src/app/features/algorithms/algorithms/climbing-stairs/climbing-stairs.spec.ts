@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { climbingStairsGenerator } from './climbing-stairs';
 import type { SortStep } from '../../models/sort-step';
-import type { ClimbingStairsScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { ClimbingStairsScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: ClimbingStairsScenario): SortStep[] {
   return [...climbingStairsGenerator(scenario)];

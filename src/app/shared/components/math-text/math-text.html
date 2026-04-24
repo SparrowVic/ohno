@@ -1,0 +1,12 @@
+<span
+  class="math-text"
+  [class.math-text--display]="displayMode()"
+  [class.math-text--variant-default]="variant() === 'default'"
+  [class.math-text--variant-metric]="variant() === 'metric'"
+  [class.math-text--variant-chip]="variant() === 'chip'"
+  [class.math-text--variant-formula]="variant() === 'formula'"
+  [class.math-text--variant-copy]="variant() === 'copy'"
+  [class.math-text--variant-log]="variant() === 'log'"
+  [class.math-text--variant-cell]="variant() === 'cell'"
+  [innerHTML]="renderedHtml()"
+></span>

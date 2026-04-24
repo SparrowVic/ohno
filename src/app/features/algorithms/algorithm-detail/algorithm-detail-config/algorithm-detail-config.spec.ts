@@ -66,11 +66,24 @@ describe('algorithm-detail-config', () => {
     for (const item of implementedItems) {
       const config = getAlgorithmViewConfig(item.id);
 
-      expect(config.codeLines.length).toBeGreaterThan(0);
       expect(config.variantOptions.length).toBeGreaterThan(0);
       expect(config.sizeOptions).toContain(config.defaultSize);
-      if (config.codeVariants) {
-        expect(Object.keys(config.codeVariants).length).toBeGreaterThan(0);
+
+      // An algorithm without a code walkthrough is valid when all its
+      // tasks explicitly opt out (codeSnippetId === null) — the Code
+      // tab then renders the "snippet in progress" placeholder. Any
+      // algorithm that does ship a snippet must populate codeLines.
+      const tasks = (config as { tasks?: readonly { codeSnippetId: string | null }[] }).tasks;
+      const allTasksSnippetless =
+        Array.isArray(tasks) && tasks.length > 0 && tasks.every((t) => t.codeSnippetId === null);
+
+      if (allTasksSnippetless) {
+        expect(config.codeLines.length).toBe(0);
+      } else {
+        expect(config.codeLines.length).toBeGreaterThan(0);
+        if (config.codeVariants) {
+          expect(Object.keys(config.codeVariants).length).toBeGreaterThan(0);
+        }
       }
     }
   });

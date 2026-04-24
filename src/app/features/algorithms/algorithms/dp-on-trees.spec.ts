@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { dpOnTreesGenerator } from './dp-on-trees';
 import type { SortStep } from '../models/sort-step';
-import type { TreeDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import type { TreeDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: TreeDpScenario): SortStep[] {
   return [...dpOnTreesGenerator(scenario)];

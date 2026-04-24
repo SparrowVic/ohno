@@ -1,0 +1,112 @@
+@use '../control-chrome' as chrome;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.lab-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Chromed container — same surface treatment as `LabNumberInput`
+   and `LabSelect` trigger. Label eyebrow and the actual input sit
+   stacked inside this single bordered box. */
+.lab-text__field {
+  @include chrome.control-field;
+
+  display: flex;
+  align-items: center;
+  min-height: var(--control-height);
+  padding: 4px var(--control-padding-inline);
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart);
+
+  &:hover {
+    @include chrome.control-field-hover;
+  }
+
+  &:has(.lab-text__input:focus-visible) {
+    @include chrome.control-field-focus;
+  }
+}
+
+.lab-text--invalid .lab-text__field {
+  border-color: rgba(var(--viz-danger-rgb), 0.5);
+}
+
+.lab-text__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.lab-text__label {
+  font-size: 8px;
+  line-height: 1.05;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+.lab-text__field:hover .lab-text__label {
+  color: var(--text-secondary);
+}
+
+.lab-text__input {
+  /* Borderless — the surrounding field carries the chrome. */
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  line-height: 1.2;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Mono variant — used for CSV / expression inputs where digits should
+   stay column-aligned (witnesses list, CRT congruence system). */
+.lab-text--mono .lab-text__input {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.lab-text__error {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--viz-danger);
+}
+
+.lab-text__hint {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--text-tertiary);
+}

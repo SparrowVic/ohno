@@ -11,7 +11,7 @@ import {
   HuffmanTraceState,
   HuffmanTreeNode,
 } from '../../models/string';
-import { HuffmanScenario } from '../../utils/string-scenarios/string-scenarios';
+import { HuffmanScenario } from '../../utils/scenarios/string/string-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.huffmanCoding.modeLabel'),

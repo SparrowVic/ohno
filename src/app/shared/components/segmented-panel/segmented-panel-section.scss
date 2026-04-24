@@ -55,6 +55,8 @@
 
 .segmented-panel-section__value {
   min-width: 0;
+  display: flex;
+  align-items: baseline;
   font-size: 15px;
   font-weight: 700;
   line-height: 1.08;
@@ -67,4 +69,11 @@
 
 .segmented-panel-section__value--mono {
   font-family: var(--font-mono);
+}
+
+.segmented-panel-section__value app-math-text {
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--accent-rgb), 0.08);
+  min-width: 0;
+  max-width: 100%;
 }

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { burstBalloonsGenerator } from './burst-balloons';
 import type { SortStep } from '../../models/sort-step';
-import type { BurstBalloonsScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { BurstBalloonsScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: BurstBalloonsScenario): SortStep[] {
   return [...burstBalloonsGenerator(scenario)];

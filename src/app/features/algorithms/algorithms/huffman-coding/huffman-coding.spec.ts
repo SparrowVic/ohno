@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { HuffmanScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { HuffmanScenario } from '../../utils/scenarios/string/string-scenarios';
 import { huffmanCodingGenerator } from './huffman-coding';
 
 function collectSteps(scenario: HuffmanScenario): SortStep[] {

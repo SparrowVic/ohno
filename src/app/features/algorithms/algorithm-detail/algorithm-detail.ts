@@ -43,18 +43,63 @@ import { MatrixTraceState } from '../models/matrix';
 import { NetworkTraceState } from '../models/network';
 import { SearchTraceState } from '../models/search';
 import { SortTraceState } from '../models/sort-trace';
-import { deriveSortTrace } from '../utils/derive-sort-trace/derive-sort-trace';
+import { deriveSortTrace } from '../utils/helpers/derive-sort-trace/derive-sort-trace';
 import { SortStep } from '../models/sort-step';
 import { StringPresetOption, StringTraceState } from '../models/string';
 import { TreePresetOption, TreeTraversalTraceState } from '../models/tree';
+import { NumberLabTraceState } from '../models/number-lab';
+import { PointerLabTraceState } from '../models/pointer-lab';
+import { SieveGridTraceState } from '../models/sieve-grid';
+import { CallStackLabTraceState } from '../models/call-stack-lab';
+import { CallTreeLabTraceState } from '../models/call-tree-lab';
+import { ScratchpadLabTraceState } from '../models/scratchpad-lab';
+import { Task, findTask } from '../models/task';
+import { NumberLabPresetOption } from '../utils/scenarios/number-lab/number-lab-scenarios';
+import { PointerLabPresetOption } from '../utils/scenarios/pointer-lab/pointer-lab-scenarios';
+import { SieveGridPresetOption } from '../utils/scenarios/sieve-grid/sieve-grid-scenarios';
+import { CallStackLabPresetOption } from '../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
+import { CallTreeLabPresetOption } from '../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { VisualizationVariant } from '../models/visualization-renderer';
 import { AlgorithmRegistry } from '../registry/algorithm-registry/algorithm-registry';
 import { VisualizationEngine } from '../services/visualization-engine/visualization-engine';
+
+/** Family-agnostic predicate — true whenever the algorithm's config has
+ *  migrated to the unified task model (non-empty `tasks` array). Lets
+ *  the toolbar / dispatcher share one code path across number-lab,
+ *  sieve-grid, pointer-lab, tree, dp, string, call-stack-lab,
+ *  call-tree-lab without a giant switch. */
+type ConfigWithTasks = AlgorithmViewConfig & {
+  readonly tasks: readonly Task<Record<string, unknown>>[];
+  readonly defaultTaskId?: string;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: Record<string, unknown>,
+  ) => unknown;
+};
+
+function configHasTasks(
+  config: AlgorithmViewConfig | null | undefined,
+): config is ConfigWithTasks {
+  if (!config) return false;
+  const tasks = (config as { tasks?: readonly Task<unknown>[] }).tasks;
+  return Array.isArray(tasks) && tasks.length > 0;
+}
 
 interface RebuildOptions {
   readonly dpPresetId?: string | null;
   readonly stringPresetId?: string | null;
   readonly treePresetId?: string | null;
+  readonly numberLabPresetId?: string | null;
+  readonly pointerLabPresetId?: string | null;
+  readonly sieveGridPresetId?: string | null;
+  readonly callStackLabPresetId?: string | null;
+  readonly callTreeLabPresetId?: string | null;
+  /** New unified task model — when the config exposes `tasks`, we use
+   *  the task's id + values instead of the legacy preset-id to resolve
+   *  the scenario. */
+  readonly taskId?: string | null;
+  readonly customValues?: unknown;
 }
 
 @Component({
@@ -94,6 +139,21 @@ export class AlgorithmDetail {
   private readonly dpPresetSig = signal<string | null>(null);
   private readonly stringPresetSig = signal<string | null>(null);
   private readonly treePresetSig = signal<string | null>(null);
+  private readonly numberLabPresetSig = signal<string | null>(null);
+  private readonly pointerLabPresetSig = signal<string | null>(null);
+  private readonly sieveGridPresetSig = signal<string | null>(null);
+  private readonly callStackLabPresetSig = signal<string | null>(null);
+  private readonly callTreeLabPresetSig = signal<string | null>(null);
+  /** Active task identifier under the new unified task-picker model.
+   *  Parallel to the legacy preset signals during migration. When the
+   *  current algorithm has `tasks` defined, this is the source of
+   *  truth; legacy preset signals fall silent. */
+  private readonly activeTaskIdSig = signal<string | null>(null);
+  /** User-provided values overriding the active task's defaults. Null
+   *  means "use the task's defaultValues". Cleared whenever the
+   *  active task changes. Type-erased here — the config's `tasks`
+   *  entries carry the specific TValues shape. */
+  private readonly customValuesSig = signal<unknown | null>(null);
   private readonly currentSnapshot = signal<SortStep | null>(null);
   private readonly logEntriesSig = signal<readonly LogEntry[]>([]);
   private readonly graphFocusTargetIdSig = signal<string | null>(null);
@@ -129,6 +189,13 @@ export class AlgorithmDetail {
   readonly dpPresetId = this.dpPresetSig.asReadonly();
   readonly stringPresetId = this.stringPresetSig.asReadonly();
   readonly treePresetId = this.treePresetSig.asReadonly();
+  readonly numberLabPresetId = this.numberLabPresetSig.asReadonly();
+  readonly pointerLabPresetId = this.pointerLabPresetSig.asReadonly();
+  readonly sieveGridPresetId = this.sieveGridPresetSig.asReadonly();
+  readonly callStackLabPresetId = this.callStackLabPresetSig.asReadonly();
+  readonly callTreeLabPresetId = this.callTreeLabPresetSig.asReadonly();
+  readonly activeTaskId = this.activeTaskIdSig.asReadonly();
+  readonly customValues = this.customValuesSig.asReadonly();
   readonly graphFocusTargetId = this.graphFocusTargetIdSig.asReadonly();
   readonly currentStep = this.engine.currentStep;
   readonly totalSteps = this.engine.totalSteps;
@@ -149,7 +216,75 @@ export class AlgorithmDetail {
   });
   readonly treePresetOptions = computed<readonly TreePresetOption[]>(() => {
     const config = this.config();
+    if (configHasTasks(config) && config.kind === 'tree') return [];
     return config?.kind === 'tree' ? config.presetOptions : [];
+  });
+  readonly numberLabPresetOptions = computed<readonly NumberLabPresetOption[]>(() => {
+    const config = this.config();
+    // Suppress the legacy per-viz preset picker when the algorithm has
+    // migrated to the new toolbar-level task picker. Returning an empty
+    // array hides the chip row inside the viz-header (its template
+    // gates on `options().length > 0`).
+    if (configHasTasks(config) && config.kind === 'number-lab') return [];
+    return config?.kind === 'number-lab' ? config.presetOptions : [];
+  });
+
+  /** Unified task options for the toolbar picker. Null when the current
+   *  algorithm hasn't migrated. `configHasTasks` is a family-agnostic
+   *  type guard — any config kind that exposes a non-empty `tasks`
+   *  array wires into the same toolbar UX. All realistic task shapes
+   *  are record-like, so we widen to `Record<string, unknown>` rather
+   *  than leaking `unknown` to downstream consumers. */
+  readonly tasks = computed<readonly Task<Record<string, unknown>>[] | null>(() => {
+    const config = this.config();
+    if (!configHasTasks(config)) return null;
+    return config.tasks as readonly Task<Record<string, unknown>>[];
+  });
+  readonly activeTask = computed<Task<Record<string, unknown>> | null>(() => {
+    const list = this.tasks();
+    const id = this.activeTaskIdSig();
+    if (!list || !id) return null;
+    return findTask(list, id);
+  });
+
+  /** Active task's localized name, passed to the side-panel so the
+   *  Code tab can render a "Code for task: X" eyebrow. Null when the
+   *  algorithm hasn't migrated to the task model. */
+  readonly activeTaskNameForSidePanel = computed(() => this.activeTask()?.name ?? null);
+
+  /** True when the active task explicitly opts out of a code snippet
+   *  (`codeSnippetId: null`). The side-panel Code tab swaps in an
+   *  editorial placeholder instead of the shiki-rendered variants. */
+  readonly activeTaskCodeSnippetMissing = computed(() => {
+    const task = this.activeTask();
+    return task !== null && task.codeSnippetId === null;
+  });
+
+  /** Resolved values feeding the customize popover: user-provided
+   *  custom overrides if set, otherwise the active task's defaults. */
+  readonly currentTaskValues = computed<Record<string, unknown> | null>(() => {
+    const custom = this.customValuesSig();
+    if (custom !== null) return custom as Record<string, unknown>;
+    const task = this.activeTask();
+    return task ? (task.defaultValues as Record<string, unknown>) : null;
+  });
+  readonly pointerLabPresetOptions = computed<readonly PointerLabPresetOption[]>(() => {
+    const config = this.config();
+    if (configHasTasks(config) && config.kind === 'pointer-lab') return [];
+    return config?.kind === 'pointer-lab' ? config.presetOptions : [];
+  });
+  readonly sieveGridPresetOptions = computed<readonly SieveGridPresetOption[]>(() => {
+    const config = this.config();
+    if (configHasTasks(config) && config.kind === 'sieve-grid') return [];
+    return config?.kind === 'sieve-grid' ? config.presetOptions : [];
+  });
+  readonly callStackLabPresetOptions = computed<readonly CallStackLabPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'call-stack-lab' ? config.presetOptions : [];
+  });
+  readonly callTreeLabPresetOptions = computed<readonly CallTreeLabPresetOption[]>(() => {
+    const config = this.config();
+    return config?.kind === 'call-tree-lab' ? config.presetOptions : [];
   });
   readonly sizeUnitLabel = computed(() => {
     const unit = this.config()?.sizeUnit ?? 'elements';
@@ -199,6 +334,24 @@ export class AlgorithmDetail {
   );
   readonly treeTrace = computed<TreeTraversalTraceState | null>(
     () => this.currentSnapshot()?.tree ?? null,
+  );
+  readonly numberLabTrace = computed<NumberLabTraceState | null>(
+    () => this.currentSnapshot()?.numberLab ?? null,
+  );
+  readonly sieveGridTrace = computed<SieveGridTraceState | null>(
+    () => this.currentSnapshot()?.sieveGrid ?? null,
+  );
+  readonly callStackLabTrace = computed<CallStackLabTraceState | null>(
+    () => this.currentSnapshot()?.callStackLab ?? null,
+  );
+  readonly callTreeLabTrace = computed<CallTreeLabTraceState | null>(
+    () => this.currentSnapshot()?.callTreeLab ?? null,
+  );
+  readonly scratchpadLabTrace = computed<ScratchpadLabTraceState | null>(
+    () => this.currentSnapshot()?.scratchpadLab ?? null,
+  );
+  readonly pointerLabTrace = computed<PointerLabTraceState | null>(
+    () => this.currentSnapshot()?.pointerLab ?? null,
   );
   readonly geometryTrace = computed<GeometryStepState | null>(
     () => this.currentSnapshot()?.geometry ?? null,
@@ -308,11 +461,41 @@ export class AlgorithmDetail {
         this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
         this.stringPresetSig.set(config.kind === 'string' ? config.defaultPresetId : null);
         this.treePresetSig.set(config.kind === 'tree' ? config.defaultPresetId : null);
+        this.numberLabPresetSig.set(
+          config.kind === 'number-lab' ? config.defaultPresetId : null,
+        );
+        this.pointerLabPresetSig.set(
+          config.kind === 'pointer-lab' ? config.defaultPresetId : null,
+        );
+        this.sieveGridPresetSig.set(
+          config.kind === 'sieve-grid' ? config.defaultPresetId : null,
+        );
+        this.callStackLabPresetSig.set(
+          config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
+        );
+        this.callTreeLabPresetSig.set(
+          config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
+        );
+        const taskSeedId = configHasTasks(config)
+          ? config.defaultTaskId ?? config.tasks[0]?.id ?? null
+          : null;
+        this.activeTaskIdSig.set(taskSeedId);
+        this.customValuesSig.set(null);
 
         this.rebuildVisualization(config, config.defaultSize, {
           dpPresetId: config.kind === 'dp' ? config.defaultPresetId : null,
           stringPresetId: config.kind === 'string' ? config.defaultPresetId : null,
           treePresetId: config.kind === 'tree' ? config.defaultPresetId : null,
+          numberLabPresetId: config.kind === 'number-lab' ? config.defaultPresetId : null,
+          pointerLabPresetId:
+            config.kind === 'pointer-lab' ? config.defaultPresetId : null,
+          sieveGridPresetId: config.kind === 'sieve-grid' ? config.defaultPresetId : null,
+          callStackLabPresetId:
+            config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
+          callTreeLabPresetId:
+            config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
+          taskId: taskSeedId,
+          customValues: null,
         });
       });
     });
@@ -416,13 +599,152 @@ export class AlgorithmDetail {
     this.rebuildVisualization(config, this.sizeSig(), { treePresetId: value });
   }
 
+  onNumberLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'number-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.numberLabPresetSig()
+    )
+      return;
+
+    this.numberLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { numberLabPresetId: value });
+  }
+
+  /** Toolbar-level task picker changed. Works across any config kind
+   *  that has migrated to the task model — number-lab, sieve-grid,
+   *  pointer-lab, tree, etc. Clears custom values since they were
+   *  scoped to the previous task. */
+  onTaskChange(taskId: string): void {
+    const config = this.config();
+    if (!configHasTasks(config)) return;
+    if (!config.tasks.some((task) => task.id === taskId)) return;
+    if (taskId === this.activeTaskIdSig()) return;
+
+    this.activeTaskIdSig.set(taskId);
+    this.customValuesSig.set(null);
+    this.rebuildVisualization(config, this.sizeSig(), { taskId, customValues: null });
+  }
+
+  /** Customize-values popover applied new values for the currently
+   *  active task. Triggers a rerun with the overrides in place. */
+  onCustomValuesChange(values: unknown): void {
+    const config = this.config();
+    if (!configHasTasks(config)) return;
+    const taskId = this.activeTaskIdSig();
+    if (!taskId) return;
+
+    this.customValuesSig.set(values);
+    this.rebuildVisualization(config, this.sizeSig(), { taskId, customValues: values });
+  }
+
+  onPointerLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'pointer-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.pointerLabPresetSig()
+    )
+      return;
+
+    this.pointerLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { pointerLabPresetId: value });
+  }
+
+  onSieveGridPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'sieve-grid') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.sieveGridPresetSig()
+    )
+      return;
+
+    this.sieveGridPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { sieveGridPresetId: value });
+  }
+
+  onCallStackLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'call-stack-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.callStackLabPresetSig()
+    )
+      return;
+
+    this.callStackLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { callStackLabPresetId: value });
+  }
+
+  onCallTreeLabPresetChange(value: string): void {
+    const config = this.config();
+    if (!config || config.kind !== 'call-tree-lab') return;
+    if (
+      !config.presetOptions.some((option) => option.id === value) ||
+      value === this.callTreeLabPresetSig()
+    )
+      return;
+
+    this.callTreeLabPresetSig.set(value);
+    this.rebuildVisualization(config, this.sizeSig(), { callTreeLabPresetId: value });
+  }
+
   private resetUnavailableState(): void {
     this.resetPlaybackState();
     this.graphSig.set(null);
     this.dpPresetSig.set(null);
     this.stringPresetSig.set(null);
     this.treePresetSig.set(null);
+    this.numberLabPresetSig.set(null);
+    this.pointerLabPresetSig.set(null);
+    this.sieveGridPresetSig.set(null);
+    this.callStackLabPresetSig.set(null);
+    this.callTreeLabPresetSig.set(null);
+    this.activeTaskIdSig.set(null);
+    this.customValuesSig.set(null);
     this.engine.reset();
+  }
+
+  /** Shared task-path builder — used by every config kind that has a
+   *  `tasks` array. The per-family `createScenario` handles producing
+   *  the right scenario shape; this helper just resolves the task id +
+   *  effective values and feeds them in. */
+  private rebuildFromTask(
+    config: ConfigWithTasks,
+    size: number,
+    options: RebuildOptions,
+  ): void {
+    const taskId =
+      options.taskId ??
+      this.activeTaskIdSig() ??
+      config.defaultTaskId ??
+      config.tasks[0]?.id ??
+      null;
+    const task = taskId
+      ? findTask(config.tasks, taskId)
+      : null;
+    const customValues =
+      options.customValues !== undefined
+        ? options.customValues
+        : this.customValuesSig();
+    const effectiveValues = (customValues ?? task?.defaultValues ?? undefined) as
+      | Record<string, unknown>
+      | undefined;
+    // For migrated algorithms task.id doubles as the preset id so
+    // scenario-factory metadata stays consistent with the legacy
+    // flow. Fallback to the first task id if nothing else is set.
+    const resolvedPresetId =
+      taskId ??
+      ((config as { defaultPresetId?: string }).defaultPresetId ?? config.tasks[0]?.id ?? '');
+    const scenario = config.createScenario(size, resolvedPresetId, effectiveValues);
+    this.arraySig.set([]);
+    this.graphSig.set(null);
+    this.loadScenario(
+      scenario,
+      config.generator as (scenario: unknown) => Generator<SortStep>,
+    );
   }
 
   private rebuildVisualization(
@@ -432,6 +754,15 @@ export class AlgorithmDetail {
   ): void {
     this.sizeSig.set(size);
     this.graphFocusTargetIdSig.set(null);
+
+    // Unified task path — if the algorithm's config has migrated to the
+    // task model, resolve scenario from task.defaultValues (or user
+    // custom overrides) and skip the legacy preset-id dispatch below.
+    // Works across number-lab, sieve-grid, pointer-lab, tree, etc.
+    if (configHasTasks(config)) {
+      this.rebuildFromTask(config, size, options);
+      return;
+    }
 
     switch (config.kind) {
       case 'graph': {
@@ -483,11 +814,67 @@ export class AlgorithmDetail {
         this.loadScenario(scenario, config.generator);
         return;
       }
-      default: {
+      case 'number-lab': {
+        // Legacy preset-only path — only reached when config hasn't
+        // migrated to the task model (the task path is taken earlier).
+        const presetId =
+          options.numberLabPresetId ?? this.numberLabPresetSig() ?? config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'pointer-lab': {
+        const presetId =
+          options.pointerLabPresetId ?? this.pointerLabPresetSig() ?? config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'sieve-grid': {
+        const presetId =
+          options.sieveGridPresetId ?? this.sieveGridPresetSig() ?? config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'call-stack-lab': {
+        const presetId =
+          options.callStackLabPresetId ??
+          this.callStackLabPresetSig() ??
+          config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'call-tree-lab': {
+        const presetId =
+          options.callTreeLabPresetId ??
+          this.callTreeLabPresetSig() ??
+          config.defaultPresetId;
+        const scenario = config.createScenario(size, presetId);
+        this.arraySig.set([]);
+        this.graphSig.set(null);
+        this.loadScenario(scenario, config.generator);
+        return;
+      }
+      case 'array': {
         const array = this.createRandomArray(size, config.randomRange);
         this.arraySig.set(array);
         this.graphSig.set(null);
         this.loadScenario(array, config.generator);
+        return;
+      }
+      default: {
+        this.arraySig.set([]);
+        this.graphSig.set(null);
       }
     }
   }

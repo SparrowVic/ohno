@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { editDistanceGenerator } from './edit-distance';
 import type { SortStep } from '../../models/sort-step';
-import type { EditDistanceScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { EditDistanceScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: EditDistanceScenario): SortStep[] {
   return [...editDistanceGenerator(scenario)];

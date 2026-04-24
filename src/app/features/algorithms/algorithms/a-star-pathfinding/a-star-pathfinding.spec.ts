@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { AStarScenario } from '../../utils/grid-scenarios/grid-scenarios';
-import { cellId } from '../../utils/grid-scenarios/grid-scenarios';
+import type { AStarScenario } from '../../utils/scenarios/grid/grid-scenarios';
+import { cellId } from '../../utils/scenarios/grid/grid-scenarios';
 import { aStarPathfindingGenerator } from './a-star-pathfinding';
 
 function collectSteps(scenario: AStarScenario): SortStep[] {

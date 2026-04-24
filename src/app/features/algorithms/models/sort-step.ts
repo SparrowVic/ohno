@@ -5,7 +5,13 @@ import { GraphStepState } from './graph';
 import { GridTraceState } from './grid';
 import { MatrixTraceState } from './matrix';
 import { NetworkTraceState } from './network';
+import { CallStackLabTraceState } from './call-stack-lab';
+import { CallTreeLabTraceState } from './call-tree-lab';
+import { NumberLabTraceState } from './number-lab';
+import { PointerLabTraceState } from './pointer-lab';
+import { ScratchpadLabTraceState } from './scratchpad-lab';
 import { SearchTraceState } from './search';
+import { SieveGridTraceState } from './sieve-grid';
 import { StringTraceState } from './string';
 import { TreeTraversalTraceState } from './tree';
 import { TranslatableText } from '../../../core/i18n/translatable-text';
@@ -64,4 +70,10 @@ export interface SortStep {
   readonly string?: StringTraceState | null;
   readonly geometry?: GeometryStepState | null;
   readonly tree?: TreeTraversalTraceState | null;
+  readonly numberLab?: NumberLabTraceState | null;
+  readonly pointerLab?: PointerLabTraceState | null;
+  readonly sieveGrid?: SieveGridTraceState | null;
+  readonly callStackLab?: CallStackLabTraceState | null;
+  readonly callTreeLab?: CallTreeLabTraceState | null;
+  readonly scratchpadLab?: ScratchpadLabTraceState | null;
 }

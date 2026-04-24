@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import type { SortStep } from '../../models/sort-step';
-import type { BurrowsWheelerScenario } from '../../utils/string-scenarios/string-scenarios';
+import type { BurrowsWheelerScenario } from '../../utils/scenarios/string/string-scenarios';
 import { burrowsWheelerTransformGenerator } from './burrows-wheeler-transform';
 
 function collectSteps(scenario: BurrowsWheelerScenario): SortStep[] {

@@ -1,0 +1,598 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ================================================================ */
+/*  SCRATCHPAD — chalkboard / notebook derivation viewer             */
+/* ================================================================ */
+/* The metaphor is a tutor writing the derivation out line by line.
+   Narrative elements (goal, captions, notes, decisions, sticky tags)
+   use Caveat — a readable digital-notebook hand — so the canvas feels
+   like a shared whiteboard. Actual formulas stay in KaTeX / mono so
+   the math reads with precision. Per-row dashed guides keep the eye
+   tracking from body → annotation on long derivations without the
+   need for a full-canvas ruling overlay. */
+
+.scratchpad {
+  position: relative;
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  /* Auto rows stack inside one scroll surface: task prompt, global
+     margins, the page column, then the signoff footer.
+     Empty auto rows collapse to zero so the grid stays tight when a
+     given block isn't emitted. */
+  grid-template-rows: auto auto auto auto;
+  align-content: start;
+  align-items: start;
+  gap: 10px;
+  padding: 16px 20px;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+  container-type: inline-size;
+
+  /* Subtle off-white wash — the mood of paper under warm room light,
+     without a competing background grid. Per-row guides handle
+     alignment; ambient texture stays minimal so KaTeX stays crisp. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014), rgba(255, 255, 255, 0.003)),
+    rgba(var(--viz-warning-rgb), 0.014);
+  border-radius: 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ================================================================ */
+/*  TASK PROMPT — the "Zadanie:" / "Task:" block at the top.          */
+/*                                                                    */
+/*  Editorial prose, not a derivation line. Sits above the           */
+/*  derivation the way an exam question sits above the student's     */
+/*  working. Newsreader italic keeps it visually distinct from the   */
+/*  mono / KaTeX bodies below.                                        */
+/* ================================================================ */
+
+.scratchpad__task {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px 16px;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.008)),
+    rgba(var(--chrome-accent-alt-rgb), 0.045);
+  box-shadow: inset 0 0 0 0.5px rgba(var(--chrome-accent-alt-rgb), 0.18);
+  position: relative;
+}
+
+.scratchpad__task::before {
+  content: '';
+  position: absolute;
+  inset: 12px auto 12px 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--chrome-accent-alt-rgb), 0.7),
+    rgba(var(--chrome-accent-alt-rgb), 0.18)
+  );
+  border-radius: 2px;
+}
+
+.scratchpad__task-eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgb(var(--chrome-accent-alt-rgb));
+  opacity: 0.88;
+  padding-left: 10px;
+}
+
+.scratchpad__task-body {
+  margin: 0;
+  padding-left: 10px;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+:host ::ng-deep .scratchpad__task-body .math-text__rendered--mixed,
+:host ::ng-deep .scratchpad__task-body .math-text__segment--plain {
+  white-space: pre-wrap;
+}
+
+/* ================================================================ */
+/*  GLOBAL MARGIN (top-of-page sticky notes)                         */
+/* ================================================================ */
+
+.scratchpad__global-margin {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+/* ================================================================ */
+/*  PAGE — lines column                                              */
+/* ================================================================ */
+
+.scratchpad__page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  padding: 2px 0;
+}
+
+.scratchpad__divider {
+  border: 0;
+  height: 1px;
+  margin: 6px 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.14) 15%,
+    rgba(255, 255, 255, 0.14) 85%,
+    transparent
+  );
+  opacity: 0.6;
+}
+
+/* Each line = 2-row × 4-col grid.
+   Row 1: caption (spans all cols) — teacher's pencil note above body.
+   Row 2: [marker 44px | body 1fr | instruction auto | annotation 200px].
+   Unused rows collapse (`auto`). Per-row dashed guide underneath
+   makes lateral scanning (body ↔ annotation) reliable. */
+.scratchpad__line {
+  --scratchpad-indent: 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto minmax(0, 210px);
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  column-gap: 12px;
+  row-gap: 1px;
+  padding: 5px 10px 6px calc(10px + var(--scratchpad-indent) * 28px);
+  border-radius: 9px;
+  position: relative;
+  transition:
+    opacity var(--duration-base) var(--ease-out-expo),
+    transform var(--duration-base) var(--ease-out-expo),
+    background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-fast) var(--ease-soft);
+
+  /* Notebook-style row guide — the only structural rule in the
+     viewport. Faint dashed line that helps the eye track right
+     toward the annotation column without losing the wrong row. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 0;
+    border-bottom: 0.5px dashed rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+
+  /* Lines with a distinct surface of their own (current highlight,
+     result box) don't need the guide rule beneath — it would compete
+     with their edge. */
+  &--current::after,
+  &--result::after {
+    display: none;
+  }
+}
+
+/* Hover on settled lines pulls the row out of its 82%-dimmed "past"
+   state back to full opacity with a warm wash — reads as "take a
+   second look at this step". Current/result rows already own a
+   surface, so hover skips them; goal/rule sit above the derivation as
+   context and don't benefit from the pull-in. */
+@media (hover: hover) {
+  .scratchpad__line--settled:hover {
+    opacity: 1;
+    background: rgba(var(--viz-warning-rgb), 0.09);
+    box-shadow: inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.45);
+  }
+
+  .scratchpad__line--settled.scratchpad__line--goal:hover,
+  .scratchpad__line--settled.scratchpad__line--note:hover {
+    opacity: 0.82;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scratchpad__line {
+    transition: none;
+  }
+}
+
+/* Editorial margin-note voice — only rendered on the current line.
+   Leading em-dash mirrors a printed sidenote in a scholarly margin. */
+.scratchpad__line-caption {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: rgba(var(--viz-warning-rgb), 0.95);
+  padding-left: 56px;
+  overflow-wrap: anywhere;
+
+  &::before {
+    content: '— ';
+    opacity: 0.75;
+  }
+}
+
+/* Section glyphs (①⟹②③✓) — these are Unicode symbols, not latin, so
+   font-family falls through to the system serif stack. Weight + size
+   give them the presence of a hand-lettered section header. */
+.scratchpad__line-marker {
+  grid-column: 1;
+  grid-row: 2;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  font-family: var(--font-notebook);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.scratchpad__line--current .scratchpad__line-marker {
+  color: rgb(var(--viz-warning-rgb));
+}
+
+.scratchpad__line--decision .scratchpad__line-marker {
+  color: rgb(var(--viz-warning-rgb));
+  font-size: 18px;
+}
+
+.scratchpad__line--result .scratchpad__line-marker {
+  color: var(--accent-strong);
+  font-size: 20px;
+}
+
+/* ------ body (per-kind typography) ------ */
+.scratchpad__line-body {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.scratchpad__line--goal .scratchpad__line-body {
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+.scratchpad__line--note .scratchpad__line-body {
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.scratchpad__line--equation .scratchpad__line-body,
+.scratchpad__line--substitute .scratchpad__line-body {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+
+.scratchpad__line--decision .scratchpad__line-body {
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--viz-warning);
+  line-height: 1.35;
+}
+
+.scratchpad__line--result {
+  padding: 10px 14px 11px calc(14px + var(--scratchpad-indent) * 28px);
+  margin-top: 4px;
+  margin-bottom: 2px;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--accent-rgb), 0.34);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+
+.scratchpad__line--result .scratchpad__line-body {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  line-height: 1.15;
+}
+
+.scratchpad__line--result[data-line-id='section-no-result'] {
+  border-color: rgba(var(--viz-danger-rgb), 0.34);
+  background: rgba(var(--viz-danger-rgb), 0.08);
+}
+
+.scratchpad__line--result[data-line-id='section-no-result'] .scratchpad__line-marker,
+.scratchpad__line--result[data-line-id='section-no-result'] .scratchpad__line-body {
+  color: var(--viz-danger);
+}
+
+/* ------ instruction chip (persistent imperative tag) ------ */
+.scratchpad__line-instruction {
+  grid-column: 3;
+  grid-row: 2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 11px 4px;
+  border-radius: 999px;
+  border: 0.5px solid rgba(var(--viz-warning-rgb), 0.4);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.2), rgba(var(--viz-warning-rgb), 0.06)),
+    rgba(13, 16, 24, 0.42);
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(var(--viz-warning-rgb));
+  white-space: nowrap;
+  max-width: 100%;
+  line-height: 1.3;
+
+  &::before {
+    content: '→';
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 11px;
+    color: rgb(var(--viz-warning-rgb));
+    opacity: 0.85;
+  }
+}
+
+.scratchpad__line--settled .scratchpad__line-instruction {
+  border-color: rgba(var(--viz-warning-rgb), 0.22);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.08), rgba(var(--viz-warning-rgb), 0.02)),
+    rgba(13, 16, 24, 0.3);
+}
+
+/* Annotation reads as a tutor's margin note rather than a second,
+   shrunken copy of the body. We prepend a cursive `∴` ("therefore") in
+   Caveat as a teacher's hand, then let the math content sit in mono so
+   the equation stays legible. No vertical rule — the glyph and the
+   right-aligned indent are enough structural signal. */
+.scratchpad__line-annotation {
+  grid-column: 4;
+  grid-row: 2;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-align: right;
+  padding-left: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.scratchpad__line-annotation-mark {
+  flex: 0 0 auto;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1;
+  color: rgba(var(--viz-warning-rgb), 0.7);
+}
+
+.scratchpad__line--current .scratchpad__line-annotation {
+  color: var(--text-secondary);
+}
+
+.scratchpad__line--current .scratchpad__line-annotation-mark {
+  color: rgba(var(--viz-warning-rgb), 0.9);
+}
+
+/* Per-line margin row — rendered below the grid when anchored sticky
+   notes live beside the line. Indented so they sit under the body. */
+.scratchpad__line-margin {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  margin-left: 56px;
+}
+
+/* Line entrance animation + current-state surface. */
+.scratchpad__line--entering {
+  animation: scratchpad-enter 360ms var(--ease-out-expo) both;
+}
+
+.scratchpad__line--current {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--viz-warning-rgb), 0.14),
+    rgba(var(--viz-warning-rgb), 0.04) 45%,
+    transparent 85%
+  );
+  box-shadow: inset 2px 0 0 rgba(var(--viz-warning-rgb), 0.6);
+}
+
+.scratchpad__line--settled {
+  opacity: 0.82;
+}
+
+@keyframes scratchpad-enter {
+  0% {
+    opacity: 0;
+    transform: translate(-8px, -3px);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scratchpad__line--entering {
+    animation: none;
+  }
+}
+
+/* Narrow-container fallback — instruction and annotation drop below
+   the body so nothing gets clipped on sidebar-constrained widths. */
+@container (max-width: 680px) {
+  .scratchpad__line {
+    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+  }
+  .scratchpad__line-caption {
+    grid-column: 1 / -1;
+    padding-left: 46px;
+  }
+  .scratchpad__line-instruction {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 4px;
+  }
+  .scratchpad__line-annotation {
+    grid-column: 2;
+    grid-row: 4;
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 0;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    padding-top: 4px;
+    margin-top: 2px;
+  }
+}
+
+/* ================================================================ */
+/*  STICKY NOTES (margins)                                           */
+/* ================================================================ */
+
+.scratchpad__sticky {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  max-width: 100%;
+
+  &--invariant {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(var(--viz-warning-rgb), 0.2),
+        rgba(var(--viz-warning-rgb), 0.06)
+      ),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--viz-warning-rgb), 0.3);
+    color: rgb(var(--viz-warning-rgb));
+  }
+
+  &--hint {
+    /* Warm tan matches the persistent instruction chip on the line, so
+       the transient margin preview and the settled chip speak the same
+       visual vocabulary ("imperative / teacher's direction"). */
+    background:
+      linear-gradient(
+        180deg,
+        rgba(var(--viz-warning-rgb), 0.16),
+        rgba(var(--viz-warning-rgb), 0.04)
+      ),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--viz-warning-rgb), 0.32);
+    color: rgb(var(--viz-warning-rgb));
+  }
+
+  &--warning {
+    background:
+      linear-gradient(180deg, rgba(var(--viz-danger-rgb), 0.16), rgba(var(--viz-danger-rgb), 0.04)),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--viz-danger-rgb), 0.32);
+    color: var(--viz-danger);
+  }
+
+  &--success {
+    background:
+      linear-gradient(180deg, rgba(var(--accent-rgb), 0.16), rgba(var(--accent-rgb), 0.04)),
+      rgba(13, 16, 24, 0.55);
+    border-color: rgba(var(--accent-rgb), 0.32);
+    color: var(--accent-strong);
+  }
+}
+
+.scratchpad__sticky-body {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.scratchpad__sticky--inline {
+  font-size: 14px;
+  padding: 3px 10px;
+}
+
+/* ================================================================ */
+/*  SIGNOFF (completion footer)                                      */
+/* ================================================================ */
+
+.scratchpad__signoff {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 0.5px solid rgba(var(--accent-rgb), 0.25);
+  background: rgba(var(--accent-rgb), 0.06);
+  font-family: var(--font-notebook);
+  font-style: italic;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--accent-strong);
+  min-height: 40px;
+  line-height: 1.3;
+}
+
+.scratchpad__signoff-mark {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-strong);
+}

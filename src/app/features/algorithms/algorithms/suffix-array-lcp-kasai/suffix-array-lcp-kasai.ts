@@ -7,7 +7,7 @@ import {
   StringSuffixRow,
   SuffixArrayLcpTraceState,
 } from '../../models/string';
-import { SuffixArrayLcpScenario } from '../../utils/string-scenarios/string-scenarios';
+import { SuffixArrayLcpScenario } from '../../utils/scenarios/string/string-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.suffixArrayLcp.modeLabel'),

@@ -4,7 +4,7 @@ import {
   NetworkTraceTag,
 } from '../models/network';
 import { SortStep } from '../models/sort-step';
-import { LayeredNetworkEdge, MinCostMaxFlowScenario } from '../utils/network-scenarios/network-scenarios';
+import { LayeredNetworkEdge, MinCostMaxFlowScenario } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
 
 export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Generator<SortStep> {

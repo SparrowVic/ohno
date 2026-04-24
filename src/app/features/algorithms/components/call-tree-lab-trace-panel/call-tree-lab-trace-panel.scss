@@ -1,0 +1,195 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.trace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  container-type: inline-size;
+  gap: 10px;
+}
+
+.trace__header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trace__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  --segmented-panel-section-gap: 7px;
+  --segmented-panel-section-padding: 11px 12px 12px;
+}
+
+.trace__facts app-segmented-panel-section {
+  position: relative;
+}
+
+.trace__facts app-segmented-panel-section:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.trace__calc,
+.trace__streams {
+  display: grid;
+  grid-template-columns: 1fr;
+  --segmented-panel-section-padding: 11px 12px 12px;
+}
+
+.trace__active {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trace__active-title {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--viz-warning);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  --math-text-scale: 1.12;
+  --math-text-glow: rgba(var(--viz-warning-rgb), 0.14);
+}
+
+.trace__active-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.trace__active-stats,
+.trace__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.trace__chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 0.5px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+
+  &--accent {
+    border-color: rgb(var(--viz-accent-rgb) / 0.3);
+    background: rgb(var(--viz-accent-rgb) / 0.08);
+  }
+  &--success {
+    border-color: rgb(var(--accent-rgb) / 0.3);
+    background: rgb(var(--accent-rgb) / 0.08);
+  }
+  &--warning {
+    border-color: rgb(var(--viz-warning-rgb) / 0.3);
+    background: rgb(var(--viz-warning-rgb) / 0.08);
+  }
+  &--danger {
+    border-color: rgb(var(--viz-danger-rgb) / 0.3);
+    background: rgb(var(--viz-danger-rgb) / 0.08);
+  }
+  &--route {
+    border-color: rgb(var(--viz-warning-rgb) / 0.35);
+    background: rgb(var(--viz-warning-rgb) / 0.12);
+  }
+}
+
+.trace__chip-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  --math-text-scale: 1.06;
+  --math-text-glow: rgba(var(--viz-window-rgb), 0.08);
+}
+
+.trace__chip-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--viz-window-rgb), 0.1);
+}
+
+.trace__chip--success .trace__chip-value {
+  color: var(--accent-strong);
+}
+.trace__chip--warning .trace__chip-value {
+  color: var(--viz-warning);
+}
+.trace__chip--danger .trace__chip-value {
+  color: var(--viz-danger);
+}
+
+.trace__path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.trace__path-chip {
+  display: inline-flex;
+  align-items: baseline;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: rgb(var(--viz-warning-rgb) / 0.1);
+  border: 0.5px solid rgb(var(--viz-warning-rgb) / 0.22);
+  font-variant-numeric: tabular-nums;
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--viz-warning-rgb), 0.12);
+}
+
+.trace__path-sep {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.trace__empty,
+.trace__empty-note {
+  padding: 4px 0;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.trace__empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+  font-size: 13px;
+  font-style: normal;
+}
+
+.trace__empty-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--viz-warning-rgb) / 0.5);
+  box-shadow: 0 0 8px rgb(var(--viz-warning-rgb) / 0.3);
+}

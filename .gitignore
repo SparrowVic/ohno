@@ -49,3 +49,8 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Claude Code runtime — track shared skills + agents, keep local settings private
+.claude/*
+!.claude/skills/
+!.claude/agents/

@@ -24,6 +24,7 @@ import { InsaneShaderPoolService } from '../../../shared/insane-shader-pool.serv
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { ShaderCardEffect } from '../../../shared/components/shader-card-effect/shader-card-effect';
 import { UiTag } from '../../../shared/components/ui-tag/ui-tag';
+import { MathText } from '../../../shared/components/math-text/math-text';
 import { AlgorithmCardPreview } from './algorithm-card-preview/algorithm-card-preview';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 import {
@@ -44,6 +45,7 @@ import {
     ShaderCardEffect,
     AlgorithmCardPreview,
     RoadmapOverlayDirective,
+    MathText,
     UiTag,
   ],
   templateUrl: './algorithm-card.html',

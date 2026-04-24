@@ -1,0 +1,194 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.viz-options {
+  position: relative;
+  display: inline-flex;
+}
+
+.viz-options__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 8px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    transform var(--duration-fast) var(--ease-soft);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: rotate(22deg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--viz-warning-rgb), 0.5);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: rgba(var(--viz-warning-rgb), 0.12);
+    color: rgb(var(--viz-warning-rgb));
+    border-color: rgba(var(--viz-warning-rgb), 0.35);
+    transform: rotate(30deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viz-options__trigger {
+    transition: none;
+    &:hover,
+    &--active {
+      transform: none;
+    }
+  }
+}
+
+.viz-options__popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  min-width: 240px;
+  max-width: 320px;
+  padding: 10px 4px 8px;
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.045), rgba(0, 0, 0, 0) 60%),
+    rgba(14, 18, 24, 0.96);
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: viz-options-enter 160ms var(--ease-out-expo);
+}
+
+@keyframes viz-options-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viz-options__popover {
+    animation: none;
+  }
+}
+
+.viz-options__head {
+  padding: 2px 12px 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-quaternary);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 4px;
+}
+
+.viz-options__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.viz-options__item {
+  margin: 0;
+}
+
+.viz-options__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-soft);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &:has(.viz-options__checkbox:checked) {
+    background: rgba(var(--viz-warning-rgb), 0.04);
+  }
+}
+
+.viz-options__checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft);
+
+  &:checked {
+    background: rgb(var(--viz-warning-rgb));
+    border-color: rgb(var(--viz-warning-rgb));
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230a0d15' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8.5l3 3 7-7'/%3E%3C/svg%3E");
+    background-size: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--viz-warning-rgb), 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.viz-options__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.viz-options__label {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.viz-options__description {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}

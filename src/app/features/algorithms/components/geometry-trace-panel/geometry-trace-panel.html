@@ -21,7 +21,7 @@
 
       <div class="trace__check" [class.trace__check--idle]="!turnPoints()">
         <div class="trace__check-header">Cross Product Check</div>
-        <div class="trace__check-formula">cross(A, B, C) = (B−A) × (C−A)</div>
+        <app-math-text class="trace__check-formula" [tex]="crossProductFormula" variant="formula" />
 
         @if (showTurnDetails()) {
           <div class="trace__check-trio">

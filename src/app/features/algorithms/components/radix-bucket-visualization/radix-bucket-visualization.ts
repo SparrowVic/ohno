@@ -19,8 +19,8 @@ import {
   MotionProfile,
   createMotionProfile,
   pulseSvgElement,
-} from '../../utils/visualization-motion/visualization-motion';
-import { VIZ_BUCKET_COLORS, VIZ_HEX } from '../../utils/visualization-palette/visualization-palette';
+} from '../../utils/helpers/visualization-motion/visualization-motion';
+import { VIZ_BUCKET_COLORS, VIZ_HEX } from '../../utils/helpers/visualization-palette/visualization-palette';
 
 interface MutableGeometry {
   x: number;

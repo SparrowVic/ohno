@@ -1,0 +1,102 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as lab) {
+    <div class="number-lab">
+      <!-- Registers deck — live named scalars as mono chips. Tones
+           tell the user at a glance which one just moved. -->
+      <section class="number-lab__registers">
+        @for (reg of lab.registers; track reg.id) {
+          <article class="number-lab__register number-lab__register--{{ reg.tone }}">
+            <app-math-text class="number-lab__register-label" [content]="reg.label" variant="chip" />
+            <app-math-text
+              class="number-lab__register-value"
+              [content]="reg.value"
+              variant="metric"
+            />
+            @if (reg.hint; as hint) {
+              <span class="number-lab__register-hint">{{ hint | i18nText }}</span>
+            }
+          </article>
+        }
+      </section>
+
+      <!-- Formula card — always rendered with reserved space so the
+           layout below doesn't shift when the rule fires. -->
+      <section class="number-lab__formula" [class.number-lab__formula--empty]="!lab.formula">
+        <div class="number-lab__formula-row">
+          @if (lab.formula; as formula) {
+            @for (part of formula.lhs; track $index) {
+              <span class="number-lab__part number-lab__part--{{ part.role }}">
+                <app-math-text [content]="part.text" mode="math" variant="formula" />
+              </span>
+            }
+            <span class="number-lab__part number-lab__part--operator">
+              <app-math-text content="=" mode="math" variant="formula" />
+            </span>
+            @for (part of formula.rhs; track $index) {
+              <span class="number-lab__part number-lab__part--{{ part.role }}">
+                <app-math-text [content]="part.text" mode="math" variant="formula" />
+              </span>
+            }
+          } @else {
+            <span class="number-lab__formula-placeholder">—</span>
+          }
+        </div>
+      </section>
+
+      <!-- History tape — always rendered; placeholder shown before
+           any value has been emitted so the grid row keeps its size. -->
+      <section class="number-lab__history">
+        <header class="number-lab__history-head">
+          <span class="number-lab__history-label">n</span>
+          <span class="number-lab__history-value">value</span>
+        </header>
+        <div class="number-lab__history-tape">
+          @if (lab.history.length === 0) {
+            <span class="number-lab__history-placeholder">—</span>
+          } @else {
+            @for (entry of lab.history; track entry.id) {
+              <article
+                class="number-lab__history-chip"
+                [class.number-lab__history-chip--current]="entry.isCurrent"
+              >
+                <app-math-text
+                  class="number-lab__history-chip-label"
+                  [content]="entry.label"
+                  variant="chip"
+                />
+                <app-math-text
+                  class="number-lab__history-chip-value"
+                  [content]="entry.value"
+                  variant="chip"
+                />
+              </article>
+            }
+          }
+        </div>
+      </section>
+
+      <!-- Result footer — always rendered. Value fills in when the
+           algorithm finishes; until then a neutral placeholder holds
+           the slot so the stage below doesn't jump. -->
+      <footer
+        class="number-lab__result"
+        [class.number-lab__result--pending]="!lab.resultLabel"
+      >
+        <span class="number-lab__result-label">result</span>
+        @if (lab.resultLabel; as result) {
+          <app-math-text class="number-lab__result-value" [content]="result | i18nText" variant="formula" />
+        } @else {
+          <span class="number-lab__result-value">—</span>
+        }
+      </footer>
+    </div>
+  }
+</app-viz-panel>

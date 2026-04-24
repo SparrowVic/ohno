@@ -1,0 +1,189 @@
+.math-text {
+  --math-text-scale: 1.05;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.04);
+  --math-text-tracking: 0;
+  --math-text-highlight-opacity: 0;
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+  max-width: 100%;
+  color: inherit;
+  line-height: inherit;
+
+  &--display {
+    display: flex;
+    width: 100%;
+  }
+}
+
+.math-text__plain,
+.math-text__rendered {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+  max-width: 100%;
+  color: inherit;
+  line-height: inherit;
+}
+
+.math-text--display .math-text__plain,
+.math-text--display .math-text__rendered {
+  width: 100%;
+}
+
+.math-text__rendered {
+  position: relative;
+  overflow: visible;
+}
+
+.math-text__rendered--mixed {
+  display: inline;
+  white-space: normal;
+}
+
+.math-text__rendered--mixed::after {
+  display: none;
+}
+
+.math-text--display .math-text__rendered {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.math-text__rendered::after {
+  content: '';
+  position: absolute;
+  left: 0.12em;
+  right: 0.12em;
+  bottom: 0.04em;
+  height: 0.58em;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--chrome-accent-alt-rgb), 0),
+    rgba(var(--chrome-accent-alt-rgb), 0.12)
+  );
+  opacity: var(--math-text-highlight-opacity);
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.math-text__rendered .katex {
+  max-width: 100%;
+  font-size: calc(1em * var(--math-text-scale));
+  line-height: 1.08;
+  color: inherit;
+  letter-spacing: var(--math-text-tracking);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: 0 0 10px var(--math-text-glow);
+}
+
+.math-text__rendered .katex-display {
+  margin: 0;
+  padding: 0.06em 0;
+}
+
+.math-text__rendered .katex-display > .katex {
+  display: inline-block;
+}
+
+.math-text__segment--plain {
+  display: inline;
+}
+
+.math-text__segment--math {
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: baseline;
+}
+
+.math-text--display {
+  --math-text-scale: 1.12;
+}
+
+.math-text--variant-copy {
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--chrome-accent-rgb), 0.05);
+  --math-text-highlight-opacity: 0.14;
+}
+
+.math-text--variant-chip {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.06);
+  --math-text-tracking: 0.008em;
+  --math-text-highlight-opacity: 0.16;
+}
+
+.math-text--variant-metric {
+  --math-text-scale: 1.2;
+  --math-text-glow: rgba(var(--chrome-accent-alt-rgb), 0.1);
+  --math-text-tracking: 0.012em;
+  --math-text-highlight-opacity: 0.3;
+}
+
+.math-text--variant-formula {
+  --math-text-scale: 1.16;
+  --math-text-glow: rgba(var(--chrome-accent-rgb), 0.09);
+  --math-text-tracking: 0.004em;
+  --math-text-highlight-opacity: 0.22;
+}
+
+.math-text--variant-formula.math-text--display {
+  --math-text-scale: 1.22;
+}
+
+.math-text--variant-log {
+  --math-text-log-rgb: var(--viz-warning-rgb);
+  --math-text-scale: 1.04;
+  --math-text-glow: rgba(var(--math-text-log-rgb), 0.08);
+  --math-text-tracking: 0.003em;
+}
+
+/* Used in dense grids / cells where we want the KaTeX font family for
+   visual consistency but no scale bump or glow — otherwise small cells
+   overflow or look oversized. */
+.math-text--variant-cell {
+  --math-text-scale: 1;
+  --math-text-glow: transparent;
+  --math-text-tracking: 0;
+  --math-text-highlight-opacity: 0;
+}
+
+.math-text--variant-log .math-text__segment--math {
+  padding: 0.02em 0.22em 0.08em;
+  border-radius: 0.42em;
+  background:
+    linear-gradient(180deg, rgba(var(--math-text-log-rgb), 0.16), rgba(var(--math-text-log-rgb), 0.06)),
+    rgba(255, 255, 255, 0.015);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--math-text-log-rgb), 0.2),
+    0 0 12px rgba(var(--math-text-log-rgb), 0.08);
+}
+
+.math-text--variant-log .math-text__segment--math .katex {
+  font-size: calc(1em * 1.04);
+}
+
+.math-text--variant-log .math-text__segment--math .mathsf {
+  font-family: KaTeX_SansSerif, KaTeX_Main, sans-serif;
+  font-weight: 700;
+}
+
+.math-text--variant-chip .math-text__rendered .mathsf,
+.math-text--variant-metric .math-text__rendered .mathsf,
+.math-text--variant-cell .math-text__rendered .mathsf {
+  font-family: KaTeX_SansSerif, KaTeX_Main, sans-serif;
+  font-weight: 700;
+}
+
+.math-text--variant-chip .math-text__rendered .mathit,
+.math-text--variant-chip .math-text__rendered .mathnormal,
+.math-text--variant-metric .math-text__rendered .mathit,
+.math-text--variant-metric .math-text__rendered .mathnormal,
+.math-text--variant-cell .math-text__rendered .mathit,
+.math-text--variant-cell .math-text__rendered .mathnormal {
+  font-family: KaTeX_SansSerif, KaTeX_Main, sans-serif;
+  font-style: normal;
+}

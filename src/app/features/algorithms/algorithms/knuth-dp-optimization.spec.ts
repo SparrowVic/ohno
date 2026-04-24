@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../core/i18n/translatable-text';
 import { knuthDpOptimizationGenerator } from './knuth-dp-optimization';
 import type { SortStep } from '../models/sort-step';
-import type { KnuthDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import type { KnuthDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: KnuthDpScenario): SortStep[] {
   return [...knuthDpOptimizationGenerator(scenario)];

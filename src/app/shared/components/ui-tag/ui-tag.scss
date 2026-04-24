@@ -27,6 +27,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  --math-text-scale: 1.04;
+  --math-text-glow: rgb(var(--ui-tag-rgb) / 0.12);
 }
 
 .ui-tag__icon {

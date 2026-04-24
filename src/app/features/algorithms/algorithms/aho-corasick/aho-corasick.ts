@@ -8,7 +8,7 @@ import {
   AhoCorasickNodeView,
   AhoCorasickTraceState,
 } from '../../models/string';
-import { AhoCorasickScenario } from '../../utils/string-scenarios/string-scenarios';
+import { AhoCorasickScenario } from '../../utils/scenarios/string/string-scenarios';
 
 interface TrieNode {
   readonly id: number;

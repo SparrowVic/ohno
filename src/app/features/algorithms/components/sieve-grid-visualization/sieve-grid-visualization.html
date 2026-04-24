@@ -1,0 +1,88 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as sieve) {
+    <div class="sieve">
+      <!-- Pivot strip: the active prime being used to cross out
+           multiples, plus the √n bound and the live primes tally. -->
+      <section class="sieve__pivot">
+        <div class="sieve__pivot-main">
+          <app-math-text class="sieve__pivot-label" content="p" mode="math" variant="chip" />
+          <app-math-text
+            class="sieve__pivot-value"
+            [class.sieve__pivot-value--idle]="sieve.activePrime === null"
+            [content]="sieve.activePrime === null ? '—' : sieve.activePrime.toString()"
+            variant="metric"
+          />
+        </div>
+        <div class="sieve__pivot-meta">
+          <span class="sieve__pivot-bound">
+            <app-math-text class="sieve__pivot-bound-label" content="√n" mode="math" variant="chip" />
+            <app-math-text
+              class="sieve__pivot-bound-value"
+              [content]="sieve.bound.toString()"
+              variant="chip"
+            />
+          </span>
+          @for (stat of sieve.stats; track stat.label) {
+            <span class="sieve__pivot-stat sieve__pivot-stat--{{ stat.tone }}">
+              <app-math-text
+                class="sieve__pivot-stat-label"
+                [content]="stat.label | i18nText"
+                variant="chip"
+              />
+              <app-math-text
+                class="sieve__pivot-stat-value"
+                [content]="stat.value | i18nText"
+                variant="chip"
+              />
+            </span>
+          }
+        </div>
+      </section>
+
+      <!-- Number grid: each integer in a cell with a status tint.
+           Cells for values below the sieve's start are hidden as
+           skipped shells so the grid stays aligned from the top. -->
+      <section
+        class="sieve__grid"
+        [style.grid-template-columns]="'repeat(' + columnCount() + ', minmax(0, 1fr))'"
+      >
+        @for (cell of sieve.cells; track cell.value) {
+          <article class="sieve__cell sieve__cell--{{ cell.state }}">
+            <app-math-text
+              class="sieve__cell-value"
+              [content]="cell.value.toString()"
+              variant="cell"
+            />
+            @if (cell.factorLabel; as factor) {
+              <app-math-text class="sieve__cell-factor" [content]="factor" variant="cell" />
+            }
+          </article>
+        }
+      </section>
+
+      <footer
+        class="sieve__result"
+        [class.sieve__result--pending]="!sieve.resultLabel"
+      >
+        <span class="sieve__result-label">primes</span>
+        @if (sieve.resultLabel; as result) {
+          <app-math-text
+            class="sieve__result-value"
+            [content]="result | i18nText"
+            variant="formula"
+          />
+        } @else {
+          <span class="sieve__result-value">—</span>
+        }
+      </footer>
+    </div>
+  }
+</app-viz-panel>

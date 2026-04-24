@@ -4,7 +4,7 @@ import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text
 import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
-import { ChtDpScenario } from '../utils/dp-scenarios/dp-scenarios';
+import { ChtDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
 interface HullLine {
   readonly index: number;

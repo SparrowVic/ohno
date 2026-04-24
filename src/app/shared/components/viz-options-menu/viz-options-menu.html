@@ -1,0 +1,54 @@
+@if (hasOptions()) {
+  <div class="viz-options" [class.viz-options--open]="isOpen()">
+    <button
+      type="button"
+      class="viz-options__trigger"
+      [class.viz-options__trigger--active]="isOpen()"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-label]="I18N_KEY.shared.vizOptionsMenu.triggerLabel | transloco"
+      [attr.title]="I18N_KEY.shared.vizOptionsMenu.triggerLabel | transloco"
+      (click)="toggle($event)"
+    >
+      <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M8 1.8v1.9M8 12.3v1.9M2.75 4.75l1.35 1.35M11.9 9.9l1.35 1.35M1.8 8h1.9M12.3 8h1.9M2.75 11.25l1.35-1.35M11.9 6.1l1.35-1.35" />
+        <circle cx="8" cy="8" r="2.5" />
+      </svg>
+    </button>
+
+    @if (isOpen()) {
+      <div
+        class="viz-options__popover"
+        role="dialog"
+        [attr.aria-label]="I18N_KEY.shared.vizOptionsMenu.triggerLabel | transloco"
+      >
+        <header class="viz-options__head">
+          @if (title(); as customTitle) {
+            <span>{{ customTitle | i18nText }}</span>
+          } @else {
+            <span>{{ I18N_KEY.shared.vizOptionsMenu.title | transloco }}</span>
+          }
+        </header>
+        <ul class="viz-options__list">
+          @for (option of options(); track option.id) {
+            <li class="viz-options__item">
+              <label class="viz-options__row">
+                <input
+                  type="checkbox"
+                  class="viz-options__checkbox"
+                  [checked]="option.checked"
+                  (change)="onOptionToggle(option, $event)"
+                />
+                <span class="viz-options__copy">
+                  <span class="viz-options__label">{{ option.label | i18nText }}</span>
+                  @if (option.description; as description) {
+                    <span class="viz-options__description">{{ description | i18nText }}</span>
+                  }
+                </span>
+              </label>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+}

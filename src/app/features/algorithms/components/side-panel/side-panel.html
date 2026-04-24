@@ -57,6 +57,18 @@
         <app-string-trace-panel [state]="stringState()" />
       } @else if (treeState()) {
         <app-tree-trace-panel [state]="treeState()" />
+      } @else if (numberLabState()) {
+        <app-number-lab-trace-panel [state]="numberLabState()" />
+      } @else if (pointerLabState()) {
+        <app-pointer-lab-trace-panel [state]="pointerLabState()" />
+      } @else if (sieveGridState()) {
+        <app-sieve-grid-trace-panel [state]="sieveGridState()" />
+      } @else if (callStackLabState()) {
+        <app-call-stack-lab-trace-panel [state]="callStackLabState()" />
+      } @else if (callTreeLabState()) {
+        <app-call-tree-lab-trace-panel [state]="callTreeLabState()" />
+      } @else if (scratchpadLabState()) {
+        <app-scratchpad-lab-trace-panel [state]="scratchpadLabState()" />
       } @else if (closestPairGeometryState()) {
         <app-closest-pair-trace-panel [state]="closestPairGeometryState()" />
       } @else if (lineIntersectionGeometryState()) {
@@ -80,11 +92,22 @@
       }
     }
     @case ('code') {
+      @if (activeTaskName(); as taskName) {
+        <p class="side-panel__code-eyebrow">
+          <span class="side-panel__code-eyebrow-label">
+            {{ I18N_KEY.features.algorithms.sidePanel.codeForTaskLabel | transloco }}
+          </span>
+          <span class="side-panel__code-eyebrow-task">
+            <app-math-text mode="mixed" [content]="taskName | i18nText" />
+          </span>
+        </p>
+      }
       <app-code-panel
         [lines]="codeLines()"
         [regions]="codeRegions()"
         [codeVariants]="codeVariants()"
         [activeLineNumber]="activeLineNumber()"
+        [snippetMissing]="codeSnippetMissing()"
       />
     }
     @case ('info') {

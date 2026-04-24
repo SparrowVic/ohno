@@ -19,7 +19,7 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { DpCell, DpPresetOption, DpTraceState } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/visualization-motion/visualization-motion';
+import { createMotionProfile, pulseElement } from '../../utils/helpers/visualization-motion/visualization-motion';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';

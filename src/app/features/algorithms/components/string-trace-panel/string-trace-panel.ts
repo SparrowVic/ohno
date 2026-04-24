@@ -32,11 +32,19 @@ import {
 } from '../../models/string';
 import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
 import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
 @Component({
   selector: 'app-string-trace-panel',
-  imports: [FaIconComponent, I18nTextPipe, SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
+  imports: [
+    FaIconComponent,
+    I18nTextPipe,
+    MathText,
+    SegmentedPanel,
+    SegmentedPanelSection,
+    TranslocoPipe,
+  ],
   templateUrl: './string-trace-panel.html',
   styleUrl: './string-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -168,6 +176,10 @@ export class StringTracePanel {
 
   formatRatio(value: number | null): string {
     return value === null ? '—' : `${value.toFixed(2)}x`;
+  }
+
+  protected stringify(value: unknown): string {
+    return value === null || value === undefined ? '' : String(value);
   }
 
   private translate(key: I18nKey, params?: Record<string, string | number>): string {

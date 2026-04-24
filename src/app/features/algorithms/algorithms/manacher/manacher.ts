@@ -4,7 +4,7 @@ import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-t
 import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { ManacherTraceState } from '../../models/string';
-import { ManacherScenario } from '../../utils/string-scenarios/string-scenarios';
+import { ManacherScenario } from '../../utils/scenarios/string/string-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.manacher.modeLabel'),

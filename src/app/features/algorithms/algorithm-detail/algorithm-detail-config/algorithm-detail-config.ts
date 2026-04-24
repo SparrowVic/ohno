@@ -503,7 +503,270 @@ import { MatrixTraceState } from '../../models/matrix';
 import { NetworkTraceState } from '../../models/network';
 import { SearchTraceState } from '../../models/search';
 import { StringPresetOption, StringTraceState } from '../../models/string';
+import { Task } from '../../models/task';
 import { TreePresetOption } from '../../models/tree';
+import {
+  NumberLabPresetOption,
+  EuclideanGcdScenario,
+  FIBONACCI_PRESETS as FIBONACCI_ITER_PRESETS,
+  FACTORIAL_PRESETS,
+  EUCLIDEAN_GCD_PRESETS,
+  EUCLIDEAN_GCD_TASKS,
+  EuclideanGcdValues,
+  DEFAULT_FIBONACCI_PRESET_ID as DEFAULT_FIBONACCI_ITER_PRESET_ID,
+  DEFAULT_FACTORIAL_PRESET_ID,
+  DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
+  DEFAULT_EUCLIDEAN_GCD_TASK_ID,
+  createFibonacciScenario as createFibonacciIterScenario,
+  createFactorialScenario,
+  createEuclideanGcdScenario,
+} from '../../utils/scenarios/number-lab/number-lab-scenarios';
+import {
+  PointerLabPresetOption,
+  TwoPointersScenario,
+  TwoPointersValues,
+  SlidingWindowScenario,
+  SlidingWindowValues,
+  PalindromeCheckScenario,
+  PalindromeValues,
+  ReverseScenario,
+  ReverseValues,
+  KadaneScenario,
+  KadaneValues,
+  TWO_POINTERS_PRESETS,
+  SLIDING_WINDOW_PRESETS,
+  PALINDROME_PRESETS,
+  REVERSE_PRESETS,
+  KADANE_PRESETS,
+  TWO_POINTERS_TASKS,
+  SLIDING_WINDOW_TASKS,
+  PALINDROME_TASKS,
+  REVERSE_TASKS,
+  KADANE_TASKS,
+  DEFAULT_TWO_POINTERS_PRESET_ID,
+  DEFAULT_SLIDING_WINDOW_PRESET_ID,
+  DEFAULT_PALINDROME_PRESET_ID,
+  DEFAULT_REVERSE_PRESET_ID,
+  DEFAULT_KADANE_PRESET_ID,
+  DEFAULT_TWO_POINTERS_TASK_ID,
+  DEFAULT_SLIDING_WINDOW_TASK_ID,
+  DEFAULT_PALINDROME_TASK_ID,
+  DEFAULT_REVERSE_TASK_ID,
+  DEFAULT_KADANE_TASK_ID,
+  createTwoPointersScenario,
+  createSlidingWindowScenario,
+  createPalindromeScenario,
+  createReverseScenario,
+  createKadaneScenario,
+} from '../../utils/scenarios/pointer-lab/pointer-lab-scenarios';
+import {
+  SieveGridPresetOption,
+  SieveEratosthenesScenario,
+  EratosthenesValues,
+  ERATOSTHENES_PRESETS,
+  ERATOSTHENES_TASKS,
+  DEFAULT_ERATOSTHENES_PRESET_ID,
+  DEFAULT_ERATOSTHENES_TASK_ID,
+  createEratosthenesScenario,
+} from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
+import {
+  CallStackLabPresetOption,
+  RECURSIVE_FIBONACCI_PRESETS,
+  DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
+  createRecursiveFibonacciScenario,
+} from '../../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
+import {
+  CallTreeLabPresetOption,
+  NQueensScenario,
+  MinimaxScenario,
+  McTsScenario,
+  N_QUEENS_PRESETS,
+  MINIMAX_PRESETS,
+  MCTS_PRESETS,
+  DEFAULT_N_QUEENS_PRESET_ID,
+  DEFAULT_MINIMAX_PRESET_ID,
+  DEFAULT_MCTS_PRESET_ID,
+  createNQueensScenario,
+  createMinimaxScenario,
+  createMcTsScenario,
+} from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
+import { fibonacciIterativeGenerator } from '../../algorithms/fibonacci-iterative/fibonacci-iterative';
+import { factorialGenerator } from '../../algorithms/factorial/factorial';
+import { euclideanGcdGenerator } from '../../algorithms/euclidean-gcd/euclidean-gcd';
+import { twoPointersGenerator } from '../../algorithms/two-pointers/two-pointers';
+import { slidingWindowGenerator } from '../../algorithms/sliding-window/sliding-window';
+import { palindromeCheckGenerator } from '../../algorithms/palindrome-check/palindrome-check';
+import { reverseStringArrayGenerator } from '../../algorithms/reverse-string-array/reverse-string-array';
+import { kadaneGenerator } from '../../algorithms/kadane/kadane';
+import { sieveOfEratosthenesGenerator } from '../../algorithms/sieve-of-eratosthenes/sieve-of-eratosthenes';
+import { recursionCallStackGenerator } from '../../algorithms/recursion-call-stack/recursion-call-stack';
+import { backtrackingGenerator } from '../../algorithms/backtracking/backtracking';
+import { minimaxAlphaBetaGenerator } from '../../algorithms/minimax-alpha-beta/minimax-alpha-beta';
+import { mctsGenerator } from '../../algorithms/mcts/mcts';
+import { extendedEuclideanGenerator } from '../../algorithms/extended-euclidean/extended-euclidean';
+import {
+  ExtendedEuclideanScenario,
+  ExtendedEuclideanValues,
+  EXTENDED_EUCLIDEAN_PRESETS,
+  EXTENDED_EUCLIDEAN_TASKS,
+  DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
+  DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
+  createExtendedEuclideanScenario,
+} from '../../utils/scenarios/number-lab/extended-euclidean-scenarios';
+import { millerRabinGenerator } from '../../algorithms/miller-rabin/miller-rabin';
+import {
+  MillerRabinScenario,
+  MillerRabinValues,
+  MILLER_RABIN_PRESETS,
+  MILLER_RABIN_TASKS,
+  DEFAULT_MILLER_RABIN_PRESET_ID,
+  DEFAULT_MILLER_RABIN_TASK_ID,
+  createMillerRabinScenario,
+} from '../../utils/scenarios/number-lab/miller-rabin-scenarios';
+import { crtGenerator } from '../../algorithms/crt/crt';
+import {
+  CrtScenario,
+  CrtValues,
+  CRT_PRESETS,
+  CRT_TASKS,
+  DEFAULT_CRT_PRESET_ID,
+  DEFAULT_CRT_TASK_ID,
+  createCrtScenario,
+} from '../../utils/scenarios/number-lab/crt-scenarios';
+import { pollardsRhoGenerator } from '../../algorithms/pollards-rho/pollards-rho';
+import {
+  PollardsRhoScenario,
+  PollardsRhoValues,
+  POLLARDS_RHO_PRESETS,
+  POLLARDS_RHO_TASKS,
+  DEFAULT_POLLARDS_RHO_PRESET_ID,
+  DEFAULT_POLLARDS_RHO_TASK_ID,
+  createPollardsRhoScenario,
+} from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
+import { gaussianEliminationGenerator } from '../../algorithms/gaussian-elimination/gaussian-elimination';
+import {
+  GaussianEliminationScenario,
+  GaussianEliminationValues,
+  GAUSSIAN_ELIMINATION_PRESETS,
+  GAUSSIAN_ELIMINATION_TASKS,
+  DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
+  DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
+  createGaussianEliminationScenario,
+} from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
+import { simplexAlgorithmGenerator } from '../../algorithms/simplex-algorithm/simplex-algorithm';
+import {
+  SimplexAlgorithmScenario,
+  SimplexAlgorithmValues,
+  SIMPLEX_ALGORITHM_PRESETS,
+  SIMPLEX_ALGORITHM_TASKS,
+  DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
+  DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
+  createSimplexAlgorithmScenario,
+} from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
+import { reservoirSamplingGenerator } from '../../algorithms/reservoir-sampling/reservoir-sampling';
+import {
+  ReservoirSamplingScenario,
+  ReservoirSamplingValues,
+  RESERVOIR_SAMPLING_PRESETS,
+  RESERVOIR_SAMPLING_TASKS,
+  DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
+  DEFAULT_RESERVOIR_SAMPLING_TASK_ID,
+  createReservoirSamplingScenario,
+} from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
+import { fftNttGenerator } from '../../algorithms/fft-ntt/fft-ntt';
+import {
+  FftNttScenario,
+  FftNttValues,
+  FFT_NTT_PRESETS,
+  FFT_NTT_TASKS,
+  DEFAULT_FFT_NTT_PRESET_ID,
+  DEFAULT_FFT_NTT_TASK_ID,
+  createFftNttScenario,
+} from '../../utils/scenarios/number-lab/fft-ntt-scenarios';
+import {
+  FIBONACCI_CODE,
+  FIBONACCI_CODE_HIGHLIGHT_MAP,
+  FIBONACCI_CODE_REGIONS,
+  FIBONACCI_CODE_VARIANTS,
+} from '../../data/fibonacci-iterative-code';
+import {
+  FACTORIAL_CODE,
+  FACTORIAL_CODE_HIGHLIGHT_MAP,
+  FACTORIAL_CODE_REGIONS,
+  FACTORIAL_CODE_VARIANTS,
+} from '../../data/factorial-code';
+import {
+  EUCLIDEAN_GCD_CODE,
+  EUCLIDEAN_GCD_CODE_HIGHLIGHT_MAP,
+  EUCLIDEAN_GCD_CODE_REGIONS,
+  EUCLIDEAN_GCD_CODE_VARIANTS,
+} from '../../data/euclidean-gcd-code';
+import {
+  EXTENDED_EUCLIDEAN_CODE,
+  EXTENDED_EUCLIDEAN_CODE_HIGHLIGHT_MAP,
+  EXTENDED_EUCLIDEAN_CODE_REGIONS,
+  EXTENDED_EUCLIDEAN_CODE_VARIANTS,
+} from '../../data/extended-euclidean-code';
+import {
+  TWO_POINTERS_CODE,
+  TWO_POINTERS_CODE_HIGHLIGHT_MAP,
+  TWO_POINTERS_CODE_REGIONS,
+  TWO_POINTERS_CODE_VARIANTS,
+} from '../../data/two-pointers-code';
+import {
+  SLIDING_WINDOW_CODE,
+  SLIDING_WINDOW_CODE_HIGHLIGHT_MAP,
+  SLIDING_WINDOW_CODE_REGIONS,
+  SLIDING_WINDOW_CODE_VARIANTS,
+} from '../../data/sliding-window-code';
+import {
+  PALINDROME_CODE,
+  PALINDROME_CODE_HIGHLIGHT_MAP,
+  PALINDROME_CODE_REGIONS,
+  PALINDROME_CODE_VARIANTS,
+} from '../../data/palindrome-check-code';
+import {
+  REVERSE_CODE,
+  REVERSE_CODE_HIGHLIGHT_MAP,
+  REVERSE_CODE_REGIONS,
+  REVERSE_CODE_VARIANTS,
+} from '../../data/reverse-string-array-code';
+import {
+  KADANE_CODE,
+  KADANE_CODE_HIGHLIGHT_MAP,
+  KADANE_CODE_REGIONS,
+  KADANE_CODE_VARIANTS,
+} from '../../data/kadane-code';
+import {
+  SIEVE_OF_ERATOSTHENES_CODE,
+  SIEVE_OF_ERATOSTHENES_CODE_HIGHLIGHT_MAP,
+  SIEVE_OF_ERATOSTHENES_CODE_REGIONS,
+  SIEVE_OF_ERATOSTHENES_CODE_VARIANTS,
+} from '../../data/sieve-of-eratosthenes-code';
+import {
+  RECURSION_CALL_STACK_CODE,
+  RECURSION_CALL_STACK_CODE_HIGHLIGHT_MAP,
+  RECURSION_CALL_STACK_CODE_REGIONS,
+  RECURSION_CALL_STACK_CODE_VARIANTS,
+} from '../../data/recursion-call-stack-code';
+import {
+  BACKTRACKING_CODE,
+  BACKTRACKING_CODE_HIGHLIGHT_MAP,
+  BACKTRACKING_CODE_REGIONS,
+  BACKTRACKING_CODE_VARIANTS,
+} from '../../data/backtracking-code';
+import {
+  MINIMAX_ALPHA_BETA_CODE,
+  MINIMAX_ALPHA_BETA_CODE_HIGHLIGHT_MAP,
+  MINIMAX_ALPHA_BETA_CODE_REGIONS,
+  MINIMAX_ALPHA_BETA_CODE_VARIANTS,
+} from '../../data/minimax-alpha-beta-code';
+import {
+  MCTS_CODE,
+  MCTS_CODE_HIGHLIGHT_MAP,
+  MCTS_CODE_REGIONS,
+  MCTS_CODE_VARIANTS,
+} from '../../data/mcts-code';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LegendItem, LogEntry } from '../../models/detail';
 import { HOPCROFT_KARP_CODE, HOPCROFT_KARP_CODE_VARIANTS } from '../../data/hopcroft-karp-code';
@@ -546,7 +809,7 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { VIZ_COLOR } from '../../utils/visualization-palette/visualization-palette';
+import { VIZ_COLOR } from '../../utils/helpers/visualization-palette/visualization-palette';
 import {
   BITMASK_DP_PRESETS,
   BURST_BALLOONS_PRESETS,
@@ -611,13 +874,13 @@ import {
   TreeDpScenario,
   TravelingSalesmanScenario,
   WildcardMatchingScenario,
-} from '../../utils/dp-scenarios/dp-scenarios';
+} from '../../utils/scenarios/dp/dp-scenarios';
 import {
   createKruskalScenario,
   createUnionFindScenario,
   KruskalScenario,
   UnionFindScenario,
-} from '../../utils/dsu-scenarios/dsu-scenarios';
+} from '../../utils/scenarios/dsu/dsu-scenarios';
 import {
   generateBellmanFordGraph,
   generateBipartiteGraph,
@@ -632,13 +895,13 @@ import {
   generateSccGraph,
   generateSteinerGraph,
   generateTraversalGraph,
-} from '../../utils/dijkstra-graph/dijkstra-graph';
+} from '../../utils/helpers/dijkstra-graph/dijkstra-graph';
 import {
   AStarScenario,
   createAStarScenario,
   createFloodFillScenario,
   FloodFillScenario,
-} from '../../utils/grid-scenarios/grid-scenarios';
+} from '../../utils/scenarios/grid/grid-scenarios';
 import {
   HUNGARIAN_ALGORITHM_CODE,
   HUNGARIAN_ALGORITHM_CODE_VARIANTS,
@@ -648,7 +911,7 @@ import {
   createHungarianScenario,
   FloydWarshallScenario,
   HungarianScenario,
-} from '../../utils/matrix-scenarios/matrix-scenarios';
+} from '../../utils/scenarios/matrix/matrix-scenarios';
 import {
   createEdmondsKarpScenario,
   createDinicScenario,
@@ -657,7 +920,7 @@ import {
   DinicScenario,
   HopcroftKarpScenario,
   MinCostMaxFlowScenario,
-} from '../../utils/network-scenarios/network-scenarios';
+} from '../../utils/scenarios/network/network-scenarios';
 import {
   AHO_CORASICK_PRESETS,
   BWT_PRESETS,
@@ -692,13 +955,16 @@ import {
   createSuffixArrayLcpScenario,
   createSuffixArrayScenario,
   createZAlgorithmScenario,
-} from '../../utils/string-scenarios/string-scenarios';
+} from '../../utils/scenarios/string/string-scenarios';
 import {
   DEFAULT_TREE_TRAVERSALS_PRESET_ID,
+  DEFAULT_TREE_TRAVERSALS_TASK_ID,
   TREE_TRAVERSALS_PRESETS,
+  TREE_TRAVERSALS_TASKS,
   TreeTraversalScenario,
+  TreeTraversalValues,
   createTreeTraversalScenario,
-} from '../../utils/tree-scenarios/tree-scenarios';
+} from '../../utils/scenarios/tree/tree-scenarios';
 import { treeTraversalsGenerator } from '../../algorithms/tree-traversals/tree-traversals';
 
 const BAR_LEGEND: readonly LegendItem[] = [
@@ -1252,6 +1518,42 @@ const TREE_TRAVERSALS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'tree', label: 'Tree Walk' },
 ];
 
+const NUMBER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'number-lab', label: 'Number Lab' },
+];
+
+/** Variant pair offered for math-heavy algorithms that should default
+ *  to the chalkboard (derivational) view but can also be explored in
+ *  the register dashboard. Students toggle from the toolbar. */
+const NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'scratchpad-lab', label: 'Chalkboard' },
+  { value: 'number-lab', label: 'Number Lab' },
+];
+
+/** Chalkboard-only option for algorithms whose derivational story is
+ *  the whole point (Extended Euclidean, Miller-Rabin, CRT, …) — the
+ *  dashboard view would only restate the registers without adding
+ *  pedagogical value, so we skip it. */
+const SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'scratchpad-lab', label: 'Chalkboard' },
+];
+
+const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'pointer-lab', label: 'Pointer Lab' },
+];
+
+const SIEVE_GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'sieve-grid', label: 'Sieve Grid' },
+];
+
+const CALL_STACK_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'call-stack-lab', label: 'Call Stack Lab' },
+];
+
+const CALL_TREE_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'call-tree-lab', label: 'Call Tree Lab' },
+];
+
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'grid', label: 'Grid Board' },
 ];
@@ -1448,9 +1750,81 @@ interface GeometryAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithm
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
 }
 
-interface TreeAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+interface TreeAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
   readonly kind: 'tree';
   readonly presetOptions: readonly TreePresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
+}
+
+interface NumberLabAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
+  readonly kind: 'number-lab';
+  readonly presetOptions: readonly NumberLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  /** New unified task model. When present, the toolbar task picker
+   *  takes over and the per-viz `presetOptions` are treated as legacy
+   *  source of truth only for algorithms that haven't migrated yet.
+   *  During migration both coexist. */
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
+}
+
+interface PointerLabAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
+  readonly kind: 'pointer-lab';
+  readonly presetOptions: readonly PointerLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
+}
+
+interface SieveGridAlgorithmViewConfig<TScenario = any, TValues = any>
+  extends BaseAlgorithmViewConfig {
+  readonly kind: 'sieve-grid';
+  readonly presetOptions: readonly SieveGridPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (
+    size: number,
+    presetId: string,
+    customValues?: TValues,
+  ) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+  readonly tasks?: readonly Task<TValues>[];
+  readonly defaultTaskId?: string;
+}
+
+interface CallStackLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'call-stack-lab';
+  readonly presetOptions: readonly CallStackLabPresetOption[];
+  readonly defaultPresetId: string;
+  readonly createScenario: (size: number, presetId: string) => TScenario;
+  readonly generator: (scenario: TScenario) => Generator<SortStep>;
+}
+
+interface CallTreeLabAlgorithmViewConfig<TScenario = unknown> extends BaseAlgorithmViewConfig {
+  readonly kind: 'call-tree-lab';
+  readonly presetOptions: readonly CallTreeLabPresetOption[];
   readonly defaultPresetId: string;
   readonly createScenario: (size: number, presetId: string) => TScenario;
   readonly generator: (scenario: TScenario) => Generator<SortStep>;
@@ -1467,7 +1841,12 @@ export type AlgorithmViewConfig =
   | DsuAlgorithmViewConfig<any>
   | NetworkAlgorithmViewConfig<any>
   | GeometryAlgorithmViewConfig<any>
-  | TreeAlgorithmViewConfig<any>;
+  | TreeAlgorithmViewConfig<any>
+  | NumberLabAlgorithmViewConfig<any>
+  | PointerLabAlgorithmViewConfig<any>
+  | SieveGridAlgorithmViewConfig<any>
+  | CallStackLabAlgorithmViewConfig<any>
+  | CallTreeLabAlgorithmViewConfig<any>;
 
 const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'array',
@@ -2030,7 +2409,536 @@ const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
   randomizeLabel: 'New frequency set',
 });
 
-const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
+const FIBONACCI_ITER_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'number-lab',
+  codeLines: FIBONACCI_CODE,
+  codeRegions: FIBONACCI_CODE_REGIONS,
+  codeHighlightMap: FIBONACCI_CODE_HIGHLIGHT_MAP,
+  codeVariants: FIBONACCI_CODE_VARIANTS,
+  variantOptions: NUMBER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'number-lab',
+  sizeOptions: [6, 10, 15],
+  defaultSize: 10,
+  sizeUnit: 'iterations',
+  randomizeLabel: 'New Fibonacci run',
+  legendItems: () => [],
+  presetOptions: FIBONACCI_ITER_PRESETS,
+  defaultPresetId: DEFAULT_FIBONACCI_ITER_PRESET_ID,
+  createScenario: (size, presetId) => createFibonacciIterScenario(size, presetId),
+  generator: fibonacciIterativeGenerator,
+};
+
+const FACTORIAL_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'number-lab',
+  codeLines: FACTORIAL_CODE,
+  codeRegions: FACTORIAL_CODE_REGIONS,
+  codeHighlightMap: FACTORIAL_CODE_HIGHLIGHT_MAP,
+  codeVariants: FACTORIAL_CODE_VARIANTS,
+  variantOptions: NUMBER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'number-lab',
+  sizeOptions: [4, 6, 10],
+  defaultSize: 6,
+  sizeUnit: 'iterations',
+  randomizeLabel: 'New factorial run',
+  legendItems: () => [],
+  presetOptions: FACTORIAL_PRESETS,
+  defaultPresetId: DEFAULT_FACTORIAL_PRESET_ID,
+  createScenario: (size, presetId) => createFactorialScenario(size, presetId),
+  generator: factorialGenerator,
+};
+
+const EUCLIDEAN_GCD_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  EuclideanGcdScenario,
+  EuclideanGcdValues
+> = {
+  kind: 'number-lab',
+  codeLines: EUCLIDEAN_GCD_CODE,
+  codeRegions: EUCLIDEAN_GCD_CODE_REGIONS,
+  codeHighlightMap: EUCLIDEAN_GCD_CODE_HIGHLIGHT_MAP,
+  codeVariants: EUCLIDEAN_GCD_CODE_VARIANTS,
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  /* Size has no meaning here — the (a, b) pair comes from the task
+   *  picker + customize-values popover. Single-option hides the
+   *  toolbar's size select. */
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New GCD pair',
+  legendItems: () => [],
+  /* `presetOptions` stays populated for now so the legacy scratchpad
+   *  per-viz picker keeps working during migration; once the toolbar
+   *  task picker is live it'll be hidden via an empty array at the
+   *  algorithm-detail level. */
+  presetOptions: EUCLIDEAN_GCD_PRESETS,
+  defaultPresetId: DEFAULT_EUCLIDEAN_GCD_PRESET_ID,
+  tasks: EUCLIDEAN_GCD_TASKS,
+  defaultTaskId: DEFAULT_EUCLIDEAN_GCD_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createEuclideanGcdScenario(size, presetId, customValues),
+  generator: euclideanGcdGenerator,
+};
+
+/** Extended Euclidean — chalkboard-only. Two-phase derivation (forward
+ *  division chain + back-substitution for Bézout coefficients) is the
+ *  whole pedagogical story; a register dashboard would have nothing
+ *  interesting to add. Reuses the `number-lab` kind dispatcher so the
+ *  rebuild logic can wire the scenario factory + generator exactly
+ *  like other (a, b)-pair algorithms. */
+const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  ExtendedEuclideanScenario,
+  ExtendedEuclideanValues
+> = {
+  kind: 'number-lab',
+  codeLines: EXTENDED_EUCLIDEAN_CODE,
+  codeRegions: EXTENDED_EUCLIDEAN_CODE_REGIONS,
+  codeHighlightMap: EXTENDED_EUCLIDEAN_CODE_HIGHLIGHT_MAP,
+  codeVariants: EXTENDED_EUCLIDEAN_CODE_VARIANTS,
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  /* Size has no meaning here — the (a, b) pair comes from the task
+   *  picker + customize-values popover. */
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New pair',
+  legendItems: () => [],
+  presetOptions: EXTENDED_EUCLIDEAN_PRESETS,
+  defaultPresetId: DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
+  tasks: EXTENDED_EUCLIDEAN_TASKS,
+  defaultTaskId: DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createExtendedEuclideanScenario(size, presetId, customValues),
+  generator: extendedEuclideanGenerator,
+};
+
+/** Miller-Rabin primality — chalkboard-only. Decomposition of `n - 1`
+ *  into `2^r · d`, then per-witness square chain. No code snippet yet
+ *  (`codeSnippetId: null` on each task triggers the editorial
+ *  placeholder). Registered under the `number-lab` view-config kind
+ *  so the rebuild path shares wiring with other scratchpad notebooks. */
+const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  MillerRabinScenario,
+  MillerRabinValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New candidate',
+  legendItems: () => [],
+  presetOptions: MILLER_RABIN_PRESETS,
+  defaultPresetId: DEFAULT_MILLER_RABIN_PRESET_ID,
+  tasks: MILLER_RABIN_TASKS,
+  defaultTaskId: DEFAULT_MILLER_RABIN_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createMillerRabinScenario(size, presetId, customValues),
+  generator: millerRabinGenerator,
+};
+
+/** Chinese Remainder Theorem — chalkboard-only. Systematic residue
+ *  reconstruction: product of moduli, per-term `Mᵢ · yᵢ · rᵢ`, sum,
+ *  reduce. `codeSnippetId: null` on each task triggers the editorial
+ *  placeholder on the Code tab. */
+const CRT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<CrtScenario, CrtValues> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New system',
+  legendItems: () => [],
+  presetOptions: CRT_PRESETS,
+  defaultPresetId: DEFAULT_CRT_PRESET_ID,
+  tasks: CRT_TASKS,
+  defaultTaskId: DEFAULT_CRT_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createCrtScenario(size, presetId, customValues),
+  generator: crtGenerator,
+};
+
+/** Pollard's rho factorization — chalkboard-only. Tortoise-hare
+ *  iteration table: each row records `(x, y, |x-y|, gcd)` until a
+ *  non-trivial factor drops out or the pointers collide without one.
+ *  `codeSnippetId: null` triggers the editorial placeholder. */
+const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  PollardsRhoScenario,
+  PollardsRhoValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New composite',
+  legendItems: () => [],
+  presetOptions: POLLARDS_RHO_PRESETS,
+  defaultPresetId: DEFAULT_POLLARDS_RHO_PRESET_ID,
+  tasks: POLLARDS_RHO_TASKS,
+  defaultTaskId: DEFAULT_POLLARDS_RHO_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createPollardsRhoScenario(size, presetId, customValues),
+  generator: pollardsRhoGenerator,
+};
+
+/** Gaussian elimination — chalkboard-only. Matrix snapshots render
+ *  as KaTeX `\left[\begin{array}...|c\end{array}\right]` blocks, one
+ *  per row operation (swap / scale / eliminate). No code snippet yet
+ *  — each task carries `codeSnippetId: null` so the Code tab shows
+ *  the editorial placeholder. */
+const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  GaussianEliminationScenario,
+  GaussianEliminationValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New system',
+  legendItems: () => [],
+  presetOptions: GAUSSIAN_ELIMINATION_PRESETS,
+  defaultPresetId: DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
+  tasks: GAUSSIAN_ELIMINATION_TASKS,
+  defaultTaskId: DEFAULT_GAUSSIAN_ELIMINATION_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createGaussianEliminationScenario(size, presetId, customValues),
+  generator: gaussianEliminationGenerator,
+};
+
+/** Simplex algorithm — chalkboard-only. Tableau snapshots as
+ *  augmented-matrix KaTeX blocks, one per pivot, with the basis
+ *  annotated alongside so students track which variable sits in
+ *  which row. Shares the matrix-rendering approach with Gaussian
+ *  elimination. */
+const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  SimplexAlgorithmScenario,
+  SimplexAlgorithmValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New LP',
+  legendItems: () => [],
+  presetOptions: SIMPLEX_ALGORITHM_PRESETS,
+  defaultPresetId: DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
+  tasks: SIMPLEX_ALGORITHM_TASKS,
+  defaultTaskId: DEFAULT_SIMPLEX_ALGORITHM_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createSimplexAlgorithmScenario(size, presetId, customValues),
+  generator: simplexAlgorithmGenerator,
+};
+
+/** Reservoir sampling — chalkboard-only. Per-item iteration table:
+ *  fill phase fills the first k slots unconditionally, then each
+ *  later item gets a coin flip against `k/(i+1)` driving an
+ *  accept/reject decision. Deterministic LCG seeded from the task
+ *  so the narrative is replayable. */
+const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  ReservoirSamplingScenario,
+  ReservoirSamplingValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New stream',
+  legendItems: () => [],
+  presetOptions: RESERVOIR_SAMPLING_PRESETS,
+  defaultPresetId: DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
+  tasks: RESERVOIR_SAMPLING_TASKS,
+  defaultTaskId: DEFAULT_RESERVOIR_SAMPLING_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createReservoirSamplingScenario(size, presetId, customValues),
+  generator: reservoirSamplingGenerator,
+};
+
+/** FFT / NTT — chalkboard-only. Iterative radix-2 Cooley-Tukey: bit-
+ *  reversal permutation, then `log₂ N` butterfly stages. Each
+ *  butterfly is its own scratchpad line showing `(u, t)` and the
+ *  resulting `(u + t, u - t)` pair, with the twiddle factor noted in
+ *  the annotation. Only power-of-two input lengths are accepted. */
+const FFT_NTT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<FftNttScenario, FftNttValues> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New signal',
+  legendItems: () => [],
+  presetOptions: FFT_NTT_PRESETS,
+  defaultPresetId: DEFAULT_FFT_NTT_PRESET_ID,
+  tasks: FFT_NTT_TASKS,
+  defaultTaskId: DEFAULT_FFT_NTT_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createFftNttScenario(size, presetId, customValues),
+  generator: fftNttGenerator,
+};
+
+const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  TwoPointersScenario,
+  TwoPointersValues
+> = {
+  kind: 'pointer-lab',
+  codeLines: TWO_POINTERS_CODE,
+  codeRegions: TWO_POINTERS_CODE_REGIONS,
+  codeHighlightMap: TWO_POINTERS_CODE_HIGHLIGHT_MAP,
+  codeVariants: TWO_POINTERS_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New sorted array',
+  legendItems: () => [],
+  presetOptions: TWO_POINTERS_PRESETS,
+  defaultPresetId: DEFAULT_TWO_POINTERS_PRESET_ID,
+  tasks: TWO_POINTERS_TASKS,
+  defaultTaskId: DEFAULT_TWO_POINTERS_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createTwoPointersScenario(size, presetId, customValues),
+  generator: twoPointersGenerator,
+};
+
+const SLIDING_WINDOW_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  SlidingWindowScenario,
+  SlidingWindowValues
+> = {
+  kind: 'pointer-lab',
+  codeLines: SLIDING_WINDOW_CODE,
+  codeRegions: SLIDING_WINDOW_CODE_REGIONS,
+  codeHighlightMap: SLIDING_WINDOW_CODE_HIGHLIGHT_MAP,
+  codeVariants: SLIDING_WINDOW_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New stream',
+  legendItems: () => [],
+  presetOptions: SLIDING_WINDOW_PRESETS,
+  defaultPresetId: DEFAULT_SLIDING_WINDOW_PRESET_ID,
+  tasks: SLIDING_WINDOW_TASKS,
+  defaultTaskId: DEFAULT_SLIDING_WINDOW_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createSlidingWindowScenario(size, presetId, customValues),
+  generator: slidingWindowGenerator,
+};
+
+const PALINDROME_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  PalindromeCheckScenario,
+  PalindromeValues
+> = {
+  kind: 'pointer-lab',
+  codeLines: PALINDROME_CODE,
+  codeRegions: PALINDROME_CODE_REGIONS,
+  codeHighlightMap: PALINDROME_CODE_HIGHLIGHT_MAP,
+  codeVariants: PALINDROME_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'characters',
+  randomizeLabel: 'New word',
+  legendItems: () => [],
+  presetOptions: PALINDROME_PRESETS,
+  defaultPresetId: DEFAULT_PALINDROME_PRESET_ID,
+  tasks: PALINDROME_TASKS,
+  defaultTaskId: DEFAULT_PALINDROME_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createPalindromeScenario(size, presetId, customValues),
+  generator: palindromeCheckGenerator,
+};
+
+const REVERSE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  ReverseScenario,
+  ReverseValues
+> = {
+  kind: 'pointer-lab',
+  codeLines: REVERSE_CODE,
+  codeRegions: REVERSE_CODE_REGIONS,
+  codeHighlightMap: REVERSE_CODE_HIGHLIGHT_MAP,
+  codeVariants: REVERSE_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New sequence',
+  legendItems: () => [],
+  presetOptions: REVERSE_PRESETS,
+  defaultPresetId: DEFAULT_REVERSE_PRESET_ID,
+  tasks: REVERSE_TASKS,
+  defaultTaskId: DEFAULT_REVERSE_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createReverseScenario(size, presetId, customValues),
+  generator: reverseStringArrayGenerator,
+};
+
+const KADANE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
+  KadaneScenario,
+  KadaneValues
+> = {
+  kind: 'pointer-lab',
+  codeLines: KADANE_CODE,
+  codeRegions: KADANE_CODE_REGIONS,
+  codeHighlightMap: KADANE_CODE_HIGHLIGHT_MAP,
+  codeVariants: KADANE_CODE_VARIANTS,
+  variantOptions: POINTER_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'pointer-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'elements',
+  randomizeLabel: 'New sequence',
+  legendItems: () => [],
+  presetOptions: KADANE_PRESETS,
+  defaultPresetId: DEFAULT_KADANE_PRESET_ID,
+  tasks: KADANE_TASKS,
+  defaultTaskId: DEFAULT_KADANE_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createKadaneScenario(size, presetId, customValues),
+  generator: kadaneGenerator,
+};
+
+const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: SieveGridAlgorithmViewConfig<
+  SieveEratosthenesScenario,
+  EratosthenesValues
+> = {
+  kind: 'sieve-grid',
+  codeLines: SIEVE_OF_ERATOSTHENES_CODE,
+  codeRegions: SIEVE_OF_ERATOSTHENES_CODE_REGIONS,
+  codeHighlightMap: SIEVE_OF_ERATOSTHENES_CODE_HIGHLIGHT_MAP,
+  codeVariants: SIEVE_OF_ERATOSTHENES_CODE_VARIANTS,
+  variantOptions: SIEVE_GRID_VARIANT_OPTIONS,
+  defaultVariant: 'sieve-grid',
+  /* `upper` now lives on the task — the size select becomes redundant,
+   *  so we collapse to a single option which the toolbar auto-hides. */
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'integers',
+  randomizeLabel: 'New range',
+  legendItems: () => [],
+  presetOptions: ERATOSTHENES_PRESETS,
+  defaultPresetId: DEFAULT_ERATOSTHENES_PRESET_ID,
+  tasks: ERATOSTHENES_TASKS,
+  defaultTaskId: DEFAULT_ERATOSTHENES_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createEratosthenesScenario(size, presetId, customValues),
+  generator: sieveOfEratosthenesGenerator,
+};
+
+const RECURSION_CALL_STACK_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-stack-lab',
+  codeLines: RECURSION_CALL_STACK_CODE,
+  codeRegions: RECURSION_CALL_STACK_CODE_REGIONS,
+  codeHighlightMap: RECURSION_CALL_STACK_CODE_HIGHLIGHT_MAP,
+  codeVariants: RECURSION_CALL_STACK_CODE_VARIANTS,
+  variantOptions: CALL_STACK_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-stack-lab',
+  sizeOptions: [3, 4, 5, 6, 7],
+  defaultSize: 5,
+  sizeUnit: 'n',
+  randomizeLabel: 'New depth',
+  legendItems: () => [],
+  presetOptions: RECURSIVE_FIBONACCI_PRESETS,
+  defaultPresetId: DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
+  createScenario: (size, presetId) => createRecursiveFibonacciScenario(size, presetId),
+  generator: recursionCallStackGenerator,
+};
+
+const BACKTRACKING_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-tree-lab',
+  codeLines: BACKTRACKING_CODE,
+  codeRegions: BACKTRACKING_CODE_REGIONS,
+  codeHighlightMap: BACKTRACKING_CODE_HIGHLIGHT_MAP,
+  codeVariants: BACKTRACKING_CODE_VARIANTS,
+  variantOptions: CALL_TREE_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-tree-lab',
+  sizeOptions: [4, 5, 6],
+  defaultSize: 5,
+  sizeUnit: 'board',
+  randomizeLabel: 'New scenario',
+  legendItems: () => [],
+  presetOptions: N_QUEENS_PRESETS,
+  defaultPresetId: DEFAULT_N_QUEENS_PRESET_ID,
+  createScenario: (size, presetId) => createNQueensScenario(size, presetId),
+  generator: backtrackingGenerator,
+};
+
+const MINIMAX_ALPHA_BETA_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-tree-lab',
+  codeLines: MINIMAX_ALPHA_BETA_CODE,
+  codeRegions: MINIMAX_ALPHA_BETA_CODE_REGIONS,
+  codeHighlightMap: MINIMAX_ALPHA_BETA_CODE_HIGHLIGHT_MAP,
+  codeVariants: MINIMAX_ALPHA_BETA_CODE_VARIANTS,
+  variantOptions: CALL_TREE_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-tree-lab',
+  sizeOptions: [8, 9, 16],
+  defaultSize: 9,
+  sizeUnit: 'leaves',
+  randomizeLabel: 'New game tree',
+  legendItems: () => [],
+  presetOptions: MINIMAX_PRESETS,
+  defaultPresetId: DEFAULT_MINIMAX_PRESET_ID,
+  createScenario: (size, presetId) => createMinimaxScenario(size, presetId),
+  generator: minimaxAlphaBetaGenerator,
+};
+
+const MCTS_VIEW_CONFIG: AlgorithmViewConfig = {
+  kind: 'call-tree-lab',
+  codeLines: MCTS_CODE,
+  codeRegions: MCTS_CODE_REGIONS,
+  codeHighlightMap: MCTS_CODE_HIGHLIGHT_MAP,
+  codeVariants: MCTS_CODE_VARIANTS,
+  variantOptions: CALL_TREE_LAB_VARIANT_OPTIONS,
+  defaultVariant: 'call-tree-lab',
+  sizeOptions: [6, 10, 12],
+  defaultSize: 10,
+  sizeUnit: 'iterations',
+  randomizeLabel: 'New playout',
+  legendItems: () => [],
+  presetOptions: MCTS_PRESETS,
+  defaultPresetId: DEFAULT_MCTS_PRESET_ID,
+  createScenario: (size, presetId) => createMcTsScenario(size, presetId),
+  generator: mctsGenerator,
+};
+
+const TREE_TRAVERSALS_VIEW_CONFIG: TreeAlgorithmViewConfig<
+  TreeTraversalScenario,
+  TreeTraversalValues
+> = {
   kind: 'tree',
   codeLines: TREE_TRAVERSALS_CODE,
   codeRegions: TREE_TRAVERSALS_CODE_REGIONS,
@@ -2038,6 +2946,8 @@ const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
   codeVariants: TREE_TRAVERSALS_CODE_VARIANTS,
   variantOptions: TREE_TRAVERSALS_VARIANT_OPTIONS,
   defaultVariant: 'tree',
+  /* Size (tree depth) stays as an independent scale knob in the
+   *  toolbar — tasks only name the traversal order + tree shape. */
   sizeOptions: [7, 15, 31],
   defaultSize: 15,
   sizeUnit: 'nodes',
@@ -2045,7 +2955,10 @@ const TREE_TRAVERSALS_VIEW_CONFIG: AlgorithmViewConfig = {
   legendItems: () => [],
   presetOptions: TREE_TRAVERSALS_PRESETS,
   defaultPresetId: DEFAULT_TREE_TRAVERSALS_PRESET_ID,
-  createScenario: (size, presetId) => createTreeTraversalScenario(size, presetId),
+  tasks: TREE_TRAVERSALS_TASKS,
+  defaultTaskId: DEFAULT_TREE_TRAVERSALS_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createTreeTraversalScenario(size, presetId, customValues),
   generator: (scenario: TreeTraversalScenario) => treeTraversalsGenerator(scenario),
 };
 
@@ -2982,6 +3895,27 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'voronoi-diagram') return VORONOI_VIEW_CONFIG;
   if (id === 'delaunay-triangulation') return DELAUNAY_VIEW_CONFIG;
   if (id === 'tree-traversals') return TREE_TRAVERSALS_VIEW_CONFIG;
+  if (id === 'fibonacci-iterative') return FIBONACCI_ITER_VIEW_CONFIG;
+  if (id === 'factorial') return FACTORIAL_VIEW_CONFIG;
+  if (id === 'euclidean-gcd') return EUCLIDEAN_GCD_VIEW_CONFIG;
+  if (id === 'extended-euclidean') return EXTENDED_EUCLIDEAN_VIEW_CONFIG;
+  if (id === 'miller-rabin') return MILLER_RABIN_VIEW_CONFIG;
+  if (id === 'chinese-remainder-theorem') return CRT_VIEW_CONFIG;
+  if (id === 'pollards-rho') return POLLARDS_RHO_VIEW_CONFIG;
+  if (id === 'gaussian-elimination') return GAUSSIAN_ELIMINATION_VIEW_CONFIG;
+  if (id === 'simplex-algorithm') return SIMPLEX_ALGORITHM_VIEW_CONFIG;
+  if (id === 'reservoir-sampling') return RESERVOIR_SAMPLING_VIEW_CONFIG;
+  if (id === 'fft-ntt') return FFT_NTT_VIEW_CONFIG;
+  if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
+  if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
+  if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;
+  if (id === 'reverse-string-array') return REVERSE_VIEW_CONFIG;
+  if (id === 'kadane') return KADANE_VIEW_CONFIG;
+  if (id === 'sieve-of-eratosthenes') return SIEVE_OF_ERATOSTHENES_VIEW_CONFIG;
+  if (id === 'recursion-call-stack') return RECURSION_CALL_STACK_VIEW_CONFIG;
+  if (id === 'backtracking') return BACKTRACKING_VIEW_CONFIG;
+  if (id === 'minimax-alpha-beta') return MINIMAX_ALPHA_BETA_VIEW_CONFIG;
+  if (id === 'monte-carlo-tree-search') return MCTS_VIEW_CONFIG;
   return BUBBLE_VIEW_CONFIG;
 }
 

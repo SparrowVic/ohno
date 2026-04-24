@@ -8,7 +8,7 @@ import {
   StringRotationRow,
   StringRunGroup,
 } from '../../models/string';
-import { BurrowsWheelerScenario } from '../../utils/string-scenarios/string-scenarios';
+import { BurrowsWheelerScenario } from '../../utils/scenarios/string/string-scenarios';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.burrowsWheelerTransform.modeLabel'),

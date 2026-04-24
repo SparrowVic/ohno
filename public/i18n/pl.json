@@ -265,7 +265,12 @@
         "collapseRegionAriaLabel": "Zwiń region kodu",
         "collapsedRegionSummary": "… {{count}} linii",
         "emptyLabel": "Brak dostępnego kodu.",
-        "expandRegionAriaLabel": "Rozwiń region kodu"
+        "expandRegionAriaLabel": "Rozwiń region kodu",
+        "snippetMissing": {
+          "eyebrow": "Snippet w drodze",
+          "title": "Dla tego zadania nie ma jeszcze przeglądu kodu.",
+          "body": "Przejdź do zakładki Trace, żeby śledzić derywację krok po kroku. Kod pojawi się tutaj, gdy zostanie napisany."
+        }
       },
       "detail": {
         "backLabel": "Przeglądaj",
@@ -344,6 +349,171 @@
         }
       },
       "runtime": {
+        "callStackLab": {
+          "recursiveFibonacci": {
+            "decisions": {
+              "base": "n ≤ 1 — zwracamy bezpośrednio.",
+              "bothDone": "Oba wywołania wróciły — łączymy.",
+              "done": "Wywołanie korzenia zakończone.",
+              "leftDone": "Lewe podwywołanie wróciło.",
+              "pop": "Ściągamy ramkę i propagujemy wynik w górę.",
+              "push": "Wrzucamy świeżą ramkę na stos.",
+              "rightDone": "Prawe podwywołanie wróciło."
+            },
+            "descriptions": {
+              "callLeft": "[[math]]fib({{n}})[[/math]] odpala lewe wywołanie [[math]]fib({{k}})[[/math]].",
+              "callRight": "[[math]]fib({{n}})[[/math]] odpala prawe wywołanie [[math]]fib({{k}})[[/math]].",
+              "combine": "[[math]]fib({{n}}) = {{left}} + {{right}} = {{value}}[[/math]].",
+              "complete": "[[math]]fib({{n}}) = {{value}}[[/math]] i koniec.",
+              "enter": "Wchodzimy do [[math]]fib({{n}})[[/math]].",
+              "gotLeft": "[[math]]fib({{n}})[[/math]] otrzymało [[math]]left = {{value}}[[/math]].",
+              "gotRight": "[[math]]fib({{n}})[[/math]] otrzymało [[math]]right = {{value}}[[/math]].",
+              "return": "Zwracamy [[math]]{{value}}[[/math]] z [[math]]fib({{n}})[[/math]].",
+              "returnBase": "Przypadek bazowy [[math]]fib({{n}}) = {{value}}[[/math]]."
+            },
+            "modeLabel": "Stos wywołań rekurencji",
+            "phases": {
+              "base": "Przypadek bazowy",
+              "combine": "Łączenie",
+              "complete": "Zakończone",
+              "descendLeft": "Schodzimy w lewo",
+              "descendRight": "Schodzimy w prawo",
+              "enter": "Wejście",
+              "return": "Powrót"
+            },
+            "resultFormat": "fib({{n}}) = {{value}}",
+            "stats": {
+              "calls": "Wywołania",
+              "depth": "Głębokość",
+              "maxDepth": "Maks. głębokość"
+            }
+          }
+        },
+        "callTreeLab": {
+          "backtracking": {
+            "boardFooter": "[[math]]{{placed}} / {{n}}[[/math]] hetmanów na planszy",
+            "boardTitle": "Plansza N-hetmanów",
+            "decisions": {
+              "cellAttacked": "Pole atakowane — pomijamy.",
+              "cellSafe": "Pole bezpieczne — schodzimy niżej.",
+              "descend": "Rekurencja w kolejny wiersz.",
+              "exhausted": "Żadna kolumna nie działa — cofamy dalej.",
+              "placed": "Hetman postawiony — rekurencja w kolejny wiersz.",
+              "solved": "Każdy wiersz ma hetmana — koniec.",
+              "tryCol": "Próba kolejnej kolumny w tym wierszu.",
+              "unwind": "Cofamy i próbujemy kolejnej kolumny."
+            },
+            "descriptions": {
+              "backtrack": "Wiersz [[math]]{{row}}[[/math]], kolumna [[math]]{{col}}[[/math]] nie prowadzi do celu — cofamy i próbujemy kolejną.",
+              "complete": "Przeszukiwanie zakończone.",
+              "conflict": "W wierszu [[math]]{{row}}[[/math]], kolumnie [[math]]{{col}}[[/math]] atak innego hetmana.",
+              "noSolution": "Wyczerpaliśmy kolumny — brak poprawnego rozstawienia.",
+              "place": "Wiersz [[math]]{{row}}[[/math]], kolumna [[math]]{{col}}[[/math]] bezpieczne — stawiamy hetmana.",
+              "probe": "Próbujemy kolumny [[math]]{{col}}[[/math]] w wierszu [[math]]{{row}}[[/math]].",
+              "setup": "Rozmieszczamy hetmanów na planszy [[math]]{{n}} × {{n}}[[/math]] — jeden na wiersz.",
+              "solution": "Wszystkich [[math]]{{n}}[[/math]] hetmanów rozstawionych — rozwiązanie!"
+            },
+            "modeLabel": "Backtracking (N-hetmanów)",
+            "phases": {
+              "backtrack": "Cofnięcie",
+              "complete": "Zakończone",
+              "conflict": "Konflikt",
+              "place": "Postawienie",
+              "probe": "Próba",
+              "setup": "Przygotowanie",
+              "solution": "Rozwiązanie"
+            },
+            "resultFailure": "Nie istnieje poprawne rozstawienie.",
+            "resultSuccess": "Rozwiązanie znalezione: kolumny [[math]][{{cols}}][[/math]].",
+            "stats": {
+              "attempts": "Próby",
+              "backtracks": "Cofnięcia",
+              "col": "kol",
+              "placedCount": "Postawione",
+              "row": "wiersz"
+            }
+          },
+          "mcts": {
+            "decisions": {
+              "bubbleUp": "Przepuszczamy wizyty + nagrodę przez wszystkich przodków.",
+              "descend": "Schodzimy zgodnie z UCB1.",
+              "done": "Iteracje skończone — wybieramy najczęściej odwiedzane dziecko korzenia.",
+              "expand": "Tworzymy jedno nowe dziecko dla wybranego rodzica.",
+              "explore": "UCB1 równoważy eksploatację i eksplorację.",
+              "simulate": "Deterministyczny rollout — pobieramy nagrodę liścia."
+            },
+            "descriptions": {
+              "backprop": "Propagacja nagrody {{reward}} w górę przez głębokość {{depth}}.",
+              "complete": "Finalny wybór: ramię #{{arm}} — wizyt {{visits}}, średnia {{mean}}.",
+              "expand": "Ekspansja ramienia #{{arm}} na głębokości {{depth}}.",
+              "selectPick": "Wybór ramienia #{{arm}} — najwyższe [[math]]UCB = {{ucb}}[[/math]].",
+              "selectStart": "Iteracja {{iter}} — start selekcji od korzenia.",
+              "setup": "Uruchamiamy {{iterations}} iteracji MCTS z [[math]]c = {{c}}[[/math]].",
+              "simulate": "Symulacja playout — nagroda = {{reward}}."
+            },
+            "modeLabel": "Monte Carlo Tree Search",
+            "phases": {
+              "backprop": "Backprop",
+              "complete": "Zakończone",
+              "expand": "Ekspansja",
+              "select": "Selekcja",
+              "setup": "Przygotowanie",
+              "simulate": "Symulacja"
+            },
+            "resultFormat": "Najlepsze ramię #{{arm}} — wizyt {{visits}}, średnia {{mean}}",
+            "stats": {
+              "bestArm": "Najlepsze ramię",
+              "explored": "Węzły",
+              "iteration": "Iter",
+              "reward": "μ",
+              "ucb": "UCB",
+              "visits": "N"
+            }
+          },
+          "minimax": {
+            "decisions": {
+              "cutAlpha": "Cięcie α — pozostałe rodzeństwa nie poprawią MIN.",
+              "cutBeta": "Cięcie β — pozostałe rodzeństwa nie poprawią MAX.",
+              "descend": "Schodzimy w kolejne dziecko.",
+              "done": "Korzeń ustalony.",
+              "leafReturn": "Liść — zwracamy wartość statyczną.",
+              "maxUp": "MAX podnosi swój best/α po zwrocie z dziecka.",
+              "minDown": "MIN obniża swój best/β po zwrocie z dziecka.",
+              "settle": "Wszystkie dzieci odwiedzone — zwracamy best."
+            },
+            "descriptions": {
+              "complete": "Wartość korzenia {{value}} — ocenione {{evaluated}}, odcięte {{pruned}}.",
+              "enter": "Wchodzimy w [[math]]{{player}}(d={{depth}}, α={{alpha}}, β={{beta}})[[/math]].",
+              "leaf": "Wartość liścia [[math]]={{value}}[[/math]].",
+              "prune": "[[math]]α({{alpha}}) ≥ β({{beta}})[[/math]] — odcinamy {{skipped}} liści podrzędnego drzewa.",
+              "settle": "{{player}} kończy z wynikiem {{value}}.",
+              "setup": "Przeszukujemy drzewo gry — głębokość {{depth}}, rozgałęzienie {{branching}}.",
+              "updateMax": "MAX zbiera {{value}} → [[math]]best = {{best}}, α = {{alpha}}[[/math]].",
+              "updateMin": "MIN zbiera {{value}} → [[math]]best = {{best}}, β = {{beta}}[[/math]]."
+            },
+            "modeLabel": "Minimax (α/β)",
+            "phases": {
+              "complete": "Zakończone",
+              "descend": "Schodzenie",
+              "evaluate": "Ewaluacja",
+              "prune": "Przycięcie",
+              "settle": "Ustalenie",
+              "setup": "Przygotowanie",
+              "update": "Aktualizacja"
+            },
+            "resultFormat": "Wartość minimax w korzeniu = {{value}}",
+            "stats": {
+              "alpha": "α",
+              "best": "Best",
+              "beta": "β",
+              "evaluated": "Ocenione",
+              "leaf": "liść",
+              "player": "gracz",
+              "pruned": "Odcięte",
+              "value": "wart"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "decisions": {
@@ -741,10 +911,10 @@
               "combineAdjacentCachedTerms": "połącz sąsiednie wartości z cache"
             },
             "descriptions": {
-              "commitTerm": "Zapisz F({{index}}) w tabeli, aby kolejne wyrazy mogły od razu go użyć.",
-              "complete": "Tablicowanie kończy się z gotowym F({{index}}) na końcu paska.",
-              "initialize": "Ustaw F(0) = 0 i F(1) = 1 przed tablicowaniem większych wyrazów.",
-              "inspectParents": "F({{index}}) to suma dwóch poprzednich wyrazów Fibonacciego."
+              "commitTerm": "Zapisz [[math]]F({{index}})[[/math]] w tabeli, aby kolejne wyrazy mogły od razu go użyć.",
+              "complete": "Tablicowanie kończy się z gotowym [[math]]F({{index}})[[/math]] na końcu paska.",
+              "initialize": "Ustaw [[math]]F(0) = 0[[/math]] i [[math]]F(1) = 1[[/math]] przed tablicowaniem większych wyrazów.",
+              "inspectParents": "[[math]]F({{index}})[[/math]] to suma dwóch poprzednich wyrazów Fibonacciego."
             },
             "insights": {
               "baseLabel": "Baza",
@@ -1569,6 +1739,732 @@
             }
           }
         },
+        "numberLab": {
+          "factorial": {
+            "decisions": {
+              "advance": "Następna iteracja i.",
+              "done": "Licznik osiągnął n.",
+              "multiply": "Mnożymy akumulator przez licznik.",
+              "zero": "Przypadek bazowy 0! = 1."
+            },
+            "descriptions": {
+              "advance": "Licznik mija i = {{k}}.",
+              "complete": "[[math]]{{n}}! = {{value}}[[/math]] — koniec.",
+              "multiply": "[[math]]acc ← {{prev}} × {{k}} = {{product}}[[/math]]",
+              "setup": "Liczymy [[math]]{{n}}![[/math]] z narastającym akumulatorem.",
+              "zero": "[[math]]0! = 1[[/math]] z definicji."
+            },
+            "hints": {
+              "counter": "licznik pętli",
+              "product": "bieżący iloczyn"
+            },
+            "modeLabel": "Silnia",
+            "phases": {
+              "advance": "Następne i",
+              "complete": "Zakończone",
+              "multiply": "Mnożenie",
+              "setup": "Przygotowanie"
+            },
+            "resultFormat": "{{n}}! = {{value}}"
+          },
+          "fibonacci": {
+            "decisions": {
+              "advance": "Przesunięcie: prev ← curr, curr ← next.",
+              "baseCase": "Wartości startowe — rekurencja się jeszcze nie odpaliła.",
+              "done": "Osiągnęliśmy szukany indeks.",
+              "sumPrev": "F(n) = F(n−1) + F(n−2) — sumujemy dwie poprzednie."
+            },
+            "descriptions": {
+              "advance": "Przesuwamy okno po [[math]]F({{index}})[[/math]].",
+              "baseF0": "Emitujemy przypadek bazowy [[math]]F(0) = 0[[/math]].",
+              "baseF1": "Emitujemy przypadek bazowy [[math]]F(1) = 1[[/math]].",
+              "complete": "[[math]]F({{n}}) = {{value}}[[/math]] — koniec.",
+              "emit": "Wyznaczamy [[math]]F({{index}}) = F({{index}}−1) + F({{index}}−2) = {{curr}} + {{prev}} = {{next}}[[/math]].",
+              "setup": "Przygotowujemy okno iteracji dla [[math]]F({{n}})[[/math]]."
+            },
+            "hints": {
+              "nextSum": "prev + curr",
+              "rollWindow": "przesuwa się co krok",
+              "terminal": "indeks docelowy"
+            },
+            "modeLabel": "Fibonacci (iteracyjnie)",
+            "phases": {
+              "advance": "Przesunięcie okna",
+              "base": "Przypadek bazowy",
+              "complete": "Zakończone",
+              "emit": "Sumowanie",
+              "setup": "Przygotowanie"
+            },
+            "registers": {
+              "curr": "F(n)",
+              "n": "szukane n",
+              "next": "F(n+1)",
+              "prev": "F(n−1)"
+            },
+            "resultFormat": "F({{n}}) = {{value}}"
+          },
+          "gcd": {
+            "decisions": {
+              "done": "b = 0 — a trzyma nwd.",
+              "remainder": "Wyznaczamy resztę z bieżącej pary.",
+              "swap": "Przesunięcie: a ← b, b ← r."
+            },
+            "descriptions": {
+              "complete": "[[math]]nwd = {{gcd}}[[/math]] gdy [[math]]b = 0[[/math]].",
+              "remainder": "[[math]]r ← {{a}} mod {{b}} = {{r}}[[/math]]",
+              "setup": "Liczymy [[math]]nwd({{a}}, {{b}})[[/math]].",
+              "swap": "Przesuwamy: [[math]]a ← {{a}}, b ← {{b}}[[/math]]."
+            },
+            "hints": {
+              "a": "dzielna",
+              "b": "dzielnik",
+              "r": "reszta"
+            },
+            "modeLabel": "NWD — algorytm Euklidesa",
+            "phases": {
+              "complete": "Zakończone",
+              "remainder": "Reszta",
+              "setup": "Przygotowanie",
+              "swap": "Przesunięcie pary"
+            },
+            "resultFormat": "nwd = {{gcd}}"
+          }
+        },
+        "pointerLab": {
+          "kadane": {
+            "decisions": {
+              "bestUp": "Bieżąca suma bije dotychczasowy rekord.",
+              "done": "Przeszliśmy wszystkie indeksy.",
+              "extendWindow": "Rozszerzamy bieżące okno o nową wartość.",
+              "keepBest": "Bieżąca suma nie bije rekordu — zostawiamy go.",
+              "resetWindow": "Restart — poprzednia suma to balast.",
+              "seed": "Start od pierwszej wartości."
+            },
+            "descriptions": {
+              "bestUpdate": "Nowy rekord [[math]]sum = {{sum}}[[/math]] w przedziale [[math]][{{left}}..{{right}}][[/math]].",
+              "complete": "Najlepsza suma podtablicy [[math]]{{sum}}[[/math]] @ [[math]][{{left}}..{{right}}][[/math]].",
+              "extend": "Dodajemy [[math]]{{value}}[[/math]] → [[math]]current = {{sum}}[[/math]] @ [[math]][{{left}}..{{right}}][[/math]].",
+              "init": "Zasiew: [[math]]current = best = {{value}}[[/math]] na indeksie 0.",
+              "keepBest": "[[math]]{{current}} ≤ {{best}}[[/math]] — trzymamy rekord.",
+              "restart": "Reset na indeksie [[math]]{{index}}[[/math]] — startujemy od [[math]]{{value}}[[/math]]."
+            },
+            "modeLabel": "Algorytm Kadane'a",
+            "phases": {
+              "bestUpdate": "Nowy rekord",
+              "complete": "Zakończone",
+              "extend": "Rozszerzenie",
+              "init": "Start",
+              "restart": "Restart"
+            },
+            "resultFormat": "Największa suma podtablicy = {{sum}} @ [{{left}}..{{right}}]",
+            "stats": {
+              "best": "Rekord",
+              "current": "Bieżąca",
+              "index": "i"
+            }
+          },
+          "palindrome": {
+            "decisions": {
+              "done": "Wskaźniki się zbiegły bez niezgodności.",
+              "match": "Zgodność — ruszamy do środka.",
+              "mismatch": "Pierwsza niezgodność odrzuca palindrom.",
+              "probe": "Porównanie odbitych znaków."
+            },
+            "descriptions": {
+              "confirmed": "Wszystkie pary zgodne — palindrom potwierdzony.",
+              "converge": "Oba wskaźniki przesuwamy do środka.",
+              "match": "[[math]]{{left}} = {{right}}[[/math]] — znaki zgodne.",
+              "mismatch": "[[math]]{{left}} ≠ {{right}}[[/math]] — palindrom odrzucony.",
+              "setup": "Porównujemy końce \"{{word}}\" symetrycznie."
+            },
+            "modeLabel": "Palindrom",
+            "phases": {
+              "compare": "Porównanie",
+              "confirmed": "Palindrom",
+              "converge": "Zbieżność",
+              "rejected": "Niezgodność",
+              "setup": "Przygotowanie"
+            },
+            "resultNot": "\"{{word}}\" nie jest palindromem.",
+            "resultOk": "\"{{word}}\" czyta się tak samo z obu stron.",
+            "stats": {
+              "verdictLabel": "Werdykt",
+              "verdictNot": "nie palindrom",
+              "verdictPalindrome": "palindrom",
+              "verdictPending": "sprawdzam…",
+              "wordLabel": "Słowo"
+            }
+          },
+          "reverse": {
+            "decisions": {
+              "converge": "Oba wskaźniki do środka.",
+              "done": "Wskaźniki się minęły — odwrócenie zakończone.",
+              "probe": "Odbicie końców i zamiana.",
+              "swap": "Zamiana lewy ↔ prawy w miejscu."
+            },
+            "descriptions": {
+              "advance": "Zbieżność — końce ustawione na [[math]]{{left}} / {{right}}[[/math]].",
+              "complete": "Odwrócona sekwencja: [[math]]{{reversed}}[[/math]].",
+              "setup": "Odwracamy \"{{input}}\" w miejscu odbitymi wskaźnikami.",
+              "swap": "Zamiana końców: [[math]]{{left}} ↔ {{right}}[[/math]]."
+            },
+            "modeLabel": "Odwrócenie",
+            "phases": {
+              "advance": "Zbieżność",
+              "complete": "Zakończone",
+              "setup": "Przygotowanie",
+              "swap": "Zamiana"
+            },
+            "resultFormat": "Odwrócone: {{reversed}}",
+            "stats": {
+              "originalLabel": "Oryginał",
+              "swapsLabel": "Zamiany"
+            }
+          },
+          "slidingWindow": {
+            "decisions": {
+              "bestUpdate": "Suma okna bije aktualny rekord.",
+              "done": "Przeszliśmy wszystkie okna.",
+              "fillFirst": "Zapełniamy pierwsze okno.",
+              "keepBest": "Suma okna nie bije rekordu — trzymamy.",
+              "rollForward": "Przesuwamy okno o jedno pole w prawo."
+            },
+            "descriptions": {
+              "bestUpdate": "Najlepsza [[math]]sum = {{sum}}[[/math]] w [[math]][{{left}}..{{right}}][[/math]].",
+              "complete": "Najlepsze okno [[math]]{{best}}[[/math]] w [[math]][{{left}}..{{right}}][[/math]].",
+              "keepBest": "[[math]]{{sum}} ≤ {{best}}[[/math]] — trzymamy poprzednią.",
+              "slide": "Przesunięcie: wypada [[math]]{{out}}[[/math]], wchodzi [[math]]{{in}}[[/math]] → [[math]]sum = {{sum}}[[/math]].",
+              "warmup": "Wypełniamy pierwsze okno szerokości [[math]]{{k}}[[/math]], [[math]]sum = {{sum}}[[/math]]."
+            },
+            "modeLabel": "Przesuwne okno",
+            "phases": {
+              "bestUpdate": "Nowy rekord",
+              "complete": "Zakończone",
+              "slide": "Przesunięcie",
+              "warmup": "Rozbieg"
+            },
+            "resultFormat": "Najlepsza suma {{best}} @ [{{left}}..{{right}}]",
+            "stats": {
+              "best": "Najlepsza",
+              "windowSize": "Szerokość",
+              "windowSum": "Suma okna"
+            }
+          },
+          "twoPointers": {
+            "decisions": {
+              "match": "Para dokładnie trafia w cel.",
+              "noPair": "Nie ma pary w posortowanej tablicy.",
+              "probe": "Porównujemy bieżącą parę.",
+              "tooBig": "Suma nad celem — maleje od prawej.",
+              "tooSmall": "Suma pod celem — rosnąca lewa strona."
+            },
+            "descriptions": {
+              "compare": "[[math]]{{left}} + {{right}} = {{sum}}[[/math]] względem celu [[math]]{{target}}[[/math]].",
+              "hit": "Para [[math]]({{left}}, {{right}})[[/math]] sumuje się do [[math]]{{target}}[[/math]].",
+              "miss": "Wskaźniki minęły się bez trafienia [[math]]{{target}}[[/math]].",
+              "setup": "Ustawiamy wskaźniki na cel [[math]]{{target}}[[/math]] w {{size}} wartościach.",
+              "shrinkLeft": "Suma zbyt mała — przesuwamy lewy wskaźnik.",
+              "shrinkRight": "Suma zbyt duża — cofamy prawy wskaźnik."
+            },
+            "modeLabel": "Dwa wskaźniki",
+            "phases": {
+              "compare": "Porównanie",
+              "hit": "Dopasowanie",
+              "miss": "Brak pary",
+              "setup": "Przygotowanie",
+              "shrinkLeft": "Lewa +1",
+              "shrinkRight": "Prawa −1"
+            },
+            "resultHit": "Znaleziono ({{left}}, {{right}}) = {{target}}",
+            "resultMiss": "Żadna para nie sumuje się do celu.",
+            "stats": {
+              "sumLabel": "Bieżąca suma",
+              "targetLabel": "Cel"
+            }
+          }
+        },
+        "scratchpadLab": {
+          "crt": {
+            "modeLabel": "Chińskie twierdzenie o resztach (tablica)",
+            "goal": "Znajdź [[math]]x \\pmod{ {{M}} }[[/math]] spełniające układ {{count}} kongruencji.",
+            "rule": "Dla parami względnie pierwszych modułów istnieje dokładnie jedno [[math]]x \\pmod{M}[[/math]], gdzie [[math]]M = \\prod m_i[[/math]].",
+            "invariant": "Moduły muszą być parami względnie pierwsze — to warunek jednoznaczności rozwiązania.",
+            "systemLine": "[[math]]x \\equiv {{r}} \\pmod{ {{m}} }[[/math]]  (#{{index}})",
+            "setup": {
+              "productLine": "[[math]]M = {{product}} = {{M}}[[/math]]",
+              "productInstruction": "Policz iloczyn wszystkich modułów",
+              "productAnnotation": "[[math]]M = {{M}}[[/math]]"
+            },
+            "term": {
+              "header": "Człon {{index}}: [[math]]x \\equiv {{r}} \\pmod{ {{m}} }[[/math]]",
+              "bigM": "[[math]]M_{{index}} = M / {{m}} = {{M}} / {{m}} = {{Mi}}[[/math]]",
+              "bigMInstruction": "Podziel [[math]]{{M}}[[/math]] przez [[math]]{{m}}[[/math]]",
+              "reducedM": "[[math]]M_{{index}} \\bmod {{m}} = {{Mi}} \\bmod {{m}} = {{r}}[[/math]]",
+              "reducedMInstruction": "Policz [[math]]{{Mi}} \\bmod {{m}}[[/math]]",
+              "inverse": "[[math]]y_{{index}} = ({{Mi_mod}})^{-1} \\pmod{ {{m}} } = {{y}}[[/math]]",
+              "inverseInstruction": "Znajdź odwrotność [[math]]{{Mi_mod}} \\pmod{ {{m}} }[[/math]] (rozszerzony Euklides)",
+              "partial": "[[math]]T_{{index}} = {{r}} \\cdot {{Mi}} \\cdot {{y}} = {{partial}}[[/math]]",
+              "partialInstruction": "Policz [[math]]{{r}} \\cdot {{Mi}} \\cdot {{y}}[[/math]]"
+            },
+            "sum": {
+              "line": "[[math]]\\sum T_i = {{terms}} = {{sum}}[[/math]]",
+              "instruction": "Zsumuj wszystkie człony",
+              "reduce": "[[math]]x = {{sum}} \\bmod {{M}} = {{x}}[[/math]]",
+              "reduceInstruction": "Policz [[math]]{{sum}} \\bmod {{M}}[[/math]]"
+            },
+            "result": {
+              "line": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]",
+              "signoff": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]"
+            },
+            "phases": {
+              "setup": "Iloczyn modułów",
+              "terms": "Człony",
+              "combine": "Sumowanie",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "product": "Liczymy iloczyn modułów [[math]]M[[/math]].",
+              "buildingTerm": "Budujemy człon [[math]]r_i \\cdot M_i \\cdot y_i[[/math]].",
+              "summing": "Sumujemy człony cząstkowe.",
+              "reducing": "Redukujemy sumę modulo [[math]]M[[/math]].",
+              "done": "Rozwiązanie jednoznaczne ustalone."
+            },
+            "captions": {
+              "system": "Układ kongruencji — stała referencja poniżej.",
+              "setup": "Policzmy [[math]]M = \\prod m_i[[/math]].",
+              "termStart": "Budujemy człon cząstkowy.",
+              "sum": "Sumujemy wszystkie człony.",
+              "reduce": "Redukujemy wynik modulo [[math]]M[[/math]].",
+              "result": "Finalne [[math]]x \\pmod{M}[[/math]]."
+            }
+          },
+          "extendedEuclidean": {
+            "modeLabel": "Rozszerzony algorytm Euklidesa (tablica)",
+            "goal": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że [[math]]s \\cdot {{a}} + t \\cdot {{b}} = \\gcd({{a}}, {{b}})[[/math]].",
+            "rule": "Puść łańcuch dzielenia Euklidesa do przodu aż [[math]]r = 0[[/math]], potem podstawiaj wstecznie reszty, aby zbudować tożsamość Bézouta.",
+            "invariant": "Każda linia forward [[math]]a = q \\cdot b + r[[/math]] zostaje dostępna do dalszych podstawień.",
+            "forwardHeader": "Przebieg w przód",
+            "forwardEquation": "[[math]]{{a}} = {{q}} \\cdot {{b}} + {{r}}[[/math]]",
+            "forwardAnnotation": "[[math]]{{a}} \\bmod {{b}} = {{r}}[[/math]]",
+            "forwardInstruction": "Rozpisz [[math]]{{a}} = q \\cdot {{b}} + r[[/math]]",
+            "forwardStopDecision": "Reszta spadła do [[math]]0[[/math]] — koniec",
+            "gcdFound": "[[math]]\\gcd = {{gcd}}[[/math]]",
+            "backHeader": "Podstawianie wsteczne",
+            "backSeed": "[[math]]{{expression}}[[/math]]",
+            "backSeedInstruction": "Odczytaj z [[math]]{{a}} = q \\cdot {{b}} + r[[/math]]",
+            "backSubLine": "[[math]]{{expression}}[[/math]]",
+            "backSubInstruction": "Użyj [[math]]{{a}} = {{q}} \\cdot {{b}} + r[[/math]]",
+            "backSubAnnotation": "[[math]]{{coefA}} \\cdot {{a}} + {{coefB}} \\cdot {{b}}[[/math]]",
+            "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
+            "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
+            "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "section": {
+              "forward": "Obliczenia w przód",
+              "gcd": "NWD",
+              "check": "Sprawdzenie",
+              "existenceCheck": "Sprawdzenie istnienia rozwiązań",
+              "back": "Cofanie",
+              "result": "Wynik",
+              "noResult": "Brak rozwiązań",
+              "particular": "Rozwiązanie szczególne",
+              "general": "Rozwiązanie ogólne",
+              "minimization": "Minimalizacja",
+              "interpretation": "Interpretacja",
+              "conclusion": "Wniosek"
+            },
+            "resultLabels": {
+              "check": "Sprawdzenie:",
+              "interpretation": "Interpretacja:",
+              "forK": "Dla [[math]]k = {{k}}[[/math]]:",
+              "neighbors": "Sąsiednie wartości są większe bezwzględnie:",
+              "pick": "Wybieramy:"
+            },
+            "gcdLine": "[[math]]NWD = {{gcd}}[[/math]]",
+            "modularRemainderCheck": "[[math]]{{value}} \\bmod {{divisor}} = {{remainder}}[[/math]]",
+            "rsa": {
+              "goal": "Wyznacz klucz prywatny [[math]]d[[/math]]: dla [[math]]n = {{n}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]] i [[math]]e = {{e}}[[/math]] znajdź [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]].",
+              "rule": "Uruchom rozszerzonego Euklidesa dla [[math]]\\varphi(n)[[/math]] i [[math]]e[[/math]]. Jeśli [[math]]\\gcd({{phi}}, {{e}}) = 1[[/math]], współczynnik przy [[math]]e[[/math]] jest odwrotnością modulo [[math]]\\varphi(n)[[/math]].",
+              "invariant": "Szukamy współczynnika przy [[math]]e[[/math]], nie przy module. Dopiero na końcu redukujemy go do przedziału modulo [[math]]\\varphi(n)[[/math]].",
+              "inverseExists": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}}[[/math]], więc odwrotność modulo [[math]]\\varphi(n)[[/math]] istnieje.",
+              "noInverse": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}} \\neq 1[[/math]], więc [[math]]e[[/math]] nie ma odwrotności modulo [[math]]\\varphi(n)[[/math]].",
+              "inverseExistsShort": "Odwrotność istnieje.",
+              "noInverseShort": "Odwrotność nie istnieje.",
+              "inverseLine": "Współczynnik przy [[math]]e = {{e}}[[/math]] wynosi [[math]]{{coefficient}}[[/math]], więc:",
+              "privateKeyLine": "[[math]]d = {{d}}[[/math]]",
+              "productCheck": "[[math]]{{e}} \\cdot {{d}} = {{product}}[[/math]]",
+              "moduloCheck": "[[math]]{{product}} \\bmod {{phi}} = {{remainder}}[[/math]]",
+              "pairLine": "[[math]](e, d) = ({{e}}, {{d}})[[/math]]",
+              "identityLine": "[[math]]m^{e \\cdot d} = m \\pmod{ {{n}} }[[/math]]",
+              "interpretation": "W RSA para [[math]](e, d) = ({{e}}, {{d}})[[/math]] spełnia [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
+              "signoff": "[[math]]d = {{d}}[[/math]] dla [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]]."
+            },
+            "diophantine": {
+              "goal": "Rozwiąż równanie diofantyczne [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Najpierw znajdź Bézouta dla [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]], potem przeskaluj wynik.",
+              "rule": "Rozszerzony Euklides daje [[math]]s \\cdot a + t \\cdot b = \\gcd(a,b)[[/math]]. Równanie [[math]]a x + b y = {{target}}[[/math]] ma rozwiązania tylko wtedy, gdy [[math]]\\gcd(a,b)[[/math]] dzieli prawą stronę.",
+              "invariant": "Po znalezieniu jednej pary [[math]](x_0,y_0)[[/math]] wszystkie rozwiązania powstają przez dodanie [[math]]b/g[[/math]] do [[math]]x[[/math]] i odjęcie [[math]]a/g[[/math]] od [[math]]y[[/math]].",
+              "check": "[[math]]{{target}} = {{scale}} \\cdot NWD[[/math]]",
+              "exists": "Ponieważ [[math]]{{gcd}}[[/math]] dzieli prawą stronę równania, rozwiązania istnieją.",
+              "backTarget": "To już jest równanie docelowe, bo prawa strona wynosi [[math]]{{target}}[[/math]].",
+              "generalRule": "Dla równania [[math]]ax + by = c[[/math]], przy [[math]]g = \\gcd(a,b)[[/math]]:",
+              "here": "Tutaj:",
+              "noSolution": "[[math]]{{gcd}} \\nmid {{target}}[[/math]] (reszta [[math]]{{remainder}}[[/math]]), więc równanie diofantyczne nie ma rozwiązań.",
+              "scale": "Mnożymy tożsamość Bézouta przez [[math]]{{scale}}[[/math]]: [[math]]x_0 = {{scale}} \\cdot {{s}}, \\quad y_0 = {{scale}} \\cdot {{t}}[[/math]].",
+              "particular": "[[math]]x_0 = {{x}}, \\; y_0 = {{y}}[[/math]], więc [[math]]{{a}} \\cdot {{x}} + {{b}} \\cdot {{y}} = {{target}}[[/math]].",
+              "general": "[[math]]x = {{xFormula}}, \\quad y = {{yFormula}}, \\quad k \\in \\mathbb{Z}[[/math]].",
+              "stepSizes": "[[math]]g = {{gcd}}, \\quad b/g = {{stepX}}, \\quad a/g = {{stepY}}[[/math]]",
+              "candidate": "[[math]]k = {{k}} \\Rightarrow x = {{x}}, \\; y = {{y}}[[/math]]",
+              "minimal": "[[math]]k = {{k}}[[/math]] daje najmniejsze wartości bezwzględne w tej rodzinie: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
+              "signoff": "Rozwiązanie szczególne: [[math]]x = {{x}}, y = {{y}}[[/math]]. Ogólnie: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]]."
+            },
+            "modularEquation": {
+              "goal": "Rozwiąż równanie modularne [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]. Rozszerzony Euklides najpierw sprawdza, czy prawa strona jest podzielna przez [[math]]\\gcd({{coefficient}}, {{modulus}})[[/math]].",
+              "rule": "Dla [[math]]a x \\equiv c \\pmod m[[/math]] policz [[math]]g = \\gcd(a,m)[[/math]]. Jeśli [[math]]g \\nmid c[[/math]], zatrzymaj się. Jeśli [[math]]g \\mid c[[/math]], podziel równanie przez [[math]]g[[/math]] i użyj odwrotności modulo [[math]]m/g[[/math]].",
+              "invariant": "Back-substytucja jest potrzebna dopiero po teście podzielności. Gdy test odpada, cały problem kończy się na samym [[math]]\\gcd[[/math]].",
+              "condition": "Kongruencja [[math]]ax = c \\; (\\mathrm{mod}\\; m)[[/math]] ma rozwiązanie tylko wtedy, gdy:",
+              "check": "[[math]]{{rhs}} = {{scale}} \\cdot {{gcd}}[[/math]], więc rozwiązania istnieją i przechodzimy do odwrotności po redukcji.",
+              "therefore": "Czyli:",
+              "noSolution": "[[math]]{{gcd}} \\nmid {{rhs}}[[/math]] (reszta [[math]]{{remainder}}[[/math]]), więc kongruencja nie ma rozwiązań.",
+              "reduce": "Dzielimy przez [[math]]g[[/math]]: [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} } \\Rightarrow {{reducedCoefficient}}x \\equiv {{reducedRhs}} \\pmod{ {{reducedModulus}} }[[/math]].",
+              "solution": "Odwrotność [[math]]{{reducedCoefficient}}[[/math]] modulo [[math]]{{reducedModulus}}[[/math]] to [[math]]{{inverse}}[[/math]], więc [[math]]x \\equiv {{reducedRhs}} \\cdot {{inverse}} = {{x}} \\pmod{ {{reducedModulus}} }[[/math]].",
+              "allSolutions": "W modulo [[math]]{{modulus}}[[/math]] dostajemy [[math]]x \\equiv {{x}} \\pmod{ {{reducedModulus}} }[[/math]], czyli [[math]]x \\in \\{ {{solutions}} \\}[[/math]].",
+              "signoff": "Rozwiązania [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]]."
+            },
+            "captions": {
+              "forwardStart": "Rozpoczynamy łańcuch dzielenia w przód.",
+              "forwardContinue": "Przesuwamy parę i dzielimy dalej.",
+              "forwardStop": "Reszta wynosi zero — łańcuch kończy się.",
+              "gcdFound": "Ostatnia niezerowa reszta to [[math]]\\gcd[[/math]].",
+              "backSeed": "Przepisz ostatnie nietrywialne równanie jako [[math]]r = a - q \\cdot b[[/math]].",
+              "backSubstitute": "Podstaw wcześniejsze równanie, aby wyeliminować jeden z termów.",
+              "verify": "Sprawdź, że [[math]]s \\cdot a + t \\cdot b = \\gcd[[/math]].",
+              "result": "Współczynniki Bézouta ustalone."
+            },
+            "phases": {
+              "setup": "Przygotowanie",
+              "forward": "Przebieg w przód",
+              "gcd": "Odczyt gcd",
+              "back": "Podstawianie wstecz",
+              "verify": "Weryfikacja",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "preparing": "Zapisujemy cel i regułę algorytmu.",
+              "forwardDiv": "Dzielimy bieżącą parę, aby znaleźć resztę.",
+              "forwardStop": "Reszta wynosi [[math]]0[[/math]] — zatrzymujemy przebieg w przód.",
+              "readingGcd": "Ostatnia niezerowa reszta to [[math]]\\gcd[[/math]].",
+              "unwinding": "Podstawiamy wcześniejsze równanie forward do bieżącego wyrażenia.",
+              "verifying": "Podstawiamy [[math]]s, t[[/math]] z powrotem, aby potwierdzić tożsamość Bézouta.",
+              "done": "Współczynniki Bézouta ustalone.",
+              "checking": "Sprawdzamy warunek istnienia rozwiązania dla tego typu zadania.",
+              "interpreting": "Interpretujemy współczynniki Bézouta w treści zadania.",
+              "noSolution": "Warunek istnienia nie przechodzi — zapisujemy wniosek."
+            }
+          },
+          "fftNtt": {
+            "modeLabel": "FFT / NTT (tablica)",
+            "goal": "Policz {{N}}-punktową dyskretną transformatę Fouriera: [[math]]X_k = \\sum_{n=0}^{N-1} x_n \\cdot \\omega_N^{k n}[[/math]], gdzie [[math]]\\omega_N = e^{-2\\pi i / N}[[/math]].",
+            "rule": "Radix-2 Cooley-Tukey: permutacja bit-reverse, potem [[math]]\\log_2 N[[/math]] etapów. W każdym etapie łączysz pary poprzez butterfly [[math]](u, t) \\to (u + t, u - t)[[/math]] z twiddle [[math]]t = \\omega_m^j \\cdot x_{\\text{lower}}[[/math]].",
+            "invariant": "Po etapie [[math]]s[[/math]] bloki długości [[math]]2^s[[/math]] są już poprawnymi DFT tych podbloków. Po ostatnim etapie cała tablica to [[math]]X[/math]] o długości [[math]]N[/math]].",
+            "setup": {
+              "input": "Wejście: [[math]]x = [{{input}}][[/math]], [[math]]N = {{N}}[[/math]].",
+              "bitReverse": "Po permutacji bit-reverse: [[math]]{{result}}[[/math]].",
+              "bitReverseInstruction": "Zamień indeksy tak, żeby bity były odwrócone — to warunek iteracyjnej wersji."
+            },
+            "stage": {
+              "header": "Etap {{stage}}: łączymy bloki długości [[math]]m = {{m}}[[/math]].",
+              "headerInstruction": "Dla każdego bloku długości [[math]]{{m}}[[/math]] zastosuj butterflies z twiddle [[math]]\\omega_{m}^j[[/math]].",
+              "butterfly": "Butterfly [[math]]({{upperIdx}}, {{lowerIdx}})[[/math]]: [[math]]u = {{u}}[[/math]], [[math]]t = \\omega \\cdot x_{\\text{lower}} = {{t}}[[/math]] → [[math]]({{uPlus}}, \\, {{uMinus}})[[/math]].",
+              "butterflyInstruction": "Policz nowe [[math]]x_{{upperIdx}} = u + t[[/math]] i [[math]]x_{{lowerIdx}} = u - t[[/math]].",
+              "twiddle": "[[math]]\\omega_{{m}}^{{j}} = {{value}}[[/math]]"
+            },
+            "result": {
+              "spectrum": "DFT: [[math]]X = {{spectrum}}[[/math]]",
+              "signoff": "[[math]]X = {{spectrum}}[[/math]]",
+              "invalid": "Długość wejścia [[math]]N = {{N}}[[/math]] nie jest potęgą dwójki — radix-2 FFT wymaga [[math]]N = 2^k[[/math]]."
+            },
+            "phases": {
+              "setup": "Start",
+              "butterflies": "Etapy butterfly",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "permuting": "Permutacja bit-reverse.",
+              "stageStart": "Start etapu — łączymy bloki.",
+              "butterfly": "Butterfly [[math]](u, t) \\to (u+t, u-t)[/math]].",
+              "done": "Transformata gotowa.",
+              "invalid": "Długość nie jest potęgą dwójki — radix-2 odpada."
+            },
+            "captions": {
+              "setup": "Start: wejście i bit-reverse.",
+              "stage": "Nowy etap.",
+              "result": "Finalny spektrum."
+            }
+          },
+          "gaussianElimination": {
+            "modeLabel": "Eliminacja Gaussa-Jordana (tablica)",
+            "goal": "Sprowadź macierz rozszerzoną do postaci schodkowo-zredukowanej (RREF) i odczytaj rozwiązanie układu {{count}} równań.",
+            "rule": "Dopuszczalne operacje wierszowe: zamiana wierszy, mnożenie wiersza przez niezerową stałą, dodanie wielokrotności jednego wiersza do innego. Każda z nich zachowuje zbiór rozwiązań.",
+            "invariant": "Cel: w każdej kolumnie pivotu dokładnie jeden niezerowy wpis (sam pivot = 1). Po sweepie lewa część macierzy to macierz jednostkowa.",
+            "setup": {
+              "initial": "Zapisz macierz rozszerzoną układu.",
+              "initialAnnotation": "Pionowa kreska oddziela współczynniki od wektora wyrazów wolnych."
+            },
+            "op": {
+              "pivotHeader": "Kolumna pivotu {{col}} — pivot w wierszu {{row}}.",
+              "swap": "Zamień wiersze [[math]]R_{{r1}}[[/math]] ↔ [[math]]R_{{r2}}[[/math]]",
+              "swapInstruction": "Zamień wiersz {{r1}} z wierszem {{r2}}, żeby pivot był niezerowy.",
+              "scale": "[[math]]R_{{row}} \\leftarrow R_{{row}} / {{factor}}[[/math]] (normalizacja do pivotu = 1)",
+              "scaleInstruction": "Podziel wiersz {{row}} przez {{factor}}, żeby pivot wyniósł 1.",
+              "eliminate": "[[math]]R_{{target}} \\leftarrow R_{{target}} - {{factor}} \\cdot R_{{pivot}}[[/math]]",
+              "eliminateInstruction": "Odejmij {{factor}}-krotność wiersza {{pivot}} od wiersza {{target}}.",
+              "skipAlready": "Wpis już zerowy — pomijamy eliminację."
+            },
+            "failure": {
+              "singular": "Nie udało się znaleźć pivotu w jednej z kolumn — układ jest osobliwy (brak jednoznacznego rozwiązania) lub sprzeczny."
+            },
+            "result": {
+              "solution": "[[math]]{{solution}}[[/math]]",
+              "signoff": "[[math]]{{solution}}[[/math]]",
+              "signoffSingular": "Układ osobliwy / sprzeczny"
+            },
+            "phases": {
+              "setup": "Przygotowanie",
+              "forward": "Sweep Gaussa-Jordana",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "starting": "Przygotowujemy pivot.",
+              "swapping": "Zamieniamy wiersze.",
+              "scaling": "Skalujemy wiersz pivotu.",
+              "eliminating": "Zerujemy wpis w pozostałych wierszach.",
+              "done": "RREF uzyskana — odczytujemy rozwiązanie.",
+              "singular": "Macierz osobliwa lub układ sprzeczny."
+            },
+            "captions": {
+              "setup": "Start: macierz rozszerzona.",
+              "pivot": "Nowa kolumna pivotu.",
+              "result": "Finalne rozwiązanie układu."
+            }
+          },
+          "gcd": {
+            "bNonZeroHint": "[[math]]b \\ne 0[[/math]] — przesuwamy parę i idziemy dalej.",
+            "bZeroDecision": "[[math]]b = 0[[/math]] → stop, [[math]]\\gcd = a = {{a}}[[/math]].",
+            "captions": {
+              "decision": "Sprawdzamy warunek pętli — [[math]]b[[/math]] osiągnęło zero.",
+              "result": "Zamykamy końcową wartość [[math]]\\gcd[[/math]] w ramce.",
+              "setup": "Zapisujemy cel i regułę algorytmu.",
+              "substitute": "Podstawiamy [[math]]\\gcd(a, b) → \\gcd(b, a \\bmod b)[[/math]]."
+            },
+            "decisions": {
+              "bIsZero": "[[math]]b = 0[[/math]] — pętla się kończy.",
+              "complete": "Wartość [[math]]\\gcd[[/math]] jest ustalona.",
+              "computing": "Liczymy resztę z bieżącej pary.",
+              "settingUp": "Zapisujemy cel i regułę algorytmu.",
+              "substituting": "Podstawiamy [[math]]\\gcd(a, b) → \\gcd(b, a \\bmod b)[[/math]]."
+            },
+            "firstPair": "[[math]]\\gcd({{a}}, {{b}})[[/math]]",
+            "goal": "Znajdź [[math]]\\gcd({{a}}, {{b}})[[/math]].",
+            "invariant": "Niezmiennik: [[math]]\\gcd(a, b)[[/math]] nie zmienia się w żadnym kroku.",
+            "modeLabel": "Algorytm Euklidesa (tablica)",
+            "phases": {
+              "complete": "Koniec",
+              "compute": "Liczymy resztę",
+              "decide": "Decyzja",
+              "setup": "Przygotowanie",
+              "substitute": "Podstawienie"
+            },
+            "remainderAnnotation": "[[math]]{{prevA}} \\bmod {{prevB}} = {{r}}[[/math]]",
+            "remainderInstruction": "Policz [[math]]{{a}} \\bmod {{b}}[[/math]]",
+            "resultLine": "= [[math]]{{gcd}}[[/math]]",
+            "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}[[/math]]",
+            "rule": "Algorytm Euklidesa: [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], powtarzaj aż [[math]]b = 0[[/math]].",
+            "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]"
+          },
+          "millerRabin": {
+            "modeLabel": "Test Millera-Rabina (tablica)",
+            "goal": "Sprawdź, czy [[math]]n = {{n}}[[/math]] jest prawdopodobnie pierwsze, czy złożone.",
+            "rule": "Jeśli istnieje świadek [[math]]a[[/math]] taki że ani [[math]]a^d \\equiv 1 \\pmod{n}[[/math]], ani [[math]]a^{2^i d} \\equiv n-1 \\pmod{n}[[/math]] dla [[math]]0 \\le i < r[[/math]], to [[math]]n[[/math]] jest złożone.",
+            "invariant": "[[math]]n - 1 = 2^r \\cdot d[[/math]] z [[math]]d[[/math]] nieparzystym — ustalamy to raz na starcie.",
+            "setup": {
+              "decompose": "[[math]]n - 1 = {{n}} = 2^{{r}} \\cdot {{d}}[[/math]]",
+              "decomposeInstruction": "Rozłóż [[math]]n - 1[[/math]] jako [[math]]2^r \\cdot d[[/math]] z nieparzystym [[math]]d[[/math]]",
+              "decomposeAnnotation": "[[math]]r = {{r}}, \\; d = {{d}}[[/math]]"
+            },
+            "witness": {
+              "header": "Świadek #{{index}}: [[math]]a = {{a}}[[/math]]",
+              "seed": "[[math]]x = {{a}}^{{d}} \\bmod {{n}} = {{seed}}[[/math]]",
+              "seedInstruction": "Policz [[math]]{{a}}^{{d}} \\bmod {{n}}[[/math]] szybkim potęgowaniem",
+              "squareStep": "[[math]]x \\leftarrow {{prev}}^2 \\bmod {{n}} = {{x}}[[/math]]  (krok {{step}})",
+              "squareStepInstruction": "Podnieś [[math]]{{prev}}^2 \\bmod {{n}}[[/math]]",
+              "passImmediate": "[[math]]x = 1[[/math]] → świadek [[math]]a = {{a}}[[/math]] przechodzi ✓",
+              "passMinusOne": "[[math]]x = {{n}} = n - 1[[/math]] → świadek [[math]]a = {{a}}[[/math]] przechodzi ✓",
+              "witnessFound": "Łańcuch nie trafił w [[math]]n - 1[[/math]] — [[math]]a = {{a}}[[/math]] jest świadkiem złożoności [[math]]n = {{n}}[[/math]]."
+            },
+            "result": {
+              "probablyPrime": "[[math]]n = {{n}}[[/math]] przeszło wszystkie {{count}} świadków — jest prawdopodobnie pierwsze.",
+              "composite": "[[math]]n = {{n}}[[/math]] jest złożone — świadek [[math]]a = {{a}}[[/math]] to potwierdza.",
+              "signoffPrime": "[[math]]{{n}}[[/math]] prawdopodobnie pierwsze",
+              "signoffComposite": "[[math]]{{n}}[[/math]] złożone (świadek [[math]]{{a}}[[/math]])"
+            },
+            "phases": {
+              "setup": "Rozkład",
+              "witness": "Świadek",
+              "decide": "Werdykt",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "decomposing": "Rozkładamy [[math]]n - 1 = 2^r \\cdot d[[/math]].",
+              "seeding": "Liczymy [[math]]x = a^d \\bmod n[[/math]].",
+              "squaring": "Podnosimy [[math]]x[[/math]] do kwadratu modulo [[math]]n[[/math]].",
+              "witnessPassed": "Świadek przeszedł — idziemy dalej.",
+              "witnessFailed": "Świadek zidentyfikował złożoność.",
+              "probablyPrime": "Wszystkie świadki zaliczone — prawdopodobnie pierwsze.",
+              "composite": "Znaleziony świadek — [[math]]n[[/math]] złożone."
+            },
+            "captions": {
+              "setup": "Zapiszmy [[math]]n - 1 = 2^r \\cdot d[[/math]].",
+              "witnessStart": "Sprawdzamy świadka [[math]]a[[/math]].",
+              "squareChain": "Ruszamy łańcuch kwadratowania.",
+              "verdict": "Czy [[math]]x = 1[[/math]] albo [[math]]x = n - 1[[/math]]?",
+              "result": "Finalny werdykt."
+            }
+          },
+          "pollardsRho": {
+            "modeLabel": "Rho Pollarda (tablica)",
+            "goal": "Znajdź nietrywialny dzielnik [[math]]n = {{n}}[[/math]].",
+            "rule": "Iteruj [[math]]f(x) = x^2 + c \\bmod n[[/math]] dwoma wskaźnikami: [[math]]x \\leftarrow f(x)[[/math]], [[math]]y \\leftarrow f(f(y))[[/math]]. Nietrywialny [[math]]\\gcd(|x - y|, n)[[/math]] to dzielnik [[math]]n[[/math]].",
+            "invariant": "Gdy wskaźniki się spotkają bez wcześniejszego gcd ∈ (1, n), [[math]]n[[/math]] może być pierwsze albo trzeba zmienić [[math]]c[[/math]] i zacząć od nowa.",
+            "setup": {
+              "formula": "[[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]]",
+              "formulaInstruction": "Zdefiniuj funkcję iteracji [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]]",
+              "seeds": "[[math]]x_0 = y_0 = {{x0}}[[/math]]",
+              "seedsAnnotation": "Żółw i zając startują z tego samego miejsca."
+            },
+            "step": {
+              "line": "Krok {{i}}: [[math]]x = {{x}}, \\; y = {{y}}, \\; |x - y| = {{diff}}, \\; \\gcd = {{g}}[[/math]]",
+              "instruction": "Wykonaj krok {{i}} — jedno [[math]]f[[/math]] dla [[math]]x[[/math]], dwa [[math]]f[[/math]] dla [[math]]y[[/math]], potem [[math]]\\gcd(|x - y|, n)[[/math]]",
+              "annotation": "[[math]]\\gcd({{diff}}, n) = {{g}}[[/math]]"
+            },
+            "result": {
+              "success": "[[math]]n = {{n}} = {{factor}} \\cdot {{quotient}}[[/math]] — rho znalazło dzielnik.",
+              "failure": "[[math]]\\gcd = n[[/math]] bez znalezienia właściwego dzielnika — zmień [[math]]c[[/math]] i zrestartuj (w praktyce). [[math]]n = {{n}}[[/math]] może też być pierwsze.",
+              "exhausted": "Przekroczono limit {{max}} iteracji bez znalezienia dzielnika dla [[math]]n = {{n}}[[/math]] z [[math]]c = {{c}}[[/math]] — spróbuj innego [[math]]c[[/math]].",
+              "signoffSuccess": "[[math]]{{n}} = {{factor}} \\cdot {{quotient}}[[/math]]",
+              "signoffFailure": "Brak dzielnika dla [[math]]c = {{c}}[[/math]]; restart wymagany."
+            },
+            "phases": {
+              "setup": "Przygotowanie",
+              "iterate": "Iteracja",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "seeding": "Ustalamy funkcję i ziarna.",
+              "iterating": "Robimy krok żółw-zając i sprawdzamy [[math]]\\gcd[[/math]].",
+              "factorFound": "[[math]]\\gcd[[/math]] mieści się w [[math]](1, n)[[/math]] — to dzielnik.",
+              "cycleTrap": "Wskaźniki się spotkały bez gcd ∈ (1, n).",
+              "exhausted": "Limit iteracji osiągnięty."
+            },
+            "captions": {
+              "setup": "Definicja [[math]]f[[/math]] i start.",
+              "step": "Krok tortoise-hare.",
+              "result": "Finalny werdykt."
+            }
+          },
+          "reservoirSampling": {
+            "modeLabel": "Próbkowanie rezerwuarowe (tablica)",
+            "goal": "Wylosuj jednostajnie [[math]]k = {{k}}[[/math]] elementów ze strumienia [[math]]n = {{n}}[[/math]] liczb o nieznanej długości.",
+            "rule": "Algorytm R: pierwsze [[math]]k[[/math]] elementów trafia prosto do rezerwuaru. Dla każdego kolejnego elementu [[math]]i \\geq k[[/math]] losuj [[math]]j \\in [0, i][[/math]]. Jeśli [[math]]j < k[[/math]], zastąp slot [[math]]j[[/math]]; w przeciwnym razie pomijaj.",
+            "invariant": "W dowolnym momencie po przetworzeniu [[math]]n[[/math]] elementów każdy widziany element jest w rezerwuarze z prawdopodobieństwem [[math]]k/n[[/math]].",
+            "setup": {
+              "streamLine": "Strumień: [[math]]{{stream}}[[/math]]",
+              "streamInstruction": "Rezerwuar pojemności [[math]]k = {{k}}[[/math]], strumień o długości [[math]]n = {{n}}[[/math]].",
+              "reservoirInit": "Rezerwuar: [[math]]{{reservoir}}[[/math]] (pusty)"
+            },
+            "fill": {
+              "line": "Slot {{index}} ← element {{item}}. Rezerwuar: [[math]]{{reservoir}}[[/math]]",
+              "instruction": "Wrzuć element {{item}} do slotu {{slot}} (faza wypełnienia)."
+            },
+            "sample": {
+              "header": "Element {{index}}: wartość [[math]]{{item}}[[/math]], prawdopodobieństwo akceptacji [[math]]{{probability}}[[/math]].",
+              "roll": "Losowanie: [[math]]u = {{roll}}[[/math]], [[math]]j = \\lfloor u \\cdot {{iPlusOne}} \\rfloor = {{j}}[[/math]].",
+              "rollInstruction": "Policz [[math]]j = \\lfloor u \\cdot {{iPlusOne}} \\rfloor[[/math]].",
+              "accept": "[[math]]j < k[[/math]] → akceptacja: slot {{slot}} ← {{item}}. Rezerwuar: [[math]]{{reservoir}}[[/math]]",
+              "reject": "[[math]]j = {{j}} \\geq k = {{k}}[[/math]] → odrzucamy {{item}}.",
+              "newState": "Nowy stan: [[math]]{{reservoir}}[[/math]]"
+            },
+            "result": {
+              "sample": "Próbka końcowa: [[math]]{{reservoir}}[[/math]]",
+              "signoff": "[[math]]{{reservoir}}[[/math]]",
+              "emptySignoff": "Strumień pusty — brak próbki."
+            },
+            "phases": {
+              "setup": "Start",
+              "fill": "Wypełnianie rezerwuaru",
+              "sample": "Losowanie",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "preparing": "Przygotowujemy rezerwuar i strumień.",
+              "filling": "Wypełniamy [[math]]k[[/math]] początkowych slotów.",
+              "rolling": "Rzucamy kostką dla bieżącego elementu.",
+              "accepting": "[[math]]j < k[[/math]] — zastępujemy slot w rezerwuarze.",
+              "rejecting": "[[math]]j \\geq k[[/math]] — pomijamy element.",
+              "done": "Strumień zakończony — odczytujemy próbkę."
+            },
+            "captions": {
+              "setup": "Start: strumień i pusty rezerwuar.",
+              "fillPhase": "Faza wypełnienia.",
+              "samplePhase": "Faza próbkowania.",
+              "result": "Finalna próbka rezerwuarowa."
+            }
+          },
+          "simplex": {
+            "modeLabel": "Simplex (tablica)",
+            "goal": "Zmaksymalizuj funkcję celu [[math]]c^T x[[/math]] przy ograniczeniach [[math]]Ax \\leq b[[/math]], [[math]]x \\geq 0[[/math]] — {{count}} zmiennych decyzyjnych.",
+            "rule": "Każda iteracja: wybierz zmienną wchodzącą (kolumna z najbardziej ujemnym kosztem zredukowanym w wierszu celu), zmienną wychodzącą (test minimalnego ilorazu [[math]]b_i / a_{ij}[[/math]] dla dodatnich pivotów), wykonaj pivot Jordana i zaktualizuj bazę.",
+            "invariant": "Po każdej iteracji baza pozostaje feasibilna (wszystkie RHS ≥ 0). Optymalność: wszystkie koszty zredukowane w wierszu celu ≥ 0.",
+            "setup": {
+              "initial": "Dodaj zmienne dopełniające, żeby przerobić nierówności w równości. Pierwsza macierz ma współczynniki oryginalne po lewej i macierz jednostkową (dla slacków) po prawej.",
+              "initialAnnotation": "Wiersz celu zapisany jako [[math]]-c^T[/math] dla zmiennych oryginalnych; zera w kolumnach slacków.",
+              "basis": "Baza startowa: {{basis}}"
+            },
+            "op": {
+              "entering": "Iteracja {{iteration}}: wchodzi [[math]]{{variable}}[[/math]] (koszt zredukowany {{reducedCost}}).",
+              "enteringInstruction": "Wybierz [[math]]{{variable}}[[/math]] jako zmienną wchodzącą.",
+              "leaving": "Wychodzi [[math]]{{variable}}[[/math]] — iloraz {{ratio}} (wiersz {{row}}).",
+              "leavingInstruction": "Test minimalnego ilorazu wskazuje [[math]]{{variable}}[[/math]] jako zmienną wychodzącą.",
+              "pivot": "Pivot {{iteration}}: [[math]]{{entering}}[[/math]] wchodzi, [[math]]{{leaving}}[[/math]] wychodzi.",
+              "pivotInstruction": "Znormalizuj wiersz {{row}} i wyeliminuj kolumnę [[math]]{{variable}}[[/math]] z pozostałych wierszy.",
+              "basisUpdated": "Nowa baza: {{basis}}"
+            },
+            "failure": {
+              "unbounded": "Test minimalnego ilorazu nie znalazł dodatniego pivotu — problem jest nieograniczony ([[math]]z \\to \\infty[/math]]).",
+              "exhausted": "Osiągnięto limit {{max}} iteracji bez znalezienia optimum."
+            },
+            "result": {
+              "optimal": "Optimum: [[math]]{{solution}}[[/math]], [[math]]z = {{objective}}[[/math]].",
+              "signoff": "[[math]]{{solution}}, \\; z = {{objective}}[[/math]]",
+              "signoffFailure": "Brak skończonego optimum"
+            },
+            "phases": {
+              "setup": "Tableau startowe",
+              "iterate": "Iteracja",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "starting": "Przygotowujemy tableau.",
+              "picking": "Wybieramy zmienną wchodzącą i wychodzącą.",
+              "pivoting": "Wykonujemy pivot.",
+              "optimal": "Wszystkie koszty zredukowane ≥ 0 — optimum osiągnięte.",
+              "unbounded": "Brak dodatniego pivotu — problem nieograniczony."
+            },
+            "captions": {
+              "setup": "Start: tableau z slackami.",
+              "iteration": "Nowa iteracja — wybór pivotu.",
+              "result": "Finalne optimum LP."
+            }
+          }
+        },
         "search": {
           "binarySearch": {
             "decisions": {
@@ -1660,6 +2556,43 @@
               "found": "Znaleziono trafienie",
               "notFound": "Brak celu",
               "ready": "Gotowe do skanowania"
+            }
+          }
+        },
+        "sieveGrid": {
+          "eratosthenes": {
+            "decisions": {
+              "aboveBound": "p · p > n — przechodzimy do zbierania wyników.",
+              "alreadyComposite": "Już wykreślone — pomijamy.",
+              "collect": "Przeżyło wszystkie przebiegi — zbieramy jako pierwszą.",
+              "complete": "Koniec sita do n.",
+              "crossMultiple": "Oznaczamy wielokrotność p jako złożoną.",
+              "finishedPrime": "Wykreślono wszystkie wielokrotności p.",
+              "pickFreshPrime": "Świeża liczba pierwsza — startujemy wykreślanie wielokrotności."
+            },
+            "descriptions": {
+              "collectPrime": "[[math]]{{i}}[[/math]] przetrwało — dodajemy do listy liczb pierwszych.",
+              "complete": "Znaleziono [[math]]{{count}}[[/math]] liczb pierwszych [[math]]≤ {{n}}[[/math]].",
+              "finishPrime": "Wykreślono wszystkie wielokrotności [[math]]{{p}}[[/math]].",
+              "mark": "Oznaczamy [[math]]{{k}} = {{p}} × (k / p)[[/math]] jako złożoną.",
+              "pickPrime": "[[math]]{{p}}[[/math]] jest pierwsza — wykreślamy wielokrotności od [[math]]{{p}}²[[/math]].",
+              "setup": "Inicjujemy sito długości [[math]]{{n}} + 1[[/math]].",
+              "skipComposite": "[[math]]{{p}}[[/math]] było już wykreślone — pomijamy."
+            },
+            "modeLabel": "Sito Eratostenesa",
+            "phases": {
+              "collect": "Zbiórka",
+              "complete": "Zakończone",
+              "mark": "Wykreślanie",
+              "pick": "Wybór pierwszej",
+              "setup": "Przygotowanie",
+              "skip": "Pomijanie"
+            },
+            "resultFormat": "{{count}} liczb pierwszych: {{list}}",
+            "stats": {
+              "candidate": "Kandydat",
+              "crossed": "Wykreślone",
+              "found": "Pierwsze"
             }
           }
         },
@@ -2212,10 +3145,10 @@
               "completeMatches": "Rabin-Karp zakończony. Zweryfikowane dopasowania na indeksach {{matches}}.",
               "completeNoMatch": "Rabin-Karp zakończył działanie. Nie znaleziono żadnego zweryfikowanego wystąpienia wzorca.",
               "falseAlarm": "Fałszywy alarm w oknie {{start}}: rolling hash zderzył się, ale znaki nie pasują w całości.",
-              "prepare": "Przygotuj Rabin-Karp dla wzorca \"{{pattern}}\" z bazą {{base}} i mod {{mod}}.",
+              "prepare": "Przygotuj Rabin-Karp dla wzorca \"{{pattern}}\" z [[math]]base = {{base}}[[/math]] i [[math]]mod = {{mod}}[[/math]].",
               "rollHash": "Przetocz hash do przodu: usuń \"{{outgoingChar}}\" i dodaj \"{{incomingChar}}\".",
               "verifiedMatch": "Zweryfikowano pełne dopasowanie na indeksie {{start}}.",
-              "verifyChars": "Zweryfikuj text[{{textIndex}}] = \"{{textChar}}\" względem pattern[{{patternIndex}}] = \"{{patternChar}}\"."
+              "verifyChars": "Zweryfikuj [[math]]text[{{textIndex}}] = \"{{textChar}}\"[[/math]] względem [[math]]pattern[{{patternIndex}}] = \"{{patternChar}}\"[[/math]]."
             },
             "insights": {
               "baseLabel": "Baza",
@@ -2514,6 +3447,66 @@
         }
       },
       "scenarios": {
+        "callStackLab": {
+          "fibonacci": {
+            "bushy": {
+              "description": "fib(6) — gęstsze drzewo pokazuje wykładniczy wybuch duplikatów.",
+              "label": "Gęste drzewo"
+            },
+            "classic": {
+              "description": "fib(5) — kanoniczne demo drzewa wywołań.",
+              "label": "Klasyczna głębokość"
+            },
+            "tiny": {
+              "description": "fib(3) — najmniejsze drzewo, na którym widać rozgałęzienie.",
+              "label": "Malutkie drzewo"
+            }
+          }
+        },
+        "callTreeLab": {
+          "backtracking": {
+            "challenge": {
+              "description": "6-hetmanów — gęstsze drzewo z kilkoma ślepymi uliczkami przed sukcesem.",
+              "label": "6 hetmanów"
+            },
+            "classic": {
+              "description": "5-hetmanów — nieco więcej rozgałęzień, wciąż pełne rozwiązanie.",
+              "label": "5 hetmanów"
+            },
+            "tiny": {
+              "description": "4-hetmani — najmniejsza klasyczna plansza z czystym rozwiązaniem.",
+              "label": "4 hetmany"
+            }
+          },
+          "mcts": {
+            "classic": {
+              "description": "10 iteracji na drzewie 2-ramiennym — wizyty narastają, ranking się stabilizuje.",
+              "label": "Klasyczny 2-ramienny"
+            },
+            "deep": {
+              "description": "12 iteracji na drzewie 3-ramiennym — test obciążeniowy dla równowagi UCB.",
+              "label": "Głębszy 3-ramienny"
+            },
+            "shallow": {
+              "description": "6 iteracji na drzewie 2-ramiennym — widać, jak eksploracja zaczyna faworyzować najlepsze ramię.",
+              "label": "Płytki start"
+            }
+          },
+          "minimax": {
+            "balanced": {
+              "description": "Drzewo binarne z 8 liśćmi — na tyle proste, że policzysz ręcznie.",
+              "label": "Zbalansowane 2×3"
+            },
+            "prunable": {
+              "description": "Drzewo 3-arne skonstruowane tak, by α i β odcinały kilka poddrzew.",
+              "label": "Odcinalne 3×2"
+            },
+            "wide": {
+              "description": "Szersze drzewo 3-arne (27 liści) pokazuje, jak odcinanie narasta z głębokością.",
+              "label": "Szerokie 3×3"
+            }
+          }
+        },
         "dp": {
           "bitmaskDp": {
             "crews": {
@@ -2810,6 +3803,144 @@
             }
           }
         },
+        "extendedEuclidean": {
+          "short": {
+            "label": "Krótki łańcuch",
+            "description": "[[math]]\\gcd(60, 48)[[/math]] — jednokrokowa substytucja, pierwsze spotkanie z Bézoutem."
+          },
+          "classic": {
+            "label": "Klasyczny podręcznikowy",
+            "description": "[[math]]\\gcd(240, 46)[[/math]] — pięć kroków forward daje bogaty, wielopoziomowy back-sub."
+          },
+          "large": {
+            "label": "Większa para",
+            "description": "[[math]]\\gcd(1071, 462)[[/math]] — ta sama para co \"Większa\" w Euklidesie, więc możesz prześledzić współczynniki Bézouta na znanym łańcuchu."
+          }
+        },
+        "numberLab": {
+          "factorial": {
+            "growing": {
+              "description": "Patrz, jak 10! rośnie — akumulator szybko zbiera wartość.",
+              "label": "Rosnący iloczyn"
+            },
+            "small": {
+              "description": "Przejdź 6! krok po kroku — zwięzły, pełny ślad.",
+              "label": "Krótki przebieg"
+            }
+          },
+          "fibonacci": {
+            "classic": {
+              "description": "Policz F(10) z przesuwnym oknem dwóch wartości.",
+              "label": "Klasyczny ciąg"
+            },
+            "deep": {
+              "description": "Pchnij okno dalej — F(15) — i zobacz tempo wzrostu.",
+              "label": "Głębszy przebieg"
+            }
+          },
+          "gcd": {
+            "coprime": {
+              "description": "nwd(35, 17) — szybko ląduje na 1.",
+              "label": "Para względnie pierwsza"
+            },
+            "large": {
+              "description": "nwd(1071, 462) — kilka rund reszty, zanim zbiega.",
+              "label": "Większa para"
+            },
+            "shared": {
+              "description": "nwd(48, 36) ma wyraźny wspólny dzielnik do znalezienia.",
+              "label": "Wspólny czynnik"
+            }
+          }
+        },
+        "pointerLab": {
+          "kadane": {
+            "allNegative": {
+              "description": "Wszystkie wartości ujemne — trzeba wybrać najmniej złą.",
+              "label": "Same ujemne"
+            },
+            "classic": {
+              "description": "Mieszanka znaków z wyraźnym zwycięskim środkowym biegiem — klasyka.",
+              "label": "Klasyczna mieszanka"
+            },
+            "mostlyNegative": {
+              "description": "Głównie ujemny szum z jednym jasnym pikiem do złapania.",
+              "label": "Samotny pik"
+            },
+            "zigzag": {
+              "description": "Naprzemienne szczyty i dołki — decyzje extend vs restart padają często.",
+              "label": "Zygzak"
+            }
+          },
+          "palindrome": {
+            "classic": {
+              "description": "Palindrom nieparzystej długości — porównania zbiegają do środka.",
+              "label": "Klasyczny kajak"
+            },
+            "nope": {
+              "description": "Wygląda na palindrom, ale zawodzi już na pierwszej lustrzanej parze.",
+              "label": "Palette"
+            },
+            "odd": {
+              "description": "Krótki 5-znakowy palindrom — lustra trafiają się symetrycznie.",
+              "label": "Radar"
+            }
+          },
+          "reverse": {
+            "digits": {
+              "description": "Sześć cyfr zamienianych symetrycznie w miejscu.",
+              "label": "Odwrót cyfr"
+            },
+            "word": {
+              "description": "Odwróć \"flower\" znak po znaku.",
+              "label": "Odwrót słowa"
+            }
+          },
+          "slidingWindow": {
+            "dips": {
+              "description": "Mieszany przebieg — najlepsze okno siedzi w środku ciągu.",
+              "label": "Dołki i skoki"
+            },
+            "gains": {
+              "description": "Wartości rosną, gdy okno przesuwa się w prawo.",
+              "label": "Równy wzrost"
+            },
+            "tail": {
+              "description": "Najlepsze okno mieszka na końcu — trzeba skanować do końca.",
+              "label": "Ładunek na końcu"
+            }
+          },
+          "twoPointers": {
+            "classic": {
+              "description": "Posortowana tablica z czystym trafieniem w środkowym zakresie.",
+              "label": "Klasyczna para"
+            },
+            "edgeHit": {
+              "description": "Dopasowanie blisko brzegów — wskaźniki gnają do środka.",
+              "label": "Trafienie na brzegu"
+            },
+            "noMatch": {
+              "description": "Cel poza osiągalnym zakresem — wskaźniki się mijają.",
+              "label": "Brak dopasowania"
+            }
+          }
+        },
+        "sieveGrid": {
+          "eratosthenes": {
+            "classic": {
+              "description": "Podręcznikowe sito dla ~60 liczb — czysty do śledzenia gołym okiem.",
+              "label": "Klasyczny 60"
+            },
+            "compact": {
+              "description": "Krótki przebieg — n ≈ 30, wszystko mieści się na jednym ekranie.",
+              "label": "Kompaktowy"
+            },
+            "wide": {
+              "description": "Rozciągnij do ~120 liczb, żeby zobaczyć rzedniecie log-log sita.",
+              "label": "Szeroki przegląd"
+            }
+          }
+        },
         "string": {
           "ahoCorasick": {
             "alerts": {
@@ -2987,13 +4118,380 @@
           }
         }
       },
+      "scratchpadLab": {
+        "taskLabel": "Zadanie"
+      },
       "sidePanel": {
         "ariaLabel": "Zakładki inspectora",
+        "codeForTaskLabel": "Kod dla zadania:",
         "tabs": {
           "code": "Kod",
           "info": "Info",
           "log": "Log",
           "trace": "Ślad"
+        }
+      },
+      "tasks": {
+        "crt": {
+          "values": {
+            "congruences": "kongruencje",
+            "congruencesPlaceholder": "2:3, 3:5, 2:7"
+          },
+          "classic": {
+            "title": "Klasyczny przykład: 3 kongruencje",
+            "summary": "[[math]]x \\equiv 2 \\, (3), \\, 3 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{105}[[/math]]",
+            "instruction": "Rozwiąż układ kongruencji {{congruences}}. Podaj rozwiązanie [[math]]x \\pmod{ {{M}} }[[/math]] za pomocą konstrukcji z chińskiego twierdzenia o resztach.",
+            "hints": {
+              "0": "[[math]]M = 3 \\cdot 5 \\cdot 7 = 105[[/math]], [[math]]M_1 = 35, M_2 = 21, M_3 = 15[[/math]].",
+              "1": "Odwrotności: [[math]]35^{-1} \\equiv 2 \\pmod{3}[[/math]], [[math]]21^{-1} \\equiv 1 \\pmod{5}[[/math]], [[math]]15^{-1} \\equiv 1 \\pmod{7}[[/math]]. Człony: [[math]]140 + 63 + 30 = 233[[/math]], [[math]]233 \\bmod 105 = 23[[/math]]."
+            }
+          },
+          "twoCongruences": {
+            "title": "Para kongruencji",
+            "summary": "[[math]]x \\equiv 1 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{35}[[/math]]",
+            "instruction": "Wyznacz [[math]]x \\pmod{ {{M}} }[[/math]] spełniające {{congruences}}. Minimalny przypadek — jedna substytucja wsteczna.",
+            "hints": {
+              "0": "[[math]]M = 35[[/math]], [[math]]M_1 = 7, M_2 = 5[[/math]]. [[math]]7 \\equiv 2 \\pmod{5}[[/math]], odwrotność [[math]]3[[/math]]; [[math]]5 \\equiv 5 \\pmod{7}[[/math]], odwrotność [[math]]3[[/math]]. Sprawdź [[math]]x = 16[[/math]]."
+            }
+          },
+          "smallestPositive": {
+            "title": "Najmniejsze dodatnie rozwiązanie",
+            "summary": "[[math]]x \\equiv 4 \\, (9), \\, 3 \\, (11), \\, 6 \\, (13)[[/math]] — podaj najmniejsze dodatnie [[math]]x[[/math]]",
+            "instruction": "Znajdź najmniejszą dodatnią liczbę całkowitą [[math]]x[[/math]] spełniającą {{congruences}}. Redukuj modulo [[math]]M = {{M}}[[/math]].",
+            "hints": {
+              "0": "[[math]]M_1 = 143, M_2 = 117, M_3 = 99[[/math]]. Kolejne [[math]]M_i \\bmod m_i[[/math]]: [[math]]8, 7, 8[[/math]].",
+              "1": "Odwrotności: [[math]]8^{-1} \\equiv 8 \\pmod{9}[[/math]], [[math]]7^{-1} \\equiv 8 \\pmod{11}[[/math]], [[math]]8^{-1} \\equiv 5 \\pmod{13}[[/math]]. Suma członów [[math]]= 10354[[/math]], [[math]]10354 \\bmod 1287 = 58[[/math]]."
+            }
+          }
+        },
+        "extendedEuclidean": {
+          "values": {
+            "n": "n",
+            "phi": "φ(n)",
+            "publicExponent": "e",
+            "modulus": "moduł",
+            "coefficient": "współczynnik",
+            "target": "prawa strona",
+            "rhs": "prawa strona"
+          },
+          "rsaInverse": {
+            "hints": {
+              "0": "Najpierw uruchom zwykły łańcuch Euklidesa dla [[math]]\\varphi(n) = {{a}}[[/math]] oraz [[math]]e = {{b}}[[/math]].",
+              "1": "Po back-substytucji interesuje nas współczynnik przy [[math]]e[[/math]]. Zredukuj go modulo [[math]]\\varphi(n)[[/math]], aby dostać [[math]]d[[/math]]."
+            },
+            "instruction": "W systemie RSA rozważono:\n[[math]]n = {{n}}[[/math]], [[math]]e = {{b}}[[/math]], [[math]]\\varphi(n) = {{a}}[[/math]].\n\n1. Sprawdź, czy [[math]]e[[/math]] posiada odwrotność modulo [[math]]\\varphi(n)[[/math]].\n2. Jeśli tak, wyznacz klucz prywatny [[math]]d[[/math]] taki, że:\n[[math]]d \\cdot e = 1 \\; (\\mathrm{mod}\\; \\varphi(n))[[/math]]\n3. Zinterpretuj wynik w kontekście RSA.",
+            "summary": "[[math]]e = 35, \\varphi(n) = 192[[/math]] — odwrotność modulo jako klucz prywatny RSA.",
+            "title": "RSA: odwrotność modulo"
+          },
+          "diophantineLogistics": {
+            "hints": {
+              "0": "Najpierw policz [[math]]\\gcd(84,36)[[/math]]. Dopiero po sprawdzeniu, że [[math]]12[[/math]] jest wielokrotnością NWD, skaluj współczynniki Bézouta.",
+              "1": "Dla domyślnych danych [[math]]84 = 2 \\cdot 36 + 12[[/math]], więc back-substytucja jest krótka, ale interpretacja rozwiązania jest innym typem zadania."
+            },
+            "instruction": "Firma logistyczna używa dwóch typów ciężarówek:\n- typ A przewozi [[math]]{{a}}[[/math]] jednostki,\n- typ B przewozi [[math]]{{b}}[[/math]] jednostek.\n\nModel matematyczny prowadzi do równania:\n[[math]]{{a}}x + {{b}}y = {{target}}[[/math]]\n\n1. Znajdź rozwiązanie szczególne.\n2. Wyznacz rozwiązanie ogólne.\n3. Wskaż rozwiązanie o najmniejszych wartościach bezwzględnych.",
+            "summary": "[[math]]84x + 36y = 12[[/math]] — równanie diofantyczne z rozwiązaniem ogólnym.",
+            "title": "Równanie diofantyczne"
+          },
+          "modularEquationTrap": {
+            "hints": {
+              "0": "Nie zaczynaj od szukania odwrotności [[math]]143^{-1}[[/math]]. Najpierw policz [[math]]\\gcd(143,221)[[/math]].",
+              "1": "Jeśli [[math]]\\gcd(a,m)[[/math]] nie dzieli prawej strony kongruencji, back-substytucja nie jest potrzebna."
+            },
+            "instruction": "Rozwiąż kongruencję:\n[[math]]{{b}}x = {{rhs}} \\; (\\mathrm{mod}\\; {{a}})[[/math]]\n\n1. Sprawdź, czy rozwiązanie istnieje.\n2. Jeśli tak, znajdź wszystkie rozwiązania.\n3. Uzasadnij wynik.",
+            "summary": "[[math]]143x \\equiv 55 \\pmod{221}[[/math]] — pułapka: NWD blokuje rozwiązania.",
+            "title": "Kongruencja: pułapka"
+          },
+          "classic": {
+            "hints": {
+              "0": "Pięć kroków forward: 240, 46, 10, 6, 4, 2, 0 — reszta 2 to [[math]]\\gcd[[/math]].",
+              "1": "Back-substytucja ma co najmniej trzy poziomy zagnieżdżenia — dobry test śledzenia współczynników."
+            },
+            "instruction": "Rozwiąż równanie diofantyczne [[math]]{{a}} x + {{b}} y = \\gcd({{a}}, {{b}})[[/math]] w liczbach całkowitych — znajdź jedną parę [[math]](x, y)[[/math]] spełniającą równość. Skorzystaj z rozszerzonego algorytmu Euklidesa.",
+            "summary": "[[math]]\\gcd(240, 46) = 2[[/math]] — pięć kroków forward, bogaty back-sub.",
+            "title": "Klasyczny podręcznikowy"
+          },
+          "fibonacciChain": {
+            "hints": {
+              "0": "Forward produkuje reszty: 34, 21, 13, 8, 5, 3, 2, 1 — sam ciąg Fibonacciego.",
+              "1": "Współczynniki Bézouta też okażą się liczbami Fibonacciego (z naprzemiennym znakiem).",
+              "2": "To kanoniczny worst case — żadna mniejsza para nie wymaga dłuższego back-subu."
+            },
+            "instruction": "Wyznacz współczynniki Bézouta dla kolejnych liczb Fibonacciego [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]], czyli liczby całkowite [[math]]s, t[[/math]] takie, że:\n[[math]]{{a}}s + {{b}}t = \\gcd({{a}}, {{b}})[[/math]]\n\nSprawdź, że wartości bezwzględne współczynników też są liczbami Fibonacciego.",
+            "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — najgłębszy back-sub dla tego rozmiaru.",
+            "title": "Najdłuższa back-substytucja"
+          },
+          "knownGcd": {
+            "hints": {
+              "0": "Forward: [[math]]735 = 3 \\cdot 210 + 105[[/math]], potem [[math]]210 = 2 \\cdot 105 + 0[[/math]]. Back-sub: [[math]]105 = 1 \\cdot 735 + (-3) \\cdot 210[[/math]]."
+            },
+            "instruction": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie że [[math]]{{a}} s + {{b}} t = \\gcd({{a}}, {{b}})[[/math]]. Zapisz back-substytucję w możliwie najmniejszej liczbie linii.",
+            "summary": "[[math]]\\gcd(735, 210) = 105[[/math]] — duże liczby, krótki łańcuch.",
+            "title": "Znane gcd, krótki łańcuch"
+          },
+          "large": {
+            "hints": {
+              "0": "Ta sama para co w zadaniu „Większa para” zwykłego Euklidesa — możesz porównać oba algorytmy na identycznym łańcuchu.",
+              "1": "Współczynniki Bézouta dla [[math]]\\gcd = 21[[/math]] nie są małe, ale mieszczą się w jednej linii."
+            },
+            "instruction": "Znajdź współczynniki Bézouta [[math]]s, t[[/math]] dla [[math]]\\gcd({{a}}, {{b}})[[/math]]. Następnie podaj jedno rozwiązanie równania diofantycznego [[math]]{{a}} x + {{b}} y = \\gcd({{a}}, {{b}})[[/math]] w liczbach całkowitych.",
+            "summary": "[[math]]\\gcd(1071, 462) = 21[[/math]] — ta sama para co w zwykłym Euklidesie.",
+            "title": "Większa para"
+          },
+          "modularInverse": {
+            "hints": {
+              "0": "Forward: [[math]]7 \\bmod 5 = 2[[/math]], [[math]]5 \\bmod 2 = 1[[/math]], [[math]]2 \\bmod 1 = 0[[/math]].",
+              "1": "Back-sub: [[math]]1 = 5 - 2 \\cdot 2 = 5 - 2 \\cdot (7 - 5) = 3 \\cdot 5 - 2 \\cdot 7[[/math]]. Stąd [[math]]s = -2[[/math]], [[math]]t = 3[[/math]], a [[math]]7^{-1} \\equiv 3 \\pmod{5}[[/math]]."
+            },
+            "instruction": "Wyznacz odwrotność multiplikatywną [[math]]{{a}}[[/math]] modulo [[math]]{{b}}[[/math]], tj. liczbę całkowitą [[math]]0 \\leq x < {{b}}[[/math]] taką, że [[math]]{{a}} x \\equiv 1 \\pmod{ {{b}} }[[/math]]. Użyj rozszerzonego algorytmu Euklidesa, a znaleziony współczynnik sprowadź do przedziału [[math]][0, {{b}})[[/math]].",
+            "summary": "[[math]]7s + 5t = 1[[/math]] — szukamy odwrotności 7 modulo 5.",
+            "title": "Odwrotność modulo"
+          },
+          "primePair": {
+            "hints": {
+              "0": "Sześć kroków forward: [[math]]251 \\to 52 \\to 43 \\to 9 \\to 7 \\to 2 \\to 1 \\to 0[[/math]].",
+              "1": "Mimo długiego łańcucha końcowe [[math]]s, t[[/math]] są umiarkowane — głębokość nie zawsze oznacza wielkie liczby w back-sub."
+            },
+            "instruction": "Udowodnij, że [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]] są względnie pierwsze, wyznaczając ich współczynniki Bézouta [[math]]s, t[[/math]] spełniające [[math]]{{a}} s + {{b}} t = 1[[/math]]. Podaj końcowe wartości [[math]]s[[/math]] i [[math]]t[[/math]].",
+            "summary": "[[math]]\\gcd(251, 199) = 1[[/math]] — para liczb pierwszych, sześciokrokowy forward.",
+            "title": "Para liczb pierwszych"
+          },
+          "short": {
+            "hints": {
+              "0": "[[math]]60 = 1 \\cdot 48 + 12[[/math]], potem [[math]]48 = 4 \\cdot 12 + 0[[/math]].",
+              "1": "Back-sub jednoliniowy: [[math]]12 = 1 \\cdot 60 + (-1) \\cdot 48[[/math]]."
+            },
+            "instruction": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że:\n[[math]]{{a}}s + {{b}}t = \\gcd({{a}}, {{b}})[[/math]]\n\nZapisz każde dzielenie w przód i pokaż back-substytucję w jednej linii.",
+            "summary": "[[math]]\\gcd(60, 48) = 12[[/math]] — jednokrokowa substytucja.",
+            "title": "Krótki łańcuch"
+          },
+          "smallBezout": {
+            "hints": {
+              "0": "Back-sub odczytuje [[math]]6 = 30 - 2 \\cdot 12[[/math]] wprost z pierwszego forward step: [[math]]s = 1[[/math]], [[math]]t = -2[[/math]]."
+            },
+            "instruction": "Zapisz [[math]]\\gcd({{a}}, {{b}})[[/math]] jako całkowitą kombinację liczb [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]]. Wystarczy jedna linia back-substytucji — podaj pełną tożsamość [[math]]\\gcd = s \\cdot {{a}} + t \\cdot {{b}}[[/math]] z konkretnymi wartościami [[math]]s, t[[/math]].",
+            "summary": "[[math]]\\gcd(30, 12) = 6[[/math]] — dwa kroki forward, jedna linia back-sub.",
+            "title": "Minimalny back-sub"
+          }
+        },
+        "fftNtt": {
+          "values": {
+            "input": "wejście",
+            "inputPlaceholder": "1 2 3 4"
+          },
+          "basic4Point": {
+            "title": "4-punktowa DFT",
+            "summary": "[[math]][1, 2, 3, 4] \\to [10, -2 + 2i, -2, -2 - 2i][/math]] — dwa etapy butterfly, twiddle [[math]]\\{1, -i, -1, i\\}[/math]].",
+            "instruction": "Policz 4-punktową DFT sygnału [[math]]{{input}}[[/math]] algorytmem Cooley-Tukey radix-2. Wykonaj permutację bit-reverse, a potem [[math]]\\log_2 {{N}} = 2[[/math]] etapy butterfly. Każde [[math]]\\omega_4^j[[/math]] dla [[math]]j = 0, 1, 2, 3[[/math]] to jedna z wartości [[math]]\\{1, -i, -1, i\\}[[/math]].",
+            "hints": {
+              "0": "Bit-reverse dla [[math]]N = 4[[/math]]: permutacja indeksów [[math]](0, 1, 2, 3) \\to (0, 2, 1, 3)[[/math]]. Dla wejścia [[math]][1, 2, 3, 4][[/math]] daje to [[math]][1, 3, 2, 4][[/math]].",
+              "1": "Etap 1 (m=2, [[math]]\\omega = -1[[/math]]): butterflies na parach [[math]](1, 3)[[/math]] i [[math]](2, 4)[[/math]] dają [[math]][4, -2, 6, -2][[/math]]. Etap 2 (m=4) łączy [[math]](4, 6)[[/math]] i [[math]](-2, -2)[[/math]] z twiddle [[math]]\\{1, -i\\}[[/math]] — finalnie [[math]][10, -2+2i, -2, -2-2i][[/math]]."
+            }
+          }
+        },
+        "gaussianElimination": {
+          "values": {
+            "system": "układ",
+            "systemPlaceholder": "1 1 | 5; 1 -1 | 1"
+          },
+          "basic2x2": {
+            "title": "Układ 2×2",
+            "summary": "[[math]]x + y = 5, \\; x - y = 1[[/math]] → [[math]]x = 3, y = 2[[/math]]",
+            "instruction": "Rozwiąż układ równań {{system}} przez eliminację Gaussa-Jordana: sprowadź macierz rozszerzoną do RREF i odczytaj rozwiązanie.",
+            "hints": {
+              "0": "Pierwszy pivot w (1,1) to 1 — wystarczy odjąć wiersz 1 od wiersza 2, żeby zzerować pierwszą kolumnę poniżej.",
+              "1": "Drugi pivot to [[math]]-2[[/math]] — normalizuj przez [[math]]-2[[/math]], potem odejmij od wiersza 1, żeby wyczyścić drugą kolumnę powyżej."
+            }
+          }
+        },
+        "gcd": {
+          "abundance": {
+            "hints": {
+              "0": "Forward chain: [[math]]252 \\bmod 198 = 54[[/math]], potem 198 mod 54 = 36, 54 mod 36 = 18, 36 mod 18 = 0.",
+              "1": "Jeśli zsumujesz wspólne czynniki pierwsze ([[math]]2 \\cdot 3^2[[/math]]), otrzymasz 18 — tę samą wartość co Euklides, bez faktoryzacji."
+            },
+            "instruction": "Wyznacz [[math]]\\gcd({{a}}, {{b}})[[/math]] algorytmem Euklidesa. Pokaż, że algorytm dochodzi do tego samego wyniku co wybór wspólnych czynników pierwszych — bez faktoryzacji liczb. W tym tkwi siła metody Euklidesa.",
+            "summary": "[[math]]\\gcd(252, 198) = 18[[/math]] — bogata struktura czynników pierwszych.",
+            "title": "Nadmiar czynników"
+          },
+          "coprime": {
+            "hints": {
+              "0": "Łańcuch reszt: [[math]]35 = 2 \\cdot 17 + 1[[/math]], potem [[math]]17 = 17 \\cdot 1 + 0[[/math]].",
+              "1": "Gdy reszta osiąga 1, następny krok ją zeruje i kończy algorytm."
+            },
+            "instruction": "Udowodnij, że [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]] są względnie pierwsze, uruchamiając algorytm Euklidesa aż do zakończenia i odczytując [[math]]\\gcd[[/math]]. Podaj liczbę wykonanych dzieleń.",
+            "summary": "[[math]]\\gcd(35, 17) = 1[[/math]] — liczby nie dzielą wspólnego czynnika.",
+            "title": "Para względnie pierwsza"
+          },
+          "fibonacciWorst": {
+            "hints": {
+              "0": "Obserwuj reszty: 34, 21, 13, 8, 5, 3, 2, 1 — sam ciąg Fibonacciego.",
+              "1": "Liczba kroków rośnie logarytmicznie względem [[math]]\\max(a, b)[[/math]] z podstawą [[math]]\\varphi \\approx 1{,}618[[/math]].",
+              "2": "Twierdzenie Lamégo: żadna para mniejsza od sąsiednich Fibonacciego nie wymaga więcej kroków."
+            },
+            "instruction": "Policz, ile iteracji wykonuje algorytm Euklidesa dla [[math]]\\gcd({{a}}, {{b}})[[/math]]. Wyjaśnij, dlaczego para sąsiadujących liczb Fibonacciego wymusza maksymalną liczbę kroków dla tej wielkości wejścia (twierdzenie Lamégo).",
+            "summary": "[[math]]F_{11}, F_{10} = (89, 55)[[/math]] — maksymalna liczba kroków dla tej wielkości.",
+            "title": "Najgorszy przypadek: sąsiedzi Fibonacciego"
+          },
+          "identical": {
+            "hints": {
+              "0": "[[math]]a \\bmod a = 0[[/math]] — drugi argument natychmiast staje się zerem."
+            },
+            "instruction": "Oblicz [[math]]\\gcd({{a}}, {{b}})[[/math]]. Wyjaśnij, jak zachowuje się niezmiennik [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]] gdy [[math]]a = b[[/math]] — po co algorytmowi przypadek [[math]]b = 0[[/math]] jako warunek zakończenia?",
+            "summary": "[[math]]\\gcd(42, 42) = 42[[/math]] — jeden krok i koniec.",
+            "title": "Identyczna para"
+          },
+          "large": {
+            "hints": {
+              "0": "Sześć kroków, a [[math]]\\gcd[[/math]] wynosi 21 ([[math]]= 3 \\cdot 7[[/math]]).",
+              "1": "Oba argumenty są podzielne przez 21 — algorytm to odkryje, choć nie widzi faktoryzacji."
+            },
+            "instruction": "Sprowadź ułamek [[math]]\\frac{ {{a}} }{ {{b}} }[[/math]] do postaci nieskracalnej. Wyznacz [[math]]\\gcd({{a}}, {{b}})[[/math]] algorytmem Euklidesa i podziel licznik oraz mianownik przez uzyskaną wartość.",
+            "summary": "[[math]]\\gcd(1071, 462) = 21[[/math]] — średniej długości łańcuch.",
+            "title": "Większa para"
+          },
+          "powersOfTwo": {
+            "hints": {
+              "0": "[[math]]64 \\bmod 16 = 0[[/math]], więc pętla zamyka się po pierwszym dzieleniu."
+            },
+            "instruction": "Wyznacz [[math]]\\gcd({{a}}, {{b}})[[/math]] i wyjaśnij, dlaczego algorytm Euklidesa kończy pracę w jednym kroku. Ogólnie: dla jakich par [[math]](a, b)[[/math]] pętla zamyka się natychmiast?",
+            "summary": "[[math]]\\gcd(64, 16) = 16[[/math]] — jedna iteracja.",
+            "title": "Potęgi dwójki"
+          },
+          "shared": {
+            "hints": {
+              "0": "[[math]]48 = 1 \\cdot 36 + 12[[/math]], potem [[math]]36 = 3 \\cdot 12 + 0[[/math]].",
+              "1": "Wspólny dzielnik [[math]]12 = 2^2 \\cdot 3[[/math]] dzieli obie liczby — algorytm znajduje go w dwóch krokach."
+            },
+            "instruction": "Oblicz [[math]]\\gcd({{a}}, {{b}})[[/math]]. Następnie, korzystając z tożsamości [[math]]a \\cdot b = \\gcd(a, b) \\cdot \\operatorname{lcm}(a, b)[[/math]], wyznacz [[math]]\\operatorname{lcm}({{a}}, {{b}})[[/math]] — bez uruchamiania osobnego algorytmu.",
+            "summary": "[[math]]\\gcd(48, 36) = 12[[/math]] — wyraźny wspólny czynnik.",
+            "title": "Wspólny czynnik"
+          },
+          "twinPrimes": {
+            "hints": {
+              "0": "[[math]]101 \\bmod 103 = 101[[/math]] — para (a, b) zamienia się miejscami bez specjalnego przypadku.",
+              "1": "Po „swapie” reszta w kolejnym kroku to 2, potem 1, potem 0."
+            },
+            "instruction": "Dla pary [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]] prześledź pierwszą iterację pętli i uzasadnij, dlaczego algorytm Euklidesa nie potrzebuje jawnego kroku „zamień [[math]]a[[/math]] z [[math]]b[[/math]]”, żeby działał poprawnie niezależnie od porządku argumentów.",
+            "summary": "[[math]]\\gcd(101, 103) = 1[[/math]] — start z [[math]]a < b[[/math]], widać implicit swap.",
+            "title": "Bliźniacze liczby pierwsze"
+          },
+          "values": {
+            "a": "a",
+            "b": "b"
+          }
+        },
+        "millerRabin": {
+          "values": {
+            "n": "n",
+            "witnesses": "świadki",
+            "witnessesPlaceholder": "2, 3, 7"
+          },
+          "carmichael": {
+            "title": "Liczba Carmichaela",
+            "summary": "[[math]]561 = 3 \\cdot 11 \\cdot 17[[/math]] — test Fermata tu zawodzi, Miller-Rabin nie.",
+            "instruction": "Zdecyduj, czy [[math]]n = {{n}}[[/math]] jest pierwsze, używając testu Millera-Rabina ze świadkami [[math]]{{witnesses}}[[/math]]. Wpisane domyślnie [[math]]n = 561[[/math]] to najmniejsza liczba Carmichaela — naiwny test Fermata dałby „prawdopodobnie pierwsze”; Miller-Rabin dzięki sprawdzaniu pierwiastka kwadratowego z jedności wykryje złożoność.",
+            "hints": {
+              "0": "Rozłóż najpierw [[math]]560 = 2^4 \\cdot 35[[/math]], więc [[math]]r = 4[[/math]], [[math]]d = 35[[/math]].",
+              "1": "Już dla świadka [[math]]a = 2[[/math]] łańcuch trafi w [[math]]1[[/math]] bez przejścia przez [[math]]n - 1[[/math]] — to właśnie „pierwiastek kwadratowy z 1 różny od [[math]]\\pm 1[[/math]]”, który wyklucza pierwszość."
+            }
+          },
+          "smallPrime": {
+            "title": "Łagodny test",
+            "summary": "Mała liczba pierwsza, świadek [[math]]a = 2[[/math]] — szybkie obejście mechaniki.",
+            "instruction": "Uruchom test Millera-Rabina dla [[math]]n = {{n}}[[/math]] ze świadkami [[math]]{{witnesses}}[[/math]]. Rozpisz rozkład [[math]]n - 1 = 2^r \\cdot d[[/math]] i prześledź łańcuch kwadratowania, aż [[math]]x[[/math]] osiągnie [[math]]n - 1[[/math]] albo [[math]]1[[/math]].",
+            "hints": {
+              "0": "[[math]]28 = 2^2 \\cdot 7[[/math]], więc [[math]]r = 2[[/math]], [[math]]d = 7[[/math]].",
+              "1": "[[math]]2^7 \\bmod 29 = 128 \\bmod 29 = 12[[/math]]. Podnieś do kwadratu: [[math]]12^2 \\bmod 29 = 144 \\bmod 29 = 28 = n - 1[[/math]] ✓."
+            }
+          },
+          "compositeWitness": {
+            "title": "Świadek złożoności",
+            "summary": "[[math]]25 = 5^2[[/math]] — znajdź świadka, który natychmiast obali pierwszość.",
+            "instruction": "Pokaż, że [[math]]n = {{n}}[[/math]] jest złożone, używając testu Millera-Rabina ze świadkami [[math]]{{witnesses}}[[/math]]. Odpisz pełny łańcuch kwadratowania i wskaż, w którym miejscu świadek obala pierwszość. Uwaga: przy domyślnym [[math]]n = 25[[/math]] świadek [[math]]a = 7[[/math]] jest strong liar — test dla tego świadka przechodzi, mimo że 25 jest złożone.",
+            "hints": {
+              "0": "[[math]]24 = 2^3 \\cdot 3[[/math]], [[math]]r = 3[[/math]], [[math]]d = 3[[/math]]. [[math]]2^3 \\bmod 25 = 8[[/math]]; łańcuch [[math]]8, 14, 21[[/math]] — żaden element nie jest [[math]]1[[/math]] ani [[math]]n - 1 = 24[[/math]], więc świadek obala pierwszość."
+            }
+          }
+        },
+        "pointerLab": {
+          "slidingWindow": {
+            "windowSize": "szerokość okna"
+          },
+          "twoPointers": {
+            "target": "cel"
+          }
+        },
+        "pollardsRho": {
+          "values": {
+            "n": "n",
+            "c": "c",
+            "x0": "x₀"
+          },
+          "quickFactor": {
+            "title": "Szybki dzielnik",
+            "summary": "[[math]]91 = 7 \\cdot 13[[/math]], [[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]] — gcd = 7 w jednej iteracji.",
+            "instruction": "Rozłóż [[math]]n = {{n}}[[/math]] za pomocą algorytmu rho Pollarda z [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]] i [[math]]x_0 = {{x0}}[[/math]]. Pokaż, jak iteracja tortoise-hare daje nietrywialny [[math]]\\gcd[[/math]].",
+            "hints": {
+              "0": "[[math]]x_1 = f(2) = 5[[/math]], [[math]]y_1 = f(f(2)) = f(5) = 26[[/math]]. [[math]]|5 - 26| = 21[[/math]], [[math]]\\gcd(21, 91) = 7[[/math]] — dzielnik znaleziony."
+            }
+          },
+          "classic8051": {
+            "title": "Podręcznikowy przykład",
+            "summary": "[[math]]8051 = 83 \\cdot 97[[/math]], klasyczny przykład rho.",
+            "instruction": "Rozłóż [[math]]n = {{n}}[[/math]] używając rho Pollarda z [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]], [[math]]x_0 = {{x0}}[[/math]]. Wypisz tabelę iteracji [[math]](x, y, |x - y|, \\gcd)[[/math]] aż do ujawnienia dzielnika.",
+            "hints": {
+              "0": "Iteracja 1: [[math]]x = 5, y = 26[[/math]], [[math]]\\gcd(21, 8051) = 1[[/math]] — kontynuujemy.",
+              "1": "Iteracja 2 daje [[math]]x = 26, y = 2839[[/math]] i [[math]]\\gcd(2813, 8051) = 97[[/math]] — dzielnik."
+            }
+          },
+          "cycleFailure": {
+            "title": "Cykl bez dzielnika",
+            "summary": "[[math]]n = 53[[/math]] jest pierwsze — wskaźniki spotkają się z [[math]]\\gcd = n[[/math]], restart wymagany.",
+            "instruction": "Zastosuj rho Pollarda do [[math]]n = {{n}}[[/math]] z [[math]]f(x) = x^2 + {{c}}[[/math]], [[math]]x_0 = {{x0}}[[/math]]. Prześledź tabelę iteracji aż tortoise dogoni hare i [[math]]\\gcd = n[[/math]]. Wyjaśnij, co oznacza ten przypadek i co zrobić w praktyce (zmienić [[math]]c[[/math]] i powtórzyć).",
+            "hints": {
+              "0": "Dla [[math]]n = 53[[/math]] (liczby pierwszej) nie istnieje [[math]]d \\in (1, n)[[/math]] z [[math]]d \\mid n[[/math]] — rho musi zwrócić błąd.",
+              "1": "Po kilku iteracjach [[math]]x = y = 14[[/math]] i [[math]]\\gcd(0, 53) = 53[[/math]] — sygnał restartu ze zmienionym [[math]]c[[/math]]."
+            }
+          }
+        },
+        "reservoirSampling": {
+          "values": {
+            "stream": "strumień",
+            "streamPlaceholder": "5 3 8 1 9 2 7 4",
+            "reservoirSize": "rozmiar k",
+            "seed": "ziarno"
+          },
+          "uniformSample": {
+            "title": "Jednostajna próbka k = 3",
+            "summary": "Strumień 8 liczb, rezerwuar pojemności 3, deterministyczne ziarno — pokaż, że każdy element kończy z prawdopodobieństwem [[math]]3/8[[/math]].",
+            "instruction": "Dla strumienia [[math]]{{stream}}[[/math]] wybierz jednostajną próbkę [[math]]k = {{k}}[[/math]] elementów algorytmem Reservoir Sampling R. Prześledź fazę wypełniania (pierwsze [[math]]k[[/math]] elementów bezwarunkowo), a potem każdy krok z ziarnem [[math]]{{seed}}[[/math]]: rzut kostką, decyzja akceptacja/odrzucenie.",
+            "hints": {
+              "0": "Faza wypełniania jest trywialna — pierwsze [[math]]k = {{k}}[[/math]] elementów idą prosto do rezerwuaru, slot po slocie.",
+              "1": "W fazie próbkowania prawdopodobieństwo akceptacji maleje jak [[math]]k/(i+1)[[/math]] — dla [[math]]i = k[[/math]] wynosi [[math]]k/(k+1)[[/math]], a dla [[math]]i = n-1[[/math]] schodzi do [[math]]k/n[[/math]]. Stąd jednostajność końcowa."
+            }
+          }
+        },
+        "sieveEratosthenes": {
+          "values": {
+            "upper": "do N"
+          }
+        },
+        "simplexAlgorithm": {
+          "values": {
+            "objective": "wektor c",
+            "objectivePlaceholder": "40 30",
+            "constraints": "ograniczenia",
+            "constraintsPlaceholder": "1 1 | 12; 2 1 | 16"
+          },
+          "basicMaxProfit": {
+            "title": "Maksymalizacja zysku",
+            "summary": "[[math]]\\max z = 40x + 30y[/math]] przy [[math]]x+y \\leq 12[/math]], [[math]]2x+y \\leq 16[/math]] → [[math]]x=4, y=8, z=400[/math]]",
+            "instruction": "Rozwiąż problem programowania liniowego — maksymalizuj {{objective}} przy ograniczeniach {{constraints}}, [[math]]x, y \\geq 0[[/math]], używając metody simplex.",
+            "hints": {
+              "0": "W pierwszej iteracji wchodzi [[math]]x[[/math]] (koszt zredukowany [[math]]-40[[/math]], najbardziej ujemny). Test minimalnego ilorazu: [[math]]12/1 = 12[[/math]] vs [[math]]16/2 = 8[[/math]] — wychodzi [[math]]s_2[[/math]].",
+              "1": "W drugiej iteracji wchodzi [[math]]y[[/math]] (koszt zredukowany [[math]]-10[[/math]]). Test: [[math]]4 / 0{.}5 = 8[[/math]] vs [[math]]8 / 0{.}5 = 16[[/math]] — wychodzi [[math]]s_1[[/math]]. Po pivocie wszystkie koszty ≥ 0: optimum [[math]]z = 400[[/math]] przy [[math]]x = 4, y = 8[[/math]]."
+            }
+          }
         }
       },
       "toolbar": {
@@ -3056,6 +4554,18 @@
           "randomize": "Losuj"
         },
         "counterLabel": "Krok {{current}} / {{total}}",
+        "customizeValues": {
+          "aboveMaximumLabel": "Wartość przekracza dozwolone maksimum.",
+          "applyLabel": "Zastosuj",
+          "belowMinimumLabel": "Wartość poniżej dozwolonego minimum.",
+          "cancelLabel": "Anuluj",
+          "fieldTypeUnsupportedLabel": "Typ pola jeszcze nie obsługiwany.",
+          "mustBeNonZeroLabel": "Wartość nie może być zerem.",
+          "notAnIntegerLabel": "Wpisz liczbę całkowitą.",
+          "requiredLabel": "Pole wymagane.",
+          "title": "Własne wartości"
+        },
+        "customizeValuesAriaLabel": "Dostosuj wartości",
         "datasetSizeLabel": "Rozmiar danych",
         "nextStepLabel": "Następny krok",
         "pausePlaybackLabel": "Wstrzymaj odtwarzanie",
@@ -3138,12 +4648,29 @@
           "twoSideCheck": "Kontrola dwóch stron",
           "vectorMerge": "Scalanie wektorów"
         },
+        "taskLabel": "Zadanie",
         "viewLabel": "Widok"
       },
       "traceHint": {
         "ariaLabel": "Wskazówka śladu"
       },
       "tracePanels": {
+        "callStackLab": {
+          "activeLabel": "Aktywna ramka",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu stosu wywołań dla tego kroku.",
+          "iterationLabel": "Iteracja",
+          "returnsLabel": "Ostatnie powroty",
+          "statsLabel": "Statystyki"
+        },
+        "callTreeLab": {
+          "activeLabel": "Aktywny węzeł",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu drzewa wywołań dla tego kroku.",
+          "iterationLabel": "Iteracja",
+          "pathLabel": "Aktywna ścieżka",
+          "statsLabel": "Statystyki"
+        },
         "closestPair": {
           "activeComparisonLabel": "Aktywne porównanie",
           "bestLabel": "Najlepszy",
@@ -3528,6 +5055,27 @@
           },
           "waitingStepLabel": "Oczekiwanie na następny krok BFS / DFS / powiększania."
         },
+        "numberLab": {
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu dla tego kroku.",
+          "historyLabel": "Historia",
+          "iterationLabel": "Iteracja",
+          "registersLabel": "Rejestry"
+        },
+        "pointerLab": {
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu dla tego kroku.",
+          "pointersLabel": "Wskaźniki",
+          "statsLabel": "Statystyki"
+        },
+        "scratchpadLab": {
+          "currentLineLabel": "Bieżąca linia",
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu tablicy dla tego kroku.",
+          "historyLabel": "Wyprowadzenie",
+          "iterationLabel": "Iteracja",
+          "marginsLabel": "Notatki na marginesie"
+        },
         "search": {
           "calculationAriaLabel": "Podsumowanie obliczeń wyszukiwania",
           "columns": {
@@ -3565,6 +5113,13 @@
           "visitedOrderLabel": "Kolejność odwiedzin",
           "waitingDecisionLabel": "oczekiwanie na kolejny ruch",
           "windowLabel": "Okno"
+        },
+        "sieveGrid": {
+          "decisionLabel": "Decyzja",
+          "emptyLabel": "Brak śladu sita dla tego kroku.",
+          "iterationLabel": "Iteracja",
+          "pivotLabel": "Aktywna liczba",
+          "primesLabel": "Znalezione liczby pierwsze"
         },
         "sort": {
           "boundaryLabel": "Granica",
@@ -4542,6 +6097,14 @@
           }
         }
       },
+      "vizOptions": {
+        "scratchpadLab": {
+          "captionsLabel": "Pokaż tytuły kroków",
+          "captionsDescription": "Przypinamy opis kroku prowadzącego nad każdą linię, żeby długie wyprowadzenia dało się czytać bez przewijania paska u góry.",
+          "instructionsLabel": "Pokaż wskazówki",
+          "instructionsDescription": "Tag w trybie rozkazującym (np. \"Policz 48 mod 36\") zostaje przypięty do linii, którą wyprodukował."
+        }
+      },
       "visualizations": {
         "closestPair": {
           "action": {
@@ -4738,6 +6301,7 @@
       }
     }
   },
+  "features.algorithms.runtime.callStackLab.recursiveFibonacci.descriptions.base": "Missing value for 'features.algorithms.runtime.callStackLab.recursiveFibonacci.descriptions.base'",
   "features.algorithms.runtime.dp.burstBalloons.labels.intervalRange": "Missing value for 'features.algorithms.runtime.dp.burstBalloons.labels.intervalRange'",
   "shared": {
     "codeLanguageDial": {
@@ -4770,6 +6334,10 @@
     "table": {
       "emptyLabel": "Brak wierszy",
       "legendLabel": "Legenda"
+    },
+    "vizOptionsMenu": {
+      "title": "Opcje widoku",
+      "triggerLabel": "Opcje widoku"
     }
   }
 }

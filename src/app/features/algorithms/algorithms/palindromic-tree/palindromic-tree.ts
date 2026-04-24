@@ -7,7 +7,7 @@ import {
   PalindromicTreeNodeView,
   PalindromicTreeTraceState,
 } from '../../models/string';
-import { PalindromicTreeScenario } from '../../utils/string-scenarios/string-scenarios';
+import { PalindromicTreeScenario } from '../../utils/scenarios/string/string-scenarios';
 
 interface EertreeNode {
   readonly id: number;

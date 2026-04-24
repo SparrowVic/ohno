@@ -10,8 +10,8 @@ import {
   TreeTraversalOrder,
   TreeTraversalTraceState,
 } from '../../models/tree';
-import { TreeTraversalScenario } from '../../utils/tree-scenarios/tree-scenarios';
-import { buildTreeEdges, layoutTree, TreeLayoutNode } from '../../utils/tree-layout/tree-layout';
+import { TreeTraversalScenario } from '../../utils/scenarios/tree/tree-scenarios';
+import { buildTreeEdges, layoutTree, TreeLayoutNode } from '../../utils/helpers/tree-layout/tree-layout';
 import { createTreeStep } from '../tree-step';
 
 const I18N = {

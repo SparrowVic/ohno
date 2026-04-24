@@ -3,7 +3,7 @@ import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { DsuEdgeTrace } from '../models/dsu';
 import { SortStep } from '../models/sort-step';
-import { KruskalScenario } from '../utils/dsu-scenarios/dsu-scenarios';
+import { KruskalScenario } from '../utils/scenarios/dsu/dsu-scenarios';
 import { createDsuStep, DsuBaseNode } from './dsu-step';
 
 const I18N = {

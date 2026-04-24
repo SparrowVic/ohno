@@ -1,0 +1,73 @@
+<div class="trace">
+  @if (state(); as lab) {
+    <div class="trace__header">
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="lab.modeLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="lab.phaseLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.numberLab.iterationLabel | transloco"
+          [value]="lab.iteration"
+          [valueMono]="true"
+        />
+        @if (hasResult()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+            [value]="lab.resultLabel! | i18nText"
+          />
+        }
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.pointerLab.decisionLabel | transloco
+          "
+          [value]="lab.decisionLabel | i18nText"
+        />
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__streams">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.pointerLab.pointersLabel | transloco"
+          [badge]="lab.pointers.length"
+        >
+          <div class="trace__pointer-grid">
+            @for (ptr of lab.pointers; track ptr.id) {
+              <div class="trace__pointer trace__pointer--{{ ptr.tone }}">
+                <app-math-text class="trace__pointer-label" [content]="ptr.label" />
+                <app-math-text class="trace__pointer-index" [content]="stringify(ptr.index)" />
+              </div>
+            }
+          </div>
+        </app-segmented-panel-section>
+
+        @if (lab.stats.length > 0) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.pointerLab.statsLabel | transloco"
+            [badge]="lab.stats.length"
+          >
+            <div class="trace__stats">
+              @for (stat of lab.stats; track $index) {
+                <div class="trace__stat trace__stat--{{ stat.tone }}">
+                  <app-math-text class="trace__stat-label" [content]="stat.label | i18nText" />
+                  <app-math-text class="trace__stat-value" [content]="stat.value | i18nText" />
+                </div>
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+      </app-segmented-panel>
+    </div>
+  } @else {
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      {{ I18N_KEY.features.algorithms.tracePanels.pointerLab.emptyLabel | transloco }}
+    </div>
+  }
+</div>

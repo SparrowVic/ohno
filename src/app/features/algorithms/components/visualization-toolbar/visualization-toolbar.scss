@@ -1,3 +1,5 @@
+@use '../../../../shared/controls/control-chrome' as chrome;
+
 :host {
   display: block;
 }
@@ -105,6 +107,59 @@
   min-width: 0;
   align-items: stretch;
   overflow: visible;
+}
+
+.toolbar__task {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 0;
+
+  & > app-lab-select {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+.toolbar__customize-btn {
+  @include chrome.control-field(var(--control-radius-sm));
+
+  flex: 0 0 auto;
+  width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  align-self: flex-end;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover:not(:disabled) {
+    @include chrome.control-field-hover;
+
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    @include chrome.control-field-focus;
+  }
+
+  &--active {
+    @include chrome.control-field-active;
+
+    color: var(--chrome-accent-alt);
+  }
 }
 
 .ctrl-btn {

@@ -1,0 +1,106 @@
+<div class="trace">
+  @if (state(); as tree) {
+    <div class="trace__header">
+      <app-segmented-panel class="trace__facts">
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
+          [value]="tree.modeLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
+          [value]="tree.phaseLabel | i18nText"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.callTreeLab.iterationLabel | transloco"
+          [value]="tree.iteration"
+          [valueMono]="true"
+        />
+        @if (hasResult()) {
+          <app-segmented-panel-section
+            [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
+            [value]="tree.resultLabel! | i18nText"
+          />
+        }
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__calc">
+        <app-segmented-panel-section
+          [eyebrow]="
+            I18N_KEY.features.algorithms.tracePanels.callTreeLab.decisionLabel | transloco
+          "
+          [value]="tree.decisionLabel | i18nText"
+        />
+      </app-segmented-panel>
+
+      <app-segmented-panel class="trace__streams">
+        @if (activeNode(); as node) {
+          <app-segmented-panel-section
+            [eyebrow]="
+              I18N_KEY.features.algorithms.tracePanels.callTreeLab.activeLabel | transloco
+            "
+          >
+            <div class="trace__active">
+              <app-math-text class="trace__active-title" [content]="node.title" mode="math" />
+              @if (node.subtitle) {
+                <span class="trace__active-subtitle">{{ node.subtitle | i18nText }}</span>
+              }
+              @if (node.stats.length > 0) {
+                <div class="trace__active-stats">
+                  @for (stat of node.stats; track stat.label) {
+                    <span class="trace__chip trace__chip--{{ stat.tone }}">
+                      <app-math-text class="trace__chip-label" [content]="stat.label | i18nText" />
+                      <app-math-text class="trace__chip-value" [content]="stat.value | i18nText" />
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+          </app-segmented-panel-section>
+        }
+
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.callTreeLab.statsLabel | transloco"
+          [badge]="tree.stats.length"
+        >
+          <div class="trace__chips">
+            @for (stat of tree.stats; track stat.label) {
+              <span class="trace__chip trace__chip--{{ stat.tone }}">
+                <app-math-text class="trace__chip-label" [content]="stat.label | i18nText" />
+                <app-math-text class="trace__chip-value" [content]="stat.value | i18nText" />
+              </span>
+            }
+          </div>
+        </app-segmented-panel-section>
+
+        <app-segmented-panel-section
+          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.callTreeLab.pathLabel | transloco"
+          [badge]="tree.activePath.length"
+        >
+          <div class="trace__path">
+            @if (tree.activePath.length === 0) {
+              <span class="trace__empty-note">{{
+                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
+              }}</span>
+            } @else {
+              @for (id of tree.activePath; track id; let last = $last) {
+                @for (node of tree.nodes; track node.id) {
+                  @if (node.id === id) {
+                    <app-math-text class="trace__path-chip" [content]="node.title" mode="math" />
+                    @if (!last) {
+                      <span class="trace__path-sep" aria-hidden="true">→</span>
+                    }
+                  }
+                }
+              }
+            }
+          </div>
+        </app-segmented-panel-section>
+      </app-segmented-panel>
+    </div>
+  } @else {
+    <div class="trace__empty">
+      <span class="trace__empty-dot" aria-hidden="true"></span>
+      {{ I18N_KEY.features.algorithms.tracePanels.callTreeLab.emptyLabel | transloco }}
+    </div>
+  }
+</div>

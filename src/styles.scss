@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap');
+@import 'katex/dist/katex.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,wght@1,300;1,400;1,500;1,600&family=Sora:wght@400;500;600;700;800&display=swap');
 
 :root {
   color-scheme: dark;
@@ -231,6 +232,14 @@
      ====================================================================== */
   --font-sans: 'Sora', 'Inter', 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, monospace;
+  /* Used by the scratchpad viz for narrative chrome — captions, goals,
+     sticky notes, imperative tags. Newsreader italic is a screen-optimized
+     serif with strong italics, giving a Tufte-style editorial margin-note
+     voice that scales up cleanly on dense/ultrawide layouts where a
+     cursive-hand font reads as cheap or under-baked. Always paired with
+     `font-style: italic` at the call-site; listing italic-only weights in
+     the @import keeps the file small. */
+  --font-notebook: 'Newsreader', 'Iowan Old Style', 'Hoefler Text', Georgia, serif;
 
   /* ======================================================================
      RADII.

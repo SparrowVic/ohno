@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { longestPalindromicSubsequenceGenerator } from './longest-palindromic-subsequence';
 import type { SortStep } from '../../models/sort-step';
-import type { LpsScenario } from '../../utils/dp-scenarios/dp-scenarios';
+import type { LpsScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: LpsScenario): SortStep[] {
   return [...longestPalindromicSubsequenceGenerator(scenario)];

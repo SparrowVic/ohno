@@ -1,0 +1,135 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
+    <app-viz-preset-picker
+      [options]="presetOptions()"
+      [activeId]="presetId()"
+      (selected)="selectPreset($event)"
+    />
+  </app-viz-header>
+
+  @if (state(); as tree) {
+    <div class="ctlab">
+      <!-- Stats strip always visible so the viewer sees counters
+           even while the tree is still growing. -->
+      <section class="ctlab__stats">
+        @for (stat of tree.stats; track stat.label) {
+          <div class="ctlab__stat ctlab__stat--{{ stat.tone }}">
+            <app-math-text class="ctlab__stat-label" [content]="stat.label | i18nText" variant="chip" />
+            <app-math-text class="ctlab__stat-value" [content]="stat.value | i18nText" variant="formula" />
+          </div>
+        }
+      </section>
+
+      <!-- Sidecar — optional physical state (e.g. N-Queens board).
+           Pinned above the tree so the two views read top-down. -->
+      @if (tree.sidecar; as board) {
+        <section class="ctlab__sidecar">
+          <header class="ctlab__sidecar-head">
+            <app-math-text [content]="board.title | i18nText" variant="chip" />
+          </header>
+          <div
+            class="ctlab__board"
+            [style.grid-template-columns]="'repeat(' + board.cols + ', 1fr)'"
+          >
+            @for (cell of board.cells; track cell.row + ':' + cell.col) {
+              <article class="ctlab__board-cell ctlab__board-cell--{{ cell.state }}">
+                @if (cell.value) {
+                  <span class="ctlab__board-cell-value">{{ cell.value }}</span>
+                }
+              </article>
+            }
+          </div>
+          @if (board.footer) {
+            <footer class="ctlab__sidecar-footer">
+              <app-math-text [content]="board.footer | i18nText" variant="chip" />
+            </footer>
+          }
+        </section>
+      }
+
+      <!-- Tree stage: SVG edges + HTML node cards. -->
+      <section class="ctlab__stage">
+        @if (tree.nodes.length === 0) {
+          <div class="ctlab__empty">—</div>
+        } @else {
+          <div
+            class="ctlab__canvas"
+            [style.width.px]="pixelWidth()"
+            [style.height.px]="pixelHeight()"
+          >
+            <svg
+              class="ctlab__edges"
+              [attr.viewBox]="viewBox()"
+              preserveAspectRatio="xMidYMin meet"
+              aria-hidden="true"
+            >
+              @for (edge of layout().edges; track edge.id) {
+                <path
+                  class="ctlab__edge"
+                  [class.ctlab__edge--active]="edge.isOnPath"
+                  [attr.d]="edge.path"
+                />
+                @if (edge.label; as label) {
+                  <g [attr.transform]="'translate(' + edge.labelX + ' ' + edge.labelY + ')'">
+                    <rect
+                      class="ctlab__edge-label-bg"
+                      x="-16"
+                      y="-8"
+                      width="32"
+                      height="16"
+                      rx="5"
+                    />
+                    <text class="ctlab__edge-label" text-anchor="middle" dy="4">{{ label }}</text>
+                  </g>
+                }
+              }
+            </svg>
+
+            @for (node of layout().nodes; track node.id) {
+              <article
+                class="ctlab__node ctlab__node--{{ node.phase }}"
+                [class.ctlab__node--active-path]="isOnPath(node.id)"
+                [style.left.px]="nodeLeftPx(node)"
+                [style.top.px]="nodeTopPx(node)"
+                [style.width.px]="nodeWidthPx"
+                [style.min-height.px]="nodeHeightPx"
+              >
+                <header class="ctlab__node-head">
+                  <app-math-text class="ctlab__node-title" [content]="node.title" variant="formula" />
+                  @if (node.badge) {
+                    <span class="ctlab__node-badge">{{ node.badge }}</span>
+                  }
+                </header>
+                @if (node.subtitle) {
+                  <span class="ctlab__node-subtitle">{{ node.subtitle | i18nText }}</span>
+                }
+                @if (node.stats.length > 0) {
+                  <div class="ctlab__node-stats">
+                    @for (stat of node.stats; track stat.label) {
+                      <span class="ctlab__node-stat ctlab__node-stat--{{ stat.tone }}">
+                        <app-math-text class="ctlab__node-stat-label" [content]="stat.label | i18nText" variant="cell" />
+                        <app-math-text class="ctlab__node-stat-value" [content]="stat.value | i18nText" variant="chip" />
+                      </span>
+                    }
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        }
+      </section>
+
+      <footer
+        class="ctlab__result"
+        [class.ctlab__result--pending]="!tree.resultLabel"
+      >
+        <span class="ctlab__result-label">result</span>
+        @if (tree.resultLabel; as result) {
+          <app-math-text class="ctlab__result-value" [content]="result | i18nText" variant="formula" />
+        } @else {
+          <span class="ctlab__result-value">—</span>
+        }
+      </footer>
+    </div>
+  }
+</app-viz-panel>

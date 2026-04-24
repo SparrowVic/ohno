@@ -1223,6 +1223,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['sequence', 'iteration', 'basics'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'factorial',
@@ -1232,6 +1234,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['math', 'iteration', 'recursion'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'euclidean-gcd',
@@ -1241,6 +1245,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['number theory', 'modulo', 'gcd'],
+    complexity: {
+      timeBest: 'O(1)',
+      timeAverage: 'O(log min(a, b))',
+      timeWorst: 'O(log min(a, b))',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'sieve-of-eratosthenes',
@@ -1250,6 +1261,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['primes', 'number theory', 'array marking'],
+    complexity: {
+      timeBest: 'O(n log log n)',
+      timeAverage: 'O(n log log n)',
+      timeWorst: 'O(n log log n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'two-pointers',
@@ -1259,6 +1277,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['arrays', 'window', 'pointers'],
+    complexity: { timeBest: 'O(1)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'sliding-window',
@@ -1268,6 +1288,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['arrays', 'window', 'incremental'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'palindrome-check',
@@ -1277,6 +1299,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['strings', 'two pointers', 'symmetry'],
+    complexity: { timeBest: 'O(1)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'reverse-string-array',
@@ -1286,7 +1310,9 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['in-place', 'two pointers', 'basics'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
     inPlace: true,
+    implemented: true,
   }),
   algo({
     id: 'backtracking',
@@ -1296,6 +1322,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'backtracking',
     tags: ['search', 'constraints', 'state space'],
+    complexity: {
+      timeBest: 'O(n!)',
+      timeAverage: 'O(n!)',
+      timeWorst: 'O(n!)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'kadane',
@@ -1305,6 +1338,8 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'array-techniques',
     tags: ['max subarray', 'linear', 'DP-lite'],
+    complexity: { timeBest: 'O(n)', timeAverage: 'O(n)', timeWorst: 'O(n)', space: 'O(1)' },
+    implemented: true,
   }),
   algo({
     id: 'recursion-call-stack',
@@ -1314,6 +1349,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'recursion',
     tags: ['stack frames', 'recursion', 'visualization'],
+    complexity: {
+      timeBest: 'O(2ⁿ)',
+      timeAverage: 'O(2ⁿ)',
+      timeWorst: 'O(2ⁿ)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'minimax-alpha-beta',
@@ -1323,6 +1365,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'game-theory',
     tags: ['game tree', 'pruning', 'adversarial'],
+    complexity: {
+      timeBest: 'O(b^(d/2))',
+      timeAverage: 'O(b^(3d/4))',
+      timeWorst: 'O(b^d)',
+      space: 'O(d)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'monte-carlo-tree-search',
@@ -1332,6 +1381,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'game-theory',
     tags: ['MCTS', 'simulation', 'exploration'],
+    complexity: {
+      timeBest: 'O(i · d)',
+      timeAverage: 'O(i · d)',
+      timeWorst: 'O(i · d)',
+      space: 'O(i)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'reservoir-sampling',
@@ -1341,6 +1397,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'randomized',
     tags: ['streaming', 'randomized', 'sampling'],
+    complexity: {
+      timeBest: 'O(n)',
+      timeAverage: 'O(n)',
+      timeWorst: 'O(n)',
+      space: 'O(k)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'fft-ntt',
@@ -1350,6 +1413,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['convolution', 'frequency domain', 'polynomials'],
+    complexity: {
+      timeBest: 'O(n log n)',
+      timeAverage: 'O(n log n)',
+      timeWorst: 'O(n log n)',
+      space: 'O(n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'gaussian-elimination',
@@ -1359,6 +1429,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['linear algebra', 'matrix', 'row reduction'],
+    complexity: {
+      timeBest: 'O(n³)',
+      timeAverage: 'O(n³)',
+      timeWorst: 'O(n³)',
+      space: 'O(n²)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'simplex-algorithm',
@@ -1368,6 +1445,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['linear programming', 'optimization', 'pivoting'],
+    complexity: {
+      timeBest: 'O(m · n)',
+      timeAverage: 'O(m · n · k)',
+      timeWorst: 'exponential',
+      space: 'O(m · n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'miller-rabin',
@@ -1377,6 +1461,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['primality', 'number theory', 'probabilistic'],
+    complexity: {
+      timeBest: 'O(k · log³ n)',
+      timeAverage: 'O(k · log³ n)',
+      timeWorst: 'O(k · log³ n)',
+      space: 'O(log n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'pollards-rho',
@@ -1386,6 +1477,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['factorization', 'number theory', 'randomized'],
+    complexity: {
+      timeBest: 'O(n^(1/4))',
+      timeAverage: 'O(n^(1/4))',
+      timeWorst: 'O(n^(1/2))',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'chinese-remainder-theorem',
@@ -1395,6 +1493,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['modular arithmetic', 'number theory', 'CRT'],
+    complexity: {
+      timeBest: 'O(k · log M)',
+      timeAverage: 'O(k · log M)',
+      timeWorst: 'O(k · log M)',
+      space: 'O(k)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'extended-euclidean',
@@ -1404,5 +1509,12 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['gcd', 'Bézout', 'mod inverse'],
+    complexity: {
+      timeBest: 'O(log min(a, b))',
+      timeAverage: 'O(log min(a, b))',
+      timeWorst: 'O(log min(a, b))',
+      space: 'O(log min(a, b))',
+    },
+    implemented: true,
   }),
 ] as const;

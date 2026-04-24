@@ -115,7 +115,7 @@
                     }
                   }
                   @default {
-                    <span>{{ textValue(row, column) }}</span>
+                    <app-math-text [content]="textValue(row, column)" variant="metric" />
                   }
                 }
               </td>

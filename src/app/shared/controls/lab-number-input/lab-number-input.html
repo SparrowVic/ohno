@@ -1,0 +1,23 @@
+<label class="lab-number" [class.lab-number--invalid]="hasError()">
+  <span class="lab-number__field">
+    <span class="lab-number__copy">
+      <span class="lab-number__label">{{ label() }}</span>
+      <input
+        class="lab-number__input"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        spellcheck="false"
+        [value]="raw()"
+        [disabled]="disabled()"
+        [placeholder]="placeholder()"
+        [attr.aria-invalid]="hasError()"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+      />
+    </span>
+  </span>
+  @if (error(); as message) {
+    <span class="lab-number__error" role="alert">{{ message }}</span>
+  }
+</label>

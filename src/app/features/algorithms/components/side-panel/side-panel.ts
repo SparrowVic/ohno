@@ -14,6 +14,9 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLine, CodeRegion, CodeVariantMap, LogEntry } from '../../models/detail';
 import { DpTraceState } from '../../models/dp';
@@ -45,6 +48,12 @@ import { SearchTraceState } from '../../models/search';
 import { SortTraceState } from '../../models/sort-trace';
 import { StringTraceState } from '../../models/string';
 import { TreeTraversalTraceState } from '../../models/tree';
+import { NumberLabTraceState } from '../../models/number-lab';
+import { PointerLabTraceState } from '../../models/pointer-lab';
+import { SieveGridTraceState } from '../../models/sieve-grid';
+import { CallStackLabTraceState } from '../../models/call-stack-lab';
+import { CallTreeLabTraceState } from '../../models/call-tree-lab';
+import { ScratchpadLabTraceState } from '../../models/scratchpad-lab';
 import { ClosestPairTracePanel } from '../closest-pair-trace-panel/closest-pair-trace-panel';
 import { CodePanel } from '../code-panel/code-panel';
 import { DelaunayTracePanel } from '../delaunay-trace-panel/delaunay-trace-panel';
@@ -65,6 +74,12 @@ import { SortTracePanel } from '../sort-trace-panel/sort-trace-panel';
 import { StringTracePanel } from '../string-trace-panel/string-trace-panel';
 import { SweepLineTracePanel } from '../sweep-line-trace-panel/sweep-line-trace-panel';
 import { TreeTracePanel } from '../tree-trace-panel/tree-trace-panel';
+import { NumberLabTracePanel } from '../number-lab-trace-panel/number-lab-trace-panel';
+import { PointerLabTracePanel } from '../pointer-lab-trace-panel/pointer-lab-trace-panel';
+import { SieveGridTracePanel } from '../sieve-grid-trace-panel/sieve-grid-trace-panel';
+import { CallStackLabTracePanel } from '../call-stack-lab-trace-panel/call-stack-lab-trace-panel';
+import { CallTreeLabTracePanel } from '../call-tree-lab-trace-panel/call-tree-lab-trace-panel';
+import { ScratchpadLabTracePanel } from '../scratchpad-lab-trace-panel/scratchpad-lab-trace-panel';
 import { VoronoiTracePanel } from '../voronoi-trace-panel/voronoi-trace-panel';
 
 type SideTabId = 'trace' | 'code' | 'info' | 'log';
@@ -87,6 +102,8 @@ const MAX_WIDTH = 680;
     ClosestPairTracePanel,
     CodePanel,
     DelaunayTracePanel,
+    I18nTextPipe,
+    MathText,
     DpTracePanel,
     DsuTracePanel,
     GeometryTracePanel,
@@ -105,6 +122,12 @@ const MAX_WIDTH = 680;
     SweepLineTracePanel,
     TranslocoPipe,
     TreeTracePanel,
+    NumberLabTracePanel,
+    PointerLabTracePanel,
+    SieveGridTracePanel,
+    CallStackLabTracePanel,
+    CallTreeLabTracePanel,
+    ScratchpadLabTracePanel,
     NgTemplateOutlet,
     VoronoiTracePanel,
   ],
@@ -119,6 +142,15 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly codeRegions = input<readonly CodeRegion[]>([]);
   readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
+  /** Name of the currently-selected task (if the algorithm has
+   *  migrated to the unified task model). Rendered as a muted
+   *  eyebrow above the code snippet so the student knows which
+   *  variant of the algorithm they're reading. */
+  readonly activeTaskName = input<TranslatableText | null>(null);
+  /** True when the active task references a code snippet that hasn't
+   *  been authored yet — the Code tab renders an editorial placeholder
+   *  instead of the shiki-rendered variants. */
+  readonly codeSnippetMissing = input<boolean>(false);
   readonly logEntries = input.required<readonly LogEntry[]>();
   readonly traceState = input<GraphStepState | null>(null);
   readonly dpState = input<DpTraceState | null>(null);
@@ -130,6 +162,12 @@ export class SidePanel implements OnInit, OnDestroy {
   readonly sortState = input<SortTraceState | null>(null);
   readonly stringState = input<StringTraceState | null>(null);
   readonly treeState = input<TreeTraversalTraceState | null>(null);
+  readonly numberLabState = input<NumberLabTraceState | null>(null);
+  readonly pointerLabState = input<PointerLabTraceState | null>(null);
+  readonly sieveGridState = input<SieveGridTraceState | null>(null);
+  readonly callStackLabState = input<CallStackLabTraceState | null>(null);
+  readonly callTreeLabState = input<CallTreeLabTraceState | null>(null);
+  readonly scratchpadLabState = input<ScratchpadLabTraceState | null>(null);
   readonly geometryState = input<GeometryStepState | null>(null);
   readonly graphFocusTargetLabel = input<string | null>(null);
   readonly graphFocusPathLabel = input<string | null>(null);
@@ -148,7 +186,13 @@ export class SidePanel implements OnInit, OnDestroy {
       this.sortState() ||
       this.geometryState() ||
       this.stringState() ||
-      this.treeState()
+      this.treeState() ||
+      this.numberLabState() ||
+      this.pointerLabState() ||
+      this.sieveGridState() ||
+      this.callStackLabState() ||
+      this.callTreeLabState() ||
+      this.scratchpadLabState()
         ? (['trace', ...BASE_SIDE_TAB_IDS] as const)
         : BASE_SIDE_TAB_IDS;
 
@@ -220,6 +264,13 @@ export class SidePanel implements OnInit, OnDestroy {
         this.searchState() !== null ||
         this.sortState() !== null ||
         this.stringState() !== null ||
+        this.treeState() !== null ||
+        this.numberLabState() !== null ||
+        this.pointerLabState() !== null ||
+        this.sieveGridState() !== null ||
+        this.callStackLabState() !== null ||
+        this.callTreeLabState() !== null ||
+        this.scratchpadLabState() !== null ||
         this.geometryState() !== null;
 
       if (!hasTrace && this.activeTabState() === 'trace') {

@@ -96,5 +96,65 @@
         (presetChange)="treePresetChange.emit($event)"
       />
     }
+    @case ('number-lab') {
+      <app-number-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="numberLabPresetOptions()"
+        [presetId]="numberLabPresetId()"
+        (presetChange)="numberLabPresetChange.emit($event)"
+      />
+    }
+    @case ('pointer-lab') {
+      <app-pointer-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="pointerLabPresetOptions()"
+        [presetId]="pointerLabPresetId()"
+        (presetChange)="pointerLabPresetChange.emit($event)"
+      />
+    }
+    @case ('sieve-grid') {
+      <app-sieve-grid-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="sieveGridPresetOptions()"
+        [presetId]="sieveGridPresetId()"
+        (presetChange)="sieveGridPresetChange.emit($event)"
+      />
+    }
+    @case ('call-stack-lab') {
+      <app-call-stack-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="callStackLabPresetOptions()"
+        [presetId]="callStackLabPresetId()"
+        (presetChange)="callStackLabPresetChange.emit($event)"
+      />
+    }
+    @case ('call-tree-lab') {
+      <app-call-tree-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="callTreeLabPresetOptions()"
+        [presetId]="callTreeLabPresetId()"
+        (presetChange)="callTreeLabPresetChange.emit($event)"
+      />
+    }
+    @case ('scratchpad-lab') {
+      <app-scratchpad-lab-visualization
+        [array]="array()"
+        [step]="step()"
+        [speed]="speed()"
+        [presetOptions]="numberLabPresetOptions()"
+        [presetId]="numberLabPresetId()"
+        (presetChange)="numberLabPresetChange.emit($event)"
+      />
+    }
   }
 </div>

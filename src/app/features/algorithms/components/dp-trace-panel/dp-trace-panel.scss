@@ -135,10 +135,23 @@
   overflow-wrap: anywhere;
 }
 
+.trace__calc-expression app-math-text {
+  --math-text-scale: 1.1;
+  --math-text-glow: rgba(var(--accent-rgb), 0.08);
+}
+
 .trace__calc-result {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
   margin-top: 4px;
   font-size: 10px;
   color: var(--viz-success-ink);
+}
+
+.trace__calc-result app-math-text {
+  --math-text-scale: 1.12;
+  --math-text-glow: rgba(var(--accent-rgb), 0.1);
 }
 
 .trace__calc-decision {
@@ -177,6 +190,11 @@
   color: #a4e6ff;
   font-size: 9px;
   font-weight: 600;
+}
+
+.trace__chip app-math-text {
+  --math-text-scale: 1.08;
+  --math-text-glow: rgba(var(--viz-accent-rgb), 0.08);
 }
 
 .trace__chip--soft {

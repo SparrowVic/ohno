@@ -56,6 +56,10 @@ export const I18N_KEY = {
       emptyLabel: t('shared.table.emptyLabel'),
       legendLabel: t('shared.table.legendLabel'),
     },
+    vizOptionsMenu: {
+      triggerLabel: t('shared.vizOptionsMenu.triggerLabel'),
+      title: t('shared.vizOptionsMenu.title'),
+    },
   },
   catalog: {
     algorithms: {
@@ -141,6 +145,7 @@ export const I18N_KEY = {
       },
       sidePanel: {
         ariaLabel: t('features.algorithms.sidePanel.ariaLabel'),
+        codeForTaskLabel: t('features.algorithms.sidePanel.codeForTaskLabel'),
         tabs: {
           trace: t('features.algorithms.sidePanel.tabs.trace'),
           code: t('features.algorithms.sidePanel.tabs.code'),
@@ -157,6 +162,21 @@ export const I18N_KEY = {
         runStateLabel: t('features.algorithms.toolbar.runStateLabel'),
         counterLabel: t('features.algorithms.toolbar.counterLabel'),
         viewLabel: t('features.algorithms.toolbar.viewLabel'),
+        taskLabel: t('features.algorithms.toolbar.taskLabel'),
+        customizeValuesAriaLabel: t('features.algorithms.toolbar.customizeValuesAriaLabel'),
+        customizeValues: {
+          title: t('features.algorithms.toolbar.customizeValues.title'),
+          applyLabel: t('features.algorithms.toolbar.customizeValues.applyLabel'),
+          cancelLabel: t('features.algorithms.toolbar.customizeValues.cancelLabel'),
+          requiredLabel: t('features.algorithms.toolbar.customizeValues.requiredLabel'),
+          notAnIntegerLabel: t('features.algorithms.toolbar.customizeValues.notAnIntegerLabel'),
+          belowMinimumLabel: t('features.algorithms.toolbar.customizeValues.belowMinimumLabel'),
+          aboveMaximumLabel: t('features.algorithms.toolbar.customizeValues.aboveMaximumLabel'),
+          mustBeNonZeroLabel: t('features.algorithms.toolbar.customizeValues.mustBeNonZeroLabel'),
+          fieldTypeUnsupportedLabel: t(
+            'features.algorithms.toolbar.customizeValues.fieldTypeUnsupportedLabel',
+          ),
+        },
         datasetSizeLabel: t('features.algorithms.toolbar.datasetSizeLabel'),
         speedLabel: t('features.algorithms.toolbar.speedLabel'),
         actions: {
@@ -326,6 +346,11 @@ export const I18N_KEY = {
         expandRegionAriaLabel: t('features.algorithms.codePanel.expandRegionAriaLabel'),
         collapseRegionAriaLabel: t('features.algorithms.codePanel.collapseRegionAriaLabel'),
         collapsedRegionSummary: t('features.algorithms.codePanel.collapsedRegionSummary'),
+        snippetMissing: {
+          eyebrow: t('features.algorithms.codePanel.snippetMissing.eyebrow'),
+          title: t('features.algorithms.codePanel.snippetMissing.title'),
+          body: t('features.algorithms.codePanel.snippetMissing.body'),
+        },
       },
       traceHint: {
         ariaLabel: t('features.algorithms.traceHint.ariaLabel'),
@@ -1073,6 +1098,67 @@ export const I18N_KEY = {
           outputLabel: t('features.algorithms.tracePanels.tree.outputLabel'),
           emptyLabel: t('features.algorithms.tracePanels.tree.emptyLabel'),
         },
+        numberLab: {
+          iterationLabel: t('features.algorithms.tracePanels.numberLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.numberLab.decisionLabel'),
+          registersLabel: t('features.algorithms.tracePanels.numberLab.registersLabel'),
+          historyLabel: t('features.algorithms.tracePanels.numberLab.historyLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.numberLab.emptyLabel'),
+        },
+        pointerLab: {
+          decisionLabel: t('features.algorithms.tracePanels.pointerLab.decisionLabel'),
+          pointersLabel: t('features.algorithms.tracePanels.pointerLab.pointersLabel'),
+          statsLabel: t('features.algorithms.tracePanels.pointerLab.statsLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.pointerLab.emptyLabel'),
+        },
+        sieveGrid: {
+          iterationLabel: t('features.algorithms.tracePanels.sieveGrid.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.sieveGrid.decisionLabel'),
+          pivotLabel: t('features.algorithms.tracePanels.sieveGrid.pivotLabel'),
+          primesLabel: t('features.algorithms.tracePanels.sieveGrid.primesLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.sieveGrid.emptyLabel'),
+        },
+        callStackLab: {
+          iterationLabel: t('features.algorithms.tracePanels.callStackLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.callStackLab.decisionLabel'),
+          activeLabel: t('features.algorithms.tracePanels.callStackLab.activeLabel'),
+          statsLabel: t('features.algorithms.tracePanels.callStackLab.statsLabel'),
+          returnsLabel: t('features.algorithms.tracePanels.callStackLab.returnsLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.callStackLab.emptyLabel'),
+        },
+        callTreeLab: {
+          iterationLabel: t('features.algorithms.tracePanels.callTreeLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.callTreeLab.decisionLabel'),
+          activeLabel: t('features.algorithms.tracePanels.callTreeLab.activeLabel'),
+          statsLabel: t('features.algorithms.tracePanels.callTreeLab.statsLabel'),
+          pathLabel: t('features.algorithms.tracePanels.callTreeLab.pathLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.callTreeLab.emptyLabel'),
+        },
+        scratchpadLab: {
+          iterationLabel: t('features.algorithms.tracePanels.scratchpadLab.iterationLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.scratchpadLab.decisionLabel'),
+          currentLineLabel: t('features.algorithms.tracePanels.scratchpadLab.currentLineLabel'),
+          marginsLabel: t('features.algorithms.tracePanels.scratchpadLab.marginsLabel'),
+          historyLabel: t('features.algorithms.tracePanels.scratchpadLab.historyLabel'),
+          emptyLabel: t('features.algorithms.tracePanels.scratchpadLab.emptyLabel'),
+        },
+      },
+      vizOptions: {
+        scratchpadLab: {
+          captionsLabel: t('features.algorithms.vizOptions.scratchpadLab.captionsLabel'),
+          captionsDescription: t(
+            'features.algorithms.vizOptions.scratchpadLab.captionsDescription',
+          ),
+          instructionsLabel: t(
+            'features.algorithms.vizOptions.scratchpadLab.instructionsLabel',
+          ),
+          instructionsDescription: t(
+            'features.algorithms.vizOptions.scratchpadLab.instructionsDescription',
+          ),
+        },
+      },
+      scratchpadLab: {
+        taskLabel: t('features.algorithms.scratchpadLab.taskLabel'),
       },
       visualizations: {
         search: {
