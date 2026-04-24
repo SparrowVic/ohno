@@ -4,6 +4,12 @@ Ten plik opisuje aktywne zadania z `EXTENDED_EUCLIDEAN_TASKS` w `index.ts` oraz
 ich domyslne wartosci. Aktualizuj go zawsze po zmianie listy taskow,
 `defaultValues`, `notebookFlow` albo sposobu liczenia w notatniku.
 
+Aktualny notatnik na UI pokazuje obliczenia jak zapis na kartce: osobne sekcje
+typu `Obliczenia w przod`, `Sprawdzenie`, `Cofanie`, `Wynik`, bez opisowych
+captionow nad kazdym rownaniem. Przy back-substytucji kazdy nietrywialny krok
+jest rozpisany jako: rownanie z lancucha, podstawienie, rozwiniecie nawiasow i
+zebranie wspolczynnikow.
+
 ## Kolejnosc w widoku
 
 1. `short` - podstawowe zadanie startowe.
@@ -408,13 +414,15 @@ NWD = 1
 2 = 5 - 1 * 3
 
 1 = 3 - (5 - 1 * 3)
-1 = 2 * 3 - 1 * 5
+1 = 3 - 5 + 3
+1 = 2 * 3 - 5
 ```
 
 ```text
 3 = 8 - 1 * 5
 
 1 = 2 * (8 - 1 * 5) - 1 * 5
+1 = 2 * 8 - 2 * 5 - 5
 1 = 2 * 8 - 3 * 5
 ```
 
@@ -422,6 +430,7 @@ NWD = 1
 5 = 13 - 1 * 8
 
 1 = 2 * 8 - 3 * (13 - 1 * 8)
+1 = 2 * 8 - 3 * 13 + 3 * 8
 1 = 5 * 8 - 3 * 13
 ```
 
@@ -429,6 +438,7 @@ NWD = 1
 8 = 21 - 1 * 13
 
 1 = 5 * (21 - 1 * 13) - 3 * 13
+1 = 5 * 21 - 5 * 13 - 3 * 13
 1 = 5 * 21 - 8 * 13
 ```
 
@@ -436,6 +446,7 @@ NWD = 1
 13 = 34 - 1 * 21
 
 1 = 5 * 21 - 8 * (34 - 1 * 21)
+1 = 5 * 21 - 8 * 34 + 8 * 21
 1 = 13 * 21 - 8 * 34
 ```
 
@@ -443,6 +454,7 @@ NWD = 1
 21 = 55 - 1 * 34
 
 1 = 13 * (55 - 1 * 34) - 8 * 34
+1 = 13 * 55 - 13 * 34 - 8 * 34
 1 = 13 * 55 - 21 * 34
 ```
 
@@ -450,7 +462,8 @@ NWD = 1
 34 = 89 - 1 * 55
 
 1 = 13 * 55 - 21 * (89 - 1 * 55)
-1 = -21 * 89 + 34 * 55
+1 = 13 * 55 - 21 * 89 + 21 * 55
+1 = 34 * 55 - 21 * 89
 ```
 
 ### Wynik

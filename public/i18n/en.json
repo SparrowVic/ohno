@@ -2058,6 +2058,20 @@
             "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
             "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "section": {
+              "forward": "Forward calculations",
+              "gcd": "GCD",
+              "check": "Check",
+              "back": "Back-substitution",
+              "result": "Result",
+              "particular": "Particular solution",
+              "general": "General solution",
+              "minimization": "Minimization",
+              "interpretation": "Interpretation",
+              "conclusion": "Conclusion"
+            },
+            "gcdLine": "[[math]]GCD = {{gcd}}[[/math]]",
+            "modularRemainderCheck": "[[math]]{{value}} \\bmod {{divisor}} = {{remainder}}[[/math]]",
             "rsa": {
               "goal": "Find the private key [[math]]d[[/math]]: for [[math]]n = {{n}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], and [[math]]e = {{e}}[[/math]], solve [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]].",
               "rule": "Run Extended Euclidean on [[math]]\\varphi(n)[[/math]] and [[math]]e[[/math]]. If [[math]]\\gcd({{phi}}, {{e}}) = 1[[/math]], the coefficient of [[math]]e[[/math]] is the inverse modulo [[math]]\\varphi(n)[[/math]].",
@@ -2065,6 +2079,8 @@
               "inverseExists": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}}[[/math]], so the inverse modulo [[math]]\\varphi(n)[[/math]] exists.",
               "noInverse": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}} \\neq 1[[/math]], so [[math]]e[[/math]] has no inverse modulo [[math]]\\varphi(n)[[/math]].",
               "inverseLine": "The coefficient of [[math]]e[[/math]] is [[math]]{{coefficient}}[[/math]], so [[math]]d \\equiv {{coefficient}} \\pmod{ {{phi}} } = {{d}}[[/math]].",
+              "productCheck": "[[math]]{{e}} \\cdot {{d}} = {{product}}[[/math]]",
+              "moduloCheck": "[[math]]{{product}} \\bmod {{phi}} = {{remainder}}[[/math]]",
               "interpretation": "In RSA, [[math]](e, d) = ({{e}}, {{d}})[[/math]] satisfies [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
               "signoff": "[[math]]d = {{d}}[[/math]] for [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
               "noInverseSignoff": "No private key: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."
@@ -2078,6 +2094,8 @@
               "scale": "Scale Bézout's identity by [[math]]{{scale}}[[/math]]: [[math]]x_0 = {{scale}} \\cdot {{s}}, \\quad y_0 = {{scale}} \\cdot {{t}}[[/math]].",
               "particular": "[[math]]x_0 = {{x}}, \\; y_0 = {{y}}[[/math]], so [[math]]{{a}} \\cdot {{x}} + {{b}} \\cdot {{y}} = {{target}}[[/math]].",
               "general": "[[math]]x = {{xFormula}}, \\quad y = {{yFormula}}, \\quad k \\in \\mathbb{Z}[[/math]].",
+              "stepSizes": "[[math]]g = {{gcd}}, \\quad b/g = {{stepX}}, \\quad a/g = {{stepY}}[[/math]]",
+              "candidate": "[[math]]k = {{k}} \\Rightarrow x = {{x}}, \\; y = {{y}}[[/math]]",
               "minimal": "[[math]]k = {{k}}[[/math]] gives the smallest absolute values in this family: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
               "signoff": "Particular solution: [[math]]x = {{x}}, y = {{y}}[[/math]]. General form: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]].",
               "noSolutionSignoff": "No solutions for [[math]]{{a}}x + {{b}}y = {{target}}[[/math]], because [[math]]\\gcd = {{gcd}}[[/math]] does not divide the right-hand side."

@@ -61,6 +61,36 @@ const I18N = {
   bezoutResult: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.bezoutResult'),
   verify: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.verify'),
   resultSignoff: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultSignoff'),
+  section: {
+    forward: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.forward'),
+    gcd: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.gcd'),
+    check: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.check'),
+    back: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.back'),
+    result: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.result'),
+    particular: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.particular'),
+    general: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.general'),
+    minimization: t(
+      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.minimization',
+    ),
+    interpretation: t(
+      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.interpretation',
+    ),
+    conclusion: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.section.conclusion'),
+  },
+  gcdLine: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.gcdLine'),
+  modularRemainderCheck: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularRemainderCheck',
+  ),
+  rsaProductCheck: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.productCheck',
+  ),
+  rsaModuloCheck: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.moduloCheck'),
+  diophantineStepSizes: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.stepSizes',
+  ),
+  diophantineCandidate: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.candidate',
+  ),
   rsaGoal: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.goal'),
   rsaRule: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.rule'),
   rsaInvariant: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.invariant'),
@@ -169,24 +199,6 @@ const I18N = {
       'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.noSolution',
     ),
   },
-  captions: {
-    forwardStart: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.forwardStart',
-    ),
-    forwardContinue: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.forwardContinue',
-    ),
-    forwardStop: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.forwardStop',
-    ),
-    gcdFound: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.gcdFound'),
-    backSeed: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.backSeed'),
-    backSubstitute: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.backSubstitute',
-    ),
-    verify: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.verify'),
-    result: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.result'),
-  },
 } as const;
 
 const SECTION_MARKERS = {
@@ -203,10 +215,7 @@ type LineBuilder = {
   readonly indent: number;
   readonly marker: string | null;
   readonly caption: ScratchpadLine['caption'];
-  /** Phase-entry captions that should stay visible on settled lines —
-   *  first forward row, terminal forward row, gcd announce, back-seed,
-   *  verify, result. Looping captions (middle forward rows, back-sub
-   *  iterations) leave this falsy so they only show while `current`. */
+  /** Keep structural preamble lines visible after the active step moves on. */
   readonly captionPinned?: boolean;
   readonly content: ScratchpadLine['content'];
   readonly instruction: ScratchpadLine['instruction'];
@@ -233,10 +242,36 @@ function formatLinearCombo(sa: number, a: number, tb: number, b: number): string
 /** Render `q · r` inline for back-sub expressions, collapsing the
  *  multiplier when it's 1 (so we don't print "1·46" as if it were a
  *  meaningful factor). */
-function formatTerm(coef: number, value: number): string {
+function formatTerm(coef: number, value: number | string): string {
   if (coef === 1) return `${value}`;
   if (coef === -1) return `-${value}`;
   return `${coef} \\cdot ${value}`;
+}
+
+function formatSignedTerms(
+  terms: readonly { readonly coef: number; readonly value: number | string }[],
+): string {
+  const nonZeroTerms = terms.filter((term) => term.coef !== 0);
+  if (nonZeroTerms.length === 0) return '0';
+
+  return nonZeroTerms
+    .map((term, index) => {
+      const absTerm = formatTerm(Math.abs(term.coef), term.value);
+      if (index === 0) return term.coef < 0 ? `-${absTerm}` : absTerm;
+      return `${term.coef < 0 ? '-' : '+'} ${absTerm}`;
+    })
+    .join(' ');
+}
+
+function formatRemainderAsDifference(step: ForwardEquation): string {
+  return `${step.remainder} = ${step.dividend} - ${step.quotient} \\cdot ${step.divisor}`;
+}
+
+function formatBackExpression(
+  gcdValue: number,
+  terms: readonly { readonly coef: number; readonly value: number | string }[],
+): string {
+  return `${gcdValue} = ${formatSignedTerms(terms)}`;
 }
 
 function normalizeModulo(value: number, modulus: number): number {
@@ -478,138 +513,136 @@ export function* extendedEuclideanGenerator(
     });
   }
 
-  // ---------- Step 0 — setup beat ----------
-  // Append the first forward row here so the initial frame has a
-  // concrete equation to anchor the eye; the remaining forward rows
-  // appear one per step below.
-  const first = forwardSteps[0];
-  lineBuilders.push({
-    id: 'fwd-0',
-    kind: 'equation',
-    indent: 0,
-    marker: SECTION_MARKERS.forward,
-    caption: I18N.captions.forwardStart,
-    captionPinned: true,
-    content: i18nText(I18N.forwardEquation, {
-      a: first.dividend,
-      q: first.quotient,
-      b: first.divisor,
-      r: first.remainder,
-    }),
-    instruction: i18nText(I18N.forwardInstruction, { a: first.dividend, b: first.divisor }),
-    annotation: i18nText(I18N.forwardAnnotation, {
-      a: first.dividend,
-      b: first.divisor,
-      r: first.remainder,
-    }),
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 1,
-    description: i18nText(I18N.forwardInstruction, {
-      a: first.dividend,
-      b: first.divisor,
-    }),
-    state: snapshot({
-      phase: I18N.phases.forward,
-      decision: I18N.decisions.forwardDiv,
-      tone: 'compute',
-      currentLineId: 'fwd-0',
-      transientMargin: null,
-      resultLabel: null,
-    }),
-  });
+  function paperLine(opts: {
+    readonly id: string;
+    readonly kind: ScratchpadLine['kind'];
+    readonly content: ScratchpadLine['content'];
+    readonly indent?: number;
+    readonly marker?: string | null;
+    readonly annotation?: ScratchpadLine['annotation'];
+  }): LineBuilder {
+    return {
+      id: opts.id,
+      kind: opts.kind,
+      indent: opts.indent ?? 0,
+      marker: opts.marker ?? null,
+      caption: null,
+      content: opts.content,
+      instruction: null,
+      annotation: opts.annotation ?? null,
+    };
+  }
 
-  // ---------- Remaining forward rows ----------
-  // Middle forward rows drop the imperative chip: once the equation is
-  // on the board, "→ Rozpisz a = q·b + r" on a completed line reads as
-  // temporally wrong (the action is already done, the annotation below
-  // records what fell out). The first row (`fwd-0`) keeps its chip as a
-  // "start here" anchor while the board is otherwise empty; the terminal
-  // row keeps a chip because its text is the stop-decision label
-  // ("Reszta spadła do 0 — koniec"), not an imperative about the
-  // computation on that line.
-  for (let i = 1; i < forwardSteps.length; i++) {
-    const step = forwardSteps[i];
-    const lineId = `fwd-${i}`;
-    const isTerminal = step.remainder === 0;
-    lineBuilders.push({
-      id: lineId,
-      kind: 'equation',
-      indent: 0,
-      marker: null,
-      caption: isTerminal ? I18N.captions.forwardStop : I18N.captions.forwardContinue,
-      captionPinned: isTerminal,
-      content: i18nText(I18N.forwardEquation, {
-        a: step.dividend,
-        q: step.quotient,
-        b: step.divisor,
-        r: step.remainder,
-      }),
-      instruction: isTerminal
-        ? i18nText(I18N.forwardStopDecision, { a: step.dividend, b: step.divisor })
-        : null,
-      annotation: i18nText(I18N.forwardAnnotation, {
-        a: step.dividend,
-        b: step.divisor,
-        r: step.remainder,
-      }),
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: isTerminal ? 3 : 2,
-      description: i18nText(I18N.forwardInstruction, {
-        a: step.dividend,
-        b: step.divisor,
-      }),
-      state: snapshot({
-        phase: I18N.phases.forward,
-        decision: isTerminal ? I18N.decisions.forwardStop : I18N.decisions.forwardDiv,
-        tone: isTerminal ? 'decide' : 'compute',
-        currentLineId: lineId,
-        transientMargin: null,
-        resultLabel: null,
-      }),
+  function appendPaperStep(
+    builder: LineBuilder,
+    opts: {
+      readonly activeCodeLine: number;
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+      readonly tone: ScratchpadLabTraceState['tone'];
+      readonly resultLabel?: ScratchpadLabTraceState['resultLabel'];
+    },
+  ): SortStep {
+    return appendStep(builder, {
+      ...opts,
+      description: builder.content,
     });
   }
 
-  // ---------- Gcd identified ----------
-  lineBuilders.push({
-    id: 'gcd-announce',
-    kind: 'decision',
-    indent: 0,
-    marker: SECTION_MARKERS.gcd,
-    caption: I18N.captions.gcdFound,
-    captionPinned: true,
-    content: i18nText(I18N.gcdFound, { gcd: gcdValue }),
-    instruction: null,
-    annotation: null,
-  });
-  lineBuilders.push({
-    id: 'divider-mid',
-    kind: 'divider',
-    indent: 0,
-    marker: null,
-    caption: null,
-    content: '',
-    instruction: null,
-    annotation: null,
-  });
-  stepIndex += 1;
-  yield createScratchpadLabStep({
+  function mathLine(id: string, expression: string, indent = 0): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'equation',
+      indent,
+      content: i18nText(I18N.backSubLine, { expression }),
+    });
+  }
+
+  function sectionLine(
+    id: string,
+    content: ScratchpadLine['content'],
+    marker: string | null = null,
+  ): LineBuilder {
+    return paperLine({
+      id,
+      kind: 'note',
+      marker,
+      content,
+    });
+  }
+
+  yield appendPaperStep(
+    sectionLine('section-forward', I18N.section.forward, SECTION_MARKERS.forward),
+    {
+      activeCodeLine: 1,
+      phase: I18N.phases.forward,
+      decision: I18N.decisions.forwardDiv,
+      tone: 'setup',
+    },
+  );
+
+  for (let i = 0; i < forwardSteps.length; i++) {
+    const step = forwardSteps[i];
+    const lineId = `fwd-${i}`;
+    const isTerminal = step.remainder === 0;
+    yield appendPaperStep(
+      paperLine({
+        id: lineId,
+        kind: 'equation',
+        content: i18nText(I18N.forwardEquation, {
+          a: step.dividend,
+          q: step.quotient,
+          b: step.divisor,
+          r: step.remainder,
+        }),
+        annotation: isTerminal
+          ? null
+          : i18nText(I18N.forwardAnnotation, {
+              a: step.dividend,
+              b: step.divisor,
+              r: step.remainder,
+            }),
+      }),
+      {
+        activeCodeLine: isTerminal ? 3 : 2,
+        phase: I18N.phases.forward,
+        decision: isTerminal ? I18N.decisions.forwardStop : I18N.decisions.forwardDiv,
+        tone: isTerminal ? 'decide' : 'compute',
+      },
+    );
+  }
+
+  yield appendPaperStep(sectionLine('section-gcd', I18N.section.gcd, SECTION_MARKERS.gcd), {
     activeCodeLine: 4,
-    description: i18nText(I18N.gcdFound, { gcd: gcdValue }),
-    state: snapshot({
+    phase: I18N.phases.gcd,
+    decision: I18N.decisions.readingGcd,
+    tone: 'setup',
+  });
+
+  yield appendPaperStep(
+    paperLine({
+      id: 'gcd-announce',
+      kind: 'decision',
+      content: i18nText(I18N.gcdLine, { gcd: gcdValue }),
+    }),
+    {
+      activeCodeLine: 4,
       phase: I18N.phases.gcd,
       decision: I18N.decisions.readingGcd,
       tone: 'substitute',
-      currentLineId: 'gcd-announce',
-      transientMargin: null,
-      resultLabel: null,
-    }),
-  });
+    },
+  );
 
   if (flow.kind === 'rsa-inverse') {
+    yield appendPaperStep(
+      sectionLine('section-check', I18N.section.check, SECTION_MARKERS.verify),
+      {
+        activeCodeLine: 4,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.checking,
+        tone: 'setup',
+      },
+    );
     const inverseExists = gcdValue === 1;
     const checkLine = inverseExists
       ? i18nText(I18N.rsaInverseExists, {
@@ -622,21 +655,14 @@ export function* extendedEuclideanGenerator(
           phi: originalA,
           gcd: gcdValue,
         });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'rsa-inverse-check',
         kind: 'decision',
-        indent: 0,
-        marker: SECTION_MARKERS.verify,
-        caption: I18N.captions.verify,
-        captionPinned: true,
         content: checkLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 4,
-        description: checkLine,
         phase: I18N.phases.verify,
         decision: inverseExists ? I18N.decisions.checking : I18N.decisions.noSolution,
         tone: inverseExists ? 'decide' : 'conclude',
@@ -648,21 +674,21 @@ export function* extendedEuclideanGenerator(
         phi: originalA,
         gcd: gcdValue,
       });
-      yield appendStep(
-        {
+      yield appendPaperStep(sectionLine('section-conclusion', I18N.section.conclusion), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.noSolution,
+        tone: 'setup',
+      });
+      yield appendPaperStep(
+        paperLine({
           id: 'rsa-no-inverse-result',
           kind: 'result',
-          indent: 0,
           marker: SECTION_MARKERS.result,
-          caption: I18N.captions.result,
-          captionPinned: true,
           content: signoff,
-          instruction: null,
-          annotation: null,
-        },
+        }),
         {
           activeCodeLine: 7,
-          description: signoff,
           phase: I18N.phases.complete,
           decision: I18N.decisions.noSolution,
           tone: 'complete',
@@ -674,6 +700,15 @@ export function* extendedEuclideanGenerator(
   }
 
   if (flow.kind === 'linear-diophantine') {
+    yield appendPaperStep(
+      sectionLine('section-check', I18N.section.check, SECTION_MARKERS.verify),
+      {
+        activeCodeLine: 4,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.checking,
+        tone: 'setup',
+      },
+    );
     const hasSolution = flow.target % gcdValue === 0;
     const checkLine = hasSolution
       ? i18nText(I18N.diophantineCheck, {
@@ -686,21 +721,14 @@ export function* extendedEuclideanGenerator(
           gcd: gcdValue,
           remainder: normalizeModulo(flow.target, gcdValue),
         });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'diophantine-check',
         kind: 'decision',
-        indent: 0,
-        marker: SECTION_MARKERS.verify,
-        caption: I18N.captions.verify,
-        captionPinned: true,
         content: checkLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 4,
-        description: checkLine,
         phase: I18N.phases.verify,
         decision: hasSolution ? I18N.decisions.checking : I18N.decisions.noSolution,
         tone: hasSolution ? 'decide' : 'conclude',
@@ -713,21 +741,21 @@ export function* extendedEuclideanGenerator(
         target: flow.target,
         gcd: gcdValue,
       });
-      yield appendStep(
-        {
+      yield appendPaperStep(sectionLine('section-conclusion', I18N.section.conclusion), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.noSolution,
+        tone: 'setup',
+      });
+      yield appendPaperStep(
+        paperLine({
           id: 'diophantine-no-solution-result',
           kind: 'result',
-          indent: 0,
           marker: SECTION_MARKERS.result,
-          caption: I18N.captions.result,
-          captionPinned: true,
           content: signoff,
-          instruction: null,
-          annotation: null,
-        },
+        }),
         {
           activeCodeLine: 7,
-          description: signoff,
           phase: I18N.phases.complete,
           decision: I18N.decisions.noSolution,
           tone: 'complete',
@@ -739,7 +767,33 @@ export function* extendedEuclideanGenerator(
   }
 
   if (flow.kind === 'modular-equation') {
+    yield appendPaperStep(
+      sectionLine('section-check', I18N.section.check, SECTION_MARKERS.verify),
+      {
+        activeCodeLine: 4,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.checking,
+        tone: 'setup',
+      },
+    );
     const hasSolution = flow.rhs % gcdValue === 0;
+    yield appendPaperStep(
+      paperLine({
+        id: 'modular-equation-remainder-check',
+        kind: 'equation',
+        content: i18nText(I18N.modularRemainderCheck, {
+          value: flow.rhs,
+          divisor: gcdValue,
+          remainder: normalizeModulo(flow.rhs, gcdValue),
+        }),
+      }),
+      {
+        activeCodeLine: 4,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.checking,
+        tone: 'compute',
+      },
+    );
     const checkLine = hasSolution
       ? i18nText(I18N.modularCheck, {
           gcd: gcdValue,
@@ -751,21 +805,14 @@ export function* extendedEuclideanGenerator(
           rhs: flow.rhs,
           remainder: normalizeModulo(flow.rhs, gcdValue),
         });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'modular-equation-check',
         kind: 'decision',
-        indent: 0,
-        marker: SECTION_MARKERS.verify,
-        caption: I18N.captions.verify,
-        captionPinned: true,
         content: checkLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 4,
-        description: checkLine,
         phase: I18N.phases.verify,
         decision: hasSolution ? I18N.decisions.checking : I18N.decisions.noSolution,
         tone: hasSolution ? 'decide' : 'conclude',
@@ -778,21 +825,21 @@ export function* extendedEuclideanGenerator(
         modulus: originalA,
         gcd: gcdValue,
       });
-      yield appendStep(
-        {
+      yield appendPaperStep(sectionLine('section-conclusion', I18N.section.conclusion), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.noSolution,
+        tone: 'setup',
+      });
+      yield appendPaperStep(
+        paperLine({
           id: 'modular-equation-no-solution-result',
           kind: 'result',
-          indent: 0,
           marker: SECTION_MARKERS.result,
-          caption: I18N.captions.result,
-          captionPinned: true,
           content: signoff,
-          instruction: null,
-          annotation: null,
-        },
+        }),
         {
           activeCodeLine: 7,
-          description: signoff,
           phase: I18N.phases.complete,
           decision: I18N.decisions.noSolution,
           tone: 'complete',
@@ -803,24 +850,14 @@ export function* extendedEuclideanGenerator(
     }
   }
 
-  // ---------- Phase 2 — back-substitution ----------
-  // We carry an expression of the form `gcd = coefOfU · u + coefOfV · v`
-  // where u and v are two "live" values from the forward chain. Each
-  // back-sub rewrites v (the newer one) using the forward equation
-  // that produced it. After k substitutions we've eliminated the k
-  // most recent intermediates; once u and v are the original a and b,
-  // we've reached the Bézout identity.
-  //
-  // Start: the second-to-last forward equation (the one that produced
-  // the gcd as its remainder) gives us `gcd = dividend − quotient ·
-  // divisor`. That's the seed expression with coefOfU = 1 (for
-  // dividend), coefOfV = −quotient (for divisor).
+  yield appendPaperStep(sectionLine('section-back', I18N.section.back, SECTION_MARKERS.back), {
+    activeCodeLine: 5,
+    phase: I18N.phases.back,
+    decision: I18N.decisions.unwinding,
+    tone: 'setup',
+  });
 
   const nonTerminalSteps = forwardSteps.filter((s) => s.remainder !== 0);
-  // Which forward-chain variables currently appear in the expression:
-  // valueU is the older (outer) — always the "dividend" side of the
-  // forward equation we last substituted against.
-  // valueV is the newer (inner) — the "divisor" of that equation.
   let valueU: number;
   let valueV: number;
   let coefOfU: number;
@@ -828,136 +865,94 @@ export function* extendedEuclideanGenerator(
 
   {
     const seed = nonTerminalSteps[nonTerminalSteps.length - 1];
-    // seed: gcd = seed.dividend − seed.quotient · seed.divisor
     valueU = seed.dividend;
     valueV = seed.divisor;
     coefOfU = 1;
     coefOfV = -seed.quotient;
-
-    const seedContent = `${gcdValue} = ${formatTerm(coefOfU, valueU)} ${
-      coefOfV >= 0 ? '+' : '-'
-    } ${formatTerm(Math.abs(coefOfV), valueV)}`;
-
-    lineBuilders.push({
-      id: 'back-seed',
-      kind: 'substitute',
-      indent: 1,
-      marker: SECTION_MARKERS.back,
-      caption: I18N.captions.backSeed,
-      captionPinned: true,
-      content: i18nText(I18N.backSeed, {
-        gcd: gcdValue,
-        expression: seedContent,
-      }),
-      instruction: i18nText(I18N.backSeedInstruction, {
-        a: seed.dividend,
-        b: seed.divisor,
-      }),
-      annotation: null,
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
+    yield appendPaperStep(mathLine('back-seed', formatRemainderAsDifference(seed), 1), {
       activeCodeLine: 5,
-      description: i18nText(I18N.backSeed, {
-        gcd: gcdValue,
-        expression: seedContent,
-      }),
-      state: snapshot({
-        phase: I18N.phases.back,
-        decision: I18N.decisions.unwinding,
-        tone: 'substitute',
-        currentLineId: 'back-seed',
-        transientMargin: null,
-        resultLabel: null,
-      }),
+      phase: I18N.phases.back,
+      decision: I18N.decisions.unwinding,
+      tone: 'substitute',
     });
   }
 
-  // Walk backwards through earlier forward steps; each one lets us
-  // replace `valueV` with `(dividend − quotient · divisor)` of that
-  // earlier step.
   for (let i = nonTerminalSteps.length - 2; i >= 0; i--) {
     const source = nonTerminalSteps[i];
-    // source: valueV = source.dividend − source.quotient · source.divisor
-    // Current expr: gcd = coefOfU · valueU + coefOfV · valueV
-    //             = coefOfU · valueU + coefOfV · (source.dividend − source.quotient · source.divisor)
-    //             = coefOfU · valueU + coefOfV · source.dividend − coefOfV · source.quotient · source.divisor
-    // After rewriting: the "old" valueU keeps its role; source.dividend takes over as new valueU,
-    // and source.divisor becomes the new valueV.
-    // But source.dividend equals the previous valueV's "source.dividend" which should be
-    // the previous (outer) value. Actually in standard EEA back-sub, source.dividend ==
-    // previous step's divisor. Let me recompute the bookkeeping:
-    //
-    //  source.dividend = next step's divisor ≡ our current valueU  (because nonTerminalSteps
-    //  are in forward order and valueU cascades). So after substitution we have:
-    //    gcd = (coefOfU + coefOfV) · valueU + (−coefOfV · source.quotient) · source.divisor
-    //  Wait, that's only true if source.dividend == valueU. Let me verify:
-    //    forward step i:      source.dividend = d_i,      source.divisor = d_{i+1},     source.remainder = d_{i+2}
-    //    forward step i+1:    dividend = d_{i+1},         divisor = d_{i+2},            remainder = d_{i+3}
-    //  So yes: source.dividend == next step's divisor. And at step (i+1) as the seed we had
-    //  valueU = d_{i+1}, valueV = d_{i+2}. But source.dividend = d_i (one earlier).
-    //
-    //  Hmm — so source.dividend ≠ valueU in general. Let me trace more carefully.
-    //
-    //  Seed (last non-terminal step k): valueU = d_k, valueV = d_{k+1} (where d_k is last
-    //  dividend, d_{k+1} is last divisor which equals the gcd's immediate predecessor).
-    //
-    //  Step i = k−1: source.dividend = d_{k−1}, source.divisor = d_k, source.remainder = d_{k+1}.
-    //  source lets us write: d_{k+1} = d_{k−1} − source.quotient · d_k = source.dividend − source.quotient · source.divisor.
-    //  But valueV = d_{k+1}, valueU = d_k. So source.divisor = valueU. Rewriting:
-    //    gcd = coefOfU · d_k + coefOfV · (d_{k−1} − q · d_k)
-    //        = coefOfV · d_{k−1} + (coefOfU − q · coefOfV) · d_k
-    //  New expression: outer becomes source.dividend = d_{k−1}, inner becomes source.divisor = d_k.
-    //  Equivalently valueU_new = source.dividend, valueV_new = source.divisor (the old valueU).
-
     const q = source.quotient;
+    const unchangedTerm = { coef: coefOfU, value: valueU };
+    const substitutedTerm = {
+      coef: coefOfV,
+      value: `(${source.dividend} - ${q} \\cdot ${source.divisor})`,
+    };
+    const substitution = formatBackExpression(
+      gcdValue,
+      coefOfV > 0 ? [substitutedTerm, unchangedTerm] : [unchangedTerm, substitutedTerm],
+    );
+    const expanded = formatBackExpression(
+      gcdValue,
+      coefOfV > 0
+        ? [
+            { coef: coefOfV, value: source.dividend },
+            { coef: -coefOfV * q, value: source.divisor },
+            { coef: coefOfU, value: valueU },
+          ]
+        : [
+            { coef: coefOfU, value: valueU },
+            { coef: coefOfV, value: source.dividend },
+            { coef: -coefOfV * q, value: source.divisor },
+          ],
+    );
     const newCoefOfU = coefOfV;
     const newCoefOfV = coefOfU - q * coefOfV;
     const newValueU = source.dividend;
     const newValueV = source.divisor;
+    const collected = formatBackExpression(
+      gcdValue,
+      newCoefOfV > 0
+        ? [
+            { coef: newCoefOfV, value: newValueV },
+            { coef: newCoefOfU, value: newValueU },
+          ]
+        : [
+            { coef: newCoefOfU, value: newValueU },
+            { coef: newCoefOfV, value: newValueV },
+          ],
+    );
+    const stepNumber = nonTerminalSteps.length - 1 - i;
+
+    yield appendPaperStep(
+      mathLine(`back-source-${stepNumber}`, formatRemainderAsDifference(source), 1),
+      {
+        activeCodeLine: 6,
+        phase: I18N.phases.back,
+        decision: I18N.decisions.unwinding,
+        tone: 'substitute',
+      },
+    );
+    yield appendPaperStep(mathLine(`back-substitute-${stepNumber}`, substitution, 1), {
+      activeCodeLine: 6,
+      phase: I18N.phases.back,
+      decision: I18N.decisions.unwinding,
+      tone: 'substitute',
+    });
+    yield appendPaperStep(mathLine(`back-expand-${stepNumber}`, expanded, 1), {
+      activeCodeLine: 6,
+      phase: I18N.phases.back,
+      decision: I18N.decisions.unwinding,
+      tone: 'substitute',
+    });
+    yield appendPaperStep(mathLine(`back-collect-${stepNumber}`, collected, 1), {
+      activeCodeLine: 6,
+      phase: I18N.phases.back,
+      decision: I18N.decisions.unwinding,
+      tone: 'substitute',
+    });
 
     coefOfU = newCoefOfU;
     coefOfV = newCoefOfV;
     valueU = newValueU;
     valueV = newValueV;
-
-    const lineId = `back-${nonTerminalSteps.length - 1 - i}`;
-    const bodyExpression = `${gcdValue} = ${formatTerm(coefOfU, valueU)} ${
-      coefOfV >= 0 ? '+' : '-'
-    } ${formatTerm(Math.abs(coefOfV), valueV)}`;
-
-    lineBuilders.push({
-      id: lineId,
-      kind: 'substitute',
-      indent: 1,
-      marker: null,
-      caption: I18N.captions.backSubstitute,
-      content: i18nText(I18N.backSubLine, { expression: bodyExpression }),
-      instruction: i18nText(I18N.backSubInstruction, {
-        a: source.dividend,
-        q,
-        b: source.divisor,
-      }),
-      annotation: i18nText(I18N.backSubAnnotation, {
-        coefA: coefOfU,
-        a: valueU,
-        coefB: coefOfV,
-        b: valueV,
-      }),
-    });
-    stepIndex += 1;
-    yield createScratchpadLabStep({
-      activeCodeLine: 6,
-      description: i18nText(I18N.backSubLine, { expression: bodyExpression }),
-      state: snapshot({
-        phase: I18N.phases.back,
-        decision: I18N.decisions.unwinding,
-        tone: 'substitute',
-        currentLineId: lineId,
-        transientMargin: null,
-        resultLabel: null,
-      }),
-    });
   }
 
   // After the loop `coefOfU, valueU` should be the coefficient and
@@ -990,76 +985,118 @@ export function* extendedEuclideanGenerator(
     gcd: gcdValue,
   });
 
-  yield appendStep(
+  yield appendPaperStep(
+    sectionLine('section-result', I18N.section.result, SECTION_MARKERS.result),
     {
+      activeCodeLine: 7,
+      phase: I18N.phases.verify,
+      decision: I18N.decisions.verifying,
+      tone: 'setup',
+    },
+  );
+
+  yield appendPaperStep(
+    paperLine({
       id: 'bezout',
       kind: 'decision',
-      indent: 0,
-      marker: SECTION_MARKERS.verify,
-      caption: I18N.captions.verify,
-      captionPinned: true,
       content: bezoutLine,
-      instruction: null,
       annotation: i18nText(I18N.verify, {
         expression: bezoutExpression,
         value: checkValue,
       }),
-    },
+    }),
     {
       activeCodeLine: 7,
-      description: bezoutLine,
       phase: I18N.phases.verify,
       decision: I18N.decisions.verifying,
       tone: 'conclude',
     },
   );
 
-  lineBuilders.push({
-    id: 'divider-conclusion',
-    kind: 'divider',
-    indent: 0,
-    marker: null,
-    caption: null,
-    content: '',
-    instruction: null,
-    annotation: null,
-  });
-
   if (flow.kind === 'rsa-inverse') {
     const d = normalizeModulo(tForB, originalA);
+    const product = originalB * d;
+    const moduloCheck = normalizeModulo(product, originalA);
     const inverseLine = i18nText(I18N.rsaInverseLine, {
       coefficient: tForB,
       phi: originalA,
       d,
     });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'rsa-inverse-result',
         kind: 'result',
-        indent: 0,
-        marker: SECTION_MARKERS.result,
-        caption: I18N.captions.result,
-        captionPinned: true,
         content: inverseLine,
-        instruction: null,
-        annotation: i18nText(I18N.rsaInterpretation, {
-          n: flow.n,
-          e: originalB,
-          d,
-        }),
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: inverseLine,
         phase: I18N.phases.complete,
         decision: I18N.decisions.interpreting,
         tone: 'complete',
-        resultLabel: i18nText(I18N.rsaSignoff, {
+      },
+    );
+    yield appendPaperStep(
+      paperLine({
+        id: 'rsa-product-check',
+        kind: 'equation',
+        content: i18nText(I18N.rsaProductCheck, {
+          e: originalB,
+          d,
+          product,
+        }),
+      }),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'complete',
+      },
+    );
+    yield appendPaperStep(
+      paperLine({
+        id: 'rsa-modulo-check',
+        kind: 'equation',
+        content: i18nText(I18N.rsaModuloCheck, {
+          product,
+          phi: originalA,
+          remainder: moduloCheck,
+        }),
+      }),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'complete',
+      },
+    );
+    const signoff = i18nText(I18N.rsaSignoff, {
+      n: flow.n,
+      e: originalB,
+      phi: originalA,
+      d,
+    });
+    yield appendPaperStep(sectionLine('section-interpretation', I18N.section.interpretation), {
+      activeCodeLine: 7,
+      phase: I18N.phases.complete,
+      decision: I18N.decisions.interpreting,
+      tone: 'setup',
+    });
+    yield appendPaperStep(
+      paperLine({
+        id: 'rsa-interpretation',
+        kind: 'result',
+        content: i18nText(I18N.rsaInterpretation, {
           n: flow.n,
           e: originalB,
-          phi: originalA,
           d,
         }),
+      }),
+      {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'complete',
+        resultLabel: signoff,
       },
     );
     return;
@@ -1078,20 +1115,21 @@ export function* extendedEuclideanGenerator(
       s: sForA,
       t: tForB,
     });
-    yield appendStep(
-      {
+    yield appendPaperStep(sectionLine('section-particular', I18N.section.particular), {
+      activeCodeLine: 7,
+      phase: I18N.phases.verify,
+      decision: I18N.decisions.interpreting,
+      tone: 'setup',
+    });
+    yield appendPaperStep(
+      paperLine({
         id: 'diophantine-scale',
         kind: 'substitute',
         indent: 1,
-        marker: null,
-        caption: I18N.captions.backSubstitute,
         content: scaleLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: scaleLine,
         phase: I18N.phases.verify,
         decision: I18N.decisions.interpreting,
         tone: 'substitute',
@@ -1105,20 +1143,14 @@ export function* extendedEuclideanGenerator(
       b: originalB,
       target: flow.target,
     });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'diophantine-particular',
         kind: 'decision',
-        indent: 0,
-        marker: null,
-        caption: I18N.captions.verify,
         content: particularLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: particularLine,
         phase: I18N.phases.verify,
         decision: I18N.decisions.interpreting,
         tone: 'conclude',
@@ -1131,20 +1163,37 @@ export function* extendedEuclideanGenerator(
       stepX,
       stepY,
     });
-    yield appendStep(
-      {
-        id: 'diophantine-general',
+    yield appendPaperStep(sectionLine('section-general', I18N.section.general), {
+      activeCodeLine: 7,
+      phase: I18N.phases.complete,
+      decision: I18N.decisions.interpreting,
+      tone: 'setup',
+    });
+    yield appendPaperStep(
+      paperLine({
+        id: 'diophantine-step-sizes',
         kind: 'equation',
-        indent: 0,
-        marker: null,
-        caption: I18N.captions.result,
-        content: generalLine,
-        instruction: null,
-        annotation: null,
-      },
+        content: i18nText(I18N.diophantineStepSizes, {
+          gcd: gcdValue,
+          stepX,
+          stepY: Math.abs(stepY),
+        }),
+      }),
       {
         activeCodeLine: 7,
-        description: generalLine,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'conclude',
+      },
+    );
+    yield appendPaperStep(
+      paperLine({
+        id: 'diophantine-general',
+        kind: 'equation',
+        content: generalLine,
+      }),
+      {
+        activeCodeLine: 7,
         phase: I18N.phases.complete,
         decision: I18N.decisions.interpreting,
         tone: 'conclude',
@@ -1170,21 +1219,40 @@ export function* extendedEuclideanGenerator(
         xFormula: formatGeneralTerm(x0, stepX),
         yFormula: formatGeneralTerm(y0, stepY),
       });
-      yield appendStep(
-        {
+      yield appendPaperStep(sectionLine('section-minimization', I18N.section.minimization), {
+        activeCodeLine: 7,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'setup',
+      });
+      for (const k of [best.k - 1, best.k, best.k + 1]) {
+        yield appendPaperStep(
+          paperLine({
+            id: `diophantine-candidate-${k}`,
+            kind: 'equation',
+            content: i18nText(I18N.diophantineCandidate, {
+              k,
+              x: x0 + stepX * k,
+              y: y0 + stepY * k,
+            }),
+          }),
+          {
+            activeCodeLine: 7,
+            phase: I18N.phases.complete,
+            decision: I18N.decisions.done,
+            tone: k === best.k ? 'complete' : 'conclude',
+          },
+        );
+      }
+      yield appendPaperStep(
+        paperLine({
           id: 'diophantine-minimal',
           kind: 'result',
-          indent: 0,
           marker: SECTION_MARKERS.result,
-          caption: I18N.captions.result,
-          captionPinned: true,
           content: minimalLine,
-          instruction: null,
-          annotation: null,
-        },
+        }),
         {
           activeCodeLine: 7,
-          description: minimalLine,
           phase: I18N.phases.complete,
           decision: I18N.decisions.done,
           tone: 'complete',
@@ -1194,21 +1262,15 @@ export function* extendedEuclideanGenerator(
       return;
     }
 
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'diophantine-result',
         kind: 'result',
-        indent: 0,
         marker: SECTION_MARKERS.result,
-        caption: I18N.captions.result,
-        captionPinned: true,
         content: signoff,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: signoff,
         phase: I18N.phases.complete,
         decision: I18N.decisions.done,
         tone: 'complete',
@@ -1232,20 +1294,14 @@ export function* extendedEuclideanGenerator(
       reducedRhs,
       reducedModulus,
     });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'modular-equation-reduce',
         kind: 'equation',
-        indent: 0,
-        marker: null,
-        caption: I18N.captions.verify,
         content: reduceLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: reduceLine,
         phase: I18N.phases.verify,
         decision: I18N.decisions.interpreting,
         tone: 'substitute',
@@ -1259,20 +1315,14 @@ export function* extendedEuclideanGenerator(
       reducedRhs,
       x: x0,
     });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'modular-equation-solution',
         kind: 'decision',
-        indent: 0,
-        marker: null,
-        caption: I18N.captions.result,
         content: solutionLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: solutionLine,
         phase: I18N.phases.complete,
         decision: I18N.decisions.interpreting,
         tone: 'conclude',
@@ -1294,21 +1344,15 @@ export function* extendedEuclideanGenerator(
       modulus: originalA,
       solutions: allSolutions,
     });
-    yield appendStep(
-      {
+    yield appendPaperStep(
+      paperLine({
         id: 'modular-equation-result',
         kind: 'result',
-        indent: 0,
         marker: SECTION_MARKERS.result,
-        caption: I18N.captions.result,
-        captionPinned: true,
         content: allSolutionsLine,
-        instruction: null,
-        annotation: null,
-      },
+      }),
       {
         activeCodeLine: 7,
-        description: allSolutionsLine,
         phase: I18N.phases.complete,
         decision: I18N.decisions.done,
         tone: 'complete',
@@ -1325,21 +1369,16 @@ export function* extendedEuclideanGenerator(
     s: sForA,
     t: tForB,
   });
-  yield appendStep(
-    {
+  yield appendPaperStep(
+    paperLine({
       id: 'result-line',
       kind: 'result',
       indent: 0.6,
       marker: SECTION_MARKERS.result,
-      caption: I18N.captions.result,
-      captionPinned: true,
       content: bezoutLine,
-      instruction: null,
-      annotation: null,
-    },
+    }),
     {
       activeCodeLine: 7,
-      description: signoff,
       phase: I18N.phases.complete,
       decision: I18N.decisions.done,
       tone: 'complete',

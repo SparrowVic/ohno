@@ -2058,6 +2058,20 @@
             "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
             "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "section": {
+              "forward": "Obliczenia w przód",
+              "gcd": "NWD",
+              "check": "Sprawdzenie",
+              "back": "Cofanie",
+              "result": "Wynik",
+              "particular": "Rozwiązanie szczególne",
+              "general": "Rozwiązanie ogólne",
+              "minimization": "Minimalizacja",
+              "interpretation": "Interpretacja",
+              "conclusion": "Wniosek"
+            },
+            "gcdLine": "[[math]]NWD = {{gcd}}[[/math]]",
+            "modularRemainderCheck": "[[math]]{{value}} \\bmod {{divisor}} = {{remainder}}[[/math]]",
             "rsa": {
               "goal": "Wyznacz klucz prywatny [[math]]d[[/math]]: dla [[math]]n = {{n}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]] i [[math]]e = {{e}}[[/math]] znajdź [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]].",
               "rule": "Uruchom rozszerzonego Euklidesa dla [[math]]\\varphi(n)[[/math]] i [[math]]e[[/math]]. Jeśli [[math]]\\gcd({{phi}}, {{e}}) = 1[[/math]], współczynnik przy [[math]]e[[/math]] jest odwrotnością modulo [[math]]\\varphi(n)[[/math]].",
@@ -2065,6 +2079,8 @@
               "inverseExists": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}}[[/math]], więc odwrotność modulo [[math]]\\varphi(n)[[/math]] istnieje.",
               "noInverse": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}} \\neq 1[[/math]], więc [[math]]e[[/math]] nie ma odwrotności modulo [[math]]\\varphi(n)[[/math]].",
               "inverseLine": "Współczynnik przy [[math]]e[[/math]] to [[math]]{{coefficient}}[[/math]], więc [[math]]d \\equiv {{coefficient}} \\pmod{ {{phi}} } = {{d}}[[/math]].",
+              "productCheck": "[[math]]{{e}} \\cdot {{d}} = {{product}}[[/math]]",
+              "moduloCheck": "[[math]]{{product}} \\bmod {{phi}} = {{remainder}}[[/math]]",
               "interpretation": "W RSA para [[math]](e, d) = ({{e}}, {{d}})[[/math]] spełnia [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
               "signoff": "[[math]]d = {{d}}[[/math]] dla [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
               "noInverseSignoff": "Brak klucza prywatnego: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."
@@ -2078,6 +2094,8 @@
               "scale": "Mnożymy tożsamość Bézouta przez [[math]]{{scale}}[[/math]]: [[math]]x_0 = {{scale}} \\cdot {{s}}, \\quad y_0 = {{scale}} \\cdot {{t}}[[/math]].",
               "particular": "[[math]]x_0 = {{x}}, \\; y_0 = {{y}}[[/math]], więc [[math]]{{a}} \\cdot {{x}} + {{b}} \\cdot {{y}} = {{target}}[[/math]].",
               "general": "[[math]]x = {{xFormula}}, \\quad y = {{yFormula}}, \\quad k \\in \\mathbb{Z}[[/math]].",
+              "stepSizes": "[[math]]g = {{gcd}}, \\quad b/g = {{stepX}}, \\quad a/g = {{stepY}}[[/math]]",
+              "candidate": "[[math]]k = {{k}} \\Rightarrow x = {{x}}, \\; y = {{y}}[[/math]]",
               "minimal": "[[math]]k = {{k}}[[/math]] daje najmniejsze wartości bezwzględne w tej rodzinie: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
               "signoff": "Rozwiązanie szczególne: [[math]]x = {{x}}, y = {{y}}[[/math]]. Ogólnie: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]].",
               "noSolutionSignoff": "Brak rozwiązań dla [[math]]{{a}}x + {{b}}y = {{target}}[[/math]], bo [[math]]\\gcd = {{gcd}}[[/math]] nie dzieli prawej strony."

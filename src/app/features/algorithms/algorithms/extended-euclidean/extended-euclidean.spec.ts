@@ -35,6 +35,10 @@ function signoffParams(step: SortStep | undefined): Record<string, unknown> | nu
   return { ...(label.params ?? {}) };
 }
 
+function lineIds(step: SortStep | undefined): string[] {
+  return (step?.scratchpadLab?.lines ?? []).map((line) => line.id);
+}
+
 describe('extendedEuclideanGenerator', () => {
   it('uses the short Bézout task as the default scenario', () => {
     const generated = createExtendedEuclideanScenario(1, null);
@@ -76,6 +80,32 @@ describe('extendedEuclideanGenerator', () => {
       'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.signoff',
     );
     expect(signoffParams(steps.at(-1))).toMatchObject({ n: 221, e: 35, phi: 192, d: 11 });
+
+    expect(lineIds(steps.at(-1))).toEqual(
+      expect.arrayContaining([
+        'section-forward',
+        'fwd-0',
+        'fwd-1',
+        'fwd-2',
+        'section-gcd',
+        'section-check',
+        'section-back',
+        'back-seed',
+        'back-source-1',
+        'back-substitute-1',
+        'back-expand-1',
+        'back-collect-1',
+        'section-result',
+        'rsa-inverse-result',
+        'rsa-product-check',
+        'rsa-modulo-check',
+        'section-interpretation',
+        'rsa-interpretation',
+      ]),
+    );
+    const finalLines = steps.at(-1)?.scratchpadLab?.lines ?? [];
+    expect(finalLines.find((line) => line.id === 'fwd-0')?.caption).toBeNull();
+    expect(finalLines.find((line) => line.id === 'back-substitute-1')?.caption).toBeNull();
   });
 
   it('stops the modular-equation trap after gcd divisibility fails', () => {
