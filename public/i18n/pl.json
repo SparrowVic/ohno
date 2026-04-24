@@ -2058,6 +2058,42 @@
             "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
             "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "rsa": {
+              "goal": "Wyznacz klucz prywatny [[math]]d[[/math]]: dla [[math]]n = {{n}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]] i [[math]]e = {{e}}[[/math]] znajdź [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]].",
+              "rule": "Uruchom rozszerzonego Euklidesa dla [[math]]\\varphi(n)[[/math]] i [[math]]e[[/math]]. Jeśli [[math]]\\gcd({{phi}}, {{e}}) = 1[[/math]], współczynnik przy [[math]]e[[/math]] jest odwrotnością modulo [[math]]\\varphi(n)[[/math]].",
+              "invariant": "Szukamy współczynnika przy [[math]]e[[/math]], nie przy module. Dopiero na końcu redukujemy go do przedziału modulo [[math]]\\varphi(n)[[/math]].",
+              "inverseExists": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}}[[/math]], więc odwrotność modulo [[math]]\\varphi(n)[[/math]] istnieje.",
+              "noInverse": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}} \\neq 1[[/math]], więc [[math]]e[[/math]] nie ma odwrotności modulo [[math]]\\varphi(n)[[/math]].",
+              "inverseLine": "Współczynnik przy [[math]]e[[/math]] to [[math]]{{coefficient}}[[/math]], więc [[math]]d \\equiv {{coefficient}} \\pmod{ {{phi}} } = {{d}}[[/math]].",
+              "interpretation": "W RSA para [[math]](e, d) = ({{e}}, {{d}})[[/math]] spełnia [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
+              "signoff": "[[math]]d = {{d}}[[/math]] dla [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
+              "noInverseSignoff": "Brak klucza prywatnego: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."
+            },
+            "diophantine": {
+              "goal": "Rozwiąż równanie diofantyczne [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Najpierw znajdź Bézouta dla [[math]]{{a}}[[/math]] i [[math]]{{b}}[[/math]], potem przeskaluj wynik.",
+              "rule": "Rozszerzony Euklides daje [[math]]s \\cdot a + t \\cdot b = \\gcd(a,b)[[/math]]. Równanie [[math]]a x + b y = {{target}}[[/math]] ma rozwiązania tylko wtedy, gdy [[math]]\\gcd(a,b)[[/math]] dzieli prawą stronę.",
+              "invariant": "Po znalezieniu jednej pary [[math]](x_0,y_0)[[/math]] wszystkie rozwiązania powstają przez dodanie [[math]]b/g[[/math]] do [[math]]x[[/math]] i odjęcie [[math]]a/g[[/math]] od [[math]]y[[/math]].",
+              "check": "[[math]]{{target}} = {{scale}} \\cdot {{gcd}}[[/math]], więc równanie ma rozwiązania.",
+              "noSolution": "[[math]]{{gcd}} \\nmid {{target}}[[/math]] (reszta [[math]]{{remainder}}[[/math]]), więc równanie diofantyczne nie ma rozwiązań.",
+              "scale": "Mnożymy tożsamość Bézouta przez [[math]]{{scale}}[[/math]]: [[math]]x_0 = {{scale}} \\cdot {{s}}, \\quad y_0 = {{scale}} \\cdot {{t}}[[/math]].",
+              "particular": "[[math]]x_0 = {{x}}, \\; y_0 = {{y}}[[/math]], więc [[math]]{{a}} \\cdot {{x}} + {{b}} \\cdot {{y}} = {{target}}[[/math]].",
+              "general": "[[math]]x = {{xFormula}}, \\quad y = {{yFormula}}, \\quad k \\in \\mathbb{Z}[[/math]].",
+              "minimal": "[[math]]k = {{k}}[[/math]] daje najmniejsze wartości bezwzględne w tej rodzinie: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
+              "signoff": "Rozwiązanie szczególne: [[math]]x = {{x}}, y = {{y}}[[/math]]. Ogólnie: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]].",
+              "noSolutionSignoff": "Brak rozwiązań dla [[math]]{{a}}x + {{b}}y = {{target}}[[/math]], bo [[math]]\\gcd = {{gcd}}[[/math]] nie dzieli prawej strony."
+            },
+            "modularEquation": {
+              "goal": "Rozwiąż równanie modularne [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]. Rozszerzony Euklides najpierw sprawdza, czy prawa strona jest podzielna przez [[math]]\\gcd({{coefficient}}, {{modulus}})[[/math]].",
+              "rule": "Dla [[math]]a x \\equiv c \\pmod m[[/math]] policz [[math]]g = \\gcd(a,m)[[/math]]. Jeśli [[math]]g \\nmid c[[/math]], zatrzymaj się. Jeśli [[math]]g \\mid c[[/math]], podziel równanie przez [[math]]g[[/math]] i użyj odwrotności modulo [[math]]m/g[[/math]].",
+              "invariant": "Back-substytucja jest potrzebna dopiero po teście podzielności. Gdy test odpada, cały problem kończy się na samym [[math]]\\gcd[[/math]].",
+              "check": "[[math]]{{rhs}} = {{scale}} \\cdot {{gcd}}[[/math]], więc rozwiązania istnieją i przechodzimy do odwrotności po redukcji.",
+              "noSolution": "[[math]]{{gcd}} \\nmid {{rhs}}[[/math]] (reszta [[math]]{{remainder}}[[/math]]), więc kongruencja nie ma rozwiązań.",
+              "reduce": "Dzielimy przez [[math]]g[[/math]]: [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} } \\Rightarrow {{reducedCoefficient}}x \\equiv {{reducedRhs}} \\pmod{ {{reducedModulus}} }[[/math]].",
+              "solution": "Odwrotność [[math]]{{reducedCoefficient}}[[/math]] modulo [[math]]{{reducedModulus}}[[/math]] to [[math]]{{inverse}}[[/math]], więc [[math]]x \\equiv {{reducedRhs}} \\cdot {{inverse}} = {{x}} \\pmod{ {{reducedModulus}} }[[/math]].",
+              "allSolutions": "W modulo [[math]]{{modulus}}[[/math]] dostajemy [[math]]x \\equiv {{x}} \\pmod{ {{reducedModulus}} }[[/math]], czyli [[math]]x \\in \\{ {{solutions}} \\}[[/math]].",
+              "signoff": "Rozwiązania [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]].",
+              "noSolutionSignoff": "Brak rozwiązań: [[math]]\\gcd({{coefficient}}, {{modulus}}) = {{gcd}}[[/math]] nie dzieli [[math]]{{rhs}}[[/math]]."
+            },
             "captions": {
               "forwardStart": "Rozpoczynamy łańcuch dzielenia w przód.",
               "forwardContinue": "Przesuwamy parę i dzielimy dalej.",
@@ -2083,7 +2119,10 @@
               "readingGcd": "Ostatnia niezerowa reszta to [[math]]\\gcd[[/math]].",
               "unwinding": "Podstawiamy wcześniejsze równanie forward do bieżącego wyrażenia.",
               "verifying": "Podstawiamy [[math]]s, t[[/math]] z powrotem, aby potwierdzić tożsamość Bézouta.",
-              "done": "Współczynniki Bézouta ustalone."
+              "done": "Współczynniki Bézouta ustalone.",
+              "checking": "Sprawdzamy warunek istnienia rozwiązania dla tego typu zadania.",
+              "interpreting": "Interpretujemy współczynniki Bézouta w treści zadania.",
+              "noSolution": "Warunek istnienia nie przechodzi — zapisujemy wniosek."
             }
           },
           "fftNtt": {
@@ -4091,6 +4130,42 @@
           }
         },
         "extendedEuclidean": {
+          "values": {
+            "n": "n",
+            "phi": "φ(n)",
+            "publicExponent": "e",
+            "modulus": "moduł",
+            "coefficient": "współczynnik",
+            "target": "prawa strona",
+            "rhs": "prawa strona"
+          },
+          "rsaInverse": {
+            "hints": {
+              "0": "Najpierw uruchom zwykły łańcuch Euklidesa dla [[math]]\\varphi(n) = {{a}}[[/math]] oraz [[math]]e = {{b}}[[/math]].",
+              "1": "Po back-substytucji interesuje nas współczynnik przy [[math]]e[[/math]]. Zredukuj go modulo [[math]]\\varphi(n)[[/math]], aby dostać [[math]]d[[/math]]."
+            },
+            "instruction": "W systemie RSA rozważono [[math]]n = {{n}}[[/math]], publiczny wykładnik [[math]]e = {{b}}[[/math]] oraz [[math]]\\varphi(n) = {{a}}[[/math]]. Sprawdź, czy [[math]]e[[/math]] ma odwrotność modulo [[math]]\\varphi(n)[[/math]]. Jeśli tak, wyznacz klucz prywatny [[math]]d[[/math]] spełniający [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]] i zinterpretuj wynik w kontekście RSA.",
+            "summary": "[[math]]e = 35, \\varphi(n) = 192[[/math]] — odwrotność modulo jako klucz prywatny RSA.",
+            "title": "RSA: odwrotność modulo"
+          },
+          "diophantineLogistics": {
+            "hints": {
+              "0": "Najpierw policz [[math]]\\gcd(84,36)[[/math]]. Dopiero po sprawdzeniu, że [[math]]12[[/math]] jest wielokrotnością NWD, skaluj współczynniki Bézouta.",
+              "1": "Dla domyślnych danych [[math]]84 = 2 \\cdot 36 + 12[[/math]], więc back-substytucja jest krótka, ale interpretacja rozwiązania jest innym typem zadania."
+            },
+            "instruction": "Firma logistyczna używa dwóch typów ciężarówek. Typ A przewozi [[math]]{{a}}[[/math]] jednostki, typ B przewozi [[math]]{{b}}[[/math]] jednostek. Model prowadzi do równania [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Znajdź rozwiązanie szczególne, wyznacz rozwiązanie ogólne i wskaż reprezentanta o najmniejszych wartościach bezwzględnych.",
+            "summary": "[[math]]84x + 36y = 12[[/math]] — równanie diofantyczne z rozwiązaniem ogólnym.",
+            "title": "Równanie diofantyczne"
+          },
+          "modularEquationTrap": {
+            "hints": {
+              "0": "Nie zaczynaj od szukania odwrotności [[math]]143^{-1}[[/math]]. Najpierw policz [[math]]\\gcd(143,221)[[/math]].",
+              "1": "Jeśli [[math]]\\gcd(a,m)[[/math]] nie dzieli prawej strony kongruencji, back-substytucja nie jest potrzebna."
+            },
+            "instruction": "Rozwiąż kongruencję [[math]]{{b}}x \\equiv {{rhs}} \\pmod{ {{a}} }[[/math]]. Sprawdź, czy rozwiązanie istnieje, a jeśli tak, znajdź wszystkie rozwiązania modulo [[math]]{{a}}[[/math]]. Uzasadnij wynik przez rozszerzony algorytm Euklidesa, zaczynając od samego testu [[math]]\\gcd({{b}}, {{a}})[[/math]].",
+            "summary": "[[math]]143x \\equiv 55 \\pmod{221}[[/math]] — pułapka: NWD blokuje rozwiązania.",
+            "title": "Kongruencja: pułapka"
+          },
           "classic": {
             "hints": {
               "0": "Pięć kroków forward: 240, 46, 10, 6, 4, 2, 0 — reszta 2 to [[math]]\\gcd[[/math]].",

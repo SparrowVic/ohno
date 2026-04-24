@@ -1,8 +1,9 @@
-import { TranslatableText } from '../../../../../core/i18n/translatable-text';
+import { I18nTextParams, TranslatableText } from '../../../../../core/i18n/translatable-text';
 import { notebookInstructionText } from '../../../models/notebook-task';
 import {
   DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
   EXTENDED_EUCLIDEAN_TASKS,
+  ExtendedEuclideanNotebookFlow,
   ExtendedEuclideanTask,
 } from './extended-euclidean';
 
@@ -22,6 +23,7 @@ export interface ExtendedEuclideanScenario extends BaseScenario {
   readonly kind: 'extended-euclidean';
   readonly a: number;
   readonly b: number;
+  readonly notebookFlow: ExtendedEuclideanNotebookFlow;
   /** Exam-style prompt pulled from the active task's `instruction`
    *  field — rendered as a "Task:" block atop the scratchpad. Null
    *  when the task did not declare a prompt. */
@@ -45,6 +47,33 @@ export const DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID = DEFAULT_EXTENDED_EUCLIDEAN_T
 export { EXTENDED_EUCLIDEAN_TASKS, DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID };
 export type ExtendedEuclideanValues = ExtendedEuclideanTask['defaultValues'];
 
+function resolveNotebookFlow(
+  task: ExtendedEuclideanTask,
+  values: ExtendedEuclideanValues,
+): ExtendedEuclideanNotebookFlow {
+  const flow = task.notebookFlow ?? { kind: 'bezout' as const };
+  switch (flow.kind) {
+    case 'rsa-inverse':
+      return {
+        kind: 'rsa-inverse',
+        n: values.n ?? flow.n,
+      };
+    case 'linear-diophantine':
+      return {
+        kind: 'linear-diophantine',
+        target: values.target ?? flow.target,
+        minimize: flow.minimize,
+      };
+    case 'modular-equation':
+      return {
+        kind: 'modular-equation',
+        rhs: values.rhs ?? flow.rhs,
+      };
+    case 'bezout':
+      return flow;
+  }
+}
+
 export function createExtendedEuclideanScenario(
   _size: number,
   presetId: string | null,
@@ -59,12 +88,15 @@ export function createExtendedEuclideanScenario(
     EXTENDED_EUCLIDEAN_TASKS[0];
   const a = customValues?.a ?? task.defaultValues.a;
   const b = customValues?.b ?? task.defaultValues.b;
+  const values: ExtendedEuclideanValues = { ...task.defaultValues, ...customValues, a, b };
+  const promptParams: I18nTextParams = { ...values };
   return {
     kind: 'extended-euclidean',
     presetId: task.id,
     presetLabel: typeof task.name === 'string' ? task.name : task.id,
     presetDescription: typeof task.summary === 'string' ? task.summary : '',
-    taskPrompt: notebookInstructionText(task, { a, b }),
+    taskPrompt: notebookInstructionText(task, promptParams),
+    notebookFlow: resolveNotebookFlow(task, values),
     a,
     b,
   };

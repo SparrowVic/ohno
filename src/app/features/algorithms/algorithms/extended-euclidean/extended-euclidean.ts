@@ -29,12 +29,8 @@ const I18N = {
   goal: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.goal'),
   rule: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rule'),
   invariant: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.invariant'),
-  forwardHeader: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardHeader',
-  ),
-  forwardEquation: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardEquation',
-  ),
+  forwardHeader: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardHeader'),
+  forwardEquation: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardEquation'),
   forwardAnnotation: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardAnnotation',
   ),
@@ -45,9 +41,7 @@ const I18N = {
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.forwardStopDecision',
   ),
   gcdFound: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.gcdFound'),
-  backHeader: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.backHeader',
-  ),
+  backHeader: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.backHeader'),
   /** First back-sub line — the "seed" that reads off the Bézout
    *  expression directly from the last non-trivial forward equation. */
   backSeed: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.backSeed'),
@@ -64,12 +58,86 @@ const I18N = {
   backSubAnnotation: t(
     'features.algorithms.runtime.scratchpadLab.extendedEuclidean.backSubAnnotation',
   ),
-  bezoutResult: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.bezoutResult',
-  ),
+  bezoutResult: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.bezoutResult'),
   verify: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.verify'),
-  resultSignoff: t(
-    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultSignoff',
+  resultSignoff: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.resultSignoff'),
+  rsaGoal: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.goal'),
+  rsaRule: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.rule'),
+  rsaInvariant: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.invariant'),
+  rsaInverseExists: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.inverseExists',
+  ),
+  rsaNoInverse: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.noInverse'),
+  rsaInverseLine: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.inverseLine'),
+  rsaInterpretation: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.interpretation',
+  ),
+  rsaSignoff: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.signoff'),
+  rsaNoInverseSignoff: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.rsa.noInverseSignoff',
+  ),
+  diophantineGoal: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.goal',
+  ),
+  diophantineRule: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.rule',
+  ),
+  diophantineInvariant: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.invariant',
+  ),
+  diophantineCheck: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.check',
+  ),
+  diophantineNoSolution: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.noSolution',
+  ),
+  diophantineScale: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.scale',
+  ),
+  diophantineParticular: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.particular',
+  ),
+  diophantineGeneral: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.general',
+  ),
+  diophantineMinimal: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.minimal',
+  ),
+  diophantineSignoff: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.signoff',
+  ),
+  diophantineNoSolutionSignoff: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.diophantine.noSolutionSignoff',
+  ),
+  modularGoal: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.goal',
+  ),
+  modularRule: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.rule',
+  ),
+  modularInvariant: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.invariant',
+  ),
+  modularCheck: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.check',
+  ),
+  modularNoSolution: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.noSolution',
+  ),
+  modularReduce: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.reduce',
+  ),
+  modularSolution: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.solution',
+  ),
+  modularAllSolutions: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.allSolutions',
+  ),
+  modularSignoff: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.signoff',
+  ),
+  modularNoSolutionSignoff: t(
+    'features.algorithms.runtime.scratchpadLab.extendedEuclidean.modularEquation.noSolutionSignoff',
   ),
   phases: {
     setup: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.setup'),
@@ -77,14 +145,10 @@ const I18N = {
     gcd: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.gcd'),
     back: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.back'),
     verify: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.verify'),
-    complete: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.complete',
-    ),
+    complete: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.phases.complete'),
   },
   decisions: {
-    preparing: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.preparing',
-    ),
+    preparing: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.preparing'),
     forwardDiv: t(
       'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.forwardDiv',
     ),
@@ -94,13 +158,16 @@ const I18N = {
     readingGcd: t(
       'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.readingGcd',
     ),
-    unwinding: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.unwinding',
-    ),
-    verifying: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.verifying',
-    ),
+    unwinding: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.unwinding'),
+    verifying: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.verifying'),
     done: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.done'),
+    checking: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.checking'),
+    interpreting: t(
+      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.interpreting',
+    ),
+    noSolution: t(
+      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.decisions.noSolution',
+    ),
   },
   captions: {
     forwardStart: t(
@@ -112,12 +179,8 @@ const I18N = {
     forwardStop: t(
       'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.forwardStop',
     ),
-    gcdFound: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.gcdFound',
-    ),
-    backSeed: t(
-      'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.backSeed',
-    ),
+    gcdFound: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.gcdFound'),
+    backSeed: t('features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.backSeed'),
     backSubstitute: t(
       'features.algorithms.runtime.scratchpadLab.extendedEuclidean.captions.backSubstitute',
     ),
@@ -176,12 +239,104 @@ function formatTerm(coef: number, value: number): string {
   return `${coef} \\cdot ${value}`;
 }
 
+function normalizeModulo(value: number, modulus: number): number {
+  return ((value % modulus) + modulus) % modulus;
+}
+
+function formatGeneralTerm(base: number, step: number): string {
+  if (step === 0) return `${base}`;
+  const absStep = Math.abs(step);
+  const stepTerm = absStep === 1 ? 'k' : `${absStep}k`;
+  if (base === 0) return step > 0 ? stepTerm : `-${stepTerm}`;
+  return `${base} ${step > 0 ? '+' : '-'} ${stepTerm}`;
+}
+
+function findSmallestRepresentative(
+  x0: number,
+  y0: number,
+  stepX: number,
+  stepY: number,
+): { readonly k: number; readonly x: number; readonly y: number } {
+  const centers = [stepX === 0 ? 0 : -x0 / stepX, stepY === 0 ? 0 : -y0 / stepY, 0];
+  const candidates = new Set<number>();
+  for (const center of centers) {
+    const floor = Math.floor(center);
+    for (let delta = -3; delta <= 3; delta++) {
+      candidates.add(floor + delta);
+      candidates.add(Math.ceil(center) + delta);
+    }
+  }
+
+  let best = { k: 0, x: x0, y: y0 };
+  let bestScore = Number.POSITIVE_INFINITY;
+  for (const k of candidates) {
+    const x = x0 + stepX * k;
+    const y = y0 + stepY * k;
+    const score = Math.max(Math.abs(x), Math.abs(y)) * 1000 + Math.abs(x) + Math.abs(y);
+    if (score < bestScore || (score === bestScore && Math.abs(k) < Math.abs(best.k))) {
+      best = { k, x, y };
+      bestScore = score;
+    }
+  }
+  return best;
+}
+
+function goalForScenario(scenario: ExtendedEuclideanScenario): ScratchpadLine['content'] {
+  const flow = scenario.notebookFlow;
+  switch (flow.kind) {
+    case 'rsa-inverse':
+      return i18nText(I18N.rsaGoal, { phi: scenario.a, e: scenario.b, n: flow.n });
+    case 'linear-diophantine':
+      return i18nText(I18N.diophantineGoal, {
+        a: scenario.a,
+        b: scenario.b,
+        target: flow.target,
+      });
+    case 'modular-equation':
+      return i18nText(I18N.modularGoal, {
+        coefficient: scenario.b,
+        rhs: flow.rhs,
+        modulus: scenario.a,
+      });
+    case 'bezout':
+      return i18nText(I18N.goal, { a: scenario.a, b: scenario.b });
+  }
+}
+
+function ruleForScenario(scenario: ExtendedEuclideanScenario): ScratchpadLine['content'] {
+  const flow = scenario.notebookFlow;
+  switch (flow.kind) {
+    case 'rsa-inverse':
+      return i18nText(I18N.rsaRule, { phi: scenario.a, e: scenario.b });
+    case 'linear-diophantine':
+      return i18nText(I18N.diophantineRule, { target: flow.target });
+    case 'modular-equation':
+      return i18nText(I18N.modularRule, { rhs: flow.rhs });
+    case 'bezout':
+      return I18N.rule;
+  }
+}
+
+function invariantForScenario(scenario: ExtendedEuclideanScenario): ScratchpadMargin['text'] {
+  switch (scenario.notebookFlow.kind) {
+    case 'rsa-inverse':
+      return I18N.rsaInvariant;
+    case 'linear-diophantine':
+      return I18N.diophantineInvariant;
+    case 'modular-equation':
+      return I18N.modularInvariant;
+    case 'bezout':
+      return I18N.invariant;
+  }
+}
+
 export function* extendedEuclideanGenerator(
   scenario: ExtendedEuclideanScenario,
 ): Generator<SortStep> {
   const originalA = scenario.a;
   const originalB = scenario.b;
   const presetLabel = scenario.presetLabel;
+  const flow = scenario.notebookFlow;
 
   // ---------- Phase 1 — forward pass ----------
   // Collect every `a = q·b + r` step. The last non-zero remainder is
@@ -210,7 +365,7 @@ export function* extendedEuclideanGenerator(
       marker: null,
       caption: null,
       captionPinned: true,
-      content: i18nText(I18N.goal, { a: originalA, b: originalB }),
+      content: goalForScenario(scenario),
       instruction: null,
       annotation: null,
     },
@@ -230,7 +385,7 @@ export function* extendedEuclideanGenerator(
       indent: 0,
       marker: null,
       caption: null,
-      content: I18N.rule,
+      content: ruleForScenario(scenario),
       instruction: null,
       annotation: null,
     },
@@ -249,7 +404,7 @@ export function* extendedEuclideanGenerator(
   const globalInvariant: ScratchpadMargin = {
     id: 'invariant',
     anchorLineId: null,
-    text: I18N.invariant,
+    text: invariantForScenario(scenario),
     tone: 'invariant',
   };
 
@@ -294,6 +449,33 @@ export function* extendedEuclideanGenerator(
       resultLabel: opts.resultLabel,
       iteration: stepIndex,
     };
+  }
+
+  function appendStep(
+    builder: LineBuilder,
+    opts: {
+      readonly activeCodeLine: number;
+      readonly description: SortStep['description'];
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+      readonly tone: ScratchpadLabTraceState['tone'];
+      readonly resultLabel?: ScratchpadLabTraceState['resultLabel'];
+    },
+  ): SortStep {
+    lineBuilders.push(builder);
+    stepIndex += 1;
+    return createScratchpadLabStep({
+      activeCodeLine: opts.activeCodeLine,
+      description: opts.description,
+      state: snapshot({
+        phase: opts.phase,
+        decision: opts.decision,
+        tone: opts.tone,
+        currentLineId: builder.id,
+        transientMargin: null,
+        resultLabel: opts.resultLabel ?? null,
+      }),
+    });
   }
 
   // ---------- Step 0 — setup beat ----------
@@ -426,6 +608,200 @@ export function* extendedEuclideanGenerator(
       resultLabel: null,
     }),
   });
+
+  if (flow.kind === 'rsa-inverse') {
+    const inverseExists = gcdValue === 1;
+    const checkLine = inverseExists
+      ? i18nText(I18N.rsaInverseExists, {
+          e: originalB,
+          phi: originalA,
+          gcd: gcdValue,
+        })
+      : i18nText(I18N.rsaNoInverse, {
+          e: originalB,
+          phi: originalA,
+          gcd: gcdValue,
+        });
+    yield appendStep(
+      {
+        id: 'rsa-inverse-check',
+        kind: 'decision',
+        indent: 0,
+        marker: SECTION_MARKERS.verify,
+        caption: I18N.captions.verify,
+        captionPinned: true,
+        content: checkLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 4,
+        description: checkLine,
+        phase: I18N.phases.verify,
+        decision: inverseExists ? I18N.decisions.checking : I18N.decisions.noSolution,
+        tone: inverseExists ? 'decide' : 'conclude',
+      },
+    );
+    if (!inverseExists) {
+      const signoff = i18nText(I18N.rsaNoInverseSignoff, {
+        e: originalB,
+        phi: originalA,
+        gcd: gcdValue,
+      });
+      yield appendStep(
+        {
+          id: 'rsa-no-inverse-result',
+          kind: 'result',
+          indent: 0,
+          marker: SECTION_MARKERS.result,
+          caption: I18N.captions.result,
+          captionPinned: true,
+          content: signoff,
+          instruction: null,
+          annotation: null,
+        },
+        {
+          activeCodeLine: 7,
+          description: signoff,
+          phase: I18N.phases.complete,
+          decision: I18N.decisions.noSolution,
+          tone: 'complete',
+          resultLabel: signoff,
+        },
+      );
+      return;
+    }
+  }
+
+  if (flow.kind === 'linear-diophantine') {
+    const hasSolution = flow.target % gcdValue === 0;
+    const checkLine = hasSolution
+      ? i18nText(I18N.diophantineCheck, {
+          target: flow.target,
+          gcd: gcdValue,
+          scale: flow.target / gcdValue,
+        })
+      : i18nText(I18N.diophantineNoSolution, {
+          target: flow.target,
+          gcd: gcdValue,
+          remainder: normalizeModulo(flow.target, gcdValue),
+        });
+    yield appendStep(
+      {
+        id: 'diophantine-check',
+        kind: 'decision',
+        indent: 0,
+        marker: SECTION_MARKERS.verify,
+        caption: I18N.captions.verify,
+        captionPinned: true,
+        content: checkLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 4,
+        description: checkLine,
+        phase: I18N.phases.verify,
+        decision: hasSolution ? I18N.decisions.checking : I18N.decisions.noSolution,
+        tone: hasSolution ? 'decide' : 'conclude',
+      },
+    );
+    if (!hasSolution) {
+      const signoff = i18nText(I18N.diophantineNoSolutionSignoff, {
+        a: originalA,
+        b: originalB,
+        target: flow.target,
+        gcd: gcdValue,
+      });
+      yield appendStep(
+        {
+          id: 'diophantine-no-solution-result',
+          kind: 'result',
+          indent: 0,
+          marker: SECTION_MARKERS.result,
+          caption: I18N.captions.result,
+          captionPinned: true,
+          content: signoff,
+          instruction: null,
+          annotation: null,
+        },
+        {
+          activeCodeLine: 7,
+          description: signoff,
+          phase: I18N.phases.complete,
+          decision: I18N.decisions.noSolution,
+          tone: 'complete',
+          resultLabel: signoff,
+        },
+      );
+      return;
+    }
+  }
+
+  if (flow.kind === 'modular-equation') {
+    const hasSolution = flow.rhs % gcdValue === 0;
+    const checkLine = hasSolution
+      ? i18nText(I18N.modularCheck, {
+          gcd: gcdValue,
+          rhs: flow.rhs,
+          scale: flow.rhs / gcdValue,
+        })
+      : i18nText(I18N.modularNoSolution, {
+          gcd: gcdValue,
+          rhs: flow.rhs,
+          remainder: normalizeModulo(flow.rhs, gcdValue),
+        });
+    yield appendStep(
+      {
+        id: 'modular-equation-check',
+        kind: 'decision',
+        indent: 0,
+        marker: SECTION_MARKERS.verify,
+        caption: I18N.captions.verify,
+        captionPinned: true,
+        content: checkLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 4,
+        description: checkLine,
+        phase: I18N.phases.verify,
+        decision: hasSolution ? I18N.decisions.checking : I18N.decisions.noSolution,
+        tone: hasSolution ? 'decide' : 'conclude',
+      },
+    );
+    if (!hasSolution) {
+      const signoff = i18nText(I18N.modularNoSolutionSignoff, {
+        coefficient: originalB,
+        rhs: flow.rhs,
+        modulus: originalA,
+        gcd: gcdValue,
+      });
+      yield appendStep(
+        {
+          id: 'modular-equation-no-solution-result',
+          kind: 'result',
+          indent: 0,
+          marker: SECTION_MARKERS.result,
+          caption: I18N.captions.result,
+          captionPinned: true,
+          content: signoff,
+          instruction: null,
+          annotation: null,
+        },
+        {
+          activeCodeLine: 7,
+          description: signoff,
+          phase: I18N.phases.complete,
+          decision: I18N.decisions.noSolution,
+          tone: 'complete',
+          resultLabel: signoff,
+        },
+      );
+      return;
+    }
+  }
 
   // ---------- Phase 2 — back-substitution ----------
   // We carry an expression of the form `gcd = coefOfU · u + coefOfV · v`
@@ -606,68 +982,368 @@ export function* extendedEuclideanGenerator(
   const bezoutExpression = formatLinearCombo(sForA, originalA, tForB, originalB);
   const checkValue = sForA * originalA + tForB * originalB;
 
-  lineBuilders.push({
-    id: 'bezout',
-    kind: 'decision',
-    indent: 0,
-    marker: SECTION_MARKERS.verify,
-    caption: I18N.captions.verify,
-    captionPinned: true,
-    content: i18nText(I18N.bezoutResult, {
-      s: sForA,
-      a: originalA,
-      t: tForB,
-      b: originalB,
-      gcd: gcdValue,
-    }),
-    instruction: null,
-    annotation: i18nText(I18N.verify, {
-      expression: bezoutExpression,
-      value: checkValue,
-    }),
+  const bezoutLine = i18nText(I18N.bezoutResult, {
+    s: sForA,
+    a: originalA,
+    t: tForB,
+    b: originalB,
+    gcd: gcdValue,
   });
 
+  yield appendStep(
+    {
+      id: 'bezout',
+      kind: 'decision',
+      indent: 0,
+      marker: SECTION_MARKERS.verify,
+      caption: I18N.captions.verify,
+      captionPinned: true,
+      content: bezoutLine,
+      instruction: null,
+      annotation: i18nText(I18N.verify, {
+        expression: bezoutExpression,
+        value: checkValue,
+      }),
+    },
+    {
+      activeCodeLine: 7,
+      description: bezoutLine,
+      phase: I18N.phases.verify,
+      decision: I18N.decisions.verifying,
+      tone: 'conclude',
+    },
+  );
+
   lineBuilders.push({
-    id: 'result-line',
-    kind: 'result',
-    indent: 0.6,
-    marker: SECTION_MARKERS.result,
-    caption: I18N.captions.result,
-    captionPinned: true,
-    content: i18nText(I18N.bezoutResult, {
-      s: sForA,
-      a: originalA,
-      t: tForB,
-      b: originalB,
-      gcd: gcdValue,
-    }),
+    id: 'divider-conclusion',
+    kind: 'divider',
+    indent: 0,
+    marker: null,
+    caption: null,
+    content: '',
     instruction: null,
     annotation: null,
   });
 
-  stepIndex += 1;
-  yield createScratchpadLabStep({
-    activeCodeLine: 7,
-    description: i18nText(I18N.resultSignoff, {
-      a: originalA,
-      b: originalB,
+  if (flow.kind === 'rsa-inverse') {
+    const d = normalizeModulo(tForB, originalA);
+    const inverseLine = i18nText(I18N.rsaInverseLine, {
+      coefficient: tForB,
+      phi: originalA,
+      d,
+    });
+    yield appendStep(
+      {
+        id: 'rsa-inverse-result',
+        kind: 'result',
+        indent: 0,
+        marker: SECTION_MARKERS.result,
+        caption: I18N.captions.result,
+        captionPinned: true,
+        content: inverseLine,
+        instruction: null,
+        annotation: i18nText(I18N.rsaInterpretation, {
+          n: flow.n,
+          e: originalB,
+          d,
+        }),
+      },
+      {
+        activeCodeLine: 7,
+        description: inverseLine,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'complete',
+        resultLabel: i18nText(I18N.rsaSignoff, {
+          n: flow.n,
+          e: originalB,
+          phi: originalA,
+          d,
+        }),
+      },
+    );
+    return;
+  }
+
+  if (flow.kind === 'linear-diophantine') {
+    const scale = flow.target / gcdValue;
+    const x0 = sForA * scale;
+    const y0 = tForB * scale;
+    const stepX = originalB / gcdValue;
+    const stepY = -originalA / gcdValue;
+    const scaleLine = i18nText(I18N.diophantineScale, {
+      target: flow.target,
       gcd: gcdValue,
+      scale,
       s: sForA,
       t: tForB,
-    }),
-    state: snapshot({
+    });
+    yield appendStep(
+      {
+        id: 'diophantine-scale',
+        kind: 'substitute',
+        indent: 1,
+        marker: null,
+        caption: I18N.captions.backSubstitute,
+        content: scaleLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: scaleLine,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.interpreting,
+        tone: 'substitute',
+      },
+    );
+
+    const particularLine = i18nText(I18N.diophantineParticular, {
+      x: x0,
+      y: y0,
+      a: originalA,
+      b: originalB,
+      target: flow.target,
+    });
+    yield appendStep(
+      {
+        id: 'diophantine-particular',
+        kind: 'decision',
+        indent: 0,
+        marker: null,
+        caption: I18N.captions.verify,
+        content: particularLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: particularLine,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.interpreting,
+        tone: 'conclude',
+      },
+    );
+
+    const generalLine = i18nText(I18N.diophantineGeneral, {
+      xFormula: formatGeneralTerm(x0, stepX),
+      yFormula: formatGeneralTerm(y0, stepY),
+      stepX,
+      stepY,
+    });
+    yield appendStep(
+      {
+        id: 'diophantine-general',
+        kind: 'equation',
+        indent: 0,
+        marker: null,
+        caption: I18N.captions.result,
+        content: generalLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: generalLine,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'conclude',
+      },
+    );
+
+    let signoff = i18nText(I18N.diophantineSignoff, {
+      x: x0,
+      y: y0,
+      xFormula: formatGeneralTerm(x0, stepX),
+      yFormula: formatGeneralTerm(y0, stepY),
+    });
+    if (flow.minimize) {
+      const best = findSmallestRepresentative(x0, y0, stepX, stepY);
+      const minimalLine = i18nText(I18N.diophantineMinimal, {
+        k: best.k,
+        x: best.x,
+        y: best.y,
+      });
+      signoff = i18nText(I18N.diophantineSignoff, {
+        x: best.x,
+        y: best.y,
+        xFormula: formatGeneralTerm(x0, stepX),
+        yFormula: formatGeneralTerm(y0, stepY),
+      });
+      yield appendStep(
+        {
+          id: 'diophantine-minimal',
+          kind: 'result',
+          indent: 0,
+          marker: SECTION_MARKERS.result,
+          caption: I18N.captions.result,
+          captionPinned: true,
+          content: minimalLine,
+          instruction: null,
+          annotation: null,
+        },
+        {
+          activeCodeLine: 7,
+          description: minimalLine,
+          phase: I18N.phases.complete,
+          decision: I18N.decisions.done,
+          tone: 'complete',
+          resultLabel: signoff,
+        },
+      );
+      return;
+    }
+
+    yield appendStep(
+      {
+        id: 'diophantine-result',
+        kind: 'result',
+        indent: 0,
+        marker: SECTION_MARKERS.result,
+        caption: I18N.captions.result,
+        captionPinned: true,
+        content: signoff,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: signoff,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'complete',
+        resultLabel: signoff,
+      },
+    );
+    return;
+  }
+
+  if (flow.kind === 'modular-equation') {
+    const reducedCoefficient = originalB / gcdValue;
+    const reducedModulus = originalA / gcdValue;
+    const reducedRhs = flow.rhs / gcdValue;
+    const inverse = normalizeModulo(tForB, reducedModulus);
+    const x0 = normalizeModulo(reducedRhs * inverse, reducedModulus);
+    const reduceLine = i18nText(I18N.modularReduce, {
+      coefficient: originalB,
+      rhs: flow.rhs,
+      modulus: originalA,
+      reducedCoefficient,
+      reducedRhs,
+      reducedModulus,
+    });
+    yield appendStep(
+      {
+        id: 'modular-equation-reduce',
+        kind: 'equation',
+        indent: 0,
+        marker: null,
+        caption: I18N.captions.verify,
+        content: reduceLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: reduceLine,
+        phase: I18N.phases.verify,
+        decision: I18N.decisions.interpreting,
+        tone: 'substitute',
+      },
+    );
+
+    const solutionLine = i18nText(I18N.modularSolution, {
+      inverse,
+      reducedCoefficient,
+      reducedModulus,
+      reducedRhs,
+      x: x0,
+    });
+    yield appendStep(
+      {
+        id: 'modular-equation-solution',
+        kind: 'decision',
+        indent: 0,
+        marker: null,
+        caption: I18N.captions.result,
+        content: solutionLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: solutionLine,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.interpreting,
+        tone: 'conclude',
+      },
+    );
+
+    const allSolutions = Array.from({ length: gcdValue }, (_, k) =>
+      normalizeModulo(x0 + k * reducedModulus, originalA),
+    ).join(', ');
+    const allSolutionsLine = i18nText(I18N.modularAllSolutions, {
+      x: x0,
+      reducedModulus,
+      modulus: originalA,
+      solutions: allSolutions,
+    });
+    const signoff = i18nText(I18N.modularSignoff, {
+      coefficient: originalB,
+      rhs: flow.rhs,
+      modulus: originalA,
+      solutions: allSolutions,
+    });
+    yield appendStep(
+      {
+        id: 'modular-equation-result',
+        kind: 'result',
+        indent: 0,
+        marker: SECTION_MARKERS.result,
+        caption: I18N.captions.result,
+        captionPinned: true,
+        content: allSolutionsLine,
+        instruction: null,
+        annotation: null,
+      },
+      {
+        activeCodeLine: 7,
+        description: allSolutionsLine,
+        phase: I18N.phases.complete,
+        decision: I18N.decisions.done,
+        tone: 'complete',
+        resultLabel: signoff,
+      },
+    );
+    return;
+  }
+
+  const signoff = i18nText(I18N.resultSignoff, {
+    a: originalA,
+    b: originalB,
+    gcd: gcdValue,
+    s: sForA,
+    t: tForB,
+  });
+  yield appendStep(
+    {
+      id: 'result-line',
+      kind: 'result',
+      indent: 0.6,
+      marker: SECTION_MARKERS.result,
+      caption: I18N.captions.result,
+      captionPinned: true,
+      content: bezoutLine,
+      instruction: null,
+      annotation: null,
+    },
+    {
+      activeCodeLine: 7,
+      description: signoff,
       phase: I18N.phases.complete,
       decision: I18N.decisions.done,
       tone: 'complete',
-      currentLineId: 'result-line',
-      transientMargin: null,
-      resultLabel: i18nText(I18N.resultSignoff, {
-        a: originalA,
-        b: originalB,
-        gcd: gcdValue,
-        s: sForA,
-        t: tForB,
-      }),
-    }),
-  });
+      resultLabel: signoff,
+    },
+  );
 }

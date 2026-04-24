@@ -1,11 +1,8 @@
-import { EXTENDED_EUCLIDEAN_CLASSIC_TASK } from './classic.task';
+import { EXTENDED_EUCLIDEAN_DIOPHANTINE_LOGISTICS_TASK } from './diophantine-logistics.task';
 import { EXTENDED_EUCLIDEAN_FIBONACCI_CHAIN_TASK } from './fibonacci-chain.task';
-import { EXTENDED_EUCLIDEAN_KNOWN_GCD_TASK } from './known-gcd.task';
-import { EXTENDED_EUCLIDEAN_LARGE_TASK } from './large.task';
-import { EXTENDED_EUCLIDEAN_MODULAR_INVERSE_TASK } from './modular-inverse.task';
-import { EXTENDED_EUCLIDEAN_PRIME_PAIR_TASK } from './prime-pair.task';
+import { EXTENDED_EUCLIDEAN_MODULAR_EQUATION_TRAP_TASK } from './modular-equation-trap.task';
+import { EXTENDED_EUCLIDEAN_RSA_INVERSE_TASK } from './rsa-inverse.task';
 import { EXTENDED_EUCLIDEAN_SHORT_TASK } from './short.task';
-import { EXTENDED_EUCLIDEAN_SMALL_BEZOUT_TASK } from './small-bezout.task';
 import { ExtendedEuclideanTask } from './extended-euclidean-task';
 
 export {
@@ -15,22 +12,18 @@ export {
 export type {
   ExtendedEuclideanTask,
   ExtendedEuclideanTaskValues,
+  ExtendedEuclideanNotebookFlow,
 } from './extended-euclidean-task';
 
-/** Full task roster for Extended Euclidean, ordered roughly from the
- *  shortest sensible Bézout (two forward steps) up to the worst-case
- *  Fibonacci chain. Each task lives in its own file — the cost of
- *  adding another variant is one new `.task.ts` file and one entry
- *  in the array below. */
+/** Full task roster for Extended Euclidean, ordered from the default
+ *  basic Bézout run through applied inverse / Diophantine / modular
+ *  equation tasks, up to a long pure back-substitution chain. */
 export const EXTENDED_EUCLIDEAN_TASKS: readonly ExtendedEuclideanTask[] = [
   EXTENDED_EUCLIDEAN_SHORT_TASK,
-  EXTENDED_EUCLIDEAN_CLASSIC_TASK,
-  EXTENDED_EUCLIDEAN_LARGE_TASK,
-  EXTENDED_EUCLIDEAN_SMALL_BEZOUT_TASK,
-  EXTENDED_EUCLIDEAN_MODULAR_INVERSE_TASK,
-  EXTENDED_EUCLIDEAN_KNOWN_GCD_TASK,
-  EXTENDED_EUCLIDEAN_PRIME_PAIR_TASK,
+  EXTENDED_EUCLIDEAN_RSA_INVERSE_TASK,
+  EXTENDED_EUCLIDEAN_DIOPHANTINE_LOGISTICS_TASK,
+  EXTENDED_EUCLIDEAN_MODULAR_EQUATION_TRAP_TASK,
   EXTENDED_EUCLIDEAN_FIBONACCI_CHAIN_TASK,
 ];
 
-export const DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID = 'classic';
+export const DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID = 'short';

@@ -2058,6 +2058,42 @@
             "bezoutResult": "[[math]]\\gcd({{a}}, {{b}}) = {{s}} \\cdot {{a}} + {{t}} \\cdot {{b}} = {{gcd}}[[/math]]",
             "verify": "[[math]]{{expression}} = {{value}}[[/math]] ✓",
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}, \\; s = {{s}}, \\; t = {{t}}[[/math]]",
+            "rsa": {
+              "goal": "Find the private key [[math]]d[[/math]]: for [[math]]n = {{n}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], and [[math]]e = {{e}}[[/math]], solve [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]].",
+              "rule": "Run Extended Euclidean on [[math]]\\varphi(n)[[/math]] and [[math]]e[[/math]]. If [[math]]\\gcd({{phi}}, {{e}}) = 1[[/math]], the coefficient of [[math]]e[[/math]] is the inverse modulo [[math]]\\varphi(n)[[/math]].",
+              "invariant": "We are tracking the coefficient of [[math]]e[[/math]], not the modulus coefficient. Only at the end do we reduce it modulo [[math]]\\varphi(n)[[/math]].",
+              "inverseExists": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}}[[/math]], so the inverse modulo [[math]]\\varphi(n)[[/math]] exists.",
+              "noInverse": "[[math]]\\gcd({{phi}}, {{e}}) = {{gcd}} \\neq 1[[/math]], so [[math]]e[[/math]] has no inverse modulo [[math]]\\varphi(n)[[/math]].",
+              "inverseLine": "The coefficient of [[math]]e[[/math]] is [[math]]{{coefficient}}[[/math]], so [[math]]d \\equiv {{coefficient}} \\pmod{ {{phi}} } = {{d}}[[/math]].",
+              "interpretation": "In RSA, [[math]](e, d) = ({{e}}, {{d}})[[/math]] satisfies [[math]]m^{e \\cdot d} \\equiv m \\pmod{ {{n}} }[[/math]].",
+              "signoff": "[[math]]d = {{d}}[[/math]] for [[math]]e = {{e}}[[/math]], [[math]]\\varphi(n) = {{phi}}[[/math]], [[math]]n = {{n}}[[/math]].",
+              "noInverseSignoff": "No private key: [[math]]\\gcd({{e}}, {{phi}}) = {{gcd}} \\neq 1[[/math]]."
+            },
+            "diophantine": {
+              "goal": "Solve the linear Diophantine equation [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. First find Bézout for [[math]]{{a}}[[/math]] and [[math]]{{b}}[[/math]], then scale it.",
+              "rule": "Extended Euclidean gives [[math]]s \\cdot a + t \\cdot b = \\gcd(a,b)[[/math]]. The equation [[math]]a x + b y = {{target}}[[/math]] has solutions only when [[math]]\\gcd(a,b)[[/math]] divides the right-hand side.",
+              "invariant": "Once one pair [[math]](x_0,y_0)[[/math]] is known, every solution comes from adding [[math]]b/g[[/math]] to [[math]]x[[/math]] and subtracting [[math]]a/g[[/math]] from [[math]]y[[/math]].",
+              "check": "[[math]]{{target}} = {{scale}} \\cdot {{gcd}}[[/math]], so the equation has solutions.",
+              "noSolution": "[[math]]{{gcd}} \\nmid {{target}}[[/math]] (remainder [[math]]{{remainder}}[[/math]]), so the Diophantine equation has no solutions.",
+              "scale": "Scale Bézout's identity by [[math]]{{scale}}[[/math]]: [[math]]x_0 = {{scale}} \\cdot {{s}}, \\quad y_0 = {{scale}} \\cdot {{t}}[[/math]].",
+              "particular": "[[math]]x_0 = {{x}}, \\; y_0 = {{y}}[[/math]], so [[math]]{{a}} \\cdot {{x}} + {{b}} \\cdot {{y}} = {{target}}[[/math]].",
+              "general": "[[math]]x = {{xFormula}}, \\quad y = {{yFormula}}, \\quad k \\in \\mathbb{Z}[[/math]].",
+              "minimal": "[[math]]k = {{k}}[[/math]] gives the smallest absolute values in this family: [[math]]x = {{x}}, \\; y = {{y}}[[/math]].",
+              "signoff": "Particular solution: [[math]]x = {{x}}, y = {{y}}[[/math]]. General form: [[math]]x = {{xFormula}}, y = {{yFormula}}[[/math]].",
+              "noSolutionSignoff": "No solutions for [[math]]{{a}}x + {{b}}y = {{target}}[[/math]], because [[math]]\\gcd = {{gcd}}[[/math]] does not divide the right-hand side."
+            },
+            "modularEquation": {
+              "goal": "Solve the modular equation [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]. Extended Euclidean first checks whether the right-hand side is divisible by [[math]]\\gcd({{coefficient}}, {{modulus}})[[/math]].",
+              "rule": "For [[math]]a x \\equiv c \\pmod m[[/math]], compute [[math]]g = \\gcd(a,m)[[/math]]. If [[math]]g \\nmid c[[/math]], stop. If [[math]]g \\mid c[[/math]], divide by [[math]]g[[/math]] and use an inverse modulo [[math]]m/g[[/math]].",
+              "invariant": "Back-substitution is only needed after the divisibility test. If the test fails, the whole problem ends at the [[math]]\\gcd[[/math]].",
+              "check": "[[math]]{{rhs}} = {{scale}} \\cdot {{gcd}}[[/math]], so solutions exist and we move to the reduced inverse.",
+              "noSolution": "[[math]]{{gcd}} \\nmid {{rhs}}[[/math]] (remainder [[math]]{{remainder}}[[/math]]), so the congruence has no solutions.",
+              "reduce": "Divide by [[math]]g[[/math]]: [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} } \\Rightarrow {{reducedCoefficient}}x \\equiv {{reducedRhs}} \\pmod{ {{reducedModulus}} }[[/math]].",
+              "solution": "The inverse of [[math]]{{reducedCoefficient}}[[/math]] modulo [[math]]{{reducedModulus}}[[/math]] is [[math]]{{inverse}}[[/math]], so [[math]]x \\equiv {{reducedRhs}} \\cdot {{inverse}} = {{x}} \\pmod{ {{reducedModulus}} }[[/math]].",
+              "allSolutions": "Modulo [[math]]{{modulus}}[[/math]], this gives [[math]]x \\equiv {{x}} \\pmod{ {{reducedModulus}} }[[/math]], i.e. [[math]]x \\in \\{ {{solutions}} \\}[[/math]].",
+              "signoff": "Solutions of [[math]]{{coefficient}}x \\equiv {{rhs}} \\pmod{ {{modulus}} }[[/math]]: [[math]]{{solutions}}[[/math]].",
+              "noSolutionSignoff": "No solutions: [[math]]\\gcd({{coefficient}}, {{modulus}}) = {{gcd}}[[/math]] does not divide [[math]]{{rhs}}[[/math]]."
+            },
             "captions": {
               "forwardStart": "Start the forward division chain.",
               "forwardContinue": "Shift the pair and divide again.",
@@ -2083,7 +2119,10 @@
               "readingGcd": "Last non-zero remainder is the [[math]]\\gcd[[/math]].",
               "unwinding": "Substituting an earlier forward equation into the running expression.",
               "verifying": "Plugging [[math]]s, t[[/math]] back to confirm Bézout's identity.",
-              "done": "Bézout coefficients are settled."
+              "done": "Bézout coefficients are settled.",
+              "checking": "Checking the existence condition for this task shape.",
+              "interpreting": "Interpreting Bézout coefficients in the task context.",
+              "noSolution": "The existence condition fails — writing the conclusion."
             }
           },
           "fftNtt": {
@@ -4091,6 +4130,42 @@
           }
         },
         "extendedEuclidean": {
+          "values": {
+            "n": "n",
+            "phi": "φ(n)",
+            "publicExponent": "e",
+            "modulus": "modulus",
+            "coefficient": "coefficient",
+            "target": "right-hand side",
+            "rhs": "right-hand side"
+          },
+          "rsaInverse": {
+            "hints": {
+              "0": "First run the Euclidean chain for [[math]]\\varphi(n) = {{a}}[[/math]] and [[math]]e = {{b}}[[/math]].",
+              "1": "After back-substitution, use the coefficient of [[math]]e[[/math]]. Reduce it modulo [[math]]\\varphi(n)[[/math]] to get [[math]]d[[/math]]."
+            },
+            "instruction": "In an RSA system, take [[math]]n = {{n}}[[/math]], public exponent [[math]]e = {{b}}[[/math]], and [[math]]\\varphi(n) = {{a}}[[/math]]. Check whether [[math]]e[[/math]] has an inverse modulo [[math]]\\varphi(n)[[/math]]. If it does, compute the private key [[math]]d[[/math]] satisfying [[math]]d \\cdot e \\equiv 1 \\pmod{\\varphi(n)}[[/math]] and interpret the result for RSA.",
+            "summary": "[[math]]e = 35, \\varphi(n) = 192[[/math]] — modular inverse as an RSA private key.",
+            "title": "RSA modular inverse"
+          },
+          "diophantineLogistics": {
+            "hints": {
+              "0": "First compute [[math]]\\gcd(84,36)[[/math]]. Only after checking that [[math]]12[[/math]] is a multiple of the gcd should you scale the Bézout coefficients.",
+              "1": "For the default values [[math]]84 = 2 \\cdot 36 + 12[[/math]], so back-substitution is short, but the interpretation is a different task type."
+            },
+            "instruction": "A logistics company uses two truck types. Type A carries [[math]]{{a}}[[/math]] units and type B carries [[math]]{{b}}[[/math]] units. The model gives [[math]]{{a}}x + {{b}}y = {{target}}[[/math]]. Find one particular solution, derive the general solution, and choose the representative with the smallest absolute values.",
+            "summary": "[[math]]84x + 36y = 12[[/math]] — Diophantine equation with a general solution.",
+            "title": "Diophantine equation"
+          },
+          "modularEquationTrap": {
+            "hints": {
+              "0": "Do not start by looking for [[math]]143^{-1}[[/math]]. First compute [[math]]\\gcd(143,221)[[/math]].",
+              "1": "If [[math]]\\gcd(a,m)[[/math]] does not divide the right-hand side, back-substitution is unnecessary."
+            },
+            "instruction": "Solve the congruence [[math]]{{b}}x \\equiv {{rhs}} \\pmod{ {{a}} }[[/math]]. Check whether a solution exists; if it does, find all solutions modulo [[math]]{{a}}[[/math]]. Justify the result with Extended Euclidean, starting from the [[math]]\\gcd({{b}}, {{a}})[[/math]] test.",
+            "summary": "[[math]]143x \\equiv 55 \\pmod{221}[[/math]] — trap case: the gcd blocks solutions.",
+            "title": "Congruence trap"
+          },
           "classic": {
             "hints": {
               "0": "Five forward steps: 240, 46, 10, 6, 4, 2, 0 — the final remainder 2 is the [[math]]\\gcd[[/math]].",
