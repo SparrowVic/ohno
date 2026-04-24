@@ -1433,6 +1433,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['primality', 'number theory', 'probabilistic'],
+    complexity: {
+      timeBest: 'O(k · log³ n)',
+      timeAverage: 'O(k · log³ n)',
+      timeWorst: 'O(k · log³ n)',
+      space: 'O(log n)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'pollards-rho',
@@ -1442,6 +1449,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['factorization', 'number theory', 'randomized'],
+    complexity: {
+      timeBest: 'O(n^(1/4))',
+      timeAverage: 'O(n^(1/4))',
+      timeWorst: 'O(n^(1/2))',
+      space: 'O(1)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'chinese-remainder-theorem',
@@ -1451,6 +1465,13 @@ export const ALGORITHM_CATALOG: readonly AlgorithmItem[] = [
     category: 'misc',
     subcategory: 'math',
     tags: ['modular arithmetic', 'number theory', 'CRT'],
+    complexity: {
+      timeBest: 'O(k · log M)',
+      timeAverage: 'O(k · log M)',
+      timeWorst: 'O(k · log M)',
+      space: 'O(k)',
+    },
+    implemented: true,
   }),
   algo({
     id: 'extended-euclidean',

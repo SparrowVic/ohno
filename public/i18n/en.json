@@ -1984,6 +1984,60 @@
           }
         },
         "scratchpadLab": {
+          "crt": {
+            "modeLabel": "Chinese Remainder Theorem (chalkboard)",
+            "goal": "Find [[math]]x \\pmod{ {{M}} }[[/math]] satisfying the system of {{count}} congruences.",
+            "rule": "For pairwise-coprime moduli a unique [[math]]x \\pmod{M}[[/math]] exists, where [[math]]M = \\prod m_i[[/math]].",
+            "invariant": "Moduli must be pairwise coprime — this is the uniqueness condition.",
+            "systemLine": "[[math]]x \\equiv {{r}} \\pmod{ {{m}} }[[/math]]  (#{{index}})",
+            "setup": {
+              "productLine": "[[math]]M = {{product}} = {{M}}[[/math]]",
+              "productInstruction": "Compute the product of all moduli",
+              "productAnnotation": "[[math]]M = {{M}}[[/math]]"
+            },
+            "term": {
+              "header": "Term {{index}}: [[math]]x \\equiv {{r}} \\pmod{ {{m}} }[[/math]]",
+              "bigM": "[[math]]M_{{index}} = M / {{m}} = {{M}} / {{m}} = {{Mi}}[[/math]]",
+              "bigMInstruction": "Divide [[math]]{{M}}[[/math]] by [[math]]{{m}}[[/math]]",
+              "reducedM": "[[math]]M_{{index}} \\bmod {{m}} = {{Mi}} \\bmod {{m}} = {{r}}[[/math]]",
+              "reducedMInstruction": "Compute [[math]]{{Mi}} \\bmod {{m}}[[/math]]",
+              "inverse": "[[math]]y_{{index}} = ({{Mi_mod}})^{-1} \\pmod{ {{m}} } = {{y}}[[/math]]",
+              "inverseInstruction": "Find the inverse of [[math]]{{Mi_mod}} \\pmod{ {{m}} }[[/math]] (Extended Euclidean)",
+              "partial": "[[math]]T_{{index}} = {{r}} \\cdot {{Mi}} \\cdot {{y}} = {{partial}}[[/math]]",
+              "partialInstruction": "Compute [[math]]{{r}} \\cdot {{Mi}} \\cdot {{y}}[[/math]]"
+            },
+            "sum": {
+              "line": "[[math]]\\sum T_i = {{terms}} = {{sum}}[[/math]]",
+              "instruction": "Sum the partial terms",
+              "reduce": "[[math]]x = {{sum}} \\bmod {{M}} = {{x}}[[/math]]",
+              "reduceInstruction": "Compute [[math]]{{sum}} \\bmod {{M}}[[/math]]"
+            },
+            "result": {
+              "line": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]",
+              "signoff": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]"
+            },
+            "phases": {
+              "setup": "Product of moduli",
+              "terms": "Terms",
+              "combine": "Combine",
+              "complete": "Done"
+            },
+            "decisions": {
+              "product": "Compute [[math]]M = \\prod m_i[[/math]].",
+              "buildingTerm": "Build the term [[math]]r_i \\cdot M_i \\cdot y_i[[/math]].",
+              "summing": "Sum the partial terms.",
+              "reducing": "Reduce the sum modulo [[math]]M[[/math]].",
+              "done": "Unique solution established."
+            },
+            "captions": {
+              "system": "Reference system — always available below.",
+              "setup": "Compute [[math]]M = \\prod m_i[[/math]].",
+              "termStart": "Build a partial term.",
+              "sum": "Sum all terms.",
+              "reduce": "Reduce modulo [[math]]M[[/math]].",
+              "result": "Final [[math]]x \\pmod{M}[[/math]]."
+            }
+          },
           "extendedEuclidean": {
             "modeLabel": "Extended Euclidean (chalkboard)",
             "goal": "Find integers [[math]]s, t[[/math]] such that [[math]]s \\cdot {{a}} + t \\cdot {{b}} = \\gcd({{a}}, {{b}})[[/math]].",
@@ -2065,6 +2119,96 @@
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}[[/math]]",
             "rule": "Euclidean algorithm: [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], repeat until [[math]]b = 0[[/math]].",
             "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]"
+          },
+          "millerRabin": {
+            "modeLabel": "Miller-Rabin primality (chalkboard)",
+            "goal": "Decide whether [[math]]n = {{n}}[[/math]] is probably prime or composite.",
+            "rule": "If there exists a witness [[math]]a[[/math]] such that neither [[math]]a^d \\equiv 1 \\pmod{n}[[/math]] nor [[math]]a^{2^i d} \\equiv n-1 \\pmod{n}[[/math]] for any [[math]]0 \\le i < r[[/math]], then [[math]]n[[/math]] is composite.",
+            "invariant": "[[math]]n - 1 = 2^r \\cdot d[[/math]] with [[math]]d[[/math]] odd — fixed once at setup.",
+            "setup": {
+              "decompose": "[[math]]n - 1 = {{n}} = 2^{{r}} \\cdot {{d}}[[/math]]",
+              "decomposeInstruction": "Factor powers of 2 out of [[math]]n - 1[[/math]] until the quotient is odd",
+              "decomposeAnnotation": "[[math]]r = {{r}}, \\; d = {{d}}[[/math]]"
+            },
+            "witness": {
+              "header": "Witness #{{index}}: [[math]]a = {{a}}[[/math]]",
+              "seed": "[[math]]x = {{a}}^{{d}} \\bmod {{n}} = {{seed}}[[/math]]",
+              "seedInstruction": "Compute [[math]]{{a}}^{{d}} \\bmod {{n}}[[/math]] via fast exponentiation",
+              "squareStep": "[[math]]x \\leftarrow {{prev}}^2 \\bmod {{n}} = {{x}}[[/math]]  (step {{step}})",
+              "squareStepInstruction": "Square [[math]]{{prev}}[[/math]] modulo [[math]]{{n}}[[/math]]",
+              "passImmediate": "[[math]]x = 1[[/math]] → witness [[math]]a = {{a}}[[/math]] passes ✓",
+              "passMinusOne": "[[math]]x = {{n}} = n - 1[[/math]] → witness [[math]]a = {{a}}[[/math]] passes ✓",
+              "witnessFound": "Chain never hit [[math]]n - 1[[/math]] — [[math]]a = {{a}}[[/math]] witnesses that [[math]]n = {{n}}[[/math]] is composite."
+            },
+            "result": {
+              "probablyPrime": "[[math]]n = {{n}}[[/math]] passed all {{count}} witnesses — it's probably prime.",
+              "composite": "[[math]]n = {{n}}[[/math]] is composite — witness [[math]]a = {{a}}[[/math]] proves it.",
+              "signoffPrime": "[[math]]{{n}}[[/math]] probably prime",
+              "signoffComposite": "[[math]]{{n}}[[/math]] composite (witness [[math]]{{a}}[[/math]])"
+            },
+            "phases": {
+              "setup": "Decompose",
+              "witness": "Witness",
+              "decide": "Decide",
+              "complete": "Done"
+            },
+            "decisions": {
+              "decomposing": "Decomposing [[math]]n - 1 = 2^r \\cdot d[[/math]].",
+              "seeding": "Computing [[math]]x = a^d \\bmod n[[/math]].",
+              "squaring": "Squaring [[math]]x[[/math]] modulo [[math]]n[[/math]].",
+              "witnessPassed": "Witness passed — moving on.",
+              "witnessFailed": "Witness proved compositeness.",
+              "probablyPrime": "All witnesses passed — probably prime.",
+              "composite": "Witness found — [[math]]n[[/math]] is composite."
+            },
+            "captions": {
+              "setup": "Write [[math]]n - 1 = 2^r \\cdot d[[/math]].",
+              "witnessStart": "Check witness [[math]]a[[/math]].",
+              "squareChain": "Start the square chain.",
+              "verdict": "Is [[math]]x = 1[[/math]] or [[math]]x = n - 1[[/math]]?",
+              "result": "Final verdict."
+            }
+          },
+          "pollardsRho": {
+            "modeLabel": "Pollard's rho (chalkboard)",
+            "goal": "Find a non-trivial factor of [[math]]n = {{n}}[[/math]].",
+            "rule": "Iterate [[math]]f(x) = x^2 + c \\bmod n[[/math]] with two pointers: [[math]]x \\leftarrow f(x)[[/math]], [[math]]y \\leftarrow f(f(y))[[/math]]. A non-trivial [[math]]\\gcd(|x - y|, n)[[/math]] is a factor of [[math]]n[[/math]].",
+            "invariant": "If the pointers meet without an earlier gcd in [[math]](1, n)[[/math]], either [[math]]n[[/math]] is prime or a different [[math]]c[[/math]] is needed.",
+            "setup": {
+              "formula": "[[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]]",
+              "formulaInstruction": "Define the iteration [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]]",
+              "seeds": "[[math]]x_0 = y_0 = {{x0}}[[/math]]",
+              "seedsAnnotation": "Tortoise and hare start at the same place."
+            },
+            "step": {
+              "line": "Step {{i}}: [[math]]x = {{x}}, \\; y = {{y}}, \\; |x - y| = {{diff}}, \\; \\gcd = {{g}}[[/math]]",
+              "instruction": "Take step {{i}} — one [[math]]f[[/math]] for [[math]]x[[/math]], two [[math]]f[[/math]]'s for [[math]]y[[/math]], then [[math]]\\gcd(|x - y|, n)[[/math]]",
+              "annotation": "[[math]]\\gcd({{diff}}, n) = {{g}}[[/math]]"
+            },
+            "result": {
+              "success": "[[math]]n = {{n}} = {{factor}} \\cdot {{quotient}}[[/math]] — rho found a factor.",
+              "failure": "[[math]]\\gcd = n[[/math]] without producing a proper factor — change [[math]]c[[/math]] and restart (in practice). [[math]]n = {{n}}[[/math]] may also be prime.",
+              "exhausted": "Hit the cap of {{max}} iterations for [[math]]n = {{n}}[[/math]] with [[math]]c = {{c}}[[/math]] — try a different [[math]]c[[/math]].",
+              "signoffSuccess": "[[math]]{{n}} = {{factor}} \\cdot {{quotient}}[[/math]]",
+              "signoffFailure": "No factor for [[math]]c = {{c}}[[/math]]; restart required."
+            },
+            "phases": {
+              "setup": "Setup",
+              "iterate": "Iterate",
+              "complete": "Done"
+            },
+            "decisions": {
+              "seeding": "Pick the iteration function and seeds.",
+              "iterating": "Take one tortoise-hare step and check [[math]]\\gcd[[/math]].",
+              "factorFound": "[[math]]\\gcd[[/math]] landed in [[math]](1, n)[[/math]] — that's a factor.",
+              "cycleTrap": "Pointers met without a gcd in [[math]](1, n)[[/math]].",
+              "exhausted": "Iteration cap reached."
+            },
+            "captions": {
+              "setup": "Define [[math]]f[[/math]] and the seeds.",
+              "step": "Tortoise-hare step.",
+              "result": "Final verdict."
+            }
           }
         },
         "search": {
@@ -3734,6 +3878,38 @@
         }
       },
       "tasks": {
+        "crt": {
+          "values": {
+            "congruences": "congruences",
+            "congruencesPlaceholder": "2:3, 3:5, 2:7"
+          },
+          "classic": {
+            "title": "Classic example: 3 congruences",
+            "summary": "[[math]]x \\equiv 2 \\, (3), \\, 3 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{105}[[/math]]",
+            "instruction": "Solve the system [[math]]x \\equiv 2 \\pmod{3}[[/math]], [[math]]x \\equiv 3 \\pmod{5}[[/math]], [[math]]x \\equiv 2 \\pmod{7}[[/math]]. Present [[math]]x \\pmod{105}[[/math]] via the Chinese Remainder Theorem construction.",
+            "hints": {
+              "0": "[[math]]M = 3 \\cdot 5 \\cdot 7 = 105[[/math]], [[math]]M_1 = 35, M_2 = 21, M_3 = 15[[/math]].",
+              "1": "Inverses: [[math]]35^{-1} \\equiv 2 \\pmod{3}[[/math]], [[math]]21^{-1} \\equiv 1 \\pmod{5}[[/math]], [[math]]15^{-1} \\equiv 1 \\pmod{7}[[/math]]. Terms: [[math]]140 + 63 + 30 = 233[[/math]], [[math]]233 \\bmod 105 = 23[[/math]]."
+            }
+          },
+          "twoCongruences": {
+            "title": "Pair of congruences",
+            "summary": "[[math]]x \\equiv 1 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{35}[[/math]]",
+            "instruction": "Find [[math]]x \\pmod{35}[[/math]] such that [[math]]x \\equiv 1 \\pmod{5}[[/math]] and [[math]]x \\equiv 2 \\pmod{7}[[/math]]. Minimal case — one back-substitution line.",
+            "hints": {
+              "0": "[[math]]M = 35[[/math]], [[math]]M_1 = 7, M_2 = 5[[/math]]. [[math]]7 \\equiv 2 \\pmod{5}[[/math]], inverse [[math]]3[[/math]]; [[math]]5 \\equiv 5 \\pmod{7}[[/math]], inverse [[math]]3[[/math]]. Check [[math]]x = 16[[/math]]."
+            }
+          },
+          "smallestPositive": {
+            "title": "Smallest positive solution",
+            "summary": "[[math]]x \\equiv 4 \\, (9), \\, 3 \\, (11), \\, 6 \\, (13)[[/math]] — state the smallest positive [[math]]x[[/math]]",
+            "instruction": "Find the smallest positive integer [[math]]x[[/math]] satisfying [[math]]x \\equiv 4 \\pmod{9}[[/math]], [[math]]x \\equiv 3 \\pmod{11}[[/math]], [[math]]x \\equiv 6 \\pmod{13}[[/math]]. Reduce modulo [[math]]M = 9 \\cdot 11 \\cdot 13 = 1287[[/math]].",
+            "hints": {
+              "0": "[[math]]M_1 = 143, M_2 = 117, M_3 = 99[[/math]]. Reductions [[math]]M_i \\bmod m_i[[/math]]: [[math]]8, 7, 8[[/math]].",
+              "1": "Inverses: [[math]]8^{-1} \\equiv 8 \\pmod{9}[[/math]], [[math]]7^{-1} \\equiv 8 \\pmod{11}[[/math]], [[math]]8^{-1} \\equiv 5 \\pmod{13}[[/math]]. Sum of terms [[math]]= 10354[[/math]], [[math]]10354 \\bmod 1287 = 58[[/math]]."
+            }
+          }
+        },
         "extendedEuclidean": {
           "classic": {
             "hints": {
@@ -3884,12 +4060,78 @@
             "b": "b"
           }
         },
+        "millerRabin": {
+          "values": {
+            "n": "n",
+            "witnesses": "witnesses",
+            "witnessesPlaceholder": "2, 3, 7"
+          },
+          "carmichael": {
+            "title": "Carmichael number — 561",
+            "summary": "[[math]]561 = 3 \\cdot 11 \\cdot 17[[/math]] — Fermat fails, Miller-Rabin succeeds.",
+            "instruction": "Decide whether [[math]]n = 561[[/math]] is prime using Miller-Rabin with witnesses [[math]]\\{2, 3\\}[[/math]]. 561 is the smallest Carmichael number — a naive Fermat test would report 'probably prime'; Miller-Rabin's square-root-of-unity check catches the compositeness.",
+            "hints": {
+              "0": "Start by factoring [[math]]560 = 2^4 \\cdot 35[[/math]], so [[math]]r = 4[[/math]], [[math]]d = 35[[/math]].",
+              "1": "Already for witness [[math]]a = 2[[/math]] the chain lands on [[math]]1[[/math]] without passing through [[math]]n - 1[[/math]] — a 'non-trivial square root of 1', which rules out primality."
+            }
+          },
+          "smallPrime": {
+            "title": "Gentle run — 29",
+            "summary": "Small prime, witness [[math]]a = 2[[/math]] — first contact with the mechanics.",
+            "instruction": "Run Miller-Rabin on [[math]]n = 29[[/math]] with witness [[math]]a = 2[[/math]]. Write the decomposition [[math]]n - 1 = 2^r \\cdot d[[/math]] and follow the square chain until [[math]]x[[/math]] hits [[math]]n - 1[[/math]] or [[math]]1[[/math]].",
+            "hints": {
+              "0": "[[math]]28 = 2^2 \\cdot 7[[/math]], so [[math]]r = 2[[/math]], [[math]]d = 7[[/math]].",
+              "1": "[[math]]2^7 \\bmod 29 = 128 \\bmod 29 = 12[[/math]]. Square: [[math]]12^2 \\bmod 29 = 144 \\bmod 29 = 28 = n - 1[[/math]] ✓."
+            }
+          },
+          "compositeWitness": {
+            "title": "Compositeness witness — 25",
+            "summary": "[[math]]25 = 5^2[[/math]] — find a witness that rules out primality outright.",
+            "instruction": "Show that [[math]]n = 25[[/math]] is composite using Miller-Rabin with witness [[math]]a = 2[[/math]]. Write out the full square chain and point to where the witness proves compositeness. Note: [[math]]a = 7[[/math]] for [[math]]n = 25[[/math]] is a strong liar — the test passes for that witness even though 25 is composite.",
+            "hints": {
+              "0": "[[math]]24 = 2^3 \\cdot 3[[/math]], [[math]]r = 3[[/math]], [[math]]d = 3[[/math]]. [[math]]2^3 \\bmod 25 = 8[[/math]]; chain [[math]]8, 14, 21[[/math]] — no element is [[math]]1[[/math]] or [[math]]n - 1 = 24[[/math]], so the witness proves compositeness."
+            }
+          }
+        },
         "pointerLab": {
           "slidingWindow": {
             "windowSize": "window size"
           },
           "twoPointers": {
             "target": "target"
+          }
+        },
+        "pollardsRho": {
+          "values": {
+            "n": "n",
+            "c": "c",
+            "x0": "x₀"
+          },
+          "quickFactor": {
+            "title": "Quick factor — 91",
+            "summary": "[[math]]91 = 7 \\cdot 13[[/math]], [[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]] — gcd = 7 on iteration one.",
+            "instruction": "Factor [[math]]n = 91[[/math]] using Pollard's rho with [[math]]f(x) = x^2 + 1 \\bmod 91[[/math]] and [[math]]x_0 = 2[[/math]]. Show that the first tortoise-hare step already yields a non-trivial [[math]]\\gcd[[/math]].",
+            "hints": {
+              "0": "[[math]]x_1 = f(2) = 5[[/math]], [[math]]y_1 = f(f(2)) = f(5) = 26[[/math]]. [[math]]|5 - 26| = 21[[/math]], [[math]]\\gcd(21, 91) = 7[[/math]] — factor found."
+            }
+          },
+          "classic8051": {
+            "title": "Textbook 8051",
+            "summary": "[[math]]8051 = 83 \\cdot 97[[/math]], the classic rho example.",
+            "instruction": "Factor [[math]]n = 8051[[/math]] using Pollard's rho with [[math]]f(x) = x^2 + 1 \\bmod 8051[[/math]], [[math]]x_0 = 2[[/math]]. Lay out the iteration table [[math]](x, y, |x - y|, \\gcd)[[/math]] until a factor drops out.",
+            "hints": {
+              "0": "Iteration 1: [[math]]x = 5, y = 26[[/math]], [[math]]\\gcd(21, 8051) = 1[[/math]] — continue.",
+              "1": "Iteration 2 gives [[math]]x = 26, y = 2839[[/math]] and [[math]]\\gcd(2813, 8051) = 97[[/math]] — factor."
+            }
+          },
+          "cycleFailure": {
+            "title": "Cycle without a factor — 53",
+            "summary": "[[math]]n = 53[[/math]] is prime — the pointers collide with [[math]]\\gcd = n[[/math]], restart needed.",
+            "instruction": "Apply Pollard's rho to [[math]]n = 53[[/math]] ([[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]]). Walk the iteration table until the tortoise catches the hare and [[math]]\\gcd = n[[/math]]. Explain why no non-trivial factor exists for a prime [[math]]n[[/math]] and what you'd do in practice (change [[math]]c[[/math]] and restart).",
+            "hints": {
+              "0": "For prime [[math]]n = 53[[/math]] no [[math]]d \\in (1, n)[[/math]] with [[math]]d \\mid n[[/math]] exists — rho must report failure.",
+              "1": "After a few iterations [[math]]x = y = 14[[/math]] and [[math]]\\gcd(0, 53) = 53[[/math]] — the restart trigger."
+            }
           }
         },
         "sieveEratosthenes": {

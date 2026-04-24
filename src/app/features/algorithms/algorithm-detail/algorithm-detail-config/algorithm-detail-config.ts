@@ -616,6 +616,36 @@ import {
   DEFAULT_EXTENDED_EUCLIDEAN_TASK_ID,
   createExtendedEuclideanScenario,
 } from '../../utils/scenarios/number-lab/extended-euclidean-scenarios';
+import { millerRabinGenerator } from '../../algorithms/miller-rabin/miller-rabin';
+import {
+  MillerRabinScenario,
+  MillerRabinValues,
+  MILLER_RABIN_PRESETS,
+  MILLER_RABIN_TASKS,
+  DEFAULT_MILLER_RABIN_PRESET_ID,
+  DEFAULT_MILLER_RABIN_TASK_ID,
+  createMillerRabinScenario,
+} from '../../utils/scenarios/number-lab/miller-rabin-scenarios';
+import { crtGenerator } from '../../algorithms/crt/crt';
+import {
+  CrtScenario,
+  CrtValues,
+  CRT_PRESETS,
+  CRT_TASKS,
+  DEFAULT_CRT_PRESET_ID,
+  DEFAULT_CRT_TASK_ID,
+  createCrtScenario,
+} from '../../utils/scenarios/number-lab/crt-scenarios';
+import { pollardsRhoGenerator } from '../../algorithms/pollards-rho/pollards-rho';
+import {
+  PollardsRhoScenario,
+  PollardsRhoValues,
+  POLLARDS_RHO_PRESETS,
+  POLLARDS_RHO_TASKS,
+  DEFAULT_POLLARDS_RHO_PRESET_ID,
+  DEFAULT_POLLARDS_RHO_TASK_ID,
+  createPollardsRhoScenario,
+} from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
 import {
   FIBONACCI_CODE,
   FIBONACCI_CODE_HIGHLIGHT_MAP,
@@ -2445,6 +2475,88 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: extendedEuclideanGenerator,
 };
 
+/** Miller-Rabin primality — chalkboard-only. Decomposition of `n - 1`
+ *  into `2^r · d`, then per-witness square chain. No code snippet yet
+ *  (`codeSnippetId: null` on each task triggers the editorial
+ *  placeholder). Registered under the `number-lab` view-config kind
+ *  so the rebuild path shares wiring with other scratchpad notebooks. */
+const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  MillerRabinScenario,
+  MillerRabinValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New candidate',
+  legendItems: () => [],
+  presetOptions: MILLER_RABIN_PRESETS,
+  defaultPresetId: DEFAULT_MILLER_RABIN_PRESET_ID,
+  tasks: MILLER_RABIN_TASKS,
+  defaultTaskId: DEFAULT_MILLER_RABIN_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createMillerRabinScenario(size, presetId, customValues),
+  generator: millerRabinGenerator,
+};
+
+/** Chinese Remainder Theorem — chalkboard-only. Systematic residue
+ *  reconstruction: product of moduli, per-term `Mᵢ · yᵢ · rᵢ`, sum,
+ *  reduce. `codeSnippetId: null` on each task triggers the editorial
+ *  placeholder on the Code tab. */
+const CRT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<CrtScenario, CrtValues> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New system',
+  legendItems: () => [],
+  presetOptions: CRT_PRESETS,
+  defaultPresetId: DEFAULT_CRT_PRESET_ID,
+  tasks: CRT_TASKS,
+  defaultTaskId: DEFAULT_CRT_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createCrtScenario(size, presetId, customValues),
+  generator: crtGenerator,
+};
+
+/** Pollard's rho factorization — chalkboard-only. Tortoise-hare
+ *  iteration table: each row records `(x, y, |x-y|, gcd)` until a
+ *  non-trivial factor drops out or the pointers collide without one.
+ *  `codeSnippetId: null` triggers the editorial placeholder. */
+const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
+  PollardsRhoScenario,
+  PollardsRhoValues
+> = {
+  kind: 'number-lab',
+  codeLines: [],
+  codeRegions: [],
+  codeVariants: {},
+  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  defaultVariant: 'scratchpad-lab',
+  sizeOptions: [1],
+  defaultSize: 1,
+  sizeUnit: 'scenario',
+  randomizeLabel: 'New composite',
+  legendItems: () => [],
+  presetOptions: POLLARDS_RHO_PRESETS,
+  defaultPresetId: DEFAULT_POLLARDS_RHO_PRESET_ID,
+  tasks: POLLARDS_RHO_TASKS,
+  defaultTaskId: DEFAULT_POLLARDS_RHO_TASK_ID,
+  createScenario: (size, presetId, customValues) =>
+    createPollardsRhoScenario(size, presetId, customValues),
+  generator: pollardsRhoGenerator,
+};
+
 const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   TwoPointersScenario,
   TwoPointersValues
@@ -3637,6 +3749,9 @@ export function getAlgorithmViewConfig(id: string): AlgorithmViewConfig {
   if (id === 'factorial') return FACTORIAL_VIEW_CONFIG;
   if (id === 'euclidean-gcd') return EUCLIDEAN_GCD_VIEW_CONFIG;
   if (id === 'extended-euclidean') return EXTENDED_EUCLIDEAN_VIEW_CONFIG;
+  if (id === 'miller-rabin') return MILLER_RABIN_VIEW_CONFIG;
+  if (id === 'chinese-remainder-theorem') return CRT_VIEW_CONFIG;
+  if (id === 'pollards-rho') return POLLARDS_RHO_VIEW_CONFIG;
   if (id === 'two-pointers') return TWO_POINTERS_VIEW_CONFIG;
   if (id === 'sliding-window') return SLIDING_WINDOW_VIEW_CONFIG;
   if (id === 'palindrome-check') return PALINDROME_VIEW_CONFIG;

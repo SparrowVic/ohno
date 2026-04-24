@@ -1984,6 +1984,60 @@
           }
         },
         "scratchpadLab": {
+          "crt": {
+            "modeLabel": "Chińskie twierdzenie o resztach (tablica)",
+            "goal": "Znajdź [[math]]x \\pmod{ {{M}} }[[/math]] spełniające układ {{count}} kongruencji.",
+            "rule": "Dla parami względnie pierwszych modułów istnieje dokładnie jedno [[math]]x \\pmod{M}[[/math]], gdzie [[math]]M = \\prod m_i[[/math]].",
+            "invariant": "Moduły muszą być parami względnie pierwsze — to warunek jednoznaczności rozwiązania.",
+            "systemLine": "[[math]]x \\equiv {{r}} \\pmod{ {{m}} }[[/math]]  (#{{index}})",
+            "setup": {
+              "productLine": "[[math]]M = {{product}} = {{M}}[[/math]]",
+              "productInstruction": "Policz iloczyn wszystkich modułów",
+              "productAnnotation": "[[math]]M = {{M}}[[/math]]"
+            },
+            "term": {
+              "header": "Człon {{index}}: [[math]]x \\equiv {{r}} \\pmod{ {{m}} }[[/math]]",
+              "bigM": "[[math]]M_{{index}} = M / {{m}} = {{M}} / {{m}} = {{Mi}}[[/math]]",
+              "bigMInstruction": "Podziel [[math]]{{M}}[[/math]] przez [[math]]{{m}}[[/math]]",
+              "reducedM": "[[math]]M_{{index}} \\bmod {{m}} = {{Mi}} \\bmod {{m}} = {{r}}[[/math]]",
+              "reducedMInstruction": "Policz [[math]]{{Mi}} \\bmod {{m}}[[/math]]",
+              "inverse": "[[math]]y_{{index}} = ({{Mi_mod}})^{-1} \\pmod{ {{m}} } = {{y}}[[/math]]",
+              "inverseInstruction": "Znajdź odwrotność [[math]]{{Mi_mod}} \\pmod{ {{m}} }[[/math]] (rozszerzony Euklides)",
+              "partial": "[[math]]T_{{index}} = {{r}} \\cdot {{Mi}} \\cdot {{y}} = {{partial}}[[/math]]",
+              "partialInstruction": "Policz [[math]]{{r}} \\cdot {{Mi}} \\cdot {{y}}[[/math]]"
+            },
+            "sum": {
+              "line": "[[math]]\\sum T_i = {{terms}} = {{sum}}[[/math]]",
+              "instruction": "Zsumuj wszystkie człony",
+              "reduce": "[[math]]x = {{sum}} \\bmod {{M}} = {{x}}[[/math]]",
+              "reduceInstruction": "Policz [[math]]{{sum}} \\bmod {{M}}[[/math]]"
+            },
+            "result": {
+              "line": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]",
+              "signoff": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]"
+            },
+            "phases": {
+              "setup": "Iloczyn modułów",
+              "terms": "Człony",
+              "combine": "Sumowanie",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "product": "Liczymy iloczyn modułów [[math]]M[[/math]].",
+              "buildingTerm": "Budujemy człon [[math]]r_i \\cdot M_i \\cdot y_i[[/math]].",
+              "summing": "Sumujemy człony cząstkowe.",
+              "reducing": "Redukujemy sumę modulo [[math]]M[[/math]].",
+              "done": "Rozwiązanie jednoznaczne ustalone."
+            },
+            "captions": {
+              "system": "Układ kongruencji — stała referencja poniżej.",
+              "setup": "Policzmy [[math]]M = \\prod m_i[[/math]].",
+              "termStart": "Budujemy człon cząstkowy.",
+              "sum": "Sumujemy wszystkie człony.",
+              "reduce": "Redukujemy wynik modulo [[math]]M[[/math]].",
+              "result": "Finalne [[math]]x \\pmod{M}[[/math]]."
+            }
+          },
           "extendedEuclidean": {
             "modeLabel": "Rozszerzony algorytm Euklidesa (tablica)",
             "goal": "Znajdź liczby całkowite [[math]]s, t[[/math]] takie, że [[math]]s \\cdot {{a}} + t \\cdot {{b}} = \\gcd({{a}}, {{b}})[[/math]].",
@@ -2065,6 +2119,96 @@
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}[[/math]]",
             "rule": "Algorytm Euklidesa: [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], powtarzaj aż [[math]]b = 0[[/math]].",
             "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]"
+          },
+          "millerRabin": {
+            "modeLabel": "Test Millera-Rabina (tablica)",
+            "goal": "Sprawdź, czy [[math]]n = {{n}}[[/math]] jest prawdopodobnie pierwsze, czy złożone.",
+            "rule": "Jeśli istnieje świadek [[math]]a[[/math]] taki że ani [[math]]a^d \\equiv 1 \\pmod{n}[[/math]], ani [[math]]a^{2^i d} \\equiv n-1 \\pmod{n}[[/math]] dla [[math]]0 \\le i < r[[/math]], to [[math]]n[[/math]] jest złożone.",
+            "invariant": "[[math]]n - 1 = 2^r \\cdot d[[/math]] z [[math]]d[[/math]] nieparzystym — ustalamy to raz na starcie.",
+            "setup": {
+              "decompose": "[[math]]n - 1 = {{n}} = 2^{{r}} \\cdot {{d}}[[/math]]",
+              "decomposeInstruction": "Rozłóż [[math]]n - 1[[/math]] jako [[math]]2^r \\cdot d[[/math]] z nieparzystym [[math]]d[[/math]]",
+              "decomposeAnnotation": "[[math]]r = {{r}}, \\; d = {{d}}[[/math]]"
+            },
+            "witness": {
+              "header": "Świadek #{{index}}: [[math]]a = {{a}}[[/math]]",
+              "seed": "[[math]]x = {{a}}^{{d}} \\bmod {{n}} = {{seed}}[[/math]]",
+              "seedInstruction": "Policz [[math]]{{a}}^{{d}} \\bmod {{n}}[[/math]] szybkim potęgowaniem",
+              "squareStep": "[[math]]x \\leftarrow {{prev}}^2 \\bmod {{n}} = {{x}}[[/math]]  (krok {{step}})",
+              "squareStepInstruction": "Podnieś [[math]]{{prev}}^2 \\bmod {{n}}[[/math]]",
+              "passImmediate": "[[math]]x = 1[[/math]] → świadek [[math]]a = {{a}}[[/math]] przechodzi ✓",
+              "passMinusOne": "[[math]]x = {{n}} = n - 1[[/math]] → świadek [[math]]a = {{a}}[[/math]] przechodzi ✓",
+              "witnessFound": "Łańcuch nie trafił w [[math]]n - 1[[/math]] — [[math]]a = {{a}}[[/math]] jest świadkiem złożoności [[math]]n = {{n}}[[/math]]."
+            },
+            "result": {
+              "probablyPrime": "[[math]]n = {{n}}[[/math]] przeszło wszystkie {{count}} świadków — jest prawdopodobnie pierwsze.",
+              "composite": "[[math]]n = {{n}}[[/math]] jest złożone — świadek [[math]]a = {{a}}[[/math]] to potwierdza.",
+              "signoffPrime": "[[math]]{{n}}[[/math]] prawdopodobnie pierwsze",
+              "signoffComposite": "[[math]]{{n}}[[/math]] złożone (świadek [[math]]{{a}}[[/math]])"
+            },
+            "phases": {
+              "setup": "Rozkład",
+              "witness": "Świadek",
+              "decide": "Werdykt",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "decomposing": "Rozkładamy [[math]]n - 1 = 2^r \\cdot d[[/math]].",
+              "seeding": "Liczymy [[math]]x = a^d \\bmod n[[/math]].",
+              "squaring": "Podnosimy [[math]]x[[/math]] do kwadratu modulo [[math]]n[[/math]].",
+              "witnessPassed": "Świadek przeszedł — idziemy dalej.",
+              "witnessFailed": "Świadek zidentyfikował złożoność.",
+              "probablyPrime": "Wszystkie świadki zaliczone — prawdopodobnie pierwsze.",
+              "composite": "Znaleziony świadek — [[math]]n[[/math]] złożone."
+            },
+            "captions": {
+              "setup": "Zapiszmy [[math]]n - 1 = 2^r \\cdot d[[/math]].",
+              "witnessStart": "Sprawdzamy świadka [[math]]a[[/math]].",
+              "squareChain": "Ruszamy łańcuch kwadratowania.",
+              "verdict": "Czy [[math]]x = 1[[/math]] albo [[math]]x = n - 1[[/math]]?",
+              "result": "Finalny werdykt."
+            }
+          },
+          "pollardsRho": {
+            "modeLabel": "Rho Pollarda (tablica)",
+            "goal": "Znajdź nietrywialny dzielnik [[math]]n = {{n}}[[/math]].",
+            "rule": "Iteruj [[math]]f(x) = x^2 + c \\bmod n[[/math]] dwoma wskaźnikami: [[math]]x \\leftarrow f(x)[[/math]], [[math]]y \\leftarrow f(f(y))[[/math]]. Nietrywialny [[math]]\\gcd(|x - y|, n)[[/math]] to dzielnik [[math]]n[[/math]].",
+            "invariant": "Gdy wskaźniki się spotkają bez wcześniejszego gcd ∈ (1, n), [[math]]n[[/math]] może być pierwsze albo trzeba zmienić [[math]]c[[/math]] i zacząć od nowa.",
+            "setup": {
+              "formula": "[[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]]",
+              "formulaInstruction": "Zdefiniuj funkcję iteracji [[math]]f(x) = x^2 + {{c}} \\bmod {{n}}[[/math]]",
+              "seeds": "[[math]]x_0 = y_0 = {{x0}}[[/math]]",
+              "seedsAnnotation": "Żółw i zając startują z tego samego miejsca."
+            },
+            "step": {
+              "line": "Krok {{i}}: [[math]]x = {{x}}, \\; y = {{y}}, \\; |x - y| = {{diff}}, \\; \\gcd = {{g}}[[/math]]",
+              "instruction": "Wykonaj krok {{i}} — jedno [[math]]f[[/math]] dla [[math]]x[[/math]], dwa [[math]]f[[/math]] dla [[math]]y[[/math]], potem [[math]]\\gcd(|x - y|, n)[[/math]]",
+              "annotation": "[[math]]\\gcd({{diff}}, n) = {{g}}[[/math]]"
+            },
+            "result": {
+              "success": "[[math]]n = {{n}} = {{factor}} \\cdot {{quotient}}[[/math]] — rho znalazło dzielnik.",
+              "failure": "[[math]]\\gcd = n[[/math]] bez znalezienia właściwego dzielnika — zmień [[math]]c[[/math]] i zrestartuj (w praktyce). [[math]]n = {{n}}[[/math]] może też być pierwsze.",
+              "exhausted": "Przekroczono limit {{max}} iteracji bez znalezienia dzielnika dla [[math]]n = {{n}}[[/math]] z [[math]]c = {{c}}[[/math]] — spróbuj innego [[math]]c[[/math]].",
+              "signoffSuccess": "[[math]]{{n}} = {{factor}} \\cdot {{quotient}}[[/math]]",
+              "signoffFailure": "Brak dzielnika dla [[math]]c = {{c}}[[/math]]; restart wymagany."
+            },
+            "phases": {
+              "setup": "Przygotowanie",
+              "iterate": "Iteracja",
+              "complete": "Koniec"
+            },
+            "decisions": {
+              "seeding": "Ustalamy funkcję i ziarna.",
+              "iterating": "Robimy krok żółw-zając i sprawdzamy [[math]]\\gcd[[/math]].",
+              "factorFound": "[[math]]\\gcd[[/math]] mieści się w [[math]](1, n)[[/math]] — to dzielnik.",
+              "cycleTrap": "Wskaźniki się spotkały bez gcd ∈ (1, n).",
+              "exhausted": "Limit iteracji osiągnięty."
+            },
+            "captions": {
+              "setup": "Definicja [[math]]f[[/math]] i start.",
+              "step": "Krok tortoise-hare.",
+              "result": "Finalny werdykt."
+            }
           }
         },
         "search": {
@@ -3734,6 +3878,38 @@
         }
       },
       "tasks": {
+        "crt": {
+          "values": {
+            "congruences": "kongruencje",
+            "congruencesPlaceholder": "2:3, 3:5, 2:7"
+          },
+          "classic": {
+            "title": "Klasyczny przykład: 3 kongruencje",
+            "summary": "[[math]]x \\equiv 2 \\, (3), \\, 3 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{105}[[/math]]",
+            "instruction": "Rozwiąż układ kongruencji [[math]]x \\equiv 2 \\pmod{3}[[/math]], [[math]]x \\equiv 3 \\pmod{5}[[/math]], [[math]]x \\equiv 2 \\pmod{7}[[/math]]. Podaj rozwiązanie [[math]]x \\pmod{105}[[/math]] za pomocą konstrukcji z chińskiego twierdzenia o resztach.",
+            "hints": {
+              "0": "[[math]]M = 3 \\cdot 5 \\cdot 7 = 105[[/math]], [[math]]M_1 = 35, M_2 = 21, M_3 = 15[[/math]].",
+              "1": "Odwrotności: [[math]]35^{-1} \\equiv 2 \\pmod{3}[[/math]], [[math]]21^{-1} \\equiv 1 \\pmod{5}[[/math]], [[math]]15^{-1} \\equiv 1 \\pmod{7}[[/math]]. Człony: [[math]]140 + 63 + 30 = 233[[/math]], [[math]]233 \\bmod 105 = 23[[/math]]."
+            }
+          },
+          "twoCongruences": {
+            "title": "Para kongruencji",
+            "summary": "[[math]]x \\equiv 1 \\, (5), \\, 2 \\, (7)[[/math]] → [[math]]x \\pmod{35}[[/math]]",
+            "instruction": "Wyznacz [[math]]x \\pmod{35}[[/math]] takie że [[math]]x \\equiv 1 \\pmod{5}[[/math]] oraz [[math]]x \\equiv 2 \\pmod{7}[[/math]]. Minimalny przypadek — jedna substytucja wsteczna.",
+            "hints": {
+              "0": "[[math]]M = 35[[/math]], [[math]]M_1 = 7, M_2 = 5[[/math]]. [[math]]7 \\equiv 2 \\pmod{5}[[/math]], odwrotność [[math]]3[[/math]]; [[math]]5 \\equiv 5 \\pmod{7}[[/math]], odwrotność [[math]]3[[/math]]. Sprawdź [[math]]x = 16[[/math]]."
+            }
+          },
+          "smallestPositive": {
+            "title": "Najmniejsze dodatnie rozwiązanie",
+            "summary": "[[math]]x \\equiv 4 \\, (9), \\, 3 \\, (11), \\, 6 \\, (13)[[/math]] — podaj najmniejsze dodatnie [[math]]x[[/math]]",
+            "instruction": "Znajdź najmniejszą dodatnią liczbę całkowitą [[math]]x[[/math]] spełniającą [[math]]x \\equiv 4 \\pmod{9}[[/math]], [[math]]x \\equiv 3 \\pmod{11}[[/math]], [[math]]x \\equiv 6 \\pmod{13}[[/math]]. Wynik redukuj modulo [[math]]M = 9 \\cdot 11 \\cdot 13 = 1287[[/math]].",
+            "hints": {
+              "0": "[[math]]M_1 = 143, M_2 = 117, M_3 = 99[[/math]]. Kolejne [[math]]M_i \\bmod m_i[[/math]]: [[math]]8, 7, 8[[/math]].",
+              "1": "Odwrotności: [[math]]8^{-1} \\equiv 8 \\pmod{9}[[/math]], [[math]]7^{-1} \\equiv 8 \\pmod{11}[[/math]], [[math]]8^{-1} \\equiv 5 \\pmod{13}[[/math]]. Suma członów [[math]]= 10354[[/math]], [[math]]10354 \\bmod 1287 = 58[[/math]]."
+            }
+          }
+        },
         "extendedEuclidean": {
           "classic": {
             "hints": {
@@ -3884,12 +4060,78 @@
             "b": "b"
           }
         },
+        "millerRabin": {
+          "values": {
+            "n": "n",
+            "witnesses": "świadki",
+            "witnessesPlaceholder": "2, 3, 7"
+          },
+          "carmichael": {
+            "title": "Liczba Carmichaela — 561",
+            "summary": "[[math]]561 = 3 \\cdot 11 \\cdot 17[[/math]] — test Fermata tu zawodzi, Miller-Rabin nie.",
+            "instruction": "Zdecyduj, czy [[math]]n = 561[[/math]] jest pierwsze, używając testu Millera-Rabina ze świadkami [[math]]\\{2, 3\\}[[/math]]. 561 to najmniejsza liczba Carmichaela — naiwny test Fermata dałby „prawdopodobnie pierwsze”; Miller-Rabin dzięki sprawdzaniu pierwiastka kwadratowego z jedności wykryje złożoność.",
+            "hints": {
+              "0": "Rozłóż najpierw [[math]]560 = 2^4 \\cdot 35[[/math]], więc [[math]]r = 4[[/math]], [[math]]d = 35[[/math]].",
+              "1": "Już dla świadka [[math]]a = 2[[/math]] łańcuch trafi w [[math]]1[[/math]] bez przejścia przez [[math]]n - 1[[/math]] — to właśnie „pierwiastek kwadratowy z 1 różny od [[math]]\\pm 1[[/math]]”, który wyklucza pierwszość."
+            }
+          },
+          "smallPrime": {
+            "title": "Łagodny test — 29",
+            "summary": "Mała liczba pierwsza, świadek [[math]]a = 2[[/math]] — szybkie obejście mechaniki.",
+            "instruction": "Uruchom test Millera-Rabina dla [[math]]n = 29[[/math]] ze świadkiem [[math]]a = 2[[/math]]. Rozpisz rozkład [[math]]n - 1 = 2^r \\cdot d[[/math]] i prześledź łańcuch kwadratowania, aż [[math]]x[[/math]] osiągnie [[math]]n - 1[[/math]] albo [[math]]1[[/math]].",
+            "hints": {
+              "0": "[[math]]28 = 2^2 \\cdot 7[[/math]], więc [[math]]r = 2[[/math]], [[math]]d = 7[[/math]].",
+              "1": "[[math]]2^7 \\bmod 29 = 128 \\bmod 29 = 12[[/math]]. Podnieś do kwadratu: [[math]]12^2 \\bmod 29 = 144 \\bmod 29 = 28 = n - 1[[/math]] ✓."
+            }
+          },
+          "compositeWitness": {
+            "title": "Świadek złożoności — 25",
+            "summary": "[[math]]25 = 5^2[[/math]] — znajdź świadka, który natychmiast obali pierwszość.",
+            "instruction": "Pokaż, że [[math]]n = 25[[/math]] jest złożone, używając testu Millera-Rabina ze świadkiem [[math]]a = 2[[/math]]. Odpisz pełny łańcuch kwadratowania i wskaż, w którym miejscu świadek obala pierwszość. Uwaga: [[math]]a = 7[[/math]] dla [[math]]n = 25[[/math]] jest strong liar — test dla tego świadka przechodzi, mimo że 25 jest złożone.",
+            "hints": {
+              "0": "[[math]]24 = 2^3 \\cdot 3[[/math]], [[math]]r = 3[[/math]], [[math]]d = 3[[/math]]. [[math]]2^3 \\bmod 25 = 8[[/math]]; łańcuch [[math]]8, 14, 21[[/math]] — żaden element nie jest [[math]]1[[/math]] ani [[math]]n - 1 = 24[[/math]], więc świadek obala pierwszość."
+            }
+          }
+        },
         "pointerLab": {
           "slidingWindow": {
             "windowSize": "szerokość okna"
           },
           "twoPointers": {
             "target": "cel"
+          }
+        },
+        "pollardsRho": {
+          "values": {
+            "n": "n",
+            "c": "c",
+            "x0": "x₀"
+          },
+          "quickFactor": {
+            "title": "Szybki dzielnik — 91",
+            "summary": "[[math]]91 = 7 \\cdot 13[[/math]], [[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]] — gcd = 7 w jednej iteracji.",
+            "instruction": "Rozłóż [[math]]n = 91[[/math]] za pomocą algorytmu rho Pollarda z [[math]]f(x) = x^2 + 1 \\bmod 91[[/math]] i [[math]]x_0 = 2[[/math]]. Pokaż, że już pierwszy krok tortoise-hare daje nietrywialny [[math]]\\gcd[[/math]].",
+            "hints": {
+              "0": "[[math]]x_1 = f(2) = 5[[/math]], [[math]]y_1 = f(f(2)) = f(5) = 26[[/math]]. [[math]]|5 - 26| = 21[[/math]], [[math]]\\gcd(21, 91) = 7[[/math]] — dzielnik znaleziony."
+            }
+          },
+          "classic8051": {
+            "title": "Podręcznikowe 8051",
+            "summary": "[[math]]8051 = 83 \\cdot 97[[/math]], klasyczny przykład rho.",
+            "instruction": "Rozłóż [[math]]n = 8051[[/math]] używając rho Pollarda z [[math]]f(x) = x^2 + 1 \\bmod 8051[[/math]], [[math]]x_0 = 2[[/math]]. Wypisz tabelę iteracji [[math]](x, y, |x - y|, \\gcd)[[/math]] aż do ujawnienia dzielnika.",
+            "hints": {
+              "0": "Iteracja 1: [[math]]x = 5, y = 26[[/math]], [[math]]\\gcd(21, 8051) = 1[[/math]] — kontynuujemy.",
+              "1": "Iteracja 2 daje [[math]]x = 26, y = 2839[[/math]] i [[math]]\\gcd(2813, 8051) = 97[[/math]] — dzielnik."
+            }
+          },
+          "cycleFailure": {
+            "title": "Cykl bez dzielnika — 53",
+            "summary": "[[math]]n = 53[[/math]] jest pierwsze — wskaźniki spotkają się z [[math]]\\gcd = n[[/math]], restart wymagany.",
+            "instruction": "Zastosuj rho Pollarda do [[math]]n = 53[[/math]] ([[math]]f(x) = x^2 + 1[[/math]], [[math]]x_0 = 2[[/math]]). Prześledź tabelę iteracji aż tortoise dogoni hare i [[math]]\\gcd = n[[/math]]. Wyjaśnij, dlaczego dla pierwszego [[math]]n[[/math]] nie istnieje nietrywialny dzielnik i co zrobić w praktyce (zmienić [[math]]c[[/math]] i powtórzyć).",
+            "hints": {
+              "0": "Dla [[math]]n = 53[[/math]] (liczby pierwszej) nie istnieje [[math]]d \\in (1, n)[[/math]] z [[math]]d \\mid n[[/math]] — rho musi zwrócić błąd.",
+              "1": "Po kilku iteracjach [[math]]x = y = 14[[/math]] i [[math]]\\gcd(0, 53) = 53[[/math]] — sygnał restartu ze zmienionym [[math]]c[[/math]]."
+            }
           }
         },
         "sieveEratosthenes": {
