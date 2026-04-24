@@ -573,7 +573,6 @@ import {
 } from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
 import {
   CallStackLabPresetOption,
-  RecursiveFibonacciScenario,
   RECURSIVE_FIBONACCI_PRESETS,
   DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
   createRecursiveFibonacciScenario,
