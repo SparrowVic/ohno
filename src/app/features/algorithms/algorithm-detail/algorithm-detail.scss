@@ -378,11 +378,15 @@
     color var(--duration-base) var(--ease-soft);
 
   &:hover {
-    border-color: rgba(var(--chrome-accent-rgb), 0.24);
+    border-color: rgba(var(--chrome-accent-rgb), 0.32);
     color: var(--text-primary);
     background:
-      linear-gradient(135deg, rgba(var(--chrome-accent-rgb), 0.08), rgba(var(--chrome-accent-alt-rgb), 0.05)),
+      linear-gradient(135deg, rgba(var(--chrome-accent-rgb), 0.14), rgba(var(--chrome-accent-alt-rgb), 0.08)),
       rgba(16, 20, 28, 0.64);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      var(--elevation-1),
+      0 0 16px rgba(var(--chrome-accent-rgb), 0.1);
   }
 
   &--strong {
