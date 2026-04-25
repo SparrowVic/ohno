@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -92,11 +94,7 @@
 }
 
 .trace__pivot-chip-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.14em);
 }
 
 .trace__pivot-chip-value {

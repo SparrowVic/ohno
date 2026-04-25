@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -84,12 +86,10 @@
 }
 
 .trace__summary-preset-label {
+  @include type.eyebrow($size: 8px, $tracking: 0.14em);
+
   display: block;
-  font-size: 8px;
   line-height: 1.05;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
 }
 
 .trace__summary-preset-value {

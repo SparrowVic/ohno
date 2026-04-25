@@ -217,9 +217,11 @@
 }
 
 .log__step-key {
-  color: var(--text-quaternary);
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  @include type.eyebrow(
+    $size: 9px,
+    $tracking: 0.16em,
+    $color: var(--text-quaternary)
+  );
 }
 
 .log__step-value {
