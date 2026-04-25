@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: block;
   flex: 1;
@@ -159,13 +161,15 @@
 }
 
 .code-missing__eyebrow {
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.14em,
+    $weight: 600,
+    $color: rgb(var(--chrome-accent-alt-rgb))
+  );
+
   display: inline-block;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgb(var(--chrome-accent-alt-rgb));
   opacity: 0.86;
-  font-weight: 600;
 }
 
 .code-missing__title {

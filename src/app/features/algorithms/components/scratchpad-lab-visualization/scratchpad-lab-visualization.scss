@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -79,12 +81,14 @@
 }
 
 .scratchpad__task-eyebrow {
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.16em,
+    $weight: 600,
+    $color: rgb(var(--chrome-accent-alt-rgb))
+  );
+
   display: inline-block;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: rgb(var(--chrome-accent-alt-rgb));
   opacity: 0.88;
   padding-left: 10px;
 }

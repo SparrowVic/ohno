@@ -15,6 +15,8 @@
 //   :host { display: block; }
 //   @include card.everything;
 //   /* feature-specific tweaks below */
+
+@use 'eyebrow' as type;
 //
 // The mixin emits BEM selectors at the call site's scope, so every
 // `.card`, `.card__stripe`, `.card__pip`, etc. inside the consumer's
@@ -167,14 +169,11 @@
   }
 
   .card__section {
+    @include type.eyebrow($size: 9px, $tracking: 0.18em, $weight: 800);
+
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
     transition: color var(--duration-base) var(--ease-soft);
   }
 

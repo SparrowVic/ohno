@@ -1,4 +1,5 @@
 @use '../../../shared/styles/browse-card' as card;
+@use '../../../shared/styles/eyebrow' as type;
 
 :host {
   display: block;
@@ -74,11 +75,7 @@
 }
 
 .card__metric dt {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.18em, $weight: 800);
 }
 
 .card__metric dd {
