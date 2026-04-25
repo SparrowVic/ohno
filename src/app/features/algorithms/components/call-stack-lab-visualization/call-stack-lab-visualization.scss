@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -53,11 +55,7 @@
 }
 
 .cslab__stat-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9.5px, $tracking: 0.18em);
 }
 
 .cslab__stat-value {
@@ -181,11 +179,11 @@
 }
 
 .cslab__frame-depth {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--text-tertiary);
+  /* Caller renders depth labels mixed-case ("d=2") so no uppercase
+     transform — call eyebrow then unset it. */
+  @include type.eyebrow($size: 10px, $tracking: 0.14em, $mono: true);
+
+  text-transform: none;
 }
 
 .cslab__frame-title {
@@ -259,11 +257,7 @@
 }
 
 .cslab__local-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9.5px, $tracking: 0.14em);
 }
 
 .cslab__local-value {

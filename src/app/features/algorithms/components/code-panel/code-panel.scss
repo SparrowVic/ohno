@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: block;
   flex: 1;
@@ -159,13 +161,15 @@
 }
 
 .code-missing__eyebrow {
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.14em,
+    $weight: 600,
+    $color: rgb(var(--chrome-accent-alt-rgb))
+  );
+
   display: inline-block;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgb(var(--chrome-accent-alt-rgb));
   opacity: 0.86;
-  font-weight: 600;
 }
 
 .code-missing__title {
@@ -230,7 +234,7 @@
   color: var(--text-tertiary);
   text-align: right;
   user-select: none;
-  opacity: 0.5;
+  opacity: 0.7;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
   transform: translateY(-50%);
@@ -238,7 +242,7 @@
 }
 
 :host ::ng-deep .code-panel__render-line:hover::before {
-  opacity: 0.78;
+  opacity: 0.95;
   color: var(--text-secondary);
 }
 

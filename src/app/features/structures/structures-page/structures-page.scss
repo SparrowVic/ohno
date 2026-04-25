@@ -1,3 +1,5 @@
+@use '../../../shared/styles/eyebrow' as type;
+
 :host {
   display: block;
 }
@@ -121,6 +123,12 @@
 }
 
 .page__eyebrow {
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.16em,
+    $color: var(--chrome-accent-alt-strong)
+  );
+
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -134,11 +142,6 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 0 18px rgba(var(--chrome-accent-alt-rgb), 0.1);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--chrome-accent-alt-strong);
 }
 
 .page__eyebrow::before {
@@ -357,11 +360,11 @@
 }
 
 .page__stat-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.14em,
+    $color: var(--text-secondary)
+  );
 }
 
 .page__controls {

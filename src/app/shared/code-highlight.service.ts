@@ -11,13 +11,13 @@ import python from '@shikijs/langs/python';
 import rust from '@shikijs/langs/rust';
 import swift from '@shikijs/langs/swift';
 import typescript from '@shikijs/langs/typescript';
-import vitesseDark from '@shikijs/themes/vitesse-dark';
+import darkPlus from '@shikijs/themes/dark-plus';
 import { createHighlighterCore, type ShikiTransformer } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 
 import { CodeLanguage, CodeLine } from '../features/algorithms/models/detail';
 
-const SHIKI_THEME = 'vitesse-dark';
+const SHIKI_THEME = 'dark-plus';
 
 function lineText(line: CodeLine): string {
   return line.tokens.map((token) => token.text).join('');
@@ -61,7 +61,7 @@ export class CodeHighlightService {
   private getHighlighter(): ReturnType<typeof createHighlighterCore> {
     this.highlighterPromise ??= createHighlighterCore({
       engine: createJavaScriptRegexEngine(),
-      themes: [vitesseDark],
+      themes: [darkPlus],
       langs: [typescript, javascript, python, csharp, java, cpp, go, rust, swift, php, kotlin],
       warnings: false,
     });

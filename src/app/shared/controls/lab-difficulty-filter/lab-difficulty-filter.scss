@@ -1,4 +1,5 @@
 @use '../control-chrome' as chrome;
+@use '../../styles/eyebrow' as type;
 
 :host {
   display: inline-block;
@@ -18,11 +19,9 @@
 }
 
 .difficulty__label {
-  font-size: 8px;
+  @include type.eyebrow($size: 8px, $tracking: 0.14em);
+
   line-height: 1.05;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
 }
 
 .difficulty__options {

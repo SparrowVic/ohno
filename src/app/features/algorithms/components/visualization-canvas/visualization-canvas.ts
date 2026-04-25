@@ -15,6 +15,7 @@ import { DsuGraphVisualization } from '../dsu-graph-visualization/dsu-graph-visu
 import { DsuVisualization } from '../dsu-visualization/dsu-visualization';
 import { HalfPlaneVisualization } from '../half-plane-visualization/half-plane-visualization';
 import { LineIntersectionVisualization } from '../line-intersection-visualization/line-intersection-visualization';
+import { MatrixGridVisualization } from '../matrix-grid-visualization/matrix-grid-visualization';
 import { MatrixVisualization } from '../matrix-visualization/matrix-visualization';
 import { MinkowskiSumVisualization } from '../minkowski-sum-visualization/minkowski-sum-visualization';
 import { NetworkVisualization } from '../network-visualization/network-visualization';
@@ -54,6 +55,7 @@ import { VoronoiVisualization } from '../voronoi-visualization/voronoi-visualiza
     DsuGraphVisualization,
     DsuVisualization,
     HalfPlaneVisualization,
+    MatrixGridVisualization,
     MatrixVisualization,
     LineIntersectionVisualization,
     MinkowskiSumVisualization,

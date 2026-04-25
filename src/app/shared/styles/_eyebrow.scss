@@ -1,0 +1,65 @@
+// ============================================================================
+// EYEBROW — micro-label typography used everywhere a section, panel,
+// metric tile or chip carries a quiet "what is this?" header above its
+// content. Across the app the same recipe shows up: small uppercase
+// text, wide tracking, weight 700-800, tertiary ink. This mixin
+// centralizes the spec so every eyebrow stays in lockstep.
+//
+// Usage:
+//   @use '<...>/shared/styles/eyebrow' as type;
+//   .my-section__label { @include type.eyebrow; }
+//   .my-tight-label    { @include type.eyebrow($size: 8px, $tracking: 0.12em); }
+//   .my-mono-label     { @include type.eyebrow($mono: true); }
+//
+// Defaults match the most common occurrence (9px sans, 0.16em tracking,
+// weight 700, --text-tertiary). Override args sparingly — divergence
+// should be deliberate, not ambient.
+// ============================================================================
+
+@mixin eyebrow(
+  $size: 9px,
+  $tracking: 0.16em,
+  $weight: 700,
+  $color: var(--text-tertiary),
+  $mono: false
+) {
+  font-size: $size;
+  font-weight: $weight;
+  letter-spacing: $tracking;
+  text-transform: uppercase;
+  color: $color;
+
+  @if $mono {
+    font-family: var(--font-mono);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// EYEBROW DOT — small accent pip rendered as ::before, used by section
+// eyebrows that want a visual anchor (card__section, topbar__eyebrow,
+// etc.). Driven by a tone-specific accent variable so callers can swap
+// the colour without forking the recipe.
+//
+// Usage on a parent that already has @include eyebrow:
+//   .my-eyebrow {
+//     @include type.eyebrow;
+//     display: inline-flex;
+//     align-items: center;
+//     gap: 8px;
+//     &::before { @include type.eyebrow-dot; }
+//   }
+// ----------------------------------------------------------------------------
+
+@mixin eyebrow-dot(
+  $size: 5px,
+  $rgb: var(--accent-rgb)
+) {
+  content: '';
+  width: $size;
+  height: $size;
+  border-radius: 999px;
+  background: rgb($rgb);
+  box-shadow:
+    0 0 6px rgb($rgb / 0.6),
+    0 0 12px rgb($rgb / 0.28);
+}

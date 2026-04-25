@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -40,12 +42,7 @@
 }
 
 .sieve__pivot-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 10px, $tracking: 0.2em, $mono: true);
 }
 
 .sieve__pivot-value {
@@ -85,11 +82,7 @@
 }
 
 .sieve__pivot-bound-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 10px, $tracking: 0.18em);
 }
 
 .sieve__pivot-bound-value {
@@ -128,11 +121,7 @@
 }
 
 .sieve__pivot-stat-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9.5px, $tracking: 0.16em);
 }
 
 .sieve__pivot-stat--success .sieve__pivot-stat-label {
@@ -191,9 +180,9 @@
 
   &--skipped {
     color: var(--text-tertiary);
-    opacity: 0.35;
+    opacity: 0.55;
     text-decoration: line-through;
-    text-decoration-color: rgba(255, 255, 255, 0.25);
+    text-decoration-color: rgba(255, 255, 255, 0.4);
   }
 
   &--prime {
@@ -206,10 +195,10 @@
   }
 
   &--composite {
-    color: var(--text-tertiary);
-    opacity: 0.55;
+    color: var(--text-secondary);
+    opacity: 0.72;
     text-decoration: line-through;
-    text-decoration-color: rgba(255, 255, 255, 0.3);
+    text-decoration-color: rgba(255, 255, 255, 0.45);
     text-decoration-thickness: 1.5px;
   }
 

@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -99,12 +101,8 @@
 }
 
 .trace__active-local-label {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.14em, $mono: true);
+
   --math-text-scale: 1.06;
   --math-text-glow: rgba(var(--viz-accent-rgb), 0.08);
 }
@@ -154,12 +152,8 @@
 }
 
 .trace__pivot-chip-label {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.14em, $mono: true);
+
   --math-text-scale: 1.06;
   --math-text-glow: rgba(var(--viz-window-rgb), 0.08);
 }

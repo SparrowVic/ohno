@@ -1,0 +1,39 @@
+<app-viz-panel>
+  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+
+  @if (state(); as grid) {
+    <div class="mgrid">
+      @if (grid.operationLabel; as op) {
+        <header class="mgrid__op">
+          <app-math-text [content]="op | i18nText" variant="formula" />
+        </header>
+      }
+
+      <section
+        class="mgrid__matrix"
+        [style.grid-template-columns]="gridTemplate()"
+        [attr.data-rows]="grid.rows"
+        [attr.data-cols]="grid.cols"
+      >
+        @for (cell of grid.cells; track cell.id) {
+          <article
+            class="mgrid__cell mgrid__cell--{{ cell.state }}"
+            [style.grid-row]="cell.row + 1"
+            [style.grid-column]="cellGridColumn(cell.col)"
+          >
+            <span class="mgrid__cell-value">{{ cell.value }}</span>
+          </article>
+        }
+      </section>
+
+      <footer class="mgrid__result" [class.mgrid__result--pending]="!grid.resultLabel">
+        <span class="mgrid__result-label">result</span>
+        @if (grid.resultLabel; as result) {
+          <app-math-text class="mgrid__result-value" [content]="result | i18nText" variant="formula" />
+        } @else {
+          <span class="mgrid__result-value">—</span>
+        }
+      </footer>
+    </div>
+  }
+</app-viz-panel>

@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: block;
 }
@@ -66,16 +68,12 @@
   min-width: 0;
 }
 
-/* Phase tag — mono uppercase micro-typography. Intentionally tiny
-   with a fixed letter-spacing so it reads as a label, not a
-   heading. Colour stays muted; the rail does the semantic work. */
+/* Phase tag — uses the shared eyebrow recipe with a mono override and
+   a slightly larger size (10px) so it reads as a panel-header label,
+   not body copy. Colour stays muted; the rail does the semantic work. */
 .viz-header__phase {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 10px, $mono: true);
+
   line-height: 1;
 }
 

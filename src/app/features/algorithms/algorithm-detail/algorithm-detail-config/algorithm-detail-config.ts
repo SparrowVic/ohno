@@ -1538,6 +1538,15 @@ const SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'scratchpad-lab', label: 'Chalkboard' },
 ];
 
+/** Variant pair for matrix-pivoting algorithms (Gaussian, Simplex):
+ *  the chalkboard captures the symbolic derivation while the matrix
+ *  grid renders the augmented matrix as a colour-coded cell grid so
+ *  pivots / row-operations / eliminations are visible in place. */
+const MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'scratchpad-lab', label: 'Chalkboard' },
+  { value: 'matrix-grid', label: 'Matrix Grid' },
+];
+
 const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'pointer-lab', label: 'Pointer Lab' },
 ];
@@ -2512,11 +2521,11 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   generator: extendedEuclideanGenerator,
 };
 
-/** Miller-Rabin primality — chalkboard-only. Decomposition of `n - 1`
- *  into `2^r · d`, then per-witness square chain. No code snippet yet
- *  (`codeSnippetId: null` on each task triggers the editorial
- *  placeholder). Registered under the `number-lab` view-config kind
- *  so the rebuild path shares wiring with other scratchpad notebooks. */
+/** Miller-Rabin primality — chalkboard primary plus a dashboard
+ *  variant. Decomposition of `n - 1` into `2^r · d`, then per-witness
+ *  square chain. The chalkboard remains the default since the
+ *  derivational story is the point; the number-lab dashboard offers a
+ *  compact "live registers + squaring tape" view as a complement. */
 const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   MillerRabinScenario,
   MillerRabinValues
@@ -2525,7 +2534,7 @@ const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,
@@ -2550,7 +2559,7 @@ const CRT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<CrtScenario, CrtValues> = {
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,
@@ -2578,7 +2587,7 @@ const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,
@@ -2607,7 +2616,7 @@ const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,
@@ -2636,7 +2645,7 @@ const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,
@@ -2665,7 +2674,7 @@ const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,

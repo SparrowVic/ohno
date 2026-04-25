@@ -1,6 +1,12 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import {
+  NumberLabHistoryEntry,
+  NumberLabRegister,
+  NumberLabTone,
+  NumberLabTraceState,
+} from '../../models/number-lab';
+import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
@@ -8,10 +14,12 @@ import {
 import { SortStep } from '../../models/sort-step';
 import type { CrtCongruence } from '../../utils/scenarios/number-lab/crt';
 import type { CrtScenario } from '../../utils/scenarios/number-lab/crt-scenarios';
-import { createScratchpadLabStep } from '../scratchpad-lab-step';
+import { createNumberLabStep } from '../number-lab-step';
+import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.crt.modeLabel'),
+  numberLabModeLabel: t('features.algorithms.runtime.numberLab.crt.modeLabel'),
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -40,11 +48,28 @@ type MergeResult = {
   readonly inverse: number;
 };
 
+interface LiveState {
+  /** Index of the congruence currently being merged in (0-based). */
+  currentIndex: number | null;
+  /** Running residue of the merged solution so far. */
+  runningResidue: number | null;
+  /** Running modulus (lcm of moduli merged so far). */
+  runningModulus: number | null;
+  /** Final summary string for the result panel. */
+  resultText: string | null;
+}
+
 export function* crtGenerator(scenario: CrtScenario): Generator<SortStep> {
   const presetLabel = scenario.presetLabel;
   const system = scenario.congruences;
   const lineBuilders: LineBuilder[] = [];
   let stepIndex = 0;
+  const live: LiveState = {
+    currentIndex: null,
+    runningResidue: null,
+    runningModulus: null,
+    resultText: null,
+  };
 
   function snapshot(opts: {
     readonly phase: ScratchpadLabTraceState['phaseLabel'];
@@ -93,13 +118,118 @@ export function* crtGenerator(scenario: CrtScenario): Generator<SortStep> {
       readonly tone: ScratchpadLabTraceState['tone'];
     },
   ): SortStep {
+    syncLiveFromBuilder(builder);
     lineBuilders.push(builder);
     stepIndex += 1;
-    return createScratchpadLabStep({
-      activeCodeLine: opts.activeCodeLine,
-      description: builder.content,
-      state: snapshot({ ...opts, currentLineId: builder.id }),
-    });
+    return withScratchpad(
+      createNumberLabStep({
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: numberLabState(builder),
+      }),
+      snapshot({ ...opts, currentLineId: builder.id }),
+    );
+  }
+
+  function syncLiveFromBuilder(builder: LineBuilder): void {
+    const id = builder.id;
+    const text = typeof builder.content === 'string' ? builder.content : '';
+
+    /* Section ids of the form `section-merge-N` mark which congruence
+     *  we're currently merging into the running solution. */
+    const mergeMatch = id.match(/section-merge-(\d+)/);
+    if (mergeMatch) {
+      live.currentIndex = Number(mergeMatch[1]) - 1;
+    }
+
+    /* The running solution after the i-th merge is emitted as a math
+     *  line containing `x \\equiv K (\\mathrm{mod} M)` — pick out
+     *  numeric K and M into the live registers. */
+    const congruenceMatch = text.match(/x\s*\\?equiv\s*(-?\d+)\s*\\?\(?\\?mathrm\{mod\}\\?\s*(\d+)/);
+    if (congruenceMatch) {
+      live.runningResidue = Number(congruenceMatch[1]);
+      live.runningModulus = Number(congruenceMatch[2]);
+    }
+
+    if (id.startsWith('result-') || id === 'final-equation') {
+      const stripped = text.replace(/\[\[\/?math\]\]/g, '').replace(/\\;/g, ' ').trim();
+      if (stripped) {
+        live.resultText = live.resultText ? `${live.resultText};  ${stripped}` : stripped;
+      }
+    }
+  }
+
+  function buildRegisters(): readonly NumberLabRegister[] {
+    const registers: NumberLabRegister[] = [
+      { id: 'k', label: 'k', value: String(system.length), hint: null, tone: 'muted' },
+    ];
+    if (live.currentIndex !== null && live.currentIndex < system.length) {
+      const cur = system[live.currentIndex];
+      registers.push({
+        id: 'i',
+        label: 'i',
+        value: String(live.currentIndex + 1),
+        hint: null,
+        tone: 'active',
+      });
+      registers.push({
+        id: 'a',
+        label: 'a_i',
+        value: String(cur.residue),
+        hint: null,
+        tone: 'active',
+      });
+      registers.push({
+        id: 'n',
+        label: 'n_i',
+        value: String(cur.modulus),
+        hint: null,
+        tone: 'active',
+      });
+    }
+    if (live.runningResidue !== null) {
+      registers.push({
+        id: 'x',
+        label: 'x',
+        value: String(live.runningResidue),
+        hint: null,
+        tone: 'settled',
+      });
+    }
+    if (live.runningModulus !== null) {
+      registers.push({
+        id: 'M',
+        label: 'M',
+        value: String(live.runningModulus),
+        hint: null,
+        tone: 'settled',
+      });
+    }
+    return registers;
+  }
+
+  function buildHistory(): readonly NumberLabHistoryEntry[] {
+    return system.map((cur, index) => ({
+      id: `crt-${index}`,
+      label: `(a_${index + 1}, n_${index + 1})`,
+      value: `(${cur.residue}, ${cur.modulus})`,
+      isCurrent: index === live.currentIndex,
+    }));
+  }
+
+  function numberLabState(builder: LineBuilder): NumberLabTraceState {
+    return {
+      modeLabel: I18N.numberLabModeLabel,
+      phaseLabel: phaseFor(builder),
+      decisionLabel: decisionFor(builder),
+      tone: numberLabToneFor(builder),
+      registers: buildRegisters(),
+      history: buildHistory(),
+      formula: null,
+      presetLabel,
+      resultLabel: live.resultText,
+      iteration: stepIndex,
+    };
   }
 
   function line(opts: {
@@ -1156,6 +1286,13 @@ function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
     return builder.id === 'section-no-result' ? 'conclude' : 'complete';
   if (builder.kind === 'note') return 'setup';
   return 'compute';
+}
+
+function numberLabToneFor(builder: LineBuilder): NumberLabTone {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'idle';
+  if (builder.id.includes('merge') || builder.id.includes('reduce')) return 'update';
+  return 'compare';
 }
 
 function ordinal(index: number): string {

@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/trace-chip' as chip;
+
 :host {
   display: flex;
   flex: 1;
@@ -79,15 +81,7 @@
 }
 
 .trace__chip {
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-
-  &--queued {
-    color: rgba(226, 232, 240, 0.64);
-    background: rgba(255, 255, 255, 0.04);
-  }
+  @include chip.base;
 
   &--current {
     color: #fff176;

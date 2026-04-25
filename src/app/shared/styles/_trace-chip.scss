@@ -1,0 +1,30 @@
+// ============================================================================
+// TRACE CHIP — small status pill used by the geometry trace-panel
+// family (delaunay, half-plane, minkowski-sum, sweep-line, voronoi)
+// to mark each entry in a trace list as queued / current / done.
+//
+// The skeleton (padding, radius, type) and the queued state are
+// identical across panels; only the current/done tones differ. This
+// mixin owns the skeleton + the queued state. Each consuming file
+// adds its own &--current and &--done blocks for tone.
+//
+// Usage:
+//   @use '<...>/shared/styles/trace-chip' as trace;
+//   .trace__chip {
+//     @include trace.base;
+//     &--current { color: var(--viz-hit); ... }
+//     &--done    { color: var(--viz-route); ... }
+//   }
+// ============================================================================
+
+@mixin base {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+
+  &--queued {
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+  }
+}

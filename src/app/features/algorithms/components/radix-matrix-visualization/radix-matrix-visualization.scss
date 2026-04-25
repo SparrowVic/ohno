@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -61,7 +63,7 @@
   padding: 8px 14px;
   border-radius: 16px;
   background: rgba(24, 25, 27, 0.58);
-  color: rgba(196, 206, 226, 0.8);
+  color: var(--text-secondary);
   font-size: 12px;
 }
 
@@ -82,7 +84,7 @@
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.1);
   background: rgba(24, 25, 27, 0.56);
-  color: rgba(148, 163, 184, 0.82);
+  color: var(--text-tertiary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -128,7 +130,7 @@
   gap: 10px;
   padding: 14px 16px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.08);
-  color: rgba(148, 163, 184, 0.84);
+  color: var(--text-secondary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -206,7 +208,7 @@
   justify-content: center;
   min-height: 40px;
   border-radius: 12px;
-  color: rgba(148, 163, 184, 0.72);
+  color: var(--text-quaternary);
   background: rgba(15, 16, 17, 0.62);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -293,11 +295,7 @@
 }
 
 .ordered__title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(148, 163, 184, 0.78);
+  @include type.eyebrow($size: 11px, $tracking: 0.12em);
 }
 
 .ordered__track {

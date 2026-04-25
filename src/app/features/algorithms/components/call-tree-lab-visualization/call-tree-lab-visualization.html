@@ -48,7 +48,14 @@
       }
 
       <!-- Tree stage: SVG edges + HTML node cards. -->
-      <section class="ctlab__stage">
+      <section
+        #stage
+        class="ctlab__stage"
+        (pointerdown)="onStagePointerDown($event)"
+        (pointermove)="onStagePointerMove($event)"
+        (pointerup)="onStagePointerUp($event)"
+        (pointercancel)="onStagePointerUp($event)"
+      >
         @if (tree.nodes.length === 0) {
           <div class="ctlab__empty">—</div>
         } @else {
@@ -60,7 +67,7 @@
             <svg
               class="ctlab__edges"
               [attr.viewBox]="viewBox()"
-              preserveAspectRatio="xMidYMin meet"
+              preserveAspectRatio="none"
               aria-hidden="true"
             >
               @for (edge of layout().edges; track edge.id) {

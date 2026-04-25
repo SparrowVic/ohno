@@ -14,6 +14,7 @@ export type VisualizationVariant =
   | 'dp'
   | 'grid'
   | 'matrix'
+  | 'matrix-grid'
   | 'dsu'
   | 'dsu-graph'
   | 'network'

@@ -4,6 +4,7 @@ import { GeometryStepState } from './geometry';
 import { GraphStepState } from './graph';
 import { GridTraceState } from './grid';
 import { MatrixTraceState } from './matrix';
+import { MatrixGridTraceState } from './matrix-grid';
 import { NetworkTraceState } from './network';
 import { CallStackLabTraceState } from './call-stack-lab';
 import { CallTreeLabTraceState } from './call-tree-lab';
@@ -65,6 +66,7 @@ export interface SortStep {
   readonly dsu?: DsuTraceState | null;
   readonly grid?: GridTraceState | null;
   readonly matrix?: MatrixTraceState | null;
+  readonly matrixGrid?: MatrixGridTraceState | null;
   readonly network?: NetworkTraceState | null;
   readonly search?: SearchTraceState | null;
   readonly string?: StringTraceState | null;

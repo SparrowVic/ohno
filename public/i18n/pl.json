@@ -1739,6 +1739,21 @@
             }
           }
         },
+        "matrixGrid": {
+          "gaussianElimination": {
+            "modeLabel": "Eliminacja Gaussa (macierz)",
+            "phases": {
+              "setup": "Macierz rozszerzona",
+              "forward": "Eliminacja w przód",
+              "backward": "Eliminacja wstecz",
+              "contradiction": "Sprzeczność",
+              "complete": "Wynik"
+            }
+          },
+          "simplex": {
+            "modeLabel": "Simplex (tableau)"
+          }
+        },
         "numberLab": {
           "factorial": {
             "decisions": {
@@ -1802,6 +1817,18 @@
               "prev": "F(n−1)"
             },
             "resultFormat": "F({{n}}) = {{value}}"
+          },
+          "millerRabin": {
+            "modeLabel": "Test Millera-Rabina (rejestry)"
+          },
+          "pollardsRho": {
+            "modeLabel": "Pollard ρ (rejestry)"
+          },
+          "reservoirSampling": {
+            "modeLabel": "Reservoir Sampling (rejestry)"
+          },
+          "crt": {
+            "modeLabel": "CRT (rejestry)"
           },
           "gcd": {
             "decisions": {

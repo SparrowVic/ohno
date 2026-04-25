@@ -1739,6 +1739,21 @@
             }
           }
         },
+        "matrixGrid": {
+          "gaussianElimination": {
+            "modeLabel": "Gaussian Elimination (matrix)",
+            "phases": {
+              "setup": "Augmented matrix",
+              "forward": "Forward elimination",
+              "backward": "Back-substitution",
+              "contradiction": "Contradiction",
+              "complete": "Result"
+            }
+          },
+          "simplex": {
+            "modeLabel": "Simplex (tableau)"
+          }
+        },
         "numberLab": {
           "factorial": {
             "decisions": {
@@ -1802,6 +1817,18 @@
               "prev": "F(n−1)"
             },
             "resultFormat": "F({{n}}) = {{value}}"
+          },
+          "millerRabin": {
+            "modeLabel": "Miller-Rabin Test (registers)"
+          },
+          "pollardsRho": {
+            "modeLabel": "Pollard ρ (registers)"
+          },
+          "reservoirSampling": {
+            "modeLabel": "Reservoir Sampling (registers)"
+          },
+          "crt": {
+            "modeLabel": "CRT (registers)"
           },
           "gcd": {
             "decisions": {

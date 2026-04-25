@@ -1,16 +1,24 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import {
+  NumberLabHistoryEntry,
+  NumberLabRegister,
+  NumberLabTone,
+  NumberLabTraceState,
+} from '../../models/number-lab';
+import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import type { MillerRabinScenario } from '../../utils/scenarios/number-lab/miller-rabin-scenarios';
-import { createScratchpadLabStep } from '../scratchpad-lab-step';
+import { createNumberLabStep } from '../number-lab-step';
+import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.millerRabin.modeLabel'),
+  numberLabModeLabel: t('features.algorithms.runtime.numberLab.millerRabin.modeLabel'),
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -45,12 +53,31 @@ interface BaseTest {
   readonly leakRoot: number | null;
 }
 
+interface LiveState {
+  base: number | null;
+  /** Current x_i value. null until first emission of seed. */
+  currentX: number | null;
+  /** Index into the squaring chain (0 = seed, 1+ = squares). */
+  currentXIndex: number | null;
+  /** History of x_i values witnessed during the active base test. */
+  squaringChain: { readonly index: number; readonly value: number }[];
+  /** Final verdict text shown in the result slot once we conclude. */
+  verdictText: string | null;
+}
+
 export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<SortStep> {
   const n = scenario.n;
   const presetLabel = scenario.presetLabel;
   const decomposition = decompose(n - 1);
   const lineBuilders: LineBuilder[] = [];
   let stepIndex = 0;
+  const live: LiveState = {
+    base: null,
+    currentX: null,
+    currentXIndex: null,
+    squaringChain: [],
+    verdictText: null,
+  };
 
   function snapshot(opts: {
     readonly phase: ScratchpadLabTraceState['phaseLabel'];
@@ -99,13 +126,152 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
       readonly tone: ScratchpadLabTraceState['tone'];
     },
   ): SortStep {
+    syncLiveFromBuilder(builder);
     lineBuilders.push(builder);
     stepIndex += 1;
-    return createScratchpadLabStep({
-      activeCodeLine: opts.activeCodeLine,
-      description: builder.content,
-      state: snapshot({ ...opts, currentLineId: builder.id }),
+    return withScratchpad(
+      createNumberLabStep({
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: numberLabState(builder),
+      }),
+      snapshot({ ...opts, currentLineId: builder.id }),
+    );
+  }
+
+  /** Pulls register-relevant facts off the line we're about to emit so
+   *  the dashboard variant tracks the same beat-by-beat state as the
+   *  chalkboard. Pattern-matches on the line id since each generator
+   *  flow uses a stable namespacing scheme. */
+  function syncLiveFromBuilder(builder: LineBuilder): void {
+    const id = builder.id;
+    const baseSection = id.match(/-section$/) && id.includes('base');
+    if (baseSection) {
+      const match = id.match(/^(.+?)-section$/);
+      const prefix = match?.[1] ?? '';
+      const base = baseRegistry.get(prefix);
+      if (base !== undefined) {
+        live.base = base;
+        live.currentX = null;
+        live.currentXIndex = null;
+        live.squaringChain = [];
+      }
+    }
+
+    const contentText = typeof builder.content === 'string' ? builder.content : '';
+
+    const seedMatch = id.match(/-x0-value$/);
+    if (seedMatch) {
+      const numericMatch = contentText.match(/x_0 = (-?\d+)/);
+      if (numericMatch) {
+        const value = Number(numericMatch[1]);
+        live.currentX = value;
+        live.currentXIndex = 0;
+        live.squaringChain = [{ index: 0, value }];
+      }
+    }
+
+    const squareMatch = id.match(/-x(\d+)-value$/);
+    if (squareMatch) {
+      const index = Number(squareMatch[1]);
+      const numericMatch = contentText.match(/= (-?\d+)/);
+      if (numericMatch) {
+        const value = Number(numericMatch[1]);
+        live.currentX = value;
+        live.currentXIndex = index;
+        if (live.squaringChain.find((entry) => entry.index === index) === undefined) {
+          live.squaringChain.push({ index, value });
+        }
+      }
+    }
+
+    if (builder.kind === 'result' && builder.id !== 'section-no-result') {
+      // resultSection itself — don't set verdict yet, we wait for the
+      // math line that follows it.
+    }
+    if (id.endsWith('-result') && builder.kind === 'equation') {
+      // The math line under the result section captures the verdict.
+      const text = typeof builder.content === 'string' ? builder.content : '';
+      const stripped = text.replace(/\[\[\/?math\]\]/g, '').replace(/\\;/g, ' ').trim();
+      live.verdictText = stripped;
+    }
+  }
+
+  /** Resolve `idPrefix → base value` for every base test the flow runs.
+   *  Populated lazily as we enter each base section. */
+  const baseRegistry = new Map<string, number>([
+    ['short-base', scenario.bases[0]],
+    ['single-base', scenario.bases[0]],
+    ['liar-base-one', scenario.bases[0]],
+    ['liar-base-two', scenario.bases[1] ?? scenario.bases[0]],
+    ['sqrt-base', scenario.bases[0]],
+  ]);
+
+  function buildRegisters(): readonly NumberLabRegister[] {
+    const registers: NumberLabRegister[] = [
+      { id: 'n', label: 'n', value: String(n), hint: null, tone: 'muted' },
+      {
+        id: 's',
+        label: 's',
+        value: String(decomposition.s),
+        hint: null,
+        tone: 'settled',
+      },
+      {
+        id: 'd',
+        label: 'd',
+        value: String(decomposition.d),
+        hint: null,
+        tone: 'settled',
+      },
+    ];
+    if (live.base !== null) {
+      registers.push({
+        id: 'base',
+        label: 'a',
+        value: String(live.base),
+        hint: null,
+        tone: 'active',
+      });
+    }
+    if (live.currentX !== null && live.currentXIndex !== null) {
+      registers.push({
+        id: 'x',
+        label: `x_${live.currentXIndex}`,
+        value: String(live.currentX),
+        hint: null,
+        tone: 'active',
+      });
+    }
+    return registers;
+  }
+
+  function buildHistory(currentBuilderId: string): readonly NumberLabHistoryEntry[] {
+    return live.squaringChain.map((entry) => {
+      const matchesCurrent =
+        entry.index === live.currentXIndex && currentBuilderId.includes(`-x${entry.index}-value`);
+      return {
+        id: `square-${entry.index}-base-${live.base ?? 'na'}`,
+        label: `x_${entry.index}`,
+        value: String(entry.value),
+        isCurrent: matchesCurrent,
+      };
     });
+  }
+
+  function numberLabState(builder: LineBuilder): NumberLabTraceState {
+    return {
+      modeLabel: I18N.numberLabModeLabel,
+      phaseLabel: phaseFor(builder),
+      decisionLabel: decisionFor(builder),
+      tone: numberLabToneFor(builder),
+      registers: buildRegisters(),
+      history: buildHistory(builder.id),
+      formula: null,
+      presetLabel,
+      resultLabel: live.verdictText,
+      iteration: stepIndex,
+    };
   }
 
   function paperLine(opts: {
@@ -538,6 +704,13 @@ function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
   if (builder.kind === 'note') return 'setup';
   if (builder.id.includes('conclusion')) return 'decide';
   return 'compute';
+}
+
+function numberLabToneFor(builder: LineBuilder): NumberLabTone {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'idle';
+  if (builder.id.includes('conclusion')) return 'settle';
+  return 'update';
 }
 
 function gcd(a: number, b: number): number {

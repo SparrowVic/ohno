@@ -46,7 +46,7 @@
           {{ I18N_KEY.core.languageSwitcher.closeLabel | transloco }}
         </button>
 
-        <app-world-flag-globe />
+        <app-world-flag-globe (countrySelected)="onCountrySelected($event)" />
       </div>
     </div>
   }

@@ -1,6 +1,12 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import {
+  MatrixGridCell,
+  MatrixGridCellState,
+  MatrixGridTone,
+  MatrixGridTraceState,
+} from '../../models/matrix-grid';
+import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
@@ -11,6 +17,7 @@ import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.simplex.modeLabel'),
+  matrixGridModeLabel: t('features.algorithms.runtime.matrixGrid.simplex.modeLabel'),
 } as const;
 
 const EPSILON = 1e-9;
@@ -92,6 +99,15 @@ export function* simplexAlgorithmGenerator(
     };
   }
 
+  /** Per-iteration pivot tracking — populated by the loop before
+   *  emitting `pivot-N-leaving` / `pivot-N-tableau` so the matrix-grid
+   *  view can colour the pivot row/col/cell correctly. */
+  const pivotsPerIteration = new Map<
+    number,
+    { readonly row: number; readonly col: number }
+  >();
+  let currentResultText: string | null = null;
+
   function appendStep(
     builder: LineBuilder,
     opts: {
@@ -103,11 +119,63 @@ export function* simplexAlgorithmGenerator(
   ): SortStep {
     lineBuilders.push(builder);
     stepIndex += 1;
-    return createScratchpadLabStep({
-      activeCodeLine: opts.activeCodeLine,
-      description: builder.content,
-      state: snapshot({ ...opts, currentLineId: builder.id }),
-    });
+    captureResultFromBuilder(builder);
+    return {
+      ...createScratchpadLabStep({
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: snapshot({ ...opts, currentLineId: builder.id }),
+      }),
+      matrixGrid: buildMatrixGridState(builder),
+    };
+  }
+
+  function captureResultFromBuilder(builder: LineBuilder): void {
+    if (builder.id === 'no-result-unbounded') {
+      currentResultText = 'funkcja celu nieograniczona';
+      return;
+    }
+    if (builder.id === 'no-result-exhausted') {
+      currentResultText = 'limit pivotów przekroczony';
+      return;
+    }
+    if (!builder.id.startsWith('result-')) return;
+    const text = typeof builder.content === 'string' ? builder.content : '';
+    const stripped = text.replace(/\[\[\/?math\]\]/g, '').trim();
+    if (!stripped) return;
+    currentResultText = currentResultText ? `${currentResultText};  ${stripped}` : stripped;
+  }
+
+  function buildMatrixGridState(builder: LineBuilder): MatrixGridTraceState {
+    const op = parseSimplexOperation(builder, pivotsPerIteration);
+    const rows = m + 1;
+    const cols = totalColumns;
+    const cells: MatrixGridCell[] = [];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        cells.push({
+          id: `r${row}c${col}-step${stepIndex}`,
+          row,
+          col,
+          value: formatCell(tableau[row][col]),
+          state: simplexCellState(row, col, rows, varColumns, op),
+        });
+      }
+    }
+    return {
+      mode: 'simplex',
+      modeLabel: I18N.matrixGridModeLabel,
+      phaseLabel: simplexPhaseLabel(builder),
+      decisionLabel: null,
+      tone: simplexMatrixTone(op),
+      rows,
+      cols,
+      dividerCol: varColumns,
+      cells,
+      operationLabel: op.label,
+      resultLabel: currentResultText,
+      iteration: stepIndex,
+    };
   }
 
   function paperLine(opts: {
@@ -302,6 +370,7 @@ export function* simplexAlgorithmGenerator(
     }
 
     const leavingName = columnName(leaving.basisColumn, n);
+    pivotsPerIteration.set(iteration + 1, { row: leaving.row, col: enteringCol });
     yield* emit(
       math(
         `pivot-${iteration + 1}-leaving`,
@@ -605,6 +674,189 @@ function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
   if (builder.kind === 'result') return 'complete';
   if (builder.kind === 'note') return 'setup';
   return 'compute';
+}
+
+/* ========================================================================
+   MATRIX-GRID OP PARSING — Simplex emits stable line ids per pivot
+   iteration (pivot-N-entering / -leaving / -tableau, ratio-N-row …).
+   We pattern-match on those ids to colour the pivot cell, the
+   entering column and the leaving row in the tableau view.
+   ======================================================================== */
+
+interface SimplexOp {
+  readonly pivotRow: number | null;
+  readonly pivotCol: number | null;
+  readonly affectedRow: number | null;
+  readonly kind:
+    | 'idle'
+    | 'select-column'
+    | 'ratio-test'
+    | 'pivot'
+    | 'apply-pivot'
+    | 'optimal'
+    | 'fail';
+  readonly label: string | null;
+}
+
+function parseSimplexOperation(
+  builder: LineBuilder,
+  pivots: ReadonlyMap<number, { readonly row: number; readonly col: number }>,
+): SimplexOp {
+  const id = builder.id;
+  const text = typeof builder.content === 'string' ? builder.content : '';
+
+  if (id === 'no-result-unbounded' || id === 'no-result-exhausted' || id === 'section-no-result') {
+    return base('fail');
+  }
+  if (id === 'section-optimality' || id.startsWith('optimality-')) {
+    return base('optimal');
+  }
+  if (id.startsWith('result-') || id === 'section-result') {
+    return base('optimal');
+  }
+  if (id === 'initial-tableau' || id === 'initial-columns') {
+    return base('idle');
+  }
+
+  const ratioMatch = id.match(/^ratio-(\d+)-(\d+)$/);
+  if (ratioMatch) {
+    const iter = Number(ratioMatch[1]);
+    const row = Number(ratioMatch[2]);
+    const pivot = pivots.get(iter);
+    return {
+      pivotRow: null,
+      pivotCol: pivot?.col ?? null,
+      affectedRow: row,
+      kind: 'ratio-test',
+      label: text || null,
+    };
+  }
+
+  const enteringMatch = id.match(/^pivot-(\d+)-(entering|reduced-costs)$/);
+  if (enteringMatch) {
+    const iter = Number(enteringMatch[1]);
+    const pivot = pivots.get(iter);
+    return {
+      pivotRow: null,
+      pivotCol: pivot?.col ?? null,
+      affectedRow: null,
+      kind: 'select-column',
+      label: text || null,
+    };
+  }
+
+  const leavingMatch = id.match(/^pivot-(\d+)-leaving$/);
+  if (leavingMatch) {
+    const iter = Number(leavingMatch[1]);
+    const pivot = pivots.get(iter);
+    return {
+      pivotRow: pivot?.row ?? null,
+      pivotCol: pivot?.col ?? null,
+      affectedRow: pivot?.row ?? null,
+      kind: 'pivot',
+      label: text || null,
+    };
+  }
+
+  const tableauMatch = id.match(/^pivot-(\d+)-(tableau|basis)$/);
+  if (tableauMatch) {
+    const iter = Number(tableauMatch[1]);
+    const pivot = pivots.get(iter);
+    return {
+      pivotRow: pivot?.row ?? null,
+      pivotCol: pivot?.col ?? null,
+      affectedRow: pivot?.row ?? null,
+      kind: 'apply-pivot',
+      label: text || null,
+    };
+  }
+
+  return base('idle');
+
+  function base(kind: SimplexOp['kind']): SimplexOp {
+    return {
+      pivotRow: null,
+      pivotCol: null,
+      affectedRow: null,
+      kind,
+      label: null,
+    };
+  }
+}
+
+function simplexCellState(
+  row: number,
+  col: number,
+  rows: number,
+  varColumns: number,
+  op: SimplexOp,
+): MatrixGridCellState {
+  const isObjectiveRow = row === rows - 1;
+  const isRhs = col === varColumns;
+
+  if (op.kind === 'fail') {
+    if (op.affectedRow !== null && row === op.affectedRow) return 'eliminating';
+    return 'idle';
+  }
+
+  if (op.kind === 'optimal') {
+    if (isObjectiveRow) return 'leading';
+    if (isRhs) return 'rhs';
+    return 'idle';
+  }
+
+  if (op.kind === 'select-column') {
+    if (col === op.pivotCol) {
+      return isObjectiveRow ? 'pivot' : 'pivot-col';
+    }
+    if (isObjectiveRow) return 'pivot-row';
+  }
+
+  if (op.kind === 'ratio-test') {
+    if (col === op.pivotCol) return 'pivot-col';
+    if (op.affectedRow !== null && row === op.affectedRow) return 'eliminating';
+  }
+
+  if (op.kind === 'pivot') {
+    if (row === op.pivotRow && col === op.pivotCol) return 'pivot';
+    if (row === op.pivotRow) return 'pivot-row';
+    if (col === op.pivotCol) return 'pivot-col';
+  }
+
+  if (op.kind === 'apply-pivot') {
+    if (row === op.pivotRow) return 'updated';
+    if (col === op.pivotCol) return 'pivot-col';
+  }
+
+  if (isRhs) return 'rhs';
+  return 'idle';
+}
+
+function simplexPhaseLabel(builder: LineBuilder): string {
+  if (builder.id === 'no-result-unbounded') return 'Brak optimum';
+  if (builder.id === 'no-result-exhausted') return 'Limit pivotów';
+  if (builder.id.startsWith('result-') || builder.id === 'section-result') return 'Optimum';
+  if (builder.id.startsWith('optimality-') || builder.id === 'section-optimality') {
+    return 'Test optymalności';
+  }
+  if (builder.id.startsWith('ratio-') || builder.id.startsWith('section-ratio-')) {
+    return 'Test ilorazów';
+  }
+  if (builder.id.startsWith('pivot-') || builder.id.startsWith('section-pivot-')) {
+    return 'Pivot';
+  }
+  if (builder.id.startsWith('initial-')) return 'Tableau początkowe';
+  if (builder.id.startsWith('standard-')) return 'Postać standardowa';
+  return 'Model';
+}
+
+function simplexMatrixTone(op: SimplexOp): MatrixGridTone {
+  if (op.kind === 'fail') return 'fail';
+  if (op.kind === 'optimal') return 'complete';
+  if (op.kind === 'pivot' || op.kind === 'apply-pivot') return 'pivot';
+  if (op.kind === 'ratio-test') return 'eliminate';
+  if (op.kind === 'select-column') return 'compute';
+  return 'idle';
 }
 
 function formatCell(value: number): string {

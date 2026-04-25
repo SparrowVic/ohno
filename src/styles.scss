@@ -37,20 +37,28 @@
   --chrome-line-strong: rgba(255, 255, 255, 0.16);
 
   /* ======================================================================
-     BORDERS — three tiers tuned for dark bg.
+     BORDERS — three tiers tuned for dark bg. The default tier sits at
+     0.10 alpha (was 0.07): hairlines need to be felt as edges, not as
+     suggestions. The hover/strong tiers stay where they were so the
+     escalation between rest/hover/active still reads.
      ====================================================================== */
-  --border: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(255, 255, 255, 0.16);
-  --border-strong: rgba(255, 255, 255, 0.22);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(255, 255, 255, 0.24);
   --border-brand: rgba(var(--chrome-accent-rgb), 0.34);
 
   /* ======================================================================
      TEXT — ink ramp, slightly cooler primary for crisp feel.
+     Tuned brighter than a typical editorial dark theme: this app's
+     visualizations push a lot of secondary/tertiary chrome (eyebrows,
+     captions, log meta), and a too-quiet ramp made the whole UI feel
+     "fading". Hierarchy still holds — primary stays crisp white, the
+     gap between tiers is preserved — but the floor is lifted.
      ====================================================================== */
   --text-primary: #f5f6fb;
-  --text-secondary: #bdbecb;
-  --text-tertiary: #858793;
-  --text-quaternary: #5a5c68;
+  --text-secondary: #d6d8e3;
+  --text-tertiary: #a4a6b3;
+  --text-quaternary: #6b6e7a;
 
   /* ======================================================================
      BRAND PALETTE — lime / cyan / violet triad.

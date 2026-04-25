@@ -1,0 +1,217 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.mgrid {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 24px;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* ============================================================================
+   OPERATION LABEL — what's happening on the matrix this step (e.g.
+   "R2 ← R2 − 3·R1"). Mono, prominent enough to read at a glance.
+   ============================================================================ */
+.mgrid__op {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 0.5px solid rgb(var(--viz-warning-rgb) / 0.32);
+  background:
+    linear-gradient(180deg, rgb(var(--viz-warning-rgb) / 0.1), rgb(var(--viz-warning-rgb) / 0.02)),
+    rgba(13, 16, 24, 0.55);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--viz-warning-ink);
+  --math-text-glow: rgb(var(--viz-warning-rgb) / 0.16);
+}
+
+/* ============================================================================
+   MATRIX GRID — CSS grid with one cell per (row, col). The dividerCol
+   inserts a 6px-wide track between coefficient and RHS columns.
+   ============================================================================ */
+.mgrid__matrix {
+  display: grid;
+  gap: 6px;
+  align-self: start;
+  min-width: 0;
+}
+
+.mgrid__cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.005)),
+    rgba(13, 16, 24, 0.55);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition:
+    background var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-soft),
+    transform var(--duration-fast) var(--ease-soft);
+}
+
+.mgrid__cell-value {
+  /* Tabular numerics give a clean column alignment; keeping the value
+     inside its own span makes the cell easier to overlay later (e.g.
+     a prev-value diff badge). */
+  display: inline-block;
+}
+
+/* ---- Cell state tints ---- */
+
+.mgrid__cell--idle {
+  /* default look — already set on the base. */
+}
+
+.mgrid__cell--rhs {
+  /* RHS column reads as a slightly different surface — the divider
+     does most of the visual work, this is just a hair more depth. */
+  background:
+    linear-gradient(180deg, rgba(var(--chrome-accent-alt-rgb), 0.06), rgba(255, 255, 255, 0.005)),
+    rgba(13, 16, 24, 0.65);
+  border-color: rgba(var(--chrome-accent-alt-rgb), 0.16);
+  color: var(--text-primary);
+}
+
+.mgrid__cell--leading {
+  /* Pivot positions already locked in (forward elimination done). */
+  border-color: rgb(var(--accent-rgb) / 0.32);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.08), rgba(255, 255, 255, 0.005)),
+    rgba(13, 16, 24, 0.55);
+  color: var(--accent-strong);
+}
+
+.mgrid__cell--free {
+  /* Free-variable column in the resolved RREF — visually quieter so
+     the leading columns dominate. */
+  opacity: 0.7;
+}
+
+.mgrid__cell--pivot-row {
+  /* Source row for a row operation. Slight cyan tint. */
+  background:
+    linear-gradient(180deg, rgb(var(--chrome-accent-alt-rgb) / 0.12), rgba(255, 255, 255, 0.005)),
+    rgba(13, 16, 24, 0.6);
+  border-color: rgb(var(--chrome-accent-alt-rgb) / 0.28);
+  color: var(--text-primary);
+}
+
+.mgrid__cell--pivot-col {
+  /* Column being eliminated. Slight violet tint. */
+  background:
+    linear-gradient(180deg, rgb(var(--chrome-accent-rgb) / 0.1), rgba(255, 255, 255, 0.005)),
+    rgba(13, 16, 24, 0.6);
+  border-color: rgb(var(--chrome-accent-rgb) / 0.28);
+}
+
+.mgrid__cell--pivot {
+  /* Active pivot — combination of pivot-row + pivot-col + extra glow. */
+  border-color: rgb(var(--chrome-accent-alt-rgb) / 0.62);
+  background:
+    linear-gradient(180deg, rgb(var(--chrome-accent-alt-rgb) / 0.22), rgb(var(--chrome-accent-rgb) / 0.08)),
+    rgba(13, 16, 24, 0.65);
+  color: var(--text-primary);
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--chrome-accent-alt-rgb) / 0.36),
+    0 0 18px -2px rgb(var(--chrome-accent-alt-rgb) / 0.36);
+  transform: scale(1.02);
+  z-index: 2;
+}
+
+.mgrid__cell--eliminating {
+  /* Row being reduced. Pink/warm tint to flag "this is changing". */
+  border-color: rgb(var(--viz-warning-rgb) / 0.45);
+  background:
+    linear-gradient(180deg, rgb(var(--viz-warning-rgb) / 0.16), rgb(var(--viz-warning-rgb) / 0.02)),
+    rgba(13, 16, 24, 0.65);
+  color: var(--viz-warning-ink);
+  box-shadow: 0 0 14px rgb(var(--viz-warning-rgb) / 0.22);
+}
+
+.mgrid__cell--updated {
+  /* Cell whose value just changed. Brief lime pulse via stronger
+     accent border + a soft outer glow. */
+  border-color: rgb(var(--accent-rgb) / 0.55);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.22), rgb(var(--accent-rgb) / 0.04)),
+    rgba(13, 16, 24, 0.65);
+  color: var(--accent-strong);
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--accent-rgb) / 0.35),
+    0 0 18px rgb(var(--accent-rgb) / 0.28);
+}
+
+/* ============================================================================
+   RESULT FOOTER — mirrors the call-tree-lab footer for consistency.
+   ============================================================================ */
+.mgrid__result {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-height: 58px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.12), rgb(var(--accent-rgb) / 0.04)),
+    rgba(13, 16, 24, 0.55);
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    opacity var(--duration-fast) var(--ease-soft);
+
+  &--pending {
+    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.025);
+    opacity: 0.7;
+  }
+}
+
+.mgrid__result--pending .mgrid__result-label,
+.mgrid__result--pending .mgrid__result-value {
+  color: var(--text-tertiary);
+}
+
+.mgrid__result-label {
+  @include type.eyebrow($size: 10px, $tracking: 0.18em, $color: var(--accent-ink));
+}
+
+.mgrid__result-value {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mgrid__cell {
+    transition: none;
+  }
+
+  .mgrid__cell--pivot {
+    transform: none;
+  }
+}

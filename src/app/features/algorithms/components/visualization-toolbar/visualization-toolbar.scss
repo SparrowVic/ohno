@@ -1,4 +1,5 @@
 @use '../../../../shared/controls/control-chrome' as chrome;
+@use '../../../../shared/styles/eyebrow' as type;
 
 :host {
   display: block;
@@ -24,9 +25,9 @@
     height: 1px;
     background: linear-gradient(
       90deg,
-      rgba(184, 213, 110, 0),
-      rgba(184, 213, 110, 0.2),
-      rgba(184, 213, 110, 0)
+      rgba(var(--accent-rgb), 0),
+      rgba(var(--accent-rgb), 0.42) 50%,
+      rgba(var(--accent-rgb), 0)
     );
     pointer-events: none;
   }
@@ -72,11 +73,9 @@
 }
 
 .toolbar__eyebrow {
-  font-size: 8px;
+  @include type.eyebrow($size: 8px, $tracking: 0.12em);
+
   line-height: 1.05;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
 }
 
 .toolbar__counter {
@@ -205,7 +204,7 @@
   }
 
   &:disabled {
-    opacity: 0.3;
+    opacity: 0.5;
     cursor: default;
     pointer-events: none;
   }
