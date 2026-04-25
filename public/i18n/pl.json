@@ -1803,6 +1803,9 @@
             },
             "resultFormat": "F({{n}}) = {{value}}"
           },
+          "millerRabin": {
+            "modeLabel": "Test Millera-Rabina (rejestry)"
+          },
           "gcd": {
             "decisions": {
               "done": "b = 0 — a trzyma nwd.",

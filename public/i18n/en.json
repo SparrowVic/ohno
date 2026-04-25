@@ -1803,6 +1803,9 @@
             },
             "resultFormat": "F({{n}}) = {{value}}"
           },
+          "millerRabin": {
+            "modeLabel": "Miller-Rabin Test (registers)"
+          },
           "gcd": {
             "decisions": {
               "done": "b = 0 — a holds the gcd.",
