@@ -74,7 +74,7 @@
   font-weight: 700;
 
   &--queued {
-    color: rgba(226, 232, 240, 0.64);
+    color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.04);
   }
 
@@ -108,7 +108,7 @@
 }
 
 .trace__row--ghost {
-  opacity: 0.54;
+  opacity: 0.7;
 }
 
 .trace__row-label {
@@ -129,7 +129,7 @@
 }
 
 .trace__status-note--ghost {
-  color: rgba(226, 232, 240, 0.6);
+  color: var(--text-tertiary);
 }
 
 .trace__placeholder {

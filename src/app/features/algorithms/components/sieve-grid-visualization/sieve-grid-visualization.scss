@@ -191,9 +191,9 @@
 
   &--skipped {
     color: var(--text-tertiary);
-    opacity: 0.35;
+    opacity: 0.55;
     text-decoration: line-through;
-    text-decoration-color: rgba(255, 255, 255, 0.25);
+    text-decoration-color: rgba(255, 255, 255, 0.4);
   }
 
   &--prime {
@@ -206,10 +206,10 @@
   }
 
   &--composite {
-    color: var(--text-tertiary);
-    opacity: 0.55;
+    color: var(--text-secondary);
+    opacity: 0.72;
     text-decoration: line-through;
-    text-decoration-color: rgba(255, 255, 255, 0.3);
+    text-decoration-color: rgba(255, 255, 255, 0.45);
     text-decoration-thickness: 1.5px;
   }
 

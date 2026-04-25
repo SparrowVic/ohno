@@ -84,7 +84,7 @@
   font-weight: 700;
 
   &--queued {
-    color: rgba(226, 232, 240, 0.64);
+    color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.04);
   }
 

@@ -170,10 +170,10 @@
   width: 2px;
   background: linear-gradient(
     180deg,
-    rgba(var(--chrome-accent-alt-rgb), 0.6),
-    rgba(var(--chrome-accent-rgb), 0.3) 100%
+    rgba(var(--chrome-accent-alt-rgb), 0.7),
+    rgba(var(--chrome-accent-rgb), 0.4) 100%
   );
-  opacity: 0.5;
+  opacity: 0.72;
   transition: opacity var(--duration-base) var(--ease-soft);
 }
 
