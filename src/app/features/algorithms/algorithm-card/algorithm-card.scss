@@ -1,363 +1,23 @@
+@use '../../../shared/styles/browse-card' as card;
+
 :host {
   display: block;
 }
 
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-  min-height: 100%;
-  padding: 18px 18px 16px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.006) 40%, transparent 80%),
-    var(--surface-2);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    var(--elevation-1);
-  overflow: hidden;
-  isolation: isolate;
-  transition:
-    border-color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-slow) var(--ease-out-expo);
-}
+@include card.everything;
 
-/* Top-edge difficulty stripe — categorical, 2px, quiet. Brightens on hover. */
-.card__stripe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.45) 22%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.8) 50%,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.45) 78%,
-    transparent 100%
-  );
-  opacity: 0.65;
-  pointer-events: none;
-  z-index: 2;
-  transition: opacity var(--duration-base) var(--ease-soft);
-}
-
-/* Top-center mouse shine — fades in softly to signal the card is alive. */
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 70% 40% at 50% -10%,
-    rgba(255, 255, 255, 0.08),
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-soft);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.card > :not(.card__stripe) {
-  position: relative;
-  z-index: 2;
-}
-
-/* ---- HOVER ---- Internal intensification, no card lift. ---- */
-
-.card:hover {
-  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.3);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012) 40%, transparent 80%),
-    var(--surface-3);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
-    inset 0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
-    inset 0 0 56px rgb(var(--card-accent-rgb, 199 229 106) / 0.18);
-}
-
-.card:hover .card__stripe {
-  opacity: 1;
-}
-
-.card:hover::after {
-  opacity: 1;
-}
-
-.card:focus-visible {
-  outline: none;
-  border-color: transparent;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    var(--ring-focus),
-    var(--elevation-2);
-}
-
-.card:active {
-  transform: scale(0.994);
-  transition: transform var(--duration-fast) var(--ease-out-quart);
-}
-
-.card--disabled {
-  filter: saturate(0.8);
-  opacity: 0.88;
-}
-
-/* ---- EYEBROW + DIFFICULTY PIPS ---- */
-
-.card__eyebrow,
-.card__title-row,
-.card__preview-meta,
-.card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.card__section {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  transition: color var(--duration-base) var(--ease-soft);
-}
-
-.card__facet {
-  display: inline-flex;
-  align-items: center;
-}
-
-.card__difficulty-pips {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.card__pip {
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  transition:
-    background var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart),
-    transform var(--duration-base) var(--ease-spring);
-}
-
-.card__pip--on {
-  background: rgb(var(--card-accent-rgb, 199 229 106));
-  box-shadow:
-    0 0 4px rgb(var(--card-accent-rgb, 199 229 106) / 0.55),
-    0 0 9px rgb(var(--card-accent-rgb, 199 229 106) / 0.22);
-}
-
-.card:hover .card__section {
-  color: var(--text-secondary);
-}
-
-.card:hover .card__pip--on {
-  box-shadow:
-    0 0 6px rgb(var(--card-accent-rgb, 199 229 106) / 0.8),
-    0 0 14px rgb(var(--card-accent-rgb, 199 229 106) / 0.32);
-  transform: scale(1.2);
-}
-
-/* ---- TITLE ---- */
-
-.card__title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.card__title-row {
-  align-items: flex-start;
-}
-
-.card__name {
-  margin: 0;
-  font-size: 21px;
-  line-height: 1.05;
-  letter-spacing: -0.07em;
-  color: var(--text-primary);
-  font-weight: 700;
-  text-wrap: balance;
-  transition:
-    color var(--duration-base) var(--ease-soft),
-    transform var(--duration-base) var(--ease-out-quart);
-}
-
-.card:hover .card__name {
-  background:
-    linear-gradient(
-      100deg,
-      var(--text-primary) 0%,
-      var(--text-primary) 56%,
-      rgb(var(--card-accent-rgb, 199 229 106)) 110%
-    );
-  background-size: 160% 100%;
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-}
-
-.card__desc {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  text-wrap: pretty;
-}
+/* ---- ALGORITHM-CARD-LOCAL: math-text inside the description and metric
+       values gets the card-accent glow so KaTeX strokes pick up the
+       difficulty tint. ---- */
 
 .card__desc app-math-text {
   --math-text-scale: 1.08;
   --math-text-glow: rgb(var(--card-accent-rgb, 199 229 106) / 0.08);
 }
 
-/* ---- PREVIEW AREA — this is where the internal zoom lives ---- */
-
-.card__preview {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 14px;
-  min-height: 120px;
-  padding: 14px;
-  border-radius: 14px;
-  border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.16);
-  background:
-    linear-gradient(
-      var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.1),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 58%,
-      rgba(255, 255, 255, 0.02)
-    ),
-    rgba(255, 255, 255, 0.025);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  overflow: hidden;
-  transition:
-    border-color var(--duration-base) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart);
-}
-
-.card:hover .card__preview {
-  border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.38);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.12);
-}
-
-.card__preview-art {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  min-height: 68px;
-  transform-origin: center center;
-  transform: scale(1);
-  transition: transform 520ms var(--ease-out-expo);
-  will-change: transform;
-}
-
-.card:hover .card__preview-art {
-  transform: scale(1.07);
-}
-
-.card__preview::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 92%;
-  width: 158px;
-  height: 158px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(
-    circle,
-    rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
-    transparent 72%
-  );
-  pointer-events: none;
-  transition: transform var(--duration-slow) var(--ease-out-expo);
-}
-
-.card:hover .card__preview::before {
-  transform: translate(calc(-50% - 14px), -50%) scale(1.08);
-}
-
-.card__preview::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: var(--card-grid-size, 20px) var(--card-grid-size, 20px);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 100%);
-  pointer-events: none;
-}
-
-.card__preview--disabled {
-  background:
-    linear-gradient(
-      var(--card-preview-angle, 168deg),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.06),
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.03) 62%,
-      rgba(255, 255, 255, 0.02)
-    ),
-    rgba(255, 255, 255, 0.02);
-}
-
-/* ---- INSANE VARIANT — stripe already distinguishes; keep a single accent pop ---- */
-
-.card--insane .card__stripe {
-  opacity: 0.85;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(var(--card-accent-rgb, 255 122 47) / 0.6) 18%,
-    rgb(var(--card-accent-rgb, 255 122 47) / 1) 50%,
-    rgb(var(--card-accent-rgb, 255 122 47) / 0.6) 82%,
-    transparent 100%
-  );
-}
-
-.card--insane:hover .card__stripe {
-  opacity: 1;
-}
-
-/* Preview art in insane cards gets a slightly warmer border on hover — the
-   only place where we still lean into heat, very quietly. */
-.card--insane:hover .card__preview {
-  border-color: rgb(var(--card-accent-rgb, 255 122 47) / 0.5);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 28px rgb(var(--card-accent-rgb, 255 122 47) / 0.2);
-}
-
-.card__preview-meta {
-  position: relative;
-  z-index: 1;
-}
-
-.card__preview-hint {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-secondary);
-  letter-spacing: 0.02em;
-}
-
-/* ---- METRICS ---- */
+/* ---- METRICS — only algorithm cards carry a complexity strip. Two
+       narrow tiles (time, space) with an accent underline that paints
+       in on hover. ---- */
 
 .card__metrics {
   display: grid;
@@ -436,57 +96,16 @@
   --math-text-glow: rgb(var(--card-accent-rgb, 199 229 106) / 0.14);
 }
 
-/* ---- FOOTER / CTA ---- */
-
-.card__footer {
-  margin-top: auto;
-  align-items: flex-end;
-}
-
-.card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.card__eyebrow app-ui-tag,
-.card__title-row app-ui-tag,
-.card__preview-meta app-ui-tag,
-.card__tags app-ui-tag {
-  flex-shrink: 0;
-}
+/* ---- CTA INK — algorithm cards lead with the lime accent, switch to
+       the cool cyan on hover; insane cards swap in the warm orange
+       gradient. ---- */
 
 .card__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--accent-strong);
-  white-space: nowrap;
-  transition:
-    color var(--duration-base) var(--ease-soft),
-    letter-spacing var(--duration-base) var(--ease-out-expo),
-    transform var(--duration-base) var(--ease-out-quart);
-}
-
-.card__cta::after {
-  content: '→';
-  display: inline-block;
-  font-size: 12px;
-  transform: translateX(0);
-  transition: transform var(--duration-base) var(--ease-out-expo);
 }
 
 .card:hover .card__cta {
   color: var(--chrome-accent-alt-strong);
-  letter-spacing: 0.18em;
-}
-
-.card:hover .card__cta::after {
-  transform: translateX(4px);
 }
 
 .card--insane .card__cta {
@@ -497,40 +116,19 @@
   color: rgb(var(--card-accent-alt-rgb, 255 198 102));
 }
 
+/* ---- RESPONSIVE — extra rule on top of the shared mobile stack: the
+       metric grid collapses to one column. ---- */
+
 @media (max-width: 720px) {
-  .card {
-    padding: 15px;
-  }
-
-  .card__title-row,
-  .card__footer,
-  .card__preview-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .card__metrics {
     grid-template-columns: 1fr;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card,
-  .card::after,
-  .card__preview-art,
-  .card__preview::before,
-  .card__cta,
-  .card__cta::after,
-  .card__name,
-  .card__pip,
-  .card__stripe,
   .card__metric,
   .card__metric::before {
     animation: none !important;
     transition: none;
-  }
-
-  .card:hover .card__preview-art {
-    transform: none;
   }
 }
