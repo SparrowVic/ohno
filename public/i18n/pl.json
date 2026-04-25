@@ -1806,6 +1806,9 @@
           "millerRabin": {
             "modeLabel": "Test Millera-Rabina (rejestry)"
           },
+          "pollardsRho": {
+            "modeLabel": "Pollard ρ (rejestry)"
+          },
           "gcd": {
             "decisions": {
               "done": "b = 0 — a trzyma nwd.",

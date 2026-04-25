@@ -1806,6 +1806,9 @@
           "millerRabin": {
             "modeLabel": "Miller-Rabin Test (registers)"
           },
+          "pollardsRho": {
+            "modeLabel": "Pollard ρ (registers)"
+          },
           "gcd": {
             "decisions": {
               "done": "b = 0 — a holds the gcd.",

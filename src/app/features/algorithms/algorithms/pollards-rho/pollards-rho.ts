@@ -1,16 +1,24 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import {
+  NumberLabHistoryEntry,
+  NumberLabRegister,
+  NumberLabTone,
+  NumberLabTraceState,
+} from '../../models/number-lab';
+import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import type { PollardsRhoScenario } from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
-import { createScratchpadLabStep } from '../scratchpad-lab-step';
+import { createNumberLabStep } from '../number-lab-step';
+import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.pollardsRho.modeLabel'),
+  numberLabModeLabel: t('features.algorithms.runtime.numberLab.pollardsRho.modeLabel'),
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -79,10 +87,37 @@ type BrentOutcome =
       readonly batches: readonly BrentBatch[];
     };
 
+interface LiveState {
+  /** Modulus we're currently factoring — top-level n at start, but
+   *  recursive flows update it per call. */
+  modulus: number;
+  /** Constant c in f(x) = x² + c (mod modulus). */
+  constant: number;
+  /** Most recent Floyd iteration we surfaced. */
+  iteration: number | null;
+  x: number | null;
+  y: number | null;
+  diff: number | null;
+  rowGcd: number | null;
+  resultText: string | null;
+  history: { readonly index: number; readonly x: number; readonly y: number; readonly gcd: number }[];
+}
+
 export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<SortStep> {
   const presetLabel = scenario.presetLabel;
   const lineBuilders: LineBuilder[] = [];
   let stepIndex = 0;
+  const live: LiveState = {
+    modulus: scenario.n,
+    constant: scenario.c,
+    iteration: null,
+    x: null,
+    y: null,
+    diff: null,
+    rowGcd: null,
+    resultText: null,
+    history: [],
+  };
 
   function snapshot(opts: {
     readonly phase: ScratchpadLabTraceState['phaseLabel'];
@@ -131,13 +166,137 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
       readonly tone: ScratchpadLabTraceState['tone'];
     },
   ): SortStep {
+    syncLiveFromBuilder(builder);
     lineBuilders.push(builder);
     stepIndex += 1;
-    return createScratchpadLabStep({
-      activeCodeLine: opts.activeCodeLine,
-      description: builder.content,
-      state: snapshot({ ...opts, currentLineId: builder.id }),
-    });
+    return withScratchpad(
+      createNumberLabStep({
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: numberLabState(builder),
+      }),
+      snapshot({ ...opts, currentLineId: builder.id }),
+    );
+  }
+
+  /** Reflects the current chalkboard line back into the live register
+   *  state by pattern-matching id-prefixes. The chalkboard generator
+   *  emits very predictable line ids so we can lift the values without
+   *  re-running the algorithm. */
+  function syncLiveFromBuilder(builder: LineBuilder): void {
+    const id = builder.id;
+    const text = typeof builder.content === 'string' ? builder.content : '';
+
+    const nMatch = text.match(/^n = (\d+)$/);
+    if (nMatch) live.modulus = Number(nMatch[1]);
+
+    const fMatch = text.match(/x\^2 \+ (\d+)/);
+    if (fMatch) live.constant = Number(fMatch[1]);
+
+    const iterMatch = id.match(/iter-(\d+)-label$/);
+    if (iterMatch) {
+      live.iteration = Number(iterMatch[1]);
+      live.x = null;
+      live.y = null;
+      live.diff = null;
+      live.rowGcd = null;
+    }
+
+    const xMatch = id.match(/iter-(\d+)-x$/);
+    if (xMatch) {
+      const valueMatch = text.match(/= (-?\d+)$/);
+      if (valueMatch) live.x = Number(valueMatch[1]);
+    }
+
+    const yMatch = id.match(/iter-(\d+)-y$/);
+    if (yMatch) {
+      const valueMatch = text.match(/= (-?\d+)$/);
+      if (valueMatch) live.y = Number(valueMatch[1]);
+    }
+
+    const diffMatch = id.match(/iter-(\d+)-diff$/);
+    if (diffMatch) {
+      const valueMatch = text.match(/= (-?\d+)$/);
+      if (valueMatch) live.diff = Number(valueMatch[1]);
+    }
+
+    const gcdMatch = id.match(/iter-(\d+)-gcd$/);
+    if (gcdMatch) {
+      const valueMatch = text.match(/= (-?\d+)$/);
+      if (valueMatch && live.iteration !== null && live.x !== null && live.y !== null) {
+        live.rowGcd = Number(valueMatch[1]);
+        const exists = live.history.find((h) => h.index === live.iteration);
+        if (!exists) {
+          live.history.push({
+            index: live.iteration,
+            x: live.x,
+            y: live.y,
+            gcd: live.rowGcd,
+          });
+        }
+      }
+    }
+
+    if (id.endsWith('-result') && builder.kind === 'equation') {
+      const stripped = text.replace(/\[\[\/?math\]\]/g, '').trim();
+      live.resultText = stripped;
+    }
+  }
+
+  function buildRegisters(): readonly NumberLabRegister[] {
+    const registers: NumberLabRegister[] = [
+      { id: 'n', label: 'n', value: String(live.modulus), hint: null, tone: 'muted' },
+      { id: 'c', label: 'c', value: String(live.constant), hint: null, tone: 'settled' },
+    ];
+    if (live.iteration !== null) {
+      registers.push({
+        id: 'i',
+        label: 'i',
+        value: String(live.iteration),
+        hint: null,
+        tone: 'active',
+      });
+    }
+    if (live.x !== null) {
+      registers.push({ id: 'x', label: 'x', value: String(live.x), hint: null, tone: 'active' });
+    }
+    if (live.y !== null) {
+      registers.push({ id: 'y', label: 'y', value: String(live.y), hint: null, tone: 'active' });
+    }
+    if (live.rowGcd !== null) {
+      registers.push({
+        id: 'd',
+        label: 'd',
+        value: String(live.rowGcd),
+        hint: null,
+        tone: 'settled',
+      });
+    }
+    return registers;
+  }
+
+  function buildHistory(): readonly NumberLabHistoryEntry[] {
+    return live.history.map((entry) => ({
+      id: `pollard-iter-${entry.index}-mod-${live.modulus}`,
+      label: `i=${entry.index}`,
+      value: `gcd=${entry.gcd}`,
+      isCurrent: entry.index === live.iteration,
+    }));
+  }
+
+  function numberLabState(builder: LineBuilder): NumberLabTraceState {
+    return {
+      modeLabel: I18N.numberLabModeLabel,
+      phaseLabel: phaseFor(builder),
+      decisionLabel: decisionFor(builder),
+      tone: numberLabToneFor(builder),
+      registers: buildRegisters(),
+      history: buildHistory(),
+      formula: null,
+      presetLabel,
+      resultLabel: live.resultText,
+      iteration: stepIndex,
+    };
   }
 
   function paperLine(opts: {
@@ -710,6 +869,13 @@ function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
     return builder.id === 'section-no-result' ? 'conclude' : 'complete';
   if (builder.kind === 'note') return 'setup';
   return 'compute';
+}
+
+function numberLabToneFor(builder: LineBuilder): NumberLabTone {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'idle';
+  if (builder.id.includes('split') || builder.id.includes('quotient')) return 'settle';
+  return 'update';
 }
 
 function ordinalCall(index: number): string {
