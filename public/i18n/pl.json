@@ -1827,6 +1827,9 @@
           "reservoirSampling": {
             "modeLabel": "Reservoir Sampling (rejestry)"
           },
+          "crt": {
+            "modeLabel": "CRT (rejestry)"
+          },
           "gcd": {
             "decisions": {
               "done": "b = 0 — a trzyma nwd.",
