@@ -1,3 +1,5 @@
+@use '../../../shared/styles/eyebrow' as type;
+
 :host {
   display: block;
 }
@@ -397,11 +399,11 @@
 }
 
 .page__stat-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.18em,
+    $color: var(--text-secondary)
+  );
 }
 
 /* ============================================================================
