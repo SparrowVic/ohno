@@ -37,11 +37,14 @@
   --chrome-line-strong: rgba(255, 255, 255, 0.16);
 
   /* ======================================================================
-     BORDERS — three tiers tuned for dark bg.
+     BORDERS — three tiers tuned for dark bg. The default tier sits at
+     0.10 alpha (was 0.07): hairlines need to be felt as edges, not as
+     suggestions. The hover/strong tiers stay where they were so the
+     escalation between rest/hover/active still reads.
      ====================================================================== */
-  --border: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(255, 255, 255, 0.16);
-  --border-strong: rgba(255, 255, 255, 0.22);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(255, 255, 255, 0.24);
   --border-brand: rgba(var(--chrome-accent-rgb), 0.34);
 
   /* ======================================================================
