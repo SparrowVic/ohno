@@ -1,0 +1,103 @@
+// ============================================================================
+// CHROME PILL — read-only chip used in app chrome (topbar status, view
+// switcher, run-state counter, "live" indicator). Three variants ride
+// the same skeleton: a default glass pill, a "strong" mono+numeric
+// variant for tabular data (Step 11/11, dataset size), and a "live"
+// accent variant for the green pulsing-dot signal.
+//
+// Distinct from `controls/_control-chrome.scss::glass-pill` which is
+// for interactive form-field chrome — this partial is for chrome that
+// only displays state.
+//
+// Usage:
+//   @use '<...>/shared/styles/chrome-pill' as pill;
+//   .topbar__pill {
+//     @include pill.base;
+//     &:hover { @include pill.base-hover; }
+//     &--strong { @include pill.strong; }
+//     &--live   { @include pill.live; }
+//   }
+// ============================================================================
+
+@mixin base($radius: 999px) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: $radius;
+  border: 0.5px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+    rgba(14, 17, 24, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    var(--elevation-1);
+  backdrop-filter: blur(12px) saturate(116%);
+  -webkit-backdrop-filter: blur(12px) saturate(116%);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  transition:
+    border-color var(--duration-base) var(--ease-soft),
+    background var(--duration-base) var(--ease-soft),
+    color var(--duration-base) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart);
+}
+
+@mixin base-hover {
+  border-color: rgba(var(--chrome-accent-rgb), 0.32);
+  color: var(--text-primary);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--chrome-accent-rgb), 0.14),
+      rgba(var(--chrome-accent-alt-rgb), 0.08)
+    ),
+    rgba(16, 20, 28, 0.64);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    var(--elevation-1),
+    0 0 16px rgba(var(--chrome-accent-rgb), 0.1);
+}
+
+// Strong variant — used for tabular numeric chrome (step counters,
+// dataset sizes). Mono font, cyan accent halo so numbers read at a
+// glance even out of the corner of the eye.
+@mixin strong {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  gap: 8px;
+  border-color: rgba(var(--chrome-accent-alt-rgb), 0.22);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--chrome-accent-alt-rgb), 0.1),
+      rgba(var(--chrome-accent-rgb), 0.06)
+    ),
+    rgba(14, 17, 24, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    var(--elevation-1),
+    0 0 14px rgba(var(--chrome-accent-alt-rgb), 0.12);
+}
+
+// Live variant — green accent + pulsing dot (set by the consumer as
+// a separate child element). Used for "live signal" indicators.
+@mixin live {
+  color: var(--accent-strong);
+  border-color: rgba(var(--accent-rgb), 0.38);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--accent-rgb), 0.16),
+      rgba(var(--chrome-accent-alt-rgb), 0.08)
+    ),
+    rgba(16, 22, 20, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    var(--elevation-1),
+    0 0 22px rgba(var(--accent-rgb), 0.22);
+}
