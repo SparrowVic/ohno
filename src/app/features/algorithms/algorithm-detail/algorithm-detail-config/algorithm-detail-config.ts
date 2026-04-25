@@ -2665,7 +2665,7 @@ const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,

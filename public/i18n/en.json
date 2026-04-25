@@ -1809,6 +1809,9 @@
           "pollardsRho": {
             "modeLabel": "Pollard ρ (registers)"
           },
+          "reservoirSampling": {
+            "modeLabel": "Reservoir Sampling (registers)"
+          },
           "gcd": {
             "decisions": {
               "done": "b = 0 — a holds the gcd.",

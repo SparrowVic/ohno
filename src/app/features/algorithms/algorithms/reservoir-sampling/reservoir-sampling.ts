@@ -1,16 +1,24 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import {
+  NumberLabHistoryEntry,
+  NumberLabRegister,
+  NumberLabTone,
+  NumberLabTraceState,
+} from '../../models/number-lab';
+import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import type { ReservoirSamplingScenario } from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
-import { createScratchpadLabStep } from '../scratchpad-lab-step';
+import { createNumberLabStep } from '../number-lab-step';
+import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.modeLabel'),
+  numberLabModeLabel: t('features.algorithms.runtime.numberLab.reservoirSampling.modeLabel'),
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -28,6 +36,43 @@ type LineBuilder = {
   readonly annotation: ScratchpadLine['annotation'];
 };
 
+interface LiveState {
+  /** Current stream index (1-based, matching the chalkboard's `i = N`
+   *  notation). Null until the run loop starts. */
+  i: number | null;
+  /** Most recent random draw / index decision (the `j` term in
+   *  fixed-k-updates, or the `random[i]` value in k-one). */
+  draw: number | null;
+  /** Decision verdict from the most recent stream tick — readable
+   *  one-word string ("zastąp", "pomiń", "start", "dodaj", "ignoruj"). */
+  decision: string | null;
+  /** Reservoir snapshot at the latest emission. */
+  reservoir: readonly string[];
+  /** Final reservoir once the result section is reached. */
+  resultReservoir: string | null;
+  /** Counter of items that pass the predicate (predicate flow). */
+  realCounter: number | null;
+  /** History tape — one entry per processed stream item. */
+  history: { id: string; label: string; value: string }[];
+}
+
+function decisionGloss(decision: string | null): string | null {
+  switch (decision) {
+    case 'start':
+      return 'start';
+    case 'replace':
+      return 'zastąp';
+    case 'skip':
+      return 'pomiń';
+    case 'add':
+      return 'dodaj';
+    case 'ignore':
+      return 'ignoruj';
+    default:
+      return null;
+  }
+}
+
 export function* reservoirSamplingGenerator(
   scenario: ReservoirSamplingScenario,
 ): Generator<SortStep> {
@@ -35,6 +80,15 @@ export function* reservoirSamplingGenerator(
   const values = scenario.values;
   const lineBuilders: LineBuilder[] = [];
   let stepIndex = 0;
+  const live: LiveState = {
+    i: null,
+    draw: null,
+    decision: null,
+    reservoir: [],
+    resultReservoir: null,
+    realCounter: null,
+    history: [],
+  };
 
   function snapshot(opts: {
     readonly phase: ScratchpadLabTraceState['phaseLabel'];
@@ -83,13 +137,153 @@ export function* reservoirSamplingGenerator(
       readonly tone: ScratchpadLabTraceState['tone'];
     },
   ): SortStep {
+    syncLiveFromBuilder(builder);
     lineBuilders.push(builder);
     stepIndex += 1;
-    return createScratchpadLabStep({
-      activeCodeLine: opts.activeCodeLine,
-      description: builder.content,
-      state: snapshot({ ...opts, currentLineId: builder.id }),
-    });
+    return withScratchpad(
+      createNumberLabStep({
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: numberLabState(builder),
+      }),
+      snapshot({ ...opts, currentLineId: builder.id }),
+    );
+  }
+
+  /** Lift register-relevant facts out of the chalkboard line we're
+   *  about to emit. The reservoir-sampling generator emits one line
+   *  per stream tick with predictable id prefixes (run-N, run-N-...);
+   *  parsing the math content gives us i, the draw, the decision,
+   *  and the running reservoir snapshot. */
+  function syncLiveFromBuilder(builder: LineBuilder): void {
+    const id = builder.id;
+    const text = typeof builder.content === 'string' ? builder.content : '';
+
+    const iMatch = text.match(/i = (\d+)/);
+    if (iMatch) live.i = Number(iMatch[1]);
+
+    const indexMatch = text.match(/indeks = (\d+)/);
+    if (indexMatch) live.i = Number(indexMatch[1]);
+
+    const realMatch = text.match(/r = (\d+)/);
+    if (realMatch) live.realCounter = Number(realMatch[1]);
+
+    const drawMatch = text.match(/j = (-?\d+)/);
+    if (drawMatch) live.draw = Number(drawMatch[1]);
+    const randomMatch = text.match(/random\[\d+\] = ([0-9.]+)/);
+    if (randomMatch) live.draw = Number(randomMatch[1]);
+
+    if (text.includes('decyzja = start')) live.decision = 'start';
+    else if (text.includes('zastąp')) live.decision = 'replace';
+    else if (text.includes('pomiń')) live.decision = 'skip';
+    else if (text.includes('dodaj')) live.decision = 'add';
+    else if (text.includes('ignoruj')) live.decision = 'ignore';
+
+    const reservoirMatch = text.match(/reservoir = \[(.*?)\]/);
+    if (reservoirMatch) {
+      const items = reservoirMatch[1]
+        .split(',')
+        .map((piece) => piece.trim())
+        .filter((piece) => piece.length > 0);
+      live.reservoir = items;
+    }
+
+    if (id === 'result-reservoir') {
+      const captureMatch = text.match(/= \[(.*?)\]$/);
+      if (captureMatch) live.resultReservoir = `[${captureMatch[1].trim()}]`;
+    }
+
+    // Append a stream tick to the history when the line is per-item.
+    if (id.match(/^run-\d+$|^run-\d+-/) && builder.kind === 'equation') {
+      const slot = `run-${live.i ?? 'n/a'}`;
+      const exists = live.history.find((entry) => entry.id === slot);
+      const decisionLabel = decisionGloss(live.decision) ?? '…';
+      if (!exists) {
+        live.history.push({
+          id: slot,
+          label: `i=${live.i ?? '?'}`,
+          value: decisionLabel,
+        });
+      } else if (decisionLabel !== '…') {
+        exists.value = decisionLabel;
+      }
+    }
+  }
+
+  function buildRegisters(): readonly NumberLabRegister[] {
+    const registers: NumberLabRegister[] = [
+      { id: 'k', label: 'k', value: String(values.k), hint: null, tone: 'settled' },
+    ];
+    if (live.i !== null) {
+      registers.push({
+        id: 'i',
+        label: 'i',
+        value: String(live.i),
+        hint: null,
+        tone: 'active',
+      });
+    }
+    if (live.realCounter !== null) {
+      registers.push({
+        id: 'r',
+        label: 'r',
+        value: String(live.realCounter),
+        hint: null,
+        tone: 'active',
+      });
+    }
+    if (live.draw !== null) {
+      registers.push({
+        id: 'j',
+        label: 'j',
+        value: String(live.draw),
+        hint: null,
+        tone: 'default',
+      });
+    }
+    if (live.decision !== null) {
+      registers.push({
+        id: 'decision',
+        label: 'decyzja',
+        value: decisionGloss(live.decision) ?? live.decision,
+        hint: null,
+        tone: 'active',
+      });
+    }
+    if (live.reservoir.length > 0) {
+      registers.push({
+        id: 'reservoir',
+        label: 'R',
+        value: `[${live.reservoir.join(', ')}]`,
+        hint: null,
+        tone: 'settled',
+      });
+    }
+    return registers;
+  }
+
+  function buildHistory(): readonly NumberLabHistoryEntry[] {
+    return live.history.map((entry, index) => ({
+      id: entry.id,
+      label: entry.label,
+      value: entry.value,
+      isCurrent: index === live.history.length - 1,
+    }));
+  }
+
+  function numberLabState(builder: LineBuilder): NumberLabTraceState {
+    return {
+      modeLabel: I18N.numberLabModeLabel,
+      phaseLabel: phaseFor(builder),
+      decisionLabel: decisionFor(builder),
+      tone: numberLabToneFor(builder),
+      registers: buildRegisters(),
+      history: buildHistory(),
+      formula: null,
+      presetLabel,
+      resultLabel: live.resultReservoir,
+      iteration: stepIndex,
+    };
   }
 
   function paperLine(opts: {
@@ -447,6 +641,13 @@ function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
   if (builder.kind === 'result') return 'complete';
   if (builder.kind === 'note') return 'setup';
   return 'compute';
+}
+
+function numberLabToneFor(builder: LineBuilder): NumberLabTone {
+  if (builder.kind === 'result') return 'complete';
+  if (builder.kind === 'note') return 'idle';
+  if (builder.id.includes('section') || builder.id.includes('parameters')) return 'settle';
+  return 'update';
 }
 
 function matchesPredicate(status: string, predicate: string): boolean {
