@@ -1739,6 +1739,18 @@
             }
           }
         },
+        "matrixGrid": {
+          "gaussianElimination": {
+            "modeLabel": "Gaussian Elimination (matrix)",
+            "phases": {
+              "setup": "Augmented matrix",
+              "forward": "Forward elimination",
+              "backward": "Back-substitution",
+              "contradiction": "Contradiction",
+              "complete": "Result"
+            }
+          }
+        },
         "numberLab": {
           "factorial": {
             "decisions": {

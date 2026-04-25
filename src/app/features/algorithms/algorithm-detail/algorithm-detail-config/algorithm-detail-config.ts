@@ -1538,6 +1538,15 @@ const SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'scratchpad-lab', label: 'Chalkboard' },
 ];
 
+/** Variant pair for matrix-pivoting algorithms (Gaussian, Simplex):
+ *  the chalkboard captures the symbolic derivation while the matrix
+ *  grid renders the augmented matrix as a colour-coded cell grid so
+ *  pivots / row-operations / eliminations are visible in place. */
+const MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
+  { value: 'scratchpad-lab', label: 'Chalkboard' },
+  { value: 'matrix-grid', label: 'Matrix Grid' },
+];
+
 const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
   { value: 'pointer-lab', label: 'Pointer Lab' },
 ];
@@ -2607,7 +2616,7 @@ const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,

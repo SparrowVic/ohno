@@ -1,6 +1,12 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import {
+  MatrixGridCell,
+  MatrixGridCellState,
+  MatrixGridTone,
+  MatrixGridTraceState,
+} from '../../models/matrix-grid';
+import {
   ScratchpadLabTraceState,
   ScratchpadLine,
   ScratchpadLineState,
@@ -11,6 +17,18 @@ import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.modeLabel'),
+  matrixGridModeLabel: t(
+    'features.algorithms.runtime.matrixGrid.gaussianElimination.modeLabel',
+  ),
+  matrixGridPhases: {
+    setup: t('features.algorithms.runtime.matrixGrid.gaussianElimination.phases.setup'),
+    forward: t('features.algorithms.runtime.matrixGrid.gaussianElimination.phases.forward'),
+    backward: t('features.algorithms.runtime.matrixGrid.gaussianElimination.phases.backward'),
+    contradiction: t(
+      'features.algorithms.runtime.matrixGrid.gaussianElimination.phases.contradiction',
+    ),
+    complete: t('features.algorithms.runtime.matrixGrid.gaussianElimination.phases.complete'),
+  },
 } as const;
 
 const EPSILON = 1e-9;
@@ -97,6 +115,10 @@ export function* gaussianEliminationGenerator(
     };
   }
 
+  /** Plain-text result string we accumulate as the chalkboard reaches
+   *  the result section — used to drive the matrix-grid footer. */
+  let currentResult: string | null = null;
+
   function appendStep(
     builder: LineBuilder,
     opts: {
@@ -108,11 +130,64 @@ export function* gaussianEliminationGenerator(
   ): SortStep {
     lineBuilders.push(builder);
     stepIndex += 1;
-    return createScratchpadLabStep({
-      activeCodeLine: opts.activeCodeLine,
-      description: builder.content,
-      state: snapshot({ ...opts, currentLineId: builder.id }),
-    });
+    captureResultFromBuilder(builder);
+    return {
+      ...createScratchpadLabStep({
+        activeCodeLine: opts.activeCodeLine,
+        description: builder.content,
+        state: snapshot({ ...opts, currentLineId: builder.id }),
+      }),
+      matrixGrid: buildMatrixGridState(builder, opts),
+    };
+  }
+
+  function captureResultFromBuilder(builder: LineBuilder): void {
+    if (builder.id === 'no-solution') {
+      currentResult = 'układ sprzeczny';
+      return;
+    }
+    if (!builder.id.startsWith('result-')) return;
+    const text = typeof builder.content === 'string' ? builder.content : '';
+    const stripped = text.replace(/\[\[\/?math\]\]/g, '').trim();
+    if (!stripped) return;
+    currentResult = currentResult ? `${currentResult};  ${stripped}` : stripped;
+  }
+
+  function buildMatrixGridState(
+    builder: LineBuilder,
+    opts: {
+      readonly phase: ScratchpadLabTraceState['phaseLabel'];
+      readonly decision: ScratchpadLabTraceState['decisionLabel'];
+    },
+  ): MatrixGridTraceState {
+    const op = parseOperation(builder);
+    const cells: MatrixGridCell[] = [];
+    for (let row = 0; row < rowCount; row++) {
+      const colCount = matrix[row].length;
+      for (let col = 0; col < colCount; col++) {
+        cells.push({
+          id: `r${row}c${col}-step${stepIndex}`,
+          row,
+          col,
+          value: formatCell(matrix[row][col]),
+          state: cellStateFor(row, col, op),
+        });
+      }
+    }
+    return {
+      mode: 'gaussian-elimination',
+      modeLabel: I18N.matrixGridModeLabel,
+      phaseLabel: matrixPhaseLabel(builder),
+      decisionLabel: opts.decision,
+      tone: matrixGridTone(builder, op),
+      rows: rowCount,
+      cols: variableCount + 1,
+      dividerCol: variableCount,
+      cells,
+      operationLabel: op.label,
+      resultLabel: currentResult,
+      iteration: stepIndex,
+    };
   }
 
   function paperLine(opts: {
@@ -534,6 +609,148 @@ function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
   }
   if (builder.kind === 'note') return 'setup';
   return 'compute';
+}
+
+/* ========================================================================
+   MATRIX-GRID OP PARSING — the chalkboard generator emits stable line
+   ids (e.g. `forward-eliminate-1-2-operation` / `…-matrix`) that
+   encode the row-operation context. We pattern-match on those ids to
+   tint the corresponding cells in the grid view rather than
+   re-running the algorithm.
+   ======================================================================== */
+
+interface MatrixOp {
+  /** Pivot row index (0-based) for this operation, or null. */
+  readonly pivotRow: number | null;
+  /** Pivot column index (0-based) for this operation, or null. */
+  readonly pivotCol: number | null;
+  /** Row currently being eliminated/scaled, or null. */
+  readonly affectedRow: number | null;
+  /** Whether the matrix snapshot has just been written (true on
+   *  `…-matrix` lines, false on `…-operation` lines). */
+  readonly isCommitted: boolean;
+  /** Phase classification for the tone. */
+  readonly kind: 'idle' | 'pivot' | 'eliminate' | 'swap' | 'scale' | 'complete' | 'fail';
+  readonly label: string | null;
+}
+
+function parseOperation(builder: LineBuilder): MatrixOp {
+  const id = builder.id;
+  const text = typeof builder.content === 'string' ? builder.content : '';
+  const isCommitted = id.endsWith('-matrix');
+
+  if (id === 'matrix-initial') {
+    return base('idle');
+  }
+  if (id === 'no-solution' || id.includes('contradiction')) {
+    return base('fail');
+  }
+  if (id.startsWith('result-') || id === 'section-result') {
+    return base('complete');
+  }
+
+  const swapMatch = id.match(/^(?:forward|backward)-swap-(\d+)-(\d+)-(operation|matrix)$/);
+  if (swapMatch) {
+    return {
+      pivotRow: Number(swapMatch[1]),
+      pivotCol: null,
+      affectedRow: Number(swapMatch[2]),
+      isCommitted,
+      kind: 'swap',
+      label: text || null,
+    };
+  }
+
+  const scaleMatch = id.match(/^(?:forward|backward)-scale-(\d+)-(operation|matrix)$/);
+  if (scaleMatch) {
+    return {
+      pivotRow: Number(scaleMatch[1]),
+      pivotCol: null,
+      affectedRow: Number(scaleMatch[1]),
+      isCommitted,
+      kind: 'scale',
+      label: text || null,
+    };
+  }
+
+  const elimMatch = id.match(/^(?:forward|backward)-eliminate-(\d+)-(\d+)-(operation|matrix)$/);
+  if (elimMatch) {
+    return {
+      pivotRow: Number(elimMatch[1]),
+      pivotCol: null,
+      affectedRow: Number(elimMatch[2]),
+      isCommitted,
+      kind: 'eliminate',
+      label: text || null,
+    };
+  }
+
+  return base('idle');
+
+  function base(kind: MatrixOp['kind']): MatrixOp {
+    return {
+      pivotRow: null,
+      pivotCol: null,
+      affectedRow: null,
+      isCommitted,
+      kind,
+      label: null,
+    };
+  }
+}
+
+function cellStateFor(row: number, _col: number, op: MatrixOp): MatrixGridCellState {
+  if (op.kind === 'fail' && op.affectedRow !== null && row === op.affectedRow) {
+    return 'eliminating';
+  }
+  if (op.kind === 'pivot' || op.kind === 'scale') {
+    if (row === op.pivotRow) {
+      return op.isCommitted ? 'updated' : 'pivot-row';
+    }
+  }
+  if (op.kind === 'swap') {
+    if (row === op.pivotRow || row === op.affectedRow) {
+      return op.isCommitted ? 'updated' : 'pivot-row';
+    }
+  }
+  if (op.kind === 'eliminate') {
+    if (row === op.pivotRow) return 'pivot-row';
+    if (row === op.affectedRow) {
+      return op.isCommitted ? 'updated' : 'eliminating';
+    }
+  }
+  if (op.kind === 'complete') {
+    /* Visual settle on result step — RHS column reads brighter than
+     *  the rest. */
+    return 'idle';
+  }
+  return 'idle';
+}
+
+function matrixPhaseLabel(builder: LineBuilder): string {
+  if (builder.id.includes('contradiction') || builder.id === 'no-solution') {
+    return 'Sprzeczność';
+  }
+  if (builder.id.startsWith('result-') || builder.id === 'section-result') {
+    return 'Wynik';
+  }
+  if (builder.id.includes('forward')) return 'Eliminacja w przód';
+  if (builder.id.includes('backward')) return 'Eliminacja wstecz';
+  if (builder.id === 'matrix-initial' || builder.id.includes('augmented')) {
+    return 'Macierz rozszerzona';
+  }
+  if (builder.id.includes('check')) return 'Sprawdzenie';
+  if (builder.id.includes('free')) return 'Zmienne wolne';
+  return 'Układ równań';
+}
+
+function matrixGridTone(builder: LineBuilder, op: MatrixOp): MatrixGridTone {
+  if (op.kind === 'fail') return 'fail';
+  if (op.kind === 'complete') return 'complete';
+  if (op.kind === 'eliminate') return 'eliminate';
+  if (op.kind === 'pivot' || op.kind === 'scale' || op.kind === 'swap') return 'pivot';
+  if (builder.kind === 'result') return 'complete';
+  return 'idle';
 }
 
 function formatCell(value: number): string {
