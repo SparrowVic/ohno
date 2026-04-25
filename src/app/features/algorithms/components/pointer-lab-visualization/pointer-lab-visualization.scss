@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -86,12 +88,8 @@
 }
 
 .pointer-lab__cell-index {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.12em, $mono: true);
+
   font-variant-numeric: tabular-nums;
 }
 
@@ -300,12 +298,7 @@
 }
 
 .pointer-lab__stat-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 10px, $tracking: 0.14em, $mono: true);
 }
 
 .pointer-lab__stat-value {
@@ -343,12 +336,12 @@
 }
 
 .pointer-lab__result-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent-ink);
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.18em,
+    $mono: true,
+    $color: var(--accent-ink)
+  );
 }
 
 .pointer-lab__result--pending .pointer-lab__result-label,

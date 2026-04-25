@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -54,11 +56,8 @@
 }
 
 .ctlab__stat-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9.5px, $tracking: 0.18em);
+
 }
 
 .ctlab__stat-value {
@@ -93,12 +92,7 @@
 }
 
 .ctlab__sidecar-head {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 10px, $tracking: 0.2em, $mono: true);
 }
 
 .ctlab__board {
@@ -491,12 +485,12 @@
 }
 
 .ctlab__result-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent-ink);
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.18em,
+    $mono: true,
+    $color: var(--accent-ink)
+  );
 }
 
 .ctlab__result-value {

@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -64,12 +66,7 @@
 }
 
 .number-lab__register-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 10px, $tracking: 0.18em, $mono: true);
 }
 
 .number-lab__register-value {
@@ -185,15 +182,11 @@
 }
 
 .number-lab__history-head {
+  @include type.eyebrow($size: 9px, $tracking: 0.16em, $mono: true);
+
   display: flex;
   align-items: baseline;
   gap: 14px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
 }
 
 .number-lab__history-tape {
@@ -306,12 +299,12 @@
 }
 
 .number-lab__result-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent-ink);
+  @include type.eyebrow(
+    $size: 10px,
+    $tracking: 0.18em,
+    $mono: true,
+    $color: var(--accent-ink)
+  );
 }
 
 .number-lab__result-value {
