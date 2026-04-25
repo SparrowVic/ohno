@@ -2645,7 +2645,7 @@ const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   codeLines: [],
   codeRegions: [],
   codeVariants: {},
-  variantOptions: SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS,
+  variantOptions: MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS,
   defaultVariant: 'scratchpad-lab',
   sizeOptions: [1],
   defaultSize: 1,

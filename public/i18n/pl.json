@@ -1749,6 +1749,9 @@
               "contradiction": "Sprzeczność",
               "complete": "Wynik"
             }
+          },
+          "simplex": {
+            "modeLabel": "Simplex (tableau)"
           }
         },
         "numberLab": {
