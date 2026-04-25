@@ -1,4 +1,5 @@
 @use '../../../../shared/controls/control-chrome' as chrome;
+@use '../../../../shared/styles/eyebrow' as type;
 
 :host {
   display: block;
@@ -72,11 +73,9 @@
 }
 
 .toolbar__eyebrow {
-  font-size: 8px;
+  @include type.eyebrow($size: 8px, $tracking: 0.12em);
+
   line-height: 1.05;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
 }
 
 .toolbar__counter {

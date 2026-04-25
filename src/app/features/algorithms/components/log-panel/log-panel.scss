@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -50,6 +52,8 @@
 
 /* Sticky column header */
 .log__head {
+  @include type.eyebrow($size: 9px, $tracking: 0.14em, $mono: true);
+
   position: sticky;
   top: 0;
   z-index: 2;
@@ -63,12 +67,6 @@
   background:
     linear-gradient(180deg, rgba(var(--viz-warning-rgb), 0.09), rgba(255, 255, 255, 0.012) 80%),
     rgba(12, 15, 20, 0.92);
-  color: var(--text-tertiary);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
