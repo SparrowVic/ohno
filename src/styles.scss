@@ -46,11 +46,16 @@
 
   /* ======================================================================
      TEXT — ink ramp, slightly cooler primary for crisp feel.
+     Tuned brighter than a typical editorial dark theme: this app's
+     visualizations push a lot of secondary/tertiary chrome (eyebrows,
+     captions, log meta), and a too-quiet ramp made the whole UI feel
+     "fading". Hierarchy still holds — primary stays crisp white, the
+     gap between tiers is preserved — but the floor is lifted.
      ====================================================================== */
   --text-primary: #f5f6fb;
-  --text-secondary: #bdbecb;
-  --text-tertiary: #858793;
-  --text-quaternary: #5a5c68;
+  --text-secondary: #d6d8e3;
+  --text-tertiary: #a4a6b3;
+  --text-quaternary: #6b6e7a;
 
   /* ======================================================================
      BRAND PALETTE — lime / cyan / violet triad.

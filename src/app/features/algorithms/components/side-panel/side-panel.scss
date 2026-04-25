@@ -219,7 +219,7 @@
   justify-content: center;
   gap: 9px;
   text-align: center;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   font-family: inherit;
   z-index: 1;
   cursor: pointer;
@@ -230,7 +230,7 @@
     transform 140ms var(--ease-out-quart);
 
   &:hover {
-    color: var(--text-secondary);
+    color: var(--text-primary);
   }
 
   &:focus-visible {
