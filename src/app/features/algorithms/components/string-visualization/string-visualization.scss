@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   display: flex;
   flex: 1;
@@ -48,10 +50,7 @@
 .bwt-summary__label,
 .hash-card__label,
 .z-col__label {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.12em);
 }
 
 .cell-track,
@@ -423,10 +422,7 @@
 }
 
 .rle-output-label {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.12em);
 }
 
 .rle-chips-row {

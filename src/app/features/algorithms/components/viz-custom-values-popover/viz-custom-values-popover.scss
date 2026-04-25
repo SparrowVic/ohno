@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/eyebrow' as type;
+
 :host {
   /* Positioned by the caller (toolbar task dock) — this component
      is purely the form body; chrome comes from `app-lab-popover`. */
@@ -16,13 +18,13 @@
 }
 
 .custom-values__title {
+  @include type.eyebrow(
+    $size: 13px,
+    $tracking: 0.14em,
+    $color: rgba(var(--chrome-accent-rgb), 0.86)
+  );
+
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: rgba(var(--chrome-accent-rgb), 0.86);
-  text-transform: uppercase;
 }
 
 .custom-values__form {

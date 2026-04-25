@@ -3,6 +3,7 @@
    summation canvas styling are local; everything inside the canvas
    (polygons, vertex points) ships from the shared partial. */
 @use '../geo-canvas/geometry-viz';
+@use '../../../../shared/styles/eyebrow' as type;
 
 .mkv__stage {
   display: flex;
@@ -41,10 +42,7 @@
 }
 
 .mkv__eyebrow {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include type.eyebrow($size: 9px, $tracking: 0.12em);
 }
 
 .mkv__title {
