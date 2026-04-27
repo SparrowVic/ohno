@@ -35,27 +35,36 @@
     gap: 13px;
     min-height: 100%;
     padding: 18px 18px 16px;
-    border: 0.5px solid rgba(255, 255, 255, 0.11);
+    border: 0.5px solid rgba(255, 255, 255, 0.095);
     border-radius: 18px;
     background:
       linear-gradient(180deg,
-        rgba(255, 255, 255, 0.04),
-        rgba(255, 255, 255, 0.008) 58%
+        rgba(255, 255, 255, 0.052),
+        rgba(255, 255, 255, 0.014) 42%,
+        rgba(255, 255, 255, 0.002) 74%
+      ),
+      radial-gradient(ellipse 82% 58% at 10% -8%,
+        rgb(var(--chrome-accent-rgb) / 0.07),
+        transparent 66%
+      ),
+      radial-gradient(ellipse 70% 58% at 104% 12%,
+        rgb(var(--chrome-accent-alt-rgb) / 0.052),
+        transparent 64%
       ),
       linear-gradient(135deg,
-        rgb(var(--chrome-accent-rgb) / 0.028),
-        rgb(var(--chrome-accent-alt-rgb) / 0.022) 60%,
-        rgb(var(--accent-rgb) / 0.01) 92%
-      ),
-      rgb(var(--glass-base-rgb) / 0.52);
-    backdrop-filter: blur(11px) saturate(128%);
-    -webkit-backdrop-filter: blur(11px) saturate(128%);
+        rgb(17 23 34 / 0.76),
+        rgb(8 11 18 / 0.72) 58%,
+        rgb(4 6 11 / 0.68)
+      );
+    backdrop-filter: blur(9px) saturate(126%);
+    -webkit-backdrop-filter: blur(9px) saturate(126%);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.085),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.02),
-      inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.03),
-      inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.026),
-      0 10px 28px rgba(0, 0, 0, 0.24);
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+      inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.038),
+      inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.032),
+      inset 0 -18px 38px rgba(0, 0, 0, 0.18),
+      0 12px 34px rgba(0, 0, 0, 0.32);
     overflow: hidden;
     isolation: isolate;
     transition:
@@ -74,9 +83,9 @@
       from 215deg,
       transparent 0deg 214deg,
       rgb(var(--card-accent-rgb, 199 229 106) / 0) 232deg,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.5) 248deg,
-      rgb(var(--chrome-accent-alt-rgb) / 0.32) 260deg,
-      transparent 284deg 360deg
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.72) 248deg,
+      rgb(var(--chrome-accent-alt-rgb) / 0.46) 260deg,
+      transparent 282deg 360deg
     );
     opacity: 0;
     transform: rotate(-38deg);
@@ -101,7 +110,7 @@
     inset: 0;
     background: radial-gradient(
       ellipse 70% 40% at 50% -10%,
-      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.068),
       transparent 60%
     );
     opacity: 0;
@@ -119,23 +128,30 @@
     border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.32);
     background:
       linear-gradient(180deg,
-        rgba(255, 255, 255, 0.052),
-        rgba(255, 255, 255, 0.012) 50%,
-        transparent 90%
+        rgba(255, 255, 255, 0.066),
+        rgba(255, 255, 255, 0.016) 44%,
+        transparent 86%
+      ),
+      radial-gradient(ellipse 86% 62% at 10% -8%,
+        rgb(var(--chrome-accent-rgb) / 0.082),
+        transparent 66%
+      ),
+      radial-gradient(ellipse 74% 62% at 104% 12%,
+        rgb(var(--chrome-accent-alt-rgb) / 0.066),
+        transparent 64%
       ),
       linear-gradient(135deg,
-        rgb(var(--card-accent-rgb, 199 229 106) / 0.034),
-        rgb(var(--chrome-accent-alt-rgb) / 0.018) 60%,
-        transparent 92%
-      ),
-      rgb(var(--glass-base-rgb) / 0.58);
+        rgb(20 27 40 / 0.78),
+        rgb(8 12 19 / 0.74) 58%,
+        rgb(4 6 11 / 0.7)
+      );
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.11),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
       inset 0 0 0 1px rgba(255, 255, 255, 0.026),
-      inset 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.14),
-      inset 0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.14),
-      inset 0 0 56px rgb(var(--card-accent-rgb, 199 229 106) / 0.18),
-      0 12px 32px rgba(0, 0, 0, 0.24);
+      inset 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
+      inset 0 0 24px rgb(var(--card-accent-rgb, 199 229 106) / 0.1),
+      inset 0 0 54px rgb(var(--chrome-accent-alt-rgb) / 0.08),
+      0 14px 38px rgba(0, 0, 0, 0.34);
   }
 
   .card:hover::before {
@@ -143,7 +159,7 @@
   }
 
   .card:hover::after {
-    opacity: 0.72;
+    opacity: 0.9;
   }
 
   .card:focus-visible {
@@ -337,16 +353,25 @@
     min-height: 120px;
     padding: 14px;
     border-radius: 14px;
-    border: 0.5px solid rgb(var(--card-accent-rgb, 199 229 106) / 0.16);
+    border: 0.5px solid rgba(255, 255, 255, 0.09);
     background:
-      linear-gradient(
-        var(--card-preview-angle, 168deg),
-        rgb(var(--card-accent-rgb, 199 229 106) / 0.1),
-        rgb(var(--card-accent-rgb, 199 229 106) / 0.04) 58%,
-        rgba(255, 255, 255, 0.02)
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.008) 58%,
+        transparent 100%
       ),
-      rgba(255, 255, 255, 0.025);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      radial-gradient(ellipse 72% 68% at 50% -18%,
+        rgb(var(--chrome-accent-alt-rgb) / 0.048),
+        transparent 68%
+      ),
+      radial-gradient(ellipse 78% 82% at 100% 110%,
+        rgb(var(--card-accent-rgb, 199 229 106) / 0.032),
+        transparent 70%
+      ),
+      rgb(4 7 12 / 0.48);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.055);
     overflow: hidden;
     transition:
       border-color var(--duration-base) var(--ease-soft),
@@ -354,17 +379,19 @@
   }
 
   .card:hover .card__preview {
-    border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.38);
+    border-color: rgb(var(--card-accent-rgb, 199 229 106) / 0.34);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.07),
-      0 0 22px rgb(var(--card-accent-rgb, 199 229 106) / 0.12);
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      inset 0 0 0 1px rgb(var(--card-accent-rgb, 199 229 106) / 0.09),
+      0 0 18px rgb(var(--card-accent-rgb, 199 229 106) / 0.1);
   }
 
   .card--insane:hover .card__preview {
-    border-color: rgb(var(--card-accent-rgb, 255 122 47) / 0.5);
+    border-color: rgb(var(--card-accent-rgb, 255 122 47) / 0.46);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 0 28px rgb(var(--card-accent-rgb, 255 122 47) / 0.2);
+      inset 0 0 0 1px rgb(var(--card-accent-rgb, 255 122 47) / 0.1),
+      0 0 22px rgb(var(--card-accent-rgb, 255 122 47) / 0.16);
   }
 
   .card__preview-art {
@@ -393,7 +420,7 @@
     transform: translate(-50%, -50%);
     background: radial-gradient(
       circle,
-      rgb(var(--card-accent-rgb, 199 229 106) / 0.12),
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.06),
       transparent 72%
     );
     pointer-events: none;
@@ -414,13 +441,13 @@
         transparent 0%,
         transparent 42%,
         rgb(var(--card-accent-rgb, 199 229 106) / 0) 46%,
-        rgb(var(--card-accent-rgb, 199 229 106) / 0.32) 50%,
-        rgb(var(--chrome-accent-alt-rgb) / 0.18) 52%,
+        rgb(var(--card-accent-rgb, 199 229 106) / 0.28) 50%,
+        rgb(var(--chrome-accent-alt-rgb) / 0.2) 52%,
         transparent 58%,
         transparent 100%
       ),
-      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      linear-gradient(rgb(var(--chrome-accent-alt-rgb) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--chrome-accent-alt-rgb) / 0.035) 1px, transparent 1px);
     background-size:
       220% 100%,
       var(--card-grid-size, 20px) var(--card-grid-size, 20px),
@@ -441,13 +468,12 @@
 
   .card__preview--disabled {
     background:
-      linear-gradient(
-        var(--card-preview-angle, 168deg),
-        rgb(var(--card-accent-rgb, 199 229 106) / 0.06),
-        rgb(var(--card-accent-rgb, 199 229 106) / 0.03) 62%,
-        rgba(255, 255, 255, 0.02)
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.032),
+        rgba(255, 255, 255, 0.006) 62%,
+        transparent
       ),
-      rgba(255, 255, 255, 0.02);
+      rgb(4 7 12 / 0.42);
   }
 
   .card__preview-meta {

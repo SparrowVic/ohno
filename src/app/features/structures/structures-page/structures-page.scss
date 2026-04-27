@@ -17,23 +17,23 @@
   gap: 22px;
   padding: 32px 32px 28px;
   border-radius: var(--radius-3xl);
-  border: 0.5px solid rgba(255, 255, 255, 0.13);
+  border: 0.5px solid rgba(255, 255, 255, 0.115);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.01) 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.046), rgba(255, 255, 255, 0.008) 62%),
     linear-gradient(
       135deg,
-      rgb(var(--chrome-accent-alt-rgb) / 0.05),
-      rgb(var(--chrome-accent-rgb) / 0.036) 60%,
-      rgb(var(--accent-rgb) / 0.014) 92%
+      rgb(var(--chrome-accent-alt-rgb) / 0.04),
+      rgb(var(--chrome-accent-rgb) / 0.028) 60%,
+      rgb(var(--accent-rgb) / 0.012) 92%
     ),
-    rgb(var(--glass-base-rgb) / 0.58);
-  backdrop-filter: blur(18px) saturate(138%);
-  -webkit-backdrop-filter: blur(18px) saturate(138%);
+    rgb(var(--glass-base-rgb) / 0.5);
+  backdrop-filter: blur(16px) saturate(132%);
+  -webkit-backdrop-filter: blur(16px) saturate(132%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.024),
-    inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.052),
-    inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.105),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.044),
+    inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.038),
     0 18px 46px rgba(0, 0, 0, 0.28),
     0 0 0 1px rgb(var(--chrome-accent-alt-rgb) / 0.025);
   overflow: hidden;
@@ -44,24 +44,24 @@
 .page__controls,
 .page__empty {
   position: relative;
-  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border: 0.5px solid rgba(255, 255, 255, 0.105);
   border-radius: var(--radius-2xl);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.046), rgba(255, 255, 255, 0.008) 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.006) 62%),
     linear-gradient(
       135deg,
-      rgb(var(--chrome-accent-alt-rgb) / 0.036),
-      rgb(var(--chrome-accent-rgb) / 0.024) 60%,
-      rgb(var(--accent-rgb) / 0.01) 92%
+      rgb(var(--chrome-accent-alt-rgb) / 0.03),
+      rgb(var(--chrome-accent-rgb) / 0.02) 60%,
+      rgb(var(--accent-rgb) / 0.008) 92%
     ),
-    rgb(var(--glass-base-rgb) / 0.55);
-  backdrop-filter: blur(15px) saturate(132%);
-  -webkit-backdrop-filter: blur(15px) saturate(132%);
+    rgb(var(--glass-base-rgb) / 0.48);
+  backdrop-filter: blur(13px) saturate(128%);
+  -webkit-backdrop-filter: blur(13px) saturate(128%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.022),
-    inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.042),
-    inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.036),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+    inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.034),
+    inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.03),
     0 14px 36px rgba(0, 0, 0, 0.24);
   overflow: hidden;
   isolation: isolate;
