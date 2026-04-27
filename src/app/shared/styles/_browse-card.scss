@@ -64,9 +64,37 @@
       box-shadow var(--duration-slow) var(--ease-out-expo);
   }
 
-  /* Top-center mouse shine — the only chromatic ornament that fades in
-     on hover; signals the card is alive without competing with the
-     accent stripe. */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from 215deg,
+      transparent 0deg 214deg,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0) 232deg,
+      rgb(var(--card-accent-rgb, 199 229 106) / 0.5) 248deg,
+      rgb(var(--chrome-accent-alt-rgb) / 0.32) 260deg,
+      transparent 284deg 360deg
+    );
+    opacity: 0;
+    transform: rotate(-38deg);
+    pointer-events: none;
+    z-index: 3;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+            mask-composite: exclude;
+    transition: opacity var(--duration-base) var(--ease-soft);
+  }
+
+  /* Top-center mouse shine stays deliberately quiet; the hover signature
+     comes from the glinting border and preview scan, not a brighter body. */
   .card::after {
     content: '';
     position: absolute;
@@ -100,7 +128,7 @@
         rgb(var(--chrome-accent-alt-rgb) / 0.018) 60%,
         transparent 92%
       ),
-      rgb(var(--glass-base-rgb) / 0.64);
+      rgb(var(--glass-base-rgb) / 0.58);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.11),
       inset 0 0 0 1px rgba(255, 255, 255, 0.026),
@@ -110,8 +138,12 @@
       0 12px 32px rgba(0, 0, 0, 0.24);
   }
 
+  .card:hover::before {
+    animation: card-border-glint 940ms var(--ease-out-expo) both;
+  }
+
   .card:hover::after {
-    opacity: 1;
+    opacity: 0.72;
   }
 
   .card:focus-visible {
@@ -154,7 +186,7 @@
     );
     opacity: 0.65;
     pointer-events: none;
-    z-index: 2;
+    z-index: 4;
     transition: opacity var(--duration-base) var(--ease-soft);
   }
 
@@ -377,12 +409,34 @@
     position: absolute;
     inset: 0;
     background-image:
+      linear-gradient(
+        105deg,
+        transparent 0%,
+        transparent 42%,
+        rgb(var(--card-accent-rgb, 199 229 106) / 0) 46%,
+        rgb(var(--card-accent-rgb, 199 229 106) / 0.32) 50%,
+        rgb(var(--chrome-accent-alt-rgb) / 0.18) 52%,
+        transparent 58%,
+        transparent 100%
+      ),
       linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: var(--card-grid-size, 20px) var(--card-grid-size, 20px);
+    background-size:
+      220% 100%,
+      var(--card-grid-size, 20px) var(--card-grid-size, 20px),
+      var(--card-grid-size, 20px) var(--card-grid-size, 20px);
+    background-position:
+      140% 0,
+      0 0,
+      0 0;
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 100%);
+    opacity: 0.78;
     pointer-events: none;
+  }
+
+  .card:hover .card__preview::after {
+    animation: card-preview-scan 860ms var(--ease-out-expo) both;
   }
 
   .card__preview--disabled {
@@ -479,9 +533,11 @@
 
   @media (prefers-reduced-motion: reduce) {
     .card,
+    .card::before,
     .card::after,
     .card__preview-art,
     .card__preview::before,
+    .card__preview::after,
     .card__cta,
     .card__cta::after,
     .card__name,
@@ -494,5 +550,37 @@
     .card:hover .card__preview-art {
       transform: none;
     }
+  }
+}
+
+@keyframes card-border-glint {
+  0% {
+    opacity: 0;
+    transform: rotate(-58deg);
+  }
+
+  28% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0.28;
+    transform: rotate(28deg);
+  }
+}
+
+@keyframes card-preview-scan {
+  0% {
+    background-position:
+      -140% 0,
+      0 0,
+      0 0;
+  }
+
+  100% {
+    background-position:
+      140% 0,
+      0 0,
+      0 0;
   }
 }

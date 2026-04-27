@@ -19,18 +19,26 @@
   pointer-events: none;
 }
 
-/* Halo + core layer trick: each path renders the same leaf with its own
-   blur radius. The halo spreads light wide and dim; the core keeps a
-   slightly sharper centre. Stacked, they read as a soft luminous body
-   rather than a clipped ribbon. overflow: visible on .stream lets the
-   halo expand past the SVG viewBox without being clipped. */
+/* Halo + core + head: the path forms a tapered cable impulse, while
+   the small head reads as the leading charge. The halo is intentionally
+   tighter now so the stream stays on the grid line instead of becoming
+   an atmospheric ribbon. */
 .stream .halo {
-  filter: blur(3.5px);
-  opacity: 0.66;
+  filter: blur(2.8px);
+  opacity: 0.54;
 }
 
 .stream .core {
-  filter: blur(0.85px);
+  filter: blur(0.55px);
+}
+
+.stream .head {
+  fill: var(--stream-color);
+  filter:
+    blur(0.35px)
+    drop-shadow(0 0 5px var(--stream-color))
+    drop-shadow(0 0 10px var(--stream-color));
+  opacity: 0.72;
 }
 
 .stream.h {
@@ -54,10 +62,18 @@
 /* Stop colours come from the brand triad — bind via class so the SCSS
    stays the single source of truth and the component never duplicates
    raw RGB values. */
+.stream.cyan {
+  --stream-color: rgb(var(--chrome-accent-alt-rgb));
+}
+
 .stream.cyan .stop-peak,
 .stream.cyan .stop-mid,
 .stream.cyan .stop-edge {
   stop-color: rgb(var(--chrome-accent-alt-rgb));
+}
+
+.stream.violet {
+  --stream-color: rgb(var(--chrome-accent-rgb));
 }
 
 .stream.violet .stop-peak,
@@ -66,10 +82,18 @@
   stop-color: rgb(var(--chrome-accent-rgb));
 }
 
+.stream.lime {
+  --stream-color: rgb(var(--accent-rgb));
+}
+
 .stream.lime .stop-peak,
 .stream.lime .stop-mid,
 .stream.lime .stop-edge {
   stop-color: rgb(var(--accent-rgb));
+}
+
+.stream.pink {
+  --stream-color: rgb(var(--chrome-accent-warm-rgb));
 }
 
 .stream.pink .stop-peak,
