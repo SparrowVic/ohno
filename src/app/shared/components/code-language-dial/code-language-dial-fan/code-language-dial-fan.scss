@@ -1,0 +1,247 @@
+:host {
+  display: contents;
+}
+
+.code-language-dial-fan {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2147483000;
+  --trigger-w: 32px;
+  --trigger-h: 32px;
+  --trigger-cx: calc(var(--trigger-w, 32px) / 2);
+  --trigger-cy: calc(var(--trigger-h, 32px) / 2);
+}
+
+.code-language-dial-fan__backdrop,
+.code-language-dial-fan__halo,
+.code-language-dial-fan__burst,
+.code-language-dial-fan__center-logo {
+  position: absolute;
+  top: var(--trigger-cy);
+  left: var(--trigger-cx);
+  pointer-events: none;
+}
+
+.code-language-dial-fan__backdrop {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(18, 22, 32, 0.22),
+    rgba(18, 22, 32, 0.09) 34%,
+    rgba(18, 22, 32, 0.03) 60%,
+    transparent 78%
+  );
+  backdrop-filter: blur(6px) saturate(108%);
+  -webkit-backdrop-filter: blur(6px) saturate(108%);
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.34),
+    rgba(0, 0, 0, 0.52) 9%,
+    rgba(0, 0, 0, 0.84) 20%,
+    rgba(0, 0, 0, 0.72) 38%,
+    rgba(0, 0, 0, 0.46) 56%,
+    rgba(0, 0, 0, 0.22) 74%,
+    rgba(0, 0, 0, 0.08) 90%,
+    transparent
+  );
+  -webkit-mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.34),
+    rgba(0, 0, 0, 0.52) 9%,
+    rgba(0, 0, 0, 0.84) 20%,
+    rgba(0, 0, 0, 0.72) 38%,
+    rgba(0, 0, 0, 0.46) 56%,
+    rgba(0, 0, 0, 0.22) 74%,
+    rgba(0, 0, 0, 0.08) 90%,
+    transparent
+  );
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.66);
+  transition:
+    opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-language-dial-fan--open .code-language-dial-fan__backdrop {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.code-language-dial-fan__halo {
+  width: 210px;
+  height: 210px;
+  border: 1px dashed rgba(var(--chrome-accent-rgb, 154 140 255), 0.28);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--chrome-accent-rgb, 154 140 255), 0.1),
+    transparent 62%
+  );
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  transition:
+    opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-language-dial-fan--open .code-language-dial-fan__halo {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  animation: code-language-dial-fan-halo-spin 14s linear infinite;
+}
+
+.code-language-dial-fan__center-logo {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--dial-accent, #9a8cff) 42%, #ffffff);
+  font-size: 44px;
+  line-height: 1;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.18);
+  filter: blur(4px)
+    drop-shadow(0 0 16px color-mix(in srgb, var(--dial-accent, #9a8cff) 48%, transparent));
+  z-index: 1;
+  transition:
+    opacity 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-language-dial-fan__center-logo fa-icon {
+  display: inline-grid;
+  place-items: center;
+  font-size: inherit;
+}
+
+.code-language-dial-fan__center-logo-text {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: 800;
+  color: inherit;
+}
+
+.code-language-dial-fan--open .code-language-dial-fan__center-logo {
+  animation: code-language-dial-fan-center-emerge 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.code-language-dial-fan--pulse .code-language-dial-fan__center-logo {
+  animation: code-language-dial-fan-center-pop 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.code-language-dial-fan__burst {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid color-mix(in srgb, var(--chrome-accent, #9a8cff) 70%, #ffffff);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--chrome-accent-alt-rgb, 76 227 255), 0.22),
+    rgba(var(--chrome-accent-rgb, 154 140 255), 0.12) 45%,
+    transparent 80%
+  );
+  opacity: 0;
+  filter: blur(0.4px);
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.code-language-dial-fan--open .code-language-dial-fan__burst {
+  animation: code-language-dial-fan-burst 640ms cubic-bezier(0.18, 0.82, 0.28, 1) forwards;
+}
+
+@keyframes code-language-dial-fan-halo-spin {
+  from { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  to { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
+}
+
+@keyframes code-language-dial-fan-center-emerge {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.18);
+    filter: blur(5px)
+      drop-shadow(0 0 12px color-mix(in srgb, var(--dial-accent, #9a8cff) 32%, transparent));
+  }
+
+  32% {
+    opacity: 1;
+    filter: blur(1px)
+      drop-shadow(0 0 22px color-mix(in srgb, var(--dial-accent, #9a8cff) 72%, transparent));
+  }
+
+  62% {
+    transform: translate(-50%, -50%) scale(1.16);
+  }
+
+  100% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0)
+      drop-shadow(0 0 20px color-mix(in srgb, var(--dial-accent, #9a8cff) 58%, transparent));
+  }
+}
+
+@keyframes code-language-dial-fan-center-pop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0)
+      drop-shadow(0 0 22px color-mix(in srgb, var(--dial-accent, #9a8cff) 72%, transparent));
+  }
+
+  36% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.48);
+    filter: blur(0)
+      drop-shadow(0 0 32px color-mix(in srgb, var(--dial-accent, #9a8cff) 94%, transparent));
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.18);
+    filter: blur(6px)
+      drop-shadow(0 0 10px color-mix(in srgb, var(--dial-accent, #9a8cff) 30%, transparent));
+  }
+}
+
+@keyframes code-language-dial-fan-burst {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; border-width: 2px; }
+  14% { opacity: 0.95; }
+  40% { opacity: 0.6; border-width: 1.2px; }
+  100% { transform: translate(-50%, -50%) scale(6.2); opacity: 0; border-width: 0.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-language-dial-fan__backdrop,
+  .code-language-dial-fan__halo,
+  .code-language-dial-fan__burst,
+  .code-language-dial-fan__center-logo {
+    animation: none !important;
+    transition: opacity 120ms linear !important;
+  }
+
+  .code-language-dial-fan--open .code-language-dial-fan__center-logo {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1);
+    filter: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .code-language-dial-fan__backdrop {
+    width: 270px;
+    height: 270px;
+  }
+
+  .code-language-dial-fan__halo {
+    width: 180px;
+    height: 180px;
+  }
+}

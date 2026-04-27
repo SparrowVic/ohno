@@ -13,8 +13,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import {
   faGolang,
@@ -28,42 +26,19 @@ import {
 
 import { I18N_KEY } from '../../../core/i18n/i18n-keys';
 import { CodeLanguage } from '../../../features/algorithms/models/detail';
-
-type CodeLanguageDialId = CodeLanguage | 'javascript' | 'go' | 'rust' | 'swift' | 'php' | 'kotlin';
-
-export interface CodeLanguageDialOption {
-  readonly id: CodeLanguageDialId;
-  readonly language?: CodeLanguage;
-  readonly label: string;
-  readonly disabled?: boolean;
-  readonly hint?: string;
-}
-
-interface CodeLanguageDialItem extends CodeLanguageDialOption {
-  readonly shortLabel: string;
-  readonly accent: string;
-  readonly icon?: IconDefinition;
-  readonly x: number;
-  readonly y: number;
-  readonly launchSpinDeg: number;
-  readonly delayMs: number;
-}
-
-interface TriggerRect {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-}
-
-const LANGUAGE_DIAL_META: Record<
+import { CodeLanguageDialFan } from './code-language-dial-fan/code-language-dial-fan';
+import { CodeLanguageDialTrigger } from './code-language-dial-trigger/code-language-dial-trigger';
+import type {
   CodeLanguageDialId,
-  {
-    readonly shortLabel: string;
-    readonly accent: string;
-    readonly icon?: IconDefinition;
-  }
-> = {
+  CodeLanguageDialItem,
+  CodeLanguageDialMeta,
+  CodeLanguageDialOption,
+  TriggerRect,
+} from './code-language-dial.types';
+
+export type { CodeLanguageDialOption } from './code-language-dial.types';
+
+const LANGUAGE_DIAL_META: Record<CodeLanguageDialId, CodeLanguageDialMeta> = {
   typescript: { shortLabel: 'TS', accent: '#54b7ff' },
   python: { shortLabel: 'Py', accent: '#8adf84', icon: faPython },
   csharp: { shortLabel: 'C#', accent: '#bd9cff' },
@@ -78,22 +53,16 @@ const LANGUAGE_DIAL_META: Record<
   kotlin: { shortLabel: 'Kt', accent: '#ff8ec8' },
 };
 
-// Fan dimensions (kept in sync with CSS). The items orbit these virtual
-// trigger dimensions — when the real trigger shrinks at small widths the
-// SCSS falls back to the same defaults so the math stays predictable.
 const TRIGGER_VIRTUAL_WIDTH = 32;
 const TRIGGER_VIRTUAL_HEIGHT = 32;
 const ITEM_SIZE = 44;
 const DIAL_RADIUS = 96;
-// Dealer-throw cadence: first card flicks out almost immediately, each
-// subsequent one ~34ms behind. Tight enough to feel like one continuous
-// motion, loose enough that the eye can track individual cards.
 const STAGGER_BASE_MS = 4;
 const STAGGER_STEP_MS = 34;
 
 @Component({
   selector: 'app-code-language-dial',
-  imports: [FaIconComponent, TranslocoPipe],
+  imports: [CodeLanguageDialFan, CodeLanguageDialTrigger, TranslocoPipe],
   templateUrl: './code-language-dial.html',
   styleUrl: './code-language-dial.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -101,8 +70,8 @@ const STAGGER_STEP_MS = 34;
 export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zone = inject(NgZone);
-  private readonly triggerRef = viewChild<ElementRef<HTMLButtonElement>>('triggerBtn');
-  private readonly fanRef = viewChild<ElementRef<HTMLDivElement>>('fan');
+  private readonly triggerComponent = viewChild(CodeLanguageDialTrigger);
+  private readonly fanComponent = viewChild(CodeLanguageDialFan);
   private fanEl: HTMLDivElement | null = null;
   private pulseResetTimer: ReturnType<typeof setTimeout> | null = null;
   private listenersAttached = false;
@@ -123,12 +92,14 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
     width: TRIGGER_VIRTUAL_WIDTH,
     height: TRIGGER_VIRTUAL_HEIGHT,
   });
+
   protected readonly activeOption = computed<CodeLanguageDialItem>(() => {
     const option =
       this.options().find((candidate) => candidate.language === this.value()) ?? this.options()[0]!;
 
     return this.toDialItem(option, 0, 0, 0, 0);
   });
+
   protected readonly radialItems = computed<readonly CodeLanguageDialItem[]>(() => {
     const selected = this.value();
     const enabled = this.options().filter(
@@ -150,10 +121,6 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
       const angle = startAngle + index * angleStep;
       const x = centerX + Math.cos(angle) * DIAL_RADIUS;
       const y = centerY + Math.sin(angle) * DIAL_RADIUS;
-
-      // Card-throw spin: each card rotates out of the trigger along the
-      // tangent of its orbit, tumbles once, then lands flat at its slot.
-      // Angle-specific spin varies the feel slightly for each position.
       const spinDeg = -180 + Math.sin(angle) * 60;
 
       return this.toDialItem(option, x, y, spinDeg, STAGGER_BASE_MS + index * STAGGER_STEP_MS);
@@ -161,14 +128,13 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   });
 
   ngAfterViewInit(): void {
-    // Portal the fan to <body>. Any ancestor with backdrop-filter/transform/
-    // filter/will-change creates a containing block that re-scopes our
-    // position:fixed fan — causing it to be clipped by parent overflow.
-    // Living at body level guarantees the fan positions against the real
-    // viewport and its z-index beats every in-flow stacking context.
-    const fanEl = this.fanRef()?.nativeElement;
-    if (fanEl && fanEl.parentElement !== document.body) {
-      this.fanEl = fanEl;
+    const fanEl = this.fanComponent()?.element();
+    if (!fanEl) {
+      return;
+    }
+
+    this.fanEl = fanEl;
+    if (fanEl.parentElement !== document.body) {
       document.body.appendChild(fanEl);
     }
   }
@@ -231,8 +197,6 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
     this.fanEl = null;
   }
 
-  // ---- private ------------------------------------------------------------
-
   private toDialItem(
     option: CodeLanguageDialOption,
     x: number,
@@ -262,15 +226,9 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   }
 
   private measureTrigger(): void {
-    const el = this.triggerRef()?.nativeElement;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    this.triggerRect.set({
-      x: rect.left,
-      y: rect.top,
-      width: rect.width,
-      height: rect.height,
-    });
+    const rect = this.triggerComponent()?.measure();
+    if (!rect) return;
+    this.triggerRect.set(rect);
   }
 
   private scheduleMeasure(): void {
@@ -285,8 +243,6 @@ export class CodeLanguageDial implements AfterViewInit, OnDestroy {
   private attachListeners(): void {
     if (this.listenersAttached) return;
     this.zone.runOutsideAngular(() => {
-      // Capture-phase scroll catches any ancestor scroller (side-panel,
-      // viewport, resizable handles).
       document.addEventListener('scroll', this.repositionHandler, {
         capture: true,
         passive: true,

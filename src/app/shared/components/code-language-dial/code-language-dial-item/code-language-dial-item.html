@@ -1,0 +1,31 @@
+<button
+  type="button"
+  class="code-language-dial-item"
+  [class.code-language-dial-item--open]="open()"
+  [class.code-language-dial-item--disabled]="item().disabled"
+  [style.--dial-x.px]="item().x"
+  [style.--dial-y.px]="item().y"
+  [style.--dial-spin]="item().launchSpinDeg + 'deg'"
+  [style.--dial-accent]="item().accent"
+  [style.--dial-delay]="item().delayMs + 'ms'"
+  [attr.aria-label]="
+    item().disabled
+      ? (I18N_KEY.shared.codeLanguageDial.languageComingSoon
+        | transloco: { language: item().label })
+      : (I18N_KEY.shared.codeLanguageDial.switchToLanguage
+        | transloco: { language: item().label })
+  "
+  [title]="
+    item().disabled
+      ? item().label + ' · ' + (I18N_KEY.shared.codeLanguageDial.comingSoon | transloco)
+      : item().label
+  "
+  [disabled]="item().disabled"
+  (click)="select()"
+>
+  @if (item().icon) {
+    <fa-icon [icon]="item().icon" />
+  } @else {
+    <span>{{ item().shortLabel }}</span>
+  }
+</button>

@@ -1,0 +1,34 @@
+<div
+  #fan
+  class="code-language-dial-fan"
+  [class.code-language-dial-fan--open]="open()"
+  [class.code-language-dial-fan--pulse]="pulse()"
+  [style.top.px]="rect().y"
+  [style.left.px]="rect().x"
+  [style.--trigger-w.px]="rect().width"
+  [style.--trigger-h.px]="rect().height"
+  [style.--dial-accent]="activeOption().accent"
+  [attr.aria-hidden]="!open()"
+>
+  <span class="code-language-dial-fan__backdrop" aria-hidden="true"></span>
+  <span class="code-language-dial-fan__halo" aria-hidden="true"></span>
+  <span class="code-language-dial-fan__burst" aria-hidden="true"></span>
+
+  <span class="code-language-dial-fan__center-logo" aria-hidden="true">
+    @if (activeOption().icon) {
+      <fa-icon [icon]="activeOption().icon" />
+    } @else {
+      <span class="code-language-dial-fan__center-logo-text">
+        {{ activeOption().shortLabel }}
+      </span>
+    }
+  </span>
+
+  @for (item of items(); track item.id) {
+    <app-code-language-dial-item
+      [item]="item"
+      [open]="open()"
+      (selected)="selected.emit($event)"
+    />
+  }
+</div>
