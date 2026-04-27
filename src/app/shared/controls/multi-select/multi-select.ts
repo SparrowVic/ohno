@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
+  DestroyRef,
   computed,
   effect,
   forwardRef,
@@ -13,6 +12,8 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
+import { PopoverCoordinator } from '../../components/popover/popover-coordinator';
+import { Popover } from '../../components/popover/popover';
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
 export interface MultiSelectOption<T extends string | number> {
@@ -31,7 +32,7 @@ export interface MultiSelectGroup<T extends string | number> {
 
 @Component({
   selector: 'app-multi-select',
-  imports: [],
+  imports: [Popover],
   templateUrl: './multi-select.html',
   styleUrl: './multi-select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,10 +73,12 @@ export class MultiSelect<
   readonly allOptions = computed(() => this.groups().flatMap((group) => group.options));
   readonly selectedSet = computed(() => new Set(this.selectedValues()));
 
-  private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly popoverRegistration = inject(PopoverCoordinator).register(() => this.close());
 
   constructor() {
     super();
+    this.destroyRef.onDestroy(() => this.popoverRegistration.unregister());
 
     effect(
       () => {
@@ -104,12 +107,18 @@ export class MultiSelect<
     return next;
   }
 
-  toggleOpen(): void {
+  toggleOpen(event?: Event): void {
+    event?.stopPropagation();
     if (this.disabled()) {
       return;
     }
 
-    this.open.update((open) => !open);
+    if (this.open()) {
+      this.close();
+    } else {
+      this.openPopover();
+    }
+
     this.markAsTouched();
   }
 
@@ -150,6 +159,14 @@ export class MultiSelect<
     this.markAsTouched();
   }
 
+  onTriggerFocus(): void {
+    if (this.disabled()) {
+      return;
+    }
+
+    this.popoverRegistration.activate();
+  }
+
   onTriggerKeydown(event: KeyboardEvent): void {
     if (this.disabled()) {
       return;
@@ -163,7 +180,7 @@ export class MultiSelect<
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      this.open.set(true);
+      this.openPopover();
       this.markAsTouched();
     }
 
@@ -176,20 +193,8 @@ export class MultiSelect<
     return this.selectedSet().has(value);
   }
 
-  @HostListener('document:pointerdown', ['$event'])
-  onDocumentPointerDown(event: PointerEvent): void {
-    if (!this.open()) {
-      return;
-    }
-
-    const host = this.hostRef.nativeElement;
-    if (!host.contains(event.target as Node)) {
-      this.open.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscapeKey(): void {
-    this.open.set(false);
+  private openPopover(): void {
+    this.popoverRegistration.activate();
+    this.open.set(true);
   }
 }

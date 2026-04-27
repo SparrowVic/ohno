@@ -17,7 +17,7 @@ import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
-import { LabPopover } from '../../../../shared/components/lab-popover/lab-popover';
+import { Popover } from '../../../../shared/components/popover/popover';
 import { NumberInput } from '../../../../shared/controls/number-input/number-input';
 import { TextInput } from '../../../../shared/controls/text-input/text-input';
 import {
@@ -32,7 +32,7 @@ type ControlValue = number | string | null;
 
 /**
  * Form body of the customize-values popover. Chrome + close handling
- * come from `LabPopover`; individual fields use `NumberInput` for
+ * come from `Popover`; individual fields use `NumberInput` for
  * numerics (shared chrome with the rest of the toolbar) and a plain
  * `<input type="text">` for strings (CSV witnesses, CRT congruence
  * systems, etc.) styled to match.
@@ -42,14 +42,7 @@ type ControlValue = number | string | null;
  */
 @Component({
   selector: 'app-viz-custom-values-popover',
-  imports: [
-    I18nTextPipe,
-    NumberInput,
-    LabPopover,
-    TextInput,
-    ReactiveFormsModule,
-    TranslocoPipe,
-  ],
+  imports: [I18nTextPipe, NumberInput, Popover, TextInput, ReactiveFormsModule, TranslocoPipe],
   templateUrl: './viz-custom-values-popover.html',
   styleUrl: './viz-custom-values-popover.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,10 +75,9 @@ export class VizCustomValuesPopover {
     const seed = this.initialValues();
     const controls: Record<string, FormControl<ControlValue>> = {};
     for (const [key, field] of Object.entries(schema)) {
-      controls[key] = new FormControl<ControlValue>(
-        seedFor(field, seed[key]),
-        { nonNullable: false },
-      );
+      controls[key] = new FormControl<ControlValue>(seedFor(field, seed[key]), {
+        nonNullable: false,
+      });
     }
     const group = new FormGroup(controls);
     // Subscribe to every subsequent value change and bump the tick
@@ -247,10 +239,7 @@ function validateFloat(field: TaskFloatField, value: number | null): Translatabl
   return null;
 }
 
-function validateString(
-  field: TaskStringField,
-  value: string,
-): TranslatableText | null {
+function validateString(field: TaskStringField, value: string): TranslatableText | null {
   const trimmed = value.trim();
   if (field.minLength !== undefined && trimmed.length < field.minLength) {
     return I18N_KEY.features.algorithms.toolbar.customizeValues.belowMinimumLabel;

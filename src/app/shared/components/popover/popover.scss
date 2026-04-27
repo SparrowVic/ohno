@@ -1,0 +1,138 @@
+@use '../../controls/control-chrome' as chrome;
+
+:host {
+  display: block;
+  isolation: isolate;
+}
+
+.popover {
+  @include chrome.floating-panel(14px);
+
+  position: relative;
+  width: var(--popover-width, auto);
+  min-width: var(--popover-min-width, 240px);
+  max-width: var(--popover-max-width, 420px);
+  padding: var(--popover-padding, 14px 16px 12px);
+  border-radius: var(--popover-radius, 14px);
+  overflow: hidden;
+  transform-origin: var(--popover-origin, top center);
+  animation: popover-panel-enter 420ms var(--ease-out-expo) both;
+  will-change: transform, opacity, filter, clip-path;
+}
+
+.popover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  z-index: 2;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--chrome-accent-rgb), 0.8),
+    rgba(var(--chrome-accent-alt-rgb), 0.56),
+    transparent
+  );
+  opacity: 0;
+  transform: scaleX(0.18);
+  filter: blur(0.2px);
+  pointer-events: none;
+  animation: popover-accent-enter 520ms 90ms var(--ease-out-expo) both;
+}
+
+.popover__underlay {
+  @include chrome.floating-panel-underlay;
+
+  animation: popover-underlay-enter 620ms var(--ease-out-expo) both;
+}
+
+.popover__body {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--popover-body-gap, 10px);
+  animation: popover-body-enter 340ms 60ms var(--ease-out-quart) both;
+  will-change: transform, opacity;
+}
+
+@keyframes popover-panel-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0) scale(0.955);
+    filter: blur(9px) saturate(0.9);
+    clip-path: inset(0 0 18% 0 round var(--popover-radius, 14px));
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate3d(0, 2px, 0) scale(1.01);
+    filter: blur(0) saturate(1.08);
+    clip-path: inset(0 0 0 0 round var(--popover-radius, 14px));
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) saturate(1);
+    clip-path: inset(0 0 0 0 round var(--popover-radius, 14px));
+  }
+}
+
+@keyframes popover-underlay-enter {
+  0% {
+    opacity: 0;
+    transform: scale(1.08) translateY(-4px);
+  }
+
+  44% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0.75;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes popover-body-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -4px, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes popover-accent-enter {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.18) translateY(-1px);
+  }
+
+  42% {
+    opacity: 0.9;
+    transform: scaleX(1.02) translateY(0);
+  }
+
+  100% {
+    opacity: 0.38;
+    transform: scaleX(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popover,
+  .popover::after,
+  .popover__underlay,
+  .popover__body {
+    animation: none !important;
+    transition: none !important;
+  }
+}

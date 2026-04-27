@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
@@ -20,6 +21,7 @@ import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { Slider } from '../../../../shared/controls/slider/slider';
 import { Select, SelectOption } from '../../../../shared/controls/select/select';
+import { PopoverCoordinator } from '../../../../shared/components/popover/popover-coordinator';
 import { VizCustomValuesPopover } from '../viz-custom-values-popover/viz-custom-values-popover';
 
 @Component({
@@ -38,6 +40,10 @@ import { VizCustomValuesPopover } from '../viz-custom-values-popover/viz-custom-
 export class VisualizationToolbar {
   protected readonly I18N_KEY = I18N_KEY;
   private readonly transloco = inject(TranslocoService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly popoverRegistration = inject(PopoverCoordinator).register(() =>
+    this.closeCustomValues(),
+  );
   readonly isPlaying = input.required<boolean>();
   readonly speed = input.required<number>();
   readonly currentStep = input.required<number>();
@@ -128,6 +134,8 @@ export class VisualizationToolbar {
   readonly customValuesChange = output<Record<string, unknown>>();
 
   constructor() {
+    this.destroyRef.onDestroy(() => this.popoverRegistration.unregister());
+
     effect(() => {
       const speed = this.speed();
       untracked(() => {
@@ -193,11 +201,22 @@ export class VisualizationToolbar {
     // Stop propagation so the popover's own outside-click handler
     // (registered on document:click) doesn't immediately re-close it.
     event.stopPropagation();
-    this.customValuesOpen.update((open) => !open);
+
+    if (this.customValuesOpen()) {
+      this.closeCustomValues();
+      return;
+    }
+
+    this.popoverRegistration.activate();
+    this.customValuesOpen.set(true);
   }
 
   closeCustomValues(): void {
     if (this.customValuesOpen()) this.customValuesOpen.set(false);
+  }
+
+  onCustomValuesFocus(): void {
+    this.popoverRegistration.activate();
   }
 
   onCustomValuesApply(values: Record<string, unknown>): void {

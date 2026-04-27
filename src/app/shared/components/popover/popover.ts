@@ -1,14 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
   inject,
+  input,
   output,
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 /**
- * Shared floating panel primitive — the "popover" chrome used by the
+ * Shared floating panel primitive - the popover chrome used by the
  * customize-values form, the view-options menu and any future overlay
  * that needs the same visual language as the filter drop-downs on the
  * algorithms page.
@@ -24,16 +27,33 @@ import {
  * trigger, inside a side panel, centered, etc.).
  */
 @Component({
-  selector: 'app-lab-popover',
+  selector: 'app-popover',
   imports: [],
-  templateUrl: './lab-popover.html',
-  styleUrl: './lab-popover.scss',
+  templateUrl: './popover.html',
+  styleUrl: './popover.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabPopover {
+export class Popover {
+  readonly panelRole = input<string | null>('dialog');
   readonly close = output<void>();
 
+  private readonly documentRef = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly onAnyScroll = () => this.close.emit();
+
+  constructor() {
+    const options: AddEventListenerOptions = { capture: true, passive: true };
+    const windowRef = this.documentRef.defaultView;
+
+    this.documentRef.addEventListener('scroll', this.onAnyScroll, options);
+    windowRef?.addEventListener('scroll', this.onAnyScroll, options);
+
+    this.destroyRef.onDestroy(() => {
+      this.documentRef.removeEventListener('scroll', this.onAnyScroll, options);
+      windowRef?.removeEventListener('scroll', this.onAnyScroll, options);
+    });
+  }
 
   @HostListener('document:click', ['$event'])
   onDocClick(event: MouseEvent): void {

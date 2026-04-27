@@ -137,27 +137,24 @@
   }
 }
 
-.multi-select__menu {
-  @include chrome.floating-panel(16px);
-
+.multi-select__popover {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   z-index: 41;
   min-width: 100%;
   width: min(620px, calc(100vw - 56px));
-  padding: 14px;
-  overflow: hidden;
-  isolation: isolate;
+  max-width: calc(100vw - 56px);
+  --popover-width: 100%;
+  --popover-min-width: 0;
+  --popover-max-width: none;
+  --popover-padding: 14px;
+  --popover-radius: 16px;
+  --popover-body-gap: 0;
 }
 
-.multi-select__menu::before {
-  @include chrome.floating-panel-underlay;
-}
-
-.multi-select__menu > * {
-  position: relative;
-  z-index: 1;
+.multi-select__menu {
+  min-width: 0;
 }
 
 .multi-select__header {
@@ -264,7 +261,9 @@
   animation: multi-select-group-in 320ms var(--ease-out-expo) both;
 
   @for $i from 1 through 6 {
-    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 40}ms; }
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 40}ms;
+    }
   }
 }
 
@@ -322,13 +321,12 @@
     /* No border ring — the checkbox alone communicates selected state.
        Just a whisper of lime tint in the background for context. */
     color: var(--text-primary);
-    background:
-      linear-gradient(
-        90deg,
-        rgba(var(--accent-rgb), 0.05),
-        rgba(var(--accent-rgb), 0.015) 65%,
-        transparent
-      );
+    background: linear-gradient(
+      90deg,
+      rgba(var(--accent-rgb), 0.05),
+      rgba(var(--accent-rgb), 0.015) 65%,
+      transparent
+    );
   }
 }
 
@@ -355,11 +353,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(
-    circle,
-    rgba(var(--accent-rgb), 0.7),
-    rgba(var(--accent-rgb), 0) 68%
-  );
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.7), rgba(var(--accent-rgb), 0) 68%);
   opacity: 0;
   pointer-events: none;
 }
@@ -378,7 +372,8 @@
   inset: 0;
   border-radius: inherit;
   background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%231a1f10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 6.2l2.2 2.2L9 4.4'/></svg>") center / 12px 12px no-repeat,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%231a1f10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 6.2l2.2 2.2L9 4.4'/></svg>")
+      center / 12px 12px no-repeat,
     linear-gradient(
       135deg,
       color-mix(in srgb, rgb(var(--accent-rgb)) 78%, #ffffff),
@@ -490,8 +485,9 @@
 }
 
 @media (max-width: 760px) {
-  .multi-select__menu {
-    width: min(100%, 560px);
+  .multi-select__popover {
+    width: 100%;
+    max-width: 560px;
   }
 
   .multi-select__groups {

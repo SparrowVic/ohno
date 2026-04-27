@@ -10,7 +10,8 @@
     [attr.aria-expanded]="open()"
     [attr.aria-label]="ariaLabel() || label()"
     [disabled]="disabled()"
-    (click)="toggleOpen()"
+    (click)="toggleOpen($event)"
+    (focus)="onTriggerFocus()"
     (keydown)="onTriggerKeydown($event)"
   >
     <span class="multi-select__copy">
@@ -32,65 +33,68 @@
   </button>
 
   @if (open()) {
-    <div class="multi-select__menu">
-      <header class="multi-select__header">
-        <div class="multi-select__header-copy">
-          @if (title()) {
-            <p class="multi-select__eyebrow">{{ label() }}</p>
-            <h3 class="multi-select__title">{{ title() }}</h3>
-          } @else {
-            <h3 class="multi-select__title">{{ label() }}</h3>
+    <app-popover class="multi-select__popover" [panelRole]="null" (close)="close()">
+      <div class="multi-select__menu">
+        <header class="multi-select__header">
+          <div class="multi-select__header-copy">
+            @if (title()) {
+              <p class="multi-select__eyebrow">{{ label() }}</p>
+              <h3 class="multi-select__title">{{ title() }}</h3>
+            } @else {
+              <h3 class="multi-select__title">{{ label() }}</h3>
+            }
+
+            @if (subtitle()) {
+              <p class="multi-select__subtitle">{{ subtitle() }}</p>
+            }
+          </div>
+
+          @if (selectionCount() > 0) {
+            <button type="button" class="multi-select__clear" (click)="clear()">
+              {{ clearLabel() }}
+            </button>
           }
+        </header>
 
-          @if (subtitle()) {
-            <p class="multi-select__subtitle">{{ subtitle() }}</p>
-          }
-        </div>
+        @if (groups().length === 0) {
+          <p class="multi-select__empty">{{ emptyLabel() }}</p>
+        } @else {
+          <div class="multi-select__groups" role="listbox" aria-multiselectable="true">
+            @for (group of groups(); track group.id) {
+              <section class="multi-select__group">
+                <h4 class="multi-select__group-title">{{ group.label }}</h4>
 
-        @if (selectionCount() > 0) {
-          <button type="button" class="multi-select__clear" (click)="clear()">
-            {{ clearLabel() }}
-          </button>
-        }
-      </header>
+                <div class="multi-select__group-options">
+                  @for (option of group.options; track option.value) {
+                    <button
+                      type="button"
+                      role="option"
+                      class="multi-select__option"
+                      [class.multi-select__option--selected]="isSelected(option.value)"
+                      [disabled]="option.disabled || disabled()"
+                      [attr.aria-selected]="isSelected(option.value)"
+                      (click)="toggleOption(option)"
+                    >
+                      <span class="multi-select__check" aria-hidden="true"></span>
+                      <span class="multi-select__option-copy">
+                        <span class="multi-select__option-label">{{ option.label }}</span>
 
-      @if (groups().length === 0) {
-        <p class="multi-select__empty">{{ emptyLabel() }}</p>
-      } @else {
-        <div class="multi-select__groups" role="listbox" aria-multiselectable="true">
-          @for (group of groups(); track group.id) {
-            <section class="multi-select__group">
-              <h4 class="multi-select__group-title">{{ group.label }}</h4>
+                        @if (option.hint) {
+                          <span class="multi-select__option-hint">{{ option.hint }}</span>
+                        }
+                      </span>
 
-              <div class="multi-select__group-options">
-                @for (option of group.options; track option.value) {
-                  <button
-                    type="button"
-                    class="multi-select__option"
-                    [class.multi-select__option--selected]="isSelected(option.value)"
-                    [disabled]="option.disabled || disabled()"
-                    [attr.aria-selected]="isSelected(option.value)"
-                    (click)="toggleOption(option)"
-                  >
-                    <span class="multi-select__check" aria-hidden="true"></span>
-                    <span class="multi-select__option-copy">
-                      <span class="multi-select__option-label">{{ option.label }}</span>
-
-                      @if (option.hint) {
-                        <span class="multi-select__option-hint">{{ option.hint }}</span>
+                      @if (option.count !== undefined) {
+                        <span class="multi-select__option-count">{{ option.count }}</span>
                       }
-                    </span>
-
-                    @if (option.count !== undefined) {
-                      <span class="multi-select__option-count">{{ option.count }}</span>
-                    }
-                  </button>
-                }
-              </div>
-            </section>
-          }
-        </div>
-      }
-    </div>
+                    </button>
+                  }
+                </div>
+              </section>
+            }
+          </div>
+        }
+      </div>
+    </app-popover>
   }
 </div>

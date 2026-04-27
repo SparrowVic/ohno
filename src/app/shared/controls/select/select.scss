@@ -165,29 +165,25 @@
   color: rgba(var(--chrome-accent-alt-rgb), 0.86);
 }
 
-.select__menu {
-  @include chrome.floating-panel(16px);
-
+.select__popover {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   right: 0;
   z-index: 41;
+  --popover-width: 100%;
+  --popover-min-width: 0;
+  --popover-max-width: none;
+  --popover-padding: 6px;
+  --popover-radius: 16px;
+  --popover-body-gap: 0;
+}
+
+.select__menu {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 6px;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.select__menu::before {
-  @include chrome.floating-panel-underlay;
-}
-
-.select__menu > * {
-  position: relative;
-  z-index: 1;
+  min-width: 0;
 }
 
 .select__option {
@@ -204,7 +200,9 @@
 
   // stagger entrance
   @for $i from 1 through 12 {
-    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 18}ms; }
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 18}ms;
+    }
   }
 
   /* Lime-accent dot — only visible for the currently active option.
@@ -218,10 +216,11 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background:
-      radial-gradient(circle at 35% 35%,
-        color-mix(in srgb, rgb(var(--accent-rgb)) 60%, #ffffff),
-        rgb(var(--accent-rgb)) 70%);
+    background: radial-gradient(
+      circle at 35% 35%,
+      color-mix(in srgb, rgb(var(--accent-rgb)) 60%, #ffffff),
+      rgb(var(--accent-rgb)) 70%
+    );
     box-shadow:
       0 0 0 1px rgba(var(--accent-rgb), 0.3),
       0 0 12px rgba(var(--accent-rgb), 0.55);

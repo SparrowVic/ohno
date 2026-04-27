@@ -2,7 +2,7 @@
 
 :host {
   /* Positioned by the caller (toolbar task dock) — this component
-     is purely the form body; chrome comes from `app-lab-popover`. */
+     is purely the form body; chrome comes from `app-popover`. */
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
@@ -91,4 +91,3 @@
     cursor: not-allowed;
   }
 }
-

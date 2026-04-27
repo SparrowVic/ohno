@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
+  DestroyRef,
   computed,
   forwardRef,
   inject,
@@ -11,6 +10,8 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
+import { PopoverCoordinator } from '../../components/popover/popover-coordinator';
+import { Popover } from '../../components/popover/popover';
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
 export interface SelectOption<T extends string | number> {
@@ -21,7 +22,7 @@ export interface SelectOption<T extends string | number> {
 
 @Component({
   selector: 'app-select',
-  imports: [],
+  imports: [Popover],
   templateUrl: './select.html',
   styleUrl: './select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,16 +50,29 @@ export class Select<
     return this.options().find((option) => Object.is(option.value, value)) ?? null;
   });
 
-  private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly popoverRegistration = inject(PopoverCoordinator).register(() => this.close());
+
+  constructor() {
+    super();
+    this.destroyRef.onDestroy(() => this.popoverRegistration.unregister());
+  }
 
   protected override coerceValue(value: T | null): T | null {
     if (value === null) return null;
     return this.options().find((option) => Object.is(option.value, value))?.value ?? value;
   }
 
-  toggleOpen(): void {
+  toggleOpen(event?: Event): void {
+    event?.stopPropagation();
     if (this.disabled()) return;
-    this.open.update((open) => !open);
+
+    if (this.open()) {
+      this.close();
+    } else {
+      this.openPopover();
+    }
+
     this.markAsTouched();
   }
 
@@ -73,6 +87,11 @@ export class Select<
     this.open.set(false);
   }
 
+  onTriggerFocus(): void {
+    if (this.disabled()) return;
+    this.popoverRegistration.activate();
+  }
+
   onTriggerKeydown(event: KeyboardEvent): void {
     if (this.disabled()) return;
     if (event.key === 'Enter' || event.key === ' ') {
@@ -82,7 +101,7 @@ export class Select<
     }
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      this.open.set(true);
+      this.openPopover();
       this.markAsTouched();
     }
     if (event.key === 'Escape') {
@@ -90,12 +109,8 @@ export class Select<
     }
   }
 
-  @HostListener('document:pointerdown', ['$event'])
-  onDocumentPointerDown(event: PointerEvent): void {
-    if (!this.open()) return;
-    const host = this.hostRef.nativeElement;
-    if (!host.contains(event.target as Node)) {
-      this.open.set(false);
-    }
+  private openPopover(): void {
+    this.popoverRegistration.activate();
+    this.open.set(true);
   }
 }

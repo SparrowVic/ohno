@@ -1,4 +1,4 @@
-<app-lab-popover (close)="close.emit()">
+<app-popover (close)="close.emit()">
   <header class="custom-values__header">
     <h3 class="custom-values__title">
       {{ I18N_KEY.features.algorithms.toolbar.customizeValues.title | transloco }}
@@ -32,7 +32,11 @@
     }
 
     <footer class="custom-values__actions">
-      <button type="button" class="custom-values__btn custom-values__btn--ghost" (click)="onCancel()">
+      <button
+        type="button"
+        class="custom-values__btn custom-values__btn--ghost"
+        (click)="onCancel()"
+      >
         {{ I18N_KEY.features.algorithms.toolbar.customizeValues.cancelLabel | transloco }}
       </button>
       <button
@@ -44,4 +48,4 @@
       </button>
     </footer>
   </form>
-</app-lab-popover>
+</app-popover>
