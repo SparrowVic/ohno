@@ -1,0 +1,37 @@
+@for (s of streams(); track s.id) {
+  <svg
+    class="stream"
+    [class.h]="s.axis === 'h'"
+    [class.v]="s.axis === 'v'"
+    [class.cyan]="s.color === 'cyan'"
+    [class.violet]="s.color === 'violet'"
+    [class.lime]="s.color === 'lime'"
+    [class.pink]="s.color === 'pink'"
+    [class.reverse]="s.reverse"
+    [style.--row-or-col]="s.rowOrCol + 'px'"
+    [style.--thickness]="s.thickness + 'px'"
+    [style.animation-duration]="s.duration + 's'"
+    [style.animation-delay]="s.delay + 's'"
+    [attr.viewBox]="s.viewBox"
+    [attr.width]="s.width"
+    [attr.height]="s.height"
+    aria-hidden="true"
+    (animationiteration)="onIteration(s.id)"
+  >
+    <defs>
+      <radialGradient
+        [attr.id]="s.gradientId"
+        [attr.cx]="s.gradientCx"
+        [attr.cy]="s.gradientCy"
+        [attr.r]="s.gradientR"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop class="stop-peak" offset="0%" [attr.stop-opacity]="s.peakAlpha" />
+        <stop class="stop-mid" offset="42%" [attr.stop-opacity]="s.midAlpha" />
+        <stop class="stop-edge" offset="100%" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <path class="halo" [attr.d]="s.pathD" [attr.fill]="'url(#' + s.gradientId + ')'" />
+    <path class="core" [attr.d]="s.pathD" [attr.fill]="'url(#' + s.gradientId + ')'" />
+  </svg>
+}
