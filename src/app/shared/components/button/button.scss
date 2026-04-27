@@ -165,7 +165,9 @@
   height: var(--button-icon-size);
   font-size: var(--button-icon-size);
   line-height: 1;
-  transition: transform var(--duration-fast) var(--ease-out-quart);
+  transition:
+    color var(--duration-fast) var(--ease-out-quart),
+    transform var(--duration-fast) var(--ease-out-quart);
 }
 
 .app-button__shine,
@@ -250,9 +252,20 @@
   color: color-mix(in srgb, var(--button-accent-color) 68%, #ffffff);
 }
 
-.app-button:is(:hover, :focus-visible, .app-button--active):not(.app-button--disabled):not(
-    :disabled
-  ) {
+.app-button--bloom .app-button__bloom {
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--button-accent-alt-color) 24%, transparent) 0%,
+    color-mix(in srgb, var(--button-accent-alt-color) 7%, transparent) 50%,
+    transparent 78%
+  );
+}
+
+.app-button:not(.app-button--bloom):is(
+    :hover,
+    :focus-visible,
+    .app-button--active
+  ):not(.app-button--disabled):not(:disabled) {
   color: color-mix(in srgb, var(--button-accent-alt-color) 84%, #ffffff);
 }
 
@@ -291,11 +304,6 @@
   transform: scale(1);
 }
 
-.app-button--bloom:hover:not(.app-button--disabled):not(:disabled) .app-button__icon,
-.app-button--bloom:hover:not(.app-button--disabled):not(:disabled) .app-button__label {
-  color: color-mix(in srgb, var(--button-accent-alt-color) 86%, #ffffff);
-}
-
 .app-button:not(.app-button--bloom):hover:not(.app-button--disabled):not(:disabled)
   .app-button__shine {
   opacity: 1;
@@ -305,6 +313,10 @@
 .app-button:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--button-accent-color) 62%, transparent);
   outline-offset: 2px;
+}
+
+.app-button--bloom:active:not(.app-button--disabled):not(:disabled) .app-button__icon {
+  color: color-mix(in srgb, var(--button-accent-alt-color) 86%, #ffffff);
 }
 
 .app-button:active:not(.app-button--disabled):not(:disabled) .app-button__icon {
