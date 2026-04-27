@@ -11,8 +11,8 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
 /**
- * Labeled integer input sharing the same chrome as `LabSelect` /
- * `LabSlider`. Value is `number | null`; null means "user cleared the
+ * Labeled integer input sharing the same chrome as `Select` /
+ * `Slider`. Value is `number | null`; null means "user cleared the
  * field or typed something unparseable". Validation (required, min /
  * max, business rules) stays with the parent — pass a localized
  * message via `error` to paint the invalid state and render the
@@ -22,20 +22,20 @@ import { BaseControlValueAccessor } from '../base-control-value-accessor';
  * all share one visual language.
  */
 @Component({
-  selector: 'app-lab-number-input',
+  selector: 'app-number-input',
   imports: [],
-  templateUrl: './lab-number-input.html',
-  styleUrl: './lab-number-input.scss',
+  templateUrl: './number-input.html',
+  styleUrl: './number-input.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LabNumberInput),
+      useExisting: forwardRef(() => NumberInput),
       multi: true,
     },
   ],
 })
-export class LabNumberInput extends BaseControlValueAccessor<number | null> {
+export class NumberInput extends BaseControlValueAccessor<number | null> {
   readonly label = input.required<string>();
   readonly placeholder = input<string>('');
   readonly error = input<string | null>(null);

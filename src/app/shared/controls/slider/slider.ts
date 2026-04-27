@@ -4,20 +4,20 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
 @Component({
-  selector: 'app-lab-slider',
+  selector: 'app-slider',
   imports: [],
-  templateUrl: './lab-slider.html',
-  styleUrl: './lab-slider.scss',
+  templateUrl: './slider.html',
+  styleUrl: './slider.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LabSlider),
+      useExisting: forwardRef(() => Slider),
       multi: true,
     },
   ],
 })
-export class LabSlider extends BaseControlValueAccessor<number> {
+export class Slider extends BaseControlValueAccessor<number> {
   readonly label = input.required<string>();
   readonly min = input<number>(1);
   readonly max = input<number>(10);

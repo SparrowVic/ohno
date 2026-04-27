@@ -6,17 +6,18 @@
   min-width: 0;
 }
 
-.lab-text {
+.number-input {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
-/* Chromed container — same surface treatment as `LabNumberInput`
-   and `LabSelect` trigger. Label eyebrow and the actual input sit
-   stacked inside this single bordered box. */
-.lab-text__field {
+/* Chromed container — same surface treatment as `Select`'s trigger.
+   Label eyebrow and the actual input sit stacked inside this single
+   bordered box, so number inputs visually align with the rest of the
+   control family (select, slider, multi-select). */
+.number-input__field {
   @include chrome.control-field;
 
   display: flex;
@@ -32,16 +33,18 @@
     @include chrome.control-field-hover;
   }
 
-  &:has(.lab-text__input:focus-visible) {
+  /* Elevate focus styling to the whole box when the inner input is
+     focused — mirrors how select trigger reacts to :focus-visible. */
+  &:has(.number-input__input:focus-visible) {
     @include chrome.control-field-focus;
   }
 }
 
-.lab-text--invalid .lab-text__field {
+.number-input--invalid .number-input__field {
   border-color: rgba(var(--viz-danger-rgb), 0.5);
 }
 
-.lab-text__copy {
+.number-input__copy {
   display: flex;
   flex: 1;
   min-width: 0;
@@ -49,27 +52,28 @@
   gap: 1px;
 }
 
-.lab-text__label {
+.number-input__label {
   @include type.eyebrow($size: 8px, $tracking: 0.14em);
 
   line-height: 1.05;
   transition: color var(--duration-fast) var(--ease-soft);
 }
 
-.lab-text__field:hover .lab-text__label {
+.number-input__field:hover .number-input__label {
   color: var(--text-secondary);
 }
 
-.lab-text__input {
+.number-input__input {
   /* Borderless — the surrounding field carries the chrome. */
   border: 0;
   background: transparent;
   padding: 0;
   width: 100%;
   min-width: 0;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.01em;
   color: var(--text-primary);
   line-height: 1.2;
@@ -88,24 +92,9 @@
   }
 }
 
-/* Mono variant — used for CSV / expression inputs where digits should
-   stay column-aligned (witnesses list, CRT congruence system). */
-.lab-text--mono .lab-text__input {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.lab-text__error {
+.number-input__error {
   font-family: var(--font-sans);
   font-size: 11px;
   line-height: 1.35;
   color: var(--viz-danger);
-}
-
-.lab-text__hint {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  line-height: 1.35;
-  color: var(--text-tertiary);
 }

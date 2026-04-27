@@ -18,15 +18,15 @@ import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { Task } from '../../models/task';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
-import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-select/lab-select';
+import { Slider } from '../../../../shared/controls/slider/slider';
+import { Select, SelectOption } from '../../../../shared/controls/select/select';
 import { VizCustomValuesPopover } from '../viz-custom-values-popover/viz-custom-values-popover';
 
 @Component({
   selector: 'app-visualization-toolbar',
   imports: [
-    LabSelect,
-    LabSlider,
+    Select,
+    Slider,
     ReactiveFormsModule,
     TranslocoPipe,
     VizCustomValuesPopover,
@@ -82,19 +82,19 @@ export class VisualizationToolbar {
     if (total <= 0) return 0;
     return Math.min(100, (this.currentStep() / total) * 100);
   });
-  readonly variantSelectOptions = computed<readonly LabSelectOption<VisualizationVariant>[]>(() =>
+  readonly variantSelectOptions = computed<readonly SelectOption<VisualizationVariant>[]>(() =>
     this.variantOptions().map((option) => ({
       value: option.value,
       label: option.label,
     })),
   );
-  readonly sizeSelectOptions = computed<readonly LabSelectOption<number>[]>(() =>
+  readonly sizeSelectOptions = computed<readonly SelectOption<number>[]>(() =>
     this.sizeOptions().map((option) => ({
       value: option,
       label: `${option} ${this.sizeUnit()}`,
     })),
   );
-  readonly taskSelectOptions = computed<readonly LabSelectOption<string>[]>(() => {
+  readonly taskSelectOptions = computed<readonly SelectOption<string>[]>(() => {
     const list = this.tasks() ?? [];
     // Task labels often arrive as i18n keys — resolve them to strings
     // here so the select renders plain text without demanding a pipe

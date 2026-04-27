@@ -9,13 +9,13 @@ import { NavigationService } from '../../../core/services/navigation-service';
 import { buildCategoryThemeVars } from '../../../shared/category-theme';
 import {
   DifficultyFilterValue,
-  LabDifficultyFilter,
-  buildDifficultyFilterOptions,
-} from '../../../shared/controls/lab-difficulty-filter/lab-difficulty-filter';
+  SelectButton,
+  buildDifficultySelectButtonOptions,
+} from '../../../shared/controls/select-button/select-button';
 import {
-  LabMultiSelect,
-  LabMultiSelectGroup,
-} from '../../../shared/controls/lab-multi-select/lab-multi-select';
+  MultiSelect,
+  MultiSelectGroup,
+} from '../../../shared/controls/multi-select/multi-select';
 import { AlgorithmTraitId } from '../algorithm-traits/algorithm-traits';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem } from '../models/algorithm';
@@ -32,7 +32,7 @@ import {
 
 @Component({
   selector: 'app-algorithms-page',
-  imports: [AlgorithmCard, NgStyle, LabDifficultyFilter, LabMultiSelect],
+  imports: [AlgorithmCard, NgStyle, SelectButton, MultiSelect],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +44,7 @@ export class AlgorithmsPage {
   private readonly transloco = inject(TranslocoService);
 
   readonly difficultyOptions = computed(() =>
-    buildDifficultyFilterOptions((key, params) => this.translate(key, params)),
+    buildDifficultySelectButtonOptions((key, params) => this.translate(key, params)),
   );
 
   private readonly difficultyFilter = signal<DifficultyFilterValue>('all');
@@ -85,7 +85,7 @@ export class AlgorithmsPage {
       this.translate(key, params),
     );
   });
-  readonly traitSelectGroups = computed<readonly LabMultiSelectGroup<AlgorithmTraitId>[]>(() => {
+  readonly traitSelectGroups = computed<readonly MultiSelectGroup<AlgorithmTraitId>[]>(() => {
     return this.traitGroups().map((group) => ({
       id: group.id,
       label: group.label,

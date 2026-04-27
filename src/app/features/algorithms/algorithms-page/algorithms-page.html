@@ -28,7 +28,7 @@
 
     <div class="page__filter-stack">
       <div class="page__filters">
-        <app-lab-multi-select
+        <app-multi-select
           [label]="traitsTriggerLabel()"
           [summary]="traitsSummary()"
           [ariaLabel]="traitsTriggerAriaLabel()"
@@ -41,7 +41,7 @@
           (valueChange)="selectTraits($event)"
         />
 
-        <app-lab-difficulty-filter
+        <app-select-button
           [options]="difficultyOptions()"
           [value]="activeDifficulty()"
           [ariaLabel]="difficultyGroupLabel()"

@@ -7,9 +7,9 @@ import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { NavigationService } from '../../../core/services/navigation-service';
 import {
   DifficultyFilterValue,
-  LabDifficultyFilter,
-  buildDifficultyFilterOptions,
-} from '../../../shared/controls/lab-difficulty-filter/lab-difficulty-filter';
+  SelectButton,
+  buildDifficultySelectButtonOptions,
+} from '../../../shared/controls/select-button/select-button';
 import { StructureCard } from '../structure-card/structure-card';
 import { StructureItem } from '../models/structure';
 import { StructureRegistry } from '../registry/structure-registry';
@@ -22,7 +22,7 @@ interface PageStat {
 
 @Component({
   selector: 'app-structures-page',
-  imports: [StructureCard, LabDifficultyFilter],
+  imports: [StructureCard, SelectButton],
   templateUrl: './structures-page.html',
   styleUrl: './structures-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +34,7 @@ export class StructuresPage {
   private readonly transloco = inject(TranslocoService);
 
   readonly difficultyOptions = computed(() =>
-    buildDifficultyFilterOptions((key, params) => this.translate(key, params)),
+    buildDifficultySelectButtonOptions((key, params) => this.translate(key, params)),
   );
 
   private readonly difficultyFilter = signal<DifficultyFilterValue>('all');

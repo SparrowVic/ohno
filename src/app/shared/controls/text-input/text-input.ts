@@ -11,32 +11,32 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
 /**
- * Labeled free-text input sharing the `LabNumberInput` chrome. Value
+ * Labeled free-text input sharing the `NumberInput` chrome. Value
  * is a plain `string` — no coercion, no mid-typing rebuffering; the
  * component simply mirrors `<input type="text">` behavior through the
- * lab-control visual language so CSV / expression / free-form fields
+ * control visual language so CSV / expression / free-form fields
  * sit next to the number + select + slider controls without looking
  * foreign.
  *
  * Validation stays with the parent (pass `error` to paint the invalid
  * state and render the message below the field), matching how
- * `LabNumberInput` delegates upstream.
+ * `NumberInput` delegates upstream.
  */
 @Component({
-  selector: 'app-lab-text-input',
+  selector: 'app-text-input',
   imports: [],
-  templateUrl: './lab-text-input.html',
-  styleUrl: './lab-text-input.scss',
+  templateUrl: './text-input.html',
+  styleUrl: './text-input.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LabTextInput),
+      useExisting: forwardRef(() => TextInput),
       multi: true,
     },
   ],
 })
-export class LabTextInput extends BaseControlValueAccessor<string> {
+export class TextInput extends BaseControlValueAccessor<string> {
   readonly label = input.required<string>();
   readonly placeholder = input<string>('');
   readonly error = input<string | null>(null);

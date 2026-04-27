@@ -1,13 +1,13 @@
 <label
-  class="lab-text"
-  [class.lab-text--invalid]="hasError()"
-  [class.lab-text--mono]="mono()"
+  class="text-input"
+  [class.text-input--invalid]="hasError()"
+  [class.text-input--mono]="mono()"
 >
-  <span class="lab-text__field">
-    <span class="lab-text__copy">
-      <span class="lab-text__label">{{ label() }}</span>
+  <span class="text-input__field">
+    <span class="text-input__copy">
+      <span class="text-input__label">{{ label() }}</span>
       <input
-        class="lab-text__input"
+        class="text-input__input"
         type="text"
         autocomplete="off"
         spellcheck="false"
@@ -21,8 +21,8 @@
     </span>
   </span>
   @if (error(); as message) {
-    <span class="lab-text__error" role="alert">{{ message }}</span>
+    <span class="text-input__error" role="alert">{{ message }}</span>
   } @else if (hint(); as hintText) {
-    <span class="lab-text__hint">{{ hintText }}</span>
+    <span class="text-input__hint">{{ hintText }}</span>
   }
 </label>

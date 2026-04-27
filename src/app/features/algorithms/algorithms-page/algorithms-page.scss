@@ -504,14 +504,14 @@
   min-width: 0;
 }
 
-.page__filters > app-lab-multi-select {
+.page__filters > app-multi-select {
   /* Hard-locked width — the results label on the other side of the
      filter bar changes text length when filters are applied, which
      would otherwise cause this control to shrink/grow. */
   flex: 0 0 240px;
 }
 
-.page__filters > app-lab-difficulty-filter {
+.page__filters > app-select-button {
   flex: 0 0 auto;
 }
 
@@ -582,7 +582,7 @@
     width: 100%;
   }
 
-  .page__filters > app-lab-multi-select {
+  .page__filters > app-multi-select {
     flex: 1 1 auto;
   }
 

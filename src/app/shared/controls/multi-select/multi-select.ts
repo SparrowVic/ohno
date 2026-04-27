@@ -15,7 +15,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
-export interface LabMultiSelectOption<T extends string | number> {
+export interface MultiSelectOption<T extends string | number> {
   readonly value: T;
   readonly label: string;
   readonly hint?: string;
@@ -23,27 +23,27 @@ export interface LabMultiSelectOption<T extends string | number> {
   readonly disabled?: boolean;
 }
 
-export interface LabMultiSelectGroup<T extends string | number> {
+export interface MultiSelectGroup<T extends string | number> {
   readonly id: string;
   readonly label: string;
-  readonly options: readonly LabMultiSelectOption<T>[];
+  readonly options: readonly MultiSelectOption<T>[];
 }
 
 @Component({
-  selector: 'app-lab-multi-select',
+  selector: 'app-multi-select',
   imports: [],
-  templateUrl: './lab-multi-select.html',
-  styleUrl: './lab-multi-select.scss',
+  templateUrl: './multi-select.html',
+  styleUrl: './multi-select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LabMultiSelect),
+      useExisting: forwardRef(() => MultiSelect),
       multi: true,
     },
   ],
 })
-export class LabMultiSelect<
+export class MultiSelect<
   T extends string | number = string | number,
 > extends BaseControlValueAccessor<readonly T[]> {
   readonly label = input.required<string>();
@@ -55,7 +55,7 @@ export class LabMultiSelect<
   readonly emptyLabel = input<string>('No options available.');
   readonly clearLabel = input<string>('Clear');
   readonly columns = input<number>(2);
-  readonly groups = input<readonly LabMultiSelectGroup<T>[]>([]);
+  readonly groups = input<readonly MultiSelectGroup<T>[]>([]);
   readonly valueInput = input<readonly T[]>([], { alias: 'value' });
   readonly valueChange = output<readonly T[]>();
 
@@ -117,7 +117,7 @@ export class LabMultiSelect<
     this.open.set(false);
   }
 
-  toggleOption(option: LabMultiSelectOption<T>): void {
+  toggleOption(option: MultiSelectOption<T>): void {
     if (this.disabled() || option.disabled) {
       return;
     }

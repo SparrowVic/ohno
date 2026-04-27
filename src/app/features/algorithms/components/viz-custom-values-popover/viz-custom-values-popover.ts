@@ -18,8 +18,8 @@ import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { LabPopover } from '../../../../shared/components/lab-popover/lab-popover';
-import { LabNumberInput } from '../../../../shared/controls/lab-number-input/lab-number-input';
-import { LabTextInput } from '../../../../shared/controls/lab-text-input/lab-text-input';
+import { NumberInput } from '../../../../shared/controls/number-input/number-input';
+import { TextInput } from '../../../../shared/controls/text-input/text-input';
 import {
   TaskFloatField,
   TaskInputField,
@@ -32,7 +32,7 @@ type ControlValue = number | string | null;
 
 /**
  * Form body of the customize-values popover. Chrome + close handling
- * come from `LabPopover`; individual fields use `LabNumberInput` for
+ * come from `LabPopover`; individual fields use `NumberInput` for
  * numerics (shared chrome with the rest of the toolbar) and a plain
  * `<input type="text">` for strings (CSV witnesses, CRT congruence
  * systems, etc.) styled to match.
@@ -44,9 +44,9 @@ type ControlValue = number | string | null;
   selector: 'app-viz-custom-values-popover',
   imports: [
     I18nTextPipe,
-    LabNumberInput,
+    NumberInput,
     LabPopover,
-    LabTextInput,
+    TextInput,
     ReactiveFormsModule,
     TranslocoPipe,
   ],

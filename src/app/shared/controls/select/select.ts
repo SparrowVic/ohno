@@ -13,31 +13,31 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BaseControlValueAccessor } from '../base-control-value-accessor';
 
-export interface LabSelectOption<T extends string | number> {
+export interface SelectOption<T extends string | number> {
   readonly value: T;
   readonly label: string;
   readonly hint?: string;
 }
 
 @Component({
-  selector: 'app-lab-select',
+  selector: 'app-select',
   imports: [],
-  templateUrl: './lab-select.html',
-  styleUrl: './lab-select.scss',
+  templateUrl: './select.html',
+  styleUrl: './select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LabSelect),
+      useExisting: forwardRef(() => Select),
       multi: true,
     },
   ],
 })
-export class LabSelect<
+export class Select<
   T extends string | number = string | number,
 > extends BaseControlValueAccessor<T> {
   readonly label = input.required<string>();
-  readonly options = input<readonly LabSelectOption<T>[]>([]);
+  readonly options = input<readonly SelectOption<T>[]>([]);
   readonly placeholder = input<string>('Select');
   readonly compact = input(false);
   readonly chrome = input(false);
@@ -66,7 +66,7 @@ export class LabSelect<
     this.open.set(false);
   }
 
-  selectOption(option: LabSelectOption<T>): void {
+  selectOption(option: SelectOption<T>): void {
     if (this.disabled()) return;
     this.setValue(option.value);
     this.markAsTouched();

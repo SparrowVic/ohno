@@ -1,9 +1,9 @@
-<label class="lab-number" [class.lab-number--invalid]="hasError()">
-  <span class="lab-number__field">
-    <span class="lab-number__copy">
-      <span class="lab-number__label">{{ label() }}</span>
+<label class="number-input" [class.number-input--invalid]="hasError()">
+  <span class="number-input__field">
+    <span class="number-input__copy">
+      <span class="number-input__label">{{ label() }}</span>
       <input
-        class="lab-number__input"
+        class="number-input__input"
         type="text"
         inputmode="numeric"
         autocomplete="off"
@@ -18,6 +18,6 @@
     </span>
   </span>
   @if (error(); as message) {
-    <span class="lab-number__error" role="alert">{{ message }}</span>
+    <span class="number-input__error" role="alert">{{ message }}</span>
   }
 </label>
