@@ -223,11 +223,7 @@
   font-family: inherit;
   z-index: 1;
   cursor: pointer;
-  /* Hover/active no longer translate — feedback comes from color + icon halo,
-     so the label doesn't visibly shift. Only :active keeps a tiny press. */
-  transition:
-    color 220ms var(--ease-soft),
-    transform 140ms var(--ease-out-quart);
+  transition: color 220ms var(--ease-soft);
 
   &:hover {
     color: var(--text-primary);
@@ -238,16 +234,12 @@
     box-shadow: var(--ring-focus-soft);
   }
 
-  &:active {
-    transform: scale(0.985);
-  }
-
   &--active {
-    color: var(--text-primary);
+    color: color-mix(in srgb, rgb(var(--inspector-accent, 199 229 106)) 78%, #ffffff);
   }
 
   &--active .side-tab__icon {
-    color: rgb(var(--inspector-accent, 199 229 106));
+    color: currentColor;
     filter:
       drop-shadow(0 0 6px rgba(var(--inspector-accent, 199 229 106), 0.48))
       drop-shadow(0 0 12px rgba(var(--inspector-accent, 199 229 106), 0.22));
@@ -256,8 +248,8 @@
 
 .side-tab__icon {
   position: relative;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -267,8 +259,8 @@
     filter 260ms var(--ease-out-quart);
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     display: block;
     position: relative;
     z-index: 1;
@@ -327,17 +319,17 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  color: currentColor;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   line-height: 1.05;
-  transition:
-    letter-spacing 240ms var(--ease-out-quart),
-    text-shadow 240ms var(--ease-soft);
+  text-transform: uppercase;
+  transition: text-shadow 240ms var(--ease-soft);
 }
 
 .side-tab--active .side-tab__label {
-  letter-spacing: 0.02em;
+  color: currentColor;
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.3),
     0 0 10px rgba(var(--inspector-accent, 199 229 106), 0.2);

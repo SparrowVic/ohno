@@ -315,8 +315,7 @@
         "emptyLabel": "Run the scenario to start a chronological trace.",
         "eventHeaderLabel": "event",
         "stepHeaderLabel": "step",
-        "stepKeyLabel": "STEP",
-        "timeHeaderLabel": "time ·"
+        "stepKeyLabel": "STEP"
       },
       "page": {
         "availabilitySummary": "{{implemented}} interactive • {{upcoming}} roadmap",

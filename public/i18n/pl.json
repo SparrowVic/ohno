@@ -315,8 +315,7 @@
         "emptyLabel": "Uruchom scenariusz, aby rozpocząć chronologiczny ślad.",
         "eventHeaderLabel": "zdarzenie",
         "stepHeaderLabel": "krok",
-        "stepKeyLabel": "KROK",
-        "timeHeaderLabel": "czas ·"
+        "stepKeyLabel": "KROK"
       },
       "page": {
         "availabilitySummary": "{{implemented}} interaktywnych • {{upcoming}} w roadmapie",
