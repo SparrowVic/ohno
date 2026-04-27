@@ -42,6 +42,10 @@
   align-items: center;
 }
 
+.navbar__right {
+  justify-content: flex-end;
+}
+
 .navbar__left {
   width: min(248px, 100%);
 }
@@ -79,11 +83,6 @@
   width: 100%;
   padding: 2px 4px 2px 0;
   min-width: 0;
-  transition: transform var(--duration-base) var(--ease-out-quart);
-}
-
-.navbar__brand:hover {
-  transform: translateY(-1px);
 }
 
 .navbar__brand-logo {

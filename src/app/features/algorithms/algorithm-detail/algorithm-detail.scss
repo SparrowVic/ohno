@@ -1,5 +1,4 @@
 @use '../../../shared/styles/eyebrow' as type;
-@use '../../../shared/styles/chrome-pill' as pill;
 
 :host {
   display: block;
@@ -10,13 +9,15 @@
 }
 
 .detail {
+  --detail-container-gap: 14px;
+
   isolation: isolate;
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  gap: 10px;
-  padding: 8px;
+  gap: var(--detail-container-gap);
+  padding: 10px 12px 12px;
 }
 
 .topbar {
@@ -26,7 +27,7 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
-  padding: 2px 2px 0;
+  padding: 0;
   min-height: 58px;
   flex-shrink: 0;
 }
@@ -56,11 +57,6 @@
 .topbar__brand {
   min-width: 0;
   width: min(248px, 100%);
-  transition: transform var(--duration-base) var(--ease-out-quart);
-}
-
-.topbar__brand:hover {
-  transform: translateY(-1px);
 }
 
 .topbar__brand-logo {
@@ -259,40 +255,8 @@
 .topbar__meta {
   gap: 6px;
   justify-content: flex-end;
+  justify-self: end;
   flex-wrap: wrap;
-}
-
-.topbar__pill {
-  @include pill.base;
-
-  &:hover {
-    @include pill.base-hover;
-  }
-
-  &--strong {
-    @include pill.strong;
-  }
-
-  &--live {
-    @include pill.live;
-  }
-}
-
-.topbar__pill-live-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: radial-gradient(
-    circle at 32% 28%,
-    #ffffff 0%,
-    var(--accent-strong) 40%,
-    var(--accent) 100%
-  );
-  box-shadow:
-    0 0 0 0 rgba(var(--accent-rgb), 0.55),
-    0 0 10px rgba(var(--accent-rgb), 0.72);
-  animation: live-pulse 1.4s var(--ease-out-expo) infinite;
-  flex-shrink: 0;
 }
 
 .detail__content {
@@ -302,7 +266,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  gap: 8px;
+  gap: var(--detail-container-gap);
 }
 
 .viz-panel {
@@ -418,7 +382,16 @@
   .topbar__identity,
   .topbar__meta {
     width: 100%;
+  }
+
+  .topbar__brand,
+  .topbar__identity {
     justify-content: flex-start;
+  }
+
+  .topbar__meta {
+    justify-content: flex-end;
+    justify-self: stretch;
   }
 
   .topbar__identity,
@@ -438,15 +411,13 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1080px) {
   .detail {
-    padding: 8px;
+    padding: 10px;
   }
+}
 
-  .topbar {
-    padding: 12px;
-  }
-
+@media (max-width: 720px) {
   .topbar__title {
     font-size: 18px;
   }
@@ -457,7 +428,7 @@
   .back-btn,
   .back-btn::before,
   .back-btn svg,
-  .topbar__brand {
+  .topbar__brand-logo {
     animation: none !important;
     transition: none;
   }

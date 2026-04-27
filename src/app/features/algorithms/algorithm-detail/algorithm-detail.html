@@ -45,20 +45,6 @@
           [leftIcon]="icons.browse"
           (buttonClick)="back()"
         />
-        <span class="topbar__pill">{{ currentVariantLabel() }}</span>
-        <span class="topbar__pill">{{
-          I18N_KEY.features.algorithms.detail.sizeSummaryLabel
-            | transloco: { count: size(), unit: sizeUnitLabel() }
-        }}</span>
-        <span class="topbar__pill topbar__pill--strong" [class.topbar__pill--live]="isPlaying()">
-          @if (isPlaying()) {
-            <span class="topbar__pill-live-dot" aria-hidden="true"></span>
-          }
-          {{
-            I18N_KEY.features.algorithms.detail.stepSummaryLabel
-              | transloco: { current: currentStep(), total: totalSteps() }
-          }}
-        </span>
       </div>
     </header>
 

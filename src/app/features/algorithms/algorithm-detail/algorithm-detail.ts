@@ -304,13 +304,6 @@ export class AlgorithmDetail {
       label: this.translateMaybe(getVisualizationVariantLabelKey(option.label), option.label),
     })),
   );
-  readonly currentVariantLabel = computed(() => {
-    const active = this.variantSig();
-    return (
-      this.translatedVariantOptions().find((option) => option.value === active)?.label ??
-      humanizeLabel(active)
-    );
-  });
 
   readonly graphTrace = computed(() => this.currentSnapshot()?.graph ?? null);
   readonly dpTrace = computed<DpTraceState | null>(() => this.currentSnapshot()?.dp ?? null);
