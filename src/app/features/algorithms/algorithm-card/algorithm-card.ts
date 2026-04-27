@@ -91,7 +91,7 @@ export class AlgorithmCard {
     return this.isInsane() ? 'warm' : 'primary';
   });
   readonly ctaAppearance = computed<ButtonAppearance>(() =>
-    this.algorithm().implemented ? 'ghost' : 'outline',
+    this.algorithm().implemented ? 'bloom' : 'outline',
   );
   readonly previewLabel = computed(() =>
     this.translate(

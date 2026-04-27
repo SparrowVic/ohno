@@ -165,6 +165,7 @@
   height: var(--button-icon-size);
   font-size: var(--button-icon-size);
   line-height: 1;
+  transition: transform var(--duration-fast) var(--ease-out-quart);
 }
 
 .app-button__shine,
@@ -225,6 +226,12 @@
   color: color-mix(in srgb, var(--button-accent-alt-color) 72%, var(--text-primary));
 }
 
+.app-button--soft {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--button-accent-color) 11%, transparent);
+  color: color-mix(in srgb, var(--button-accent-alt-color) 74%, var(--text-primary));
+}
+
 .app-button--outline {
   border-color: color-mix(in srgb, var(--button-accent-color) 38%, transparent);
   background: rgba(255, 255, 255, 0.012);
@@ -249,9 +256,9 @@
   color: color-mix(in srgb, var(--button-accent-alt-color) 84%, #ffffff);
 }
 
-.app-button:not(.app-button--bloom):is(:hover, .app-button--active):not(.app-button--disabled):not(
-    :disabled
-  ) {
+.app-button:not(.app-button--bloom):not(.app-button--soft):is(:hover, .app-button--active):not(
+    .app-button--disabled
+  ):not(:disabled) {
   border-color: color-mix(in srgb, var(--button-accent-alt-color) 44%, transparent);
 }
 
@@ -270,6 +277,10 @@
     color-mix(in srgb, var(--button-accent-color) 14%, transparent),
     transparent 72%
   );
+}
+
+.app-button--soft:is(:hover, .app-button--active):not(.app-button--disabled):not(:disabled) {
+  background: color-mix(in srgb, var(--button-accent-color) 17%, transparent);
 }
 
 .app-button--bloom:is(:hover, :focus-visible, .app-button--active):not(.app-button--disabled):not(
@@ -296,8 +307,8 @@
   outline-offset: 2px;
 }
 
-.app-button:active:not(.app-button--disabled):not(:disabled) {
-  transform: translateY(0) scale(0.97);
+.app-button:active:not(.app-button--disabled):not(:disabled) .app-button__icon {
+  transform: scale(0.88);
 }
 
 .app-button--pulse {

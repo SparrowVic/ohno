@@ -76,8 +76,9 @@
       [appearance]="ctaAppearance()"
       [accent]="ctaAccent()"
       [interactive]="false"
-      [label]="ctaLabel()"
-      [rightIcon]="isImplemented() ? icons.open : null"
+      [leftIcon]="icons.open"
+      [ariaLabel]="ctaLabel()"
+      [title]="ctaLabel()"
     />
   </div>
 </ng-template>

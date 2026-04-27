@@ -15,7 +15,7 @@ import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 export type ButtonAccent = 'brand' | 'primary' | 'neutral' | 'warm' | 'danger' | 'custom';
-export type ButtonAppearance = 'solid' | 'tonal' | 'outline' | 'ghost' | 'bloom';
+export type ButtonAppearance = 'solid' | 'tonal' | 'soft' | 'outline' | 'ghost' | 'bloom';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 export type ButtonType = 'button' | 'submit' | 'reset';
 
