@@ -17,6 +17,7 @@ import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
+import { AppButton } from '../../../../shared/components/button/button';
 import { Popover } from '../../../../shared/components/popover/popover';
 import { NumberInput } from '../../../../shared/controls/number-input/number-input';
 import { TextInput } from '../../../../shared/controls/text-input/text-input';
@@ -42,7 +43,15 @@ type ControlValue = number | string | null;
  */
 @Component({
   selector: 'app-viz-custom-values-popover',
-  imports: [I18nTextPipe, NumberInput, Popover, TextInput, ReactiveFormsModule, TranslocoPipe],
+  imports: [
+    AppButton,
+    I18nTextPipe,
+    NumberInput,
+    Popover,
+    TextInput,
+    ReactiveFormsModule,
+    TranslocoPipe,
+  ],
   templateUrl: './viz-custom-values-popover.html',
   styleUrl: './viz-custom-values-popover.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

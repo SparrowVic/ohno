@@ -1,18 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  input,
-  output,
-  viewChild,
-} from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { ChangeDetectionStrategy, Component, input, output, viewChild } from '@angular/core';
 
+import { AppButton } from '../../button/button';
 import { CodeLanguageDialItem, TriggerRect } from '../code-language-dial.types';
 
 @Component({
   selector: 'app-code-language-dial-trigger',
-  imports: [FaIconComponent],
+  imports: [AppButton],
   templateUrl: './code-language-dial-trigger.html',
   styleUrl: './code-language-dial-trigger.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,10 +17,10 @@ export class CodeLanguageDialTrigger {
   readonly ariaLabel = input.required<string>();
   readonly toggle = output<void>();
 
-  private readonly triggerRef = viewChild<ElementRef<HTMLButtonElement>>('triggerBtn');
+  private readonly triggerRef = viewChild(AppButton);
 
   measure(): TriggerRect | null {
-    const element = this.triggerRef()?.nativeElement;
+    const element = this.triggerRef()?.element();
     if (!element) {
       return null;
     }

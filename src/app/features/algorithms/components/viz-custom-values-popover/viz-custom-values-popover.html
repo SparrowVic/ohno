@@ -32,20 +32,21 @@
     }
 
     <footer class="custom-values__actions">
-      <button
-        type="button"
-        class="custom-values__btn custom-values__btn--ghost"
-        (click)="onCancel()"
-      >
-        {{ I18N_KEY.features.algorithms.toolbar.customizeValues.cancelLabel | transloco }}
-      </button>
-      <button
+      <app-button
+        appearance="ghost"
+        accent="neutral"
+        size="sm"
+        [label]="I18N_KEY.features.algorithms.toolbar.customizeValues.cancelLabel | transloco"
+        (buttonClick)="onCancel()"
+      />
+      <app-button
         type="submit"
-        class="custom-values__btn custom-values__btn--primary"
+        appearance="solid"
+        accent="primary"
+        size="sm"
         [disabled]="!canApply()"
-      >
-        {{ I18N_KEY.features.algorithms.toolbar.customizeValues.applyLabel | transloco }}
-      </button>
+        [label]="I18N_KEY.features.algorithms.toolbar.customizeValues.applyLabel | transloco"
+      />
     </footer>
   </form>
 </app-popover>

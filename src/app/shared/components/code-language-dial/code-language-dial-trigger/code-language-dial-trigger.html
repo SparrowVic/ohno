@@ -1,19 +1,15 @@
-<button
-  #triggerBtn
-  type="button"
-  class="code-language-dial-trigger"
-  [class.code-language-dial-trigger--open]="open()"
-  [class.code-language-dial-trigger--pulse]="pulse()"
-  [style.--dial-accent]="option().accent"
-  [attr.aria-expanded]="open()"
-  [attr.aria-label]="ariaLabel()"
+<app-button
+  appearance="bloom"
+  accent="custom"
+  size="sm"
+  [compact]="true"
+  [customAccent]="option().accent"
+  [leftIcon]="option().icon ?? null"
+  [label]="option().icon ? null : option().shortLabel"
+  [active]="open()"
+  [pulse]="pulse()"
+  [expanded]="open()"
+  [ariaLabel]="ariaLabel()"
   [title]="option().label"
-  (click)="toggle.emit()"
->
-  <span class="code-language-dial-trigger__bloom" aria-hidden="true"></span>
-  @if (option().icon) {
-    <fa-icon class="code-language-dial-trigger__icon" [icon]="option().icon" />
-  } @else {
-    <span class="code-language-dial-trigger__label">{{ option().shortLabel }}</span>
-  }
-</button>
+  (buttonClick)="toggle.emit()"
+/>

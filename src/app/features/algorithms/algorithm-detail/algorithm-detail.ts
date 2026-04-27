@@ -11,6 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
+import { faArrowLeftLong } from '@fortawesome/pro-solid-svg-icons';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
@@ -25,6 +26,7 @@ import { LegendBar } from '../components/legend-bar/legend-bar';
 import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
 import { VisualizationToolbar } from '../components/visualization-toolbar/visualization-toolbar';
+import { AppButton } from '../../../shared/components/button/button';
 import {
   AlgorithmViewConfig,
   describeGraphPath,
@@ -78,9 +80,7 @@ type ConfigWithTasks = AlgorithmViewConfig & {
   ) => unknown;
 };
 
-function configHasTasks(
-  config: AlgorithmViewConfig | null | undefined,
-): config is ConfigWithTasks {
+function configHasTasks(config: AlgorithmViewConfig | null | undefined): config is ConfigWithTasks {
   if (!config) return false;
   const tasks = (config as { tasks?: readonly Task<unknown>[] }).tasks;
   return Array.isArray(tasks) && tasks.length > 0;
@@ -105,6 +105,7 @@ interface RebuildOptions {
 @Component({
   selector: 'app-algorithm-detail',
   imports: [
+    AppButton,
     LegendBar,
     SidePanel,
     VisualizationCanvas,
@@ -118,6 +119,9 @@ interface RebuildOptions {
   providers: [VisualizationEngine],
 })
 export class AlgorithmDetail {
+  protected readonly icons = {
+    browse: faArrowLeftLong,
+  };
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly registry = inject(AlgorithmRegistry);
@@ -461,15 +465,9 @@ export class AlgorithmDetail {
         this.dpPresetSig.set(config.kind === 'dp' ? config.defaultPresetId : null);
         this.stringPresetSig.set(config.kind === 'string' ? config.defaultPresetId : null);
         this.treePresetSig.set(config.kind === 'tree' ? config.defaultPresetId : null);
-        this.numberLabPresetSig.set(
-          config.kind === 'number-lab' ? config.defaultPresetId : null,
-        );
-        this.pointerLabPresetSig.set(
-          config.kind === 'pointer-lab' ? config.defaultPresetId : null,
-        );
-        this.sieveGridPresetSig.set(
-          config.kind === 'sieve-grid' ? config.defaultPresetId : null,
-        );
+        this.numberLabPresetSig.set(config.kind === 'number-lab' ? config.defaultPresetId : null);
+        this.pointerLabPresetSig.set(config.kind === 'pointer-lab' ? config.defaultPresetId : null);
+        this.sieveGridPresetSig.set(config.kind === 'sieve-grid' ? config.defaultPresetId : null);
         this.callStackLabPresetSig.set(
           config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
         );
@@ -477,7 +475,7 @@ export class AlgorithmDetail {
           config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
         );
         const taskSeedId = configHasTasks(config)
-          ? config.defaultTaskId ?? config.tasks[0]?.id ?? null
+          ? (config.defaultTaskId ?? config.tasks[0]?.id ?? null)
           : null;
         this.activeTaskIdSig.set(taskSeedId);
         this.customValuesSig.set(null);
@@ -487,13 +485,10 @@ export class AlgorithmDetail {
           stringPresetId: config.kind === 'string' ? config.defaultPresetId : null,
           treePresetId: config.kind === 'tree' ? config.defaultPresetId : null,
           numberLabPresetId: config.kind === 'number-lab' ? config.defaultPresetId : null,
-          pointerLabPresetId:
-            config.kind === 'pointer-lab' ? config.defaultPresetId : null,
+          pointerLabPresetId: config.kind === 'pointer-lab' ? config.defaultPresetId : null,
           sieveGridPresetId: config.kind === 'sieve-grid' ? config.defaultPresetId : null,
-          callStackLabPresetId:
-            config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
-          callTreeLabPresetId:
-            config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
+          callStackLabPresetId: config.kind === 'call-stack-lab' ? config.defaultPresetId : null,
+          callTreeLabPresetId: config.kind === 'call-tree-lab' ? config.defaultPresetId : null,
           taskId: taskSeedId,
           customValues: null,
         });
@@ -711,24 +706,16 @@ export class AlgorithmDetail {
    *  `tasks` array. The per-family `createScenario` handles producing
    *  the right scenario shape; this helper just resolves the task id +
    *  effective values and feeds them in. */
-  private rebuildFromTask(
-    config: ConfigWithTasks,
-    size: number,
-    options: RebuildOptions,
-  ): void {
+  private rebuildFromTask(config: ConfigWithTasks, size: number, options: RebuildOptions): void {
     const taskId =
       options.taskId ??
       this.activeTaskIdSig() ??
       config.defaultTaskId ??
       config.tasks[0]?.id ??
       null;
-    const task = taskId
-      ? findTask(config.tasks, taskId)
-      : null;
+    const task = taskId ? findTask(config.tasks, taskId) : null;
     const customValues =
-      options.customValues !== undefined
-        ? options.customValues
-        : this.customValuesSig();
+      options.customValues !== undefined ? options.customValues : this.customValuesSig();
     const effectiveValues = (customValues ?? task?.defaultValues ?? undefined) as
       | Record<string, unknown>
       | undefined;
@@ -737,14 +724,13 @@ export class AlgorithmDetail {
     // flow. Fallback to the first task id if nothing else is set.
     const resolvedPresetId =
       taskId ??
-      ((config as { defaultPresetId?: string }).defaultPresetId ?? config.tasks[0]?.id ?? '');
+      (config as { defaultPresetId?: string }).defaultPresetId ??
+      config.tasks[0]?.id ??
+      '';
     const scenario = config.createScenario(size, resolvedPresetId, effectiveValues);
     this.arraySig.set([]);
     this.graphSig.set(null);
-    this.loadScenario(
-      scenario,
-      config.generator as (scenario: unknown) => Generator<SortStep>,
-    );
+    this.loadScenario(scenario, config.generator as (scenario: unknown) => Generator<SortStep>);
   }
 
   private rebuildVisualization(
@@ -845,9 +831,7 @@ export class AlgorithmDetail {
       }
       case 'call-stack-lab': {
         const presetId =
-          options.callStackLabPresetId ??
-          this.callStackLabPresetSig() ??
-          config.defaultPresetId;
+          options.callStackLabPresetId ?? this.callStackLabPresetSig() ?? config.defaultPresetId;
         const scenario = config.createScenario(size, presetId);
         this.arraySig.set([]);
         this.graphSig.set(null);
@@ -856,9 +840,7 @@ export class AlgorithmDetail {
       }
       case 'call-tree-lab': {
         const presetId =
-          options.callTreeLabPresetId ??
-          this.callTreeLabPresetSig() ??
-          config.defaultPresetId;
+          options.callTreeLabPresetId ?? this.callTreeLabPresetSig() ?? config.defaultPresetId;
         const scenario = config.createScenario(size, presetId);
         this.arraySig.set([]);
         this.graphSig.set(null);

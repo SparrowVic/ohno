@@ -1,35 +1,41 @@
-<button
-  type="button"
+<span
   class="copy-code-button"
-  [class.copy-code-button--pressed]="pressPulse()"
   [class.copy-code-button--copied]="copied()"
-  [class.copy-code-button--success-pulse]="successPulse()"
   [class.copy-code-button--icon-pulse]="iconPulse()"
-  [attr.aria-label]="
-    copied()
-      ? copiedAriaLabel() || (I18N_KEY.shared.copyCodeButton.copiedAriaLabel | transloco)
-      : ariaLabel() || (I18N_KEY.shared.copyCodeButton.ariaLabel | transloco)
-  "
-  [title]="
-    copied()
-      ? copiedLabel() || (I18N_KEY.shared.copyCodeButton.copiedLabel | transloco)
-      : label() || (I18N_KEY.shared.copyCodeButton.label | transloco)
-  "
-  (click)="handleClick()"
+  [class.copy-code-button--success-pulse]="successPulse()"
 >
-  <span class="copy-code-button__bloom" aria-hidden="true"></span>
+  <app-button
+    class="copy-code-button__button"
+    appearance="bloom"
+    accent="primary"
+    size="sm"
+    [compact]="true"
+    [active]="copied()"
+    [pulse]="pressPulse() || successPulse()"
+    [ariaLabel]="
+      copied()
+        ? copiedAriaLabel() || (I18N_KEY.shared.copyCodeButton.copiedAriaLabel | transloco)
+        : ariaLabel() || (I18N_KEY.shared.copyCodeButton.ariaLabel | transloco)
+    "
+    [title]="
+      copied()
+        ? copiedLabel() || (I18N_KEY.shared.copyCodeButton.copiedLabel | transloco)
+        : label() || (I18N_KEY.shared.copyCodeButton.label | transloco)
+    "
+    (buttonClick)="handleClick()"
+  />
 
   <span class="copy-code-button__icon-bay" aria-hidden="true">
     <fa-icon class="copy-code-button__icon copy-code-button__icon--copy" [icon]="icons.copy" />
     <fa-icon class="copy-code-button__icon copy-code-button__icon--check" [icon]="icons.check" />
     <fa-icon class="copy-code-button__spark" [icon]="icons.sparkle" />
   </span>
+</span>
 
-  <span class="copy-code-button__sr" aria-live="polite" aria-atomic="true">
-    {{
-      copied()
-        ? copiedAriaLabel() || (I18N_KEY.shared.copyCodeButton.copiedAriaLabel | transloco)
-        : label() || (I18N_KEY.shared.copyCodeButton.label | transloco)
-    }}
-  </span>
-</button>
+<span class="copy-code-button__sr" aria-live="polite" aria-atomic="true">
+  {{
+    copied()
+      ? copiedAriaLabel() || (I18N_KEY.shared.copyCodeButton.copiedAriaLabel | transloco)
+      : label() || (I18N_KEY.shared.copyCodeButton.label | transloco)
+  }}
+</span>

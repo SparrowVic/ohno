@@ -1,18 +1,18 @@
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { RouterLink } from '@angular/router';
+import { faArrowRightLong } from '@fortawesome/pro-solid-svg-icons';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
+import {
+  AppButton,
+  type ButtonAccent,
+  type ButtonAppearance,
+} from '../../../shared/components/button/button';
 import { RoadmapOverlayDirective } from '../../../shared/directives/roadmap-overlay/roadmap-overlay.directive';
 import { UiTag } from '../../../shared/components/ui-tag/ui-tag';
 import { MathText } from '../../../shared/components/math-text/math-text';
@@ -38,6 +38,7 @@ const DIFFICULTY_RANK: Record<Difficulty, number> = {
     NgStyle,
     NgTemplateOutlet,
     RouterLink,
+    AppButton,
     AlgorithmCardPreview,
     RoadmapOverlayDirective,
     MathText,
@@ -52,6 +53,9 @@ export class AlgorithmCard {
   private readonly transloco = inject(TranslocoService);
 
   readonly algorithm = input.required<AlgorithmItem>();
+  protected readonly icons = {
+    open: faArrowRightLong,
+  };
   readonly cardLink = computed(() => ['/algorithms', this.algorithm().id]);
   readonly isInsane = computed(() => this.algorithm().difficulty === Difficulty.UltraHard);
   readonly isImplemented = computed(() => this.algorithm().implemented);
@@ -81,6 +85,13 @@ export class AlgorithmCard {
         ? t('features.algorithms.card.cta.openVisualization')
         : t('features.algorithms.card.cta.inRoadmap'),
     ),
+  );
+  readonly ctaAccent = computed<ButtonAccent>(() => {
+    if (!this.algorithm().implemented) return 'neutral';
+    return this.isInsane() ? 'warm' : 'primary';
+  });
+  readonly ctaAppearance = computed<ButtonAppearance>(() =>
+    this.algorithm().implemented ? 'ghost' : 'outline',
   );
   readonly previewLabel = computed(() =>
     this.translate(

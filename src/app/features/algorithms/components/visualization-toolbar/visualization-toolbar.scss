@@ -1,4 +1,3 @@
-@use '../../../../shared/controls/control-chrome' as chrome;
 @use '../../../../shared/styles/eyebrow' as type;
 
 :host {
@@ -122,113 +121,7 @@
 }
 
 .toolbar__customize-btn {
-  @include chrome.control-field(var(--control-radius-sm));
-
-  flex: 0 0 auto;
-  width: var(--control-height-sm);
-  height: var(--control-height-sm);
   align-self: flex-end;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    background var(--duration-fast) var(--ease-soft),
-    border-color var(--duration-fast) var(--ease-soft),
-    color var(--duration-fast) var(--ease-soft),
-    box-shadow var(--duration-base) var(--ease-out-quart);
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  &:hover:not(:disabled) {
-    @include chrome.control-field-hover;
-
-    color: var(--text-primary);
-  }
-
-  &:focus-visible {
-    @include chrome.control-field-focus;
-  }
-
-  &--active {
-    @include chrome.control-field-active;
-
-    color: var(--chrome-accent-alt);
-  }
-}
-
-.ctrl-btn {
-  width: var(--control-icon-size);
-  height: var(--control-icon-size);
-  border-radius: var(--control-radius);
-  border: 0.5px solid var(--border);
-  background: rgba(24, 25, 27, 0.92);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
-
-  &:hover {
-    background: rgba(31, 32, 34, 0.98);
-    border-color: var(--border-hover);
-    transform: translateY(-1px);
-  }
-
-  svg {
-    width: 14px;
-    height: 14px;
-    color: var(--text-secondary);
-  }
-
-  &--play {
-    background: var(--accent);
-    border-color: var(--accent);
-    box-shadow: 0 10px 20px rgba(184, 213, 110, 0.22);
-
-    svg {
-      color: #141512;
-    }
-
-    &:hover {
-      background: var(--accent-strong);
-      border-color: var(--accent-strong);
-    }
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-    pointer-events: none;
-  }
-}
-
-.generate-btn {
-  min-height: var(--control-height);
-  padding: 0 var(--control-padding-inline);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent-strong);
-  background: rgba(184, 213, 110, 0.12);
-  border: 0.5px solid rgba(184, 213, 110, 0.16);
-  border-radius: var(--control-radius);
-  font-family: inherit;
-  transition:
-    background 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease;
-
-  &:hover {
-    background: rgba(184, 213, 110, 0.18);
-    transform: translateY(-1px);
-  }
 }
 
 @media (max-width: 1200px) {

@@ -13,6 +13,15 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import {
+  faBackwardStep,
+  faForwardStep,
+  faPause,
+  faPenLine,
+  faPlay,
+  faRotateRight,
+  faWandMagicSparkles,
+} from '@fortawesome/pro-solid-svg-icons';
 
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
@@ -21,24 +30,28 @@ import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { Slider } from '../../../../shared/controls/slider/slider';
 import { Select, SelectOption } from '../../../../shared/controls/select/select';
+import { AppButton } from '../../../../shared/components/button/button';
 import { PopoverCoordinator } from '../../../../shared/components/popover/popover-coordinator';
 import { VizCustomValuesPopover } from '../viz-custom-values-popover/viz-custom-values-popover';
 
 @Component({
   selector: 'app-visualization-toolbar',
-  imports: [
-    Select,
-    Slider,
-    ReactiveFormsModule,
-    TranslocoPipe,
-    VizCustomValuesPopover,
-  ],
+  imports: [AppButton, Select, Slider, ReactiveFormsModule, TranslocoPipe, VizCustomValuesPopover],
   templateUrl: './visualization-toolbar.html',
   styleUrl: './visualization-toolbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualizationToolbar {
   protected readonly I18N_KEY = I18N_KEY;
+  protected readonly icons = {
+    reset: faRotateRight,
+    previous: faBackwardStep,
+    play: faPlay,
+    pause: faPause,
+    next: faForwardStep,
+    randomize: faWandMagicSparkles,
+    customize: faPenLine,
+  };
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly popoverRegistration = inject(PopoverCoordinator).register(() =>
@@ -184,11 +197,9 @@ export class VisualizationToolbar {
       .pipe(takeUntilDestroyed())
       .subscribe((value) => this.variantChange.emit(value));
 
-    this.taskControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((value) => {
-        if (value) this.taskChange.emit(value);
-      });
+    this.taskControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      if (value) this.taskChange.emit(value);
+    });
   }
 
   transportLabelKey(): I18nKey {
