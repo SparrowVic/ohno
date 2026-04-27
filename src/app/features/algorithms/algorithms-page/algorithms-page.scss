@@ -26,7 +26,6 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008)),
     var(--surface-1);
-  box-shadow: var(--elevation-3);
   backdrop-filter: blur(20px) saturate(128%);
   -webkit-backdrop-filter: blur(20px) saturate(128%);
   overflow: hidden;
@@ -418,7 +417,6 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
     var(--surface-1);
-  box-shadow: var(--elevation-2);
   backdrop-filter: blur(18px) saturate(124%);
   -webkit-backdrop-filter: blur(18px) saturate(124%);
   overflow: hidden;

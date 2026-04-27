@@ -40,9 +40,7 @@
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.006) 40%, transparent 80%),
       var(--surface-2);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      var(--elevation-1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     overflow: hidden;
     isolation: isolate;
     transition:

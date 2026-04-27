@@ -9,9 +9,9 @@
      Each step is ~4–6% lighter than the previous one so the eye can read
      depth without high-contrast banding.
      ====================================================================== */
-  --app-bg: #0a0c12;
-  --app-bg-rgb: 10 12 18;
-  --surface-0: #0a0c12;                         /* page / outermost */
+  --app-bg: #050608;
+  --app-bg-rgb: 5 6 8;
+  --surface-0: #050608;                         /* page / outermost */
   --surface-1: rgba(20, 23, 31, 0.88);          /* panels */
   --surface-2: rgba(26, 30, 39, 0.92);          /* cards / raised */
   --surface-3: rgba(32, 37, 48, 0.96);          /* hover / strong */
@@ -285,6 +285,13 @@
 html,
 body {
   height: 100%;
+  background: var(--app-bg);
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
+  background: var(--app-bg);
 }
 
 body {
@@ -296,12 +303,6 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image:
-    radial-gradient(ellipse 42% 30% at 8% -4%, rgba(var(--chrome-accent-rgb), 0.2), transparent 60%),
-    radial-gradient(ellipse 38% 28% at 94% 2%, rgba(var(--chrome-accent-alt-rgb), 0.15), transparent 62%),
-    radial-gradient(ellipse 60% 40% at 50% 128%, rgba(var(--chrome-accent-warm-rgb), 0.09), transparent 60%),
-    linear-gradient(180deg, #121829 0%, #0a0c14 48%, #090b10 100%);
-  background-attachment: fixed;
 }
 
 /* Brand rail — a hairline signature line riding the top edge of the
@@ -328,23 +329,6 @@ body::after {
   animation: brand-text-flow 16s linear infinite;
   opacity: 0.82;
   filter: blur(0.3px) drop-shadow(0 0 8px rgba(var(--chrome-accent-rgb), 0.45));
-}
-
-/* ======================================================================
-   FILM GRAIN — subtle noise texture layered over the entire viewport.
-   Gives the dark surfaces a premium, photographic quality.
-   Base64 SVG is ~1KB, inlined so it's cached with styles.css.
-   ====================================================================== */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-  opacity: 0.042;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
 }
 
 button {

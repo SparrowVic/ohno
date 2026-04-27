@@ -14,22 +14,6 @@
   padding: 0;
 }
 
-.navbar::before {
-  content: '';
-  position: absolute;
-  inset: -12px 18% auto;
-  height: 36px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 26% 50%, rgba(var(--chrome-accent-rgb), 0.22), transparent 56%),
-    radial-gradient(circle at 58% 50%, rgba(var(--chrome-accent-alt-rgb), 0.18), transparent 56%),
-    radial-gradient(circle at 82% 50%, rgba(var(--accent-rgb), 0.12), transparent 58%);
-  filter: blur(24px);
-  pointer-events: none;
-  opacity: 0.7;
-  animation: ohno-fade-in var(--duration-entrance) var(--ease-soft) both;
-}
-
 .navbar__left,
 .navbar__center,
 .navbar__right {
@@ -55,21 +39,6 @@
   display: flex;
   justify-content: center;
   padding: 0 6px;
-}
-
-.navbar__center::before {
-  content: '';
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: min(46vw, 380px);
-  height: 38px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 32% 50%, rgba(var(--chrome-accent-rgb), 0.16), transparent 58%),
-    radial-gradient(circle at 68% 50%, rgba(var(--chrome-accent-alt-rgb), 0.12), transparent 58%);
-  transform: translate(-50%, -50%);
-  filter: blur(22px);
-  pointer-events: none;
 }
 
 .navbar__brand,
@@ -362,7 +331,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .navbar::before,
   .command-trigger,
   .command-trigger::before {
     animation: none !important;
