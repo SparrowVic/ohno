@@ -301,23 +301,6 @@
   &::before {
     content: none;
   }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.45) 22%,
-      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.8) 50%,
-      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.45) 78%,
-      transparent 100%
-    );
-    opacity: 0.65;
-    pointer-events: none;
-  }
 }
 
 .unavailable {
