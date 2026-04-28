@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 type StreamColor = 'cyan' | 'violet' | 'lime' | 'pink';
 type StreamAxis = 'h' | 'v';
@@ -67,11 +67,7 @@ const SEEDS: readonly StreamSeed[] = [
   styleUrl: './bg-energy-layer.scss',
 })
 export class BgEnergyLayer {
-  protected readonly streams = signal<readonly BgStream[]>(SEEDS.map((seed, i) => buildStream(seed, i)));
-
-  protected onIteration(id: number): void {
-    this.streams.update((prev) => prev.map((s) => (s.id === id ? buildStream(s, id) : s)));
-  }
+  protected readonly streams: readonly BgStream[] = SEEDS.map((seed, i) => buildStream(seed, i));
 }
 
 function buildStream(seed: StreamSeed, id: number): BgStream {

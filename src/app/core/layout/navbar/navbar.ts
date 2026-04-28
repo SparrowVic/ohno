@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RouterLink } from '@angular/router';
 
@@ -12,6 +12,7 @@ import { NavbarTabDeck } from './navbar-tab-deck/navbar-tab-deck';
   imports: [RouterLink, LanguageSwitcher, NavbarTabDeck, TranslocoPipe],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Navbar {
   private readonly navigation = inject(NavigationService);

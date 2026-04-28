@@ -1,4 +1,4 @@
-@for (s of streams(); track s.id) {
+@for (s of streams; track s.id) {
   <svg
     class="stream"
     [class.h]="s.axis === 'h'"
@@ -16,7 +16,6 @@
     [attr.width]="s.width"
     [attr.height]="s.height"
     aria-hidden="true"
-    (animationiteration)="onIteration(s.id)"
   >
     <defs>
       <linearGradient

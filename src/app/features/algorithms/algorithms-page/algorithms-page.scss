@@ -11,8 +11,8 @@
 }
 
 /* ============================================================================
-   HERO — cinematic, bold. Double-layer aurora, rotating orbital ring,
-   floating accent dots, flowing-gradient title with animated shimmer.
+   HERO — cinematic, bold. Static glass aurora and accent details keep the
+   identity without repainting continuously while the page scrolls.
    ============================================================================ */
 
 .page__hero {
@@ -72,7 +72,6 @@
   filter: blur(22px);
   opacity: 0.55;
   mix-blend-mode: screen;
-  animation: hero-float 14s ease-in-out infinite;
 }
 
 /* Bottom gradient rail — brand signature glowing rim along the lower
@@ -120,7 +119,6 @@
   border: 1px dashed rgb(var(--chrome-accent-rgb) / 0.14);
   opacity: 0.45;
   pointer-events: none;
-  animation: hero-orbit 40s linear infinite;
   z-index: -1;
 }
 
@@ -136,12 +134,11 @@
     radial-gradient(circle at 12% 70%, rgb(var(--chrome-accent-alt-rgb) / 0.55), transparent 12%);
   opacity: 0.5;
   pointer-events: none;
-  animation: hero-orbit 40s linear infinite;
   z-index: -1;
   filter: blur(1.5px);
 }
 
-/* Eyebrow — brand pill with pulse */
+/* Eyebrow — brand pill */
 .page__eyebrow {
   display: inline-flex;
   align-items: center;
@@ -174,37 +171,14 @@
   box-shadow:
     0 0 10px rgb(var(--chrome-accent-rgb) / 0.9),
     0 0 18px rgb(var(--chrome-accent-alt-rgb) / 0.5);
-  animation: hero-pulse 1.8s ease-in-out infinite;
   flex-shrink: 0;
 }
 
 .page__eyebrow::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 38%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 62%
-  );
-  transform: translateX(-100%);
-  animation: hero-eyebrow-sheen 5s var(--ease-out-expo) infinite;
-  pointer-events: none;
+  content: none;
 }
 
-@keyframes hero-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.55; transform: scale(0.78); }
-}
-
-@keyframes hero-eyebrow-sheen {
-  0%, 50% { transform: translateX(-100%); }
-  80%     { transform: translateX(120%); }
-  100%    { transform: translateX(120%); }
-}
-
-/* Title — MASSIVE, flowing gradient that slowly drifts */
+/* Title — strong static gradient */
 .page__title {
   font-size: clamp(40px, 5.2vw, 68px);
   line-height: 0.92;
@@ -224,7 +198,6 @@
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
-  animation: brand-text-flow 10s linear infinite;
   text-wrap: balance;
 }
 
@@ -565,7 +538,7 @@
   gap: 14px;
 }
 
-.cards-grid > * {
+.cards-grid > *:nth-child(-n + 12) {
   animation: ohno-fade-up 640ms var(--ease-out-expo) both;
 }
 

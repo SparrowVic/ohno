@@ -29,6 +29,18 @@ export interface TraitGroupView {
 type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
 
 const TRAIT_DEFINITION_BY_ID = new Map(ALGORITHM_TRAITS.map((trait) => [trait.id, trait] as const));
+const TRAITS_BY_ALGORITHM = new WeakMap<AlgorithmItem, readonly AlgorithmTraitId[]>();
+
+function getAlgorithmTraits(item: AlgorithmItem): readonly AlgorithmTraitId[] {
+  const cached = TRAITS_BY_ALGORITHM.get(item);
+  if (cached) {
+    return cached;
+  }
+
+  const traits = deriveAlgorithmTraits(item);
+  TRAITS_BY_ALGORITHM.set(item, traits);
+  return traits;
+}
 
 export function buildTraitCounts(
   items: readonly AlgorithmItem[],
@@ -36,7 +48,7 @@ export function buildTraitCounts(
   const counts = new Map<AlgorithmTraitId, number>();
 
   for (const item of items) {
-    for (const trait of deriveAlgorithmTraits(item)) {
+    for (const trait of getAlgorithmTraits(item)) {
       counts.set(trait, (counts.get(trait) ?? 0) + 1);
     }
   }
@@ -97,13 +109,13 @@ export function filterItemsByTraits(
   }
 
   return items.filter((item) => {
-    const itemTraits = new Set(deriveAlgorithmTraits(item));
+    const itemTraits = getAlgorithmTraits(item);
 
     for (const traitIds of groupedTraits.values()) {
       let matchedGroup = false;
 
       for (const traitId of traitIds) {
-        if (itemTraits.has(traitId)) {
+        if (itemTraits.includes(traitId)) {
           matchedGroup = true;
           break;
         }

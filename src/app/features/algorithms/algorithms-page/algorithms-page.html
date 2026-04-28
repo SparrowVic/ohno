@@ -51,9 +51,10 @@
     </div>
   </section>
 
-  @if (filteredItems().length > 0) {
+  @let items = filteredItems();
+  @if (items.length > 0) {
     <div class="cards-grid">
-      @for (algorithm of filteredItems(); track algorithm.id) {
+      @for (algorithm of items; track algorithm.id) {
         <app-algorithm-card [algorithm]="algorithm" />
       }
     </div>

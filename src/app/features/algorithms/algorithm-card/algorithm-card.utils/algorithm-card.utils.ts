@@ -6,6 +6,9 @@ export interface CardMetric {
   readonly value: string;
 }
 
+const SEMANTIC_TAGS_BY_ALGORITHM = new WeakMap<AlgorithmItem, readonly string[]>();
+const CARD_STYLE_VARS_BY_KEY = new Map<string, Record<string, string>>();
+
 function normalizeCardValue(value: string): string {
   return value
     .toLowerCase()
@@ -39,6 +42,11 @@ function numberFromSeed(seed: string, salt: number, min: number, max: number): n
 }
 
 export function buildSemanticTags(algorithm: AlgorithmItem): readonly string[] {
+  const cached = SEMANTIC_TAGS_BY_ALGORITHM.get(algorithm);
+  if (cached) {
+    return cached;
+  }
+
   const complexityValues = new Set(
     [
       algorithm.complexity.timeBest,
@@ -50,16 +58,24 @@ export function buildSemanticTags(algorithm: AlgorithmItem): readonly string[] {
 
   const seen = new Set<string>();
 
-  return algorithm.tags.filter((tag) => {
+  const tags = algorithm.tags.filter((tag) => {
     const normalized = normalizeCardValue(tag);
 
-    if (!normalized || isComplexityNotation(tag) || complexityValues.has(normalized) || seen.has(normalized)) {
+    if (
+      !normalized ||
+      isComplexityNotation(tag) ||
+      complexityValues.has(normalized) ||
+      seen.has(normalized)
+    ) {
       return false;
     }
 
     seen.add(normalized);
     return true;
   });
+
+  SEMANTIC_TAGS_BY_ALGORITHM.set(algorithm, tags);
+  return tags;
 }
 
 export function formatFacetLabel(value: string): string {
@@ -98,9 +114,15 @@ export function createWashStyle(difficulty: Difficulty): Record<string, string> 
 }
 
 export function createCardStyleVars(seed: string, difficulty: Difficulty): Record<string, string> {
+  const cacheKey = `${difficulty}:${seed}`;
+  const cached = CARD_STYLE_VARS_BY_KEY.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const fromRight = hashSeed(seed, 31) % 2 === 0;
 
-  return {
+  const styleVars = {
     ...buildDifficultyThemeVars(difficulty, 'card'),
     '--card-blob-1-x': fromRight
       ? `${numberFromSeed(seed, 11, 92, 108).toFixed(1)}%`
@@ -111,4 +133,7 @@ export function createCardStyleVars(seed: string, difficulty: Difficulty): Recor
     '--card-grid-size': `${numberFromSeed(seed, 19, 18, 25).toFixed(0)}px`,
     '--card-preview-angle': `${numberFromSeed(seed, 20, 144, 196).toFixed(0)}deg`,
   };
+
+  CARD_STYLE_VARS_BY_KEY.set(cacheKey, styleVars);
+  return styleVars;
 }

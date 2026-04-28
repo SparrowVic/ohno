@@ -25,11 +25,11 @@ import {
   formatFacetLabel,
 } from './algorithm-card.utils/algorithm-card.utils';
 
-const DIFFICULTY_RANK: Record<Difficulty, number> = {
-  [Difficulty.Easy]: 1,
-  [Difficulty.Medium]: 2,
-  [Difficulty.Hard]: 3,
-  [Difficulty.UltraHard]: 4,
+const DIFFICULTY_PIPS: Record<Difficulty, readonly boolean[]> = {
+  [Difficulty.Easy]: [true, false, false, false],
+  [Difficulty.Medium]: [true, true, false, false],
+  [Difficulty.Hard]: [true, true, true, false],
+  [Difficulty.UltraHard]: [true, true, true, true],
 };
 
 @Component({
@@ -59,11 +59,9 @@ export class AlgorithmCard {
   readonly cardLink = computed(() => ['/algorithms', this.algorithm().id]);
   readonly isInsane = computed(() => this.algorithm().difficulty === Difficulty.UltraHard);
   readonly isImplemented = computed(() => this.algorithm().implemented);
-  readonly difficultyRank = computed(() => DIFFICULTY_RANK[this.algorithm().difficulty] ?? 1);
-  readonly difficultyPips = computed(() => {
-    const filled = this.difficultyRank();
-    return [0, 1, 2, 3].map((index) => index < filled);
-  });
+  readonly difficultyPips = computed(
+    () => DIFFICULTY_PIPS[this.algorithm().difficulty] ?? DIFFICULTY_PIPS[Difficulty.Easy],
+  );
   readonly facetLabel = computed(() => {
     const facet = this.algorithm().subcategory || this.algorithm().category;
     const key = getAlgorithmFacetLabelKey(facet);

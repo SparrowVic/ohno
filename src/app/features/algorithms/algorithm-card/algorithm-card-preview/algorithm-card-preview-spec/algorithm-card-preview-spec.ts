@@ -1488,7 +1488,20 @@ const PREVIEW_REGISTRIES: readonly PreviewRegistryEntry[] = [
   { variants: MISC_VARIANTS, build: buildMiscPreview },
 ];
 
+const PREVIEW_SPEC_BY_ALGORITHM_ID = new Map<string, PreviewSpec>();
+
 export function resolvePreviewSpec(algorithm: AlgorithmItem): PreviewSpec {
+  const cached = PREVIEW_SPEC_BY_ALGORITHM_ID.get(algorithm.id);
+  if (cached) {
+    return cached;
+  }
+
+  const spec = buildPreviewSpec(algorithm);
+  PREVIEW_SPEC_BY_ALGORITHM_ID.set(algorithm.id, spec);
+  return spec;
+}
+
+function buildPreviewSpec(algorithm: AlgorithmItem): PreviewSpec {
   for (const registry of PREVIEW_REGISTRIES) {
     const variant = registry.variants[algorithm.id];
     if (variant) {
