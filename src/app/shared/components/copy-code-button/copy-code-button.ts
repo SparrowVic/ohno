@@ -12,10 +12,11 @@ import { faCheck, faCopy, faSparkles } from '@fortawesome/pro-solid-svg-icons';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../core/i18n/i18n-keys';
+import { AppButton } from '../button/button';
 
 @Component({
   selector: 'app-copy-code-button',
-  imports: [FaIconComponent, TranslocoPipe],
+  imports: [AppButton, FaIconComponent, TranslocoPipe],
   templateUrl: './copy-code-button.html',
   styleUrl: './copy-code-button.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

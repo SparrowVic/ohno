@@ -37,22 +37,6 @@
   pointer-events: none;
 }
 
-/* Soft atmospheric blob at the top */
-.sidebar::after {
-  content: '';
-  position: absolute;
-  inset: -6px auto auto 8px;
-  width: 128px;
-  height: 72px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 28% 50%, rgba(var(--chrome-accent-rgb), 0.16), transparent 62%),
-    radial-gradient(circle at 74% 50%, rgba(var(--chrome-accent-alt-rgb), 0.12), transparent 64%);
-  filter: blur(28px);
-  pointer-events: none;
-  opacity: 0.85;
-}
-
 .sidebar__stack {
   display: flex;
   flex-direction: column;

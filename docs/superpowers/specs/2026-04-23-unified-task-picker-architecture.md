@@ -156,7 +156,7 @@ Side panel otherwise unchanged. Trace / Code / Log / Info remain read-only / ref
 1. **Create `Task<TValues>` type** in `src/app/features/algorithms/models/task.ts`.
 2. **Create `TaskInputSchema<TValues>` type** (discriminated primitives listed above).
 3. **Extend `AlgorithmDetailConfig`** to optionally accept `tasks: readonly Task<TValues>[]` alongside the existing preset fields. Both coexist during migration.
-4. **Build `VizTaskPicker` primitive** — thin wrapper over existing `lab-select`, exports `taskId` input + `taskChange` output.
+4. **Build `VizTaskPicker` primitive** — thin wrapper over existing `select`, exports `taskId` input + `taskChange` output.
 5. **Build `VizCustomValuesPopover` primitive** — container with dynamic field rendering from schema + validation hook.
 6. **Wire both into `visualization-toolbar`** — new inputs `[taskOptions]`, `[activeTaskId]`, `[inputSchema]`, `[currentValues]`; new outputs `taskChange`, `customValues`.
 7. **Algorithm-detail** grows parallel handlers `onTaskChange` / `onCustomValues` that dispatch to the algorithm's generator with resolved values.

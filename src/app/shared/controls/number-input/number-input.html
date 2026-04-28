@@ -1,0 +1,23 @@
+<label class="number-input" [class.number-input--invalid]="hasError()">
+  <span class="number-input__field">
+    <span class="number-input__copy">
+      <span class="number-input__label">{{ label() }}</span>
+      <input
+        class="number-input__input"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        spellcheck="false"
+        [value]="raw()"
+        [disabled]="disabled()"
+        [placeholder]="placeholder()"
+        [attr.aria-invalid]="hasError()"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+      />
+    </span>
+  </span>
+  @if (error(); as message) {
+    <span class="number-input__error" role="alert">{{ message }}</span>
+  }
+</label>

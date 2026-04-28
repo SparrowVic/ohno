@@ -1,25 +1,19 @@
 <div class="lang-switcher">
-  <button
-    type="button"
+  <app-button
     class="lang-switcher__trigger"
-    [class.lang-switcher__trigger--open]="open()"
-    [attr.aria-expanded]="open()"
-    [attr.aria-label]="I18N_KEY.core.languageSwitcher.openAriaLabel | transloco"
-    (click)="toggleOpen()"
-  >
-    <span class="lang-switcher__orb" aria-hidden="true">
-      <span class="lang-switcher__orb-core"></span>
-    </span>
-
-    <span class="lang-switcher__copy">
-      <span class="lang-switcher__eyebrow">{{
-        I18N_KEY.core.languageSwitcher.eyebrow | transloco
-      }}</span>
-      <span class="lang-switcher__label">{{ activeLangLabel() }}</span>
-    </span>
-
-    <span class="lang-switcher__meta" aria-hidden="true">250</span>
-  </button>
+    appearance="soft"
+    accent="brand"
+    size="md"
+    [active]="open()"
+    [expanded]="open()"
+    [wide]="true"
+    [leftIcon]="icons.globe"
+    [label]="I18N_KEY.core.languageSwitcher.eyebrow | transloco"
+    [suffix]="activeLangShort()"
+    [ariaLabel]="I18N_KEY.core.languageSwitcher.openAriaLabel | transloco"
+    [title]="activeLangLabel()"
+    (buttonClick)="toggleOpen()"
+  />
 
   @if (open()) {
     <div
@@ -37,14 +31,16 @@
       ></button>
 
       <div #panel class="lang-switcher__panel">
-        <button
-          type="button"
+        <app-button
           class="lang-switcher__close"
-          [attr.aria-label]="I18N_KEY.core.languageSwitcher.closeOverlayAriaLabel | transloco"
-          (click)="close()"
-        >
-          {{ I18N_KEY.core.languageSwitcher.closeLabel | transloco }}
-        </button>
+          appearance="tonal"
+          accent="warm"
+          size="sm"
+          [label]="I18N_KEY.core.languageSwitcher.closeLabel | transloco"
+          [rightIcon]="icons.close"
+          [ariaLabel]="I18N_KEY.core.languageSwitcher.closeOverlayAriaLabel | transloco"
+          (buttonClick)="close()"
+        />
 
         <app-world-flag-globe (countrySelected)="onCountrySelected($event)" />
       </div>

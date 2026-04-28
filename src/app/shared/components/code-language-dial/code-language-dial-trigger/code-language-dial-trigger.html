@@ -1,0 +1,15 @@
+<app-button
+  appearance="bloom"
+  accent="custom"
+  size="sm"
+  [compact]="true"
+  [customAccent]="option().accent"
+  [leftIcon]="option().icon ?? null"
+  [label]="option().icon ? null : option().shortLabel"
+  [active]="open()"
+  [pulse]="pulse()"
+  [expanded]="open()"
+  [ariaLabel]="ariaLabel()"
+  [title]="option().label"
+  (buttonClick)="toggle.emit()"
+/>

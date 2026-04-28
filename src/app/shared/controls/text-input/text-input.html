@@ -1,0 +1,28 @@
+<label
+  class="text-input"
+  [class.text-input--invalid]="hasError()"
+  [class.text-input--mono]="mono()"
+>
+  <span class="text-input__field">
+    <span class="text-input__copy">
+      <span class="text-input__label">{{ label() }}</span>
+      <input
+        class="text-input__input"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        [value]="raw()"
+        [disabled]="disabled()"
+        [placeholder]="placeholder()"
+        [attr.aria-invalid]="hasError()"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+      />
+    </span>
+  </span>
+  @if (error(); as message) {
+    <span class="text-input__error" role="alert">{{ message }}</span>
+  } @else if (hint(); as hintText) {
+    <span class="text-input__hint">{{ hintText }}</span>
+  }
+</label>

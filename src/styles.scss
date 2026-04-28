@@ -9,14 +9,18 @@
      Each step is ~4–6% lighter than the previous one so the eye can read
      depth without high-contrast banding.
      ====================================================================== */
-  --app-bg: #0a0c12;
-  --app-bg-rgb: 10 12 18;
-  --surface-0: #0a0c12;                         /* page / outermost */
+  --app-bg: #050608;
+  --app-bg-rgb: 5 6 8;
+  --surface-0: #050608;                         /* page / outermost */
   --surface-1: rgba(20, 23, 31, 0.88);          /* panels */
   --surface-2: rgba(26, 30, 39, 0.92);          /* cards / raised */
   --surface-3: rgba(32, 37, 48, 0.96);          /* hover / strong */
   --surface-4: rgba(38, 44, 57, 0.98);          /* floating / menus */
   --surface-inset: rgba(6, 8, 12, 0.7);         /* recessed (code, track) */
+
+  /* Glassmorphism base — cool graphite glass that separates from the
+     black canvas without turning cards into pale blue blocks. */
+  --glass-base-rgb: 24 31 43;
 
   /* legacy aliases — retained so existing selectors keep working */
   --surface: var(--surface-1);
@@ -45,7 +49,7 @@
   --border: rgba(255, 255, 255, 0.1);
   --border-hover: rgba(255, 255, 255, 0.18);
   --border-strong: rgba(255, 255, 255, 0.24);
-  --border-brand: rgba(var(--chrome-accent-rgb), 0.34);
+  --border-brand: rgb(var(--chrome-accent-rgb) / 0.34);
 
   /* ======================================================================
      TEXT — ink ramp, slightly cooler primary for crisp feel.
@@ -87,28 +91,28 @@
   --brand-gradient:
     linear-gradient(
       135deg,
-      rgba(var(--chrome-accent-rgb), 1) 0%,
-      rgba(var(--chrome-accent-alt-rgb), 1) 55%,
-      rgba(var(--accent-rgb), 1) 100%
+      rgb(var(--chrome-accent-rgb) / 1) 0%,
+      rgb(var(--chrome-accent-alt-rgb) / 1) 55%,
+      rgb(var(--accent-rgb) / 1) 100%
     );
   --brand-gradient-soft:
     linear-gradient(
       135deg,
-      rgba(var(--chrome-accent-rgb), 0.22) 0%,
-      rgba(var(--chrome-accent-alt-rgb), 0.2) 55%,
-      rgba(var(--accent-rgb), 0.22) 100%
+      rgb(var(--chrome-accent-rgb) / 0.22) 0%,
+      rgb(var(--chrome-accent-alt-rgb) / 0.2) 55%,
+      rgb(var(--accent-rgb) / 0.22) 100%
     );
   --brand-gradient-faint:
     linear-gradient(
       135deg,
-      rgba(var(--chrome-accent-rgb), 0.1) 0%,
-      rgba(var(--chrome-accent-alt-rgb), 0.08) 55%,
-      rgba(var(--accent-rgb), 0.1) 100%
+      rgb(var(--chrome-accent-rgb) / 0.1) 0%,
+      rgb(var(--chrome-accent-alt-rgb) / 0.08) 55%,
+      rgb(var(--accent-rgb) / 0.1) 100%
     );
   --brand-aurora:
-    radial-gradient(ellipse 80% 60% at 12% -10%, rgba(var(--chrome-accent-rgb), 0.22), transparent 60%),
-    radial-gradient(ellipse 70% 55% at 88% -4%, rgba(var(--chrome-accent-alt-rgb), 0.16), transparent 58%),
-    radial-gradient(ellipse 90% 65% at 48% 120%, rgba(var(--accent-rgb), 0.12), transparent 62%);
+    radial-gradient(ellipse 80% 60% at 12% -10%, rgb(var(--chrome-accent-rgb) / 0.22), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 88% -4%, rgb(var(--chrome-accent-alt-rgb) / 0.16), transparent 58%),
+    radial-gradient(ellipse 90% 65% at 48% 120%, rgb(var(--accent-rgb) / 0.12), transparent 62%);
 
   /* ======================================================================
      VISUALIZATION PALETTE — unchanged pairs, slightly richer ink.
@@ -160,7 +164,7 @@
      pink = acting, lime = done.
      ====================================================================== */
   --code-bg: rgba(11, 13, 18, 0.96);
-  --line-highlight: rgba(var(--accent-rgb), 0.09);
+  --line-highlight: rgb(var(--accent-rgb) / 0.09);
 
   --viz-state-default: var(--viz-accent);
   --viz-state-default-rgb: var(--viz-accent-rgb);
@@ -202,28 +206,60 @@
      FOCUS RING — one ring to rule them all (used everywhere).
      ====================================================================== */
   --ring-focus:
-    0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.5),
-    0 0 0 4px rgba(var(--chrome-accent-alt-rgb), 0.14),
-    0 0 28px rgba(var(--chrome-accent-alt-rgb), 0.18);
+    0 0 0 1px rgb(var(--chrome-accent-alt-rgb) / 0.5),
+    0 0 0 4px rgb(var(--chrome-accent-alt-rgb) / 0.14),
+    0 0 28px rgb(var(--chrome-accent-alt-rgb) / 0.18);
   --ring-focus-soft:
-    0 0 0 1px rgba(var(--chrome-accent-alt-rgb), 0.3),
-    0 0 0 3px rgba(var(--chrome-accent-alt-rgb), 0.1);
+    0 0 0 1px rgb(var(--chrome-accent-alt-rgb) / 0.3),
+    0 0 0 3px rgb(var(--chrome-accent-alt-rgb) / 0.1);
 
   /* ======================================================================
      PANEL SHELL (detail viz frame).
      ====================================================================== */
   --panel-shell-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
-    var(--surface-1);
-  --panel-shell-border: var(--border-strong);
-  --panel-shell-shadow: var(--elevation-2);
-  --panel-shell-radius: 22px;
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.014) 42%,
+      rgba(255, 255, 255, 0.002) 74%
+    ),
+    radial-gradient(
+      ellipse 82% 58% at 10% -8%,
+      rgb(var(--chrome-accent-rgb) / 0.07),
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 70% 58% at 104% 12%,
+      rgb(var(--chrome-accent-alt-rgb) / 0.052),
+      transparent 64%
+    ),
+    linear-gradient(
+      135deg,
+      rgb(17 23 34 / 0.76),
+      rgb(8 11 18 / 0.72) 58%,
+      rgb(4 6 11 / 0.68)
+    );
+  --panel-shell-border: rgba(255, 255, 255, 0.095);
+  --panel-shell-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+    inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.038),
+    inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.032),
+    inset 0 -18px 38px rgba(0, 0, 0, 0.18),
+    0 12px 34px rgba(0, 0, 0, 0.32);
+  --panel-shell-radius: 18px;
   --panel-topbar-height: 56px;
   --panel-topbar-padding-inline: 10px;
-  --panel-topbar-divider: rgba(255, 255, 255, 0.06);
+  --panel-topbar-divider: rgba(255, 255, 255, 0.085);
   --panel-topbar-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008) 78%),
-    rgba(22, 26, 34, 0.38);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.006) 62%),
+    linear-gradient(
+      135deg,
+      rgb(var(--chrome-accent-rgb) / 0.03),
+      rgb(var(--chrome-accent-alt-rgb) / 0.02) 60%,
+      rgb(var(--accent-rgb) / 0.008) 92%
+    ),
+    rgb(var(--glass-base-rgb) / 0.34);
 
   /* ======================================================================
      CONTROL SIZING — compact and consistent.
@@ -272,6 +308,17 @@
   --duration-base: 220ms;
   --duration-slow: 360ms;
   --duration-entrance: 520ms;
+
+  /* ======================================================================
+     BACKGROUND GRID — global lab-canvas layer. The static layer keeps a
+     quiet two-scale grid: a readable 96px raster, a rarer 384px structural
+     line, and a faint dot lattice. Moving energy lives in
+     ohno-bg-energy-layer so the canvas does not flash random points.
+     ====================================================================== */
+  --app-grid-line-alpha: 0.03;
+  --app-grid-major-line-alpha: 0.042;
+  --app-grid-accent-line-alpha: 0.03;
+  --app-grid-dot-alpha: 0.016;
 }
 
 *,
@@ -285,6 +332,66 @@
 html,
 body {
   height: 100%;
+  background: var(--app-bg);
+}
+
+app-root {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  min-height: 100%;
+  background: var(--app-bg);
+}
+
+app-root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    /* hairline grid — horizontal lines */
+    linear-gradient(rgb(255 255 255 / var(--app-grid-line-alpha)) 1px, transparent 1px),
+    /* hairline grid — vertical lines */
+    linear-gradient(90deg, rgb(255 255 255 / var(--app-grid-line-alpha)) 1px, transparent 1px),
+    /* structural grid — slow, faint cyan horizontal anchors */
+    linear-gradient(
+      rgb(var(--chrome-accent-alt-rgb) / var(--app-grid-major-line-alpha)) 1px,
+      transparent 1px
+    ),
+    /* structural grid — slow, faint violet vertical anchors */
+    linear-gradient(
+      90deg,
+      rgb(var(--chrome-accent-rgb) / var(--app-grid-accent-line-alpha)) 1px,
+      transparent 1px
+    ),
+    /* fine cyan dot lattice at quarter spacing */
+    radial-gradient(circle, rgb(var(--chrome-accent-alt-rgb) / var(--app-grid-dot-alpha)) 0 0.8px, transparent 1px);
+  background-repeat:
+    repeat, repeat, repeat, repeat, repeat;
+  background-size:
+    96px 96px,
+    96px 96px,
+    384px 384px,
+    384px 384px,
+    24px 24px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  -webkit-mask-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.76), #000 18%, #000 82%, rgba(0, 0, 0, 0.8));
+  mask-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.76), #000 18%, #000 82%, rgba(0, 0, 0, 0.8));
+}
+
+app-root > * {
+  position: relative;
+  z-index: 1;
 }
 
 body {
@@ -296,12 +403,6 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image:
-    radial-gradient(ellipse 42% 30% at 8% -4%, rgba(var(--chrome-accent-rgb), 0.2), transparent 60%),
-    radial-gradient(ellipse 38% 28% at 94% 2%, rgba(var(--chrome-accent-alt-rgb), 0.15), transparent 62%),
-    radial-gradient(ellipse 60% 40% at 50% 128%, rgba(var(--chrome-accent-warm-rgb), 0.09), transparent 60%),
-    linear-gradient(180deg, #121829 0%, #0a0c14 48%, #090b10 100%);
-  background-attachment: fixed;
 }
 
 /* Brand rail — a hairline signature line riding the top edge of the
@@ -318,33 +419,16 @@ body::after {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(var(--chrome-accent-rgb), 0.8) 18%,
-    rgba(var(--chrome-accent-alt-rgb), 0.95) 42%,
-    rgba(var(--accent-rgb), 0.85) 66%,
-    rgba(var(--chrome-accent-warm-rgb), 0.5) 84%,
+    rgb(var(--chrome-accent-rgb) / 0.8) 18%,
+    rgb(var(--chrome-accent-alt-rgb) / 0.95) 42%,
+    rgb(var(--accent-rgb) / 0.85) 66%,
+    rgb(var(--chrome-accent-warm-rgb) / 0.5) 84%,
     transparent 100%
   );
   background-size: 240% 100%;
   animation: brand-text-flow 16s linear infinite;
   opacity: 0.82;
-  filter: blur(0.3px) drop-shadow(0 0 8px rgba(var(--chrome-accent-rgb), 0.45));
-}
-
-/* ======================================================================
-   FILM GRAIN — subtle noise texture layered over the entire viewport.
-   Gives the dark surfaces a premium, photographic quality.
-   Base64 SVG is ~1KB, inlined so it's cached with styles.css.
-   ====================================================================== */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-  opacity: 0.042;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
+  filter: blur(0.3px) drop-shadow(0 0 8px rgb(var(--chrome-accent-rgb) / 0.45));
 }
 
 button {
@@ -365,7 +449,7 @@ a {
 }
 
 ::selection {
-  background: rgba(var(--chrome-accent-rgb), 0.32);
+  background: rgb(var(--chrome-accent-rgb) / 0.32);
   color: #f7f4ff;
 }
 
@@ -387,8 +471,19 @@ a {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--chrome-accent-rgb), 0.36);
+  background: rgb(var(--chrome-accent-rgb) / 0.36);
   background-clip: padding-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  app-root::before {
+    animation: none;
+  }
+
+  app-root::after {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 /* ======================================================================
@@ -410,8 +505,8 @@ a {
 }
 
 @keyframes ohno-ring-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(var(--chrome-accent-alt-rgb), 0.38); }
-  100% { box-shadow: 0 0 0 14px rgba(var(--chrome-accent-alt-rgb), 0); }
+  0%   { box-shadow: 0 0 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.38); }
+  100% { box-shadow: 0 0 0 14px rgb(var(--chrome-accent-alt-rgb) / 0); }
 }
 
 @keyframes ohno-shimmer {
@@ -467,8 +562,8 @@ a {
 }
 
 @keyframes live-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.6), 0 0 10px rgba(var(--accent-rgb), 0.6); }
-  100% { box-shadow: 0 0 0 10px rgba(var(--accent-rgb), 0), 0 0 10px rgba(var(--accent-rgb), 0.3); }
+  0%   { box-shadow: 0 0 0 0 rgb(var(--accent-rgb) / 0.6), 0 0 10px rgb(var(--accent-rgb) / 0.6); }
+  100% { box-shadow: 0 0 0 10px rgb(var(--accent-rgb) / 0), 0 0 10px rgb(var(--accent-rgb) / 0.3); }
 }
 
 /* ======================================================================

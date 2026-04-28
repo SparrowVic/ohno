@@ -1,5 +1,5 @@
 @if (algorithm(); as algo) {
-  <div class="detail">
+  <div class="detail" [ngStyle]="detailThemeStyle()">
     <header class="topbar">
       <a
         class="topbar__brand"
@@ -36,27 +36,15 @@
         </div>
       </div>
       <div class="topbar__meta">
-        <button type="button" class="back-btn" (click)="back()">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M10.5 3.5L5.5 8l5 4.5" />
-            <path d="M13 8H6" />
-          </svg>
-          {{ I18N_KEY.features.algorithms.detail.backLabel | transloco }}
-        </button>
-        <span class="topbar__pill">{{ currentVariantLabel() }}</span>
-        <span class="topbar__pill">{{
-          I18N_KEY.features.algorithms.detail.sizeSummaryLabel
-            | transloco: { count: size(), unit: sizeUnitLabel() }
-        }}</span>
-        <span class="topbar__pill topbar__pill--strong" [class.topbar__pill--live]="isPlaying()">
-          @if (isPlaying()) {
-            <span class="topbar__pill-live-dot" aria-hidden="true"></span>
-          }
-          {{
-            I18N_KEY.features.algorithms.detail.stepSummaryLabel
-              | transloco: { current: currentStep(), total: totalSteps() }
-          }}
-        </span>
+        <app-button
+          class="back-btn"
+          size="sm"
+          appearance="soft"
+          accent="brand"
+          [label]="I18N_KEY.features.algorithms.detail.backLabel | transloco"
+          [leftIcon]="icons.browse"
+          (buttonClick)="back()"
+        />
       </div>
     </header>
 
@@ -174,8 +162,13 @@
 } @else {
   <div class="not-found">
     <p>{{ I18N_KEY.features.algorithms.detail.notFoundLabel | transloco }}</p>
-    <button type="button" class="back-btn" (click)="back()">
-      {{ I18N_KEY.features.algorithms.detail.backToAlgorithmsLabel | transloco }}
-    </button>
+    <app-button
+      class="back-btn"
+      appearance="tonal"
+      accent="brand"
+      [label]="I18N_KEY.features.algorithms.detail.backToAlgorithmsLabel | transloco"
+      [leftIcon]="icons.browse"
+      (buttonClick)="back()"
+    />
   </div>
 }

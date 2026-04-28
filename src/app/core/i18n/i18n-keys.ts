@@ -335,7 +335,6 @@ export const I18N_KEY = {
       },
       logPanel: {
         emptyLabel: t('features.algorithms.logPanel.emptyLabel'),
-        timeHeaderLabel: t('features.algorithms.logPanel.timeHeaderLabel'),
         stepHeaderLabel: t('features.algorithms.logPanel.stepHeaderLabel'),
         eventHeaderLabel: t('features.algorithms.logPanel.eventHeaderLabel'),
         stepKeyLabel: t('features.algorithms.logPanel.stepKeyLabel'),

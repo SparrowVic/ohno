@@ -70,7 +70,16 @@
       </div>
     }
 
-    <span class="card__cta">{{ ctaLabel() }}</span>
+    <app-button
+      class="card__cta"
+      size="sm"
+      [appearance]="ctaAppearance()"
+      [accent]="ctaAccent()"
+      [interactive]="false"
+      [leftIcon]="icons.open"
+      [ariaLabel]="ctaLabel()"
+      [title]="ctaLabel()"
+    />
   </div>
 </ng-template>
 

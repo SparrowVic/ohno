@@ -9,13 +9,13 @@ import { NavigationService } from '../../../core/services/navigation-service';
 import { buildCategoryThemeVars } from '../../../shared/category-theme';
 import {
   DifficultyFilterValue,
-  LabDifficultyFilter,
-  buildDifficultyFilterOptions,
-} from '../../../shared/controls/lab-difficulty-filter/lab-difficulty-filter';
+  SelectButton,
+  buildDifficultySelectButtonOptions,
+} from '../../../shared/controls/select-button/select-button';
 import {
-  LabMultiSelect,
-  LabMultiSelectGroup,
-} from '../../../shared/controls/lab-multi-select/lab-multi-select';
+  MultiSelect,
+  MultiSelectGroup,
+} from '../../../shared/controls/multi-select/multi-select';
 import { AlgorithmTraitId } from '../algorithm-traits/algorithm-traits';
 import { AlgorithmCard } from '../algorithm-card/algorithm-card';
 import { AlgorithmItem } from '../models/algorithm';
@@ -30,9 +30,17 @@ import {
   TraitGroupView,
 } from './algorithms-page.utils/algorithms-page.utils';
 
+interface FilteredItemsSnapshot {
+  readonly items: readonly AlgorithmItem[];
+  readonly totalItems: number;
+  readonly implementedCount: number;
+  readonly upcomingCount: number;
+  readonly trackCount: number;
+}
+
 @Component({
   selector: 'app-algorithms-page',
-  imports: [AlgorithmCard, NgStyle, LabDifficultyFilter, LabMultiSelect],
+  imports: [AlgorithmCard, NgStyle, SelectButton, MultiSelect],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +52,7 @@ export class AlgorithmsPage {
   private readonly transloco = inject(TranslocoService);
 
   readonly difficultyOptions = computed(() =>
-    buildDifficultyFilterOptions((key, params) => this.translate(key, params)),
+    buildDifficultySelectButtonOptions((key, params) => this.translate(key, params)),
   );
 
   private readonly difficultyFilter = signal<DifficultyFilterValue>('all');
@@ -85,7 +93,7 @@ export class AlgorithmsPage {
       this.translate(key, params),
     );
   });
-  readonly traitSelectGroups = computed<readonly LabMultiSelectGroup<AlgorithmTraitId>[]>(() => {
+  readonly traitSelectGroups = computed<readonly MultiSelectGroup<AlgorithmTraitId>[]>(() => {
     return this.traitGroups().map((group) => ({
       id: group.id,
       label: group.label,
@@ -101,18 +109,36 @@ export class AlgorithmsPage {
     groupSelectedTraits(this.selectedTraitsState()),
   );
 
-  readonly filteredItems = computed<readonly AlgorithmItem[]>(() => {
-    return filterItemsByTraits(this.difficultyScopedItems(), this.selectedTraitsByGroup());
+  private readonly filteredSnapshot = computed<FilteredItemsSnapshot>(() => {
+    const items = filterItemsByTraits(this.difficultyScopedItems(), this.selectedTraitsByGroup());
+    let implementedCount = 0;
+    const tracks = new Set<string>();
+
+    for (const item of items) {
+      if (item.implemented) {
+        implementedCount += 1;
+      }
+
+      tracks.add(item.subcategory || item.category);
+    }
+
+    return {
+      items,
+      totalItems: items.length,
+      implementedCount,
+      upcomingCount: items.length - implementedCount,
+      trackCount: tracks.size,
+    };
   });
 
-  readonly totalItems = computed(() => this.filteredItems().length);
-  readonly implementedCount = computed(
-    () => this.filteredItems().filter((item) => item.implemented).length,
-  );
-  readonly upcomingCount = computed(() => this.totalItems() - this.implementedCount());
-  readonly trackCount = computed(
-    () => new Set(this.filteredItems().map((item) => item.subcategory || item.category)).size,
-  );
+  readonly filteredItems = computed<readonly AlgorithmItem[]>(() => {
+    return this.filteredSnapshot().items;
+  });
+
+  readonly totalItems = computed(() => this.filteredSnapshot().totalItems);
+  readonly implementedCount = computed(() => this.filteredSnapshot().implementedCount);
+  readonly upcomingCount = computed(() => this.filteredSnapshot().upcomingCount);
+  readonly trackCount = computed(() => this.filteredSnapshot().trackCount);
   readonly heroEyebrow = computed(() => this.translate(t('features.algorithms.page.heroEyebrow')));
   readonly heroDescription = computed(() =>
     this.translate(t('features.algorithms.page.heroDescription')),
@@ -204,10 +230,22 @@ export class AlgorithmsPage {
   });
 
   selectDifficulty(value: DifficultyFilterValue): void {
+    if (Object.is(this.difficultyFilter(), value)) {
+      return;
+    }
+
     this.difficultyFilter.set(value);
   }
 
   selectTraits(value: readonly AlgorithmTraitId[]): void {
+    const current = this.selectedTraitsState();
+    const hasSameTraits =
+      current.length === value.length && current.every((entry, index) => entry === value[index]);
+
+    if (hasSameTraits) {
+      return;
+    }
+
     this.selectedTraitsState.set([...value]);
   }
 

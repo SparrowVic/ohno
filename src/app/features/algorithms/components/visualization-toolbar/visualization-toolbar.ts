@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
@@ -12,32 +13,50 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import {
+  faBackwardStep,
+  faForwardStep,
+  faPause,
+  faPenLine,
+  faPlay,
+  faRotateRight,
+  faWandMagicSparkles,
+} from '@fortawesome/pro-solid-svg-icons';
 
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { Task } from '../../models/task';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { LabSlider } from '../../../../shared/controls/lab-slider/lab-slider';
-import { LabSelect, LabSelectOption } from '../../../../shared/controls/lab-select/lab-select';
+import { Slider } from '../../../../shared/controls/slider/slider';
+import { Select, SelectOption } from '../../../../shared/controls/select/select';
+import { AppButton } from '../../../../shared/components/button/button';
+import { PopoverCoordinator } from '../../../../shared/components/popover/popover-coordinator';
 import { VizCustomValuesPopover } from '../viz-custom-values-popover/viz-custom-values-popover';
 
 @Component({
   selector: 'app-visualization-toolbar',
-  imports: [
-    LabSelect,
-    LabSlider,
-    ReactiveFormsModule,
-    TranslocoPipe,
-    VizCustomValuesPopover,
-  ],
+  imports: [AppButton, Select, Slider, ReactiveFormsModule, TranslocoPipe, VizCustomValuesPopover],
   templateUrl: './visualization-toolbar.html',
   styleUrl: './visualization-toolbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualizationToolbar {
   protected readonly I18N_KEY = I18N_KEY;
+  protected readonly icons = {
+    reset: faRotateRight,
+    previous: faBackwardStep,
+    play: faPlay,
+    pause: faPause,
+    next: faForwardStep,
+    randomize: faWandMagicSparkles,
+    customize: faPenLine,
+  };
   private readonly transloco = inject(TranslocoService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly popoverRegistration = inject(PopoverCoordinator).register(() =>
+    this.closeCustomValues(),
+  );
   readonly isPlaying = input.required<boolean>();
   readonly speed = input.required<number>();
   readonly currentStep = input.required<number>();
@@ -82,19 +101,19 @@ export class VisualizationToolbar {
     if (total <= 0) return 0;
     return Math.min(100, (this.currentStep() / total) * 100);
   });
-  readonly variantSelectOptions = computed<readonly LabSelectOption<VisualizationVariant>[]>(() =>
+  readonly variantSelectOptions = computed<readonly SelectOption<VisualizationVariant>[]>(() =>
     this.variantOptions().map((option) => ({
       value: option.value,
       label: option.label,
     })),
   );
-  readonly sizeSelectOptions = computed<readonly LabSelectOption<number>[]>(() =>
+  readonly sizeSelectOptions = computed<readonly SelectOption<number>[]>(() =>
     this.sizeOptions().map((option) => ({
       value: option,
       label: `${option} ${this.sizeUnit()}`,
     })),
   );
-  readonly taskSelectOptions = computed<readonly LabSelectOption<string>[]>(() => {
+  readonly taskSelectOptions = computed<readonly SelectOption<string>[]>(() => {
     const list = this.tasks() ?? [];
     // Task labels often arrive as i18n keys — resolve them to strings
     // here so the select renders plain text without demanding a pipe
@@ -128,6 +147,8 @@ export class VisualizationToolbar {
   readonly customValuesChange = output<Record<string, unknown>>();
 
   constructor() {
+    this.destroyRef.onDestroy(() => this.popoverRegistration.unregister());
+
     effect(() => {
       const speed = this.speed();
       untracked(() => {
@@ -176,11 +197,9 @@ export class VisualizationToolbar {
       .pipe(takeUntilDestroyed())
       .subscribe((value) => this.variantChange.emit(value));
 
-    this.taskControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((value) => {
-        if (value) this.taskChange.emit(value);
-      });
+    this.taskControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      if (value) this.taskChange.emit(value);
+    });
   }
 
   transportLabelKey(): I18nKey {
@@ -193,11 +212,22 @@ export class VisualizationToolbar {
     // Stop propagation so the popover's own outside-click handler
     // (registered on document:click) doesn't immediately re-close it.
     event.stopPropagation();
-    this.customValuesOpen.update((open) => !open);
+
+    if (this.customValuesOpen()) {
+      this.closeCustomValues();
+      return;
+    }
+
+    this.popoverRegistration.activate();
+    this.customValuesOpen.set(true);
   }
 
   closeCustomValues(): void {
     if (this.customValuesOpen()) this.customValuesOpen.set(false);
+  }
+
+  onCustomValuesFocus(): void {
+    this.popoverRegistration.activate();
   }
 
   onCustomValuesApply(values: Record<string, unknown>): void {

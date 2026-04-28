@@ -28,7 +28,7 @@
 
     <div class="page__filter-stack">
       <div class="page__filters">
-        <app-lab-multi-select
+        <app-multi-select
           [label]="traitsTriggerLabel()"
           [summary]="traitsSummary()"
           [ariaLabel]="traitsTriggerAriaLabel()"
@@ -41,7 +41,7 @@
           (valueChange)="selectTraits($event)"
         />
 
-        <app-lab-difficulty-filter
+        <app-select-button
           [options]="difficultyOptions()"
           [value]="activeDifficulty()"
           [ariaLabel]="difficultyGroupLabel()"
@@ -51,9 +51,10 @@
     </div>
   </section>
 
-  @if (filteredItems().length > 0) {
+  @let items = filteredItems();
+  @if (items.length > 0) {
     <div class="cards-grid">
-      @for (algorithm of filteredItems(); track algorithm.id) {
+      @for (algorithm of items; track algorithm.id) {
         <app-algorithm-card [algorithm]="algorithm" />
       }
     </div>

@@ -93,24 +93,15 @@
   --math-text-glow: rgb(var(--card-accent-rgb, 199 229 106) / 0.14);
 }
 
-/* ---- CTA INK — algorithm cards lead with the lime accent, switch to
-       the cool cyan on hover; insane cards swap in the warm orange
-       gradient. ---- */
+/* ---- CTA — uses the shared button component, so the shared browse-card
+       arrow treatment is disabled for this host. ---- */
 
 .card__cta {
-  color: var(--accent-strong);
+  margin-left: auto;
 }
 
-.card:hover .card__cta {
-  color: var(--chrome-accent-alt-strong);
-}
-
-.card--insane .card__cta {
-  color: rgb(var(--card-accent-rgb, 255 122 47));
-}
-
-.card--insane:hover .card__cta {
-  color: rgb(var(--card-accent-alt-rgb, 255 198 102));
+.card__cta::after {
+  content: none;
 }
 
 /* ---- RESPONSIVE — extra rule on top of the shared mobile stack: the

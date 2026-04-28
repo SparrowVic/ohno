@@ -1,0 +1,122 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.stream {
+  position: absolute;
+  display: block;
+  overflow: visible;
+  will-change: transform;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  pointer-events: none;
+}
+
+/* Halo + core: the path forms a tapered cable impulse without a bright
+   dot at the leading edge. The stream should read as ambient current,
+   not a cursor travelling across the page. */
+.stream .halo {
+  filter: blur(3.2px);
+  opacity: 0.38;
+}
+
+.stream .core {
+  filter: blur(0.72px);
+  opacity: 0.72;
+}
+
+.stream .head {
+  display: none;
+}
+
+.stream.h {
+  top: var(--row-or-col);
+  left: 0;
+  margin-top: calc(var(--thickness) / -2);
+  animation-name: bg-energy-flow-h;
+}
+
+.stream.v {
+  left: var(--row-or-col);
+  top: 0;
+  margin-left: calc(var(--thickness) / -2);
+  animation-name: bg-energy-flow-v;
+}
+
+.stream.reverse {
+  animation-direction: reverse;
+}
+
+/* Stop colours come from the brand triad — bind via class so the SCSS
+   stays the single source of truth and the component never duplicates
+   raw RGB values. */
+.stream.cyan {
+  --stream-color: rgb(var(--chrome-accent-alt-rgb));
+}
+
+.stream.cyan .stop-peak,
+.stream.cyan .stop-mid,
+.stream.cyan .stop-edge {
+  stop-color: rgb(var(--chrome-accent-alt-rgb));
+}
+
+.stream.violet {
+  --stream-color: rgb(var(--chrome-accent-rgb));
+}
+
+.stream.violet .stop-peak,
+.stream.violet .stop-mid,
+.stream.violet .stop-edge {
+  stop-color: rgb(var(--chrome-accent-rgb));
+}
+
+.stream.lime {
+  --stream-color: rgb(var(--accent-rgb));
+}
+
+.stream.lime .stop-peak,
+.stream.lime .stop-mid,
+.stream.lime .stop-edge {
+  stop-color: rgb(var(--accent-rgb));
+}
+
+.stream.pink {
+  --stream-color: rgb(var(--chrome-accent-warm-rgb));
+}
+
+.stream.pink .stop-peak,
+.stream.pink .stop-mid,
+.stream.pink .stop-edge {
+  stop-color: rgb(var(--chrome-accent-warm-rgb));
+}
+
+@keyframes bg-energy-flow-h {
+  from {
+    transform: translate3d(-400px, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(100vw + 80px), 0, 0);
+  }
+}
+
+@keyframes bg-energy-flow-v {
+  from {
+    transform: translate3d(0, -400px, 0);
+  }
+  to {
+    transform: translate3d(0, calc(100vh + 80px), 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    display: none;
+  }
+}

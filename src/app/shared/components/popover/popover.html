@@ -1,0 +1,6 @@
+<div class="popover" [attr.role]="panelRole()" (click)="onInnerClick($event)">
+  <div class="popover__underlay" aria-hidden="true"></div>
+  <div class="popover__body">
+    <ng-content />
+  </div>
+</div>

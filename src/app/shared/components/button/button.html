@@ -1,0 +1,117 @@
+<ng-template #buttonContent>
+  <span class="app-button__bloom" aria-hidden="true"></span>
+  <span class="app-button__shine" aria-hidden="true"></span>
+
+  @if (leftIcon(); as icon) {
+    <fa-icon class="app-button__icon app-button__icon--left" [icon]="icon" />
+  }
+
+  @if (label(); as text) {
+    <span class="app-button__label">{{ text }}</span>
+  }
+
+  @if (suffix(); as text) {
+    <span class="app-button__suffix">{{ text }}</span>
+  }
+
+  @if (rightIcon(); as icon) {
+    <fa-icon class="app-button__icon app-button__icon--right" [icon]="icon" />
+  }
+</ng-template>
+
+@if (interactive() && routerLink(); as link) {
+  <a
+    #buttonEl
+    class="app-button"
+    [class.app-button--solid]="appearance() === 'solid'"
+    [class.app-button--tonal]="appearance() === 'tonal'"
+    [class.app-button--soft]="appearance() === 'soft'"
+    [class.app-button--outline]="appearance() === 'outline'"
+    [class.app-button--ghost]="appearance() === 'ghost'"
+    [class.app-button--bloom]="appearance() === 'bloom'"
+    [class.app-button--xs]="size() === 'xs'"
+    [class.app-button--sm]="size() === 'sm'"
+    [class.app-button--md]="size() === 'md'"
+    [class.app-button--lg]="size() === 'lg'"
+    [class.app-button--icon-only]="iconOnly()"
+    [class.app-button--active]="active()"
+    [class.app-button--pulse]="pulse()"
+    [class.app-button--icon-pop-active]="iconPopActive()"
+    [class.app-button--compact]="compact()"
+    [class.app-button--wide]="wide()"
+    [class.app-button--disabled]="disabled()"
+    [attr.data-accent]="accent()"
+    [style.--button-custom-accent]="customAccent()"
+    [routerLink]="link"
+    [queryParamsHandling]="queryParamsHandling()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-disabled]="disabled()"
+    [attr.aria-expanded]="expanded()"
+    [attr.title]="titleText()"
+    (click)="onClick($event)"
+    (focus)="onFocus($event)"
+  >
+    <ng-container [ngTemplateOutlet]="buttonContent" />
+  </a>
+} @else if (interactive()) {
+  <button
+    #buttonEl
+    class="app-button"
+    [class.app-button--solid]="appearance() === 'solid'"
+    [class.app-button--tonal]="appearance() === 'tonal'"
+    [class.app-button--soft]="appearance() === 'soft'"
+    [class.app-button--outline]="appearance() === 'outline'"
+    [class.app-button--ghost]="appearance() === 'ghost'"
+    [class.app-button--bloom]="appearance() === 'bloom'"
+    [class.app-button--xs]="size() === 'xs'"
+    [class.app-button--sm]="size() === 'sm'"
+    [class.app-button--md]="size() === 'md'"
+    [class.app-button--lg]="size() === 'lg'"
+    [class.app-button--icon-only]="iconOnly()"
+    [class.app-button--active]="active()"
+    [class.app-button--pulse]="pulse()"
+    [class.app-button--icon-pop-active]="iconPopActive()"
+    [class.app-button--compact]="compact()"
+    [class.app-button--wide]="wide()"
+    [attr.data-accent]="accent()"
+    [style.--button-custom-accent]="customAccent()"
+    [type]="type()"
+    [disabled]="disabled()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-expanded]="expanded()"
+    [attr.title]="titleText()"
+    (click)="onClick($event)"
+    (focus)="onFocus($event)"
+  >
+    <ng-container [ngTemplateOutlet]="buttonContent" />
+  </button>
+} @else {
+  <span
+    #buttonEl
+    class="app-button"
+    [class.app-button--solid]="appearance() === 'solid'"
+    [class.app-button--tonal]="appearance() === 'tonal'"
+    [class.app-button--soft]="appearance() === 'soft'"
+    [class.app-button--outline]="appearance() === 'outline'"
+    [class.app-button--ghost]="appearance() === 'ghost'"
+    [class.app-button--bloom]="appearance() === 'bloom'"
+    [class.app-button--xs]="size() === 'xs'"
+    [class.app-button--sm]="size() === 'sm'"
+    [class.app-button--md]="size() === 'md'"
+    [class.app-button--lg]="size() === 'lg'"
+    [class.app-button--icon-only]="iconOnly()"
+    [class.app-button--active]="active()"
+    [class.app-button--pulse]="pulse()"
+    [class.app-button--icon-pop-active]="iconPopActive()"
+    [class.app-button--compact]="compact()"
+    [class.app-button--wide]="wide()"
+    [class.app-button--disabled]="disabled()"
+    [attr.data-accent]="accent()"
+    [style.--button-custom-accent]="customAccent()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-disabled]="disabled()"
+    [attr.title]="titleText()"
+  >
+    <ng-container [ngTemplateOutlet]="buttonContent" />
+  </span>
+}

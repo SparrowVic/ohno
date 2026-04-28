@@ -1,0 +1,176 @@
+@use '../control-chrome' as chrome;
+@use '../../styles/eyebrow' as type;
+
+:host {
+  display: inline-block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.select-button {
+  display: inline-grid;
+  gap: 6px;
+  width: max-content;
+  max-width: 100%;
+
+  &--disabled {
+    opacity: 0.56;
+  }
+}
+
+.select-button__label {
+  @include type.eyebrow($size: 8px, $tracking: 0.14em);
+
+  line-height: 1.05;
+}
+
+.select-button__options {
+  @include chrome.control-field(var(--control-radius));
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  /* Each option is sized to accommodate the longest label comfortably —
+     all columns are equal width, but the group overall stays content-sized
+     (never stretches to fill the parent layout cell). */
+  grid-template-columns: repeat(var(--select-button-count, 5), minmax(62px, auto));
+  gap: 4px;
+  padding: 4px;
+  width: max-content;
+  max-width: 100%;
+
+  /* Magic indicator — slides under the active option. Tone comes from
+     data-tone attribute so each select button animates to its own color. */
+  --select-button-tone-rgb: var(--chrome-accent-rgb);
+  --select-button-tone-alt-rgb: var(--chrome-accent-alt-rgb);
+
+  &[data-tone='easy'] {
+    --select-button-tone-rgb: var(--easy-rgb);
+    --select-button-tone-alt-rgb: var(--easy-rgb);
+  }
+
+  &[data-tone='medium'] {
+    --select-button-tone-rgb: var(--medium-rgb);
+    --select-button-tone-alt-rgb: var(--medium-rgb);
+  }
+
+  &[data-tone='hard'] {
+    --select-button-tone-rgb: var(--hard-rgb);
+    --select-button-tone-alt-rgb: var(--hard-rgb);
+  }
+
+  &[data-tone='ultra-hard'] {
+    --select-button-tone-rgb: var(--ultra-hard-rgb);
+    --select-button-tone-alt-rgb: var(--ultra-hard-rgb);
+  }
+}
+
+.select-button__indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px - (var(--select-button-count, 5) - 1) * 4px) / var(--select-button-count, 5));
+  transform: translateX(
+    calc(var(--select-button-index, 0) * (100% + 4px))
+  );
+  border-radius: 8px;
+  border: 0.5px solid rgba(var(--select-button-tone-rgb), 0.3);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--select-button-tone-rgb), 0.22),
+      rgba(var(--select-button-tone-alt-rgb), 0.12) 62%,
+      rgba(255, 255, 255, 0.02)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(28, 32, 42, 0.98);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 6px 14px rgba(0, 0, 0, 0.2),
+    0 0 18px rgba(var(--select-button-tone-rgb), 0.22);
+  transition:
+    transform 320ms var(--ease-spring),
+    border-color 280ms var(--ease-soft),
+    background 280ms var(--ease-soft),
+    box-shadow 280ms var(--ease-out-quart);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.select-button__option {
+  @include chrome.option-surface(8px);
+
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--control-height) - 8px);
+  padding: 0 12px;
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-tertiary);
+  overflow: hidden;
+
+  &:hover:not(:disabled):not(.select-button__option--active) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus-soft);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &--active {
+    color: var(--text-primary);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    &.select-button__option--easy { color: var(--easy); }
+    &.select-button__option--medium { color: var(--medium); }
+    &.select-button__option--hard { color: var(--hard); }
+    &.select-button__option--ultra-hard { color: #ffd9bf; }
+  }
+}
+
+.select-button__option-label {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 560px) {
+  /* On very small screens, allow the group to wrap into the line and shrink
+     slightly so it stays usable next to the results label. */
+  .select-button__options {
+    grid-template-columns: repeat(var(--select-button-count, 5), minmax(54px, auto));
+  }
+
+  .select-button__option {
+    padding: 0 9px;
+  }
+
+  .select-button__option-label {
+    font-size: 10.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select-button__option,
+  .select-button__indicator {
+    transition: none;
+  }
+}

@@ -1,0 +1,40 @@
+@for (s of streams; track s.id) {
+  <svg
+    class="stream"
+    [class.h]="s.axis === 'h'"
+    [class.v]="s.axis === 'v'"
+    [class.cyan]="s.color === 'cyan'"
+    [class.violet]="s.color === 'violet'"
+    [class.lime]="s.color === 'lime'"
+    [class.pink]="s.color === 'pink'"
+    [class.reverse]="s.reverse"
+    [style.--row-or-col]="s.rowOrCol + 'px'"
+    [style.--thickness]="s.thickness + 'px'"
+    [style.animation-duration]="s.duration + 's'"
+    [style.animation-delay]="s.delay + 's'"
+    [attr.viewBox]="s.viewBox"
+    [attr.width]="s.width"
+    [attr.height]="s.height"
+    aria-hidden="true"
+  >
+    <defs>
+      <linearGradient
+        [attr.id]="s.gradientId"
+        [attr.x1]="s.gradientX1"
+        [attr.y1]="s.gradientY1"
+        [attr.x2]="s.gradientX2"
+        [attr.y2]="s.gradientY2"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop class="stop-edge" offset="0%" stop-opacity="0" />
+        <stop class="stop-mid" offset="52%" [attr.stop-opacity]="s.midAlpha * 0.34" />
+        <stop class="stop-mid" offset="78%" [attr.stop-opacity]="s.midAlpha" />
+        <stop class="stop-peak" offset="92%" [attr.stop-opacity]="s.peakAlpha" />
+        <stop class="stop-edge" offset="100%" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <path class="halo" [attr.d]="s.pathD" [attr.fill]="'url(#' + s.gradientId + ')'" />
+    <path class="core" [attr.d]="s.pathD" [attr.fill]="'url(#' + s.gradientId + ')'" />
+    <circle class="head" [attr.cx]="s.headCx" [attr.cy]="s.headCy" [attr.r]="s.headR" />
+  </svg>
+}

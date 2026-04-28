@@ -9,22 +9,12 @@
   border-radius: var(--panel-shell-radius);
   background: var(--panel-shell-bg);
   box-shadow: var(--panel-shell-shadow);
-  backdrop-filter: blur(18px) saturate(124%);
-  -webkit-backdrop-filter: blur(18px) saturate(124%);
+  backdrop-filter: blur(9px) saturate(126%);
+  -webkit-backdrop-filter: blur(9px) saturate(126%);
   isolation: isolate;
 
   &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 14% 0%, rgba(var(--inspector-accent, 199 229 106), 0.12), transparent 40%),
-      radial-gradient(circle at 92% 4%, rgba(var(--inspector-accent-alt, 76 227 255), 0.08), transparent 36%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 22%);
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.9;
-    transition: opacity var(--duration-slow) var(--ease-soft);
+    content: none;
   }
 }
 
@@ -95,43 +85,37 @@
 
 .side-tabs-bar {
   position: relative;
-  min-height: calc(var(--panel-topbar-height) + 4px);
+  min-height: var(--panel-topbar-height);
   display: flex;
   align-items: stretch;
   overflow: hidden;
-  border-bottom: 0.5px solid var(--panel-topbar-divider);
-  background:
-    linear-gradient(180deg, rgba(var(--inspector-accent, 199 229 106), 0.06), rgba(255, 255, 255, 0) 72%),
-    var(--panel-topbar-bg);
-  transition: background var(--duration-slow) var(--ease-soft);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.055);
+  background: transparent;
 
   &::before {
     content: '';
     position: absolute;
     inset: 0 0 auto;
     height: 1px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.045);
     pointer-events: none;
   }
 
-  /* Bottom brand rail — animated flow */
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
     bottom: -1px;
-    height: 2px;
+    height: 1px;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(var(--inspector-accent, 199 229 106), 0.7) 26%,
-      rgba(var(--inspector-accent-alt, 76 227 255), 0.55) 62%,
+      rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.24) 32%,
+      rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.2) 66%,
       transparent 100%
     );
-    background-size: 220% 100%;
-    animation: brand-text-flow 12s linear infinite;
-    opacity: 0.7;
+    opacity: 0.68;
     pointer-events: none;
   }
 }
@@ -170,17 +154,27 @@
   background:
     linear-gradient(
       180deg,
-      rgba(var(--inspector-accent, 199 229 106), 0.24),
-      rgba(var(--inspector-accent, 199 229 106), 0.08) 68%,
+      rgba(255, 255, 255, 0.066),
+      rgba(255, 255, 255, 0.016) 44%,
+      transparent 86%
+    ),
+    radial-gradient(
+      ellipse 86% 62% at 10% -8%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.1),
+      transparent 66%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1),
       rgba(255, 255, 255, 0.02)
     ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)),
-    rgba(18, 22, 30, 0.95);
-  border: 0.5px solid rgba(var(--inspector-accent, 199 229 106), 0.38);
+    rgb(17 23 34 / 0.74);
+  border: 0.5px solid rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.28);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
     0 10px 22px rgba(0, 0, 0, 0.24),
-    0 0 22px rgba(var(--inspector-accent, 199 229 106), 0.28);
+    0 0 18px rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.18);
   transition:
     transform 360ms var(--ease-spring),
     background 320ms var(--ease-soft),
@@ -209,7 +203,7 @@
   flex: 1;
   position: relative;
   min-width: 0;
-  min-height: calc(var(--panel-topbar-height) - 6px);
+  min-height: calc(var(--panel-topbar-height) - 10px);
   padding: 0 14px;
   border-radius: 12px;
   border: none;
@@ -223,11 +217,7 @@
   font-family: inherit;
   z-index: 1;
   cursor: pointer;
-  /* Hover/active no longer translate — feedback comes from color + icon halo,
-     so the label doesn't visibly shift. Only :active keeps a tiny press. */
-  transition:
-    color 220ms var(--ease-soft),
-    transform 140ms var(--ease-out-quart);
+  transition: color 220ms var(--ease-soft);
 
   &:hover {
     color: var(--text-primary);
@@ -238,16 +228,12 @@
     box-shadow: var(--ring-focus-soft);
   }
 
-  &:active {
-    transform: scale(0.985);
-  }
-
   &--active {
-    color: var(--text-primary);
+    color: color-mix(in srgb, rgb(var(--inspector-accent, 199 229 106)) 78%, #ffffff);
   }
 
   &--active .side-tab__icon {
-    color: rgb(var(--inspector-accent, 199 229 106));
+    color: currentColor;
     filter:
       drop-shadow(0 0 6px rgba(var(--inspector-accent, 199 229 106), 0.48))
       drop-shadow(0 0 12px rgba(var(--inspector-accent, 199 229 106), 0.22));
@@ -256,8 +242,8 @@
 
 .side-tab__icon {
   position: relative;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -267,8 +253,8 @@
     filter 260ms var(--ease-out-quart);
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     display: block;
     position: relative;
     z-index: 1;
@@ -327,17 +313,17 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  color: currentColor;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   line-height: 1.05;
-  transition:
-    letter-spacing 240ms var(--ease-out-quart),
-    text-shadow 240ms var(--ease-soft);
+  text-transform: uppercase;
+  transition: text-shadow 240ms var(--ease-soft);
 }
 
 .side-tab--active .side-tab__label {
-  letter-spacing: 0.02em;
+  color: currentColor;
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.3),
     0 0 10px rgba(var(--inspector-accent, 199 229 106), 0.2);
@@ -393,13 +379,8 @@
   display: flex;
   flex-direction: column;
   padding: 12px 12px 14px;
-  background:
-    radial-gradient(circle at 50% -20%, rgba(var(--inspector-accent, 199 229 106), 0.14), transparent 38%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.022), transparent 24%),
-    rgba(11, 13, 18, 0.2);
-  transition: background var(--duration-slow) var(--ease-soft);
+  background: transparent;
 
-  /* thin accent halo right under the tab indicator */
   &::before {
     content: '';
     position: absolute;
@@ -409,28 +390,16 @@
     height: 1px;
     background: linear-gradient(
       90deg,
-      rgba(var(--inspector-accent, 199 229 106), 0),
-      rgba(var(--inspector-accent, 199 229 106), 0.42) 50%,
-      rgba(var(--inspector-accent, 199 229 106), 0)
+      transparent,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent
     );
     pointer-events: none;
-    opacity: 0.8;
+    opacity: 0.62;
   }
 
-  /* floating accent glow in corner */
   &::after {
-    content: '';
-    position: absolute;
-    right: 14px;
-    top: 14px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(var(--inspector-accent, 199 229 106), 0.12), transparent 68%);
-    filter: blur(20px);
-    pointer-events: none;
-    opacity: 0.8;
-    transition: opacity var(--duration-slow) var(--ease-soft);
+    content: none;
   }
 }
 

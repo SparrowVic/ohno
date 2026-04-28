@@ -4,6 +4,8 @@ export interface NavTab {
   readonly id: NavTabId;
   readonly label: string;
   readonly path: string;
+  readonly disabled?: boolean;
+  readonly disabledLabel?: string;
 }
 
 export interface SidebarFilter {

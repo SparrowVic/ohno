@@ -1,0 +1,111 @@
+@use '../control-chrome' as chrome;
+@use '../../styles/eyebrow' as type;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.text-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Chromed container — same surface treatment as `NumberInput`
+   and `Select` trigger. Label eyebrow and the actual input sit
+   stacked inside this single bordered box. */
+.text-input__field {
+  @include chrome.control-field;
+
+  display: flex;
+  align-items: center;
+  min-height: var(--control-height);
+  padding: 4px var(--control-padding-inline);
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out-quart);
+
+  &:hover {
+    @include chrome.control-field-hover;
+  }
+
+  &:has(.text-input__input:focus-visible) {
+    @include chrome.control-field-focus;
+  }
+}
+
+.text-input--invalid .text-input__field {
+  border-color: rgba(var(--viz-danger-rgb), 0.5);
+}
+
+.text-input__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.text-input__label {
+  @include type.eyebrow($size: 8px, $tracking: 0.14em);
+
+  line-height: 1.05;
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+.text-input__field:hover .text-input__label {
+  color: var(--text-secondary);
+}
+
+.text-input__input {
+  /* Borderless — the surrounding field carries the chrome. */
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  line-height: 1.2;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Mono variant — used for CSV / expression inputs where digits should
+   stay column-aligned (witnesses list, CRT congruence system). */
+.text-input--mono .text-input__input {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.text-input__error {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--viz-danger);
+}
+
+.text-input__hint {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--text-tertiary);
+}

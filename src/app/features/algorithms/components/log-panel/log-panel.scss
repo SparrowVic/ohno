@@ -85,17 +85,14 @@
   pointer-events: none;
 }
 
-.log__head-kind {
-  text-align: center;
-  color: var(--text-quaternary);
-}
-
 .log__head-step {
+  grid-column: 2;
   padding-left: 2px;
   color: var(--viz-warning-ink);
 }
 
 .log__head-desc {
+  grid-column: 3;
   padding-left: 2px;
 }
 

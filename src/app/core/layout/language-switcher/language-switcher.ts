@@ -12,10 +12,12 @@ import {
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { animate } from 'animejs';
+import { faGlobeEurope, faXmark } from '@fortawesome/pro-solid-svg-icons';
 
 import { APP_LANG } from '../../i18n/app-lang';
 import { AppLanguageService } from '../../i18n/app-language.service';
 import { I18N_KEY } from '../../i18n/i18n-keys';
+import { AppButton } from '../../../shared/components/button/button';
 import { WorldFlagGlobe } from './world-flag-globe/world-flag-globe';
 
 interface SelectedCountry {
@@ -24,12 +26,16 @@ interface SelectedCountry {
 
 @Component({
   selector: 'app-language-switcher',
-  imports: [WorldFlagGlobe, TranslocoPipe],
+  imports: [AppButton, WorldFlagGlobe, TranslocoPipe],
   templateUrl: './language-switcher.html',
   styleUrl: './language-switcher.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSwitcher {
+  protected readonly icons = {
+    globe: faGlobeEurope,
+    close: faXmark,
+  };
   private readonly language = inject(AppLanguageService);
   private readonly doc = inject(DOCUMENT);
   private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -39,6 +45,7 @@ export class LanguageSwitcher {
   protected readonly I18N_KEY = I18N_KEY;
   readonly activeLang = this.language.activeLang;
   readonly open = signal(false);
+  readonly activeLangShort = computed(() => this.activeLang().toUpperCase());
   readonly activeLangLabel = computed(
     () =>
       this.language.options.find((option) => option.value === this.activeLang())?.label ??

@@ -1,6 +1,9 @@
 :host {
   display: block;
-  border-top: 0.5px solid rgba(255, 255, 255, 0.05);
+  border-top: 0.5px solid var(--panel-topbar-divider);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014), rgba(255, 255, 255, 0.004)),
+    rgb(var(--glass-base-rgb) / 0.18);
 }
 
 .legend {
@@ -17,8 +20,11 @@
   gap: 6px;
   padding: 5px 10px;
   border-radius: 999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.025);
+  border: 0.5px solid rgba(255, 255, 255, 0.075);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+    rgb(var(--glass-base-rgb) / 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
   font-size: 10px;
   color: var(--text-secondary);
 }
