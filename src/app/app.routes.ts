@@ -22,8 +22,8 @@ export const routes: Routes = [
       },
       {
         path: 'structures',
-        loadChildren: () =>
-          import('./features/structures/structures.routes').then((m) => m.STRUCTURES_ROUTES),
+        redirectTo: '/algorithms',
+        pathMatch: 'prefix',
       },
     ],
   },

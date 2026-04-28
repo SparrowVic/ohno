@@ -1,7 +1,24 @@
-<a [routerLink]="tab().path" [attr.aria-current]="active() ? 'page' : null">
-  <span class="tab-deck-item__hover-circle" aria-hidden="true"></span>
-  <span class="tab-deck-item__label-stack">
-    <span class="tab-deck-item__label">{{ tab().label }}</span>
-    <span class="tab-deck-item__label-hover" aria-hidden="true">{{ tab().label }}</span>
+@if (tab().disabled) {
+  <span class="tab-deck-item__link" aria-disabled="true" [attr.title]="tab().disabledLabel">
+    <span class="tab-deck-item__hover-circle" aria-hidden="true"></span>
+    <span class="tab-deck-item__label-stack">
+      <span class="tab-deck-item__label">{{ tab().label }}</span>
+      <span class="tab-deck-item__label-hover" aria-hidden="true">{{ tab().label }}</span>
+    </span>
+    @if (tab().disabledLabel) {
+      <span class="tab-deck-item__badge">{{ tab().disabledLabel }}</span>
+    }
   </span>
-</a>
+} @else {
+  <a
+    class="tab-deck-item__link"
+    [routerLink]="tab().path"
+    [attr.aria-current]="active() ? 'page' : null"
+  >
+    <span class="tab-deck-item__hover-circle" aria-hidden="true"></span>
+    <span class="tab-deck-item__label-stack">
+      <span class="tab-deck-item__label">{{ tab().label }}</span>
+      <span class="tab-deck-item__label-hover" aria-hidden="true">{{ tab().label }}</span>
+    </span>
+  </a>
+}

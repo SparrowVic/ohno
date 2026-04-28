@@ -12,6 +12,7 @@ import { NavTab } from '../../../../models/navigation';
   host: {
     class: 'tab-deck-item',
     '[class.is-active]': 'active()',
+    '[class.is-disabled]': 'tab().disabled',
     '[attr.data-tab-id]': 'tab().id',
   },
 })

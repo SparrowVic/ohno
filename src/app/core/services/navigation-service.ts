@@ -14,11 +14,19 @@ interface NavTabDefinition {
   readonly id: NavTabId;
   readonly labelKey: string;
   readonly path: string;
+  readonly disabled?: boolean;
+  readonly disabledLabelKey?: string;
 }
 
 const NAV_TABS: readonly NavTabDefinition[] = [
   { id: 'algorithms', labelKey: t('core.navigation.tabs.algorithms'), path: '/algorithms' },
-  { id: 'structures', labelKey: t('core.navigation.tabs.structures'), path: '/structures' },
+  {
+    id: 'structures',
+    labelKey: t('core.navigation.tabs.structures'),
+    path: '/structures',
+    disabled: true,
+    disabledLabelKey: t('core.navigation.tabs.comingSoon'),
+  },
 ];
 
 interface SidebarItemDefinition {
@@ -478,6 +486,10 @@ export class NavigationService {
       id: tab.id,
       label: this.transloco.translate(tab.labelKey),
       path: tab.path,
+      disabled: tab.disabled,
+      disabledLabel: tab.disabledLabelKey
+        ? this.transloco.translate(tab.disabledLabelKey)
+        : undefined,
     }));
   });
 
@@ -491,8 +503,8 @@ export class NavigationService {
 
   readonly activeTabId: Signal<NavTabId> = computed(() => {
     const url = this.currentUrl();
-    if (url.startsWith('/structures')) return 'structures';
-    return 'algorithms';
+    const activeTab = NAV_TABS.find((tab) => url.startsWith(tab.path));
+    return activeTab && !activeTab.disabled ? activeTab.id : 'algorithms';
   });
 
   readonly sidebarGroups: Signal<readonly SidebarGroup[]> = computed(() => {
