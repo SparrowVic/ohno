@@ -7,6 +7,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { NgStyle } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -27,6 +28,8 @@ import { SidePanel } from '../components/side-panel/side-panel';
 import { VisualizationCanvas } from '../components/visualization-canvas/visualization-canvas';
 import { VisualizationToolbar } from '../components/visualization-toolbar/visualization-toolbar';
 import { AppButton } from '../../../shared/components/button/button';
+import { buildCategoryThemeVars } from '../../../shared/category-theme';
+import { buildDifficultyThemeVars } from '../../../shared/difficulty-theme';
 import {
   AlgorithmViewConfig,
   describeGraphPath,
@@ -107,6 +110,7 @@ interface RebuildOptions {
   imports: [
     AppButton,
     LegendBar,
+    NgStyle,
     SidePanel,
     VisualizationCanvas,
     VisualizationToolbar,
@@ -176,6 +180,14 @@ export class AlgorithmDetail {
   readonly difficultyLabelKey = computed(() => {
     const algorithm = this.algorithm();
     return algorithm ? getDifficultyLabelKey(algorithm.difficulty) : null;
+  });
+  readonly detailThemeStyle = computed<Record<string, string>>(() => {
+    const algorithm = this.algorithm();
+
+    return {
+      ...buildCategoryThemeVars(algorithm?.category ?? 'overview', 'detail'),
+      ...buildDifficultyThemeVars(algorithm?.difficulty ?? null, 'difficulty'),
+    };
   });
   readonly breadcrumbs = computed(() => {
     const algorithm = this.algorithm();

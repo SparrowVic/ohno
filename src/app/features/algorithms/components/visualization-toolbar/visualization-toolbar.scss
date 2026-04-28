@@ -54,14 +54,23 @@
   min-height: var(--control-height);
   padding: 5px 9px;
   border-radius: var(--control-radius);
-  border: 0.5px solid var(--border);
-  background: rgba(19, 20, 21, 0.9);
+  border: 0.5px solid rgba(255, 255, 255, 0.105);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.006) 70%),
+    linear-gradient(
+      135deg,
+      rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.055),
+      rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.034)
+    ),
+    rgb(var(--glass-base-rgb) / 0.38);
+  backdrop-filter: blur(10px) saturate(124%);
+  -webkit-backdrop-filter: blur(10px) saturate(124%);
   display: grid;
   align-content: center;
   gap: 4px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 8px 18px rgba(0, 0, 0, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 18px rgba(0, 0, 0, 0.16);
 }
 
 .toolbar__progress-copy {
@@ -95,7 +104,12 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgba(184, 213, 110, 0.55), rgba(184, 213, 110, 0.95));
+  background: linear-gradient(
+    90deg,
+    rgb(var(--detail-accent-rgb, var(--accent-rgb)) / 0.58),
+    rgb(var(--detail-accent-alt-rgb, var(--accent-rgb)) / 0.92)
+  );
+  box-shadow: 0 0 12px rgb(var(--detail-accent-rgb, var(--accent-rgb)) / 0.28);
 }
 
 .toolbar__dock {

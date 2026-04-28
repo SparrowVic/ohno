@@ -1,11 +1,13 @@
 @use '../../../shared/styles/eyebrow' as type;
 
 :host {
+  position: relative;
   display: block;
   height: 100dvh;
   min-height: 100dvh;
   overflow: hidden;
-  background: var(--app-bg);
+  background: transparent;
+  isolation: isolate;
 }
 
 .detail {
@@ -18,6 +20,7 @@
   min-height: 0;
   gap: var(--detail-container-gap);
   padding: 10px 12px 12px;
+  background: transparent;
 }
 
 .topbar {
@@ -30,20 +33,27 @@
   padding: 0;
   min-height: 58px;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .topbar::before {
+  content: none;
+}
+
+.topbar::after {
   content: '';
   position: absolute;
-  inset: -14px 20% auto;
-  height: 40px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 28% 50%, rgba(var(--chrome-accent-rgb), 0.18), transparent 58%),
-    radial-gradient(circle at 62% 50%, rgba(var(--chrome-accent-alt-rgb), 0.14), transparent 58%);
-  filter: blur(24px);
+  inset: auto 8% -2px 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.24) 30%,
+    rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.22) 60%,
+    transparent 100%
+  );
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.62;
 }
 
 .topbar__brand,
@@ -126,15 +136,15 @@
   gap: 6px;
   padding: 3px 9px 3px 12px;
   border-radius: 999px;
-  border: 0.5px solid rgba(var(--chrome-accent-rgb), 0.22);
+  border: 0.5px solid rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.22);
   background:
     linear-gradient(
       135deg,
-      rgba(var(--chrome-accent-rgb), 0.1),
-      rgba(var(--chrome-accent-alt-rgb), 0.06)
+      rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.1),
+      rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.06)
     ),
     rgba(14, 17, 24, 0.62);
-  color: var(--chrome-accent-strong);
+  color: var(--detail-accent-strong, var(--chrome-accent-strong));
   font-weight: 700;
   backdrop-filter: blur(10px);
   box-shadow:
@@ -147,29 +157,33 @@
   width: 4px;
   height: 4px;
   border-radius: 999px;
-  background: var(--brand-gradient);
-  box-shadow: 0 0 8px rgba(var(--chrome-accent-rgb), 0.6);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb))),
+    rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)))
+  );
+  box-shadow: 0 0 8px rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.6);
   flex-shrink: 0;
 }
 
 .topbar__crumb:last-child {
   color: var(--text-primary);
-  border-color: rgba(var(--chrome-accent-alt-rgb), 0.34);
+  border-color: rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.34);
   background:
     linear-gradient(
       135deg,
-      rgba(var(--chrome-accent-alt-rgb), 0.16),
-      rgba(var(--chrome-accent-rgb), 0.1)
+      rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.16),
+      rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.1)
     ),
     rgba(16, 20, 28, 0.7);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     var(--elevation-1),
-    0 0 16px rgba(var(--chrome-accent-alt-rgb), 0.14);
+    0 0 16px rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.14);
 }
 
 .topbar__crumb-sep {
-  color: rgba(var(--chrome-accent-rgb), 0.48);
+  color: rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.48);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;
@@ -189,15 +203,14 @@
     100deg,
     var(--text-primary) 0%,
     var(--text-primary) 40%,
-    var(--chrome-accent-strong) 64%,
-    var(--chrome-accent-alt-strong) 82%,
+    var(--detail-accent-strong, var(--chrome-accent-strong)) 64%,
+    var(--detail-accent-alt-strong, var(--chrome-accent-alt-strong)) 82%,
     var(--text-primary) 108%
   );
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: brand-text-flow 12s linear infinite;
 }
 
 .topbar__badge {
@@ -281,18 +294,28 @@
   border-radius: var(--panel-shell-radius);
   background: var(--panel-shell-bg);
   box-shadow: var(--panel-shell-shadow);
-  backdrop-filter: blur(18px) saturate(122%);
-  -webkit-backdrop-filter: blur(18px) saturate(122%);
+  backdrop-filter: blur(9px) saturate(126%);
+  -webkit-backdrop-filter: blur(9px) saturate(126%);
   animation: ohno-fade-up var(--duration-entrance) var(--ease-out-expo) both;
 
   &::before {
+    content: none;
+  }
+
+  &::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 18% 0%, rgba(var(--chrome-accent-rgb), 0.08), transparent 38%),
-      radial-gradient(circle at 92% 2%, rgba(var(--chrome-accent-alt-rgb), 0.06), transparent 32%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%);
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.45) 22%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.8) 50%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.45) 78%,
+      transparent 100%
+    );
+    opacity: 0.65;
     pointer-events: none;
   }
 }
@@ -309,22 +332,15 @@
   width: min(560px, 100%);
   padding: 32px;
   border-radius: var(--radius-2xl);
-  border: 0.5px solid var(--border-hover);
-  background:
-    radial-gradient(circle at top left, rgba(var(--chrome-accent-rgb), 0.1), transparent 48%),
-    radial-gradient(
-      circle at bottom right,
-      rgba(var(--chrome-accent-alt-rgb), 0.06),
-      transparent 44%
-    ),
-    var(--surface-1);
-  box-shadow: var(--elevation-3);
-  backdrop-filter: blur(18px) saturate(120%);
-  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  border: 0.5px solid var(--panel-shell-border);
+  background: var(--panel-shell-bg);
+  box-shadow: var(--panel-shell-shadow);
+  backdrop-filter: blur(9px) saturate(126%);
+  -webkit-backdrop-filter: blur(9px) saturate(126%);
 }
 
 .unavailable__eyebrow {
-  @include type.eyebrow($size: 10px, $tracking: 0.16em, $color: var(--chrome-accent-strong));
+  @include type.eyebrow($size: 10px, $tracking: 0.16em, $color: var(--detail-accent-strong, var(--chrome-accent-strong)));
 
   margin-bottom: 12px;
   display: inline-flex;
@@ -332,12 +348,12 @@
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 0.5px solid rgba(var(--chrome-accent-rgb), 0.28);
+  border: 0.5px solid rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.28);
   background:
     linear-gradient(
       135deg,
-      rgba(var(--chrome-accent-rgb), 0.14),
-      rgba(var(--chrome-accent-alt-rgb), 0.08)
+      rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.14),
+      rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.08)
     ),
     rgba(255, 255, 255, 0.02);
 }

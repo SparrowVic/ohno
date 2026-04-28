@@ -217,17 +217,49 @@
      PANEL SHELL (detail viz frame).
      ====================================================================== */
   --panel-shell-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
-    var(--surface-1);
-  --panel-shell-border: var(--border-strong);
-  --panel-shell-shadow: var(--elevation-2);
-  --panel-shell-radius: 22px;
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.014) 42%,
+      rgba(255, 255, 255, 0.002) 74%
+    ),
+    radial-gradient(
+      ellipse 82% 58% at 10% -8%,
+      rgb(var(--chrome-accent-rgb) / 0.07),
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 70% 58% at 104% 12%,
+      rgb(var(--chrome-accent-alt-rgb) / 0.052),
+      transparent 64%
+    ),
+    linear-gradient(
+      135deg,
+      rgb(17 23 34 / 0.76),
+      rgb(8 11 18 / 0.72) 58%,
+      rgb(4 6 11 / 0.68)
+    );
+  --panel-shell-border: rgba(255, 255, 255, 0.095);
+  --panel-shell-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+    inset 1px 0 0 rgb(var(--chrome-accent-alt-rgb) / 0.038),
+    inset -1px 0 0 rgb(var(--chrome-accent-rgb) / 0.032),
+    inset 0 -18px 38px rgba(0, 0, 0, 0.18),
+    0 12px 34px rgba(0, 0, 0, 0.32);
+  --panel-shell-radius: 18px;
   --panel-topbar-height: 56px;
   --panel-topbar-padding-inline: 10px;
-  --panel-topbar-divider: rgba(255, 255, 255, 0.06);
+  --panel-topbar-divider: rgba(255, 255, 255, 0.085);
   --panel-topbar-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008) 78%),
-    rgba(22, 26, 34, 0.38);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.006) 62%),
+    linear-gradient(
+      135deg,
+      rgb(var(--chrome-accent-rgb) / 0.03),
+      rgb(var(--chrome-accent-alt-rgb) / 0.02) 60%,
+      rgb(var(--accent-rgb) / 0.008) 92%
+    ),
+    rgb(var(--glass-base-rgb) / 0.34);
 
   /* ======================================================================
      CONTROL SIZING — compact and consistent.

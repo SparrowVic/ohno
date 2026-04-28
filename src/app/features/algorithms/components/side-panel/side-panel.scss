@@ -9,22 +9,30 @@
   border-radius: var(--panel-shell-radius);
   background: var(--panel-shell-bg);
   box-shadow: var(--panel-shell-shadow);
-  backdrop-filter: blur(18px) saturate(124%);
-  -webkit-backdrop-filter: blur(18px) saturate(124%);
+  backdrop-filter: blur(9px) saturate(126%);
+  -webkit-backdrop-filter: blur(9px) saturate(126%);
   isolation: isolate;
 
   &::before {
+    content: none;
+  }
+
+  &::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 14% 0%, rgba(var(--inspector-accent, 199 229 106), 0.12), transparent 40%),
-      radial-gradient(circle at 92% 4%, rgba(var(--inspector-accent-alt, 76 227 255), 0.08), transparent 36%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 22%);
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.45) 22%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.8) 50%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.45) 78%,
+      transparent 100%
+    );
+    opacity: 0.65;
     pointer-events: none;
-    z-index: 0;
-    opacity: 0.9;
-    transition: opacity var(--duration-slow) var(--ease-soft);
+    z-index: 2;
   }
 }
 
@@ -99,39 +107,33 @@
   display: flex;
   align-items: stretch;
   overflow: hidden;
-  border-bottom: 0.5px solid var(--panel-topbar-divider);
-  background:
-    linear-gradient(180deg, rgba(var(--inspector-accent, 199 229 106), 0.06), rgba(255, 255, 255, 0) 72%),
-    var(--panel-topbar-bg);
-  transition: background var(--duration-slow) var(--ease-soft);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.055);
+  background: transparent;
 
   &::before {
     content: '';
     position: absolute;
     inset: 0 0 auto;
     height: 1px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.045);
     pointer-events: none;
   }
 
-  /* Bottom brand rail — animated flow */
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
     bottom: -1px;
-    height: 2px;
+    height: 1px;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(var(--inspector-accent, 199 229 106), 0.7) 26%,
-      rgba(var(--inspector-accent-alt, 76 227 255), 0.55) 62%,
+      rgb(var(--detail-accent-rgb, var(--chrome-accent-rgb)) / 0.24) 32%,
+      rgb(var(--detail-accent-alt-rgb, var(--chrome-accent-alt-rgb)) / 0.2) 66%,
       transparent 100%
     );
-    background-size: 220% 100%;
-    animation: brand-text-flow 12s linear infinite;
-    opacity: 0.7;
+    opacity: 0.68;
     pointer-events: none;
   }
 }
@@ -170,17 +172,27 @@
   background:
     linear-gradient(
       180deg,
-      rgba(var(--inspector-accent, 199 229 106), 0.24),
-      rgba(var(--inspector-accent, 199 229 106), 0.08) 68%,
+      rgba(255, 255, 255, 0.066),
+      rgba(255, 255, 255, 0.016) 44%,
+      transparent 86%
+    ),
+    radial-gradient(
+      ellipse 86% 62% at 10% -8%,
+      rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.1),
+      transparent 66%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1),
       rgba(255, 255, 255, 0.02)
     ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)),
-    rgba(18, 22, 30, 0.95);
-  border: 0.5px solid rgba(var(--inspector-accent, 199 229 106), 0.38);
+    rgb(17 23 34 / 0.74);
+  border: 0.5px solid rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.28);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
     0 10px 22px rgba(0, 0, 0, 0.24),
-    0 0 22px rgba(var(--inspector-accent, 199 229 106), 0.28);
+    0 0 18px rgb(var(--difficulty-accent-rgb, 199 229 106) / 0.18);
   transition:
     transform 360ms var(--ease-spring),
     background 320ms var(--ease-soft),
@@ -385,13 +397,8 @@
   display: flex;
   flex-direction: column;
   padding: 12px 12px 14px;
-  background:
-    radial-gradient(circle at 50% -20%, rgba(var(--inspector-accent, 199 229 106), 0.14), transparent 38%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.022), transparent 24%),
-    rgba(11, 13, 18, 0.2);
-  transition: background var(--duration-slow) var(--ease-soft);
+  background: transparent;
 
-  /* thin accent halo right under the tab indicator */
   &::before {
     content: '';
     position: absolute;
@@ -401,28 +408,16 @@
     height: 1px;
     background: linear-gradient(
       90deg,
-      rgba(var(--inspector-accent, 199 229 106), 0),
-      rgba(var(--inspector-accent, 199 229 106), 0.42) 50%,
-      rgba(var(--inspector-accent, 199 229 106), 0)
+      transparent,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent
     );
     pointer-events: none;
-    opacity: 0.8;
+    opacity: 0.62;
   }
 
-  /* floating accent glow in corner */
   &::after {
-    content: '';
-    position: absolute;
-    right: 14px;
-    top: 14px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(var(--inspector-accent, 199 229 106), 0.12), transparent 68%);
-    filter: blur(20px);
-    pointer-events: none;
-    opacity: 0.8;
-    transition: opacity var(--duration-slow) var(--ease-soft);
+    content: none;
   }
 }
 
