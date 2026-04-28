@@ -19,26 +19,21 @@
   pointer-events: none;
 }
 
-/* Halo + core + head: the path forms a tapered cable impulse, while
-   the small head reads as the leading charge. The halo is intentionally
-   tighter now so the stream stays on the grid line instead of becoming
-   an atmospheric ribbon. */
+/* Halo + core: the path forms a tapered cable impulse without a bright
+   dot at the leading edge. The stream should read as ambient current,
+   not a cursor travelling across the page. */
 .stream .halo {
-  filter: blur(2.8px);
-  opacity: 0.54;
+  filter: blur(3.2px);
+  opacity: 0.38;
 }
 
 .stream .core {
-  filter: blur(0.55px);
+  filter: blur(0.72px);
+  opacity: 0.72;
 }
 
 .stream .head {
-  fill: var(--stream-color);
-  filter:
-    blur(0.35px)
-    drop-shadow(0 0 5px var(--stream-color))
-    drop-shadow(0 0 10px var(--stream-color));
-  opacity: 0.72;
+  display: none;
 }
 
 .stream.h {

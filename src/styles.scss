@@ -278,14 +278,15 @@
   --duration-entrance: 520ms;
 
   /* ======================================================================
-     BACKGROUND GRID — global lab-canvas layer. The static layer holds the
-     hairline grid + dots + occasional node flashes; the energy layer holds
-     ten independent signal packets, each riding its own row or column.
-     Asymmetry comes from prime-spaced periods, mixed directions, and
-     per-stream custom properties animated via @property.
+     BACKGROUND GRID — global lab-canvas layer. The static layer keeps a
+     quiet two-scale grid: a readable 96px raster, a rarer 384px structural
+     line, and a faint dot lattice. Moving energy lives in
+     ohno-bg-energy-layer so the canvas does not flash random points.
      ====================================================================== */
-  --app-grid-line-alpha: 0.024;
-  --app-grid-dot-alpha: 0.04;
+  --app-grid-line-alpha: 0.03;
+  --app-grid-major-line-alpha: 0.042;
+  --app-grid-accent-line-alpha: 0.03;
+  --app-grid-dot-alpha: 0.016;
 }
 
 *,
@@ -321,76 +322,39 @@ app-root::before {
     linear-gradient(rgb(255 255 255 / var(--app-grid-line-alpha)) 1px, transparent 1px),
     /* hairline grid — vertical lines */
     linear-gradient(90deg, rgb(255 255 255 / var(--app-grid-line-alpha)) 1px, transparent 1px),
+    /* structural grid — slow, faint cyan horizontal anchors */
+    linear-gradient(
+      rgb(var(--chrome-accent-alt-rgb) / var(--app-grid-major-line-alpha)) 1px,
+      transparent 1px
+    ),
+    /* structural grid — slow, faint violet vertical anchors */
+    linear-gradient(
+      90deg,
+      rgb(var(--chrome-accent-rgb) / var(--app-grid-accent-line-alpha)) 1px,
+      transparent 1px
+    ),
     /* fine cyan dot lattice at quarter spacing */
-    radial-gradient(circle, rgb(var(--chrome-accent-alt-rgb) / var(--app-grid-dot-alpha)) 0 0.8px, transparent 1px),
-    /* node flash 1 — cyan, intersection (192, 288) */
-    radial-gradient(circle,
-      rgb(var(--chrome-accent-alt-rgb) / var(--grid-node-1-a)) 0%,
-      rgb(var(--chrome-accent-alt-rgb) / calc(var(--grid-node-1-a) * 0.32)) 38%,
-      rgb(var(--chrome-accent-alt-rgb) / 0) 100%),
-    /* node flash 2 — violet, intersection (1056, 480) */
-    radial-gradient(circle,
-      rgb(var(--chrome-accent-rgb) / var(--grid-node-2-a)) 0%,
-      rgb(var(--chrome-accent-rgb) / calc(var(--grid-node-2-a) * 0.34)) 40%,
-      rgb(var(--chrome-accent-rgb) / 0) 100%),
-    /* node flash 3 — lime, intersection (768, 96) */
-    radial-gradient(circle,
-      rgb(var(--accent-rgb) / var(--grid-node-3-a)) 0%,
-      rgb(var(--accent-rgb) / calc(var(--grid-node-3-a) * 0.30)) 36%,
-      rgb(var(--accent-rgb) / 0) 100%),
-    /* node flash 4 — pink, intersection (1632, 768) */
-    radial-gradient(circle,
-      rgb(var(--chrome-accent-warm-rgb) / var(--grid-node-4-a)) 0%,
-      rgb(var(--chrome-accent-warm-rgb) / calc(var(--grid-node-4-a) * 0.32)) 40%,
-      rgb(var(--chrome-accent-warm-rgb) / 0) 100%),
-    /* node flash 5 — cyan, intersection (480, 672) */
-    radial-gradient(circle,
-      rgb(var(--chrome-accent-alt-rgb) / var(--grid-node-5-a)) 0%,
-      rgb(var(--chrome-accent-alt-rgb) / calc(var(--grid-node-5-a) * 0.34)) 38%,
-      rgb(var(--chrome-accent-alt-rgb) / 0) 100%),
-    /* node flash 6 — violet, intersection (1344, 960) */
-    radial-gradient(circle,
-      rgb(var(--chrome-accent-rgb) / var(--grid-node-6-a)) 0%,
-      rgb(var(--chrome-accent-rgb) / calc(var(--grid-node-6-a) * 0.32)) 40%,
-      rgb(var(--chrome-accent-rgb) / 0) 100%);
+    radial-gradient(circle, rgb(var(--chrome-accent-alt-rgb) / var(--app-grid-dot-alpha)) 0 0.8px, transparent 1px);
   background-repeat:
-    repeat, repeat, repeat,
-    no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+    repeat, repeat, repeat, repeat, repeat;
   background-size:
     96px 96px,
     96px 96px,
-    24px 24px,
-    60px 60px,
-    80px 80px,
-    50px 50px,
-    70px 70px,
-    60px 60px,
-    70px 70px;
+    384px 384px,
+    384px 384px,
+    24px 24px;
   background-position:
     0 0,
     0 0,
     0 0,
-    /* node 1 box centered on (192, 288) */
-    162px  258px,
-    /* node 2 box centered on (1056, 480) */
-    1016px 440px,
-    /* node 3 box centered on (768, 96) */
-    743px  71px,
-    /* node 4 box centered on (1632, 768) */
-    1597px 733px,
-    /* node 5 box centered on (480, 672) */
-    450px  642px,
-    /* node 6 box centered on (1344, 960) */
-    1309px 925px;
+    0 0,
+    0 0;
   mix-blend-mode: screen;
-  opacity: 0.95;
-  animation:
-    grid-node-flash-1 28s ease-in-out infinite,
-    grid-node-flash-2 37s ease-in-out infinite -9s,
-    grid-node-flash-3 33s ease-in-out infinite -19s,
-    grid-node-flash-4 41s ease-in-out infinite -23s,
-    grid-node-flash-5 25s ease-in-out infinite -7s,
-    grid-node-flash-6 31s ease-in-out infinite -14s;
+  opacity: 0.9;
+  -webkit-mask-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.76), #000 18%, #000 82%, rgba(0, 0, 0, 0.8));
+  mask-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.76), #000 18%, #000 82%, rgba(0, 0, 0, 0.8));
 }
 
 app-root > * {
@@ -539,16 +503,6 @@ a {
   inherits: false;
 }
 
-/* Background grid node flashes — alpha goes from 0 to a peak only in a
-   narrow slice of the cycle, so each intersection conducts briefly and
-   rarely. Six nodes stagger across long prime-spaced cycles. */
-@property --grid-node-1-a { syntax: '<number>'; initial-value: 0; inherits: false; }
-@property --grid-node-2-a { syntax: '<number>'; initial-value: 0; inherits: false; }
-@property --grid-node-3-a { syntax: '<number>'; initial-value: 0; inherits: false; }
-@property --grid-node-4-a { syntax: '<number>'; initial-value: 0; inherits: false; }
-@property --grid-node-5-a { syntax: '<number>'; initial-value: 0; inherits: false; }
-@property --grid-node-6-a { syntax: '<number>'; initial-value: 0; inherits: false; }
-
 @keyframes brand-angle-spin {
   from { --brand-angle: 0deg; }
   to   { --brand-angle: 360deg; }
@@ -563,34 +517,6 @@ a {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-
-/* Node flash pulses — alpha sits at 0 for most of the cycle, then
-   blooms briefly and decays, so each intersection feels like a rare
-   conducting event rather than a metronome. */
-@keyframes grid-node-flash-1 {
-  0%, 84%, 100% { --grid-node-1-a: 0; }
-  91%           { --grid-node-1-a: 0.65; }
-}
-@keyframes grid-node-flash-2 {
-  0%, 82%, 100% { --grid-node-2-a: 0; }
-  90%           { --grid-node-2-a: 0.62; }
-}
-@keyframes grid-node-flash-3 {
-  0%, 86%, 100% { --grid-node-3-a: 0; }
-  92%           { --grid-node-3-a: 0.55; }
-}
-@keyframes grid-node-flash-4 {
-  0%, 80%, 100% { --grid-node-4-a: 0; }
-  89%           { --grid-node-4-a: 0.50; }
-}
-@keyframes grid-node-flash-5 {
-  0%, 85%, 100% { --grid-node-5-a: 0; }
-  91%           { --grid-node-5-a: 0.58; }
-}
-@keyframes grid-node-flash-6 {
-  0%, 83%, 100% { --grid-node-6-a: 0; }
-  90%           { --grid-node-6-a: 0.52; }
 }
 
 @keyframes hero-orbit {
