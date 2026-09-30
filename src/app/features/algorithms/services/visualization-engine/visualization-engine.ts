@@ -7,6 +7,9 @@ export type EngineState = 'idle' | 'running' | 'paused' | 'complete';
 
 type StepListener = (step: SortStep, index: number) => void;
 
+const MIN_SPEED = 1;
+const MAX_SPEED = 10;
+
 @Injectable()
 export class VisualizationEngine {
   private history: SortStep[] = [];
@@ -33,9 +36,9 @@ export class VisualizationEngine {
     return this.history[c];
   });
 
-  load(generator: Generator<SortStep>, onStep: StepListener): void {
+  load(steps: Iterable<SortStep>, onStep: StepListener): void {
     this.stop();
-    this.history = Array.from(generator);
+    this.history = Array.from(steps);
     this.cursor = this.history.length > 0 ? 0 : -1;
     this.listener = onStep;
     this.stateSig.set(this.history.length > 0 ? 'paused' : 'idle');
@@ -45,7 +48,17 @@ export class VisualizationEngine {
   }
 
   setSpeed(speed: number): void {
-    this.speedSig.set(speed);
+    this.speedSig.set(Math.max(MIN_SPEED, Math.min(MAX_SPEED, Math.round(speed))));
+  }
+
+  seek(index: number): void {
+    this.clearTimer();
+    if (this.history.length === 0) return;
+    const lastIndex = this.history.length - 1;
+    this.cursor = Math.max(0, Math.min(lastIndex, Math.trunc(index)));
+    this.cursorSig.set(this.cursor);
+    this.stateSig.set(this.cursor >= lastIndex ? 'complete' : 'paused');
+    this.emitCurrent();
   }
 
   play(): void {
