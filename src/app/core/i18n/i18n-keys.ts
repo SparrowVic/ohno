@@ -32,6 +32,46 @@ export const I18N_KEY = {
         wheelZoom: t('core.worldGlobe.legend.wheelZoom'),
       },
     },
+    instrument: {
+      brand: {
+        tagline: t('core.instrument.brand.tagline'),
+        homeAriaLabel: t('core.instrument.brand.homeAriaLabel'),
+      },
+      bank: {
+        navAriaLabel: t('core.instrument.bank.navAriaLabel'),
+        algorithms: t('core.instrument.bank.algorithms'),
+        all: t('core.instrument.bank.all'),
+        structures: t('core.instrument.bank.structures'),
+        structuresRow: t('core.instrument.bank.structuresRow'),
+        comingSoon: t('core.instrument.bank.comingSoon'),
+        recent: t('core.instrument.bank.recent'),
+        recentEmpty: t('core.instrument.bank.recentEmpty'),
+        recentAriaLabel: t('core.instrument.bank.recentAriaLabel'),
+        shortcuts: t('core.instrument.bank.shortcuts'),
+        languageAriaLabel: t('core.instrument.bank.languageAriaLabel'),
+      },
+      palette: {
+        placeholder: t('core.instrument.palette.placeholder'),
+        openAriaLabel: t('core.instrument.palette.openAriaLabel'),
+        dialogLabel: t('core.instrument.palette.dialogLabel'),
+        inputAriaLabel: t('core.instrument.palette.inputAriaLabel'),
+        results: t('core.instrument.palette.results'),
+        noResults: t('core.instrument.palette.noResults'),
+        shortcutsTitle: t('core.instrument.palette.shortcutsTitle'),
+        close: t('core.instrument.palette.close'),
+      },
+      shortcuts: {
+        search: t('core.instrument.shortcuts.search'),
+        shortcuts: t('core.instrument.shortcuts.shortcuts'),
+        close: t('core.instrument.shortcuts.close'),
+        play: t('core.instrument.shortcuts.play'),
+        step: t('core.instrument.shortcuts.step'),
+        reset: t('core.instrument.shortcuts.reset'),
+        tempo: t('core.instrument.shortcuts.tempo'),
+        tabs: t('core.instrument.shortcuts.tabs'),
+        log: t('core.instrument.shortcuts.log'),
+      },
+    },
   },
   shared: {
     difficulty: {
@@ -59,6 +99,12 @@ export const I18N_KEY = {
     vizOptionsMenu: {
       triggerLabel: t('shared.vizOptionsMenu.triggerLabel'),
       title: t('shared.vizOptionsMenu.title'),
+    },
+    filters: {
+      all: t('shared.filters.all'),
+      difficulty: {
+        ariaLabel: t('shared.filters.difficulty.ariaLabel'),
+      },
     },
   },
   catalog: {
@@ -125,6 +171,30 @@ export const I18N_KEY = {
   },
   features: {
     algorithms: {
+    catalog: {
+      marquee: {
+        eyebrow: t('features.algorithms.catalog.marquee.eyebrow'),
+        overviewEyebrow: t('features.algorithms.catalog.marquee.overviewEyebrow'),
+        overviewTitle: t('features.algorithms.catalog.marquee.overviewTitle'),
+        modules: t('features.algorithms.catalog.marquee.modules'),
+        categories: t('features.algorithms.catalog.marquee.categories'),
+        groups: t('features.algorithms.catalog.marquee.groups'),
+      },
+      path: {
+        eyebrow: t('features.algorithms.catalog.path.eyebrow'),
+        progressAriaLabel: t('features.algorithms.catalog.path.progressAriaLabel'),
+        stepAriaLabel: t('features.algorithms.catalog.path.stepAriaLabel'),
+      },
+      card: {
+        time: t('features.algorithms.catalog.card.time'),
+        live: t('features.algorithms.catalog.card.live'),
+        openAriaLabel: t('features.algorithms.catalog.card.openAriaLabel'),
+      },
+      empty: {
+        title: t('features.algorithms.catalog.empty.title'),
+        hint: t('features.algorithms.catalog.empty.hint'),
+      },
+    },
       detail: {
         breadcrumbAriaLabel: t('features.algorithms.detail.breadcrumbAriaLabel'),
         backLabel: t('features.algorithms.detail.backLabel'),
