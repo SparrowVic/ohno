@@ -11,6 +11,7 @@ import {
 import { OhnoEngraving } from '../../shared/instrument/engraving/engraving';
 import { OhnoKbd } from '../../shared/instrument/kbd/kbd';
 import { OhnoKey } from '../../shared/instrument/key/key';
+import { OhnoKnob } from '../../shared/instrument/knob/knob';
 import { OhnoLatch } from '../../shared/instrument/latch/latch';
 import { OhnoLed } from '../../shared/instrument/led/led';
 import { OhnoMeter } from '../../shared/instrument/meter/meter';
@@ -22,7 +23,7 @@ import { OhnoScreen } from '../../shared/instrument/screen/screen';
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +32,8 @@ export class InstrumentSpecimen {
   protected readonly ledColors: readonly LedColor[] = [
     'signal', 'cyan', 'pink', 'lime', 'amber', 'red', 'violet', 'slate', 'easy',
   ];
+
+  protected readonly speed = signal(5);
 
   protected readonly icons = {
     back: faChevronLeft,
