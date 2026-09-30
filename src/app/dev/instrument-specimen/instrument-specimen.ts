@@ -9,6 +9,7 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 
 import { OhnoEngraving } from '../../shared/instrument/engraving/engraving';
+import { OhnoGauge } from '../../shared/instrument/gauge/gauge';
 import { OhnoKbd } from '../../shared/instrument/kbd/kbd';
 import { OhnoKey } from '../../shared/instrument/key/key';
 import { OhnoKnob } from '../../shared/instrument/knob/knob';
@@ -19,11 +20,13 @@ import { LedColor } from '../../shared/instrument/led/led.types';
 import { OhnoPlate } from '../../shared/instrument/plate/plate';
 import { OhnoReadout } from '../../shared/instrument/readout/readout';
 import { OhnoScreen } from '../../shared/instrument/screen/screen';
+import { OhnoSlot } from '../../shared/instrument/slot/slot';
+import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window-stepper';
 
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +37,8 @@ export class InstrumentSpecimen {
   ];
 
   protected readonly speed = signal(5);
+  protected readonly size = signal(16);
+  protected readonly step = signal(66);
 
   protected readonly icons = {
     back: faChevronLeft,

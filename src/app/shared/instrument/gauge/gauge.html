@@ -1,0 +1,7 @@
+<ohno-engraving>{{ label() }}</ohno-engraving>
+<div class="ohno-gauge__leds" aria-hidden="true">
+  @for (led of leds(); track $index) {
+    <ohno-led [color]="led === 'done' ? doneColor() : litColor()" [on]="led !== 'off'" />
+  }
+</div>
+<ohno-readout [value]="lit()" [total]="count()" [pad]="2" size="sm" />
