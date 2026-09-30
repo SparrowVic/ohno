@@ -71,6 +71,8 @@ const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
 const TOP_PADDING = 74;
 const BOTTOM_PADDING = 34;
 const MIN_BAR_WIDTH = 4;
+const MIN_LABEL_BAR_WIDTH = 14;
+const MIN_AXIS_BAR_WIDTH = 22;
 const SEGMENT_PERIOD = 6;
 const SEGMENT_HEIGHT = 4;
 const LABEL_SIZE = 15;
@@ -417,11 +419,14 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     bar.text.setAttribute('y', String(labelY));
     bar.text.style.fontSize = `${labelSize}px`;
     bar.text.textContent = String(bar.value);
+    bar.text.setAttribute('visibility', barWidth < MIN_LABEL_BAR_WIDTH ? 'hidden' : 'visible');
     bar.text.removeAttribute('transform');
 
     bar.axis.setAttribute('x', String(barWidth / 2));
     bar.axis.setAttribute('y', String(floorY + 20));
     bar.axis.textContent = String(bar.position).padStart(2, '0');
+    const thinAxis = barWidth < MIN_AXIS_BAR_WIDTH && bar.position % 2 === 1;
+    bar.axis.setAttribute('visibility', thinAxis ? 'hidden' : 'visible');
   }
 
   private animateBarTo(bar: Bar, fromPos: number, toPos: number): void {

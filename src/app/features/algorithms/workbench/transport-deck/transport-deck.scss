@@ -1,9 +1,11 @@
 :host {
   display: block;
+  container-type: inline-size;
 }
 
 .deck {
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   min-height: 178px;
 }
@@ -12,7 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 18px 26px 14px;
+  padding: 16px 18px 12px;
   border-left: 2px solid var(--groove);
   box-shadow: inset 1px 0 0 var(--groove-highlight);
 }
@@ -24,30 +26,40 @@
 }
 
 .deck__section--transport {
-  padding-right: 34px;
+  padding-right: 14px;
 }
 
 .deck__section--axis {
-  flex: 1;
-  min-width: 260px;
-  max-width: 360px;
+  flex: 1 1 180px;
+  min-width: 180px;
+  max-width: 220px;
+}
+
+.deck__section--tempo {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+.deck__section--size {
+  padding-right: 10px;
+  padding-left: 10px;
 }
 
 .deck__section--tempo,
-.deck__section--size,
-.deck__section--task {
+.deck__section--size {
   align-items: center;
 }
 
 .deck__section--tempo .deck__title,
-.deck__section--size .deck__title,
-.deck__section--task .deck__title {
+.deck__section--size .deck__title {
   align-self: flex-start;
 }
 
 .deck__section--data {
-  flex: none;
-  min-width: 190px;
+  flex: 1 1 auto;
+  min-width: 128px;
+  padding-right: 8px;
+  padding-left: 14px;
 }
 
 .deck__title-row {
@@ -60,7 +72,7 @@
 .deck__transport {
   display: flex;
   align-items: flex-end;
-  gap: 16px;
+  gap: 12px;
 }
 
 .deck__key {
@@ -96,8 +108,30 @@
   right: 0;
 }
 
+.deck__section--task {
+  flex: 1 1 180px;
+  min-width: 160px;
+  max-width: 240px;
+}
+
 .deck__task-key {
   --key-width: 100%;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.deck__task-key ::ng-deep .ohno-key,
+.deck__data-key ::ng-deep .ohno-key {
+  max-width: 100%;
+}
+
+.deck__task-key ::ng-deep .ohno-key__label,
+.deck__data-key ::ng-deep .ohno-key__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .deck__data {
@@ -107,7 +141,8 @@
 }
 
 .deck__data-key {
-  --key-width: 150px;
+  --key-width: 100%;
+  min-width: 104px;
   --key-height: 54px;
   --key-justify: flex-start;
   --key-font: 600 14px/1 var(--font-ui);
@@ -115,11 +150,7 @@
   display: block;
 }
 
-@media (max-width: 1279px) {
-  .deck {
-    flex-wrap: wrap;
-  }
-
+@container (max-width: 860px) {
   .deck__section--axis {
     max-width: none;
   }
@@ -127,6 +158,10 @@
   .deck__section--tempo {
     border-left: 0;
     box-shadow: none;
+  }
+
+  .deck__section--data {
+    flex: 1 0 auto;
   }
 }
 

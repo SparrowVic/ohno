@@ -21,6 +21,7 @@
       </span>
     }
   </div>
+  <div class="head__right">
   <div class="head__views" role="group" [attr.aria-label]="I18N_KEY.features.algorithms.workbench.head.viewsAriaLabel | transloco">
     @for (view of views(); track view.value) {
       <ohno-key
@@ -59,4 +60,5 @@
       }
     </ohno-floating-plate>
   </span>
+  </div>
 </div>

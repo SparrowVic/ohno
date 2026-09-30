@@ -57,4 +57,15 @@
     grid-column: 1 / -1;
     --search-height: 42px;
   }
+
+  .topbar ohno-lang-toggle {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .topbar__back {
+    grid-column: 2;
+    justify-self: end;
+  }
 }

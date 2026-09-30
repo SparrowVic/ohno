@@ -42,3 +42,21 @@
   font-weight: 600;
   color: var(--ink);
 }
+
+@media (max-width: 767px) {
+  :host {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .ohno-opline__sentence {
+    flex-basis: calc(100% - 120px);
+  }
+
+  .ohno-opline__registers {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+}

@@ -61,7 +61,7 @@ private animateCompare(...) {
 }
 ```
 
-The helper lives inlined in each viz that needs it (see [bar-chart-visualization.ts:493](../../../src/app/features/algorithms/components/bar-chart-visualization/bar-chart-visualization.ts#L493) and [block-swap-visualization.ts:657](../../../src/app/features/algorithms/components/block-swap-visualization/block-swap-visualization.ts#L657)). That's fine — small, self-contained.
+The helper is exported once from [visualization-motion.ts](../../../src/app/features/algorithms/utils/helpers/visualization-motion/visualization-motion.ts) (`prefersReducedMotion()`); `pulseElement` / `pulseSvgElement` already check it, so JS-driven motion only needs the gate around Anime.js tweens and scroll behaviour. Never re-declare it locally.
 
 For pure-CSS transitions on layout components, wrap with a media query:
 

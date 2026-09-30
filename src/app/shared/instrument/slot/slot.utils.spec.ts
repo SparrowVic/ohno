@@ -23,4 +23,9 @@ describe('slot utils', () => {
     expect(slotMarks(11)).toEqual([0, 2, 4, 6, 8, 11]);
     expect(slotMarks(0)).toEqual([0]);
   });
+
+  it('drops a stride mark that would collide with the total', () => {
+    expect(slotMarks(178)).toEqual([0, 40, 80, 120, 178]);
+    expect(slotMarks(175)).toEqual([0, 40, 80, 120, 175]);
+  });
 });

@@ -4,8 +4,9 @@
 
 .head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 22px;
+  gap: 12px 22px;
   min-height: 70px;
 }
 
@@ -44,11 +45,17 @@
   gap: 9px;
 }
 
+.head__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
 .head__views {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: auto;
 }
 
 .head__options {
@@ -69,7 +76,8 @@
     gap: 14px 18px;
   }
 
-  .head__views {
+  .head__right {
+    width: 100%;
     margin-left: 0;
   }
 

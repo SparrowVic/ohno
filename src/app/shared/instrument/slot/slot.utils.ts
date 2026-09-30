@@ -1,4 +1,5 @@
 const MAX_MARKS = 5;
+const LAST_MARK_CLEARANCE = 0.6;
 
 export function slotPercent(step: number, total: number): number {
   if (total <= 0) return 0;
@@ -15,6 +16,7 @@ export function slotMarks(total: number): readonly number[] {
   if (total <= 0) return [0];
   const stride = niceStride(total);
   const marks: number[] = [];
-  for (let mark = 0; mark < total; mark += stride) marks.push(mark);
+  const lastRoom = total - stride * LAST_MARK_CLEARANCE;
+  for (let mark = 0; mark < lastRoom; mark += stride) marks.push(mark);
   return [...marks.slice(0, MAX_MARKS), total];
 }
