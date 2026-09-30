@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+  outline: none;
+}
+
+:host(:focus-visible) {
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-md);
+}
+
+.ohno-menu__item {
+  --key-width: 100%;
+  --key-justify: flex-start;
+}

@@ -121,4 +121,19 @@
     <ohno-tape class="specimen__tape" [rows]="tapeRows" stepHeader="KROK" eventHeader="ZDARZENIE" emptyLabel="Uruchom scenariusz, aby rozpocząć zapis." />
     <ohno-tape class="specimen__tape" [rows]="[]" stepHeader="KROK" eventHeader="ZDARZENIE" emptyLabel="Uruchom scenariusz, aby rozpocząć zapis." />
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Wyszukiwanie, język, menu</ohno-engraving>
+    <div class="specimen__row">
+      <ohno-search-field class="specimen__search" placeholder="Szukaj algorytmu…" label="Otwórz wyszukiwarkę" (open)="menuOpen.set(false)" />
+      <ohno-lang-toggle [value]="language()" [options]="[{ value: 'pl', label: 'PL' }, { value: 'en', label: 'EN' }]" label="Język interfejsu" (valueChange)="language.set($event)" />
+      <span class="specimen__anchor">
+        <ohno-key label="TS ▾" [menu]="true" [expanded]="menuOpen()" (keyClick)="menuOpen.set(!menuOpen())" />
+        <ohno-floating-plate class="specimen__menu" [open]="menuOpen()" label="Język kodu" (dismiss)="menuOpen.set(false)">
+          @if (menuOpen()) {
+            <ohno-menu [items]="languageItems" [activeId]="codeLanguage()" label="Język kodu" (select)="codeLanguage.set($event); menuOpen.set(false)" (dismiss)="menuOpen.set(false)" />
+          }
+        </ohno-floating-plate>
+      </span>
+    </div>
+  </ohno-plate>
 </div>

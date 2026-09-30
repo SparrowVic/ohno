@@ -90,3 +90,17 @@
   height: 200px;
   width: 340px;
 }
+
+.specimen__search {
+  width: 300px;
+}
+
+.specimen__anchor {
+  position: relative;
+  display: inline-block;
+}
+
+.specimen__menu {
+  top: calc(100% + 8px);
+  left: 0;
+}
