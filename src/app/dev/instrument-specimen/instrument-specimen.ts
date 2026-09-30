@@ -44,11 +44,17 @@ import { OhnoWorkbenchTopbar } from '../../features/algorithms/workbench/workben
 import { OhnoTransportDeck } from '../../features/algorithms/workbench/transport-deck/transport-deck';
 import { TaskInputSchema } from '../../features/algorithms/models/task';
 import { PlaybackStatus, TransportAction } from '../../features/algorithms/workbench/utils/transport.utils';
+import { getAlgorithmViewConfig } from '../../features/algorithms/algorithm-detail/algorithm-detail-config/algorithm-detail-config';
+import { InspectorTab, OhnoInspector } from '../../features/algorithms/workbench/inspector/inspector';
+import { OhnoLogPrinter } from '../../features/algorithms/workbench/log-printer/log-printer';
+import { EMPTY_TRACES, WorkbenchTraces } from '../../features/algorithms/workbench/models/workbench-traces';
+import { TapeFilter } from '../../features/algorithms/workbench/utils/tape-rows.utils';
+import { deriveSortTrace } from '../../features/algorithms/utils/helpers/derive-sort-trace/derive-sort-trace';
 
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck, OhnoInspector, OhnoLogPrinter],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -141,6 +147,23 @@ export class InstrumentSpecimen {
     b: { kind: 'int', label: 'b', min: 1, max: 9999, nonZero: true },
   };
   protected readonly deckValues = signal<Record<string, unknown>>({ a: 735, b: 210 });
+
+  protected readonly inspectorTab = signal<InspectorTab>('code');
+  protected readonly inspectorAlgorithm = ALGORITHM_CATALOG.find((item) => item.id === 'bubble-sort')!;
+  protected readonly inspectorConfig = getAlgorithmViewConfig('bubble-sort');
+  protected readonly inspectorTraces: WorkbenchTraces = {
+    ...EMPTY_TRACES,
+    sort: deriveSortTrace({
+      array: [13, 56, 35, 11, 48, 74, 12, 72, 84, 57, 96, 58, 35, 27, 97, 99],
+      comparing: [5, 6],
+      swapping: null,
+      sorted: [14, 15],
+      boundary: 14,
+      activeCodeLine: 6,
+      description: 'Porównaj 74 na indeksie 5 z 12 na indeksie 6.',
+    }),
+  };
+  protected readonly logFilter = signal<TapeFilter>('all');
 
   protected readonly sampleModules = ['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
     .map((id) => ALGORITHM_CATALOG.find((item) => item.id === id)!)

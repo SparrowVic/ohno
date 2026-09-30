@@ -18,37 +18,22 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
 import { CodeHighlightService } from '../../../../shared/code-highlight.service';
-import {
-  CodeLanguageDial,
-  CodeLanguageDialOption,
-} from '../../../../shared/components/code-language-dial/code-language-dial';
-import { CopyCodeButton } from '../../../../shared/components/copy-code-button/copy-code-button';
-import {
-  CodeLanguage,
-  CodeLine,
-  CodeRegion,
-  CodeVariant,
-  CodeVariantMap,
-} from '../../models/detail';
-import {
-  applyActiveLineHighlight,
-  findClickedRegionId,
-  syncCodeRegionState,
-} from './code-panel.dom/code-panel.dom';
+import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
+import { CodeLanguage, CodeLine, CodeRegion, CodeVariant, CodeVariantMap } from '../../models/detail';
+import { applyActiveLineHighlight, findClickedRegionId, syncCodeRegionState } from './code-panel.dom/code-panel.dom';
 import {
   EMPTY_CODE_PANEL_HTML,
-  buildAvailableLanguageOptions,
   buildVariantIdentity,
   buildVariantMap,
-  buildVariantSource,
-  copyTextToClipboard,
   resolveActiveCodeLine,
   resolveActiveVariant,
 } from './code-panel.utils/code-panel.utils';
 
+const GUTTER_WIDTH_PX = 44;
+
 @Component({
   selector: 'app-code-panel',
-  imports: [CodeLanguageDial, CopyCodeButton, TranslocoPipe],
+  imports: [OhnoEngraving, TranslocoPipe],
   templateUrl: './code-panel.html',
   styleUrl: './code-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,43 +50,24 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   readonly regions = input<readonly CodeRegion[]>([]);
   readonly codeVariants = input<CodeVariantMap>({});
   readonly activeLineNumber = input<number | null>(null);
-  /** True when the active task has no authored code snippet yet — the
-   *  panel renders an editorial "coming soon" placeholder instead of
-   *  the normal shiki-rendered code. */
   readonly snippetMissing = input<boolean>(false);
+
   protected readonly I18N_KEY = I18N_KEY;
   protected readonly renderRoot = viewChild<ElementRef<HTMLElement>>('renderRoot');
   protected readonly highlightedHtml = signal<SafeHtml>(
     this.sanitizer.bypassSecurityTrustHtml(EMPTY_CODE_PANEL_HTML),
   );
   protected readonly hasLines = signal(false);
-  protected readonly copied = signal(false);
   protected readonly gutterHover = signal(false);
-  protected readonly selectedLanguage = signal<CodeLanguage>('typescript');
-  protected readonly availableLanguages = computed<readonly CodeLanguageDialOption[]>(() => {
-    return buildAvailableLanguageOptions(this.variantMap());
-  });
-  protected readonly activeVariant = computed<CodeVariant>(() => {
-    return resolveActiveVariant(this.variantMap(), this.selectedLanguage());
-  });
+  protected readonly activeVariant = computed<CodeVariant>(() =>
+    resolveActiveVariant(this.variantMap(), this.language()),
+  );
   private readonly regionStateLabels = computed(() => ({
-    expandRegionAriaLabel: this.translate(
-      I18N_KEY.features.algorithms.codePanel.expandRegionAriaLabel,
-    ),
-    collapseRegionAriaLabel: this.translate(
-      I18N_KEY.features.algorithms.codePanel.collapseRegionAriaLabel,
-    ),
+    expandRegionAriaLabel: this.translate(I18N_KEY.features.algorithms.codePanel.expandRegionAriaLabel),
+    collapseRegionAriaLabel: this.translate(I18N_KEY.features.algorithms.codePanel.collapseRegionAriaLabel),
     collapsedRegionSummary: (lineCount: number) =>
-      this.translate(I18N_KEY.features.algorithms.codePanel.collapsedRegionSummary, {
-        count: lineCount,
-      }),
+      this.translate(I18N_KEY.features.algorithms.codePanel.collapsedRegionSummary, { count: lineCount }),
   }));
-
-  // Width of the line-number + fold-toggle gutter column in pixels.
-  // Matches the `left: 60px` separator and the 66px content padding in
-  // code-panel.scss. When the cursor sits inside this strip, we reveal
-  // every available fold toggle at once.
-  private static readonly GUTTER_WIDTH_PX = 60;
 
   private renderVersion = 0;
   private lastAppliedActiveLine: number | null = null;
@@ -109,28 +75,17 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   private lastVariantIdentity = '';
   private readonly collapsedRegionIds = new Set<string>();
   private domSyncFrame: number | null = null;
-  private copyResetTimer: ReturnType<typeof setTimeout> | null = null;
 
-  private readonly variantMap = computed<Record<CodeLanguage, CodeVariant>>(() => {
-    return buildVariantMap({
+  private readonly variantMap = computed<Record<CodeLanguage, CodeVariant>>(() =>
+    buildVariantMap({
       inputVariants: this.codeVariants(),
       fallbackLanguage: this.language(),
       fallbackLines: this.lines(),
       fallbackRegions: this.regions(),
-    });
-  });
+    }),
+  );
 
   constructor() {
-    effect(() => {
-      const variants = this.variantMap();
-      const selected = this.selectedLanguage();
-      if (!variants[selected]) {
-        this.selectedLanguage.set(
-          (Object.keys(variants)[0] as CodeLanguage | undefined) ?? 'typescript',
-        );
-      }
-    });
-
     effect(() => {
       const variant = this.activeVariant();
       this.syncRegionDefaults(variant);
@@ -149,9 +104,6 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
     if (this.domSyncFrame !== null) {
       cancelAnimationFrame(this.domSyncFrame);
     }
-    if (this.copyResetTimer !== null) {
-      clearTimeout(this.copyResetTimer);
-    }
   }
 
   ngAfterViewChecked(): void {
@@ -162,49 +114,22 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
     }
   }
 
-  protected selectLanguage(language: CodeLanguage): void {
-    if (language === this.selectedLanguage()) {
-      return;
-    }
-
-    this.selectedLanguage.set(language);
-  }
-
-  protected async copyCurrentCode(): Promise<void> {
-    const source = this.activeVariant().source ?? buildVariantSource(this.activeVariant().lines);
-    await copyTextToClipboard(this.document, source);
-
-    this.copied.set(true);
-    if (this.copyResetTimer !== null) {
-      clearTimeout(this.copyResetTimer);
-    }
-    this.copyResetTimer = setTimeout(() => this.copied.set(false), 1400);
-  }
-
   protected onRenderMouseMove(event: MouseEvent): void {
     const root = this.renderRoot()?.nativeElement;
-    if (!root) {
-      return;
-    }
+    if (!root) return;
     const rect = root.getBoundingClientRect();
     const xWithinRender = event.clientX - rect.left;
-    const inGutter = xWithinRender >= 0 && xWithinRender < CodePanel.GUTTER_WIDTH_PX;
-    if (inGutter !== this.gutterHover()) {
-      this.gutterHover.set(inGutter);
-    }
+    const inGutter = xWithinRender >= 0 && xWithinRender < GUTTER_WIDTH_PX;
+    if (inGutter !== this.gutterHover()) this.gutterHover.set(inGutter);
   }
 
   protected onRenderMouseLeave(): void {
-    if (this.gutterHover()) {
-      this.gutterHover.set(false);
-    }
+    if (this.gutterHover()) this.gutterHover.set(false);
   }
 
   protected onRenderClick(event: MouseEvent): void {
     const regionId = findClickedRegionId(event);
-    if (!regionId) {
-      return;
-    }
+    if (!regionId) return;
 
     event.preventDefault();
     event.stopPropagation();
@@ -222,9 +147,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
   private async renderCode(variant: CodeVariant): Promise<void> {
     const version = ++this.renderVersion;
     const html = await this.highlighter.highlight(variant.lines, variant.language);
-    if (version !== this.renderVersion) {
-      return;
-    }
+    if (version !== this.renderVersion) return;
 
     this.highlightedHtml.set(this.sanitizer.bypassSecurityTrustHtml(html));
     this.hasLines.set(variant.lines.length > 0);
@@ -233,23 +156,15 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
 
   private applyActiveLine(): void {
     const root = this.renderRoot()?.nativeElement;
-    if (!root) {
-      return;
-    }
+    if (!root) return;
 
-    this.lastAppliedActiveLine = applyActiveLineHighlight(
-      root,
-      this.lastAppliedActiveLine,
-      this.resolveActiveLine(),
-    );
+    this.lastAppliedActiveLine = applyActiveLineHighlight(root, this.lastAppliedActiveLine, this.resolveActiveLine());
   }
 
   private syncRegionDefaults(variant: CodeVariant): void {
     const regions = variant.regions ?? [];
     const identity = buildVariantIdentity(variant);
-    if (identity === this.lastVariantIdentity) {
-      return;
-    }
+    if (identity === this.lastVariantIdentity) return;
 
     this.collapsedRegionIds.clear();
     for (const region of regions) {
@@ -265,16 +180,10 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
 
   private ensureVisibleActiveLine(): void {
     const activeLine = this.resolveActiveLine();
-    if (activeLine === null) {
-      return;
-    }
+    if (activeLine === null) return;
 
     for (const region of this.activeVariant().regions ?? []) {
-      if (
-        this.collapsedRegionIds.has(region.id) &&
-        activeLine > region.startLine &&
-        activeLine <= region.endLine
-      ) {
+      if (this.collapsedRegionIds.has(region.id) && activeLine > region.startLine && activeLine <= region.endLine) {
         this.collapsedRegionIds.delete(region.id);
       }
     }
@@ -282,16 +191,9 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
 
   private applyRegionState(): void {
     const root = this.renderRoot()?.nativeElement;
-    if (!root) {
-      return;
-    }
+    if (!root) return;
 
-    syncCodeRegionState(
-      root,
-      this.activeVariant().regions ?? [],
-      this.collapsedRegionIds,
-      this.regionStateLabels(),
-    );
+    syncCodeRegionState(root, this.activeVariant().regions ?? [], this.collapsedRegionIds, this.regionStateLabels());
   }
 
   private resolveActiveLine(): number | null {
@@ -305,9 +207,7 @@ export class CodePanel implements AfterViewChecked, OnDestroy {
     }
 
     const view = this.document.defaultView;
-    if (!view) {
-      return;
-    }
+    if (!view) return;
 
     queueMicrotask(() => {
       this.domSyncFrame = view.requestAnimationFrame(() => {

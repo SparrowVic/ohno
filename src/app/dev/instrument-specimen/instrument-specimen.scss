@@ -126,3 +126,18 @@
   place-items: center;
   height: 100%;
 }
+
+.specimen__units--inspector {
+  display: grid;
+  grid-template-columns: 456px 456px;
+  gap: 14px;
+  align-items: start;
+}
+
+.specimen__inspector {
+  height: 640px;
+}
+
+.specimen__printer {
+  height: 318px;
+}

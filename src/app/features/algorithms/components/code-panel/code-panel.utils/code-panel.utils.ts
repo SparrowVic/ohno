@@ -1,4 +1,3 @@
-import { CodeLanguageDialOption } from '../../../../../shared/components/code-language-dial/code-language-dial';
 import {
   CodeLanguage,
   CodeLine,
@@ -6,6 +5,13 @@ import {
   CodeVariant,
   CodeVariantMap,
 } from '../../../models/detail';
+
+export interface CodeLanguageOption {
+  readonly id: CodeLanguage;
+  readonly language?: CodeLanguage;
+  readonly label: string;
+  readonly disabled?: boolean;
+}
 
 const LANGUAGE_LABELS: Record<CodeLanguage, string> = {
   typescript: 'TypeScript',
@@ -22,19 +28,31 @@ const LANGUAGE_LABELS: Record<CodeLanguage, string> = {
   plaintext: 'Text',
 };
 
-const SUGGESTED_LANGUAGE_OPTIONS: readonly CodeLanguageDialOption[] = [
-  { id: 'javascript', label: 'JavaScript', disabled: true, hint: 'Coming soon' },
-  { id: 'go', label: 'Go', disabled: true, hint: 'Coming soon' },
-  { id: 'rust', label: 'Rust', disabled: true, hint: 'Coming soon' },
-  { id: 'swift', label: 'Swift', disabled: true, hint: 'Coming soon' },
-  { id: 'php', label: 'PHP', disabled: true, hint: 'Coming soon' },
-  { id: 'kotlin', label: 'Kotlin', disabled: true, hint: 'Coming soon' },
-];
+const LANGUAGE_SHORT_LABELS: Record<CodeLanguage, string> = {
+  typescript: 'TS',
+  javascript: 'JS',
+  python: 'PY',
+  csharp: 'C#',
+  java: 'JAVA',
+  cpp: 'C++',
+  go: 'GO',
+  rust: 'RS',
+  swift: 'SWIFT',
+  php: 'PHP',
+  kotlin: 'KT',
+  plaintext: 'TXT',
+};
+
+const SUGGESTED_LANGUAGES: readonly CodeLanguage[] = ['javascript', 'go', 'rust', 'swift', 'php', 'kotlin'];
 
 export const EMPTY_CODE_PANEL_HTML = '<pre class="code-panel__shiki"><code></code></pre>';
 
 export function buildVariantSource(lines: readonly CodeLine[]): string {
   return lines.map((line) => line.tokens.map((token) => token.text).join('')).join('\n');
+}
+
+export function shortLanguageLabel(language: CodeLanguage): string {
+  return LANGUAGE_SHORT_LABELS[language];
 }
 
 export function buildVariantMap(options: {
@@ -64,7 +82,7 @@ export function buildVariantMap(options: {
 
 export function buildAvailableLanguageOptions(
   variants: Record<CodeLanguage, CodeVariant>,
-): readonly CodeLanguageDialOption[] {
+): readonly CodeLanguageOption[] {
   const implementedLanguages = new Set<CodeLanguage>(
     Object.values(variants).map((variant) => variant.language),
   );
@@ -75,9 +93,11 @@ export function buildAvailableLanguageOptions(
       language: variant.language,
       label: LANGUAGE_LABELS[variant.language],
     })),
-    ...SUGGESTED_LANGUAGE_OPTIONS.filter(
-      (option) => !implementedLanguages.has(option.id as CodeLanguage),
-    ),
+    ...SUGGESTED_LANGUAGES.filter((language) => !implementedLanguages.has(language)).map((language) => ({
+      id: language,
+      label: LANGUAGE_LABELS[language],
+      disabled: true,
+    })),
   ];
 }
 

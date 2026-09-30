@@ -1,0 +1,58 @@
+@let t = traces();
+@let geo = geometry();
+@if (t.graph) {
+  <app-graph-trace-panel
+    [state]="t.graph"
+    [algorithmId]="algorithmId()"
+    [focusTargetLabel]="t.graphFocus?.targetLabel ?? null"
+    [focusPathLabel]="t.graphFocus?.pathLabel ?? null"
+    [focusModeLabel]="t.graphFocus?.modeLabel ?? null"
+    [focusHint]="t.graphFocus?.hint ?? null"
+  />
+} @else if (t.dp) {
+  <app-dp-trace-panel [state]="t.dp" />
+} @else if (t.dsu) {
+  <app-dsu-trace-panel [state]="t.dsu" [algorithmId]="algorithmId()" />
+} @else if (t.grid) {
+  <app-grid-trace-panel [state]="t.grid" [algorithmId]="algorithmId()" />
+} @else if (t.matrix) {
+  <app-matrix-trace-panel [state]="t.matrix" [algorithmId]="algorithmId()" />
+} @else if (t.network) {
+  <app-network-trace-panel [state]="t.network" [algorithmId]="algorithmId()" />
+} @else if (t.string) {
+  <app-string-trace-panel [state]="t.string" />
+} @else if (t.tree) {
+  <app-tree-trace-panel [state]="t.tree" />
+} @else if (t.scratchpadLab) {
+  <app-scratchpad-lab-trace-panel [state]="t.scratchpadLab" />
+} @else if (t.numberLab) {
+  <app-number-lab-trace-panel [state]="t.numberLab" />
+} @else if (t.pointerLab) {
+  <app-pointer-lab-trace-panel [state]="t.pointerLab" />
+} @else if (t.sieveGrid) {
+  <app-sieve-grid-trace-panel [state]="t.sieveGrid" />
+} @else if (t.callStackLab) {
+  <app-call-stack-lab-trace-panel [state]="t.callStackLab" />
+} @else if (t.callTreeLab) {
+  <app-call-tree-lab-trace-panel [state]="t.callTreeLab" />
+} @else if (geo.closestPair) {
+  <app-closest-pair-trace-panel [state]="geo.closestPair" />
+} @else if (geo.lineIntersection) {
+  <app-line-intersection-trace-panel [state]="geo.lineIntersection" />
+} @else if (geo.halfPlane) {
+  <app-half-plane-trace-panel [state]="geo.halfPlane" />
+} @else if (geo.minkowski) {
+  <app-minkowski-sum-trace-panel [state]="geo.minkowski" />
+} @else if (geo.sweepLine) {
+  <app-sweep-line-trace-panel [state]="geo.sweepLine" />
+} @else if (geo.voronoi) {
+  <app-voronoi-trace-panel [state]="geo.voronoi" />
+} @else if (geo.delaunay) {
+  <app-delaunay-trace-panel [state]="geo.delaunay" />
+} @else if (geo.convexHull) {
+  <app-geometry-trace-panel [state]="geo.convexHull" />
+} @else if (t.sort) {
+  <app-sort-trace-panel [state]="t.sort" [algorithmId]="algorithmId()" />
+} @else {
+  <app-search-trace-panel [state]="t.search" />
+}

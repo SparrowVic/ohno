@@ -191,6 +191,29 @@
       (customValuesChange)="deckValues.set($event)"
     />
   </ohno-plate>
+  <div class="specimen__units specimen__units--inspector">
+    <ohno-plate class="specimen__unit specimen__inspector" [screws]="true">
+      <ohno-inspector
+        [tab]="inspectorTab()"
+        [algorithm]="inspectorAlgorithm"
+        [codeLines]="inspectorConfig.codeLines"
+        [codeRegions]="inspectorConfig.codeRegions ?? []"
+        [codeVariants]="inspectorConfig.codeVariants ?? {}"
+        [activeLineNumber]="13"
+        [traces]="inspectorTraces"
+        (tabChange)="inspectorTab.set($event)"
+      />
+    </ohno-plate>
+    <ohno-plate class="specimen__unit specimen__printer" [screws]="true">
+      <ohno-log-printer
+        [rows]="tapeRows"
+        [live]="deckPlaying()"
+        [filter]="logFilter()"
+        algorithmId="bubble-sort"
+        (filterChange)="logFilter.set($event)"
+      />
+    </ohno-plate>
+  </div>
   <ohno-plate class="specimen__unit" [screws]="true">
     <ohno-engraving>Deck zadaniowy (bez okna rozmiaru)</ohno-engraving>
     <ohno-transport-deck
