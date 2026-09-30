@@ -1,0 +1,72 @@
+@if (open()) {
+  <div class="palette" (click)="close()">
+    <ohno-plate
+      class="palette__plate"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="I18N_KEY.core.instrument.palette.dialogLabel | transloco"
+      [screws]="true"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="palette__field">
+        <fa-icon class="palette__icon" [icon]="icons.search" />
+        <input
+          #input
+          class="palette__input"
+          type="text"
+          role="combobox"
+          autocomplete="off"
+          spellcheck="false"
+          aria-autocomplete="list"
+          aria-controls="ohno-palette-results"
+          [attr.aria-expanded]="mode() === 'search'"
+          [attr.aria-activedescendant]="activeOptionId()"
+          [attr.aria-label]="I18N_KEY.core.instrument.palette.inputAriaLabel | transloco"
+          [placeholder]="placeholder()"
+          [value]="query()"
+          (input)="onInput($event)"
+          (keydown)="onInputKeydown($event)"
+        />
+        <ohno-kbd>Esc</ohno-kbd>
+      </div>
+
+      @if (mode() === 'search') {
+        <ohno-engraving>{{ I18N_KEY.core.instrument.palette.results | transloco }}</ohno-engraving>
+        <ul id="ohno-palette-results" class="palette__results" role="listbox">
+          @for (hit of results(); track hit.id; let index = $index) {
+            <li
+              class="palette__option"
+              role="option"
+              [id]="'ohno-palette-option-' + index"
+              [class.palette__option--active]="index === activeIndex()"
+              [attr.aria-selected]="index === activeIndex()"
+              (pointermove)="activeIndex.set(index)"
+              (click)="choose(hit)"
+            >
+              <ohno-led [color]="difficultyLed(hit.difficulty)" size="sm" />
+              <ohno-engraving tone="dim">{{ hit.moduleId }}</ohno-engraving>
+              <span class="palette__name">{{ hit.name }}</span>
+              <ohno-engraving>{{ hit.categoryLabel }} · {{ hit.subcategoryLabel }}</ohno-engraving>
+            </li>
+          } @empty {
+            <li class="palette__empty">{{ noResultsLabel() }}</li>
+          }
+        </ul>
+      }
+
+      <div class="palette__shortcuts">
+        <ohno-engraving class="palette__shortcuts-title">{{ I18N_KEY.core.instrument.palette.shortcutsTitle | transloco }}</ohno-engraving>
+        @for (row of shortcutRows(); track row.label) {
+          <div class="palette__shortcut">
+            <span class="palette__keys">
+              @for (key of row.keys; track key) {
+                <ohno-kbd>{{ key }}</ohno-kbd>
+              }
+            </span>
+            <ohno-engraving tone="bright">{{ row.label }}</ohno-engraving>
+          </div>
+        }
+      </div>
+    </ohno-plate>
+  </div>
+}
