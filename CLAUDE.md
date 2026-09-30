@@ -25,7 +25,7 @@ This is belt-and-suspenders on top of Claude Code's existing context handling. O
 - **KaTeX 0.16** via [src/app/shared/components/math-text/](src/app/shared/components/math-text/).
 - **Shiki 4** via [src/app/shared/code-highlight.service.ts](src/app/shared/code-highlight.service.ts), consumed by [src/app/features/algorithms/components/code-panel/](src/app/features/algorithms/components/code-panel/).
 - **Font Awesome Pro 7** — requires `FONTAWESOME_PACKAGE_TOKEN` env var for `npm ci`.
-- Fonts: Sora (sans), IBM Plex Mono (mono), **Newsreader italic** (scratchpad narrative chrome — editorial margin-note voice). Caveat is still loaded but is no longer the default for scratchpad scenes; available if a future scene specifically wants a cursive hand.
+- Fonts (self-hosted via `@fontsource-variable`, listed in `angular.json` `styles`): **Instrument Sans** (`--font-ui`, all UI text), **Doto** ROND 100 / weight 900 (`--font-dot`, numbers, complexity notation and the marquee only — never sentences, never below 14px), **Geist Mono** (`--font-mono`, engravings, code, registers, tape). Sora, IBM Plex Mono, Newsreader and Caveat are gone; KaTeX keeps its own fonts.
 
 Node `^20.19.0 || ^22.12.0`, npm `>=10`.
 
@@ -57,36 +57,19 @@ Node `^20.19.0 || ^22.12.0`, npm `>=10`.
 9. **File layout per component:** `name.ts` + `name.html` + `name.scss` (separate files, `templateUrl` / `styleUrl`). Colocated spec: `name.spec.ts` only for algorithm layer.
 10. **`prefers-reduced-motion` must be honored in any animated viz.** Use `prefersReducedMotion()` from `utils/visualization-motion/`.
 
-## Design system — `src/styles.scss` token catalog
+## Design system — Instrument (`src/styles/`)
 
-Dark-only (`color-scheme: dark`), app-bg `#0a0c12`.
+The app is being rebuilt as **Instrument** — an analog test bench: graphite plates, inset black screens with a dot texture, raised keys, one orange action colour, Doto readouts. Spec: [docs/superpowers/specs/2026-09-30-instrument-redesign-design.md](docs/superpowers/specs/2026-09-30-instrument-redesign-design.md); reference images in [docs/redesign-instrument/](docs/redesign-instrument/) are a 1:1 contract.
 
-**Surface ladder:** `--surface-0` … `--surface-4`, `--surface-inset`. Chrome overlays: `--chrome-navbar-bg`, `--chrome-sidebar-bg`, `--chrome-veil`, `--chrome-line`.
+**Token catalog:** [src/styles/_instrument-tokens.scss](src/styles/_instrument-tokens.scss) — the single source of truth (materials `--desk`/`--plate-*`/`--key-*`/`--screen`/`--paper`, ink ramp `--ink` … `--ink-4`, `--signal` orange, state colours `--cyan`/`--pink`/`--lime`/`--slate` aliased as `--viz-state-compare`/`-swap`/`-sorted`/`-default`, `--amber`/`--red`/`--violet`/`--easy`, difficulty, fonts, radii, motion, gradients, shadow recipes, screen texture, focus ring, z-index). Every colour has an `-rgb` twin; components use only `var(--x)` or `rgb(var(--x-rgb) / a)` — the comma form `rgba(var(--x-rgb), a)` is forbidden. Full catalog with roles: the `ohno-design-tokens` skill.
 
-**Ink ramp:** `--text-primary` / `-secondary` / `-tertiary` / `-quaternary`.
+**Base rules:** [src/styles/_base.scss](src/styles/_base.scss) — reset, desk background with SVG noise (`app-root::before`), global `:focus-visible { box-shadow: var(--focus-ring) }` (orange), reduced-motion kill switch, keyframes. There is no brand rail, aurora, glass, film grain on content or grid canvas any more.
 
-**Brand triad** (each color has a matching `-rgb` channel for `rgb(var(...) / α)`):
-- `--accent` lime `#c7e56a`
-- `--chrome-accent` violet `#9a8cff`
-- `--chrome-accent-alt` cyan `#4ce3ff`
-- `--chrome-accent-warm` pink `#ff88b8` (sparingly)
-- `--brand-gradient` / `--brand-gradient-soft` / `--brand-aurora`.
+**Compatibility aliases:** [src/styles/_compat-tokens.scss](src/styles/_compat-tokens.scss) maps every pre-redesign token name (`--surface-*`, `--text-*`, `--accent`, `--chrome-*`, `--elevation-*`, `--ring-focus`, …) onto the new palette so untouched screens keep rendering during the migration. **Never use them in new or migrated code**; they are deleted in Phase 5.
 
-**Visualization state tokens (semantic — cyan=attending, pink=acting, lime=done):**
-- `--viz-state-default` / `--viz-state-compare` / `--viz-state-swap` / `--viz-state-sorted` (+ each `-rgb`).
-- Family accents for non-sort viz: `--viz-accent`, `--viz-window`, `--viz-warning`, `--viz-success`, `--viz-route`, `--viz-danger`, `--viz-hit`, `--viz-ember`.
+**Primitives:** [src/app/shared/instrument/](src/app/shared/instrument/) — `ohno-plate`, `ohno-screen`, `ohno-engraving`, `ohno-led`, `ohno-kbd`, `ohno-readout`, `ohno-meter`, `ohno-key`, `ohno-latch`, `ohno-knob`, `ohno-window-stepper`, `ohno-slot`, `ohno-gauge`, `ohno-opline`, `ohno-rack`, `ohno-rack-row`, `ohno-tape`, `ohno-floating-plate`, `ohno-menu`, `ohno-search-field`, `ohno-lang-toggle`. Reach for one before styling a `div`. They are all rendered on the dev-only specimen route `/dev/instrument` (`canMatch: isDevMode()`, absent from production builds) — extend that page whenever you add a primitive.
 
-**Difficulty:** `--easy` / `--medium` / `--hard` / `--ultra-hard` (+ `-rgb`, `-bg`).
-
-**Radii:** `--radius-sm: 7` / `-md: 10` / `-lg: 14` / `-xl: 18` / `-2xl: 22` / `-3xl: 28`. Control chrome: `--control-radius: 12`, `--control-radius-sm: 10`. Panel shell: `--panel-shell-radius: 22`.
-
-**Motion:** easings `--ease-out-quart`, `--ease-out-expo`, `--ease-spring`, `--ease-soft`. Durations `--duration-instant: 90ms`, `-fast: 150ms`, `-base: 220ms`, `-slow: 360ms`, `-entrance: 520ms`.
-
-**Elevation:** `--elevation-0` … `--elevation-4`. Never hand-roll shadows.
-
-**Focus ring:** global `:focus-visible { box-shadow: var(--ring-focus); }` — cyan triple-layer ring. Don't override per-component unless there's a real reason.
-
-**Film grain + brand rail:** `body::before` SVG noise @ 0.042 opacity; `body::after` 1px top aurora line. Don't fight these — they're part of the identity.
+**Depth and motion:** shadows are tokens (`--shadow-plate`, `--shadow-key`, `--shadow-key-in`, `--shadow-screen`, …) — never hand-roll them; nothing lifts on hover. Durations `--duration-instant` 90ms (key press), `-fast` 150ms, `-base` 220ms, `-slow` 360ms, `--duration-pulse` 2.4s; easings `--ease-out-quart`, `--ease-out-expo`, `--ease-soft`.
 
 ## Visualization architecture
 
