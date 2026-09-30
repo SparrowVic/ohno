@@ -31,7 +31,7 @@ Node `^20.19.0 || ^22.12.0`, npm `>=10`.
 
 ## Top-level layout
 
-- [src/app/core/](src/app/core/) — shell, routing, i18n, language service, `TranslatableText` helper.
+- [src/app/core/](src/app/core/) — shell (`core/layout/shell`), bank sidebar (`core/layout/bank-sidebar`), command palette (`core/layout/command-palette`, mounted once in `App` so ⌘K / `/` / `?` work on every route), routing, i18n, `NavigationService` (`core/services`, algorithms groups + `?category`/`?subcategory` sync), `RecentAlgorithmsStore` (`core/recent`, localStorage `ohno:recent:v1`).
 - [src/app/shared/](src/app/shared/) — reusable primitives: `math-text/`, `code-highlight.service.ts`, `difficulty-theme.ts`, `category-theme.ts`, directives, pipes, generic controls.
 - [src/app/features/algorithms/](src/app/features/algorithms/) — the heart:
   - `algorithms/` — pure algorithm generators (one file or folder per algorithm).
@@ -39,7 +39,7 @@ Node `^20.19.0 || ^22.12.0`, npm `>=10`.
   - `components/` — visualization components, scene primitives (`code-panel`, `log-panel`, `legend-bar`, `visualization-toolbar`, `viz-options-menu`, `scratchpad-lab-visualization`, `bar-chart-visualization`, …).
   - `data/catalog/` — algorithm catalog metadata.
   - `registry/` — lookup service.
-  - `algorithm-detail/`, `algorithms-page/`, `algorithm-card/`, `algorithm-traits/` — UI shells.
+  - `algorithm-detail/` (old workbench, rewritten in Phase 3), `algorithms-page/` (catalog: marquee, tools, starter path, groups, deferred grid), `module-card/` (card + 8 family previews), `algorithm-traits/` — UI shells.
 - [src/styles.scss](src/styles.scss) — the canonical token catalog. **Single source of truth** for color, spacing, radius, motion, elevation, typography, focus.
 - [public/i18n/](public/i18n/) — `pl.json`, `en.json`.
 - [proj-info/](proj-info/) — brief, todos, navbar & shader-card explorations, logo archive, mockup HTMLs. Useful as design reference; not shipped.
@@ -68,6 +68,8 @@ The app is being rebuilt as **Instrument** — an analog test bench: graphite pl
 **Compatibility aliases:** [src/styles/_compat-tokens.scss](src/styles/_compat-tokens.scss) maps every pre-redesign token name (`--surface-*`, `--text-*`, `--accent`, `--chrome-*`, `--elevation-*`, `--ring-focus`, …) onto the new palette so untouched screens keep rendering during the migration. **Never use them in new or migrated code**; they are deleted in Phase 5.
 
 **Primitives:** [src/app/shared/instrument/](src/app/shared/instrument/) — `ohno-plate`, `ohno-screen`, `ohno-engraving`, `ohno-led`, `ohno-kbd`, `ohno-readout`, `ohno-meter`, `ohno-key`, `ohno-latch`, `ohno-knob`, `ohno-window-stepper`, `ohno-slot`, `ohno-gauge`, `ohno-opline`, `ohno-rack`, `ohno-rack-row`, `ohno-tape`, `ohno-floating-plate`, `ohno-menu`, `ohno-search-field`, `ohno-lang-toggle`. Reach for one before styling a `div`. They are all rendered on the dev-only specimen route `/dev/instrument` (`canMatch: isDevMode()`, absent from production builds) — extend that page whenever you add a primitive.
+
+**Catalog data derived at runtime:** module ids (`data/catalog/module-id`, `SRT-01`… from catalog order), preview families (`data/catalog/preview-family`), starter paths (`data/catalog/paths/paths.ts`), difficulty latches (`data/catalog/difficulty-filter`); module descriptions live in `public/i18n/*.json` under `features.algorithms.catalog.modules.<id>.description` (PL source of truth: `docs/superpowers/plans/module-descriptions.pl.json`).
 
 **Depth and motion:** shadows are tokens (`--shadow-plate`, `--shadow-key`, `--shadow-key-in`, `--shadow-screen`, …) — never hand-roll them; nothing lifts on hover. Durations `--duration-instant` 90ms (key press), `-fast` 150ms, `-base` 220ms, `-slow` 360ms, `--duration-pulse` 2.4s; easings `--ease-out-quart`, `--ease-out-expo`, `--ease-soft`.
 

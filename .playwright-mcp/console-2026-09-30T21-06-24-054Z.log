@@ -1,0 +1,2 @@
+[      43ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/witek/repos/ohno/.angular/cache/21.2.7/ohno/vite/deps/chunk-WKYDDHXK.js?v=b8d22622:11166
+[      77ms] [LOG] NG0751: Angular has detected that this application contains `@defer` blocks and the hot module replacement (HMR) mode is enabled. All `@defer` block dependencies will be loaded eagerly. Find more at https://v21.angular.dev/errors/NG0751 @ http://localhost:4200/@fs/Users/witek/repos/ohno/.angular/cache/21.2.7/ohno/vite/deps/chunk-WKYDDHXK.js?v=b8d22622:11166

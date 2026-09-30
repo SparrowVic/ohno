@@ -22,3 +22,12 @@
   scrollbar-gutter: stable;
   padding-bottom: 24px;
 }
+
+@media (max-width: 1023px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+}
