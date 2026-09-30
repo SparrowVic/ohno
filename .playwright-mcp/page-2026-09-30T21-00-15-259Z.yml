@@ -1,0 +1,108 @@
+- generic [ref=f1e4]:
+  - generic [ref=f1e6]:
+    - link "Oh(no) — catalog" [ref=f1e11] [cursor=pointer]:
+      - /url: /algorithms
+      - generic [ref=f1e17]:
+        - generic [ref=f1e18]: Oh(no)
+        - generic [ref=f1e19]: Algorithm lab
+    - generic [ref=f1e20]: Algorithms
+    - navigation "Algorithm banks" [ref=f1e21]:
+      - button "All 102" [ref=f1e22] [cursor=pointer]:
+        - generic [ref=f1e25]: All
+        - generic [ref=f1e26]: "102"
+      - button "Sorting 11" [ref=f1e28] [cursor=pointer]:
+        - generic [ref=f1e31]: Sorting
+        - generic [ref=f1e32]: "11"
+      - button "Searching 03" [ref=f1e34] [cursor=pointer]:
+        - generic [ref=f1e37]: Searching
+        - generic [ref=f1e38]: "03"
+      - button "Trees 01" [ref=f1e40] [cursor=pointer]:
+        - generic [ref=f1e43]: Trees
+        - generic [ref=f1e44]: "01"
+      - button "Graphs 26" [ref=f1e46] [cursor=pointer]:
+        - generic [ref=f1e49]: Graphs
+        - generic [ref=f1e50]: "26"
+      - button "Dynamic prog. 21" [ref=f1e52] [cursor=pointer]:
+        - generic [ref=f1e55]: Dynamic prog.
+        - generic [ref=f1e56]: "21"
+      - button "Strings 11" [ref=f1e58] [cursor=pointer]:
+        - generic [ref=f1e61]: Strings
+        - generic [ref=f1e62]: "11"
+      - button "Geometry 08" [ref=f1e64] [cursor=pointer]:
+        - generic [ref=f1e67]: Geometry
+        - generic [ref=f1e68]: "08"
+      - button "Other 21" [ref=f1e70] [cursor=pointer]:
+        - generic [ref=f1e73]: Other
+        - generic [ref=f1e74]: "21"
+    - separator [ref=f1e76]
+    - generic [ref=f1e77]: Structures
+    - generic [ref=f1e78]:
+      - generic [ref=f1e81]: Data structures
+      - generic [ref=f1e82]: Soon
+    - separator [ref=f1e83]
+    - generic [ref=f1e84]: Recently opened
+    - generic "Recently opened modules" [ref=f1e85]:
+      - paragraph [ref=f1e86]: Open any module and it will appear here.
+    - generic [ref=f1e87]:
+      - button "? Shortcuts" [ref=f1e88] [cursor=pointer]:
+        - generic [ref=f1e89]: "?"
+        - generic [ref=f1e91]: Shortcuts
+      - radiogroup "Interface language" [ref=f1e92]:
+        - radio "PL" [ref=f1e93] [cursor=pointer]
+        - radio "EN" [checked] [ref=f1e94] [cursor=pointer]
+  - main [ref=f1e95]:
+    - generic [ref=f1e97]:
+      - generic [ref=f1e98]:
+        - generic [ref=f1e99]:
+          - generic [ref=f1e100]:
+            - generic [ref=f1e101]: Bank 01 · category
+            - generic [ref=f1e102]: SORTING
+          - generic [ref=f1e104]:
+            - generic [ref=f1e105]:
+              - generic [ref=f1e106]: Modules
+              - generic [ref=f1e107]: "11"
+            - generic [ref=f1e109]:
+              - generic [ref=f1e110]: Comparison
+              - generic [ref=f1e111]: "08"
+            - generic [ref=f1e113]:
+              - generic [ref=f1e114]: Non-comparison
+              - generic [ref=f1e115]: "03"
+        - generic [ref=f1e117]:
+          - button "Open search" [ref=f1e119] [cursor=pointer]:
+            - generic [ref=f1e123]: Search 102 algorithms…
+            - generic [ref=f1e124]: ⌘K
+          - group "Difficulty filter" [ref=f1e126]:
+            - button "Easy" [pressed] [ref=f1e129] [cursor=pointer]
+            - button "Medium" [pressed] [ref=f1e135] [cursor=pointer]
+            - button "Hard" [pressed] [ref=f1e141] [cursor=pointer]
+            - button "Insane" [pressed] [ref=f1e147] [cursor=pointer]
+      - generic [ref=f1e151]:
+        - generic [ref=f1e152]:
+          - generic [ref=f1e153]: Starter path
+          - generic [ref=f1e154]: From swapping neighbours to divide and conquer
+        - generic [ref=f1e155]:
+          - 'link "Step 1: Bubble Sort" [ref=f1e157] [cursor=pointer]':
+            - /url: /algorithms/bubble-sort
+            - generic [ref=f1e160]: "01"
+            - generic [ref=f1e161]: Bubble Sort
+          - 'link "Step 2: Insertion Sort" [ref=f1e164] [cursor=pointer]':
+            - /url: /algorithms/insertion-sort
+            - generic [ref=f1e167]: "02"
+            - generic [ref=f1e168]: Insertion Sort
+          - 'link "Step 3: Merge Sort" [ref=f1e171] [cursor=pointer]':
+            - /url: /algorithms/merge-sort
+            - generic [ref=f1e174]: "03"
+            - generic [ref=f1e175]: Merge Sort
+          - 'link "Step 4: Quick Sort" [ref=f1e178] [cursor=pointer]':
+            - /url: /algorithms/quick-sort
+            - generic [ref=f1e181]: "04"
+            - generic [ref=f1e182]: Quick Sort
+        - generic "Starter path progress" [ref=f1e183]:
+          - generic [ref=f1e184]: "0"
+          - generic [ref=f1e185]: /4
+      - generic [ref=f1e186]:
+        - generic [ref=f1e187]: Comparison
+        - generic [ref=f1e188]: "08"
+      - generic [ref=f1e199]:
+        - generic [ref=f1e200]: Non-comparison
+        - generic [ref=f1e201]: "03"
