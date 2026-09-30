@@ -30,6 +30,10 @@
               }
             ],
             "styles": [
+              "node_modules/katex/dist/katex.min.css",
+              "node_modules/@fontsource-variable/instrument-sans/wght.css",
+              "node_modules/@fontsource-variable/doto/full.css",
+              "node_modules/@fontsource-variable/geist-mono/wght.css",
               "src/styles.scss"
             ]
           },
