@@ -13,5 +13,6 @@ export type PlatePadding = 'none' | 'sm' | 'md';
 })
 export class OhnoPlate {
   readonly screws = input(false);
+  readonly screwCorners = input<'all' | 'top'>('all');
   readonly padding = input<PlatePadding>('md');
 }

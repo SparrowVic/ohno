@@ -8,6 +8,9 @@ import {
   faRotateLeft,
 } from '@fortawesome/pro-solid-svg-icons';
 
+import { ALGORITHM_CATALOG } from '../../features/algorithms/data/catalog/catalog';
+import { moduleId } from '../../features/algorithms/data/catalog/module-id/module-id';
+import { OhnoModuleCard } from '../../features/algorithms/module-card/module-card';
 import { OhnoEngraving } from '../../shared/instrument/engraving/engraving';
 import { OhnoFloatingPlate } from '../../shared/instrument/floating-plate/floating-plate';
 import { OhnoGauge } from '../../shared/instrument/gauge/gauge';
@@ -36,7 +39,7 @@ import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,4 +87,8 @@ export class InstrumentSpecimen {
     { step: 59, kind: 'event', tone: 'cyan', event: 'PORÓWNAJ', detail: '56[1] : 74[2]' },
     { step: 60, kind: 'event', tone: 'lime', event: 'USTAL', detail: '99[15]' },
   ];
+
+  protected readonly sampleModules = ['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
+    .map((id) => ALGORITHM_CATALOG.find((item) => item.id === id)!)
+    .map((item) => ({ item, moduleId: moduleId(item, ALGORITHM_CATALOG) }));
 }

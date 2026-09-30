@@ -5,6 +5,9 @@
   @if (icon(); as keyIcon) {
     <fa-icon class="ohno-key__icon" [icon]="keyIcon" />
   }
+  @if (prefix(); as index) {
+    <span class="ohno-key__prefix">{{ index }}</span>
+  }
   @if (label(); as text) {
     <span class="ohno-key__label">{{ text }}</span>
   }
