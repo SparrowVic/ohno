@@ -70,6 +70,7 @@ export const I18N_KEY = {
         tempo: t('core.instrument.shortcuts.tempo'),
         tabs: t('core.instrument.shortcuts.tabs'),
         log: t('core.instrument.shortcuts.log'),
+        spaceKey: t('core.instrument.shortcuts.spaceKey'),
       },
     },
   },
