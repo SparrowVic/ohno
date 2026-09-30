@@ -6,28 +6,9 @@ import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 import { filter, map } from 'rxjs';
 
 import { AppLanguageService } from '../i18n/app-language.service';
-import { NavTab, NavTabId, SidebarFilter, SidebarGroup, SidebarItem } from '../models/navigation';
+import { SidebarFilter, SidebarGroup, SidebarItem } from '../models/navigation';
 import { AlgorithmRegistry } from '../../features/algorithms/registry/algorithm-registry/algorithm-registry';
-import { StructureRegistry } from '../../features/structures/registry/structure-registry';
 
-interface NavTabDefinition {
-  readonly id: NavTabId;
-  readonly labelKey: string;
-  readonly path: string;
-  readonly disabled?: boolean;
-  readonly disabledLabelKey?: string;
-}
-
-const NAV_TABS: readonly NavTabDefinition[] = [
-  { id: 'algorithms', labelKey: t('core.navigation.tabs.algorithms'), path: '/algorithms' },
-  {
-    id: 'structures',
-    labelKey: t('core.navigation.tabs.structures'),
-    path: '/structures',
-    disabled: true,
-    disabledLabelKey: t('core.navigation.tabs.comingSoon'),
-  },
-];
 
 interface SidebarItemDefinition {
   readonly id: string;
@@ -42,7 +23,6 @@ interface SidebarGroupDefinition {
   readonly items: readonly SidebarItemDefinition[];
 }
 
-type SidebarTabId = NavTabId;
 
 const ALGORITHMS_SIDEBAR: readonly SidebarGroupDefinition[] = [
   {
@@ -319,179 +299,15 @@ const ALGORITHMS_SIDEBAR: readonly SidebarGroupDefinition[] = [
   },
 ];
 
-const STRUCTURES_SIDEBAR: readonly SidebarGroupDefinition[] = [
-  {
-    id: 'catalog',
-    labelKey: t('core.navigation.sidebar.structures.groups.catalog'),
-    items: [
-      {
-        id: 'all-structures',
-        labelKey: t('core.navigation.sidebar.structures.items.allStructures'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.allStructures'),
-        filter: {},
-      },
-    ],
-  },
-  {
-    id: 'linear',
-    labelKey: t('core.navigation.sidebar.structures.groups.linear'),
-    items: [
-      {
-        id: 'all-linear',
-        labelKey: t('core.navigation.sidebar.structures.items.allLinear'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.linearDataStructures'),
-        filter: { category: 'linear' },
-      },
-      {
-        id: 'stack-queue',
-        labelKey: t('core.navigation.sidebar.structures.items.stackQueue'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.stackAndQueueStructures'),
-        filter: { category: 'linear', subcategory: 'stack-queue' },
-      },
-      {
-        id: 'linked-list',
-        labelKey: t('core.navigation.sidebar.structures.items.linkedList'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.linkedListStructures'),
-        filter: { category: 'linear', subcategory: 'linked-list' },
-      },
-    ],
-  },
-  {
-    id: 'hashing',
-    labelKey: t('core.navigation.sidebar.structures.groups.hashing'),
-    items: [
-      {
-        id: 'all-hashing',
-        labelKey: t('core.navigation.sidebar.structures.items.allHashing'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.hashingStructures'),
-        filter: { category: 'hashing' },
-      },
-      {
-        id: 'hash-table',
-        labelKey: t('core.navigation.sidebar.structures.items.hashTable'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.hashTableStructures'),
-        filter: { category: 'hashing', subcategory: 'hash-table' },
-      },
-      {
-        id: 'probabilistic',
-        labelKey: t('core.navigation.sidebar.structures.items.probabilistic'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.probabilisticStructures'),
-        filter: { category: 'hashing', subcategory: 'probabilistic' },
-      },
-      {
-        id: 'distributed',
-        labelKey: t('core.navigation.sidebar.structures.items.distributed'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.distributedHashing'),
-        filter: { category: 'hashing', subcategory: 'distributed' },
-      },
-    ],
-  },
-  {
-    id: 'trees',
-    labelKey: t('core.navigation.sidebar.structures.groups.trees'),
-    items: [
-      {
-        id: 'all-structures-trees',
-        labelKey: t('core.navigation.sidebar.structures.items.allTrees'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.treeDataStructures'),
-        filter: { category: 'trees' },
-      },
-      {
-        id: 'search-trees',
-        labelKey: t('core.navigation.sidebar.structures.items.searchTrees'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.searchTreeStructures'),
-        filter: { category: 'trees', subcategory: 'search' },
-      },
-      {
-        id: 'heaps',
-        labelKey: t('core.navigation.sidebar.structures.items.heaps'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.heapStructures'),
-        filter: { category: 'trees', subcategory: 'heaps' },
-      },
-      {
-        id: 'prefix-suffix',
-        labelKey: t('core.navigation.sidebar.structures.items.prefixSuffix'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.prefixAndSuffixTrees'),
-        filter: { category: 'trees', subcategory: 'prefix-suffix' },
-      },
-      {
-        id: 'range',
-        labelKey: t('core.navigation.sidebar.structures.items.range'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.rangeQueryStructures'),
-        filter: { category: 'trees', subcategory: 'range' },
-      },
-      {
-        id: 'advanced-trees',
-        labelKey: t('core.navigation.sidebar.structures.items.advancedTrees'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.advancedTreeStructures'),
-        filter: { category: 'trees', subcategory: 'advanced' },
-      },
-    ],
-  },
-  {
-    id: 'specialized',
-    labelKey: t('core.navigation.sidebar.structures.groups.specialized'),
-    items: [
-      {
-        id: 'all-specialized',
-        labelKey: t('core.navigation.sidebar.structures.items.allSpecialized'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.specializedDataStructures'),
-        filter: { category: 'specialized' },
-      },
-      {
-        id: 'ordered',
-        labelKey: t('core.navigation.sidebar.structures.items.ordered'),
-        sectionTitleKey: t(
-          'core.navigation.sidebar.structures.sections.orderedRandomizedStructures',
-        ),
-        filter: { category: 'specialized', subcategory: 'ordered' },
-      },
-      {
-        id: 'set-union',
-        labelKey: t('core.navigation.sidebar.structures.items.setUnion'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.disjointSetStructures'),
-        filter: { category: 'specialized', subcategory: 'set-union' },
-      },
-      {
-        id: 'spatial',
-        labelKey: t('core.navigation.sidebar.structures.items.spatial'),
-        sectionTitleKey: t('core.navigation.sidebar.structures.sections.spatialIndexingStructures'),
-        filter: { category: 'specialized', subcategory: 'spatial' },
-      },
-    ],
-  },
-];
-
-const DEFAULT_ACTIVE_ITEM_KEY: Record<SidebarTabId, string> = {
-  algorithms: 'overview:all-algorithms',
-  structures: 'catalog:all-structures',
-};
-
-const TAB_BASE_PATH: Record<SidebarTabId, string> = {
-  algorithms: '/algorithms',
-  structures: '/structures',
-};
+const DEFAULT_ACTIVE_ITEM_KEY = 'overview:all-algorithms';
+const BASE_PATH = '/algorithms';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
   private readonly router = inject(Router);
   private readonly algorithms = inject(AlgorithmRegistry);
-  private readonly structures = inject(StructureRegistry);
   private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
-
-  readonly tabs: Signal<readonly NavTab[]> = computed(() => {
-    this.language.activeLang();
-    return NAV_TABS.map((tab) => ({
-      id: tab.id,
-      label: this.transloco.translate(tab.labelKey),
-      path: tab.path,
-      disabled: tab.disabled,
-      disabledLabel: tab.disabledLabelKey
-        ? this.transloco.translate(tab.disabledLabelKey)
-        : undefined,
-    }));
-  });
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -501,224 +317,101 @@ export class NavigationService {
     { initialValue: this.router.url },
   );
 
-  readonly activeTabId: Signal<NavTabId> = computed(() => {
-    const url = this.currentUrl();
-    const activeTab = NAV_TABS.find((tab) => url.startsWith(tab.path));
-    return activeTab && !activeTab.disabled ? activeTab.id : 'algorithms';
-  });
-
   readonly sidebarGroups: Signal<readonly SidebarGroup[]> = computed(() => {
-    switch (this.activeTabId()) {
-      case 'algorithms':
-        return this.buildSidebarGroups(ALGORITHMS_SIDEBAR, (filterValue) =>
-          this.algorithms.count(filterValue),
-        );
-      case 'structures':
-        return this.buildSidebarGroups(STRUCTURES_SIDEBAR, (filterValue) =>
-          this.structures.count(filterValue),
-        );
-    }
-  });
-
-  private readonly collapsedState = signal(false);
-  readonly collapsed: Signal<boolean> = this.collapsedState.asReadonly();
-
-  private readonly activeItemState = signal<Record<SidebarTabId, string>>(DEFAULT_ACTIVE_ITEM_KEY);
-  readonly activeItemKey: Signal<string> = computed(
-    () => this.activeItemState()[this.activeTabId()],
-  );
-
-  readonly activeItem: Signal<SidebarItem | null> = computed(() => {
-    const key = this.activeItemKey();
-    for (const group of this.sidebarGroups()) {
-      for (const item of group.items) {
-        if (`${group.id}:${item.id}` === key) {
-          return item;
-        }
-      }
-    }
-    return null;
-  });
-
-  constructor() {
-    effect(() => {
-      const tabId = this.activeTabId();
-      const groups = this.sidebarGroups();
-      const routedKey = this.findItemKeyByRoute(tabId, groups, this.currentUrl());
-      if (routedKey) {
-        this.activeItemState.update((state) =>
-          state[tabId] === routedKey
-            ? state
-            : {
-                ...state,
-                [tabId]: routedKey,
-              },
-        );
-        return;
-      }
-
-      const activeKey = this.activeItemKey();
-      if (this.findItemByKey(groups, activeKey)) return;
-
-      const fallbackKey =
-        this.findItemByKey(groups, DEFAULT_ACTIVE_ITEM_KEY[tabId]) ?? this.firstItemKey(groups);
-      if (!fallbackKey) return;
-
-      this.activeItemState.update((state) => ({
-        ...state,
-        [tabId]: fallbackKey,
-      }));
-    });
-  }
-
-  toggleCollapsed(): void {
-    this.collapsedState.update((value) => !value);
-  }
-
-  setActiveItem(groupId: string, itemId: string): void {
-    const tabId = this.activeTabId();
-    const key = `${groupId}:${itemId}`;
-    const item = this.getItemByKey(this.sidebarGroups(), key);
-    if (!item) return;
-
-    this.activeItemState.update((state) => ({
-      ...state,
-      [tabId]: key,
-    }));
-
-    void this.router.navigate([TAB_BASE_PATH[tabId]], {
-      queryParams: this.filterToQueryParams(item.filter),
-    });
-  }
-
-  private buildSidebarGroups(
-    definitions: readonly SidebarGroupDefinition[],
-    countByFilter: (filterValue: SidebarItem['filter']) => number,
-  ): readonly SidebarGroup[] {
     this.language.activeLang();
-
-    return definitions.map((group) => ({
+    return ALGORITHMS_SIDEBAR.map((group) => ({
       id: group.id,
       label: this.transloco.translate(group.labelKey),
       items: group.items.map((item) => ({
         id: item.id,
         label: this.transloco.translate(item.labelKey),
-        count: countByFilter(item.filter),
+        count: this.algorithms.count(item.filter),
         sectionTitle: this.transloco.translate(item.sectionTitleKey),
         filter: item.filter,
       })),
     }));
+  });
+
+  private readonly activeItemState = signal(DEFAULT_ACTIVE_ITEM_KEY);
+  readonly activeItemKey: Signal<string> = this.activeItemState.asReadonly();
+  readonly activeGroupId: Signal<string> = computed(() => this.activeItemKey().split(':')[0]);
+
+  readonly activeItem: Signal<SidebarItem | null> = computed(
+    () => this.getItemByKey(this.sidebarGroups(), this.activeItemKey()),
+  );
+
+  constructor() {
+    effect(() => {
+      const groups = this.sidebarGroups();
+      const routedKey = this.findItemKeyByRoute(groups, this.currentUrl());
+      if (routedKey) {
+        this.activeItemState.set(routedKey);
+        return;
+      }
+      if (this.getItemByKey(groups, this.activeItemKey())) return;
+      this.activeItemState.set(DEFAULT_ACTIVE_ITEM_KEY);
+    });
   }
 
-  private findItemByKey(groups: readonly SidebarGroup[], key: string): string | null {
-    for (const group of groups) {
-      for (const item of group.items) {
-        const currentKey = `${group.id}:${item.id}`;
-        if (currentKey === key) {
-          return currentKey;
-        }
-      }
-    }
-    return null;
+  setActiveItem(groupId: string, itemId: string): void {
+    const key = `${groupId}:${itemId}`;
+    const item = this.getItemByKey(this.sidebarGroups(), key);
+    if (!item) return;
+    this.activeItemState.set(key);
+    void this.router.navigate([BASE_PATH], { queryParams: this.filterToQueryParams(item.filter) });
   }
 
   private getItemByKey(groups: readonly SidebarGroup[], key: string): SidebarItem | null {
     for (const group of groups) {
       for (const item of group.items) {
-        if (`${group.id}:${item.id}` === key) {
-          return item;
-        }
+        if (`${group.id}:${item.id}` === key) return item;
       }
     }
-
     return null;
   }
 
-  private findItemKeyByRoute(
-    tabId: SidebarTabId,
-    groups: readonly SidebarGroup[],
-    url: string,
-  ): string | null {
-    const routeFilter = this.getFilterFromUrl(tabId, url);
-    if (!routeFilter) {
-      return null;
-    }
-
+  private findItemKeyByRoute(groups: readonly SidebarGroup[], url: string): string | null {
+    const routeFilter = this.getFilterFromUrl(url);
+    if (!routeFilter) return null;
     return this.findItemKeyByFilter(groups, routeFilter);
   }
 
-  private getFilterFromUrl(tabId: SidebarTabId, url: string): SidebarFilter | null {
+  private getFilterFromUrl(url: string): SidebarFilter | null {
     const parsed = this.router.parseUrl(url);
-    const primary = parsed.root.children['primary'];
-    const segments = primary?.segments.map((segment) => segment.path) ?? [];
-    const expected = TAB_BASE_PATH[tabId].replace(/^\//, '');
-
-    if (segments.length !== 1 || segments[0] !== expected) {
-      return null;
-    }
-
+    const segments = parsed.root.children['primary']?.segments.map((segment) => segment.path) ?? [];
+    if (segments.length !== 1 || segments[0] !== 'algorithms') return null;
     const category = parsed.queryParams['category'];
     const subcategory = parsed.queryParams['subcategory'];
-
     return {
       category: typeof category === 'string' && category.length > 0 ? category : undefined,
-      subcategory:
-        typeof subcategory === 'string' && subcategory.length > 0 ? subcategory : undefined,
+      subcategory: typeof subcategory === 'string' && subcategory.length > 0 ? subcategory : undefined,
     };
   }
 
-  private findItemKeyByFilter(
-    groups: readonly SidebarGroup[],
-    filterValue: SidebarFilter,
-  ): string | null {
+  private findItemKeyByFilter(groups: readonly SidebarGroup[], filterValue: SidebarFilter): string | null {
     const exactKey = this.findMatchingItemKey(groups, filterValue);
-    if (exactKey) {
-      return exactKey;
-    }
-
+    if (exactKey) return exactKey;
     if (filterValue.category && filterValue.subcategory) {
       return this.findMatchingItemKey(groups, { category: filterValue.category });
     }
-
     return this.findMatchingItemKey(groups, {});
   }
 
-  private findMatchingItemKey(
-    groups: readonly SidebarGroup[],
-    filterValue: SidebarFilter,
-  ): string | null {
+  private findMatchingItemKey(groups: readonly SidebarGroup[], filterValue: SidebarFilter): string | null {
     for (const group of groups) {
       for (const item of group.items) {
-        const itemFilter = item.filter;
-        if (
-          itemFilter.category === filterValue.category &&
-          itemFilter.subcategory === filterValue.subcategory
-        ) {
+        if (item.filter.category === filterValue.category && item.filter.subcategory === filterValue.subcategory) {
           return `${group.id}:${item.id}`;
         }
       }
     }
-
     return null;
   }
 
   private filterToQueryParams(filterValue: SidebarFilter): Record<string, string> {
     const queryParams: Record<string, string> = {};
-
-    if (filterValue.category) {
-      queryParams['category'] = filterValue.category;
-    }
-
-    if (filterValue.subcategory) {
-      queryParams['subcategory'] = filterValue.subcategory;
-    }
-
+    if (filterValue.category) queryParams['category'] = filterValue.category;
+    if (filterValue.subcategory) queryParams['subcategory'] = filterValue.subcategory;
     return queryParams;
-  }
-
-  private firstItemKey(groups: readonly SidebarGroup[]): string | null {
-    const group = groups[0];
-    const item = group?.items[0];
-    return group && item ? `${group.id}:${item.id}` : null;
   }
 }
