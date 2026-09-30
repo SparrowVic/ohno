@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
@@ -43,7 +42,7 @@ const DIFFICULTY_LED: Readonly<Record<Difficulty, LedColor>> = {
 
 @Component({
   selector: 'app-algorithms-page',
-  imports: [OhnoEngraving, OhnoKey, OhnoLatch, OhnoModuleCard, OhnoPlate, OhnoReadout, OhnoScreen, OhnoSearchField, RouterLink, TranslocoPipe],
+  imports: [OhnoEngraving, OhnoKey, OhnoLatch, OhnoModuleCard, OhnoPlate, OhnoReadout, OhnoScreen, OhnoSearchField, TranslocoPipe],
   templateUrl: './algorithms-page.html',
   styleUrl: './algorithms-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
