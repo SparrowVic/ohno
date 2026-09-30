@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import {
   faBackwardStep,
   faChevronLeft,
@@ -41,11 +41,14 @@ import { OhnoStageHead } from '../../features/algorithms/workbench/stage-head/st
 import { OhnoStageScreen } from '../../features/algorithms/workbench/stage-screen/stage-screen';
 import { StageMeter } from '../../features/algorithms/workbench/utils/stage-readout.utils';
 import { OhnoWorkbenchTopbar } from '../../features/algorithms/workbench/workbench-topbar/workbench-topbar';
+import { OhnoTransportDeck } from '../../features/algorithms/workbench/transport-deck/transport-deck';
+import { TaskInputSchema } from '../../features/algorithms/models/task';
+import { PlaybackStatus, TransportAction } from '../../features/algorithms/workbench/utils/transport.utils';
 
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -123,7 +126,23 @@ export class InstrumentSpecimen {
     { keys: ['L'], label: 'log' },
   ];
 
-  protected readonly sampleModules =['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
+  protected readonly deckPlaying = signal(false);
+  protected readonly deckAction = computed<TransportAction>(() => (this.deckPlaying() ? 'pause' : this.step() >= 196 ? 'restart' : 'play'));
+  protected readonly deckStatus = computed<PlaybackStatus>(() =>
+    this.deckPlaying() ? 'playing' : this.step() >= 196 ? 'complete' : this.step() === 0 ? 'idle' : 'paused',
+  );
+  protected readonly deckTaskId = signal('known-gcd');
+  protected readonly deckTasks = [
+    { id: 'known-gcd', label: 'Znany gcd · 735, 210' },
+    { id: 'coprime', label: 'Liczby względnie pierwsze' },
+  ];
+  protected readonly deckSchema: TaskInputSchema<Record<string, unknown>> = {
+    a: { kind: 'int', label: 'a', min: 1, max: 9999 },
+    b: { kind: 'int', label: 'b', min: 1, max: 9999, nonZero: true },
+  };
+  protected readonly deckValues = signal<Record<string, unknown>>({ a: 735, b: 210 });
+
+  protected readonly sampleModules = ['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
     .map((id) => ALGORITHM_CATALOG.find((item) => item.id === id)!)
     .map((item) => ({ item, moduleId: moduleId(item, ALGORITHM_CATALOG) }));
 }

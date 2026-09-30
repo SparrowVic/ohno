@@ -276,6 +276,9 @@ export const I18N_KEY = {
           data: t('features.algorithms.workbench.deck.data'),
           custom: t('features.algorithms.workbench.deck.custom'),
           customAriaLabel: t('features.algorithms.workbench.deck.customAriaLabel'),
+          playAriaLabel: t('features.algorithms.workbench.deck.playAriaLabel'),
+          pauseAriaLabel: t('features.algorithms.workbench.deck.pauseAriaLabel'),
+          restartAriaLabel: t('features.algorithms.workbench.deck.restartAriaLabel'),
         },
         inspector: {
           tabsAriaLabel: t('features.algorithms.workbench.inspector.tabsAriaLabel'),

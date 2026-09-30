@@ -1,0 +1,42 @@
+<form class="form" (submit)="submit($event)">
+  <ohno-engraving class="form__title">{{ I18N_KEY.features.algorithms.toolbar.customizeValues.title | transloco }}</ohno-engraving>
+  @for (field of fields(); track field.key) {
+    <div class="form__field">
+      <label class="form__label" [for]="field.inputId">{{ field.label }}</label>
+      <input
+        class="form__input"
+        [class.form__input--mono]="field.kind === 'string'"
+        [class.form__input--invalid]="field.error !== null"
+        [id]="field.inputId"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        [attr.inputmode]="inputMode(field.kind)"
+        [placeholder]="field.placeholder"
+        [value]="field.text"
+        [attr.aria-invalid]="field.error !== null ? 'true' : null"
+        (input)="update(field.key, $event)"
+      />
+      @if (field.error; as error) {
+        <ohno-engraving class="form__error" tone="pink">{{ error }}</ohno-engraving>
+      }
+    </div>
+  }
+  @if (crossError(); as error) {
+    <ohno-engraving class="form__error" tone="pink" role="alert">{{ error }}</ohno-engraving>
+  }
+  <div class="form__actions">
+    <ohno-key
+      size="sm"
+      [label]="I18N_KEY.features.algorithms.toolbar.customizeValues.cancelLabel | transloco"
+      (keyClick)="cancel.emit()"
+    />
+    <ohno-key
+      size="sm"
+      type="submit"
+      variant="signal"
+      [disabled]="!canApply()"
+      [label]="I18N_KEY.features.algorithms.toolbar.customizeValues.applyLabel | transloco"
+    />
+  </div>
+</form>

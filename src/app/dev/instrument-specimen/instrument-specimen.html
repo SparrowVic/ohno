@@ -167,6 +167,51 @@
       <div class="specimen__display-placeholder"><ohno-engraving tone="dim">wyświetlacz rodziny</ohno-engraving></div>
     </ohno-stage-screen>
     <ohno-legend-row [items]="stageLegend" [hints]="stageHints" />
+    <ohno-transport-deck
+      [status]="deckStatus()"
+      [transportAction]="deckAction()"
+      [stepIndex]="step()"
+      [lastIndex]="196"
+      [speed]="speed()"
+      [gauge]="{ count: 15, lit: 3, done: 2 }"
+      gaugeLabel="Przebiegi"
+      [sizeOptions]="[16, 32, 64]"
+      [size]="size()"
+      sizeUnit="elementów"
+      randomizeLabel="Losuj"
+      [customSchema]="deckSchema"
+      [customValues]="deckValues()"
+      (reset)="step.set(0); deckPlaying.set(false)"
+      (stepBack)="step.set(step() - 1)"
+      (toggle)="deckPlaying.set(!deckPlaying())"
+      (stepForward)="step.set(step() + 1)"
+      (seek)="step.set($event)"
+      (speedChange)="speed.set($event)"
+      (sizeChange)="size.set($event)"
+      (customValuesChange)="deckValues.set($event)"
+    />
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Deck zadaniowy (bez okna rozmiaru)</ohno-engraving>
+    <ohno-transport-deck
+      [status]="deckStatus()"
+      [transportAction]="deckAction()"
+      [stepIndex]="step()"
+      [lastIndex]="196"
+      [speed]="speed()"
+      [sizeOptions]="[1]"
+      [size]="1"
+      [tasks]="deckTasks"
+      [activeTaskId]="deckTaskId()"
+      randomizeLabel="Nowa para"
+      [customSchema]="deckSchema"
+      [customValues]="deckValues()"
+      (toggle)="deckPlaying.set(!deckPlaying())"
+      (seek)="step.set($event)"
+      (speedChange)="speed.set($event)"
+      (taskChange)="deckTaskId.set($event)"
+      (customValuesChange)="deckValues.set($event)"
+    />
   </ohno-plate>
   <ohno-plate class="specimen__unit" [screws]="true">
     <ohno-engraving>Karty modułów · osiem rodzin</ohno-engraving>

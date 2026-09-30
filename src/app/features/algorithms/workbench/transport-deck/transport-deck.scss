@@ -1,0 +1,162 @@
+:host {
+  display: block;
+}
+
+.deck {
+  display: flex;
+  align-items: stretch;
+  min-height: 178px;
+}
+
+.deck__section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 26px 14px;
+  border-left: 2px solid var(--groove);
+  box-shadow: inset 1px 0 0 var(--groove-highlight);
+}
+
+.deck__section:first-child {
+  padding-left: 4px;
+  border-left: 0;
+  box-shadow: none;
+}
+
+.deck__section--transport {
+  padding-right: 34px;
+}
+
+.deck__section--axis {
+  flex: 1;
+  min-width: 260px;
+  max-width: 360px;
+}
+
+.deck__section--tempo,
+.deck__section--size,
+.deck__section--task {
+  align-items: center;
+}
+
+.deck__section--tempo .deck__title,
+.deck__section--size .deck__title,
+.deck__section--task .deck__title {
+  align-self: flex-start;
+}
+
+.deck__section--data {
+  flex: none;
+  min-width: 190px;
+}
+
+.deck__title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.deck__transport {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.deck__key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.deck__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.deck__knob {
+  margin-top: -2px;
+}
+
+.deck__anchor {
+  position: relative;
+  display: inline-block;
+}
+
+.deck__menu {
+  bottom: calc(100% + 8px);
+  left: 0;
+}
+
+.deck__menu--custom {
+  left: auto;
+  right: 0;
+}
+
+.deck__task-key {
+  --key-width: 100%;
+}
+
+.deck__data {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deck__data-key {
+  --key-width: 150px;
+  --key-height: 54px;
+  --key-justify: flex-start;
+  --key-font: 600 14px/1 var(--font-ui);
+  --key-gap: 12px;
+  display: block;
+}
+
+@media (max-width: 1279px) {
+  .deck {
+    flex-wrap: wrap;
+  }
+
+  .deck__section--axis {
+    max-width: none;
+  }
+
+  .deck__section--tempo {
+    border-left: 0;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .deck__section {
+    padding: 14px 0 12px;
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .deck__section--transport {
+    flex-basis: 100%;
+    padding-right: 0;
+  }
+
+  .deck__transport {
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .deck__key ohno-key {
+    --key-height: 48px;
+  }
+
+  .deck__section--axis {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .deck__section--data {
+    flex-basis: 100%;
+  }
+}
