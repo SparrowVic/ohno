@@ -1,0 +1,8 @@
+<ohno-engraving>{{ label() }}</ohno-engraving>
+<ohno-readout
+  [value]="value()"
+  [total]="total()"
+  [pad]="pad()"
+  [size]="main() ? 'xl' : 'lg'"
+  [tone]="main() ? 'signal' : 'ink'"
+/>
