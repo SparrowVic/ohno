@@ -63,3 +63,15 @@
   align-items: center;
   gap: 6px;
 }
+
+.specimen__row--deck {
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.specimen__axis {
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}

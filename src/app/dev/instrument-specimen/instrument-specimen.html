@@ -82,4 +82,22 @@
       <ohno-engraving tone="dim">strzałki, przeciąganie w pionie, kółko nie</ohno-engraving>
     </div>
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Oś kroków, rozmiar, wskaźnik</ohno-engraving>
+    <div class="specimen__row specimen__row--deck">
+      <div class="specimen__axis">
+        <ohno-slot [step]="step()" [total]="196" label="Krok" (stepChange)="step.set($event)" />
+        <ohno-gauge label="Przebiegi" [count]="15" [lit]="3" [done]="2" />
+      </div>
+      <ohno-window-stepper
+        [options]="[16, 32, 64]"
+        [value]="size()"
+        label="Rozmiar danych"
+        unitLabel="elementów"
+        decreaseLabel="Mniej elementów"
+        increaseLabel="Więcej elementów"
+        (valueChange)="size.set($event)"
+      />
+    </div>
+  </ohno-plate>
 </div>
