@@ -75,3 +75,13 @@
   flex-direction: column;
   gap: 22px;
 }
+
+.specimen__stage {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.specimen__rack {
+  width: 214px;
+}
