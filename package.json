@@ -71,7 +71,6 @@
     "katex": "^0.16.45",
     "rxjs": "~7.8.0",
     "shiki": "^4.0.2",
-    "three": "^0.184.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
@@ -81,7 +80,6 @@
     "@jsverse/transloco-keys-manager": "^8.1.0",
     "@types/animejs": "^3.1.13",
     "@types/d3": "^7.4.3",
-    "@types/three": "^0.184.0",
     "@vitest/coverage-v8": "^4.1.4",
     "jsdom": "^29.0.2",
     "typescript": "~5.9.3",

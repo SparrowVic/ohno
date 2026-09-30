@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { Navbar } from '../navbar/navbar';
-import { Sidebar } from '../sidebar/sidebar';
+import { OhnoBankSidebar } from '../bank-sidebar/bank-sidebar';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, Navbar, Sidebar],
+  imports: [RouterOutlet, OhnoBankSidebar],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
