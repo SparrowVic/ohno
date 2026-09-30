@@ -24,12 +24,14 @@ import { OhnoRackRow } from '../../shared/instrument/rack/rack-row/rack-row';
 import { OhnoReadout } from '../../shared/instrument/readout/readout';
 import { OhnoScreen } from '../../shared/instrument/screen/screen';
 import { OhnoSlot } from '../../shared/instrument/slot/slot';
+import { OhnoTape } from '../../shared/instrument/tape/tape';
+import { TapeRow } from '../../shared/instrument/tape/tape.types';
 import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window-stepper';
 
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,4 +63,12 @@ export class InstrumentSpecimen {
   protected toggleDifficulty(id: string, on: boolean): void {
     this.difficulties.update((items) => items.map((item) => (item.id === id ? { ...item, on } : item)));
   }
+
+  protected readonly tapeRows: readonly TapeRow[] = [
+    { step: 56, kind: 'separator', tone: 'slate', event: '── PRZEBIEG 2 ZAKOŃCZONY ──', detail: '' },
+    { step: 57, kind: 'event', tone: 'cyan', event: 'PORÓWNAJ', detail: '56[0] : 13[1]' },
+    { step: 58, kind: 'event', tone: 'pink', event: 'ZAMIEŃ', detail: '56[0] ↔ 13[1]' },
+    { step: 59, kind: 'event', tone: 'cyan', event: 'PORÓWNAJ', detail: '56[1] : 74[2]' },
+    { step: 60, kind: 'event', tone: 'lime', event: 'USTAL', detail: '99[15]' },
+  ];
 }

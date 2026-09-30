@@ -116,4 +116,9 @@
       </ohno-opline>
     </ohno-screen>
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Drukarka kroków</ohno-engraving>
+    <ohno-tape class="specimen__tape" [rows]="tapeRows" stepHeader="KROK" eventHeader="ZDARZENIE" emptyLabel="Uruchom scenariusz, aby rozpocząć zapis." />
+    <ohno-tape class="specimen__tape" [rows]="[]" stepHeader="KROK" eventHeader="ZDARZENIE" emptyLabel="Uruchom scenariusz, aby rozpocząć zapis." />
+  </ohno-plate>
 </div>
