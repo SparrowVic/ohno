@@ -23,7 +23,13 @@
   --led-off: #292b30;
   --led-off-rgb: 41 43 48;
   --desk-halo-warm: #212328;
+  --desk-halo-warm-rgb: 33 35 40;
   --desk-halo-cool: #17181c;
+  --desk-halo-cool-rgb: 23 24 28;
+  --well: #15161a;
+  --well-rgb: 21 22 26;
+  --screw-hi: #3b3e44;
+  --screw-lo: #14151a;
 
   --ink: #f0efea;
   --ink-rgb: 240 239 234;
@@ -37,6 +43,8 @@
   --signal: #ff5a1f;
   --signal-rgb: 255 90 31;
   --signal-deep: #a83a10;
+  --signal-deep-rgb: 168 58 16;
+  --signal-ink: #230d02;
   --signal-dim: #7a3a1d;
   --signal-dim-rgb: 122 58 29;
   --cyan: #4ce3ff;
@@ -106,6 +114,7 @@
   --gradient-key-signal: linear-gradient(150deg, #ff8548, #ef470a);
   --gradient-knob-ring: conic-gradient(from 20deg, #2c2e33, #3c3f46, #24262a, #363940, #2c2e33);
   --gradient-knob-face: linear-gradient(150deg, #2f3137, #1b1c20);
+  --gradient-cap: linear-gradient(150deg, #3a3d44, #24262b);
   --gradient-paper: linear-gradient(180deg, #d6d1c3 0%, #ebe6d9 9%, #efeadf 72%, #ddd8ca 100%);
   --gradient-sheen: linear-gradient(118deg, rgb(var(--white-rgb) / 0.04) 0%, rgb(var(--white-rgb) / 0) 26%);
 

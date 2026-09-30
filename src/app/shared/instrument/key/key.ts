@@ -47,7 +47,7 @@ export class OhnoKey {
     this.pressed() === true && this.variant() === 'default' ? 'in' : this.variant(),
   );
   protected readonly iconOnly = computed(() => this.label() === null && this.icon() !== null);
-  protected readonly titleText = computed(() => this.title() ?? this.ariaLabel() ?? this.label());
+  protected readonly titleText = computed(() => this.title() ?? (this.iconOnly() ? this.ariaLabel() : null));
 
   protected onClick(event: MouseEvent): void {
     if (this.disabled()) {

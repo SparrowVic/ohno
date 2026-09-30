@@ -29,4 +29,8 @@ describe('nextMenuIndex', () => {
   it('starts from the first enabled item when nothing is active', () => {
     expect(nextMenuIndex(items, -1, 1)).toBe(0);
   });
+
+  it('starts from the last enabled item when moving up with nothing active', () => {
+    expect(nextMenuIndex(items, -1, -1)).toBe(3);
+  });
 });

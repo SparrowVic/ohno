@@ -39,12 +39,12 @@
 }
 
 .ohno-key[data-variant='signal'] {
-  color: var(--paper-ink);
+  color: var(--signal-ink);
   background: var(--gradient-key-signal);
   box-shadow: var(--shadow-key-signal);
 }
 
-.ohno-key[data-variant='signal'] .ohno-key__icon { color: var(--paper-ink); }
+.ohno-key[data-variant='signal'] .ohno-key__icon { color: var(--signal-ink); }
 
 .ohno-key:disabled,
 .ohno-key[aria-disabled='true'] {
