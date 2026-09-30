@@ -38,7 +38,7 @@
   position: absolute;
   inset: 11px;
   border-radius: 50%;
-  background: conic-gradient(from 20deg, var(--key-lo), var(--key-hi), var(--plate-lo), var(--key-hi), var(--key-lo));
+  background: var(--gradient-knob-ring);
   box-shadow: var(--shadow-knob);
 }
 
@@ -47,7 +47,7 @@
   position: absolute;
   inset: 7px;
   border-radius: 50%;
-  background: var(--gradient-key);
+  background: var(--gradient-knob-face);
   box-shadow: inset 1px 1px 0 rgb(var(--white-rgb) / 0.09);
 }
 

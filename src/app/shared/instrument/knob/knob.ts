@@ -44,6 +44,7 @@ export class OhnoKnob {
   }
 
   protected onPointerDown(event: PointerEvent): void {
+    event.preventDefault();
     (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
     this.rangeInput().nativeElement.focus({ preventScroll: true });
     this.dragStartY = event.clientY;

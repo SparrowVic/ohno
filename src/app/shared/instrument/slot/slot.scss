@@ -10,11 +10,25 @@
 }
 
 .ohno-slot__marks {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 9px;
   margin-top: 5px;
   font: 500 9px/1 var(--font-mono);
   color: var(--ink-4);
+}
+
+.ohno-slot__mark {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.ohno-slot__mark--start {
+  transform: none;
+}
+
+.ohno-slot__mark--end {
+  transform: translateX(-100%);
 }
 
 .ohno-slot__track {

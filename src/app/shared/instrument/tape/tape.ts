@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  afterRenderEffect,
   computed,
-  effect,
   input,
   viewChild,
 } from '@angular/core';
@@ -28,10 +28,14 @@ export class OhnoTape {
   private readonly paper = viewChild.required<ElementRef<HTMLElement>>('paper');
 
   constructor() {
-    effect(() => {
+    afterRenderEffect(() => {
       const index = this.currentIndex();
-      const rowElement = this.paper().nativeElement.querySelector<HTMLElement>(`[data-row="${index}"]`);
-      rowElement?.scrollIntoView({ block: 'nearest' });
+      const paper = this.paper().nativeElement;
+      const row = paper.querySelector<HTMLElement>(`[data-row="${index}"]`);
+      if (!row) return;
+      const rowBottom = row.getBoundingClientRect().bottom - paper.getBoundingClientRect().top + paper.scrollTop;
+      const target = Math.ceil(rowBottom - paper.clientHeight);
+      if (target > paper.scrollTop) paper.scrollTop = target;
     });
   }
 
