@@ -35,11 +35,17 @@ import { OhnoSlot } from '../../shared/instrument/slot/slot';
 import { OhnoTape } from '../../shared/instrument/tape/tape';
 import { TapeRow } from '../../shared/instrument/tape/tape.types';
 import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window-stepper';
+import { Difficulty } from '../../features/algorithms/models/algorithm';
+import { LegendEntry, LegendHint, OhnoLegendRow } from '../../features/algorithms/workbench/legend-row/legend-row';
+import { OhnoStageHead } from '../../features/algorithms/workbench/stage-head/stage-head';
+import { OhnoStageScreen } from '../../features/algorithms/workbench/stage-screen/stage-screen';
+import { StageMeter } from '../../features/algorithms/workbench/utils/stage-readout.utils';
+import { OhnoWorkbenchTopbar } from '../../features/algorithms/workbench/workbench-topbar/workbench-topbar';
 
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,7 +94,36 @@ export class InstrumentSpecimen {
     { step: 60, kind: 'event', tone: 'lime', event: 'USTAL', detail: '99[15]' },
   ];
 
-  protected readonly sampleModules = ['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
+  protected readonly stageView = signal<'bar' | 'block'>('bar');
+  protected readonly stageDifficulty = Difficulty.Easy;
+  protected readonly stageViews = [
+    { value: 'bar' as const, label: 'Słupki' },
+    { value: 'block' as const, label: 'Bloki' },
+  ];
+  protected readonly stageMeters: readonly StageMeter[] = [
+    { id: 'passes', label: 'Przebieg', value: 3, total: 15, pad: 2 },
+    { id: 'comparisons', label: 'Porównania', value: 35, total: null, pad: 3 },
+    { id: 'swaps', label: 'Zamiany', value: 28, total: null, pad: 3 },
+  ];
+  protected readonly stageRegisters = [
+    { label: 'i', value: '5' },
+    { label: 'j', value: '6' },
+    { label: 'granica', value: '14' },
+    { label: 'ustalone', value: '2' },
+  ];
+  protected readonly stageLegend: readonly LegendEntry[] = [
+    { label: 'Nieposortowane', color: 'slate' },
+    { label: 'Porównanie', color: 'cyan' },
+    { label: 'Zamiana', color: 'pink' },
+    { label: 'Posortowane', color: 'lime' },
+  ];
+  protected readonly stageHints: readonly LegendHint[] = [
+    { keys: ['[', ']'], label: 'tempo' },
+    { keys: ['C'], label: 'kod' },
+    { keys: ['L'], label: 'log' },
+  ];
+
+  protected readonly sampleModules =['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
     .map((id) => ALGORITHM_CATALOG.find((item) => item.id === id)!)
     .map((item) => ({ item, moduleId: moduleId(item, ALGORITHM_CATALOG) }));
 }

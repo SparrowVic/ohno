@@ -1,0 +1,30 @@
+<header class="topbar">
+  <ohno-brand [tagline]="tagline()" [ariaLabel]="I18N_KEY.core.instrument.brand.homeAriaLabel | transloco" />
+  <ohno-key
+    class="topbar__back"
+    [label]="I18N_KEY.features.algorithms.workbench.topbar.catalog | transloco"
+    [icon]="icons.back"
+    routerLink="/algorithms"
+    queryParamsHandling="preserve"
+  />
+  <nav class="topbar__crumbs" [attr.aria-label]="I18N_KEY.features.algorithms.workbench.topbar.crumbsAriaLabel | transloco">
+    @for (crumb of crumbs(); track $index; let last = $last) {
+      <ohno-engraving [tone]="last ? 'bright' : 'default'">{{ crumb }}</ohno-engraving>
+      @if (!last) {
+        <ohno-led color="signal" size="sm" />
+      }
+    }
+  </nav>
+  <ohno-search-field
+    class="topbar__search"
+    [placeholder]="placeholder()"
+    [label]="I18N_KEY.core.instrument.palette.openAriaLabel | transloco"
+    (open)="openSearch()"
+  />
+  <ohno-lang-toggle
+    [value]="activeLang()"
+    [options]="langOptions"
+    [label]="I18N_KEY.core.instrument.bank.languageAriaLabel | transloco"
+    (valueChange)="setLang($event)"
+  />
+</header>

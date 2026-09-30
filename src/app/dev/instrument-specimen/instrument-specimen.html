@@ -138,6 +138,36 @@
       </span>
     </div>
   </ohno-plate>
+  <div class="specimen__unit">
+    <ohno-workbench-topbar [crumbs]="['Algorytmy', 'Sortowanie', 'Porównawcze']" [moduleCount]="102" />
+  </div>
+  <ohno-plate class="specimen__unit specimen__stage-unit" [screws]="true">
+    <ohno-stage-head
+      name="Bubble Sort"
+      [difficulty]="stageDifficulty"
+      difficultyLabel="Łatwe"
+      time="O(n²)"
+      space="O(1)"
+      [views]="stageViews"
+      [activeView]="stageView()"
+      (viewChange)="stageView.set($event === 'block' ? 'block' : 'bar')"
+    />
+    <ohno-stage-screen
+      class="specimen__stage-screen"
+      [stepIndex]="66"
+      [lastIndex]="196"
+      [meters]="stageMeters"
+      status="paused"
+      [speed]="5"
+      phaseLabel="Porównanie"
+      tone="cyan"
+      sentenceHtml="Porównaj <em>74</em> na indeksie <em>5</em> z <em>12</em> na indeksie <em>6</em>."
+      [registers]="stageRegisters"
+    >
+      <div class="specimen__display-placeholder"><ohno-engraving tone="dim">wyświetlacz rodziny</ohno-engraving></div>
+    </ohno-stage-screen>
+    <ohno-legend-row [items]="stageLegend" [hints]="stageHints" />
+  </ohno-plate>
   <ohno-plate class="specimen__unit" [screws]="true">
     <ohno-engraving>Karty modułów · osiem rodzin</ohno-engraving>
     <div class="specimen__cards">

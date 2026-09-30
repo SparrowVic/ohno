@@ -6699,6 +6699,10 @@
           "transport": "Transport"
         },
         "head": {
+          "copyLink": "Kopiuj link",
+          "linkCopied": "Skopiowano link",
+          "optionsAriaLabel": "Więcej opcji",
+          "shortcuts": "Skróty klawiszowe",
           "space": "pamięć",
           "time": "czas",
           "timeSpace": "czas · pamięć",
@@ -6715,12 +6719,18 @@
         },
         "legend": {
           "activeDigit": "Aktywna cyfra",
+          "boundary": "Granica",
           "bucketLane": "Kubełek",
+          "comparing": "Porównanie",
           "gatheredOutput": "Zebrane wyjście",
           "hintCode": "kod",
           "hintLog": "log",
           "hintTempo": "tempo",
-          "inputStream": "Strumień wejścia"
+          "inputStream": "Strumień wejścia",
+          "pivot": "Pivot",
+          "sorted": "Posortowane",
+          "swapping": "Zamiana",
+          "unsorted": "Nieposortowane"
         },
         "log": {
           "empty": "Uruchom scenariusz, aby rozpocząć zapis.",

@@ -1,0 +1,62 @@
+<div class="head">
+  <h1 class="head__title" [class.head__title--long]="longTitle()">{{ name() }}</h1>
+  <span class="head__difficulty">
+    <ohno-led [color]="difficultyLed()" />
+    <ohno-engraving tone="bright">{{ difficultyLabel() }}</ohno-engraving>
+  </span>
+  <div class="head__complexity">
+    @if (sameComplexity()) {
+      <span class="head__readout">
+        <ohno-readout [value]="time()" size="md" />
+        <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.head.timeSpace | transloco }}</ohno-engraving>
+      </span>
+    } @else {
+      <span class="head__readout">
+        <ohno-readout [value]="time()" size="md" />
+        <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.head.time | transloco }}</ohno-engraving>
+      </span>
+      <span class="head__readout">
+        <ohno-readout [value]="space()" size="md" />
+        <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.head.space | transloco }}</ohno-engraving>
+      </span>
+    }
+  </div>
+  <div class="head__views" role="group" [attr.aria-label]="I18N_KEY.features.algorithms.workbench.head.viewsAriaLabel | transloco">
+    @for (view of views(); track view.value) {
+      <ohno-key
+        [label]="view.label"
+        led="signal"
+        [ledOn]="view.value === activeView()"
+        [pressed]="view.value === activeView()"
+        (keyClick)="viewChange.emit(view.value)"
+      />
+    }
+  </div>
+  <span class="head__options">
+    @if (copied()) {
+      <ohno-engraving class="head__copied" tone="lime" role="status">{{ I18N_KEY.features.algorithms.workbench.head.linkCopied | transloco }}</ohno-engraving>
+    }
+    <ohno-key
+      [icon]="icons.options"
+      [ariaLabel]="I18N_KEY.features.algorithms.workbench.head.optionsAriaLabel | transloco"
+      [menu]="true"
+      [expanded]="menuOpen()"
+      (keyClick)="toggleMenu()"
+    />
+    <ohno-floating-plate
+      class="head__menu"
+      [open]="menuOpen()"
+      [label]="I18N_KEY.features.algorithms.workbench.head.optionsAriaLabel | transloco"
+      (dismiss)="closeMenu()"
+    >
+      @if (menuOpen()) {
+        <ohno-menu
+          [items]="optionItems()"
+          [label]="I18N_KEY.features.algorithms.workbench.head.optionsAriaLabel | transloco"
+          (select)="pickOption($event)"
+          (dismiss)="closeMenu()"
+        />
+      }
+    </ohno-floating-plate>
+  </span>
+</div>

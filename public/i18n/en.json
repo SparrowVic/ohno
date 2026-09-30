@@ -6699,6 +6699,10 @@
           "transport": "Transport"
         },
         "head": {
+          "copyLink": "Copy link",
+          "linkCopied": "Link copied",
+          "optionsAriaLabel": "More options",
+          "shortcuts": "Keyboard shortcuts",
           "space": "space",
           "time": "time",
           "timeSpace": "time · space",
@@ -6715,12 +6719,18 @@
         },
         "legend": {
           "activeDigit": "Active digit",
+          "boundary": "Boundary",
           "bucketLane": "Bucket lane",
+          "comparing": "Comparing",
           "gatheredOutput": "Gathered output",
           "hintCode": "code",
           "hintLog": "log",
           "hintTempo": "tempo",
-          "inputStream": "Input stream"
+          "inputStream": "Input stream",
+          "pivot": "Pivot",
+          "sorted": "Sorted",
+          "swapping": "Swapping",
+          "unsorted": "Unsorted"
         },
         "log": {
           "empty": "Run the scenario to start the tape.",

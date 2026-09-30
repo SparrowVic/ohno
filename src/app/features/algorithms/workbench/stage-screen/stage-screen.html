@@ -1,0 +1,27 @@
+<ohno-screen class="stage" padding="none">
+  <div class="stage__meters">
+    <ohno-meter
+      [label]="I18N_KEY.features.algorithms.workbench.stage.step | transloco"
+      [value]="stepIndex()"
+      [total]="lastIndex()"
+      [pad]="3"
+      [main]="true"
+    />
+    @for (meter of meters(); track meter.id) {
+      <ohno-meter [label]="meter.label" [value]="meter.value" [total]="meter.total" [pad]="meter.pad" />
+    }
+    <span class="stage__status">
+      <ohno-led [color]="statusLed()" [pulse]="status() === 'playing'" />
+      <ohno-engraving tone="bright">{{ statusLabel() }}</ohno-engraving>
+    </span>
+  </div>
+  <div class="stage__display">
+    <ng-content />
+  </div>
+  <ohno-opline class="stage__opline" [phase]="phaseLabel()" [tone]="tone()" [registers]="registers()">
+    <span [innerHTML]="sentenceHtml()"></span>
+  </ohno-opline>
+  <p class="stage__live" aria-live="polite" aria-atomic="true" [attr.aria-label]="I18N_KEY.features.algorithms.workbench.stage.liveRegionLabel | transloco">
+    {{ liveText() }}
+  </p>
+</ohno-screen>

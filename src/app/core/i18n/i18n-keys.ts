@@ -207,6 +207,10 @@ export const I18N_KEY = {
           space: t('features.algorithms.workbench.head.space'),
           timeSpace: t('features.algorithms.workbench.head.timeSpace'),
           viewsAriaLabel: t('features.algorithms.workbench.head.viewsAriaLabel'),
+          optionsAriaLabel: t('features.algorithms.workbench.head.optionsAriaLabel'),
+          shortcuts: t('features.algorithms.workbench.head.shortcuts'),
+          copyLink: t('features.algorithms.workbench.head.copyLink'),
+          linkCopied: t('features.algorithms.workbench.head.linkCopied'),
         },
         stage: {
           step: t('features.algorithms.workbench.stage.step'),
@@ -243,6 +247,12 @@ export const I18N_KEY = {
           activeDigit: t('features.algorithms.workbench.legend.activeDigit'),
           bucketLane: t('features.algorithms.workbench.legend.bucketLane'),
           gatheredOutput: t('features.algorithms.workbench.legend.gatheredOutput'),
+          unsorted: t('features.algorithms.workbench.legend.unsorted'),
+          comparing: t('features.algorithms.workbench.legend.comparing'),
+          swapping: t('features.algorithms.workbench.legend.swapping'),
+          sorted: t('features.algorithms.workbench.legend.sorted'),
+          pivot: t('features.algorithms.workbench.legend.pivot'),
+          boundary: t('features.algorithms.workbench.legend.boundary'),
         },
         deck: {
           transport: t('features.algorithms.workbench.deck.transport'),
