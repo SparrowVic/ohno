@@ -6681,6 +6681,7 @@
           "custom": "Custom…",
           "customAriaLabel": "Custom values",
           "data": "Data",
+          "gauge": "Passes",
           "pause": "Pause",
           "pauseAriaLabel": "Pause playback",
           "playAriaLabel": "Start playback",

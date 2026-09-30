@@ -50,9 +50,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="stringPresetOptions()"
-        [presetId]="stringPresetId()"
-        (presetChange)="stringPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('dp') {
@@ -60,9 +60,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="dpPresetOptions()"
-        [presetId]="dpPresetId()"
-        (presetChange)="dpPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('convex-hull') {
@@ -94,9 +94,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="treePresetOptions()"
-        [presetId]="treePresetId()"
-        (presetChange)="treePresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('number-lab') {
@@ -104,9 +104,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="numberLabPresetOptions()"
-        [presetId]="numberLabPresetId()"
-        (presetChange)="numberLabPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('pointer-lab') {
@@ -114,9 +114,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="pointerLabPresetOptions()"
-        [presetId]="pointerLabPresetId()"
-        (presetChange)="pointerLabPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('sieve-grid') {
@@ -124,9 +124,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="sieveGridPresetOptions()"
-        [presetId]="sieveGridPresetId()"
-        (presetChange)="sieveGridPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('call-stack-lab') {
@@ -134,9 +134,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="callStackLabPresetOptions()"
-        [presetId]="callStackLabPresetId()"
-        (presetChange)="callStackLabPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('call-tree-lab') {
@@ -144,9 +144,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="callTreeLabPresetOptions()"
-        [presetId]="callTreeLabPresetId()"
-        (presetChange)="callTreeLabPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
     @case ('scratchpad-lab') {
@@ -154,9 +154,9 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="numberLabPresetOptions()"
-        [presetId]="numberLabPresetId()"
-        (presetChange)="numberLabPresetChange.emit($event)"
+        [presetOptions]="presetOptions()"
+        [presetId]="presetId()"
+        (presetChange)="presetChange.emit($event)"
       />
     }
   }

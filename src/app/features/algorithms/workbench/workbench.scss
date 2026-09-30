@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.workbench {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 100dvh;
+  padding: 14px 18px 16px;
+}
+
+.workbench--empty {
+  align-items: center;
+  justify-content: center;
+}
+
+.workbench__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 456px;
+  grid-template-rows: minmax(0, 1fr) 318px;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+.workbench__unit {
+  min-width: 0;
+  min-height: 0;
+}
+
+.workbench__unit--stage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  grid-row: 1 / 3;
+  padding: 18px 26px 18px;
+}
+
+.workbench__stage {
+  flex: 1;
+  min-height: 320px;
+}
+
+.workbench__canvas {
+  height: 100%;
+}
+
+.workbench__unit--inspector,
+.workbench__unit--log {
+  padding: 22px 24px 24px;
+}
+
+.workbench__unit--log ohno-log-printer {
+  outline: none;
+}
+
+.workbench__state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  width: min(560px, 100%);
+  margin: 40px auto;
+}
+
+.workbench__state-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.workbench__state-title {
+  margin: 0;
+  font: 700 24px/1.1 var(--font-ui);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.workbench__state-copy {
+  margin: 0;
+  font: 400 13.5px/1.5 var(--font-ui);
+  color: var(--ink-2);
+}
+
+@media (max-width: 1439px) {
+  .workbench__grid {
+    grid-template-columns: minmax(0, 1fr) 400px;
+  }
+}
+
+@media (max-width: 1279px) {
+  .workbench__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(360px, 560px);
+  }
+
+  .workbench__unit--stage {
+    grid-row: auto;
+    grid-column: 1 / 3;
+  }
+}
+
+@media (max-width: 1023px) {
+  .workbench {
+    padding: 12px;
+  }
+
+  .workbench__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .workbench__unit--stage {
+    grid-column: auto;
+    padding: 16px 18px;
+  }
+
+  .workbench__unit--inspector {
+    min-height: 480px;
+  }
+
+  .workbench__unit--log {
+    min-height: 318px;
+  }
+}
+
+@media (max-width: 767px) {
+  .workbench__unit--stage {
+    padding: 14px 14px 16px;
+  }
+
+  .workbench__unit--inspector,
+  .workbench__unit--log {
+    padding: 16px 14px 18px;
+  }
+}

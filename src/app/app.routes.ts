@@ -12,10 +12,7 @@ export const routes: Routes = [
   },
   {
     path: 'algorithms/:id',
-    loadComponent: () =>
-      import('./features/algorithms/algorithm-detail/algorithm-detail').then(
-        (m) => m.AlgorithmDetail,
-      ),
+    loadComponent: () => import('./features/algorithms/workbench/workbench').then((m) => m.Workbench),
   },
   {
     path: '',

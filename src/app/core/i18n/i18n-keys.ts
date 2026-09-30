@@ -279,6 +279,7 @@ export const I18N_KEY = {
           playAriaLabel: t('features.algorithms.workbench.deck.playAriaLabel'),
           pauseAriaLabel: t('features.algorithms.workbench.deck.pauseAriaLabel'),
           restartAriaLabel: t('features.algorithms.workbench.deck.restartAriaLabel'),
+          gauge: t('features.algorithms.workbench.deck.gauge'),
         },
         inspector: {
           tabsAriaLabel: t('features.algorithms.workbench.inspector.tabsAriaLabel'),

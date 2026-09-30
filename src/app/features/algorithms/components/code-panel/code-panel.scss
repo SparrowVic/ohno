@@ -96,36 +96,20 @@
   user-select: none;
 }
 
-:host ::ng-deep .code-panel__render-line::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 3px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: transparent;
-  transform: translateY(-50%);
-  transition: background var(--duration-fast) var(--ease-soft), box-shadow var(--duration-fast) var(--ease-soft);
-}
-
 :host ::ng-deep .code-panel__render-line:hover:not(.code-panel__render-line--active) {
   background: rgb(var(--white-rgb) / 0.03);
 }
 
 :host ::ng-deep .code-panel__render-line--active {
-  background: linear-gradient(90deg, rgb(var(--signal-rgb) / 0.26), rgb(var(--signal-rgb) / 0.06) 60%, transparent);
+  background:
+    radial-gradient(circle at 7px 50%, var(--signal) 0 3px, rgb(var(--signal-rgb) / 0.45) 3.5px 5.5px, transparent 7px),
+    linear-gradient(90deg, rgb(var(--signal-rgb) / 0.26), rgb(var(--signal-rgb) / 0.06) 60%, transparent);
   box-shadow: inset 0 1px 0 rgb(var(--signal-rgb) / 0.18), inset 0 -1px 0 rgb(var(--signal-rgb) / 0.18);
 }
 
 :host ::ng-deep .code-panel__render-line--active::before {
   color: var(--signal);
   font-weight: 700;
-}
-
-:host ::ng-deep .code-panel__render-line--active::after {
-  background: var(--signal);
-  box-shadow: 0 0 7px var(--signal), 0 0 14px rgb(var(--signal-rgb) / 0.55);
 }
 
 :host ::ng-deep .code-panel__render-line--hidden {
