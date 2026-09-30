@@ -6,6 +6,7 @@ const translocoConfig = {
     output: 'public/i18n',
     marker: 't',
     sort: true,
+    unflat: true,
     addMissingKeys: true,
   },
 };
