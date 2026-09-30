@@ -45,4 +45,34 @@
       </div>
     </ohno-screen>
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Klawisze i zatrzaski</ohno-engraving>
+    <div class="specimen__row">
+      <ohno-key label="Katalog" [icon]="icons.back" size="sm" />
+      <ohno-key label="Słupki" led="signal" [pressed]="true" />
+      <ohno-key label="Bloki" led="signal" [ledOn]="false" [pressed]="false" />
+      <ohno-key label="TS ▾" [menu]="true" [expanded]="false" />
+      <ohno-key label="Log" kbd="L" />
+      <ohno-key [icon]="icons.copy" ariaLabel="Kopiuj kod" size="sm" />
+      <ohno-key label="Wyłączony" [disabled]="true" />
+    </div>
+    <div class="specimen__row">
+      <ohno-key [icon]="icons.reset" ariaLabel="Reset" size="lg" />
+      <ohno-key [icon]="icons.previous" ariaLabel="Poprzedni krok" size="lg" />
+      <ohno-key [icon]="icons.play" ariaLabel="Uruchom" size="xl" variant="signal" />
+      <ohno-key [icon]="icons.next" ariaLabel="Następny krok" size="lg" />
+      <span class="specimen__hint"><ohno-kbd>Spacja</ohno-kbd><ohno-engraving>Start</ohno-engraving></span>
+    </div>
+    <div class="specimen__row">
+      @for (difficulty of difficulties(); track difficulty.id) {
+        <ohno-latch
+          [label]="difficulty.label"
+          [led]="difficulty.led"
+          [pressed]="difficulty.on"
+          size="sm"
+          (pressedChange)="toggleDifficulty(difficulty.id, $event)"
+        />
+      }
+    </div>
+  </ohno-plate>
 </div>
