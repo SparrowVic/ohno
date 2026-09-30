@@ -56,7 +56,13 @@ export function cancelElementAnimations(target: Element): void {
   target.getAnimations().forEach((animation) => animation.cancel());
 }
 
+export function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export function pulseSvgElement(target: SVGElement, options: PulseOptions): void {
+  if (prefersReducedMotion()) return;
   prepareSvgTarget(target, options.origin ?? 'center');
   cancelElementAnimations(target);
   const opacity = options.opacity ?? [1, 1, 1];
@@ -93,6 +99,7 @@ export function pulseSvgElement(target: SVGElement, options: PulseOptions): void
 }
 
 export function pulseElement(target: HTMLElement, options: PulseOptions): void {
+  if (prefersReducedMotion()) return;
   target.style.transformOrigin = options.origin ?? 'center';
   cancelElementAnimations(target);
   const opacity = options.opacity ?? [1, 1, 1];

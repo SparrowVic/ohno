@@ -5,6 +5,7 @@ import {
   computePlaybackDelay,
   createMotionProfile,
   findNewSorted,
+  prefersReducedMotion,
   pulseElement,
   pulseSvgElement,
   samePair,
@@ -93,5 +94,28 @@ describe('visualization-motion', () => {
       ]),
       expect.objectContaining({ duration: 120 }),
     );
+  });
+});
+
+describe('prefersReducedMotion', () => {
+  it('is false when matchMedia is unavailable and follows the media query otherwise', () => {
+    const original = window.matchMedia;
+    Object.defineProperty(window, 'matchMedia', { configurable: true, writable: true, value: undefined });
+    expect(prefersReducedMotion()).toBe(false);
+
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      writable: true,
+      value: (query: string) => ({ matches: query.includes('reduce') }),
+    });
+    expect(prefersReducedMotion()).toBe(true);
+
+    const target = document.createElement('div');
+    target.animate = vi.fn() as unknown as typeof target.animate;
+    target.getAnimations = () => [];
+    pulseElement(target, { duration: 100 });
+    expect(target.animate).not.toHaveBeenCalled();
+
+    Object.defineProperty(window, 'matchMedia', { configurable: true, writable: true, value: original });
   });
 });
