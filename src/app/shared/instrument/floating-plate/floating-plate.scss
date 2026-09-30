@@ -1,0 +1,14 @@
+:host {
+  position: absolute;
+  z-index: var(--z-popover);
+  display: none;
+  padding: 8px;
+  border-radius: var(--radius-screen);
+  background: var(--gradient-plate);
+  box-shadow: var(--shadow-plate), 0 0 0 1px rgb(var(--black-rgb) / 0.6);
+  animation: ohno-fade-scale var(--duration-fast) var(--ease-out-quart);
+}
+
+:host(.ohno-floating-plate--open) {
+  display: block;
+}

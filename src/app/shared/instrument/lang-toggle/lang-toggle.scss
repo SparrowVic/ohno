@@ -1,0 +1,31 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 3px;
+  border-radius: var(--radius-key);
+  background: var(--screen);
+  box-shadow: var(--shadow-window);
+}
+
+.ohno-lang-toggle__key {
+  width: 40px;
+  height: 32px;
+  border: 0;
+  border-radius: 9px;
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+  background: transparent;
+}
+
+.ohno-lang-toggle__key--on {
+  color: var(--ink);
+  background: var(--gradient-key);
+  box-shadow: 3px 4px 8px rgb(var(--black-rgb) / 0.6), inset 1px 1px 0 rgb(var(--white-rgb) / 0.1);
+}
+
+.ohno-lang-toggle__key:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
