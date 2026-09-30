@@ -1,0 +1,13 @@
+<a class="brand" [routerLink]="link()" [attr.aria-label]="ariaLabel()">
+  <span class="brand__mark" aria-hidden="true">
+    <svg viewBox="9 14 46 36" fill="none">
+      <ellipse cx="22.5" cy="32.5" rx="9.6" ry="11.6" stroke="currentColor" stroke-width="4" />
+      <path d="M33.5 17.5V46M33.5 31.2l6.4-4.6 5.8 1 4.6 6.6V46" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+      <circle class="brand__dot" cx="50.3" cy="46" r="3" />
+    </svg>
+  </span>
+  <span class="brand__text">
+    <span class="brand__name">Oh<i>(</i>no<i>)</i></span>
+    <ohno-engraving>{{ tagline() }}</ohno-engraving>
+  </span>
+</a>

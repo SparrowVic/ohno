@@ -13,47 +13,7 @@
 }
 
 .bank__brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
   padding: 0 6px 22px;
-  color: var(--ink);
-  border-radius: var(--radius-key);
-}
-
-.bank__mark {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-key);
-  background: var(--gradient-key);
-  box-shadow: var(--shadow-key);
-}
-
-.bank__mark svg {
-  width: 26px;
-  height: 26px;
-}
-
-.bank__mark-dot {
-  fill: var(--signal);
-}
-
-.bank__brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.bank__name {
-  font: 700 19px/1 var(--font-ui);
-  letter-spacing: -0.02em;
-}
-
-.bank__name i {
-  font-style: normal;
-  color: var(--signal);
 }
 
 .bank__title {

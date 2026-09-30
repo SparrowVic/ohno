@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AlgorithmRegistry } from '../../../features/algorithms/registry/algorithm-registry/algorithm-registry';
+import { OhnoBrand } from '../../../shared/instrument/brand/brand';
 import { OhnoEngraving } from '../../../shared/instrument/engraving/engraving';
 import { OhnoKbd } from '../../../shared/instrument/kbd/kbd';
 import { LangToggleOption, OhnoLangToggle } from '../../../shared/instrument/lang-toggle/lang-toggle';
@@ -28,7 +29,7 @@ interface RecentRow {
 
 @Component({
   selector: 'ohno-bank-sidebar',
-  imports: [OhnoEngraving, OhnoKbd, OhnoLangToggle, OhnoLed, OhnoPlate, OhnoReadout, RouterLink, TranslocoPipe],
+  imports: [OhnoBrand, OhnoEngraving, OhnoKbd, OhnoLangToggle, OhnoLed, OhnoPlate, OhnoReadout, RouterLink, TranslocoPipe],
   templateUrl: './bank-sidebar.html',
   styleUrl: './bank-sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

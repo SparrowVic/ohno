@@ -6673,6 +6673,118 @@
           "instructionsDescription": "Keep the imperative tag (e.g. \"Compute 48 mod 36\") attached to the line it produced.",
           "instructionsLabel": "Show instructions"
         }
+      },
+      "workbench": {
+        "deck": {
+          "axis": "Step axis",
+          "axisAriaLabel": "Step position",
+          "custom": "Custom…",
+          "customAriaLabel": "Custom values",
+          "data": "Data",
+          "pause": "Pause",
+          "reset": "Reset",
+          "resetAriaLabel": "Reset the run",
+          "size": "Size",
+          "sizeAriaLabel": "Data size",
+          "sizeDecrease": "Fewer elements",
+          "sizeIncrease": "More elements",
+          "start": "Start",
+          "step": "Step",
+          "stepBackAriaLabel": "Step back",
+          "stepForwardAriaLabel": "Step forward",
+          "task": "Task",
+          "taskMenuLabel": "Choose a task",
+          "tempo": "Tempo",
+          "tempoAriaLabel": "Playback tempo",
+          "transport": "Transport"
+        },
+        "head": {
+          "space": "space",
+          "time": "time",
+          "timeSpace": "time · space",
+          "viewsAriaLabel": "Visualization view"
+        },
+        "inspector": {
+          "code": "Code",
+          "copied": "Code copied",
+          "copy": "Copy code",
+          "info": "Info",
+          "languageAriaLabel": "Code language",
+          "tabsAriaLabel": "Inspector",
+          "trace": "Trace"
+        },
+        "legend": {
+          "activeDigit": "Active digit",
+          "bucketLane": "Bucket lane",
+          "gatheredOutput": "Gathered output",
+          "hintCode": "code",
+          "hintLog": "log",
+          "hintTempo": "tempo",
+          "inputStream": "Input stream"
+        },
+        "log": {
+          "empty": "Run the scenario to start the tape.",
+          "eventHeader": "EVENT",
+          "events": {
+            "compare": "COMPARE",
+            "complete": "DONE",
+            "pass": "── PASS {{index}} DONE ──",
+            "settle": "SETTLE",
+            "start": "START",
+            "step": "STEP",
+            "swap": "SWAP"
+          },
+          "export": "Download the log as text",
+          "filter": "Event filter",
+          "filters": {
+            "all": "All events",
+            "compare": "Comparisons",
+            "pass": "Passes",
+            "swap": "Swaps"
+          },
+          "live": "Live",
+          "paused": "Paused",
+          "rows": "rows",
+          "stepHeader": "STEP",
+          "title": "Log · step printer"
+        },
+        "meters": {
+          "comparisons": "Comparisons",
+          "passes": "Pass",
+          "swaps": "Swaps"
+        },
+        "phases": {
+          "complete": "Done",
+          "start": "Start",
+          "step": "Step"
+        },
+        "registers": {
+          "boundary": "bound",
+          "left": "i",
+          "right": "j",
+          "settled": "settled"
+        },
+        "stage": {
+          "liveRegionLabel": "Current step",
+          "status": {
+            "complete": "Finished",
+            "idle": "Ready",
+            "paused": "Paused",
+            "playing": "Playing"
+          },
+          "step": "Step",
+          "tempo": "tempo {{speed}}×"
+        },
+        "states": {
+          "notFound": "Module not found.",
+          "unavailable": "This visualization is not ready yet.",
+          "unavailableEyebrow": "Module locked"
+        },
+        "topbar": {
+          "catalog": "Catalog",
+          "crumbsAriaLabel": "Category path",
+          "tagline": "Algorithm lab · {{count}} modules"
+        }
       }
     },
     "structures": {

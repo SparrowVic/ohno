@@ -6673,6 +6673,118 @@
           "instructionsDescription": "Tag w trybie rozkazującym (np. \"Policz 48 mod 36\") zostaje przypięty do linii, którą wyprodukował.",
           "instructionsLabel": "Pokaż wskazówki"
         }
+      },
+      "workbench": {
+        "deck": {
+          "axis": "Oś kroków",
+          "axisAriaLabel": "Pozycja kroku",
+          "custom": "Własne…",
+          "customAriaLabel": "Własne wartości",
+          "data": "Dane",
+          "pause": "Pauza",
+          "reset": "Reset",
+          "resetAriaLabel": "Resetuj przebieg",
+          "size": "Rozmiar",
+          "sizeAriaLabel": "Rozmiar danych",
+          "sizeDecrease": "Mniej elementów",
+          "sizeIncrease": "Więcej elementów",
+          "start": "Start",
+          "step": "Krok",
+          "stepBackAriaLabel": "Krok wstecz",
+          "stepForwardAriaLabel": "Krok naprzód",
+          "task": "Zadanie",
+          "taskMenuLabel": "Wybierz zadanie",
+          "tempo": "Tempo",
+          "tempoAriaLabel": "Tempo odtwarzania",
+          "transport": "Transport"
+        },
+        "head": {
+          "space": "pamięć",
+          "time": "czas",
+          "timeSpace": "czas · pamięć",
+          "viewsAriaLabel": "Widok wizualizacji"
+        },
+        "inspector": {
+          "code": "Kod",
+          "copied": "Skopiowano kod",
+          "copy": "Kopiuj kod",
+          "info": "Info",
+          "languageAriaLabel": "Język kodu",
+          "tabsAriaLabel": "Inspektor",
+          "trace": "Ślad"
+        },
+        "legend": {
+          "activeDigit": "Aktywna cyfra",
+          "bucketLane": "Kubełek",
+          "gatheredOutput": "Zebrane wyjście",
+          "hintCode": "kod",
+          "hintLog": "log",
+          "hintTempo": "tempo",
+          "inputStream": "Strumień wejścia"
+        },
+        "log": {
+          "empty": "Uruchom scenariusz, aby rozpocząć zapis.",
+          "eventHeader": "ZDARZENIE",
+          "events": {
+            "compare": "PORÓWNAJ",
+            "complete": "KONIEC",
+            "pass": "── PRZEBIEG {{index}} ZAKOŃCZONY ──",
+            "settle": "USTAL",
+            "start": "START",
+            "step": "KROK",
+            "swap": "ZAMIEŃ"
+          },
+          "export": "Pobierz log jako tekst",
+          "filter": "Filtr zdarzeń",
+          "filters": {
+            "all": "Wszystkie zdarzenia",
+            "compare": "Porównania",
+            "pass": "Przebiegi",
+            "swap": "Zamiany"
+          },
+          "live": "Na żywo",
+          "paused": "Wstrzymany",
+          "rows": "wierszy",
+          "stepHeader": "KROK",
+          "title": "Log · drukarka kroków"
+        },
+        "meters": {
+          "comparisons": "Porównania",
+          "passes": "Przebieg",
+          "swaps": "Zamiany"
+        },
+        "phases": {
+          "complete": "Koniec",
+          "start": "Start",
+          "step": "Krok"
+        },
+        "registers": {
+          "boundary": "granica",
+          "left": "i",
+          "right": "j",
+          "settled": "ustalone"
+        },
+        "stage": {
+          "liveRegionLabel": "Bieżący krok",
+          "status": {
+            "complete": "Zakończono",
+            "idle": "Gotowy",
+            "paused": "Pauza",
+            "playing": "Odtwarzanie"
+          },
+          "step": "Krok",
+          "tempo": "tempo {{speed}}×"
+        },
+        "states": {
+          "notFound": "Nie znaleziono modułu.",
+          "unavailable": "Ta wizualizacja nie jest jeszcze gotowa.",
+          "unavailableEyebrow": "Moduł zablokowany"
+        },
+        "topbar": {
+          "catalog": "Katalog",
+          "crumbsAriaLabel": "Ścieżka kategorii",
+          "tagline": "Algorithm lab · {{count}} modułów"
+        }
       }
     },
     "structures": {
