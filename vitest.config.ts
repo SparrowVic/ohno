@@ -5,6 +5,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: [
+      'src/app/core/**/*.spec.ts',
       'src/app/features/algorithms/**/*.spec.ts',
       'src/app/shared/**/*.spec.ts',
     ],
