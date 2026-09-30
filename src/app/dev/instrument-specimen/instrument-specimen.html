@@ -75,4 +75,11 @@
       }
     </div>
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Tempo</ohno-engraving>
+    <div class="specimen__row">
+      <ohno-knob [value]="speed()" label="Tempo" [readout]="speed() + '×'" (valueChange)="speed.set($event)" />
+      <ohno-engraving tone="dim">strzałki, przeciąganie w pionie, kółko nie</ohno-engraving>
+    </div>
+  </ohno-plate>
 </div>

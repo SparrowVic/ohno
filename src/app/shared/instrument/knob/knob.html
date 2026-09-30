@@ -1,0 +1,34 @@
+<div
+  class="ohno-knob__dial"
+  [class.ohno-knob__dial--dragging]="dragging()"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+>
+  @for (tick of ticks(); track tick; let index = $index) {
+    <i
+      class="ohno-knob__tick"
+      [class.ohno-knob__tick--lit]="tick <= value()"
+      [style.--tick-angle]="tickAngle(tick)"
+      [style.--tick-index]="index"
+      aria-hidden="true"
+    ></i>
+  }
+  <div class="ohno-knob__cap" [style.--knob-angle]="angle() + 'deg'"></div>
+  <input
+    #rangeInput
+    class="ohno-knob__input"
+    type="range"
+    [min]="min()"
+    [max]="max()"
+    [step]="1"
+    [value]="value()"
+    [attr.aria-label]="label()"
+    [attr.aria-valuetext]="readout() ?? value()"
+    (input)="onInput($event)"
+  />
+</div>
+@if (readout(); as text) {
+  <span class="ohno-knob__readout">{{ text }}</span>
+}
