@@ -1,0 +1,35 @@
+:host {
+  display: inline-block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+}
+
+:host(.ohno-led--sm) {
+  width: 5px;
+  height: 5px;
+}
+
+.ohno-led__dot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--led-off);
+  box-shadow:
+    inset 0 1px 1px rgb(var(--black-rgb) / 0.8),
+    0 1px 0 rgb(var(--white-rgb) / 0.06);
+  transition: background var(--duration-fast) var(--ease-soft), box-shadow var(--duration-fast) var(--ease-soft);
+}
+
+:host(.ohno-led--on) .ohno-led__dot {
+  background: var(--led-color);
+  box-shadow:
+    0 0 0 1px rgb(var(--black-rgb) / 0.35),
+    0 0 7px var(--led-color),
+    0 0 16px rgb(var(--led-color-rgb) / 0.45);
+}
+
+:host(.ohno-led--on.ohno-led--pulse) .ohno-led__dot {
+  animation: ohno-led-pulse var(--duration-pulse) ease-in-out infinite;
+}

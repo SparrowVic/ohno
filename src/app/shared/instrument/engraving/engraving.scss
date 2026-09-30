@@ -1,0 +1,17 @@
+:host {
+  display: inline-block;
+  font: 500 9.5px/1 var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-shadow: var(--engraving-shadow);
+  white-space: nowrap;
+}
+
+:host([data-tone='bright']) { color: var(--ink-2); }
+:host([data-tone='dim']) { color: var(--ink-4); }
+:host([data-tone='signal']) { color: var(--signal); }
+:host([data-tone='cyan']) { color: var(--cyan); }
+:host([data-tone='pink']) { color: var(--pink); }
+:host([data-tone='lime']) { color: var(--lime); }
+:host([data-tone='amber']) { color: var(--amber); }

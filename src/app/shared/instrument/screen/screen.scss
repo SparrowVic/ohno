@@ -1,0 +1,28 @@
+:host {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-screen);
+  background: var(--screen);
+  box-shadow: var(--shadow-screen);
+}
+
+:host([data-padding='sm']) { padding: 10px 12px; }
+:host([data-padding='md']) { padding: 18px 26px; }
+
+:host::before,
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+:host(.ohno-screen--dots)::before {
+  background-image: var(--screen-dots);
+  background-size: var(--screen-dot-size) var(--screen-dot-size);
+}
+
+:host::after {
+  background: var(--gradient-sheen);
+}
