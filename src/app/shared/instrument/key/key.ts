@@ -38,6 +38,8 @@ export class OhnoKey {
   readonly type = input<'button' | 'submit'>('button');
   readonly routerLink = input<string | unknown[] | null>(null);
   readonly queryParamsHandling = input<QueryParamsHandling | null>(null);
+  readonly keyId = input<string | null>(null);
+  readonly tabIndex = input<number | null>(null);
 
   readonly keyClick = output<MouseEvent>();
 

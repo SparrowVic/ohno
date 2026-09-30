@@ -19,6 +19,10 @@ export class OhnoSlot {
   protected readonly percent = computed(() => `${slotPercent(this.step(), this.total())}%`);
   protected readonly markList = computed(() => this.marks() ?? slotMarks(this.total()));
 
+  protected markPercent(mark: number): number {
+    return slotPercent(mark, this.total());
+  }
+
   protected onInput(event: Event): void {
     this.stepChange.emit(Number((event.target as HTMLInputElement).value));
   }
