@@ -1,8 +1,15 @@
+import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
 
 import { Shell } from './core/layout/shell/shell';
 
 export const routes: Routes = [
+  {
+    path: 'dev/instrument',
+    canMatch: [() => isDevMode()],
+    loadComponent: () =>
+      import('./dev/instrument-specimen/instrument-specimen').then((m) => m.InstrumentSpecimen),
+  },
   {
     path: 'algorithms/:id',
     loadComponent: () =>

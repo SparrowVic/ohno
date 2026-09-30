@@ -1,0 +1,53 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  padding: 24px;
+}
+
+.specimen {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.specimen__unit {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.specimen__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.specimen__led {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.specimen__screen {
+  min-height: 140px;
+}
+
+.specimen__dot-text {
+  font: 900 50px/0.8 var(--font-dot);
+  font-variation-settings: var(--dot-settings);
+  color: var(--signal);
+  text-shadow: 0 0 18px rgb(var(--signal-rgb) / 0.45);
+}
+
+.specimen__dot-text small {
+  font-size: 24px;
+  color: rgb(var(--signal-rgb) / 0.45);
+}
+
+.specimen__copy {
+  margin-top: 14px;
+  color: var(--ink-2);
+}

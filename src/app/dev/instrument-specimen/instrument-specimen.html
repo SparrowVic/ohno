@@ -1,0 +1,30 @@
+<div class="specimen">
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Atomy · płyta, ekran, grawer, LED, kbd</ohno-engraving>
+    <div class="specimen__row">
+      @for (color of ledColors; track color) {
+        <span class="specimen__led">
+          <ohno-led [color]="color" />
+          <ohno-engraving tone="dim">{{ color }}</ohno-engraving>
+        </span>
+      }
+      <span class="specimen__led"><ohno-led [on]="false" /><ohno-engraving tone="dim">off</ohno-engraving></span>
+      <span class="specimen__led"><ohno-led color="lime" [pulse]="true" /><ohno-engraving tone="dim">pulse</ohno-engraving></span>
+    </div>
+    <div class="specimen__row">
+      <ohno-engraving>default</ohno-engraving>
+      <ohno-engraving tone="bright">bright</ohno-engraving>
+      <ohno-engraving tone="dim">dim</ohno-engraving>
+      <ohno-engraving tone="signal">signal</ohno-engraving>
+      <ohno-engraving tone="cyan">cyan</ohno-engraving>
+      <ohno-engraving tone="pink">pink</ohno-engraving>
+      <ohno-engraving tone="lime">lime</ohno-engraving>
+      <ohno-engraving tone="amber">amber</ohno-engraving>
+      <ohno-kbd>Spacja</ohno-kbd><ohno-kbd>←</ohno-kbd><ohno-kbd>⌘K</ohno-kbd>
+    </div>
+    <ohno-screen class="specimen__screen" padding="md">
+      <span class="specimen__dot-text">066<small>/196</small></span>
+      <p class="specimen__copy">Ekran z kropkową teksturą, tekst UI w Instrument Sans, liczby w Doto.</p>
+    </ohno-screen>
+  </ohno-plate>
+</div>
