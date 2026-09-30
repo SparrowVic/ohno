@@ -27,4 +27,22 @@
       <p class="specimen__copy">Ekran z kropkową teksturą, tekst UI w Instrument Sans, liczby w Doto.</p>
     </ohno-screen>
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Odczyty i mierniki</ohno-engraving>
+    <ohno-screen padding="md">
+      <div class="specimen__row specimen__row--meters">
+        <ohno-meter label="Krok" [value]="66" [total]="196" [pad]="3" [main]="true" />
+        <ohno-meter label="Przebieg" [value]="3" [total]="15" [pad]="2" />
+        <ohno-meter label="Porównania" [value]="35" [pad]="3" />
+        <ohno-meter label="Zamiany" [value]="28" [pad]="3" />
+      </div>
+      <div class="specimen__row">
+        <ohno-readout [value]="'O(n log n)'" size="sm" />
+        <ohno-readout [value]="13" size="md" tone="cyan" />
+        <ohno-readout [value]="105" size="lg" tone="lime" />
+        <ohno-readout [value]="'∞'" size="md" tone="dim" />
+        <ohno-readout [value]="412" size="lg" tone="pink" />
+      </div>
+    </ohno-screen>
+  </ohno-plate>
 </div>
