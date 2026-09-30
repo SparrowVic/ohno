@@ -24,5 +24,6 @@
 
 .ohno-window-stepper__keys ohno-key {
   --key-width: 34px;
+  --key-radius: var(--radius-md);
   --key-font: 500 17px/1 var(--font-mono);
 }
