@@ -1,0 +1,9 @@
+<h3 class="ohno-rack__head">
+  <ohno-engraving>{{ title() }}</ohno-engraving>
+  @if (meta(); as text) {
+    <ohno-engraving tone="dim">{{ text }}</ohno-engraving>
+  }
+</h3>
+<div class="ohno-rack__rows">
+  <ng-content />
+</div>

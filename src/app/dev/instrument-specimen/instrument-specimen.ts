@@ -16,8 +16,11 @@ import { OhnoKnob } from '../../shared/instrument/knob/knob';
 import { OhnoLatch } from '../../shared/instrument/latch/latch';
 import { OhnoLed } from '../../shared/instrument/led/led';
 import { OhnoMeter } from '../../shared/instrument/meter/meter';
+import { OhnoOpLine } from '../../shared/instrument/opline/opline';
 import { LedColor } from '../../shared/instrument/led/led.types';
 import { OhnoPlate } from '../../shared/instrument/plate/plate';
+import { OhnoRack } from '../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../shared/instrument/rack/rack-row/rack-row';
 import { OhnoReadout } from '../../shared/instrument/readout/readout';
 import { OhnoScreen } from '../../shared/instrument/screen/screen';
 import { OhnoSlot } from '../../shared/instrument/slot/slot';
@@ -26,7 +29,7 @@ import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -100,4 +100,20 @@
       />
     </div>
   </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Linia operacji i stojak</ohno-engraving>
+    <ohno-screen padding="md">
+      <div class="specimen__stage">
+        <ohno-rack class="specimen__rack" title="Kolejka · min" meta="dist · skąd">
+          <ohno-rack-row tone="head"><span rackLead>C</span>← F<ohno-readout rackValue [value]="4" size="sm" /></ohno-rack-row>
+          <ohno-rack-row><span rackLead>G</span>← F<ohno-readout rackValue [value]="6" size="sm" /></ohno-rack-row>
+          <ohno-rack-row tone="done"><span rackLead>A</span>źródło<ohno-readout rackValue [value]="0" size="sm" /></ohno-rack-row>
+          <ohno-rack-row tone="dim"><span rackLead>D</span>—<ohno-readout rackValue [value]="'∞'" size="sm" /></ohno-rack-row>
+        </ohno-rack>
+      </div>
+      <ohno-opline phase="Relaksacja" tone="pink" [registers]="[{ label: 'u', value: 'F' }, { label: 'v', value: 'C' }, { label: 'w', value: '2' }]">
+        dist(C) = dist(F) + w(F,C) = 2 + 2 = <em>4</em> &lt; ∞ → zapisz 4, prev(C) = F.
+      </ohno-opline>
+    </ohno-screen>
+  </ohno-plate>
 </div>

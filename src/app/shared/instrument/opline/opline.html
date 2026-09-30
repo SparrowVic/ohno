@@ -1,0 +1,10 @@
+<ohno-led [color]="tone()" />
+<ohno-engraving class="ohno-opline__phase">{{ phase() }}</ohno-engraving>
+<strong class="ohno-opline__sentence"><ng-content /></strong>
+@if (registers().length > 0) {
+  <div class="ohno-opline__registers">
+    @for (register of registers(); track register.label) {
+      <span>{{ register.label }}<b>{{ register.value }}</b></span>
+    }
+  </div>
+}
