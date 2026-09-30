@@ -11,7 +11,7 @@
   width: var(--key-width, auto);
   padding: 0 13px;
   border: 0;
-  border-radius: var(--radius-key);
+  border-radius: var(--key-radius, var(--radius-key));
   color: var(--ink-2);
   font: var(--key-font, 600 12px/1 var(--font-ui));
   letter-spacing: 0.02em;
@@ -69,3 +69,9 @@
 .ohno-key[data-size='xl'] .ohno-key__icon { width: 28px; height: 28px; font-size: 26px; }
 
 .ohno-key__kbd { margin-left: 4px; }
+
+.ohno-key__prefix {
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+}

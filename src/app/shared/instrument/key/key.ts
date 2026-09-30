@@ -21,6 +21,7 @@ export type KeyMenuRole = 'menuitem' | 'menuitemradio';
 })
 export class OhnoKey {
   readonly label = input<string | null>(null);
+  readonly prefix = input<string | null>(null);
   readonly ariaLabel = input<string | null>(null);
   readonly title = input<string | null>(null);
   readonly variant = input<KeyVariant>('default');
