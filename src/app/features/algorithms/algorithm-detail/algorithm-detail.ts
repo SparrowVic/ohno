@@ -17,6 +17,7 @@ import { faArrowLeftLong } from '@fortawesome/pro-solid-svg-icons';
 import { AppLanguageService } from '../../../core/i18n/app-language.service';
 import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
 import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
+import { RecentAlgorithmsStore } from '../../../core/recent/recent-algorithms-store';
 import { I18N_KEY, I18nKey } from '../../../core/i18n/i18n-keys';
 import {
   getVisualizationActionLabelKey,
@@ -132,6 +133,7 @@ export class AlgorithmDetail {
   private readonly engine = inject(VisualizationEngine);
   private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly recent = inject(RecentAlgorithmsStore);
 
   protected readonly I18N_KEY = I18N_KEY;
   private readonly idParam = toSignal(this.route.paramMap.pipe(map((params) => params.get('id'))), {
@@ -456,6 +458,13 @@ export class AlgorithmDetail {
   });
 
   constructor() {
+    effect(() => {
+      const id = this.idParam();
+      const step = this.currentStep();
+      const total = this.totalSteps();
+      if (!id || total === 0 || step < 0) return;
+      this.recent.record({ id, step, total, finished: step >= total });
+    });
     effect(() => {
       const config = this.config();
       const algorithm = this.algorithm();
@@ -878,6 +887,8 @@ export class AlgorithmDetail {
     generator: (scenario: TScenario) => Generator<SortStep>,
   ): void {
     this.resetPlaybackState();
+    const id = this.idParam();
+    if (id) this.recent.touch(id);
     this.engine.load(generator(scenario), (step, index) => {
       this.currentSnapshot.set(step);
       this.appendLog(step, index);
