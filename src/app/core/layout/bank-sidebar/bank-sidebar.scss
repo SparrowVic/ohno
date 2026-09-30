@@ -184,3 +184,61 @@
   border-radius: var(--radius-sm);
   background: transparent;
 }
+
+@media (max-width: 1023px) {
+  :host {
+    height: auto;
+  }
+
+  .bank {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    height: auto;
+    padding: 12px 14px;
+    overflow: visible;
+  }
+
+  .bank__brand {
+    padding: 0 6px 0 0;
+  }
+
+  .bank__title,
+  .bank__groove,
+  .bank__recent {
+    display: none;
+  }
+
+  .bank__rows {
+    flex: 1 1 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .bank__row {
+    display: inline-grid;
+    width: auto;
+    height: 36px;
+    gap: 6px;
+    padding: 0 12px 0 10px;
+    background: var(--gradient-key);
+    box-shadow: var(--shadow-key);
+  }
+
+  .bank__row--on {
+    background: var(--gradient-key-in);
+    box-shadow: var(--shadow-key-in);
+  }
+
+  .bank__row.bank__row--off {
+    display: none;
+  }
+
+  .bank__foot {
+    margin-top: 0;
+    margin-left: auto;
+    padding: 0;
+  }
+}

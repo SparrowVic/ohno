@@ -3,7 +3,7 @@
     <ohno-screen class="marquee" padding="none">
       <div class="marquee__title">
         <ohno-engraving>{{ marqueeEyebrow() }}</ohno-engraving>
-        <ohno-readout class="marquee__name" [value]="marqueeTitle()" size="marquee" [style.font-size.px]="marqueeSize()" />
+        <ohno-readout class="marquee__name" [value]="marqueeTitle()" size="marquee" [style.--marquee-size.px]="marqueeSize()" [style.font-size.px]="marqueeSize()" />
       </div>
       <div class="marquee__stats">
         @for (stat of marqueeStats(); track stat.label; let first = $first) {

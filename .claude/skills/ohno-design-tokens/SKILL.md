@@ -84,7 +84,7 @@ Easings `--ease-out-quart`, `--ease-out-expo`, `--ease-soft`. Durations `--durat
 
 ## Primitives that already encode the tokens
 
-`src/app/shared/instrument/` — `ohno-plate`, `ohno-screen`, `ohno-engraving`, `ohno-led`, `ohno-kbd`, `ohno-readout`, `ohno-meter`, `ohno-key`, `ohno-latch`, `ohno-knob`, `ohno-window-stepper`, `ohno-slot`, `ohno-gauge`, `ohno-opline`, `ohno-rack`, `ohno-rack-row`, `ohno-tape`, `ohno-floating-plate`, `ohno-menu`, `ohno-search-field`, `ohno-lang-toggle`. Reach for one before styling a `div`. All of them are on the dev-only specimen route `/dev/instrument`.
+`src/app/shared/instrument/` — `ohno-plate`, `ohno-screen`, `ohno-engraving`, `ohno-led`, `ohno-kbd`, `ohno-readout`, `ohno-meter`, `ohno-key`, `ohno-latch`, `ohno-knob`, `ohno-window-stepper`, `ohno-slot`, `ohno-gauge`, `ohno-opline`, `ohno-rack`, `ohno-rack-row`, `ohno-tape`, `ohno-floating-plate`, `ohno-menu`, `ohno-search-field`, `ohno-lang-toggle`. Reach for one before styling a `div`. All of them are on the dev-only specimen route `/dev/instrument`. `ohno-key` also takes `prefix` (mono index) and reads `--key-width`, `--key-height`, `--key-radius`, `--key-justify`, `--key-font`, `--key-flex-direction`, `--key-gap` from its host; `ohno-plate` takes `screwCorners="top"` for cards; `ohno-search-field` reads `--search-height`/`--search-radius`.
 
 ## Compatibility aliases (deprecated)
 

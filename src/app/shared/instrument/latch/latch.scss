@@ -1,8 +1,9 @@
 :host {
-  display: inline-block;
+  display: block;
 }
 
 :host ohno-key {
+  display: block;
   --key-flex-direction: column;
   --key-gap: 10px;
 }
