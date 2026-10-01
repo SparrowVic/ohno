@@ -44,3 +44,9 @@
   font-style: normal;
   color: var(--signal);
 }
+
+@media (max-width: 479px) {
+  .brand__text ohno-engraving {
+    display: none;
+  }
+}

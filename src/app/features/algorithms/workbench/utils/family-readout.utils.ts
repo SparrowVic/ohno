@@ -361,7 +361,7 @@ export function scratchpadReadout(
   const decisions = state.lines.filter((line) => line.kind === 'decision').length;
   const registerMeters: StageMeter[] = (registersState?.registers ?? [])
     .slice(0, 3)
-    .map((item) => ({ id: item.id, label: item.label, value: item.value, total: null, pad: 2 }));
+    .map((item) => ({ id: item.id, label: labels.translate(item.label), value: item.value, total: null, pad: 2 }));
   return {
     meters:
       registerMeters.length > 0
@@ -369,7 +369,7 @@ export function scratchpadReadout(
         : [meter('lines', labels, equations), meter('phases', labels, currentPhase, phaseCount), meter('result', labels, decisions)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, SCRATCHPAD_TONES[state.tone]),
-    registers: (registersState?.registers ?? []).slice(0, 4).map((item) => ({ label: item.label, value: item.value })),
+    registers: (registersState?.registers ?? []).slice(0, 4).map((item) => ({ label: labels.translate(item.label), value: item.value })),
     gauge: gauge(phaseCount, donePhases, currentPhase),
     gaugeLabel: labels.gauges.phases,
   };
@@ -387,10 +387,10 @@ const NUMBER_LAB_TONES: Readonly<Record<NumberLabTraceState['tone'], LedColor>> 
 export function numberLabReadout(state: NumberLabTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
   return {
-    meters: state.registers.slice(0, 3).map((item) => ({ id: item.id, label: item.label, value: item.value, total: null, pad: 2 })),
+    meters: state.registers.slice(0, 3).map((item) => ({ id: item.id, label: labels.translate(item.label), value: item.value, total: null, pad: 2 })),
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, NUMBER_LAB_TONES[state.tone]),
-    registers: state.registers.slice(0, 4).map((item) => ({ label: item.label, value: item.value })),
+    registers: state.registers.slice(0, 4).map((item) => ({ label: labels.translate(item.label), value: item.value })),
     gauge: gauge(Math.max(1, state.history.length), state.history.filter((entry) => !entry.isCurrent).length, state.history.length),
     gaugeLabel: labels.gauges.output,
   };

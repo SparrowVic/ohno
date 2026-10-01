@@ -65,7 +65,7 @@ import {
   resolvePresetId,
   resolveTaskId,
 } from './utils/scenario.utils';
-import { markupSentence } from './utils/sentence-markup.utils';
+import { plainSentence, sentenceParts } from './utils/sentence-markup.utils';
 import { FamilyReadoutLabels, familyStageReadout } from './utils/family-readout.utils';
 import { FamilyTapeLabels, familyTapeOverrides } from './utils/family-tape.utils';
 import { genericStageReadout, sortingStageReadout, StageReadout, StageReadoutLabels } from './utils/stage-readout.utils';
@@ -287,11 +287,12 @@ export class Workbench {
   });
   protected readonly gauge = computed(() => this.readout().gauge);
   protected readonly gaugeLabel = computed(() => this.readout().gaugeLabel);
-  protected readonly sentence = computed(() => {
+  private readonly rawSentence = computed(() => {
     const step = this.step();
     return step ? this.translateText(step.description) : '';
   });
-  protected readonly sentenceHtml = computed(() => markupSentence(this.sentence()));
+  protected readonly sentenceParts = computed(() => sentenceParts(this.rawSentence()));
+  private readonly sentence = computed(() => plainSentence(this.rawSentence()));
   private readonly familyTapeLabels = computed<FamilyTapeLabels>(() => {
     const phases = I18N_KEY.features.algorithms.workbench.log.phases;
     return {
@@ -313,7 +314,7 @@ export class Workbench {
       this.cursor(),
       this.logFilterState(),
       this.tapeLabels(),
-      (text) => this.translateText(text),
+      (text) => plainSentence(this.translateText(text)),
       this.tapeOverrides(),
     ),
   );

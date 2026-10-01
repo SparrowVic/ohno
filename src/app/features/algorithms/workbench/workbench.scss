@@ -86,19 +86,8 @@
 }
 
 @media (min-width: 1280px) {
-  .workbench {
-    height: 100dvh;
-    min-height: 820px;
-  }
-
-  .workbench__stage {
-    min-height: 260px;
-  }
-}
-
-@media (min-width: 1280px) and (max-width: 1439px) {
-  .workbench {
-    min-height: 960px;
+  .workbench__unit--inspector {
+    contain: size;
   }
 }
 

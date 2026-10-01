@@ -3,6 +3,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
 import { OhnoLed } from '../../../../shared/instrument/led/led';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
@@ -10,6 +11,7 @@ import { OhnoMeter } from '../../../../shared/instrument/meter/meter';
 import { OhnoOpLine } from '../../../../shared/instrument/opline/opline';
 import { OpLineRegister } from '../../../../shared/instrument/opline/opline.types';
 import { OhnoScreen } from '../../../../shared/instrument/screen/screen';
+import { SentencePart } from '../utils/sentence-markup.utils';
 import { StageMeter } from '../utils/stage-readout.utils';
 import { PlaybackStatus } from '../utils/transport.utils';
 
@@ -29,7 +31,7 @@ const STATUS_KEYS: Readonly<Record<PlaybackStatus, string>> = {
 
 @Component({
   selector: 'ohno-stage-screen',
-  imports: [OhnoEngraving, OhnoLed, OhnoMeter, OhnoOpLine, OhnoScreen, TranslocoPipe],
+  imports: [MathText, OhnoEngraving, OhnoLed, OhnoMeter, OhnoOpLine, OhnoScreen, TranslocoPipe],
   templateUrl: './stage-screen.html',
   styleUrl: './stage-screen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,7 +44,7 @@ export class OhnoStageScreen {
   readonly speed = input.required<number>();
   readonly phaseLabel = input.required<string>();
   readonly tone = input<LedColor>('cyan');
-  readonly sentenceHtml = input.required<string>();
+  readonly sentence = input.required<readonly SentencePart[]>();
   readonly registers = input<readonly OpLineRegister[]>([]);
   readonly liveText = input('');
 

@@ -19,7 +19,13 @@
     <ng-content />
   </div>
   <ohno-opline class="stage__opline" [phase]="phaseLabel()" [tone]="tone()" [registers]="registers()">
-    <span [innerHTML]="sentenceHtml()"></span>
+    @for (part of sentence(); track $index) {
+      @if (part.kind === 'tex') {
+        <app-math-text class="stage__math" [tex]="part.tex" />
+      } @else {
+        <span [innerHTML]="part.html"></span>
+      }
+    }
   </ohno-opline>
   <p class="stage__live" aria-live="polite" aria-atomic="true" [attr.aria-label]="I18N_KEY.features.algorithms.workbench.stage.liveRegionLabel | transloco">
     {{ liveText() }}

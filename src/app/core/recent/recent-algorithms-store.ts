@@ -5,9 +5,17 @@ import { RecentEntry, parseRecentEntries, upsertRecent } from './recent-algorith
 
 const STORAGE_KEY = 'ohno:recent:v1';
 
+function localStorageOf(view: Window | null): Storage | null {
+  try {
+    return view?.localStorage ?? null;
+  } catch {
+    return null;
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class RecentAlgorithmsStore {
-  private readonly storage = inject(DOCUMENT).defaultView?.localStorage ?? null;
+  private readonly storage = localStorageOf(inject(DOCUMENT).defaultView);
   private readonly entriesState = signal<readonly RecentEntry[]>(this.read());
 
   readonly entries: Signal<readonly RecentEntry[]> = this.entriesState.asReadonly();

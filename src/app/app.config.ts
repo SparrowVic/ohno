@@ -4,7 +4,7 @@ import {
   isDevMode,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withNavigationErrorHandler } from '@angular/router';
 import { provideTransloco, translocoConfig } from '@jsverse/transloco';
 
 import { routes } from './app.routes';
@@ -14,12 +14,13 @@ import {
   FALLBACK_APP_LANG,
 } from './core/i18n/app-lang';
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
+import { reloadOnChunkLoadError } from './core/routing/chunk-reload';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
-    provideRouter(routes),
+    provideRouter(routes, withNavigationErrorHandler(reloadOnChunkLoadError)),
     provideTransloco({
       config: translocoConfig({
         availableLangs: APP_LANG_OPTIONS.map((option) => option.value),

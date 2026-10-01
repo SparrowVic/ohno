@@ -46,7 +46,7 @@ export class AppLanguageService {
     effect(() => {
       const lang = normalizeLang(this.transloco.activeLang());
       this.doc.documentElement.lang = lang;
-      this.doc.defaultView?.localStorage.setItem(LANG_STORAGE_KEY, lang);
+      this.writeSavedLang(lang);
       void firstValueFrom(this.transloco.load(lang));
     });
   }
@@ -57,7 +57,7 @@ export class AppLanguageService {
   }
 
   private resolveInitialLang(): AppLang {
-    const savedLang = this.doc.defaultView?.localStorage.getItem(LANG_STORAGE_KEY);
+    const savedLang = this.readSavedLang();
     if (isAppLang(savedLang)) {
       return savedLang;
     }
@@ -68,6 +68,22 @@ export class AppLanguageService {
     }
 
     return DEFAULT_APP_LANG;
+  }
+
+  private readSavedLang(): string | null {
+    try {
+      return this.doc.defaultView?.localStorage.getItem(LANG_STORAGE_KEY) ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  private writeSavedLang(lang: AppLang): void {
+    try {
+      this.doc.defaultView?.localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch {
+      return;
+    }
   }
 }
 

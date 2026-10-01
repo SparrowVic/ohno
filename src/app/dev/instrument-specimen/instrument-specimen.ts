@@ -48,6 +48,7 @@ import { getAlgorithmViewConfig } from '../../features/algorithms/algorithm-deta
 import { InspectorTab, OhnoInspector } from '../../features/algorithms/workbench/inspector/inspector';
 import { OhnoLogPrinter } from '../../features/algorithms/workbench/log-printer/log-printer';
 import { EMPTY_TRACES, WorkbenchTraces } from '../../features/algorithms/workbench/models/workbench-traces';
+import { sentenceParts } from '../../features/algorithms/workbench/utils/sentence-markup.utils';
 import { TapeFilter } from '../../features/algorithms/workbench/utils/tape-rows.utils';
 import { deriveSortTrace } from '../../features/algorithms/utils/helpers/derive-sort-trace/derive-sort-trace';
 
@@ -114,6 +115,7 @@ export class InstrumentSpecimen {
     { id: 'comparisons', label: 'Porównania', value: 35, total: null, pad: 3 },
     { id: 'swaps', label: 'Zamiany', value: 28, total: null, pad: 3 },
   ];
+  protected readonly stageSentence = sentenceParts('Porównaj 74 na indeksie 5 z 12 na indeksie 6, [[math]]74 > 12[[/math]].');
   protected readonly stageRegisters = [
     { label: 'i', value: '5' },
     { label: 'j', value: '6' },

@@ -188,6 +188,32 @@ describe('scratchpadReadout', () => {
     expect(readout.gaugeLabel).toBe('g:phases');
   });
 
+  it('translates register labels that are i18n keys', () => {
+    const key = 'features.algorithms.numberLab.registers.current';
+    const registers = {
+      modeLabel: 'm',
+      phaseLabel: 'p',
+      decisionLabel: 'd',
+      tone: 'emit' as const,
+      registers: [{ id: 'f', label: key, value: '8', hint: null, tone: 'active' as const }],
+      history: [],
+      formula: null,
+      presetLabel: 'preset',
+      resultLabel: null,
+      iteration: 1,
+    };
+    const translated: FamilyReadoutLabels = { ...labels, translate: (text) => (text === key ? 'Bieżąca' : labels.translate(text)) };
+    const readout = scratchpadReadout(scratchpad, registers, {
+      step: sortStep({ array: [], scratchpadLab: scratchpad, numberLab: registers }),
+      index: 4,
+      lastIndex: 11,
+      variant: 'scratchpad-lab',
+      labels: translated,
+    });
+    expect(readout.meters[0]?.label).toBe('Bieżąca');
+    expect(readout.registers[0]?.label).toBe('Bieżąca');
+  });
+
   it('falls back to line counts when no registers exist', () => {
     const readout = scratchpadReadout(scratchpad, null, {
       step: sortStep({ array: [], scratchpadLab: scratchpad }),
