@@ -10,7 +10,7 @@ import { GraphStepState } from '../../models/graph';
 import { GridTraceState } from '../../models/grid';
 import { MatrixTraceState } from '../../models/matrix';
 import { MatrixGridTraceState } from '../../models/matrix-grid';
-import { NetworkTraceState } from '../../models/network';
+import { NetworkEdgeSnapshot, NetworkTraceState } from '../../models/network';
 import { NumberLabTraceState } from '../../models/number-lab';
 import { PointerLabTraceState } from '../../models/pointer-lab';
 import { ScratchpadLabTraceState, ScratchpadLine } from '../../models/scratchpad-lab';
@@ -65,7 +65,8 @@ export type FamilyMeterId =
   | 'pairs'
   | 'distance'
   | 'edges'
-  | 'rows';
+  | 'rows'
+  | 'operations';
 
 export type FamilyGaugeId =
   | 'settled'
@@ -104,7 +105,9 @@ export type FamilyRegisterId =
   | 'y'
   | 'depth'
   | 'row'
-  | 'col';
+  | 'col'
+  | 'level'
+  | 'cost';
 
 export interface FamilyReadoutLabels {
   readonly meters: Readonly<Record<FamilyMeterId, string>>;
@@ -120,6 +123,7 @@ export interface FamilyReadoutContext {
   readonly lastIndex: number;
   readonly variant: VisualizationVariant;
   readonly labels: FamilyReadoutLabels;
+  readonly relaxations?: number;
 }
 
 const EMPTY = '—';
@@ -149,13 +153,19 @@ function phaseText(labels: FamilyReadoutLabels, index: number, lastIndex: number
   return labels.phases.step;
 }
 
+export function relaxationCounts(history: readonly SortStep[]): readonly number[] {
+  let count = 0;
+  return history.map((step) => (step.phase === 'relax' ? ++count : count));
+}
+
 export function graphReadout(state: GraphStepState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
   const settled = state.nodes.filter((node) => node.isSettled).length;
-  const relaxed = state.nodes.filter((node) => node.previousId !== null).length;
+  const relaxed = ctx.relaxations ?? state.nodes.filter((node) => node.previousId !== null).length;
   const current = state.nodes.find((node) => node.id === state.currentNodeId) ?? null;
   const activeEdge = state.edges.find((edge) => edge.id === state.activeEdgeId) ?? null;
-  const candidate = activeEdge ? (state.nodes.find((node) => node.id === activeEdge.to) ?? null) : null;
+  const candidateId = activeEdge && activeEdge.to === state.currentNodeId ? activeEdge.from : activeEdge?.to;
+  const candidate = candidateId === undefined ? null : (state.nodes.find((node) => node.id === candidateId) ?? null);
   const tone = edgeTone(index, lastIndex, activeEdge ? 'pink' : current ? 'cyan' : 'slate');
   const registers: OpLineRegister[] = [];
   if (current) registers.push(register('u', labels, current.label));
@@ -596,16 +606,24 @@ export function sieveReadout(state: SieveGridTraceState, ctx: FamilyReadoutConte
   };
 }
 
+export function edgeFlow(edge: NetworkEdgeSnapshot): number {
+  if (edge.primaryText === 'match') return 1;
+  const flow = Number(edge.primaryText.split('/')[0]);
+  return Number.isFinite(flow) ? flow : 0;
+}
+
 export function networkReadout(state: NetworkTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const flowEdges = state.edges.filter((edge) => edge.status === 'flow' || edge.status === 'matched' || edge.status === 'saturated').length;
+  const flowEdges = state.edges.filter((edge) => edgeFlow(edge) > 0).length;
   const current = state.nodes.find((node) => node.status === 'current') ?? null;
   const augmenting = state.edges.some((edge) => edge.status === 'augment');
   return {
     meters: [meter('frontier', labels, state.frontierCount), meter('queue', labels, state.queue.length), meter('edges', labels, flowEdges)],
     phaseLabel: phaseText(labels, index, lastIndex, state.phaseLabel),
     tone: edgeTone(index, lastIndex, augmenting ? 'pink' : current ? 'cyan' : 'slate'),
-    registers: current ? [register('u', labels, current.label), register('lo', labels, current.level)] : [],
+    registers: current
+      ? [register('u', labels, current.label), register(state.mode === 'min-cost-max-flow' ? 'cost' : 'level', labels, current.level)]
+      : [],
     gauge: gauge(state.nodes.length, state.nodes.filter((node) => node.status === 'visited' || node.status === 'linked').length),
     gaugeLabel: labels.gauges.visited,
   };
@@ -631,15 +649,22 @@ export function treeReadout(state: TreeTraversalTraceState, ctx: FamilyReadoutCo
 
 export function dsuReadout(state: DsuTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const accepted = state.edges.filter((edge) => edge.status === 'accepted').length;
+  const merged = state.nodes.length - state.componentCount;
   const decided = state.edges.filter((edge) => edge.status === 'accepted' || edge.status === 'rejected').length;
   const active = state.edges.find((edge) => edge.status === 'active') ?? null;
   const merging = state.nodes.some((node) => node.status === 'merged');
+  const registers = active ? [register('a', labels, active.fromLabel)] : [];
+  if (active && active.fromId !== active.toId) registers.push(register('b', labels, active.toLabel));
+  if (active && active.weight !== null) registers.push(register('w', labels, active.weight));
   return {
-    meters: [meter('components', labels, state.componentCount), meter('merged', labels, accepted), meter('edges', labels, decided, state.edges.length)],
+    meters: [
+      meter('components', labels, state.componentCount),
+      meter('merged', labels, merged),
+      meter(state.mode === 'union-find' ? 'operations' : 'edges', labels, decided, state.edges.length),
+    ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.statusLabel)),
     tone: edgeTone(index, lastIndex, merging ? 'pink' : active ? 'cyan' : 'slate'),
-    registers: active ? [register('a', labels, active.fromLabel), register('b', labels, active.toLabel), register('w', labels, active.weight)] : [],
+    registers,
     gauge: gauge(Math.max(1, state.edges.length), decided),
     gaugeLabel: labels.gauges.checked,
   };

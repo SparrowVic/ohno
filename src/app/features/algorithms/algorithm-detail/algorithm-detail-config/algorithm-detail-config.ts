@@ -1086,15 +1086,22 @@ const TARJAN_SCC_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
   { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
-  { label: I18N_KEY.features.algorithms.display.legend.sccColor, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc1, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc2, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc3, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc4, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.treeEdge, color: 'var(--lime)' },
 ];
 
 const KOSARAJU_SCC_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
   { label: I18N_KEY.features.algorithms.display.legend.reversedEdge, color: 'var(--pink)' },
-  { label: I18N_KEY.features.algorithms.display.legend.sccColor, color: 'var(--violet)' },
-  { label: I18N_KEY.features.algorithms.display.legend.assigned, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc1, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc2, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc3, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scc4, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.treeEdge, color: 'var(--lime)' },
 ];
 
 const EULER_LEGEND: readonly LegendItem[] = [
@@ -1175,14 +1182,17 @@ const DINIC_LEGEND: readonly LegendItem[] = [
 ];
 
 const EDMONDS_KARP_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.sourceSink, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.legend.residualEdge, color: 'var(--slate)' },
-  { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
   { label: I18N_KEY.features.algorithms.display.legend.augmentingPath, color: 'var(--pink)' },
   { label: I18N_KEY.features.algorithms.display.legend.positiveFlow, color: 'var(--lime)' },
-  { label: I18N_KEY.features.algorithms.display.legend.saturated, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
 ];
 
 const MIN_COST_MAX_FLOW_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.sourceSink, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.legend.residualEdge, color: 'var(--slate)' },
   { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
   { label: I18N_KEY.features.algorithms.display.legend.cheapestRoute, color: 'var(--pink)' },
@@ -1383,6 +1393,7 @@ const KRUSKAL_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.acceptedEdge, color: 'var(--lime)' },
   { label: I18N_KEY.features.algorithms.display.legend.rejectedEdge, color: 'var(--red)' },
   { label: I18N_KEY.features.algorithms.display.legend.root, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.legend.pendingEdge, color: 'var(--slate)' },
 ];
 

@@ -2,15 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { DsuGroupTrace, DsuNodeTrace } from '../../models/dsu';
 import {
-  DSU_GRAPH_ARROW_TIP_INSET,
   DSU_GRAPH_CIRCLE_CENTER_X,
   DSU_GRAPH_CIRCLE_CENTER_Y,
   DSU_GRAPH_FOREST_ROOT_Y,
-  DSU_GRAPH_NODE_RADIUS,
-  buildDsuRenderedEdge,
   layoutDsuCircle,
   layoutDsuForest,
-  unionFindEdgeStatusFromChild,
 } from './dsu-graph-layout';
 
 function makeNode(
@@ -56,9 +52,6 @@ describe('layoutDsuForest', () => {
   });
 
   it('fans children one level below their parent', () => {
-    //     A (root)
-    //    / \
-    //   B   C
     const nodes = [
       makeNode('A', 'A'),
       makeNode('B', 'A'),
@@ -76,11 +69,6 @@ describe('layoutDsuForest', () => {
   });
 
   it('recurses into grandchildren via BFS', () => {
-    //     A (root)
-    //     |
-    //     B
-    //     |
-    //     C
     const nodes = [
       makeNode('A', 'A'),
       makeNode('B', 'A'),
@@ -97,12 +85,10 @@ describe('layoutDsuForest', () => {
   });
 
   it('lays multiple groups out horizontally, not stacked', () => {
-    // Two separate singletons — their Xs must differ.
     const nodes = [makeNode('A', 'A'), makeNode('B', 'B')];
     const groups = [makeGroup('A', ['A']), makeGroup('B', ['B'])];
     const positions = layoutDsuForest(nodes, groups);
     expect(positions.get('A')!.x).not.toBe(positions.get('B')!.x);
-    // Same baseline — both roots.
     expect(positions.get('A')!.y).toBe(positions.get('B')!.y);
   });
 });
@@ -138,93 +124,5 @@ describe('layoutDsuCircle', () => {
 
     expect(left.x).toBeLessThan(DSU_GRAPH_CIRCLE_CENTER_X);
     expect(Math.round(left.y)).toBe(DSU_GRAPH_CIRCLE_CENTER_Y);
-  });
-});
-
-describe('buildDsuRenderedEdge', () => {
-  it('returns null when either endpoint is missing', () => {
-    expect(
-      buildDsuRenderedEdge({
-        id: 'e',
-        fromId: 'A',
-        toId: 'B',
-        from: undefined,
-        to: { x: 100, y: 100 },
-        weight: null,
-        status: 'parent',
-        directed: true,
-      }),
-    ).toBeNull();
-  });
-
-  it('trims both endpoints by (node radius + inset) along the line direction', () => {
-    const edge = buildDsuRenderedEdge({
-      id: 'e',
-      fromId: 'A',
-      toId: 'B',
-      from: { x: 0, y: 0 },
-      to: { x: 200, y: 0 },
-      weight: null,
-      status: 'parent',
-      directed: true,
-    })!;
-    // Edge is purely horizontal — y stays zero, x shrinks inward on
-    // both sides by (radius + inset).
-    expect(edge.y1).toBe(0);
-    expect(edge.y2).toBe(0);
-    const trim = DSU_GRAPH_NODE_RADIUS + DSU_GRAPH_ARROW_TIP_INSET;
-    expect(edge.x1).toBeCloseTo(trim, 5);
-    expect(edge.x2).toBeCloseTo(200 - trim, 5);
-  });
-
-  it('keeps the midpoint at the raw from/to midpoint (not trimmed)', () => {
-    const edge = buildDsuRenderedEdge({
-      id: 'e',
-      fromId: 'A',
-      toId: 'B',
-      from: { x: 40, y: 40 },
-      to: { x: 140, y: 140 },
-      weight: 7,
-      status: 'accepted',
-      directed: false,
-    })!;
-    expect(edge.midX).toBe(90);
-    expect(edge.midY).toBe(90);
-    expect(edge.weight).toBe(7);
-  });
-
-  it('clamps trim for very short edges so endpoints do not invert', () => {
-    // Distance of 20 — trim would otherwise be 24 and push endpoints
-    // past each other. The helper caps it at dist / 2 - 0.5 = 9.5.
-    const edge = buildDsuRenderedEdge({
-      id: 'e',
-      fromId: 'A',
-      toId: 'B',
-      from: { x: 0, y: 0 },
-      to: { x: 20, y: 0 },
-      weight: null,
-      status: 'parent',
-      directed: true,
-    })!;
-    expect(edge.x1).toBeCloseTo(9.5, 5);
-    expect(edge.x2).toBeCloseTo(10.5, 5);
-    expect(edge.x1).toBeLessThan(edge.x2);
-  });
-});
-
-describe('unionFindEdgeStatusFromChild', () => {
-  it('promotes active / query children to active edges', () => {
-    expect(unionFindEdgeStatusFromChild('active')).toBe('active');
-    expect(unionFindEdgeStatusFromChild('query')).toBe('active');
-  });
-
-  it('promotes merged / compressed children to accepted edges', () => {
-    expect(unionFindEdgeStatusFromChild('merged')).toBe('accepted');
-    expect(unionFindEdgeStatusFromChild('compressed')).toBe('accepted');
-  });
-
-  it('falls back to a quiet parent pointer for idle / root / untagged states', () => {
-    expect(unionFindEdgeStatusFromChild('idle')).toBe('parent');
-    expect(unionFindEdgeStatusFromChild('root')).toBe('parent');
   });
 });

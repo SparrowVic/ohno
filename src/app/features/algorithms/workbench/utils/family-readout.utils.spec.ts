@@ -1,34 +1,48 @@
 import { describe, expect, it } from 'vitest';
 
+import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { convexHullGenerator } from '../../algorithms/convex-hull';
 import { dijkstraGenerator } from '../../algorithms/dijkstra/dijkstra';
+import { dinicMaxFlowGenerator } from '../../algorithms/dinic-max-flow';
+import { hopcroftKarpGenerator } from '../../algorithms/hopcroft-karp';
 import { kmpPatternMatchingGenerator } from '../../algorithms/kmp-pattern-matching/kmp-pattern-matching';
 import { knapsack01Generator } from '../../algorithms/knapsack-01/knapsack-01';
+import { kruskalsMstGenerator } from '../../algorithms/kruskals-mst';
+import { unionFindGenerator } from '../../algorithms/union-find';
+import { GraphNodeSnapshot, GraphStepState } from '../../models/graph';
+import { NetworkEdgeSnapshot, NetworkTraceState } from '../../models/network';
 import { ScratchpadLabTraceState } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { generateDijkstraGraph } from '../../utils/helpers/dijkstra-graph/dijkstra-graph';
+import { createDinicScenario, createHopcroftKarpScenario } from '../../utils/scenarios/network/network-scenarios';
 import {
+  edgeFlow,
   FamilyGaugeId,
   FamilyMeterId,
+  FamilyReadoutContext,
   FamilyReadoutLabels,
   FamilyRegisterId,
   familyStageReadout,
+  graphReadout,
+  networkReadout,
+  relaxationCounts,
   scratchpadReadout,
 } from './family-readout.utils';
+import { StageReadout } from './stage-readout.utils';
 import { sortStep } from './step-events.fixture';
 
 const METER_IDS: readonly FamilyMeterId[] = [
   'settled', 'queue', 'relaxed', 'row', 'column', 'value', 'textIndex', 'patternIndex', 'matches', 'stack', 'checked',
   'rejected', 'frontier', 'visited', 'result', 'pivot', 'improved', 'prime', 'bound', 'primes', 'components', 'merged',
   'output', 'low', 'high', 'probe', 'frames', 'returns', 'iteration', 'explored', 'depth', 'phases', 'lines', 'hits',
-  'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows',
+  'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows', 'operations',
 ];
 const GAUGE_IDS: readonly FamilyGaugeId[] = [
   'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
 ];
 const REGISTER_IDS: readonly FamilyRegisterId[] = [
-  'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col',
+  'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col', 'level', 'cost',
 ];
 
 function labelMap<T extends string>(ids: readonly T[], prefix: string): Record<T, string> {
@@ -47,8 +61,17 @@ function history(generator: Generator<SortStep>): readonly SortStep[] {
   return [...generator];
 }
 
-function readoutAt(steps: readonly SortStep[], index: number, variant: VisualizationVariant) {
-  return familyStageReadout({ step: steps[index]!, index, lastIndex: steps.length - 1, variant, labels });
+function readoutAt(steps: readonly SortStep[], index: number, variant: VisualizationVariant, relaxations?: number) {
+  const ctx: FamilyReadoutContext = { step: steps[index]!, index, lastIndex: steps.length - 1, variant, labels, relaxations };
+  return familyStageReadout(ctx);
+}
+
+function registerMap(readout: StageReadout): Record<string, string> {
+  return Object.fromEntries(readout.registers.map((item) => [item.label, item.value]));
+}
+
+function meterValue(readout: StageReadout, id: string): number | string | undefined {
+  return readout.meters.find((item) => item.id === id)?.value;
 }
 
 describe('familyStageReadout', () => {
@@ -224,5 +247,245 @@ describe('scratchpadReadout', () => {
     });
     expect(readout.meters.map((meter) => [meter.id, meter.value])).toEqual([['lines', 2], ['phases', 1], ['result', 1]]);
     expect(readout.registers).toEqual([]);
+  });
+});
+
+describe('graphReadout', () => {
+  const node = (id: string, overrides: Partial<GraphNodeSnapshot> = {}): GraphNodeSnapshot => ({
+    id,
+    label: id.toUpperCase(),
+    x: 0,
+    y: 0,
+    distance: null,
+    previousId: null,
+    secondaryText: null,
+    isSource: false,
+    isCurrent: false,
+    isSettled: false,
+    isFrontier: false,
+    ...overrides,
+  });
+  const state: GraphStepState = {
+    nodes: [node('b', { previousId: 'a' }), node('f', { isCurrent: true, previousId: 'a' }), node('a', { isSource: true })],
+    edges: [{ id: 'b-f', from: 'b', to: 'f', weight: 4, isActive: true, isRelaxed: false, isTree: false }],
+    sourceId: 'a',
+    phaseLabel: 'relax',
+    metricLabel: 'd',
+    secondaryLabel: 'prev',
+    frontierLabel: 'queue',
+    frontierHeadLabel: 'head',
+    completionLabel: 'done',
+    frontierStatusLabel: 'frontier',
+    completionStatusLabel: 'settled',
+    showEdgeWeights: true,
+    detailLabel: 'detail',
+    detailValue: '',
+    visitOrderLabel: 'order',
+    currentNodeId: 'f',
+    activeEdgeId: 'b-f',
+    queue: [],
+    visitOrder: [],
+    traceRows: [],
+    computation: null,
+  };
+  const ctx = (graph: GraphStepState, relaxations?: number): FamilyReadoutContext => ({
+    step: sortStep({ array: [], graph }),
+    index: 3,
+    lastIndex: 10,
+    variant: 'dijkstra-graph',
+    labels,
+    relaxations,
+  });
+
+  it('reads v from the endpoint that is not the current node when an undirected edge is stored towards it', () => {
+    expect(registerMap(graphReadout(state, ctx(state)))).toMatchObject({ 'r:u': 'F', 'r:v': 'B', 'r:w': '4' });
+  });
+
+  it('reads v from the edge target when the current node is the edge source', () => {
+    const forward = { ...state, currentNodeId: 'b' };
+    expect(registerMap(graphReadout(forward, ctx(forward)))).toMatchObject({ 'r:u': 'B', 'r:v': 'F' });
+  });
+
+  it('shows the relaxation count from context and falls back to reached nodes without it', () => {
+    expect(meterValue(graphReadout(state, ctx(state, 7)), 'relaxed')).toBe(7);
+    expect(meterValue(graphReadout(state, ctx(state)), 'relaxed')).toBe(2);
+  });
+
+  it('never repeats u under v across a Dijkstra run on an undirected graph', () => {
+    const steps = history(dijkstraGenerator(generateDijkstraGraph(8)));
+    const reversed = steps.findIndex((step) => {
+      const graph = step.graph;
+      const edge = graph?.edges.find((item) => item.id === graph.activeEdgeId);
+      return edge !== undefined && edge.to === graph?.currentNodeId;
+    });
+    expect(reversed).toBeGreaterThan(0);
+    steps.forEach((_, index) => {
+      const registers = registerMap(readoutAt(steps, index, 'dijkstra-graph')!);
+      if (registers['r:v'] !== undefined) expect(registers['r:v']).not.toBe(registers['r:u']);
+    });
+  });
+});
+
+describe('relaxationCounts', () => {
+  it('counts relax steps up to and including each index', () => {
+    const steps = [
+      sortStep({ array: [] }),
+      sortStep({ array: [], phase: 'relax' }),
+      sortStep({ array: [], phase: 'skip-relax' }),
+      sortStep({ array: [], phase: 'relax' }),
+      sortStep({ array: [], phase: 'settle-node' }),
+    ];
+    expect(relaxationCounts(steps)).toEqual([0, 1, 1, 2, 2]);
+  });
+
+  it('feeds the relaxed meter with every Bellman-Ford relaxation, not the reached-node count', () => {
+    const steps = history(bellmanFordGenerator(generateDijkstraGraph(8)));
+    const counts = relaxationCounts(steps);
+    const relaxSteps = steps.filter((step) => step.phase === 'relax').length;
+    const last = steps.length - 1;
+    expect(counts[last]).toBe(relaxSteps);
+    expect(meterValue(readoutAt(steps, last, 'dijkstra-graph', counts[last])!, 'relaxed')).toBe(relaxSteps);
+  });
+});
+
+describe('dsuReadout', () => {
+  it('counts real unions on find() steps and shows an operations meter without a weight register', () => {
+    const steps = history(
+      unionFindGenerator({
+        kind: 'union-find',
+        nodes: [
+          { id: 'a', label: 'A' },
+          { id: 'b', label: 'B' },
+          { id: 'c', label: 'C' },
+          { id: 'd', label: 'D' },
+        ],
+        operations: [
+          { kind: 'union', a: 'a', b: 'b' },
+          { kind: 'find', a: 'b' },
+          { kind: 'find', a: 'a' },
+          { kind: 'union', a: 'c', b: 'd' },
+        ],
+      }),
+    );
+    const findIndex = steps.findIndex((step) => step.dsu?.edges.some((edge) => edge.status === 'active' && edge.fromId === edge.toId));
+    expect(findIndex).toBeGreaterThan(0);
+    const findReadout = readoutAt(steps, findIndex, 'dsu')!;
+    expect(findReadout.meters.map((item) => item.id)).toEqual(['components', 'merged', 'operations']);
+    expect(findReadout.registers.map((item) => item.label)).toEqual(['r:a']);
+    const afterFinds = steps.findIndex((step) => step.dsu?.edges.filter((edge) => edge.status === 'accepted').length === 3);
+    expect(afterFinds).toBeGreaterThan(0);
+    expect(meterValue(readoutAt(steps, afterFinds, 'dsu')!, 'merged')).toBe(1);
+    const last = readoutAt(steps, steps.length - 1, 'dsu')!;
+    expect(meterValue(last, 'merged')).toBe(2);
+    expect(last.meters[2]).toMatchObject({ id: 'operations', label: 'm:operations', value: 4, total: 4 });
+  });
+
+  it('counts merged components and shows the weight register on a Kruskal step', () => {
+    const steps = history(
+      kruskalsMstGenerator({
+        kind: 'kruskal',
+        graph: {
+          sourceId: 'a',
+          nodes: [
+            { id: 'a', label: 'A', x: 0, y: 0 },
+            { id: 'b', label: 'B', x: 1, y: 0 },
+            { id: 'c', label: 'C', x: 2, y: 0 },
+          ],
+          edges: [
+            { id: 'ab', from: 'a', to: 'b', weight: 1 },
+            { id: 'bc', from: 'b', to: 'c', weight: 2 },
+            { id: 'ac', from: 'a', to: 'c', weight: 5 },
+          ],
+        },
+      }),
+    );
+    const activeIndex = steps.findIndex((step) => step.dsu?.edges.some((edge) => edge.status === 'active'));
+    const active = readoutAt(steps, activeIndex, 'dsu')!;
+    expect(active.meters.map((item) => item.id)).toEqual(['components', 'merged', 'edges']);
+    expect(active.registers.map((item) => item.label)).toEqual(['r:a', 'r:b', 'r:w']);
+    const last = readoutAt(steps, steps.length - 1, 'dsu')!;
+    expect(meterValue(last, 'merged')).toBe(2);
+    expect(last.meters[2]).toMatchObject({ id: 'edges', value: 3, total: 3 });
+  });
+});
+
+describe('networkReadout', () => {
+  const edge = (id: string, primaryText: string, status: NetworkEdgeSnapshot['status']): NetworkEdgeSnapshot => ({
+    id,
+    fromId: 's',
+    toId: 't',
+    directed: true,
+    primaryText,
+    secondaryText: null,
+    status,
+  });
+  const state = (mode: NetworkTraceState['mode'], edges: readonly NetworkEdgeSnapshot[]): NetworkTraceState => ({
+    mode,
+    modeLabel: mode,
+    phaseLabel: 'phase',
+    statusLabel: 'status',
+    resultLabel: 'result',
+    frontierLabel: 'frontier',
+    frontierCount: 0,
+    queueLabel: 'queue',
+    queue: [],
+    activeRouteLabel: null,
+    focusItemsLabel: 'focus',
+    focusItems: [],
+    nodes: [{ id: 's', label: 'S', x: 0, y: 0, lane: 'source', level: 2, linkLabel: null, status: 'current', tags: [] }],
+    edges,
+    traceRows: [],
+    computation: null,
+  });
+  const ctx = (network: NetworkTraceState): FamilyReadoutContext => ({
+    step: sortStep({ array: [], network }),
+    index: 3,
+    lastIndex: 10,
+    variant: 'network',
+    labels,
+  });
+
+  it('parses the flow from the f/c chip and treats other text as no flow', () => {
+    expect(edgeFlow(edge('a', '3/4', 'augment'))).toBe(3);
+    expect(edgeFlow(edge('b', '0/5', 'base'))).toBe(0);
+    expect(edgeFlow(edge('c', 'match', 'matched'))).toBe(1);
+    expect(edgeFlow(edge('f', 'free', 'base'))).toBe(0);
+  });
+
+  it('counts flow-carrying edges regardless of their display status', () => {
+    const network = state('dinic', [
+      edge('a', '3/4', 'augment'),
+      edge('b', '3/3', 'active'),
+      edge('c', '0/2', 'candidate'),
+      edge('d', '2/2', 'saturated'),
+      edge('e', 'match', 'matched'),
+      edge('m', 'match', 'augment'),
+    ]);
+    expect(meterValue(networkReadout(network, ctx(network)), 'edges')).toBe(5);
+  });
+
+  it('labels the node level register as level outside min-cost flow', () => {
+    const dinic = state('dinic', []);
+    expect(networkReadout(dinic, ctx(dinic)).registers).toEqual([
+      { label: 'r:u', value: 'S' },
+      { label: 'r:level', value: '2' },
+    ]);
+    const minCost = state('min-cost-max-flow', []);
+    expect(networkReadout(minCost, ctx(minCost)).registers.map((item) => item.label)).toEqual(['r:u', 'r:cost']);
+  });
+
+  it('keeps the edges meter above zero on Dinic augment steps', () => {
+    const steps = history(dinicMaxFlowGenerator(createDinicScenario(8)));
+    const augmentIndex = steps.findIndex((step) => step.network?.edges.some((item) => item.status === 'augment' && edgeFlow(item) > 0));
+    expect(augmentIndex).toBeGreaterThan(0);
+    expect(Number(meterValue(readoutAt(steps, augmentIndex, 'network')!, 'edges'))).toBeGreaterThan(0);
+  });
+
+  it('counts matched edges in Hopcroft-Karp and reads the BFS level register', () => {
+    const steps = history(hopcroftKarpGenerator(createHopcroftKarpScenario(10)));
+    const last = steps.at(-1)!.network!;
+    expect(meterValue(readoutAt(steps, steps.length - 1, 'network')!, 'edges')).toBe(last.edges.filter((item) => item.status === 'matched').length);
+    const currentIndex = steps.findIndex((step) => step.network?.nodes.some((item) => item.status === 'current'));
+    expect(readoutAt(steps, currentIndex, 'network')!.registers.map((item) => item.label)).toEqual(['r:u', 'r:level']);
   });
 });

@@ -66,7 +66,7 @@ import {
   resolveTaskId,
 } from './utils/scenario.utils';
 import { plainSentence, sentenceParts } from './utils/sentence-markup.utils';
-import { FamilyReadoutLabels, familyStageReadout } from './utils/family-readout.utils';
+import { FamilyReadoutLabels, familyStageReadout, relaxationCounts } from './utils/family-readout.utils';
 import { FamilyTapeLabels, familyTapeOverrides } from './utils/family-tape.utils';
 import { genericStageReadout, sortingStageReadout, StageReadout, StageReadoutLabels } from './utils/stage-readout.utils';
 import { StepEventKind } from './utils/step-events.utils';
@@ -267,6 +267,7 @@ export class Workbench {
     return { events, passSeparator: (index) => this.translate(log.events.pass, { index }) };
   });
   private readonly isSorting = computed(() => this.config()?.kind === 'array');
+  private readonly relaxationCounts = computed(() => relaxationCounts(this.playback.history()));
 
   protected readonly readout = computed<StageReadout>(() => {
     const step = this.step();
@@ -282,6 +283,7 @@ export class Workbench {
         lastIndex: this.lastIndex(),
         variant: this.variantState(),
         labels: this.familyLabels(),
+        relaxations: this.relaxationCounts()[this.cursor()],
       });
     return family ?? genericStageReadout(this.cursor(), this.lastIndex(), labels);
   });

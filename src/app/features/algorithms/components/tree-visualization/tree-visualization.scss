@@ -61,10 +61,6 @@
   font-size: var(--tree-value-size, 14px);
   dominant-baseline: central;
 
-  &[data-dot='true'] {
-    font-variation-settings: var(--dot-settings);
-  }
-
   &[data-dot='false'] {
     font-family: var(--font-mono);
     font-weight: 700;
@@ -126,8 +122,6 @@
 .tree__rack-value {
   @include display.rack-value-dot;
 
-  font-variation-settings: var(--dot-settings);
-
   &[data-dot='false'] {
     font: 700 12px/1 var(--font-mono);
   }
@@ -147,7 +141,6 @@
 
   padding: 0 4px;
   font-size: 14px;
-  font-variation-settings: var(--dot-settings);
 
   &[data-tone='lime'] {
     box-shadow: inset 0 0 0 1px rgb(var(--lime-rgb) / 0.55);

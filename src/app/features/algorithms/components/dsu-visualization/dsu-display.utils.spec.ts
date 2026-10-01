@@ -16,7 +16,28 @@ import {
   dsuNoteTone,
   dsuOperationKind,
   dsuOperationRows,
+  dsuRevealScrollDelta,
 } from './dsu-display.utils';
+
+describe('dsuRevealScrollDelta', () => {
+  const box = { top: 100, bottom: 300 };
+
+  it('leaves a row that is already in view alone', () => {
+    expect(dsuRevealScrollDelta(box, { top: 120, bottom: 150 })).toBe(0);
+  });
+
+  it('scrolls down until a row below the fold clears the margin', () => {
+    expect(dsuRevealScrollDelta(box, { top: 320, bottom: 350 })).toBe(58);
+  });
+
+  it('scrolls up until a row above the fold clears the margin', () => {
+    expect(dsuRevealScrollDelta(box, { top: 40, bottom: 70 })).toBe(-68);
+  });
+
+  it('aligns the top of a row taller than the list', () => {
+    expect(dsuRevealScrollDelta(box, { top: 200, bottom: 500 })).toBe(92);
+  });
+});
 
 function node(id: string, parentId: string, rootId: string, status: DsuNodeStatus = 'idle', rank = 0): DsuNodeTrace {
   return {

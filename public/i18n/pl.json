@@ -751,7 +751,13 @@
           "groupAria": "Zbiór {{root}}: {{members}}",
           "operations": "Operacje",
           "rank": "ranga",
-          "size": "rozmiar"
+          "size": "rozmiar",
+          "verdict": {
+            "accepted": "przyjęta",
+            "active": "bieżąca",
+            "pending": "oczekuje",
+            "rejected": "odrzucona"
+          }
         },
         "dsuGraph": {
           "edges": "Krawędzie",
@@ -883,7 +889,26 @@
             "zeroInDegreeQueue": "Kolejka · st. 0"
           },
           "nodeAria": "Węzeł {{label}}, wartość {{value}}",
-          "route": "Trasa"
+          "route": "Trasa",
+          "secondary": {
+            "degree": "st. {{degree}}",
+            "done": "gotowy",
+            "finish": "meta",
+            "idle": "wolny",
+            "new": "nowy",
+            "next": "dalej {{node}}",
+            "onStack": "na stosie",
+            "sealed": "domknięty",
+            "sideOne": "strona 1",
+            "sideZero": "strona 0",
+            "split": "podział",
+            "start": "start",
+            "startFinish": "start / meta",
+            "steiner": "steinerowski",
+            "terminal": "terminal",
+            "used": "{{used}}/{{total}} użyte",
+            "via": "przez {{node}}"
+          }
         },
         "grid": {
           "boardAria": "Plansza {{rows}} × {{cols}}: front {{frontier}}, odwiedzone {{visited}}, wynik {{result}}",
@@ -928,7 +953,10 @@
           "reversedEdge": "Odwrócona krawędź",
           "root": "Korzeń",
           "saturated": "Nasycona",
-          "sccColor": "Kolor SSS",
+          "scc1": "SSS 1",
+          "scc2": "SSS 2",
+          "scc3": "SSS 3",
+          "scc4": "SSS 4",
           "settled": "Ustalone",
           "sideA": "Strona 0",
           "sideB": "Strona 1",
@@ -1046,6 +1074,7 @@
           "low": "Lo",
           "matches": "Dopasowania",
           "merged": "Scalone",
+          "operations": "Operacje",
           "output": "Wyjście",
           "pairs": "Pary",
           "patternIndex": "j · wzorzec",
@@ -1078,6 +1107,8 @@
             "bfsQueue": "Kolejka BFS",
             "carryingFlow": "z przepływem",
             "committedFlow": "Zatwierdzony przepływ",
+            "cost": "k {{value}}",
+            "costResidual": "k {{cost}} · rez. {{residual}}",
             "costScan": "Skan kosztów",
             "currentMatching": "Bieżące skojarzenie",
             "finalCommittedFlow": "Przepływ końcowy",
@@ -1188,11 +1219,13 @@
           "b": "b",
           "c": "c",
           "col": "kol.",
+          "cost": "koszt",
           "depth": "głęb.",
           "hi": "hi",
           "i": "i",
           "j": "j",
           "k": "k",
+          "level": "poz.",
           "lo": "lo",
           "mid": "mid",
           "n": "n",

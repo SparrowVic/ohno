@@ -1,88 +1,100 @@
 @if (state(); as current) {
   <div class="display display--rack">
-    <div class="display__main">
-      <div #graphScroll class="graph-scroll">
-        <svg
-          class="graph"
-          role="img"
-          [attr.aria-label]="(keys.notes.ariaDisplay | transloco) + ' · ' + (current.modeLabel | i18nText)"
-          [attr.viewBox]="viewBox().value"
-          [style.min-width.px]="minWidth()"
-          [style.min-height.px]="minHeight()"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <defs>
-            @for (tone of arrowTones; track tone) {
-              <marker
-                class="arrow"
-                [attr.id]="markerId(tone)"
-                [attr.data-tone]="tone"
-                markerWidth="12"
-                markerHeight="12"
-                refX="11"
-                refY="6"
-                orient="auto"
-                markerUnits="userSpaceOnUse"
-              >
-                <path d="M0 0L12 6L0 12Z" />
-              </marker>
-            }
-          </defs>
+    <div
+      #graphScroll
+      class="display__main graph-scroll"
+      [style.--dsu-min-width]="minScreen().width + 'px'"
+      [style.--dsu-min-height]="minScreen().height + 'px'"
+    >
+      <svg
+        #svg
+        class="graph"
+        role="img"
+        [attr.aria-label]="(keys.notes.ariaDisplay | transloco) + ' · ' + (current.modeLabel | i18nText)"
+        [attr.viewBox]="viewBox()"
+        [style.--dsu-unit]="unit()"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          @for (tone of arrowTones; track tone) {
+            <marker
+              class="arrow"
+              [attr.id]="markerId(tone)"
+              [attr.data-tone]="tone"
+              viewBox="0 0 12 12"
+              [attr.markerWidth]="glyphs().marker"
+              [attr.markerHeight]="glyphs().marker"
+              refX="11"
+              refY="6"
+              orient="auto"
+              markerUnits="userSpaceOnUse"
+            >
+              <path d="M0 0L12 6L0 12Z" />
+            </marker>
+          }
+        </defs>
 
-          @for (edge of edges(); track edge.id) {
-            <line
-              class="edge"
-              [attr.data-tone]="edge.tone"
-              [attr.marker-end]="edge.marker"
-              [attr.x1]="edge.x1"
-              [attr.y1]="edge.y1"
-              [attr.x2]="edge.x2"
-              [attr.y2]="edge.y2"
+        @for (edge of edges(); track edge.id) {
+          <line
+            class="edge"
+            [attr.data-tone]="edge.tone"
+            [attr.marker-end]="edge.marker"
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
+          />
+        }
+
+        @for (chip of chips(); track chip.id) {
+          <g
+            class="chip"
+            [attr.data-tone]="chip.tone"
+            [attr.data-status]="chip.status"
+            [attr.transform]="'translate(' + chip.x + ' ' + chip.y + ')'"
+          >
+            <rect
+              class="chip__box"
+              [attr.x]="-chip.width / 2"
+              [attr.y]="-glyphs().chipHeight / 2"
+              [attr.width]="chip.width"
+              [attr.height]="glyphs().chipHeight"
             />
-          }
+            <text class="chip__text">{{ chip.weight }}</text>
+          </g>
+        }
 
-          @for (chip of chips(); track chip.id) {
-            <g
-              class="chip"
-              [attr.data-tone]="chip.tone"
-              [attr.data-status]="chip.status"
-              [attr.transform]="'translate(' + chip.x + ' ' + chip.y + ')'"
-            >
-              <rect class="chip__box" [attr.x]="-chip.width / 2" y="-12" [attr.width]="chip.width" height="24" />
-              <text class="chip__text">{{ chip.weight }}</text>
-            </g>
-          }
-
-          @for (node of nodes(); track node.id) {
-            <g
-              class="node"
-              [attr.data-tone]="node.tone"
-              [attr.data-current]="node.isCurrent"
-              [attr.data-frontier]="node.isQuery"
-              [attr.data-root]="node.isRoot"
-              [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
-            >
-              @if (node.isCurrent) {
-                <circle class="node__halo" r="31" />
-              }
-              @if (node.isRoot) {
-                <circle class="node__crown" r="25" />
-              }
-              <circle class="node__ring" r="20" />
-              <text class="node__label">{{ node.label }}</text>
-              @if (node.isRoot && node.size > 1) {
-                <text class="node__value" y="-36">{{ node.size }}</text>
-                <text class="node__rank" x="33" y="-16">{{ keys.dsuGraph.rankTag | transloco: { rank: node.rank } }}</text>
-              }
-            </g>
-          }
-        </svg>
-      </div>
+        @for (node of nodes(); track node.id) {
+          <g
+            class="node"
+            [attr.data-tone]="node.tone"
+            [attr.data-current]="node.isCurrent"
+            [attr.data-frontier]="node.isQuery"
+            [attr.data-root]="node.isRoot"
+            [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+          >
+            @if (node.isCurrent) {
+              <circle class="node__halo" [attr.r]="glyphs().halo" />
+            }
+            @if (node.isRoot) {
+              <circle class="node__crown" [attr.r]="glyphs().crown" />
+            }
+            <circle class="node__ring" [attr.r]="glyphs().ring" />
+            <text class="node__label">{{ node.label }}</text>
+            @if (node.isRoot && node.size > 1) {
+              <text class="node__value" [attr.y]="glyphs().valueY">{{ node.size }}</text>
+              <text class="node__rank" [attr.x]="glyphs().rankX" [attr.y]="glyphs().rankY">
+                {{ keys.dsuGraph.rankTag | transloco: { rank: node.rank } }}
+              </text>
+            }
+          </g>
+        }
+      </svg>
     </div>
 
     <div #rack class="display__rack">
       @if (mode() === 'kruskal') {
-        <ohno-rack [title]="keys.dsuGraph.edges | transloco" [meta]="keys.dsuGraph.weight | transloco">
+        <ohno-rack class="rack-list" [title]="keys.dsuGraph.edges | transloco" [meta]="keys.dsuGraph.weight | transloco">
           @for (row of edgeRows(); track row.id) {
             <ohno-rack-row [tone]="row.tone">
               <span rackLead class="rack-lead">{{ row.fromLabel }}</span>
@@ -95,7 +107,7 @@
         </ohno-rack>
       }
 
-      <ohno-rack [title]="keys.racks.sets | transloco" [meta]="keys.dsuGraph.size | transloco">
+      <ohno-rack class="rack-sets" [title]="keys.racks.sets | transloco" [meta]="keys.dsuGraph.size | transloco">
         @for (row of setRows(); track row.rootId) {
           <ohno-rack-row [tone]="row.tone">
             <span rackLead class="rack-lead rack-lead--root">{{ row.rootLabel }}</span>
@@ -108,7 +120,7 @@
       </ohno-rack>
 
       @if (mode() === 'union-find') {
-        <ohno-rack [title]="keys.dsuGraph.operations | transloco">
+        <ohno-rack class="rack-list" [title]="keys.dsuGraph.operations | transloco">
           @for (row of operationRows(); track row.id) {
             <ohno-rack-row [tone]="row.tone">
               <span rackLead class="rack-lead">{{ row.fromLabel }}</span>
@@ -120,12 +132,22 @@
                 }
               </span>
               <span rackValue class="rack-mark" [attr.data-mark]="row.mark">
-                @switch (row.mark) {
-                  @case ('accepted') { ✓ }
-                  @case ('rejected') { × }
-                  @case ('active') { ◂ }
-                  @default { · }
-                }
+                <span aria-hidden="true">
+                  @switch (row.mark) {
+                    @case ('accepted') { ✓ }
+                    @case ('rejected') { × }
+                    @case ('active') { ◂ }
+                    @default { · }
+                  }
+                </span>
+                <span class="sr-only">
+                  @switch (row.mark) {
+                    @case ('accepted') { {{ keys.dsu.verdict.accepted | transloco }} }
+                    @case ('rejected') { {{ keys.dsu.verdict.rejected | transloco }} }
+                    @case ('active') { {{ keys.dsu.verdict.active | transloco }} }
+                    @default { {{ keys.dsu.verdict.pending | transloco }} }
+                  }
+                </span>
               </span>
             </ohno-rack-row>
           } @empty {

@@ -751,7 +751,13 @@
           "groupAria": "Set {{root}}: {{members}}",
           "operations": "Operations",
           "rank": "rank",
-          "size": "size"
+          "size": "size",
+          "verdict": {
+            "accepted": "accepted",
+            "active": "current",
+            "pending": "pending",
+            "rejected": "rejected"
+          }
         },
         "dsuGraph": {
           "edges": "Edges",
@@ -883,7 +889,26 @@
             "zeroInDegreeQueue": "Queue · in-deg 0"
           },
           "nodeAria": "Node {{label}}, value {{value}}",
-          "route": "Route"
+          "route": "Route",
+          "secondary": {
+            "degree": "deg {{degree}}",
+            "done": "done",
+            "finish": "finish",
+            "idle": "idle",
+            "new": "new",
+            "next": "next {{node}}",
+            "onStack": "on stack",
+            "sealed": "sealed",
+            "sideOne": "side 1",
+            "sideZero": "side 0",
+            "split": "split",
+            "start": "start",
+            "startFinish": "start / finish",
+            "steiner": "steiner",
+            "terminal": "terminal",
+            "used": "{{used}}/{{total}} used",
+            "via": "via {{node}}"
+          }
         },
         "grid": {
           "boardAria": "Board {{rows}} × {{cols}}: frontier {{frontier}}, visited {{visited}}, result {{result}}",
@@ -928,7 +953,10 @@
           "reversedEdge": "Reversed edge",
           "root": "Root",
           "saturated": "Saturated",
-          "sccColor": "SCC colour",
+          "scc1": "SCC 1",
+          "scc2": "SCC 2",
+          "scc3": "SCC 3",
+          "scc4": "SCC 4",
           "settled": "Settled",
           "sideA": "Side 0",
           "sideB": "Side 1",
@@ -1046,6 +1074,7 @@
           "low": "Lo",
           "matches": "Matches",
           "merged": "Merged",
+          "operations": "Operations",
           "output": "Output",
           "pairs": "Pairs",
           "patternIndex": "j · pattern",
@@ -1078,6 +1107,8 @@
             "bfsQueue": "BFS queue",
             "carryingFlow": "carrying flow",
             "committedFlow": "Committed flow",
+            "cost": "c {{value}}",
+            "costResidual": "c {{cost}} · res {{residual}}",
             "costScan": "Cost scan",
             "currentMatching": "Current matching",
             "finalCommittedFlow": "Final committed flow",
@@ -1188,11 +1219,13 @@
           "b": "b",
           "c": "c",
           "col": "col",
+          "cost": "cost",
           "depth": "depth",
           "hi": "hi",
           "i": "i",
           "j": "j",
           "k": "k",
+          "level": "lvl",
           "lo": "lo",
           "mid": "mid",
           "n": "n",

@@ -241,11 +241,7 @@ export class TreeVisualization implements VisualizationRenderer {
         pulseElement(cell, {
           duration: motion.settleMs,
           scale: 1.08,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 8px rgb(var(--cyan-rgb) / 0.5))',
-            'drop-shadow(0 0 0 transparent)',
-          ],
+          filter: ['none', 'none', 'none'],
         });
       }
     }

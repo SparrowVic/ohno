@@ -51,6 +51,7 @@ export interface NetworkRackEntry {
   readonly lead: string;
   readonly body: string;
   readonly value: string | null;
+  readonly detail?: TranslatableText;
 }
 
 const LABELS = I18N_KEY.features.algorithms.display.network.labels;
@@ -106,6 +107,7 @@ const EDGE_TONES: Readonly<Record<NetworkEdgeStatus, NetworkTone>> = {
 const VIA_PATTERN = /^via (.+)$/;
 const OUT_PATTERN = /^out (\d+)$/;
 const RESIDUAL_PATTERN = /^res (-?\d+)$/;
+const COST_RESIDUAL_PATTERN = /^c (-?\d+) · r (-?\d+)$/;
 const FLOW_ITEM_PATTERN = /^(\S+?)\s*→\s*(\S+) (-?\d+\/-?\d+)(?: @ (-?\d+))?$/;
 const MATCH_ITEM_PATTERN = /^([^-\s]+)-([^-\s]+)$/;
 
@@ -139,6 +141,10 @@ export function networkEdgeText(raw: string | null): TranslatableText | null {
   if (key) return i18nText(key);
   const residual = RESIDUAL_PATTERN.exec(raw);
   if (residual) return i18nText(LABELS.residual, { value: Number(residual[1]) });
+  const costResidual = COST_RESIDUAL_PATTERN.exec(raw);
+  if (costResidual) {
+    return i18nText(LABELS.costResidual, { cost: Number(costResidual[1]), residual: Number(costResidual[2]) });
+  }
   return raw;
 }
 
@@ -157,8 +163,8 @@ export function networkParentLabel(raw: string | null): string | null {
 export function networkFocusEntry(raw: string): NetworkRackEntry {
   const flow = FLOW_ITEM_PATTERN.exec(raw);
   if (flow) {
-    const cost = flow[4] === undefined ? '' : ` · c ${flow[4]}`;
-    return { lead: flow[1], body: `→ ${flow[2]}${cost}`, value: flow[3] };
+    const entry: NetworkRackEntry = { lead: flow[1], body: `→ ${flow[2]}`, value: flow[3] };
+    return flow[4] === undefined ? entry : { ...entry, detail: i18nText(LABELS.cost, { value: Number(flow[4]) }) };
   }
   const match = MATCH_ITEM_PATTERN.exec(raw);
   if (match) return { lead: match[1], body: `↔ ${match[2]}`, value: null };
