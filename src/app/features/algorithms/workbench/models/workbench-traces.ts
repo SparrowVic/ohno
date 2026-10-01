@@ -68,8 +68,9 @@ export const EMPTY_TRACES: WorkbenchTraces = {
   graphFocus: null,
 };
 
-const TRACE_KEYS: readonly (keyof Omit<WorkbenchTraces, 'graphFocus' | 'matrixGrid'>)[] = [
+const TRACE_KEYS: readonly (keyof Omit<WorkbenchTraces, 'graphFocus'>)[] = [
   'graph',
+  'matrixGrid',
   'dp',
   'dsu',
   'grid',

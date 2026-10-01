@@ -66,14 +66,8 @@ import {
   resolveTaskId,
 } from './utils/scenario.utils';
 import { markupSentence } from './utils/sentence-markup.utils';
-import {
-  genericStageReadout,
-  PassGauge,
-  sortingPassGauge,
-  sortingStageReadout,
-  StageReadout,
-  StageReadoutLabels,
-} from './utils/stage-readout.utils';
+import { FamilyReadoutLabels, familyStageReadout } from './utils/family-readout.utils';
+import { genericStageReadout, sortingStageReadout, StageReadout, StageReadoutLabels } from './utils/stage-readout.utils';
 import { StepEventKind } from './utils/step-events.utils';
 import { buildTapeRows, TapeFilter, TapeLabels } from './utils/tape-rows.utils';
 import { resolveTranslatableText } from './utils/translate-text.utils';
@@ -244,6 +238,24 @@ export class Workbench {
         boundary: this.translate(workbench.registers.boundary),
         settled: this.translate(workbench.registers.settled),
       },
+      gauge: this.translate(workbench.deck.gauge),
+    };
+  });
+  private readonly familyLabels = computed<FamilyReadoutLabels>(() => {
+    const display = I18N_KEY.features.algorithms.display;
+    const workbench = I18N_KEY.features.algorithms.workbench;
+    const translateGroup = <T extends string>(group: Readonly<Record<T, string>>): Readonly<Record<T, string>> =>
+      Object.fromEntries(Object.entries(group).map(([id, key]) => [id, this.translate(key as string)])) as Readonly<Record<T, string>>;
+    return {
+      meters: translateGroup(display.meters),
+      gauges: translateGroup(display.gauges),
+      registers: translateGroup(display.registers),
+      phases: {
+        start: this.translate(workbench.phases.start),
+        step: this.translate(workbench.phases.step),
+        complete: this.translate(workbench.phases.complete),
+      },
+      translate: (text) => this.translateText(text),
     };
   });
   private readonly tapeLabels = computed<TapeLabels>(() => {
@@ -261,12 +273,19 @@ export class Workbench {
     if (step && this.isSorting()) {
       return sortingStageReadout(step, this.playback.events(), this.cursor(), labels);
     }
-    return genericStageReadout(this.cursor(), this.lastIndex(), labels);
+    const family =
+      step &&
+      familyStageReadout({
+        step,
+        index: this.cursor(),
+        lastIndex: this.lastIndex(),
+        variant: this.variantState(),
+        labels: this.familyLabels(),
+      });
+    return family ?? genericStageReadout(this.cursor(), this.lastIndex(), labels);
   });
-  protected readonly gauge = computed<PassGauge | null>(() =>
-    this.isSorting() ? sortingPassGauge(this.playback.events(), this.cursor()) : null,
-  );
-  protected readonly gaugeLabel = computed(() => this.translate(I18N_KEY.features.algorithms.workbench.deck.gauge));
+  protected readonly gauge = computed(() => this.readout().gauge);
+  protected readonly gaugeLabel = computed(() => this.readout().gaugeLabel);
   protected readonly sentence = computed(() => {
     const step = this.step();
     return step ? this.translateText(step.description) : '';

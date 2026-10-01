@@ -4,7 +4,6 @@ import { ClosestPairVisualization } from '../closest-pair-visualization/closest-
 import { ConvexHullVisualization } from '../convex-hull-visualization/convex-hull-visualization';
 import { DelaunayVisualization } from '../delaunay-visualization/delaunay-visualization';
 import { WeightedGraphData } from '../../models/graph';
-import { PresetOption } from '../../models/preset-option';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { BarChartVisualization } from '../bar-chart-visualization/bar-chart-visualization';
@@ -80,8 +79,5 @@ export class VisualizationCanvas {
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
   readonly graphFocusTargetId = input<string | null>(null);
-  readonly presetOptions = input<readonly PresetOption[]>([]);
-  readonly presetId = input<string | null>(null);
   readonly graphFocusTargetChange = output<string | null>();
-  readonly presetChange = output<string>();
 }

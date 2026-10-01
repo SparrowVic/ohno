@@ -165,6 +165,24 @@ export class InstrumentSpecimen {
   };
   protected readonly logFilter = signal<TapeFilter>('all');
 
+  protected readonly displayCells = [
+    { value: '0', tone: 'idle', tag: null, mark: null },
+    { value: '6', tone: 'slate', tag: null, mark: null },
+    { value: '6', tone: 'pink', tag: 'take', mark: null },
+    { value: '9', tone: 'pink', tag: 'skip', mark: null },
+    { value: '13', tone: 'cyan', tag: null, mark: '?' },
+    { value: '10', tone: 'lime', tag: null, mark: null },
+    { value: '·', tone: 'dim', tag: null, mark: null },
+  ];
+  protected readonly displayTape = [
+    { char: 'A', index: 10, tone: 'lime' },
+    { char: 'B', index: 11, tone: 'lime' },
+    { char: 'C', index: 12, tone: 'cyan' },
+    { char: 'A', index: 13, tone: 'slate' },
+    { char: 'B', index: 14, tone: 'dim' },
+    { char: 'D', index: 15, tone: 'pink' },
+  ];
+  protected readonly planeTicks = [0, 20, 40, 60, 80, 100];
   protected readonly sampleModules = ['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
     .map((id) => ALGORITHM_CATALOG.find((item) => item.id === id)!)
     .map((item) => ({ item, moduleId: moduleId(item, ALGORITHM_CATALOG) }));

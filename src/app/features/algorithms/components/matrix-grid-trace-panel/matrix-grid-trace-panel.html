@@ -1,0 +1,58 @@
+@if (state(); as grid) {
+  <div class="trace">
+    <ohno-rack [title]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco">
+      <ohno-rack-row>
+        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco }}</span>
+        {{ grid.modeLabel | i18nText }}
+      </ohno-rack-row>
+      <ohno-rack-row tone="now">
+        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco }}</span>
+        {{ grid.phaseLabel | i18nText }}
+      </ohno-rack-row>
+      <ohno-rack-row>
+        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.iterationLabel | transloco }}</span>
+        <span rackValue class="trace__dot">{{ grid.iteration }}</span>
+      </ohno-rack-row>
+      <ohno-rack-row>
+        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.sizeLabel | transloco }}</span>
+        <span rackValue>{{ sizeLabel() }}</span>
+      </ohno-rack-row>
+      @if (pivotLabel(); as pivot) {
+        <ohno-rack-row tone="head">
+          <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.pivotLabel | transloco }}</span>
+          <span rackValue>{{ pivot }}</span>
+        </ohno-rack-row>
+      }
+    </ohno-rack>
+
+    @if (grid.operationLabel; as operation) {
+      <section class="trace__block">
+        <ohno-engraving>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.operationLabel | transloco }}</ohno-engraving>
+        <app-math-text class="trace__math" [content]="operation | i18nText" mode="mixed" variant="formula" />
+      </section>
+    }
+    @if (grid.decisionLabel; as decision) {
+      <section class="trace__block">
+        <ohno-engraving tone="pink">{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.decisionLabel | transloco }}</ohno-engraving>
+        <p class="trace__copy">{{ decision | i18nText }}</p>
+      </section>
+    }
+    @if (grid.resultLabel; as result) {
+      <section class="trace__block">
+        <ohno-engraving tone="lime">{{ I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco }}</ohno-engraving>
+        <app-math-text class="trace__math" [content]="result | i18nText" mode="mixed" variant="formula" />
+      </section>
+    }
+
+    <ohno-rack [title]="I18N_KEY.features.algorithms.tracePanels.matrixGrid.rowsLabel | transloco" [meta]="sizeLabel()">
+      @for (row of rows(); track row.index) {
+        <ohno-rack-row [tone]="row.tone">
+          <span rackLead>{{ row.label }}</span>
+          <span class="trace__values">{{ row.values }}</span>
+        </ohno-rack-row>
+      }
+    </ohno-rack>
+  </div>
+} @else {
+  <p class="trace__empty">{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.emptyLabel | transloco }}</p>
+}

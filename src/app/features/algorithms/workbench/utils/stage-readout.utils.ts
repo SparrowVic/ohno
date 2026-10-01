@@ -6,9 +6,15 @@ import { countStepEvents, StepEvent, StepEventKind } from './step-events.utils';
 export interface StageMeter {
   readonly id: string;
   readonly label: string;
-  readonly value: number;
+  readonly value: number | string;
   readonly total: number | null;
   readonly pad: number;
+}
+
+export interface PassGauge {
+  readonly count: number;
+  readonly lit: number;
+  readonly done: number;
 }
 
 export interface StageReadout {
@@ -16,6 +22,8 @@ export interface StageReadout {
   readonly phaseLabel: string;
   readonly tone: LedColor;
   readonly registers: readonly OpLineRegister[];
+  readonly gauge: PassGauge | null;
+  readonly gaugeLabel: string;
 }
 
 export interface StageReadoutLabels {
@@ -27,12 +35,7 @@ export interface StageReadoutLabels {
     readonly boundary: string;
     readonly settled: string;
   };
-}
-
-export interface PassGauge {
-  readonly count: number;
-  readonly lit: number;
-  readonly done: number;
+  readonly gauge: string;
 }
 
 const PHASE_TONES: Readonly<Record<StepEventKind, LedColor>> = {
@@ -81,6 +84,8 @@ export function sortingStageReadout(
       { label: labels.registers.boundary, value: String(step.boundary) },
       { label: labels.registers.settled, value: String(step.sorted.length) },
     ],
+    gauge,
+    gaugeLabel: labels.gauge,
   };
 }
 
@@ -95,5 +100,7 @@ export function genericStageReadout(
     phaseLabel: labels.phases[kind],
     tone: kind === 'step' ? 'cyan' : PHASE_TONES[kind],
     registers: [],
+    gauge: null,
+    gaugeLabel: '',
   };
 }

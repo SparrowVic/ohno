@@ -77,7 +77,7 @@
       }
       @case ('trace') {
         <section class="inspector__panel inspector__panel--scroll" role="tabpanel" aria-labelledby="inspector-tab-trace">
-          <ohno-trace-host [traces]="traces()" [algorithmId]="algorithm().id" />
+          <ohno-trace-host [traces]="traces()" [algorithmId]="algorithm().id" [variant]="variant()" />
         </section>
       }
     }

@@ -56,8 +56,9 @@
 }
 
 .deck__section--data {
-  flex: 1 1 auto;
+  flex: 1 1 128px;
   min-width: 128px;
+  max-width: 300px;
   padding-right: 8px;
   padding-left: 14px;
 }

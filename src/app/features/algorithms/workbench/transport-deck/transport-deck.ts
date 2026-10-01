@@ -13,6 +13,7 @@ import {
 
 import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
 import { OhnoFloatingPlate } from '../../../../shared/instrument/floating-plate/floating-plate';
@@ -25,6 +26,7 @@ import { MenuItem } from '../../../../shared/instrument/menu/menu.types';
 import { OhnoReadout } from '../../../../shared/instrument/readout/readout';
 import { OhnoSlot } from '../../../../shared/instrument/slot/slot';
 import { OhnoWindowStepper } from '../../../../shared/instrument/window-stepper/window-stepper';
+import { PresetOption } from '../../models/preset-option';
 import { TaskInputSchema } from '../../models/task';
 import { OhnoCustomValuesForm } from '../custom-values-form/custom-values-form';
 import { hasCustomFields, showSizeSection, TaskChoice } from '../utils/deck.utils';
@@ -68,6 +70,8 @@ export class OhnoTransportDeck {
   readonly tasks = input<readonly TaskChoice[]>([]);
   readonly activeTaskId = input<string | null>(null);
   readonly randomizeLabel = input.required<string>();
+  readonly presetOptions = input<readonly PresetOption[]>([]);
+  readonly presetId = input<string | null>(null);
   readonly customSchema = input<TaskInputSchema<Record<string, unknown>> | null>(null);
   readonly customValues = input<Record<string, unknown>>({});
   readonly customValidate = input<((values: Record<string, unknown>) => TranslatableText | null) | null>(null);
@@ -82,6 +86,7 @@ export class OhnoTransportDeck {
   readonly randomize = output<void>();
   readonly taskChange = output<string>();
   readonly customValuesChange = output<Record<string, unknown>>();
+  readonly presetChange = output<string>();
 
   private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
@@ -101,6 +106,7 @@ export class OhnoTransportDeck {
   };
   protected readonly taskMenuOpen = signal(false);
   protected readonly customOpen = signal(false);
+  protected readonly presetMenuOpen = signal(false);
 
   protected readonly playIcon = computed(() => {
     const action = this.transportAction();
@@ -128,6 +134,16 @@ export class OhnoTransportDeck {
     this.tasks().map((task) => ({ id: task.id, label: task.label })),
   );
   protected readonly hasCustom = computed(() => hasCustomFields(this.customSchema()));
+  protected readonly hasPresets = computed(() => this.presetOptions().length > 1);
+  protected readonly activePresetLabel = computed(() => {
+    this.language.activeLang();
+    const option = this.presetOptions().find((item) => item.id === this.presetId()) ?? this.presetOptions()[0];
+    return option ? this.translatePreset(option.label) : '';
+  });
+  protected readonly presetItems = computed<readonly MenuItem[]>(() => {
+    this.language.activeLang();
+    return this.presetOptions().map((option) => ({ id: option.id, label: this.translatePreset(option.label) }));
+  });
   protected readonly canStepBack = computed(() => this.stepIndex() > 0);
   protected readonly canStepForward = computed(() => this.stepIndex() < this.lastIndex());
   protected readonly tempoReadout = computed(() => `${this.speed()}×`);
@@ -135,6 +151,15 @@ export class OhnoTransportDeck {
   protected pickTask(id: string): void {
     this.taskMenuOpen.set(false);
     if (id !== this.activeTaskId()) this.taskChange.emit(id);
+  }
+
+  protected pickPreset(id: string): void {
+    this.presetMenuOpen.set(false);
+    if (id !== this.presetId()) this.presetChange.emit(id);
+  }
+
+  private translatePreset(label: string): string {
+    return looksLikeI18nKey(label) ? this.transloco.translate(label) : label;
   }
 
   protected applyCustomValues(values: Record<string, unknown>): void {

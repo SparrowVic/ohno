@@ -16,6 +16,7 @@ const labels: StageReadoutLabels = {
     complete: 'Koniec',
   },
   registers: { left: 'i', right: 'j', boundary: 'granica', settled: 'ustalone' },
+  gauge: 'Przebiegi',
 };
 
 const events = classifyStepEvents(BUBBLE_HISTORY);
@@ -65,8 +66,8 @@ describe('sortingPassGauge', () => {
 
 describe('genericStageReadout', () => {
   it('labels the first, middle and last steps without meters or registers', () => {
-    expect(genericStageReadout(0, 5, labels)).toEqual({ meters: [], phaseLabel: 'Start', tone: 'slate', registers: [] });
-    expect(genericStageReadout(2, 5, labels)).toEqual({ meters: [], phaseLabel: 'Krok', tone: 'cyan', registers: [] });
-    expect(genericStageReadout(5, 5, labels)).toEqual({ meters: [], phaseLabel: 'Koniec', tone: 'lime', registers: [] });
+    expect(genericStageReadout(0, 5, labels)).toEqual({ meters: [], phaseLabel: 'Start', tone: 'slate', registers: [], gauge: null, gaugeLabel: '' });
+    expect(genericStageReadout(2, 5, labels)).toEqual({ meters: [], phaseLabel: 'Krok', tone: 'cyan', registers: [], gauge: null, gaugeLabel: '' });
+    expect(genericStageReadout(5, 5, labels)).toEqual({ meters: [], phaseLabel: 'Koniec', tone: 'lime', registers: [], gauge: null, gaugeLabel: '' });
   });
 });

@@ -127,6 +127,34 @@
   <section class="deck__section deck__section--data">
     <ohno-engraving class="deck__title">{{ I18N_KEY.features.algorithms.workbench.deck.data | transloco }}</ohno-engraving>
     <div class="deck__data">
+      @if (hasPresets()) {
+        <span class="deck__anchor">
+          <ohno-key
+            class="deck__data-key deck__preset-key"
+            [label]="activePresetLabel() + ' ▾'"
+            [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.presetMenuLabel | transloco"
+            [menu]="true"
+            [expanded]="presetMenuOpen()"
+            (keyClick)="presetMenuOpen.set(!presetMenuOpen())"
+          />
+          <ohno-floating-plate
+            class="deck__menu"
+            [open]="presetMenuOpen()"
+            [label]="I18N_KEY.features.algorithms.workbench.deck.presetMenuLabel | transloco"
+            (dismiss)="presetMenuOpen.set(false)"
+          >
+            @if (presetMenuOpen()) {
+              <ohno-menu
+                [items]="presetItems()"
+                [activeId]="presetId()"
+                [label]="I18N_KEY.features.algorithms.workbench.deck.presetMenuLabel | transloco"
+                (select)="pickPreset($event)"
+                (dismiss)="presetMenuOpen.set(false)"
+              />
+            }
+          </ohno-floating-plate>
+        </span>
+      }
       <ohno-key class="deck__data-key" [label]="randomizeLabel()" [icon]="icons.random" (keyClick)="randomize.emit()" />
       @if (customSchema(); as schema) {
         @if (hasCustom()) {

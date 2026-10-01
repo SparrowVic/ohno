@@ -11,6 +11,7 @@ import { GraphTracePanel } from '../../components/graph-trace-panel/graph-trace-
 import { GridTracePanel } from '../../components/grid-trace-panel/grid-trace-panel';
 import { HalfPlaneTracePanel } from '../../components/half-plane-trace-panel/half-plane-trace-panel';
 import { LineIntersectionTracePanel } from '../../components/line-intersection-trace-panel/line-intersection-trace-panel';
+import { MatrixGridTracePanel } from '../../components/matrix-grid-trace-panel/matrix-grid-trace-panel';
 import { MatrixTracePanel } from '../../components/matrix-trace-panel/matrix-trace-panel';
 import { MinkowskiSumTracePanel } from '../../components/minkowski-sum-trace-panel/minkowski-sum-trace-panel';
 import { NetworkTracePanel } from '../../components/network-trace-panel/network-trace-panel';
@@ -34,7 +35,9 @@ import {
   isSweepLineState,
   isVoronoiDiagramState,
 } from '../../models/geometry';
+import { VisualizationVariant } from '../../models/visualization-renderer';
 import { WorkbenchTraces } from '../models/workbench-traces';
+import { pickTracePanel } from './trace-host.utils';
 
 @Component({
   selector: 'ohno-trace-host',
@@ -50,6 +53,7 @@ import { WorkbenchTraces } from '../models/workbench-traces';
     GridTracePanel,
     HalfPlaneTracePanel,
     LineIntersectionTracePanel,
+    MatrixGridTracePanel,
     MatrixTracePanel,
     MinkowskiSumTracePanel,
     NetworkTracePanel,
@@ -71,6 +75,9 @@ import { WorkbenchTraces } from '../models/workbench-traces';
 export class OhnoTraceHost {
   readonly traces = input.required<WorkbenchTraces>();
   readonly algorithmId = input.required<string>();
+  readonly variant = input.required<VisualizationVariant>();
+
+  protected readonly panel = computed(() => pickTracePanel(this.traces(), this.variant()));
 
   protected readonly geometry = computed(() => {
     const state = this.traces().geometry;

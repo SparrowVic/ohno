@@ -26,6 +26,7 @@ import {
 import { InfoPanel } from '../../components/info-panel/info-panel';
 import { AlgorithmItem } from '../../models/algorithm';
 import { CodeLanguage, CodeLine, CodeRegion, CodeVariantMap } from '../../models/detail';
+import { VisualizationVariant } from '../../models/visualization-renderer';
 import { hasTrace, WorkbenchTraces } from '../models/workbench-traces';
 import { OhnoTraceHost } from '../trace-host/trace-host';
 
@@ -62,6 +63,7 @@ export class OhnoInspector {
   readonly activeTaskName = input<TranslatableText | null>(null);
   readonly codeSnippetMissing = input(false);
   readonly traces = input.required<WorkbenchTraces>();
+  readonly variant = input.required<VisualizationVariant>();
   readonly tabChange = output<InspectorTab>();
 
   private readonly document = inject(DOCUMENT);

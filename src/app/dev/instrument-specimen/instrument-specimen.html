@@ -201,6 +201,7 @@
         [codeVariants]="inspectorConfig.codeVariants ?? {}"
         [activeLineNumber]="13"
         [traces]="inspectorTraces"
+      variant="bar"
         (tabChange)="inspectorTab.set($event)"
       />
     </ohno-plate>
@@ -235,6 +236,103 @@
       (taskChange)="deckTaskId.set($event)"
       (customValuesChange)="deckValues.set($event)"
     />
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Język ekranów · komórki, taśma, węzły, siatka, notatka, rack</ohno-engraving>
+    <ohno-screen padding="md">
+      <div class="display display--rack specimen__display">
+        <div class="display__main specimen__display-main">
+          <div class="specimen__cells">
+            @for (cell of displayCells; track cell.value) {
+              <span class="specimen__cell" [attr.data-tone]="cell.tone">
+                @if (cell.tag) {
+                  <span class="specimen__cell-tag">{{ cell.tag }}</span>
+                }
+                @if (cell.mark) {
+                  <span class="specimen__cell-mark">{{ cell.mark }}</span>
+                }
+                {{ cell.value }}
+              </span>
+            }
+          </div>
+          <div class="specimen__tape">
+            @for (cell of displayTape; track cell.index) {
+              <span class="specimen__tape-cell" [attr.data-tone]="cell.tone">
+                <span class="tape-cell__char">{{ cell.char }}</span>
+                <span class="tape-cell__index">{{ cell.index }}</span>
+              </span>
+            }
+          </div>
+          <svg class="specimen__graph" viewBox="0 0 320 120" aria-hidden="true">
+            <line class="specimen__edge" x1="50" y1="60" x2="150" y2="30" data-tone="lime" />
+            <line class="specimen__edge" x1="150" y1="30" x2="260" y2="70" data-tone="pink" />
+            <line class="specimen__edge" x1="50" y1="60" x2="260" y2="70" />
+            <g class="specimen__chip" transform="translate(100 38)" data-tone="slate">
+              <rect class="chip__box" x="-12" y="-9" width="24" height="18" />
+              <text class="chip__text">7</text>
+            </g>
+            <g class="specimen__node" transform="translate(50 60)" data-tone="violet">
+              <circle class="node__halo" r="20" />
+              <circle class="node__ring" r="14" />
+              <text class="node__label">A</text>
+              <text class="node__value" y="28">0</text>
+            </g>
+            <g class="specimen__node" transform="translate(150 30)" data-tone="cyan" data-current="true">
+              <circle class="node__halo" r="20" />
+              <circle class="node__ring" r="14" />
+              <text class="node__label">F</text>
+              <text class="node__value" y="28">2</text>
+            </g>
+            <g class="specimen__node" transform="translate(260 70)" data-tone="amber" data-frontier="true">
+              <circle class="node__halo" r="20" />
+              <circle class="node__ring" r="14" />
+              <text class="node__label">C</text>
+              <text class="node__value" y="28">4</text>
+            </g>
+          </svg>
+          <svg class="specimen__plane" viewBox="-6 -6 112 72" aria-hidden="true">
+            @for (tick of planeTicks; track tick) {
+              <line class="graticule__line" [attr.x1]="tick" y1="0" [attr.x2]="tick" y2="60" />
+              <text class="graticule__tick" [attr.x]="tick" y="64">{{ tick }}</text>
+            }
+            @for (tick of [0, 20, 40, 60]; track tick) {
+              <line class="graticule__line" x1="0" [attr.y1]="60 - tick" x2="100" [attr.y2]="60 - tick" />
+            }
+            <line class="graticule__axis" x1="0" y1="60" x2="100" y2="60" />
+            <line class="graticule__axis" x1="0" y1="0" x2="0" y2="60" />
+            <polyline class="specimen__hull" points="48,56 86,46 70,16 30,8" />
+            <g class="specimen__point" transform="translate(48 56)" data-tone="violet">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">1</text>
+            </g>
+            <g class="specimen__point" transform="translate(30 8)" data-tone="cyan" data-current="true">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">6</text>
+            </g>
+            <g class="specimen__point" transform="translate(60 30)" data-tone="pink">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">10</text>
+            </g>
+            <g class="specimen__point" transform="translate(20 40)" data-tone="slate">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">7</text>
+            </g>
+          </svg>
+        </div>
+        <div class="display__rack">
+          <ohno-rack title="Kolejka · min" meta="dist · skąd">
+            <ohno-rack-row tone="head"><span rackLead>C</span>← F<span rackValue class="specimen__rack-dot">4</span></ohno-rack-row>
+            <ohno-rack-row><span rackLead>G</span>← F<span rackValue class="specimen__rack-dot">6</span></ohno-rack-row>
+            <ohno-rack-row tone="dim"><span rackLead>D</span>—<span rackValue class="specimen__rack-dot">∞</span></ohno-rack-row>
+          </ohno-rack>
+          <div class="specimen__note" data-tone="cyan">
+            <span class="specimen__note-title">Iloczyn wektorowy</span>
+            <span class="specimen__note-dot">+412</span>
+            <ohno-led color="lime" /> lewy skręt · zostaje
+          </div>
+          <div class="specimen__note" data-tone="pink">
+            <span class="specimen__note-title">Ostatni powrót</span>
+            i = 8: C ≠ B<br />j = lps[2] = 1 → j = lps[0] = 0
+          </div>
+        </div>
+      </div>
+    </ohno-screen>
   </ohno-plate>
   <ohno-plate class="specimen__unit" [screws]="true">
     <ohno-engraving>Karty modułów · osiem rodzin</ohno-engraving>

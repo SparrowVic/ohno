@@ -35,10 +35,7 @@
               [step]="step()"
               [speed]="speed()"
               [graphFocusTargetId]="graphFocusTargetId()"
-              [presetOptions]="presetOptions()"
-              [presetId]="presetId()"
               (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
-              (presetChange)="onPresetChange($event)"
             />
           </ohno-stage-screen>
           <ohno-legend-row [items]="legendItems()" [hints]="legendHints()" />
@@ -56,6 +53,8 @@
             [tasks]="tasks()"
             [activeTaskId]="taskId()"
             [randomizeLabel]="randomizeLabel()"
+            [presetOptions]="presetOptions()"
+            [presetId]="presetId()"
             [customSchema]="customSchema()"
             [customValues]="customValues()"
             [customValidate]="customValidate()"
@@ -69,6 +68,7 @@
             (randomize)="onRandomize()"
             (taskChange)="onTaskChange($event)"
             (customValuesChange)="onCustomValuesChange($event)"
+            (presetChange)="onPresetChange($event)"
           />
         </ohno-plate>
         <ohno-plate class="workbench__unit workbench__unit--inspector" [screws]="true" padding="none">
@@ -82,6 +82,7 @@
             [activeTaskName]="activeTaskName()"
             [codeSnippetMissing]="codeSnippetMissing()"
             [traces]="traces()"
+            [variant]="variant()"
             (tabChange)="onInspectorTab($event)"
           />
         </ohno-plate>
