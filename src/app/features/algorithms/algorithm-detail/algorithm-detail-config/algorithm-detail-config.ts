@@ -994,7 +994,6 @@ const VIZ_WINDOW = VIZ_COLOR.window;
 const VIZ_WARNING = VIZ_COLOR.warning;
 const VIZ_SUCCESS = VIZ_COLOR.success;
 const VIZ_ROUTE = VIZ_COLOR.route;
-const VIZ_DANGER = VIZ_COLOR.danger;
 const VIZ_HIT = VIZ_COLOR.hit;
 const VIZ_EMBER = VIZ_COLOR.ember;
 
@@ -1150,20 +1149,20 @@ const STRING_LEGEND: readonly LegendItem[] = [
 ];
 
 const FLOOD_FILL_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed cell', color: VIZ_ACCENT },
-  { label: 'Current wave cell', color: VIZ_WARNING },
-  { label: 'Fill frontier', color: VIZ_WINDOW },
-  { label: 'Painted region', color: VIZ_SUCCESS },
-  { label: 'Rejected cell', color: 'var(--text-secondary)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.legend.seed, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.painted, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.rejected, color: 'var(--red)', opacity: 0.6 },
 ];
 
 const A_STAR_LEGEND: readonly LegendItem[] = [
-  { label: 'Start', color: VIZ_ACCENT },
-  { label: 'Goal', color: VIZ_EMBER },
-  { label: 'Open set', color: VIZ_WINDOW },
-  { label: 'Current cell', color: VIZ_WARNING },
-  { label: 'Closed set', color: VIZ_ROUTE },
-  { label: 'Final path', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.startGoal, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.openSet, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.closedSet, color: 'var(--lime)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.foundPath, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.wall, color: 'var(--slate)' },
 ];
 
 const HOPCROFT_KARP_LEGEND: readonly LegendItem[] = [
@@ -1200,185 +1199,196 @@ const MIN_COST_MAX_FLOW_LEGEND: readonly LegendItem[] = [
 ];
 
 const FLOYD_WARSHALL_LEGEND: readonly LegendItem[] = [
-  { label: 'Pivot row / column', color: VIZ_ACCENT },
-  { label: 'Active compare cell', color: VIZ_WARNING },
-  { label: 'Improved shortest path', color: VIZ_SUCCESS },
-  { label: 'Reachable baseline', color: VIZ_WINDOW },
-  { label: 'Infinity / unreachable', color: 'var(--text-secondary)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.pivotLines, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.shorterPath, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.unreachable, color: 'var(--slate)', opacity: 0.5 },
 ];
 
 const HUNGARIAN_LEGEND: readonly LegendItem[] = [
-  { label: 'Active reduction / inspect cell', color: VIZ_WARNING },
-  { label: 'Zero candidate', color: VIZ_WINDOW },
-  { label: 'Covered line set', color: VIZ_ACCENT },
-  { label: 'Chosen assignment', color: VIZ_SUCCESS },
-  { label: 'Adjusted by matrix shift', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.currentLine, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.zero, color: 'var(--cyan)', opacity: 0.72 },
+  { label: I18N_KEY.features.algorithms.display.legend.assignment, color: 'var(--lime)' },
+];
+
+const SIEVE_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.checked, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.currentPrime, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.crossing, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.crossed, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.prime, color: 'var(--lime)' },
 ];
 
 const KNAPSACK_LEGEND: readonly LegendItem[] = [
-  { label: 'Base case', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active DP cell', color: VIZ_WARNING },
-  { label: 'Candidate predecessor', color: VIZ_WINDOW },
-  { label: 'Committed best value', color: VIZ_SUCCESS },
-  { label: 'Backtrack path', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.doesNotFit, color: 'var(--red)' },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const LCS_LEGEND: readonly LegendItem[] = [
-  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active compare cell', color: VIZ_WARNING },
-  { label: 'Character match', color: VIZ_ACCENT },
-  { label: 'Chosen carry / best value', color: VIZ_SUCCESS },
-  { label: 'Recovered subsequence path', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.charMatch, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const EDIT_DISTANCE_LEGEND: readonly LegendItem[] = [
-  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active transition', color: VIZ_WARNING },
-  { label: 'Free carry / char match', color: VIZ_ACCENT },
-  { label: 'Stored cheapest edit count', color: VIZ_SUCCESS },
-  { label: 'Recovered edit script', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.charMatch, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const MATRIX_CHAIN_LEGEND: readonly LegendItem[] = [
-  { label: 'Diagonal base interval', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active interval', color: VIZ_WARNING },
-  { label: 'Candidate subproblem', color: VIZ_WINDOW },
-  { label: 'Committed best split', color: VIZ_SUCCESS },
-  { label: 'Optimal split trace', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const COIN_CHANGE_LEGEND: readonly LegendItem[] = [
-  { label: 'Base amount / reachable zero', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active amount check', color: VIZ_WARNING },
-  { label: 'Candidate predecessor', color: VIZ_WINDOW },
-  { label: 'Committed min-coin answer', color: VIZ_SUCCESS },
-  { label: 'Recovered coin path', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.unreachable, color: 'var(--red)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const SUBSET_SUM_LEGEND: readonly LegendItem[] = [
-  { label: 'Base case', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active sum check', color: VIZ_WARNING },
-  { label: 'Candidate predecessor', color: VIZ_WINDOW },
-  { label: 'Reachable boolean state', color: VIZ_SUCCESS },
-  { label: 'Recovered witness subset', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.reachable, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.unreachable, color: 'var(--red)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const LPS_LEGEND: readonly LegendItem[] = [
-  { label: 'Diagonal single-char base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active interval', color: VIZ_WARNING },
-  { label: 'Mirrored character pair', color: VIZ_ACCENT },
-  { label: 'Committed interval answer', color: VIZ_SUCCESS },
-  { label: 'Recovered palindrome trace', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const BURST_BALLOONS_LEGEND: readonly LegendItem[] = [
-  { label: 'Active interval', color: VIZ_WARNING },
-  { label: 'Candidate subinterval', color: VIZ_WINDOW },
-  { label: 'Saved last-burst split', color: VIZ_ACCENT },
-  { label: 'Committed max-coin score', color: VIZ_SUCCESS },
-  { label: 'Recovered burst order', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const WILDCARD_LEGEND: readonly LegendItem[] = [
-  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active transition', color: VIZ_WARNING },
-  { label: 'Direct char / ? match', color: VIZ_ACCENT },
-  { label: 'Reachable wildcard state', color: VIZ_SUCCESS },
-  { label: 'Recovered match route', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.prefixMatch, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.prefixMismatch, color: 'var(--red)', opacity: 0.6 },
 ];
 
 const LIS_LEGEND: readonly LegendItem[] = [
-  { label: 'Input strip / base value', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active end index', color: VIZ_WARNING },
-  { label: 'Candidate predecessor', color: VIZ_WINDOW },
-  { label: 'Committed LIS length', color: VIZ_SUCCESS },
-  { label: 'Recovered subsequence', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const CLIMBING_STAIRS_LEGEND: readonly LegendItem[] = [
-  { label: 'Base landing', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active stair', color: VIZ_WARNING },
-  { label: 'Previous two landings', color: VIZ_WINDOW },
-  { label: 'Committed ways count', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
 ];
 
 const FIBONACCI_LEGEND: readonly LegendItem[] = [
-  { label: 'Base term', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active term', color: VIZ_WARNING },
-  { label: 'Previous cache terms', color: VIZ_WINDOW },
-  { label: 'Committed Fibonacci value', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
 ];
 
 const REGEX_LEGEND: readonly LegendItem[] = [
-  { label: 'Base border', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active regex state', color: VIZ_WARNING },
-  { label: 'Dot / literal match', color: VIZ_ACCENT },
-  { label: 'Reachable regex state', color: VIZ_SUCCESS },
-  { label: 'Recovered derivation route', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.prefixMatch, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.prefixMismatch, color: 'var(--red)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const TSP_LEGEND: readonly LegendItem[] = [
-  { label: 'Start subset', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active subset expansion', color: VIZ_WARNING },
-  { label: 'Candidate predecessor state', color: VIZ_WINDOW },
-  { label: 'Committed subset route', color: VIZ_SUCCESS },
-  { label: 'Recovered optimal tour', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const SOS_LEGEND: readonly LegendItem[] = [
-  { label: 'Base subset row', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active SOS state', color: VIZ_WARNING },
-  { label: 'Candidate source states', color: VIZ_WINDOW },
-  { label: 'Committed aggregated value', color: VIZ_SUCCESS },
-  { label: 'Recovered contributing submasks', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const PROFILE_LEGEND: readonly LegendItem[] = [
-  { label: 'Empty frontier base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active profile state', color: VIZ_WARNING },
-  { label: 'Candidate predecessor profile', color: VIZ_WINDOW },
-  { label: 'Committed tiling count', color: VIZ_SUCCESS },
-  { label: 'Recovered frontier route', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const TREE_DP_LEGEND: readonly LegendItem[] = [
-  { label: 'Node weight base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active parent node', color: VIZ_WARNING },
-  { label: 'Child subtree being merged', color: VIZ_WINDOW },
-  { label: 'Committed subtree DP', color: VIZ_SUCCESS },
-  { label: 'Recovered independent set', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const BITMASK_DP_LEGEND: readonly LegendItem[] = [
-  { label: 'Empty-mask base', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active subset state', color: VIZ_WARNING },
-  { label: 'Candidate predecessor mask', color: VIZ_WINDOW },
-  { label: 'Committed subset cost', color: VIZ_SUCCESS },
-  { label: 'Recovered assignment path', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const CHT_LEGEND: readonly LegendItem[] = [
-  { label: 'Base point', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active query point', color: VIZ_WARNING },
-  { label: 'Candidate predecessor line', color: VIZ_WINDOW },
-  { label: 'Committed query answer', color: VIZ_SUCCESS },
-  { label: 'Recovered transition chain', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const DIVIDE_CONQUER_LEGEND: readonly LegendItem[] = [
-  { label: 'Base DP state', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active midpoint cell', color: VIZ_WARNING },
-  { label: 'Candidate split source', color: VIZ_WINDOW },
-  { label: 'Committed midpoint answer', color: VIZ_SUCCESS },
-  { label: 'Recovered partition cuts', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const KNUTH_LEGEND: readonly LegendItem[] = [
-  { label: 'Diagonal base interval', color: 'rgba(255,255,255,0.34)' },
-  { label: 'Active interval', color: VIZ_WARNING },
-  { label: 'Candidate subinterval', color: VIZ_WINDOW },
-  { label: 'Committed split window answer', color: VIZ_SUCCESS },
-  { label: 'Recovered merge tree', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.base, color: 'var(--slate)', opacity: 0.5 },
+  { label: I18N_KEY.features.algorithms.display.legend.currentCell, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.computed, color: 'var(--lime)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.resultPath, color: 'var(--lime)' },
 ];
 
 const UNION_FIND_LEGEND: readonly LegendItem[] = [
@@ -2862,7 +2872,7 @@ const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: SieveGridAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'integers',
   randomizeLabel: 'New range',
-  legendItems: () => [],
+  legendItems: () => SIEVE_LEGEND,
   presetOptions: ERATOSTHENES_PRESETS,
   defaultPresetId: DEFAULT_ERATOSTHENES_PRESET_ID,
   tasks: ERATOSTHENES_TASKS,

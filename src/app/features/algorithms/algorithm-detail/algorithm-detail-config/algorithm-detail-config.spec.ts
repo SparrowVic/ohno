@@ -1,5 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
+import { legendLedColor } from '../../workbench/utils/legend.utils';
 import {
   describeGraphPath,
   getAlgorithmViewConfig,
@@ -37,6 +41,89 @@ function makeGraphTrace(
     computation: null,
   };
 }
+
+const TABLE_FAMILY_IDS = [
+  'knapsack-01',
+  'longest-common-subsequence',
+  'edit-distance',
+  'matrix-chain-multiplication',
+  'coin-change',
+  'subset-sum',
+  'longest-palindromic-subsequence',
+  'burst-balloons',
+  'wildcard-matching',
+  'longest-increasing-subsequence',
+  'climbing-stairs',
+  'fibonacci-dp',
+  'regex-matching-dp',
+  'traveling-salesman-dp',
+  'sos-dp',
+  'profile-dp',
+  'dp-on-trees',
+  'dp-with-bitmask',
+  'dp-convex-hull-trick',
+  'divide-conquer-dp-optimization',
+  'knuth-dp-optimization',
+  'floyd-warshall',
+  'hungarian-algorithm',
+  'flood-fill',
+  'a-star-pathfinding',
+  'sieve-of-eratosthenes',
+];
+
+const LEGEND_KEY_PREFIX = 'features.algorithms.display.legend.';
+const TOKEN_COLOR = /^var\(--(cyan|pink|lime|amber|red|violet|slate)\)$/;
+
+const loadLegendLabels = (lang: string) =>
+  (
+    JSON.parse(readFileSync(resolve(process.cwd(), `public/i18n/${lang}.json`), 'utf8')) as {
+      features: { algorithms: { display: { legend: Record<string, string> } } };
+    }
+  ).features.algorithms.display.legend;
+
+const legendOf = (id: string) => {
+  const config = getAlgorithmViewConfig(id);
+  return config.legendItems(config.defaultVariant);
+};
+
+describe('table family legends', () => {
+  const labels = { pl: loadLegendLabels('pl'), en: loadLegendLabels('en') };
+
+  it.each(TABLE_FAMILY_IDS)('%s lists translated, token-coloured, distinct entries', (id) => {
+    const items = legendOf(id);
+
+    expect(items.length).toBeGreaterThan(0);
+    expect(new Set(items.map((item) => item.label)).size).toBe(items.length);
+    for (const item of items) {
+      expect(item.label.startsWith(LEGEND_KEY_PREFIX), item.label).toBe(true);
+      const key = item.label.slice(LEGEND_KEY_PREFIX.length);
+      expect(labels.pl[key], `pl ${key}`).toBeTruthy();
+      expect(labels.en[key], `en ${key}`).toBeTruthy();
+      expect(item.color, item.label).toMatch(TOKEN_COLOR);
+    }
+  });
+
+  it('follows the image 09 set for knapsack', () => {
+    expect(legendOf('knapsack-01').map((item) => [item.label.slice(LEGEND_KEY_PREFIX.length), legendLedColor(item.color)])).toEqual([
+      ['base', 'slate'],
+      ['currentCell', 'cyan'],
+      ['candidates', 'pink'],
+      ['computed', 'slate'],
+      ['doesNotFit', 'red'],
+      ['resultPath', 'lime'],
+    ]);
+  });
+
+  it('gives the sieve its own legend', () => {
+    expect(legendOf('sieve-of-eratosthenes').map((item) => legendLedColor(item.color))).toEqual([
+      'cyan',
+      'violet',
+      'pink',
+      'slate',
+      'lime',
+    ]);
+  });
+});
 
 describe('algorithm-detail-config', () => {
   it('exposes stable inspector storage keys and humanizes dashed labels', () => {

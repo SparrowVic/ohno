@@ -6,7 +6,20 @@ import { dijkstraGenerator } from '../../algorithms/dijkstra/dijkstra';
 import { dinicMaxFlowGenerator } from '../../algorithms/dinic-max-flow';
 import { hopcroftKarpGenerator } from '../../algorithms/hopcroft-karp';
 import { kmpPatternMatchingGenerator } from '../../algorithms/kmp-pattern-matching/kmp-pattern-matching';
+import { aStarPathfindingGenerator } from '../../algorithms/a-star-pathfinding/a-star-pathfinding';
+import { coinChangeGenerator } from '../../algorithms/coin-change/coin-change';
+import { editDistanceGenerator } from '../../algorithms/edit-distance/edit-distance';
+import { floodFillGenerator } from '../../algorithms/flood-fill/flood-fill';
+import { floydWarshallGenerator } from '../../algorithms/floyd-warshall/floyd-warshall';
+import { gaussianEliminationGenerator } from '../../algorithms/gaussian-elimination/gaussian-elimination';
+import { hungarianAlgorithmGenerator } from '../../algorithms/hungarian-algorithm';
 import { knapsack01Generator } from '../../algorithms/knapsack-01/knapsack-01';
+import { longestCommonSubsequenceGenerator } from '../../algorithms/longest-common-subsequence/longest-common-subsequence';
+import { regexMatchingDpGenerator } from '../../algorithms/regex-matching-dp/regex-matching-dp';
+import { matrixChainMultiplicationGenerator } from '../../algorithms/matrix-chain-multiplication/matrix-chain-multiplication';
+import { sieveOfEratosthenesGenerator } from '../../algorithms/sieve-of-eratosthenes/sieve-of-eratosthenes';
+import { simplexAlgorithmGenerator } from '../../algorithms/simplex-algorithm/simplex-algorithm';
+import { subsetSumGenerator } from '../../algorithms/subset-sum/subset-sum';
 import { kruskalsMstGenerator } from '../../algorithms/kruskals-mst';
 import { unionFindGenerator } from '../../algorithms/union-find';
 import { GraphNodeSnapshot, GraphStepState } from '../../models/graph';
@@ -15,6 +28,20 @@ import { ScratchpadLabTraceState } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { generateDijkstraGraph } from '../../utils/helpers/dijkstra-graph/dijkstra-graph';
+import {
+  createCoinChangeScenario,
+  createEditDistanceScenario,
+  createKnapsackScenario,
+  createRegexMatchingScenario,
+  createLcsScenario,
+  createMatrixChainScenario,
+  createSubsetSumScenario,
+} from '../../utils/scenarios/dp/dp-scenarios';
+import { createAStarScenario, createFloodFillScenario } from '../../utils/scenarios/grid/grid-scenarios';
+import { createFloydWarshallScenario } from '../../utils/scenarios/matrix/matrix-scenarios';
+import { createGaussianEliminationScenario } from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
+import { createSimplexAlgorithmScenario } from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
+import { createEratosthenesScenario } from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
 import { createDinicScenario, createHopcroftKarpScenario } from '../../utils/scenarios/network/network-scenarios';
 import {
   edgeFlow,
@@ -25,7 +52,11 @@ import {
   FamilyRegisterId,
   familyStageReadout,
   graphReadout,
+  matrixGridOperationCounts,
+  matrixPhaseText,
+  matrixResultCount,
   networkReadout,
+  operationProgress,
   relaxationCounts,
   scratchpadReadout,
 } from './family-readout.utils';
@@ -34,12 +65,14 @@ import { sortStep } from './step-events.fixture';
 
 const METER_IDS: readonly FamilyMeterId[] = [
   'settled', 'queue', 'relaxed', 'row', 'column', 'value', 'textIndex', 'patternIndex', 'matches', 'stack', 'checked',
-  'rejected', 'frontier', 'visited', 'result', 'pivot', 'improved', 'prime', 'bound', 'primes', 'components', 'merged',
+  'rejected', 'frontier', 'visited', 'result', 'pivot', 'improved', 'prime', 'bound', 'components', 'merged',
   'output', 'low', 'high', 'probe', 'frames', 'returns', 'iteration', 'explored', 'depth', 'phases', 'lines', 'hits',
-  'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows', 'operations',
+  'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows', 'operations', 'capacity',
+  'best', 'amount', 'sum', 'indexI', 'indexJ', 'matched', 'zeros', 'path', 'closed', 'painted', 'crossed',
 ];
 const GAUGE_IDS: readonly FamilyGaugeId[] = [
   'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
+  'matched', 'operations', 'closed',
 ];
 const REGISTER_IDS: readonly FamilyRegisterId[] = [
   'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col', 'level', 'cost',
@@ -61,8 +94,14 @@ function history(generator: Generator<SortStep>): readonly SortStep[] {
   return [...generator];
 }
 
-function readoutAt(steps: readonly SortStep[], index: number, variant: VisualizationVariant, relaxations?: number) {
-  const ctx: FamilyReadoutContext = { step: steps[index]!, index, lastIndex: steps.length - 1, variant, labels, relaxations };
+function readoutAt(
+  steps: readonly SortStep[],
+  index: number,
+  variant: VisualizationVariant,
+  relaxations?: number,
+  operations?: FamilyReadoutContext['operations'],
+) {
+  const ctx: FamilyReadoutContext = { step: steps[index]!, index, lastIndex: steps.length - 1, variant, labels, relaxations, operations };
   return familyStageReadout(ctx);
 }
 
@@ -88,30 +127,6 @@ describe('familyStageReadout', () => {
     const last = readoutAt(steps, steps.length - 1, 'dijkstra-graph')!;
     expect(last.tone).toBe('lime');
     expect(last.phaseLabel).toBe(steps.at(-1)!.graph!.phaseLabel);
-  });
-
-  it('reads row, column and value meters from a knapsack step', () => {
-    const steps = history(
-      knapsack01Generator({
-        kind: 'knapsack-01',
-        presetId: 'camp',
-        presetLabel: 'Camp',
-        presetDescription: 'camp',
-        capacity: 7,
-        items: [
-          { id: 'compass', label: 'Compass', weight: 2, value: 6 },
-          { id: 'torch', label: 'Torch', weight: 1, value: 3 },
-          { id: 'rope', label: 'Rope', weight: 3, value: 7 },
-        ],
-      }),
-    );
-    const activeIndex = steps.findIndex((step) => step.dp?.cells.some((cell) => cell.status === 'active'));
-    const readout = readoutAt(steps, activeIndex, 'dp')!;
-    expect(readout.meters.map((meter) => meter.id)).toEqual(['row', 'column', 'value']);
-    expect(readout.meters[0]!.total).toBe(steps[activeIndex]!.dp!.rowHeaders.length);
-    expect(readout.registers.map((item) => item.label)).toEqual(['r:i', 'r:c']);
-    expect(readout.gaugeLabel).toBe('g:rows');
-    expect(['cyan', 'pink']).toContain(readout.tone);
   });
 
   it('reads the text and pattern cursors from a KMP step and counts scanned characters', () => {
@@ -487,5 +502,291 @@ describe('networkReadout', () => {
     expect(meterValue(readoutAt(steps, steps.length - 1, 'network')!, 'edges')).toBe(last.edges.filter((item) => item.status === 'matched').length);
     const currentIndex = steps.findIndex((step) => step.network?.nodes.some((item) => item.status === 'current'));
     expect(readoutAt(steps, currentIndex, 'network')!.registers.map((item) => item.label)).toEqual(['r:u', 'r:level']);
+  });
+});
+
+const MATRIX_PHASE_KEY = 'features.algorithms.display.phases.matrix';
+
+function meterIds(readout: StageReadout): readonly string[] {
+  return readout.meters.map((item) => item.id);
+}
+
+function meterOf(readout: StageReadout, id: string) {
+  return readout.meters.find((item) => item.id === id);
+}
+
+describe('dpReadout', () => {
+  const knapsack = history(knapsack01Generator(createKnapsackScenario(5, 'camp')));
+
+  it('reads row, capacity and best like image 09 on the Rope × 5 compare step', () => {
+    const compareIndex = knapsack.findIndex((step) => {
+      const active = step.dp?.cells.find((cell) => cell.status === 'active');
+      return active?.row === 3 && active.col === 5 && step.dp?.computation?.result === '13';
+    });
+    expect(compareIndex).toBeGreaterThan(0);
+    const readout = readoutAt(knapsack, compareIndex, 'dp')!;
+    expect(meterIds(readout)).toEqual(['row', 'capacity', 'best']);
+    expect(meterOf(readout, 'row')).toMatchObject({ label: 'm:row', value: 3, total: 5 });
+    expect(meterOf(readout, 'capacity')).toMatchObject({ label: 'm:capacity', value: 5, total: 7 });
+    expect(meterOf(readout, 'best')).toMatchObject({ label: 'm:best', value: '13' });
+    expect(registerMap(readout)).toEqual({ 'r:i': '3', 'r:c': '5', 'r:w': '3', 'r:v': '7' });
+    expect(readout.gauge).toEqual({ count: 5, done: 2, lit: 3 });
+    expect(readout.gaugeLabel).toBe('g:rows');
+  });
+
+  it('prefers the pending computation result over the stale cell value on every knapsack compare step', () => {
+    knapsack.forEach((step, index) => {
+      const result = step.dp?.computation?.result;
+      if (typeof result !== 'string' || !/^\d+$/.test(result)) return;
+      expect(meterValue(readoutAt(knapsack, index, 'dp')!, 'best')).toBe(result);
+    });
+  });
+
+  it('fills the row gauge once the table is complete', () => {
+    const last = readoutAt(knapsack, knapsack.length - 1, 'dp')!;
+    expect(meterOf(last, 'row')).toMatchObject({ value: 5, total: 5 });
+    expect(last.gauge).toEqual({ count: 5, done: 5, lit: 5 });
+    expect(last.tone).toBe('lime');
+    const answer = last.meters.find((item) => item.id === 'best')?.value;
+    expect(answer).not.toBe('—');
+    expect(Number(answer)).toBeGreaterThan(0);
+  });
+
+  it('never runs the row gauge backwards while the traceback walks the table', () => {
+    const done = knapsack.map((_, index) => readoutAt(knapsack, index, 'dp')!.gauge?.done ?? 0);
+    done.slice(1).forEach((value, index) => expect(value).toBeGreaterThanOrEqual(done[index]!));
+  });
+
+  it('reads the base row of a regex table as row zero instead of an empty meter', () => {
+    const regex = history(regexMatchingDpGenerator(createRegexMatchingScenario(5, 'alias')));
+    const rowZero = regex.findIndex((step) => step.dp?.cells.some((cell) => cell.status === 'active' && cell.row === 0));
+    if (rowZero < 0) return;
+    const readout = readoutAt(regex, rowZero, 'dp')!;
+    expect(readout.meters[0]?.value).toBe(0);
+  });
+
+  it('shows an empty capacity and no registers when no cell is active', () => {
+    const readout = readoutAt(knapsack, 0, 'dp')!;
+    expect(meterValue(readout, 'capacity')).toBe('—');
+    expect(readout.registers).toEqual([]);
+  });
+
+  it('names the column axis amount for coin change and sum for subset sum', () => {
+    const coin = history(coinChangeGenerator(createCoinChangeScenario(5, 'classic')));
+    const coinIndex = coin.findIndex((step) => step.dp?.cells.some((cell) => cell.status === 'active'));
+    const coinReadout = readoutAt(coin, coinIndex, 'dp')!;
+    expect(meterIds(coinReadout)).toEqual(['row', 'amount', 'value']);
+    expect(meterOf(coinReadout, 'amount')?.total).toBe(coin[0]!.dp!.colHeaders.length - 1);
+    expect(meterOf(coinReadout, 'row')?.total).toBe(coin[0]!.dp!.rowHeaders.length - 1);
+
+    const subset = history(subsetSumGenerator(createSubsetSumScenario(5, 'classic')));
+    const subsetIndex = subset.findIndex((step) => step.dp?.computation?.result === 'T');
+    const subsetReadout = readoutAt(subset, subsetIndex, 'dp')!;
+    expect(meterIds(subsetReadout)).toEqual(['row', 'sum', 'value']);
+    expect(meterValue(subsetReadout, 'value')).toBe('T');
+  });
+
+  it('reads i and j indices for the string tables', () => {
+    const lcs = history(longestCommonSubsequenceGenerator(createLcsScenario(5, 'classic')));
+    const lcsIndex = lcs.findIndex((step) => step.dp?.cells.some((cell) => cell.status === 'active') && step.dp.computation);
+    const active = lcs[lcsIndex]!.dp!.cells.find((cell) => cell.status === 'active')!;
+    const readout = readoutAt(lcs, lcsIndex, 'dp')!;
+    expect(meterIds(readout)).toEqual(['indexI', 'indexJ', 'value']);
+    expect(meterOf(readout, 'indexI')).toMatchObject({ value: active.row, total: 5 });
+    expect(meterOf(readout, 'indexJ')).toMatchObject({ value: active.col, total: 5 });
+    expect(meterValue(readout, 'value')).toBe(lcs[lcsIndex]!.dp!.computation!.result);
+
+    const edit = history(editDistanceGenerator(createEditDistanceScenario(5, 'classic')));
+    const editIndex = edit.findIndex((step) => step.dp?.cells.some((cell) => cell.status === 'active'));
+    expect(meterIds(readoutAt(edit, editIndex, 'dp')!)).toEqual(['indexI', 'indexJ', 'value']);
+  });
+
+  it('keeps row, column and value with 1-based positions where the column axis has no obvious name', () => {
+    const chain = history(matrixChainMultiplicationGenerator(createMatrixChainScenario(5, 'classic')));
+    const index = chain.findIndex((step) => step.dp?.cells.some((cell) => cell.status === 'active'));
+    const active = chain[index]!.dp!.cells.find((cell) => cell.status === 'active')!;
+    const readout = readoutAt(chain, index, 'dp')!;
+    expect(meterIds(readout)).toEqual(['row', 'column', 'value']);
+    expect(meterOf(readout, 'row')).toMatchObject({ value: active.row + 1, total: chain[index]!.dp!.rowHeaders.length });
+    expect(meterOf(readout, 'column')).toMatchObject({ value: active.col + 1, total: chain[index]!.dp!.colHeaders.length });
+    expect(readout.registers.map((item) => item.label)).toEqual(['r:i', 'r:c']);
+  });
+});
+
+describe('matrixReadout', () => {
+  const floyd = history(floydWarshallGenerator(createFloydWarshallScenario(5)));
+
+  it('maps every Floyd-Warshall phase to a display key so no English reaches the op-line', () => {
+    floyd.forEach((step, index) => {
+      expect(readoutAt(floyd, index, 'matrix')!.phaseLabel.startsWith(MATRIX_PHASE_KEY)).toBe(true);
+    });
+    expect(matrixPhaseText('Pivot C')).toEqual({ key: `${MATRIX_PHASE_KEY}.pivot`, params: { pivot: 'C' } });
+    expect(matrixPhaseText('Pivot C complete')).toEqual({ key: `${MATRIX_PHASE_KEY}.pivotDone`, params: { pivot: 'C' } });
+    expect(matrixPhaseText('Adjust matrix 2')).toEqual({ key: `${MATRIX_PHASE_KEY}.adjustMatrix`, params: { round: '2' } });
+  });
+
+  it('falls back to the generic phase when a matrix phase is unknown', () => {
+    const step = floyd[3]!;
+    const unknown = { ...step, matrix: { ...step.matrix!, phaseLabel: 'Something new' } };
+    expect(readoutAt([floyd[0]!, floyd[1]!, floyd[2]!, unknown, floyd[4]!], 3, 'matrix')!.phaseLabel).toBe('Krok');
+  });
+
+  it('counts cumulative Floyd-Warshall improvements instead of the current step only', () => {
+    const last = floyd.length - 1;
+    const total = matrixResultCount(floyd[last]!.matrix!);
+    expect(total).toBeGreaterThan(1);
+    expect(meterValue(readoutAt(floyd, last, 'matrix')!, 'improved')).toBe(total);
+    let previous = 0;
+    floyd.forEach((_, index) => {
+      const value = Number(meterValue(readoutAt(floyd, index, 'matrix')!, 'improved'));
+      expect(value).toBeGreaterThanOrEqual(previous);
+      previous = value;
+    });
+    expect(readoutAt(floyd, last, 'matrix')!.gauge).toEqual({ count: 5, done: 5, lit: 5 });
+  });
+
+  it('reads the focus cell registers on update steps and the pivot gauge while comparing', () => {
+    const updateIndex = floyd.findIndex((step) => step.matrix?.cells.some((cell) => cell.status === 'improved'));
+    const readout = readoutAt(floyd, updateIndex, 'matrix')!;
+    expect(readout.registers.map((item) => item.label)).toEqual(['r:row', 'r:col']);
+    expect(readout.tone).toBe('pink');
+    const compareIndex = floyd.findIndex((step) => step.matrix?.pivotLabel === 'B' && step.matrix.cells.some((cell) => cell.status === 'active'));
+    expect(readoutAt(floyd, compareIndex, 'matrix')!.gauge).toEqual({ count: 5, done: 1, lit: 2 });
+  });
+
+  const hungarian = history(
+    hungarianAlgorithmGenerator({
+      kind: 'hungarian',
+      rowLabels: ['Ava', 'Ben', 'Cara', 'Dean'],
+      colLabels: ['UI', 'API', 'DB', 'QA'],
+      costs: [
+        [82, 83, 69, 92],
+        [77, 37, 49, 92],
+        [11, 69, 5, 86],
+        [8, 9, 98, 23],
+      ],
+    }),
+  );
+
+  it('shows matched, lines and zeros for Hungarian and reaches a cover step', () => {
+    const coverIndex = hungarian.findIndex((step) => step.matrix?.phaseLabel.startsWith('Cover zeros'));
+    expect(coverIndex).toBeGreaterThan(0);
+    const cover = readoutAt(hungarian, coverIndex, 'matrix')!;
+    expect(meterIds(cover)).toEqual(['matched', 'lines', 'zeros']);
+    const state = hungarian[coverIndex]!.matrix!;
+    const covered = [...state.rowHeaders, ...state.colHeaders].filter((header) => header.status === 'covered').length;
+    expect(covered).toBeGreaterThan(0);
+    expect(meterOf(cover, 'lines')).toMatchObject({ value: covered, total: 4 });
+    expect(meterOf(cover, 'matched')).toMatchObject({ value: matrixResultCount(state), total: 4 });
+    expect(cover.phaseLabel).toBe(`${MATRIX_PHASE_KEY}.coverZeros`);
+    expect(cover.gaugeLabel).toBe('g:matched');
+    const last = readoutAt(hungarian, hungarian.length - 1, 'matrix')!;
+    expect(meterValue(last, 'matched')).toBe(4);
+    expect(last.gauge).toEqual({ count: 4, done: 4, lit: 4 });
+  });
+
+  it('reads Hungarian registers from the active header row or column', () => {
+    const rowIndex = hungarian.findIndex((step) => step.matrix?.rowHeaders.some((header) => header.status === 'active'));
+    const rowState = hungarian[rowIndex]!.matrix!;
+    expect(readoutAt(hungarian, rowIndex, 'matrix')!.registers).toEqual([
+      { label: 'r:row', value: rowState.rowHeaders.find((header) => header.status === 'active')!.label },
+    ]);
+    const colIndex = hungarian.findIndex((step) => step.matrix?.colHeaders.some((header) => header.status === 'active'));
+    const colState = hungarian[colIndex]!.matrix!;
+    expect(readoutAt(hungarian, colIndex, 'matrix')!.registers).toEqual([
+      { label: 'r:col', value: colState.colHeaders.find((header) => header.status === 'active')!.label },
+    ]);
+  });
+});
+
+describe('matrixGridReadout', () => {
+  const gaussian = history(gaussianEliminationGenerator(createGaussianEliminationScenario(0, null)));
+  const simplex = history(simplexAlgorithmGenerator(createSimplexAlgorithmScenario(0, null)));
+
+  function gridAt(steps: readonly SortStep[], index: number): StageReadout {
+    return readoutAt(steps, index, 'matrix-grid', undefined, operationProgress(matrixGridOperationCounts(steps), index))!;
+  }
+
+  it('counts each row operation once and each simplex pivot once', () => {
+    const gaussianCounts = matrixGridOperationCounts(gaussian);
+    const operations = new Set(
+      gaussian
+        .map((step) => step.matrixGrid?.operationLabel)
+        .filter((label): label is string => typeof label === 'string' && label.includes('R_') && !label.includes('\\begin')),
+    );
+    expect(gaussianCounts.at(-1)).toBe(operations.size);
+    expect(matrixGridOperationCounts(simplex).at(-1)).toBe(2);
+    expect(operationProgress([0, 0, 0], 1)).toBeUndefined();
+    expect(operationProgress([0, 1, 2], 1)).toEqual({ done: 1, total: 2 });
+  });
+
+  it('shows the real Gaussian pivot from the table builder', () => {
+    const index = gaussian.findIndex((step) => step.matrixGrid?.cells.some((cell) => cell.state === 'pivot-row'));
+    const readout = gridAt(gaussian, index);
+    expect(meterValue(readout, 'pivot')).toMatch(/^(x|y|z|x\d+)$/);
+    expect(registerMap(readout)).toEqual({ 'r:row': 'R₁', 'r:col': 'x' });
+    expect(meterIds(readout)).toEqual(['operations', 'pivot', 'rows']);
+    expect(readout.gaugeLabel).toBe('g:operations');
+    expect(readout.gauge).toEqual({ count: matrixGridOperationCounts(gaussian).at(-1), done: 1, lit: 1 });
+  });
+
+  it('labels the Simplex pivot with the entering column and fills the gauge by the end', () => {
+    const selectIndex = simplex.findIndex((step) => step.matrixGrid?.tone === 'compute');
+    expect(meterValue(gridAt(simplex, selectIndex), 'pivot')).toBe('x');
+    const pivotIndex = simplex.findIndex((step) => step.matrixGrid?.cells.some((cell) => cell.state === 'pivot'));
+    const pivot = gridAt(simplex, pivotIndex);
+    expect(meterValue(pivot, 'pivot')).toBe('x');
+    expect(registerMap(pivot)).toEqual({ 'r:row': 'R₂', 'r:col': 'x' });
+    expect(gridAt(simplex, simplex.length - 1).gauge).toEqual({ count: 2, done: 2, lit: 2 });
+  });
+
+  it('falls back to the iteration meter and the row gauge without operation context', () => {
+    const readout = readoutAt(gaussian, 0, 'matrix-grid')!;
+    expect(meterIds(readout)).toEqual(['iteration', 'pivot', 'rows']);
+    expect(readout.gaugeLabel).toBe('g:rows');
+  });
+});
+
+describe('gridReadout', () => {
+  it('reads closed and path meters for A*', () => {
+    const steps = history(aStarPathfindingGenerator(createAStarScenario(8)));
+    const last = readoutAt(steps, steps.length - 1, 'grid')!;
+    expect(meterIds(last)).toEqual(['frontier', 'closed', 'path']);
+    expect(meterValue(last, 'path')).toBe(steps.at(-1)!.grid!.resultCount);
+    expect(meterValue(last, 'closed')).toBe(steps.at(-1)!.grid!.visitedCount);
+  });
+
+  it('reads a painted meter for flood fill', () => {
+    const steps = history(floodFillGenerator(createFloodFillScenario(8)));
+    const last = readoutAt(steps, steps.length - 1, 'grid')!;
+    expect(meterIds(last)).toEqual(['frontier', 'visited', 'painted']);
+    expect(meterValue(last, 'painted')).toBe(steps.at(-1)!.grid!.resultCount);
+  });
+});
+
+describe('sieveReadout', () => {
+  const steps = history(sieveOfEratosthenesGenerator(createEratosthenesScenario(48, null)));
+  const upper = steps[0]!.sieveGrid!.cells.at(-1)!.value;
+
+  it('reads n from the last cell and gauges only the candidates from 2', () => {
+    const readout = readoutAt(steps, 0, 'sieve-grid')!;
+    expect(registerMap(readout)['r:n']).toBe(String(upper));
+    expect(readout.gauge).toEqual({ count: upper - 1, done: 0, lit: 0 });
+    const last = readoutAt(steps, steps.length - 1, 'sieve-grid')!;
+    expect(last.gauge).toEqual({ count: upper - 1, done: upper - 1, lit: upper - 1 });
+  });
+
+  it('replaces the primes meter with the crossed composites so far', () => {
+    const lastState = steps.at(-1)!.sieveGrid!;
+    const primes = lastState.cells.filter((cell) => cell.state === 'prime').length;
+    const last = readoutAt(steps, steps.length - 1, 'sieve-grid')!;
+    expect(meterIds(last)).toEqual(['prime', 'bound', 'crossed']);
+    expect(meterValue(last, 'crossed')).toBe(upper - 1 - primes);
+    let previous = 0;
+    steps.forEach((_, index) => {
+      const value = Number(meterValue(readoutAt(steps, index, 'sieve-grid')!, 'crossed'));
+      expect(value).toBeGreaterThanOrEqual(previous);
+      previous = value;
+    });
   });
 });

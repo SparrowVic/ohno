@@ -1,9 +1,18 @@
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { OpLineRegister } from '../../../../shared/instrument/opline/opline.types';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { CallTreeLabTraceState } from '../../models/call-tree-lab';
-import { DpTraceState } from '../../models/dp';
+import {
+  buildMatrixGridTable,
+  isRowOperationLabel,
+  matrixGridColumnLabel,
+} from '../../components/matrix-grid-visualization/matrix-grid-display.utils';
+import { dpFocusCell } from '../../components/dp-visualization/dp-display.utils';
+import { matrixFocus, matrixPivotIndex } from '../../components/matrix-visualization/matrix-display.utils';
+import { smallestFactor } from '../../components/sieve-grid-visualization/sieve-display.utils';
+import { DpCell, DpMode, DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
 import { GeometryStepState } from '../../models/geometry';
 import { GraphStepState } from '../../models/graph';
@@ -15,7 +24,7 @@ import { NumberLabTraceState } from '../../models/number-lab';
 import { PointerLabTraceState } from '../../models/pointer-lab';
 import { ScratchpadLabTraceState, ScratchpadLine } from '../../models/scratchpad-lab';
 import { SearchTraceState } from '../../models/search';
-import { SieveGridTraceState } from '../../models/sieve-grid';
+import { SieveCellState, SieveGridCell, SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
 import { StringTraceState } from '../../models/string';
 import { TreeTraversalTraceState } from '../../models/tree';
@@ -42,7 +51,6 @@ export type FamilyMeterId =
   | 'improved'
   | 'prime'
   | 'bound'
-  | 'primes'
   | 'components'
   | 'merged'
   | 'output'
@@ -66,7 +74,19 @@ export type FamilyMeterId =
   | 'distance'
   | 'edges'
   | 'rows'
-  | 'operations';
+  | 'operations'
+  | 'capacity'
+  | 'best'
+  | 'amount'
+  | 'sum'
+  | 'indexI'
+  | 'indexJ'
+  | 'matched'
+  | 'zeros'
+  | 'path'
+  | 'closed'
+  | 'painted'
+  | 'crossed';
 
 export type FamilyGaugeId =
   | 'settled'
@@ -81,7 +101,10 @@ export type FamilyGaugeId =
   | 'frames'
   | 'explored'
   | 'events'
-  | 'cells';
+  | 'cells'
+  | 'matched'
+  | 'operations'
+  | 'closed';
 
 export type FamilyRegisterId =
   | 'u'
@@ -124,6 +147,7 @@ export interface FamilyReadoutContext {
   readonly variant: VisualizationVariant;
   readonly labels: FamilyReadoutLabels;
   readonly relaxations?: number;
+  readonly operations?: { readonly done: number; readonly total: number };
 }
 
 const EMPTY = '—';
@@ -188,30 +212,107 @@ export function graphReadout(state: GraphStepState, ctx: FamilyReadoutContext): 
   };
 }
 
-export function dpReadout(state: DpTraceState, ctx: FamilyReadoutContext): StageReadout {
-  const { labels, index, lastIndex } = ctx;
-  const active = state.cells.find((cell) => cell.status === 'active') ?? null;
-  const touchedRows = new Set(
+interface DpAxes {
+  readonly row: FamilyMeterId;
+  readonly column: FamilyMeterId;
+  readonly value: FamilyMeterId;
+}
+
+const DP_BASE_AXES: Partial<Readonly<Record<DpMode, DpAxes>>> = {
+  'knapsack-01': { row: 'row', column: 'capacity', value: 'best' },
+  'coin-change': { row: 'row', column: 'amount', value: 'value' },
+  'subset-sum': { row: 'row', column: 'sum', value: 'value' },
+  'longest-common-subsequence': { row: 'indexI', column: 'indexJ', value: 'value' },
+  'edit-distance': { row: 'indexI', column: 'indexJ', value: 'value' },
+  'wildcard-matching': { row: 'textIndex', column: 'patternIndex', value: 'value' },
+  'regex-matching-dp': { row: 'textIndex', column: 'patternIndex', value: 'value' },
+};
+
+const DP_PLAIN_AXES: DpAxes = { row: 'row', column: 'column', value: 'value' };
+const DP_RESULT = /^(-?\d+|T|F|∞)$/;
+const KNAPSACK_ITEM = /^w(\d+) · v(\d+)$/;
+
+export function dpResultValue(state: DpTraceState): string | null {
+  const result = state.computation?.result;
+  return typeof result === 'string' && DP_RESULT.test(result) ? result : null;
+}
+
+function dpAnswerCell(state: DpTraceState): DpCell | null {
+  const lastRow = state.rowHeaders.length - 1;
+  const lastCol = state.colHeaders.length - 1;
+  return state.cells.find((cell) => cell.row === lastRow && cell.col === lastCol && cell.valueLabel !== '·') ?? null;
+}
+
+function dpBestValue(state: DpTraceState, active: DpCell | null, complete: boolean): string {
+  const result = dpResultValue(state);
+  if (result !== null) return result;
+  if (active && active.valueLabel !== '·' && !complete) return active.valueLabel;
+  const improved = state.cells.find((cell) => cell.status === 'improved')?.valueLabel;
+  if (improved) return improved;
+  return (complete ? dpAnswerCell(state)?.valueLabel : active?.valueLabel) ?? EMPTY;
+}
+
+function dpRegisters(state: DpTraceState, active: DpCell | null, labels: FamilyReadoutLabels): OpLineRegister[] {
+  if (!active) return [];
+  if (state.mode !== 'knapsack-01') return [register('i', labels, active.rowLabel), register('c', labels, active.colLabel)];
+  const item = state.rowHeaders[active.row]?.metaLabel?.match(KNAPSACK_ITEM) ?? null;
+  const registers = [register('i', labels, active.row), register('c', labels, active.col)];
+  if (item) registers.push(register('w', labels, item[1]!), register('v', labels, item[2]!));
+  return registers;
+}
+
+interface DpProgress {
+  readonly row: number | string;
+  readonly done: number;
+  readonly lit: number;
+}
+
+function dpTouchedRows(state: DpTraceState): number {
+  return new Set(
     state.cells.filter((cell) => cell.status !== 'idle' && cell.status !== 'base' && cell.status !== 'blocked').map((cell) => cell.row),
-  );
-  const rowCount = state.rowHeaders.length;
-  const doneRows = state.rowHeaders.filter((_, row) =>
+  ).size;
+}
+
+function dpRowMajorProgress(state: DpTraceState, focus: DpCell | null, complete: boolean): DpProgress {
+  const rowCount = state.rowHeaders.length - 1;
+  if (complete) return { row: rowCount, done: rowCount, lit: rowCount };
+  const focusRow = focus?.row ?? state.rowHeaders.findIndex((header) => header.status === 'active');
+  if (focusRow >= 0) return { row: focusRow, done: Math.max(0, focusRow - 1), lit: focusRow };
+  return { row: EMPTY, done: 0, lit: 0 };
+}
+
+function dpTableProgress(state: DpTraceState, focus: DpCell | null): DpProgress {
+  const touched = dpTouchedRows(state);
+  const done = state.rowHeaders.filter((_, row) =>
     state.cells.filter((cell) => cell.row === row).every((cell) => cell.status !== 'idle'),
   ).length;
+  return { row: focus ? focus.row + 1 : touched, done, lit: Math.max(done, touched) };
+}
+
+export function dpReadout(state: DpTraceState, ctx: FamilyReadoutContext): StageReadout {
+  const { labels, index, lastIndex } = ctx;
+  const baseAxes = DP_BASE_AXES[state.mode];
+  const axes = baseAxes ?? DP_PLAIN_AXES;
+  const offset = baseAxes ? 1 : 0;
+  const focus = dpFocusCell(state);
   const hasPath = state.cells.some((cell) => cell.status === 'chosen' || cell.status === 'backtrack');
   const hasCandidate = state.cells.some((cell) => cell.status === 'candidate');
-  const tone = edgeTone(index, lastIndex, hasPath ? 'lime' : hasCandidate ? 'pink' : active ? 'cyan' : 'slate');
-  const best = active?.valueLabel ?? state.cells.find((cell) => cell.status === 'improved')?.valueLabel ?? EMPTY;
+  const tone = edgeTone(index, lastIndex, hasPath ? 'lime' : hasCandidate ? 'pink' : focus ? 'cyan' : 'slate');
+  const complete = state.cells.some((cell) => cell.status === 'backtrack') || index >= lastIndex;
+  const progress = baseAxes ? dpRowMajorProgress(state, focus, complete) : dpTableProgress(state, focus);
+  const rowCount = state.rowHeaders.length - offset;
+  const answerCol = state.colHeaders.length - 1 - offset;
+  const column = complete && baseAxes ? answerCol : focus ? focus.col + 1 - offset : baseAxes ? EMPTY : 0;
   return {
     meters: [
-      meter('row', labels, active ? active.row + 1 : touchedRows.size, rowCount),
-      meter('column', labels, active ? active.col + 1 : 0, state.colHeaders.length),
-      meter('value', labels, best, null, 2),
+      meter(axes.row, labels, progress.row, rowCount),
+      meter(axes.column, labels, column, state.colHeaders.length - offset),
+      meter(axes.value, labels, dpBestValue(state, focus, complete), null, 2),
     ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone,
-    registers: active ? [register('i', labels, active.rowLabel), register('c', labels, active.colLabel)] : [],
-    gauge: gauge(rowCount, doneRows, Math.max(doneRows, touchedRows.size)),
+    registers: dpRegisters(state, focus, labels),
+    gauge: gauge(rowCount, progress.done, progress.lit),
     gaugeLabel: labels.gauges.rows,
   };
 }
@@ -532,33 +633,110 @@ export function gridReadout(state: GridTraceState, ctx: FamilyReadoutContext): S
   const { labels, index, lastIndex } = ctx;
   const total = state.rows * state.cols;
   const active = state.cells.find((cell) => cell.id === state.activeCellId) ?? null;
+  const aStar = state.mode === 'a-star';
   return {
-    meters: [meter('frontier', labels, state.frontierCount), meter('visited', labels, state.visitedCount, total, 3), meter('result', labels, state.resultCount, null, 3)],
+    meters: [
+      meter('frontier', labels, state.frontierCount),
+      meter(aStar ? 'closed' : 'visited', labels, state.visitedCount, total, 3),
+      meter(aStar ? 'path' : 'painted', labels, state.resultCount, null, 3),
+    ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.statusLabel)),
     tone: edgeTone(index, lastIndex, state.cells.some((cell) => cell.status === 'path') ? 'lime' : active ? 'cyan' : 'slate'),
     registers: active ? [register('row', labels, active.row), register('col', labels, active.col)] : [],
     gauge: gauge(total, state.visitedCount),
-    gaugeLabel: labels.gauges.visited,
+    gaugeLabel: aStar ? labels.gauges.closed : labels.gauges.visited,
   };
 }
 
-export function matrixReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
+type MatrixPhaseId = keyof typeof I18N_KEY.features.algorithms.display.phases.matrix;
+
+const MATRIX_PHASES: readonly (readonly [RegExp, MatrixPhaseId, string | null])[] = [
+  [/^Initialize distance matrix$/, 'distanceMatrix', null],
+  [/^Pivot (.+) complete$/, 'pivotDone', 'pivot'],
+  [/^Pivot (.+)$/, 'pivot', 'pivot'],
+  [/^All-pairs shortest paths ready$/, 'distancesReady', null],
+  [/^Initialize cost matrix$/, 'costMatrix', null],
+  [/^Row reduction$/, 'rowReduction', null],
+  [/^Column reduction$/, 'columnReduction', null],
+  [/^Zero matching (\d+)$/, 'zeroMatching', 'round'],
+  [/^Cover zeros (\d+)$/, 'coverZeros', 'round'],
+  [/^Adjust matrix (\d+)$/, 'adjustMatrix', 'round'],
+  [/^Optimal assignment ready$/, 'assignmentReady', null],
+];
+
+export function matrixPhaseText(phaseLabel: string): TranslatableText | null {
+  for (const [pattern, id, param] of MATRIX_PHASES) {
+    const match = pattern.exec(phaseLabel);
+    if (!match) continue;
+    const key = I18N_KEY.features.algorithms.display.phases.matrix[id];
+    return param ? i18nText(key, { [param]: match[1] }) : i18nText(key);
+  }
+  return null;
+}
+
+const MATRIX_RESULT_COUNT = /^(?:updates|matched) (\d+)$/;
+const PIVOT_FINISHED = /^Pivot .+ complete$/;
+
+export function matrixResultCount(state: MatrixTraceState): number | null {
+  const match = MATRIX_RESULT_COUNT.exec(state.resultLabel);
+  return match ? Number(match[1]) : null;
+}
+
+function matrixPhase(state: MatrixTraceState, labels: FamilyReadoutLabels): string | null {
+  const text = matrixPhaseText(state.phaseLabel);
+  return text === null ? null : labels.translate(text);
+}
+
+function floydWarshallReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const improved = state.cells.filter((cell) => cell.status === 'improved' || cell.status === 'assignment').length;
-  const pivotIndex = state.rowHeaders.findIndex((header) => header.status === 'pivot');
-  const active = state.cells.find((cell) => cell.status === 'active' || cell.status === 'candidate') ?? null;
+  const improved = matrixResultCount(state) ?? state.cells.filter((cell) => cell.status === 'improved').length;
+  const size = state.rowHeaders.length;
+  const pivotIndex = matrixPivotIndex(state);
+  const pivotFinished = PIVOT_FINISHED.test(state.phaseLabel);
+  const done = pivotIndex < 0 ? (index >= lastIndex ? size : 0) : pivotFinished ? pivotIndex + 1 : pivotIndex;
+  const focus = matrixFocus(state);
+  const updating = state.cells.some((cell) => cell.status === 'improved');
   return {
     meters: [
       meter('pivot', labels, state.pivotLabel ?? EMPTY, state.rowHeaders.length),
       meter('improved', labels, improved, null, 3),
       meter('rows', labels, state.rowHeaders.length),
     ],
-    phaseLabel: phaseText(labels, index, lastIndex, state.phaseLabel),
-    tone: edgeTone(index, lastIndex, improved > 0 && active?.status === 'candidate' ? 'pink' : active ? 'cyan' : 'slate'),
-    registers: active ? [register('row', labels, active.rowLabel), register('col', labels, active.colLabel)] : [],
-    gauge: gauge(state.rowHeaders.length, pivotIndex < 0 ? 0 : pivotIndex, pivotIndex < 0 ? 0 : pivotIndex + 1),
+    phaseLabel: phaseText(labels, index, lastIndex, matrixPhase(state, labels)),
+    tone: edgeTone(index, lastIndex, updating ? 'pink' : focus ? 'cyan' : 'slate'),
+    registers: focus
+      ? [register('row', labels, state.rowHeaders[focus.row]?.label ?? null), register('col', labels, state.colHeaders[focus.col]?.label ?? null)]
+      : [],
+    gauge: gauge(size, done, pivotIndex < 0 ? done : pivotIndex + 1),
     gaugeLabel: labels.gauges.rows,
   };
+}
+
+function hungarianReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
+  const { labels, index, lastIndex } = ctx;
+  const size = state.rowHeaders.length;
+  const assigned = state.cells.filter((cell) => cell.status === 'assignment').length;
+  const matched = matrixResultCount(state) ?? assigned;
+  const lines = [...state.rowHeaders, ...state.colHeaders].filter((header) => header.status === 'covered').length;
+  const zeros = state.cells.filter((cell) => cell.valueLabel === '0').length;
+  const activeRow = state.rowHeaders.find((header) => header.status === 'active') ?? null;
+  const activeCol = state.colHeaders.find((header) => header.status === 'active') ?? null;
+  const adjusting = state.cells.some((cell) => cell.status === 'adjusted');
+  const registers: OpLineRegister[] = [];
+  if (activeRow) registers.push(register('row', labels, activeRow.label));
+  if (activeCol) registers.push(register('col', labels, activeCol.label));
+  return {
+    meters: [meter('matched', labels, matched, size), meter('lines', labels, lines, size), meter('zeros', labels, zeros)],
+    phaseLabel: phaseText(labels, index, lastIndex, matrixPhase(state, labels)),
+    tone: edgeTone(index, lastIndex, adjusting ? 'pink' : lines > 0 ? 'amber' : activeRow || activeCol ? 'cyan' : 'slate'),
+    registers,
+    gauge: gauge(size, matched),
+    gaugeLabel: labels.gauges.matched,
+  };
+}
+
+export function matrixReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
+  return state.mode === 'hungarian' ? hungarianReadout(state, ctx) : floydWarshallReadout(state, ctx);
 }
 
 const MATRIX_GRID_TONES: Readonly<Record<MatrixGridTraceState['tone'], LedColor>> = {
@@ -570,17 +748,60 @@ const MATRIX_GRID_TONES: Readonly<Record<MatrixGridTraceState['tone'], LedColor>
   fail: 'red',
 };
 
+const SUBSCRIPT_DIGITS = /[₀-₉]/g;
+
+function plainDigits(label: string): string {
+  return label.replace(SUBSCRIPT_DIGITS, (digit) => String(digit.charCodeAt(0) - 0x2080));
+}
+
+export function isMatrixGridOperation(state: MatrixGridTraceState, previous: MatrixGridTraceState | null): boolean {
+  if (state.mode === 'simplex') {
+    const pivot = state.cells.find((cell) => cell.state === 'pivot' && cell.row < state.rows - 1);
+    if (!pivot) return false;
+    return !previous?.cells.some((cell) => cell.state === 'pivot' && cell.row === pivot.row && cell.col === pivot.col);
+  }
+  return isRowOperationLabel(state.operationLabel) && state.operationLabel !== previous?.operationLabel;
+}
+
+export function matrixGridOperationCounts(history: readonly SortStep[]): readonly number[] {
+  let count = 0;
+  let previous: MatrixGridTraceState | null = null;
+  return history.map((step) => {
+    const state = step.matrixGrid ?? null;
+    if (state && isMatrixGridOperation(state, previous)) count += 1;
+    previous = state;
+    return count;
+  });
+}
+
+export function operationProgress(counts: readonly number[], index: number): FamilyReadoutContext['operations'] {
+  const total = counts.at(-1) ?? 0;
+  if (total === 0) return undefined;
+  return { done: counts[index] ?? 0, total };
+}
+
 export function matrixGridReadout(state: MatrixGridTraceState, ctx: FamilyReadoutContext): StageReadout {
-  const { labels, index, lastIndex } = ctx;
-  const pivot = state.cells.find((cell) => cell.state === 'pivot') ?? null;
+  const { labels, index, lastIndex, operations } = ctx;
+  const table = buildMatrixGridTable(state);
+  const pivot = table.pivot;
+  const entering = state.mode === 'simplex' ? (table.columns.find((column) => column.active) ?? null) : null;
+  const columnLabel = entering?.label ?? (pivot ? matrixGridColumnLabel(state, pivot.col) : null);
+  const pivotValue = columnLabel !== null ? plainDigits(columnLabel) : EMPTY;
+  const registers: OpLineRegister[] = [];
+  if (pivot) registers.push(register('row', labels, table.rows[pivot.row]?.label ?? null));
+  if (columnLabel !== null) registers.push(register('col', labels, columnLabel));
   const leading = state.cells.filter((cell) => cell.state === 'leading').length;
   return {
-    meters: [meter('iteration', labels, state.iteration), meter('pivot', labels, pivot ? `${pivot.row + 1}:${pivot.col + 1}` : EMPTY), meter('rows', labels, state.rows)],
+    meters: [
+      operations ? meter('operations', labels, operations.done, operations.total) : meter('iteration', labels, state.iteration),
+      meter('pivot', labels, pivotValue),
+      meter('rows', labels, state.rows),
+    ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, MATRIX_GRID_TONES[state.tone]),
-    registers: pivot ? [register('row', labels, pivot.row + 1), register('col', labels, pivot.col + 1)] : [],
-    gauge: gauge(state.rows, leading, pivot ? pivot.row + 1 : leading),
-    gaugeLabel: labels.gauges.rows,
+    registers,
+    gauge: operations ? gauge(Math.max(1, operations.total), operations.done) : gauge(state.rows, leading, pivot ? pivot.row + 1 : leading),
+    gaugeLabel: operations ? labels.gauges.operations : labels.gauges.rows,
   };
 }
 
@@ -592,16 +813,24 @@ const SIEVE_TONES: Readonly<Record<SieveGridTraceState['tone'], LedColor>> = {
   complete: 'lime',
 };
 
+const CROSSED_STATES: ReadonlySet<SieveCellState> = new Set<SieveCellState>(['composite', 'marking', 'just-marked']);
+
+export function isCrossedSieveCell(cell: SieveGridCell): boolean {
+  return CROSSED_STATES.has(cell.state) || (cell.state === 'current' && smallestFactor(cell.value) !== null);
+}
+
 export function sieveReadout(state: SieveGridTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const primes = state.cells.filter((cell) => cell.state === 'prime' || cell.state === 'current-prime').length;
-  const marked = state.cells.filter((cell) => cell.state !== 'unchecked').length;
+  const candidates = state.cells.filter((cell) => cell.value >= 2);
+  const crossed = candidates.filter(isCrossedSieveCell).length;
+  const marked = candidates.filter((cell) => cell.state !== 'unchecked').length;
+  const upper = state.cells.at(-1)?.value ?? null;
   return {
-    meters: [meter('prime', labels, state.activePrime ?? EMPTY), meter('bound', labels, state.bound), meter('primes', labels, primes)],
+    meters: [meter('prime', labels, state.activePrime ?? EMPTY), meter('bound', labels, state.bound), meter('crossed', labels, crossed, null, 2)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, SIEVE_TONES[state.tone]),
-    registers: [register('p', labels, state.activePrime), register('n', labels, state.cells.length)],
-    gauge: gauge(state.cells.length, marked),
+    registers: [register('p', labels, state.activePrime), register('n', labels, upper)],
+    gauge: gauge(candidates.length, marked),
     gaugeLabel: labels.gauges.marked,
   };
 }

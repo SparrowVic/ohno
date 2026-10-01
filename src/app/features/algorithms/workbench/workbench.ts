@@ -66,7 +66,13 @@ import {
   resolveTaskId,
 } from './utils/scenario.utils';
 import { plainSentence, sentenceParts } from './utils/sentence-markup.utils';
-import { FamilyReadoutLabels, familyStageReadout, relaxationCounts } from './utils/family-readout.utils';
+import {
+  FamilyReadoutLabels,
+  familyStageReadout,
+  matrixGridOperationCounts,
+  operationProgress,
+  relaxationCounts,
+} from './utils/family-readout.utils';
 import { FamilyTapeLabels, familyTapeOverrides } from './utils/family-tape.utils';
 import { genericStageReadout, sortingStageReadout, StageReadout, StageReadoutLabels } from './utils/stage-readout.utils';
 import { StepEventKind } from './utils/step-events.utils';
@@ -268,6 +274,7 @@ export class Workbench {
   });
   private readonly isSorting = computed(() => this.config()?.kind === 'array');
   private readonly relaxationCounts = computed(() => relaxationCounts(this.playback.history()));
+  private readonly operationCounts = computed(() => matrixGridOperationCounts(this.playback.history()));
 
   protected readonly readout = computed<StageReadout>(() => {
     const step = this.step();
@@ -284,6 +291,7 @@ export class Workbench {
         variant: this.variantState(),
         labels: this.familyLabels(),
         relaxations: this.relaxationCounts()[this.cursor()],
+        operations: operationProgress(this.operationCounts(), this.cursor()),
       });
     return family ?? genericStageReadout(this.cursor(), this.lastIndex(), labels);
   });
@@ -324,7 +332,11 @@ export class Workbench {
   protected readonly legendItems = computed<readonly LegendEntry[]>(() =>
     (this.config()?.legendItems(this.variantState()) ?? []).map((item) => {
       const key = legendLabelKey(item.label);
-      return { label: key ? this.translate(key) : item.label, color: legendLedColor(item.color) };
+      return {
+        label: key ? this.translate(key) : item.label,
+        color: legendLedColor(item.color),
+        dim: item.opacity !== undefined && item.opacity < 1,
+      };
     }),
   );
   protected readonly legendHints = computed<readonly LegendHint[]>(() => {
