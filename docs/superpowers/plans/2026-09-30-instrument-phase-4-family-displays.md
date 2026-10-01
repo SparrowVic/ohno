@@ -58,7 +58,10 @@ Same as Phase 3, plus:
 - [x] Step 5: trace host `variant`; `MatrixGridTracePanel` placeholder (facts only) so the branch exists.
 - [x] Step 6: i18n keys, extract, verify, commit "Lay the display language and family readouts".
 
-### Task 1: Graph family (image 08)
+### Task 1: Graph family (image 08) — DONE
+Rulings: generator node and edge labels map to `features.algorithms.display.{graph,network,tree,dsuGraph,dsu}.*` through lookup tables; the log printer names graph phases with short verbs (`workbench.log.phases.*`); task algorithms fold task, custom values and randomize into one *Zadanie* deck section; the wide workbench is not height-locked — the inspector is `contain: size` at ≥1280 so long code scrolls inside it; the deck gauge caps at 12 LEDs and scales progress; op-line math renders through KaTeX while tape, export and aria-live read `plainSentence()`.
+Follow-ups carried into later tasks: `_display` edge variants (red conflict, solid pink), `--node-value-size`, the `dsu-graph-layout` members-as-labels bug, the `pulseElement` default filter token, a min-cost register for networks, the DSU compressed tone, family tape verbs for dsu / network / tree.
+
 `graph-visualization`, `dsu-graph-visualization`, `dsu-visualization`, `network-visualization`, `tree-visualization`: LED-ring nodes (r 14, ring 1.5px, Doto label inside, Doto distance under), weight chips, tree edges lime, active edge pink dashed, settled nodes lime, frontier dotted amber ring, source violet; rack = queue (head cyan) + settled (lime); network rack = queue + focus items with `flow/cap` edge labels; tree rack = stack/queue + output tape; DSU rack = sets as LED chip rows. Readout: settled/queue/relaxations meters, gauge "Ustalone". Delete viz-header usage. Commit "Rebuild the graph displays in the dot language".
 
 ### Task 2: Table family (image 09)
@@ -84,3 +87,6 @@ Same as Phase 3, plus:
 
 ### Task 9: Sweep
 Delete `viz-panel`, `viz-header`, `viz-preset-picker`, `visualization-palette`; legend arrays and variant labels through keys; `rgba(var(` count in `src` → 0; `grep backdrop-filter` → 0; screenshots of all seven archetypes at 1440 / 360; CLAUDE.md + skills updated. Commit "Finish the family displays".
+
+### Task 10: Generator strings
+Step descriptions, phase labels and node/edge captions that generators still emit as English template strings (graph, network, tree, DSU, radix HUD and the call-tree lab) move to `features.algorithms.runtime.<family>.*` keys with `i18nText(key, params)`; PL first, then EN; specs assert keys, not prose. Commit "Translate the generator strings".
