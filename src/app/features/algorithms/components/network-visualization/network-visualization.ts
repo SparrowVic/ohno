@@ -11,234 +11,206 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
-import { NetworkEdgeSnapshot, NetworkNodeSnapshot, NetworkTraceState } from '../../models/network';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, isI18nText } from '../../../../core/i18n/translatable-text';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { NetworkEdgeStatus, NetworkNodeStatus, NetworkTraceState } from '../../models/network';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
   createMotionProfile,
   pulseSvgElement,
 } from '../../utils/helpers/visualization-motion/visualization-motion';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
+import {
+  NetworkBox,
+  NetworkEdgeGeometry,
+  NetworkRackEntry,
+  NetworkTone,
+  estimateChipWidth,
+  networkEdgeGeometry,
+  networkEdgeText,
+  networkEdgeTone,
+  networkFocusEntry,
+  networkLevelChip,
+  networkLinkLabel,
+  networkNodeTone,
+  networkQueueEntry,
+  networkRackTitle,
+  networkViewBox,
+  placeEdgeChips,
+} from './network-display.utils';
 
-/** Node radius — kept in sync with the `r` attribute on `.node__body`.
- *  Edges trim their endpoints by this amount so arrow tips land on
- *  the node border instead of getting swallowed by its fill. */
-const NETWORK_NODE_RADIUS = 22;
-/** Extra breathing room between the arrow tip and the node border. */
-const NETWORK_ARROW_TIP_INSET = 2;
-const NETWORK_CHIP_TEXT_WIDTH = 6.2;
-const NETWORK_CHIP_PADDING_X = 12;
+const NODE_RADIUS = 21;
+const ARROW_TIP_INSET = 3;
+const VIEW_PAD_X = 66;
+const VIEW_PAD_Y = 64;
+const CHIP_GLYPH_WIDTH = 7.8;
+const NODE_CHIP_OFFSET = NODE_RADIUS + 19;
+const NODE_CHIP_HEIGHT = 20;
+const LEVEL_SLOT_WIDTH = 34;
+const LINK_SLOT_WIDTH = 56;
+const CHIP_PADDING_X = 7;
+const EDGE_CHIP_LINE_HEIGHT = 17;
+const ARROW_TONES: readonly NetworkTone[] = ['slate', 'cyan', 'pink', 'lime', 'amber', 'red'];
+const ARROW_FILLS: Readonly<Record<NetworkTone, string>> = {
+  slate: 'var(--ink-3)',
+  cyan: 'var(--cyan)',
+  pink: 'var(--pink)',
+  lime: 'var(--lime)',
+  violet: 'var(--violet)',
+  amber: 'var(--amber)',
+  red: 'rgb(var(--red-rgb) / 0.6)',
+};
 
-interface ArrowMarker {
+interface RenderedNetworkNode {
   readonly id: string;
-  readonly fill: string;
+  readonly label: string;
+  readonly x: number;
+  readonly y: number;
+  readonly status: NetworkNodeStatus;
+  readonly tone: NetworkTone;
+  readonly isSink: boolean;
+  readonly levelText: string | null;
+  readonly levelWidth: number;
+  readonly linkText: string | null;
+  readonly linkWidth: number;
 }
 
-/** Palette of marker-end arrow heads. One per edge state so the user
- *  can tell at a glance whether an edge is quiet, under consideration,
- *  augmenting flow, or locked in as a matched / flow-carrying edge.
- *  Matches graph-viz's marker recipe (9x9 in `userSpaceOnUse` units,
- *  path `M0 0L9 4.5L0 9Z`). */
-const NETWORK_ARROW_MARKERS: readonly ArrowMarker[] = [
-  { id: 'networkArrowDefault', fill: 'rgba(255, 255, 255, 0.52)' },
-  { id: 'networkArrowActive', fill: 'rgb(var(--viz-warning-rgb) / 0.9)' },
-  { id: 'networkArrowAugment', fill: 'rgb(var(--viz-success-rgb) / 0.9)' },
-  { id: 'networkArrowFlow', fill: 'rgb(var(--viz-route-rgb) / 0.9)' },
-];
-
-/** Rendered edge — pre-computes trimmed endpoints + midpoint so the
- *  template doesn't have to do any geometry on a hot path. */
-interface RenderedNetworkEdge {
+interface RenderedNetworkEdge extends NetworkEdgeGeometry {
   readonly id: string;
-  readonly fromId: string;
-  readonly toId: string;
-  readonly status: NetworkEdgeSnapshot['status'];
-  readonly directed: boolean;
+  readonly status: NetworkEdgeStatus;
+  readonly tone: NetworkTone;
+  readonly marker: string | null;
   readonly primaryText: string;
   readonly secondaryText: string | null;
-  readonly x1: number;
-  readonly y1: number;
-  readonly x2: number;
-  readonly y2: number;
-  readonly midX: number;
-  readonly midY: number;
+  readonly chipWidth: number;
+  readonly chipHeight: number;
+  readonly chipX: number;
+  readonly chipY: number;
 }
 
+function nodeObstacles(nodes: readonly RenderedNetworkNode[]): readonly NetworkBox[] {
+  const ring = NODE_RADIUS * 2 + 6;
+  return nodes.flatMap((node) => [
+    { cx: node.x, cy: node.y, width: ring, height: ring },
+    { cx: node.x, cy: node.y - NODE_CHIP_OFFSET, width: Math.max(LEVEL_SLOT_WIDTH, node.levelWidth), height: NODE_CHIP_HEIGHT },
+    { cx: node.x, cy: node.y + NODE_CHIP_OFFSET, width: Math.max(LINK_SLOT_WIDTH, node.linkWidth), height: NODE_CHIP_HEIGHT },
+  ]);
+}
 
 @Component({
   selector: 'app-network-visualization',
-  imports: [TranslocoPipe, VizHeader, VizPanel],
+  imports: [TranslocoPipe, I18nTextPipe, OhnoRack, OhnoRackRow],
   templateUrl: './network-visualization.html',
   styleUrl: './network-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  private readonly language = inject(AppLanguageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly translation = toSignal(this.transloco.selectTranslation());
 
   protected readonly I18N_KEY = I18N_KEY;
+  protected readonly nodeRadius = NODE_RADIUS;
+  protected readonly nodeChipOffset = NODE_CHIP_OFFSET;
+  protected readonly arrowTones = ARROW_TONES;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  private readonly containerRef = viewChild.required<ElementRef<SVGSVGElement>>('container');
+  private readonly containerRef = viewChild<ElementRef<SVGSVGElement>>('container');
 
   private initialized = false;
   private lastStep: SortStep | null = null;
 
   readonly state = computed<NetworkTraceState | null>(() => this.step()?.network ?? null);
-  readonly nodes = computed(() => this.state()?.nodes ?? []);
-  readonly arrowMarkers = NETWORK_ARROW_MARKERS;
 
-  /** Enriched edges — raw endpoints trimmed back by the node radius
-   *  so the marker arrow tip meets the border cleanly, and a midpoint
-   *  for the capacity/flow label chip. Same recipe as graph-viz's
-   *  `edges` computed; keeps arrow heads from disappearing into the
-   *  node fill. */
-  readonly edges = computed<readonly RenderedNetworkEdge[]>(() => {
-    const nodes = this.state()?.nodes ?? [];
-    const raw = this.state()?.edges ?? [];
-    const byId = new Map(nodes.map((n) => [n.id, n] as const));
-    return raw.map((edge) => {
-      const from = byId.get(edge.fromId);
-      const to = byId.get(edge.toId);
-      const fromX = from?.x ?? 0;
-      const fromY = from?.y ?? 0;
-      const toX = to?.x ?? 0;
-      const toY = to?.y ?? 0;
-      const dx = toX - fromX;
-      const dy = toY - fromY;
-      const dist = Math.hypot(dx, dy) || 1;
-      const trim = Math.min(NETWORK_NODE_RADIUS + NETWORK_ARROW_TIP_INSET, dist / 2 - 0.5);
-      const ux = dx / dist;
-      const uy = dy / dist;
+  readonly viewBox = computed(() => {
+    const box = networkViewBox(this.state()?.nodes ?? [], VIEW_PAD_X, VIEW_PAD_Y);
+    return `${box.x} ${box.y} ${box.width} ${box.height}`;
+  });
+
+  readonly nodes = computed<readonly RenderedNetworkNode[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return state.nodes.map((node) => {
+      const levelText = this.resolve(networkLevelChip(state.mode, node.level));
+      const linkText = this.resolve(networkLinkLabel(node.linkLabel));
       return {
-        id: edge.id,
-        fromId: edge.fromId,
-        toId: edge.toId,
-        status: edge.status,
-        directed: edge.directed,
-        primaryText: edge.primaryText,
-        secondaryText: edge.secondaryText ?? null,
-        x1: fromX + ux * trim,
-        y1: fromY + uy * trim,
-        x2: toX - ux * trim,
-        y2: toY - uy * trim,
-        midX: (fromX + toX) / 2,
-        midY: (fromY + toY) / 2,
+        id: node.id,
+        label: node.label,
+        x: node.x,
+        y: node.y,
+        status: node.status,
+        tone: networkNodeTone(node.status),
+        isSink: node.lane === 'sink',
+        levelText,
+        levelWidth: levelText ? this.chipWidth(levelText, 28) : 0,
+        linkText,
+        linkWidth: linkText ? this.chipWidth(linkText, 28) : 0,
       };
     });
   });
 
-  /** Pick the marker-end URL for a given edge state. Mirrors graph-viz's
-   *  `edgeMarker` — undirected edges get no marker at all. */
-  edgeMarker(edge: RenderedNetworkEdge): string | null {
-    if (!edge.directed) return null;
-    if (edge.status === 'augment') return 'url(#networkArrowAugment)';
-    if (edge.status === 'active') return 'url(#networkArrowActive)';
-    if (edge.status === 'matched' || edge.status === 'flow') return 'url(#networkArrowFlow)';
-    return 'url(#networkArrowDefault)';
+  readonly edges = computed<readonly RenderedNetworkEdge[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    const nodesById = new Map(state.nodes.map((node) => [node.id, node] as const));
+    const drafts = state.edges.map((edge) => {
+      const tone = networkEdgeTone(edge.status);
+      const primaryText = this.resolve(networkEdgeText(edge.primaryText)) ?? '';
+      const secondaryText = this.resolve(networkEdgeText(edge.secondaryText));
+      const chipWidth = Math.max(
+        this.chipWidth(primaryText, 30),
+        secondaryText ? this.chipWidth(secondaryText, 30) : 0,
+      );
+      return {
+        ...networkEdgeGeometry(edge, nodesById, NODE_RADIUS + ARROW_TIP_INSET),
+        id: edge.id,
+        status: edge.status,
+        tone,
+        marker: edge.directed ? `url(#network-arrow-${tone})` : null,
+        primaryText,
+        secondaryText,
+        chipWidth,
+        chipHeight: secondaryText ? EDGE_CHIP_LINE_HEIGHT * 2 + 4 : EDGE_CHIP_LINE_HEIGHT + 5,
+      };
+    });
+    const positions = placeEdgeChips(
+      drafts.map((draft) => ({ x1: draft.x1, y1: draft.y1, x2: draft.x2, y2: draft.y2, width: draft.chipWidth, height: draft.chipHeight })),
+      nodeObstacles(this.nodes()),
+    );
+    return drafts.map((draft, index) => ({ ...draft, chipX: positions[index].x, chipY: positions[index].y }));
+  });
+
+  readonly queueTitle = computed<TranslatableText>(() => networkRackTitle(this.state()?.queueLabel ?? ''));
+  readonly queueRows = computed<readonly NetworkRackEntry[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return state.queue.map((label) => networkQueueEntry(label, state.nodes));
+  });
+
+  readonly focusTitle = computed<TranslatableText>(() => networkRackTitle(this.state()?.focusItemsLabel ?? ''));
+  readonly focusRows = computed<readonly NetworkRackEntry[]>(() =>
+    (this.state()?.focusItems ?? []).map((item) => networkFocusEntry(item)),
+  );
+
+  arrowFill(tone: NetworkTone): string {
+    return ARROW_FILLS[tone];
   }
 
-  /** SVG viewBox with a minimum floor matching graph-viz's default
-   *  (960 × 620). Fixed-viewport families keep node chrome at the
-   *  same on-screen size across algorithms: if the layout fits the
-   *  floor the content is centered inside it, and only graphs that
-   *  actually overflow get a larger viewport. Without this, a small
-   *  8-node flow network would scale its r=22 circles up to look
-   *  almost twice the size of a Dijkstra node in the same panel. */
-  readonly viewBox = computed(() => {
-    const nodes = this.nodes();
-    if (nodes.length === 0) return '0 0 960 620';
-
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-    for (const node of nodes) {
-      if (node.x < minX) minX = node.x;
-      if (node.x > maxX) maxX = node.x;
-      if (node.y < minY) minY = node.y;
-      if (node.y > maxY) maxY = node.y;
-    }
-
-    const pad = 68;
-    const contentWidth = maxX - minX + pad * 2;
-    const contentHeight = maxY - minY + pad * 2;
-    const width = Math.max(contentWidth, 960);
-    const height = Math.max(contentHeight, 620);
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
-    return `${cx - width / 2} ${cy - height / 2} ${width} ${height}`;
-  });
-
-  private readonly modeLabel = computed(
-    () =>
-      this.state()?.modeLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.modeFallback),
-  );
-  private readonly statusLabel = computed(
-    () =>
-      this.state()?.statusLabel ??
-      this.translate(I18N_KEY.features.algorithms.visualizations.network.statusFallback),
-  );
-  private readonly decisionLabel = computed(() => this.state()?.computation?.decision ?? null);
-  private readonly routeLabel = computed(() => this.state()?.activeRouteLabel ?? null);
-
-  /** Mode tag — the algorithm family ("Max-flow", "Matching", …). Stays
-   *  fixed across steps, so it reads as the viz's identity badge. */
-  readonly phaseLabel = computed<TranslatableText>(() => this.modeLabel());
-
-  /** Action sentence for the header. Priority:
-   *    1. `computation.decision` — richest per-step fact.
-   *    2. `activeRouteLabel`     — augmenting path under consideration.
-   *    3. `statusLabel`          — generic state fallback. */
-  readonly actionText = computed<TranslatableText>(() => {
-    const decision = this.decisionLabel();
-    if (decision) return decision;
-
-    const route = this.routeLabel();
-    if (route) return route;
-
-    return this.statusLabel();
-  });
-
-  /** Tone derived from edge/node status flags — same convention as
-   *  other viz headers:
-   *    - augment / matched / flow → sorted (lime, locked in)
-   *    - active                   → swap   (pink, acting now)
-   *    - blocked                  → compare (cyan, attending)
-   *    - current node             → compare
-   *    - idle                     → default */
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const state = this.state();
-    if (!state) return 'default';
-
-    const edges = state.edges;
-    if (edges.some((edge) => edge.status === 'augment')) return 'sorted';
-    if (edges.some((edge) => edge.status === 'matched' || edge.status === 'flow')) {
-      return 'sorted';
-    }
-    if (edges.some((edge) => edge.status === 'active')) return 'swap';
-    if (edges.some((edge) => edge.status === 'blocked')) return 'compare';
-
-    const nodes = state.nodes;
-    if (nodes.some((node) => node.status === 'current')) return 'compare';
-
-    return 'default';
-  });
+  readonly route = computed(() => this.state()?.activeRouteLabel ?? null);
 
   constructor() {
     effect(() => {
-      const arr = this.array();
+      const values = this.array();
       if (!this.initialized) return;
-      this.initialize(arr);
+      this.initialize(values);
       untracked(() => {
         const step = this.step();
         if (step) this.render(step);
@@ -247,9 +219,7 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
 
     effect(() => {
       const step = this.step();
-      if (this.initialized && step) {
-        this.render(step);
-      }
+      if (this.initialized && step) this.render(step);
     });
   }
 
@@ -279,53 +249,20 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     this.initialized = false;
   }
 
-  levelLabel(node: NetworkNodeSnapshot): string {
-    if (this.state()?.mode === 'min-cost-max-flow') {
-      return node.level === null ? 'C—' : `C${node.level}`;
-    }
-    return node.level === null ? 'L—' : `L${node.level}`;
-  }
-
-  metricChipWidth(node: NetworkNodeSnapshot): number {
-    return this.estimateChipWidth(this.levelLabel(node), 44);
-  }
-
-  linkLabel(node: NetworkNodeSnapshot): string {
-    return node.linkLabel ?? '—';
-  }
-
-  linkChipWidth(node: NetworkNodeSnapshot): number {
-    return this.estimateChipWidth(this.linkLabel(node), 64);
-  }
-
-  node(nodeId: string): NetworkNodeSnapshot | undefined {
-    return this.nodes().find((node) => node.id === nodeId);
-  }
-
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
     const current = step.network;
     const previous = previousStep?.network ?? null;
     if (!current) return;
 
     const motion = createMotionProfile(this.speed());
+    const flat = ['none', 'none', 'none'] as const;
 
     const previousCurrent = previous?.nodes.find((node) => node.status === 'current')?.id ?? null;
     const nextCurrent = current.nodes.find((node) => node.status === 'current')?.id ?? null;
     if (nextCurrent && nextCurrent !== previousCurrent) {
-      // Target the inner body circle — the wrapping `<g>` carries a
-      // translate() transform that would be clobbered by the pulse
-      // keyframes, snapping the node to (0,0) for the duration.
-      const nodeEl = this.findSvgElement(`[data-node-id="${nextCurrent}"] .node__body`);
-      if (nodeEl) {
-        pulseSvgElement(nodeEl, {
-          duration: motion.compareMs,
-          scale: 1.08,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 8px rgba(240,180,41,0.14))',
-            'drop-shadow(0 0 0 transparent)',
-          ],
-        });
+      const halo = this.findSvgElement(`[data-node-id="${nextCurrent}"] .node__halo`);
+      if (halo) {
+        pulseSvgElement(halo, { duration: motion.compareMs, scale: 1.3, opacity: [0.2, 0.9, 0.55], filter: flat });
       }
     }
 
@@ -333,38 +270,25 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     for (const edge of current.edges) {
       const prior = previousEdges.get(edge.id);
       if (!prior || prior === edge.status) continue;
-      if (edge.status !== 'augment' && edge.status !== 'matched' && edge.status !== 'flow')
-        continue;
-      // Target the line directly — same reason as above: the group
-      // has a translate'd edge-label child and pulsing the `<g>` would
-      // dislocate both the line and its label chip.
-      const edgeEl = this.findSvgElement(`[data-edge-id="${edge.id}"] .edge-line`);
-      if (!edgeEl) continue;
-      pulseSvgElement(edgeEl, {
-        duration: motion.settleMs,
-        scale: 1.015,
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 8px rgba(62,207,142,0.14))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
+      if (edge.status !== 'augment' && edge.status !== 'matched' && edge.status !== 'flow') continue;
+      const line = this.findSvgElement(`[data-edge-id="${edge.id}"] .network__edge`);
+      if (!line) continue;
+      pulseSvgElement(line, { duration: motion.settleMs, scale: 1, opacity: [1, 0.45, 1], filter: flat });
     }
   }
 
   private findSvgElement(selector: string): SVGElement | null {
-    return this.containerRef().nativeElement.querySelector<SVGElement>(selector);
+    return this.containerRef()?.nativeElement.querySelector<SVGElement>(selector) ?? null;
   }
 
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
+  private resolve(text: TranslatableText | null): string | null {
+    if (text === null) return null;
+    if (!isI18nText(text)) return text;
+    this.translation();
+    return this.transloco.translate(text.key, text.params);
   }
 
-  /** SVG chips need explicit geometry, so widen the rect to match the
-   *  mono text instead of letting longer labels spill past the fill. */
-  private estimateChipWidth(text: string, minWidth: number): number {
-    const glyphCount = Array.from(text).length;
-    return Math.max(minWidth, Math.ceil(glyphCount * NETWORK_CHIP_TEXT_WIDTH + NETWORK_CHIP_PADDING_X * 2));
+  private chipWidth(text: string, minWidth: number): number {
+    return estimateChipWidth(text, CHIP_GLYPH_WIDTH, CHIP_PADDING_X, minWidth);
   }
 }

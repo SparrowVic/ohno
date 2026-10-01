@@ -85,6 +85,23 @@
   color: var(--ink-2);
 }
 
+@media (min-width: 1280px) {
+  .workbench {
+    height: 100dvh;
+    min-height: 820px;
+  }
+
+  .workbench__stage {
+    min-height: 260px;
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .workbench {
+    min-height: 960px;
+  }
+}
+
 @media (max-width: 1439px) {
   .workbench__grid {
     grid-template-columns: minmax(0, 1fr) 400px;

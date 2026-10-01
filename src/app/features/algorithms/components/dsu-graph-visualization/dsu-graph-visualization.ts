@@ -1,13 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  input,
+  viewChild,
+} from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
-import {
-  DsuMode,
-  DsuNodeStatus,
-  DsuTraceState,
-} from '../../models/dsu';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { DsuEdgeStatus, DsuMode, DsuTraceState } from '../../models/dsu';
 import { SortStep } from '../../models/sort-step';
 import {
   DsuGraphPosition,
@@ -16,174 +22,239 @@ import {
   computeDsuGraphViewBox,
   layoutDsuCircle,
   layoutDsuForest,
-  unionFindEdgeStatusFromChild,
 } from '../../utils/helpers/dsu-graph-layout/dsu-graph-layout';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
+import {
+  DSU_EDGE_ARROW_TONES,
+  DsuChipTone,
+  DsuEdgeRow,
+  DsuEdgeTone,
+  DsuNodeTone,
+  DsuOperationRow,
+  DsuSetRow,
+  dsuArrowMarkerId,
+  dsuChipPoint,
+  dsuCurrentNodeId,
+  dsuEdgeRows,
+  dsuGroupsByNodeId,
+  dsuIsRoot,
+  dsuKruskalEdgeTone,
+  dsuNodeTone,
+  dsuOperationRows,
+  dsuParentEdgeTone,
+  dsuSetRows,
+  dsuSpreadRing,
+  dsuWeightChipTone,
+  dsuWeightChipWidth,
+} from './dsu-graph-visualization.utils';
 
-interface RenderedNode {
+interface DisplayNode {
   readonly id: string;
   readonly label: string;
-  readonly status: DsuNodeStatus;
+  readonly tone: DsuNodeTone;
   readonly isRoot: boolean;
+  readonly isCurrent: boolean;
+  readonly isQuery: boolean;
   readonly rank: number;
   readonly size: number;
   readonly x: number;
   readonly y: number;
 }
 
-interface ArrowMarker {
+interface DisplayEdge {
   readonly id: string;
-  readonly fill: string;
+  readonly x1: number;
+  readonly y1: number;
+  readonly x2: number;
+  readonly y2: number;
+  readonly tone: DsuEdgeTone;
+  readonly marker: string | null;
 }
 
-const ARROW_MARKERS: readonly ArrowMarker[] = [
-  { id: 'dsuArrowParent', fill: 'rgb(var(--chrome-accent-alt-rgb) / 0.7)' },
-  { id: 'dsuArrowActive', fill: 'rgb(var(--chrome-accent-warm-rgb) / 0.85)' },
-  { id: 'dsuArrowAccepted', fill: 'rgb(var(--accent-rgb) / 0.85)' },
-];
+interface WeightChip {
+  readonly id: string;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly weight: number;
+  readonly tone: DsuChipTone;
+  readonly status: DsuEdgeStatus;
+}
 
-const I18N = I18N_KEY.features.algorithms.visualizations.dsuGraph;
+interface ViewBoxFrame {
+  readonly value: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+const DISPLAY_KEYS = I18N_KEY.features.algorithms.display;
+const MIN_UNIT_SCALE = 0.5;
+const RING_RADIUS = 232;
+let nextInstanceId = 0;
 
 @Component({
   selector: 'app-dsu-graph-visualization',
-  imports: [TranslocoPipe, VizHeader, VizPanel],
+  imports: [TranslocoPipe, I18nTextPipe, OhnoRack, OhnoRackRow],
   templateUrl: './dsu-graph-visualization.html',
   styleUrl: './dsu-graph-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuGraphVisualization {
-  protected readonly I18N = I18N;
+  protected readonly keys = DISPLAY_KEYS;
+  protected readonly arrowTones = DSU_EDGE_ARROW_TONES;
+  private readonly markerPrefix = `dsu-graph-${nextInstanceId++}`;
+  private readonly rack = viewChild<ElementRef<HTMLElement>>('rack');
+  private readonly graphScroll = viewChild<ElementRef<HTMLElement>>('graphScroll');
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
-  readonly mode = computed<DsuMode>(() => this.state()?.mode ?? 'union-find');
-  readonly modeLabel = computed(() => this.state()?.modeLabel ?? '—');
-  readonly statusLabel = computed(() => this.state()?.statusLabel ?? '—');
-  readonly componentCount = computed(() => this.state()?.componentCount ?? 0);
-  readonly resultLabel = computed(() => this.state()?.resultLabel ?? '—');
-  readonly activeLabel = computed(() => this.state()?.activePairLabel ?? '—');
-  readonly decision = computed(() => this.state()?.decision ?? '—');
+  protected readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
+  protected readonly mode = computed<DsuMode>(() => this.state()?.mode ?? 'union-find');
 
-  readonly arrowMarkers = ARROW_MARKERS;
-
-  readonly nodePositions = computed<ReadonlyMap<string, DsuGraphPosition>>(() => {
+  private readonly positions = computed<ReadonlyMap<string, DsuGraphPosition>>(() => {
     const state = this.state();
     if (!state) return new Map();
     return state.mode === 'union-find'
-      ? layoutDsuForest(state.nodes, state.groups)
-      : layoutDsuCircle(state.nodes);
+      ? layoutDsuForest(state.nodes, dsuGroupsByNodeId(state.nodes, state.groups))
+      : dsuSpreadRing(layoutDsuCircle(state.nodes), RING_RADIUS);
   });
 
-  /** Tight-fit SVG viewBox — recomputed each step so forests of any
-   *  depth and rings of any count stay fully visible without nodes
-   *  getting clipped off the top, bottom or sides of the canvas. */
-  readonly viewBox = computed(() => computeDsuGraphViewBox(this.nodePositions()));
+  protected readonly viewBox = computed<ViewBoxFrame>(() => {
+    const value = computeDsuGraphViewBox(this.positions());
+    const [, , width, height] = value.split(' ').map(Number);
+    return { value, width: width ?? 0, height: height ?? 0 };
+  });
 
-  readonly renderedNodes = computed<readonly RenderedNode[]>(() => {
+  protected readonly minWidth = computed(() => Math.round(this.viewBox().width * MIN_UNIT_SCALE));
+  protected readonly minHeight = computed(() => Math.round(this.viewBox().height * MIN_UNIT_SCALE));
+
+  protected readonly nodes = computed<readonly DisplayNode[]>(() => {
     const state = this.state();
     if (!state) return [];
-    const positions = this.nodePositions();
+    const positions = this.positions();
+    const currentId = dsuCurrentNodeId(state.nodes);
     return state.nodes.map((node) => {
-      const pos = positions.get(node.id) ?? { x: 0, y: 0 };
+      const isRoot = dsuIsRoot(node);
+      const position = positions.get(node.id) ?? { x: 0, y: 0 };
       return {
         id: node.id,
         label: node.label,
-        status: node.status,
-        isRoot: node.parentId === node.id,
+        tone: dsuNodeTone(node.status, isRoot),
+        isRoot,
+        isCurrent: node.id === currentId,
+        isQuery: node.status === 'query',
         rank: node.rank,
         size: node.size,
-        x: pos.x,
-        y: pos.y,
+        x: position.x,
+        y: position.y,
       };
     });
   });
 
-  readonly renderedEdges = computed<readonly DsuGraphRenderedEdge[]>(() => {
+  private readonly renderedEdges = computed<readonly { edge: DsuGraphRenderedEdge; tone: DsuEdgeTone; status: DsuEdgeStatus | null }[]>(() => {
     const state = this.state();
     if (!state) return [];
-    const positions = this.nodePositions();
-
+    const positions = this.positions();
     if (state.mode === 'union-find') {
       return state.nodes
-        .filter((node) => node.parentId !== node.id)
-        .map((node) =>
-          buildDsuRenderedEdge({
+        .filter((node) => !dsuIsRoot(node))
+        .flatMap((node) => {
+          const edge = buildDsuRenderedEdge({
             id: `uf-${node.id}`,
             fromId: node.id,
             toId: node.parentId,
             from: positions.get(node.id),
             to: positions.get(node.parentId),
             weight: null,
-            status: unionFindEdgeStatusFromChild(node.status),
+            status: 'parent',
             directed: true,
-          }),
-        )
-        .filter((edge): edge is DsuGraphRenderedEdge => edge !== null);
+          });
+          return edge ? [{ edge, tone: dsuParentEdgeTone(node.status), status: null }] : [];
+        });
     }
-
-    return state.edges
-      .map((edge) =>
-        buildDsuRenderedEdge({
-          id: edge.id,
-          fromId: edge.fromId,
-          toId: edge.toId,
-          from: positions.get(edge.fromId),
-          to: positions.get(edge.toId),
-          weight: edge.weight,
-          status: edge.status,
-          directed: false,
-        }),
-      )
-      .filter((edge): edge is DsuGraphRenderedEdge => edge !== null);
+    return state.edges.flatMap((trace) => {
+      const edge = buildDsuRenderedEdge({
+        id: trace.id,
+        fromId: trace.fromId,
+        toId: trace.toId,
+        from: positions.get(trace.fromId),
+        to: positions.get(trace.toId),
+        weight: trace.weight,
+        status: trace.status,
+        directed: false,
+      });
+      return edge ? [{ edge, tone: dsuKruskalEdgeTone(trace.status), status: trace.status }] : [];
+    });
   });
 
-  /** Mode tag — "UNION-FIND" or "KRUSKAL" — passes straight through
-   *  the header's i18n-text pipe (modeLabel is already a translated
-   *  TranslatableText from the trace generator). */
-  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+  protected readonly edges = computed<readonly DisplayEdge[]>(() =>
+    [...this.renderedEdges()]
+      .sort((left, right) => edgeLayer(left.tone) - edgeLayer(right.tone))
+      .map(({ edge, tone }) => ({
+        id: edge.id,
+        x1: edge.x1,
+        y1: edge.y1,
+        x2: edge.x2,
+        y2: edge.y2,
+        tone,
+        marker: edge.directed ? `url(#${dsuArrowMarkerId(this.markerPrefix, tone)})` : null,
+      })),
+  );
 
-  /** Action sentence for the header. Priority:
-   *    1. `decision`    — richest per-step fact ("Union(3,7) accepted").
-   *    2. `activeLabel` — pair under consideration.
-   *    3. `statusLabel` — generic state. */
-  readonly actionText = computed<TranslatableText>(() => {
-    const state = this.state();
-    if (!state) return '';
-    return state.decision ?? state.activePairLabel ?? state.statusLabel ?? '';
-  });
+  protected readonly chips = computed<readonly WeightChip[]>(() =>
+    this.renderedEdges().flatMap(({ edge, status }) =>
+      edge.weight === null || status === null
+        ? []
+        : [
+            {
+              id: edge.id,
+              ...dsuChipPoint(edge),
+              width: dsuWeightChipWidth(edge.weight),
+              weight: edge.weight,
+              tone: dsuWeightChipTone(status),
+              status,
+            },
+          ],
+    ),
+  );
 
-  /** Tone from structural flags — same convention as graph-viz:
-   *    - accepted edge / merged-or-compressed node → sorted (lime, locked in)
-   *    - active edge / active-or-query node        → swap   (pink, acting now)
-   *    - rejected edge                              → compare (cyan, attending)
-   *    - idle                                       → default */
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const state = this.state();
-    if (!state) return 'default';
+  protected readonly setRows = computed<readonly DsuSetRow[]>(() => dsuSetRows(this.state()?.groups ?? []));
+  protected readonly edgeRows = computed<readonly DsuEdgeRow[]>(() =>
+    this.mode() === 'kruskal' ? dsuEdgeRows(this.state()?.edges ?? []) : [],
+  );
+  protected readonly operationRows = computed<readonly DsuOperationRow[]>(() =>
+    this.mode() === 'union-find' ? dsuOperationRows(this.state()?.edges ?? []) : [],
+  );
 
-    const edges = this.renderedEdges();
-    if (edges.some((edge) => edge.status === 'accepted')) return 'sorted';
-    if (edges.some((edge) => edge.status === 'active')) return 'swap';
-
-    const nodes = this.renderedNodes();
-    if (nodes.some((node) => node.status === 'merged' || node.status === 'compressed')) {
-      return 'sorted';
-    }
-    if (nodes.some((node) => node.status === 'active' || node.status === 'query')) {
-      return 'compare';
-    }
-
-    if (edges.some((edge) => edge.status === 'rejected')) return 'compare';
-    return 'default';
-  });
-
-  edgeMarker(edge: DsuGraphRenderedEdge): string | null {
-    if (!edge.directed) return null;
-    if (edge.status === 'active') return 'url(#dsuArrowActive)';
-    if (edge.status === 'accepted') return 'url(#dsuArrowAccepted)';
-    return 'url(#dsuArrowParent)';
+  constructor() {
+    afterRenderEffect(() => {
+      this.viewBox();
+      const scroller = this.graphScroll()?.nativeElement;
+      if (!scroller) return;
+      scroller.scrollLeft = Math.max(0, (scroller.scrollWidth - scroller.clientWidth) / 2);
+      scroller.scrollTop = Math.max(0, (scroller.scrollHeight - scroller.clientHeight) / 2);
+    });
+    afterRenderEffect(() => {
+      this.edgeRows();
+      this.operationRows();
+      const rack = this.rack()?.nativeElement;
+      const head = rack?.querySelector<HTMLElement>('ohno-rack-row[data-tone="head"]');
+      if (!rack || !head) return;
+      const top = head.offsetTop;
+      const bottom = top + head.offsetHeight;
+      if (top < rack.scrollTop) rack.scrollTop = top - 8;
+      else if (bottom > rack.scrollTop + rack.clientHeight) rack.scrollTop = bottom - rack.clientHeight + 8;
+    });
   }
+
+  protected markerId(tone: DsuEdgeTone): string {
+    return dsuArrowMarkerId(this.markerPrefix, tone);
+  }
+}
+
+function edgeLayer(tone: DsuEdgeTone): number {
+  if (tone === 'idle' || tone === 'red') return 0;
+  if (tone === 'lime') return 1;
+  return 2;
 }

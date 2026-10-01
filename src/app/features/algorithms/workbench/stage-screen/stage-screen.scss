@@ -59,6 +59,16 @@
   border: 0;
 }
 
+@media (min-width: 1280px) {
+  .stage {
+    min-height: 0;
+  }
+
+  .stage__display {
+    min-height: 140px;
+  }
+}
+
 @media (max-width: 767px) {
   .stage__meters {
     flex-wrap: wrap;

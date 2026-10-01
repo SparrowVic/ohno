@@ -67,6 +67,7 @@ import {
 } from './utils/scenario.utils';
 import { markupSentence } from './utils/sentence-markup.utils';
 import { FamilyReadoutLabels, familyStageReadout } from './utils/family-readout.utils';
+import { FamilyTapeLabels, familyTapeOverrides } from './utils/family-tape.utils';
 import { genericStageReadout, sortingStageReadout, StageReadout, StageReadoutLabels } from './utils/stage-readout.utils';
 import { StepEventKind } from './utils/step-events.utils';
 import { buildTapeRows, TapeFilter, TapeLabels } from './utils/tape-rows.utils';
@@ -291,6 +292,20 @@ export class Workbench {
     return step ? this.translateText(step.description) : '';
   });
   protected readonly sentenceHtml = computed(() => markupSentence(this.sentence()));
+  private readonly familyTapeLabels = computed<FamilyTapeLabels>(() => {
+    const phases = I18N_KEY.features.algorithms.workbench.log.phases;
+    return {
+      pickNode: this.translate(phases.pickNode),
+      inspectEdge: this.translate(phases.inspectEdge),
+      relax: this.translate(phases.relax),
+      skipRelax: this.translate(phases.skipRelax),
+      settleNode: this.translate(phases.settleNode),
+      complete: this.translate(phases.complete),
+    };
+  });
+  private readonly tapeOverrides = computed(() =>
+    this.isSorting() ? [] : familyTapeOverrides(this.playback.history(), this.familyTapeLabels()),
+  );
   protected readonly tapeRows = computed(() =>
     buildTapeRows(
       this.playback.events(),
@@ -299,6 +314,7 @@ export class Workbench {
       this.logFilterState(),
       this.tapeLabels(),
       (text) => this.translateText(text),
+      this.tapeOverrides(),
     ),
   );
 

@@ -13,77 +13,88 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
-import { DsuGroupTrace, DsuNodeTrace, DsuTraceState } from '../../models/dsu';
+import { DsuTraceState } from '../../models/dsu';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/helpers/visualization-motion/visualization-motion';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
+import {
+  cancelElementAnimations,
+  createMotionProfile,
+  prefersReducedMotion,
+  pulseElement,
+} from '../../utils/helpers/visualization-motion/visualization-motion';
+import {
+  DsuGroupRow,
+  dsuActivePairChanged,
+  dsuComplete,
+  dsuDecidedCount,
+  dsuFocusOperationId,
+  dsuGroupRows,
+  dsuMovedNodeIds,
+  dsuNoteTone,
+  dsuOperationRows,
+} from './dsu-display.utils';
 
-const I18N = I18N_KEY.features.algorithms.visualizations.dsu;
+interface ChipPosition {
+  readonly left: number;
+  readonly top: number;
+}
+
+const FLIP_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const NO_FILTER: readonly [string, string, string] = ['none', 'none', 'none'];
 
 @Component({
   selector: 'app-dsu-visualization',
-  imports: [I18nTextPipe, TranslocoPipe, VizHeader, VizPanel],
+  imports: [I18nTextPipe, TranslocoPipe, OhnoRack, OhnoRackRow],
   templateUrl: './dsu-visualization.html',
   styleUrl: './dsu-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  protected readonly I18N = I18N;
+  protected readonly DSU = I18N_KEY.features.algorithms.display.dsu;
+  protected readonly NOTES = I18N_KEY.features.algorithms.display.notes;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
+  private readonly groupsRef = viewChild<ElementRef<HTMLElement>>('groups');
+  private readonly opsRef = viewChild<string, ElementRef<HTMLElement>>('ops', { read: ElementRef });
 
   private initialized = false;
-  private lastStep: SortStep | null = null;
+  private lastState: DsuTraceState | null = null;
+  private positions = new Map<string, ChipPosition>();
 
-  readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
-
-  /** Algorithm tag — "Union-Find" or "Kruskal". Stays fixed for the
-   *  run; the header's rail tone adds the step-level motion. */
-  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
-
-  /** Action sentence. `decision` is the richest per-step fact; we
-   *  fall back to the generic status label when nothing meaningful
-   *  is decided yet. */
-  readonly actionText = computed<TranslatableText>(() => {
+  protected readonly state = computed<DsuTraceState | null>(() => this.step()?.dsu ?? null);
+  protected readonly rows = computed<readonly DsuGroupRow[]>(() => {
     const state = this.state();
-    if (!state) return '';
-    return state.decision ?? state.statusLabel ?? '';
+    return state ? dsuGroupRows(state) : [];
   });
-
-  /** Tone derived from edge/node statuses — mirrors the dsu-graph
-   *  viz convention so both DSU views read as the same family. */
-  readonly headerTone = computed<VizHeaderTone>(() => {
+  protected readonly operations = computed(() => {
     const state = this.state();
-    if (!state) return 'default';
-
-    const edges = state.edges;
-    if (edges.some((edge) => edge.status === 'accepted')) return 'sorted';
-    if (edges.some((edge) => edge.status === 'active')) return 'swap';
-
-    const nodes = state.nodes;
-    if (nodes.some((node) => node.status === 'merged' || node.status === 'compressed')) {
-      return 'sorted';
-    }
-    if (nodes.some((node) => node.status === 'active' || node.status === 'query')) {
-      return 'compare';
-    }
-
-    if (edges.some((edge) => edge.status === 'rejected')) return 'compare';
-    return 'default';
+    return state ? dsuOperationRows(state) : [];
+  });
+  protected readonly isKruskal = computed(() => this.state()?.mode === 'kruskal');
+  protected readonly rackMeta = computed(() => {
+    const state = this.state();
+    return state ? `${dsuDecidedCount(state)}/${state.edges.length}` : null;
+  });
+  protected readonly complete = computed(() => {
+    const state = this.state();
+    return state ? dsuComplete(state) : false;
+  });
+  protected readonly noteTone = computed(() => {
+    const state = this.state();
+    return state ? dsuNoteTone(state) : 'slate';
   });
 
   constructor() {
     effect(() => {
-      const arr = this.array();
+      const values = this.array();
       if (!this.initialized) return;
-      this.initialize(arr);
+      this.initialize(values);
       untracked(() => {
         const step = this.step();
         if (step) this.render(step);
@@ -92,9 +103,7 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
 
     effect(() => {
       const step = this.step();
-      if (this.initialized && step) {
-        this.render(step);
-      }
+      if (this.initialized && step) this.render(step);
     });
   }
 
@@ -110,86 +119,106 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
   }
 
   initialize(_: readonly number[]): void {
-    this.lastStep = null;
+    this.lastState = null;
+    this.positions.clear();
   }
 
   render(step: SortStep): void {
-    const previous = this.lastStep;
-    this.lastStep = step;
-    queueMicrotask(() => this.animateStepEffects(previous, step));
+    const previous = this.lastState;
+    const current = step.dsu ?? null;
+    this.lastState = current;
+    queueMicrotask(() => this.afterStep(previous, current));
   }
 
   destroy(): void {
-    this.lastStep = null;
+    this.lastState = null;
+    this.positions.clear();
     this.initialized = false;
   }
 
-  groups(): readonly DsuGroupTrace[] {
-    return [...(this.state()?.groups ?? [])].sort((left, right) => {
-      if (left.active !== right.active) return left.active ? -1 : 1;
-      return left.rootLabel.localeCompare(right.rootLabel);
-    });
+  protected memberList(row: DsuGroupRow): string {
+    return [row.root.label, ...row.members.map((chip) => chip.label)].join(', ');
   }
 
-  nodesForGroup(group: DsuGroupTrace): readonly DsuNodeTrace[] {
-    const traces = this.state()?.nodes ?? [];
-    return traces
-      .filter((node) => node.rootId === group.rootId)
-      .sort((left, right) => left.label.localeCompare(right.label));
-  }
+  private afterStep(previous: DsuTraceState | null, current: DsuTraceState | null): void {
+    const host = this.groupsRef()?.nativeElement;
+    if (!host || !current) {
+      this.positions.clear();
+      return;
+    }
 
-  nodeSubtitle(node: DsuNodeTrace): TranslatableText {
-    if (node.parentId === node.id) return I18N.nodeSubtitle.root;
-    return i18nText(I18N.nodeSubtitle.parent, { label: node.parentLabel });
-  }
-
-  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
-    const current = step.dsu;
-    const previous = previousStep?.dsu ?? null;
-    if (!current) return;
-
+    const moved = new Set(dsuMovedNodeIds(previous, current));
+    const next = this.measureChips(host);
+    const reduced = prefersReducedMotion();
     const motion = createMotionProfile(this.speed());
 
-    if (current.activePairLabel && current.activePairLabel !== previous?.activePairLabel) {
-      for (const node of current.nodes.filter(
-        (item) => item.status === 'active' || item.status === 'query',
-      )) {
-        const el = this.findElement(`[data-node-id="${node.id}"]`);
-        if (!el) continue;
-        pulseElement(el, {
-          duration: motion.compareMs,
-          scale: 1.025,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 8px rgba(240,180,41,0.14))',
-            'drop-shadow(0 0 0 transparent)',
-          ],
-        });
+    if (!reduced) {
+      for (const id of moved) {
+        const before = this.positions.get(id);
+        const after = next.get(id);
+        const chip = this.chipElement(host, id);
+        if (!before || !after || !chip) continue;
+        const dx = before.left - after.left;
+        const dy = before.top - after.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+        cancelElementAnimations(chip);
+        chip.animate(
+          [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }],
+          { duration: motion.swapMs, easing: FLIP_EASING },
+        );
+      }
+
+      if (moved.size === 0 && dsuActivePairChanged(previous, current)) {
+        for (const node of current.nodes) {
+          if (node.status !== 'active') continue;
+          const chip = this.chipElement(host, node.id);
+          if (chip) pulseElement(chip, { duration: motion.compareMs, scale: 1.06, filter: NO_FILTER });
+        }
       }
     }
 
-    const previousStatuses = new Map(
-      previous?.nodes.map((node) => [node.id, node.status]) ?? [],
-    );
-    for (const node of current.nodes) {
-      const prior = previousStatuses.get(node.id);
-      if (!prior || prior === node.status) continue;
-      if (node.status !== 'merged' && node.status !== 'compressed') continue;
-      const el = this.findElement(`[data-node-id="${node.id}"]`);
-      if (!el) continue;
-      pulseElement(el, {
-        duration: motion.settleMs,
-        scale: 1.02,
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          'drop-shadow(0 0 7px rgba(62,207,142,0.14))',
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-    }
+    this.positions = next;
+    this.revealFocus(host, current);
   }
 
-  private findElement(selector: string): HTMLElement | null {
-    return this.containerRef().nativeElement.querySelector(selector);
+  private measureChips(host: HTMLElement): Map<string, ChipPosition> {
+    const origin = host.getBoundingClientRect();
+    const result = new Map<string, ChipPosition>();
+    for (const chip of host.querySelectorAll<HTMLElement>('[data-node-id]')) {
+      const rect = chip.getBoundingClientRect();
+      const id = chip.dataset['nodeId'];
+      if (!id) continue;
+      result.set(id, {
+        left: rect.left - origin.left + host.scrollLeft,
+        top: rect.top - origin.top + host.scrollTop,
+      });
+    }
+    return result;
+  }
+
+  private chipElement(host: HTMLElement, id: string): HTMLElement | null {
+    return host.querySelector<HTMLElement>(`[data-node-id="${CSS.escape(id)}"]`);
+  }
+
+  private revealFocus(host: HTMLElement, state: DsuTraceState): void {
+    const activeRow = host.querySelector<HTMLElement>('.dsu__row[data-active="true"]');
+    if (activeRow) this.scrollWithin(host, activeRow);
+
+    const rack = this.opsRef()?.nativeElement;
+    const focusId = dsuFocusOperationId(state);
+    if (!rack || !focusId) return;
+    const row = rack.querySelector<HTMLElement>(`[data-op-id="${CSS.escape(focusId)}"]`);
+    if (row) this.scrollWithin(rack, row);
+  }
+
+  private scrollWithin(container: HTMLElement, target: HTMLElement): void {
+    const box = container.getBoundingClientRect();
+    const rect = target.getBoundingClientRect();
+    const margin = 8;
+    if (rect.top < box.top + margin) {
+      container.scrollTop -= box.top + margin - rect.top;
+    } else if (rect.bottom > box.bottom - margin) {
+      container.scrollTop += rect.bottom - (box.bottom - margin);
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
@@ -34,11 +35,13 @@ import { PassGauge } from '../utils/stage-readout.utils';
 import { PlaybackStatus, TransportAction } from '../utils/transport.utils';
 
 const MIN_SPEED = 1;
+const RANDOMIZE_TASK_ITEM = 'deck:randomize';
 const MAX_SPEED = 10;
 
 @Component({
   selector: 'ohno-transport-deck',
   imports: [
+    NgTemplateOutlet,
     OhnoCustomValuesForm,
     OhnoEngraving,
     OhnoFloatingPlate,
@@ -130,9 +133,10 @@ export class OhnoTransportDeck {
   protected readonly activeTaskLabel = computed(
     () => this.tasks().find((task) => task.id === this.activeTaskId())?.label ?? '',
   );
-  protected readonly taskItems = computed<readonly MenuItem[]>(() =>
-    this.tasks().map((task) => ({ id: task.id, label: task.label })),
-  );
+  protected readonly taskItems = computed<readonly MenuItem[]>(() => [
+    ...this.tasks().map((task) => ({ id: task.id, label: task.label })),
+    { id: RANDOMIZE_TASK_ITEM, label: this.randomizeLabel() },
+  ]);
   protected readonly hasCustom = computed(() => hasCustomFields(this.customSchema()));
   protected readonly hasPresets = computed(() => this.presetOptions().length > 1);
   protected readonly activePresetLabel = computed(() => {
@@ -150,6 +154,10 @@ export class OhnoTransportDeck {
 
   protected pickTask(id: string): void {
     this.taskMenuOpen.set(false);
+    if (id === RANDOMIZE_TASK_ITEM) {
+      this.randomize.emit();
+      return;
+    }
     if (id !== this.activeTaskId()) this.taskChange.emit(id);
   }
 

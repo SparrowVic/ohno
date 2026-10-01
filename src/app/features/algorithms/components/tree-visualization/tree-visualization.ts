@@ -1,261 +1,249 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
-  OnDestroy,
+  afterNextRender,
+  afterRenderEffect,
   computed,
-  effect,
+  inject,
   input,
-  output,
-  untracked,
+  signal,
   viewChild,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SortStep } from '../../models/sort-step';
-import { TreePresetOption, TreeTraversalTraceState } from '../../models/tree';
+import { TreeTraversalTraceState } from '../../models/tree';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
   createMotionProfile,
   pulseElement,
   pulseSvgElement,
 } from '../../utils/helpers/visualization-motion/visualization-motion';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
-import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
+import {
+  TreeEdgeTone,
+  TreeNodeTone,
+  TreeSegment,
+  treeBounds,
+  treeCapScale,
+  treeEdgeTone,
+  treeFitScale,
+  treeGaps,
+  treeGlyphMetrics,
+  treeIsFrontier,
+  treeNodeTone,
+  treeNodeValueText,
+  treeOutputCells,
+  treePendingRows,
+  treeSegment,
+  treeShowsTag,
+  treeViewBoxAttr,
+} from './tree-display.utils';
+
+const BASE_PADDING = { x: 40, top: 36, bottom: 44 };
+const MAX_PX_PER_UNIT = 1.6;
+const HALO_GAP_PX = 6;
+const EDGE_GAP_PX = 1.5;
+const TAG_GAP_PX = 12;
+const TAG_FONT_PX = 10;
+const EDGE_PAD_PX = 14;
+const TAG_PAD_PX = 26;
+
+interface TreeGlyphs {
+  readonly ring: number;
+  readonly halo: number;
+  readonly valueSize: number;
+  readonly valueDot: boolean;
+  readonly tagSize: number;
+  readonly tagOffset: number;
+  readonly showTags: boolean;
+}
+
+interface DisplayNode {
+  readonly id: string;
+  readonly label: string;
+  readonly value: string;
+  readonly valueDot: boolean;
+  readonly tag: boolean;
+  readonly x: number;
+  readonly y: number;
+  readonly tone: TreeNodeTone;
+  readonly current: boolean;
+  readonly frontier: boolean;
+}
+
+interface DisplayEdge extends TreeSegment {
+  readonly id: string;
+  readonly tone: TreeEdgeTone;
+}
 
 @Component({
   selector: 'app-tree-visualization',
-  imports: [TranslocoPipe, VizHeader, VizPanel, VizPresetPicker],
+  imports: [TranslocoPipe, I18nTextPipe, OhnoRack, OhnoRackRow],
   templateUrl: './tree-visualization.html',
   styleUrl: './tree-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TreeVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  protected readonly I18N_KEY = I18N_KEY;
+export class TreeVisualization implements VisualizationRenderer {
+  protected readonly I18N = I18N_KEY.features.algorithms.display.tree;
+  protected readonly RACKS = I18N_KEY.features.algorithms.display.racks;
+  protected readonly NOTES = I18N_KEY.features.algorithms.display.notes;
+  protected readonly REGISTERS = I18N_KEY.features.algorithms.display.registers;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
-  readonly presetOptions = input<readonly TreePresetOption[]>([]);
-  readonly presetId = input<string | null>(null);
-  readonly presetChange = output<string>();
 
-  private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
-  private initialized = false;
-  private lastStep: SortStep | null = null;
+  private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly svgRef = viewChild<ElementRef<SVGSVGElement>>('svg');
+  private readonly svgSize = signal({ width: 0, height: 0 });
+  private previous: TreeTraversalTraceState | null = null;
 
-  readonly state = computed<TreeTraversalTraceState | null>(() => this.step()?.tree ?? null);
+  protected readonly state = computed<TreeTraversalTraceState | null>(() => this.step()?.tree ?? null);
+  protected readonly levelOrder = computed(() => this.state()?.order === 'level-order');
+  protected readonly modeLabel = computed(() => this.state()?.modeLabel ?? '');
 
-  /** Algorithm tag — which traversal order. Stays stable across steps
-   *  so the phase chip reads as the viz's identity ("Preorder",
-   *  "Level-order"...). */
-  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+  private readonly gaps = computed(() => treeGaps(this.state()?.nodes ?? []));
 
-  /** Action sentence. `decisionLabel` captures the rule that fires
-   *  *now* (e.g. "emit current before descending") while `phaseLabel`
-   *  from the generator names the specific operation (push / visit /
-   *  backtrack). We show the decision because it explains WHY this
-   *  step matters, not just what's happening. */
-  readonly actionText = computed<TranslatableText>(() => {
-    const state = this.state();
-    if (!state) return '';
-    return state.decisionLabel ?? state.phaseLabel ?? '';
+  private readonly pxPerUnit = computed(() => {
+    const { width, height } = this.svgSize();
+    const box = treeBounds(this.state()?.nodes ?? [], BASE_PADDING);
+    return Math.min(MAX_PX_PER_UNIT, treeFitScale(box, width, height));
   });
 
-  /** Tone follows the per-step phase:
-   *    - visit       → swap   (acting now, emits to output)
-   *    - push        → compare (attending new frame)
-   *    - backtrack   → settle (yellow route — unwinding)
-   *    - complete    → sorted (lime, traversal done)
-   *    - everything else → default */
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const state = this.state();
-    if (!state) return 'default';
-    if (state.visitedCount >= state.totalNodes && state.totalNodes > 0) return 'sorted';
+  private readonly metrics = computed(() => treeGlyphMetrics(this.gaps(), this.pxPerUnit()));
 
-    const node = state.currentNodeId
-      ? state.nodes.find((n) => n.id === state.currentNodeId)
-      : null;
-    if (!node) return 'default';
-
-    switch (node.status) {
-      case 'current':
-        return 'swap';
-      case 'onStack':
-      case 'queued':
-        return 'compare';
-      case 'backtrack':
-        return 'settle';
-      case 'visited':
-        return 'sorted';
-      default:
-        return 'default';
-    }
+  protected readonly glyphs = computed<TreeGlyphs>(() => {
+    const unit = 1 / this.pxPerUnit();
+    const { ringPx, valuePx, valueDot, showTags } = this.metrics();
+    return {
+      ring: ringPx * unit,
+      halo: (ringPx + HALO_GAP_PX) * unit,
+      valueSize: valuePx * unit,
+      valueDot,
+      tagSize: TAG_FONT_PX * unit,
+      tagOffset: (ringPx + TAG_GAP_PX) * unit,
+      showTags,
+    };
   });
 
-  /** SVG viewBox with a minimum-size floor (960 × 620) matching the
-   *  rest of the graph family. Small trees stay centered inside the
-   *  reference canvas so node chrome renders at the same on-screen
-   *  size as Dijkstra / Dinic / Union-Find; deep trees that overflow
-   *  the floor still expand the viewport so nothing clips. */
-  readonly viewBox = computed(() => {
-    const state = this.state();
-    if (!state || state.nodes.length === 0) return '0 0 960 620';
-    const xs = state.nodes.map((n) => n.x);
-    const ys = state.nodes.map((n) => n.y);
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
-
-    const pad = 52;
-    const contentWidth = maxX - minX + pad * 2;
-    const contentHeight = maxY - minY + pad * 2;
-    const width = Math.max(contentWidth, 960);
-    const height = Math.max(contentHeight, 620);
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
-    return `${cx - width / 2} ${cy - height / 2} ${width} ${height}`;
+  protected readonly viewBox = computed(() => {
+    const unit = 1 / this.pxPerUnit();
+    const { ringPx, showTags } = this.metrics();
+    const { width, height } = this.svgSize();
+    const box = treeBounds(this.state()?.nodes ?? [], {
+      x: (ringPx + EDGE_PAD_PX) * unit,
+      top: (ringPx + EDGE_PAD_PX) * unit,
+      bottom: (ringPx + (showTags ? TAG_PAD_PX : EDGE_PAD_PX)) * unit,
+    });
+    return treeViewBoxAttr(treeCapScale(box, width, height, MAX_PX_PER_UNIT));
   });
 
-  readonly nodePositions = computed(() => {
+  protected readonly nodes = computed<readonly DisplayNode[]>(() => {
     const state = this.state();
-    if (!state) return new Map<string, { x: number; y: number }>();
-    const map = new Map<string, { x: number; y: number }>();
-    for (const node of state.nodes) {
-      map.set(node.id, { x: node.x, y: node.y });
-    }
-    return map;
+    if (!state) return [];
+    return state.nodes.map((node) => ({
+      id: node.id,
+      label: node.label,
+      value: treeNodeValueText(node),
+      valueDot: node.value !== null && this.glyphs().valueDot,
+      tag: treeShowsTag(node),
+      x: node.x,
+      y: node.y,
+      tone: treeNodeTone(node.status),
+      current: node.id === state.currentNodeId,
+      frontier: treeIsFrontier(node.status),
+    }));
   });
 
-  /** Labels the user sees on the stack strip (top-down) and queue
-   *  strip (front first). Strip is empty when the respective
-   *  container is empty. */
-  readonly stackItems = computed(() => this.resolveLabels(this.state()?.stack ?? []));
-  readonly queueItems = computed(() => this.resolveLabels(this.state()?.queue ?? []));
-
-  /** Which strip to render — stack for DFS, queue for BFS. Exposed as
-   *  a computed so the template can render a single block and switch
-   *  the heading. */
-  readonly stripKind = computed<'stack' | 'queue' | 'none'>(() => {
+  protected readonly edges = computed<readonly DisplayEdge[]>(() => {
     const state = this.state();
-    if (!state) return 'none';
-    if (state.order === 'level-order') return 'queue';
-    return 'stack';
+    if (!state) return [];
+    const byId = new Map(state.nodes.map((node) => [node.id, node]));
+    const inset = this.glyphs().ring + EDGE_GAP_PX / this.pxPerUnit();
+    const levelOrder = this.levelOrder();
+    return state.edges.flatMap((edge) => {
+      const from = byId.get(edge.fromId);
+      const to = byId.get(edge.toId);
+      if (!from || !to) return [];
+      return [{ id: edge.id, tone: treeEdgeTone(edge, levelOrder, to.status), ...treeSegment(from, to, inset) }];
+    });
   });
+
+  protected readonly pendingRows = computed(() => treePendingRows(this.state()));
+  protected readonly outputCells = computed(() => treeOutputCells(this.state()));
 
   constructor() {
-    effect(() => {
-      this.array();
-      if (!this.initialized) return;
-      this.initialize(this.array());
-      untracked(() => {
-        const step = this.step();
-        if (step) this.render(step);
+    const destroyRef = inject(DestroyRef);
+
+    afterNextRender(() => {
+      const element = this.svgRef()?.nativeElement;
+      if (!element || typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(([entry]) => {
+        const { width, height } = entry.contentRect;
+        this.svgSize.set({ width, height });
       });
+      observer.observe(element);
+      destroyRef.onDestroy(() => observer.disconnect());
     });
 
-    effect(() => {
+    afterRenderEffect(() => {
       const step = this.step();
-      if (this.initialized && step) {
-        this.render(step);
-      }
+      if (step) this.render(step);
     });
-  }
 
-  ngAfterViewInit(): void {
-    this.initialized = true;
-    this.initialize(this.array());
-    const step = this.step();
-    if (step) this.render(step);
-  }
-
-  ngOnDestroy(): void {
-    this.destroy();
+    destroyRef.onDestroy(() => this.destroy());
   }
 
   initialize(_: readonly number[]): void {
-    this.lastStep = null;
+    this.previous = null;
   }
 
   render(step: SortStep): void {
-    const previous = this.lastStep;
-    this.lastStep = step;
-    queueMicrotask(() => this.animateStepEffects(previous, step));
+    const current = step.tree ?? null;
+    const previous = this.previous;
+    this.previous = current;
+    if (!current || !previous) return;
+    this.animateStep(previous, current);
   }
 
   destroy(): void {
-    this.lastStep = null;
-    this.initialized = false;
+    this.previous = null;
   }
 
-  selectPreset(id: string): void {
-    this.presetChange.emit(id);
-  }
-
-  edgePath(edge: { fromId: string; toId: string }): string | null {
-    const from = this.nodePositions().get(edge.fromId);
-    const to = this.nodePositions().get(edge.toId);
-    if (!from || !to) return null;
-    // Simple straight segment — the tree layout already places
-    // children off-center so crossings don't happen for reasonable
-    // fan-outs. A curve would read as "branch" but visually we prefer
-    // crisp geometry that echoes the data structure.
-    return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
-  }
-
-  private resolveLabels(ids: readonly string[]): readonly { id: string; label: string }[] {
-    const state = this.state();
-    if (!state) return [];
-    const byId = new Map(state.nodes.map((n) => [n.id, n] as const));
-    return ids.map((id) => ({ id, label: byId.get(id)?.label ?? id }));
-  }
-
-  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
-    const current = step.tree;
-    const previous = previousStep?.tree ?? null;
-    if (!current) return;
-
+  private animateStep(previous: TreeTraversalTraceState, current: TreeTraversalTraceState): void {
     const motion = createMotionProfile(this.speed());
+    const host = this.hostRef.nativeElement;
     const currentId = current.currentNodeId;
-    if (currentId && currentId !== previous?.currentNodeId) {
-      // Target the inner body circle, NOT the parent `<g>`. The `<g>`
-      // carries a `transform="translate(...)"` attribute that would be
-      // overridden by the Web Animations API's `transform: scale(...)`
-      // keyframes — the node would jump to (0,0) for the pulse
-      // duration before snapping back. Circles have no transform
-      // attribute, so scaling around their fill-box centre is safe.
-      const nodeEl = this.containerRef().nativeElement.querySelector<SVGCircleElement>(
-        `[data-tree-node="${currentId}"] .tree-node__body`,
-      );
-      if (nodeEl) {
-        pulseSvgElement(nodeEl, {
+    if (currentId && currentId !== previous.currentNodeId) {
+      const ring = host.querySelector<SVGCircleElement>(`[data-node="${currentId}"] .node__ring`);
+      if (ring) {
+        pulseSvgElement(ring, {
           duration: motion.compareMs,
           scale: 1.08,
           filter: [
             'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 10px rgb(var(--chrome-accent-warm-rgb) / 0.5))',
+            'drop-shadow(0 0 8px rgb(var(--cyan-rgb) / 0.6))',
             'drop-shadow(0 0 0 transparent)',
           ],
         });
       }
     }
 
-    const prevOutput = previous?.output ?? [];
-    if (current.output.length > prevOutput.length) {
-      const tapeEl = this.containerRef().nativeElement.querySelector<HTMLElement>(
-        '.tree-output__chip:last-child',
-      );
-      if (tapeEl) {
-        pulseElement(tapeEl, {
+    if (current.output.length > previous.output.length) {
+      const cell = host.querySelector<HTMLElement>('.tree__cell:last-child');
+      if (cell) {
+        pulseElement(cell, {
           duration: motion.settleMs,
           scale: 1.08,
           filter: [
             'drop-shadow(0 0 0 transparent)',
-            'drop-shadow(0 0 12px rgb(var(--accent-rgb) / 0.5))',
+            'drop-shadow(0 0 8px rgb(var(--cyan-rgb) / 0.5))',
             'drop-shadow(0 0 0 transparent)',
           ],
         });

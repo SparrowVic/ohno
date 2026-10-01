@@ -9,6 +9,11 @@ export type TapeFilter = 'all' | 'compare' | 'swap' | 'pass';
 
 export const TAPE_FILTERS: readonly TapeFilter[] = ['all', 'compare', 'swap', 'pass'];
 
+export interface TapeEventOverride {
+  readonly event: string;
+  readonly tone: LedColor;
+}
+
 export interface TapeLabels {
   readonly events: Readonly<Record<StepEventKind, string>>;
   readonly passSeparator: (index: number) => string;
@@ -38,6 +43,7 @@ export function buildTapeRows(
   filter: TapeFilter,
   labels: TapeLabels,
   translate: (text: TranslatableText) => string,
+  overrides: readonly (TapeEventOverride | null)[] = [],
 ): readonly TapeRow[] {
   const allowed = FILTERS[filter];
   return events.flatMap((event): TapeRow[] => {
@@ -47,7 +53,16 @@ export function buildTapeRows(
     }
     const step = history[event.index];
     const detail = event.detail || (step ? translate(step.description) : '');
-    return [{ step: event.index, kind: 'event', tone: TONES[event.kind], event: labels.events[event.kind], detail }];
+    const override = overrides[event.index] ?? null;
+    return [
+      {
+        step: event.index,
+        kind: 'event',
+        tone: override?.tone ?? TONES[event.kind],
+        event: override?.event ?? labels.events[event.kind],
+        detail,
+      },
+    ];
   });
 }
 

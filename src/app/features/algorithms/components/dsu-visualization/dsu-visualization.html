@@ -1,41 +1,99 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
-
-  @if (state()) {
-    <div class="dsu-viz__groups" #container>
-      @for (group of groups(); track group.rootId) {
-        <article
-          class="dsu-group"
-          [class.dsu-group--active]="group.active"
-          [attr.data-group-root]="group.rootId"
+@if (state(); as dsu) {
+  <div class="display display--rack">
+    <div
+      #groups
+      class="display__main dsu__groups"
+      role="list"
+      [attr.aria-label]="NOTES.ariaDisplay | transloco"
+      [attr.data-density]="rows().length > 6 ? 'compact' : 'regular'"
+      [attr.data-complete]="complete()"
+    >
+      @for (row of rows(); track row.rootId; let first = $first) {
+        <div
+          class="dsu__row"
+          role="listitem"
+          [attr.data-active]="row.active"
+          [attr.aria-label]="DSU.groupAria | transloco: { root: row.root.label, members: memberList(row) }"
         >
-          <div class="dsu-group__head">
-            <div>
-              <div class="dsu-group__root">{{ group.rootLabel }}</div>
-              <div class="dsu-group__meta">
-                {{ I18N.nodeCount | transloco: { count: group.size } }}
-              </div>
-            </div>
-            <span class="dsu-group__badge">
-              {{ I18N.rootBadge | transloco: { label: group.rootLabel } }}
+          <div class="dsu__root" [attr.data-node-id]="row.root.id" [attr.data-tone]="row.root.tone" [attr.data-query]="row.root.query">
+            <span class="dsu__led" aria-hidden="true"></span>
+            <span class="dsu__root-label">{{ row.root.label }}</span>
+            <span class="dsu__root-rank">
+              <span class="dsu__caption">{{ DSU.rank | transloco }}</span>
+              <span class="dsu__rank-value">{{ row.rank }}</span>
             </span>
           </div>
 
-          <div class="dsu-group__chips">
-            @for (node of nodesForGroup(group); track node.id) {
-              <div
-                class="dsu-node-chip dsu-node-chip--{{ node.status }}"
-                [attr.data-node-id]="node.id"
-              >
-                <span class="dsu-node-chip__label">{{ node.label }}</span>
-                <span class="dsu-node-chip__meta">{{ nodeSubtitle(node) | i18nText }}</span>
-              </div>
+          <div class="dsu__chips">
+            @for (chip of row.members; track chip.id) {
+              <span class="dsu__chip" [attr.data-node-id]="chip.id" [attr.data-tone]="chip.tone" [attr.data-query]="chip.query">
+                <span class="dsu__led" aria-hidden="true"></span>
+                <span class="dsu__chip-label">{{ chip.label }}</span>
+                @if (chip.parentHint) {
+                  <span class="dsu__chip-parent">↑{{ chip.parentHint }}</span>
+                }
+              </span>
             }
           </div>
-        </article>
+
+          <div class="dsu__size">
+            <span class="dsu__caption" [class.dsu__caption--quiet]="!first">{{ DSU.size | transloco }}</span>
+            <span class="dsu__size-value">{{ row.size }}</span>
+          </div>
+        </div>
       }
     </div>
-  } @else {
-    <p class="dsu-viz__empty">{{ I18N.emptyLabel | transloco }}</p>
-  }
-</app-viz-panel>
+
+    <div class="display__rack dsu__rack">
+      <ohno-rack
+        #ops
+        class="dsu__ops"
+        [title]="(isKruskal() ? DSU.edges : DSU.operations) | transloco"
+        [meta]="rackMeta()"
+      >
+        @for (op of operations(); track op.id) {
+          <ohno-rack-row [tone]="op.tone" [attr.data-op-id]="op.id">
+            <span rackLead class="dsu__op-lead">
+              @switch (op.kind) {
+                @case ('find') {
+                  {{ DSU.find | transloco: { label: op.fromLabel } }}
+                }
+                @default {
+                  {{ op.fromLabel }}–{{ op.toLabel }}
+                }
+              }
+            </span>
+            <span class="dsu__op-verdict" [attr.data-verdict]="op.verdict">
+              @switch (op.verdict) {
+                @case ('accepted') {
+                  ✓
+                }
+                @case ('rejected') {
+                  ×
+                }
+              }
+            </span>
+            <span rackValue class="dsu__op-value">
+              @if (op.weight !== null) {
+                {{ op.weight }}
+              } @else {
+                <span class="dsu__op-index">{{ op.order }}</span>
+              }
+            </span>
+          </ohno-rack-row>
+        } @empty {
+          <ohno-rack-row tone="dim">{{ NOTES.empty | transloco }}</ohno-rack-row>
+        }
+      </ohno-rack>
+
+      @if (dsu.decision; as decision) {
+        <div class="dsu__note" [attr.data-tone]="noteTone()">
+          <span class="dsu__note-title">{{ DSU.decision | transloco }}</span>
+          {{ decision | i18nText }}
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="dsu__empty">{{ NOTES.empty | transloco }}</div>
+}

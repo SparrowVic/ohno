@@ -111,8 +111,8 @@
 
 .deck__section--task {
   flex: 1 1 180px;
-  min-width: 160px;
-  max-width: 240px;
+  min-width: 150px;
+  max-width: 300px;
 }
 
 .deck__task-key {
@@ -127,12 +127,23 @@
   max-width: 100%;
 }
 
-.deck__task-key ::ng-deep .ohno-key__label,
-.deck__data-key ::ng-deep .ohno-key__label {
+.deck__task-key ::ng-deep .ohno-key__label {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.deck__data-key ::ng-deep .ohno-key__label {
+  display: -webkit-box;
+  white-space: normal;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.12;
+  text-align: left;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .deck__data {

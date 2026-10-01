@@ -1,120 +1,85 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
-
-  @if (state(); as tree) {
-    <div class="tree-canvas" #container>
-      <svg
-        class="tree-svg"
-        [attr.viewBox]="viewBox()"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <defs>
-          <filter id="tree-node-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        <!-- Edges first so nodes paint on top. -->
-        @for (edge of tree.edges; track edge.id) {
-          <path
-            class="tree-edge"
-            [class.tree-edge--on-path]="edge.isOnPath"
-            [class.tree-edge--traversed]="edge.isTraversed"
-            [attr.d]="edgePath(edge)"
+<div class="display display--rack">
+  <div class="display__main tree">
+    <svg
+      #svg
+      class="tree__svg"
+      [attr.viewBox]="viewBox()"
+      [style.--tree-value-size]="glyphs().valueSize + 'px'"
+      [style.--tree-tag-size]="glyphs().tagSize + 'px'"
+      preserveAspectRatio="xMidYMid meet"
+      role="group"
+      [attr.aria-label]="NOTES.ariaDisplay | transloco"
+    >
+      <g class="tree__edges">
+        @for (edge of edges(); track edge.id) {
+          <line
+            class="tree__edge"
+            [attr.data-tone]="edge.tone"
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
           />
         }
+      </g>
 
-        @for (node of tree.nodes; track node.id) {
+      <g class="tree__nodes">
+        @for (node of nodes(); track node.id) {
           <g
-            class="tree-node tree-node--{{ node.status }}"
-            [class.tree-node--root]="node.parentId === null"
-            [attr.data-tree-node]="node.id"
-            [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+            class="tree__node"
+            role="img"
+            [attr.data-node]="node.id"
+            [attr.data-tone]="node.tone"
+            [attr.data-current]="node.current"
+            [attr.data-frontier]="node.frontier"
+            [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+            [attr.aria-label]="I18N.nodeAria | transloco: { label: node.label, value: node.value }"
           >
-            <circle class="tree-node__halo" r="30" />
-            <circle class="tree-node__body" r="22" filter="url(#tree-node-glow)" />
-            <text class="tree-node__label" y="5">{{ node.label }}</text>
-            @if (node.value !== null) {
-              <text class="tree-node__value" y="36">{{ node.value }}</text>
+            <circle class="node__halo" [attr.r]="glyphs().halo" />
+            <circle class="node__ring" [attr.r]="glyphs().ring" />
+            <text class="node__value tree__value" [attr.data-dot]="node.valueDot">{{ node.value }}</text>
+            @if (node.tag && glyphs().showTags) {
+              <text class="tree__tag" [attr.y]="glyphs().tagOffset">{{ node.label }}</text>
             }
           </g>
         }
-      </svg>
+      </g>
+    </svg>
+  </div>
 
-      <!-- Support strips: live stack/queue + emitted output tape. -->
-      <aside class="tree-support">
-        @if (stripKind() === 'stack') {
-          <section class="tree-strip tree-strip--stack">
-            <header class="tree-strip__head">
-              <span class="tree-strip__label">{{
-                I18N_KEY.features.algorithms.tracePanels.tree.stackLabel | transloco
-              }}</span>
-              <span class="tree-strip__count">{{ stackItems().length }}</span>
-            </header>
-            <div class="tree-strip__items">
-              @if (stackItems().length === 0) {
-                <span class="tree-strip__empty">—</span>
-              } @else {
-                @for (item of stackItems(); track item.id; let isLast = $last) {
-                  <span
-                    class="tree-strip__chip"
-                    [class.tree-strip__chip--top]="isLast"
-                    >{{ item.label }}</span
-                  >
-                }
-              }
-            </div>
-          </section>
-        } @else if (stripKind() === 'queue') {
-          <section class="tree-strip tree-strip--queue">
-            <header class="tree-strip__head">
-              <span class="tree-strip__label">{{
-                I18N_KEY.features.algorithms.tracePanels.tree.queueLabel | transloco
-              }}</span>
-              <span class="tree-strip__count">{{ queueItems().length }}</span>
-            </header>
-            <div class="tree-strip__items">
-              @if (queueItems().length === 0) {
-                <span class="tree-strip__empty">—</span>
-              } @else {
-                @for (item of queueItems(); track item.id; let isFirst = $first) {
-                  <span
-                    class="tree-strip__chip"
-                    [class.tree-strip__chip--head]="isFirst"
-                    >{{ item.label }}</span
-                  >
-                }
-              }
-            </div>
-          </section>
-        }
+  <div class="display__rack tree__racks">
+    <ohno-rack
+      class="tree__rack tree__rack--pending"
+      [title]="(levelOrder() ? RACKS.queue : RACKS.stack) | transloco"
+      [meta]="(levelOrder() ? I18N.frontUp : RACKS.topUp) | transloco"
+    >
+      @for (row of pendingRows(); track row.id) {
+        <ohno-rack-row [tone]="row.tone">
+          @if (row.showLabel) {
+            <span rackLead class="tree__rack-lead">{{ row.label }}</span>
+          }
+          <span class="tree__rack-body">{{ REGISTERS.depth | transloco }} {{ row.depth }}</span>
+          <span rackValue class="tree__rack-value" [attr.data-dot]="row.valueDot">{{ row.value }}</span>
+        </ohno-rack-row>
+      } @empty {
+        <ohno-rack-row tone="dim">
+          <span class="tree__rack-body">{{ NOTES.empty | transloco }}</span>
+        </ohno-rack-row>
+      }
+    </ohno-rack>
 
-        <section class="tree-output">
-          <header class="tree-strip__head">
-            <span class="tree-strip__label">{{
-              I18N_KEY.features.algorithms.tracePanels.tree.outputLabel | transloco
-            }}</span>
-            <span class="tree-strip__count">
-              {{ tree.visitedCount }} / {{ tree.totalNodes }}
-            </span>
-          </header>
-          <div class="tree-output__tape">
-            @for (label of tree.output; track $index) {
-              <span class="tree-output__chip">{{ label }}</span>
-            }
-          </div>
-        </section>
-      </aside>
-    </div>
-  }
-</app-viz-panel>
+    <ohno-rack class="tree__rack tree__rack--output" [title]="RACKS.output | transloco" [meta]="modeLabel() | i18nText">
+      @if (outputCells().length > 0) {
+        <ol class="tree__output">
+          @for (cell of outputCells(); track cell.key) {
+            <li class="tree__cell" [attr.data-tone]="cell.tone" [attr.data-dot]="cell.dot">{{ cell.text }}</li>
+          }
+        </ol>
+      } @else {
+        <ohno-rack-row tone="dim">
+          <span class="tree__rack-body">{{ NOTES.empty | transloco }}</span>
+        </ohno-rack-row>
+      }
+    </ohno-rack>
+  </div>
+</div>

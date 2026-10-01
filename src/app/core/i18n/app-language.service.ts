@@ -1,7 +1,8 @@
 import { DOCUMENT } from '@angular/common';
-import { computed, effect, inject, Injectable } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 
 import {
   AppLang,
@@ -18,17 +19,32 @@ export class AppLanguageService {
   private readonly transloco = inject(TranslocoService);
   private readonly doc = inject(DOCUMENT);
 
+  private readonly loadRevision = signal(0);
+
   readonly options = APP_LANG_OPTIONS;
-  readonly activeLang = computed<AppLang>(() => normalizeLang(this.transloco.activeLang()));
+  readonly activeLang = computed<AppLang>(
+    () => {
+      this.loadRevision();
+      return normalizeLang(this.transloco.activeLang());
+    },
+    { equal: () => false },
+  );
 
   constructor() {
     const initialLang = this.resolveInitialLang();
-    if (initialLang !== this.activeLang()) {
+    if (initialLang !== normalizeLang(this.transloco.activeLang())) {
       this.transloco.setActiveLang(initialLang);
     }
 
+    this.transloco.events$
+      .pipe(
+        filter((event) => event.type === 'translationLoadSuccess'),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.loadRevision.update((revision) => revision + 1));
+
     effect(() => {
-      const lang = this.activeLang();
+      const lang = normalizeLang(this.transloco.activeLang());
       this.doc.documentElement.lang = lang;
       this.doc.defaultView?.localStorage.setItem(LANG_STORAGE_KEY, lang);
       void firstValueFrom(this.transloco.load(lang));
@@ -36,7 +52,7 @@ export class AppLanguageService {
   }
 
   setActiveLang(lang: AppLang): void {
-    if (lang === this.activeLang()) return;
+    if (lang === normalizeLang(this.transloco.activeLang())) return;
     this.transloco.setActiveLang(lang);
   }
 
