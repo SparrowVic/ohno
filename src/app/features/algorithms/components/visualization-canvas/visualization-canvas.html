@@ -50,9 +50,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="stringPresetOptions()"
-        [presetId]="stringPresetId()"
-        (presetChange)="stringPresetChange.emit($event)"
       />
     }
     @case ('dp') {
@@ -60,9 +57,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="dpPresetOptions()"
-        [presetId]="dpPresetId()"
-        (presetChange)="dpPresetChange.emit($event)"
       />
     }
     @case ('convex-hull') {
@@ -94,9 +88,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="treePresetOptions()"
-        [presetId]="treePresetId()"
-        (presetChange)="treePresetChange.emit($event)"
       />
     }
     @case ('number-lab') {
@@ -104,9 +95,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="numberLabPresetOptions()"
-        [presetId]="numberLabPresetId()"
-        (presetChange)="numberLabPresetChange.emit($event)"
       />
     }
     @case ('pointer-lab') {
@@ -114,9 +102,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="pointerLabPresetOptions()"
-        [presetId]="pointerLabPresetId()"
-        (presetChange)="pointerLabPresetChange.emit($event)"
       />
     }
     @case ('sieve-grid') {
@@ -124,9 +109,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="sieveGridPresetOptions()"
-        [presetId]="sieveGridPresetId()"
-        (presetChange)="sieveGridPresetChange.emit($event)"
       />
     }
     @case ('call-stack-lab') {
@@ -134,9 +116,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="callStackLabPresetOptions()"
-        [presetId]="callStackLabPresetId()"
-        (presetChange)="callStackLabPresetChange.emit($event)"
       />
     }
     @case ('call-tree-lab') {
@@ -144,9 +123,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="callTreeLabPresetOptions()"
-        [presetId]="callTreeLabPresetId()"
-        (presetChange)="callTreeLabPresetChange.emit($event)"
       />
     }
     @case ('scratchpad-lab') {
@@ -154,9 +130,6 @@
         [array]="array()"
         [step]="step()"
         [speed]="speed()"
-        [presetOptions]="numberLabPresetOptions()"
-        [presetId]="numberLabPresetId()"
-        (presetChange)="numberLabPresetChange.emit($event)"
       />
     }
   }

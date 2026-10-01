@@ -1,0 +1,85 @@
+<div class="inspector">
+  <div class="inspector__bar">
+    <div class="inspector__tabs" role="tablist" [attr.aria-label]="I18N_KEY.features.algorithms.workbench.inspector.tabsAriaLabel | transloco">
+      @for (item of tabs(); track item.id) {
+        <ohno-key
+          [label]="item.label"
+          led="signal"
+          [ledOn]="activeTab() === item.id"
+          [pressed]="activeTab() === item.id"
+          [keyId]="'inspector-tab-' + item.id"
+          (keyClick)="selectTab(item.id)"
+        />
+      }
+    </div>
+    @if (activeTab() === 'code') {
+      <div class="inspector__tools">
+        @if (copied()) {
+          <ohno-engraving tone="lime" role="status">{{ I18N_KEY.features.algorithms.workbench.inspector.copied | transloco }}</ohno-engraving>
+        }
+        <span class="inspector__anchor">
+          <ohno-key
+            [label]="languageKeyLabel()"
+            [ariaLabel]="I18N_KEY.features.algorithms.workbench.inspector.languageAriaLabel | transloco"
+            [menu]="true"
+            [expanded]="languageMenuOpen()"
+            (keyClick)="languageMenuOpen.set(!languageMenuOpen())"
+          />
+          <ohno-floating-plate
+            class="inspector__menu"
+            [open]="languageMenuOpen()"
+            [label]="I18N_KEY.features.algorithms.workbench.inspector.languageAriaLabel | transloco"
+            (dismiss)="languageMenuOpen.set(false)"
+          >
+            @if (languageMenuOpen()) {
+              <ohno-menu
+                [items]="languageItems()"
+                [activeId]="selectedLanguage()"
+                [label]="I18N_KEY.features.algorithms.workbench.inspector.languageAriaLabel | transloco"
+                (select)="pickLanguage($event)"
+                (dismiss)="languageMenuOpen.set(false)"
+              />
+            }
+          </ohno-floating-plate>
+        </span>
+        <ohno-key
+          [icon]="icons.copy"
+          [ariaLabel]="I18N_KEY.features.algorithms.workbench.inspector.copy | transloco"
+          (keyClick)="copyCode()"
+        />
+      </div>
+    }
+  </div>
+  <ohno-screen class="inspector__screen" padding="none">
+    @switch (activeTab()) {
+      @case ('code') {
+        <section class="inspector__panel inspector__panel--code" role="tabpanel" aria-labelledby="inspector-tab-code">
+          @if (activeTaskName(); as taskName) {
+            <p class="inspector__task">
+              <ohno-engraving>{{ I18N_KEY.features.algorithms.sidePanel.codeForTaskLabel | transloco }}</ohno-engraving>
+              <app-math-text mode="mixed" [content]="taskName | i18nText" />
+            </p>
+          }
+          <app-code-panel
+            [lines]="codeLines()"
+            [language]="selectedLanguage()"
+            [regions]="codeRegions()"
+            [codeVariants]="codeVariants()"
+            [activeLineNumber]="activeLineNumber()"
+            [snippetMissing]="codeSnippetMissing()"
+          />
+        </section>
+      }
+      @case ('info') {
+        <section class="inspector__panel inspector__panel--scroll" role="tabpanel" aria-labelledby="inspector-tab-info">
+          <app-info-panel [algorithm]="algorithm()" />
+        </section>
+      }
+      @case ('trace') {
+        <section class="inspector__panel inspector__panel--scroll" role="tabpanel" aria-labelledby="inspector-tab-trace">
+          <ohno-trace-host [traces]="traces()" [algorithmId]="algorithm().id" [variant]="variant()" />
+        </section>
+      }
+    }
+  </ohno-screen>
+</div>

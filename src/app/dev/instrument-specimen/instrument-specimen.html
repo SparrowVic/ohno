@@ -1,0 +1,345 @@
+<div class="specimen">
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Atomy · płyta, ekran, grawer, LED, kbd</ohno-engraving>
+    <div class="specimen__row">
+      @for (color of ledColors; track color) {
+        <span class="specimen__led">
+          <ohno-led [color]="color" />
+          <ohno-engraving tone="dim">{{ color }}</ohno-engraving>
+        </span>
+      }
+      <span class="specimen__led"><ohno-led [on]="false" /><ohno-engraving tone="dim">off</ohno-engraving></span>
+      <span class="specimen__led"><ohno-led color="lime" [pulse]="true" /><ohno-engraving tone="dim">pulse</ohno-engraving></span>
+    </div>
+    <div class="specimen__row">
+      <ohno-engraving>default</ohno-engraving>
+      <ohno-engraving tone="bright">bright</ohno-engraving>
+      <ohno-engraving tone="dim">dim</ohno-engraving>
+      <ohno-engraving tone="signal">signal</ohno-engraving>
+      <ohno-engraving tone="cyan">cyan</ohno-engraving>
+      <ohno-engraving tone="pink">pink</ohno-engraving>
+      <ohno-engraving tone="lime">lime</ohno-engraving>
+      <ohno-engraving tone="amber">amber</ohno-engraving>
+      <ohno-kbd>Spacja</ohno-kbd><ohno-kbd>←</ohno-kbd><ohno-kbd>⌘K</ohno-kbd>
+    </div>
+    <ohno-screen class="specimen__screen" padding="md">
+      <span class="specimen__dot-text">066<small>/196</small></span>
+      <p class="specimen__copy">Ekran z kropkową teksturą, tekst UI w Instrument Sans, liczby w Doto.</p>
+    </ohno-screen>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Odczyty i mierniki</ohno-engraving>
+    <ohno-screen padding="md">
+      <div class="specimen__row specimen__row--meters">
+        <ohno-meter label="Krok" [value]="66" [total]="196" [pad]="3" [main]="true" />
+        <ohno-meter label="Przebieg" [value]="3" [total]="15" [pad]="2" />
+        <ohno-meter label="Porównania" [value]="35" [pad]="3" />
+        <ohno-meter label="Zamiany" [value]="28" [pad]="3" />
+      </div>
+      <div class="specimen__row">
+        <ohno-readout [value]="'O(n log n)'" size="sm" />
+        <ohno-readout [value]="13" size="md" tone="cyan" />
+        <ohno-readout [value]="105" size="lg" tone="lime" />
+        <ohno-readout [value]="'∞'" size="md" tone="dim" />
+        <ohno-readout [value]="412" size="lg" tone="pink" />
+      </div>
+    </ohno-screen>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Klawisze i zatrzaski</ohno-engraving>
+    <div class="specimen__row">
+      <ohno-key label="Katalog" [icon]="icons.back" size="sm" />
+      <ohno-key prefix="02" label="Insertion Sort" led="signal" size="md" />
+      <ohno-key label="Słupki" led="signal" [pressed]="true" />
+      <ohno-key label="Bloki" led="signal" [ledOn]="false" [pressed]="false" />
+      <ohno-key label="TS ▾" [menu]="true" [expanded]="false" />
+      <ohno-key label="Log" kbd="L" />
+      <ohno-key [icon]="icons.copy" ariaLabel="Kopiuj kod" size="sm" />
+      <ohno-key label="Wyłączony" [disabled]="true" />
+      <ohno-key label="Katalog (wyłączony link)" routerLink="/algorithms" [disabled]="true" size="sm" />
+    </div>
+    <div class="specimen__row">
+      <ohno-key [icon]="icons.reset" ariaLabel="Reset" size="lg" />
+      <ohno-key [icon]="icons.previous" ariaLabel="Poprzedni krok" size="lg" />
+      <ohno-key [icon]="icons.play" ariaLabel="Uruchom" size="xl" variant="signal" />
+      <ohno-key [icon]="icons.next" ariaLabel="Następny krok" size="lg" />
+      <span class="specimen__hint"><ohno-kbd>Spacja</ohno-kbd><ohno-engraving>Start</ohno-engraving></span>
+    </div>
+    <div class="specimen__row">
+      @for (difficulty of difficulties(); track difficulty.id) {
+        <ohno-latch
+          [label]="difficulty.label"
+          [led]="difficulty.led"
+          [pressed]="difficulty.on"
+          size="sm"
+          (pressedChange)="toggleDifficulty(difficulty.id, $event)"
+        />
+      }
+    </div>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Tempo</ohno-engraving>
+    <div class="specimen__row">
+      <ohno-knob [value]="speed()" label="Tempo" [readout]="speed() + '×'" (valueChange)="speed.set($event)" />
+      <ohno-engraving tone="dim">strzałki, przeciąganie w pionie, kółko nie</ohno-engraving>
+    </div>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Oś kroków, rozmiar, wskaźnik</ohno-engraving>
+    <div class="specimen__row specimen__row--deck">
+      <div class="specimen__axis">
+        <ohno-slot [step]="step()" [total]="196" label="Krok" (stepChange)="step.set($event)" />
+        <ohno-gauge label="Przebiegi" [count]="15" [lit]="3" [done]="2" />
+      </div>
+      <ohno-window-stepper
+        [options]="[16, 32, 64]"
+        [value]="size()"
+        label="Rozmiar danych"
+        unitLabel="elementów"
+        decreaseLabel="Mniej elementów"
+        increaseLabel="Więcej elementów"
+        (valueChange)="size.set($event)"
+      />
+    </div>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Linia operacji i stojak</ohno-engraving>
+    <ohno-screen padding="md">
+      <div class="specimen__stage">
+        <ohno-rack class="specimen__rack" title="Kolejka · min" meta="dist · skąd">
+          <ohno-rack-row tone="head"><span rackLead>C</span>← F<ohno-readout rackValue [value]="4" size="sm" /></ohno-rack-row>
+          <ohno-rack-row><span rackLead>G</span>← F<ohno-readout rackValue [value]="6" size="sm" /></ohno-rack-row>
+          <ohno-rack-row tone="done"><span rackLead>A</span>źródło<ohno-readout rackValue [value]="0" size="sm" /></ohno-rack-row>
+          <ohno-rack-row tone="dim"><span rackLead>D</span>—<ohno-readout rackValue [value]="'∞'" size="sm" /></ohno-rack-row>
+        </ohno-rack>
+      </div>
+      <ohno-opline phase="Relaksacja" tone="pink" [registers]="[{ label: 'u', value: 'F' }, { label: 'v', value: 'C' }, { label: 'w', value: '2' }]">
+        dist(C) = dist(F) + w(F,C) = 2 + 2 = <em>4</em> &lt; ∞ → zapisz 4, prev(C) = F.
+      </ohno-opline>
+    </ohno-screen>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Drukarka kroków</ohno-engraving>
+    <ohno-tape class="specimen__tape" [rows]="tapeRows" stepHeader="KROK" eventHeader="ZDARZENIE" emptyLabel="Uruchom scenariusz, aby rozpocząć zapis." />
+    <ohno-tape class="specimen__tape" [rows]="[]" stepHeader="KROK" eventHeader="ZDARZENIE" emptyLabel="Uruchom scenariusz, aby rozpocząć zapis." />
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Wyszukiwanie, język, menu</ohno-engraving>
+    <div class="specimen__row">
+      <ohno-search-field class="specimen__search" placeholder="Szukaj algorytmu…" label="Otwórz wyszukiwarkę" (open)="menuOpen.set(false)" />
+      <ohno-lang-toggle [value]="language()" [options]="[{ value: 'pl', label: 'PL' }, { value: 'en', label: 'EN' }]" label="Język interfejsu" (valueChange)="language.set($event)" />
+      <span class="specimen__anchor">
+        <ohno-key label="TS ▾" [menu]="true" [expanded]="menuOpen()" (keyClick)="menuOpen.set(!menuOpen())" />
+        <ohno-floating-plate class="specimen__menu" [open]="menuOpen()" label="Język kodu" (dismiss)="menuOpen.set(false)">
+          @if (menuOpen()) {
+            <ohno-menu [items]="languageItems" [activeId]="codeLanguage()" label="Język kodu" (select)="codeLanguage.set($event); menuOpen.set(false)" (dismiss)="menuOpen.set(false)" />
+          }
+        </ohno-floating-plate>
+      </span>
+    </div>
+  </ohno-plate>
+  <div class="specimen__unit">
+    <ohno-workbench-topbar [crumbs]="['Algorytmy', 'Sortowanie', 'Porównawcze']" [moduleCount]="102" />
+  </div>
+  <ohno-plate class="specimen__unit specimen__stage-unit" [screws]="true">
+    <ohno-stage-head
+      name="Bubble Sort"
+      [difficulty]="stageDifficulty"
+      difficultyLabel="Łatwe"
+      time="O(n²)"
+      space="O(1)"
+      [views]="stageViews"
+      [activeView]="stageView()"
+      (viewChange)="stageView.set($event === 'block' ? 'block' : 'bar')"
+    />
+    <ohno-stage-screen
+      class="specimen__stage-screen"
+      [stepIndex]="66"
+      [lastIndex]="196"
+      [meters]="stageMeters"
+      status="paused"
+      [speed]="5"
+      phaseLabel="Porównanie"
+      tone="cyan"
+      [sentence]="stageSentence"
+      [registers]="stageRegisters"
+    >
+      <div class="specimen__display-placeholder"><ohno-engraving tone="dim">wyświetlacz rodziny</ohno-engraving></div>
+    </ohno-stage-screen>
+    <ohno-legend-row [items]="stageLegend" [hints]="stageHints" />
+    <ohno-transport-deck
+      [status]="deckStatus()"
+      [transportAction]="deckAction()"
+      [stepIndex]="step()"
+      [lastIndex]="196"
+      [speed]="speed()"
+      [gauge]="{ count: 15, lit: 3, done: 2 }"
+      gaugeLabel="Przebiegi"
+      [sizeOptions]="[16, 32, 64]"
+      [size]="size()"
+      sizeUnit="elementów"
+      randomizeLabel="Losuj"
+      [customSchema]="deckSchema"
+      [customValues]="deckValues()"
+      (reset)="step.set(0); deckPlaying.set(false)"
+      (stepBack)="step.set(step() - 1)"
+      (toggle)="deckPlaying.set(!deckPlaying())"
+      (stepForward)="step.set(step() + 1)"
+      (seek)="step.set($event)"
+      (speedChange)="speed.set($event)"
+      (sizeChange)="size.set($event)"
+      (customValuesChange)="deckValues.set($event)"
+    />
+  </ohno-plate>
+  <div class="specimen__units specimen__units--inspector">
+    <ohno-plate class="specimen__unit specimen__inspector" [screws]="true">
+      <ohno-inspector
+        [tab]="inspectorTab()"
+        [algorithm]="inspectorAlgorithm"
+        [codeLines]="inspectorConfig.codeLines"
+        [codeRegions]="inspectorConfig.codeRegions ?? []"
+        [codeVariants]="inspectorConfig.codeVariants ?? {}"
+        [activeLineNumber]="13"
+        [traces]="inspectorTraces"
+      variant="bar"
+        (tabChange)="inspectorTab.set($event)"
+      />
+    </ohno-plate>
+    <ohno-plate class="specimen__unit specimen__printer" [screws]="true">
+      <ohno-log-printer
+        [rows]="tapeRows"
+        [live]="deckPlaying()"
+        [filter]="logFilter()"
+        algorithmId="bubble-sort"
+        (filterChange)="logFilter.set($event)"
+      />
+    </ohno-plate>
+  </div>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Deck zadaniowy (bez okna rozmiaru)</ohno-engraving>
+    <ohno-transport-deck
+      [status]="deckStatus()"
+      [transportAction]="deckAction()"
+      [stepIndex]="step()"
+      [lastIndex]="196"
+      [speed]="speed()"
+      [sizeOptions]="[1]"
+      [size]="1"
+      [tasks]="deckTasks"
+      [activeTaskId]="deckTaskId()"
+      randomizeLabel="Nowa para"
+      [customSchema]="deckSchema"
+      [customValues]="deckValues()"
+      (toggle)="deckPlaying.set(!deckPlaying())"
+      (seek)="step.set($event)"
+      (speedChange)="speed.set($event)"
+      (taskChange)="deckTaskId.set($event)"
+      (customValuesChange)="deckValues.set($event)"
+    />
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Język ekranów · komórki, taśma, węzły, siatka, notatka, rack</ohno-engraving>
+    <ohno-screen padding="md">
+      <div class="display display--rack specimen__display">
+        <div class="display__main specimen__display-main">
+          <div class="specimen__cells">
+            @for (cell of displayCells; track cell.value) {
+              <span class="specimen__cell" [attr.data-tone]="cell.tone">
+                @if (cell.tag) {
+                  <span class="specimen__cell-tag">{{ cell.tag }}</span>
+                }
+                @if (cell.mark) {
+                  <span class="specimen__cell-mark">{{ cell.mark }}</span>
+                }
+                {{ cell.value }}
+              </span>
+            }
+          </div>
+          <div class="specimen__tape">
+            @for (cell of displayTape; track cell.index) {
+              <span class="specimen__tape-cell" [attr.data-tone]="cell.tone">
+                <span class="tape-cell__char">{{ cell.char }}</span>
+                <span class="tape-cell__index">{{ cell.index }}</span>
+              </span>
+            }
+          </div>
+          <svg class="specimen__graph" viewBox="0 0 320 120" aria-hidden="true">
+            <line class="specimen__edge" x1="50" y1="60" x2="150" y2="30" data-tone="lime" />
+            <line class="specimen__edge" x1="150" y1="30" x2="260" y2="70" data-tone="pink" />
+            <line class="specimen__edge" x1="50" y1="60" x2="260" y2="70" />
+            <g class="specimen__chip" transform="translate(100 38)" data-tone="slate">
+              <rect class="chip__box" x="-12" y="-9" width="24" height="18" />
+              <text class="chip__text">7</text>
+            </g>
+            <g class="specimen__node" transform="translate(50 60)" data-tone="violet">
+              <circle class="node__halo" r="20" />
+              <circle class="node__ring" r="14" />
+              <text class="node__label">A</text>
+              <text class="node__value" y="28">0</text>
+            </g>
+            <g class="specimen__node" transform="translate(150 30)" data-tone="cyan" data-current="true">
+              <circle class="node__halo" r="20" />
+              <circle class="node__ring" r="14" />
+              <text class="node__label">F</text>
+              <text class="node__value" y="28">2</text>
+            </g>
+            <g class="specimen__node" transform="translate(260 70)" data-tone="amber" data-frontier="true">
+              <circle class="node__halo" r="20" />
+              <circle class="node__ring" r="14" />
+              <text class="node__label">C</text>
+              <text class="node__value" y="28">4</text>
+            </g>
+          </svg>
+          <svg class="specimen__plane" viewBox="-6 -6 112 72" aria-hidden="true">
+            @for (tick of planeTicks; track tick) {
+              <line class="graticule__line" [attr.x1]="tick" y1="0" [attr.x2]="tick" y2="60" />
+              <text class="graticule__tick" [attr.x]="tick" y="64">{{ tick }}</text>
+            }
+            @for (tick of [0, 20, 40, 60]; track tick) {
+              <line class="graticule__line" x1="0" [attr.y1]="60 - tick" x2="100" [attr.y2]="60 - tick" />
+            }
+            <line class="graticule__axis" x1="0" y1="60" x2="100" y2="60" />
+            <line class="graticule__axis" x1="0" y1="0" x2="0" y2="60" />
+            <polyline class="specimen__hull" points="48,56 86,46 70,16 30,8" />
+            <g class="specimen__point" transform="translate(48 56)" data-tone="violet">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">1</text>
+            </g>
+            <g class="specimen__point" transform="translate(30 8)" data-tone="cyan" data-current="true">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">6</text>
+            </g>
+            <g class="specimen__point" transform="translate(60 30)" data-tone="pink">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">10</text>
+            </g>
+            <g class="specimen__point" transform="translate(20 40)" data-tone="slate">
+              <circle class="point__dot" r="1.6" /><text class="point__id" x="2.4" y="-1.6">7</text>
+            </g>
+          </svg>
+        </div>
+        <div class="display__rack">
+          <ohno-rack title="Kolejka · min" meta="dist · skąd">
+            <ohno-rack-row tone="head"><span rackLead>C</span>← F<span rackValue class="specimen__rack-dot">4</span></ohno-rack-row>
+            <ohno-rack-row><span rackLead>G</span>← F<span rackValue class="specimen__rack-dot">6</span></ohno-rack-row>
+            <ohno-rack-row tone="dim"><span rackLead>D</span>—<span rackValue class="specimen__rack-dot">∞</span></ohno-rack-row>
+          </ohno-rack>
+          <div class="specimen__note" data-tone="cyan">
+            <span class="specimen__note-title">Iloczyn wektorowy</span>
+            <span class="specimen__note-dot">+412</span>
+            <ohno-led color="lime" /> lewy skręt · zostaje
+          </div>
+          <div class="specimen__note" data-tone="pink">
+            <span class="specimen__note-title">Ostatni powrót</span>
+            i = 8: C ≠ B<br />j = lps[2] = 1 → j = lps[0] = 0
+          </div>
+        </div>
+      </div>
+    </ohno-screen>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Karty modułów · osiem rodzin</ohno-engraving>
+    <div class="specimen__cards">
+      @for (sample of sampleModules; track sample.item.id) {
+        <ohno-module-card [algorithm]="sample.item" [moduleId]="sample.moduleId" />
+      }
+    </div>
+  </ohno-plate>
+</div>

@@ -1,0 +1,205 @@
+<div class="deck">
+  <section class="deck__section deck__section--transport">
+    <ohno-engraving class="deck__title">{{ I18N_KEY.features.algorithms.workbench.deck.transport | transloco }}</ohno-engraving>
+    <div class="deck__transport">
+      <div class="deck__key">
+        <ohno-key
+          [icon]="icons.reset"
+          [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.resetAriaLabel | transloco"
+          size="lg"
+          (keyClick)="reset.emit()"
+        />
+        <span class="deck__hint">
+          <ohno-kbd>R</ohno-kbd>
+          <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.deck.reset | transloco }}</ohno-engraving>
+        </span>
+      </div>
+      <div class="deck__key">
+        <ohno-key
+          [icon]="icons.back"
+          [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.stepBackAriaLabel | transloco"
+          size="lg"
+          [disabled]="!canStepBack()"
+          (keyClick)="stepBack.emit()"
+        />
+        <span class="deck__hint">
+          <ohno-kbd>←</ohno-kbd>
+          <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.deck.step | transloco }}</ohno-engraving>
+        </span>
+      </div>
+      <div class="deck__key deck__key--play">
+        <ohno-key [icon]="playIcon()" [ariaLabel]="playAriaLabel()" size="xl" variant="signal" (keyClick)="toggle.emit()" />
+        <span class="deck__hint">
+          <ohno-kbd>{{ I18N_KEY.core.instrument.shortcuts.spaceKey | transloco }}</ohno-kbd>
+          <ohno-engraving>{{ playLabel() }}</ohno-engraving>
+        </span>
+      </div>
+      <div class="deck__key">
+        <ohno-key
+          [icon]="icons.forward"
+          [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.stepForwardAriaLabel | transloco"
+          size="lg"
+          [disabled]="!canStepForward()"
+          (keyClick)="stepForward.emit()"
+        />
+        <span class="deck__hint">
+          <ohno-kbd>→</ohno-kbd>
+          <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.deck.step | transloco }}</ohno-engraving>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="deck__section deck__section--axis">
+    <div class="deck__title-row">
+      <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.deck.axis | transloco }}</ohno-engraving>
+      <ohno-readout [value]="stepIndex()" [total]="lastIndex()" [pad]="3" size="sm" tone="dim" />
+    </div>
+    <ohno-slot
+      [step]="stepIndex()"
+      [total]="lastIndex()"
+      [label]="I18N_KEY.features.algorithms.workbench.deck.axisAriaLabel | transloco"
+      (stepChange)="seek.emit($event)"
+    />
+    @if (gauge(); as passes) {
+      <ohno-gauge [label]="gaugeLabel()" [count]="passes.count" [lit]="passes.lit" [done]="passes.done" />
+    }
+  </section>
+
+  <section class="deck__section deck__section--tempo">
+    <ohno-engraving class="deck__title">{{ I18N_KEY.features.algorithms.workbench.deck.tempo | transloco }}</ohno-engraving>
+    <ohno-knob
+      class="deck__knob"
+      [value]="speed()"
+      [min]="minSpeed"
+      [max]="maxSpeed"
+      [label]="I18N_KEY.features.algorithms.workbench.deck.tempoAriaLabel | transloco"
+      [readout]="tempoReadout()"
+      (valueChange)="speedChange.emit($event)"
+    />
+  </section>
+
+  @if (hasTasks()) {
+    <section class="deck__section deck__section--task">
+      <ohno-engraving class="deck__title">{{ I18N_KEY.features.algorithms.workbench.deck.task | transloco }}</ohno-engraving>
+      <div class="deck__data">
+        <span class="deck__anchor">
+          <ohno-key
+            class="deck__task-key"
+            [label]="activeTaskLabel() + ' ▾'"
+            [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.taskMenuLabel | transloco"
+            [menu]="true"
+            [expanded]="taskMenuOpen()"
+            (keyClick)="taskMenuOpen.set(!taskMenuOpen())"
+          />
+          <ohno-floating-plate
+            class="deck__menu"
+            [open]="taskMenuOpen()"
+            [label]="I18N_KEY.features.algorithms.workbench.deck.taskMenuLabel | transloco"
+            (dismiss)="taskMenuOpen.set(false)"
+          >
+            @if (taskMenuOpen()) {
+              <ohno-menu
+                [items]="taskItems()"
+                [activeId]="activeTaskId()"
+                [label]="I18N_KEY.features.algorithms.workbench.deck.taskMenuLabel | transloco"
+                (select)="pickTask($event)"
+                (dismiss)="taskMenuOpen.set(false)"
+              />
+            }
+          </ohno-floating-plate>
+        </span>
+        @if (customSchema(); as schema) {
+          @if (hasCustom()) {
+            <ng-container [ngTemplateOutlet]="customKey" [ngTemplateOutletContext]="{ $implicit: schema }" />
+          }
+        }
+      </div>
+    </section>
+  } @else if (showSize()) {
+    <section class="deck__section deck__section--size">
+      <ohno-engraving class="deck__title">{{ I18N_KEY.features.algorithms.workbench.deck.size | transloco }}</ohno-engraving>
+      <ohno-window-stepper
+        [options]="sizeOptions()"
+        [value]="size()"
+        [label]="I18N_KEY.features.algorithms.workbench.deck.sizeAriaLabel | transloco"
+        [unitLabel]="sizeUnit()"
+        [decreaseLabel]="I18N_KEY.features.algorithms.workbench.deck.sizeDecrease | transloco"
+        [increaseLabel]="I18N_KEY.features.algorithms.workbench.deck.sizeIncrease | transloco"
+        (valueChange)="sizeChange.emit($event)"
+      />
+    </section>
+  }
+
+  @if (!hasTasks()) {
+    <section class="deck__section deck__section--data">
+      <ohno-engraving class="deck__title">{{ I18N_KEY.features.algorithms.workbench.deck.data | transloco }}</ohno-engraving>
+      <div class="deck__data">
+        @if (hasPresets()) {
+          <span class="deck__anchor">
+            <ohno-key
+              class="deck__data-key deck__preset-key"
+              [label]="activePresetLabel() + ' ▾'"
+              [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.presetMenuLabel | transloco"
+              [menu]="true"
+              [expanded]="presetMenuOpen()"
+              (keyClick)="presetMenuOpen.set(!presetMenuOpen())"
+            />
+            <ohno-floating-plate
+              class="deck__menu"
+              [open]="presetMenuOpen()"
+              [label]="I18N_KEY.features.algorithms.workbench.deck.presetMenuLabel | transloco"
+              (dismiss)="presetMenuOpen.set(false)"
+            >
+              @if (presetMenuOpen()) {
+                <ohno-menu
+                  [items]="presetItems()"
+                  [activeId]="presetId()"
+                  [label]="I18N_KEY.features.algorithms.workbench.deck.presetMenuLabel | transloco"
+                  (select)="pickPreset($event)"
+                  (dismiss)="presetMenuOpen.set(false)"
+                />
+              }
+            </ohno-floating-plate>
+          </span>
+        }
+        <ohno-key class="deck__data-key" [label]="randomizeLabel()" [icon]="icons.random" (keyClick)="randomize.emit()" />
+        @if (customSchema(); as schema) {
+          @if (hasCustom()) {
+            <ng-container [ngTemplateOutlet]="customKey" [ngTemplateOutletContext]="{ $implicit: schema }" />
+          }
+        }
+      </div>
+    </section>
+  }
+</div>
+
+<ng-template #customKey let-schema>
+  <span class="deck__anchor">
+    <ohno-key
+      class="deck__data-key"
+      [label]="I18N_KEY.features.algorithms.workbench.deck.custom | transloco"
+      [ariaLabel]="I18N_KEY.features.algorithms.workbench.deck.customAriaLabel | transloco"
+      [icon]="icons.custom"
+      [menu]="true"
+      [expanded]="customOpen()"
+      (keyClick)="customOpen.set(!customOpen())"
+    />
+    <ohno-floating-plate
+      class="deck__menu deck__menu--custom"
+      [open]="customOpen()"
+      [label]="I18N_KEY.features.algorithms.workbench.deck.customAriaLabel | transloco"
+      (dismiss)="customOpen.set(false)"
+    >
+      @if (customOpen()) {
+        <ohno-custom-values-form
+          [schema]="schema"
+          [initialValues]="customValues()"
+          [validate]="customValidate()"
+          (apply)="applyCustomValues($event)"
+          (cancel)="customOpen.set(false)"
+        />
+      }
+    </ohno-floating-plate>
+  </span>
+</ng-template>

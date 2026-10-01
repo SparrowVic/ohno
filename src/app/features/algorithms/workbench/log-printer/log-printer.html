@@ -1,0 +1,60 @@
+<div class="printer">
+  <div class="printer__head">
+    <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.log.title | transloco }}</ohno-engraving>
+    <span class="printer__live">
+      <ohno-led [color]="live() ? 'lime' : 'amber'" [pulse]="live()" />
+      <ohno-engraving tone="bright">
+        {{ (live() ? I18N_KEY.features.algorithms.workbench.log.live : I18N_KEY.features.algorithms.workbench.log.paused) | transloco }}
+      </ohno-engraving>
+    </span>
+  </div>
+  <div class="printer__body">
+    <ohno-tape
+      class="printer__tape"
+      [rows]="rows()"
+      [stepHeader]="I18N_KEY.features.algorithms.workbench.log.stepHeader | transloco"
+      [eventHeader]="I18N_KEY.features.algorithms.workbench.log.eventHeader | transloco"
+      [emptyLabel]="I18N_KEY.features.algorithms.workbench.log.empty | transloco"
+    />
+    <div class="printer__side">
+      <ohno-key
+        [icon]="icons.download"
+        [ariaLabel]="I18N_KEY.features.algorithms.workbench.log.export | transloco"
+        size="lg"
+        [disabled]="rowCount() === 0"
+        (keyClick)="exportLog()"
+      />
+      <span class="printer__anchor">
+        <ohno-key
+          [icon]="icons.filter"
+          [ariaLabel]="I18N_KEY.features.algorithms.workbench.log.filter | transloco"
+          size="lg"
+          [menu]="true"
+          [expanded]="filterMenuOpen()"
+          [pressed]="filter() !== 'all'"
+          (keyClick)="filterMenuOpen.set(!filterMenuOpen())"
+        />
+        <ohno-floating-plate
+          class="printer__menu"
+          [open]="filterMenuOpen()"
+          [label]="I18N_KEY.features.algorithms.workbench.log.filter | transloco"
+          (dismiss)="filterMenuOpen.set(false)"
+        >
+          @if (filterMenuOpen()) {
+            <ohno-menu
+              [items]="filterItems()"
+              [activeId]="filter()"
+              [label]="I18N_KEY.features.algorithms.workbench.log.filter | transloco"
+              (select)="pickFilter($event)"
+              (dismiss)="filterMenuOpen.set(false)"
+            />
+          }
+        </ohno-floating-plate>
+      </span>
+      <span class="printer__count">
+        <ohno-readout [value]="rowCount()" [pad]="3" size="md" tone="dim" />
+        <ohno-engraving>{{ I18N_KEY.features.algorithms.workbench.log.rows | transloco }}</ohno-engraving>
+      </span>
+    </div>
+  </div>
+</div>

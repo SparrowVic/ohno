@@ -1,14 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { AppLanguageService } from './core/i18n/app-language.service';
-import { BgEnergyLayer } from './core/layout/bg-energy-layer/bg-energy-layer';
+import { OhnoCommandPalette } from './core/layout/command-palette/command-palette';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BgEnergyLayer],
+  imports: [RouterOutlet, OhnoCommandPalette],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   private readonly language = inject(AppLanguageService);

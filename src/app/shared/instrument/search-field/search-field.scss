@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+.ohno-search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: var(--search-height, 38px);
+  padding: 0 10px 0 13px;
+  border: 0;
+  border-radius: var(--search-radius, 11px);
+  color: var(--ink-3);
+  font: 400 13px/1 var(--font-ui);
+  text-align: left;
+  background: var(--screen);
+  box-shadow: var(--shadow-screen);
+}
+
+.ohno-search-field__icon { font-size: 15px; }
+.ohno-search-field__placeholder { flex: 1; }
+.ohno-search-field:focus-visible { outline: none; box-shadow: var(--shadow-screen), var(--focus-ring); }

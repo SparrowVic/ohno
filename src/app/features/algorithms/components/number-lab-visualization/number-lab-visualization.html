@@ -14,7 +14,7 @@
       <section class="number-lab__registers">
         @for (reg of lab.registers; track reg.id) {
           <article class="number-lab__register number-lab__register--{{ reg.tone }}">
-            <app-math-text class="number-lab__register-label" [content]="reg.label" variant="chip" />
+            <app-math-text class="number-lab__register-label" [content]="reg.label | i18nText" variant="chip" />
             <app-math-text
               class="number-lab__register-value"
               [content]="reg.value"

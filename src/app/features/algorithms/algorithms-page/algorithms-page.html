@@ -1,64 +1,80 @@
-<section class="page" [ngStyle]="pageThemeStyle()">
-  <header class="page__hero">
-    <div class="page__hero-copy">
-      <span class="page__eyebrow">{{ heroEyebrow() }}</span>
-      <h1 class="page__title">{{ title() }}</h1>
-      <p class="page__lede">{{ heroDescription() }}</p>
-      <div class="page__hero-meta">
-        <span class="page__meta-pill">{{ filterSummary() }}</span>
-        <span class="page__meta-pill">{{ availabilitySummary() }}</span>
+<section class="catalog">
+  <div class="catalog__row">
+    <ohno-screen class="marquee" padding="none">
+      <div class="marquee__title">
+        <ohno-engraving>{{ marqueeEyebrow() }}</ohno-engraving>
+        <ohno-readout class="marquee__name" [value]="marqueeTitle()" size="marquee" [style.--marquee-size.px]="marqueeSize()" [style.font-size.px]="marqueeSize()" />
+      </div>
+      <div class="marquee__stats">
+        @for (stat of marqueeStats(); track stat.label; let first = $first) {
+          <div class="marquee__stat">
+            <ohno-engraving>{{ stat.label }}</ohno-engraving>
+            <ohno-readout [value]="stat.value" [pad]="2" size="lg" [tone]="first ? 'signal' : 'ink'" />
+          </div>
+        }
+      </div>
+    </ohno-screen>
+
+    <div class="tools">
+      <ohno-search-field
+        class="tools__search"
+        [placeholder]="searchPlaceholder()"
+        [label]="I18N_KEY.core.instrument.palette.openAriaLabel | transloco"
+        (open)="openSearch()"
+      />
+      <div class="tools__latches" role="group" [attr.aria-label]="I18N_KEY.shared.filters.difficulty.ariaLabel | transloco">
+        @for (latch of latches(); track latch.difficulty) {
+          <ohno-latch class="tools__latch" [label]="latch.label" [led]="latch.led" [pressed]="latch.pressed" size="lg" (pressedChange)="toggleLatch(latch.difficulty)" />
+        }
       </div>
     </div>
+  </div>
 
-    <div class="page__stats">
-      @for (stat of stats(); track stat.label) {
-        <article class="page__stat page__stat--{{ stat.tone }}">
-          <span class="page__stat-value">{{ stat.value }}</span>
-          <span class="page__stat-label">{{ stat.label }}</span>
-        </article>
+  <ohno-plate class="path" padding="none">
+    <div class="path__label">
+      <ohno-engraving>{{ I18N_KEY.features.algorithms.catalog.path.eyebrow | transloco }}</ohno-engraving>
+      <b>{{ pathTitle() }}</b>
+    </div>
+    <div class="path__chain">
+      @for (step of path().steps; track step.id; let first = $first; let index = $index) {
+        @if (!first) {
+          <i class="path__cable" [class.path__cable--lit]="path().steps[index - 1].done" aria-hidden="true"></i>
+        }
+        <ohno-key
+          class="path__step"
+          [prefix]="'0' + step.index"
+          [label]="step.name"
+          [led]="step.done ? 'lime' : 'signal'"
+          [ledOn]="step.done || step.current"
+          [pressed]="step.done"
+          [routerLink]="['/algorithms', step.id]"
+          [ariaLabel]="stepAriaLabel(step.index, step.name)"
+        />
       }
     </div>
-  </header>
+    <ohno-readout class="path__readout" [value]="path().doneCount" [total]="path().total" size="sm" [attr.aria-label]="I18N_KEY.features.algorithms.catalog.path.progressAriaLabel | transloco" />
+  </ohno-plate>
 
-  <section class="page__controls">
-    <div class="page__results">
-      <p class="page__results-label">{{ resultsLabel() }}</p>
-      <p class="page__results-subtitle">{{ resultsSubtitle() }}</p>
+  @for (group of groups(); track group.id) {
+    <div class="group">
+      <ohno-engraving tone="bright">{{ group.label }}</ohno-engraving>
+      <ohno-readout [value]="group.items.length" [pad]="2" size="sm" tone="dim" />
     </div>
-
-    <div class="page__filter-stack">
-      <div class="page__filters">
-        <app-multi-select
-          [label]="traitsTriggerLabel()"
-          [summary]="traitsSummary()"
-          [ariaLabel]="traitsTriggerAriaLabel()"
-          [title]="traitsPopoverTitle()"
-          [subtitle]="traitsPopoverSubtitle()"
-          [emptyLabel]="traitsEmptyLabel()"
-          [clearLabel]="clearTraitsLabel()"
-          [groups]="traitSelectGroups()"
-          [value]="activeTraits()"
-          (valueChange)="selectTraits($event)"
-        />
-
-        <app-select-button
-          [options]="difficultyOptions()"
-          [value]="activeDifficulty()"
-          [ariaLabel]="difficultyGroupLabel()"
-          (valueChange)="selectDifficulty($event)"
-        />
-      </div>
-    </div>
-  </section>
-
-  @let items = filteredItems();
-  @if (items.length > 0) {
-    <div class="cards-grid">
-      @for (algorithm of items; track algorithm.id) {
-        <app-algorithm-card [algorithm]="algorithm" />
+    <div class="grid">
+      @for (item of group.items; track item.id) {
+        @defer (on viewport) {
+          <ohno-module-card [algorithm]="item" [moduleId]="moduleIdOf(item.id)" />
+        } @placeholder {
+          <div class="grid__slot"></div>
+        }
       }
     </div>
-  } @else {
-    <div class="page__empty">{{ emptyLabel() }}</div>
+  } @empty {
+    <ohno-plate class="empty" [screws]="true">
+      <ohno-screen class="empty__screen" padding="md">
+        <ohno-engraving tone="bright">{{ I18N_KEY.features.algorithms.catalog.empty.title | transloco }}</ohno-engraving>
+        <p class="empty__hint">{{ I18N_KEY.features.algorithms.catalog.empty.hint | transloco }}</p>
+      </ohno-screen>
+    </ohno-plate>
   }
 </section>

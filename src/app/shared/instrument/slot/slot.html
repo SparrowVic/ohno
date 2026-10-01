@@ -1,0 +1,25 @@
+<div class="ohno-slot__ruler" aria-hidden="true"></div>
+<div class="ohno-slot__marks" aria-hidden="true">
+  @for (mark of markList(); track mark) {
+    <span
+      class="ohno-slot__mark"
+      [class.ohno-slot__mark--start]="$first"
+      [class.ohno-slot__mark--end]="$last"
+      [style.left.%]="markPercent(mark)"
+    >{{ mark }}</span>
+  }
+</div>
+<div class="ohno-slot__track" [style.--slot-percent]="percent()">
+  <div class="ohno-slot__cap"></div>
+  <input
+    class="ohno-slot__input"
+    type="range"
+    [min]="0"
+    [max]="total()"
+    [step]="1"
+    [value]="step()"
+    [disabled]="total() === 0"
+    [attr.aria-label]="label()"
+    (input)="onInput($event)"
+  />
+</div>

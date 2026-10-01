@@ -1,0 +1,5 @@
+<button type="button" class="ohno-search-field" [attr.aria-label]="label()" (click)="open.emit()">
+  <fa-icon class="ohno-search-field__icon" [icon]="icon" />
+  <span class="ohno-search-field__placeholder">{{ placeholder() }}</span>
+  <ohno-kbd>{{ shortcut() }}</ohno-kbd>
+</button>

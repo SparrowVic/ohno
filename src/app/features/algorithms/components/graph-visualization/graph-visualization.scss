@@ -1,386 +1,273 @@
+@use '../../../../../styles/display';
+
+@include display.layout;
+
 :host {
   display: flex;
   flex: 1;
-  min-height: 0;
-}
-
-/* SVG canvas — occupies the whole panel body. Flex sizing lets it
-   grow to fill the remaining height under the header while the
-   viewBox keeps its aspect ratio. */
-.graph {
-  flex: 1;
   width: 100%;
+  height: 100%;
   min-height: 0;
-  display: block;
+  contain: size;
 }
 
-/* Focus chip — compact pill slotted into the header's right edge
-   when a multi-hop route is focused. Hairline border + neutral
-   surface so it inherits the header's chrome instead of competing
-   with it. The × glyph is the sole affordance. */
-.graph-focus-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 6px 4px 10px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.03);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  cursor: pointer;
-  max-width: 240px;
-  transition:
-    color var(--duration-base) var(--ease-soft),
-    background var(--duration-base) var(--ease-soft),
-    border-color var(--duration-base) var(--ease-soft);
-
-  &:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.14);
-  }
-
-  &:focus-visible {
-    outline: 1px solid rgb(var(--viz-hit-rgb) / 0.7);
-    outline-offset: 2px;
-  }
+.display {
+  flex: 1;
 }
 
-.graph-focus-chip__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-}
-
-.graph-focus-chip__close {
-  display: inline-flex;
-  align-items: center;
+.graph {
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  font-size: 12px;
-  line-height: 1;
-  color: var(--text-tertiary);
-  background: rgba(255, 255, 255, 0.04);
 }
 
-/* Edges — default neutral stroke; state flags paint over the
-   base. Transitions keep changes smooth when steps advance. */
-.edge-line {
-  stroke: rgba(255, 255, 255, 0.16);
-  stroke-width: 2;
+.graph__svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  user-select: none;
+  --graph-k: 1;
+}
+
+.graph__edge {
+  @include display.edge;
+
+  vector-effect: non-scaling-stroke;
   transition:
-    stroke 220ms ease,
-    opacity 220ms ease,
-    stroke-width 220ms ease;
+    stroke var(--duration-fast) var(--ease-soft),
+    opacity var(--duration-fast) var(--ease-soft);
 
-  &--tree {
-    stroke: rgb(var(--viz-route-rgb) / 0.6);
-    stroke-width: 2.4;
+  &[data-tone='red'] {
+    stroke: var(--red);
+    stroke-width: 2;
   }
 
-  &--focused {
-    stroke: rgb(var(--viz-hit-rgb) / 0.95);
-    stroke-width: 3.5;
+  &[data-tone='rose'] {
+    stroke: var(--pink);
+    stroke-width: 2;
   }
 
-  &--active {
-    stroke: url(#graphEdgeGlow);
-    stroke-width: 3.5;
-    stroke-dasharray: 10 8;
-    animation: edge-flow 700ms linear infinite;
+  &[data-tone='soft'] {
+    stroke: rgb(var(--lime-rgb) / 0.5);
+    stroke-width: 1.6;
   }
 
-  &--relaxed {
-    stroke: var(--viz-route);
-    stroke-width: 3;
-  }
-
-  &--muted {
-    opacity: 0.42;
+  &[data-dim='true'] {
+    opacity: 0.22;
   }
 }
 
-.edge-line[data-tone='critical'],
-.edge-line[data-tone='bridge'] {
-  stroke: rgb(var(--viz-danger-rgb) / 0.9);
-  stroke-width: 3;
-}
+.graph__arrow {
+  fill: var(--ink-4);
 
-.edge-line[data-tone='component-a'] {
-  stroke: rgb(var(--viz-accent-rgb) / 0.62);
-  stroke-width: 2.6;
-}
-
-.edge-line[data-tone='component-b'] {
-  stroke: rgba(139, 92, 246, 0.62);
-  stroke-width: 2.6;
-}
-
-.edge-line[data-tone='component-c'] {
-  stroke: rgb(var(--viz-success-rgb) / 0.62);
-  stroke-width: 2.6;
-}
-
-.edge-line[data-tone='component-d'] {
-  stroke: rgb(var(--viz-warning-rgb) / 0.62);
-  stroke-width: 2.6;
-}
-
-.edge-line[data-tone='terminal'] {
-  stroke: rgb(var(--viz-accent-rgb) / 0.62);
-  stroke-width: 2.6;
-}
-
-.edge-line[data-tone='steiner'] {
-  stroke: rgb(var(--viz-success-rgb) / 0.62);
-  stroke-width: 2.6;
-}
-
-.edge-weight {
-  rect {
-    fill: rgba(13, 16, 24, 0.92);
-    stroke: rgba(255, 255, 255, 0.08);
+  @each $tone in ('lime', 'cyan', 'pink', 'red', 'amber', 'violet') {
+    &[data-tone='#{$tone}'] {
+      fill: var(--#{$tone});
+    }
   }
 
-  text {
-    fill: var(--text-primary);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-variant-numeric: tabular-nums;
+  &[data-tone='rose'] {
+    fill: var(--pink);
+  }
+
+  &[data-tone='soft'] {
+    fill: rgb(var(--lime-rgb) / 0.5);
+  }
+}
+
+.graph__chip {
+  transition: opacity var(--duration-fast) var(--ease-soft);
+
+  .chip__box {
+    fill: var(--screen);
+    stroke: rgb(var(--white-rgb) / 0.2);
+    stroke-width: 1;
+    rx: 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .chip__text {
+    font: 500 calc(10px * var(--graph-k)) var(--font-mono);
+    fill: var(--ink-3);
     text-anchor: middle;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    dominant-baseline: central;
+    pointer-events: none;
+  }
+
+  &[data-tone='pink'] .chip__box {
+    stroke: rgb(var(--pink-rgb) / 0.6);
+  }
+
+  &[data-tone='pink'] .chip__text {
+    fill: var(--pink);
+  }
+
+  &[data-dim='true'] {
+    opacity: 0.22;
   }
 }
 
-.node {
-  transition:
-    transform 220ms ease,
-    opacity 220ms ease;
-  cursor: default;
+.graph__node {
+  @include display.node;
+
+  outline: none;
+  transition: opacity var(--duration-fast) var(--ease-soft);
+
+  .node__ring {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .node__label {
+    font-size: calc(13px * var(--graph-k));
+  }
+
+  .node__value {
+    font-size: var(--graph-value-size, 14px);
+    font-variation-settings: var(--dot-settings);
+  }
+
+  .node__halo {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .node__focus {
+    fill: none;
+    stroke: var(--signal);
+    stroke-width: 2;
+    opacity: 0;
+  }
+
+  &[data-interactive='true'] {
+    cursor: pointer;
+  }
+
+  &[data-interactive='true']:hover .node__ring {
+    fill: rgb(var(--tone-rgb) / 0.2);
+  }
+
+  &:focus-visible .node__focus {
+    opacity: 1;
+  }
+
+  &[data-route='true'] .node__ring {
+    stroke-width: 2.25;
+  }
+
+  &[data-dim='true'] {
+    opacity: 0.3;
+  }
+
+  &[data-current='true'] .node__halo {
+    @include display.pulse-ring(graph-halo);
+  }
 }
 
-.node--clickable {
-  cursor: pointer;
-}
-
-.node__halo,
-.node__body,
-.node__distance rect,
-.node__previous rect {
-  transition:
-    fill 220ms ease,
-    stroke 220ms ease,
-    opacity 220ms ease,
-    transform 220ms ease;
-}
-
-.node__halo {
-  fill: rgb(var(--viz-window-rgb) / 0.08);
-  opacity: 0;
-}
-
-.node__body {
-  fill: #1f2430;
-  stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 1.5;
-}
-
-.node__label,
-.node__distance text,
-.node__previous text {
-  fill: var(--text-primary);
-  text-anchor: middle;
-  font-variant-numeric: tabular-nums;
-}
-
-.node__metric-label {
-  fill: var(--text-tertiary);
-  text-anchor: middle;
-  font-size: 7.5px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.node__label {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.node[data-tone='left'] {
-  --node-tone-fill: rgb(var(--viz-accent-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-accent-rgb) / 0.72);
-  --node-tone-rect: rgb(var(--viz-accent-rgb) / 0.35);
-}
-
-.node[data-tone='right'] {
-  --node-tone-fill: rgb(var(--viz-warning-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-warning-rgb) / 0.72);
-  --node-tone-rect: rgb(var(--viz-warning-rgb) / 0.35);
-}
-
-.node[data-tone='critical'] {
-  --node-tone-fill: rgb(var(--viz-danger-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-danger-rgb) / 0.82);
-  --node-tone-rect: rgb(var(--viz-danger-rgb) / 0.42);
-}
-
-.node[data-tone='component-a'] {
-  --node-tone-fill: rgb(var(--viz-accent-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-accent-rgb) / 0.74);
-  --node-tone-rect: rgb(var(--viz-accent-rgb) / 0.35);
-}
-
-.node[data-tone='component-b'] {
-  --node-tone-fill: rgba(139, 92, 246, 0.18);
-  --node-tone-stroke: rgba(139, 92, 246, 0.74);
-  --node-tone-rect: rgba(139, 92, 246, 0.35);
-}
-
-.node[data-tone='component-c'] {
-  --node-tone-fill: rgb(var(--viz-success-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-success-rgb) / 0.74);
-  --node-tone-rect: rgb(var(--viz-success-rgb) / 0.35);
-}
-
-.node[data-tone='component-d'] {
-  --node-tone-fill: rgb(var(--viz-warning-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-warning-rgb) / 0.76);
-  --node-tone-rect: rgb(var(--viz-warning-rgb) / 0.35);
-}
-
-.node[data-tone='terminal'] {
-  --node-tone-fill: rgb(var(--viz-accent-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-accent-rgb) / 0.76);
-  --node-tone-rect: rgb(var(--viz-accent-rgb) / 0.35);
-}
-
-.node[data-tone='steiner'] {
-  --node-tone-fill: rgb(var(--viz-success-rgb) / 0.18);
-  --node-tone-stroke: rgb(var(--viz-success-rgb) / 0.78);
-  --node-tone-rect: rgb(var(--viz-success-rgb) / 0.35);
-}
-
-.node--muted {
-  opacity: 0.55;
-}
-
-.node__distance rect,
-.node__previous rect {
-  fill: rgba(10, 12, 18, 0.9);
-  stroke: rgba(255, 255, 255, 0.07);
-  stroke-width: 0.5;
-}
-
-.node__distance text,
-.node__previous text {
+.graph__svg[data-dot='false'] .node__value {
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-weight: 700;
 }
 
-.node--source {
-  .node__body {
-    fill: rgb(var(--viz-accent-rgb) / 0.2);
-    stroke: rgb(var(--viz-accent-rgb) / 0.75);
-  }
-
-  .node__distance rect {
-    fill: rgb(var(--viz-accent-rgb) / 0.14);
-    stroke: rgb(var(--viz-accent-rgb) / 0.5);
-  }
-}
-
-.node--path {
-  .node__body {
-    stroke-width: 2.5;
-  }
-}
-
-.node--selected {
-  .node__distance rect,
-  .node__previous rect {
-    stroke: rgb(var(--viz-hit-rgb) / 0.68);
-  }
-
-  .node__body {
-    stroke: rgb(var(--viz-hit-rgb) / 0.88);
-  }
-}
-
-.node--frontier {
-  .node__halo {
-    opacity: 1;
-  }
-
-  .node__body {
-    fill: rgb(var(--viz-window-rgb) / 0.24);
-    stroke: rgb(var(--viz-window-rgb) / 0.82);
-  }
-}
-
-.node--current {
-  .node__halo {
-    opacity: 1;
-    fill: rgb(var(--viz-warning-rgb) / 0.18);
-    animation: current-node-pulse 820ms ease-in-out infinite;
-  }
-
-  .node__body {
-    fill: rgb(var(--viz-warning-rgb) / 0.24);
-    stroke: rgb(var(--viz-warning-rgb) / 0.88);
-  }
-}
-
-.node--settled {
-  .node__halo {
-    opacity: 1;
-    fill: rgb(var(--viz-success-rgb) / 0.16);
-  }
-
-  .node__body {
-    fill: rgb(var(--viz-success-rgb) / 0.22);
-    stroke: rgb(var(--viz-success-rgb) / 0.9);
-  }
-}
-
-.node[data-tone]:not(.node--current):not(.node--frontier):not(.node--source) {
-  .node__body {
-    fill: var(--node-tone-fill);
-    stroke: var(--node-tone-stroke);
-  }
-
-  .node__distance rect,
-  .node__previous rect {
-    stroke: var(--node-tone-rect);
-  }
-}
-
-@keyframes edge-flow {
-  to {
-    stroke-dashoffset: -24;
-  }
-}
-
-@keyframes current-node-pulse {
+@keyframes graph-halo {
   0%,
   100% {
+    opacity: 0.55;
     transform: scale(1);
-    opacity: 0.82;
   }
 
   50% {
-    transform: scale(1.08);
-    opacity: 0.96;
+    opacity: 0.18;
+    transform: scale(1.14);
+  }
+}
+
+.graph__route {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  background: var(--screen);
+  box-shadow: inset 0 0 0 1px rgb(var(--cyan-rgb) / 0.45);
+  font: 500 10px/1 var(--font-mono);
+  color: var(--cyan);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.graph__route-title {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.graph__route-path {
+  color: var(--ink);
+}
+
+.graph__route-close {
+  color: var(--ink-3);
+}
+
+.graph__rack {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.graph__rack + .graph__rack {
+  margin-top: auto;
+}
+
+.graph__rack-lead {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.graph__rack-body {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-3);
+}
+
+.graph__rack-value {
+  @include display.rack-value-dot;
+
+  font-variation-settings: var(--dot-settings);
+}
+
+@media (max-width: 1023px) {
+  :host {
+    min-height: 440px;
+  }
+
+  .display--rack {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .graph__racks {
+    flex-direction: row;
+    gap: 14px;
+    max-height: 168px;
+    overflow: hidden;
+  }
+
+  .graph__rack {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .graph__rack + .graph__rack {
+    margin-top: 0;
   }
 }

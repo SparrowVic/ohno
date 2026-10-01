@@ -1,0 +1,129 @@
+@if (algorithm(); as algo) {
+  <div class="workbench">
+    <ohno-workbench-topbar [crumbs]="crumbs()" [moduleCount]="moduleCount" />
+    @if (config()) {
+      <div class="workbench__grid">
+        <ohno-plate class="workbench__unit workbench__unit--stage" [screws]="true" padding="none">
+          <ohno-stage-head
+            [name]="algo.name"
+            [difficulty]="algo.difficulty"
+            [difficultyLabel]="difficultyLabel()"
+            [time]="algo.complexity.timeAverage"
+            [space]="algo.complexity.space"
+            [views]="views()"
+            [activeView]="variant()"
+            (viewChange)="onViewChange($event)"
+          />
+          <ohno-stage-screen
+            class="workbench__stage"
+            [stepIndex]="cursor()"
+            [lastIndex]="lastIndex()"
+            [meters]="readout().meters"
+            [status]="status()"
+            [speed]="speed()"
+            [phaseLabel]="readout().phaseLabel"
+            [tone]="readout().tone"
+            [sentence]="sentenceParts()"
+            [registers]="readout().registers"
+            [liveText]="liveText()"
+          >
+            <app-visualization-canvas
+              class="workbench__canvas"
+              [variant]="variant()"
+              [array]="array()"
+              [graph]="graph()"
+              [step]="step()"
+              [speed]="speed()"
+              [graphFocusTargetId]="graphFocusTargetId()"
+              (graphFocusTargetChange)="onGraphFocusTargetChange($event)"
+            />
+          </ohno-stage-screen>
+          <ohno-legend-row [items]="legendItems()" [hints]="legendHints()" />
+          <ohno-transport-deck
+            [status]="status()"
+            [transportAction]="transportAction()"
+            [stepIndex]="cursor()"
+            [lastIndex]="lastIndex()"
+            [speed]="speed()"
+            [gauge]="gauge()"
+            [gaugeLabel]="gaugeLabel()"
+            [sizeOptions]="sizeOptions()"
+            [size]="size()"
+            [sizeUnit]="sizeUnit()"
+            [tasks]="tasks()"
+            [activeTaskId]="taskId()"
+            [randomizeLabel]="randomizeLabel()"
+            [presetOptions]="presetOptions()"
+            [presetId]="presetId()"
+            [customSchema]="customSchema()"
+            [customValues]="customValues()"
+            [customValidate]="customValidate()"
+            (reset)="onReset()"
+            (stepBack)="onStepBack()"
+            (toggle)="onToggle()"
+            (stepForward)="onStepForward()"
+            (seek)="onSeek($event)"
+            (speedChange)="onSpeedChange($event)"
+            (sizeChange)="onSizeChange($event)"
+            (randomize)="onRandomize()"
+            (taskChange)="onTaskChange($event)"
+            (customValuesChange)="onCustomValuesChange($event)"
+            (presetChange)="onPresetChange($event)"
+          />
+        </ohno-plate>
+        <ohno-plate class="workbench__unit workbench__unit--inspector" [screws]="true" padding="none">
+          <ohno-inspector
+            [tab]="inspectorTab()"
+            [algorithm]="algo"
+            [codeLines]="codeLines()"
+            [codeRegions]="codeRegions()"
+            [codeVariants]="codeVariants()"
+            [activeLineNumber]="activeLineNumber()"
+            [activeTaskName]="activeTaskName()"
+            [codeSnippetMissing]="codeSnippetMissing()"
+            [traces]="traces()"
+            [variant]="variant()"
+            (tabChange)="onInspectorTab($event)"
+          />
+        </ohno-plate>
+        <ohno-plate class="workbench__unit workbench__unit--log" [screws]="true" padding="none">
+          <ohno-log-printer
+            tabindex="-1"
+            [rows]="tapeRows()"
+            [live]="playing()"
+            [filter]="logFilter()"
+            [algorithmId]="algo.id"
+            (filterChange)="onLogFilter($event)"
+          />
+        </ohno-plate>
+      </div>
+    } @else {
+      <ohno-plate class="workbench__state" [screws]="true">
+        <ohno-screen class="workbench__state-screen" padding="md">
+          <ohno-engraving tone="amber">{{ I18N_KEY.features.algorithms.workbench.states.unavailableEyebrow | transloco }}</ohno-engraving>
+          <h2 class="workbench__state-title">{{ algo.name }}</h2>
+          <p class="workbench__state-copy">{{ I18N_KEY.features.algorithms.workbench.states.unavailable | transloco }}</p>
+        </ohno-screen>
+        <ohno-key
+          [label]="I18N_KEY.features.algorithms.workbench.topbar.catalog | transloco"
+          [icon]="icons.back"
+          routerLink="/algorithms"
+          queryParamsHandling="preserve"
+        />
+      </ohno-plate>
+    }
+  </div>
+} @else {
+  <div class="workbench workbench--empty">
+    <ohno-plate class="workbench__state" [screws]="true">
+      <ohno-screen class="workbench__state-screen" padding="md">
+        <ohno-engraving tone="amber">{{ I18N_KEY.features.algorithms.workbench.states.notFound | transloco }}</ohno-engraving>
+      </ohno-screen>
+      <ohno-key
+        [label]="I18N_KEY.features.algorithms.workbench.topbar.catalog | transloco"
+        [icon]="icons.back"
+        routerLink="/algorithms"
+      />
+    </ohno-plate>
+  </div>
+}

@@ -5,19 +5,24 @@ import {
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
   MotionProfile,
   createMotionProfile,
   findNewSorted,
+  prefersReducedMotion,
   pulseSvgElement,
   samePair,
 } from '../../utils/helpers/visualization-motion/visualization-motion';
@@ -29,44 +34,54 @@ interface Bar {
   group: SVGGElement;
   rect: SVGRectElement;
   text: SVGTextElement;
+  axis: SVGTextElement;
 }
 
 type BarState = 'default' | 'comparing' | 'swapping' | 'sorted';
 
 interface StateStyle {
   readonly fill: string;
-  readonly stroke: string;
+  readonly label: string;
+  readonly axis: string;
 }
 
-/** Single source of truth for each visual state. Each bar is a SOLID
- *  fill + hairline stroke — no vertical gradient, no sheen, no cap,
- *  no shadow. Colors alias directly onto the app's identity palette
- *  (cyan = attending, pink = acting, lime = done). Text color stays
- *  `--text-primary` always — the bar's own color already conveys the
- *  state and tinting the label on top of a same-colored fill was a
- *  low-contrast read. */
 const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
   default: {
-    fill: 'rgb(var(--viz-state-default-rgb) / 0.85)',
-    stroke: 'rgb(var(--viz-state-default-rgb) / 0.95)',
+    fill: 'rgb(var(--viz-state-default-rgb) / 0.72)',
+    label: 'var(--ink-3)',
+    axis: 'var(--ink-4)',
   },
   comparing: {
-    fill: 'rgb(var(--viz-state-compare-rgb) / 0.92)',
-    stroke: 'var(--viz-state-compare)',
+    fill: 'var(--viz-state-compare)',
+    label: 'var(--viz-state-compare)',
+    axis: 'var(--viz-state-compare)',
   },
   swapping: {
-    fill: 'rgb(var(--viz-state-swap-rgb) / 0.92)',
-    stroke: 'var(--viz-state-swap)',
+    fill: 'var(--viz-state-swap)',
+    label: 'var(--viz-state-swap)',
+    axis: 'var(--viz-state-swap)',
   },
   sorted: {
-    fill: 'rgb(var(--viz-state-sorted-rgb) / 0.92)',
-    stroke: 'var(--viz-state-sorted)',
+    fill: 'var(--viz-state-sorted)',
+    label: 'var(--viz-state-sorted)',
+    axis: 'var(--viz-state-sorted)',
   },
 };
 
-const TOP_PADDING = 44;
-const BOTTOM_PADDING = 30;
+const TOP_PADDING = 74;
+const BOTTOM_PADDING = 34;
 const MIN_BAR_WIDTH = 4;
+const MIN_LABEL_BAR_WIDTH = 14;
+const MIN_AXIS_BAR_WIDTH = 22;
+const SEGMENT_PERIOD = 6;
+const SEGMENT_HEIGHT = 4;
+const LABEL_SIZE = 15;
+const AXIS_SIZE = 11;
+const BRACKET_LIFT = 12;
+const BRACKET_ARM = 12;
+const DOT_SETTINGS = "'ROND' 100";
+
+let instanceSequence = 0;
 
 @Component({
   selector: 'app-bar-chart-visualization',
@@ -81,9 +96,18 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   readonly speed = input<number>(5);
 
   private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
+  private readonly language = inject(AppLanguageService);
+  private readonly transloco = inject(TranslocoService);
+  private readonly maskId = `bar-segments-${instanceSequence++}`;
 
   private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
   private barsGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private boundaryGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private bracketGroup: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private boundaryLine: SVGLineElement | null = null;
+  private boundaryLabel: SVGTextElement | null = null;
+  private bracketPath: SVGPathElement | null = null;
+  private bracketLabel: SVGTextElement | null = null;
   private bars: Bar[] = [];
   private width = 0;
   private height = 0;
@@ -109,6 +133,11 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
         this.render(s);
       }
     });
+
+    effect(() => {
+      this.language.activeLang();
+      if (this.initialized && this.lastStep) untracked(() => this.applyMarkers(this.lastStep!));
+    });
   }
 
   ngAfterViewInit(): void {
@@ -116,17 +145,54 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     this.svg = d3Selection
       .select(container)
       .append('svg')
+      .attr('class', 'bars-svg')
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('preserveAspectRatio', 'none');
 
+    this.appendSegmentMask();
+    this.boundaryGroup = this.svg.append('g').attr('class', 'boundary');
+    this.boundaryLine = this.boundaryGroup
+      .append('line')
+      .attr('stroke', 'var(--viz-state-sorted)')
+      .attr('stroke-width', 1.5)
+      .attr('stroke-dasharray', '4 5')
+      .attr('opacity', 0.75)
+      .node();
+    this.boundaryLabel = this.boundaryGroup
+      .append('text')
+      .attr('fill', 'var(--viz-state-sorted)')
+      .attr('text-anchor', 'start')
+      .style('font', '500 9.5px var(--font-mono)')
+      .style('letter-spacing', '0.15em')
+      .style('text-transform', 'uppercase')
+      .node();
     this.barsGroup = this.svg.append('g').attr('class', 'bars');
+    this.bracketGroup = this.svg.append('g').attr('class', 'bracket');
+    this.bracketPath = this.bracketGroup
+      .append('path')
+      .attr('fill', 'none')
+      .attr('stroke-width', 1.5)
+      .attr('stroke-linecap', 'round')
+      .node();
+    this.bracketLabel = this.bracketGroup
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .style('font-family', 'var(--font-dot)')
+      .style('font-weight', '900')
+      .style('font-variation-settings', DOT_SETTINGS)
+      .style('font-size', `${LABEL_SIZE}px`)
+      .node();
+    this.hideMarkers();
 
     this.measure();
     this.resizeObserver = new ResizeObserver(() => {
       this.measure();
       this.layoutAll();
-      if (this.lastStep) this.applyStates(this.lastStep);
+      if (this.lastStep) {
+        this.applyStates(this.lastStep);
+        this.applyMarkers(this.lastStep);
+      }
     });
     this.resizeObserver.observe(container);
 
@@ -146,36 +212,22 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     this.bars = array.map((value, i) => this.createBar(`el-${i}`, value, i));
     this.layoutAll();
     this.lastStep = null;
+    this.hideMarkers();
   }
 
   render(step: SortStep): void {
     const previousStep = this.lastStep;
     if (this.bars.length !== step.array.length) {
       this.snapRebuild(step.array);
-      this.lastStep = step;
-      this.applyStates(step);
-      this.animateStepEffects(previousStep, step);
-      return;
+    } else {
+      const needsSync = this.bars.some((bar) => bar.value !== step.array[bar.position]);
+      if (needsSync && !(step.swapping && this.tryAnimatedSwap(step))) {
+        this.snapRebuild(step.array);
+      }
     }
-
-    const needsSync = this.bars.some((bar) => bar.value !== step.array[bar.position]);
-    if (!needsSync) {
-      this.lastStep = step;
-      this.applyStates(step);
-      this.animateStepEffects(previousStep, step);
-      return;
-    }
-
-    if (step.swapping && this.tryAnimatedSwap(step)) {
-      this.lastStep = step;
-      this.applyStates(step);
-      this.animateStepEffects(previousStep, step);
-      return;
-    }
-
-    this.snapRebuild(step.array);
     this.lastStep = step;
     this.applyStates(step);
+    this.applyMarkers(step);
     this.animateStepEffects(previousStep, step);
   }
 
@@ -186,8 +238,35 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     this.svg?.remove();
     this.svg = null;
     this.barsGroup = null;
+    this.boundaryGroup = null;
+    this.bracketGroup = null;
     this.initialized = false;
     this.lastStep = null;
+  }
+
+  private appendSegmentMask(): void {
+    if (!this.svg) return;
+    const defs = this.svg.append('defs');
+    const pattern = defs
+      .append('pattern')
+      .attr('id', `${this.maskId}-pattern`)
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 4)
+      .attr('height', SEGMENT_PERIOD);
+    pattern.append('rect').attr('width', 4).attr('height', SEGMENT_HEIGHT).attr('fill', '#fff');
+    const mask = defs
+      .append('mask')
+      .attr('id', this.maskId)
+      .attr('maskUnits', 'userSpaceOnUse')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 100000)
+      .attr('height', 100000);
+    mask
+      .append('rect')
+      .attr('width', 100000)
+      .attr('height', 100000)
+      .attr('fill', `url(#${this.maskId}-pattern)`);
   }
 
   private tryAnimatedSwap(step: SortStep): boolean {
@@ -226,26 +305,28 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     const rect = g
       .append('rect')
       .attr('fill', defaultStyle.fill)
-      .attr('stroke', defaultStyle.stroke)
-      .attr('stroke-width', 0.5)
-      .style('shape-rendering', 'geometricPrecision')
+      .attr('mask', `url(#${this.maskId})`)
+      .style('shape-rendering', 'crispEdges')
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center bottom');
     const text = g
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--text-primary)')
-      .style('font-family', 'var(--font-mono)')
-      .style('font-weight', '600')
-      .style('letter-spacing', '0.02em')
-      .style('font-variant-numeric', 'tabular-nums')
-      .style('paint-order', 'stroke fill')
-      .style('stroke', 'rgba(8, 10, 16, 0.82)')
-      .style('stroke-width', '2px')
-      .style('stroke-linejoin', 'round')
-      .style('transform-box', 'fill-box')
-      .style('transform-origin', 'center center')
+      .attr('fill', defaultStyle.label)
+      .style('font-family', 'var(--font-dot)')
+      .style('font-weight', '900')
+      .style('font-variation-settings', DOT_SETTINGS)
+      .style('font-size', `${LABEL_SIZE}px`)
       .text(String(value));
+    const axis = g
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('fill', defaultStyle.axis)
+      .style('font-family', 'var(--font-mono)')
+      .style('font-weight', '500')
+      .style('font-size', `${AXIS_SIZE}px`)
+      .style('letter-spacing', '0.06em')
+      .text(String(position).padStart(2, '0'));
 
     return {
       id,
@@ -254,6 +335,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       group: g.node() as SVGGElement,
       rect: rect.node() as SVGRectElement,
       text: text.node() as SVGTextElement,
+      axis: axis.node() as SVGTextElement,
     };
   }
 
@@ -272,7 +354,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   }
 
   private horizontalPadding(): number {
-    return clamp(this.width * 0.03, 10, 24);
+    return clamp(this.width * 0.03, 12, 40);
   }
 
   private usableWidth(): number {
@@ -285,7 +367,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   }
 
   private barGap(): number {
-    return clamp(this.barStepRaw() * 0.18, 2, 10);
+    return clamp(this.barStepRaw() * 0.32, 2, 26);
   }
 
   private barWidth(): number {
@@ -303,11 +385,8 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
 
   private heightFor(value: number): number {
     const usable = Math.max(32, this.baselineY() - TOP_PADDING);
-    return (value / this.maxValue) * usable;
-  }
-
-  private radiusFor(barWidth: number, barHeight: number): number {
-    return clamp(Math.min(barWidth, barHeight) * 0.28, 3, 18);
+    const raw = (value / this.maxValue) * usable;
+    return Math.max(SEGMENT_HEIGHT, Math.round(raw / SEGMENT_PERIOD) * SEGMENT_PERIOD - (SEGMENT_PERIOD - SEGMENT_HEIGHT));
   }
 
   private layoutAll(): void {
@@ -323,8 +402,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     const floorY = this.baselineY();
     const barHeight = this.heightFor(bar.value);
     const y = floorY - barHeight;
-    const radius = this.radiusFor(barWidth, barHeight);
-    const labelSize = clamp(barWidth * 0.42, 10, 14);
+    const labelSize = clamp(barWidth * 0.5, 14, LABEL_SIZE);
     const labelY = Math.max(labelSize + 6, y - 10);
 
     bar.group.setAttribute('transform', `translate(${x}, 0)`);
@@ -333,26 +411,39 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     bar.rect.setAttribute('y', String(y));
     bar.rect.setAttribute('width', String(barWidth));
     bar.rect.setAttribute('height', String(barHeight));
-    bar.rect.setAttribute('rx', String(radius));
-    bar.rect.setAttribute('ry', String(radius));
+    bar.rect.setAttribute('rx', '1.5');
+    bar.rect.setAttribute('ry', '1.5');
     bar.rect.removeAttribute('transform');
 
     bar.text.setAttribute('x', String(barWidth / 2));
     bar.text.setAttribute('y', String(labelY));
-    bar.text.setAttribute('font-size', String(labelSize));
+    bar.text.style.fontSize = `${labelSize}px`;
     bar.text.textContent = String(bar.value);
+    bar.text.setAttribute('visibility', barWidth < MIN_LABEL_BAR_WIDTH ? 'hidden' : 'visible');
     bar.text.removeAttribute('transform');
+
+    bar.axis.setAttribute('x', String(barWidth / 2));
+    bar.axis.setAttribute('y', String(floorY + 20));
+    bar.axis.textContent = String(bar.position).padStart(2, '0');
+    const thinAxis = barWidth < MIN_AXIS_BAR_WIDTH && bar.position % 2 === 1;
+    bar.axis.setAttribute('visibility', thinAxis ? 'hidden' : 'visible');
   }
 
   private animateBarTo(bar: Bar, fromPos: number, toPos: number): void {
     const motion = this.motion();
     const fromX = this.xFor(fromPos);
     const toX = this.xFor(toPos);
+    const target = bar.group;
+    bar.axis.textContent = String(toPos).padStart(2, '0');
+
+    if (prefersReducedMotion()) {
+      target.setAttribute('transform', `translate(${toX}, 0)`);
+      return;
+    }
+
     const distance = Math.abs(toX - fromX);
     const lift = Math.min(motion.swapLiftPx + 6, Math.max(14, distance * 0.18));
-    const target = bar.group;
     const state = { x: fromX, t: 0 };
-
     target.setAttribute('transform', `translate(${fromX}, 0)`);
 
     animate(state, {
@@ -362,8 +453,7 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       ease: 'inOutQuad',
       onUpdate: () => {
         const arc = Math.sin(Math.PI * state.t);
-        const y = -arc * lift;
-        target.setAttribute('transform', `translate(${state.x}, ${y})`);
+        target.setAttribute('transform', `translate(${state.x}, ${-arc * lift})`);
       },
       onComplete: () => {
         target.setAttribute('transform', `translate(${toX}, 0)`);
@@ -384,14 +474,80 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     for (const bar of this.bars) {
       const state = stateFor(bar.position);
       bar.group.setAttribute('data-state', state);
-      this.applyStateStyles(bar, state);
+      const style = BAR_STATE_STYLES[state];
+      bar.rect.setAttribute('fill', style.fill);
+      bar.text.setAttribute('fill', style.label);
+      bar.axis.setAttribute('fill', style.axis);
     }
   }
 
-  private applyStateStyles(bar: Bar, state: BarState): void {
-    const style = BAR_STATE_STYLES[state];
-    bar.rect.setAttribute('fill', style.fill);
-    bar.rect.setAttribute('stroke', style.stroke);
+  private applyMarkers(step: SortStep): void {
+    this.applyBoundary(step);
+    this.applyBracket(step);
+  }
+
+  private applyBoundary(step: SortStep): void {
+    if (!this.boundaryLine || !this.boundaryLabel) return;
+    const count = step.array.length;
+    const settledFrom = step.boundary;
+    const visible = count > 0 && settledFrom > 0 && settledFrom < count && step.sorted.length > 0;
+    this.boundaryLine.setAttribute('visibility', visible ? 'visible' : 'hidden');
+    this.boundaryLabel.setAttribute('visibility', visible ? 'visible' : 'hidden');
+    if (!visible) return;
+    const x = this.xFor(settledFrom) - this.barGap() / 2;
+    this.boundaryLine.setAttribute('x1', String(x));
+    this.boundaryLine.setAttribute('x2', String(x));
+    this.boundaryLine.setAttribute('y1', String(TOP_PADDING - 34));
+    this.boundaryLine.setAttribute('y2', String(this.baselineY() + 4));
+    this.boundaryLabel.setAttribute('x', String(x + 10));
+    this.boundaryLabel.setAttribute('y', String(TOP_PADDING - 28));
+    this.boundaryLabel.textContent = this.settledLabel();
+  }
+
+  private applyBracket(step: SortStep): void {
+    if (!this.bracketPath || !this.bracketLabel) return;
+    const pair = step.comparing ?? step.swapping;
+    if (!pair) {
+      this.bracketPath.setAttribute('visibility', 'hidden');
+      this.bracketLabel.setAttribute('visibility', 'hidden');
+      return;
+    }
+    const [first, second] = pair;
+    const left = Math.min(first, second);
+    const right = Math.max(first, second);
+    const barWidth = this.barWidth();
+    const x1 = this.xFor(left);
+    const x2 = this.xFor(right) + barWidth;
+    const top = Math.min(this.topOf(left), this.topOf(right)) - LABEL_SIZE - BRACKET_LIFT - 8;
+    const y = Math.max(BRACKET_ARM + LABEL_SIZE + 4, top);
+    const color = step.swapping ? BAR_STATE_STYLES.swapping.fill : BAR_STATE_STYLES.comparing.fill;
+    const leftValue = step.array[left] ?? 0;
+    const rightValue = step.array[right] ?? 0;
+    const relation = step.swapping ? '↔' : leftValue > rightValue ? '>' : leftValue < rightValue ? '<' : '=';
+
+    this.bracketPath.setAttribute('visibility', 'visible');
+    this.bracketPath.setAttribute('stroke', color);
+    this.bracketPath.setAttribute('d', `M ${x1} ${y + BRACKET_ARM} V ${y} H ${x2} V ${y + BRACKET_ARM}`);
+    this.bracketLabel.setAttribute('visibility', 'visible');
+    this.bracketLabel.setAttribute('fill', color);
+    this.bracketLabel.setAttribute('x', String((x1 + x2) / 2));
+    this.bracketLabel.setAttribute('y', String(y - 6));
+    this.bracketLabel.textContent = `${leftValue} ${relation} ${rightValue}`;
+  }
+
+  private hideMarkers(): void {
+    for (const node of [this.boundaryLine, this.boundaryLabel, this.bracketPath, this.bracketLabel]) {
+      node?.setAttribute('visibility', 'hidden');
+    }
+  }
+
+  private topOf(position: number): number {
+    const bar = this.findBar(position);
+    return bar ? this.baselineY() - this.heightFor(bar.value) : this.baselineY();
+  }
+
+  private settledLabel(): string {
+    return this.transloco.translate(I18N_KEY.features.algorithms.workbench.registers.settled).toUpperCase();
   }
 
   private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
@@ -421,9 +577,9 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
       if (!bar) continue;
       pulseSvgElement(bar.rect, {
         duration: motion.compareMs,
-        scale: 1.05,
+        scale: 1.04,
         origin: 'center bottom',
-        filter: glowFilter('var(--viz-state-compare)', 16),
+        filter: glowFilter('var(--viz-state-compare)', 14),
       });
     }
   }
@@ -432,13 +588,12 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
     indices.forEach((position, index) => {
       const bar = this.findBar(position);
       if (!bar) return;
-      const delay = index * motion.completeStepMs;
       pulseSvgElement(bar.rect, {
         duration: motion.settleMs,
-        delay,
-        scale: 1.04,
+        delay: index * motion.completeStepMs,
+        scale: 1.03,
         origin: 'center bottom',
-        filter: glowFilter('var(--viz-state-sorted)', 18),
+        filter: glowFilter('var(--viz-state-sorted)', 14),
       });
     });
   }
@@ -446,13 +601,12 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   private animateCompletion(motion: MotionProfile): void {
     const ordered = [...this.bars].sort((left, right) => left.position - right.position);
     ordered.forEach((bar, index) => {
-      const delay = index * motion.completeStepMs;
       pulseSvgElement(bar.rect, {
         duration: motion.settleMs,
-        delay,
-        scale: 1.05,
+        delay: index * motion.completeStepMs,
+        scale: 1.04,
         origin: 'center bottom',
-        filter: glowFilter('var(--viz-state-sorted)', 22),
+        filter: glowFilter('var(--viz-state-sorted)', 18),
       });
     });
   }
@@ -472,25 +626,16 @@ export class BarChartVisualization implements AfterViewInit, OnDestroy, Visualiz
   private motion(): MotionProfile {
     return createMotionProfile(this.speed());
   }
-
 }
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-/** Build the 3-frame `drop-shadow` filter keyframes used for state
- *  pulses. The middle frame carries the color + blur radius; the
- *  edges are transparent so the glow fades in and out smoothly. */
 function glowFilter(color: string, radius: number): readonly [string, string, string] {
   return [
     'drop-shadow(0 0 0 transparent)',
     `drop-shadow(0 0 ${radius}px ${color})`,
     'drop-shadow(0 0 0 transparent)',
   ];
-}
-
-function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || !window.matchMedia) return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }

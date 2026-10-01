@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ohno-gauge__leds {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}

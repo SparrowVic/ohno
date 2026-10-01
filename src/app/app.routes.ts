@@ -1,14 +1,18 @@
+import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
 
 import { Shell } from './core/layout/shell/shell';
 
 export const routes: Routes = [
   {
-    path: 'algorithms/:id',
+    path: 'dev/instrument',
+    canMatch: [() => isDevMode()],
     loadComponent: () =>
-      import('./features/algorithms/algorithm-detail/algorithm-detail').then(
-        (m) => m.AlgorithmDetail,
-      ),
+      import('./dev/instrument-specimen/instrument-specimen').then((m) => m.InstrumentSpecimen),
+  },
+  {
+    path: 'algorithms/:id',
+    loadComponent: () => import('./features/algorithms/workbench/workbench').then((m) => m.Workbench),
   },
   {
     path: '',

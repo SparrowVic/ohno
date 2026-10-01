@@ -1,0 +1,16 @@
+@for (item of items(); track item.id; let index = $index) {
+  <ohno-key
+    class="ohno-menu__item"
+    menuRole="menuitemradio"
+    [keyId]="optionId(index)"
+    [tabIndex]="-1"
+    [checked]="item.id === activeId()"
+    [label]="item.label"
+    size="sm"
+    led="signal"
+    [ledOn]="item.id === activeId()"
+    [variant]="item.id === activeId() || index === focusIndex() ? 'in' : 'default'"
+    [disabled]="item.disabled === true"
+    (keyClick)="pick(item)"
+  />
+}

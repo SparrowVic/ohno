@@ -14,7 +14,10 @@ You audit against these — in this order of severity when ranking issues:
 
 ### Severity: Blocker
 
-1. **Hardcoded hex in component SCSS.** Every color must come from `src/styles.scss` tokens via `var(--...)` or `rgb(var(--X-rgb) / α)`. Grep for `#[0-9a-fA-F]{3,8}` in changed SCSS.
+1. **Hardcoded hex in component SCSS.** Every color must come from `src/styles/_instrument-tokens.scss` tokens via `var(--...)` or `rgb(var(--X-rgb) / α)`. Grep for `#[0-9a-fA-F]{3,8}` in changed SCSS (the token catalog and `src/styles/_base.scss` are the only files allowed to hold literals).
+1a. **Comma-form alpha `rgba(var(`** anywhere in `src/` — browsers drop the declaration silently. Grep for `rgba\(var\(`.
+1b. **Doto misuse.** `--font-dot` (or `Doto`) used for words/sentences, or at a size below 14px. Doto is for numbers, complexity notation and the one-word marquee only.
+1c. **Deprecated compatibility tokens in new or migrated code** — any name that lives only in `src/styles/_compat-tokens.scss` (`--surface-*`, `--text-primary/-secondary/…`, `--accent`, `--chrome-*`, `--viz-accent`…`--viz-ember`, `--elevation-*`, `--ring-focus`, `--panel-shell-*`, `--control-*`, `--font-sans`, `--radius-lg/-xl/-2xl/-3xl`, `--ease-spring`, `--duration-entrance`). Point at the Instrument token with the same role.
 2. **`@Input()` decorator used in new code.** Must be `input()` / `input.required()` / `input<T>(default)`.
 3. **Constructor-parameter injection.** Must be `inject(...)` in field initializers.
 4. **`*ngIf` / `*ngFor` / `*ngSwitch` in templates.** Must be `@if / @for / @switch`.
@@ -26,7 +29,7 @@ You audit against these — in this order of severity when ranking issues:
 
 8. **NgModule re-introduced** or a non-standalone component added. Every new `@Component` must be standalone + OnPush.
 9. **Hardcoded ms in a visualization** instead of deriving from `createMotionProfile(speed)`.
-10. **Focus override without equivalent treatment.** `outline: none` without a compensating `box-shadow` or `var(--ring-focus)` reference.
+10. **Focus override without equivalent treatment.** `outline: none` without a compensating `box-shadow` or `var(--focus-ring)` reference.
 11. **State color tinting text on same-colored fill** (e.g., lime text on lime bar).
 12. **Hover-translate on cards** (`:hover { transform: translateY(-Npx); }`) — the flat redesign walked this back.
 13. **Per-item drop shadow** on viz elements — use a unified baseline shadow on the scene container.
@@ -34,9 +37,9 @@ You audit against these — in this order of severity when ranking issues:
 
 ### Severity: Minor (nice-to-have)
 
-15. Radii that don't match the scale (`--radius-sm` … `--radius-3xl`, `--control-radius`, `--panel-shell-radius`). Suggest the nearest token.
+15. Radii that don't match the scale (`--radius-kbd` 5, `--radius-sm` 7, `--radius-md` 10, `--radius-key` 12, `--radius-led-chip` 13, `--radius-screen` 14, `--radius-key-lg` 15, `--radius-card` 18, `--radius-key-xl` 18, `--radius-plate` 20). Suggest the nearest token.
 16. Stroke widths other than 0.5px on viz shapes.
-17. Ad-hoc shadows instead of `--elevation-*`.
+17. Ad-hoc shadows instead of the `--shadow-*` recipes (`--shadow-plate`, `--shadow-key`, `--shadow-key-in`, `--shadow-screen`, …); hover-lift (`translateY` on hover) is also out.
 18. Missing `aria-label` on icon-only buttons.
 19. Empty/loading/error state absent (only happy path rendered).
 20. Margin/padding values that don't align to the 4/8 grid.
@@ -89,11 +92,14 @@ If there are no issues at a severity: omit the section (don't write "none"). If 
 1. **Identify scope.** If the dispatcher names specific files, review exactly those. If they name a subject ("the bar chart", "the scratchpad"), glob the relevant component folder.
 2. **Grep for the rulebook violations** rather than reading top-to-bottom — much faster and catches real signals:
    - `#[0-9a-fA-F]{3,8}\b` in `.scss` under the scope.
+   - `rgba\(var\(` in `.scss`, `.ts` and `.html` under the scope.
+   - `--font-dot|Doto` in `.scss` — then read the surrounding rule for the element and the font size.
+   - `--surface-|--text-primary|--text-secondary|--accent|--chrome-|--elevation-|--ring-focus|--control-|--panel-shell-|--font-sans` in changed `.scss` (compatibility aliases).
    - `@Input\(` / `@Output\(` in `.ts`.
    - `\*ngIf\|\*ngFor\|\*ngSwitch` in `.html`.
    - `constructor\s*\(` followed by a parameter that isn't `inject()`.
    - `animate\(\|\.animate\(\|pulseSvgElement\(` without a nearby `prefersReducedMotion\(\)` check.
-   - `outline:\s*none` without a paired `box-shadow: .*--ring-focus`.
+   - `outline:\s*none` without a paired `box-shadow: .*--focus-ring`.
 3. **Read only what the grep surfaces** + the file head (for context).
 4. **Produce the structured report.**
 

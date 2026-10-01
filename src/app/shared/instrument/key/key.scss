@@ -1,0 +1,78 @@
+:host {
+  display: inline-block;
+}
+
+.ohno-key {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: var(--key-justify, center);
+  flex-direction: var(--key-flex-direction, row);
+  gap: var(--key-gap, 8px);
+  width: var(--key-width, auto);
+  padding: 0 13px;
+  border: 0;
+  border-radius: var(--key-radius, var(--radius-key));
+  color: var(--ink-2);
+  font: var(--key-font, 600 12px/1 var(--font-ui));
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background: var(--gradient-key);
+  box-shadow: var(--shadow-key);
+  transition: box-shadow var(--duration-instant) var(--ease-soft), color var(--duration-fast) var(--ease-soft), filter var(--duration-fast) var(--ease-soft);
+}
+
+.ohno-key[data-size='sm'] { height: var(--key-height, 34px); }
+.ohno-key[data-size='md'] { height: var(--key-height, 40px); }
+.ohno-key[data-size='lg'] { height: var(--key-height, 56px); border-radius: var(--key-radius, var(--radius-key-lg)); }
+.ohno-key[data-size='xl'] { height: var(--key-height, 70px); padding: 0 20px; border-radius: var(--key-radius, var(--radius-key-xl)); }
+
+.ohno-key--icon-only { padding: 0; aspect-ratio: 1; }
+.ohno-key--icon-only[data-size='xl'] { aspect-ratio: auto; width: 104px; }
+
+.ohno-key:hover:not(:disabled) { color: var(--ink); filter: brightness(1.08); }
+.ohno-key:active:not(:disabled),
+.ohno-key[data-variant='in'] {
+  color: var(--ink);
+  background: var(--gradient-key-in);
+  box-shadow: var(--shadow-key-in);
+  filter: none;
+}
+
+.ohno-key[data-variant='signal'] {
+  color: var(--signal-ink);
+  background: var(--gradient-key-signal);
+  box-shadow: var(--shadow-key-signal);
+}
+
+.ohno-key[data-variant='signal'] .ohno-key__icon { color: var(--signal-ink); }
+
+.ohno-key:disabled,
+.ohno-key[aria-disabled='true'] {
+  color: var(--ink-4);
+  cursor: not-allowed;
+  filter: none;
+}
+
+.ohno-key:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-key), var(--focus-ring);
+}
+
+.ohno-key__icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+}
+
+.ohno-key[data-size='lg'] .ohno-key__icon { width: 20px; height: 20px; font-size: 18px; }
+.ohno-key[data-size='xl'] .ohno-key__icon { width: 28px; height: 28px; font-size: 26px; }
+
+.ohno-key__kbd { margin-left: 4px; }
+
+.ohno-key__prefix {
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+}

@@ -40,7 +40,7 @@
           <div class="trace__register-grid">
             @for (reg of lab.registers; track reg.id) {
               <div class="trace__register trace__register--{{ reg.tone }}">
-                <app-math-text class="trace__register-label" [content]="reg.label" />
+                <app-math-text class="trace__register-label" [content]="reg.label | i18nText" />
                 <app-math-text class="trace__register-value" [content]="stringify(reg.value)" />
                 @if (reg.hint; as hint) {
                   <span class="trace__register-hint">{{ hint | i18nText }}</span>

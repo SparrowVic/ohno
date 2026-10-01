@@ -13,6 +13,7 @@ import {
 import * as d3Selection from 'd3-selection';
 import { animate } from 'animejs';
 
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SortBucketSnapshot, SortItemSnapshot, SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
@@ -97,7 +98,7 @@ const BUCKET_COLORS = VIZ_BUCKET_COLORS;
 
 @Component({
   selector: 'app-radix-bucket-visualization',
-  imports: [],
+  imports: [I18nTextPipe],
   templateUrl: './radix-bucket-visualization.html',
   styleUrl: './radix-bucket-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

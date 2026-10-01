@@ -1,0 +1,81 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.printer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.printer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 4px 0;
+}
+
+.printer__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printer__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.printer__tape {
+  height: 100%;
+  min-height: 160px;
+}
+
+.printer__side {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.printer__side ohno-key {
+  --key-width: 72px;
+}
+
+.printer__anchor {
+  position: relative;
+  display: block;
+}
+
+.printer__menu {
+  top: 0;
+  right: calc(100% + 8px);
+}
+
+.printer__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: auto;
+  padding: 0 2px 2px 0;
+}
+
+@media (max-width: 767px) {
+  .printer__body {
+    grid-template-columns: minmax(0, 1fr) 56px;
+  }
+
+  .printer__side ohno-key {
+    --key-width: 56px;
+    --key-height: 48px;
+  }
+}

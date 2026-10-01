@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 38px;
+}
+
+.legend__items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend__label {
+  font: 500 14.5px/1 var(--font-ui);
+  color: var(--ink-2);
+}
+
+.legend__hints {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: none;
+}
+
+.legend__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend__hint-label {
+  margin-left: 3px;
+  font: 500 12px/1 var(--font-mono);
+  color: var(--ink-3);
+}
+
+@media (max-width: 767px) {
+  .legend {
+    flex-wrap: wrap;
+  }
+
+  .legend__hints {
+    display: none;
+  }
+}

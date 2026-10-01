@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.trace {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.trace__block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trace__math {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.trace__copy {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.trace__dot {
+  font: 900 14px/1 var(--font-dot);
+}
+
+.trace__values {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.02em;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trace__empty {
+  margin: 0;
+  font: 500 11px/1.5 var(--font-mono);
+  color: var(--ink-3);
+}

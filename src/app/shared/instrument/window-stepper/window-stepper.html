@@ -1,0 +1,22 @@
+<ohno-screen
+  class="ohno-window-stepper__window"
+  role="spinbutton"
+  tabindex="0"
+  [attr.aria-label]="label()"
+  [attr.aria-valuenow]="value()"
+  [attr.aria-valuemin]="minOption()"
+  [attr.aria-valuemax]="maxOption()"
+  (keydown.arrowup)="step(1, $event)"
+  (keydown.arrowright)="step(1, $event)"
+  (keydown.arrowdown)="step(-1, $event)"
+  (keydown.arrowleft)="step(-1, $event)"
+>
+  <ohno-readout [value]="value()" size="lg" />
+</ohno-screen>
+<div class="ohno-window-stepper__keys">
+  <ohno-key label="−" [ariaLabel]="decreaseLabel()" size="sm" [disabled]="atStart()" (keyClick)="step(-1)" />
+  <ohno-key label="+" [ariaLabel]="increaseLabel()" size="sm" [disabled]="atEnd()" (keyClick)="step(1)" />
+</div>
+@if (unitLabel(); as unit) {
+  <ohno-engraving class="ohno-window-stepper__unit">{{ unit }}</ohno-engraving>
+}

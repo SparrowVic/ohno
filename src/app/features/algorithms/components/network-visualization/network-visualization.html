@@ -1,92 +1,138 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+@if (state()) {
+  <div class="display display--rack">
+    <div class="display__main network__main">
+      <svg
+        #container
+        class="network"
+        role="img"
+        [attr.aria-label]="I18N_KEY.features.algorithms.display.notes.ariaDisplay | transloco"
+        [attr.viewBox]="viewBox()"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          @for (tone of arrowTones; track tone) {
+            <marker
+              [attr.id]="'network-arrow-' + tone"
+              markerWidth="9"
+              markerHeight="9"
+              refX="8"
+              refY="4.5"
+              orient="auto"
+              markerUnits="userSpaceOnUse"
+            >
+              <path d="M0 0L9 4.5L0 9Z" [style.fill]="arrowFill(tone)" />
+            </marker>
+          }
+        </defs>
 
-  @if (state()) {
-    <svg
-      #container
-      class="network"
-      [attr.viewBox]="viewBox()"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <defs>
-        <linearGradient id="networkEdgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="var(--viz-route)" />
-          <stop offset="100%" stop-color="var(--viz-window)" />
-        </linearGradient>
-        @for (marker of arrowMarkers; track marker.id) {
-          <marker
-            [attr.id]="marker.id"
-            markerWidth="9"
-            markerHeight="9"
-            refX="8"
-            refY="4.5"
-            orient="auto"
-            markerUnits="userSpaceOnUse"
-          >
-            <path d="M0 0L9 4.5L0 9Z" [attr.fill]="marker.fill" />
-          </marker>
+        @for (edge of edges(); track edge.id) {
+          <g class="network__edge-group" [attr.data-edge-id]="edge.id">
+            <line
+              class="network__edge"
+              [attr.data-tone]="edge.tone"
+              [attr.data-status]="edge.status"
+              [attr.marker-end]="edge.marker"
+              [attr.x1]="edge.x1"
+              [attr.y1]="edge.y1"
+              [attr.x2]="edge.x2"
+              [attr.y2]="edge.y2"
+            />
+          </g>
         }
-        <filter id="networkNodeGlow">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
 
-      @for (edge of edges(); track edge.id) {
-        <g class="edge-group" [attr.data-edge-id]="edge.id">
-          <line
-            class="edge-line edge-line--{{ edge.status }}"
-            [attr.marker-end]="edgeMarker(edge)"
-            [attr.x1]="edge.x1"
-            [attr.y1]="edge.y1"
-            [attr.x2]="edge.x2"
-            [attr.y2]="edge.y2"
-          />
+        @for (edge of edges(); track edge.id) {
           <g
-            class="edge-label"
-            [attr.transform]="'translate(' + edge.midX + ' ' + edge.midY + ')'"
+            class="network__edge-chip"
+            [attr.data-tone]="edge.tone"
+            [attr.data-status]="edge.status"
+            [attr.transform]="'translate(' + edge.chipX + ' ' + edge.chipY + ')'"
           >
-            <rect x="-22" y="-13" width="44" height="26" rx="6" />
-            <text class="edge-label__primary" y="-1">{{ edge.primaryText }}</text>
-            @if (edge.secondaryText) {
-              <text class="edge-label__secondary" y="10">{{ edge.secondaryText }}</text>
+            <rect
+              class="chip__box"
+              [attr.x]="-edge.chipWidth / 2"
+              [attr.y]="-edge.chipHeight / 2"
+              [attr.width]="edge.chipWidth"
+              [attr.height]="edge.chipHeight"
+            />
+            @if (edge.secondaryText; as secondary) {
+              <text class="chip__text" y="-8.5">{{ edge.primaryText }}</text>
+              <text class="chip__text network__chip-secondary" y="9.5">{{ secondary }}</text>
+            } @else {
+              <text class="chip__text" y="0.5">{{ edge.primaryText }}</text>
             }
           </g>
-        </g>
-      }
+        }
 
-      @for (node of nodes(); track node.id) {
-        <g
-          class="node node--{{ node.status }}"
-          [attr.data-lane]="node.lane"
-          [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
-          [attr.data-node-id]="node.id"
-        >
-          <circle class="node__halo" r="30" />
-          <circle class="node__body" r="22" filter="url(#networkNodeGlow)" />
-          <text class="node__label" y="5">{{ node.label }}</text>
+        @for (node of nodes(); track node.id) {
+          <g
+            class="network__node"
+            [attr.data-node-id]="node.id"
+            [attr.data-tone]="node.tone"
+            [attr.data-status]="node.status"
+            [attr.data-current]="node.status === 'current'"
+            [attr.data-frontier]="node.status === 'frontier'"
+            [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+          >
+            <circle class="node__halo" [attr.r]="nodeRadius + 9" />
+            @if (node.isSink) {
+              <circle class="network__sink-ring" [attr.r]="nodeRadius + 4.5" />
+            }
+            <circle class="node__ring" [attr.r]="nodeRadius" />
+            <text class="node__label">{{ node.label }}</text>
 
-          <g class="node__metric" transform="translate(0 -36)">
-            @let metricWidth = metricChipWidth(node);
-            <rect [attr.x]="-metricWidth / 2" y="-11" [attr.width]="metricWidth" height="22" rx="7" />
-            <text y="3">{{ levelLabel(node) }}</text>
+            @if (node.levelText; as level) {
+              <g class="network__node-chip" [attr.transform]="'translate(0 -' + nodeChipOffset + ')'">
+                <rect class="chip__box" [attr.x]="-node.levelWidth / 2" y="-10" [attr.width]="node.levelWidth" height="20" />
+                <text class="chip__text" y="0.5">{{ level }}</text>
+              </g>
+            }
+
+            @if (node.linkText; as link) {
+              <g class="network__node-chip network__node-chip--link" [attr.transform]="'translate(0 ' + nodeChipOffset + ')'">
+                <rect class="chip__box" [attr.x]="-node.linkWidth / 2" y="-10" [attr.width]="node.linkWidth" height="20" />
+                <text class="chip__text" y="0.5">{{ link }}</text>
+              </g>
+            }
           </g>
+        }
+      </svg>
+    </div>
 
-          <g class="node__link" transform="translate(0 38)">
-            @let linkText = linkLabel(node);
-            @let linkWidth = linkChipWidth(node);
-            <rect [attr.x]="-linkWidth / 2" y="-10" [attr.width]="linkWidth" height="20" rx="6" />
-            <text y="3">{{ linkText }}</text>
-          </g>
-        </g>
+    <div class="display__rack">
+      <ohno-rack [title]="queueTitle() | i18nText">
+        @for (row of queueRows(); track $index; let first = $first) {
+          <ohno-rack-row [tone]="first ? 'head' : 'default'">
+            <span rackLead>{{ row.lead }}</span>
+            {{ row.body }}
+            <span rackValue class="network__rack-value">{{ row.value ?? '∞' }}</span>
+          </ohno-rack-row>
+        } @empty {
+          <ohno-rack-row tone="dim">{{ I18N_KEY.features.algorithms.display.notes.empty | transloco }}</ohno-rack-row>
+        }
+      </ohno-rack>
+
+      <ohno-rack [title]="focusTitle() | i18nText" [meta]="focusRows().length > 0 ? '' + focusRows().length : null">
+        @for (row of focusRows(); track $index) {
+          <ohno-rack-row tone="done">
+            <span rackLead>{{ row.lead }}</span>
+            {{ row.body }}
+            @if (row.value; as value) {
+              <span rackValue class="network__rack-value">{{ value }}</span>
+            }
+          </ohno-rack-row>
+        } @empty {
+          <ohno-rack-row tone="dim">{{ I18N_KEY.features.algorithms.display.notes.empty | transloco }}</ohno-rack-row>
+        }
+      </ohno-rack>
+
+      @if (route(); as routeText) {
+        <div class="network__note" data-tone="pink">
+          <span class="network__note-title">{{ I18N_KEY.features.algorithms.display.network.routeTitle | transloco }}</span>
+          {{ routeText }}
+        </div>
       }
-    </svg>
-  } @else {
-    <p class="network-shell__empty">
-      {{ I18N_KEY.features.algorithms.visualizations.network.emptyLabel | transloco }}
-    </p>
-  }
-</app-viz-panel>
+    </div>
+  </div>
+} @else {
+  <p class="network__empty">{{ I18N_KEY.features.algorithms.display.notes.empty | transloco }}</p>
+}

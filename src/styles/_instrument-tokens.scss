@@ -1,0 +1,187 @@
+:root {
+  color-scheme: dark;
+
+  --white-rgb: 255 255 255;
+  --black-rgb: 0 0 0;
+
+  --desk: #0b0c0e;
+  --desk-rgb: 11 12 14;
+  --plate-hi: #25272c;
+  --plate-hi-rgb: 37 39 44;
+  --plate-lo: #1a1c20;
+  --plate-lo-rgb: 26 28 32;
+  --key-hi: #2e3137;
+  --key-hi-rgb: 46 49 55;
+  --key-lo: #202227;
+  --key-lo-rgb: 32 34 39;
+  --screen: #060708;
+  --screen-rgb: 6 7 8;
+  --paper: #ebe6d9;
+  --paper-rgb: 235 230 217;
+  --paper-ink: #2a2620;
+  --paper-ink-rgb: 42 38 32;
+  --led-off: #292b30;
+  --led-off-rgb: 41 43 48;
+  --desk-halo-warm: #212328;
+  --desk-halo-warm-rgb: 33 35 40;
+  --desk-halo-cool: #17181c;
+  --desk-halo-cool-rgb: 23 24 28;
+  --well: #15161a;
+  --well-rgb: 21 22 26;
+  --screw-hi: #3b3e44;
+  --screw-lo: #14151a;
+  --code-fg: #d8d7d1;
+  --code-fg-rgb: 216 215 209;
+  --code-keyword: #ff9d6b;
+  --code-keyword-rgb: 255 157 107;
+  --code-type: #8fd6ff;
+  --code-type-rgb: 143 214 255;
+  --code-fn: #ffffff;
+  --code-comment: #66676c;
+  --code-comment-rgb: 102 103 108;
+  --code-punct: #94948f;
+  --code-punct-rgb: 148 148 143;
+  --code-value: var(--lime);
+
+  --ink: #f0efea;
+  --ink-rgb: 240 239 234;
+  --ink-2: #b9b8b2;
+  --ink-2-rgb: 185 184 178;
+  --ink-3: #82827d;
+  --ink-3-rgb: 130 130 125;
+  --ink-4: #56575b;
+  --ink-4-rgb: 86 87 91;
+
+  --signal: #ff5a1f;
+  --signal-rgb: 255 90 31;
+  --signal-deep: #a83a10;
+  --signal-deep-rgb: 168 58 16;
+  --signal-ink: #230d02;
+  --signal-dim: #7a3a1d;
+  --signal-dim-rgb: 122 58 29;
+  --cyan: #4ce3ff;
+  --cyan-rgb: 76 227 255;
+  --pink: #ff5fa8;
+  --pink-rgb: 255 95 168;
+  --lime: #c7e56a;
+  --lime-rgb: 199 229 106;
+  --amber: #ffb224;
+  --amber-rgb: 255 178 36;
+  --red: #ff6257;
+  --red-rgb: 255 98 87;
+  --violet: #a992ff;
+  --violet-rgb: 169 146 255;
+  --slate: #7d8696;
+  --slate-rgb: 125 134 150;
+  --easy: #7fe08a;
+  --easy-rgb: 127 224 138;
+
+  --viz-state-default: var(--slate);
+  --viz-state-default-rgb: var(--slate-rgb);
+  --viz-state-compare: var(--cyan);
+  --viz-state-compare-rgb: var(--cyan-rgb);
+  --viz-state-swap: var(--pink);
+  --viz-state-swap-rgb: var(--pink-rgb);
+  --viz-state-sorted: var(--lime);
+  --viz-state-sorted-rgb: var(--lime-rgb);
+
+  --difficulty-easy: var(--easy);
+  --difficulty-easy-rgb: var(--easy-rgb);
+  --difficulty-medium: var(--amber);
+  --difficulty-medium-rgb: var(--amber-rgb);
+  --difficulty-hard: var(--signal);
+  --difficulty-hard-rgb: var(--signal-rgb);
+  --difficulty-ultra-hard: var(--red);
+  --difficulty-ultra-hard-rgb: var(--red-rgb);
+
+  --font-ui: 'Instrument Sans Variable', system-ui, sans-serif;
+  --font-dot: 'Doto Variable', ui-monospace, monospace;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+  --dot-settings: 'ROND' 100;
+
+  --radius-kbd: 5px;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-key: 12px;
+  --radius-led-chip: 13px;
+  --radius-screen: 14px;
+  --radius-key-lg: 15px;
+  --radius-card: 18px;
+  --radius-key-xl: 18px;
+  --radius-plate: 20px;
+
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0.2, 0.2, 1);
+  --duration-instant: 90ms;
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+  --duration-pulse: 2400ms;
+
+  --gradient-plate: linear-gradient(150deg, var(--plate-hi), var(--plate-lo) 62%);
+  --gradient-plate-hover: linear-gradient(150deg, #2b2d33, #1e2024 62%);
+  --gradient-key: linear-gradient(150deg, var(--key-hi), var(--key-lo));
+  --gradient-key-in: linear-gradient(150deg, #15161a, #1d1f23);
+  --gradient-key-signal: linear-gradient(150deg, #ff8548, #ef470a);
+  --gradient-knob-ring: conic-gradient(from 20deg, #2c2e33, #3c3f46, #24262a, #363940, #2c2e33);
+  --gradient-knob-face: linear-gradient(150deg, #2f3137, #1b1c20);
+  --gradient-cap: linear-gradient(150deg, #3a3d44, #24262b);
+  --gradient-paper: linear-gradient(180deg, #d6d1c3 0%, #ebe6d9 9%, #efeadf 72%, #ddd8ca 100%);
+  --gradient-sheen: linear-gradient(118deg, rgb(var(--white-rgb) / 0.04) 0%, rgb(var(--white-rgb) / 0) 26%);
+
+  --shadow-plate:
+    -6px -6px 16px rgb(var(--white-rgb) / 0.028),
+    10px 12px 26px rgb(var(--black-rgb) / 0.62),
+    inset 1px 1px 0 rgb(var(--white-rgb) / 0.075),
+    inset -1px -1px 0 rgb(var(--black-rgb) / 0.45);
+  --shadow-plate-hover:
+    -6px -6px 16px rgb(var(--white-rgb) / 0.035),
+    12px 16px 30px rgb(var(--black-rgb) / 0.7),
+    inset 1px 1px 0 rgb(var(--white-rgb) / 0.11),
+    inset -1px -1px 0 rgb(var(--black-rgb) / 0.45),
+    0 0 0 1px rgb(var(--signal-rgb) / 0.35);
+  --shadow-screen:
+    inset 0 0 0 1px rgb(var(--black-rgb) / 0.9),
+    inset 4px 5px 12px rgb(var(--black-rgb) / 0.95),
+    0 1px 0 rgb(var(--white-rgb) / 0.07),
+    0 -1px 0 rgb(var(--black-rgb) / 0.55);
+  --shadow-key:
+    -3px -3px 8px rgb(var(--white-rgb) / 0.035),
+    5px 6px 12px rgb(var(--black-rgb) / 0.6),
+    inset 1px 1px 0 rgb(var(--white-rgb) / 0.1),
+    inset -1px -1px 0 rgb(var(--black-rgb) / 0.4);
+  --shadow-key-in:
+    inset 3px 3px 8px rgb(var(--black-rgb) / 0.78),
+    inset -1px -1px 0 rgb(var(--white-rgb) / 0.055);
+  --shadow-key-signal:
+    -3px -3px 8px rgb(var(--white-rgb) / 0.03),
+    6px 8px 16px rgb(var(--black-rgb) / 0.6),
+    0 0 30px rgb(var(--signal-rgb) / 0.24),
+    inset 1px 1px 0 rgb(var(--white-rgb) / 0.42),
+    inset -1px -2px 0 rgb(120 30 0 / 0.45);
+  --shadow-window:
+    inset 2px 2px 6px rgb(var(--black-rgb) / 0.8),
+    inset -1px -1px 0 rgb(var(--white-rgb) / 0.05);
+  --shadow-cap:
+    4px 6px 10px rgb(var(--black-rgb) / 0.7),
+    inset 1px 1px 0 rgb(var(--white-rgb) / 0.16);
+  --shadow-knob:
+    -4px -4px 10px rgb(var(--white-rgb) / 0.04),
+    6px 8px 16px rgb(var(--black-rgb) / 0.72),
+    inset 0 1px 0 rgb(var(--white-rgb) / 0.14);
+  --shadow-paper: 0 8px 10px rgb(var(--black-rgb) / 0.5);
+
+  --screen-dots: radial-gradient(rgb(var(--white-rgb) / 0.04) 1px, transparent 1.25px);
+  --screen-dot-size: 6px;
+  --groove: rgb(var(--black-rgb) / 0.55);
+  --groove-highlight: rgb(var(--white-rgb) / 0.05);
+  --hairline: rgb(var(--white-rgb) / 0.09);
+  --engraving-shadow: 0 1px 0 rgb(var(--black-rgb) / 0.7);
+
+  --focus-ring: 0 0 0 2px var(--signal), 0 0 0 6px rgb(var(--signal-rgb) / 0.22);
+
+  --z-menu: 40;
+  --z-popover: 60;
+  --z-toast: 80;
+}

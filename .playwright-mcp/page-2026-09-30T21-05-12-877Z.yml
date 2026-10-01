@@ -1,0 +1,238 @@
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - link "Oh(no) — catalog" [ref=e11] [cursor=pointer]:
+      - /url: /algorithms
+      - generic [ref=e17]:
+        - generic [ref=e18]: Oh(no)
+        - generic [ref=e19]: Algorithm lab
+    - generic [ref=e20]: Algorithms
+    - navigation "Algorithm banks" [ref=e21]:
+      - button "All 102" [ref=e22] [cursor=pointer]:
+        - generic [ref=e25]: All
+        - generic [ref=e26]: "102"
+      - button "Sorting 11" [ref=e28] [cursor=pointer]:
+        - generic [ref=e31]: Sorting
+        - generic [ref=e32]: "11"
+      - button "Searching 03" [ref=e34] [cursor=pointer]:
+        - generic [ref=e37]: Searching
+        - generic [ref=e38]: "03"
+      - button "Trees 01" [ref=e40] [cursor=pointer]:
+        - generic [ref=e43]: Trees
+        - generic [ref=e44]: "01"
+      - button "Graphs 26" [ref=e46] [cursor=pointer]:
+        - generic [ref=e49]: Graphs
+        - generic [ref=e50]: "26"
+      - button "Dynamic prog. 21" [ref=e52] [cursor=pointer]:
+        - generic [ref=e55]: Dynamic prog.
+        - generic [ref=e56]: "21"
+      - button "Strings 11" [ref=e58] [cursor=pointer]:
+        - generic [ref=e61]: Strings
+        - generic [ref=e62]: "11"
+      - button "Geometry 08" [ref=e64] [cursor=pointer]:
+        - generic [ref=e67]: Geometry
+        - generic [ref=e68]: "08"
+      - button "Other 21" [ref=e70] [cursor=pointer]:
+        - generic [ref=e73]: Other
+        - generic [ref=e74]: "21"
+    - separator [ref=e76]
+    - generic [ref=e77]: Structures
+    - generic [ref=e78]:
+      - generic [ref=e81]: Data structures
+      - generic [ref=e82]: Soon
+    - separator [ref=e83]
+    - generic [ref=e84]: Recently opened
+    - generic "Recently opened modules" [ref=e85]:
+      - paragraph [ref=e86]: Open any module and it will appear here.
+    - generic [ref=e87]:
+      - button "? Shortcuts" [ref=e88] [cursor=pointer]:
+        - generic [ref=e89]: "?"
+        - generic [ref=e91]: Shortcuts
+      - radiogroup "Interface language" [ref=e92]:
+        - radio "PL" [ref=e93] [cursor=pointer]
+        - radio "EN" [checked] [ref=e94] [cursor=pointer]
+  - main [ref=e95]:
+    - generic [ref=e97]:
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]: Bank 06 · category
+            - generic [ref=e102]: STRINGS
+          - generic [ref=e104]:
+            - generic [ref=e105]:
+              - generic [ref=e106]: Modules
+              - generic [ref=e107]: "11"
+            - generic [ref=e109]:
+              - generic [ref=e110]: Pattern matching
+              - generic [ref=e111]: "04"
+            - generic [ref=e113]:
+              - generic [ref=e114]: Suffix & palindromes
+              - generic [ref=e115]: "04"
+            - generic [ref=e117]:
+              - generic [ref=e118]: Compression
+              - generic [ref=e119]: "03"
+        - generic [ref=e121]:
+          - button "Open search" [ref=e123] [cursor=pointer]:
+            - generic [ref=e127]: Search 102 algorithms…
+            - generic [ref=e128]: ⌘K
+          - group "Difficulty filter" [ref=e130]:
+            - button "Easy" [pressed] [ref=e133] [cursor=pointer]
+            - button "Medium" [pressed] [ref=e139] [cursor=pointer]
+            - button "Hard" [pressed] [ref=e145] [cursor=pointer]
+            - button "Insane" [pressed] [ref=e151] [cursor=pointer]
+      - generic [ref=e155]:
+        - generic [ref=e156]:
+          - generic [ref=e157]: Starter path
+          - generic [ref=e158]: From run-length encoding to the prefix function
+        - generic [ref=e159]:
+          - 'link "Step 1: Run-Length Encoding" [ref=e161] [cursor=pointer]':
+            - /url: /algorithms/run-length-encoding
+            - generic [ref=e164]: "01"
+            - generic [ref=e165]: Run-Length Encoding
+          - 'link "Step 2: KMP Pattern Matching" [ref=e168] [cursor=pointer]':
+            - /url: /algorithms/kmp-pattern-matching
+            - generic [ref=e171]: "02"
+            - generic [ref=e172]: KMP Pattern Matching
+          - 'link "Step 3: Rabin-Karp" [ref=e175] [cursor=pointer]':
+            - /url: /algorithms/rabin-karp
+            - generic [ref=e178]: "03"
+            - generic [ref=e179]: Rabin-Karp
+          - 'link "Step 4: Manacher''s Algorithm" [ref=e182] [cursor=pointer]':
+            - /url: /algorithms/manacher
+            - generic [ref=e185]: "04"
+            - generic [ref=e186]: Manacher's Algorithm
+        - generic "Starter path progress" [ref=e187]:
+          - generic [ref=e188]: "0"
+          - generic [ref=e189]: /4
+      - generic [ref=e190]:
+        - generic [ref=e191]: Pattern matching
+        - generic [ref=e192]: "04"
+      - generic [ref=e194]:
+        - link "Open KMP Pattern Matching" [ref=e196] [cursor=pointer]:
+          - /url: /algorithms/kmp-pattern-matching?category=strings
+          - generic [ref=e197]:
+            - generic [ref=e200]:
+              - generic [ref=e201]: STR-01
+              - generic [ref=e202]: Hard
+            - heading "KMP Pattern Matching" [level=3] [ref=e207]
+            - paragraph [ref=e208]: Uses prefix-function fallback to search without rechecking characters.
+            - generic [ref=e209]:
+              - generic [ref=e210]: Varies
+              - generic [ref=e212]: time
+        - link "Open Rabin-Karp" [ref=e218] [cursor=pointer]:
+          - /url: /algorithms/rabin-karp?category=strings
+          - generic [ref=e219]:
+            - generic [ref=e222]:
+              - generic [ref=e223]: STR-02
+              - generic [ref=e224]: Hard
+            - heading "Rabin-Karp" [level=3] [ref=e229]
+            - paragraph [ref=e230]: Hashes sliding windows to compare substrings efficiently.
+            - generic [ref=e231]:
+              - generic [ref=e232]: Varies
+              - generic [ref=e234]: time
+        - link "Open Z-Algorithm" [ref=e240] [cursor=pointer]:
+          - /url: /algorithms/z-algorithm?category=strings
+          - generic [ref=e241]:
+            - generic [ref=e244]:
+              - generic [ref=e245]: STR-03
+              - generic [ref=e246]: Hard
+            - heading "Z-Algorithm" [level=3] [ref=e251]
+            - paragraph [ref=e252]: Builds longest common prefix lengths for every suffix position.
+            - generic [ref=e253]:
+              - generic [ref=e254]: Varies
+              - generic [ref=e256]: time
+        - link "Open Aho-Corasick" [ref=e262] [cursor=pointer]:
+          - /url: /algorithms/aho-corasick?category=strings
+          - generic [ref=e263]:
+            - generic [ref=e266]:
+              - generic [ref=e267]: STR-04
+              - generic [ref=e268]: Hard
+            - heading "Aho-Corasick" [level=3] [ref=e273]
+            - paragraph [ref=e274]: Matches many patterns at once with a trie and failure links.
+            - generic [ref=e275]:
+              - generic [ref=e276]: Varies
+              - generic [ref=e278]: time
+      - generic [ref=e283]:
+        - generic [ref=e284]: Suffix & palindromes
+        - generic [ref=e285]: "04"
+      - generic [ref=e287]:
+        - link "Open Manacher's Algorithm" [ref=e289] [cursor=pointer]:
+          - /url: /algorithms/manacher?category=strings
+          - generic [ref=e290]:
+            - generic [ref=e293]:
+              - generic [ref=e294]: STR-05
+              - generic [ref=e295]: Hard
+            - heading "Manacher's Algorithm" [level=3] [ref=e300]
+            - paragraph [ref=e301]: Finds all longest odd and even palindromes in linear time.
+            - generic [ref=e302]:
+              - generic [ref=e303]: Varies
+              - generic [ref=e305]: time
+        - link "Open Suffix Array (Construction)" [ref=e311] [cursor=pointer]:
+          - /url: /algorithms/suffix-array-construction?category=strings
+          - generic [ref=e312]:
+            - generic [ref=e315]:
+              - generic [ref=e316]: STR-06
+              - generic [ref=e317]: Hard
+            - heading "Suffix Array (Construction)" [level=3] [ref=e322]
+            - paragraph [ref=e323]: Orders suffixes lexicographically for fast substring tooling.
+            - generic [ref=e324]:
+              - generic [ref=e325]: Varies
+              - generic [ref=e327]: time
+        - link "Open Suffix Array + LCP (Kasai)" [ref=e333] [cursor=pointer]:
+          - /url: /algorithms/suffix-array-lcp-kasai?category=strings
+          - generic [ref=e334]:
+            - generic [ref=e337]:
+              - generic [ref=e338]: STR-07
+              - generic [ref=e339]: Insane
+            - heading "Suffix Array + LCP (Kasai)" [level=3] [ref=e344]
+            - paragraph [ref=e345]: Pairs suffix ordering with adjacent prefix lengths for range queries.
+            - generic [ref=e346]:
+              - generic [ref=e347]: Varies
+              - generic [ref=e349]: time
+        - link "Open Palindromic Tree (Eertree)" [ref=e355] [cursor=pointer]:
+          - /url: /algorithms/palindromic-tree?category=strings
+          - generic [ref=e356]:
+            - generic [ref=e359]:
+              - generic [ref=e360]: STR-08
+              - generic [ref=e361]: Insane
+            - heading "Palindromic Tree (Eertree)" [level=3] [ref=e366]
+            - paragraph [ref=e367]: Stores all distinct palindromic substrings in an online structure.
+            - generic [ref=e368]:
+              - generic [ref=e369]: Varies
+              - generic [ref=e371]: time
+      - generic [ref=e376]:
+        - generic [ref=e377]: Compression
+        - generic [ref=e378]: "03"
+      - generic [ref=e380]:
+        - link "Open Burrows-Wheeler Transform" [ref=e382] [cursor=pointer]:
+          - /url: /algorithms/burrows-wheeler-transform?category=strings
+          - generic [ref=e383]:
+            - generic [ref=e386]:
+              - generic [ref=e387]: STR-09
+              - generic [ref=e388]: Insane
+            - heading "Burrows-Wheeler Transform" [level=3] [ref=e393]
+            - paragraph [ref=e394]: Rearranges text to improve compression and indexing pipelines.
+            - generic [ref=e395]:
+              - generic [ref=e396]: Varies
+              - generic [ref=e398]: time
+        - link "Open Run-Length Encoding" [ref=e404] [cursor=pointer]:
+          - /url: /algorithms/run-length-encoding?category=strings
+          - generic [ref=e405]:
+            - generic [ref=e408]:
+              - generic [ref=e409]: STR-10
+              - generic [ref=e410]: Medium
+            - heading "Run-Length Encoding" [level=3] [ref=e415]
+            - paragraph [ref=e416]: Compresses repeated runs by storing value-count pairs.
+            - generic [ref=e417]:
+              - generic [ref=e418]: Varies
+              - generic [ref=e420]: time
+        - link "Open Huffman Coding Basics" [ref=e426] [cursor=pointer]:
+          - /url: /algorithms/huffman-coding?category=strings
+          - generic [ref=e427]:
+            - generic [ref=e430]:
+              - generic [ref=e431]: STR-11
+              - generic [ref=e432]: Medium
+            - heading "Huffman Coding Basics" [level=3] [ref=e437]
+            - paragraph [ref=e438]: Builds variable-length prefix codes from symbol frequencies.
+            - generic [ref=e439]:
+              - generic [ref=e440]: Varies
+              - generic [ref=e442]: time

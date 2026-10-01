@@ -5,6 +5,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: [
+      'src/app/core/**/*.spec.ts',
       'src/app/features/algorithms/**/*.spec.ts',
       'src/app/shared/**/*.spec.ts',
     ],
@@ -15,11 +16,10 @@ export default defineConfig({
       reporter: ['text', 'html'],
       reportsDirectory: './coverage/algorithms',
       include: [
-        'src/app/features/algorithms/algorithm-card/algorithm-card.utils/**/*.ts',
-        'src/app/features/algorithms/algorithm-card/algorithm-card-preview/algorithm-card-preview-spec/**/*.ts',
         'src/app/features/algorithms/algorithm-detail/algorithm-detail-config/**/*.ts',
         'src/app/features/algorithms/algorithm-traits/**/*.ts',
-        'src/app/features/algorithms/algorithms-page/algorithms-page.utils/**/*.ts',
+        'src/app/features/algorithms/algorithms-page/*.utils.ts',
+        'src/app/features/algorithms/module-card/module-preview/*.utils.ts',
         'src/app/features/algorithms/algorithms/a-star-pathfinding/**/*.ts',
         'src/app/features/algorithms/algorithms/bellman-ford/**/*.ts',
         'src/app/features/algorithms/algorithms/climbing-stairs/**/*.ts',

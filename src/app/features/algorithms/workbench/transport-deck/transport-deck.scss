@@ -1,0 +1,209 @@
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.deck {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  min-height: 178px;
+}
+
+.deck__section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 18px 12px;
+  border-left: 2px solid var(--groove);
+  box-shadow: inset 1px 0 0 var(--groove-highlight);
+}
+
+.deck__section:first-child {
+  padding-left: 4px;
+  border-left: 0;
+  box-shadow: none;
+}
+
+.deck__section--transport {
+  padding-right: 14px;
+}
+
+.deck__section--axis {
+  flex: 1 1 180px;
+  min-width: 180px;
+  max-width: 220px;
+}
+
+.deck__section--tempo {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+.deck__section--size {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.deck__section--tempo,
+.deck__section--size {
+  align-items: center;
+}
+
+.deck__section--tempo .deck__title,
+.deck__section--size .deck__title {
+  align-self: flex-start;
+}
+
+.deck__section--data {
+  flex: 1 1 128px;
+  min-width: 128px;
+  max-width: 300px;
+  padding-right: 8px;
+  padding-left: 14px;
+}
+
+.deck__title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.deck__transport {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.deck__key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.deck__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.deck__knob {
+  margin-top: -2px;
+}
+
+.deck__anchor {
+  position: relative;
+  display: inline-block;
+}
+
+.deck__menu {
+  bottom: calc(100% + 8px);
+  left: 0;
+}
+
+.deck__menu--custom {
+  left: auto;
+  right: 0;
+}
+
+.deck__section--task {
+  flex: 1 1 180px;
+  min-width: 150px;
+  max-width: 300px;
+}
+
+.deck__task-key {
+  --key-width: 100%;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.deck__task-key ::ng-deep .ohno-key,
+.deck__data-key ::ng-deep .ohno-key {
+  max-width: 100%;
+}
+
+.deck__task-key ::ng-deep .ohno-key__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deck__data-key ::ng-deep .ohno-key__label {
+  display: -webkit-box;
+  white-space: normal;
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1.12;
+  text-align: left;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.deck__data {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deck__data-key {
+  --key-width: 100%;
+  min-width: 104px;
+  --key-height: 54px;
+  --key-justify: flex-start;
+  --key-font: 600 14px/1 var(--font-ui);
+  --key-gap: 12px;
+  display: block;
+}
+
+@container (max-width: 860px) {
+  .deck__section--axis {
+    max-width: none;
+  }
+
+  .deck__section--tempo {
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .deck__section--data {
+    flex: 1 0 auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .deck__section {
+    padding: 14px 0 12px;
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .deck__section--transport {
+    flex-basis: 100%;
+    padding-right: 0;
+  }
+
+  .deck__transport {
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .deck__key ohno-key {
+    --key-height: 48px;
+  }
+
+  .deck__section--axis {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .deck__section--data {
+    flex-basis: 100%;
+  }
+}

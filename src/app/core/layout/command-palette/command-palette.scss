@@ -1,0 +1,119 @@
+:host {
+  display: contents;
+}
+
+.palette {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-popover);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh 16px 16px;
+  background: rgb(var(--desk-rgb) / 0.72);
+}
+
+.palette__plate {
+  width: min(640px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: ohno-fade-scale var(--duration-fast) var(--ease-out-quart);
+}
+
+.palette__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 10px 0 14px;
+  border-radius: 13px;
+  color: var(--ink-3);
+  background: var(--screen);
+  box-shadow: var(--shadow-screen);
+}
+
+.palette__field:has(.palette__input:focus-visible) {
+  box-shadow: var(--shadow-screen), var(--focus-ring);
+}
+
+.palette__icon {
+  font-size: 15px;
+}
+
+.palette__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font: 400 14px/1 var(--font-ui);
+}
+
+.palette__input::placeholder {
+  color: var(--ink-3);
+}
+
+.palette__results {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.palette__option {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 11px;
+  cursor: pointer;
+}
+
+.palette__option--active {
+  background: var(--gradient-key-in);
+  box-shadow: var(--shadow-key-in);
+}
+
+.palette__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 13.5px/1.2 var(--font-ui);
+  color: var(--ink);
+}
+
+.palette__empty {
+  padding: 12px;
+  color: var(--ink-3);
+  font: 400 13px/1.4 var(--font-ui);
+}
+
+.palette__shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px 16px;
+  padding-top: 12px;
+  border-top: 2px solid var(--groove);
+}
+
+.palette__shortcuts-title {
+  grid-column: 1 / -1;
+}
+
+.palette__shortcut {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.palette__keys {
+  display: inline-flex;
+  gap: 4px;
+}

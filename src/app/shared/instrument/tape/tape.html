@@ -1,0 +1,25 @@
+<div #paper class="ohno-tape__paper">
+  <div class="ohno-tape__row ohno-tape__row--head" aria-hidden="true">
+    <span>{{ stepHeader() }}</span><i></i><span>{{ eventHeader() }}</span><span></span>
+  </div>
+  @if (rows().length === 0) {
+    <p class="ohno-tape__empty">{{ emptyLabel() }}</p>
+  }
+  @for (row of rows(); track row.step; let index = $index) {
+    @if (row.kind === 'separator') {
+      <div class="ohno-tape__row ohno-tape__row--separator" [attr.data-row]="index">
+        <span>{{ stepText(row) }}</span><i></i><span class="ohno-tape__wide">{{ row.event }}</span>
+      </div>
+    } @else {
+      <div
+        class="ohno-tape__row"
+        [class.ohno-tape__row--current]="index === currentIndex()"
+        [attr.data-row]="index"
+        [style.--row-tone]="toneToken(row)"
+      >
+        <span>{{ stepText(row) }}</span><i></i><span>{{ row.event }}</span><span>{{ row.detail }}</span>
+      </div>
+    }
+  }
+</div>
+<div class="ohno-tape__lip" aria-hidden="true"></div>

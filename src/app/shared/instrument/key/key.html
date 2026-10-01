@@ -1,0 +1,57 @@
+<ng-template #content>
+  @if (led(); as ledColor) {
+    <ohno-led class="ohno-key__led" [color]="ledColor" [on]="ledOn()" />
+  }
+  @if (icon(); as keyIcon) {
+    <fa-icon class="ohno-key__icon" [icon]="keyIcon" />
+  }
+  @if (prefix(); as index) {
+    <span class="ohno-key__prefix">{{ index }}</span>
+  }
+  @if (label(); as text) {
+    <span class="ohno-key__label">{{ text }}</span>
+  }
+  @if (kbd(); as shortcut) {
+    <ohno-kbd class="ohno-key__kbd">{{ shortcut }}</ohno-kbd>
+  }
+</ng-template>
+
+@if (routerLink(); as link) {
+  <a
+    class="ohno-key"
+    [class.ohno-key--icon-only]="iconOnly()"
+    [attr.data-variant]="effectiveVariant()"
+    [attr.data-size]="size()"
+    [routerLink]="disabled() ? null : link"
+    [queryParamsHandling]="queryParamsHandling()"
+    [attr.id]="keyId()"
+    [attr.tabindex]="disabled() ? -1 : tabIndex()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.title]="titleText()"
+    [attr.aria-disabled]="disabled() ? 'true' : null"
+    (click)="onClick($event)"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </a>
+} @else {
+  <button
+    class="ohno-key"
+    [class.ohno-key--icon-only]="iconOnly()"
+    [attr.data-variant]="effectiveVariant()"
+    [attr.data-size]="size()"
+    [type]="type()"
+    [disabled]="disabled()"
+    [attr.id]="keyId()"
+    [attr.tabindex]="tabIndex()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.title]="titleText()"
+    [attr.aria-pressed]="pressed()"
+    [attr.aria-haspopup]="menu() ? 'menu' : null"
+    [attr.aria-expanded]="expanded()"
+    [attr.role]="menuRole()"
+    [attr.aria-checked]="checked()"
+    (click)="onClick($event)"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </button>
+}

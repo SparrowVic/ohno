@@ -1,0 +1,29 @@
+:host {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ohno-window-stepper__window {
+  width: 78px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+}
+
+.ohno-window-stepper__window:focus-visible {
+  box-shadow: var(--shadow-screen), var(--focus-ring);
+}
+
+.ohno-window-stepper__keys {
+  display: flex;
+  gap: 10px;
+}
+
+.ohno-window-stepper__keys ohno-key {
+  --key-width: 34px;
+  --key-radius: var(--radius-md);
+  --key-font: 500 17px/1 var(--font-mono);
+}

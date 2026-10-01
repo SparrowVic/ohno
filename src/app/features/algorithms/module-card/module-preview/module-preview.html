@@ -1,0 +1,65 @@
+@switch (family()) {
+  @case ('bars') {
+    <div class="bars">
+      @for (bar of bars(); track $index) {
+        <i class="bars__bar" [class]="'bars__bar bars__bar--' + bar.tone" [class.preview__current]="bar.tone === 'cyan'" [style.--h]="bar.height"></i>
+      }
+    </div>
+  }
+  @case ('buckets') {
+    <svg class="svg" viewBox="0 0 245 92">
+      @for (cell of bucketCells(); track $index) {
+        <rect [attr.x]="cell.x" [attr.y]="cell.y" width="16" height="6" rx="1.5" [class]="'cell cell--' + cell.tone" [class.preview__current]="cell.tone === 'cyan'" />
+      }
+    </svg>
+  }
+  @case ('graph') {
+    <svg class="svg" viewBox="0 0 245 92">
+      @for (edge of graphEdges; track $index) {
+        <line class="edge" [attr.x1]="graphNodes[edge[0]].x" [attr.y1]="graphNodes[edge[0]].y" [attr.x2]="graphNodes[edge[1]].x" [attr.y2]="graphNodes[edge[1]].y" />
+      }
+      <path class="arc" [attr.d]="'M' + (graphNodes[0].x + 14) + ' ' + (graphNodes[0].y - 2) + 'c30-6 54 12 56 38'" />
+      @for (node of graphNodes; track $index; let index = $index) {
+        <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="index === 0 ? 7.5 : 6.5" [class]="'node node--' + graphTone(index)" [class.preview__current]="graphTone(index) === 'cyan'" />
+      }
+    </svg>
+  }
+  @case ('matrix') {
+    <svg class="svg" viewBox="0 0 245 92">
+      @for (cell of matrixCells(); track $index) {
+        <rect [attr.x]="cell.x" [attr.y]="cell.y" width="21" height="13" rx="2" [class]="'cell cell--' + cell.tone" [class.preview__current]="cell.tone === 'cyan'" />
+      }
+    </svg>
+  }
+  @case ('tape') {
+    <svg class="svg" viewBox="0 0 245 92">
+      @for (cell of tape().cells; track $index; let index = $index) {
+        <rect [attr.x]="18 + index * 17.5" y="36" width="14" height="22" rx="3" [class]="'cell cell--' + cell" [class.preview__current]="cell === 'cyan'" />
+      }
+      <path class="reader" [attr.d]="'M' + (25 + tape().head * 17.5) + ' 30 l-5 -8 h10 z'" />
+    </svg>
+  }
+  @case ('notebook') {
+    <svg class="svg" viewBox="0 0 245 92">
+      @for (line of notebook(); track $index; let index = $index) {
+        <rect x="30" [attr.y]="14 + index * 14" [attr.width]="line.width" height="5" rx="2.5" [class]="'line line--' + line.tone" [class.preview__current]="line.tone === 'cyan'" />
+      }
+      <circle class="margin-dot" cx="18" cy="44.5" r="3" />
+    </svg>
+  }
+  @case ('xy') {
+    <svg class="svg" viewBox="0 0 245 92">
+      <path class="hull" [attr.d]="hullPath()" />
+      @for (point of xy().points; track $index; let index = $index) {
+        <circle [attr.cx]="point[0]" [attr.cy]="point[1]" r="3.5" [class]="'point point--' + (xy().hull.includes(index) ? 'cyan' : index === xy().pink ? 'pink' : 'slate')" [class.preview__current]="xy().hull.includes(index)" />
+      }
+    </svg>
+  }
+  @case ('stack') {
+    <div class="stack">
+      @for (frame of stack(); track $index) {
+        <i class="stack__frame" [class]="'stack__frame stack__frame--' + frame.tone" [class.preview__current]="frame.tone === 'cyan'" [style.width.px]="frame.width"></i>
+      }
+    </div>
+  }
+}

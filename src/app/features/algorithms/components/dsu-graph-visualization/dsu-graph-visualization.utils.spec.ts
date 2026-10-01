@@ -1,0 +1,148 @@
+import { describe, expect, it } from 'vitest';
+
+import { DsuEdgeTrace, DsuGroupTrace, DsuNodeTrace } from '../../models/dsu';
+import {
+  dsuArrowMarkerId,
+  dsuChipPoint,
+  dsuCurrentNodeId,
+  dsuEdgeRows,
+  dsuGroupsByNodeId,
+  dsuKruskalEdgeTone,
+  dsuNodeTone,
+  dsuOperationRows,
+  dsuParentEdgeTone,
+  dsuSetRows,
+  dsuSpreadRing,
+  dsuWeightChipTone,
+  dsuWeightChipWidth,
+} from './dsu-graph-visualization.utils';
+
+function node(id: string, parentId: string, rootId: string, status: DsuNodeTrace['status'] = 'idle'): DsuNodeTrace {
+  return {
+    id,
+    label: id.toUpperCase(),
+    parentId,
+    parentLabel: parentId.toUpperCase(),
+    rootId,
+    rootLabel: rootId.toUpperCase(),
+    rank: 0,
+    size: 1,
+    status,
+    tags: [],
+  };
+}
+
+function edge(id: string, fromId: string, toId: string, status: DsuEdgeTrace['status'], weight: number | null = null): DsuEdgeTrace {
+  return {
+    id,
+    fromId,
+    fromLabel: fromId.toUpperCase(),
+    toId,
+    toLabel: fromId === toId ? 'find' : toId.toUpperCase(),
+    weight,
+    status,
+  };
+}
+
+describe('dsu graph display tones', () => {
+  it('maps node status to the semantic tone', () => {
+    expect(dsuNodeTone('active', false)).toBe('cyan');
+    expect(dsuNodeTone('query', true)).toBe('cyan');
+    expect(dsuNodeTone('merged', true)).toBe('pink');
+    expect(dsuNodeTone('compressed', false)).toBe('amber');
+    expect(dsuNodeTone('root', true)).toBe('violet');
+    expect(dsuNodeTone('idle', true)).toBe('violet');
+    expect(dsuNodeTone('idle', false)).toBe('slate');
+  });
+
+  it('paints parent pointers from the child status', () => {
+    expect(dsuParentEdgeTone('merged')).toBe('pink');
+    expect(dsuParentEdgeTone('compressed')).toBe('amber');
+    expect(dsuParentEdgeTone('active')).toBe('cyan');
+    expect(dsuParentEdgeTone('query')).toBe('cyan');
+    expect(dsuParentEdgeTone('idle')).toBe('idle');
+  });
+
+  it('paints kruskal edges and chips from the edge status', () => {
+    expect(dsuKruskalEdgeTone('active')).toBe('pink');
+    expect(dsuKruskalEdgeTone('accepted')).toBe('lime');
+    expect(dsuKruskalEdgeTone('rejected')).toBe('red');
+    expect(dsuKruskalEdgeTone('pending')).toBe('idle');
+    expect(dsuWeightChipTone('pending')).toBe('slate');
+    expect(dsuWeightChipTone('active')).toBe('pink');
+  });
+
+  it('picks only the first active node as current', () => {
+    const nodes = [node('a', 'a', 'a', 'query'), node('b', 'a', 'a', 'active'), node('c', 'a', 'a', 'active')];
+    expect(dsuCurrentNodeId(nodes)).toBe('b');
+    expect(dsuCurrentNodeId([node('a', 'a', 'a')])).toBeNull();
+  });
+});
+
+describe('dsu graph racks', () => {
+  const groups: DsuGroupTrace[] = [
+    { rootId: 'e', rootLabel: 'E', size: 1, members: ['E'], active: false },
+    { rootId: 'a', rootLabel: 'A', size: 3, members: ['A', 'B', 'C'], active: false },
+    { rootId: 'd', rootLabel: 'D', size: 2, members: ['D', 'F'], active: true },
+  ];
+
+  it('orders sets by size, drops the root from the members and dims singletons', () => {
+    const rows = dsuSetRows(groups);
+    expect(rows.map((row) => row.rootLabel)).toEqual(['A', 'D', 'E']);
+    expect(rows[0]).toMatchObject({ members: 'B C', size: 3, tone: 'default' });
+    expect(rows[1]?.tone).toBe('now');
+    expect(rows[2]).toMatchObject({ members: '', tone: 'dim' });
+  });
+
+  it('maps edge statuses onto rack row tones', () => {
+    const rows = dsuEdgeRows([
+      edge('1', 'a', 'b', 'accepted', 1),
+      edge('2', 'b', 'c', 'active', 2),
+      edge('3', 'a', 'c', 'rejected', 3),
+      edge('4', 'c', 'd', 'pending', 4),
+    ]);
+    expect(rows.map((row) => row.tone)).toEqual(['done', 'head', 'dim', 'default']);
+    expect(rows[1]).toMatchObject({ fromLabel: 'B', toLabel: 'C', weight: 2 });
+  });
+
+  it('tells find operations from unions', () => {
+    const rows = dsuOperationRows([edge('op-0', 'a', 'b', 'accepted'), edge('op-1', 'c', 'c', 'active')]);
+    expect(rows.map((row) => row.kind)).toEqual(['union', 'find']);
+    expect(rows.map((row) => row.mark)).toEqual(['accepted', 'active']);
+  });
+});
+
+describe('dsu graph geometry', () => {
+  it('rebuilds group members as node ids for the forest layout', () => {
+    const nodes = [node('n1', 'n1', 'n1'), node('n2', 'n1', 'n1'), node('n3', 'n3', 'n3')];
+    const result = dsuGroupsByNodeId(nodes, [
+      { rootId: 'n1', rootLabel: 'N1', size: 2, members: ['N1', 'N2'], active: false },
+      { rootId: 'n3', rootLabel: 'N3', size: 1, members: ['N3'], active: false },
+    ]);
+    expect(result.map((group) => group.members)).toEqual([['n1', 'n2'], ['n3']]);
+  });
+
+  it('spreads a ring to the target radius around its centre', () => {
+    const ring = new Map([
+      ['a', { x: 100, y: 0 }],
+      ['b', { x: 0, y: 100 }],
+      ['c', { x: -100, y: 0 }],
+      ['d', { x: 0, y: -100 }],
+    ]);
+    const spread = dsuSpreadRing(ring, 200);
+    expect(spread.get('a')).toEqual({ x: 200, y: 0 });
+    expect(spread.get('d')).toEqual({ x: 0, y: -200 });
+    const single = new Map([['a', { x: 4, y: 5 }]]);
+    expect(dsuSpreadRing(single, 200)).toBe(single);
+  });
+
+  it('places chips off the midpoint so crossing diameters do not stack', () => {
+    expect(dsuChipPoint({ x1: 0, y1: 0, x2: 100, y2: 50 })).toEqual({ x: 40, y: 20 });
+    expect(dsuWeightChipWidth(7)).toBe(23);
+    expect(dsuWeightChipWidth(12)).toBe(32);
+  });
+
+  it('builds per-instance marker ids', () => {
+    expect(dsuArrowMarkerId('dsu-graph-3', 'pink')).toBe('dsu-graph-3-arrow-pink');
+  });
+});

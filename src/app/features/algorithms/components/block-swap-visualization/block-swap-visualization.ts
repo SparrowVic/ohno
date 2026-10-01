@@ -18,6 +18,7 @@ import {
   MotionProfile,
   createMotionProfile,
   findNewSorted,
+  prefersReducedMotion,
   pulseSvgElement,
   samePair,
 } from '../../utils/helpers/visualization-motion/visualization-motion';
@@ -284,7 +285,7 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
       .attr('height', String(BLOCK_SIZE - 6))
       .attr('rx', '13')
       .attr('ry', '13')
-      .attr('fill', 'rgba(2, 6, 23, 0.55)')
+      .attr('fill', 'rgb(var(--black-rgb) / 0.55)')
       .attr('opacity', 0.22)
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center');
@@ -307,15 +308,10 @@ export class BlockSwapVisualization implements AfterViewInit, OnDestroy, Visuali
       .attr('y', String(BLOCK_SIZE / 2 + 5))
       .attr('text-anchor', 'middle')
       .attr('font-size', 14)
-      .attr('fill', 'var(--text-primary)')
-      .style('font-family', 'var(--font-mono)')
-      .style('font-weight', '600')
-      .style('letter-spacing', '0.03em')
-      .style('font-variant-numeric', 'tabular-nums')
-      .style('paint-order', 'stroke fill')
-      .style('stroke', 'rgba(8, 10, 16, 0.82)')
-      .style('stroke-width', '2px')
-      .style('stroke-linejoin', 'round')
+      .attr('fill', 'var(--ink)')
+      .style('font-family', 'var(--font-dot)')
+      .style('font-weight', '900')
+      .style('font-variation-settings', "'ROND' 100")
       .style('transform-box', 'fill-box')
       .style('transform-origin', 'center center')
       .text(String(value));
@@ -654,7 +650,3 @@ function glowFilter(color: string, radius: number): readonly [string, string, st
   ];
 }
 
-function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || !window.matchMedia) return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}

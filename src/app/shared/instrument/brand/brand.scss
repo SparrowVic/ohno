@@ -1,0 +1,52 @@
+:host {
+  display: inline-block;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink);
+  border-radius: var(--radius-key);
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-key);
+  background: var(--gradient-key);
+  box-shadow: var(--shadow-key);
+}
+
+.brand__mark svg {
+  width: 26px;
+  height: 26px;
+}
+
+.brand__dot {
+  fill: var(--signal);
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.brand__name {
+  font: 700 19px/1 var(--font-ui);
+  letter-spacing: -0.02em;
+}
+
+.brand__name i {
+  font-style: normal;
+  color: var(--signal);
+}
+
+@media (max-width: 479px) {
+  .brand__text ohno-engraving {
+    display: none;
+  }
+}

@@ -1,0 +1,37 @@
+:host {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-plate);
+  background: var(--gradient-plate);
+  box-shadow: var(--shadow-plate);
+}
+
+:host([data-padding='sm']) { padding: 12px 14px; }
+:host([data-padding='md']) { padding: 16px 18px; }
+
+.ohno-plate__screw {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--screw-hi), var(--screw-lo) 72%);
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--black-rgb) / 0.6),
+    0 1px 0 rgb(var(--white-rgb) / 0.06);
+}
+
+.ohno-plate__screw::after {
+  content: '';
+  position: absolute;
+  left: 1.5px;
+  right: 1.5px;
+  top: 4px;
+  height: 1px;
+  background: rgb(var(--black-rgb) / 0.8);
+  transform: rotate(var(--screw-angle, 35deg));
+}
+
+.ohno-plate__screw--tl { left: 9px; top: 9px; }
+.ohno-plate__screw--tr { right: 9px; top: 9px; --screw-angle: -20deg; }
+.ohno-plate__screw--bl { left: 9px; bottom: 9px; --screw-angle: 70deg; }
+.ohno-plate__screw--br { right: 9px; bottom: 9px; --screw-angle: 10deg; }

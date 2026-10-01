@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.module {
+  display: block;
+  color: inherit;
+  border-radius: var(--radius-card);
+}
+
+.module:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.module__plate {
+  display: flex;
+  flex-direction: column;
+  height: 252px;
+  padding: 13px 14px 14px;
+  border-radius: var(--radius-card);
+  transition: background var(--duration-fast) var(--ease-soft), box-shadow var(--duration-fast) var(--ease-soft);
+}
+
+.module__plate--live {
+  background: var(--gradient-plate-hover);
+  box-shadow: var(--shadow-plate-hover);
+}
+
+.module__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 16px;
+  padding: 0 14px;
+}
+
+.module__difficulty {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.module__screen {
+  position: relative;
+  margin-top: 10px;
+  height: 92px;
+  border-radius: 11px;
+  transition: box-shadow var(--duration-fast) var(--ease-soft);
+}
+
+.module__plate--live .module__screen {
+  box-shadow: var(--shadow-screen), 0 0 0 1px rgb(var(--signal-rgb) / 0.25);
+}
+
+.module__live {
+  position: absolute;
+  z-index: 2;
+  left: 10px;
+  top: 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.module__name {
+  margin-top: 13px;
+  padding: 0 2px;
+  font: 650 18px/1 var(--font-ui);
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.module__description {
+  height: 34px;
+  margin-top: 7px;
+  padding: 0 2px;
+  overflow: hidden;
+  font: 400 12.5px/17px var(--font-ui);
+  color: var(--ink-3);
+}
+
+.module__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-left: 2px;
+}
+
+.module__foot .module__complexity {
+  font-size: 17px;
+}
+
+.module__go {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  border-radius: 50%;
+  color: var(--ink-2);
+  font-size: 14px;
+  background: var(--gradient-key);
+  box-shadow: var(--shadow-key);
+  transition: background var(--duration-instant) var(--ease-soft), box-shadow var(--duration-instant) var(--ease-soft), color var(--duration-fast) var(--ease-soft);
+}
+
+.module__go--signal {
+  color: var(--paper-ink);
+  background: var(--gradient-key-signal);
+  box-shadow: var(--shadow-key-signal);
+}

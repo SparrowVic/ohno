@@ -1,0 +1,9 @@
+<ohno-key
+  [label]="label()"
+  [led]="led()"
+  [ledOn]="pressed()"
+  [pressed]="pressed()"
+  [disabled]="disabled()"
+  [size]="size()"
+  (keyClick)="pressedChange.emit(!pressed())"
+/>

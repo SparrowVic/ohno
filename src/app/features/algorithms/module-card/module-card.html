@@ -1,0 +1,38 @@
+<a
+  class="module"
+  [routerLink]="link()"
+  queryParamsHandling="preserve"
+  [attr.aria-label]="openAriaLabel()"
+  (mouseenter)="live.set(true)"
+  (mouseleave)="live.set(false)"
+  (focus)="live.set(true)"
+  (blur)="live.set(false)"
+>
+  <ohno-plate class="module__plate" [class.module__plate--live]="live()" [screws]="true" screwCorners="top" padding="none">
+    <div class="module__top">
+      <ohno-engraving>{{ moduleId() }}</ohno-engraving>
+      <span class="module__difficulty">
+        <ohno-led [color]="difficultyLed()" />
+        <ohno-engraving tone="bright">{{ difficultyLabel() }}</ohno-engraving>
+      </span>
+    </div>
+    <ohno-screen class="module__screen">
+      @if (live()) {
+        <span class="module__live">
+          <ohno-led color="signal" [pulse]="true" size="sm" />
+          <ohno-engraving tone="signal">{{ I18N_KEY.features.algorithms.catalog.card.live | transloco }}</ohno-engraving>
+        </span>
+      }
+      <ohno-module-preview [family]="family()" [seed]="seed()" [live]="live()" />
+    </ohno-screen>
+    <h3 class="module__name">{{ algorithm().name }}</h3>
+    <p class="module__description">{{ description() }}</p>
+    <div class="module__foot">
+      <ohno-readout class="module__complexity" [value]="algorithm().complexity.timeAverage" size="sm" />
+      <ohno-engraving>{{ I18N_KEY.features.algorithms.catalog.card.time | transloco }}</ohno-engraving>
+      <span class="module__go" [class.module__go--signal]="live()" aria-hidden="true">
+        <fa-icon [icon]="icons.open" />
+      </span>
+    </div>
+  </ohno-plate>
+</a>

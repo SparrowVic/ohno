@@ -1,0 +1,96 @@
+:host {
+  display: block;
+}
+
+.ohno-slot__ruler {
+  height: 11px;
+  border-right: 1px solid var(--ink-4);
+  background: repeating-linear-gradient(90deg, var(--ink-4) 0 1px, transparent 1px calc(100% / 49));
+  opacity: 0.85;
+}
+
+.ohno-slot__marks {
+  position: relative;
+  height: 9px;
+  margin-top: 5px;
+  font: 500 9px/1 var(--font-mono);
+  color: var(--ink-4);
+}
+
+.ohno-slot__mark {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.ohno-slot__mark--start {
+  transform: none;
+}
+
+.ohno-slot__mark--end {
+  transform: translateX(-100%);
+}
+
+.ohno-slot__track {
+  position: relative;
+  margin-top: 12px;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--desk);
+  box-shadow:
+    inset 2px 2px 5px rgb(var(--black-rgb) / 0.9),
+    inset -1px -1px 0 rgb(var(--white-rgb) / 0.06);
+}
+
+.ohno-slot__track::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  bottom: 3px;
+  width: max(0px, calc(var(--slot-percent) - 3px));
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--signal-deep), var(--signal));
+  box-shadow: 0 0 12px rgb(var(--signal-rgb) / 0.5);
+  transition: width var(--duration-fast) var(--ease-soft);
+}
+
+.ohno-slot__cap {
+  position: absolute;
+  left: var(--slot-percent);
+  top: -11px;
+  width: 22px;
+  height: 36px;
+  margin-left: -11px;
+  border-radius: 7px;
+  background: var(--gradient-cap);
+  box-shadow: var(--shadow-cap);
+  pointer-events: none;
+  transition: left var(--duration-fast) var(--ease-soft);
+}
+
+.ohno-slot__cap::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 7px;
+  bottom: 7px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--signal);
+  box-shadow: 0 0 6px rgb(var(--signal-rgb) / 0.7);
+}
+
+.ohno-slot__input {
+  position: absolute;
+  inset: -11px 0;
+  width: 100%;
+  height: 36px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ohno-slot__track:has(.ohno-slot__input:focus-visible) .ohno-slot__cap {
+  box-shadow: var(--shadow-cap), var(--focus-ring);
+}

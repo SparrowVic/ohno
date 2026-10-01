@@ -1,0 +1,57 @@
+<ohno-plate class="bank" [screws]="true" padding="none">
+  <ohno-brand class="bank__brand" [tagline]="I18N_KEY.core.instrument.brand.tagline | transloco" [ariaLabel]="I18N_KEY.core.instrument.brand.homeAriaLabel | transloco" />
+
+  <ohno-engraving class="bank__title">{{ I18N_KEY.core.instrument.bank.algorithms | transloco }}</ohno-engraving>
+  <nav class="bank__rows" [attr.aria-label]="I18N_KEY.core.instrument.bank.navAriaLabel | transloco">
+    @for (row of rows(); track row.groupId) {
+      <button
+        type="button"
+        class="bank__row"
+        [class.bank__row--on]="row.active"
+        [attr.aria-current]="row.active ? 'true' : null"
+        (click)="select(row)"
+      >
+        <ohno-led color="signal" [on]="row.active" />
+        <span class="bank__label">{{ row.label }}</span>
+        <ohno-readout class="bank__count" [value]="row.count" [pad]="2" size="sm" [tone]="row.active ? 'signal' : 'dim'" />
+      </button>
+    }
+  </nav>
+
+  <hr class="bank__groove" />
+
+  <ohno-engraving class="bank__title">{{ I18N_KEY.core.instrument.bank.structures | transloco }}</ohno-engraving>
+  <div class="bank__row bank__row--off" aria-disabled="true">
+    <ohno-led color="slate" [on]="false" />
+    <span class="bank__label">{{ I18N_KEY.core.instrument.bank.structuresRow | transloco }}</span>
+    <ohno-engraving tone="dim">{{ I18N_KEY.core.instrument.bank.comingSoon | transloco }}</ohno-engraving>
+  </div>
+
+  <hr class="bank__groove" />
+
+  <ohno-engraving class="bank__title">{{ I18N_KEY.core.instrument.bank.recent | transloco }}</ohno-engraving>
+  <div class="bank__recent" [attr.aria-label]="I18N_KEY.core.instrument.bank.recentAriaLabel | transloco">
+    @for (row of recentRows(); track row.id) {
+      <a class="bank__recent-row" [routerLink]="['/algorithms', row.id]">
+        <b class="bank__recent-name">{{ row.name }}</b>
+        <ohno-readout [value]="row.step" [total]="row.total" [pad]="3" size="sm" tone="dim" />
+        <span class="bank__bar" [class.bank__bar--done]="row.finished" [style.--p]="row.percent + '%'" aria-hidden="true"></span>
+      </a>
+    } @empty {
+      <p class="bank__recent-empty">{{ I18N_KEY.core.instrument.bank.recentEmpty | transloco }}</p>
+    }
+  </div>
+
+  <div class="bank__foot">
+    <button type="button" class="bank__shortcuts" (click)="openShortcuts()">
+      <ohno-kbd>?</ohno-kbd>
+      <ohno-engraving>{{ I18N_KEY.core.instrument.bank.shortcuts | transloco }}</ohno-engraving>
+    </button>
+    <ohno-lang-toggle
+      [value]="activeLang()"
+      [options]="langOptions"
+      [label]="I18N_KEY.core.instrument.bank.languageAriaLabel | transloco"
+      (valueChange)="setLang($event)"
+    />
+  </div>
+</ohno-plate>

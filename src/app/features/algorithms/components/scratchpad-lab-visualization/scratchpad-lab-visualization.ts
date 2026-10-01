@@ -27,6 +27,7 @@ import { SortStep } from '../../models/sort-step';
 import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
 import { VizPanel } from '../viz-panel/viz-panel';
 import { VizPresetOption, VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
+import { prefersReducedMotion } from '../../utils/helpers/visualization-motion/visualization-motion';
 
 /**
  * "Tablica" (chalkboard) canvas — renders a derivation line by line as
@@ -215,7 +216,3 @@ export class ScratchpadLabVisualization implements OnInit {
   }
 }
 
-function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || !window.matchMedia) return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}

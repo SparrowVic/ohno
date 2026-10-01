@@ -810,6 +810,7 @@ import { SortStep } from '../../models/sort-step';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { VIZ_COLOR } from '../../utils/helpers/visualization-palette/visualization-palette';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import {
   BITMASK_DP_PRESETS,
   BURST_BALLOONS_PRESETS,
@@ -967,6 +968,12 @@ import {
 } from '../../utils/scenarios/tree/tree-scenarios';
 import { treeTraversalsGenerator } from '../../algorithms/tree-traversals/tree-traversals';
 
+const TREE_TRAVERSALS_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.pending, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.visited, color: 'var(--lime)' },
+];
+
 const BAR_LEGEND: readonly LegendItem[] = [
   { label: 'Unsorted', color: 'var(--viz-state-default)', opacity: 0.55 },
   { label: 'Comparing', color: 'var(--viz-state-compare)' },
@@ -999,133 +1006,124 @@ const RADIX_LEGEND: readonly LegendItem[] = [
 ];
 
 const DIJKSTRA_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: VIZ_ACCENT },
-  { label: 'Frontier queue', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'Shortest-path tree', color: VIZ_SUCCESS },
-  { label: 'Focused route', color: VIZ_HIT },
-  { label: 'Active edge relaxation', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.source, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.queue, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.relaxation, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.settled, color: 'var(--lime)' },
 ];
 
 const BFS_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: VIZ_ACCENT },
-  { label: 'Queue frontier', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'BFS tree', color: VIZ_SUCCESS },
-  { label: 'Focused route', color: VIZ_HIT },
-  { label: 'Inspected edge', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.source, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.queue, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.treeEdge, color: 'var(--lime)' },
 ];
 
 const DFS_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: VIZ_ACCENT },
-  { label: 'Stack frontier', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'DFS tree', color: VIZ_SUCCESS },
-  { label: 'Focused branch', color: VIZ_HIT },
-  { label: 'Inspected edge', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.source, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.treeEdge, color: 'var(--lime)' },
 ];
 
 const TOPOLOGICAL_SORT_KAHN_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed node', color: VIZ_ACCENT },
-  { label: 'Zero in-degree queue', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'Ordered node', color: VIZ_SUCCESS },
-  { label: 'Directed dependency', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.queue, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.ordered, color: 'var(--lime)' },
 ];
 
 const CYCLE_DETECTION_LEGEND: readonly LegendItem[] = [
-  { label: 'Entry node', color: VIZ_ACCENT },
-  { label: 'Recursion stack', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'Closed node', color: VIZ_SUCCESS },
-  { label: 'Cycle edge', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.source, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.closed, color: 'var(--lime)' },
 ];
 
 const CONNECTED_COMPONENTS_LEGEND: readonly LegendItem[] = [
-  { label: 'Current seed / node', color: VIZ_WARNING },
-  { label: 'Component frontier', color: VIZ_WINDOW },
-  { label: 'Assigned node', color: VIZ_SUCCESS },
-  { label: 'Component tree edge', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.queue, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.assigned, color: 'var(--lime)' },
 ];
 
 const BIPARTITE_CHECK_LEGEND: readonly LegendItem[] = [
-  { label: 'Side 0', color: VIZ_ACCENT },
-  { label: 'Side 1', color: VIZ_EMBER },
-  { label: 'Queue frontier', color: VIZ_WINDOW },
-  { label: 'Conflict edge / node', color: VIZ_DANGER },
+  { label: I18N_KEY.features.algorithms.display.legend.sideA, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.sideB, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.queue, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.conflict, color: 'var(--red)' },
 ];
 
 const BELLMAN_FORD_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: VIZ_ACCENT },
-  { label: 'Updated this pass', color: VIZ_WINDOW },
-  { label: 'Current relaxation', color: VIZ_WARNING },
-  { label: 'Shortest-path tree', color: VIZ_SUCCESS },
-  { label: 'Focused route', color: VIZ_HIT },
-  { label: 'Negative-cycle evidence', color: VIZ_DANGER },
+  { label: I18N_KEY.features.algorithms.display.legend.source, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.updated, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.relaxation, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.treeEdge, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.negativeCycle, color: 'var(--red)' },
 ];
 
 const PRIMS_MST_LEGEND: readonly LegendItem[] = [
-  { label: 'Start node', color: VIZ_ACCENT },
-  { label: 'Candidate frontier', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'MST edge', color: VIZ_SUCCESS },
-  { label: 'Active edge check', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.source, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.candidates, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.mstEdge, color: 'var(--lime)' },
 ];
 
 const BRIDGES_ARTICULATION_LEGEND: readonly LegendItem[] = [
-  { label: 'DFS stack', color: VIZ_WINDOW },
-  { label: 'Current node', color: VIZ_WARNING },
-  { label: 'Closed node', color: VIZ_SUCCESS },
-  { label: 'Articulation point', color: VIZ_DANGER },
-  { label: 'Bridge edge', color: VIZ_DANGER },
+  { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.closed, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.articulation, color: 'var(--red)' },
+  { label: I18N_KEY.features.algorithms.display.legend.bridge, color: 'var(--amber)' },
 ];
 
 const TARJAN_SCC_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed / current node', color: VIZ_WARNING },
-  { label: 'Tarjan stack', color: VIZ_WINDOW },
-  { label: 'Current inspect edge', color: VIZ_ROUTE },
-  { label: 'Finished SCC color', color: VIZ_ACCENT },
-  { label: 'Back-edge low-link update', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.sccColor, color: 'var(--violet)' },
 ];
 
 const KOSARAJU_SCC_LEGEND: readonly LegendItem[] = [
-  { label: 'Seed / current node', color: VIZ_WARNING },
-  { label: 'Pass 1 finish stack', color: VIZ_WINDOW },
-  { label: 'Pass 2 reversed edge', color: VIZ_ROUTE },
-  { label: 'Finished SCC color', color: VIZ_ACCENT },
-  { label: 'Assigned component', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.stack, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.reversedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.sccColor, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.assigned, color: 'var(--lime)' },
 ];
 
 const EULER_LEGEND: readonly LegendItem[] = [
-  { label: 'Unused edge', color: 'rgba(255,255,255,0.22)' },
-  { label: 'Current traversal edge', color: VIZ_WINDOW },
-  { label: 'Committed trail edge', color: VIZ_SUCCESS },
-  { label: 'Odd start / end node', color: VIZ_ACCENT },
-  { label: 'Sealed trail node', color: VIZ_HIT },
+  { label: I18N_KEY.features.algorithms.display.legend.unusedEdge, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.trailEdge, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.oddEndpoint, color: 'var(--violet)' },
 ];
 
 const CHROMATIC_NUMBER_LEGEND: readonly LegendItem[] = [
-  { label: 'Color class 1', color: 'rgba(56, 189, 248, 0.72)' },
-  { label: 'Color class 2', color: 'rgba(139, 92, 246, 0.72)' },
-  { label: 'Color class 3', color: 'rgba(52, 211, 153, 0.72)' },
-  { label: 'Color class 4', color: 'rgba(245, 158, 11, 0.76)' },
-  { label: 'Conflict edge', color: VIZ_DANGER },
+  { label: I18N_KEY.features.algorithms.display.legend.colorClassA, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.colorClassB, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.colorClassC, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.colorClassD, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.conflict, color: 'var(--red)' },
 ];
 
 const DOMINATOR_TREE_LEGEND: readonly LegendItem[] = [
-  { label: 'Entry block', color: VIZ_ACCENT },
-  { label: 'Current predecessor inspect', color: VIZ_WARNING },
-  { label: 'Stable dominator set', color: VIZ_WINDOW },
-  { label: 'Immediate dominator tree edge', color: VIZ_SUCCESS },
-  { label: 'Current worklist block', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.entryBlock, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.worklist, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.dominatorEdge, color: 'var(--lime)' },
 ];
 
 const STEINER_TREE_LEGEND: readonly LegendItem[] = [
-  { label: 'Terminal node', color: 'rgba(56, 189, 248, 0.72)' },
-  { label: 'Steiner connector', color: 'rgba(52, 211, 153, 0.74)' },
-  { label: 'Weighted graph edge', color: 'rgba(255,255,255,0.22)' },
-  { label: 'Exact selected tree edge', color: VIZ_SUCCESS },
-  { label: 'Active subset root', color: VIZ_WARNING },
+  { label: I18N_KEY.features.algorithms.display.legend.terminal, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.steinerConnector, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
 ];
 
 const SEARCH_LEGEND: readonly LegendItem[] = [
@@ -1162,37 +1160,33 @@ const A_STAR_LEGEND: readonly LegendItem[] = [
 ];
 
 const HOPCROFT_KARP_LEGEND: readonly LegendItem[] = [
-  { label: 'Left partition', color: VIZ_ACCENT },
-  { label: 'Right partition', color: VIZ_EMBER },
-  { label: 'BFS frontier', color: VIZ_WINDOW },
-  { label: 'Matching edge', color: VIZ_SUCCESS },
-  { label: 'Augmenting path', color: VIZ_ROUTE },
-  { label: 'Current inspect edge', color: VIZ_WARNING },
+  { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.matchingEdge, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.augmentingPath, color: 'var(--pink)' },
 ];
 
 const DINIC_LEGEND: readonly LegendItem[] = [
-  { label: 'Source', color: VIZ_ACCENT },
-  { label: 'Sink', color: VIZ_EMBER },
-  { label: 'Admissible level edge', color: VIZ_WINDOW },
-  { label: 'Positive flow', color: VIZ_SUCCESS },
-  { label: 'Current augment path', color: VIZ_ROUTE },
-  { label: 'Saturated edge', color: 'var(--text-secondary)', opacity: 0.6 },
+  { label: I18N_KEY.features.algorithms.display.legend.sourceSink, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.levelEdge, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.positiveFlow, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.augmentingPath, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.saturated, color: 'var(--amber)' },
 ];
 
 const EDMONDS_KARP_LEGEND: readonly LegendItem[] = [
-  { label: 'Residual candidate edge', color: 'rgba(255,255,255,0.2)' },
-  { label: 'BFS frontier', color: VIZ_WINDOW },
-  { label: 'Current inspect edge', color: VIZ_WARNING },
-  { label: 'Augmenting path', color: VIZ_ROUTE },
-  { label: 'Positive flow / saturated edge', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.residualEdge, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.augmentingPath, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.positiveFlow, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.saturated, color: 'var(--amber)' },
 ];
 
 const MIN_COST_MAX_FLOW_LEGEND: readonly LegendItem[] = [
-  { label: 'Residual candidate edge', color: 'rgba(255,255,255,0.2)' },
-  { label: 'Cheapest frontier', color: VIZ_WINDOW },
-  { label: 'Current cost relax edge', color: VIZ_WARNING },
-  { label: 'Cheapest augmenting route', color: VIZ_ROUTE },
-  { label: 'Committed flow with price', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.residualEdge, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.frontier, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.legend.cheapestRoute, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.positiveFlow, color: 'var(--lime)' },
 ];
 
 const FLOYD_WARSHALL_LEGEND: readonly LegendItem[] = [
@@ -1378,19 +1372,18 @@ const KNUTH_LEGEND: readonly LegendItem[] = [
 ];
 
 const UNION_FIND_LEGEND: readonly LegendItem[] = [
-  { label: 'Root representative', color: VIZ_ACCENT },
-  { label: 'Active / queried node', color: VIZ_WARNING },
-  { label: 'Merged / compressed node', color: VIZ_SUCCESS },
-  { label: 'Pending operation', color: VIZ_WINDOW },
-  { label: 'Completed operation', color: VIZ_ROUTE },
+  { label: I18N_KEY.features.algorithms.display.legend.root, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.merged, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.compressed, color: 'var(--amber)' },
 ];
 
 const KRUSKAL_LEGEND: readonly LegendItem[] = [
-  { label: 'Current edge check', color: VIZ_WARNING },
-  { label: 'Accepted MST edge', color: VIZ_SUCCESS },
-  { label: 'Rejected cycle edge', color: VIZ_DANGER },
-  { label: 'Current DSU roots', color: VIZ_ACCENT },
-  { label: 'Pending sorted edge', color: VIZ_WINDOW },
+  { label: I18N_KEY.features.algorithms.display.legend.inspectedEdge, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.acceptedEdge, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.legend.rejectedEdge, color: 'var(--red)' },
+  { label: I18N_KEY.features.algorithms.display.legend.root, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.legend.pendingEdge, color: 'var(--slate)' },
 ];
 
 const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
@@ -2961,7 +2954,7 @@ const TREE_TRAVERSALS_VIEW_CONFIG: TreeAlgorithmViewConfig<
   defaultSize: 15,
   sizeUnit: 'nodes',
   randomizeLabel: 'New tree shape',
-  legendItems: () => [],
+  legendItems: () => TREE_TRAVERSALS_LEGEND,
   presetOptions: TREE_TRAVERSALS_PRESETS,
   defaultPresetId: DEFAULT_TREE_TRAVERSALS_PRESET_ID,
   tasks: TREE_TRAVERSALS_TASKS,
