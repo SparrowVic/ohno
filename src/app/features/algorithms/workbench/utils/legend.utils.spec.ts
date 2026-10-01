@@ -24,7 +24,12 @@ describe('legendLabelKey', () => {
     expect(legendLabelKey('Gathered output')).toBe('features.algorithms.workbench.legend.gatheredOutput');
   });
 
+  it('passes through labels that already are i18n keys', () => {
+    expect(legendLabelKey('features.algorithms.display.legend.source')).toBe('features.algorithms.display.legend.source');
+  });
+
   it('returns null for labels without a key', () => {
     expect(legendLabelKey('Current node')).toBeNull();
+    expect(legendLabelKey('Side 0')).toBeNull();
   });
 });

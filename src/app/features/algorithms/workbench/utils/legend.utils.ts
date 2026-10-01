@@ -1,4 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 
 const COLOR_LEDS: readonly (readonly [string, LedColor])[] = [
@@ -42,5 +43,5 @@ export function legendLedColor(cssColor: string): LedColor {
 }
 
 export function legendLabelKey(label: string): string | null {
-  return LABEL_KEYS[label] ?? null;
+  return LABEL_KEYS[label] ?? (looksLikeI18nKey(label) ? label : null);
 }
