@@ -1,113 +1,127 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
-
-  @if (state(); as dpState) {
-    @if (isKnapsack()) {
-      <!-- Item shelf — mode-specific strip above the board. Each item
-           card (weight + value) reads as the row's identity so the
-           "take vs skip" decision isn't just a number on an axis.
-           Active row glows warm; packed rows flag with an accent pill. -->
-      <div class="knapsack-item-shelf">
-        @for (item of itemCards(); track item.row) {
-          <article
-            class="knapsack-item-card"
-            [class.knapsack-item-card--active]="item.isActive"
-            [class.knapsack-item-card--packed]="item.isPacked"
-            [attr.data-item-row]="item.row"
-          >
-            <div class="knapsack-item-card__label">
-              {{ looksLikeI18nKey(item.label) ? (item.label | transloco) : item.label }}
-            </div>
-            <div class="knapsack-item-card__stats">
-              <span class="knapsack-item-card__stat knapsack-item-card__stat--weight"
-                >w <b>{{ item.weight ?? '—' }}</b></span
-              >
-              <span class="knapsack-item-card__stat knapsack-item-card__stat--value"
-                >v <b>{{ item.value ?? '—' }}</b></span
-              >
-            </div>
-          </article>
-        }
-      </div>
-
-      <!-- Capacity ruler — compact w-axis strip so the column index
-           reads as a capacity the algorithm is probing, not an
-           abstract table column. Active mark pulses to match the
-           decision cell's column. -->
-      <div class="knapsack-capacity-ruler">
-        @for (marker of capacityMarkers(); track marker.col) {
-          <span
-            class="knapsack-capacity-mark"
-            [class.knapsack-capacity-mark--active]="marker.isActive"
-            [class.knapsack-capacity-mark--base]="marker.isBase"
-            [attr.data-capacity-col]="marker.col"
-            >{{ marker.label }}</span
-          >
-        }
-      </div>
-    }
-
-    <div class="dp-board-wrap" #boardWrap #container>
+@if (state(); as dp) {
+  <div class="display display--rack dp" [attr.data-mode]="dp.mode">
+    <div class="display__main dp__main">
       <div
-        class="dp-board"
-        [class.dp-board--upper]="dpState.tableShape === 'upper-triangle'"
-        [style.grid-template-columns]="gridCols()"
+        #scroller
+        class="dp__scroller"
+        [style.--dp-cell-w.px]="metrics().cellWidth"
+        [style.--dp-cell-h.px]="metrics().cellHeight"
+        [style.--dp-head-w.px]="metrics().rowHeadWidth"
+        [style.--dp-value-size.px]="metrics().valueSize"
+        [style.--dp-gap.px]="cellGap"
+        [attr.data-dot]="metrics().dot"
+        [attr.data-overflow]="metrics().overflow"
       >
-        <div class="dp-corner">{{ dpState.dimensionsLabel | i18nText }}</div>
-
-        @for (colHeader of dpState.colHeaders; track colHeader.id) {
-          <div class="{{ headerClass(colHeader.status) }}">
-            <span>{{
-              looksLikeI18nKey(colHeader.label) ? (colHeader.label | transloco) : colHeader.label
-            }}</span>
-            @if (colHeader.metaLabel) {
-              <small>{{
-                looksLikeI18nKey(colHeader.metaLabel)
-                  ? (colHeader.metaLabel | transloco)
-                  : colHeader.metaLabel
-              }}</small>
-            }
-          </div>
-        }
-
-        @for (rowHeader of dpState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
-          <div class="{{ headerClass(rowHeader.status) }}">
-            <span>{{
-              looksLikeI18nKey(rowHeader.label) ? (rowHeader.label | transloco) : rowHeader.label
-            }}</span>
-            @if (rowHeader.metaLabel) {
-              <small>{{
-                looksLikeI18nKey(rowHeader.metaLabel)
-                  ? (rowHeader.metaLabel | transloco)
-                  : rowHeader.metaLabel
-              }}</small>
+        <div
+          class="dp__table"
+          role="table"
+          [attr.aria-label]="DP.tableAria | transloco: { dims: dp.dimensionsLabel }"
+          [style.grid-template-columns]="gridColumns()"
+        >
+          <div class="dp__line" role="row">
+            <div class="dp__corner" role="columnheader">
+              <span class="dp__corner-name">dp</span>
+              <span class="dp__corner-dims">{{ dp.dimensionsLabel }}</span>
+            </div>
+            @for (column of columns(); track column.id; let first = $first) {
+              <div class="dp__col-head" role="columnheader" [attr.data-tone]="column.tone">
+                @if (axis().caption; as caption) {
+                  <span class="dp__axis" [class.dp__axis--hidden]="!first">{{ caption | i18nText }}</span>
+                }
+                <span class="dp__col-label">{{ column.label | i18nText }}</span>
+                @if (axis().columnMeta) {
+                  <span class="dp__col-meta">{{ column.meta | i18nText }}</span>
+                }
+              </div>
             }
           </div>
 
-          @for (cell of rowCells(rowIndex); track cell.id) {
-            <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
-              <span class="dp-cell__value">{{
-                looksLikeI18nKey(cell.valueLabel)
-                  ? (cell.valueLabel | transloco)
-                  : cell.valueLabel
-              }}</span>
-              @if (cell.metaLabel) {
-                <span class="dp-cell__meta">{{
-                  looksLikeI18nKey(cell.metaLabel)
-                    ? (cell.metaLabel | transloco)
-                    : cell.metaLabel
-                }}</span>
+          @for (row of rows(); track row.header.id) {
+            <div class="dp__line" role="row">
+              <div class="dp__row-head" role="rowheader" [attr.data-tone]="row.header.tone">
+                <span class="dp__row-label">{{ row.header.label | i18nText }}</span>
+                @if (row.header.meta; as meta) {
+                  <span class="dp__row-meta">{{ meta | i18nText }}</span>
+                }
+              </div>
+              @for (cell of row.cells; track cell.id) {
+                @if (cell.state === 'void') {
+                  <div class="dp__void" role="cell"></div>
+                } @else {
+                  <div
+                    class="dp__cell"
+                    role="cell"
+                    [attr.data-cell-id]="cell.id"
+                    [attr.data-state]="cell.state"
+                    [attr.data-tone]="cell.tone"
+                    [attr.data-strong]="cell.strong"
+                    [attr.data-focus]="cell.focus"
+                    [attr.data-dot]="cell.dot"
+                    [attr.data-hint]="cell.hint"
+                    [attr.aria-current]="cell.focus ? 'true' : null"
+                    [attr.aria-label]="cell.state === 'pending' ? (DP.pending | transloco) : null"
+                  >
+                    @if (cell.tag; as tag) {
+                      <span class="dp__cell-tag">{{ tag | i18nText }}</span>
+                    }
+                    @if (cell.mark) {
+                      <span class="dp__cell-mark" aria-hidden="true">?</span>
+                    }
+                    <span class="dp__cell-value">{{ cell.value }}</span>
+                    @if (cell.caption && showCaptions()) {
+                      <span class="dp__cell-caption">{{ cell.caption | i18nText }}</span>
+                    }
+                  </div>
+                }
               }
             </div>
           }
-        }
+        </div>
       </div>
     </div>
-  }
-</app-viz-panel>
+
+    <div class="display__rack dp__side">
+      @if (primaryRows().length > 0) {
+        <ohno-rack class="dp__rack dp__rack--primary" [title]="dp.primaryItemsLabel | i18nText" [meta]="primaryMeta() | i18nText">
+          @for (row of primaryRows(); track row.id) {
+            <ohno-rack-row [tone]="row.tone">
+              <ohno-led rackLead size="sm" [color]="row.led ?? 'slate'" [on]="row.led !== null" />
+              <span class="dp__item-name">{{ row.lead | i18nText }}</span>
+              @if (row.value; as value) {
+                <span rackValue class="dp__item-value" [attr.data-dot]="row.valueDot">{{ value | i18nText }}</span>
+              }
+            </ohno-rack-row>
+          }
+        </ohno-rack>
+      }
+
+      @if (secondaryRows().length > 0) {
+        <ohno-rack class="dp__rack dp__rack--secondary" [title]="dp.secondaryItemsLabel | i18nText">
+          @for (row of secondaryRows(); track row.id) {
+            <ohno-rack-row [tone]="row.tone">
+              <ohno-led rackLead size="sm" [color]="row.led ?? 'slate'" [on]="row.led !== null" />
+              <span class="dp__item-name">{{ row.lead | i18nText }}</span>
+              @if (row.value; as value) {
+                <span rackValue class="dp__item-value" [attr.data-dot]="row.valueDot">{{ value | i18nText }}</span>
+              }
+            </ohno-rack-row>
+          }
+        </ohno-rack>
+      }
+
+      @if (readouts().length > 0) {
+        <dl class="dp__readouts">
+          @for (readout of readouts(); track readout.id) {
+            <div class="dp__readout" [attr.data-tone]="readout.tone">
+              <dt class="dp__readout-label">
+                <ohno-led size="sm" [color]="readout.tone" />
+                <span>{{ readout.label | i18nText }}</span>
+              </dt>
+              <dd class="dp__readout-value" [attr.data-dot]="readout.dot">{{ readout.value | i18nText }}</dd>
+            </div>
+          }
+        </dl>
+      }
+    </div>
+  </div>
+}

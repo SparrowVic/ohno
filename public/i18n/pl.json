@@ -676,6 +676,74 @@
         "unavailableLabel": "Ta wizualizacja nie jest jeszcze zaimplementowana."
       },
       "display": {
+        "dp": {
+          "capacityAxis": "poj.",
+          "captions": {
+            "from": "z {{city}}",
+            "last": "ost. #{{id}}"
+          },
+          "labels": {
+            "afterMerge": "po scaleniu",
+            "amount": "kwota",
+            "assigned": "{{count}} przydz.",
+            "best": "najlepsze",
+            "bestIndex": "najl. j",
+            "bit": "bit {{n}}",
+            "cache": "pamięć",
+            "coin": "moneta",
+            "count": "liczba",
+            "deleteBase": "baza usuw.",
+            "dot": "kropka",
+            "empty": "pusto",
+            "end": "koniec",
+            "exclude": "bez węzła",
+            "filledBits": "zajęte bity",
+            "focus": "fokus",
+            "frontier": "front",
+            "ground": "ziemia",
+            "groups": "{{count}} gr.",
+            "include": "z węzłem",
+            "input": "wejście",
+            "insertBase": "baza wstaw.",
+            "length": "dł.",
+            "line": "prosta",
+            "link": "łącze",
+            "noCoins": "bez monet",
+            "noNumbers": "bez liczb",
+            "node": "węzeł",
+            "none": "brak",
+            "optRow": "opt wiersz {{n}}",
+            "pattern": "wzorzec",
+            "point": "punkt",
+            "prefix": "prefiks",
+            "previous": "poprz.",
+            "query": "zapytanie",
+            "stair": "stopień",
+            "stairIndex": "stopień {{n}}",
+            "star": "gwiazdka",
+            "start": "start",
+            "state": "stan",
+            "sum": "suma",
+            "take": "weź",
+            "target": "cel",
+            "term": "wyraz",
+            "text": "tekst",
+            "value": "wartość",
+            "ways": "sposoby",
+            "weight": "waga",
+            "zeroItems": "0 przedm."
+          },
+          "pending": "jeszcze nie policzone",
+          "tableAria": "Tabela programowania dynamicznego {{dims}}",
+          "tags": {
+            "delete": "usuń",
+            "insert": "wstaw",
+            "match": "zgodne",
+            "replace": "zamień",
+            "split": "podział"
+          },
+          "weightValue": "waga · wartość"
+        },
         "dsu": {
           "decision": "Decyzja",
           "edges": "Krawędzie · rosnąco",
@@ -817,6 +885,12 @@
           "nodeAria": "Węzeł {{label}}, wartość {{value}}",
           "route": "Trasa"
         },
+        "grid": {
+          "boardAria": "Plansza {{rows}} × {{cols}}: front {{frontier}}, odwiedzone {{visited}}, wynik {{result}}",
+          "decision": "Decyzja",
+          "goal": "cel",
+          "openSet": "Zbiór otwarty"
+        },
         "legend": {
           "acceptedEdge": "Przyjęta krawędź",
           "articulation": "Punkt artykulacji",
@@ -869,6 +943,86 @@
           "updated": "Zmienione w przebiegu",
           "visited": "Odwiedzone",
           "worklist": "Lista robocza"
+        },
+        "matrix": {
+          "corner": {
+            "cost": "koszt",
+            "dist": "dist"
+          },
+          "notes": {
+            "formulas": {
+              "adjustment": "nieprzykryte − {{value}} · podwójnie + {{value}}",
+              "cover": "wiersze {{rows}} + kolumny {{cols}} = {{total}}",
+              "smallest": "min(nieprzykryte) = {{value}}",
+              "subtractColumn": "kolumna {{label}} − {{value}}",
+              "subtractRow": "wiersz {{label}} − {{value}}"
+            },
+            "titles": {
+              "adjustment": "Korekta macierzy",
+              "columnMinimum": "Minimum kolumny",
+              "minimumCover": "Minimalne pokrycie",
+              "originalTotal": "Koszt oryginalny",
+              "pivot": "Węzeł pośredni",
+              "relaxation": "Test relaksacji",
+              "rowMinimum": "Minimum wiersza",
+              "smallestUncovered": "Najmniejsze nieprzykryte",
+              "subtractMinimum": "Odejmij minimum",
+              "update": "Nowa odległość",
+              "zeroMatching": "Skojarzenie zer"
+            },
+            "verdicts": {
+              "adjustment": "Powtórz test skojarzenia na nowych zerach.",
+              "columnMinimum": "Odejmij je od całej kolumny — każda kolumna dostanie zero.",
+              "cover": "Mniej linii niż n — macierz wymaga korekty.",
+              "keep": "Zostaje dotychczasowa odległość.",
+              "needMore": "Za mało niezależnych zer — potrzebne pokrycie.",
+              "perfect": "Jest pełny przydział z samych zer.",
+              "readOff": "Przydział czytamy z zer, koszt liczymy z oryginalnej macierzy.",
+              "rowMinimum": "Odejmij je od całego wiersza — powstanie zero, a optimum się nie zmieni.",
+              "shorter": "Trasa przez {{pivot}} jest krótsza.",
+              "smallest": "Odejmij je od nieprzykrytych, dodaj na przecięciach linii.",
+              "throughPivot": "Każda trasa może teraz przejść przez {{pivot}}.",
+              "updated": "Najkrótsza znana trasa biegnie teraz przez {{pivot}}.",
+              "zeroCreated": "Nowe zero w {{label}}."
+            }
+          },
+          "oldValue": "było {{value}}",
+          "racks": {
+            "activeColumn": "Bieżąca kolumna",
+            "activeRow": "Bieżący wiersz",
+            "changedPairs": "Poprawione pary",
+            "coveredColumns": "Przykryte kolumny",
+            "coveredRows": "Przykryte wiersze",
+            "currentMatches": "Bieżące przydziały",
+            "jobs": "Zadania",
+            "matrixStatus": "Stan macierzy",
+            "meaning": "Legenda",
+            "nextStep": "Następny krok",
+            "optimalPairs": "Optymalny przydział",
+            "pivotNode": "Węzeł pośredni k",
+            "reducedColumns": "Zredukowane kolumny",
+            "reducedRows": "Zredukowane wiersze",
+            "shortestPairs": "Najkrótsze trasy",
+            "whyItWorks": "Dlaczego to działa",
+            "workers": "Pracownicy",
+            "zeros": "Zera"
+          },
+          "sentences": {
+            "allRowsShortest": "Każdy wiersz trzyma już najkrótszą znaną odległość do każdego celu.",
+            "infinityUnreachable": "∞ oznacza, że na razie nie ma trasy.",
+            "noChange": "brak zmian dla tego k",
+            "perfectMatchingOptimal": "Pełne skojarzenie zer w zredukowanej macierzy daje minimalny koszt oryginalny.",
+            "rebuildMatching": "Zbuduj skojarzenie zer od nowa na poprawionej macierzy."
+          },
+          "tableAria": "Macierz {{rows}} × {{cols}}"
+        },
+        "matrixGrid": {
+          "free": "zmienna wolna",
+          "noSolution": "układ sprzeczny",
+          "objective": "cel",
+          "pendingEntry": "{{entering}} wchodzi",
+          "pivotEntry": "{{entering}} wchodzi, {{leaving}} wychodzi",
+          "tableAria": "Macierz {{size}}"
         },
         "meters": {
           "area": "Pole",
@@ -1051,6 +1205,21 @@
           "w": "w",
           "x": "x",
           "y": "y"
+        },
+        "sieve": {
+          "boardAria": "Tablica liczb od 1 do {{n}}",
+          "cellAria": "{{value}}: {{state}}",
+          "cellFactorAria": "{{value}}: {{state}}, najmniejszy dzielnik {{factor}}",
+          "primesAria": "Znalezione liczby pierwsze: {{list}}",
+          "states": {
+            "composite": "złożona, wykreślona",
+            "current": "sprawdzana",
+            "marking": "właśnie wykreślana",
+            "pivot": "bieżąca liczba pierwsza",
+            "prime": "pierwsza",
+            "skipped": "poza sitem",
+            "unchecked": "jeszcze nie sprawdzona"
+          }
         },
         "tree": {
           "frontUp": "czoło u góry",
@@ -5791,11 +5960,18 @@
         "matrixGrid": {
           "decisionLabel": "Decyzja",
           "emptyLabel": "Brak śladu macierzy dla tego kroku.",
+          "enteringLabel": "Kolumna wchodząca",
+          "factsLabel": "Fakty",
+          "historyLabel": "Historia operacji",
           "iterationLabel": "Iteracja",
+          "noneLabel": "Jeszcze żadnej operacji.",
           "operationLabel": "Operacja",
           "pivotLabel": "Pivot",
           "rowsLabel": "Wiersze",
-          "sizeLabel": "Rozmiar"
+          "sizeLabel": "Rozmiar",
+          "snapshotLabel": "Bieżąca macierz",
+          "sourceRowLabel": "Wiersz źródłowy",
+          "targetRowLabel": "Wiersz zmieniany"
         },
         "minkowskiSum": {
           "activeVectorsAriaLabel": "Aktywne wektory",

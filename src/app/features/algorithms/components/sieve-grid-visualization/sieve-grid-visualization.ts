@@ -1,77 +1,180 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
-import { MathText } from '../../../../shared/components/math-text/math-text';
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
-import { SieveGridPresetOption } from '../../utils/scenarios/sieve-grid/sieve-grid-scenarios';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
-import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
+import {
+  SIEVE_BOARD_METRICS,
+  SieveBoardCell,
+  SieveBoardLayout,
+  SieveBoardRow,
+  SievePrimeChip,
+  SieveStatRow,
+  sieveBoardLayout,
+  sieveBoardRows,
+  sievePrimeChips,
+  sieveStatRows,
+  sieveVisibleCells,
+} from './sieve-display.utils';
 
-/**
- * Shared canvas for grid-based number-theory algorithms. Draws a
- * responsive number grid — each integer in its own cell with a status
- * tint that tracks "unchecked / prime / composite / current pivot /
- * being marked". A header strip shows the active prime p, the loop
- * bound √n, and a live primes-found count.
- *
- * Designed to be reused later for Linear Sieve and Smallest-Prime-
- * Factor precompute in Stage 4.
- */
+interface BoardSize {
+  readonly width: number;
+  readonly height: number;
+}
+
 @Component({
   selector: 'app-sieve-grid-visualization',
-  imports: [I18nTextPipe, MathText, VizHeader, VizPanel, VizPresetPicker],
+  imports: [I18nTextPipe, TranslocoPipe, OhnoRack, OhnoRackRow],
   templateUrl: './sieve-grid-visualization.html',
   styleUrl: './sieve-grid-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SieveGridVisualization {
+  protected readonly SIEVE = I18N_KEY.features.algorithms.display.sieve;
+  protected readonly RACKS = I18N_KEY.features.algorithms.display.racks;
+  protected readonly NOTES = I18N_KEY.features.algorithms.display.notes;
+  protected readonly METRICS = SIEVE_BOARD_METRICS;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
-  readonly presetOptions = input<readonly SieveGridPresetOption[]>([]);
-  readonly presetId = input<string | null>(null);
-  readonly presetChange = output<string>();
 
-  readonly state = computed<SieveGridTraceState | null>(() => this.step()?.sieveGrid ?? null);
+  private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(AppLanguageService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly boardRef = viewChild<ElementRef<HTMLElement>>('board');
+  private readonly primesRef = viewChild<ElementRef<HTMLElement>>('primeChips');
+  private readonly size = signal<BoardSize>({ width: 0, height: 0 });
+  private observer: ResizeObserver | null = null;
 
-  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+  protected readonly state = computed<SieveGridTraceState | null>(() => this.step()?.sieveGrid ?? null);
 
-  readonly actionText = computed<TranslatableText>(() => {
-    const state = this.state();
-    if (!state) return '';
-    return state.decisionLabel ?? state.phaseLabel ?? '';
-  });
-
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const tone = this.state()?.tone ?? 'idle';
-    switch (tone) {
-      case 'pick':
-        return 'compare';
-      case 'mark':
-        return 'swap';
-      case 'settle':
-        return 'settle';
-      case 'complete':
-        return 'complete';
-      default:
-        return 'default';
-    }
-  });
-
-  /** Derive the column count from the last cell value so we get a
-   *  square-ish grid: ~sqrt(n), clamped to 6..14 so it stays readable
-   *  without overflowing on narrow screens. */
-  readonly columnCount = computed<number>(() => {
+  protected readonly upper = computed(() => {
     const cells = this.state()?.cells ?? [];
-    if (cells.length === 0) return 8;
-    const target = Math.round(Math.sqrt(cells.length));
-    return Math.max(6, Math.min(14, target));
+    return cells[cells.length - 1]?.value ?? 0;
   });
 
-  selectPreset(id: string): void {
-    this.presetChange.emit(id);
+  protected readonly layout = computed<SieveBoardLayout>(() => {
+    const state = this.state();
+    const count = state ? sieveVisibleCells(state.cells).length : 0;
+    const { width, height } = this.size();
+    return sieveBoardLayout(count, width || 640, height || 420);
+  });
+
+  protected readonly rows = computed<readonly SieveBoardRow[]>(() => {
+    const state = this.state();
+    return state ? sieveBoardRows(state, this.layout().columns) : [];
+  });
+
+  protected readonly columnHeads = computed<readonly number[]>(() =>
+    Array.from({ length: Math.min(this.layout().columns, this.rows()[0]?.cells.length ?? 0) }, (_, index) => index + 1),
+  );
+
+  protected readonly cellLabels = computed<ReadonlyMap<number, string>>(() => {
+    this.language.activeLang();
+    const labels = new Map<number, string>();
+    for (const row of this.rows()) {
+      for (const cell of row.cells) {
+        const state = this.transloco.translate(this.SIEVE.states[cell.stateName]);
+        labels.set(
+          cell.value,
+          cell.factor === null
+            ? this.transloco.translate(this.SIEVE.cellAria, { value: cell.value, state })
+            : this.transloco.translate(this.SIEVE.cellFactorAria, { value: cell.value, state, factor: cell.factor }),
+        );
+      }
+    }
+    return labels;
+  });
+
+  protected readonly focusCell = computed<SieveBoardCell | null>(() => {
+    for (const row of this.rows()) {
+      const cell = row.cells.find((item) => item.focus);
+      if (cell) return cell;
+    }
+    return null;
+  });
+
+  protected readonly primes = computed<readonly SievePrimeChip[]>(() => sievePrimeChips(this.state()?.cells ?? []));
+
+  protected readonly primeList = computed(() =>
+    this.primes()
+      .map((chip) => chip.value)
+      .join(', '),
+  );
+
+  protected readonly stats = computed<readonly SieveStatRow[]>(() => sieveStatRows(this.state()?.stats ?? []));
+
+  protected readonly complete = computed(() => this.state()?.tone === 'complete');
+
+  constructor() {
+    effect(() => {
+      const board = this.boardRef()?.nativeElement;
+      this.observer?.disconnect();
+      this.observer = null;
+      if (!board || typeof ResizeObserver === 'undefined') return;
+      this.observer = new ResizeObserver(([entry]) => {
+        if (!entry) return;
+        const width = Math.floor(entry.contentRect.width);
+        const height = Math.floor(entry.contentRect.height);
+        const current = this.size();
+        if (current.width !== width || current.height !== height) this.size.set({ width, height });
+      });
+      this.observer.observe(board);
+    });
+
+    afterRenderEffect(() => {
+      const focus = this.focusCell();
+      this.layout();
+      const board = this.boardRef()?.nativeElement;
+      if (board && focus) {
+        const target = board.querySelector<HTMLElement>(`[data-value="${focus.value}"]`);
+        const { columnHead, gap, inset } = SIEVE_BOARD_METRICS;
+        if (target) this.scrollWithin(board, target, columnHead + gap + inset);
+      }
+      this.primes();
+      const primes = this.primesRef()?.nativeElement;
+      const head = primes?.querySelector<HTMLElement>('[data-head="true"]');
+      if (primes && head) this.scrollWithin(primes, head);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.observer?.disconnect();
+      this.observer = null;
+    });
+  }
+
+  private scrollWithin(container: HTMLElement, target: HTMLElement, stickyTop = 0): void {
+    const box = container.getBoundingClientRect();
+    const rect = target.getBoundingClientRect();
+    const margin = 6;
+    const top = box.top + stickyTop + margin;
+    if (rect.top < top) {
+      container.scrollTop -= top - rect.top;
+    } else if (rect.bottom > box.bottom - margin) {
+      container.scrollTop += rect.bottom - (box.bottom - margin);
+    }
+    if (rect.left < box.left + margin) {
+      container.scrollLeft -= box.left + margin - rect.left;
+    } else if (rect.right > box.right - margin) {
+      container.scrollLeft += rect.right - (box.right - margin);
+    }
   }
 }

@@ -1,88 +1,97 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
+@if (state(); as sieve) {
+  <div class="display display--rack" [attr.data-complete]="complete()">
+    <div class="display__main sieve">
+      <div class="sieve__caption" aria-hidden="true">
+        <span>n {{ upper() }}</span>
+        <span>{{ layout().columns }} × {{ layout().rows }}</span>
+      </div>
 
-  @if (state(); as sieve) {
-    <div class="sieve">
-      <!-- Pivot strip: the active prime being used to cross out
-           multiples, plus the √n bound and the live primes tally. -->
-      <section class="sieve__pivot">
-        <div class="sieve__pivot-main">
-          <app-math-text class="sieve__pivot-label" content="p" mode="math" variant="chip" />
-          <app-math-text
-            class="sieve__pivot-value"
-            [class.sieve__pivot-value--idle]="sieve.activePrime === null"
-            [content]="sieve.activePrime === null ? '—' : sieve.activePrime.toString()"
-            variant="metric"
-          />
-        </div>
-        <div class="sieve__pivot-meta">
-          <span class="sieve__pivot-bound">
-            <app-math-text class="sieve__pivot-bound-label" content="√n" mode="math" variant="chip" />
-            <app-math-text
-              class="sieve__pivot-bound-value"
-              [content]="sieve.bound.toString()"
-              variant="chip"
-            />
-          </span>
-          @for (stat of sieve.stats; track stat.label) {
-            <span class="sieve__pivot-stat sieve__pivot-stat--{{ stat.tone }}">
-              <app-math-text
-                class="sieve__pivot-stat-label"
-                [content]="stat.label | i18nText"
-                variant="chip"
-              />
-              <app-math-text
-                class="sieve__pivot-stat-value"
-                [content]="stat.value | i18nText"
-                variant="chip"
-              />
-            </span>
+      <div
+        #board
+        class="sieve__board"
+        role="list"
+        [attr.aria-label]="SIEVE.boardAria | transloco: { n: upper() }"
+        [style.--sieve-cell.px]="layout().cell"
+        [style.--sieve-font.px]="layout().font"
+        [style.--sieve-columns]="layout().columns"
+        [style.--sieve-row-head.px]="METRICS.rowHead"
+        [style.--sieve-gap.px]="METRICS.gap"
+        [style.--sieve-inset.px]="METRICS.inset"
+        [attr.data-tags]="layout().tags"
+        [attr.data-scrolls]="layout().scrolls"
+      >
+        <div class="sieve__grid">
+          <span class="sieve__corner" aria-hidden="true"></span>
+          @for (column of columnHeads(); track column) {
+            <span
+              class="sieve__head sieve__head--column"
+              aria-hidden="true"
+              [attr.data-active]="focusCell()?.column === column - 1"
+            >{{ column }}</span>
+          }
+
+          @for (row of rows(); track row.index) {
+            <span class="sieve__head sieve__head--row" aria-hidden="true" [attr.data-active]="focusCell()?.row === row.index">{{
+              row.base
+            }}</span>
+            @for (cell of row.cells; track cell.value) {
+              <span
+                class="sieve__cell"
+                role="listitem"
+                [attr.data-value]="cell.value"
+                [attr.data-tone]="cell.tone"
+                [attr.data-struck]="cell.struck"
+                [attr.data-focus]="cell.focus"
+                [attr.aria-current]="cell.focus ? 'true' : null"
+                [attr.aria-label]="cellLabels().get(cell.value)"
+              >
+                @if (cell.tag) {
+                  <span class="sieve__tag" aria-hidden="true">{{ cell.tag }}</span>
+                }
+                <span aria-hidden="true">{{ cell.value }}</span>
+              </span>
+            }
           }
         </div>
-      </section>
-
-      <!-- Number grid: each integer in a cell with a status tint.
-           Cells for values below the sieve's start are hidden as
-           skipped shells so the grid stays aligned from the top. -->
-      <section
-        class="sieve__grid"
-        [style.grid-template-columns]="'repeat(' + columnCount() + ', minmax(0, 1fr))'"
-      >
-        @for (cell of sieve.cells; track cell.value) {
-          <article class="sieve__cell sieve__cell--{{ cell.state }}">
-            <app-math-text
-              class="sieve__cell-value"
-              [content]="cell.value.toString()"
-              variant="cell"
-            />
-            @if (cell.factorLabel; as factor) {
-              <app-math-text class="sieve__cell-factor" [content]="factor" variant="cell" />
-            }
-          </article>
-        }
-      </section>
-
-      <footer
-        class="sieve__result"
-        [class.sieve__result--pending]="!sieve.resultLabel"
-      >
-        <span class="sieve__result-label">primes</span>
-        @if (sieve.resultLabel; as result) {
-          <app-math-text
-            class="sieve__result-value"
-            [content]="result | i18nText"
-            variant="formula"
-          />
-        } @else {
-          <span class="sieve__result-value">—</span>
-        }
-      </footer>
+      </div>
     </div>
-  }
-</app-viz-panel>
+
+    <div class="display__rack sieve__rack">
+      <ohno-rack class="sieve__primes-rack" [title]="RACKS.primes | transloco" [meta]="primes().length.toString()">
+        @if (primes().length > 0) {
+          <div
+            #primeChips
+            class="sieve__primes"
+            role="list"
+            [attr.aria-label]="SIEVE.primesAria | transloco: { list: primeList() }"
+          >
+            @for (chip of primes(); track chip.value) {
+              <span
+                class="sieve__prime"
+                role="listitem"
+                [attr.data-head]="chip.head"
+                [attr.data-tone]="chip.pivot ? 'violet' : 'lime'"
+              >{{ chip.value }}</span>
+            }
+          </div>
+        } @else {
+          <ohno-rack-row tone="dim">{{ NOTES.empty | transloco }}</ohno-rack-row>
+        }
+      </ohno-rack>
+
+      @if (stats().length > 0) {
+        <ohno-rack class="sieve__stats-rack" [title]="RACKS.stats | transloco">
+          @for (stat of stats(); track $index) {
+            <ohno-rack-row class="sieve__stat" [attr.data-stat-tone]="stat.tone">
+              <span rackLead class="sieve__led" aria-hidden="true"></span>
+              <span class="sieve__stat-label">{{ stat.label | i18nText }}</span>
+              <span rackValue class="sieve__stat-value" [attr.data-numeric]="stat.numeric">{{ stat.value | i18nText }}</span>
+            </ohno-rack-row>
+          }
+        </ohno-rack>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="sieve__empty">{{ NOTES.empty | transloco }}</div>
+}

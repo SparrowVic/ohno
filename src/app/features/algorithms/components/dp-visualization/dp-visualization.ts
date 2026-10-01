@@ -1,342 +1,175 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  OnDestroy,
   computed,
   effect,
   input,
-  output,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
-import { DpCell, DpPresetOption, DpTraceState } from '../../models/dp';
+import { DpTraceState } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
-import { createMotionProfile, pulseElement } from '../../utils/helpers/visualization-motion/visualization-motion';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
-import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
+import { prefersReducedMotion } from '../../utils/helpers/visualization-motion/visualization-motion';
+import {
+  DP_CELL_GAP,
+  DpDisplayCell,
+  DpDisplayHeader,
+  dpColumnAxis,
+  dpDisplayHeaders,
+  dpDisplayRows,
+  dpFocusCell,
+  dpMaxValueLength,
+  dpPrimaryRackMeta,
+  dpPrimaryRows,
+  dpReadouts,
+  dpRowHeadChars,
+  dpSecondaryRows,
+  dpTableMetrics,
+} from './dp-display.utils';
 
-const FOCUS_CELL_STATUSES = new Set<DpCell['status']>([
-  'active',
-  'improved',
-  'chosen',
-  'blocked',
-  'backtrack',
-  'match',
-]);
+const HEADER_HEIGHT = 34;
+const AXIS_HEIGHT = 12;
+const META_HEIGHT = 12;
+const CAPTION_MIN_HEIGHT = 44;
+const SCROLL_MARGIN = 8;
 
-/** Knapsack item card for the item shelf — extracted from the row
- *  header so the UI can show weight / value alongside the label and
- *  highlight whichever row is currently being evaluated. */
-interface KnapsackItemCard {
-  readonly row: number;
-  readonly label: string;
-  readonly weight: number | null;
-  readonly value: number | null;
-  readonly metaLabel: string | null;
-  readonly isActive: boolean;
-  readonly isPacked: boolean;
-}
-
-/** Capacity marker sitting on the ruler strip above the board. One
- *  per column — base (w=0) gets a distinct badge, the active column
- *  pulses to match the current focus cell. */
-interface CapacityMarker {
-  readonly col: number;
-  readonly label: string;
-  readonly isActive: boolean;
-  readonly isBase: boolean;
+interface DpDisplayRow {
+  readonly header: DpDisplayHeader;
+  readonly cells: readonly DpDisplayCell[];
 }
 
 @Component({
   selector: 'app-dp-visualization',
-  imports: [I18nTextPipe, TranslocoPipe, VizHeader, VizPanel, VizPresetPicker],
+  imports: [I18nTextPipe, TranslocoPipe, OhnoLed, OhnoRack, OhnoRackRow],
   templateUrl: './dp-visualization.html',
   styleUrl: './dp-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DpVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
-  protected readonly looksLikeI18nKey = looksLikeI18nKey;
+export class DpVisualization implements VisualizationRenderer {
+  protected readonly DP = I18N_KEY.features.algorithms.display.dp;
+  protected readonly NOTES = I18N_KEY.features.algorithms.display.notes;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
-  readonly presetOptions = input<readonly DpPresetOption[]>([]);
-  readonly presetId = input<string | null>(null);
-  readonly presetChange = output<string>();
 
-  private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
-  private readonly boardWrapRef = viewChild<ElementRef<HTMLDivElement>>('boardWrap');
-  private initialized = false;
-  private lastStep: SortStep | null = null;
+  private readonly scrollerRef = viewChild<ElementRef<HTMLElement>>('scroller');
+  private readonly viewport = signal({ width: 0, height: 0 });
 
-  readonly state = computed<DpTraceState | null>(() => this.step()?.dp ?? null);
-
-  /** True when the current DP instance is the 0/1 knapsack. Drives
-   *  the item-shelf + capacity-ruler strip above the board — the two
-   *  axes-as-entities that make knapsack's "take vs skip" decision
-   *  readable at a glance, rather than buried in header labels. */
-  readonly isKnapsack = computed(() => this.state()?.mode === 'knapsack-01');
-
-  /** The cell the algorithm is currently deciding on. Falls back to
-   *  any focus-class status so the item shelf / ruler highlight the
-   *  right row + column even when the tag hasn't been set yet. */
-  readonly activeCell = computed<DpCell | null>(() => {
+  protected readonly state = computed<DpTraceState | null>(() => this.step()?.dp ?? null);
+  protected readonly axis = computed(() => {
     const state = this.state();
-    if (!state) return null;
-    return (
-      state.cells.find((cell) => cell.tags.includes('active')) ??
-      state.cells.find((cell) => FOCUS_CELL_STATUSES.has(cell.status)) ??
-      null
-    );
+    return state ? dpColumnAxis(state) : { caption: null, columnMeta: false };
   });
-
-  /** Item cards — one per data row (row 0 is the w=0 base and is
-   *  excluded). We parse `w{n} · v{n}` out of the row header's meta
-   *  label so the card can split weight from value into separate
-   *  badges; if the generator format ever changes the parse returns
-   *  nulls and the UI falls back to '—'. */
-  readonly itemCards = computed<readonly KnapsackItemCard[]>(() => {
+  protected readonly columns = computed<readonly DpDisplayHeader[]>(() =>
+    dpDisplayHeaders(this.state()?.colHeaders ?? [], this.axis().columnMeta),
+  );
+  protected readonly rows = computed<readonly DpDisplayRow[]>(() => {
     const state = this.state();
-    const active = this.activeCell();
-    if (!state || state.mode !== 'knapsack-01') return [];
-    return state.rowHeaders.slice(1).map((header, index) => {
-      const stats = parseItemStats(header.metaLabel);
-      const row = index + 1;
-      return {
-        row,
-        label: header.label,
-        weight: stats.weight,
-        value: stats.value,
-        metaLabel: header.metaLabel,
-        isActive: active?.row === row,
-        isPacked: header.status === 'accent',
-      };
+    if (!state) return [];
+    const headers = dpDisplayHeaders(state.rowHeaders, true);
+    const cells = dpDisplayRows(state, this.step()?.phase);
+    return headers.map((header, index) => ({ header, cells: cells[index] ?? [] }));
+  });
+  protected readonly metrics = computed(() => {
+    const state = this.state();
+    const { width, height } = this.viewport();
+    const axis = this.axis();
+    return dpTableMetrics({
+      width,
+      height,
+      cols: state?.colHeaders.length ?? 1,
+      rows: state?.rowHeaders.length ?? 1,
+      maxValueLength: state ? dpMaxValueLength(state) : 1,
+      rowHeadChars: state ? dpRowHeadChars(state) : 4,
+      headerHeight: HEADER_HEIGHT + (axis.caption ? AXIS_HEIGHT : 0) + (axis.columnMeta ? META_HEIGHT : 0),
     });
   });
-
-  /** Capacity markers — one per column header. The active column
-   *  matches the current decision cell's `col`; base (w=0) gets a
-   *  distinct badge tone. */
-  readonly capacityMarkers = computed<readonly CapacityMarker[]>(() => {
+  protected readonly gridColumns = computed(() => {
+    const { rowHeadWidth, cellWidth } = this.metrics();
+    return `${rowHeadWidth}px repeat(${this.columns().length}, ${cellWidth}px)`;
+  });
+  protected readonly showCaptions = computed(() => this.metrics().cellHeight >= CAPTION_MIN_HEIGHT);
+  protected readonly primaryRows = computed(() => {
     const state = this.state();
-    const active = this.activeCell();
-    if (!state || state.mode !== 'knapsack-01') return [];
-    return state.colHeaders.map((header, index) => ({
-      col: index,
-      label: header.label,
-      isActive: active?.col === index,
-      isBase: index === 0,
-    }));
+    return state ? dpPrimaryRows(state) : [];
   });
-
-  /** Algorithm tag — "LCS", "Knapsack 0/1", etc. Stays stable across
-   *  steps and reads as the viz's identity badge. */
-  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
-
-  /** Action sentence. Picks the richest per-step description:
-   *    1. `computation.decision` — "take (+v5)"
-   *    2. `computation.expression` — "dp[i-1][w] vs dp[i-1][w-wᵢ]+vᵢ"
-   *    3. `phaseLabel` — generic phase name
-   *    4. `activeLabel` — active row/col */
-  readonly actionText = computed<TranslatableText>(() => {
+  protected readonly secondaryRows = computed(() => {
     const state = this.state();
-    if (!state) return '';
-    return (
-      state.computation?.decision ??
-      state.computation?.expression ??
-      state.phaseLabel ??
-      state.activeLabel ??
-      ''
-    );
+    return state ? dpSecondaryRows(state) : [];
   });
+  protected readonly primaryMeta = computed(() => {
+    const state = this.state();
+    return state ? dpPrimaryRackMeta(state.mode) : null;
+  });
+  protected readonly readouts = computed(() => {
+    const state = this.state();
+    return state ? dpReadouts(state) : [];
+  });
+  protected readonly cellGap = DP_CELL_GAP;
 
-  /** Tone derived from cell status flags:
-   *    - chosen / improved → sorted (lime, value locked in)
-   *    - active            → swap   (pink, acting now)
-   *    - match             → compare (cyan, attending)
-   *    - backtrack / blocked → compare
-   *    - idle              → default */
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const cells = this.state()?.cells ?? [];
-    if (cells.some((cell) => cell.status === 'chosen')) return 'sorted';
-    if (cells.some((cell) => cell.status === 'improved')) return 'sorted';
-    if (cells.some((cell) => cell.status === 'active')) return 'swap';
-    if (cells.some((cell) => cell.status === 'backtrack')) return 'compare';
-    if (cells.some((cell) => cell.status === 'match')) return 'compare';
-    if (cells.some((cell) => cell.status === 'blocked')) return 'compare';
-    return 'default';
-  });
+  private readonly focusId = computed(() => dpFocusCell(this.state())?.id ?? null);
 
   constructor() {
+    effect((onCleanup) => {
+      const element = this.scrollerRef()?.nativeElement;
+      if (!element || typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(([entry]) => {
+        const { width, height } = entry.contentRect;
+        this.viewport.set({ width, height });
+      });
+      observer.observe(element);
+      onCleanup(() => observer.disconnect());
+    });
+
     effect(() => {
-      const arr = this.array();
-      if (!this.initialized) return;
-      this.initialize(arr);
+      const id = this.focusId();
       untracked(() => {
-        const step = this.step();
-        if (step) this.render(step);
+        if (id) requestAnimationFrame(() => this.revealCell(id));
       });
     });
-
-    effect(() => {
-      const step = this.step();
-      if (this.initialized && step) {
-        this.render(step);
-      }
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.initialized = true;
-    this.initialize(this.array());
-    const step = this.step();
-    if (step) this.render(step);
-  }
-
-  ngOnDestroy(): void {
-    this.destroy();
   }
 
   initialize(_: readonly number[]): void {
-    this.lastStep = null;
+    this.scrollerRef()?.nativeElement.scrollTo({ left: 0, top: 0 });
   }
 
-  render(step: SortStep): void {
-    const previous = this.lastStep;
-    this.lastStep = step;
-    queueMicrotask(() => this.animateStepEffects(previous, step));
+  render(_: SortStep): void {
+    const id = this.focusId();
+    if (id) this.revealCell(id);
   }
 
   destroy(): void {
-    this.lastStep = null;
-    this.initialized = false;
+    this.viewport.set({ width: 0, height: 0 });
   }
 
-  selectPreset(id: string): void {
-    if (id === this.presetId()) return;
-    this.presetChange.emit(id);
-  }
-
-  rowCells(row: number): readonly DpCell[] {
-    return (
-      this.state()
-        ?.cells.filter((cell) => cell.row === row)
-        .sort((left, right) => left.col - right.col) ?? []
-    );
-  }
-
-  gridCols(): string {
-    return `repeat(${(this.state()?.colHeaders.length ?? 0) + 1}, minmax(0, 1fr))`;
-  }
-
-  cellClass(cell: DpCell): string {
-    return [
-      'dp-cell',
-      `dp-cell--${cell.status}`,
-      cell.tags.includes('skip') ? 'dp-cell--skip' : '',
-      cell.tags.includes('take') ? 'dp-cell--take' : '',
-      cell.tags.includes('path') ? 'dp-cell--path' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-  }
-
-  headerClass(status: string): string {
-    return `dp-head dp-head--${status}`;
-  }
-
-  private animateStepEffects(previousStep: SortStep | null, step: SortStep): void {
-    const current = step.dp;
-    const previous = previousStep?.dp ?? null;
-    if (!current) return;
-
-    const motion = createMotionProfile(this.speed());
-    const previousStatuses = new Map(previous?.cells.map((cell) => [cell.id, cell.status]) ?? []);
-    const currentFocus = findFocusCell(current);
-    const previousFocus = findFocusCell(previous);
-
-    if (currentFocus && currentFocus.id !== previousFocus?.id) {
-      this.scrollCellIntoView(currentFocus.id);
-    }
-
-    for (const cell of current.cells) {
-      const prior = previousStatuses.get(cell.id);
-      if (!prior || prior === cell.status) continue;
-      if (!['active', 'improved', 'chosen', 'backtrack', 'match'].includes(cell.status)) continue;
-      const el = this.findCell(cell.id);
-      if (!el) continue;
-      pulseElement(el, {
-        duration: cell.status === 'active' ? motion.compareMs : motion.settleMs,
-        scale: cell.status === 'backtrack' ? 1.04 : 1.03,
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          glowForStatus(cell.status),
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-    }
-  }
-
-  private findCell(id: string): HTMLElement | null {
-    return this.containerRef().nativeElement.querySelector(`[data-cell-id="${id}"]`);
-  }
-
-  private scrollCellIntoView(id: string): void {
-    const cell = this.findCell(id);
-    if (!cell || !this.boardWrapRef()) {
-      return;
-    }
-
-    cell.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'nearest',
-    });
+  private revealCell(id: string): void {
+    const scroller = this.scrollerRef()?.nativeElement;
+    const cell = scroller?.querySelector<HTMLElement>(`[data-cell-id="${id}"]`);
+    if (!scroller || !cell) return;
+    const bounds = scroller.getBoundingClientRect();
+    const box = cell.getBoundingClientRect();
+    const { rowHeadWidth } = this.metrics();
+    const head = scroller.querySelector<HTMLElement>('.dp__corner')?.offsetHeight ?? HEADER_HEIGHT;
+    const left = deltaInto(box.left, box.right, bounds.left + rowHeadWidth + SCROLL_MARGIN, bounds.right - SCROLL_MARGIN);
+    const top = deltaInto(box.top, box.bottom, bounds.top + head + SCROLL_MARGIN, bounds.bottom - SCROLL_MARGIN);
+    if (left === 0 && top === 0) return;
+    scroller.scrollBy({ left, top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   }
 }
 
-function glowForStatus(status: DpCell['status']): string {
-  switch (status) {
-    case 'active':
-      return 'drop-shadow(0 0 10px rgba(240,180,41,0.18))';
-    case 'match':
-      return 'drop-shadow(0 0 10px rgba(56,189,248,0.18))';
-    case 'backtrack':
-      return 'drop-shadow(0 0 10px rgba(255,222,89,0.18))';
-    default:
-      return 'drop-shadow(0 0 10px rgba(62,207,142,0.18))';
-  }
-}
-
-function findFocusCell(state: DpTraceState | null | undefined): DpCell | null {
-  return (
-    state?.cells.find((cell) => cell.tags.includes('active')) ??
-    state?.cells.find((cell) => FOCUS_CELL_STATUSES.has(cell.status)) ??
-    null
-  );
-}
-
-/** Pulls `w{weight} · v{value}` or `w{weight} | v{value}` out of the
- *  row header meta label. Both glyphs appear in generator output —
- *  tolerate either so we don't need to couple the UI to a single
- *  format. Returns nulls when nothing matches so the UI falls back
- *  to a dash. */
-function parseItemStats(metaLabel: string | null): {
-  readonly weight: number | null;
-  readonly value: number | null;
-} {
-  const match =
-    metaLabel?.match(/w(\d+)\s*·\s*v(\d+)/i) ?? metaLabel?.match(/w(\d+)\s*\|\s*v(\d+)/i);
-  return {
-    weight: match ? Number(match[1]) : null,
-    value: match ? Number(match[2]) : null,
-  };
+function deltaInto(start: number, end: number, min: number, max: number): number {
+  if (start < min) return start - min;
+  if (end > max) return Math.min(end - max, start - min);
+  return 0;
 }

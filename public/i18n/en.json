@@ -676,6 +676,74 @@
         "unavailableLabel": "Visualization is not implemented yet."
       },
       "display": {
+        "dp": {
+          "capacityAxis": "cap",
+          "captions": {
+            "from": "from {{city}}",
+            "last": "last #{{id}}"
+          },
+          "labels": {
+            "afterMerge": "after merge",
+            "amount": "amount",
+            "assigned": "{{count}} assigned",
+            "best": "best",
+            "bestIndex": "best j",
+            "bit": "bit {{n}}",
+            "cache": "cache",
+            "coin": "coin",
+            "count": "count",
+            "deleteBase": "del base",
+            "dot": "dot",
+            "empty": "empty",
+            "end": "end",
+            "exclude": "exclude",
+            "filledBits": "filled bits",
+            "focus": "focus",
+            "frontier": "frontier",
+            "ground": "ground",
+            "groups": "{{count}} groups",
+            "include": "include",
+            "input": "input",
+            "insertBase": "ins base",
+            "length": "len",
+            "line": "line",
+            "link": "link",
+            "noCoins": "no coins",
+            "noNumbers": "no nums",
+            "node": "node",
+            "none": "none",
+            "optRow": "opt row {{n}}",
+            "pattern": "pattern",
+            "point": "point",
+            "prefix": "prefix",
+            "previous": "prev",
+            "query": "query",
+            "stair": "step",
+            "stairIndex": "step {{n}}",
+            "star": "star",
+            "start": "start",
+            "state": "state",
+            "sum": "sum",
+            "take": "take",
+            "target": "target",
+            "term": "term",
+            "text": "text",
+            "value": "value",
+            "ways": "ways",
+            "weight": "weight",
+            "zeroItems": "0 items"
+          },
+          "pending": "not computed yet",
+          "tableAria": "Dynamic programming table {{dims}}",
+          "tags": {
+            "delete": "delete",
+            "insert": "insert",
+            "match": "match",
+            "replace": "replace",
+            "split": "split"
+          },
+          "weightValue": "weight · value"
+        },
         "dsu": {
           "decision": "Decision",
           "edges": "Edges · ascending",
@@ -817,6 +885,12 @@
           "nodeAria": "Node {{label}}, value {{value}}",
           "route": "Route"
         },
+        "grid": {
+          "boardAria": "Board {{rows}} × {{cols}}: frontier {{frontier}}, visited {{visited}}, result {{result}}",
+          "decision": "Decision",
+          "goal": "goal",
+          "openSet": "Open set"
+        },
         "legend": {
           "acceptedEdge": "Accepted edge",
           "articulation": "Articulation point",
@@ -869,6 +943,86 @@
           "updated": "Updated this pass",
           "visited": "Visited",
           "worklist": "Worklist"
+        },
+        "matrix": {
+          "corner": {
+            "cost": "cost",
+            "dist": "dist"
+          },
+          "notes": {
+            "formulas": {
+              "adjustment": "uncovered − {{value}} · twice covered + {{value}}",
+              "cover": "rows {{rows}} + columns {{cols}} = {{total}}",
+              "smallest": "min(uncovered) = {{value}}",
+              "subtractColumn": "column {{label}} − {{value}}",
+              "subtractRow": "row {{label}} − {{value}}"
+            },
+            "titles": {
+              "adjustment": "Matrix adjustment",
+              "columnMinimum": "Column minimum",
+              "minimumCover": "Minimum cover",
+              "originalTotal": "Original cost",
+              "pivot": "Pivot node",
+              "relaxation": "Relaxation test",
+              "rowMinimum": "Row minimum",
+              "smallestUncovered": "Smallest uncovered",
+              "subtractMinimum": "Subtract minimum",
+              "update": "New distance",
+              "zeroMatching": "Zero matching"
+            },
+            "verdicts": {
+              "adjustment": "Repeat the matching test on the new zeros.",
+              "columnMinimum": "Subtract it from the whole column — every column gains a zero.",
+              "cover": "Fewer lines than n — the matrix needs an adjustment.",
+              "keep": "Keep the current distance.",
+              "needMore": "Not enough independent zeros — a cover is needed.",
+              "perfect": "A full assignment of zeros exists.",
+              "readOff": "Read the assignment from the zeros, price it with the original matrix.",
+              "rowMinimum": "Subtract it from the whole row — a zero appears and the optimum stays the same.",
+              "shorter": "The route through {{pivot}} is shorter.",
+              "smallest": "Subtract it from uncovered cells, add it where lines cross.",
+              "throughPivot": "Every route may now pass through {{pivot}}.",
+              "updated": "The shortest known route now goes through {{pivot}}.",
+              "zeroCreated": "New zero in {{label}}."
+            }
+          },
+          "oldValue": "was {{value}}",
+          "racks": {
+            "activeColumn": "Current column",
+            "activeRow": "Current row",
+            "changedPairs": "Improved pairs",
+            "coveredColumns": "Covered columns",
+            "coveredRows": "Covered rows",
+            "currentMatches": "Current matches",
+            "jobs": "Jobs",
+            "matrixStatus": "Matrix status",
+            "meaning": "Legend",
+            "nextStep": "Next step",
+            "optimalPairs": "Optimal assignment",
+            "pivotNode": "Pivot node k",
+            "reducedColumns": "Reduced columns",
+            "reducedRows": "Reduced rows",
+            "shortestPairs": "Shortest routes",
+            "whyItWorks": "Why it works",
+            "workers": "Workers",
+            "zeros": "Zeros"
+          },
+          "sentences": {
+            "allRowsShortest": "Every row now holds the shortest known distance to every destination.",
+            "infinityUnreachable": "∞ means there is no route yet.",
+            "noChange": "no change for this k",
+            "perfectMatchingOptimal": "A perfect zero matching on the reduced matrix gives the minimum original cost.",
+            "rebuildMatching": "Rebuild the zero matching on the adjusted matrix."
+          },
+          "tableAria": "Matrix {{rows}} × {{cols}}"
+        },
+        "matrixGrid": {
+          "free": "free variable",
+          "noSolution": "inconsistent system",
+          "objective": "objective",
+          "pendingEntry": "{{entering}} enters",
+          "pivotEntry": "{{entering}} enters, {{leaving}} leaves",
+          "tableAria": "Matrix {{size}}"
         },
         "meters": {
           "area": "Area",
@@ -1051,6 +1205,21 @@
           "w": "w",
           "x": "x",
           "y": "y"
+        },
+        "sieve": {
+          "boardAria": "Number board from 1 to {{n}}",
+          "cellAria": "{{value}}: {{state}}",
+          "cellFactorAria": "{{value}}: {{state}}, smallest factor {{factor}}",
+          "primesAria": "Primes found: {{list}}",
+          "states": {
+            "composite": "composite, crossed out",
+            "current": "being checked",
+            "marking": "being crossed out",
+            "pivot": "current prime",
+            "prime": "prime",
+            "skipped": "outside the sieve",
+            "unchecked": "not checked yet"
+          }
         },
         "tree": {
           "frontUp": "front on top",
@@ -5791,11 +5960,18 @@
         "matrixGrid": {
           "decisionLabel": "Decision",
           "emptyLabel": "No matrix trace for this step.",
+          "enteringLabel": "Entering column",
+          "factsLabel": "Facts",
+          "historyLabel": "Operation history",
           "iterationLabel": "Iteration",
+          "noneLabel": "No operation yet.",
           "operationLabel": "Operation",
           "pivotLabel": "Pivot",
           "rowsLabel": "Rows",
-          "sizeLabel": "Size"
+          "sizeLabel": "Size",
+          "snapshotLabel": "Current matrix",
+          "sourceRowLabel": "Source row",
+          "targetRowLabel": "Modified row"
         },
         "minkowskiSum": {
           "activeVectorsAriaLabel": "Active vectors",
