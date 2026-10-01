@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { SortItemSnapshot, SortStep } from '../../models/sort-step';
 import { createMotionProfile } from '../../utils/helpers/visualization-motion/visualization-motion';
 import { VIZ_BUCKET_COLORS } from '../../utils/helpers/visualization-palette/visualization-palette';
@@ -39,7 +40,7 @@ const BUCKET_COLORS = VIZ_BUCKET_COLORS;
 
 @Component({
   selector: 'app-radix-strip-visualization',
-  imports: [],
+  imports: [I18nTextPipe],
   templateUrl: './radix-strip-visualization.html',
   styleUrl: './radix-strip-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
