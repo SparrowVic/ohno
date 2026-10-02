@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { convexHullGenerator } from '../../algorithms/convex-hull';
 import { dijkstraGenerator } from '../../algorithms/dijkstra/dijkstra';
@@ -15,6 +16,7 @@ import { gaussianEliminationGenerator } from '../../algorithms/gaussian-eliminat
 import { hungarianAlgorithmGenerator } from '../../algorithms/hungarian-algorithm';
 import { knapsack01Generator } from '../../algorithms/knapsack-01/knapsack-01';
 import { longestCommonSubsequenceGenerator } from '../../algorithms/longest-common-subsequence/longest-common-subsequence';
+import { radixSortGenerator } from '../../algorithms/radix-sort';
 import { regexMatchingDpGenerator } from '../../algorithms/regex-matching-dp/regex-matching-dp';
 import { matrixChainMultiplicationGenerator } from '../../algorithms/matrix-chain-multiplication/matrix-chain-multiplication';
 import { sieveOfEratosthenesGenerator } from '../../algorithms/sieve-of-eratosthenes/sieve-of-eratosthenes';
@@ -52,11 +54,13 @@ import {
   FamilyRegisterId,
   familyStageReadout,
   graphReadout,
+  isRadixStep,
   matrixGridOperationCounts,
   matrixPhaseText,
   matrixResultCount,
   networkReadout,
   operationProgress,
+  radixDigit,
   relaxationCounts,
   scratchpadReadout,
 } from './family-readout.utils';
@@ -64,18 +68,18 @@ import { StageReadout } from './stage-readout.utils';
 import { sortStep } from './step-events.fixture';
 
 const METER_IDS: readonly FamilyMeterId[] = [
-  'settled', 'queue', 'relaxed', 'row', 'column', 'value', 'textIndex', 'patternIndex', 'matches', 'stack', 'checked',
+  'digit', 'bucket', 'placed', 'settled', 'queue', 'relaxed', 'row', 'column', 'value', 'textIndex', 'patternIndex', 'matches', 'stack', 'checked',
   'rejected', 'frontier', 'visited', 'result', 'pivot', 'improved', 'prime', 'bound', 'components', 'merged',
   'output', 'low', 'high', 'probe', 'frames', 'returns', 'iteration', 'explored', 'depth', 'phases', 'lines', 'hits',
   'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows', 'operations', 'capacity',
   'best', 'amount', 'sum', 'indexI', 'indexJ', 'matched', 'zeros', 'path', 'closed', 'painted', 'crossed',
 ];
 const GAUGE_IDS: readonly FamilyGaugeId[] = [
-  'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
+  'digits', 'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
   'matched', 'operations', 'closed',
 ];
 const REGISTER_IDS: readonly FamilyRegisterId[] = [
-  'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col', 'level', 'cost',
+  'digit', 'bucket', 'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col', 'level', 'cost',
 ];
 
 function labelMap<T extends string>(ids: readonly T[], prefix: string): Record<T, string> {
@@ -788,5 +792,51 @@ describe('sieveReadout', () => {
       expect(value).toBeGreaterThanOrEqual(previous);
       previous = value;
     });
+  });
+});
+
+describe('radixReadout', () => {
+  const steps = history(radixSortGenerator([170, 45, 75, 90, 802, 24, 2, 66]));
+
+  it('recognises radix steps and leaves other sorting steps alone', () => {
+    expect(isRadixStep(steps[0]!)).toBe(true);
+    expect(isRadixStep(sortStep({ array: [3, 1, 2] }))).toBe(false);
+  });
+
+  it('reads the digit pass, the active bucket and the cards already scattered', () => {
+    const index = steps.findIndex((step) => step.phase === 'distribute' && step.digitIndex === 1);
+    const step = steps[index]!;
+    const readout = readoutAt(steps, index, 'radix')!;
+    expect(meterIds(readout)).toEqual(['digit', 'bucket', 'placed']);
+    expect(meterOf(readout, 'digit')).toMatchObject({ value: 2, total: 3 });
+    expect(meterValue(readout, 'bucket')).toBe(step.activeBucket);
+    const placed = (step.buckets ?? []).reduce((total, bucket) => total + bucket.items.length, 0);
+    expect(meterOf(readout, 'placed')).toMatchObject({ value: placed, total: 8 });
+    expect(readout.tone).toBe('pink');
+    expect(readout.phaseLabel).toBe(I18N_KEY.features.algorithms.display.radix.phases.distribute);
+    expect(readout.gauge).toEqual({ count: 3, done: 1, lit: 2 });
+    expect(readout.gaugeLabel).toBe('g:digits');
+  });
+
+  it('names the active value, its digit and its bucket on the op-line', () => {
+    const index = steps.findIndex((step) => step.phase === 'distribute' && step.digitIndex === 0 && step.activeItemId === 'rdx-4');
+    const readout = readoutAt(steps, index, 'radix')!;
+    expect(registerMap(readout)).toEqual({ 'r:x': '802', 'r:digit': '2', 'r:bucket': '2' });
+  });
+
+  it('fills every digit LED at the end and never runs the gauge backwards', () => {
+    const done = steps.map((_, index) => readoutAt(steps, index, 'radix')!.gauge?.done ?? 0);
+    done.slice(1).forEach((value, index) => expect(value).toBeGreaterThanOrEqual(done[index]!));
+    const last = readoutAt(steps, steps.length - 1, 'radix')!;
+    expect(last.gauge).toEqual({ count: 3, done: 3, lit: 3 });
+    expect(meterOf(last, 'digit')).toMatchObject({ value: 3, total: 3 });
+    expect(last.tone).toBe('lime');
+  });
+
+  it('extracts a decimal digit by position', () => {
+    expect(radixDigit(802, 0)).toBe(2);
+    expect(radixDigit(802, 1)).toBe(0);
+    expect(radixDigit(802, 2)).toBe(8);
+    expect(radixDigit(45, 2)).toBe(0);
   });
 });

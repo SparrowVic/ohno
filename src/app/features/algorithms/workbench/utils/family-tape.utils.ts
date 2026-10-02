@@ -2,7 +2,16 @@ import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { SortPhase, SortStep } from '../../models/sort-step';
 import { TapeEventOverride } from './tape-rows.utils';
 
-export type FamilyTapePhase = 'pickNode' | 'inspectEdge' | 'relax' | 'skipRelax' | 'settleNode' | 'complete';
+export type FamilyTapePhase =
+  | 'pickNode'
+  | 'inspectEdge'
+  | 'relax'
+  | 'skipRelax'
+  | 'settleNode'
+  | 'complete'
+  | 'focusDigit'
+  | 'distribute'
+  | 'gather';
 
 export type FamilyTapeLabels = Readonly<Record<FamilyTapePhase, string>>;
 
@@ -14,6 +23,9 @@ const PHASE_EVENTS: Readonly<Partial<Record<SortPhase, { readonly phase: FamilyT
   'settle-node': { phase: 'settleNode', tone: 'lime' },
   'graph-complete': { phase: 'complete', tone: 'lime' },
   'search-complete': { phase: 'complete', tone: 'lime' },
+  'focus-digit': { phase: 'focusDigit', tone: 'cyan' },
+  distribute: { phase: 'distribute', tone: 'pink' },
+  gather: { phase: 'gather', tone: 'lime' },
 };
 
 export function familyTapeOverride(step: SortStep, labels: FamilyTapeLabels): TapeEventOverride | null {

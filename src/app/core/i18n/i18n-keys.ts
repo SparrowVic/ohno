@@ -323,6 +323,9 @@ export const I18N_KEY = {
             skipRelax: t('features.algorithms.workbench.log.phases.skipRelax'),
             settleNode: t('features.algorithms.workbench.log.phases.settleNode'),
             complete: t('features.algorithms.workbench.log.phases.complete'),
+            focusDigit: t('features.algorithms.workbench.log.phases.focusDigit'),
+            distribute: t('features.algorithms.workbench.log.phases.distribute'),
+            gather: t('features.algorithms.workbench.log.phases.gather'),
           },
         },
         states: {
@@ -388,6 +391,9 @@ export const I18N_KEY = {
           closed: t('features.algorithms.display.meters.closed'),
           painted: t('features.algorithms.display.meters.painted'),
           crossed: t('features.algorithms.display.meters.crossed'),
+          digit: t('features.algorithms.display.meters.digit'),
+          bucket: t('features.algorithms.display.meters.bucket'),
+          placed: t('features.algorithms.display.meters.placed'),
         },
         gauges: {
           settled: t('features.algorithms.display.gauges.settled'),
@@ -406,6 +412,7 @@ export const I18N_KEY = {
           matched: t('features.algorithms.display.gauges.matched'),
           operations: t('features.algorithms.display.gauges.operations'),
           closed: t('features.algorithms.display.gauges.closed'),
+          digits: t('features.algorithms.display.gauges.digits'),
         },
         registers: {
           u: t('features.algorithms.display.registers.u'),
@@ -432,6 +439,8 @@ export const I18N_KEY = {
           col: t('features.algorithms.display.registers.col'),
           level: t('features.algorithms.display.registers.level'),
           cost: t('features.algorithms.display.registers.cost'),
+          digit: t('features.algorithms.display.registers.digit'),
+          bucket: t('features.algorithms.display.registers.bucket'),
         },
         racks: {
           queue: t('features.algorithms.display.racks.queue'),
@@ -786,6 +795,10 @@ export const I18N_KEY = {
           crossing: t('features.algorithms.display.legend.crossing'),
           crossed: t('features.algorithms.display.legend.crossed'),
           prime: t('features.algorithms.display.legend.prime'),
+          inputStream: t('features.algorithms.display.legend.inputStream'),
+          currentDigit: t('features.algorithms.display.legend.currentDigit'),
+          scatter: t('features.algorithms.display.legend.scatter'),
+          gatheredOutput: t('features.algorithms.display.legend.gatheredOutput'),
         },
         dp: {
           tableAria: t('features.algorithms.display.dp.tableAria'),

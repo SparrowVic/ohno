@@ -771,6 +771,7 @@
           "cells": "Komórki",
           "checked": "Sprawdzone",
           "closed": "Zamknięte",
+          "digits": "Cyfry",
           "eliminated": "Odrzucone",
           "events": "Zdarzenia",
           "explored": "Zbadane",
@@ -944,6 +945,7 @@
           "crossing": "Skreślanie",
           "current": "Bieżący",
           "currentCell": "Bieżąca komórka",
+          "currentDigit": "Bieżąca cyfra",
           "currentLine": "Bieżący wiersz lub kolumna",
           "currentPrime": "Bieżąca liczba pierwsza",
           "doesNotFit": "Nie mieści się",
@@ -951,6 +953,8 @@
           "entryBlock": "Blok wejściowy",
           "foundPath": "Znaleziona ścieżka",
           "frontier": "Front",
+          "gatheredOutput": "Zebrane wyjście",
+          "inputStream": "Strumień wejściowy",
           "inspectedEdge": "Badana krawędź",
           "levelEdge": "Krawędź poziomu",
           "matchingEdge": "Krawędź skojarzenia",
@@ -978,6 +982,7 @@
           "reversedEdge": "Odwrócona krawędź",
           "root": "Korzeń",
           "saturated": "Nasycona",
+          "scatter": "Rozkład do kubełka",
           "scc1": "SSS 1",
           "scc2": "SSS 2",
           "scc3": "SSS 3",
@@ -1088,6 +1093,7 @@
           "area": "Pole",
           "best": "Najlepsze",
           "bound": "Granica",
+          "bucket": "Kubełek",
           "capacity": "Pojemność",
           "cells": "Komórki",
           "checked": "Sprawdzone",
@@ -1096,6 +1102,7 @@
           "components": "Składowe",
           "crossed": "Skreślone",
           "depth": "Głębokość",
+          "digit": "Cyfra",
           "distance": "Dystans",
           "edges": "Krawędzie",
           "events": "Zdarzenia",
@@ -1121,6 +1128,7 @@
           "patternIndex": "j · wzorzec",
           "phases": "Fazy",
           "pivot": "Pivot",
+          "placed": "W kubełkach",
           "prime": "Pierwsza",
           "probe": "Sonda",
           "queue": "Kolejka",
@@ -1296,10 +1304,12 @@
           "a": "a",
           "alt": "alt",
           "b": "b",
+          "bucket": "kub.",
           "c": "c",
           "col": "kol.",
           "cost": "koszt",
           "depth": "głęb.",
+          "digit": "cyfra",
           "hi": "hi",
           "i": "i",
           "j": "j",
@@ -3685,13 +3695,13 @@
           },
           "bucketSort": {
             "descriptions": {
-              "compareWithinBucket": "Porównaj {{leftValue}} z {{rightValue}} wewnątrz bucketu {{bucketIndex}}.",
-              "complete": "Bucket sort zakończony.",
-              "insertWithinBucket": "Wstaw {{value}} na jego posortowaną pozycję wewnątrz bucketu {{bucketIndex}}.",
-              "placeInBucket": "Umieść {{value}} z indeksu {{index}} w buckecie {{bucketIndex}}.",
-              "sortBucket": "Posortuj bucket {{bucketIndex}} lokalnie przed przepisaniem go z powrotem.",
-              "start": "Rozpocznij bucket sort (n = {{size}}, buckety = {{bucketCount}}).",
-              "writeFromBucket": "Zapisz {{value}} z bucketu {{bucketIndex}} na indeks {{index}}."
+              "compareWithinBucket": "Porównaj {{leftValue}} z {{rightValue}} wewnątrz kubełka {{bucketIndex}}.",
+              "complete": "Sortowanie kubełkowe zakończone.",
+              "insertWithinBucket": "Wstaw {{value}} na jego posortowaną pozycję wewnątrz kubełka {{bucketIndex}}.",
+              "placeInBucket": "Umieść {{value}} z indeksu {{index}} w kubełku {{bucketIndex}}.",
+              "sortBucket": "Posortuj kubełek {{bucketIndex}} lokalnie, zanim wróci do tablicy.",
+              "start": "Rozpocznij sortowanie kubełkowe (n = {{size}}, kubełków: {{bucketCount}}).",
+              "writeFromBucket": "Zapisz {{value}} z kubełka {{bucketIndex}} na indeks {{index}}."
             }
           },
           "countingSort": {
@@ -3745,12 +3755,12 @@
           },
           "radixSort": {
             "descriptions": {
-              "distributeToBucket": "Wyślij {{value}} do bucketu {{bucket}} według pozycji 10^{{digitPower}}.",
+              "distributeToBucket": "Wyślij {{value}} do kubełka {{bucket}} według cyfry na pozycji 10^{{digitPower}}.",
               "finalPassComplete": "Wszystkie przebiegi cyfr są zakończone; tablica jest posortowana.",
-              "focusDigit": "Skup się na pozycji cyfry 10^{{digitPower}} dla {{count}} wartości.",
-              "gatherFromBucket": "Zbierz {{value}} z bucketu {{bucket}} z powrotem do strumienia wyjściowego.",
-              "passComplete": "Przebieg {{pass}}/{{maxDigits}} zakończony; kolejność jest już ustalona dla pozycji 10^{{digitPower}}.",
-              "start": "Rozpocznij radix sort (baza 10, maxDigits = {{maxDigits}})."
+              "focusDigit": "Skup się na cyfrze na pozycji 10^{{digitPower}} we wszystkich {{count}} wartościach.",
+              "gatherFromBucket": "Zbierz {{value}} z kubełka {{bucket}} z powrotem do strumienia wyjściowego.",
+              "passComplete": "Przebieg {{pass}}/{{maxDigits}} zakończony; kolejność według pozycji 10^{{digitPower}} jest ustalona.",
+              "start": "Rozpocznij sortowanie pozycyjne (system dziesiętny, cyfr: {{maxDigits}})."
             }
           },
           "selectionSort": {
@@ -6215,7 +6225,7 @@
         },
         "sort": {
           "boundaryLabel": "Granica",
-          "bucketsLabel": "Buckety",
+          "bucketsLabel": "Kubełki",
           "columns": {
             "index": "Indeks",
             "status": "Status",
@@ -7440,6 +7450,9 @@
           "paused": "Wstrzymany",
           "phases": {
             "complete": "KONIEC",
+            "distribute": "ROZŁÓŻ",
+            "focusDigit": "CYFRA",
+            "gather": "ZBIERZ",
             "inspectEdge": "SPRAWDŹ",
             "pickNode": "POBIERZ",
             "relax": "RELAKSUJ",

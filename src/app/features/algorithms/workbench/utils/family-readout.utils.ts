@@ -33,6 +33,9 @@ import { PassGauge, StageMeter, StageReadout } from './stage-readout.utils';
 
 export type FamilyMeterId =
   | 'settled'
+  | 'digit'
+  | 'bucket'
+  | 'placed'
   | 'queue'
   | 'relaxed'
   | 'row'
@@ -90,6 +93,7 @@ export type FamilyMeterId =
 
 export type FamilyGaugeId =
   | 'settled'
+  | 'digits'
   | 'rows'
   | 'phases'
   | 'checked'
@@ -108,6 +112,8 @@ export type FamilyGaugeId =
 
 export type FamilyRegisterId =
   | 'u'
+  | 'digit'
+  | 'bucket'
   | 'v'
   | 'w'
   | 'alt'
@@ -979,8 +985,83 @@ export function callTreeReadout(state: CallTreeLabTraceState, ctx: FamilyReadout
   };
 }
 
+type RadixPhase = 'idle' | 'focus-digit' | 'distribute' | 'gather' | 'pass-complete' | 'complete';
+
+const RADIX_PHASES = I18N_KEY.features.algorithms.display.radix.phases;
+
+const RADIX_PHASE_KEYS: Readonly<Record<RadixPhase, string>> = {
+  idle: RADIX_PHASES.idle,
+  'focus-digit': RADIX_PHASES.focus,
+  distribute: RADIX_PHASES.distribute,
+  gather: RADIX_PHASES.gather,
+  'pass-complete': RADIX_PHASES.passComplete,
+  complete: RADIX_PHASES.complete,
+};
+
+const RADIX_TONES: Readonly<Record<RadixPhase, LedColor>> = {
+  idle: 'slate',
+  'focus-digit': 'cyan',
+  distribute: 'pink',
+  gather: 'lime',
+  'pass-complete': 'lime',
+  complete: 'lime',
+};
+
+function isRadixPhase(phase: SortStep['phase']): phase is RadixPhase {
+  return phase !== undefined && phase in RADIX_PHASE_KEYS;
+}
+
+export function isRadixStep(step: SortStep): boolean {
+  return Array.isArray(step.buckets) && typeof step.maxDigits === 'number';
+}
+
+export function radixDigit(value: number, digitIndex: number): number {
+  return Math.floor(Math.abs(value) / 10 ** digitIndex) % 10;
+}
+
+function radixActiveValue(step: SortStep): number | null {
+  if (!step.activeItemId) return null;
+  const pools = [step.items ?? [], step.sourceItems ?? [], ...(step.buckets ?? []).map((bucket) => bucket.items)];
+  for (const pool of pools) {
+    const item = pool.find((candidate) => candidate.id === step.activeItemId);
+    if (item) return item.value;
+  }
+  return null;
+}
+
+export function radixReadout(step: SortStep, ctx: FamilyReadoutContext): StageReadout {
+  const { labels, index, lastIndex } = ctx;
+  const maxDigits = Math.max(1, step.maxDigits ?? 1);
+  const phase: RadixPhase = isRadixPhase(step.phase) ? step.phase : 'idle';
+  const digitIndex = step.digitIndex ?? null;
+  const complete = phase === 'complete' || index >= lastIndex;
+  const placed = (step.buckets ?? []).reduce((total, bucket) => total + bucket.items.length, 0);
+  const currentDigit = complete ? maxDigits : digitIndex === null ? null : digitIndex + 1;
+  const passesDone = complete ? maxDigits : phase === 'pass-complete' && digitIndex !== null ? digitIndex + 1 : (digitIndex ?? 0);
+  const activeValue = radixActiveValue(step);
+  const registers: OpLineRegister[] = [];
+  if (activeValue !== null) {
+    registers.push(register('x', labels, activeValue));
+    if (digitIndex !== null) registers.push(register('digit', labels, radixDigit(activeValue, digitIndex)));
+  }
+  if (step.activeBucket !== null && step.activeBucket !== undefined) registers.push(register('bucket', labels, step.activeBucket));
+  return {
+    meters: [
+      meter('digit', labels, currentDigit ?? EMPTY, maxDigits),
+      meter('bucket', labels, step.activeBucket ?? EMPTY, null, 1),
+      meter('placed', labels, placed, step.array.length),
+    ],
+    phaseLabel: labels.translate(RADIX_PHASE_KEYS[complete ? 'complete' : phase]),
+    tone: edgeTone(index, lastIndex, RADIX_TONES[phase]),
+    registers,
+    gauge: gauge(maxDigits, passesDone, currentDigit ?? passesDone),
+    gaugeLabel: labels.gauges.digits,
+  };
+}
+
 export function familyStageReadout(ctx: FamilyReadoutContext): StageReadout | null {
   const { step, variant } = ctx;
+  if (isRadixStep(step)) return radixReadout(step, ctx);
   if (step.graph) return graphReadout(step.graph, ctx);
   if (step.network) return networkReadout(step.network, ctx);
   if (step.dsu) return dsuReadout(step.dsu, ctx);

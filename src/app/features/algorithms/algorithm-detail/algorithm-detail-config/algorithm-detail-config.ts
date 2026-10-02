@@ -998,10 +998,10 @@ const VIZ_HIT = VIZ_COLOR.hit;
 const VIZ_EMBER = VIZ_COLOR.ember;
 
 const RADIX_LEGEND: readonly LegendItem[] = [
-  { label: 'Input stream', color: VIZ_WINDOW, opacity: 0.55 },
-  { label: 'Active digit', color: VIZ_ACCENT },
-  { label: 'Bucket lane', color: VIZ_EMBER },
-  { label: 'Gathered output', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.legend.inputStream, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.legend.currentDigit, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.legend.scatter, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.legend.gatheredOutput, color: 'var(--lime)' },
 ];
 
 const DIJKSTRA_LEGEND: readonly LegendItem[] = [

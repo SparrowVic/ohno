@@ -69,6 +69,7 @@ import { plainSentence, sentenceParts } from './utils/sentence-markup.utils';
 import {
   FamilyReadoutLabels,
   familyStageReadout,
+  isRadixStep,
   matrixGridOperationCounts,
   operationProgress,
   relaxationCounts,
@@ -279,7 +280,7 @@ export class Workbench {
   protected readonly readout = computed<StageReadout>(() => {
     const step = this.step();
     const labels = this.readoutLabels();
-    if (step && this.isSorting()) {
+    if (step && this.isSorting() && !isRadixStep(step)) {
       return sortingStageReadout(step, this.playback.events(), this.cursor(), labels);
     }
     const family =
@@ -312,10 +313,13 @@ export class Workbench {
       skipRelax: this.translate(phases.skipRelax),
       settleNode: this.translate(phases.settleNode),
       complete: this.translate(phases.complete),
+      focusDigit: this.translate(phases.focusDigit),
+      distribute: this.translate(phases.distribute),
+      gather: this.translate(phases.gather),
     };
   });
   private readonly tapeOverrides = computed(() =>
-    this.isSorting() ? [] : familyTapeOverrides(this.playback.history(), this.familyTapeLabels()),
+    familyTapeOverrides(this.playback.history(), this.familyTapeLabels()),
   );
   protected readonly tapeRows = computed(() =>
     buildTapeRows(

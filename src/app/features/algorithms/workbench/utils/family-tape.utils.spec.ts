@@ -14,6 +14,9 @@ const labels: FamilyTapeLabels = {
   skipRelax: 'POMIŃ',
   settleNode: 'USTAL',
   complete: 'KONIEC',
+  focusDigit: 'CYFRA',
+  distribute: 'ROZŁÓŻ',
+  gather: 'ZBIERZ',
 };
 
 describe('familyTapeOverride', () => {
@@ -23,6 +26,14 @@ describe('familyTapeOverride', () => {
     expect(familyTapeOverride(sortStep({ array: [], phase: 'skip-relax' }), labels)).toEqual({ event: 'POMIŃ', tone: 'slate' });
     expect(familyTapeOverride(sortStep({ array: [], phase: 'settle-node' }), labels)).toEqual({ event: 'USTAL', tone: 'lime' });
     expect(familyTapeOverride(sortStep({ array: [], phase: 'graph-complete' }), labels)).toEqual({ event: 'KONIEC', tone: 'lime' });
+  });
+
+  it('maps the radix phases to digit, scatter and gather verbs', () => {
+    expect(familyTapeOverride(sortStep({ array: [], phase: 'focus-digit' }), labels)).toEqual({ event: 'CYFRA', tone: 'cyan' });
+    expect(familyTapeOverride(sortStep({ array: [], phase: 'distribute' }), labels)).toEqual({ event: 'ROZŁÓŻ', tone: 'pink' });
+    expect(familyTapeOverride(sortStep({ array: [], phase: 'gather' }), labels)).toEqual({ event: 'ZBIERZ', tone: 'lime' });
+    expect(familyTapeOverride(sortStep({ array: [], phase: 'pass-complete' }), labels)).toBeNull();
+    expect(familyTapeOverride(sortStep({ array: [], phase: 'swap' }), labels)).toBeNull();
   });
 
   it('leaves steps without a family phase to the generic classifier', () => {
