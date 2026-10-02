@@ -1,93 +1,99 @@
 <div
-  class="matrix"
-  [style.--radix-swap-ms]="motion().swapMs + 'ms'"
-  [style.--radix-compare-ms]="motion().compareMs + 'ms'"
+  class="display display--rack matrix"
+  role="img"
+  [attr.aria-label]="RADIX.ariaDisplay | transloco: { count: state().source.length }"
+  [attr.data-phase]="state().phase"
+  [style.--radix-move-ms.ms]="moveMs()"
 >
-  <div class="matrix__header">
-    <div class="matrix__meta">
-      <span class="matrix__chip matrix__chip--accent">{{ phase() }}</span>
-      <span class="matrix__chip">{{ passLabel() }}</span>
-      <span class="matrix__summary">{{ summary() | i18nText }}</span>
-    </div>
-
-    <div class="matrix__digits">
-      @for (badge of digitBadges(); track badge.label) {
-        <span class="matrix__digit" [class.matrix__digit--active]="badge.active">
-          {{ badge.label }}
-        </span>
-      }
-    </div>
-  </div>
-
-  <div class="matrix__body">
-    <section class="grid-panel">
-      <div class="grid-panel__head">
-        <span>Value</span>
-        <span>Digit Matrix</span>
-        <span>Bucket</span>
-        <span>Order</span>
-      </div>
-
-      <div class="grid-panel__rows">
-        @for (row of rows(); track row.id) {
-          <div class="grid-row" [class.grid-row--active]="row.active">
-            <div class="grid-row__value">{{ row.value }}</div>
-            <div
-              class="grid-row__digits"
-              [style.grid-template-columns]="digitGridColumns()"
-            >
-              @for (digit of row.digits; track $index) {
-                <span class="grid-row__digit" [class.grid-row__digit--active]="digit.active">
-                  {{ digit.value }}
-                </span>
+  <div #main class="display__main matrix__main" aria-hidden="true">
+    <div class="matrix__scroller" [attr.data-scrolls]="layout().scrolls">
+      <div
+        class="matrix__groups"
+        [attr.data-dot]="layout().font !== null"
+        [style.--matrix-gutter.px]="METRICS.gutter"
+        [style.--matrix-gap.px]="METRICS.gap"
+        [style.--matrix-inset.px]="METRICS.inset"
+        [style.--matrix-caption.px]="METRICS.caption"
+        [style.--matrix-font.px]="layout().font"
+      >
+        @for (group of groups(); track group.index) {
+          <div class="matrix__table" [style.grid-template-columns]="columnsTemplate()" [style.grid-template-rows]="rowsTemplate()">
+            @if (view().band; as band) {
+              <span class="matrix__band" [attr.data-tone]="band.tone" [style.grid-column]="band.column + 2"></span>
+              @if (place(); as label) {
+                <span class="matrix__place" [attr.data-tone]="band.tone" [style.grid-column]="band.column + 2">{{ label | i18nText }}</span>
               }
-            </div>
-            <div class="grid-row__bucket" [class.grid-row__bucket--filled]="row.bucket !== null">
-              @if (row.bucket !== null) {
-                {{ row.bucket }}
-              } @else {
-                <span>&#183;</span>
+            }
+            @for (row of group.rows; track row.id; let line = $index) {
+              @if (row.tone !== 'idle') {
+                <span class="matrix__lane" [attr.data-tone]="row.tone" [style.grid-row]="line + 3"></span>
               }
-            </div>
-            <div class="grid-row__order" [class.grid-row__order--filled]="row.order !== null">
-              @if (row.order !== null) {
-                #{{ row.order + 1 }}
-              } @else {
-                <span>&#183;</span>
+            }
+            @if (layout().scrolls) {
+              <span class="matrix__mask"></span>
+            }
+
+            @for (column of view().columns; track column.exponent; let position = $index) {
+              <span class="matrix__head" [attr.data-tone]="column.tone" [style.grid-column]="position + 2">
+                @if (column.place !== null) {
+                  {{ column.place }}
+                } @else {
+                  <span>10<sup>{{ column.exponent }}</sup></span>
+                }
+              </span>
+            }
+            <span class="matrix__head matrix__head--side" [style.grid-column]="bucketColumn()">{{ MATRIX.destination | transloco }}</span>
+            <span class="matrix__head matrix__head--side" [style.grid-column]="bucketColumn() + 1">{{ RADIX.output | transloco }}</span>
+
+            @for (row of group.rows; track row.id; let line = $index) {
+              <span class="matrix__index" [attr.data-tone]="row.tone" [style.grid-row]="line + 3">{{ row.label }}</span>
+              @for (digit of row.digits; track digit.exponent; let position = $index) {
+                <span
+                  class="matrix__digit"
+                  [attr.data-tone]="digit.tone"
+                  [attr.data-lead]="digit.lead"
+                  [style.grid-row]="line + 3"
+                  [style.grid-column]="position + 2"
+                >{{ digit.digit }}</span>
               }
-            </div>
+              <span
+                class="matrix__bucket"
+                [attr.data-tone]="row.bucket === null ? null : row.bucketTone"
+                [attr.data-empty]="row.bucket === null"
+                [style.grid-row]="line + 3"
+                [style.grid-column]="bucketColumn()"
+              >{{ row.bucket ?? '·' }}</span>
+              <span
+                class="matrix__order"
+                [attr.data-tone]="row.order === null ? null : row.orderTone"
+                [attr.data-empty]="row.order === null"
+                [style.grid-row]="line + 3"
+                [style.grid-column]="bucketColumn() + 1"
+              >{{ row.order ?? '·' }}</span>
+            }
           </div>
         }
       </div>
-    </section>
-
-    <aside class="rail">
-      @for (bucket of buckets(); track bucket.bucket) {
-        <div
-          class="rail__bucket"
-          [class.rail__bucket--active]="bucket.active"
-          [style.--bucket-color]="bucket.color"
-        >
-          <div class="rail__head">
-            <span>Bucket {{ bucket.bucket }}</span>
-            <span>{{ bucket.count }}</span>
-          </div>
-          <div class="rail__values">
-            @for (value of bucket.values; track $index) {
-              <span class="rail__pill">{{ value }}</span>
-            }
-          </div>
-        </div>
-      }
-    </aside>
+    </div>
   </div>
 
-  <section class="ordered">
-    <div class="ordered__title">Stable Output</div>
-    <div class="ordered__track">
-      @for (value of orderedValues(); track $index) {
-        <span class="ordered__pill">{{ value }}</span>
-      }
-    </div>
-  </section>
+  <div #rack class="display__rack matrix__rack" aria-hidden="true">
+    <ohno-rack [title]="RADIX.buckets | transloco">
+      <div class="matrix__bins">
+        @for (bin of view().bins; track bin.bucket) {
+          <ohno-rack-row class="matrix__bin" [tone]="BIN_ROW_TONES[bin.tone]" [attr.data-bin-tone]="bin.tone">
+            <span rackLead class="matrix__bin-number">{{ bin.bucket }}</span>
+            <span class="matrix__bin-values">
+              @for (card of bin.cards; track card.id) {
+                <span class="matrix__bin-value" [attr.data-fresh]="card.fresh">{{ card.value }}</span>
+              } @empty {
+                <span class="matrix__bin-void">·</span>
+              }
+            </span>
+            <span rackValue class="matrix__bin-count">{{ bin.count }}</span>
+          </ohno-rack-row>
+        }
+      </div>
+    </ohno-rack>
+  </div>
 </div>

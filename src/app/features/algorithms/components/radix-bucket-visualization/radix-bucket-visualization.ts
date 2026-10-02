@@ -1,1035 +1,479 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
-  OnDestroy,
+  afterNextRender,
+  afterRenderEffect,
   computed,
-  effect,
+  inject,
   input,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import * as d3Selection from 'd3-selection';
-import { animate } from 'animejs';
+import { JSAnimation, animate } from 'animejs';
 
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
-import { SortBucketSnapshot, SortItemSnapshot, SortStep } from '../../models/sort-step';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
 import {
-  MotionProfile,
   createMotionProfile,
-  pulseSvgElement,
+  prefersReducedMotion,
 } from '../../utils/helpers/visualization-motion/visualization-motion';
-import { VIZ_BUCKET_COLORS, VIZ_HEX } from '../../utils/helpers/visualization-palette/visualization-palette';
+import {
+  RadixBinView,
+  RadixBucketLayout,
+  RadixCardFrame,
+  RadixCardView,
+  RadixLayoutInput,
+  RadixScene,
+  radixBinRect,
+  radixBinSlot,
+  radixBucketLayout,
+  radixCardFrame,
+  radixCardText,
+  radixChipVisible,
+  radixFlightPoint,
+  radixGuide,
+  radixGuidePath,
+  radixOverflow,
+  radixScene,
+  radixStreamSlot,
+  radixZoneChanges,
+} from './radix-bucket-display.utils';
 
-interface MutableGeometry {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fontSize: number;
-}
-
-interface CardDigitsPayload {
-  readonly digits: readonly string[];
-  readonly colors: readonly string[];
-}
-
-interface CardGeometry extends MutableGeometry {
-  readonly zone: 'top' | 'bucket';
-  readonly bucket: number | null;
-}
-
-interface Card {
-  readonly id: string;
-  value: number;
+interface CardParts {
   readonly group: SVGGElement;
-  readonly rect: SVGRectElement;
-  readonly gloss: SVGRectElement;
-  readonly accent: SVGRectElement;
-  readonly frame: SVGRectElement;
-  readonly digitGroup: SVGGElement;
-  digits: SVGTextElement[];
-  geometry: MutableGeometry;
-  zone: 'top' | 'bucket';
-  bucket: number | null;
-  digitsPayload: CardDigitsPayload;
+  readonly base: SVGRectElement;
+  readonly box: SVGRectElement;
+  readonly lit: SVGRectElement;
+  readonly value: SVGTextElement;
+  readonly digits: SVGGElement;
 }
 
-interface BucketElements {
-  readonly group: SVGGElement;
-  readonly panel: SVGRectElement;
-  readonly header: SVGRectElement;
-  readonly label: SVGTextElement;
-  readonly count: SVGTextElement;
+interface PaintedScene {
+  readonly scene: RadixScene;
+  readonly layout: RadixBucketLayout;
+  readonly array: readonly number[];
 }
 
-interface Rect {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-}
+type FlightPath = 'arc' | 'line';
 
-interface LayoutSnapshot {
-  readonly placements: Map<string, CardGeometry>;
-  readonly bucketRects: Map<number, Rect>;
-}
-
-interface DigitBadge {
-  readonly label: string;
-  readonly active: boolean;
-}
-
-const HUD_Y = 104;
-const STAGE_PADDING_X = 28;
-const STAGE_PADDING_BOTTOM = 28;
-const TOP_GAP_X = 12;
-const TOP_GAP_Y = 14;
-const BUCKET_GAP_X = 16;
-const BUCKET_GAP_Y = 18;
-const BUCKET_HEADER_HEIGHT = 30;
-const BUCKET_PADDING = 12;
-const BUCKET_CARD_GAP_X = 8;
-const BUCKET_CARD_GAP_Y = 8;
-
-const BUCKET_COLORS = VIZ_BUCKET_COLORS;
+const MAX_ANIMATED_ZONE_CHANGES = 2;
+const CARD_RADIUS = 6;
+const BIN_RADIUS = 7;
 
 @Component({
   selector: 'app-radix-bucket-visualization',
-  imports: [I18nTextPipe],
+  imports: [TranslocoPipe],
   templateUrl: './radix-bucket-visualization.html',
   styleUrl: './radix-bucket-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[style.--radix-natural-height.px]': 'layout().naturalHeight',
+  },
 })
-export class RadixBucketVisualization implements AfterViewInit, OnDestroy, VisualizationRenderer {
+export class RadixBucketVisualization implements VisualizationRenderer {
+  protected readonly RADIX = I18N_KEY.features.algorithms.display.radix;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  readonly phaseLabel = computed(() => phaseLabelFor(this.step()?.phase ?? 'idle'));
-  readonly passLabel = computed(() => {
-    const step = this.step();
-    const maxDigits = step?.maxDigits ?? Math.max(1, String(Math.max(0, ...this.array())).length);
-    if (step?.digitIndex == null) {
-      return `Pass 1/${maxDigits}`;
-    }
-    return `Pass ${step.digitIndex + 1}/${maxDigits}`;
-  });
-  readonly digitBadges = computed<readonly DigitBadge[]>(() => {
-    const step = this.step();
-    const maxDigits = step?.maxDigits ?? Math.max(1, String(Math.max(0, ...this.array())).length);
-    return Array.from({ length: maxDigits }, (_, index) => {
-      const exponent = maxDigits - index - 1;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly frameRef = viewChild.required<ElementRef<HTMLDivElement>>('frame');
+  private readonly slotLayerRef = viewChild.required<ElementRef<SVGGElement>>('slots');
+  private readonly binLayerRef = viewChild.required<ElementRef<SVGGElement>>('bins');
+  private readonly guideRef = viewChild.required<ElementRef<SVGPathElement>>('guide');
+  private readonly cardLayerRef = viewChild.required<ElementRef<SVGGElement>>('cards');
+  private readonly size = signal({ width: 0, height: 0 });
+
+  protected readonly scene = computed(() => radixScene(this.step(), this.array()));
+
+  private readonly layoutInput = computed<RadixLayoutInput>(
+    () => {
+      const { width, height } = this.size();
+      const scene = this.scene();
       return {
-        label: digitPowerLabel(exponent),
-        active: step?.digitIndex === exponent,
+        width: width || 640,
+        height,
+        count: scene.slotCount,
+        maxDigits: scene.maxDigits,
+        maxLoad: scene.maxLoad,
       };
-    });
-  });
-  readonly activeSummary = computed(() => {
-    const step = this.step();
-    if (!step) return 'Preparing buckets';
-    const activeValue = step.activeItemId ? this.findValueForId(step, step.activeItemId) : null;
-    if (step.phase === 'distribute' && activeValue !== null && step.activeBucket !== null) {
-      return `Routing ${activeValue} to bucket ${step.activeBucket}`;
-    }
-    if (step.phase === 'gather' && activeValue !== null && step.activeBucket !== null) {
-      return `Collecting ${activeValue} from bucket ${step.activeBucket}`;
-    }
-    if (step.phase === 'focus-digit' && step.digitIndex !== null && step.digitIndex !== undefined) {
-      return `Scanning ${digitName(step.digitIndex)}`;
-    }
-    return step.description;
+    },
+    { equal: sameLayoutInput },
+  );
+
+  protected readonly layout = computed(() => radixBucketLayout(this.layoutInput()));
+
+  protected readonly viewBox = computed(() => {
+    const { width, height } = this.layout();
+    return `0 0 ${Math.round(width)} ${Math.round(height)}`;
   });
 
-  private readonly containerRef = viewChild.required<ElementRef<HTMLDivElement>>('container');
+  protected readonly place = computed(() => {
+    const place = this.scene().place;
+    if (!place) return null;
+    const keys = this.RADIX.digitPlace;
+    return {
+      tone: place.tone,
+      key: place.name === 'power' ? keys.power : keys[place.name],
+      params: { power: place.exponent },
+    };
+  });
 
-  private svg: d3Selection.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  private bucketLayer: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private cardLayer: d3Selection.Selection<SVGGElement, unknown, null, undefined> | null = null;
-  private flowPath: SVGPathElement | null = null;
-  private bucketElements = new Map<number, BucketElements>();
-  private cards = new Map<string, Card>();
-  private width = 0;
-  private height = 0;
-  private initialized = false;
-  private resizeObserver: ResizeObserver | null = null;
-  private lastStep: SortStep | null = null;
-  private lastLayout: LayoutSnapshot | null = null;
+  private readonly cardParts = new Map<string, CardParts>();
+  private readonly frames = new Map<string, RadixCardFrame>();
+  private readonly targets = new Map<string, RadixCardFrame>();
+  private readonly flights = new Map<string, JSAnimation>();
+  private painted: PaintedScene | null = null;
+  private paintLayout: RadixBucketLayout | null = null;
 
   constructor() {
-    effect(() => {
-      const arr = this.array();
-      if (!this.initialized) return;
-      this.initialize(arr);
+    afterNextRender(() => {
+      const frame = this.frameRef().nativeElement;
+      if (typeof ResizeObserver === 'undefined') {
+        this.size.set({ width: frame.clientWidth, height: frame.clientHeight });
+        return;
+      }
+      const observer = new ResizeObserver(([entry]) => {
+        if (!entry) return;
+        const width = Math.floor(entry.contentRect.width);
+        const height = Math.floor(entry.contentRect.height);
+        const current = this.size();
+        if (current.width !== width || current.height !== height) this.size.set({ width, height });
+      });
+      observer.observe(frame);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+
+    afterRenderEffect(() => {
+      const scene = this.scene();
+      const layout = this.layout();
+      const array = this.array();
+      const measured = this.size().width > 0;
       untracked(() => {
-        const step = this.step();
-        if (step) this.render(step);
+        if (measured) this.paint(scene, layout, array);
       });
     });
 
-    effect(() => {
-      const step = this.step();
-      if (this.initialized && step) {
-        this.render(step);
-      }
-    });
+    this.destroyRef.onDestroy(() => this.destroy());
   }
 
-  ngAfterViewInit(): void {
-    const container = this.containerRef().nativeElement;
-    this.svg = d3Selection
-      .select(container)
-      .append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%');
-
-    this.bucketLayer = this.svg.append('g').attr('class', 'buckets');
-    const flow = this.svg
-      .append('path')
-      .attr('fill', 'none')
-      .attr('stroke-width', 2.5)
-      .attr('stroke-linecap', 'round')
-      .attr('stroke-dasharray', '8 8')
-      .attr('opacity', 0);
-    this.flowPath = flow.node();
-    this.cardLayer = this.svg.append('g').attr('class', 'cards');
-
-    for (let bucket = 0; bucket < 10; bucket++) {
-      this.bucketElements.set(bucket, this.createBucketElements(bucket));
-    }
-
-    this.measure();
-    this.resizeObserver = new ResizeObserver(() => {
-      this.measure();
-      const step = this.lastStep ?? this.createFallbackStep(this.array());
-      const layout = this.computeLayout(step);
-      this.updateBucketPanels(step, layout, false);
-      this.updateFlowPath(step, layout, false);
-      this.applyLayout(step, layout, false);
-      this.lastLayout = layout;
-    });
-    this.resizeObserver.observe(container);
-    this.initialized = true;
-    this.initialize(this.array());
-    const step = this.step();
-    if (step) {
-      this.render(step);
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy();
-  }
-
-  initialize(array: readonly number[]): void {
-    this.clearCards();
-    array.forEach((value, index) => {
-      this.cards.set(`rdx-${index}`, this.createCard(`rdx-${index}`, value));
-    });
-    const step = this.step() ?? this.createFallbackStep(array);
-    this.ensureCards(step);
-    const layout = this.computeLayout(step);
-    this.updateBucketPanels(step, layout, false);
-    this.updateFlowPath(step, layout, false);
-    this.applyLayout(step, layout, false);
-    this.lastLayout = layout;
-    this.lastStep = null;
+  initialize(_: readonly number[]): void {
+    this.painted = null;
+    this.stopFlights();
   }
 
   render(step: SortStep): void {
-    this.ensureCards(step);
-    const previousStep = this.lastStep;
-    const layout = this.computeLayout(step);
-    this.updateBucketPanels(step, layout, true);
-    this.updateFlowPath(step, layout, true);
-    this.applyLayout(step, layout, true);
-    this.animateStepEffects(previousStep, step, layout);
-    this.lastLayout = layout;
-    this.lastStep = step;
+    if (this.size().width === 0) return;
+    this.paint(radixScene(step, this.array()), this.layout(), this.array());
   }
 
   destroy(): void {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.clearCards();
-    this.bucketElements.clear();
-    this.flowPath = null;
-    this.svg?.remove();
-    this.svg = null;
-    this.bucketLayer = null;
-    this.cardLayer = null;
-    this.initialized = false;
-    this.lastLayout = null;
-    this.lastStep = null;
+    this.stopFlights();
+    this.cardParts.clear();
+    this.frames.clear();
+    this.targets.clear();
+    this.painted = null;
+    this.paintLayout = null;
   }
 
-  private motion(): MotionProfile {
-    return createMotionProfile(this.speed());
+  private paint(scene: RadixScene, layout: RadixBucketLayout, array: readonly number[]): void {
+    const previous = this.painted;
+    const snap =
+      !previous ||
+      previous.layout !== layout ||
+      previous.array !== array ||
+      prefersReducedMotion() ||
+      radixZoneChanges(previous.scene.cards, scene.cards) > MAX_ANIMATED_ZONE_CHANGES;
+    this.paintLayout = layout;
+    this.paintSlots(scene, layout);
+    this.paintBins(scene, layout);
+    this.paintGuide(scene, layout);
+    this.paintCards(scene, layout, snap);
+    this.painted = { scene, layout, array };
   }
 
-  private createBucketElements(bucket: number): BucketElements {
-    if (!this.bucketLayer) {
-      throw new Error('bucket layer not initialized');
-    }
-    const group = this.bucketLayer.append('g').attr('data-bucket', bucket);
-    const panel = group
-      .append('rect')
-      .attr('rx', 18)
-      .attr('ry', 18)
-      .attr('fill', 'rgba(11, 18, 33, 0.7)')
-      .attr('stroke-width', 1.25)
-      .attr('stroke', 'rgba(255, 255, 255, 0.08)');
-    const header = group.append('rect').attr('rx', 18).attr('ry', 18).attr('fill-opacity', 0.18);
-    const label = group
-      .append('text')
-      .attr('font-size', 11)
-      .attr('font-weight', 700)
-      .attr('fill', 'rgba(241, 245, 249, 0.95)')
-      .style('font-family', 'var(--font-mono)');
-    const count = group
-      .append('text')
-      .attr('font-size', 11)
-      .attr('text-anchor', 'end')
-      .attr('fill', 'rgba(196, 206, 226, 0.72)')
-      .style('font-family', 'var(--font-mono)');
-    return {
-      group: group.node() as SVGGElement,
-      panel: panel.node() as SVGRectElement,
-      header: header.node() as SVGRectElement,
-      label: label.node() as SVGTextElement,
-      count: count.node() as SVGTextElement,
-    };
-  }
-
-  private createCard(id: string, value: number): Card {
-    if (!this.cardLayer) {
-      throw new Error('card layer not initialized');
-    }
-    const group = this.cardLayer.append('g').attr('class', 'card').attr('data-id', id);
-    const rect = group.append('rect').attr('rx', 16).attr('ry', 16).attr('stroke-width', 1.3);
-    const gloss = group
-      .append('rect')
-      .attr('rx', 16)
-      .attr('ry', 16)
-      .attr('fill', 'rgba(255, 255, 255, 0.06)');
-    const accent = group.append('rect').attr('rx', 10).attr('ry', 10).attr('fill-opacity', 0.92);
-    const frame = group
-      .append('rect')
-      .attr('rx', 16)
-      .attr('ry', 16)
-      .attr('fill', 'none')
-      .attr('stroke-width', 1);
-    const digitGroup = group.append('g').attr('class', 'digits');
-    return {
-      id,
-      value,
-      group: group.node() as SVGGElement,
-      rect: rect.node() as SVGRectElement,
-      gloss: gloss.node() as SVGRectElement,
-      accent: accent.node() as SVGRectElement,
-      frame: frame.node() as SVGRectElement,
-      digitGroup: digitGroup.node() as SVGGElement,
-      digits: [],
-      geometry: { x: 0, y: 0, width: 68, height: 52, fontSize: 15 },
-      zone: 'top',
-      bucket: null,
-      digitsPayload: { digits: [String(value)], colors: ['rgba(241, 245, 249, 0.92)'] },
-    };
-  }
-
-  private clearCards(): void {
-    this.cardLayer?.selectAll('g.card').remove();
-    this.cards.clear();
-  }
-
-  private measure(): void {
-    const rect = this.containerRef().nativeElement.getBoundingClientRect();
-    this.width = rect.width;
-    this.height = rect.height;
-  }
-
-  private ensureCards(step: SortStep): void {
-    const items = this.collectUniqueItems(step);
-    for (const item of items) {
-      const existing = this.cards.get(item.id);
-      if (existing) {
-        existing.value = item.value;
-        continue;
-      }
-      this.cards.set(item.id, this.createCard(item.id, item.value));
-    }
-  }
-
-  private collectUniqueItems(step: SortStep): readonly SortItemSnapshot[] {
-    const byId = new Map<string, SortItemSnapshot>();
-    const collect = (items: readonly SortItemSnapshot[] | null | undefined): void => {
-      items?.forEach((item) => byId.set(item.id, item));
-    };
-    collect(step.items);
-    collect(step.sourceItems);
-    step.buckets?.forEach((bucket) => collect(bucket.items));
-    if (byId.size > 0) {
-      return [...byId.values()];
-    }
-    return this.array().map((value, index) => ({ id: `rdx-${index}`, value }));
-  }
-
-  private computeLayout(step: SortStep): LayoutSnapshot {
-    const placements = new Map<string, CardGeometry>();
-    const sourceItems = step.sourceItems?.length
-      ? step.sourceItems
-      : (step.items ?? this.collectUniqueItems(step));
-    const topItems = this.resolveTopItems(step, sourceItems);
-    const totalItems = Math.max(this.cards.size, sourceItems.length, this.array().length, 1);
-    const usableWidth = Math.max(320, this.width - STAGE_PADDING_X * 2);
-    const preferredTopWidth = this.width >= 1100 ? 78 : this.width >= 880 ? 72 : 64;
-    const topCols = Math.max(
-      1,
-      Math.min(totalItems, Math.floor((usableWidth + TOP_GAP_X) / (preferredTopWidth + TOP_GAP_X))),
+  private paintSlots(scene: RadixScene, layout: RadixBucketLayout): void {
+    const filled = new Set(
+      scene.cards.flatMap((card) => (card.placement.zone === 'stream' ? [card.placement.slot] : [])),
     );
-    const topWidth = clamp(
-      (usableWidth - TOP_GAP_X * Math.max(0, topCols - 1)) / topCols,
-      56,
-      preferredTopWidth,
-    );
-    const topHeight = Math.round(topWidth * 0.72);
-    const topFontSize = clamp(topHeight * 0.3, 12, 17);
-    const topRows = Math.max(1, Math.ceil(Math.max(1, topItems.length) / topCols));
-    const topAreaHeight = topRows * topHeight + Math.max(0, topRows - 1) * TOP_GAP_Y;
-    const bucketTop = HUD_Y + topAreaHeight + 54;
-
-    this.layoutRow(
-      topItems,
-      placements,
-      {
-        x: STAGE_PADDING_X,
-        y: HUD_Y,
-        width: usableWidth,
-        height: topAreaHeight,
-      },
-      topCols,
-      {
-        width: topWidth,
-        height: topHeight,
-        fontSize: topFontSize,
-        zone: 'top',
-        bucket: null,
-      },
-      TOP_GAP_X,
-      TOP_GAP_Y,
-    );
-
-    const bucketCols = this.width >= 1180 ? 10 : this.width >= 900 ? 5 : 4;
-    const bucketRows = Math.ceil(10 / bucketCols);
-    const bucketWidth = (usableWidth - BUCKET_GAP_X * Math.max(0, bucketCols - 1)) / bucketCols;
-    const availableBucketHeight = Math.max(180, this.height - bucketTop - STAGE_PADDING_BOTTOM);
-    const bucketHeight = clamp(
-      (availableBucketHeight - BUCKET_GAP_Y * Math.max(0, bucketRows - 1)) / bucketRows,
-      120,
-      184,
-    );
-    const bucketCardWidth = clamp(topWidth - 20, 42, 56);
-    const bucketCardHeight = Math.round(bucketCardWidth * 0.74);
-    const bucketFontSize = clamp(bucketCardHeight * 0.38, 11, 14);
-    const buckets = step.buckets ?? [];
-
-    for (let bucket = 0; bucket < 10; bucket++) {
-      const col = bucket % bucketCols;
-      const row = Math.floor(bucket / bucketCols);
-      const rect: Rect = {
-        x: STAGE_PADDING_X + col * (bucketWidth + BUCKET_GAP_X),
-        y: bucketTop + row * (bucketHeight + BUCKET_GAP_Y),
-        width: bucketWidth,
-        height: bucketHeight,
-      };
-      const bucketSnapshot = buckets.find((entry) => entry.bucket === bucket);
-      this.layoutBucket(bucketSnapshot?.items ?? [], bucket, rect, placements, {
-        width: bucketCardWidth,
-        height: bucketCardHeight,
-        fontSize: bucketFontSize,
-        zone: 'bucket',
-        bucket,
-      });
-    }
-
-    const bucketRects = new Map<number, Rect>();
-    for (let bucket = 0; bucket < 10; bucket++) {
-      const col = bucket % bucketCols;
-      const row = Math.floor(bucket / bucketCols);
-      bucketRects.set(bucket, {
-        x: STAGE_PADDING_X + col * (bucketWidth + BUCKET_GAP_X),
-        y: bucketTop + row * (bucketHeight + BUCKET_GAP_Y),
-        width: bucketWidth,
-        height: bucketHeight,
-      });
-    }
-
-    return {
-      placements,
-      bucketRects,
-    };
+    const slots = Array.from({ length: scene.slotCount }, (_, slot) => slot);
+    d3Selection
+      .select(this.slotLayerRef().nativeElement)
+      .selectAll<SVGRectElement, number>('rect.radix-slot')
+      .data(slots, (slot) => slot)
+      .join('rect')
+      .attr('class', 'radix-slot')
+      .attr('data-empty', (slot) => String(!filled.has(slot)))
+      .attr('x', (slot) => radixStreamSlot(layout, slot).x + 0.5)
+      .attr('y', (slot) => radixStreamSlot(layout, slot).y + 0.5)
+      .attr('width', layout.card.width - 1)
+      .attr('height', layout.card.fullHeight - 1)
+      .attr('rx', CARD_RADIUS);
   }
 
-  private resolveTopItems(
-    step: SortStep,
-    sourceItems: readonly SortItemSnapshot[],
-  ): readonly SortItemSnapshot[] {
-    if (step.phase === 'distribute') {
-      const inBuckets = new Set<string>();
-      step.buckets?.forEach((bucket) => {
-        bucket.items.forEach((item) => inBuckets.add(item.id));
+  private paintBins(scene: RadixScene, layout: RadixBucketLayout): void {
+    const { bins, card } = layout;
+    const groups = d3Selection
+      .select(this.binLayerRef().nativeElement)
+      .selectAll<SVGGElement, RadixBinView>('g.radix-bin')
+      .data(scene.bins, (bin) => bin.bucket)
+      .join((enter) => {
+        const group = enter.append('g').attr('class', 'radix-bin');
+        group.append('rect').attr('class', 'radix-bin__base');
+        group.append('rect').attr('class', 'radix-bin__well');
+        group.append('line').attr('class', 'radix-bin__lip');
+        group.append('text').attr('class', 'radix-bin__number');
+        group.append('text').attr('class', 'radix-bin__count');
+        group.append('text').attr('class', 'radix-bin__overflow');
+        return group;
       });
-      return sourceItems.filter((item) => !inBuckets.has(item.id));
-    }
-    if (step.phase === 'gather') {
-      return step.items ?? [];
-    }
-    return step.items?.length ? step.items : sourceItems;
-  }
 
-  private layoutRow(
-    items: readonly SortItemSnapshot[],
-    placements: Map<string, CardGeometry>,
-    area: Rect,
-    cols: number,
-    geometry: Omit<CardGeometry, 'x' | 'y'>,
-    gapX: number,
-    gapY: number,
-  ): void {
-    if (items.length === 0) return;
-    const rows = Math.ceil(items.length / cols);
-    const contentHeight = rows * geometry.height + Math.max(0, rows - 1) * gapY;
-    const startY = area.y + Math.max(0, (area.height - contentHeight) / 2);
-    for (let row = 0; row < rows; row++) {
-      const rowItems = items.slice(row * cols, row * cols + cols);
-      const rowWidth = rowItems.length * geometry.width + Math.max(0, rowItems.length - 1) * gapX;
-      const startX = area.x + Math.max(0, (area.width - rowWidth) / 2);
-      rowItems.forEach((item, index) => {
-        placements.set(item.id, {
-          x: startX + index * (geometry.width + gapX),
-          y: startY + row * (geometry.height + gapY),
-          width: geometry.width,
-          height: geometry.height,
-          fontSize: geometry.fontSize,
-          zone: geometry.zone,
-          bucket: geometry.bucket,
-        });
+    groups
+      .attr('data-tone', (bin) => bin.tone)
+      .attr('data-empty', (bin) => String(bin.count === 0))
+      .attr('transform', (bin) => {
+        const rect = radixBinRect(layout, bin.bucket);
+        return `translate(${rect.x}, ${rect.y})`;
       });
-    }
+    groups
+      .select<SVGRectElement>('.radix-bin__base')
+      .attr('width', bins.width)
+      .attr('height', bins.height)
+      .attr('rx', BIN_RADIUS);
+    groups
+      .select<SVGRectElement>('.radix-bin__well')
+      .attr('x', 0.5)
+      .attr('y', 0.5)
+      .attr('width', bins.width - 1)
+      .attr('height', bins.height - 1)
+      .attr('rx', BIN_RADIUS - 0.5);
+    groups
+      .select<SVGLineElement>('.radix-bin__lip')
+      .attr('x1', BIN_RADIUS)
+      .attr('x2', bins.width - BIN_RADIUS)
+      .attr('y1', bins.height + 1)
+      .attr('y2', bins.height + 1);
+    const headerBaseline = Math.round(bins.header * 0.65);
+    groups
+      .select<SVGTextElement>('.radix-bin__number')
+      .attr('x', 8)
+      .attr('y', headerBaseline)
+      .text((bin) => String(bin.bucket));
+    groups
+      .select<SVGTextElement>('.radix-bin__count')
+      .attr('x', bins.width - 8)
+      .attr('y', headerBaseline + 1)
+      .text((bin) => String(bin.count));
+
+    const chipSlot = radixBinSlot(layout, 0, bins.capacity - 1);
+    const binOrigin = radixBinRect(layout, 0);
+    groups
+      .select<SVGTextElement>('.radix-bin__overflow')
+      .attr('x', bins.width / 2)
+      .attr('y', chipSlot.y - binOrigin.y + (card.compactHeight + card.valueCap) / 2)
+      .attr('visibility', (bin) => (radixChipVisible(scene, bin.bucket, bins.capacity) ? 'visible' : 'hidden'))
+      .text((bin) => `+${radixOverflow(bin.count, bins.capacity)}`);
   }
 
-  private layoutBucket(
-    items: readonly SortItemSnapshot[],
-    bucket: number,
-    rect: Rect,
-    placements: Map<string, CardGeometry>,
-    geometry: Omit<CardGeometry, 'x' | 'y'>,
-  ): void {
-    if (items.length === 0) return;
-    const innerWidth = rect.width - BUCKET_PADDING * 2;
-    const cols = Math.max(
-      1,
-      Math.floor((innerWidth + BUCKET_CARD_GAP_X) / (geometry.width + BUCKET_CARD_GAP_X)),
-    );
-    const rows = Math.ceil(items.length / cols);
-    const innerTop = rect.y + BUCKET_HEADER_HEIGHT + BUCKET_PADDING;
-    for (let row = 0; row < rows; row++) {
-      const rowItems = items.slice(row * cols, row * cols + cols);
-      const rowWidth =
-        rowItems.length * geometry.width + Math.max(0, rowItems.length - 1) * BUCKET_CARD_GAP_X;
-      const startX = rect.x + Math.max(0, (rect.width - rowWidth) / 2);
-      rowItems.forEach((item, index) => {
-        placements.set(item.id, {
-          x: startX + index * (geometry.width + BUCKET_CARD_GAP_X),
-          y: innerTop + row * (geometry.height + BUCKET_CARD_GAP_Y),
-          width: geometry.width,
-          height: geometry.height,
-          fontSize: geometry.fontSize,
-          zone: geometry.zone,
-          bucket,
-        });
-      });
-    }
-  }
-
-  private updateBucketPanels(step: SortStep, layout: LayoutSnapshot, animatePanels: boolean): void {
-    const activeBucket = step.activeBucket ?? null;
-    for (let bucket = 0; bucket < 10; bucket++) {
-      const elements = this.bucketElements.get(bucket);
-      const rect = layout.bucketRects.get(bucket);
-      if (!elements || !rect) continue;
-      const color = BUCKET_COLORS[bucket];
-      const snapshot = step.buckets?.find((entry) => entry.bucket === bucket);
-      const count = snapshot?.items.length ?? 0;
-      const isActive =
-        activeBucket === bucket && (step.phase === 'distribute' || step.phase === 'gather');
-
-      elements.panel.setAttribute('x', String(rect.x));
-      elements.panel.setAttribute('y', String(rect.y));
-      elements.panel.setAttribute('width', String(rect.width));
-      elements.panel.setAttribute('height', String(rect.height));
-      elements.panel.setAttribute(
-        'fill',
-        isActive ? hexToRgba(color, 0.18) : 'rgba(11, 18, 33, 0.72)',
-      );
-      elements.panel.setAttribute(
-        'stroke',
-        isActive ? hexToRgba(color, 0.92) : 'rgba(148, 163, 184, 0.18)',
-      );
-
-      elements.header.setAttribute('x', String(rect.x));
-      elements.header.setAttribute('y', String(rect.y));
-      elements.header.setAttribute('width', String(rect.width));
-      elements.header.setAttribute('height', String(BUCKET_HEADER_HEIGHT));
-      elements.header.setAttribute('fill', hexToRgba(color, isActive ? 0.22 : 0.14));
-
-      elements.label.setAttribute('x', String(rect.x + 14));
-      elements.label.setAttribute('y', String(rect.y + 20));
-      elements.label.textContent = `Bucket ${bucket}`;
-
-      elements.count.setAttribute('x', String(rect.x + rect.width - 14));
-      elements.count.setAttribute('y', String(rect.y + 20));
-      elements.count.textContent = `${count}`;
-
-      if (animatePanels && isActive && this.lastStep?.activeBucket !== bucket) {
-        pulseSvgElement(elements.panel, {
-          duration: this.motion().compareMs,
-          scale: 1.02,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            `drop-shadow(0 0 18px ${hexToRgba(color, 0.65)})`,
-            'drop-shadow(0 0 0 transparent)',
-          ],
-        });
-      }
-    }
-  }
-
-  private updateFlowPath(step: SortStep, layout: LayoutSnapshot, animatePath: boolean): void {
-    if (!this.flowPath) return;
-    const activeId = step.activeItemId;
-    const activeBucket = step.activeBucket;
-    if (!activeId || activeBucket === null || activeBucket === undefined) {
-      this.flowPath.setAttribute('opacity', '0');
+  private paintGuide(scene: RadixScene, layout: RadixBucketLayout): void {
+    const guide = this.guideRef().nativeElement;
+    const route = radixGuide(layout, scene);
+    if (!route) {
+      guide.setAttribute('visibility', 'hidden');
       return;
     }
-    const currentPlacement = layout.placements.get(activeId);
-    const previousPlacement = this.lastLayout?.placements.get(activeId) ?? currentPlacement;
-    const bucketRect = layout.bucketRects.get(activeBucket);
-    if (!currentPlacement || !previousPlacement || !bucketRect) {
-      this.flowPath.setAttribute('opacity', '0');
-      return;
-    }
-
-    const start =
-      step.phase === 'gather'
-        ? centerOf(previousPlacement)
-        : centerOf(
-            previousPlacement.zone === 'bucket' && currentPlacement.zone === 'bucket'
-              ? currentPlacement
-              : previousPlacement,
-          );
-    const end =
-      step.phase === 'gather'
-        ? centerOf(currentPlacement)
-        : {
-            x: bucketRect.x + bucketRect.width / 2,
-            y: bucketRect.y + BUCKET_HEADER_HEIGHT / 2 + 6,
-          };
-    const arc = Math.max(26, Math.abs(end.x - start.x) * 0.18);
-    const midY = Math.min(start.y, end.y) - arc;
-    const d = `M ${start.x} ${start.y} C ${start.x} ${midY}, ${end.x} ${midY}, ${end.x} ${end.y}`;
-    const color = BUCKET_COLORS[activeBucket];
-    this.flowPath.setAttribute('d', d);
-    this.flowPath.setAttribute('stroke', hexToRgba(color, 0.92));
-    this.flowPath.setAttribute('opacity', '0.82');
-    if (animatePath) {
-      pulseSvgElement(this.flowPath, {
-        duration: this.motion().compareMs,
-        scale: 1,
-        opacity: [0.35, 1, 0.82],
-        filter: [
-          'drop-shadow(0 0 0 transparent)',
-          `drop-shadow(0 0 20px ${hexToRgba(color, 0.55)})`,
-          'drop-shadow(0 0 0 transparent)',
-        ],
-      });
-    }
+    guide.setAttribute('d', radixGuidePath(route));
+    guide.setAttribute('visibility', 'visible');
   }
 
-  private applyLayout(step: SortStep, layout: LayoutSnapshot, animateCards: boolean): void {
-    for (const card of this.cards.values()) {
-      const target = layout.placements.get(card.id);
-      if (!target) continue;
-      this.applyCardVisuals(card, step, target);
-      if (!animateCards || !this.lastLayout) {
-        this.commitGeometry(card, target);
-        continue;
+  private paintCards(scene: RadixScene, layout: RadixBucketLayout, snap: boolean): void {
+    const groups = d3Selection
+      .select(this.cardLayerRef().nativeElement)
+      .selectAll<SVGGElement, RadixCardView>('g.radix-card')
+      .data(scene.cards, (card) => card.id)
+      .join(
+        (enter) =>
+          enter.append('g').each((card, index, nodes) => {
+            this.cardParts.set(card.id, this.buildCard(nodes[index]));
+          }),
+        (update) => update,
+        (exit) =>
+          exit
+            .each((card) => this.forgetCard(card.id))
+            .remove(),
+      );
+
+    if (snap) this.stopFlights();
+    const motion = createMotionProfile(this.speed());
+
+    groups.each((card) => {
+      const parts = this.cardParts.get(card.id);
+      if (!parts) return;
+      this.dressCard(parts, card, layout);
+      const target = radixCardFrame(layout, scene, card);
+      const previousTarget = this.targets.get(card.id);
+      const current = this.frames.get(card.id);
+      this.targets.set(card.id, target);
+      parts.group.setAttribute('data-hidden', String(target.hidden));
+      if (snap || !current) {
+        this.drawCard(card.id, target);
+        return;
       }
-      const from = { ...card.geometry };
-      if (
-        sameGeometry(from, target) &&
-        card.zone === target.zone &&
-        card.bucket === target.bucket
-      ) {
-        this.commitGeometry(card, target);
-        continue;
+      if (previousTarget && sameFrame(previousTarget, target)) {
+        if (!this.flights.has(card.id)) this.drawCard(card.id, target);
+        return;
       }
-      const useArc = card.zone !== target.zone || step.activeItemId === card.id;
-      const motion = this.motion();
-      const duration = useArc ? motion.swapMs : motion.settleMs;
-      const state = {
-        t: 0,
-        width: from.width,
-        height: from.height,
-        fontSize: from.fontSize,
-      };
-      animate(state, {
-        t: 1,
-        width: target.width,
-        height: target.height,
-        fontSize: target.fontSize,
-        duration,
-        ease: 'inOutQuad',
-        onUpdate: () => {
-          const x = lerp(from.x, target.x, state.t);
-          const yBase = lerp(from.y, target.y, state.t);
-          const distance = Math.hypot(target.x - from.x, target.y - from.y);
-          const lift = useArc ? Math.min(52, 18 + distance * 0.14) : 0;
-          this.commitGeometry(card, {
-            x,
-            y: yBase - Math.sin(Math.PI * state.t) * lift,
-            width: state.width,
-            height: state.height,
-            fontSize: state.fontSize,
-            zone: target.zone,
-            bucket: target.bucket,
-          });
-        },
-        onComplete: () => {
-          this.commitGeometry(card, target);
-        },
-      });
-    }
-  }
-
-  private commitGeometry(card: Card, geometry: CardGeometry): void {
-    card.geometry.x = geometry.x;
-    card.geometry.y = geometry.y;
-    card.geometry.width = geometry.width;
-    card.geometry.height = geometry.height;
-    card.geometry.fontSize = geometry.fontSize;
-    card.zone = geometry.zone;
-    card.bucket = geometry.bucket;
-
-    card.group.setAttribute('transform', `translate(${geometry.x}, ${geometry.y})`);
-    card.rect.setAttribute('width', String(geometry.width));
-    card.rect.setAttribute('height', String(geometry.height));
-    card.gloss.setAttribute('width', String(geometry.width));
-    card.gloss.setAttribute('height', String(Math.max(14, geometry.height * 0.42)));
-    card.accent.setAttribute('x', '10');
-    card.accent.setAttribute('y', String(Math.max(geometry.height - 8, geometry.height * 0.84)));
-    card.accent.setAttribute('width', String(Math.max(geometry.width - 20, 8)));
-    card.accent.setAttribute('height', '4');
-    card.frame.setAttribute('width', String(geometry.width));
-    card.frame.setAttribute('height', String(geometry.height));
-    this.syncDigitNodes(card);
-  }
-
-  private applyCardVisuals(card: Card, step: SortStep, geometry: CardGeometry): void {
-    const activeBucket = geometry.bucket;
-    const bucketColor = activeBucket === null ? null : BUCKET_COLORS[activeBucket];
-    const isActive = step.activeItemId === card.id;
-    const isComplete = step.phase === 'complete';
-    const isPassComplete = step.phase === 'pass-complete';
-
-    let fill = hexToRgba(VIZ_HEX.window, 0.14);
-    let stroke = hexToRgba(VIZ_HEX.window, 0.38);
-    let accent = hexToRgba(VIZ_HEX.window, 0.92);
-    let frame = 'rgba(255, 255, 255, 0.08)';
-    let shadow = 'drop-shadow(0 18px 24px rgba(11, 18, 33, 0.28))';
-
-    if (geometry.zone === 'bucket' && bucketColor) {
-      fill = hexToRgba(bucketColor, 0.16);
-      stroke = hexToRgba(bucketColor, 0.54);
-      accent = bucketColor;
-      frame = hexToRgba(bucketColor, 0.22);
-      shadow = `drop-shadow(0 16px 20px ${hexToRgba(bucketColor, 0.18)})`;
-    }
-
-    if (isActive && step.phase === 'distribute') {
-      fill = hexToRgba(VIZ_HEX.accent, 0.22);
-      stroke = hexToRgba(VIZ_HEX.accent, 0.96);
-      accent = bucketColor ?? VIZ_HEX.accent;
-      frame = hexToRgba(VIZ_HEX.accent, 0.52);
-      shadow = `drop-shadow(0 20px 24px ${hexToRgba(VIZ_HEX.accent, 0.26)})`;
-    }
-
-    if (isActive && step.phase === 'gather') {
-      fill = hexToRgba(VIZ_HEX.success, 0.22);
-      stroke = hexToRgba(VIZ_HEX.success, 0.94);
-      accent = VIZ_HEX.success;
-      frame = hexToRgba(VIZ_HEX.success, 0.48);
-      shadow = `drop-shadow(0 20px 24px ${hexToRgba(VIZ_HEX.success, 0.24)})`;
-    }
-
-    if (isPassComplete && geometry.zone === 'top') {
-      fill = hexToRgba(VIZ_HEX.success, 0.14);
-      stroke = hexToRgba(VIZ_HEX.success, 0.7);
-      accent = VIZ_HEX.success;
-      frame = hexToRgba(VIZ_HEX.success, 0.28);
-      shadow = `drop-shadow(0 18px 22px ${hexToRgba(VIZ_HEX.success, 0.18)})`;
-    }
-
-    if (isComplete) {
-      fill = hexToRgba(VIZ_HEX.success, 0.16);
-      stroke = hexToRgba(VIZ_HEX.success, 0.82);
-      accent = VIZ_HEX.success;
-      frame = hexToRgba(VIZ_HEX.success, 0.34);
-      shadow = `drop-shadow(0 18px 22px ${hexToRgba(VIZ_HEX.success, 0.22)})`;
-    }
-
-    card.rect.setAttribute('fill', fill);
-    card.rect.setAttribute('stroke', stroke);
-    card.gloss.setAttribute('fill', 'rgba(255, 255, 255, 0.06)');
-    card.accent.setAttribute('fill', accent);
-    card.frame.setAttribute('stroke', frame);
-    card.group.style.filter = shadow;
-
-    const payload = this.buildDigitsPayload(card, step, accent, geometry.zone === 'bucket');
-    card.digitsPayload = payload;
-    this.syncDigitNodes(card);
-  }
-
-  private buildDigitsPayload(
-    card: Card,
-    step: SortStep,
-    accent: string,
-    inBucket: boolean,
-  ): CardDigitsPayload {
-    const maxDigits = step.maxDigits ?? Math.max(1, String(Math.max(0, ...this.array())).length);
-    const activeCharIndex =
-      step.digitIndex === null || step.digitIndex === undefined
-        ? null
-        : maxDigits - step.digitIndex - 1;
-    const digits = String(card.value).padStart(maxDigits, '0').split('');
-    const base = inBucket ? 'rgba(226, 232, 240, 0.9)' : 'rgba(241, 245, 249, 0.92)';
-    const colors = digits.map((_, index) => (index === activeCharIndex ? accent : base));
-    return { digits, colors };
-  }
-
-  private syncDigitNodes(card: Card): void {
-    const desired = card.digitsPayload.digits.length;
-    while (card.digits.length < desired) {
-      const node = d3Selection
-        .select(card.digitGroup)
-        .append('text')
-        .attr('text-anchor', 'middle')
-        .attr('font-weight', 700)
-        .style('font-family', 'var(--font-mono)')
-        .node() as SVGTextElement;
-      card.digits.push(node);
-    }
-    while (card.digits.length > desired) {
-      const node = card.digits.pop();
-      node?.remove();
-    }
-    const spacing = desired > 1 ? Math.min(card.geometry.width * 0.24, 18) : 0;
-    const total = spacing * Math.max(0, desired - 1);
-    const centerX = card.geometry.width / 2;
-    const centerY = card.geometry.height / 2 + card.geometry.fontSize * 0.34;
-    card.digits.forEach((node, index) => {
-      node.setAttribute('x', String(centerX - total / 2 + index * spacing));
-      node.setAttribute('y', String(centerY));
-      node.setAttribute('font-size', String(card.geometry.fontSize));
-      node.setAttribute('fill', card.digitsPayload.colors[index]);
-      node.textContent = card.digitsPayload.digits[index];
+      const path: FlightPath = previousTarget && zoneOf(previousTarget, layout) !== zoneOf(target, layout) ? 'arc' : 'line';
+      this.flyCard(card.id, current, target, path, path === 'arc' ? motion.swapMs : motion.settleMs);
     });
+
+    groups.filter((card) => card.active).raise();
   }
 
-  private animateStepEffects(
-    previousStep: SortStep | null,
-    step: SortStep,
-    layout: LayoutSnapshot,
-  ): void {
-    const activeId = step.activeItemId;
-    if (activeId && activeId !== previousStep?.activeItemId) {
-      const card = this.cards.get(activeId);
-      if (card) {
-        pulseSvgElement(card.rect, {
-          duration: this.motion().compareMs,
-          scale: 1.05,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            `drop-shadow(0 0 18px ${step.activeBucket === null || step.activeBucket === undefined ? VIZ_HEX.accent : hexToRgba(BUCKET_COLORS[step.activeBucket], 0.65)})`,
-            'drop-shadow(0 0 0 transparent)',
-          ],
-        });
-      }
-    }
-
-    if (step.phase === 'focus-digit' && step.digitIndex !== previousStep?.digitIndex) {
-      for (const card of this.cards.values()) {
-        pulseSvgElement(card.frame, {
-          duration: this.motion().compareMs,
-          scale: 1.03,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            `drop-shadow(0 0 12px ${hexToRgba(VIZ_HEX.accent, 0.38)})`,
-            'drop-shadow(0 0 0 transparent)',
-          ],
-        });
-      }
-    }
-
-    if (step.phase === 'pass-complete' || step.phase === 'complete') {
-      const ordered = step.items ?? [];
-      ordered.forEach((item, index) => {
-        const card = this.cards.get(item.id);
-        if (!card) return;
-        pulseSvgElement(card.rect, {
-          duration: this.motion().settleMs,
-          delay: index * this.motion().completeStepMs,
-          scale: 1.04,
-          filter: [
-            'drop-shadow(0 0 0 transparent)',
-            `drop-shadow(0 0 16px ${step.phase === 'complete' ? 'rgba(74, 222, 128, 0.75)' : 'rgba(52, 211, 153, 0.6)'})`,
-            'drop-shadow(0 0 0 transparent)',
-          ],
-        });
-      });
-    }
-
-    if (step.phase === 'gather' && activeId) {
-      const activeBucket = step.activeBucket;
-      if (activeBucket !== null && activeBucket !== undefined) {
-        const bucketElements = this.bucketElements.get(activeBucket);
-        if (bucketElements) {
-          pulseSvgElement(bucketElements.panel, {
-            duration: this.motion().compareMs,
-            scale: 1.02,
-            filter: [
-              'drop-shadow(0 0 0 transparent)',
-              `drop-shadow(0 0 16px ${hexToRgba(BUCKET_COLORS[activeBucket], 0.48)})`,
-              'drop-shadow(0 0 0 transparent)',
-            ],
-          });
-        }
-      }
-    }
-
-    const activeBucket = step.activeBucket;
-    if (
-      activeBucket !== null &&
-      activeBucket !== undefined &&
-      activeBucket !== previousStep?.activeBucket
-    ) {
-      const rect = layout.bucketRects.get(activeBucket);
-      if (rect && this.flowPath) {
-        this.flowPath.setAttribute('stroke-dashoffset', '0');
-      }
-    }
-  }
-
-  private createFallbackStep(array: readonly number[]): SortStep {
-    const items = array.map((value, index) => ({ id: `rdx-${index}`, value }));
+  private buildCard(node: SVGGElement): CardParts {
+    const group = d3Selection.select(node).attr('class', 'radix-card');
     return {
-      array: [...array],
-      comparing: null,
-      swapping: null,
-      sorted: [],
-      boundary: array.length,
-      activeCodeLine: 1,
-      description: 'Preparing radix sort',
-      phase: 'idle',
-      items,
-      sourceItems: items,
-      buckets: Array.from({ length: 10 }, (_, bucket) => ({ bucket, items: [] })),
-      digitIndex: 0,
-      maxDigits: Math.max(1, String(Math.max(0, ...array)).length),
-      activeItemId: null,
-      activeBucket: null,
+      group: node,
+      base: group.append('rect').attr('class', 'radix-card__base').attr('rx', CARD_RADIUS).node() as SVGRectElement,
+      box: group.append('rect').attr('class', 'radix-card__box').attr('rx', CARD_RADIUS).node() as SVGRectElement,
+      lit: group.append('rect').attr('class', 'radix-card__lit').attr('rx', 2.5).node() as SVGRectElement,
+      value: group.append('text').attr('class', 'radix-card__value').node() as SVGTextElement,
+      digits: group.append('g').attr('class', 'radix-card__digits').node() as SVGGElement,
     };
   }
 
-  private findValueForId(step: SortStep, id: string): number | null {
-    for (const item of this.collectUniqueItems(step)) {
-      if (item.id === id) return item.value;
+  private dressCard(parts: CardParts, card: RadixCardView, layout: RadixBucketLayout): void {
+    const { group, value, digits } = parts;
+    group.setAttribute('data-tone', card.tone);
+    group.setAttribute('data-active', String(card.active));
+    group.setAttribute('data-lit', card.litTone ?? 'none');
+    group.setAttribute('data-font', layout.card.valueFont);
+    value.textContent = String(card.value);
+    value.style.fontSize = `${layout.card.valueSize}px`;
+    d3Selection
+      .select(digits)
+      .selectAll<SVGTextElement, string>('text.radix-card__digit')
+      .data(card.digits)
+      .join('text')
+      .attr('class', 'radix-card__digit')
+      .attr('data-lit', (_, index) => String(index === card.litIndex))
+      .text((digit) => digit);
+  }
+
+  private flyCard(id: string, from: RadixCardFrame, to: RadixCardFrame, path: FlightPath, duration: number): void {
+    this.flights.get(id)?.cancel();
+    const progress = { t: 0 };
+    const flight = animate(progress, {
+      t: 1,
+      duration,
+      ease: path === 'arc' ? 'inOutQuad' : 'outQuart',
+      onUpdate: () => this.drawCard(id, interpolateFrame(from, to, progress.t, path)),
+      onComplete: () => {
+        this.flights.delete(id);
+        this.drawCard(id, to);
+      },
+    });
+    this.flights.set(id, flight);
+  }
+
+  private drawCard(id: string, frame: RadixCardFrame): void {
+    const parts = this.cardParts.get(id);
+    const layout = this.paintLayout;
+    if (!parts || !layout) return;
+    const metrics = layout.card;
+    const text = radixCardText(metrics, parts.digits.childElementCount, frame.height, frame.fullness);
+    parts.group.setAttribute('transform', `translate(${round(frame.x)}, ${round(frame.y)})`);
+    parts.base.setAttribute('width', String(metrics.width));
+    parts.base.setAttribute('height', String(round(frame.height)));
+    parts.box.setAttribute('x', '0.5');
+    parts.box.setAttribute('y', '0.5');
+    parts.box.setAttribute('width', String(metrics.width - 1));
+    parts.box.setAttribute('height', String(round(frame.height - 1)));
+    parts.value.setAttribute('x', String(text.valueX));
+    parts.value.setAttribute('y', String(round(text.valueY)));
+    parts.digits.setAttribute('opacity', String(round(text.digitsOpacity)));
+    const digitNodes = parts.digits.children;
+    let litX: number | null = null;
+    for (let index = 0; index < digitNodes.length; index++) {
+      const node = digitNodes[index];
+      const x = text.digitXs[index] ?? text.valueX;
+      node.setAttribute('x', String(round(x)));
+      node.setAttribute('y', String(round(text.digitsY)));
+      if (node.getAttribute('data-lit') === 'true') litX = x;
     }
-    return null;
+    if (litX === null) {
+      parts.lit.setAttribute('visibility', 'hidden');
+    } else {
+      parts.lit.setAttribute('visibility', 'visible');
+      parts.lit.setAttribute('x', String(round(litX - metrics.digitPitch / 2 + 0.5)));
+      parts.lit.setAttribute('y', String(round(text.digitsY - metrics.digitCap - 3.5)));
+      parts.lit.setAttribute('width', String(round(metrics.digitPitch - 1)));
+      parts.lit.setAttribute('height', String(round(metrics.digitCap + 7)));
+      parts.lit.setAttribute('opacity', String(round(text.digitsOpacity)));
+    }
+    this.frames.set(id, frame);
+  }
+
+  private forgetCard(id: string): void {
+    this.flights.get(id)?.cancel();
+    this.flights.delete(id);
+    this.cardParts.delete(id);
+    this.frames.delete(id);
+    this.targets.delete(id);
+  }
+
+  private stopFlights(): void {
+    for (const flight of this.flights.values()) flight.cancel();
+    this.flights.clear();
   }
 }
 
-function centerOf(geometry: CardGeometry): { x: number; y: number } {
+function sameLayoutInput(left: RadixLayoutInput, right: RadixLayoutInput): boolean {
+  return (
+    left.width === right.width &&
+    left.height === right.height &&
+    left.count === right.count &&
+    left.maxDigits === right.maxDigits &&
+    left.maxLoad === right.maxLoad
+  );
+}
+
+function sameFrame(left: RadixCardFrame, right: RadixCardFrame): boolean {
+  return (
+    left.x === right.x &&
+    left.y === right.y &&
+    left.width === right.width &&
+    left.height === right.height &&
+    left.fullness === right.fullness
+  );
+}
+
+function zoneOf(frame: RadixCardFrame, layout: RadixBucketLayout): 'stream' | 'bins' {
+  return frame.y < layout.bins.y ? 'stream' : 'bins';
+}
+
+function interpolateFrame(from: RadixCardFrame, to: RadixCardFrame, progress: number, path: FlightPath): RadixCardFrame {
+  const point = path === 'arc' ? radixFlightPoint(from, to, progress) : { x: lerp(from.x, to.x, progress), y: lerp(from.y, to.y, progress) };
   return {
-    x: geometry.x + geometry.width / 2,
-    y: geometry.y + geometry.height / 2,
+    ...point,
+    width: lerp(from.width, to.width, progress),
+    height: lerp(from.height, to.height, progress),
+    fullness: lerp(from.fullness, to.fullness, progress),
+    hidden: to.hidden,
   };
-}
-
-function digitPowerLabel(exponent: number): string {
-  if (exponent === 0) return '1s';
-  if (exponent === 1) return '10s';
-  if (exponent === 2) return '100s';
-  return `10^${exponent}`;
-}
-
-function digitName(exponent: number): string {
-  if (exponent === 0) return 'ones digit';
-  if (exponent === 1) return 'tens digit';
-  if (exponent === 2) return 'hundreds digit';
-  return `10^${exponent} place`;
-}
-
-function phaseLabelFor(phase: SortStep['phase']): string {
-  switch (phase) {
-    case 'focus-digit':
-      return 'Digit Focus';
-    case 'distribute':
-      return 'Bucket Routing';
-    case 'gather':
-      return 'Stable Gather';
-    case 'pass-complete':
-      return 'Pass Complete';
-    case 'complete':
-      return 'Sorted';
-    default:
-      return 'Ready';
-  }
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
 }
 
 function lerp(from: number, to: number, progress: number): number {
   return from + (to - from) * progress;
 }
 
-function sameGeometry(left: MutableGeometry, right: MutableGeometry): boolean {
-  return (
-    left.x === right.x &&
-    left.y === right.y &&
-    left.width === right.width &&
-    left.height === right.height &&
-    left.fontSize === right.fontSize
-  );
-}
-
-function hexToRgba(hex: string, alpha: number): string {
-  const normalized = hex.replace('#', '');
-  const chunk =
-    normalized.length === 3
-      ? normalized
-          .split('')
-          .map((value) => `${value}${value}`)
-          .join('')
-      : normalized;
-  const red = Number.parseInt(chunk.slice(0, 2), 16);
-  const green = Number.parseInt(chunk.slice(2, 4), 16);
-  const blue = Number.parseInt(chunk.slice(4, 6), 16);
-  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+function round(value: number): number {
+  return Math.round(value * 100) / 100;
 }

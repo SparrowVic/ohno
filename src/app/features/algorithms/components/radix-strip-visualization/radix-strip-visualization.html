@@ -1,94 +1,72 @@
 <div
-  class="strip"
-  [style.--radix-swap-ms]="motion().swapMs + 'ms'"
-  [style.--radix-compare-ms]="motion().compareMs + 'ms'"
+  class="display strip"
+  role="img"
+  [attr.aria-label]="RADIX.ariaDisplay | transloco: { count: state().source.length }"
+  [attr.data-phase]="state().phase"
+  [style.--radix-move-ms.ms]="moveMs()"
 >
-  <div class="strip__header">
-    <div class="strip__meta">
-      <span class="strip__chip strip__chip--accent">{{ phase() }}</span>
-      <span class="strip__chip">{{ passLabel() }}</span>
-      <span class="strip__summary">{{ summary() | i18nText }}</span>
+  <div #main class="display__main strip__main" aria-hidden="true">
+    <div class="strip__caption">
+      <ohno-engraving>{{ (view().lane === 'output' ? RADIX.output : RADIX.input) | transloco }}</ohno-engraving>
+      @if (place(); as label) {
+        <ohno-engraving [tone]="view().placeTone ?? 'cyan'">{{ label | i18nText }}</ohno-engraving>
+      }
     </div>
 
-    <div class="strip__digits">
-      @for (badge of digitBadges(); track badge.label) {
-        <span class="strip__digit" [class.strip__digit--active]="badge.active">
-          {{ badge.label }}
-        </span>
+    <div class="strip__tape">
+      <div
+        #track
+        class="strip__track"
+        [style.--cell-width.px]="tape().cell"
+        [style.--cell-font.px]="tape().font"
+        [style.--tape-gap.px]="TAPE.gap"
+        [style.--tape-inset.px]="TAPE.inset"
+      >
+        @for (cell of view().cells; track cell.key) {
+          <span class="strip__cell" [attr.data-tone]="cell.tone" [attr.data-empty]="cell.value === null" [attr.data-head]="cell.head">
+            @if (cell.value === null) {
+              <span class="strip__void">·</span>
+            } @else {
+              <span class="strip__value">{{ cell.value }}</span>
+              <span class="strip__digits">
+                @for (digit of cell.digits; track digit.exponent) {
+                  <span class="strip__digit" [attr.data-tone]="digit.tone" [attr.data-lead]="digit.lead">{{ digit.digit }}</span>
+                }
+              </span>
+            }
+            @if (cell.head) {
+              @if (view().head; as head) {
+                <span class="strip__bracket" [attr.data-tone]="head.tone"></span>
+                <span class="strip__label" [attr.data-tone]="head.tone">{{ head.arrow }} {{ head.bucket }}</span>
+              }
+            }
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="strip__caption">
+      <ohno-engraving>{{ RADIX.buckets | transloco }}</ohno-engraving>
+    </div>
+
+    <div #bins class="strip__bins" [style.--bin-columns]="binColumns()">
+      @for (bin of view().bins; track bin.bucket) {
+        <div class="strip__bin" [attr.data-tone]="bin.tone">
+          <div class="strip__bin-head">
+            <span class="strip__bin-number">{{ bin.bucket }}</span>
+            <span class="strip__bin-count">{{ bin.count }}</span>
+          </div>
+          <div class="strip__stack">
+            @for (card of bin.cards; track card.id) {
+              <span class="strip__card" [attr.data-fresh]="card.fresh">
+                @for (digit of card.digits; track digit.exponent) {
+                  <span class="strip__card-digit" [attr.data-mark]="digit.exponent === state().exponent">{{ digit.digit }}</span>
+                }
+              </span>
+            }
+          </div>
+        </div>
       }
     </div>
   </div>
-
-  <section class="lane">
-    <div class="lane__title">Scanner Lane</div>
-    <div class="lane__track">
-      @for (card of scannerCards(); track card.id) {
-        <div
-          class="card"
-          [class.card--active]="card.active"
-          [class.card--ghost]="card.ghost"
-          [class.card--settled]="card.settled"
-        >
-          <span class="card__value">{{ card.value }}</span>
-          <div class="card__digits">
-            @for (digit of card.digits; track $index) {
-              <span class="card__digit" [class.card__digit--active]="digit.active">
-                {{ digit.value }}
-              </span>
-            }
-          </div>
-        </div>
-      }
-    </div>
-  </section>
-
-  <section class="buckets">
-    @for (bucket of buckets(); track bucket.bucket) {
-      <div
-        class="bucket"
-        [class.bucket--active]="bucket.active"
-        [style.--bucket-color]="bucket.color"
-      >
-        <div class="bucket__head">
-          <span>Bucket {{ bucket.bucket }}</span>
-          <span>{{ bucket.items.length }}</span>
-        </div>
-        <div class="bucket__stack">
-          @for (card of bucket.items; track card.id) {
-            <div class="bucket-card" [class.bucket-card--active]="card.active">
-              <div class="bucket-card__digits">
-                @for (digit of card.digits; track $index) {
-                  <span
-                    class="bucket-card__digit"
-                    [class.bucket-card__digit--active]="digit.active"
-                  >
-                    {{ digit.value }}
-                  </span>
-                }
-              </div>
-              <span class="bucket-card__value">{{ card.value }}</span>
-            </div>
-          }
-        </div>
-      </div>
-    }
-  </section>
-
-  <section class="lane lane--output">
-    <div class="lane__title">Output Conveyor</div>
-    <div class="lane__track lane__track--output">
-      @for (card of outputCards(); track card.id) {
-        <div class="card card--output" [class.card--active]="card.active">
-          <span class="card__value">{{ card.value }}</span>
-          <div class="card__digits">
-            @for (digit of card.digits; track $index) {
-              <span class="card__digit" [class.card__digit--active]="digit.active">
-                {{ digit.value }}
-              </span>
-            }
-          </div>
-        </div>
-      }
-    </div>
-  </section>
 </div>

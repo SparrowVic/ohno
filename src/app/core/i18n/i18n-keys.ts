@@ -1045,6 +1045,9 @@ export const I18N_KEY = {
             complete: t('features.algorithms.display.radix.phases.complete'),
           },
         },
+        radixMatrix: {
+          destination: t('features.algorithms.display.radixMatrix.destination'),
+        },
       },
       detail: {
         breadcrumbAriaLabel: t('features.algorithms.detail.breadcrumbAriaLabel'),

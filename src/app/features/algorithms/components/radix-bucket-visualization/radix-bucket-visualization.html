@@ -1,19 +1,31 @@
-<div class="stage">
-  <div class="hud">
-    <div class="hud__cluster">
-      <div class="hud__chip hud__chip--accent">{{ phaseLabel() }}</div>
-      <div class="hud__chip">{{ passLabel() }}</div>
-      <div class="hud__summary">{{ activeSummary() | i18nText }}</div>
-    </div>
-
-    <div class="hud__digits">
-      @for (badge of digitBadges(); track badge.label) {
-        <span class="hud__digit" [class.hud__digit--active]="badge.active">
-          {{ badge.label }}
-        </span>
-      }
-    </div>
-  </div>
-
-  <div #container class="canvas"></div>
+<div #frame class="radix">
+  <svg
+    class="radix__svg"
+    role="img"
+    [attr.aria-label]="RADIX.ariaDisplay | transloco: { count: scene().slotCount }"
+    [attr.viewBox]="viewBox()"
+    preserveAspectRatio="xMidYMin meet"
+  >
+    <text class="radix__engraving" [attr.x]="layout().stream.x" [attr.y]="layout().labels.streamY">
+      {{ (scene().role === 'output' ? RADIX.output : RADIX.input) | transloco }}
+    </text>
+    @if (place(); as place) {
+      <text
+        class="radix__engraving radix__place"
+        text-anchor="end"
+        [attr.data-tone]="place.tone"
+        [attr.x]="layout().stream.x + layout().stream.width"
+        [attr.y]="layout().labels.streamY"
+      >
+        {{ place.key | transloco: place.params }}
+      </text>
+    }
+    <text class="radix__engraving" [attr.x]="layout().bins.x" [attr.y]="layout().labels.binsY">
+      {{ RADIX.buckets | transloco }}
+    </text>
+    <g #slots class="radix__slots"></g>
+    <g #bins class="radix__bins"></g>
+    <path #guide class="radix__guide" visibility="hidden" />
+    <g #cards class="radix__cards"></g>
+  </svg>
 </div>
