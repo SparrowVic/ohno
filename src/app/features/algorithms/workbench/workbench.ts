@@ -316,6 +316,12 @@ export class Workbench {
       focusDigit: this.translate(phases.focusDigit),
       distribute: this.translate(phases.distribute),
       gather: this.translate(phases.gather),
+      compare: this.translate(phases.compare),
+      match: this.translate(phases.match),
+      fallback: this.translate(phases.fallback),
+      shift: this.translate(phases.shift),
+      hit: this.translate(phases.hit),
+      lps: this.translate(phases.lps),
     };
   });
   private readonly tapeOverrides = computed(() =>

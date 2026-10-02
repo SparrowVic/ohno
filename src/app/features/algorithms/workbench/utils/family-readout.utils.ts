@@ -26,12 +26,42 @@ import { ScratchpadLabTraceState, ScratchpadLine } from '../../models/scratchpad
 import { SearchTraceState } from '../../models/search';
 import { SieveCellState, SieveGridCell, SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
-import { StringTraceState } from '../../models/string';
+import {
+  AhoCorasickTraceState,
+  BurrowsWheelerTraceState,
+  HuffmanTraceState,
+  KmpTraceState,
+  ManacherTraceState,
+  PalindromicTreeTraceState,
+  RabinKarpTraceState,
+  RleTraceState,
+  StringTraceState,
+  SuffixArrayConstructionTraceState,
+  SuffixArrayLcpTraceState,
+  ZAlgorithmTraceState,
+} from '../../models/string';
 import { TreeTraversalTraceState } from '../../models/tree';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { PassGauge, StageMeter, StageReadout } from './stage-readout.utils';
 
 export type FamilyMeterId =
+  | 'hash'
+  | 'zBox'
+  | 'center'
+  | 'radius'
+  | 'longest'
+  | 'runs'
+  | 'rotations'
+  | 'symbols'
+  | 'heap'
+  | 'bits'
+  | 'nodes'
+  | 'round'
+  | 'span'
+  | 'ranks'
+  | 'lcp'
+  | 'computed'
+  | 'palindromes'
   | 'settled'
   | 'digit'
   | 'bucket'
@@ -92,6 +122,8 @@ export type FamilyMeterId =
   | 'crossed';
 
 export type FamilyGaugeId =
+  | 'treeNodes'
+  | 'ranks'
   | 'settled'
   | 'digits'
   | 'rows'
@@ -111,6 +143,20 @@ export type FamilyGaugeId =
   | 'closed';
 
 export type FamilyRegisterId =
+  | 'textChar'
+  | 'patternChar'
+  | 'patternHash'
+  | 'windowHash'
+  | 'boxLeft'
+  | 'boxRight'
+  | 'zValue'
+  | 'center'
+  | 'mirror'
+  | 'rightEdge'
+  | 'char'
+  | 'count'
+  | 'node'
+  | 'matchLength'
   | 'u'
   | 'digit'
   | 'bucket'
@@ -323,122 +369,309 @@ export function dpReadout(state: DpTraceState, ctx: FamilyReadoutContext): Stage
   };
 }
 
-interface TapeCursor {
-  readonly textIndex: number | null;
-  readonly textLength: number;
-  readonly patternIndex: number | null;
-  readonly patternLength: number;
-  readonly matches: number;
+function charAt(source: string, index: number | null): string | null {
+  return index === null ? null : (source[index] ?? null);
 }
 
-function tapeCursor(state: StringTraceState): TapeCursor {
+function scannedCount(length: number, index: number | null, complete: boolean): number {
+  if (complete) return length;
+  return index === null ? 0 : Math.min(length, index + 1);
+}
+
+interface StringReadoutParts {
+  readonly meters: readonly StageMeter[];
+  readonly tone: LedColor;
+  readonly registers: readonly OpLineRegister[];
+  readonly gauge: PassGauge;
+  readonly gaugeLabel: string;
+}
+
+function kmpParts(state: KmpTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const comparing = state.compareTextIndex !== null && state.comparePatternIndex !== null;
+  const tone: LedColor =
+    state.stage === 'done' ? 'lime' : state.fallbackFrom !== null ? 'pink' : state.stage === 'failure' ? 'amber' : comparing ? 'cyan' : 'slate';
+  const registers = [register('i', labels, state.textIndex), register('j', labels, state.patternIndex)];
+  if (comparing) {
+    registers.push(
+      register('textChar', labels, charAt(state.text, state.compareTextIndex)),
+      register('patternChar', labels, charAt(state.pattern, state.comparePatternIndex)),
+    );
+  }
+  return {
+    meters: [
+      meter('textIndex', labels, state.textIndex ?? EMPTY, state.text.length),
+      meter('patternIndex', labels, state.patternIndex ?? EMPTY, state.pattern.length),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers,
+    gauge: gauge(state.text.length, scannedCount(state.text.length, state.textIndex, complete || state.stage === 'done')),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function rabinKarpParts(state: RabinKarpTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const tone: LedColor = state.collision
+    ? 'amber'
+    : state.verifying
+      ? 'cyan'
+      : state.patternHash === state.windowHash
+        ? 'lime'
+        : 'pink';
+  const windowEnd = state.windowStart + state.windowLength - 1;
+  return {
+    meters: [
+      meter('textIndex', labels, state.windowStart, state.text.length),
+      meter('hash', labels, state.windowHash, null, 2),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, state.windowStart),
+      register('patternHash', labels, state.patternHash),
+      register('windowHash', labels, state.windowHash),
+    ],
+    gauge: gauge(state.text.length, scannedCount(state.text.length, windowEnd, complete)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function zAlgorithmParts(state: ZAlgorithmTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const active = state.activeIndex;
+  const zValue = active === null ? null : (state.zValues[active] ?? null);
+  const box = state.boxLeft !== null && state.boxRight !== null ? `${state.boxLeft}–${state.boxRight}` : EMPTY;
+  const tone: LedColor =
+    state.comparePrefixIndex !== null ? 'cyan' : zValue !== null && zValue >= state.patternLength && state.patternLength > 0 ? 'lime' : 'slate';
+  return {
+    meters: [
+      meter('textIndex', labels, active ?? EMPTY, state.combined.length),
+      meter('zBox', labels, box),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, active),
+      register('boxLeft', labels, state.boxLeft),
+      register('boxRight', labels, state.boxRight),
+      register('zValue', labels, zValue),
+    ],
+    gauge: gauge(state.combined.length, scannedCount(state.combined.length, active, complete)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function manacherParts(state: ManacherTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const tone: LedColor =
+    state.compareLeft !== null ? 'cyan' : state.currentCenter !== null && state.currentCenter === state.longestCenter && state.longestRadius > 0 ? 'lime' : 'slate';
+  return {
+    meters: [
+      meter('center', labels, state.currentCenter ?? EMPTY, state.transformed.length),
+      meter('radius', labels, state.activeRadius),
+      meter('longest', labels, state.longestPalindrome.length, state.source.length),
+    ],
+    tone,
+    registers: [
+      register('center', labels, state.currentCenter),
+      register('mirror', labels, state.mirrorIndex),
+      register('rightEdge', labels, state.rightBoundary),
+    ],
+    gauge: gauge(state.transformed.length, scannedCount(state.transformed.length, state.currentCenter, complete)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function rleParts(state: RleTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const tone: LedColor = state.phase === 'emit' || done ? 'lime' : state.phase === 'extend' ? 'pink' : 'cyan';
+  return {
+    meters: [
+      meter('textIndex', labels, state.scanIndex ?? EMPTY, state.source.length),
+      meter('runs', labels, state.completedRuns.length),
+      meter('output', labels, state.output.length),
+    ],
+    tone,
+    registers: state.groupChar ? [register('char', labels, state.groupChar), register('count', labels, state.groupCount)] : [],
+    gauge: gauge(state.source.length, scannedCount(state.source.length, state.scanIndex, done)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function burrowsWheelerParts(state: BurrowsWheelerTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const comparing = state.rotations.some((row) => row.tone === 'compare');
+  const active = state.rotations.some((row) => row.tone === 'active');
+  const outputDone = complete || (state.output.length > 0 && state.output.length >= state.source.length);
+  const tone: LedColor = outputDone ? 'lime' : comparing ? 'pink' : active ? 'cyan' : 'slate';
+  return {
+    meters: [
+      meter('rotations', labels, state.rotations.length),
+      meter('output', labels, state.output.length, state.source.length),
+      meter('runs', labels, state.runGroups.length),
+    ],
+    tone,
+    registers: [],
+    gauge: gauge(state.source.length, outputDone ? state.source.length : state.output.length),
+    gaugeLabel: labels.gauges.output,
+  };
+}
+
+const HUFFMAN_TONES: Readonly<Record<HuffmanTraceState['phase'], LedColor>> = {
+  freq: 'cyan',
+  heap: 'amber',
+  merge: 'pink',
+  codes: 'lime',
+};
+
+function huffmanParts(state: HuffmanTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const nodeCount = Math.max(1, state.allNodes.length);
+  return {
+    meters: [
+      meter('symbols', labels, state.charFreqs.length),
+      meter('heap', labels, state.heapItems.length),
+      meter('bits', labels, state.totalCompressedBits, state.totalOriginalBits || null, 2),
+    ],
+    tone: complete ? 'lime' : HUFFMAN_TONES[state.phase],
+    registers: [],
+    gauge: gauge(nodeCount, complete ? nodeCount : state.visibleNodeIds.length),
+    gaugeLabel: labels.gauges.treeNodes,
+  };
+}
+
+function ahoCorasickParts(state: AhoCorasickTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const matchedHere = state.currentTextIndex !== null && state.matches.some((match) => match.endIndex === state.currentTextIndex);
+  const tone: LedColor = done
+    ? 'lime'
+    : state.phase === 'build'
+      ? 'amber'
+      : state.phase === 'link'
+        ? 'violet'
+        : state.failurePath.length > 0
+          ? 'pink'
+          : matchedHere
+            ? 'lime'
+            : 'cyan';
+  const activeNode = state.nodes.find((node) => node.id === state.activeNodeId) ?? null;
+  return {
+    meters: [
+      meter('textIndex', labels, state.currentTextIndex ?? EMPTY, state.text.length),
+      meter('nodes', labels, state.nodes.length),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, state.currentTextIndex),
+      register('char', labels, state.currentChar),
+      register('node', labels, activeNode ? activeNode.index : null),
+    ],
+    gauge: gauge(state.text.length, scannedCount(state.text.length, state.currentTextIndex, done)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+const SUFFIX_ARRAY_TONES: Readonly<Record<SuffixArrayConstructionTraceState['phase'], LedColor>> = {
+  seed: 'slate',
+  sort: 'pink',
+  rank: 'cyan',
+  complete: 'lime',
+};
+
+function suffixArrayParts(state: SuffixArrayConstructionTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const total = state.source.length;
+  return {
+    meters: [
+      meter('round', labels, state.round),
+      meter('span', labels, state.stepSize),
+      meter('ranks', labels, state.distinctRanks, total),
+    ],
+    tone: complete ? 'lime' : SUFFIX_ARRAY_TONES[state.phase],
+    registers: state.activeSuffixes.slice(0, 2).map((start, position) => register(position === 0 ? 'i' : 'j', labels, start)),
+    gauge: gauge(Math.max(1, total), complete ? total : state.distinctRanks),
+    gaugeLabel: labels.gauges.ranks,
+  };
+}
+
+function suffixArrayLcpParts(state: SuffixArrayLcpTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const computed = state.rows.filter((row) => row.lcp !== null).length;
+  const tone: LedColor = done ? 'lime' : state.phase === 'scan' ? 'cyan' : 'slate';
+  return {
+    meters: [
+      meter('row', labels, state.activeOrder === null ? EMPTY : state.activeOrder + 1, state.rows.length),
+      meter('lcp', labels, state.currentMatchLength),
+      meter('computed', labels, computed, state.rows.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, state.activeSuffixes[0] ?? null),
+      register('j', labels, state.compareWith),
+      register('matchLength', labels, state.currentMatchLength),
+    ],
+    gauge: gauge(Math.max(1, state.rows.length), done ? state.rows.length : computed),
+    gaugeLabel: labels.gauges.rows,
+  };
+}
+
+const PALINDROMIC_TREE_TONES: Readonly<Record<PalindromicTreeTraceState['phase'], LedColor>> = {
+  roots: 'slate',
+  followLink: 'pink',
+  reuse: 'cyan',
+  insert: 'lime',
+  complete: 'lime',
+};
+
+function palindromicTreeParts(state: PalindromicTreeTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const processed = state.processedIndex >= 0 ? state.processedIndex : null;
+  return {
+    meters: [
+      meter('textIndex', labels, processed ?? EMPTY, state.source.length),
+      meter('palindromes', labels, state.distinctCount),
+      meter('longest', labels, state.longestSuffix.length, state.source.length),
+    ],
+    tone: done ? 'lime' : PALINDROMIC_TREE_TONES[state.phase],
+    registers: [register('i', labels, processed), register('char', labels, state.currentChar)],
+    gauge: gauge(state.source.length, scannedCount(state.source.length, processed, done)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function stringParts(state: StringTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
   switch (state.mode) {
     case 'kmp':
-      return {
-        textIndex: state.textIndex,
-        textLength: state.text.length,
-        patternIndex: state.patternIndex,
-        patternLength: state.pattern.length,
-        matches: state.matches.length,
-      };
+      return kmpParts(state, labels, complete);
     case 'rabin-karp':
-      return {
-        textIndex: state.windowStart,
-        textLength: state.text.length,
-        patternIndex: state.verificationIndex,
-        patternLength: state.pattern.length,
-        matches: state.matches.length,
-      };
+      return rabinKarpParts(state, labels, complete);
     case 'z-algorithm':
-      return {
-        textIndex: state.activeIndex,
-        textLength: state.combined.length,
-        patternIndex: state.comparePrefixIndex,
-        patternLength: state.patternLength,
-        matches: state.matches.length,
-      };
+      return zAlgorithmParts(state, labels, complete);
     case 'manacher':
-      return {
-        textIndex: state.currentCenter,
-        textLength: state.transformed.length,
-        patternIndex: state.activeRadius,
-        patternLength: state.longestRadius,
-        matches: state.longestRadius,
-      };
+      return manacherParts(state, labels, complete);
     case 'rle':
-      return {
-        textIndex: state.scanIndex,
-        textLength: state.source.length,
-        patternIndex: state.groupCount,
-        patternLength: state.completedRuns.length,
-        matches: state.completedRuns.length,
-      };
+      return rleParts(state, labels, complete);
     case 'burrows-wheeler-transform':
-      return {
-        textIndex: state.activeRows.length,
-        textLength: state.rotations.length,
-        patternIndex: null,
-        patternLength: state.source.length,
-        matches: state.runGroups.length,
-      };
+      return burrowsWheelerParts(state, labels, complete);
     case 'huffman':
-      return {
-        textIndex: state.heapItems.length,
-        textLength: state.charFreqs.length,
-        patternIndex: state.visibleNodeIds.length,
-        patternLength: state.allNodes.length,
-        matches: state.codeTable.length,
-      };
+      return huffmanParts(state, labels, complete);
     case 'aho-corasick':
-      return {
-        textIndex: state.currentTextIndex,
-        textLength: state.text.length,
-        patternIndex: null,
-        patternLength: state.nodes.length,
-        matches: state.matches.length,
-      };
+      return ahoCorasickParts(state, labels, complete);
     case 'suffix-array-construction':
-      return {
-        textIndex: state.activeSuffixes[0] ?? null,
-        textLength: state.rows.length,
-        patternIndex: state.stepSize,
-        patternLength: state.source.length,
-        matches: state.distinctRanks,
-      };
+      return suffixArrayParts(state, labels, complete);
     case 'suffix-array-lcp-kasai':
-      return {
-        textIndex: state.activeOrder,
-        textLength: state.rows.length,
-        patternIndex: state.currentMatchLength,
-        patternLength: state.source.length,
-        matches: state.lcpValues.length,
-      };
+      return suffixArrayLcpParts(state, labels, complete);
     case 'palindromic-tree':
-      return {
-        textIndex: state.processedIndex,
-        textLength: state.source.length,
-        patternIndex: null,
-        patternLength: state.nodes.length,
-        matches: state.distinctCount,
-      };
+      return palindromicTreeParts(state, labels, complete);
   }
 }
 
 export function stringReadout(state: StringTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const cursor = tapeCursor(state);
-  const scanned = cursor.textIndex === null ? 0 : Math.min(cursor.textLength, cursor.textIndex + 1);
+  const parts = stringParts(state, labels, index >= lastIndex);
   return {
-    meters: [
-      meter('textIndex', labels, cursor.textIndex ?? EMPTY, cursor.textLength),
-      meter('patternIndex', labels, cursor.patternIndex ?? EMPTY, cursor.patternLength),
-      meter('matches', labels, cursor.matches),
-    ],
+    meters: parts.meters,
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
-    tone: edgeTone(index, lastIndex, 'cyan'),
-    registers: [register('i', labels, cursor.textIndex), register('j', labels, cursor.patternIndex)],
-    gauge: gauge(cursor.textLength, scanned),
-    gaugeLabel: labels.gauges.textChars,
+    tone: edgeTone(index, lastIndex, parts.tone),
+    registers: parts.registers,
+    gauge: parts.gauge,
+    gaugeLabel: parts.gaugeLabel,
   };
 }
 

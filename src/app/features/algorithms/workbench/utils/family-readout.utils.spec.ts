@@ -17,6 +17,29 @@ import { hungarianAlgorithmGenerator } from '../../algorithms/hungarian-algorith
 import { knapsack01Generator } from '../../algorithms/knapsack-01/knapsack-01';
 import { longestCommonSubsequenceGenerator } from '../../algorithms/longest-common-subsequence/longest-common-subsequence';
 import { radixSortGenerator } from '../../algorithms/radix-sort';
+import { ahoCorasickGenerator } from '../../algorithms/aho-corasick/aho-corasick';
+import { burrowsWheelerTransformGenerator } from '../../algorithms/burrows-wheeler-transform/burrows-wheeler-transform';
+import { huffmanCodingGenerator } from '../../algorithms/huffman-coding/huffman-coding';
+import { manacherGenerator } from '../../algorithms/manacher/manacher';
+import { palindromicTreeGenerator } from '../../algorithms/palindromic-tree/palindromic-tree';
+import { rabinKarpGenerator } from '../../algorithms/rabin-karp/rabin-karp';
+import { runLengthEncodingGenerator } from '../../algorithms/run-length-encoding/run-length-encoding';
+import { suffixArrayConstructionGenerator } from '../../algorithms/suffix-array-construction/suffix-array-construction';
+import { suffixArrayLcpKasaiGenerator } from '../../algorithms/suffix-array-lcp-kasai/suffix-array-lcp-kasai';
+import { zAlgorithmGenerator } from '../../algorithms/z-algorithm/z-algorithm';
+import {
+  createAhoCorasickScenario,
+  createBurrowsWheelerScenario,
+  createHuffmanScenario,
+  createKmpScenario,
+  createManacherScenario,
+  createPalindromicTreeScenario,
+  createRabinKarpScenario,
+  createRleScenario,
+  createSuffixArrayLcpScenario,
+  createSuffixArrayScenario,
+  createZAlgorithmScenario,
+} from '../../utils/scenarios/string/string-scenarios';
 import { regexMatchingDpGenerator } from '../../algorithms/regex-matching-dp/regex-matching-dp';
 import { matrixChainMultiplicationGenerator } from '../../algorithms/matrix-chain-multiplication/matrix-chain-multiplication';
 import { sieveOfEratosthenesGenerator } from '../../algorithms/sieve-of-eratosthenes/sieve-of-eratosthenes';
@@ -68,18 +91,20 @@ import { StageReadout } from './stage-readout.utils';
 import { sortStep } from './step-events.fixture';
 
 const METER_IDS: readonly FamilyMeterId[] = [
-  'digit', 'bucket', 'placed', 'settled', 'queue', 'relaxed', 'row', 'column', 'value', 'textIndex', 'patternIndex', 'matches', 'stack', 'checked',
+  'hash', 'zBox', 'center', 'radius', 'longest', 'runs', 'rotations', 'symbols', 'heap', 'bits', 'nodes', 'round', 'span',
+  'ranks', 'lcp', 'computed', 'palindromes', 'digit', 'bucket', 'placed', 'settled', 'queue', 'relaxed', 'row', 'column', 'value', 'textIndex', 'patternIndex', 'matches', 'stack', 'checked',
   'rejected', 'frontier', 'visited', 'result', 'pivot', 'improved', 'prime', 'bound', 'components', 'merged',
   'output', 'low', 'high', 'probe', 'frames', 'returns', 'iteration', 'explored', 'depth', 'phases', 'lines', 'hits',
   'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows', 'operations', 'capacity',
   'best', 'amount', 'sum', 'indexI', 'indexJ', 'matched', 'zeros', 'path', 'closed', 'painted', 'crossed',
 ];
 const GAUGE_IDS: readonly FamilyGaugeId[] = [
-  'digits', 'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
+  'treeNodes', 'ranks', 'digits', 'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
   'matched', 'operations', 'closed',
 ];
 const REGISTER_IDS: readonly FamilyRegisterId[] = [
-  'digit', 'bucket', 'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col', 'level', 'cost',
+  'textChar', 'patternChar', 'patternHash', 'windowHash', 'boxLeft', 'boxRight', 'zValue', 'center', 'mirror', 'rightEdge',
+  'char', 'count', 'node', 'matchLength', 'digit', 'bucket', 'u', 'v', 'w', 'alt', 'i', 'j', 'c', 'o', 'a', 'b', 'stack', 'p', 'lo', 'hi', 'mid', 'n', 'k', 'x', 'y', 'depth', 'row', 'col', 'level', 'cost',
 ];
 
 function labelMap<T extends string>(ids: readonly T[], prefix: string): Record<T, string> {
@@ -331,13 +356,15 @@ describe('graphReadout', () => {
   });
 
   it('never repeats u under v across a Dijkstra run on an undirected graph', () => {
-    const steps = history(dijkstraGenerator(generateDijkstraGraph(8)));
-    const reversed = steps.findIndex((step) => {
-      const graph = step.graph;
-      const edge = graph?.edges.find((item) => item.id === graph.activeEdgeId);
-      return edge !== undefined && edge.to === graph?.currentNodeId;
-    });
-    expect(reversed).toBeGreaterThan(0);
+    const reversedIndex = (run: readonly SortStep[]) =>
+      run.findIndex((step) => {
+        const graph = step.graph;
+        const edge = graph?.edges.find((item) => item.id === graph.activeEdgeId);
+        return edge !== undefined && edge.to === graph?.currentNodeId;
+      });
+    const runs = Array.from({ length: 40 }, () => history(dijkstraGenerator(generateDijkstraGraph(8))));
+    const steps = runs.find((run) => reversedIndex(run) > 0)!;
+    expect(steps).toBeDefined();
     steps.forEach((_, index) => {
       const registers = registerMap(readoutAt(steps, index, 'dijkstra-graph')!);
       if (registers['r:v'] !== undefined) expect(registers['r:v']).not.toBe(registers['r:u']);
@@ -838,5 +865,55 @@ describe('radixReadout', () => {
     expect(radixDigit(802, 1)).toBe(0);
     expect(radixDigit(802, 2)).toBe(8);
     expect(radixDigit(45, 2)).toBe(0);
+  });
+});
+
+describe('stringReadout', () => {
+  const runs: readonly { readonly mode: string; readonly steps: readonly SortStep[]; readonly meters: readonly string[] }[] = [
+    { mode: 'kmp', steps: history(kmpPatternMatchingGenerator(createKmpScenario(20, 'overlap'))), meters: ['textIndex', 'patternIndex', 'matches'] },
+    { mode: 'rabin-karp', steps: history(rabinKarpGenerator(createRabinKarpScenario(20, 'alarm'))), meters: ['textIndex', 'hash', 'matches'] },
+    { mode: 'z-algorithm', steps: history(zAlgorithmGenerator(createZAlgorithmScenario(20, 'classic'))), meters: ['textIndex', 'zBox', 'matches'] },
+    { mode: 'manacher', steps: history(manacherGenerator(createManacherScenario(14, 'banana'))), meters: ['center', 'radius', 'longest'] },
+    { mode: 'aho-corasick', steps: history(ahoCorasickGenerator(createAhoCorasickScenario(18, 'classic'))), meters: ['textIndex', 'nodes', 'matches'] },
+    { mode: 'suffix-array-construction', steps: history(suffixArrayConstructionGenerator(createSuffixArrayScenario(12, 'banana'))), meters: ['round', 'span', 'ranks'] },
+    { mode: 'suffix-array-lcp-kasai', steps: history(suffixArrayLcpKasaiGenerator(createSuffixArrayLcpScenario(12, 'banana'))), meters: ['row', 'lcp', 'computed'] },
+    { mode: 'palindromic-tree', steps: history(palindromicTreeGenerator(createPalindromicTreeScenario(12, 'banana'))), meters: ['textIndex', 'palindromes', 'longest'] },
+    { mode: 'burrows-wheeler-transform', steps: history(burrowsWheelerTransformGenerator(createBurrowsWheelerScenario(8, 'banana'))), meters: ['rotations', 'output', 'runs'] },
+    { mode: 'rle', steps: history(runLengthEncodingGenerator(createRleScenario(16, 'runs'))), meters: ['textIndex', 'runs', 'output'] },
+    { mode: 'huffman', steps: history(huffmanCodingGenerator(createHuffmanScenario(12, 'classic'))), meters: ['symbols', 'heap', 'bits'] },
+  ];
+
+  it.each(runs)('gives $mode its own meters and a gauge that ends full', ({ mode, steps, meters }) => {
+    expect(steps.every((step) => step.string?.mode === mode)).toBe(true);
+    steps.forEach((_, index) => {
+      const readout = readoutAt(steps, index, 'string')!;
+      expect(meterIds(readout)).toEqual(meters);
+      expect(readout.meters.every((item) => item.label.startsWith('m:'))).toBe(true);
+      expect(readout.registers.every((item) => item.label.startsWith('r:'))).toBe(true);
+      expect(readout.gauge!.done).toBeLessThanOrEqual(readout.gauge!.count);
+    });
+    const last = readoutAt(steps, steps.length - 1, 'string')!;
+    expect(last.tone).toBe('lime');
+    expect(last.gauge!.done).toBe(last.gauge!.count);
+  });
+
+  it('names the compared characters like image 12 during a KMP comparison', () => {
+    const steps = runs[0]!.steps;
+    const index = steps.findIndex((step) => {
+      const state = step.string;
+      return state?.mode === 'kmp' && state.stage === 'scan' && state.compareTextIndex !== null && state.comparePatternIndex !== null;
+    });
+    const state = steps[index]!.string as { text: string; pattern: string; compareTextIndex: number; comparePatternIndex: number };
+    const registers = registerMap(readoutAt(steps, index, 'string')!);
+    expect(registers['r:textChar']).toBe(state.text[state.compareTextIndex]);
+    expect(registers['r:patternChar']).toBe(state.pattern[state.comparePatternIndex]);
+  });
+
+  it('turns pink on a KMP fallback and amber while the failure table is built', () => {
+    const steps = runs[0]!.steps;
+    const fallback = steps.findIndex((step) => step.string?.mode === 'kmp' && step.string.fallbackFrom !== null && step.string.stage === 'scan');
+    if (fallback > 0) expect(readoutAt(steps, fallback, 'string')!.tone).toBe('pink');
+    const failure = steps.findIndex((step, index) => index > 0 && step.string?.mode === 'kmp' && step.string.stage === 'failure' && step.string.fallbackFrom === null);
+    if (failure > 0) expect(readoutAt(steps, failure, 'string')!.tone).toBe('amber');
   });
 });

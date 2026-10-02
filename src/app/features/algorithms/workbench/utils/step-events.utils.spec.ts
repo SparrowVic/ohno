@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { SortStep } from '../../models/sort-step';
 import { BUBBLE_HISTORY, sortStep } from './step-events.fixture';
-import { classifyStepEvents, countStepEvents } from './step-events.utils';
+import { classifyStepEvents, countStepEvents, hasFamilySlot } from './step-events.utils';
 
 describe('classifyStepEvents', () => {
   it('classifies a bubble sort history without explicit phases', () => {
@@ -26,6 +27,24 @@ describe('classifyStepEvents', () => {
       sortStep({ array: [1, 2], sorted: [0, 1] }),
     ]);
     expect(events.map((event) => event.kind)).toEqual(['start', 'compare', 'pass', 'complete']);
+  });
+
+  it('keeps string advances and mid-run family completions out of the pass and end markers', () => {
+    const tape = { mode: 'rle' } as unknown as NonNullable<SortStep['string']>;
+    const network = { mode: 'dinic' } as unknown as NonNullable<SortStep['network']>;
+    const events = classifyStepEvents([
+      sortStep({ array: [] }),
+      sortStep({ array: [], phase: 'pass-complete', string: tape }),
+      sortStep({ array: [], phase: 'complete', network }),
+      sortStep({ array: [], phase: 'pass-complete', network }),
+      sortStep({ array: [], phase: 'complete', network }),
+    ]);
+    expect(events.map((event) => event.kind)).toEqual(['start', 'step', 'step', 'pass', 'complete']);
+  });
+
+  it('recognises steps that carry a family slot', () => {
+    expect(hasFamilySlot(sortStep({ array: [1] }))).toBe(false);
+    expect(hasFamilySlot(sortStep({ array: [], search: {} as NonNullable<SortStep['search']> }))).toBe(true);
   });
 
   it('reports a settle when everything becomes sorted before the final step', () => {

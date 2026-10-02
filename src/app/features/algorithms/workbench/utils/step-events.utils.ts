@@ -37,13 +37,38 @@ export function countStepEvents(events: readonly StepEvent[], cursor: number): S
   return { comparisons, swaps, passes };
 }
 
+const FAMILY_SLOTS = [
+  'graph',
+  'dp',
+  'dsu',
+  'grid',
+  'matrix',
+  'matrixGrid',
+  'network',
+  'search',
+  'string',
+  'geometry',
+  'tree',
+  'numberLab',
+  'scratchpadLab',
+  'sieveGrid',
+  'pointerLab',
+  'callStackLab',
+  'callTreeLab',
+] as const satisfies readonly (keyof SortStep)[];
+
+export function hasFamilySlot(step: SortStep): boolean {
+  return FAMILY_SLOTS.some((slot) => step[slot] !== undefined && step[slot] !== null);
+}
+
 function classify(step: SortStep, previous: SortStep | null, last: boolean, index: number): StepEventKind {
   if (index === 0) return 'start';
   if (step.swapping) return 'swap';
   if (step.comparing) return 'compare';
-  if (last || step.phase === 'complete') return 'complete';
+  if (last || (step.phase === 'complete' && !hasFamilySlot(step))) return 'complete';
   const grew = previous !== null && step.sorted.length > previous.sorted.length;
-  if (step.phase === 'pass-complete' || (grew && step.sorted.length < step.array.length)) return 'pass';
+  const explicitPass = step.phase === 'pass-complete' && !step.string;
+  if (explicitPass || (grew && step.sorted.length < step.array.length)) return 'pass';
   if (grew) return 'settle';
   return 'step';
 }
