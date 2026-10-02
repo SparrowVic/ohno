@@ -37,6 +37,32 @@ Same as Phase 3, plus:
 4. **Trace host with both `scratchpadLab` and `numberLab`** picks the panel by the active view (pinned by a spec on the pure selector).
 5. **Radix card flight under reduced motion** jumps instead of tweening.
 
+## Status / handoff — 2026-10-02
+
+**Where the work stands.** `feat/redesign-lzb8il` is ahead of `main` by seven code commits and this note. Each commit passed the type check, the full Vitest suite and the production build locally. Nothing after `83ea1f0` is deployed: ohnolab.com runs `main` at `83ea1f0`, released 2026-10-01. To ship, open a PR into `main` (the ruleset needs `verify` and CodeQL `Analyze JavaScript and TypeScript`, linear history, a squash with an explicit title and body), then run the *Release Production* workflow with `source_ref: main`.
+
+**Done:** Tasks 0, 1, 2 and 3. Task 4 has its shared half in place: per-mode string readouts, tape verbs and step classification. Its display components are not started.
+
+**Open on Task 3 (radix):**
+- The `ohno-design-reviewer` audit has not run yet. Smoke screenshots of strip, matrix and bucket at 1440 and 360 are clean: no console errors, no page overflow.
+- The op-line prints the generator's `10^0` literally. Either the sentence markup turns `10^k` into math, or Task 10 gives the radix sentences keys with an `exponent` param.
+- Component style budget warnings: `radix-matrix` 11.2 kB and `radix-strip` 10.2 kB against the 8 kB warning budget, next to the older dp, scratchpad, call-tree, button and specimen warnings. Trim them or lift shared parts into `_display.scss` during Task 9.
+
+**Next, in order:**
+1. Task 4 displays: `string-visualization` (11 modes), `search-visualization`, `pointer-lab-visualization`. The STRING, SEARCH and POINTER legends move to keys; they still use `VIZ_COLOR`.
+2. Tasks 5, 6, 7 and 8, then the Task 9 sweep. Fifteen templates still use `viz-panel`, `viz-header` or `viz-preset-picker`. `VIZ_COLOR` remains in `algorithm-detail-config.ts` and those components. CLAUDE.md still names `feat/other-algorithms` as the current branch.
+3. Task 10 also carries the generator issues found in Tasks 2 and 3:
+   - Hungarian presets never reach the cover-and-adjust branch; one needs a cost matrix that requires covering lines.
+   - The regex default case should end in a match.
+   - `simplex-algorithm.ts` fills `pivotsPerIteration` only at the leaving step, so the reduced-cost, entering and ratio steps carry `pivotCol = null`.
+   - The simplex op-line renders entirely as italic math.
+   - DP, matrix and grid generators emit English plain strings (`step N`, `opt row N`, phase labels) that the displays map through lookup tables.
+   - The A* start cell has no `g`/`h` meta, sieve cells have no `markedBy`, and flood fill keeps no queue order.
+
+**Display proposals not yet ruled:** `_display.scss` variants for a soft settled cell, a dashed frontier cell and a dim settled cell, which dp, grid, matrix and sieve hand-roll today. A `history` input on `visualization-canvas` instead of injecting `PlaybackController` into the matrix-grid display and trace panel.
+
+**Repository housekeeping:** the superseded Dependabot npm PRs #27 and #29–#37 should close on the next Dependabot run. Actions PRs #39 and #40 stay open on purpose. Seven stale remote branches have to be deleted from the GitHub UI, because the session proxy refuses branch deletion: `codex/darken-shared-select-dropdown-surfaces`, `copilot/fix-merge-conflicts`, `copilot/resolve-merge-conflicts`, `feat/other-algorithms`, `feat/redesign`, `viz-panel-refactor`, `hide-initial-code-line-highlight`.
+
 ---
 
 ### Task 0: Display language, readout adapters, deck presets, trace-host view awareness — DONE
@@ -64,10 +90,14 @@ Follow-ups carried into later tasks: `_display` edge variants (red conflict, sol
 
 `graph-visualization`, `dsu-graph-visualization`, `dsu-visualization`, `network-visualization`, `tree-visualization`: LED-ring nodes (r 14, ring 1.5px, Doto label inside, Doto distance under), weight chips, tree edges lime, active edge pink dashed, settled nodes lime, frontier dotted amber ring, source violet; rack = queue (head cyan) + settled (lime); network rack = queue + focus items with `flow/cap` edge labels; tree rack = stack/queue + output tape; DSU rack = sets as LED chip rows. Readout: settled/queue/relaxations meters, gauge "Ustalone". Delete viz-header usage. Commit "Rebuild the graph displays in the dot language".
 
-### Task 2: Table family (image 09)
+### Task 2: Table family (image 09) — DONE
+Rulings: the 26 table legends go through keys and follow image 09 (base slate, current cyan, candidates pink, computed ink, result path lime); the DP value meter reads the generator's `computation.result` while a cell is being decided; the DP gauge completes only at the backtrack or the last cell; A* labels its meter and gauge "closed"; the sieve readout uses the smallest factor that the board shows on composite cells.
+
 `dp-visualization` (items rack + capacity readout, Doto cells, idle `·`, active cyan `?`, candidates pink with tags, result path lime), `matrix-visualization`, `matrix-grid-visualization` (divider rendered), `grid-visualization`, `sieve-grid-visualization` (primes rack); `MatrixGridTracePanel` filled; readouts: row/capacity/best (dp), pivot/row/col (matrix), frontier/visited (grid), prime/marked (sieve). Commit "Rebuild the table displays in the dot language".
 
-### Task 3: Buckets
+### Task 3: Buckets — DONE (design review pending)
+Rulings: radix steps bypass the sorting readout and show digit, bucket and in-buckets meters with a digits gauge; the legend reads input slate, current digit cyan, scatter pink, gathered output lime; Polish copy says "kubełek" everywhere; layout maths live in pure `radix-*-display.utils.ts` files with specs. Open items are listed in the status section above.
+
 `radix-bucket` (D3 kept, colours via `getComputedStyle` tokens, HUD removed — meters/op-line carry it, no backdrop-filter, flight gated), `radix-strip`, `radix-matrix` (tape cells); `VIZ_HEX` and `VIZ_BUCKET_COLORS` deleted; radix strings to i18n. Commit "Rebuild the bucket displays".
 
 ### Task 4: Tape family (image 12)
