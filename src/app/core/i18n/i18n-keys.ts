@@ -971,6 +971,28 @@ export const I18N_KEY = {
             assignmentReady: t('features.algorithms.display.phases.matrix.assignmentReady'),
           },
         },
+        radix: {
+          bucket: t('features.algorithms.display.radix.bucket'),
+          buckets: t('features.algorithms.display.radix.buckets'),
+          input: t('features.algorithms.display.radix.input'),
+          output: t('features.algorithms.display.radix.output'),
+          pass: t('features.algorithms.display.radix.pass'),
+          digitPlace: {
+            ones: t('features.algorithms.display.radix.digitPlace.ones'),
+            tens: t('features.algorithms.display.radix.digitPlace.tens'),
+            hundreds: t('features.algorithms.display.radix.digitPlace.hundreds'),
+            power: t('features.algorithms.display.radix.digitPlace.power'),
+          },
+          ariaDisplay: t('features.algorithms.display.radix.ariaDisplay'),
+          phases: {
+            idle: t('features.algorithms.display.radix.phases.idle'),
+            focus: t('features.algorithms.display.radix.phases.focus'),
+            distribute: t('features.algorithms.display.radix.phases.distribute'),
+            gather: t('features.algorithms.display.radix.phases.gather'),
+            passComplete: t('features.algorithms.display.radix.phases.passComplete'),
+            complete: t('features.algorithms.display.radix.phases.complete'),
+          },
+        },
       },
       detail: {
         breadcrumbAriaLabel: t('features.algorithms.detail.breadcrumbAriaLabel'),

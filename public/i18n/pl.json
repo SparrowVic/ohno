@@ -1270,6 +1270,28 @@
           "visitOrder": "Kolejność",
           "window": "Okno"
         },
+        "radix": {
+          "ariaDisplay": "Sortowanie pozycyjne: {{count}} wartości w kubełkach 0–9",
+          "bucket": "Kubełek {{n}}",
+          "buckets": "Kubełki",
+          "digitPlace": {
+            "hundreds": "setki",
+            "ones": "jedności",
+            "power": "pozycja 10^{{power}}",
+            "tens": "dziesiątki"
+          },
+          "input": "Wejście",
+          "output": "Wyjście",
+          "pass": "Przebieg {{pass}}/{{total}}",
+          "phases": {
+            "complete": "Posortowane",
+            "distribute": "Rozkład",
+            "focus": "Wybór cyfry",
+            "gather": "Zbieranie",
+            "idle": "Start",
+            "passComplete": "Koniec przebiegu"
+          }
+        },
         "registers": {
           "a": "a",
           "alt": "alt",

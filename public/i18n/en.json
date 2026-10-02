@@ -1270,6 +1270,28 @@
           "visitOrder": "Visit order",
           "window": "Window"
         },
+        "radix": {
+          "ariaDisplay": "Radix sort: {{count}} values across buckets 0–9",
+          "bucket": "Bucket {{n}}",
+          "buckets": "Buckets",
+          "digitPlace": {
+            "hundreds": "hundreds",
+            "ones": "ones",
+            "power": "10^{{power}} place",
+            "tens": "tens"
+          },
+          "input": "Input",
+          "output": "Output",
+          "pass": "Pass {{pass}}/{{total}}",
+          "phases": {
+            "complete": "Sorted",
+            "distribute": "Scatter",
+            "focus": "Digit focus",
+            "gather": "Gather",
+            "idle": "Start",
+            "passComplete": "Pass done"
+          }
+        },
         "registers": {
           "a": "a",
           "alt": "alt",
