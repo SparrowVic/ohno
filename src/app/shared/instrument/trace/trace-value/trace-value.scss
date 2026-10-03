@@ -1,0 +1,27 @@
+:host {
+  min-width: 0;
+  font: 500 11.5px/1.35 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+}
+
+:host([data-kind='empty']) {
+  color: var(--ink-4);
+}
+
+:host([data-kind='text']),
+:host([data-kind='i18n']) {
+  font: 500 12.5px/1.45 var(--font-ui);
+  overflow-wrap: break-word;
+}
+
+:host([data-kind='math']) {
+  font: 500 12.5px/1.45 var(--font-ui);
+}
+
+:host([data-kind='number'][data-dot]) {
+  font: 900 15px/1 var(--font-dot);
+  font-variation-settings: var(--dot-settings);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}

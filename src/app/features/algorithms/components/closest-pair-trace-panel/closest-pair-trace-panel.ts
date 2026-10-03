@@ -1,98 +1,128 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { TraceChip, TraceFact, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { ClosestPairStepState, GeometryPoint } from '../../models/geometry';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
+import { closestRegionText, trailText } from '../geo-canvas/geometry-labels.utils';
+
+const PAIR_KEYS = I18N_KEY.features.algorithms.tracePanels.closestPair;
+const GEOMETRY_KEYS = I18N_KEY.features.algorithms.tracePanels.geometry;
+
+const PHASE_KEYS: Readonly<Record<string, I18nKey>> = {
+  init: PAIR_KEYS.phases.init,
+  sort: PAIR_KEYS.phases.sort,
+  divide: PAIR_KEYS.phases.divide,
+  base: PAIR_KEYS.phases.base,
+  merge: PAIR_KEYS.phases.merge,
+  strip: PAIR_KEYS.phases.strip,
+  compare: PAIR_KEYS.phases.compare,
+  'compare-strip': PAIR_KEYS.phases.compare,
+  update: PAIR_KEYS.phases.update,
+  complete: PAIR_KEYS.phases.complete,
+};
+
+const LEGEND_CHIPS: readonly TraceChip[] = [
+  { id: 'left', label: toTraceValue(PAIR_KEYS.leftHalfLabel), tone: 'violet' },
+  { id: 'right', label: toTraceValue(PAIR_KEYS.rightHalfLabel), tone: 'amber' },
+  { id: 'strip', label: toTraceValue(PAIR_KEYS.stripCandidateLabel), tone: 'slate' },
+  { id: 'current', label: toTraceValue(PAIR_KEYS.currentComparisonLabel), tone: 'cyan' },
+  { id: 'best', label: toTraceValue(PAIR_KEYS.bestPairLabel), tone: 'lime' },
+];
+
+function formatDistance(value: number | null | undefined): string | null {
+  return value === null || value === undefined ? null : value.toFixed(2);
+}
+
+function formatCoord(point: GeometryPoint | undefined): string {
+  return point ? `(${point.x.toFixed(1)}, ${point.y.toFixed(1)})` : '(—, —)';
+}
 
 @Component({
   selector: 'app-closest-pair-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, TranslocoPipe],
   templateUrl: './closest-pair-trace-panel.html',
   styleUrl: './closest-pair-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClosestPairTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = PAIR_KEYS;
+  protected readonly legendChips = LEGEND_CHIPS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<ClosestPairStepState | null>(null);
 
-  private readonly emptyPair = {
-    left: undefined,
-    right: undefined,
-  } as const;
-
-  readonly hasCurrentPair = computed(() => !!this.state()?.currentPair);
-  readonly currentPairSlot = computed(
-    () => this.resolvePair(this.state()?.currentPair ?? null) ?? this.emptyPair,
-  );
-  readonly hasBestPair = computed(() => !!this.state()?.bestPair);
-  readonly bestPairSlot = computed(
-    () => this.resolvePair(this.state()?.bestPair ?? null) ?? this.emptyPair,
-  );
-  readonly stripCount = computed(
-    () => this.state()?.points.filter((point) => point.status === 'strip').length ?? 0,
-  );
-  readonly phaseLabel = computed(() => {
-    switch (this.state()?.phase ?? '') {
-      case 'init':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.init);
-      case 'sort':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.sort);
-      case 'divide':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.divide);
-      case 'base':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.base);
-      case 'merge':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.merge);
-      case 'strip':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.strip);
-      case 'compare':
-      case 'compare-strip':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.compare);
-      case 'update':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.update);
-      case 'complete':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.closestPair.phases.complete);
-      default:
-        return this.state()?.phase ?? '';
-    }
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    if (!geo) return [];
+    const phaseKey = PHASE_KEYS[geo.phase];
+    return [
+      { id: 'phase', label: PAIR_KEYS.phaseLabel, value: phaseKey ? toTraceValue(phaseKey) : geo.phase, kind: 'mono' },
+      { id: 'best', label: PAIR_KEYS.bestLabel, value: formatDistance(geo.bestDistance), tone: 'lime' },
+      { id: 'checks', label: PAIR_KEYS.checksLabel, value: geo.checkedPairs },
+      { id: 'depth', label: PAIR_KEYS.depthLabel, value: geo.depth },
+    ];
   });
 
-  formatDistance(value: number | null | undefined): string {
-    return value === null || value === undefined ? '—' : value.toFixed(2);
-  }
+  protected readonly regionFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    if (!geo) return [];
+    return [
+      { id: 'region', label: PAIR_KEYS.regionLabel, value: toTraceValue(closestRegionText(geo.regionLabel)), kind: 'mono' },
+      {
+        id: 'corridor',
+        label: PAIR_KEYS.stripCorridorLabel,
+        value: geo.stripWidth !== null ? `±${geo.stripWidth.toFixed(2)}` : toTraceValue(PAIR_KEYS.inactiveLabel),
+        kind: 'mono',
+      },
+      { id: 'strip', label: PAIR_KEYS.stripPointsLabel, value: geo.points.filter((point) => point.status === 'strip').length },
+      { id: 'split', label: PAIR_KEYS.splitXLabel, value: geo.midX !== null ? geo.midX.toFixed(1) : null },
+    ];
+  });
 
-  formatCoord(point: GeometryPoint | undefined): string {
-    if (!point) return '(—, —)';
-    return `(${point.x.toFixed(1)}, ${point.y.toFixed(1)})`;
-  }
+  protected readonly currentFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    if (!geo) return [];
+    return this.pairFacts(
+      geo.currentPair,
+      geo.candidateDistance,
+      'cyan',
+      geo.currentPair ? PAIR_KEYS.activeComparisonLabel : PAIR_KEYS.waitingComparisonLabel,
+    );
+  });
 
-  formatPairLabel(pair: {
-    readonly left: GeometryPoint | undefined;
-    readonly right: GeometryPoint | undefined;
-  }): string {
-    return `P${pair.left?.id ?? '—'} · P${pair.right?.id ?? '—'}`;
-  }
+  protected readonly bestFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    if (!geo) return [];
+    return this.pairFacts(
+      geo.bestPair,
+      geo.bestDistance,
+      'lime',
+      geo.bestPair ? PAIR_KEYS.championPairLabel : PAIR_KEYS.noWinningPairLabel,
+    );
+  });
 
-  private resolvePair(pair: readonly [number, number] | null): {
-    readonly left: GeometryPoint | undefined;
-    readonly right: GeometryPoint | undefined;
-  } | null {
-    const state = this.state();
-    if (!state || !pair) return null;
-    return {
-      left: state.points.find((point) => point.id === pair[0]),
-      right: state.points.find((point) => point.id === pair[1]),
-    };
-  }
+  protected readonly trailChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.trail ?? []).map((part, index) => ({ id: index, label: toTraceValue(trailText(part)), tone: 'violet' })),
+  );
 
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
+  private pairFacts(
+    pair: readonly [number, number] | null,
+    distance: number | null | undefined,
+    tone: TraceTone,
+    note: I18nKey,
+  ): readonly TraceFact[] {
+    const points = this.state()?.points ?? [];
+    const left = pair ? points.find((point) => point.id === pair[0]) : undefined;
+    const right = pair ? points.find((point) => point.id === pair[1]) : undefined;
+    return [
+      { id: 'pair', label: PAIR_KEYS.pairLabel, value: `P${left?.id ?? '—'} · P${right?.id ?? '—'}`, kind: 'mono', tone: pair ? tone : null },
+      { id: 'distance', label: PAIR_KEYS.distanceLabel, value: formatDistance(distance), tone: pair ? tone : null },
+      { id: 'coords', label: GEOMETRY_KEYS.columns.coords, value: `${formatCoord(left)} ${formatCoord(right)}`, kind: 'mono', wide: true },
+      { id: 'note', label: I18N_KEY.features.algorithms.tracePanels.common.statusLabel, value: toTraceValue(note), kind: 'text', wide: true },
+    ];
   }
 }

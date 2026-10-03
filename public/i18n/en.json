@@ -6208,9 +6208,6 @@
         },
         "viewLabel": "View"
       },
-      "traceHint": {
-        "ariaLabel": "Trace hint"
-      },
       "tracePanels": {
         "callStackLab": {
           "activeLabel": "Active frame",
@@ -6235,14 +6232,12 @@
           "bestSoFarLabel": "Best so far",
           "championPairLabel": "Current champion pair",
           "checksLabel": "Checks",
-          "comparisonAriaLabel": "Closest pair comparison",
           "currentComparisonLabel": "Current comparison",
           "currentPairLabel": "Current pair",
           "depthLabel": "Depth",
           "emptyLabel": "No geometry trace for this step.",
           "inactiveLabel": "inactive",
           "leftHalfLabel": "Left half",
-          "legendAriaLabel": "Closest pair legend",
           "noWinningPairLabel": "No winning pair yet",
           "phaseLabel": "Phase",
           "phases": {
@@ -6257,7 +6252,6 @@
             "update": "Best update"
           },
           "pointStatusLabel": "Point status",
-          "recursionAriaLabel": "Closest pair recursion",
           "recursionTrailLabel": "Recursion trail",
           "recursionTrailPlaceholder": "Recursion trail will appear once the split starts.",
           "regionAriaLabel": "Closest pair region",
@@ -6268,7 +6262,9 @@
           "stripCorridorLabel": "Strip corridor",
           "stripPointsLabel": "Strip points",
           "summaryAriaLabel": "Closest pair summary",
-          "waitingComparisonLabel": "Waiting for next comparison"
+          "waitingComparisonLabel": "Waiting for next comparison",
+          "pairLabel": "Pair",
+          "distanceLabel": "Distance"
         },
         "common": {
           "activeLabel": "Active",
@@ -6281,13 +6277,15 @@
           "resultLabel": "Result",
           "routeLabel": "Route",
           "sizeLabel": "Size",
-          "statusLabel": "Status"
+          "statusLabel": "Status",
+          "keyIdeaLabel": "Key idea",
+          "watchLabel": "What to watch",
+          "decisionLabel": "Decision"
         },
         "delaunay": {
           "centerLabel": "Center",
           "circumcircleLabel": "Circumcircle",
           "committedLabel": "Committed",
-          "detailsAriaLabel": "Delaunay details",
           "emptyLabel": "No trace data for this geometry step.",
           "noQueuedTrianglesLabel": "No queued triangles yet.",
           "radiusLabel": "Radius",
@@ -6309,7 +6307,6 @@
           "noActiveTransitionLabel": "No active transition in this step.",
           "presetLabel": "Preset",
           "presetNoteLabel": "Preset note",
-          "railsAriaLabel": "DP item rails",
           "statuses": {
             "active": "active",
             "backtrack": "backtrack",
@@ -6323,21 +6320,10 @@
           },
           "summaryAriaLabel": "DP summary",
           "tableEmptyLabel": "No DP cells yet",
-          "tagLegend": {
-            "active": "Current DP cell",
-            "base": "Base case",
-            "best": "Best known answer",
-            "blocked": "Unavailable cell",
-            "delete": "Delete operation",
-            "insert": "Insert operation",
-            "match": "Character match",
-            "path": "Backtrack path",
-            "replace": "Replace operation",
-            "skip": "Skip / carry branch",
-            "split": "Interval split",
-            "take": "Take branch"
-          },
-          "waitingTransitionLabel": "Waiting for next state transition."
+          "waitingTransitionLabel": "Waiting for next state transition.",
+          "skipTagLabel": "skip",
+          "pathTagLabel": "path",
+          "tableTitle": "Cells"
         },
         "dsu": {
           "awaitingOperationLabel": "Awaiting next operation.",
@@ -6348,7 +6334,8 @@
             "root": "Root",
             "size": "Size",
             "status": "Status",
-            "tags": "Tags"
+            "tags": "Tags",
+            "members": "Members"
           },
           "componentsLabel": "Components",
           "currentSetsLabel": "Current sets",
@@ -6364,15 +6351,9 @@
             "root": "root"
           },
           "tableEmptyLabel": "No DSU nodes yet",
-          "tagLegend": {
-            "accepted": "Accepted merge / MST edge",
-            "active": "Current merge / check focus",
-            "compressed": "Path compressed node",
-            "merged": "Merged under another root",
-            "query": "Find query path",
-            "rejected": "Rejected cycle / duplicate merge",
-            "root": "Representative root"
-          }
+          "acceptedTagLabel": "accepted",
+          "rejectedTagLabel": "rejected",
+          "tableTitle": "Nodes"
         },
         "geometry": {
           "actions": {
@@ -6392,7 +6373,6 @@
             "sorted": "Sorted (waiting)",
             "stack": "Stack (hull candidate)"
           },
-          "legendAria": "Hull legend",
           "onStack": "On stack",
           "pointStatus": "Point status",
           "rejected": "Rejected",
@@ -6401,7 +6381,6 @@
             "secondFromTop": "second from top",
             "stackTop": "stack top"
           },
-          "stackAria": "Hull stack",
           "stackEmpty": "Stack is empty",
           "standBy": "stand by",
           "summaryAria": "Convex hull summary",
@@ -6413,7 +6392,14 @@
             "leftTurn": "Left turn (CCW)",
             "rightTurn": "Right turn (CW)"
           },
-          "waiting": "Waiting for the next turn test"
+          "waiting": "Waiting for the next turn test",
+          "columns": {
+            "vertex": "Vertex",
+            "point": "Point",
+            "role": "Role",
+            "coords": "Coordinates"
+          },
+          "turnTitle": "Turn triple"
         },
         "graph": {
           "calculationAriaLabel": "Current calculation",
@@ -6455,7 +6441,8 @@
           "terminalLabel": "Terminal",
           "uiLensBadgeLabel": "UI lens",
           "visitOrderLabel": "Visit order",
-          "waitingDecisionLabel": "Waiting for a compare/relax/decision step."
+          "waitingDecisionLabel": "Waiting for a compare/relax/decision step.",
+          "tableTitle": "Nodes"
         },
         "grid": {
           "activeLabel": "Active",
@@ -6488,21 +6475,13 @@
           },
           "tableEmptyLabel": "No active grid cells yet",
           "tagLegend": {
-            "blocked": "Blocked cell",
-            "candidate": "Candidate",
-            "closed": "Closed cell",
-            "current": "Current cell",
-            "filled": "Filled cell",
-            "frontier": "Frontier",
-            "goal": "Goal cell",
-            "path": "Final path",
-            "seed": "Seed cell",
-            "wall": "Wall"
+            "candidate": "Candidate"
           },
           "targetLabel": "Target",
           "visitOrderLabel": "Visit order",
           "visitedLabel": "Visited",
-          "waitingDecisionLabel": "Waiting for the next grid update."
+          "waitingDecisionLabel": "Waiting for the next grid update.",
+          "tableTitle": "Cells"
         },
         "halfPlane": {
           "areaLabel": "Area",
@@ -6519,20 +6498,20 @@
             "infeasible": "Infeasible",
             "init": "Initial region"
           },
-          "polygonAriaLabel": "Half-plane polygon",
           "polygonEmptyLabel": "Feasible polygon is empty in this step.",
           "statusLabel": "Status",
-          "streamsAriaLabel": "Half-plane streams",
           "summaryAriaLabel": "Half-plane summary",
           "verticesUpdateLabel": "Vertices update as each constraint clips the feasible region.",
-          "vertsLabel": "Verts"
+          "vertsLabel": "Verts",
+          "feasibleStatus": "feasible",
+          "emptyStatus": "empty",
+          "completeStatus": "complete"
         },
         "lineIntersection": {
           "activeLabel": "Active",
           "activeOrderingLabel": "Active ordering",
           "betweenCheckpointsLabel": "between checkpoints",
           "currentEventLabel": "Current event",
-          "detailsAriaLabel": "Line intersection details",
           "emptyLabel": "No trace data for this geometry step.",
           "foundIntersectionsLabel": "Found intersections",
           "hitsLabel": "Hits",
@@ -6547,7 +6526,6 @@
             "intersection": "Crossing event",
             "retire": "Remove segment"
           },
-          "streamsAriaLabel": "Line intersection streams",
           "summaryAriaLabel": "Line intersection summary",
           "sweepXLabel": "Sweep x",
           "upcomingQueueLabel": "Upcoming queue"
@@ -6577,19 +6555,10 @@
             "zero": "zero"
           },
           "tableEmptyLabel": "No active matrix cells yet",
-          "tagLegend": {
-            "active": "Current compare cell",
-            "adjusted": "Changed by reduction / shift",
-            "assignment": "Chosen assignment cell",
-            "column": "Active column",
-            "covered": "Covered by current line set",
-            "improved": "Improved shortest distance",
-            "infinite": "Currently unreachable",
-            "pivot": "Pivot row / column",
-            "row": "Active row",
-            "zero": "Zero-cost candidate"
-          },
-          "waitingOperationLabel": "Waiting for the next matrix operation."
+          "waitingOperationLabel": "Waiting for the next matrix operation.",
+          "tableTitle": "Cells",
+          "rowTagLabel": "row",
+          "columnTagLabel": "column"
         },
         "matrixGrid": {
           "decisionLabel": "Decision",
@@ -6608,7 +6577,6 @@
           "targetRowLabel": "Modified row"
         },
         "minkowskiSum": {
-          "activeVectorsAriaLabel": "Active vectors",
           "activeVectorsLabel": "Active vectors",
           "areaLabel": "Area",
           "currentMergeSourceLabel": "Current merge source",
@@ -6624,10 +6592,11 @@
             "reflect": "Robot reflection",
             "seed": "Seed vertex"
           },
-          "streamsAriaLabel": "Minkowski sum streams",
           "summaryAriaLabel": "Minkowski sum summary",
           "totalLabel": "Total",
-          "waitingForVectorsLabel": "Waiting for active edge vectors."
+          "waitingForVectorsLabel": "Waiting for active edge vectors.",
+          "vectorColumn": "Vector",
+          "deltaColumn": "Δx, Δy"
         },
         "network": {
           "columns": {
@@ -6652,29 +6621,25 @@
             "visited": "visited"
           },
           "tableEmptyLabel": "No network rows yet",
-          "tagLegend": {
-            "augment": "Current augmenting path",
-            "blocked": "Rejected / dead edge state",
-            "current": "Current inspect focus",
-            "flow": "Positive flow / selected structure",
-            "free": "Currently unmatched / idle",
-            "frontier": "Queued BFS frontier",
-            "left": "Left partition node",
-            "level": "Inside active level graph",
-            "matched": "Paired or carrying solution structure",
-            "right": "Right partition node",
-            "saturated": "No residual capacity left",
-            "sink": "Sink / target",
-            "source": "Source anchor"
-          },
-          "waitingStepLabel": "Waiting for the next BFS / DFS / augment step."
+          "waitingStepLabel": "Waiting for the next BFS / DFS / augment step.",
+          "leftTagLabel": "left",
+          "rightTagLabel": "right",
+          "freeTagLabel": "free",
+          "matchedTagLabel": "matched",
+          "augmentTagLabel": "augment",
+          "flowTagLabel": "flow",
+          "saturatedTagLabel": "saturated",
+          "tableTitle": "Nodes"
         },
         "numberLab": {
           "decisionLabel": "Decision",
           "emptyLabel": "No trace available for this step.",
           "historyLabel": "History",
           "iterationLabel": "Iteration",
-          "registersLabel": "Registers"
+          "registersLabel": "Registers",
+          "registerColumn": "Register",
+          "valueColumn": "Value",
+          "hintColumn": "Note"
         },
         "pointerLab": {
           "decisionLabel": "Decision",
@@ -6688,7 +6653,9 @@
           "emptyLabel": "No chalkboard trace for this step.",
           "historyLabel": "Derivation",
           "iterationLabel": "Iteration",
-          "marginsLabel": "Margin notes"
+          "marginsLabel": "Margin notes",
+          "markerColumn": "Mark",
+          "lineColumn": "Line"
         },
         "search": {
           "calculationAriaLabel": "Search calculation summary",
@@ -6714,19 +6681,11 @@
           },
           "summaryAriaLabel": "Search summary",
           "tableEmptyLabel": "No search rows yet",
-          "tagLegend": {
-            "bound": "First or last match boundary",
-            "candidate": "Still inside active window",
-            "checked": "Checked earlier",
-            "compare": "Current probe / compare",
-            "match": "Confirmed hit",
-            "pending": "Not checked yet",
-            "pruned": "Eliminated from search"
-          },
           "targetLabel": "Target",
           "visitedOrderLabel": "Visited order",
           "waitingDecisionLabel": "waiting for next move",
-          "windowLabel": "Window"
+          "windowLabel": "Window",
+          "tableTitle": "Array"
         },
         "sieveGrid": {
           "decisionLabel": "Decision",
@@ -6750,7 +6709,6 @@
           "emptyLabel": "No trace available for this step.",
           "pairBadges": {
             "compare": "compare",
-            "idle": "idle",
             "swap": "swap"
           },
           "phaseLabel": "Phase",
@@ -6774,12 +6732,8 @@
           },
           "summaryAriaLabel": "Trace summary",
           "tableEmptyLabel": "No array rows yet",
-          "tagLegend": {
-            "compare": "In the compare pair",
-            "sorted": "Locked in final position",
-            "swap": "Being swapped"
-          },
-          "unsortedLabel": "Unsorted"
+          "unsortedLabel": "Unsorted",
+          "tableTitle": "Array"
         },
         "string": {
           "activeLabel": "Active",
@@ -6787,14 +6741,12 @@
             "automatonLabel": "Automaton",
             "currentCharLabel": "Current char",
             "currentStateLabel": "Current state",
-            "detailsAriaLabel": "Aho-Corasick details",
             "failurePathLabel": "Failure path",
             "matchCountLabel": "Match count",
             "matchesLabel": "Matches"
           },
           "burrowsWheeler": {
             "columnsLabel": "Columns",
-            "detailsAriaLabel": "Burrows-Wheeler details",
             "firstColumnLabel": "F",
             "gainLabel": "Gain",
             "inputLabel": "Input",
@@ -6803,28 +6755,25 @@
             "outputRunsLabel": "Output runs"
           },
           "calculationAriaLabel": "String calculation summary",
-          "contextAriaLabel": "String trace context",
           "currentTransitionLabel": "Current transition",
           "decisionLabel": "Decision",
           "emptyLabel": "No string trace available.",
           "huffman": {
-            "bitsSuffixLabel": "bits",
             "codesAssignedLabel": "Codes assigned",
             "compressedLabel": "Compressed",
             "compressionLabel": "Compression",
-            "detailsAriaLabel": "Huffman details",
             "heapLabel": "Heap",
             "originalLabel": "Original",
             "phaseLabel": "Phase",
             "ratioLabel": "Ratio",
             "savingsLabel": "Savings",
             "sizeLabel": "Size",
-            "uniqueCharsLabel": "Unique chars"
+            "uniqueCharsLabel": "Unique chars",
+            "bitsCount": "{{count}} bits"
           },
           "insightsLabel": "Insights",
           "kmp": {
             "alignmentLabel": "Alignment",
-            "detailsAriaLabel": "KMP details",
             "failureTableLabel": "Failure table",
             "jumpLabel": "Jump",
             "noJumpLabel": "none",
@@ -6841,7 +6790,6 @@
           "manacher": {
             "boundsLabel": "Bounds",
             "centerLabel": "Center",
-            "detailsAriaLabel": "Manacher details",
             "longestLabel": "Longest",
             "mirrorLabel": "Mirror",
             "mirrorWindowLabel": "Mirror window",
@@ -6852,7 +6800,6 @@
           "palindromicTree": {
             "activeNodeLabel": "Active node",
             "currentCharLabel": "Current char",
-            "detailsAriaLabel": "Palindromic tree details",
             "distinctLabel": "Distinct palindromes",
             "nodesLabel": "Nodes",
             "processedLabel": "Processed"
@@ -6863,7 +6810,6 @@
           "rabinKarp": {
             "baseModLabel": "Base / mod",
             "collisionStatusLabel": "collision",
-            "detailsAriaLabel": "Rabin-Karp details",
             "hashOnlyStatusLabel": "hash only",
             "hashesLabel": "Hashes",
             "incomingLabel": "Incoming",
@@ -6879,9 +6825,7 @@
           "resultLabel": "Result",
           "rle": {
             "charLabel": "Char",
-            "charsSuffixLabel": "chars",
             "countLabel": "Count",
-            "detailsAriaLabel": "RLE details",
             "originalLabel": "Original",
             "outputLabel": "Output",
             "phaseLabel": "Phase",
@@ -6889,10 +6833,14 @@
             "ratioLabel": "Ratio",
             "resultLabel": "Result",
             "runsDoneLabel": "Runs done",
-            "scannerLabel": "Scanner"
+            "scannerLabel": "Scanner",
+            "scanPhase": "scan",
+            "extendPhase": "extend run",
+            "emitPhase": "emit run",
+            "completePhase": "complete",
+            "charsCount": "{{count}} chars"
           },
           "suffixArray": {
-            "detailsAriaLabel": "Suffix array details",
             "distinctRanksLabel": "Distinct ranks",
             "orderLabel": "Suffix order",
             "ranksLabel": "Ranks",
@@ -6901,7 +6849,6 @@
           "suffixArrayLcp": {
             "activePairLabel": "Active pair",
             "compareWithLabel": "Compare with",
-            "detailsAriaLabel": "Suffix array LCP details",
             "lcpLabel": "LCP values",
             "overlapLabel": "Overlap"
           },
@@ -6909,7 +6856,6 @@
           "waitingEventLabel": "Waiting for next string event.",
           "zAlgorithm": {
             "boxLabel": "Z-box",
-            "detailsAriaLabel": "Z algorithm details",
             "leftLabel": "L",
             "prefixCompareLabel": "Prefix compare",
             "rightLabel": "R",
@@ -6920,14 +6866,15 @@
         "sweepLine": {
           "activeMergedSpansLabel": "Active merged spans",
           "areaLabel": "Area",
-          "detailsAriaLabel": "Sweep line details",
           "emptyLabel": "No trace data for this geometry step.",
           "eventQueueLabel": "Event queue",
           "noActiveSpansLabel": "No active spans on this scanline.",
           "noQueuedEventsLabel": "No queued events remain.",
           "scanlineLabel": "Scanline",
           "spansLabel": "Spans",
-          "summaryAriaLabel": "Sweep line summary"
+          "summaryAriaLabel": "Sweep line summary",
+          "spanColumn": "Span",
+          "rangeColumn": "y range"
         },
         "tree": {
           "currentNodeLabel": "Current",
@@ -6943,7 +6890,6 @@
           "activeSiteLabel": "Active site",
           "cellLabel": "Cell",
           "closedCellsLabel": "Closed cells",
-          "detailsAriaLabel": "Voronoi details",
           "doneLabel": "done",
           "emptyLabel": "No trace data for this geometry step.",
           "noQueuedSitesLabel": "No queued sites yet.",
@@ -7993,10 +7939,6 @@
     },
     "roadmap": {
       "chip": "Roadmap"
-    },
-    "table": {
-      "emptyLabel": "No rows",
-      "legendLabel": "Legend"
     },
     "vizOptionsMenu": {
       "title": "View options",

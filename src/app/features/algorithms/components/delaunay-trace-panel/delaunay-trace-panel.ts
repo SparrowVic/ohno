@@ -1,59 +1,47 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { TraceChip, TraceFact } from '../../../../shared/instrument/trace/trace.types';
 import { DelaunayTriangulationStepState } from '../../models/geometry';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
+import { triangleVerticesText } from '../geo-canvas/geometry-labels.utils';
+import { formatCoordPair, geometryEventChips } from '../geo-canvas/geometry-trace.utils';
 
-const CIRCLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'label', width: '50%' },
-  { id: 'value', width: '50%', kind: 'mono' },
-];
+const DELAUNAY_KEYS = I18N_KEY.features.algorithms.tracePanels.delaunay;
 
 @Component({
   selector: 'app-delaunay-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, TranslocoPipe],
   templateUrl: './delaunay-trace-panel.html',
   styleUrl: './delaunay-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DelaunayTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = DELAUNAY_KEYS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<DelaunayTriangulationStepState | null>(null);
-  readonly circleColumns = CIRCLE_COLUMNS;
 
-  readonly currentCircle = computed(() => this.state()?.circles[0] ?? null);
-  readonly circleRows = computed<readonly TableRow[]>(() => [
-    {
-      id: 'center',
-      ghost: this.currentCircle() === null,
-      cells: {
-        label: this.translate(I18N_KEY.features.algorithms.tracePanels.delaunay.centerLabel),
-        value: `(${this.formatCoord(this.currentCircle()?.cx)}, ${this.formatCoord(this.currentCircle()?.cy)})`,
-      },
-    },
-    {
-      id: 'radius',
-      ghost: this.currentCircle() === null,
-      cells: {
-        label: this.translate(I18N_KEY.features.algorithms.tracePanels.delaunay.radiusLabel),
-        value: this.formatCoord(this.currentCircle()?.r),
-      },
-    },
-  ]);
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    if (!geo) return [];
+    return [
+      { id: 'triangle', label: DELAUNAY_KEYS.triangleLabel, value: triangleVerticesText(geo.activeTriangleLabel), kind: 'mono', tone: 'cyan' },
+      { id: 'committed', label: DELAUNAY_KEYS.committedLabel, value: geo.triangleCount, tone: 'lime' },
+    ];
+  });
 
-  formatCoord(value: number | undefined): string {
-    return value !== undefined ? value.toFixed(1) : '—';
-  }
+  protected readonly circleFacts = computed<readonly TraceFact[]>(() => {
+    const circle = this.state()?.circles[0] ?? null;
+    return [
+      { id: 'center', label: DELAUNAY_KEYS.centerLabel, value: formatCoordPair(circle?.cx, circle?.cy), kind: 'mono', tone: circle ? 'amber' : null },
+      { id: 'radius', label: DELAUNAY_KEYS.radiusLabel, value: circle ? circle.r.toFixed(1) : null },
+    ];
+  });
 
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
+  protected readonly eventChips = computed<readonly TraceChip[]>(() =>
+    geometryEventChips(this.state()?.events ?? [], (event) => triangleVerticesText(event.label)),
+  );
 }

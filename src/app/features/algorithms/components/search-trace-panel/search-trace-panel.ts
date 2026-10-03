@@ -1,237 +1,114 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faBullseye,
-  faCheckDouble,
-  faCircle,
-  faCrosshairs,
-  faEye,
-  faScissors,
-  faWandMagicSparkles,
-} from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { SearchTraceRow, SearchTraceState, SearchTraceTag } from '../../models/search';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
-import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
-interface SearchTagLegendItem {
-  readonly id: SearchTraceTag;
-  readonly labelKey: I18nKey;
-  readonly icon: IconDefinition;
-}
+const SEARCH_KEYS = I18N_KEY.features.algorithms.tracePanels.search;
+const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
 
-const TAG_LEGEND: readonly SearchTagLegendItem[] = [
-  {
-    id: 'pending',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.pending,
-    icon: faCircle,
-  },
-  {
-    id: 'candidate',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.candidate,
-    icon: faWandMagicSparkles,
-  },
-  {
-    id: 'compare',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.compare,
-    icon: faCrosshairs,
-  },
-  {
-    id: 'checked',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.checked,
-    icon: faEye,
-  },
-  {
-    id: 'pruned',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.pruned,
-    icon: faScissors,
-  },
-  {
-    id: 'bound',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.bound,
-    icon: faBullseye,
-  },
-  {
-    id: 'match',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.search.tagLegend.match,
-    icon: faCheckDouble,
-  },
-];
+const STATUS_TONES: Readonly<Record<SearchTraceRow['status'], TraceTone | null>> = {
+  idle: null,
+  window: 'violet',
+  probe: 'cyan',
+  visited: 'slate',
+  eliminated: 'red',
+  bound: 'amber',
+  found: 'lime',
+};
 
-const TABLE_COLUMNS: readonly TableColumn[] = [
-  {
-    id: 'index',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.index,
-    width: '64px',
-    kind: 'mono',
-  },
-  {
-    id: 'value',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.value,
-    width: '92px',
-    kind: 'mono',
-  },
-  {
-    id: 'status',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.status,
-    width: '92px',
-    kind: 'tag',
-  },
-  {
-    id: 'tags',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.search.columns.tags,
-    width: '92px',
-    kind: 'tags',
-  },
+const TAG_CHIPS: Readonly<Record<SearchTraceTag, { readonly label: I18nKey; readonly tone: TraceTone | null }>> = {
+  pending: { label: SEARCH_KEYS.statuses.idle, tone: null },
+  candidate: { label: SEARCH_KEYS.statuses.window, tone: 'violet' },
+  compare: { label: SEARCH_KEYS.statuses.probe, tone: 'cyan' },
+  checked: { label: SEARCH_KEYS.statuses.visited, tone: 'slate' },
+  pruned: { label: SEARCH_KEYS.statuses.eliminated, tone: 'red' },
+  bound: { label: SEARCH_KEYS.statuses.bound, tone: 'amber' },
+  match: { label: SEARCH_KEYS.statuses.found, tone: 'lime' },
+};
+
+const TABLE_COLUMNS: readonly TraceColumn[] = [
+  { id: 'index', header: SEARCH_KEYS.columns.index, align: 'end', width: '56px' },
+  { id: 'value', header: SEARCH_KEYS.columns.value, align: 'end', width: '72px' },
+  { id: 'status', header: SEARCH_KEYS.columns.status, kind: 'chips' },
+  { id: 'tags', header: SEARCH_KEYS.columns.tags, kind: 'chips' },
 ];
 
 @Component({
   selector: 'app-search-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, OhnoTraceTable, TranslocoPipe],
   templateUrl: './search-trace-panel.html',
   styleUrl: './search-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = SEARCH_KEYS;
+  protected readonly commonKeys = COMMON_KEYS;
+  protected readonly columns = TABLE_COLUMNS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<SearchTraceState | null>(null);
-  readonly tableColumns = TABLE_COLUMNS;
 
-  readonly probeLabel = computed(() => {
-    const probeIndex = this.state()?.probeIndex;
-    if (probeIndex === null || probeIndex === undefined) return '—';
-    const probeValue = this.state()?.probeValue;
-    return `${probeIndex}${probeValue === null ? '' : ` · ${probeValue}`}`;
-  });
-
-  readonly windowLabel = computed(() => {
-    const low = this.state()?.low;
-    const high = this.state()?.high;
-    if (low === null || high === null) {
-      return this.translate(I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel);
-    }
-    return `[${low}, ${high}]`;
-  });
-
-  readonly hitLabel = computed(() => {
-    const hits = this.state()?.resultIndices ?? [];
-    if (hits.length === 0) return '—';
-    if (hits.length === 1) return String(hits[0]);
-    return `${hits[0]}..${hits[hits.length - 1]}`;
-  });
-
-  readonly legend = TAG_LEGEND;
-  readonly tableLegendItems = computed(() =>
-    TAG_LEGEND.map((item) => ({
-      id: item.id,
-      tag: this.traceTag(item.id),
-      label: '',
-      labelKey: item.labelKey,
-    })),
-  );
-  readonly tableRows = computed<readonly TableRow[]>(() =>
-    (this.state()?.rows ?? []).map((row) => ({
-      id: row.index,
-      tone: row.status === 'probe' ? 'active' : row.status === 'found' ? 'success' : 'default',
-      cells: {
-        index: row.index,
-        value: row.value,
-        status: this.statusTag(row),
-        tags: row.tags.map((tag) => this.traceTag(tag)),
-      },
-    })),
-  );
-
-  tagIcon(tag: SearchTraceTag): IconDefinition {
-    return TAG_LEGEND.find((item) => item.id === tag)?.icon ?? faCircle;
-  }
-
-  tagLabel(tag: SearchTraceTag): string {
-    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
-    return labelKey ? this.translate(labelKey) : tag;
-  }
-
-  statusTag(row: SearchTraceRow): UiTagModel {
-    return {
-      label: this.statusLabel(row.status),
-      tone: row.status === 'found' ? 'success' : row.status === 'probe' ? 'warning' : 'neutral',
-      appearance: 'soft',
-      size: 'sm',
-      uppercase: true,
-    };
-  }
-
-  traceTag(tag: SearchTraceTag): UiTagModel {
-    return {
-      icon: this.tagIcon(tag),
-      title: this.tagLabel(tag),
-      ariaLabel: this.tagLabel(tag),
-      tone: this.tagTone(tag),
-      appearance: 'soft',
-      size: 'sm',
-      shape: 'icon',
-    };
-  }
-
-  resultTone(): 'found' | 'searching' | 'idle' {
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
     const state = this.state();
-    if (!state) return 'idle';
-    if (state.resultIndices.length > 0) return 'found';
-    if (state.probeIndex !== null || state.low !== null || state.high !== null) return 'searching';
-    return 'idle';
-  }
+    if (!state) return [];
+    const probe =
+      state.probeIndex === null ? null : `${state.probeIndex}${state.probeValue === null ? '' : ` · ${state.probeValue}`}`;
+    const window =
+      state.low === null || state.high === null ? toTraceValue(COMMON_KEYS.emptyValueLabel) : `[${state.low}, ${state.high}]`;
+    return [
+      { id: 'target', label: SEARCH_KEYS.targetLabel, value: state.target, tone: 'violet' },
+      { id: 'probe', label: SEARCH_KEYS.probeLabel, value: probe, kind: 'mono', tone: probe ? 'cyan' : null },
+      { id: 'window', label: SEARCH_KEYS.windowLabel, value: window, kind: 'mono' },
+    ];
+  });
 
-  private tagTone(
-    tag: SearchTraceTag,
-  ): 'neutral' | 'window' | 'warning' | 'route' | 'danger' | 'hit' | 'success' {
-    switch (tag) {
-      case 'pending':
-        return 'neutral';
-      case 'candidate':
-        return 'window';
-      case 'compare':
-        return 'warning';
-      case 'checked':
-        return 'route';
-      case 'pruned':
-        return 'danger';
-      case 'bound':
-        return 'hit';
-      case 'match':
-        return 'success';
-    }
-  }
+  protected readonly calculationFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    const hits = state.resultIndices;
+    const hitLabel = hits.length === 0 ? null : hits.length === 1 ? hits[0] : `${hits[0]}..${hits[hits.length - 1]}`;
+    return [
+      { id: 'mode', label: COMMON_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' },
+      { id: 'status', label: COMMON_KEYS.statusLabel, value: toTraceValue(state.statusLabel), kind: 'mono' },
+      { id: 'hits', label: SEARCH_KEYS.hitsLabel, value: hitLabel, tone: hits.length > 0 ? 'lime' : null },
+      {
+        id: 'decision',
+        label: COMMON_KEYS.decisionLabel,
+        value: toTraceValue(state.decision ?? SEARCH_KEYS.waitingDecisionLabel),
+        kind: 'text',
+        wide: true,
+      },
+    ];
+  });
 
-  private statusLabel(status: SearchTraceRow['status']): string {
-    switch (status) {
-      case 'idle':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.idle);
-      case 'window':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.window);
-      case 'probe':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.probe);
-      case 'visited':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.visited);
-      case 'eliminated':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.eliminated);
-      case 'bound':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.bound);
-      case 'found':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.search.statuses.found);
-    }
-  }
+  protected readonly visitedChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.visitedOrder ?? []).map((index, position) => ({ id: position, label: index, tone: 'slate' })),
+  );
 
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
+  protected readonly hitChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.resultIndices ?? []).map((index) => ({ id: index, label: index, tone: 'lime' })),
+  );
+
+  protected readonly rows = computed<readonly TraceRow[]>(() =>
+    (this.state()?.rows ?? []).map((row) => {
+      const tone = STATUS_TONES[row.status];
+      return {
+        id: row.index,
+        tone: row.status === 'probe' || row.status === 'found' ? tone : null,
+        dim: row.status === 'eliminated',
+        cells: {
+          index: row.index,
+          value: row.value,
+          status: [{ id: row.status, label: toTraceValue(SEARCH_KEYS.statuses[row.status]), tone }],
+          tags: row.tags.map((tag) => ({ id: tag, label: toTraceValue(TAG_CHIPS[tag].label), tone: TAG_CHIPS[tag].tone })),
+        },
+      };
+    }),
+  );
 }

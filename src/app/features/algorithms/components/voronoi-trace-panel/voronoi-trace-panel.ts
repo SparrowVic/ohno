@@ -2,43 +2,55 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { TraceChip, TraceFact } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { VoronoiDiagramStepState } from '../../models/geometry';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
+import { formatCoordPair, geometryEventChips } from '../geo-canvas/geometry-trace.utils';
 
-const SITE_COLUMNS: readonly TableColumn[] = [
-  { id: 'label', width: '50%' },
-  { id: 'value', width: '50%', kind: 'mono' },
-];
+const VORONOI_KEYS = I18N_KEY.features.algorithms.tracePanels.voronoi;
 
 @Component({
   selector: 'app-voronoi-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, TranslocoPipe],
   templateUrl: './voronoi-trace-panel.html',
   styleUrl: './voronoi-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VoronoiTracePanel {
-  protected readonly I18N_KEY = I18N_KEY;
+  protected readonly keys = VORONOI_KEYS;
+
   readonly state = input<VoronoiDiagramStepState | null>(null);
-  readonly siteColumns = SITE_COLUMNS;
 
-  readonly activeSite = computed(
-    () => this.state()?.points.find((point) => point.id === this.state()?.activeSiteId) ?? null,
-  );
-  readonly siteRows = computed<readonly TableRow[]>(() => [
-    {
-      id: 'active-site',
-      ghost: this.activeSite() === null,
-      cells: {
-        label: `P${this.activeSite()?.id ?? '—'}`,
-        value: `(${this.formatCoord(this.activeSite()?.x)}, ${this.formatCoord(this.activeSite()?.y)})`,
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    if (!geo) return [];
+    return [
+      { id: 'cell', label: VORONOI_KEYS.cellLabel, value: geo.currentCellLabel, kind: 'mono', tone: 'cyan' },
+      { id: 'closed', label: VORONOI_KEYS.closedCellsLabel, value: geo.closedCells, tone: 'lime' },
+      {
+        id: 'sweep',
+        label: VORONOI_KEYS.sweepYLabel,
+        value: geo.sweepY !== null ? geo.sweepY.toFixed(1) : toTraceValue(VORONOI_KEYS.doneLabel),
       },
-    },
-  ]);
+    ];
+  });
 
-  formatCoord(value: number | undefined): string {
-    return value !== undefined ? value.toFixed(1) : '—';
-  }
+  protected readonly siteFacts = computed<readonly TraceFact[]>(() => {
+    const geo = this.state();
+    const site = geo?.points.find((point) => point.id === geo.activeSiteId) ?? null;
+    return [
+      {
+        id: 'site',
+        label: `P${site?.id ?? '—'}`,
+        value: formatCoordPair(site?.x, site?.y),
+        kind: 'mono',
+        tone: site ? 'violet' : null,
+      },
+    ];
+  });
+
+  protected readonly eventChips = computed<readonly TraceChip[]>(() => geometryEventChips(this.state()?.events ?? []));
 }

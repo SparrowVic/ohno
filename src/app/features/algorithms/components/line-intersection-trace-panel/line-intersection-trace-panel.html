@@ -1,151 +1,25 @@
-<div class="trace">
-  @if (state(); as geo) {
-    <div class="trace__header">
-      <app-segmented-panel
-        class="trace__summary"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.lineIntersection.summaryAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.phaseLabel | transloco
-          "
-          [value]="phaseLabel(geo.phase)"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.sweepXLabel | transloco
-          "
-          [value]="geo.sweepX !== null ? geo.sweepX.toFixed(1) : '—'"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.hitsLabel | transloco
-          "
-          [value]="geo.foundCount"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.activeLabel | transloco
-          "
-          [value]="geo.activeOrder.length"
-          [valueMono]="true"
-        />
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__streams"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.lineIntersection.streamsAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.currentEventLabel | transloco
-          "
-        >
-          <div class="trace__event-wrap" [class.trace__event-wrap--ghost]="!currentEvent()">
-            @if (currentEvent(); as event) {
-              <span class="trace__event-pill trace__event-pill--{{ event.kind }}">{{
-                event.label
-              }}</span>
-              <span class="trace__event-meta">x = {{ event.x.toFixed(1) }}</span>
-            } @else {
-              <span class="trace__event-pill trace__event-pill--ghost">{{
-                I18N_KEY.features.algorithms.tracePanels.lineIntersection.betweenCheckpointsLabel
-                  | transloco
-              }}</span>
-              <span class="trace__event-meta">x = —</span>
-            }
-          </div>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.activeOrderingLabel
-              | transloco
-          "
-          [badge]="geo.activeOrder.length"
-        >
-          <div class="trace__chips">
-            @if (geo.activeOrder.length === 0) {
-              <span class="trace__placeholder">{{
-                I18N_KEY.features.algorithms.tracePanels.lineIntersection.noActiveSegmentsLabel
-                  | transloco
-              }}</span>
-            } @else {
-              @for (label of geo.activeOrder; track label) {
-                <span class="trace__chip">{{ label }}</span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__streams"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.lineIntersection.detailsAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.upcomingQueueLabel | transloco
-          "
-          [badge]="upcomingEvents().length"
-        >
-          <div class="trace__chips">
-            @if (upcomingEvents().length === 0) {
-              <span class="trace__placeholder">{{
-                I18N_KEY.features.algorithms.tracePanels.lineIntersection.noQueuedEventsLabel
-                  | transloco
-              }}</span>
-            } @else {
-              @for (event of upcomingEvents(); track event.id) {
-                <span
-                  class="trace__queue-item trace__queue-item--{{ event.kind }} trace__queue-item--{{
-                    event.tone
-                  }}"
-                >
-                  {{ event.label }}
-                </span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.lineIntersection.foundIntersectionsLabel
-              | transloco
-          "
-          [badge]="geo.intersections.length"
-        >
-          @if (geo.intersections.length === 0) {
-            <div class="trace__placeholder">
-              {{
-                I18N_KEY.features.algorithms.tracePanels.lineIntersection
-                  .noConfirmedIntersectionsLabel | transloco
-              }}
-            </div>
-          } @else {
-            <app-table
-              class="trace__table"
-              [columns]="intersectionColumns"
-              [rows]="intersectionRows()"
-              [showHeader]="false"
-              density="compact"
-            />
-          }
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-    </div>
-  } @else {
-    <div class="trace__empty">
-      {{ I18N_KEY.features.algorithms.tracePanels.lineIntersection.emptyLabel | transloco }}
-    </div>
-  }
-</div>
+@if (state(); as geo) {
+  <ohno-trace-facts [title]="keys.summaryAriaLabel" [facts]="summaryFacts()" />
+  <ohno-trace-facts [facts]="eventFacts()" />
+  <ohno-trace-chips
+    [title]="keys.activeOrderingLabel"
+    [meta]="geo.activeOrder.length"
+    [chips]="orderChips()"
+    [emptyLabel]="keys.noActiveSegmentsLabel"
+  />
+  <ohno-trace-chips
+    [title]="keys.upcomingQueueLabel"
+    [meta]="upcomingChips().length"
+    [chips]="upcomingChips()"
+    [emptyLabel]="keys.noQueuedEventsLabel"
+  />
+  <ohno-trace-table
+    [title]="keys.foundIntersectionsLabel"
+    [meta]="geo.intersections.length"
+    [columns]="intersectionColumns"
+    [rows]="intersectionRows()"
+    [emptyLabel]="keys.noConfirmedIntersectionsLabel"
+  />
+} @else {
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ keys.emptyLabel | transloco }}</p>
+}

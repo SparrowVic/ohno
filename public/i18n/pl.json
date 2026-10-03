@@ -6208,9 +6208,6 @@
         },
         "viewLabel": "Widok"
       },
-      "traceHint": {
-        "ariaLabel": "Wskazówka śladu"
-      },
       "tracePanels": {
         "callStackLab": {
           "activeLabel": "Aktywna ramka",
@@ -6235,14 +6232,12 @@
           "bestSoFarLabel": "Najlepsza dotąd",
           "championPairLabel": "Aktualna najlepsza para",
           "checksLabel": "Sprawdzenia",
-          "comparisonAriaLabel": "Porównanie najbliższej pary",
           "currentComparisonLabel": "Bieżące porównanie",
           "currentPairLabel": "Bieżąca para",
           "depthLabel": "Głębokość",
           "emptyLabel": "Brak śladu geometrii dla tego kroku.",
           "inactiveLabel": "nieaktywne",
           "leftHalfLabel": "Lewa połowa",
-          "legendAriaLabel": "Legenda najbliższej pary",
           "noWinningPairLabel": "Brak najlepszej pary",
           "phaseLabel": "Faza",
           "phases": {
@@ -6257,7 +6252,6 @@
             "update": "Aktualizacja najlepszego"
           },
           "pointStatusLabel": "Status punktu",
-          "recursionAriaLabel": "Rekurencja najbliższej pary",
           "recursionTrailLabel": "Ślad rekurencji",
           "recursionTrailPlaceholder": "Ślad rekurencji pojawi się po rozpoczęciu podziału.",
           "regionAriaLabel": "Region najbliższej pary",
@@ -6268,7 +6262,9 @@
           "stripCorridorLabel": "Korytarz pasa",
           "stripPointsLabel": "Punkty w pasie",
           "summaryAriaLabel": "Podsumowanie najbliższej pary",
-          "waitingComparisonLabel": "Oczekiwanie na kolejne porównanie"
+          "waitingComparisonLabel": "Oczekiwanie na kolejne porównanie",
+          "pairLabel": "Para",
+          "distanceLabel": "Odległość"
         },
         "common": {
           "activeLabel": "Aktywne",
@@ -6281,13 +6277,15 @@
           "resultLabel": "Wynik",
           "routeLabel": "Trasa",
           "sizeLabel": "Rozmiar",
-          "statusLabel": "Status"
+          "statusLabel": "Status",
+          "keyIdeaLabel": "Kluczowa idea",
+          "watchLabel": "Na co patrzeć",
+          "decisionLabel": "Decyzja"
         },
         "delaunay": {
           "centerLabel": "Środek",
           "circumcircleLabel": "Okrąg opisany",
           "committedLabel": "Zatwierdzone",
-          "detailsAriaLabel": "Szczegóły Delaunaya",
           "emptyLabel": "Brak danych śladu dla tego kroku geometrii.",
           "noQueuedTrianglesLabel": "Brak oczekujących trójkątów.",
           "radiusLabel": "Promień",
@@ -6309,7 +6307,6 @@
           "noActiveTransitionLabel": "W tym kroku nie ma aktywnego przejścia.",
           "presetLabel": "Preset",
           "presetNoteLabel": "Notatka presetu",
-          "railsAriaLabel": "Szyny elementów DP",
           "statuses": {
             "active": "aktywna",
             "backtrack": "backtrack",
@@ -6323,21 +6320,10 @@
           },
           "summaryAriaLabel": "Podsumowanie DP",
           "tableEmptyLabel": "Brak komórek DP",
-          "tagLegend": {
-            "active": "Bieżąca komórka DP",
-            "base": "Przypadek bazowy",
-            "best": "Najlepsza znana odpowiedź",
-            "blocked": "Niedostępna komórka",
-            "delete": "Operacja usunięcia",
-            "insert": "Operacja wstawienia",
-            "match": "Dopasowanie znaków",
-            "path": "Ścieżka odtwarzania",
-            "replace": "Operacja zamiany",
-            "skip": "Gałąź pominięcia / przeniesienia",
-            "split": "Podział przedziału",
-            "take": "Gałąź wyboru"
-          },
-          "waitingTransitionLabel": "Oczekiwanie na kolejne przejście stanu."
+          "waitingTransitionLabel": "Oczekiwanie na kolejne przejście stanu.",
+          "skipTagLabel": "pomiń",
+          "pathTagLabel": "ścieżka",
+          "tableTitle": "Komórki"
         },
         "dsu": {
           "awaitingOperationLabel": "Oczekiwanie na następną operację.",
@@ -6348,7 +6334,8 @@
             "root": "Korzeń",
             "size": "Rozmiar",
             "status": "Status",
-            "tags": "Tagi"
+            "tags": "Tagi",
+            "members": "Elementy"
           },
           "componentsLabel": "Składowe",
           "currentSetsLabel": "Bieżące zbiory",
@@ -6364,15 +6351,9 @@
             "root": "korzeń"
           },
           "tableEmptyLabel": "Brak węzłów DSU",
-          "tagLegend": {
-            "accepted": "Zaakceptowane scalenie / krawędź MST",
-            "active": "Bieżące scalenie / fokus sprawdzenia",
-            "compressed": "Węzeł po kompresji ścieżki",
-            "merged": "Scalony pod innym korzeniem",
-            "query": "Ścieżka zapytania find",
-            "rejected": "Odrzucony cykl / duplikat scalenia",
-            "root": "Reprezentujący korzeń"
-          }
+          "acceptedTagLabel": "zaakceptowane",
+          "rejectedTagLabel": "odrzucone",
+          "tableTitle": "Węzły"
         },
         "geometry": {
           "actions": {
@@ -6392,7 +6373,6 @@
             "sorted": "Posortowany (czeka)",
             "stack": "Na stosie (kandydat)"
           },
-          "legendAria": "Legenda otoczki",
           "onStack": "Na stosie",
           "pointStatus": "Stan punktu",
           "rejected": "Odrzucone",
@@ -6401,7 +6381,6 @@
             "secondFromTop": "drugi od góry",
             "stackTop": "szczyt stosu"
           },
-          "stackAria": "Stos otoczki",
           "stackEmpty": "Stos jest pusty",
           "standBy": "czekaj",
           "summaryAria": "Podsumowanie otoczki wypukłej",
@@ -6413,7 +6392,14 @@
             "leftTurn": "Lewy skręt (CCW)",
             "rightTurn": "Prawy skręt (CW)"
           },
-          "waiting": "Czeka na kolejny test skrętu"
+          "waiting": "Czeka na kolejny test skrętu",
+          "columns": {
+            "vertex": "Wierzch.",
+            "point": "Punkt",
+            "role": "Rola",
+            "coords": "Współrzędne"
+          },
+          "turnTitle": "Trójka skrętu"
         },
         "graph": {
           "calculationAriaLabel": "Bieżące obliczenie",
@@ -6455,7 +6441,8 @@
           "terminalLabel": "Terminal",
           "uiLensBadgeLabel": "Soczewka UI",
           "visitOrderLabel": "Kolejność odwiedzin",
-          "waitingDecisionLabel": "Oczekiwanie na krok porównania / relaksacji / decyzji."
+          "waitingDecisionLabel": "Oczekiwanie na krok porównania / relaksacji / decyzji.",
+          "tableTitle": "Węzły"
         },
         "grid": {
           "activeLabel": "Aktywne",
@@ -6488,21 +6475,13 @@
           },
           "tableEmptyLabel": "Brak jeszcze aktywnych komórek siatki",
           "tagLegend": {
-            "blocked": "Zablokowana komórka",
-            "candidate": "Kandydat",
-            "closed": "Zamknięta komórka",
-            "current": "Bieżąca komórka",
-            "filled": "Wypełniona komórka",
-            "frontier": "Frontier",
-            "goal": "Komórka celu",
-            "path": "Końcowa ścieżka",
-            "seed": "Komórka startowa",
-            "wall": "Ściana"
+            "candidate": "Kandydat"
           },
           "targetLabel": "Cel",
           "visitOrderLabel": "Kolejność odwiedzin",
           "visitedLabel": "Odwiedzone",
-          "waitingDecisionLabel": "Oczekiwanie na następną aktualizację siatki."
+          "waitingDecisionLabel": "Oczekiwanie na następną aktualizację siatki.",
+          "tableTitle": "Komórki"
         },
         "halfPlane": {
           "areaLabel": "Pole",
@@ -6519,20 +6498,20 @@
             "infeasible": "Niedopuszczalny",
             "init": "Początkowy obszar"
           },
-          "polygonAriaLabel": "Wielokąt półpłaszczyzn",
           "polygonEmptyLabel": "W tym kroku wielokąt dopuszczalny jest pusty.",
           "statusLabel": "Status",
-          "streamsAriaLabel": "Strumienie półpłaszczyzn",
           "summaryAriaLabel": "Podsumowanie półpłaszczyzn",
           "verticesUpdateLabel": "Wierzchołki aktualizują się, gdy każde ograniczenie przycina obszar dopuszczalny.",
-          "vertsLabel": "Wierzch."
+          "vertsLabel": "Wierzch.",
+          "feasibleStatus": "wykonalny",
+          "emptyStatus": "pusty",
+          "completeStatus": "gotowy"
         },
         "lineIntersection": {
           "activeLabel": "Aktywne",
           "activeOrderingLabel": "Aktywna kolejność",
           "betweenCheckpointsLabel": "między punktami kontrolnymi",
           "currentEventLabel": "Bieżące zdarzenie",
-          "detailsAriaLabel": "Szczegóły przecięć odcinków",
           "emptyLabel": "Brak danych śladu dla tego kroku geometrii.",
           "foundIntersectionsLabel": "Znalezione przecięcia",
           "hitsLabel": "Trafienia",
@@ -6547,7 +6526,6 @@
             "intersection": "Zdarzenie przecięcia",
             "retire": "Usunięcie odcinka"
           },
-          "streamsAriaLabel": "Strumienie przecięć odcinków",
           "summaryAriaLabel": "Podsumowanie przecięć odcinków",
           "sweepXLabel": "Sweep x",
           "upcomingQueueLabel": "Nadchodząca kolejka"
@@ -6577,19 +6555,10 @@
             "zero": "zero"
           },
           "tableEmptyLabel": "Brak aktywnych komórek macierzy",
-          "tagLegend": {
-            "active": "Bieżąca komórka porównania",
-            "adjusted": "Zmieniona przez redukcję / przesunięcie",
-            "assignment": "Wybrana komórka przypisania",
-            "column": "Aktywna kolumna",
-            "covered": "Pokryta bieżącym zestawem linii",
-            "improved": "Ulepszona najkrótsza odległość",
-            "infinite": "Obecnie nieosiągalna",
-            "pivot": "Wiersz / kolumna pivota",
-            "row": "Aktywny wiersz",
-            "zero": "Kandydat o zerowym koszcie"
-          },
-          "waitingOperationLabel": "Oczekiwanie na następną operację macierzową."
+          "waitingOperationLabel": "Oczekiwanie na następną operację macierzową.",
+          "tableTitle": "Komórki",
+          "rowTagLabel": "wiersz",
+          "columnTagLabel": "kolumna"
         },
         "matrixGrid": {
           "decisionLabel": "Decyzja",
@@ -6608,7 +6577,6 @@
           "targetRowLabel": "Wiersz zmieniany"
         },
         "minkowskiSum": {
-          "activeVectorsAriaLabel": "Aktywne wektory",
           "activeVectorsLabel": "Aktywne wektory",
           "areaLabel": "Pole",
           "currentMergeSourceLabel": "Bieżące źródło scalania",
@@ -6624,10 +6592,11 @@
             "reflect": "Odbicie robota",
             "seed": "Wierzchołek startowy"
           },
-          "streamsAriaLabel": "Strumienie sumy Minkowskiego",
           "summaryAriaLabel": "Podsumowanie sumy Minkowskiego",
           "totalLabel": "Łącznie",
-          "waitingForVectorsLabel": "Oczekiwanie na aktywne wektory krawędzi."
+          "waitingForVectorsLabel": "Oczekiwanie na aktywne wektory krawędzi.",
+          "vectorColumn": "Wektor",
+          "deltaColumn": "Δx, Δy"
         },
         "network": {
           "columns": {
@@ -6652,29 +6621,25 @@
             "visited": "odwiedzony"
           },
           "tableEmptyLabel": "Brak wierszy sieci",
-          "tagLegend": {
-            "augment": "Bieżąca ścieżka powiększająca",
-            "blocked": "Odrzucony / martwy stan krawędzi",
-            "current": "Bieżący fokus inspekcji",
-            "flow": "Dodatni przepływ / wybrana struktura",
-            "free": "Obecnie nieskojarzony / bezczynny",
-            "frontier": "Kolejka frontu BFS",
-            "left": "Węzeł lewej partycji",
-            "level": "W aktywnym grafie poziomów",
-            "matched": "Skojarzony lub niosący strukturę rozwiązania",
-            "right": "Węzeł prawej partycji",
-            "saturated": "Brak pozostałej przepustowości",
-            "sink": "Ujście / cel",
-            "source": "Kotwica źródła"
-          },
-          "waitingStepLabel": "Oczekiwanie na następny krok BFS / DFS / powiększania."
+          "waitingStepLabel": "Oczekiwanie na następny krok BFS / DFS / powiększania.",
+          "leftTagLabel": "lewa",
+          "rightTagLabel": "prawa",
+          "freeTagLabel": "wolny",
+          "matchedTagLabel": "skojarzony",
+          "augmentTagLabel": "powiększanie",
+          "flowTagLabel": "przepływ",
+          "saturatedTagLabel": "nasycona",
+          "tableTitle": "Węzły"
         },
         "numberLab": {
           "decisionLabel": "Decyzja",
           "emptyLabel": "Brak śladu dla tego kroku.",
           "historyLabel": "Historia",
           "iterationLabel": "Iteracja",
-          "registersLabel": "Rejestry"
+          "registersLabel": "Rejestry",
+          "registerColumn": "Rejestr",
+          "valueColumn": "Wartość",
+          "hintColumn": "Opis"
         },
         "pointerLab": {
           "decisionLabel": "Decyzja",
@@ -6688,7 +6653,9 @@
           "emptyLabel": "Brak śladu tablicy dla tego kroku.",
           "historyLabel": "Wyprowadzenie",
           "iterationLabel": "Iteracja",
-          "marginsLabel": "Notatki na marginesie"
+          "marginsLabel": "Notatki na marginesie",
+          "markerColumn": "Znak",
+          "lineColumn": "Linia"
         },
         "search": {
           "calculationAriaLabel": "Podsumowanie obliczeń wyszukiwania",
@@ -6714,19 +6681,11 @@
           },
           "summaryAriaLabel": "Podsumowanie wyszukiwania",
           "tableEmptyLabel": "Brak wierszy wyszukiwania",
-          "tagLegend": {
-            "bound": "Granica pierwszego lub ostatniego trafienia",
-            "candidate": "Wciąż wewnątrz aktywnego okna",
-            "checked": "Sprawdzony wcześniej",
-            "compare": "Bieżąca sonda / porównanie",
-            "match": "Potwierdzone trafienie",
-            "pending": "Jeszcze niesprawdzony",
-            "pruned": "Wyeliminowany z wyszukiwania"
-          },
           "targetLabel": "Cel",
           "visitedOrderLabel": "Kolejność odwiedzin",
           "waitingDecisionLabel": "oczekiwanie na kolejny ruch",
-          "windowLabel": "Okno"
+          "windowLabel": "Okno",
+          "tableTitle": "Tablica"
         },
         "sieveGrid": {
           "decisionLabel": "Decyzja",
@@ -6750,7 +6709,6 @@
           "emptyLabel": "Brak śladu dla tego kroku.",
           "pairBadges": {
             "compare": "porównanie",
-            "idle": "bezczynnie",
             "swap": "zamiana"
           },
           "phaseLabel": "Faza",
@@ -6774,12 +6732,8 @@
           },
           "summaryAriaLabel": "Podsumowanie śladu",
           "tableEmptyLabel": "Brak wierszy tablicy",
-          "tagLegend": {
-            "compare": "W aktywnej parze porównania",
-            "sorted": "Zablokowane w końcowej pozycji",
-            "swap": "W trakcie zamiany"
-          },
-          "unsortedLabel": "Nieposortowane"
+          "unsortedLabel": "Nieposortowane",
+          "tableTitle": "Tablica"
         },
         "string": {
           "activeLabel": "Aktywne",
@@ -6787,14 +6741,12 @@
             "automatonLabel": "Automat",
             "currentCharLabel": "Bieżący znak",
             "currentStateLabel": "Bieżący stan",
-            "detailsAriaLabel": "Szczegóły Aho-Corasick",
             "failurePathLabel": "Ścieżka failure",
             "matchCountLabel": "Liczba trafień",
             "matchesLabel": "Trafienia"
           },
           "burrowsWheeler": {
             "columnsLabel": "Kolumny",
-            "detailsAriaLabel": "Szczegóły Burrowsa-Wheelera",
             "firstColumnLabel": "F",
             "gainLabel": "Zysk",
             "inputLabel": "Wejście",
@@ -6803,28 +6755,25 @@
             "outputRunsLabel": "Serie wyjściowe"
           },
           "calculationAriaLabel": "Podsumowanie obliczeń stringów",
-          "contextAriaLabel": "Kontekst śladu stringów",
           "currentTransitionLabel": "Bieżące przejście",
           "decisionLabel": "Decyzja",
           "emptyLabel": "Brak śladu stringów.",
           "huffman": {
-            "bitsSuffixLabel": "bitów",
             "codesAssignedLabel": "Przypisane kody",
             "compressedLabel": "Po kompresji",
             "compressionLabel": "Kompresja",
-            "detailsAriaLabel": "Szczegóły Huffmana",
             "heapLabel": "Kopiec",
             "originalLabel": "Oryginał",
             "phaseLabel": "Faza",
             "ratioLabel": "Współczynnik",
             "savingsLabel": "Oszczędność",
             "sizeLabel": "Rozmiar",
-            "uniqueCharsLabel": "Unikalne znaki"
+            "uniqueCharsLabel": "Unikalne znaki",
+            "bitsCount": "{{count}} bitów"
           },
           "insightsLabel": "Wnioski",
           "kmp": {
             "alignmentLabel": "Wyrównanie",
-            "detailsAriaLabel": "Szczegóły KMP",
             "failureTableLabel": "Tablica failure",
             "jumpLabel": "Skok",
             "noJumpLabel": "brak",
@@ -6841,7 +6790,6 @@
           "manacher": {
             "boundsLabel": "Granice",
             "centerLabel": "Centrum",
-            "detailsAriaLabel": "Szczegóły Manachera",
             "longestLabel": "Najdłuższy",
             "mirrorLabel": "Lustro",
             "mirrorWindowLabel": "Okno lustrzane",
@@ -6852,7 +6800,6 @@
           "palindromicTree": {
             "activeNodeLabel": "Aktywny węzeł",
             "currentCharLabel": "Bieżący znak",
-            "detailsAriaLabel": "Szczegóły drzewa palindromicznego",
             "distinctLabel": "Różne palindromy",
             "nodesLabel": "Węzły",
             "processedLabel": "Przetworzone"
@@ -6863,7 +6810,6 @@
           "rabinKarp": {
             "baseModLabel": "Baza / mod",
             "collisionStatusLabel": "kolizja",
-            "detailsAriaLabel": "Szczegóły Rabina-Karpa",
             "hashOnlyStatusLabel": "sam hash",
             "hashesLabel": "Hashe",
             "incomingLabel": "Przychodzący",
@@ -6879,9 +6825,7 @@
           "resultLabel": "Wynik",
           "rle": {
             "charLabel": "Znak",
-            "charsSuffixLabel": "zn.",
             "countLabel": "Liczba",
-            "detailsAriaLabel": "Szczegóły RLE",
             "originalLabel": "Oryginał",
             "outputLabel": "Wyjście",
             "phaseLabel": "Faza",
@@ -6889,10 +6833,14 @@
             "ratioLabel": "Współczynnik",
             "resultLabel": "Wynik",
             "runsDoneLabel": "Gotowe serie",
-            "scannerLabel": "Skaner"
+            "scannerLabel": "Skaner",
+            "scanPhase": "skanowanie",
+            "extendPhase": "przedłużanie serii",
+            "emitPhase": "zapis serii",
+            "completePhase": "gotowe",
+            "charsCount": "{{count}} zn."
           },
           "suffixArray": {
-            "detailsAriaLabel": "Szczegóły tablicy sufiksowej",
             "distinctRanksLabel": "Różne rangi",
             "orderLabel": "Porządek sufiksów",
             "ranksLabel": "Rangi",
@@ -6901,7 +6849,6 @@
           "suffixArrayLcp": {
             "activePairLabel": "Aktywna para",
             "compareWithLabel": "Porównaj z",
-            "detailsAriaLabel": "Szczegóły LCP tablicy sufiksowej",
             "lcpLabel": "Wartości LCP",
             "overlapLabel": "Wspólny prefiks"
           },
@@ -6909,7 +6856,6 @@
           "waitingEventLabel": "Oczekiwanie na następne zdarzenie stringowe.",
           "zAlgorithm": {
             "boxLabel": "Z-box",
-            "detailsAriaLabel": "Szczegóły algorytmu Z",
             "leftLabel": "L",
             "prefixCompareLabel": "Porównanie prefiksu",
             "rightLabel": "R",
@@ -6920,14 +6866,15 @@
         "sweepLine": {
           "activeMergedSpansLabel": "Aktywne scalone zakresy",
           "areaLabel": "Pole",
-          "detailsAriaLabel": "Szczegóły sweep line",
           "emptyLabel": "Brak danych śladu dla tego kroku geometrii.",
           "eventQueueLabel": "Kolejka zdarzeń",
           "noActiveSpansLabel": "Brak aktywnych zakresów na tej linii skanowania.",
           "noQueuedEventsLabel": "Brak oczekujących zdarzeń.",
           "scanlineLabel": "Linia skanowania",
           "spansLabel": "Zakresy",
-          "summaryAriaLabel": "Podsumowanie sweep line"
+          "summaryAriaLabel": "Podsumowanie sweep line",
+          "spanColumn": "Przedział",
+          "rangeColumn": "Zakres y"
         },
         "tree": {
           "currentNodeLabel": "Bieżący",
@@ -6943,7 +6890,6 @@
           "activeSiteLabel": "Aktywny punkt",
           "cellLabel": "Komórka",
           "closedCellsLabel": "Domknięte komórki",
-          "detailsAriaLabel": "Szczegóły Voronoia",
           "doneLabel": "gotowe",
           "emptyLabel": "Brak danych śladu dla tego kroku geometrii.",
           "noQueuedSitesLabel": "Brak oczekujących punktów.",
@@ -7993,10 +7939,6 @@
     },
     "roadmap": {
       "chip": "Roadmap"
-    },
-    "table": {
-      "emptyLabel": "Brak wierszy",
-      "legendLabel": "Legenda"
     },
     "vizOptionsMenu": {
       "title": "Opcje widoku",

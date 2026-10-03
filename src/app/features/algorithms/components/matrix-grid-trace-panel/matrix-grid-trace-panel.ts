@@ -5,7 +5,10 @@ import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
 import { OhnoRack } from '../../../../shared/instrument/rack/rack';
 import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { TraceFact } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { MatrixGridTraceState } from '../../models/matrix-grid';
 import { PlaybackController } from '../../workbench/playback-controller';
 import {
@@ -21,7 +24,7 @@ import {
 
 @Component({
   selector: 'app-matrix-grid-trace-panel',
-  imports: [I18nTextPipe, OhnoEngraving, OhnoRack, OhnoRackRow, TranslocoPipe],
+  imports: [OhnoEngraving, OhnoLed, OhnoRack, OhnoRackRow, OhnoTraceFacts, TranslocoPipe],
   templateUrl: './matrix-grid-trace-panel.html',
   styleUrl: './matrix-grid-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,4 +76,27 @@ export class MatrixGridTracePanel {
   });
 
   protected readonly isSimplex = computed(() => this.state()?.mode === 'simplex');
+
+  protected readonly factRows = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    const fact = this.facts();
+    if (!state || !fact) return [];
+    const pivot = fact.pivot ? `${fact.pivot}${fact.pivotValue ? ` = ${fact.pivotValue}` : ''}` : null;
+    const rows: TraceFact[] = [
+      { id: 'phase', label: this.COMMON.phaseLabel, value: toTraceValue(state.phaseLabel), kind: 'mono' },
+      { id: 'iteration', label: this.PANEL.iterationLabel, value: state.iteration },
+      { id: 'pivot', label: this.PANEL.pivotLabel, value: pivot, kind: 'mono', tone: pivot ? 'violet' : null },
+    ];
+    if (this.isSimplex()) {
+      rows.push({ id: 'entering', label: this.PANEL.enteringLabel, value: fact.entering, kind: 'mono', tone: fact.entering ? 'cyan' : null });
+    } else {
+      const operation = this.operation();
+      rows.push(
+        { id: 'operation', label: this.PANEL.operationLabel, value: operation, kind: 'mono', tone: operation ? 'pink' : null },
+        { id: 'sources', label: this.PANEL.sourceRowLabel, value: fact.sources, kind: 'mono', tone: fact.sources ? 'cyan' : null },
+      );
+    }
+    rows.push({ id: 'targets', label: this.PANEL.targetRowLabel, value: fact.targets, kind: 'mono', tone: fact.targets ? 'pink' : null });
+    return rows;
+  });
 }

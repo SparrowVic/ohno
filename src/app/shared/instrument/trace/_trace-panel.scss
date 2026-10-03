@@ -1,0 +1,49 @@
+@mixin panel {
+  :host {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .trace-panel__note {
+    margin: 0;
+    font: 500 12.5px/1.5 var(--font-ui);
+    color: var(--ink-2);
+  }
+
+  .trace-panel__section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .trace-panel__title {
+    margin: 0;
+    font: inherit;
+  }
+
+  .trace-panel__formula {
+    margin: 0;
+    padding: 8px 10px;
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    background: rgb(var(--white-rgb) / 0.035);
+    color: var(--ink);
+    font-size: 13px;
+    scrollbar-width: thin;
+  }
+
+  .trace-panel__empty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 10px 0;
+    font: 500 10px/1.4 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+}

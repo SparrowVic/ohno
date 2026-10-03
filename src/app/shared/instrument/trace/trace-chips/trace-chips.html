@@ -1,0 +1,24 @@
+@if (title(); as heading) {
+  <h3 class="ohno-trace-chips__head">
+    <ohno-engraving>{{ heading | i18nText }}</ohno-engraving>
+    @if (meta() !== null && meta() !== undefined) {
+      <ohno-engraving tone="dim"><ohno-trace-value [value]="meta()" kind="mono" /></ohno-engraving>
+    }
+  </h3>
+}
+@if (chips().length > 0) {
+  <ul class="ohno-trace-chips__list">
+    @for (chip of chips(); track chip.id) {
+      <li
+        class="ohno-trace-chips__chip"
+        [attr.data-tone]="chip.tone ?? null"
+        [class.ohno-trace-chips__chip--active]="chip.active"
+        [class.ohno-trace-chips__chip--dim]="chip.dim"
+      >
+        <ohno-trace-value [value]="chip.label" [kind]="chip.kind ?? 'mono'" />
+      </li>
+    }
+  </ul>
+} @else if (emptyLabel(); as empty) {
+  <p class="ohno-trace-chips__empty">{{ empty | i18nText }}</p>
+}

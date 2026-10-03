@@ -1,0 +1,26 @@
+@if (title(); as heading) {
+  <h3 class="ohno-trace-facts__head">
+    <ohno-engraving>{{ heading | i18nText }}</ohno-engraving>
+    @if (meta() !== null && meta() !== undefined) {
+      <ohno-engraving tone="dim"><ohno-trace-value [value]="meta()" kind="mono" /></ohno-engraving>
+    }
+  </h3>
+}
+<dl class="ohno-trace-facts__rows">
+  @for (fact of facts(); track fact.id) {
+    <div class="ohno-trace-facts__row" [class.ohno-trace-facts__row--wide]="fact.wide" [attr.data-tone]="fact.tone ?? null">
+      <dt class="ohno-trace-facts__label">
+        @if (fact.tone; as tone) {
+          <ohno-led [color]="tone" size="sm" />
+        }
+        <span>{{ fact.label | i18nText }}</span>
+      </dt>
+      <dd class="ohno-trace-facts__value">
+        <ohno-trace-value [value]="fact.value" [kind]="fact.kind ?? 'auto'" [dot]="true" />
+        @if (fact.total !== null && fact.total !== undefined) {
+          <small class="ohno-trace-facts__total">/{{ totalText(fact.total) }}</small>
+        }
+      </dd>
+    </div>
+  }
+</dl>

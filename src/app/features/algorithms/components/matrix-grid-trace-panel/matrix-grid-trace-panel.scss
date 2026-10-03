@@ -1,9 +1,7 @@
 @use '../../../../../styles/display';
+@use '../../../../shared/instrument/trace/trace-panel' as trace;
 
-:host {
-  display: block;
-  min-height: 0;
-}
+@include trace.panel;
 
 .trace {
   display: flex;
@@ -52,12 +50,6 @@
   &[data-tone] {
     color: var(--tone);
   }
-}
-
-.trace__dot {
-  @include display.rack-value-dot;
-
-  font-variation-settings: var(--dot-settings);
 }
 
 .trace__matrix-scroll {
@@ -146,10 +138,4 @@ tr[data-objective='true'] > * {
     background: rgb(var(--lime-rgb) / 0.05);
     box-shadow: inset 0 0 0 1px rgb(var(--lime-rgb) / 0.22);
   }
-}
-
-.trace__empty {
-  margin: 0;
-  font: 500 11px/1.5 var(--font-mono);
-  color: var(--ink-3);
 }

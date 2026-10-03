@@ -1,189 +1,56 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faCheckDouble, faCrosshairs, faLink } from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { TraceChip, TraceFact } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
+import { StringTraceState } from '../../models/string';
 import {
-  AhoCorasickTraceState,
-  BurrowsWheelerTraceState,
-  HuffmanTraceState,
-  KmpTraceState,
-  ManacherTraceState,
-  PalindromicTreeTraceState,
-  RabinKarpTraceState,
-  RleTraceState,
-  StringTraceState,
-  SuffixArrayConstructionTraceState,
-  SuffixArrayLcpTraceState,
-  ZAlgorithmTraceState,
-  isAhoCorasickState,
-  isBurrowsWheelerState,
-  isHuffmanState,
-  isKmpState,
-  isManacherState,
-  isPalindromicTreeState,
-  isRabinKarpState,
-  isRleState,
-  isSuffixArrayConstructionState,
-  isSuffixArrayLcpState,
-  isZAlgorithmState,
-} from '../../models/string';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { MathText } from '../../../../shared/components/math-text/math-text';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+  StringTraceSection,
+  stringCalculationFacts,
+  stringDetailSections,
+  stringInsightFacts,
+  stringSummaryFacts,
+} from './string-trace-panel.utils';
+
+const STRING_KEYS = I18N_KEY.features.algorithms.tracePanels.string;
+
+const LEGEND_CHIPS: readonly TraceChip[] = [
+  { id: 'focus', label: toTraceValue(STRING_KEYS.legendItems.currentFocus), tone: 'cyan' },
+  { id: 'structure', label: toTraceValue(STRING_KEYS.legendItems.reusableStructure), tone: 'amber' },
+  { id: 'result', label: toTraceValue(STRING_KEYS.legendItems.confirmedResult), tone: 'lime' },
+];
 
 @Component({
   selector: 'app-string-trace-panel',
-  imports: [
-    FaIconComponent,
-    I18nTextPipe,
-    MathText,
-    SegmentedPanel,
-    SegmentedPanelSection,
-    TranslocoPipe,
-  ],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, TranslocoPipe],
   templateUrl: './string-trace-panel.html',
   styleUrl: './string-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StringTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = STRING_KEYS;
+  protected readonly legendChips = LEGEND_CHIPS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input.required<StringTraceState | null>();
 
-  readonly kmpState = computed<KmpTraceState | null>(() => {
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
     const state = this.state();
-    return isKmpState(state) ? state : null;
-  });
-  readonly rabinState = computed<RabinKarpTraceState | null>(() => {
-    const state = this.state();
-    return isRabinKarpState(state) ? state : null;
-  });
-  readonly zState = computed<ZAlgorithmTraceState | null>(() => {
-    const state = this.state();
-    return isZAlgorithmState(state) ? state : null;
-  });
-  readonly manacherState = computed<ManacherTraceState | null>(() => {
-    const state = this.state();
-    return isManacherState(state) ? state : null;
-  });
-  readonly bwtState = computed<BurrowsWheelerTraceState | null>(() => {
-    const state = this.state();
-    return isBurrowsWheelerState(state) ? state : null;
-  });
-  readonly rleState = computed<RleTraceState | null>(() => {
-    const state = this.state();
-    return isRleState(state) ? state : null;
-  });
-  readonly huffmanState = computed<HuffmanTraceState | null>(() => {
-    const state = this.state();
-    return isHuffmanState(state) ? state : null;
-  });
-  readonly ahoState = computed<AhoCorasickTraceState | null>(() => {
-    const state = this.state();
-    return isAhoCorasickState(state) ? state : null;
-  });
-  readonly suffixArrayState = computed<SuffixArrayConstructionTraceState | null>(() => {
-    const state = this.state();
-    return isSuffixArrayConstructionState(state) ? state : null;
-  });
-  readonly suffixLcpState = computed<SuffixArrayLcpTraceState | null>(() => {
-    const state = this.state();
-    return isSuffixArrayLcpState(state) ? state : null;
-  });
-  readonly palindromicTreeState = computed<PalindromicTreeTraceState | null>(() => {
-    const state = this.state();
-    return isPalindromicTreeState(state) ? state : null;
+    return state ? stringSummaryFacts(state) : [];
   });
 
-  readonly legend = [
-    {
-      labelKey: I18N_KEY.features.algorithms.tracePanels.string.legendItems.currentFocus,
-      icon: faCrosshairs,
-    },
-    {
-      labelKey: I18N_KEY.features.algorithms.tracePanels.string.legendItems.reusableStructure,
-      icon: faLink,
-    },
-    {
-      labelKey: I18N_KEY.features.algorithms.tracePanels.string.legendItems.confirmedResult,
-      icon: faCheckDouble,
-    },
-  ] as const;
+  protected readonly calculationFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    return state ? stringCalculationFacts(state) : [];
+  });
 
-  failurePreview(state: KmpTraceState): readonly number[] {
-    return state.failure;
-  }
+  protected readonly insightFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    return state ? stringInsightFacts(state) : [];
+  });
 
-  zPreview(state: ZAlgorithmTraceState): readonly number[] {
-    return state.zValues;
-  }
-
-  radiiPreview(state: ManacherTraceState): readonly number[] {
-    return state.radii;
-  }
-
-  groupPreview(state: BurrowsWheelerTraceState): readonly string[] {
-    return state.runGroups.map((group) => `${group.count}×${group.char}`);
-  }
-
-  ahoMatchPreview(state: AhoCorasickTraceState): readonly string[] {
-    return state.matches.map((match) => `${match.pattern}@${match.startIndex}`);
-  }
-
-  suffixOrderPreview(order: readonly number[]): string {
-    return order.join(', ');
-  }
-
-  lcpPreview(state: SuffixArrayLcpTraceState): readonly string[] {
-    return state.lcpValues
-      .slice(0, Math.max(state.lcpValues.length - 1, 0))
-      .map((value, index) => `${index}:${value}`);
-  }
-
-  palNodePreview(state: PalindromicTreeTraceState): readonly string[] {
-    return state.nodes
-      .filter((node) => node.length > 0)
-      .map((node) => `${node.palindrome}(${node.occurrences})`);
-  }
-
-  jumpLabel(state: KmpTraceState): string {
-    return state.fallbackFrom !== null
-      ? `${state.fallbackFrom} → ${state.fallbackTo}`
-      : this.translate(I18N_KEY.features.algorithms.tracePanels.string.kmp.noJumpLabel);
-  }
-
-  rabinStatusLabel(state: RabinKarpTraceState): string {
-    if (state.collision) {
-      return this.translate(
-        I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.collisionStatusLabel,
-      );
-    }
-    if (state.verifying) {
-      return this.translate(
-        I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.verifyStatusLabel,
-      );
-    }
-    return this.translate(
-      I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.hashOnlyStatusLabel,
-    );
-  }
-
-  formatRatio(value: number | null): string {
-    return value === null ? '—' : `${value.toFixed(2)}x`;
-  }
-
-  protected stringify(value: unknown): string {
-    return value === null || value === undefined ? '' : String(value);
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
+  protected readonly sections = computed<readonly StringTraceSection[]>(() => stringDetailSections(this.state()));
 }

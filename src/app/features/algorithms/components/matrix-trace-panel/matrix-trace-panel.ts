@@ -1,277 +1,151 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faBullseye,
-  faCheckDouble,
-  faCircle,
-  faColumns3,
-  faLayerGroup,
-  faMinus,
-  faPenRuler,
-  faSquare,
-  faWandMagicSparkles,
-} from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone, TraceValue } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { MatrixCell, MatrixTraceState, MatrixTraceTag } from '../../models/matrix';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
-import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { TraceHint } from '../trace-hint/trace-hint';
+import { matrixRackSpec, matrixSentenceText } from '../matrix-visualization/matrix-display.utils';
 
-interface MatrixTagLegendItem {
-  readonly id: MatrixTraceTag;
-  readonly labelKey: I18nKey;
-  readonly icon: IconDefinition;
+const MATRIX_KEYS = I18N_KEY.features.algorithms.tracePanels.matrix;
+const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
+
+const STATUS_TONES: Readonly<Record<MatrixCell['status'], TraceTone | null>> = {
+  idle: null,
+  pivot: 'violet',
+  active: 'cyan',
+  candidate: 'pink',
+  improved: 'lime',
+  assignment: 'lime',
+  adjusted: 'amber',
+  covered: 'slate',
+  zero: 'amber',
+  blocked: 'red',
+};
+
+const TAG_CHIPS: Readonly<Record<MatrixTraceTag, { readonly label: TraceValue; readonly tone: TraceTone }>> = {
+  pivot: { label: toTraceValue(MATRIX_KEYS.statuses.pivot), tone: 'violet' },
+  active: { label: toTraceValue(MATRIX_KEYS.statuses.active), tone: 'cyan' },
+  improved: { label: toTraceValue(MATRIX_KEYS.statuses.improved), tone: 'lime' },
+  covered: { label: toTraceValue(MATRIX_KEYS.statuses.covered), tone: 'slate' },
+  zero: { label: toTraceValue(MATRIX_KEYS.statuses.zero), tone: 'amber' },
+  assignment: { label: toTraceValue(MATRIX_KEYS.statuses.assignment), tone: 'lime' },
+  row: { label: toTraceValue(MATRIX_KEYS.rowTagLabel), tone: 'cyan' },
+  column: { label: toTraceValue(MATRIX_KEYS.columnTagLabel), tone: 'cyan' },
+  adjusted: { label: toTraceValue(MATRIX_KEYS.statuses.adjusted), tone: 'amber' },
+  infinite: { label: '∞', tone: 'slate' },
+};
+
+function sentence(raw: string) {
+  return toTraceValue(matrixSentenceText(raw) ?? raw);
 }
 
-const TAG_LEGEND: readonly MatrixTagLegendItem[] = [
-  {
-    id: 'pivot',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.pivot,
-    icon: faBullseye,
-  },
-  {
-    id: 'active',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.active,
-    icon: faWandMagicSparkles,
-  },
-  {
-    id: 'improved',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.improved,
-    icon: faCheckDouble,
-  },
-  {
-    id: 'covered',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.covered,
-    icon: faColumns3,
-  },
-  {
-    id: 'zero',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.zero,
-    icon: faCircle,
-  },
-  {
-    id: 'assignment',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.assignment,
-    icon: faSquare,
-  },
-  {
-    id: 'row',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.row,
-    icon: faMinus,
-  },
-  {
-    id: 'column',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.column,
-    icon: faColumns3,
-  },
-  {
-    id: 'adjusted',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.adjusted,
-    icon: faPenRuler,
-  },
-  {
-    id: 'infinite',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.matrix.tagLegend.infinite,
-    icon: faLayerGroup,
-  },
-];
-
-const TABLE_COLUMNS: readonly TableColumn[] = [
-  {
-    id: 'cell',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.cell,
-    width: '88px',
-    kind: 'mono',
-  },
-  {
-    id: 'value',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.value,
-    width: '54px',
-    kind: 'mono',
-  },
-  {
-    id: 'meta',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.meta,
-    width: '82px',
-    kind: 'mono',
-  },
-  {
-    id: 'status',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.status,
-    width: '92px',
-    kind: 'tag',
-  },
-  {
-    id: 'tags',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.matrix.columns.tags,
-    width: '92px',
-    kind: 'tags',
-  },
+const TABLE_COLUMNS: readonly TraceColumn[] = [
+  { id: 'cell', header: MATRIX_KEYS.columns.cell, kind: 'mono' },
+  { id: 'value', header: MATRIX_KEYS.columns.value, align: 'end' },
+  { id: 'meta', header: MATRIX_KEYS.columns.meta, kind: 'mono' },
+  { id: 'status', header: MATRIX_KEYS.columns.status, kind: 'chips' },
+  { id: 'tags', header: MATRIX_KEYS.columns.tags, kind: 'chips' },
 ];
 
 @Component({
   selector: 'app-matrix-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, OhnoTraceTable, TranslocoPipe],
   templateUrl: './matrix-trace-panel.html',
   styleUrl: './matrix-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatrixTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = MATRIX_KEYS;
+  protected readonly commonKeys = COMMON_KEYS;
+  protected readonly columns = TABLE_COLUMNS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<MatrixTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
-  readonly hintKeyIdea = computed<string | null>(() => {
+  protected readonly hintFacts = computed<readonly TraceFact[]>(() => {
     const id = this.algorithmId();
-    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
-  });
-  readonly hintWatch = computed<string | null>(() => {
-    const id = this.algorithmId();
-    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
+    const tutorial = id ? GRAPH_ALGORITHM_TUTORIALS[id] : undefined;
+    if (!tutorial) return [];
+    return [
+      { id: 'idea', label: COMMON_KEYS.keyIdeaLabel, value: toTraceValue(tutorial.keyIdea), kind: 'text', wide: true },
+      { id: 'watch', label: COMMON_KEYS.watchLabel, value: toTraceValue(tutorial.watch), kind: 'text', wide: true },
+    ];
   });
 
-  readonly legend = TAG_LEGEND;
-  readonly tableColumns = TABLE_COLUMNS;
-  readonly tableLegendItems = computed(() =>
-    TAG_LEGEND.map((item) => ({
-      id: item.id,
-      tag: this.traceTag(item.id),
-      label: '',
-      labelKey: item.labelKey,
-    })),
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return [
+      { id: 'mode', label: COMMON_KEYS.modeLabel, value: sentence(state.modeLabel), kind: 'mono' },
+      { id: 'phase', label: COMMON_KEYS.phaseLabel, value: sentence(state.phaseLabel), kind: 'mono' },
+      { id: 'row', label: MATRIX_KEYS.activeRowLabel, value: state.activeRowLabel, kind: 'mono', tone: 'cyan' },
+      { id: 'col', label: MATRIX_KEYS.activeColLabel, value: state.activeColLabel, kind: 'mono', tone: 'cyan' },
+      { id: 'pivot', label: MATRIX_KEYS.pivotLabel, value: state.pivotLabel, kind: 'mono', tone: 'violet' },
+      { id: 'result', label: COMMON_KEYS.resultLabel, value: sentence(state.resultLabel), kind: 'mono', tone: 'lime' },
+    ];
+  });
+
+  protected readonly operationFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    const computation = state.computation;
+    const facts: TraceFact[] = [
+      { id: 'status', label: COMMON_KEYS.statusLabel, value: sentence(state.statusLabel), kind: 'mono' },
+      { id: 'size', label: COMMON_KEYS.sizeLabel, value: state.dimensionsLabel, kind: 'mono' },
+    ];
+    if (computation) {
+      const result = computation.result ? ` = ${computation.result}` : '';
+      facts.push(
+        { id: 'expression', label: computation.label, value: `${computation.expression}${result}`, kind: 'mono', wide: true, tone: 'pink' },
+        { id: 'decision', label: COMMON_KEYS.decisionLabel, value: sentence(computation.decision), kind: 'text', wide: true },
+      );
+    } else {
+      facts.push({
+        id: 'decision',
+        label: COMMON_KEYS.decisionLabel,
+        value: toTraceValue(MATRIX_KEYS.waitingOperationLabel),
+        kind: 'text',
+        wide: true,
+      });
+    }
+    return facts;
+  });
+
+  protected readonly focusTitle = computed(() => matrixRackSpec(this.state()?.focusItemsLabel).title);
+  protected readonly secondaryTitle = computed(() => matrixRackSpec(this.state()?.secondaryItemsLabel).title);
+
+  protected readonly focusChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.focusItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(matrixSentenceText(item) ?? item), tone: 'cyan' })),
   );
-  readonly visibleRows = computed<readonly MatrixCell[]>(() =>
+
+  protected readonly secondaryChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.secondaryItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(matrixSentenceText(item) ?? item) })),
+  );
+
+  protected readonly rows = computed<readonly TraceRow[]>(() =>
     (this.state()?.cells ?? [])
       .filter((cell) => cell.status !== 'idle' || cell.tags.length > 0)
-      .sort((left, right) => left.row - right.row || left.col - right.col),
+      .sort((left, right) => left.row - right.row || left.col - right.col)
+      .map((cell) => {
+        const tone = STATUS_TONES[cell.status];
+        const highlighted = ['active', 'candidate', 'improved', 'assignment'].includes(cell.status);
+        return {
+          id: cell.id,
+          tone: highlighted ? tone : null,
+          cells: {
+            cell: `${cell.rowLabel}→${cell.colLabel}`,
+            value: cell.valueLabel,
+            meta: cell.metaLabel,
+            status: [{ id: cell.status, label: toTraceValue(MATRIX_KEYS.statuses[cell.status]), tone }],
+            tags: cell.tags.map((tag) => ({ id: tag, label: TAG_CHIPS[tag].label, tone: TAG_CHIPS[tag].tone })),
+          },
+        };
+      }),
   );
-  readonly tableRows = computed<readonly TableRow[]>(() =>
-    this.visibleRows().map((cell) => ({
-      id: cell.id,
-      tone:
-        cell.status === 'active' || cell.status === 'candidate'
-          ? 'active'
-          : cell.status === 'improved' || cell.status === 'assignment'
-            ? 'success'
-            : 'default',
-      cells: {
-        cell: `${cell.rowLabel}→${cell.colLabel}`,
-        value: cell.valueLabel,
-        meta: cell.metaLabel ?? '—',
-        status: this.statusTag(cell),
-        tags: cell.tags.map((tag) => this.traceTag(tag)),
-      },
-    })),
-  );
-
-  tagIcon(tag: MatrixTraceTag): IconDefinition {
-    return TAG_LEGEND.find((item) => item.id === tag)?.icon ?? faCircle;
-  }
-
-  tagLabel(tag: MatrixTraceTag): string {
-    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
-    return labelKey ? this.translate(labelKey) : tag;
-  }
-
-  statusTag(cell: MatrixCell): UiTagModel {
-    return {
-      label: this.statusLabel(cell.status),
-      tone: this.statusTone(cell.status),
-      appearance: 'soft',
-      size: 'sm',
-      uppercase: true,
-    };
-  }
-
-  traceTag(tag: MatrixTraceTag): UiTagModel {
-    return {
-      icon: this.tagIcon(tag),
-      title: this.tagLabel(tag),
-      ariaLabel: this.tagLabel(tag),
-      tone: this.tagTone(tag),
-      appearance: 'soft',
-      size: 'sm',
-      shape: 'icon',
-    };
-  }
-
-  private statusTone(
-    status: MatrixCell['status'],
-  ): 'warning' | 'success' | 'window' | 'danger' | 'neutral' {
-    switch (status) {
-      case 'active':
-      case 'candidate':
-      case 'pivot':
-        return 'warning';
-      case 'improved':
-      case 'assignment':
-      case 'adjusted':
-        return 'success';
-      case 'covered':
-      case 'zero':
-        return 'window';
-      case 'blocked':
-        return 'danger';
-      default:
-        return 'neutral';
-    }
-  }
-
-  private tagTone(tag: MatrixTraceTag): 'warning' | 'success' | 'window' | 'neutral' {
-    switch (tag) {
-      case 'pivot':
-      case 'active':
-      case 'row':
-      case 'column':
-        return 'warning';
-      case 'improved':
-      case 'assignment':
-      case 'adjusted':
-        return 'success';
-      case 'covered':
-      case 'zero':
-        return 'window';
-      case 'infinite':
-        return 'neutral';
-    }
-  }
-
-  private statusLabel(status: MatrixCell['status']): string {
-    switch (status) {
-      case 'idle':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.idle);
-      case 'pivot':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.pivot);
-      case 'active':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.active);
-      case 'candidate':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.candidate);
-      case 'improved':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.improved);
-      case 'assignment':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.assignment);
-      case 'adjusted':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.adjusted);
-      case 'covered':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.covered);
-      case 'zero':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.zero);
-      case 'blocked':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.matrix.statuses.blocked);
-    }
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
 }

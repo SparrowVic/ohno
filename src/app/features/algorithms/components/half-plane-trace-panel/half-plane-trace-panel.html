@@ -1,102 +1,20 @@
-<div class="trace">
-  @if (state(); as geo) {
-    <div class="trace__header">
-      <app-segmented-panel
-        class="trace__summary"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.halfPlane.summaryAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.phaseLabel | transloco"
-          [value]="phaseLabel(geo.phase)"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.vertsLabel | transloco"
-          [value]="geo.vertexCount"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.areaLabel | transloco"
-          [value]="geo.feasibleArea !== null ? geo.feasibleArea.toFixed(1) : '0.0'"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.halfPlane.statusLabel | transloco"
-          [value]="geo.status"
-        />
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__streams"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.halfPlane.streamsAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.halfPlane.currentBoundaryLabel | transloco
-          "
-        >
-          <span class="trace__focus">{{ geo.currentConstraintLabel }}</span>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.halfPlane.constraintRailLabel | transloco
-          "
-          [badge]="geo.events.length"
-        >
-          <div class="trace__chips">
-            @if (geo.events.length === 0) {
-              <span class="trace__placeholder">{{
-                I18N_KEY.features.algorithms.tracePanels.halfPlane.noQueuedConstraintsLabel
-                  | transloco
-              }}</span>
-            } @else {
-              @for (event of geo.events; track event.id) {
-                <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__detail"
-        orientation="vertical"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.halfPlane.polygonAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.halfPlane.feasibleVerticesLabel | transloco
-          "
-          [badge]="feasiblePolygon()?.vertices?.length ?? 0"
-        >
-          <app-table
-            class="trace__table trace__table--stable"
-            [columns]="vertexColumns"
-            [rows]="vertexRows()"
-            [showHeader]="false"
-            density="compact"
-          />
-          <div class="trace__status-note" [class.trace__status-note--ghost]="!feasiblePolygon()">
-            @if (feasiblePolygon()) {
-              {{
-                I18N_KEY.features.algorithms.tracePanels.halfPlane.verticesUpdateLabel | transloco
-              }}
-            } @else {
-              {{ I18N_KEY.features.algorithms.tracePanels.halfPlane.polygonEmptyLabel | transloco }}
-            }
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-    </div>
-  } @else {
-    <div class="trace__empty">
-      {{ I18N_KEY.features.algorithms.tracePanels.halfPlane.emptyLabel | transloco }}
-    </div>
-  }
-</div>
+@if (state(); as geo) {
+  <ohno-trace-facts [title]="keys.summaryAriaLabel" [facts]="summaryFacts()" />
+  <ohno-trace-chips
+    [title]="keys.constraintRailLabel"
+    [meta]="geo.events.length"
+    [chips]="eventChips()"
+    [emptyLabel]="keys.noQueuedConstraintsLabel"
+  />
+  <ohno-trace-table
+    [title]="keys.feasibleVerticesLabel"
+    [meta]="feasiblePolygon()?.vertices?.length ?? 0"
+    [columns]="vertexColumns"
+    [rows]="vertexRows()"
+  />
+  <p class="trace-panel__note">
+    {{ (feasiblePolygon() ? keys.verticesUpdateLabel : keys.polygonEmptyLabel) | transloco }}
+  </p>
+} @else {
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ keys.emptyLabel | transloco }}</p>
+}

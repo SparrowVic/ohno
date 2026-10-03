@@ -1,0 +1,44 @@
+@let heading = title() | i18nText;
+<h3 class="ohno-trace-table__head">
+  <ohno-engraving>{{ heading }}</ohno-engraving>
+  @if (meta() !== null && meta() !== undefined) {
+    <ohno-engraving tone="dim"><ohno-trace-value [value]="meta()" kind="mono" /></ohno-engraving>
+  }
+</h3>
+@if (rows().length > 0) {
+  <div class="ohno-trace-table__scroll" role="region" tabindex="0" [attr.aria-label]="heading">
+    <table class="ohno-trace-table__table">
+      <caption class="ohno-trace-table__caption">{{ heading }}</caption>
+      <colgroup>
+        @for (column of columns(); track column.id) {
+          <col [style.width]="column.width ?? null" />
+        }
+      </colgroup>
+      <thead>
+        <tr>
+          @for (column of columns(); track column.id) {
+            <th scope="col" [attr.data-align]="column.align ?? 'start'">{{ column.header | i18nText }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr [attr.data-tone]="row.tone ?? null" [class.ohno-trace-table__row--dim]="row.dim">
+            @for (column of columns(); track column.id) {
+              @let cell = row.cells[column.id];
+              <td [attr.data-align]="column.align ?? 'start'">
+                @if (chipsOf(cell); as chips) {
+                  <ohno-trace-chips [chips]="chips" [inline]="true" />
+                } @else {
+                  <ohno-trace-value [value]="valueOf(cell)" [kind]="kindOf(column)" />
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else if (emptyLabel(); as empty) {
+  <p class="ohno-trace-table__empty">{{ empty | i18nText }}</p>
+}

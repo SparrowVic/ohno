@@ -1,0 +1,95 @@
+@use '../trace-tone' as trace;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.ohno-trace-table__head {
+  @include trace.title;
+}
+
+.ohno-trace-table__scroll {
+  max-height: var(--trace-table-max-height, 320px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--radius-sm);
+  background: var(--screen);
+  box-shadow: inset 0 0 0 1px rgb(var(--white-rgb) / 0.06);
+  scrollbar-width: thin;
+}
+
+.ohno-trace-table__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ohno-trace-table__caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 7px 9px 6px;
+  background: var(--screen);
+  box-shadow: inset 0 -1px 0 rgb(var(--white-rgb) / 0.08);
+  font: 500 9px/1.2 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-shadow: var(--engraving-shadow);
+  text-align: start;
+  white-space: nowrap;
+}
+
+td {
+  padding: 5px 9px;
+  border-top: 1px solid rgb(var(--white-rgb) / 0.04);
+  color: var(--ink-2);
+  vertical-align: middle;
+}
+
+tbody tr:first-child td {
+  border-top: 0;
+}
+
+[data-align='center'] {
+  text-align: center;
+}
+
+[data-align='end'] {
+  text-align: end;
+}
+
+tbody tr {
+  @include trace.tones;
+
+  &[data-tone] td {
+    background: rgb(var(--trace-tone-rgb) / 0.09);
+    color: var(--ink);
+  }
+
+  &[data-tone] td:first-child {
+    box-shadow: inset 2px 0 0 var(--trace-tone);
+    color: var(--trace-tone);
+  }
+}
+
+.ohno-trace-table__row--dim td {
+  opacity: 0.45;
+}
+
+.ohno-trace-table__empty {
+  margin: 0;
+  font: 500 11px/1.4 var(--font-mono);
+  color: var(--ink-4);
+}

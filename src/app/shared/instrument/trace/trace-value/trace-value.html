@@ -1,0 +1,19 @@
+@switch (resolvedKind()) {
+  @case ('math') {
+    @if (translatable(); as key) {
+      <app-math-text mode="mixed" [content]="key | i18nText" />
+    } @else {
+      <app-math-text mode="mixed" [content]="text()" />
+    }
+  }
+  @case ('i18n') {
+    {{ translatable() | i18nText }}
+  }
+  @default {
+    @if (translatable(); as key) {
+      {{ key | i18nText }}
+    } @else {
+      {{ text() }}
+    }
+  }
+}
