@@ -1,304 +1,150 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faBan,
-  faBullseye,
-  faCheckDouble,
-  faCircleDot,
-  faCrosshairs,
-  faDroplet,
-  faLayerGroup,
-  faLink,
-  faRoute,
-  faWandMagicSparkles,
-} from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
-import { NetworkTraceRow, NetworkTraceState, NetworkTraceTag } from '../../models/network';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
-import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { TraceHint } from '../trace-hint/trace-hint';
+import { NetworkNodeStatus, NetworkTraceState, NetworkTraceTag } from '../../models/network';
+import { networkLinkLabel, networkRackTitle } from '../network-visualization/network-display.utils';
 
-interface NetworkTagLegendItem {
-  readonly id: NetworkTraceTag;
-  readonly labelKey: I18nKey;
-  readonly icon: IconDefinition;
-}
+const NETWORK_KEYS = I18N_KEY.features.algorithms.tracePanels.network;
+const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
 
-const TAG_LEGEND: readonly NetworkTagLegendItem[] = [
-  {
-    id: 'source',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.source,
-    icon: faCircleDot,
-  },
-  {
-    id: 'sink',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.sink,
-    icon: faBullseye,
-  },
-  {
-    id: 'left',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.left,
-    icon: faCircleDot,
-  },
-  {
-    id: 'right',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.right,
-    icon: faBullseye,
-  },
-  {
-    id: 'free',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.free,
-    icon: faWandMagicSparkles,
-  },
-  {
-    id: 'matched',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.matched,
-    icon: faLink,
-  },
-  {
-    id: 'frontier',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.frontier,
-    icon: faWandMagicSparkles,
-  },
-  {
-    id: 'current',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.current,
-    icon: faCrosshairs,
-  },
-  {
-    id: 'level',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.level,
-    icon: faLayerGroup,
-  },
-  {
-    id: 'augment',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.augment,
-    icon: faRoute,
-  },
-  {
-    id: 'flow',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.flow,
-    icon: faDroplet,
-  },
-  {
-    id: 'blocked',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.blocked,
-    icon: faBan,
-  },
-  {
-    id: 'saturated',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.network.tagLegend.saturated,
-    icon: faCheckDouble,
-  },
-];
+const STATUS_TONES: Readonly<Record<NetworkNodeStatus, TraceTone | null>> = {
+  idle: null,
+  source: 'violet',
+  sink: 'amber',
+  frontier: 'amber',
+  current: 'cyan',
+  linked: 'lime',
+  visited: 'lime',
+  blocked: 'red',
+};
+
+const TAG_CHIPS: Readonly<Record<NetworkTraceTag, { readonly label: I18nKey; readonly tone: TraceTone | null }>> = {
+  source: { label: NETWORK_KEYS.statuses.source, tone: 'violet' },
+  sink: { label: NETWORK_KEYS.statuses.sink, tone: 'amber' },
+  left: { label: NETWORK_KEYS.leftTagLabel, tone: 'violet' },
+  right: { label: NETWORK_KEYS.rightTagLabel, tone: 'amber' },
+  free: { label: NETWORK_KEYS.freeTagLabel, tone: null },
+  matched: { label: NETWORK_KEYS.matchedTagLabel, tone: 'lime' },
+  frontier: { label: NETWORK_KEYS.statuses.frontier, tone: 'amber' },
+  current: { label: NETWORK_KEYS.statuses.current, tone: 'cyan' },
+  level: { label: NETWORK_KEYS.columns.level, tone: 'cyan' },
+  augment: { label: NETWORK_KEYS.augmentTagLabel, tone: 'pink' },
+  flow: { label: NETWORK_KEYS.flowTagLabel, tone: 'lime' },
+  blocked: { label: NETWORK_KEYS.statuses.blocked, tone: 'red' },
+  saturated: { label: NETWORK_KEYS.saturatedTagLabel, tone: 'red' },
+};
 
 @Component({
   selector: 'app-network-trace-panel',
-  imports: [SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, OhnoTraceTable, TranslocoPipe],
   templateUrl: './network-trace-panel.html',
   styleUrl: './network-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = NETWORK_KEYS;
+  protected readonly commonKeys = COMMON_KEYS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<NetworkTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
-  readonly hintKeyIdea = computed<string | null>(() => {
+  protected readonly hintFacts = computed<readonly TraceFact[]>(() => {
     const id = this.algorithmId();
-    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
-  });
-  readonly hintWatch = computed<string | null>(() => {
-    const id = this.algorithmId();
-    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
+    const tutorial = id ? GRAPH_ALGORITHM_TUTORIALS[id] : undefined;
+    if (!tutorial) return [];
+    return [
+      { id: 'idea', label: COMMON_KEYS.keyIdeaLabel, value: toTraceValue(tutorial.keyIdea), kind: 'text', wide: true },
+      { id: 'watch', label: COMMON_KEYS.watchLabel, value: toTraceValue(tutorial.watch), kind: 'text', wide: true },
+    ];
   });
 
-  readonly legend = TAG_LEGEND;
-  readonly tableLegendItems = computed(() =>
-    TAG_LEGEND.map((item) => ({
-      id: item.id,
-      tag: this.traceTag(item.id),
-      label: '',
-      labelKey: item.labelKey,
-    })),
-  );
-  readonly visibleRows = computed<readonly NetworkTraceRow[]>(() =>
-    [...(this.state()?.traceRows ?? [])].sort((left, right) =>
-      left.label.localeCompare(right.label),
-    ),
-  );
-  readonly tableRows = computed<readonly TableRow[]>(() =>
-    this.visibleRows().map((row) => ({
-      id: row.nodeId,
-      tone:
-        row.status === 'current' || row.status === 'frontier'
-          ? 'active'
-          : row.status === 'linked' || row.status === 'visited'
-            ? 'success'
-            : 'default',
-      cells: {
-        node: row.label,
-        lane: row.laneLabel,
-        link: row.linkLabel ?? '—',
-        level: row.level === null ? '—' : row.level,
-        status: this.statusTag(row),
-        tags: row.tags.map((tag) => this.traceTag(tag)),
-      },
-    })),
-  );
-  readonly queuePreview = computed(() => {
-    return this.state()?.queue ?? [];
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return [
+      { id: 'mode', label: COMMON_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' },
+      { id: 'phase', label: COMMON_KEYS.phaseLabel, value: toTraceValue(state.phaseLabel), kind: 'mono' },
+      { id: 'frontier', label: networkRackTitle(state.frontierLabel), value: state.frontierCount, tone: 'amber' },
+      { id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(state.resultLabel), kind: 'mono', tone: 'lime' },
+    ];
   });
-  readonly levelHeaderLabel = computed(() =>
-    this.translate(
-      this.state()?.mode === 'min-cost-max-flow'
-        ? I18N_KEY.features.algorithms.tracePanels.network.columns.cost
-        : I18N_KEY.features.algorithms.tracePanels.network.columns.level,
-    ),
+
+  protected readonly stepFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    const computation = state.computation;
+    const facts: TraceFact[] = [
+      { id: 'status', label: COMMON_KEYS.statusLabel, value: toTraceValue(state.statusLabel), kind: 'mono' },
+      { id: 'route', label: COMMON_KEYS.routeLabel, value: state.activeRouteLabel, kind: 'mono', tone: 'pink' },
+    ];
+    if (computation) {
+      const result = computation.result ? ` = ${computation.result}` : '';
+      facts.push(
+        { id: 'expression', label: computation.label, value: `${computation.expression}${result}`, kind: 'mono', wide: true },
+        { id: 'decision', label: COMMON_KEYS.decisionLabel, value: toTraceValue(computation.decision), kind: 'text', wide: true },
+      );
+    } else {
+      facts.push({
+        id: 'decision',
+        label: COMMON_KEYS.decisionLabel,
+        value: toTraceValue(NETWORK_KEYS.waitingStepLabel),
+        kind: 'text',
+        wide: true,
+      });
+    }
+    return facts;
+  });
+
+  protected readonly queueTitle = computed(() => networkRackTitle(this.state()?.queueLabel ?? ''));
+  protected readonly focusTitle = computed(() => networkRackTitle(this.state()?.focusItemsLabel ?? ''));
+
+  protected readonly queueChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.queue ?? []).map((item, index) => ({ id: index, label: item, tone: index === 0 ? 'cyan' : 'amber', active: index === 0 })),
   );
-  readonly tableColumns = computed<readonly TableColumn[]>(() => [
+
+  protected readonly focusChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.focusItems ?? []).map((item, index) => ({ id: index, label: item, tone: 'lime' })),
+  );
+
+  protected readonly columns = computed<readonly TraceColumn[]>(() => [
+    { id: 'node', header: NETWORK_KEYS.columns.node },
+    { id: 'lane', header: NETWORK_KEYS.columns.lane, kind: 'mono' },
+    { id: 'link', header: NETWORK_KEYS.columns.link, kind: 'mono' },
     {
-      id: 'node',
-      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.node,
-      width: '64px',
+      id: 'level',
+      header: this.state()?.mode === 'min-cost-max-flow' ? NETWORK_KEYS.columns.cost : NETWORK_KEYS.columns.level,
+      align: 'end',
     },
-    {
-      id: 'lane',
-      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.lane,
-      width: '64px',
-    },
-    {
-      id: 'link',
-      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.link,
-      width: '86px',
-    },
-    { id: 'level', header: this.levelHeaderLabel(), width: '56px', kind: 'mono' },
-    {
-      id: 'status',
-      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.status,
-      width: '92px',
-      kind: 'tag',
-    },
-    {
-      id: 'tags',
-      headerKey: I18N_KEY.features.algorithms.tracePanels.network.columns.tags,
-      width: '92px',
-      kind: 'tags',
-    },
+    { id: 'status', header: NETWORK_KEYS.columns.status, kind: 'chips' },
+    { id: 'tags', header: NETWORK_KEYS.columns.tags, kind: 'chips' },
   ]);
 
-  tagIcon(tag: NetworkTraceTag): IconDefinition {
-    return TAG_LEGEND.find((item) => item.id === tag)?.icon ?? faCircleDot;
-  }
-
-  tagLabel(tag: NetworkTraceTag): string {
-    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
-    return labelKey ? this.translate(labelKey) : tag;
-  }
-
-  statusTag(row: NetworkTraceRow): UiTagModel {
-    return {
-      label: this.statusLabel(row.status),
-      tone: this.statusTone(row.status),
-      appearance: 'soft',
-      size: 'sm',
-      uppercase: true,
-    };
-  }
-
-  traceTag(tag: NetworkTraceTag): UiTagModel {
-    return {
-      icon: this.tagIcon(tag),
-      title: this.tagLabel(tag),
-      ariaLabel: this.tagLabel(tag),
-      tone: this.tagTone(tag),
-      appearance: 'soft',
-      size: 'sm',
-      shape: 'icon',
-    };
-  }
-
-  private statusTone(
-    status: NetworkTraceRow['status'],
-  ): 'accent' | 'hit' | 'warning' | 'success' | 'danger' | 'neutral' {
-    switch (status) {
-      case 'source':
-        return 'accent';
-      case 'sink':
-        return 'hit';
-      case 'frontier':
-      case 'current':
-        return 'warning';
-      case 'linked':
-      case 'visited':
-        return 'success';
-      case 'blocked':
-        return 'danger';
-      default:
-        return 'neutral';
-    }
-  }
-
-  private tagTone(
-    tag: NetworkTraceTag,
-  ): 'accent' | 'hit' | 'neutral' | 'window' | 'warning' | 'route' | 'success' | 'danger' {
-    switch (tag) {
-      case 'source':
-      case 'left':
-        return 'accent';
-      case 'sink':
-      case 'right':
-      case 'saturated':
-        return 'hit';
-      case 'free':
-        return 'neutral';
-      case 'matched':
-      case 'augment':
-        return 'route';
-      case 'frontier':
-      case 'level':
-        return 'window';
-      case 'current':
-        return 'warning';
-      case 'flow':
-        return 'success';
-      case 'blocked':
-        return 'danger';
-    }
-  }
-
-  private statusLabel(status: NetworkTraceRow['status']): string {
-    switch (status) {
-      case 'idle':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.idle);
-      case 'source':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.source);
-      case 'sink':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.sink);
-      case 'frontier':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.frontier);
-      case 'current':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.current);
-      case 'linked':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.linked);
-      case 'visited':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.visited);
-      case 'blocked':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.network.statuses.blocked);
-    }
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
+  protected readonly rows = computed<readonly TraceRow[]>(() =>
+    [...(this.state()?.traceRows ?? [])]
+      .sort((left, right) => left.label.localeCompare(right.label))
+      .map((row) => {
+        const tone = STATUS_TONES[row.status];
+        const highlighted = ['current', 'frontier', 'linked', 'visited'].includes(row.status);
+        return {
+          id: row.nodeId,
+          tone: highlighted ? tone : null,
+          cells: {
+            node: row.label,
+            lane: row.laneLabel,
+            link: toTraceValue(networkLinkLabel(row.linkLabel)),
+            level: row.level,
+            status: [{ id: row.status, label: toTraceValue(NETWORK_KEYS.statuses[row.status]), tone }],
+            tags: row.tags.map((tag) => ({ id: tag, label: toTraceValue(TAG_CHIPS[tag].label), tone: TAG_CHIPS[tag].tone })),
+          },
+        };
+      }),
+  );
 }

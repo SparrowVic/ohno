@@ -33,6 +33,10 @@ import { OhnoScreen } from '../../shared/instrument/screen/screen';
 import { OhnoSearchField } from '../../shared/instrument/search-field/search-field';
 import { OhnoSlot } from '../../shared/instrument/slot/slot';
 import { OhnoTape } from '../../shared/instrument/tape/tape';
+import { OhnoTraceChips } from '../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow } from '../../shared/instrument/trace/trace.types';
 import { TapeRow } from '../../shared/instrument/tape/tape.types';
 import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window-stepper';
 import { Difficulty } from '../../features/algorithms/models/algorithm';
@@ -55,7 +59,7 @@ import { deriveSortTrace } from '../../features/algorithms/utils/helpers/derive-
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck, OhnoInspector, OhnoLogPrinter],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoTraceFacts, OhnoTraceChips, OhnoTraceTable, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck, OhnoInspector, OhnoLogPrinter],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,6 +107,40 @@ export class InstrumentSpecimen {
     { step: 59, kind: 'event', tone: 'cyan', event: 'PORÓWNAJ', detail: '56[1] : 74[2]' },
     { step: 60, kind: 'event', tone: 'lime', event: 'USTAL', detail: '99[15]' },
   ];
+
+  protected readonly traceFacts: readonly TraceFact[] = [
+    { id: 'phase', label: 'Faza', value: 'Porównanie', kind: 'mono', tone: 'cyan' },
+    { id: 'sorted', label: 'Posortowane', value: 2, total: 16, tone: 'lime' },
+    { id: 'boundary', label: 'Granica', value: 14 },
+    { id: 'pivot', label: 'Pivot', value: null, kind: 'mono' },
+    { id: 'expression', label: 'Przejście', value: 'dp[i][w] = max(dp[i-1][w], v + dp[i-1][w-c])', kind: 'math', wide: true },
+    { id: 'decision', label: 'Decyzja', value: '74 > 12, więc zamieniamy parę i przesuwamy granicę.', kind: 'text', wide: true },
+  ];
+  protected readonly traceChips: readonly TraceChip[] = [
+    { id: 'c', label: 'C · 4', tone: 'cyan', active: true },
+    { id: 'g', label: 'G · 6', tone: 'amber' },
+    { id: 'a', label: 'A · 0', tone: 'lime' },
+    { id: 'p', label: 'P3', tone: 'pink' },
+    { id: 'v', label: 'źródło', tone: 'violet' },
+    { id: 'r', label: 'cykl', tone: 'red' },
+    { id: 's', label: 'ściana', tone: 'slate' },
+    { id: 'd', label: 'D · ∞', dim: true },
+  ];
+  protected readonly traceColumns: readonly TraceColumn[] = [
+    { id: 'index', header: 'Indeks', align: 'end', width: '64px' },
+    { id: 'value', header: 'Wartość', align: 'end', width: '72px' },
+    { id: 'status', header: 'Status', kind: 'chips' },
+  ];
+  protected readonly traceRows: readonly TraceRow[] = Array.from({ length: 12 }, (_, index) => ({
+    id: index,
+    tone: index === 5 ? 'cyan' : index === 6 ? 'pink' : index >= 10 ? 'lime' : null,
+    dim: index === 3,
+    cells: {
+      index,
+      value: [13, 56, 35, 11, 48, 74, 12, 72, 84, 57, 97, 99][index],
+      status: [{ id: 's', label: index >= 10 ? 'posortowane' : index === 5 || index === 6 ? 'para' : 'czeka', tone: index >= 10 ? 'lime' : index === 5 ? 'cyan' : index === 6 ? 'pink' : null }],
+    },
+  }));
 
   protected readonly stageView = signal<'bar' | 'block'>('bar');
   protected readonly stageDifficulty = Difficulty.Easy;

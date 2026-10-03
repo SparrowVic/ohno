@@ -1,144 +1,25 @@
-<div class="trace">
-  @if (state(); as dpState) {
-    <div class="trace__header">
-      <app-segmented-panel
-        class="trace__summary"
-        orientation="vertical"
-        [attr.aria-label]="I18N_KEY.features.algorithms.tracePanels.dp.summaryAriaLabel | transloco"
-      >
-        <app-segmented-panel-section
-          class="trace__summary-mode"
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco"
-        >
-          <div class="trace__summary-combo">
-            <span class="trace__summary-mode-value">{{ dpState.modeLabel | i18nText }}</span>
-
-            @if (dpState.presetLabel) {
-              <span class="trace__summary-preset">
-                <span class="trace__summary-preset-label">{{
-                  I18N_KEY.features.algorithms.tracePanels.dp.presetLabel | transloco
-                }}</span>
-                <span class="trace__summary-preset-value">{{ dpState.presetLabel | i18nText }}</span>
-              </span>
-            }
-          </div>
-        </app-segmented-panel-section>
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco"
-          [value]="dpState.phaseLabel | i18nText"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.activeLabel | transloco"
-          [value]="dpState.activeLabel | i18nText: '—'"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco"
-          [value]="dpState.resultLabel | i18nText"
-        />
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__calc-grid"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.dp.calculationAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          class="trace__calc-section trace__calc-section--preset"
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.dp.presetNoteLabel | transloco"
-        >
-          <div class="trace__calc-expression">
-            <app-math-text [content]="dpState.presetDescription | i18nText" />
-          </div>
-          <div class="trace__calc-decision">{{ dpState.pathLabel | i18nText }}</div>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          class="trace__calc-section"
-          [class.trace__calc-section--muted]="!dpState.computation"
-          [eyebrow]="
-            (dpState.computation?.label | i18nText) ||
-            (I18N_KEY.features.algorithms.tracePanels.dp.currentTransitionLabel | transloco)
-          "
-        >
-          <div class="trace__calc-expression">
-            <app-math-text
-              [content]="
-                (dpState.computation?.expression | i18nText) ||
-                (I18N_KEY.features.algorithms.tracePanels.dp.waitingTransitionLabel | transloco)
-              "
-            />
-          </div>
-          <div class="trace__calc-result">
-            @if (dpState.computation?.result; as result) {
-              <span aria-hidden="true">=</span>
-              <app-math-text [content]="result | i18nText" />
-            } @else {
-              —
-            }
-          </div>
-          <div class="trace__calc-decision">
-            {{
-              (dpState.computation?.decision | i18nText) ||
-                (I18N_KEY.features.algorithms.tracePanels.dp.noActiveTransitionLabel | transloco)
-            }}
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__rails"
-        [attr.aria-label]="I18N_KEY.features.algorithms.tracePanels.dp.railsAriaLabel | transloco"
-      >
-        <app-segmented-panel-section
-          [eyebrow]="dpState.primaryItemsLabel | i18nText"
-          [badge]="dpState.primaryItems.length"
-        >
-          <div class="trace__rail-items">
-            @if (dpState.primaryItems.length === 0) {
-              <span class="trace__rail-empty">{{
-                I18N_KEY.features.algorithms.tracePanels.common.noneLabel | transloco
-              }}</span>
-            } @else {
-              @for (item of dpState.primaryItems; track item) {
-                <span class="trace__chip"><app-math-text [content]="item | i18nText" /></span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          [eyebrow]="dpState.secondaryItemsLabel | i18nText"
-          [badge]="dpState.secondaryItems.length"
-        >
-          <div class="trace__rail-items">
-            @if (dpState.secondaryItems.length === 0) {
-              <span class="trace__rail-empty">{{
-                I18N_KEY.features.algorithms.tracePanels.common.noneLabel | transloco
-              }}</span>
-            } @else {
-              @for (item of dpState.secondaryItems; track item) {
-                <span class="trace__chip trace__chip--soft"
-                  ><app-math-text [content]="item | i18nText"
-                /></span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-    </div>
-
-    <div class="trace__table-wrap">
-      <app-table
-        [columns]="tableColumns"
-        [rows]="tableRows()"
-        [legendItems]="tableLegendItems()"
-        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.dp.tableEmptyLabel"
-      />
-    </div>
-  } @else {
-    <div class="trace__empty">
-      {{ I18N_KEY.features.algorithms.tracePanels.dp.emptyLabel | transloco }}
-    </div>
-  }
-</div>
+@if (state(); as dpState) {
+  <ohno-trace-facts [title]="keys.summaryAriaLabel" [facts]="summaryFacts()" />
+  <ohno-trace-facts [title]="keys.calculationAriaLabel" [facts]="calculationFacts()" />
+  <ohno-trace-chips
+    [title]="dpState.primaryItemsLabel"
+    [meta]="dpState.primaryItems.length"
+    [chips]="primaryChips()"
+    [emptyLabel]="commonKeys.noneLabel"
+  />
+  <ohno-trace-chips
+    [title]="dpState.secondaryItemsLabel"
+    [meta]="dpState.secondaryItems.length"
+    [chips]="secondaryChips()"
+    [emptyLabel]="commonKeys.noneLabel"
+  />
+  <ohno-trace-table
+    [title]="keys.tableTitle"
+    [meta]="dpState.dimensionsLabel"
+    [columns]="columns"
+    [rows]="rows()"
+    [emptyLabel]="keys.tableEmptyLabel"
+  />
+} @else {
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ keys.emptyLabel | transloco }}</p>
+}

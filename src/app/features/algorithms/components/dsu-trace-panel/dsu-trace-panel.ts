@@ -1,268 +1,158 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faCheckDouble,
-  faCircleDot,
-  faCrosshairs,
-  faEye,
-  faLink,
-  faXmark,
-} from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { i18nText } from '../../../../core/i18n/translatable-text';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
-import { DsuEdgeTrace, DsuNodeTrace, DsuTraceState, DsuTraceTag } from '../../models/dsu';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
-import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { TraceHint } from '../trace-hint/trace-hint';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { DsuEdgeStatus, DsuNodeStatus, DsuTraceState, DsuTraceTag } from '../../models/dsu';
 
-interface DsuTagLegendItem {
-  readonly id: DsuTraceTag | 'accepted' | 'rejected';
-  readonly labelKey: I18nKey;
-  readonly icon: IconDefinition;
-}
+const DSU_KEYS = I18N_KEY.features.algorithms.tracePanels.dsu;
+const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
 
-const TAG_LEGEND: readonly DsuTagLegendItem[] = [
-  {
-    id: 'root',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.root,
-    icon: faCircleDot,
-  },
-  {
-    id: 'active',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.active,
-    icon: faCrosshairs,
-  },
-  {
-    id: 'query',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.query,
-    icon: faEye,
-  },
-  {
-    id: 'merged',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.merged,
-    icon: faLink,
-  },
-  {
-    id: 'compressed',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.compressed,
-    icon: faCheckDouble,
-  },
-  {
-    id: 'accepted',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.accepted,
-    icon: faCheckDouble,
-  },
-  {
-    id: 'rejected',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dsu.tagLegend.rejected,
-    icon: faXmark,
-  },
+const NODE_TONES: Readonly<Record<DsuNodeStatus, TraceTone | null>> = {
+  idle: null,
+  root: 'violet',
+  active: 'cyan',
+  query: 'cyan',
+  merged: 'lime',
+  compressed: 'amber',
+};
+
+const TAG_CHIPS: Readonly<Record<DsuTraceTag, { readonly label: I18nKey; readonly tone: TraceTone }>> = {
+  root: { label: DSU_KEYS.statuses.root, tone: 'violet' },
+  active: { label: DSU_KEYS.statuses.active, tone: 'cyan' },
+  query: { label: DSU_KEYS.statuses.query, tone: 'cyan' },
+  merged: { label: DSU_KEYS.statuses.merged, tone: 'lime' },
+  compressed: { label: DSU_KEYS.statuses.compressed, tone: 'amber' },
+  accepted: { label: DSU_KEYS.acceptedTagLabel, tone: 'lime' },
+  rejected: { label: DSU_KEYS.rejectedTagLabel, tone: 'red' },
+};
+
+const EDGE_TONES: Readonly<Record<DsuEdgeStatus, TraceTone | null>> = {
+  pending: null,
+  active: 'cyan',
+  accepted: 'lime',
+  rejected: 'red',
+};
+
+const NODE_COLUMNS: readonly TraceColumn[] = [
+  { id: 'node', header: DSU_KEYS.columns.node },
+  { id: 'parent', header: DSU_KEYS.columns.parent },
+  { id: 'root', header: DSU_KEYS.columns.root },
+  { id: 'rank', header: DSU_KEYS.columns.rank, align: 'end' },
+  { id: 'size', header: DSU_KEYS.columns.size, align: 'end' },
+  { id: 'status', header: DSU_KEYS.columns.status, kind: 'chips' },
+  { id: 'tags', header: DSU_KEYS.columns.tags, kind: 'chips' },
 ];
 
-const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'node', headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.node },
-  { id: 'parent', headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.parent },
-  { id: 'root', headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.root },
-  {
-    id: 'rank',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.rank,
-    width: '54px',
-    kind: 'mono',
-  },
-  {
-    id: 'size',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.size,
-    width: '54px',
-    kind: 'mono',
-  },
-  {
-    id: 'status',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.status,
-    width: '92px',
-    kind: 'tag',
-  },
-  {
-    id: 'tags',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dsu.columns.tags,
-    width: '92px',
-    kind: 'tags',
-  },
+const SET_COLUMNS: readonly TraceColumn[] = [
+  { id: 'root', header: DSU_KEYS.columns.root, width: '72px' },
+  { id: 'size', header: DSU_KEYS.columns.size, align: 'end', width: '64px' },
+  { id: 'members', header: DSU_KEYS.columns.members, kind: 'mono' },
 ];
 
 @Component({
   selector: 'app-dsu-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, OhnoTraceTable, TranslocoPipe],
   templateUrl: './dsu-trace-panel.html',
   styleUrl: './dsu-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DsuTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = DSU_KEYS;
+  protected readonly nodeColumns = NODE_COLUMNS;
+  protected readonly setColumns = SET_COLUMNS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<DsuTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
-  readonly hintKeyIdea = computed<string | null>(() => {
+  protected readonly hintFacts = computed<readonly TraceFact[]>(() => {
     const id = this.algorithmId();
-    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null) : null;
+    const tutorial = id ? GRAPH_ALGORITHM_TUTORIALS[id] : undefined;
+    if (!tutorial) return [];
+    return [
+      { id: 'idea', label: COMMON_KEYS.keyIdeaLabel, value: toTraceValue(tutorial.keyIdea), kind: 'text', wide: true },
+      { id: 'watch', label: COMMON_KEYS.watchLabel, value: toTraceValue(tutorial.watch), kind: 'text', wide: true },
+    ];
   });
-  readonly hintWatch = computed<string | null>(() => {
-    const id = this.algorithmId();
-    return id ? (GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null) : null;
-  });
 
-  readonly legend = TAG_LEGEND;
-  readonly tableColumns = TABLE_COLUMNS;
-  readonly tableLegendItems = computed(() =>
-    TAG_LEGEND.map((item) => ({
-      id: item.id,
-      tag: this.traceTag(item.id),
-      label: '',
-      labelKey: item.labelKey,
-    })),
-  );
-  readonly activeLabel = computed(() => this.state()?.activePairLabel ?? '—');
-  readonly visibleNodes = computed<readonly DsuNodeTrace[]>(() =>
-    [...(this.state()?.nodes ?? [])].sort((left, right) => left.label.localeCompare(right.label)),
-  );
-  readonly tableRows = computed<readonly TableRow[]>(() =>
-    this.visibleNodes().map((node) => ({
-      id: node.id,
-      tone:
-        node.status === 'active' || node.status === 'query'
-          ? 'active'
-          : node.status === 'merged' || node.status === 'compressed'
-            ? 'success'
-            : 'default',
-      cells: {
-        node: node.label,
-        parent: node.parentLabel,
-        root: node.rootLabel,
-        rank: node.rank,
-        size: node.size,
-        status: this.statusTag(node),
-        tags: node.tags.map((tag) => this.traceTag(tag)),
-      },
-    })),
-  );
-  readonly edgeRows = computed<readonly DsuEdgeTrace[]>(() => this.state()?.edges ?? []);
-  readonly compactGroups = computed(() =>
-    [...(this.state()?.groups ?? [])].sort((left, right) => {
-      if (left.active !== right.active) return left.active ? -1 : 1;
-      return left.rootLabel.localeCompare(right.rootLabel);
-    }),
-  );
-
-  tagIcon(tag: DsuTraceTag | 'accepted' | 'rejected'): IconDefinition {
-    return TAG_LEGEND.find((item) => item.id === tag)?.icon ?? faCircleDot;
-  }
-
-  tagLabel(tag: DsuTraceTag | 'accepted' | 'rejected'): string {
-    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
-    return labelKey ? this.translate(labelKey) : tag;
-  }
-
-  statusTag(node: DsuNodeTrace): UiTagModel {
-    return {
-      label: this.statusLabel(node.status),
-      tone: this.statusTone(node.status),
-      appearance: 'soft',
-      size: 'sm',
-      uppercase: true,
-    };
-  }
-
-  traceTag(tag: DsuTraceTag | 'accepted' | 'rejected'): UiTagModel {
-    return {
-      icon: this.tagIcon(tag),
-      title: this.tagLabel(tag),
-      ariaLabel: this.tagLabel(tag),
-      tone: this.tagTone(tag),
-      appearance: 'soft',
-      size: 'sm',
-      shape: 'icon',
-    };
-  }
-
-  edgeLabel(edge: DsuEdgeTrace): string {
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
     const state = this.state();
-    if (state?.mode === 'union-find') {
-      if (edge.toLabel === 'find') {
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.findOperationLabel, {
-          label: edge.fromLabel,
-        });
-      }
-      return `${edge.fromLabel}-${edge.toLabel}`;
-    }
-    return `${edge.fromLabel}-${edge.toLabel}`;
-  }
+    if (!state) return [];
+    return [
+      { id: 'mode', label: COMMON_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' },
+      { id: 'components', label: DSU_KEYS.componentsLabel, value: state.componentCount, tone: 'violet' },
+      { id: 'active', label: COMMON_KEYS.activeLabel, value: toTraceValue(state.activePairLabel), kind: 'mono', tone: 'cyan' },
+      { id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(state.resultLabel), kind: 'mono', tone: 'lime' },
+    ];
+  });
 
-  edgeTag(edge: DsuEdgeTrace): 'accepted' | 'rejected' | null {
-    if (edge.status === 'accepted') return 'accepted';
-    if (edge.status === 'rejected') return 'rejected';
-    return null;
-  }
+  protected readonly statusFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return [
+      { id: 'status', label: COMMON_KEYS.statusLabel, value: toTraceValue(state.statusLabel), kind: 'mono' },
+      { id: 'rail', label: DSU_KEYS.railLabel, value: toTraceValue(state.operationsLabel), kind: 'mono' },
+      {
+        id: 'decision',
+        label: COMMON_KEYS.decisionLabel,
+        value: toTraceValue(state.decision ?? DSU_KEYS.awaitingOperationLabel),
+        kind: 'text',
+        wide: true,
+      },
+    ];
+  });
 
-  private statusTone(status: DsuNodeTrace['status']): 'neutral' | 'warning' | 'accent' | 'success' {
-    switch (status) {
-      case 'active':
-      case 'query':
-        return 'warning';
-      case 'root':
-        return 'accent';
-      case 'merged':
-      case 'compressed':
-        return 'success';
-      default:
-        return 'neutral';
-    }
-  }
+  protected readonly setRows = computed<readonly TraceRow[]>(() =>
+    [...(this.state()?.groups ?? [])]
+      .sort((left, right) => {
+        if (left.active !== right.active) return left.active ? -1 : 1;
+        return left.rootLabel.localeCompare(right.rootLabel);
+      })
+      .map((group) => ({
+        id: group.rootId,
+        tone: group.active ? 'cyan' : null,
+        cells: { root: group.rootLabel, size: group.size, members: group.members.join(', ') },
+      })),
+  );
 
-  private tagTone(
-    tag: DsuTraceTag | 'accepted' | 'rejected',
-  ): 'accent' | 'warning' | 'success' | 'danger' {
-    switch (tag) {
-      case 'root':
-        return 'accent';
-      case 'active':
-      case 'query':
-        return 'warning';
-      case 'merged':
-      case 'compressed':
-      case 'accepted':
-        return 'success';
-      case 'rejected':
-        return 'danger';
-    }
-  }
+  protected readonly edgeChips = computed<readonly TraceChip[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return state.edges.map((edge) => {
+      const base =
+        state.mode === 'union-find' && edge.toLabel === 'find'
+          ? i18nText(DSU_KEYS.findOperationLabel, { label: edge.fromLabel })
+          : `${edge.fromLabel}-${edge.toLabel}`;
+      const label = edge.weight !== null && typeof base === 'string' ? `${base} · ${edge.weight}` : base;
+      return { id: edge.id, label, tone: EDGE_TONES[edge.status], active: edge.status === 'active' };
+    });
+  });
 
-  private statusLabel(status: DsuNodeTrace['status']): string {
-    switch (status) {
-      case 'idle':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.idle);
-      case 'root':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.root);
-      case 'active':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.active);
-      case 'query':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.query);
-      case 'merged':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.merged);
-      case 'compressed':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dsu.statuses.compressed);
-    }
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
+  protected readonly nodeRows = computed<readonly TraceRow[]>(() =>
+    [...(this.state()?.nodes ?? [])]
+      .sort((left, right) => left.label.localeCompare(right.label))
+      .map((node) => {
+        const tone = NODE_TONES[node.status];
+        return {
+          id: node.id,
+          tone: node.status === 'idle' || node.status === 'root' ? null : tone,
+          cells: {
+            node: node.label,
+            parent: node.parentLabel,
+            root: node.rootLabel,
+            rank: node.rank,
+            size: node.size,
+            status: [{ id: node.status, label: toTraceValue(DSU_KEYS.statuses[node.status]), tone }],
+            tags: node.tags.map((tag) => ({ id: tag, label: toTraceValue(TAG_CHIPS[tag].label), tone: TAG_CHIPS[tag].tone })),
+          },
+        };
+      }),
+  );
 }

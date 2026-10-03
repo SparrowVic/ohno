@@ -1,277 +1,135 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faArrowTurnDownRight,
-  faArrowsLeftRight,
-  faBadgeCheck,
-  faBan,
-  faBolt,
-  faCheck,
-  faCopy,
-  faDown,
-  faMerge,
-  faMinus,
-  faRoute,
-  faScissors,
-  faSquareDashed,
-} from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { DpCell, DpTraceState, DpTraceTag } from '../../models/dp';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
-import { MathText } from '../../../../shared/components/math-text/math-text';
-import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 
-interface DpTagLegend {
-  readonly id: DpTraceTag;
-  readonly labelKey: I18nKey;
-  readonly icon: IconDefinition;
-}
+const DP_KEYS = I18N_KEY.features.algorithms.tracePanels.dp;
+const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
+const DISPLAY_DP_KEYS = I18N_KEY.features.algorithms.display.dp;
 
-const TAG_LEGEND: readonly DpTagLegend[] = [
-  {
-    id: 'active',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.active,
-    icon: faBolt,
-  },
-  {
-    id: 'base',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.base,
-    icon: faMinus,
-  },
-  {
-    id: 'take',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.take,
-    icon: faCheck,
-  },
-  {
-    id: 'skip',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.skip,
-    icon: faArrowTurnDownRight,
-  },
-  {
-    id: 'match',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.match,
-    icon: faBadgeCheck,
-  },
-  {
-    id: 'insert',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.insert,
-    icon: faDown,
-  },
-  {
-    id: 'delete',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.delete,
-    icon: faScissors,
-  },
-  {
-    id: 'replace',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.replace,
-    icon: faArrowsLeftRight,
-  },
-  {
-    id: 'split',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.split,
-    icon: faMerge,
-  },
-  {
-    id: 'best',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.best,
-    icon: faCopy,
-  },
-  {
-    id: 'path',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.path,
-    icon: faRoute,
-  },
-  {
-    id: 'blocked',
-    labelKey: I18N_KEY.features.algorithms.tracePanels.dp.tagLegend.blocked,
-    icon: faBan,
-  },
-];
+const STATUS_TONES: Readonly<Record<DpCell['status'], TraceTone | null>> = {
+  idle: null,
+  base: 'slate',
+  blocked: 'red',
+  active: 'cyan',
+  candidate: 'pink',
+  improved: 'lime',
+  chosen: 'lime',
+  backtrack: 'lime',
+  match: 'amber',
+};
 
-const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'cell', headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.cell, kind: 'mono' },
-  {
-    id: 'value',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.value,
-    width: '72px',
-    kind: 'mono',
-  },
-  { id: 'meta', headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.meta, kind: 'mono' },
-  {
-    id: 'status',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.status,
-    width: '92px',
-    kind: 'tag',
-  },
-  {
-    id: 'tags',
-    headerKey: I18N_KEY.features.algorithms.tracePanels.dp.columns.tags,
-    width: '92px',
-    kind: 'tags',
-  },
+const TAG_CHIPS: Readonly<Record<DpTraceTag, { readonly label: I18nKey; readonly tone: TraceTone }>> = {
+  active: { label: DP_KEYS.statuses.active, tone: 'cyan' },
+  base: { label: DP_KEYS.statuses.base, tone: 'slate' },
+  take: { label: DISPLAY_DP_KEYS.labels.take, tone: 'pink' },
+  skip: { label: DP_KEYS.skipTagLabel, tone: 'pink' },
+  match: { label: DISPLAY_DP_KEYS.tags.match, tone: 'amber' },
+  insert: { label: DISPLAY_DP_KEYS.tags.insert, tone: 'pink' },
+  delete: { label: DISPLAY_DP_KEYS.tags.delete, tone: 'pink' },
+  replace: { label: DISPLAY_DP_KEYS.tags.replace, tone: 'pink' },
+  split: { label: DISPLAY_DP_KEYS.tags.split, tone: 'violet' },
+  best: { label: DISPLAY_DP_KEYS.labels.best, tone: 'lime' },
+  path: { label: DP_KEYS.pathTagLabel, tone: 'lime' },
+  blocked: { label: DP_KEYS.statuses.blocked, tone: 'red' },
+};
+
+const TABLE_COLUMNS: readonly TraceColumn[] = [
+  { id: 'cell', header: DP_KEYS.columns.cell, kind: 'mono' },
+  { id: 'value', header: DP_KEYS.columns.value, align: 'end' },
+  { id: 'meta', header: DP_KEYS.columns.meta, kind: 'mono' },
+  { id: 'status', header: DP_KEYS.columns.status, kind: 'chips' },
+  { id: 'tags', header: DP_KEYS.columns.tags, kind: 'chips' },
 ];
 
 @Component({
   selector: 'app-dp-trace-panel',
-  imports: [I18nTextPipe, MathText, SegmentedPanel, SegmentedPanelSection, Table, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, OhnoTraceTable, TranslocoPipe],
   templateUrl: './dp-trace-panel.html',
   styleUrl: './dp-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DpTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = DP_KEYS;
+  protected readonly commonKeys = COMMON_KEYS;
+  protected readonly columns = TABLE_COLUMNS;
 
-  protected readonly I18N_KEY = I18N_KEY;
   readonly state = input<DpTraceState | null>(null);
-  readonly legend = TAG_LEGEND;
-  readonly tableColumns = TABLE_COLUMNS;
-  readonly tableLegendItems = computed(() =>
-    TAG_LEGEND.map((item) => ({
-      id: item.id,
-      tag: this.traceTag(item.id),
-      label: '',
-      labelKey: item.labelKey,
-    })),
+
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    const facts: TraceFact[] = [{ id: 'mode', label: COMMON_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' }];
+    if (state.presetLabel) {
+      facts.push({ id: 'preset', label: DP_KEYS.presetLabel, value: toTraceValue(state.presetLabel), kind: 'mono', tone: 'violet' });
+    }
+    facts.push(
+      { id: 'phase', label: COMMON_KEYS.phaseLabel, value: toTraceValue(state.phaseLabel), kind: 'mono' },
+      { id: 'active', label: COMMON_KEYS.activeLabel, value: toTraceValue(state.activeLabel), kind: 'math', tone: 'cyan' },
+      { id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(state.resultLabel), kind: 'math', tone: 'lime' },
+    );
+    return facts;
+  });
+
+  protected readonly calculationFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    const computation = state.computation;
+    return [
+      { id: 'preset', label: DP_KEYS.presetNoteLabel, value: toTraceValue(state.presetDescription), kind: 'math', wide: true },
+      { id: 'path', label: COMMON_KEYS.routeLabel, value: toTraceValue(state.pathLabel), kind: 'mono', wide: true },
+      {
+        id: 'expression',
+        label: computation?.label || DP_KEYS.currentTransitionLabel,
+        value: toTraceValue(computation?.expression ?? DP_KEYS.waitingTransitionLabel),
+        kind: 'math',
+        wide: true,
+        tone: computation ? 'cyan' : null,
+      },
+      { id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(computation?.result ?? null), kind: 'math', tone: 'lime' },
+      {
+        id: 'decision',
+        label: COMMON_KEYS.decisionLabel,
+        value: toTraceValue(computation?.decision ?? DP_KEYS.noActiveTransitionLabel),
+        kind: 'text',
+        wide: true,
+      },
+    ];
+  });
+
+  protected readonly primaryChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.primaryItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(item), kind: 'math', tone: 'cyan' })),
   );
-  readonly visibleRows = computed<readonly DpCell[]>(() =>
+
+  protected readonly secondaryChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.secondaryItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(item), kind: 'math' })),
+  );
+
+  protected readonly rows = computed<readonly TraceRow[]>(() =>
     (this.state()?.cells ?? [])
       .filter((cell) => cell.status !== 'idle' || cell.tags.length > 0)
-      .sort((left, right) => left.row - right.row || left.col - right.col),
+      .sort((left, right) => left.row - right.row || left.col - right.col)
+      .map((cell) => {
+        const tone = STATUS_TONES[cell.status];
+        const highlighted = ['active', 'candidate', 'improved', 'chosen', 'backtrack'].includes(cell.status);
+        return {
+          id: cell.id,
+          tone: highlighted ? tone : null,
+          cells: {
+            cell: `${cell.rowLabel} × ${cell.colLabel}`,
+            value: cell.valueLabel,
+            meta: cell.metaLabel,
+            status: [{ id: cell.status, label: toTraceValue(DP_KEYS.statuses[cell.status]), tone }],
+            tags: cell.tags.map((tag) => ({ id: tag, label: toTraceValue(TAG_CHIPS[tag].label), tone: TAG_CHIPS[tag].tone })),
+          },
+        };
+      }),
   );
-  readonly tableRows = computed<readonly TableRow[]>(() =>
-    this.visibleRows().map((cell) => ({
-      id: cell.id,
-      tone:
-        cell.status === 'active' || cell.status === 'candidate'
-          ? 'active'
-          : cell.status === 'improved' || cell.status === 'chosen' || cell.status === 'backtrack'
-            ? 'success'
-            : 'default',
-      cells: {
-        cell: `${cell.rowLabel} × ${cell.colLabel}`,
-        value: cell.valueLabel,
-        meta: cell.metaLabel ?? '—',
-        status: this.statusTag(cell),
-        tags: cell.tags.map((tag) => this.traceTag(tag)),
-      },
-    })),
-  );
-
-  tagIcon(tag: DpTraceTag): IconDefinition {
-    return TAG_LEGEND.find((item) => item.id === tag)?.icon ?? faSquareDashed;
-  }
-
-  tagLabel(tag: DpTraceTag): string {
-    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
-    return labelKey ? this.translate(labelKey) : tag;
-  }
-
-  statusTag(cell: DpCell): UiTagModel {
-    return {
-      label: this.statusLabel(cell.status),
-      tone: this.statusTone(cell.status),
-      appearance: 'soft',
-      size: 'sm',
-      uppercase: true,
-    };
-  }
-
-  traceTag(tag: DpTraceTag): UiTagModel {
-    return {
-      icon: this.tagIcon(tag),
-      title: this.tagLabel(tag),
-      ariaLabel: this.tagLabel(tag),
-      tone: this.tagTone(tag),
-      appearance: 'soft',
-      size: 'sm',
-      shape: 'icon',
-    };
-  }
-
-  private statusTone(
-    status: DpCell['status'],
-  ): 'neutral' | 'danger' | 'warning' | 'success' | 'route' | 'hit' {
-    switch (status) {
-      case 'base':
-        return 'neutral';
-      case 'blocked':
-        return 'danger';
-      case 'active':
-      case 'candidate':
-        return 'warning';
-      case 'improved':
-      case 'chosen':
-        return 'success';
-      case 'backtrack':
-        return 'route';
-      case 'match':
-        return 'hit';
-      default:
-        return 'neutral';
-    }
-  }
-
-  private tagTone(
-    tag: DpTraceTag,
-  ): 'neutral' | 'warning' | 'success' | 'route' | 'hit' | 'danger' | 'window' {
-    switch (tag) {
-      case 'active':
-        return 'warning';
-      case 'base':
-        return 'neutral';
-      case 'take':
-      case 'best':
-        return 'success';
-      case 'skip':
-      case 'path':
-        return 'route';
-      case 'match':
-        return 'hit';
-      case 'insert':
-      case 'delete':
-      case 'replace':
-        return 'warning';
-      case 'split':
-        return 'window';
-      case 'blocked':
-        return 'danger';
-    }
-  }
-
-  private statusLabel(status: DpCell['status']): string {
-    switch (status) {
-      case 'idle':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.idle);
-      case 'base':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.base);
-      case 'blocked':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.blocked);
-      case 'active':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.active);
-      case 'candidate':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.candidate);
-      case 'improved':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.improved);
-      case 'chosen':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.chosen);
-      case 'backtrack':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.backtrack);
-      case 'match':
-        return this.translate(I18N_KEY.features.algorithms.tracePanels.dp.statuses.match);
-    }
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
 }

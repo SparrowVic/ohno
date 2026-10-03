@@ -1,66 +1,12 @@
-<div class="trace">
-  @if (state(); as geo) {
-    <div class="trace__header">
-      <app-segmented-panel
-        class="trace__summary"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.delaunay.summaryAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.delaunay.triangleLabel | transloco"
-          [value]="geo.activeTriangleLabel"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.delaunay.committedLabel | transloco"
-          [value]="geo.triangleCount"
-          [valueMono]="true"
-        />
-      </app-segmented-panel>
-
-      <app-segmented-panel
-        class="trace__streams"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.delaunay.detailsAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.delaunay.circumcircleLabel | transloco
-          "
-        >
-          <app-table
-            class="trace__table"
-            [columns]="circleColumns"
-            [rows]="circleRows()"
-            [showHeader]="false"
-            density="compact"
-          />
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.delaunay.triangleRailLabel | transloco
-          "
-          [badge]="geo.events.length"
-        >
-          <div class="trace__chips">
-            @if (geo.events.length === 0) {
-              <span class="trace__placeholder">{{
-                I18N_KEY.features.algorithms.tracePanels.delaunay.noQueuedTrianglesLabel | transloco
-              }}</span>
-            } @else {
-              @for (event of geo.events; track event.id) {
-                <span class="trace__chip trace__chip--{{ event.tone }}">{{ event.label }}</span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-    </div>
-  } @else {
-    <div class="trace__empty">
-      {{ I18N_KEY.features.algorithms.tracePanels.delaunay.emptyLabel | transloco }}
-    </div>
-  }
-</div>
+@if (state(); as geo) {
+  <ohno-trace-facts [title]="keys.summaryAriaLabel" [facts]="summaryFacts()" />
+  <ohno-trace-facts [title]="keys.circumcircleLabel" [facts]="circleFacts()" />
+  <ohno-trace-chips
+    [title]="keys.triangleRailLabel"
+    [meta]="geo.events.length"
+    [chips]="eventChips()"
+    [emptyLabel]="keys.noQueuedTrianglesLabel"
+  />
+} @else {
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ keys.emptyLabel | transloco }}</p>
+}

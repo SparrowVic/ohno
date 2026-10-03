@@ -1,139 +1,23 @@
-<div class="trace">
-  @if (state(); as geo) {
-    <div class="trace__header">
-      <app-segmented-panel
-        class="trace__summary trace__summary--{{ geo.phase }}"
-        [attr.aria-label]="TRACE.summaryAria | transloco"
-      >
-        <app-segmented-panel-section
-          [eyebrow]="COMMON.phaseLabel | transloco"
-          [value]="phaseKey() ? (phaseKey()! | transloco) : (geo.phase || '—')"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="TRACE.onStack | transloco"
-          [value]="hullCount()"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="TRACE.rejected | transloco"
-          [value]="rejectedCount()"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="TRACE.totalPoints | transloco"
-          [value]="pointCount()"
-          [valueMono]="true"
-        />
-      </app-segmented-panel>
-
-      <div class="trace__check" [class.trace__check--idle]="!turnPoints()">
-        <div class="trace__check-header">{{ TRACE.crossCheck | transloco }}</div>
-        <app-math-text class="trace__check-formula" [tex]="crossProductFormula" variant="formula" />
-
-        @if (showTurnDetails()) {
-          <div class="trace__check-trio">
-            @for (slot of turnSlots(); track slot.key) {
-              <div
-                class="trace__check-pt trace__check-pt--{{ slot.tone }}"
-                [class.trace__check-pt--ghost]="!slot.point"
-              >
-                <span class="trace__badge trace__badge--{{ slot.tone }}">{{ slot.key }}</span>
-                <div class="trace__check-info">
-                  <span class="trace__check-pid">P{{ slot.point?.id ?? '—' }}</span>
-                  <span class="trace__check-role">{{ slot.role | transloco }}</span>
-                  <span class="trace__check-coord"
-                    >({{ fmt(slot.point?.x) }}, {{ fmt(slot.point?.y) }})</span
-                  >
-                </div>
-              </div>
-            }
-          </div>
-
-          <div
-            class="trace__check-result"
-            [class.trace__check-result--good]="geo.crossProduct !== null && geo.crossProduct > 0"
-            [class.trace__check-result--bad]="geo.crossProduct !== null && geo.crossProduct <= 0"
-            [class.trace__check-result--idle]="geo.crossProduct === null"
-          >
-            <span class="trace__check-cp">
-              {{ TRACE.crossValue | transloco: { value: crossText() } }}
-            </span>
-            @if (turnVerdict(); as verdict) {
-              <span class="trace__check-verdict">{{ verdict.text | transloco }}</span>
-              <span class="trace__check-action trace__check-action--{{ verdict.tone }}">
-                → {{ verdict.action | transloco }}
-              </span>
-            } @else {
-              <span class="trace__check-verdict">{{ TRACE.waiting | transloco }}</span>
-              <span class="trace__check-action trace__check-action--idle">{{ TRACE.standBy | transloco }}</span>
-            }
-          </div>
-        } @else {
-          <div class="trace__status-note">
-            {{ TRACE.turnHint | transloco }}
-          </div>
-        }
-      </div>
-
-      <div class="trace__detail-panels">
-        <app-segmented-panel
-          class="trace__detail"
-          orientation="vertical"
-          [attr.aria-label]="TRACE.stackAria | transloco"
-        >
-          <app-segmented-panel-section [eyebrow]="TRACE.hullStack | transloco" [badge]="geo.stackIds.length">
-            @if (stackPoints().length === 0) {
-              <div class="trace__stack-empty">{{ TRACE.stackEmpty | transloco }}</div>
-            } @else {
-              <div class="trace__stack-list">
-                @for (pt of stackPoints(); track pt?.id; let last = $last; let first = $first) {
-                  <div
-                    class="trace__stack-row"
-                    [class.trace__stack-row--top]="last"
-                    [class.trace__stack-row--base]="first && stackPoints().length > 1"
-                  >
-                    <div class="trace__stack-marker">
-                      <div class="trace__stack-dot"></div>
-                      @if (!last) {
-                        <div class="trace__stack-line"></div>
-                      }
-                    </div>
-                    <div class="trace__stack-content">
-                      <span class="trace__stack-pid">P{{ pt?.id }}</span>
-                      <span class="trace__stack-coord">({{ fmt(pt?.x) }}, {{ fmt(pt?.y) }})</span>
-                      @if (last) {
-                        <span class="trace__stack-tag trace__stack-tag--top">{{ TRACE.top | transloco }}</span>
-                      }
-                      @if (first && stackPoints().length > 1) {
-                        <span class="trace__stack-tag trace__stack-tag--base">{{ TRACE.base | transloco }}</span>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-          </app-segmented-panel-section>
-        </app-segmented-panel>
-
-        <app-segmented-panel
-          class="trace__detail"
-          orientation="vertical"
-          [attr.aria-label]="TRACE.legendAria | transloco"
-        >
-          <app-segmented-panel-section [eyebrow]="TRACE.pointStatus | transloco">
-            <div class="trace__legend-grid">
-              @for (item of legendItems; track item.tone) {
-                <div class="trace__legend-item">
-                  <span class="trace__dot trace__dot--{{ item.tone }}"></span>
-                  <span>{{ item.label | transloco }}</span>
-                </div>
-              }
-            </div>
-          </app-segmented-panel-section>
-        </app-segmented-panel>
-      </div>
-    </div>
-  } @else {
-    <div class="trace__empty">{{ TRACE.empty | transloco }}</div>
-  }
-</div>
+@if (state(); as geo) {
+  <ohno-trace-facts [title]="TRACE.summaryAria" [facts]="summaryFacts()" />
+  <section class="trace-panel__section">
+    <h3 class="trace-panel__title"><ohno-engraving>{{ TRACE.crossCheck | transloco }}</ohno-engraving></h3>
+    <p class="trace-panel__formula"><app-math-text [tex]="crossProductFormula" variant="formula" /></p>
+    @if (showTurnDetails()) {
+      <ohno-trace-table [title]="TRACE.turnTitle" [columns]="turnColumns" [rows]="turnRows()" />
+      <ohno-trace-facts [facts]="verdictFacts()" />
+    } @else {
+      <p class="trace-panel__note">{{ TRACE.turnHint | transloco }}</p>
+    }
+  </section>
+  <ohno-trace-table
+    [title]="TRACE.hullStack"
+    [meta]="geo.stackIds.length"
+    [columns]="stackColumns"
+    [rows]="stackRows()"
+    [emptyLabel]="TRACE.stackEmpty"
+  />
+  <ohno-trace-chips [title]="TRACE.pointStatus" [chips]="legendChips" />
+} @else {
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ TRACE.empty | transloco }}</p>
+}

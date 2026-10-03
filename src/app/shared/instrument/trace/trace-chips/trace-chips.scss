@@ -1,0 +1,67 @@
+@use '../trace-tone' as trace;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+:host(.ohno-trace-chips--inline) {
+  display: inline-block;
+}
+
+.ohno-trace-chips__head {
+  @include trace.title;
+}
+
+.ohno-trace-chips__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ohno-trace-chips__chip {
+  @include trace.tones;
+
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  max-width: 100%;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: rgb(var(--white-rgb) / 0.04);
+  box-shadow: inset 0 0 0 1px rgb(var(--white-rgb) / 0.08);
+  color: var(--ink-2);
+  white-space: nowrap;
+
+  &[data-tone] {
+    color: var(--trace-tone);
+    background: rgb(var(--trace-tone-rgb) / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(var(--trace-tone-rgb) / 0.35);
+  }
+}
+
+.ohno-trace-chips__chip--active {
+  background: rgb(var(--trace-tone-rgb) / 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--trace-tone-rgb) / 0.7),
+    0 0 10px rgb(var(--trace-tone-rgb) / 0.25);
+  color: var(--trace-tone);
+
+  &:not([data-tone]) {
+    --trace-tone: var(--cyan);
+    --trace-tone-rgb: var(--cyan-rgb);
+  }
+}
+
+.ohno-trace-chips__chip--dim {
+  opacity: 0.45;
+}
+
+.ohno-trace-chips__empty {
+  margin: 0;
+  font: 500 11px/1.4 var(--font-mono);
+  color: var(--ink-4);
+}

@@ -1,235 +1,137 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  faBan,
-  faBullseye,
-  faCheckDouble,
-  faCircleDot,
-  faCrosshairs,
-  faFillDrip,
-  faRoute,
-  faWandMagicSparkles,
-} from '@fortawesome/pro-solid-svg-icons';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
-import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
+import { i18nText } from '../../../../core/i18n/translatable-text';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
+import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
+import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
+import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
+import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { GridTraceCell, GridTraceState, GridTraceTag } from '../../models/grid';
-import { SegmentedPanel } from '../../../../shared/components/segmented-panel/segmented-panel';
-import { SegmentedPanelSection } from '../../../../shared/components/segmented-panel/segmented-panel-section';
-import { Table, TableColumn, TableRow } from '../../../../shared/components/table/table';
-import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
-import { TraceHint } from '../trace-hint/trace-hint';
 
-interface GridTagLegendItem {
-  readonly id: GridTraceTag;
-  readonly labelKey: I18nKey;
-  readonly icon: IconDefinition;
-}
+const GRID_KEYS = I18N_KEY.features.algorithms.tracePanels.grid;
+const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
 
-const I18N = {
-  summary: I18N_KEY.features.algorithms.tracePanels.grid,
-  columns: I18N_KEY.features.algorithms.tracePanels.grid.columns,
-  tagLegend: I18N_KEY.features.algorithms.tracePanels.grid.tagLegend,
-  statuses: I18N_KEY.features.algorithms.tracePanels.grid.statuses,
-  tableEmptyLabel: I18N_KEY.features.algorithms.tracePanels.grid.tableEmptyLabel,
-  emptyLabel: I18N_KEY.features.algorithms.tracePanels.grid.emptyLabel,
-} as const;
+type GridStatus = GridTraceCell['status'];
 
-const TAG_LEGEND: readonly GridTagLegendItem[] = [
-  { id: 'seed', labelKey: I18N.tagLegend.seed, icon: faCircleDot },
-  { id: 'goal', labelKey: I18N.tagLegend.goal, icon: faBullseye },
-  { id: 'frontier', labelKey: I18N.tagLegend.frontier, icon: faWandMagicSparkles },
-  { id: 'current', labelKey: I18N.tagLegend.current, icon: faCrosshairs },
-  { id: 'filled', labelKey: I18N.tagLegend.filled, icon: faFillDrip },
-  { id: 'closed', labelKey: I18N.tagLegend.closed, icon: faCheckDouble },
-  { id: 'path', labelKey: I18N.tagLegend.path, icon: faRoute },
-  { id: 'wall', labelKey: I18N.tagLegend.wall, icon: faBan },
-  { id: 'blocked', labelKey: I18N.tagLegend.blocked, icon: faBan },
-  { id: 'candidate', labelKey: I18N.tagLegend.candidate, icon: faWandMagicSparkles },
-];
+const STATUS_TONES: Readonly<Record<GridStatus, TraceTone | null>> = {
+  idle: null,
+  wall: 'slate',
+  source: 'violet',
+  goal: 'amber',
+  frontier: 'amber',
+  current: 'cyan',
+  filled: 'lime',
+  closed: 'lime',
+  path: 'lime',
+  blocked: 'red',
+};
 
-const TABLE_COLUMNS: readonly TableColumn[] = [
-  { id: 'cell', headerKey: I18N.columns.cell, width: '88px' },
-  { id: 'value', headerKey: I18N.columns.value, width: '72px', kind: 'mono' },
-  { id: 'status', headerKey: I18N.columns.status, width: '100px', kind: 'tag' },
-  { id: 'tags', headerKey: I18N.columns.tags, width: '92px', kind: 'tags' },
+const TAG_CHIPS: Readonly<Record<GridTraceTag, { readonly label: I18nKey; readonly tone: TraceTone }>> = {
+  seed: { label: GRID_KEYS.statuses.source, tone: 'violet' },
+  goal: { label: GRID_KEYS.statuses.goal, tone: 'amber' },
+  frontier: { label: GRID_KEYS.statuses.frontier, tone: 'amber' },
+  current: { label: GRID_KEYS.statuses.current, tone: 'cyan' },
+  filled: { label: GRID_KEYS.statuses.filled, tone: 'lime' },
+  closed: { label: GRID_KEYS.statuses.closed, tone: 'lime' },
+  path: { label: GRID_KEYS.statuses.path, tone: 'lime' },
+  wall: { label: GRID_KEYS.statuses.wall, tone: 'slate' },
+  blocked: { label: GRID_KEYS.statuses.blocked, tone: 'red' },
+  candidate: { label: GRID_KEYS.tagLegend.candidate, tone: 'pink' },
+};
+
+const TABLE_COLUMNS: readonly TraceColumn[] = [
+  { id: 'cell', header: GRID_KEYS.columns.cell, kind: 'mono' },
+  { id: 'value', header: GRID_KEYS.columns.value, align: 'end' },
+  { id: 'status', header: GRID_KEYS.columns.status, kind: 'chips' },
+  { id: 'tags', header: GRID_KEYS.columns.tags, kind: 'chips' },
 ];
 
 @Component({
   selector: 'app-grid-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
+  imports: [OhnoLed, OhnoTraceChips, OhnoTraceFacts, OhnoTraceTable, TranslocoPipe],
   templateUrl: './grid-trace-panel.html',
   styleUrl: './grid-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GridTracePanel {
-  private readonly language = inject(AppLanguageService);
-  private readonly transloco = inject(TranslocoService);
+  protected readonly keys = GRID_KEYS;
+  protected readonly columns = TABLE_COLUMNS;
 
-  protected readonly I18N = I18N;
   readonly state = input<GridTraceState | null>(null);
   readonly algorithmId = input<string | null>(null);
 
-  readonly hintKeyIdea = computed<string | null>(() => {
+  protected readonly hintFacts = computed<readonly TraceFact[]>(() => {
     const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.keyIdea ?? null : null;
+    const tutorial = id ? GRAPH_ALGORITHM_TUTORIALS[id] : undefined;
+    if (!tutorial) return [];
+    return [
+      { id: 'idea', label: COMMON_KEYS.keyIdeaLabel, value: toTraceValue(tutorial.keyIdea), kind: 'text', wide: true },
+      { id: 'watch', label: COMMON_KEYS.watchLabel, value: toTraceValue(tutorial.watch), kind: 'text', wide: true },
+    ];
   });
-  readonly hintWatch = computed<string | null>(() => {
-    const id = this.algorithmId();
-    return id ? GRAPH_ALGORITHM_TUTORIALS[id]?.watch ?? null : null;
-  });
 
-  readonly legend = TAG_LEGEND;
-  readonly tableColumns = TABLE_COLUMNS;
-  readonly tableLegendItems = computed(() =>
-    TAG_LEGEND.map((item) => ({
-      id: item.id,
-      tag: this.traceTag(item.id),
-      label: '',
-      labelKey: item.labelKey,
-    })),
-  );
-  readonly activeLabel = computed(() => {
-    const activeId = this.state()?.activeCellId;
-    if (!activeId) return '—';
-    return this.state()?.cells.find((cell) => cell.id === activeId)?.metaLabel ?? activeId;
-  });
-  readonly resultLabel = computed<TranslatableText>(() => {
-    const state = this.state();
-    if (!state) return '—';
-    return state.mode === 'flood-fill'
-      ? i18nText(I18N.summary.filledCount, { count: state.resultCount })
-      : i18nText(I18N.summary.pathCount, { count: state.resultCount });
-  });
-  readonly tableRows = computed<readonly TableRow[]>(() =>
-    this.visibleRows().map((cell) => ({
-      id: cell.id,
-      tone:
-        cell.status === 'current'
-          ? 'active'
-          : cell.status === 'filled' || cell.status === 'path'
-            ? 'success'
-            : 'default',
-      cells: {
-        cell: cell.metaLabel,
-        value: cell.valueLabel || '—',
-        status: this.statusTag(cell),
-        tags: cell.tags.map((tag) => this.traceTag(tag)),
-      },
-    })),
-  );
-
-  tagIcon(tag: GridTraceTag): IconDefinition {
-    return TAG_LEGEND.find((item) => item.id === tag)?.icon ?? faCircleDot;
-  }
-
-  tagLabel(tag: GridTraceTag): string {
-    const labelKey = TAG_LEGEND.find((item) => item.id === tag)?.labelKey;
-    return labelKey ? this.translate(labelKey) : tag;
-  }
-
-  statusTag(cell: GridTraceCell): UiTagModel {
-    return {
-      label: this.statusLabel(cell.status),
-      tone: this.statusTone(cell.status),
-      appearance: 'soft',
-      size: 'sm',
-      uppercase: true,
-    };
-  }
-
-  traceTag(tag: GridTraceTag): UiTagModel {
-    return {
-      icon: this.tagIcon(tag),
-      title: this.tagLabel(tag),
-      ariaLabel: this.tagLabel(tag),
-      tone: this.tagTone(tag),
-      appearance: 'soft',
-      size: 'sm',
-      shape: 'icon',
-    };
-  }
-
-  visibleRows(): readonly GridTraceCell[] {
+  protected readonly summaryFacts = computed<readonly TraceFact[]>(() => {
     const state = this.state();
     if (!state) return [];
-    return state.cells.filter((cell) => cell.status !== 'idle').sort((left, right) => left.row - right.row || left.col - right.col);
-  }
+    const activeId = state.activeCellId;
+    const active = activeId ? (state.cells.find((cell) => cell.id === activeId)?.metaLabel ?? activeId) : null;
+    return [
+      { id: 'mode', label: GRID_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' },
+      { id: 'active', label: GRID_KEYS.activeLabel, value: active, kind: 'mono', tone: active ? 'cyan' : null },
+      { id: 'frontier', label: GRID_KEYS.frontierLabel, value: state.frontierCount, tone: 'amber' },
+      { id: 'visited', label: GRID_KEYS.visitedLabel, value: state.visitedCount },
+      {
+        id: 'result',
+        label: GRID_KEYS.resultLabel,
+        value: i18nText(state.mode === 'flood-fill' ? GRID_KEYS.filledCount : GRID_KEYS.pathCount, { count: state.resultCount }),
+        tone: 'lime',
+      },
+    ];
+  });
 
-  private statusLabel(status: GridTraceCell['status']): string {
-    switch (status) {
-      case 'idle':
-        return this.translate(I18N.statuses.idle);
-      case 'wall':
-        return this.translate(I18N.statuses.wall);
-      case 'source':
-        return this.translate(I18N.statuses.source);
-      case 'goal':
-        return this.translate(I18N.statuses.goal);
-      case 'frontier':
-        return this.translate(I18N.statuses.frontier);
-      case 'current':
-        return this.translate(I18N.statuses.current);
-      case 'filled':
-        return this.translate(I18N.statuses.filled);
-      case 'closed':
-        return this.translate(I18N.statuses.closed);
-      case 'path':
-        return this.translate(I18N.statuses.path);
-      case 'blocked':
-        return this.translate(I18N.statuses.blocked);
-    }
-  }
+  protected readonly boardFacts = computed<readonly TraceFact[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return [
+      { id: 'source', label: GRID_KEYS.sourceLabel, value: toTraceValue(state.sourceLabel), kind: 'mono', tone: 'violet' },
+      { id: 'target', label: GRID_KEYS.targetLabel, value: toTraceValue(state.targetLabel), kind: 'mono' },
+      { id: 'board', label: GRID_KEYS.boardLabel, value: `${state.rows}×${state.cols}`, kind: 'mono' },
+      {
+        id: 'decision',
+        label: COMMON_KEYS.decisionLabel,
+        value: toTraceValue(state.decision ?? GRID_KEYS.waitingDecisionLabel),
+        kind: 'text',
+        wide: true,
+      },
+    ];
+  });
 
-  private statusTone(status: GridTraceCell['status']): 'accent' | 'hit' | 'window' | 'warning' | 'success' | 'danger' | 'neutral' {
-    switch (status) {
-      case 'source':
-        return 'accent';
-      case 'goal':
-        return 'hit';
-      case 'frontier':
-        return 'window';
-      case 'current':
-        return 'warning';
-      case 'filled':
-      case 'closed':
-      case 'path':
-        return 'success';
-      case 'wall':
-      case 'blocked':
-        return 'danger';
-      default:
-        return 'neutral';
-    }
-  }
+  protected readonly visitChips = computed<readonly TraceChip[]>(() =>
+    (this.state()?.visitOrder ?? []).map((label, index) => ({ id: index, label, tone: 'lime' })),
+  );
 
-  private tagTone(tag: GridTraceTag): 'accent' | 'hit' | 'window' | 'warning' | 'success' | 'danger' {
-    switch (tag) {
-      case 'seed':
-        return 'accent';
-      case 'goal':
-        return 'hit';
-      case 'frontier':
-      case 'candidate':
-        return 'window';
-      case 'current':
-        return 'warning';
-      case 'filled':
-      case 'closed':
-      case 'path':
-        return 'success';
-      case 'wall':
-      case 'blocked':
-        return 'danger';
-    }
-  }
-
-  private translate(key: I18nKey, params?: Record<string, string | number>): string {
-    this.language.activeLang();
-    return this.transloco.translate(key, params);
-  }
+  protected readonly rows = computed<readonly TraceRow[]>(() => {
+    const state = this.state();
+    if (!state) return [];
+    return state.cells
+      .filter((cell) => cell.status !== 'idle')
+      .sort((left, right) => left.row - right.row || left.col - right.col)
+      .map((cell) => {
+        const tone = STATUS_TONES[cell.status];
+        return {
+          id: cell.id,
+          tone: cell.status === 'current' || cell.status === 'path' || cell.status === 'filled' ? tone : null,
+          cells: {
+            cell: cell.metaLabel,
+            value: cell.valueLabel || null,
+            status: [{ id: cell.status, label: toTraceValue(GRID_KEYS.statuses[cell.status]), tone }],
+            tags: cell.tags.map((tag) => ({ id: tag, label: toTraceValue(TAG_CHIPS[tag].label), tone: TAG_CHIPS[tag].tone })),
+          },
+        };
+      });
+  });
 }

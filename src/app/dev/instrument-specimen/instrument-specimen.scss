@@ -234,3 +234,15 @@
 .specimen__rack-dot {
   @include display.rack-value-dot;
 }
+
+.specimen__trace-screen {
+  max-width: 492px;
+}
+
+.specimen__trace {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}

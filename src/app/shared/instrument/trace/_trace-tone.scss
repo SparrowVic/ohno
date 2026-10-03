@@ -1,0 +1,21 @@
+@mixin tones {
+  --trace-tone: var(--ink);
+  --trace-tone-rgb: var(--ink-rgb);
+
+  @each $tone in 'cyan', 'pink', 'lime', 'violet', 'amber', 'red', 'slate' {
+    &[data-tone='#{$tone}'] {
+      --trace-tone: var(--#{$tone});
+      --trace-tone-rgb: var(--#{$tone}-rgb);
+    }
+  }
+}
+
+@mixin title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 0 0 8px;
+  font: inherit;
+}

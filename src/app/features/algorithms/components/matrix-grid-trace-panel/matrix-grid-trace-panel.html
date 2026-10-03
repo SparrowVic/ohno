@@ -1,44 +1,7 @@
 @if (state(); as grid) {
   <div class="trace">
-    @if (facts(); as fact) {
-      <ohno-rack [title]="PANEL.factsLabel | transloco" [meta]="table()?.size ?? null">
-        <ohno-rack-row>
-          <span rackLead class="trace__lead">{{ COMMON.phaseLabel | transloco }}</span>
-          <span class="trace__body">{{ grid.phaseLabel | i18nText }}</span>
-        </ohno-rack-row>
-        <ohno-rack-row>
-          <span rackLead class="trace__lead">{{ PANEL.iterationLabel | transloco }}</span>
-          <span rackValue class="trace__dot">{{ grid.iteration }}</span>
-        </ohno-rack-row>
-        <ohno-rack-row [tone]="fact.pivot ? 'head' : 'dim'">
-          <span rackLead class="trace__lead">{{ PANEL.pivotLabel | transloco }}</span>
-          <span class="trace__body trace__mono">{{ fact.pivot ?? '—' }}</span>
-          @if (fact.pivotValue) {
-            <span rackValue class="trace__value">{{ fact.pivotValue }}</span>
-          }
-        </ohno-rack-row>
-        @if (isSimplex()) {
-          <ohno-rack-row [tone]="fact.entering ? 'now' : 'dim'">
-            <span rackLead class="trace__lead">{{ PANEL.enteringLabel | transloco }}</span>
-            <span rackValue class="trace__value">{{ fact.entering ?? '—' }}</span>
-          </ohno-rack-row>
-        } @else {
-          <ohno-rack-row [tone]="operation() ? 'now' : 'dim'">
-            <span rackLead class="trace__lead">{{ PANEL.operationLabel | transloco }}</span>
-            <span class="trace__body trace__mono">{{ operation() ?? '—' }}</span>
-          </ohno-rack-row>
-        }
-        @if (!isSimplex()) {
-          <ohno-rack-row [tone]="fact.sources ? 'default' : 'dim'">
-            <span rackLead class="trace__lead">{{ PANEL.sourceRowLabel | transloco }}</span>
-            <span rackValue class="trace__value" data-tone="cyan">{{ fact.sources ?? '—' }}</span>
-          </ohno-rack-row>
-        }
-        <ohno-rack-row [tone]="fact.targets ? 'default' : 'dim'">
-          <span rackLead class="trace__lead">{{ PANEL.targetRowLabel | transloco }}</span>
-          <span rackValue class="trace__value" data-tone="pink">{{ fact.targets ?? '—' }}</span>
-        </ohno-rack-row>
-      </ohno-rack>
+    @if (factRows().length > 0) {
+      <ohno-trace-facts [title]="PANEL.factsLabel" [meta]="table()?.size ?? null" [facts]="factRows()" />
     }
 
     @if (table(); as snapshot) {
@@ -136,5 +99,5 @@
     }
   </div>
 } @else {
-  <p class="trace__empty">{{ PANEL.emptyLabel | transloco }}</p>
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ PANEL.emptyLabel | transloco }}</p>
 }

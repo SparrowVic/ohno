@@ -335,6 +335,17 @@
     </ohno-screen>
   </ohno-plate>
   <ohno-plate class="specimen__unit" [screws]="true">
+    <ohno-engraving>Ślad · fakty, chipy, tabela</ohno-engraving>
+    <ohno-screen class="specimen__trace-screen" padding="md">
+      <div class="specimen__trace">
+      <ohno-trace-facts title="Podsumowanie śladu" meta="krok 066" [facts]="traceFacts" />
+      <ohno-trace-chips title="Kolejka" [meta]="traceChips.length" [chips]="traceChips" />
+      <ohno-trace-chips title="Pusta szyna" [chips]="[]" emptyLabel="jeszcze brak" />
+      <ohno-trace-table title="Tablica" [meta]="traceRows.length" [columns]="traceColumns" [rows]="traceRows" maxHeight="220px" />
+      </div>
+    </ohno-screen>
+  </ohno-plate>
+  <ohno-plate class="specimen__unit" [screws]="true">
     <ohno-engraving>Karty modułów · osiem rodzin</ohno-engraving>
     <div class="specimen__cards">
       @for (sample of sampleModules; track sample.item.id) {

@@ -93,10 +93,6 @@ export const I18N_KEY = {
       languageComingSoon: t('shared.codeLanguageDial.languageComingSoon'),
       switchToLanguage: t('shared.codeLanguageDial.switchToLanguage'),
     },
-    table: {
-      emptyLabel: t('shared.table.emptyLabel'),
-      legendLabel: t('shared.table.legendLabel'),
-    },
     vizOptionsMenu: {
       triggerLabel: t('shared.vizOptionsMenu.triggerLabel'),
       title: t('shared.vizOptionsMenu.title'),
@@ -1710,9 +1706,6 @@ export const I18N_KEY = {
           body: t('features.algorithms.codePanel.snippetMissing.body'),
         },
       },
-      traceHint: {
-        ariaLabel: t('features.algorithms.traceHint.ariaLabel'),
-      },
       tracePanels: {
         matrixGrid: {
           iterationLabel: t('features.algorithms.tracePanels.matrixGrid.iterationLabel'),
@@ -1742,6 +1735,9 @@ export const I18N_KEY = {
           noneYetLabel: t('features.algorithms.tracePanels.common.noneYetLabel'),
           emptyValueLabel: t('features.algorithms.tracePanels.common.emptyValueLabel'),
           notStartedLabel: t('features.algorithms.tracePanels.common.notStartedLabel'),
+          keyIdeaLabel: t('features.algorithms.tracePanels.common.keyIdeaLabel'),
+          watchLabel: t('features.algorithms.tracePanels.common.watchLabel'),
+          decisionLabel: t('features.algorithms.tracePanels.common.decisionLabel'),
         },
         graph: {
           summaryAriaLabel: t('features.algorithms.tracePanels.graph.summaryAriaLabel'),
@@ -1786,6 +1782,7 @@ export const I18N_KEY = {
             queued: t('features.algorithms.tracePanels.graph.statuses.queued'),
             unseen: t('features.algorithms.tracePanels.graph.statuses.unseen'),
           },
+          tableTitle: t('features.algorithms.tracePanels.graph.tableTitle'),
         },
         search: {
           summaryAriaLabel: t('features.algorithms.tracePanels.search.summaryAriaLabel'),
@@ -1806,15 +1803,6 @@ export const I18N_KEY = {
             status: t('features.algorithms.tracePanels.search.columns.status'),
             tags: t('features.algorithms.tracePanels.search.columns.tags'),
           },
-          tagLegend: {
-            pending: t('features.algorithms.tracePanels.search.tagLegend.pending'),
-            candidate: t('features.algorithms.tracePanels.search.tagLegend.candidate'),
-            compare: t('features.algorithms.tracePanels.search.tagLegend.compare'),
-            checked: t('features.algorithms.tracePanels.search.tagLegend.checked'),
-            pruned: t('features.algorithms.tracePanels.search.tagLegend.pruned'),
-            bound: t('features.algorithms.tracePanels.search.tagLegend.bound'),
-            match: t('features.algorithms.tracePanels.search.tagLegend.match'),
-          },
           statuses: {
             idle: t('features.algorithms.tracePanels.search.statuses.idle'),
             window: t('features.algorithms.tracePanels.search.statuses.window'),
@@ -1824,6 +1812,7 @@ export const I18N_KEY = {
             bound: t('features.algorithms.tracePanels.search.statuses.bound'),
             found: t('features.algorithms.tracePanels.search.statuses.found'),
           },
+          tableTitle: t('features.algorithms.tracePanels.search.tableTitle'),
         },
         grid: {
           modeLabel: t('features.algorithms.tracePanels.grid.modeLabel'),
@@ -1848,15 +1837,6 @@ export const I18N_KEY = {
             tags: t('features.algorithms.tracePanels.grid.columns.tags'),
           },
           tagLegend: {
-            seed: t('features.algorithms.tracePanels.grid.tagLegend.seed'),
-            goal: t('features.algorithms.tracePanels.grid.tagLegend.goal'),
-            frontier: t('features.algorithms.tracePanels.grid.tagLegend.frontier'),
-            current: t('features.algorithms.tracePanels.grid.tagLegend.current'),
-            filled: t('features.algorithms.tracePanels.grid.tagLegend.filled'),
-            closed: t('features.algorithms.tracePanels.grid.tagLegend.closed'),
-            path: t('features.algorithms.tracePanels.grid.tagLegend.path'),
-            wall: t('features.algorithms.tracePanels.grid.tagLegend.wall'),
-            blocked: t('features.algorithms.tracePanels.grid.tagLegend.blocked'),
             candidate: t('features.algorithms.tracePanels.grid.tagLegend.candidate'),
           },
           statuses: {
@@ -1871,11 +1851,11 @@ export const I18N_KEY = {
             path: t('features.algorithms.tracePanels.grid.statuses.path'),
             blocked: t('features.algorithms.tracePanels.grid.statuses.blocked'),
           },
+          tableTitle: t('features.algorithms.tracePanels.grid.tableTitle'),
         },
         dp: {
           summaryAriaLabel: t('features.algorithms.tracePanels.dp.summaryAriaLabel'),
           calculationAriaLabel: t('features.algorithms.tracePanels.dp.calculationAriaLabel'),
-          railsAriaLabel: t('features.algorithms.tracePanels.dp.railsAriaLabel'),
           presetLabel: t('features.algorithms.tracePanels.dp.presetLabel'),
           presetNoteLabel: t('features.algorithms.tracePanels.dp.presetNoteLabel'),
           currentTransitionLabel: t('features.algorithms.tracePanels.dp.currentTransitionLabel'),
@@ -1890,20 +1870,6 @@ export const I18N_KEY = {
             status: t('features.algorithms.tracePanels.dp.columns.status'),
             tags: t('features.algorithms.tracePanels.dp.columns.tags'),
           },
-          tagLegend: {
-            active: t('features.algorithms.tracePanels.dp.tagLegend.active'),
-            base: t('features.algorithms.tracePanels.dp.tagLegend.base'),
-            take: t('features.algorithms.tracePanels.dp.tagLegend.take'),
-            skip: t('features.algorithms.tracePanels.dp.tagLegend.skip'),
-            match: t('features.algorithms.tracePanels.dp.tagLegend.match'),
-            insert: t('features.algorithms.tracePanels.dp.tagLegend.insert'),
-            delete: t('features.algorithms.tracePanels.dp.tagLegend.delete'),
-            replace: t('features.algorithms.tracePanels.dp.tagLegend.replace'),
-            split: t('features.algorithms.tracePanels.dp.tagLegend.split'),
-            best: t('features.algorithms.tracePanels.dp.tagLegend.best'),
-            path: t('features.algorithms.tracePanels.dp.tagLegend.path'),
-            blocked: t('features.algorithms.tracePanels.dp.tagLegend.blocked'),
-          },
           statuses: {
             idle: t('features.algorithms.tracePanels.dp.statuses.idle'),
             base: t('features.algorithms.tracePanels.dp.statuses.base'),
@@ -1915,6 +1881,9 @@ export const I18N_KEY = {
             backtrack: t('features.algorithms.tracePanels.dp.statuses.backtrack'),
             match: t('features.algorithms.tracePanels.dp.statuses.match'),
           },
+          skipTagLabel: t('features.algorithms.tracePanels.dp.skipTagLabel'),
+          pathTagLabel: t('features.algorithms.tracePanels.dp.pathTagLabel'),
+          tableTitle: t('features.algorithms.tracePanels.dp.tableTitle'),
         },
         dsu: {
           componentsLabel: t('features.algorithms.tracePanels.dsu.componentsLabel'),
@@ -1932,15 +1901,7 @@ export const I18N_KEY = {
             size: t('features.algorithms.tracePanels.dsu.columns.size'),
             status: t('features.algorithms.tracePanels.dsu.columns.status'),
             tags: t('features.algorithms.tracePanels.dsu.columns.tags'),
-          },
-          tagLegend: {
-            root: t('features.algorithms.tracePanels.dsu.tagLegend.root'),
-            active: t('features.algorithms.tracePanels.dsu.tagLegend.active'),
-            query: t('features.algorithms.tracePanels.dsu.tagLegend.query'),
-            merged: t('features.algorithms.tracePanels.dsu.tagLegend.merged'),
-            compressed: t('features.algorithms.tracePanels.dsu.tagLegend.compressed'),
-            accepted: t('features.algorithms.tracePanels.dsu.tagLegend.accepted'),
-            rejected: t('features.algorithms.tracePanels.dsu.tagLegend.rejected'),
+            members: t('features.algorithms.tracePanels.dsu.columns.members'),
           },
           statuses: {
             idle: t('features.algorithms.tracePanels.dsu.statuses.idle'),
@@ -1950,6 +1911,9 @@ export const I18N_KEY = {
             merged: t('features.algorithms.tracePanels.dsu.statuses.merged'),
             compressed: t('features.algorithms.tracePanels.dsu.statuses.compressed'),
           },
+          acceptedTagLabel: t('features.algorithms.tracePanels.dsu.acceptedTagLabel'),
+          rejectedTagLabel: t('features.algorithms.tracePanels.dsu.rejectedTagLabel'),
+          tableTitle: t('features.algorithms.tracePanels.dsu.tableTitle'),
         },
         matrix: {
           activeRowLabel: t('features.algorithms.tracePanels.matrix.activeRowLabel'),
@@ -1965,18 +1929,6 @@ export const I18N_KEY = {
             status: t('features.algorithms.tracePanels.matrix.columns.status'),
             tags: t('features.algorithms.tracePanels.matrix.columns.tags'),
           },
-          tagLegend: {
-            pivot: t('features.algorithms.tracePanels.matrix.tagLegend.pivot'),
-            active: t('features.algorithms.tracePanels.matrix.tagLegend.active'),
-            improved: t('features.algorithms.tracePanels.matrix.tagLegend.improved'),
-            covered: t('features.algorithms.tracePanels.matrix.tagLegend.covered'),
-            zero: t('features.algorithms.tracePanels.matrix.tagLegend.zero'),
-            assignment: t('features.algorithms.tracePanels.matrix.tagLegend.assignment'),
-            row: t('features.algorithms.tracePanels.matrix.tagLegend.row'),
-            column: t('features.algorithms.tracePanels.matrix.tagLegend.column'),
-            adjusted: t('features.algorithms.tracePanels.matrix.tagLegend.adjusted'),
-            infinite: t('features.algorithms.tracePanels.matrix.tagLegend.infinite'),
-          },
           statuses: {
             idle: t('features.algorithms.tracePanels.matrix.statuses.idle'),
             pivot: t('features.algorithms.tracePanels.matrix.statuses.pivot'),
@@ -1989,6 +1941,9 @@ export const I18N_KEY = {
             zero: t('features.algorithms.tracePanels.matrix.statuses.zero'),
             blocked: t('features.algorithms.tracePanels.matrix.statuses.blocked'),
           },
+          tableTitle: t('features.algorithms.tracePanels.matrix.tableTitle'),
+          rowTagLabel: t('features.algorithms.tracePanels.matrix.rowTagLabel'),
+          columnTagLabel: t('features.algorithms.tracePanels.matrix.columnTagLabel'),
         },
         network: {
           waitingStepLabel: t('features.algorithms.tracePanels.network.waitingStepLabel'),
@@ -2004,21 +1959,6 @@ export const I18N_KEY = {
             status: t('features.algorithms.tracePanels.network.columns.status'),
             tags: t('features.algorithms.tracePanels.network.columns.tags'),
           },
-          tagLegend: {
-            source: t('features.algorithms.tracePanels.network.tagLegend.source'),
-            sink: t('features.algorithms.tracePanels.network.tagLegend.sink'),
-            left: t('features.algorithms.tracePanels.network.tagLegend.left'),
-            right: t('features.algorithms.tracePanels.network.tagLegend.right'),
-            free: t('features.algorithms.tracePanels.network.tagLegend.free'),
-            matched: t('features.algorithms.tracePanels.network.tagLegend.matched'),
-            frontier: t('features.algorithms.tracePanels.network.tagLegend.frontier'),
-            current: t('features.algorithms.tracePanels.network.tagLegend.current'),
-            level: t('features.algorithms.tracePanels.network.tagLegend.level'),
-            augment: t('features.algorithms.tracePanels.network.tagLegend.augment'),
-            flow: t('features.algorithms.tracePanels.network.tagLegend.flow'),
-            blocked: t('features.algorithms.tracePanels.network.tagLegend.blocked'),
-            saturated: t('features.algorithms.tracePanels.network.tagLegend.saturated'),
-          },
           statuses: {
             idle: t('features.algorithms.tracePanels.network.statuses.idle'),
             source: t('features.algorithms.tracePanels.network.statuses.source'),
@@ -2029,11 +1969,18 @@ export const I18N_KEY = {
             visited: t('features.algorithms.tracePanels.network.statuses.visited'),
             blocked: t('features.algorithms.tracePanels.network.statuses.blocked'),
           },
+          leftTagLabel: t('features.algorithms.tracePanels.network.leftTagLabel'),
+          rightTagLabel: t('features.algorithms.tracePanels.network.rightTagLabel'),
+          freeTagLabel: t('features.algorithms.tracePanels.network.freeTagLabel'),
+          matchedTagLabel: t('features.algorithms.tracePanels.network.matchedTagLabel'),
+          augmentTagLabel: t('features.algorithms.tracePanels.network.augmentTagLabel'),
+          flowTagLabel: t('features.algorithms.tracePanels.network.flowTagLabel'),
+          saturatedTagLabel: t('features.algorithms.tracePanels.network.saturatedTagLabel'),
+          tableTitle: t('features.algorithms.tracePanels.network.tableTitle'),
         },
         string: {
           summaryAriaLabel: t('features.algorithms.tracePanels.string.summaryAriaLabel'),
           calculationAriaLabel: t('features.algorithms.tracePanels.string.calculationAriaLabel'),
-          contextAriaLabel: t('features.algorithms.tracePanels.string.contextAriaLabel'),
           modeLabel: t('features.algorithms.tracePanels.string.modeLabel'),
           phaseLabel: t('features.algorithms.tracePanels.string.phaseLabel'),
           activeLabel: t('features.algorithms.tracePanels.string.activeLabel'),
@@ -2059,7 +2006,6 @@ export const I18N_KEY = {
             ),
           },
           kmp: {
-            detailsAriaLabel: t('features.algorithms.tracePanels.string.kmp.detailsAriaLabel'),
             failureTableLabel: t('features.algorithms.tracePanels.string.kmp.failureTableLabel'),
             scanStateLabel: t('features.algorithms.tracePanels.string.kmp.scanStateLabel'),
             alignmentLabel: t('features.algorithms.tracePanels.string.kmp.alignmentLabel'),
@@ -2069,9 +2015,6 @@ export const I18N_KEY = {
             noJumpLabel: t('features.algorithms.tracePanels.string.kmp.noJumpLabel'),
           },
           rabinKarp: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.rabinKarp.detailsAriaLabel',
-            ),
             hashesLabel: t('features.algorithms.tracePanels.string.rabinKarp.hashesLabel'),
             rollingWindowLabel: t(
               'features.algorithms.tracePanels.string.rabinKarp.rollingWindowLabel',
@@ -2095,9 +2038,6 @@ export const I18N_KEY = {
             ),
           },
           zAlgorithm: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.zAlgorithm.detailsAriaLabel',
-            ),
             skylineLabel: t('features.algorithms.tracePanels.string.zAlgorithm.skylineLabel'),
             boxLabel: t('features.algorithms.tracePanels.string.zAlgorithm.boxLabel'),
             leftLabel: t('features.algorithms.tracePanels.string.zAlgorithm.leftLabel'),
@@ -2110,7 +2050,6 @@ export const I18N_KEY = {
             ),
           },
           manacher: {
-            detailsAriaLabel: t('features.algorithms.tracePanels.string.manacher.detailsAriaLabel'),
             radiusArrayLabel: t('features.algorithms.tracePanels.string.manacher.radiusArrayLabel'),
             mirrorWindowLabel: t(
               'features.algorithms.tracePanels.string.manacher.mirrorWindowLabel',
@@ -2121,9 +2060,6 @@ export const I18N_KEY = {
             longestLabel: t('features.algorithms.tracePanels.string.manacher.longestLabel'),
           },
           ahoCorasick: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.ahoCorasick.detailsAriaLabel',
-            ),
             automatonLabel: t('features.algorithms.tracePanels.string.ahoCorasick.automatonLabel'),
             currentStateLabel: t(
               'features.algorithms.tracePanels.string.ahoCorasick.currentStateLabel',
@@ -2140,9 +2076,6 @@ export const I18N_KEY = {
             matchesLabel: t('features.algorithms.tracePanels.string.ahoCorasick.matchesLabel'),
           },
           suffixArray: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.suffixArray.detailsAriaLabel',
-            ),
             orderLabel: t('features.algorithms.tracePanels.string.suffixArray.orderLabel'),
             stepSizeLabel: t('features.algorithms.tracePanels.string.suffixArray.stepSizeLabel'),
             distinctRanksLabel: t(
@@ -2151,9 +2084,6 @@ export const I18N_KEY = {
             ranksLabel: t('features.algorithms.tracePanels.string.suffixArray.ranksLabel'),
           },
           suffixArrayLcp: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.suffixArrayLcp.detailsAriaLabel',
-            ),
             activePairLabel: t(
               'features.algorithms.tracePanels.string.suffixArrayLcp.activePairLabel',
             ),
@@ -2164,9 +2094,6 @@ export const I18N_KEY = {
             lcpLabel: t('features.algorithms.tracePanels.string.suffixArrayLcp.lcpLabel'),
           },
           palindromicTree: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.palindromicTree.detailsAriaLabel',
-            ),
             activeNodeLabel: t(
               'features.algorithms.tracePanels.string.palindromicTree.activeNodeLabel',
             ),
@@ -2180,9 +2107,6 @@ export const I18N_KEY = {
             nodesLabel: t('features.algorithms.tracePanels.string.palindromicTree.nodesLabel'),
           },
           burrowsWheeler: {
-            detailsAriaLabel: t(
-              'features.algorithms.tracePanels.string.burrowsWheeler.detailsAriaLabel',
-            ),
             columnsLabel: t('features.algorithms.tracePanels.string.burrowsWheeler.columnsLabel'),
             inputLabel: t('features.algorithms.tracePanels.string.burrowsWheeler.inputLabel'),
             firstColumnLabel: t(
@@ -2198,7 +2122,6 @@ export const I18N_KEY = {
             noneYetLabel: t('features.algorithms.tracePanels.string.burrowsWheeler.noneYetLabel'),
           },
           rle: {
-            detailsAriaLabel: t('features.algorithms.tracePanels.string.rle.detailsAriaLabel'),
             scannerLabel: t('features.algorithms.tracePanels.string.rle.scannerLabel'),
             resultLabel: t('features.algorithms.tracePanels.string.rle.resultLabel'),
             positionLabel: t('features.algorithms.tracePanels.string.rle.positionLabel'),
@@ -2209,10 +2132,13 @@ export const I18N_KEY = {
             outputLabel: t('features.algorithms.tracePanels.string.rle.outputLabel'),
             ratioLabel: t('features.algorithms.tracePanels.string.rle.ratioLabel'),
             originalLabel: t('features.algorithms.tracePanels.string.rle.originalLabel'),
-            charsSuffixLabel: t('features.algorithms.tracePanels.string.rle.charsSuffixLabel'),
+            scanPhase: t('features.algorithms.tracePanels.string.rle.scanPhase'),
+            extendPhase: t('features.algorithms.tracePanels.string.rle.extendPhase'),
+            emitPhase: t('features.algorithms.tracePanels.string.rle.emitPhase'),
+            completePhase: t('features.algorithms.tracePanels.string.rle.completePhase'),
+            charsCount: t('features.algorithms.tracePanels.string.rle.charsCount'),
           },
           huffman: {
-            detailsAriaLabel: t('features.algorithms.tracePanels.string.huffman.detailsAriaLabel'),
             heapLabel: t('features.algorithms.tracePanels.string.huffman.heapLabel'),
             compressionLabel: t('features.algorithms.tracePanels.string.huffman.compressionLabel'),
             sizeLabel: t('features.algorithms.tracePanels.string.huffman.sizeLabel'),
@@ -2225,15 +2151,12 @@ export const I18N_KEY = {
             compressedLabel: t('features.algorithms.tracePanels.string.huffman.compressedLabel'),
             savingsLabel: t('features.algorithms.tracePanels.string.huffman.savingsLabel'),
             ratioLabel: t('features.algorithms.tracePanels.string.huffman.ratioLabel'),
-            bitsSuffixLabel: t('features.algorithms.tracePanels.string.huffman.bitsSuffixLabel'),
+            bitsCount: t('features.algorithms.tracePanels.string.huffman.bitsCount'),
           },
         },
         closestPair: {
           summaryAriaLabel: t('features.algorithms.tracePanels.closestPair.summaryAriaLabel'),
           regionAriaLabel: t('features.algorithms.tracePanels.closestPair.regionAriaLabel'),
-          comparisonAriaLabel: t('features.algorithms.tracePanels.closestPair.comparisonAriaLabel'),
-          recursionAriaLabel: t('features.algorithms.tracePanels.closestPair.recursionAriaLabel'),
-          legendAriaLabel: t('features.algorithms.tracePanels.closestPair.legendAriaLabel'),
           phaseLabel: t('features.algorithms.tracePanels.closestPair.phaseLabel'),
           bestLabel: t('features.algorithms.tracePanels.closestPair.bestLabel'),
           checksLabel: t('features.algorithms.tracePanels.closestPair.checksLabel'),
@@ -2277,10 +2200,11 @@ export const I18N_KEY = {
             update: t('features.algorithms.tracePanels.closestPair.phases.update'),
             complete: t('features.algorithms.tracePanels.closestPair.phases.complete'),
           },
+          pairLabel: t('features.algorithms.tracePanels.closestPair.pairLabel'),
+          distanceLabel: t('features.algorithms.tracePanels.closestPair.distanceLabel'),
         },
         delaunay: {
           summaryAriaLabel: t('features.algorithms.tracePanels.delaunay.summaryAriaLabel'),
-          detailsAriaLabel: t('features.algorithms.tracePanels.delaunay.detailsAriaLabel'),
           triangleLabel: t('features.algorithms.tracePanels.delaunay.triangleLabel'),
           committedLabel: t('features.algorithms.tracePanels.delaunay.committedLabel'),
           circumcircleLabel: t('features.algorithms.tracePanels.delaunay.circumcircleLabel'),
@@ -2294,8 +2218,6 @@ export const I18N_KEY = {
         },
         lineIntersection: {
           summaryAriaLabel: t('features.algorithms.tracePanels.lineIntersection.summaryAriaLabel'),
-          streamsAriaLabel: t('features.algorithms.tracePanels.lineIntersection.streamsAriaLabel'),
-          detailsAriaLabel: t('features.algorithms.tracePanels.lineIntersection.detailsAriaLabel'),
           phaseLabel: t('features.algorithms.tracePanels.lineIntersection.phaseLabel'),
           sweepXLabel: t('features.algorithms.tracePanels.lineIntersection.sweepXLabel'),
           hitsLabel: t('features.algorithms.tracePanels.lineIntersection.hitsLabel'),
@@ -2335,10 +2257,6 @@ export const I18N_KEY = {
         },
         minkowskiSum: {
           summaryAriaLabel: t('features.algorithms.tracePanels.minkowskiSum.summaryAriaLabel'),
-          streamsAriaLabel: t('features.algorithms.tracePanels.minkowskiSum.streamsAriaLabel'),
-          activeVectorsAriaLabel: t(
-            'features.algorithms.tracePanels.minkowskiSum.activeVectorsAriaLabel',
-          ),
           phaseLabel: t('features.algorithms.tracePanels.minkowskiSum.phaseLabel'),
           mergedLabel: t('features.algorithms.tracePanels.minkowskiSum.mergedLabel'),
           totalLabel: t('features.algorithms.tracePanels.minkowskiSum.totalLabel'),
@@ -2362,10 +2280,11 @@ export const I18N_KEY = {
             merge: t('features.algorithms.tracePanels.minkowskiSum.phases.merge'),
             complete: t('features.algorithms.tracePanels.minkowskiSum.phases.complete'),
           },
+          vectorColumn: t('features.algorithms.tracePanels.minkowskiSum.vectorColumn'),
+          deltaColumn: t('features.algorithms.tracePanels.minkowskiSum.deltaColumn'),
         },
         voronoi: {
           summaryAriaLabel: t('features.algorithms.tracePanels.voronoi.summaryAriaLabel'),
-          detailsAriaLabel: t('features.algorithms.tracePanels.voronoi.detailsAriaLabel'),
           cellLabel: t('features.algorithms.tracePanels.voronoi.cellLabel'),
           closedCellsLabel: t('features.algorithms.tracePanels.voronoi.closedCellsLabel'),
           sweepYLabel: t('features.algorithms.tracePanels.voronoi.sweepYLabel'),
@@ -2377,8 +2296,6 @@ export const I18N_KEY = {
         },
         halfPlane: {
           summaryAriaLabel: t('features.algorithms.tracePanels.halfPlane.summaryAriaLabel'),
-          streamsAriaLabel: t('features.algorithms.tracePanels.halfPlane.streamsAriaLabel'),
-          polygonAriaLabel: t('features.algorithms.tracePanels.halfPlane.polygonAriaLabel'),
           phaseLabel: t('features.algorithms.tracePanels.halfPlane.phaseLabel'),
           vertsLabel: t('features.algorithms.tracePanels.halfPlane.vertsLabel'),
           areaLabel: t('features.algorithms.tracePanels.halfPlane.areaLabel'),
@@ -2401,10 +2318,12 @@ export const I18N_KEY = {
             infeasible: t('features.algorithms.tracePanels.halfPlane.phases.infeasible'),
             complete: t('features.algorithms.tracePanels.halfPlane.phases.complete'),
           },
+          feasibleStatus: t('features.algorithms.tracePanels.halfPlane.feasibleStatus'),
+          emptyStatus: t('features.algorithms.tracePanels.halfPlane.emptyStatus'),
+          completeStatus: t('features.algorithms.tracePanels.halfPlane.completeStatus'),
         },
         sweepLine: {
           summaryAriaLabel: t('features.algorithms.tracePanels.sweepLine.summaryAriaLabel'),
-          detailsAriaLabel: t('features.algorithms.tracePanels.sweepLine.detailsAriaLabel'),
           scanlineLabel: t('features.algorithms.tracePanels.sweepLine.scanlineLabel'),
           areaLabel: t('features.algorithms.tracePanels.sweepLine.areaLabel'),
           spansLabel: t('features.algorithms.tracePanels.sweepLine.spansLabel'),
@@ -2415,6 +2334,8 @@ export const I18N_KEY = {
           eventQueueLabel: t('features.algorithms.tracePanels.sweepLine.eventQueueLabel'),
           noQueuedEventsLabel: t('features.algorithms.tracePanels.sweepLine.noQueuedEventsLabel'),
           emptyLabel: t('features.algorithms.tracePanels.sweepLine.emptyLabel'),
+          spanColumn: t('features.algorithms.tracePanels.sweepLine.spanColumn'),
+          rangeColumn: t('features.algorithms.tracePanels.sweepLine.rangeColumn'),
         },
         sort: {
           summaryAriaLabel: t('features.algorithms.tracePanels.sort.summaryAriaLabel'),
@@ -2429,7 +2350,6 @@ export const I18N_KEY = {
           tableEmptyLabel: t('features.algorithms.tracePanels.sort.tableEmptyLabel'),
           emptyLabel: t('features.algorithms.tracePanels.sort.emptyLabel'),
           pairBadges: {
-            idle: t('features.algorithms.tracePanels.sort.pairBadges.idle'),
             compare: t('features.algorithms.tracePanels.sort.pairBadges.compare'),
             swap: t('features.algorithms.tracePanels.sort.pairBadges.swap'),
           },
@@ -2450,17 +2370,13 @@ export const I18N_KEY = {
             status: t('features.algorithms.tracePanels.sort.columns.status'),
             tags: t('features.algorithms.tracePanels.sort.columns.tags'),
           },
-          tagLegend: {
-            compare: t('features.algorithms.tracePanels.sort.tagLegend.compare'),
-            swap: t('features.algorithms.tracePanels.sort.tagLegend.swap'),
-            sorted: t('features.algorithms.tracePanels.sort.tagLegend.sorted'),
-          },
           statuses: {
             unsorted: t('features.algorithms.tracePanels.sort.statuses.unsorted'),
             comparing: t('features.algorithms.tracePanels.sort.statuses.comparing'),
             swapping: t('features.algorithms.tracePanels.sort.statuses.swapping'),
             sorted: t('features.algorithms.tracePanels.sort.statuses.sorted'),
           },
+          tableTitle: t('features.algorithms.tracePanels.sort.tableTitle'),
         },
         tree: {
           currentNodeLabel: t('features.algorithms.tracePanels.tree.currentNodeLabel'),
@@ -2478,6 +2394,9 @@ export const I18N_KEY = {
           registersLabel: t('features.algorithms.tracePanels.numberLab.registersLabel'),
           historyLabel: t('features.algorithms.tracePanels.numberLab.historyLabel'),
           emptyLabel: t('features.algorithms.tracePanels.numberLab.emptyLabel'),
+          registerColumn: t('features.algorithms.tracePanels.numberLab.registerColumn'),
+          valueColumn: t('features.algorithms.tracePanels.numberLab.valueColumn'),
+          hintColumn: t('features.algorithms.tracePanels.numberLab.hintColumn'),
         },
         pointerLab: {
           decisionLabel: t('features.algorithms.tracePanels.pointerLab.decisionLabel'),
@@ -2515,6 +2434,8 @@ export const I18N_KEY = {
           marginsLabel: t('features.algorithms.tracePanels.scratchpadLab.marginsLabel'),
           historyLabel: t('features.algorithms.tracePanels.scratchpadLab.historyLabel'),
           emptyLabel: t('features.algorithms.tracePanels.scratchpadLab.emptyLabel'),
+          markerColumn: t('features.algorithms.tracePanels.scratchpadLab.markerColumn'),
+          lineColumn: t('features.algorithms.tracePanels.scratchpadLab.lineColumn'),
         },
         geometry: {
           summaryAria: t('features.algorithms.tracePanels.geometry.summaryAria'),
@@ -2540,12 +2461,10 @@ export const I18N_KEY = {
           waiting: t('features.algorithms.tracePanels.geometry.waiting'),
           standBy: t('features.algorithms.tracePanels.geometry.standBy'),
           turnHint: t('features.algorithms.tracePanels.geometry.turnHint'),
-          stackAria: t('features.algorithms.tracePanels.geometry.stackAria'),
           hullStack: t('features.algorithms.tracePanels.geometry.hullStack'),
           stackEmpty: t('features.algorithms.tracePanels.geometry.stackEmpty'),
           top: t('features.algorithms.tracePanels.geometry.top'),
           base: t('features.algorithms.tracePanels.geometry.base'),
-          legendAria: t('features.algorithms.tracePanels.geometry.legendAria'),
           pointStatus: t('features.algorithms.tracePanels.geometry.pointStatus'),
           legend: {
             pivot: t('features.algorithms.tracePanels.geometry.legend.pivot'),
@@ -2556,6 +2475,13 @@ export const I18N_KEY = {
             rejected: t('features.algorithms.tracePanels.geometry.legend.rejected'),
           },
           empty: t('features.algorithms.tracePanels.geometry.empty'),
+          columns: {
+            vertex: t('features.algorithms.tracePanels.geometry.columns.vertex'),
+            point: t('features.algorithms.tracePanels.geometry.columns.point'),
+            role: t('features.algorithms.tracePanels.geometry.columns.role'),
+            coords: t('features.algorithms.tracePanels.geometry.columns.coords'),
+          },
+          turnTitle: t('features.algorithms.tracePanels.geometry.turnTitle'),
         },
       },
       vizOptions: {

@@ -1,123 +1,29 @@
-<div class="trace" [attr.data-tone]="decisionTone()">
-  @if (state(); as graphState) {
-    <div class="trace__header">
-      <!-- Teaching hint — algorithm-specific key idea + what to watch -->
-      <app-trace-hint [keyIdea]="hintKeyIdea()" [watch]="hintWatch()" />
-
-      <!-- ======================================================== -->
-      <!-- PANEL 1 — Facts / summary metrics                         -->
-      <!-- ======================================================== -->
-      <app-segmented-panel
-        class="trace__facts"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.graph.summaryAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section [eyebrow]="sourceCardLabel()" [value]="sourceLabel()" />
-        <app-segmented-panel-section
-          [eyebrow]="I18N_KEY.features.algorithms.tracePanels.graph.currentLabel | transloco"
-          [value]="currentLabel()"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="completionLabel()"
-          [value]="settledCount()"
-          [valueMono]="true"
-        />
-        <app-segmented-panel-section
-          [eyebrow]="frontierLabel()"
-          [value]="queueLength()"
-          [valueMono]="true"
-        />
-      </app-segmented-panel>
-
-      <!-- ======================================================== -->
-      <!-- PANEL 2 — Calculation / current decision                  -->
-      <!-- ======================================================== -->
-      <app-segmented-panel
-        class="trace__calc"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.tracePanels.graph.calculationAriaLabel | transloco
-        "
-      >
-        <app-segmented-panel-section
-          [eyebrow]="
-            I18N_KEY.features.algorithms.tracePanels.graph.currentDecisionLabel | transloco
-          "
-          [value]="computationLabel()"
-          [badge]="decisionBadge()"
-        >
-          <code class="trace__calc-expression">{{ computationExpression() }}</code>
-          <p class="trace__calc-note">{{ computationDecision() }}</p>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          eyebrow="Result"
-          [value]="computationResult() ?? '—'"
-          [valueMono]="true"
-        />
-
-        <app-segmented-panel-section [eyebrow]="focusSummaryLabel()" [value]="focusSummaryValue()">
-          <div class="trace__context-line" [class.trace__context-line--muted]="focusCardMuted()">
-            <span class="trace__context-badge">{{ focusCardBadge() }}</span>
-            <span class="trace__context-path">{{ focusCardPath() }}</span>
-            <span class="trace__context-hint">{{ focusCardHint() }}</span>
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-
-      <!-- ======================================================== -->
-      <!-- PANEL 3 — Streams: frontier queue + visit order           -->
-      <!-- ======================================================== -->
-      <app-segmented-panel class="trace__streams">
-        <app-segmented-panel-section [eyebrow]="frontierLabel()" [badge]="graphState.queue.length">
-          <div class="trace__stream-items">
-            @if (graphState.queue.length === 0) {
-              <span class="trace__stream-empty">{{
-                I18N_KEY.features.algorithms.tracePanels.common.emptyValueLabel | transloco
-              }}</span>
-            } @else {
-              @for (entry of graphState.queue; track entry.nodeId) {
-                <span class="trace__stream-chip"
-                  >{{ entry.label }} · {{ formatDistance(entry.distance) }}</span
-                >
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-
-        <app-segmented-panel-section
-          [eyebrow]="visitOrderLabel()"
-          [badge]="graphState.visitOrder.length"
-        >
-          <div class="trace__stream-items">
-            @if (graphState.visitOrder.length === 0) {
-              <span class="trace__stream-empty">{{
-                I18N_KEY.features.algorithms.tracePanels.common.notStartedLabel | transloco
-              }}</span>
-            } @else {
-              @for (label of graphState.visitOrder; track label) {
-                <span class="trace__stream-chip trace__stream-chip--done">{{ label }}</span>
-              }
-            }
-          </div>
-        </app-segmented-panel-section>
-      </app-segmented-panel>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- NODE TABLE                                                -->
-    <!-- ======================================================== -->
-    <div class="trace__table-wrap">
-      <app-table
-        [columns]="tableColumns()"
-        [rows]="tableRows()"
-        [emptyLabelKey]="I18N_KEY.features.algorithms.tracePanels.graph.tableEmptyLabel"
-      />
-    </div>
-  } @else {
-    <div class="trace__empty">
-      <span class="trace__empty-dot" aria-hidden="true"></span>
-      {{ I18N_KEY.features.algorithms.tracePanels.graph.emptyLabel | transloco }}
-    </div>
+@if (state(); as graphState) {
+  @if (hintFacts().length > 0) {
+    <ohno-trace-facts [facts]="hintFacts()" />
   }
-</div>
+  <ohno-trace-facts [title]="keys.summaryAriaLabel" [facts]="summaryFacts()" />
+  <ohno-trace-facts [title]="keys.currentDecisionLabel" [facts]="decisionFacts()" />
+  <ohno-trace-facts [title]="keys.contextLabel" [facts]="contextFacts()" />
+  <ohno-trace-chips
+    [title]="frontierLabel()"
+    [meta]="graphState.queue.length"
+    [chips]="queueChips()"
+    [emptyLabel]="commonKeys.emptyValueLabel"
+  />
+  <ohno-trace-chips
+    [title]="visitOrderLabel()"
+    [meta]="graphState.visitOrder.length"
+    [chips]="visitChips()"
+    [emptyLabel]="commonKeys.notStartedLabel"
+  />
+  <ohno-trace-table
+    [title]="keys.tableTitle"
+    [meta]="graphState.traceRows.length"
+    [columns]="columns()"
+    [rows]="rows()"
+    [emptyLabel]="keys.tableEmptyLabel"
+  />
+} @else {
+  <p class="trace-panel__empty"><ohno-led color="slate" [on]="false" size="sm" />{{ keys.emptyLabel | transloco }}</p>
+}
