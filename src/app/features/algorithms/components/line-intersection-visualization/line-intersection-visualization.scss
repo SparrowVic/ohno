@@ -1,4 +1,1 @@
-/* Line intersection uses only the shared geometry primitives —
-   `.geo-sweep` for the sweep line, `.geo-line` for segments, and the
-   `.geo-point` halo + body for intersection markers. */
 @use '../geo-canvas/geometry-viz';

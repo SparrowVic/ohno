@@ -1,18 +1,1 @@
-/* Voronoi cells get their colour from a per-id hue-rotated palette
-   (set via `[attr.fill]`), so the cell class is intentionally thin —
-   just the stroke recipe + an accent ring for the currently-frozen
-   cell. Everything else (points, sweep) uses the shared primitives. */
 @use '../geo-canvas/geometry-viz';
-
-.vrv-cell {
-  stroke-width: 0.4;
-  stroke-linejoin: round;
-  transition:
-    fill 220ms ease,
-    stroke 220ms ease;
-
-  &--active {
-    stroke-width: 0.7;
-    filter: drop-shadow(0 0 1.2px rgba(255, 255, 255, 0.18));
-  }
-}

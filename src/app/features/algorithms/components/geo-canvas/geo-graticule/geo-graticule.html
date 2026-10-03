@@ -1,0 +1,16 @@
+@for (line of grid().lines; track line.id) {
+  <svg:line
+    class="graticule__line"
+    [class.graticule__axis]="line.edge"
+    [attr.x1]="line.x1"
+    [attr.y1]="line.y1"
+    [attr.x2]="line.x2"
+    [attr.y2]="line.y2"
+  />
+}
+@for (tick of grid().xTicks; track tick.id) {
+  <svg:text class="graticule__tick" [attr.x]="tick.x" [attr.y]="tick.y">{{ tick.label }}</svg:text>
+}
+@for (tick of grid().yTicks; track tick.id) {
+  <svg:text class="graticule__tick graticule__tick--y" [attr.x]="tick.x" [attr.y]="tick.y">{{ tick.label }}</svg:text>
+}

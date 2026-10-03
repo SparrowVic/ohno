@@ -1,61 +1,61 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
-
-  @if (geoState(); as geo) {
-    <div class="geo-stage">
-      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+<div class="display display--rack">
+  <div
+    #plane
+    class="display__main plane"
+    role="img"
+    [attr.aria-label]="GEO.ariaPlane | transloco: { count: view()?.points?.length ?? 0 }"
+  >
+    @if (view(); as scene) {
+      <svg class="plane__svg" [attr.viewBox]="scene.grid.viewBox" aria-hidden="true">
         <defs>
-          <pattern id="dlv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path
-              d="M 10 0 L 0 0 0 10"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.055)"
-              stroke-width="0.3"
-            />
-          </pattern>
+          <clipPath [attr.id]="clipId">
+            <rect [attr.x]="scene.clip.x" [attr.y]="scene.clip.y" [attr.width]="scene.clip.width" [attr.height]="scene.clip.height" />
+          </clipPath>
         </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#dlv-grid)" />
 
-        @for (triangle of geo.triangles; track triangle.id) {
+        <g appGeoGraticule [grid]="scene.grid" />
+
+        @for (triangle of scene.triangles; track triangle.id) {
           <polygon
-            [attr.points]="polygonPoints(triangle)"
-            class="geo-poly geo-poly--{{ triangleToneClass(triangle.tone) }}"
+            class="geo-poly"
+            [attr.data-tone]="triangle.current ? 'cyan' : 'lime'"
+            [attr.data-dash]="triangle.current"
+            [attr.points]="triangle.points"
           />
         }
 
-        @for (edge of geo.edges; track edge.id) {
-          <line
-            [attr.x1]="edge.start.x"
-            [attr.y1]="100 - edge.start.y"
-            [attr.x2]="edge.end.x"
-            [attr.y2]="100 - edge.end.y"
-            class="geo-line"
-          />
+        @for (edge of scene.edges; track edge.id) {
+          <line class="geo-line" data-tone="lime" [attr.x1]="edge.x1" [attr.y1]="edge.y1" [attr.x2]="edge.x2" [attr.y2]="edge.y2" />
         }
 
-        @for (circle of geo.circles; track circle.id) {
-          <circle
-            [attr.cx]="circle.cx"
-            [attr.cy]="100 - circle.cy"
-            [attr.r]="circle.r"
-            class="dlv-circumcircle dlv-circumcircle--{{ circle.tone }}"
-          />
+        <g [attr.clip-path]="'url(#' + clipId + ')'">
+          @for (circle of scene.circles; track circle.id) {
+            <circle class="geo-line" data-tone="cyan" data-dash="true" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r" />
+            <circle class="geo-center" [attr.cx]="circle.cx" [attr.cy]="circle.cy" r="2.5" />
+          }
+        </g>
+
+        @for (circle of scene.circles; track circle.id) {
+          <g class="geo-chip" data-tone="cyan" [attr.transform]="'translate(' + circle.cx + ' ' + (circle.cy - 14) + ')'">
+            <rect class="chip__box" [attr.x]="-circle.chipWidth / 2" y="-8" [attr.width]="circle.chipWidth" height="16" />
+            <text class="chip__text">{{ circle.chip }}</text>
+          </g>
         }
 
-        @for (point of geo.points; track point.id) {
-          <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
-            <circle
-              class="geo-point__glow geo-point__glow--{{ point.status === 'compare' ? 'active' : '' }}"
-              r="6.4"
-              [attr.opacity]="point.status === 'compare' ? 0.2 : 0.08"
-            />
-            <circle
-              class="geo-point geo-point--{{ point.status === 'compare' ? 'active' : 'default' }}"
-              r="3.6"
-            />
+        @for (point of scene.points; track point.id) {
+          <g class="geo-point" [attr.data-tone]="point.tone" [attr.transform]="'translate(' + point.x + ' ' + point.y + ')'">
+            <circle class="point__dot" r="4.5" />
+            <text class="point__id" x="8" y="-8">{{ point.id }}</text>
           </g>
         }
       </svg>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as scene) {
+      <app-geo-readout [view]="scene.readout" />
+      <app-geo-rack class="geo-racks__fill" [title]="RACKS.triangles" [meta]="scene.eventMeta" [rows]="scene.eventRows" />
+    }
+  </div>
+</div>

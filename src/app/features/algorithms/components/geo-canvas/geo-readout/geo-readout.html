@@ -1,0 +1,14 @@
+@let readout = view();
+<div class="geo-readout" [attr.data-tone]="readout.tone">
+  <ohno-engraving>{{ readout.title | i18nText }}</ohno-engraving>
+  @if (readout.caption; as caption) {
+    <span class="geo-readout__caption">{{ caption | i18nText }}</span>
+  }
+  <span class="geo-readout__value">{{ readout.value }}</span>
+  @if (readout.verdict; as verdict) {
+    <span class="geo-readout__verdict">
+      <ohno-led size="sm" [color]="readout.led ?? 'slate'" [on]="readout.led !== null" />
+      <span>{{ verdict | i18nText }}</span>
+    </span>
+  }
+</div>

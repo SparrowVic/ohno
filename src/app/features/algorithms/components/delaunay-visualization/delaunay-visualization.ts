@@ -1,76 +1,43 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, input, viewChild } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
-import {
-  DelaunayTriangulationStepState,
-  GeometryPolygonRegion,
-  isDelaunayTriangulationState,
-} from '../../models/geometry';
+import { DelaunayTriangulationStepState, isDelaunayTriangulationState } from '../../models/geometry';
 import { SortStep } from '../../models/sort-step';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
+import { GeoGraticule } from '../geo-canvas/geo-graticule/geo-graticule';
+import { GeoRack } from '../geo-canvas/geo-rack/geo-rack';
+import { GeoReadout } from '../geo-canvas/geo-readout/geo-readout';
+import { observePlaneBox } from '../geo-canvas/plane-box';
+import { delaunayView } from './delaunay-display.utils';
 
-const I18N = I18N_KEY.features.algorithms.visualizations.delaunay;
+let nextClipId = 0;
 
 @Component({
   selector: 'app-delaunay-visualization',
-  imports: [VizHeader, VizPanel],
+  imports: [TranslocoPipe, GeoGraticule, GeoRack, GeoReadout],
   templateUrl: './delaunay-visualization.html',
   styleUrl: './delaunay-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DelaunayVisualization {
-  readonly array = input.required<readonly number[]>();
+  protected readonly GEO = I18N_KEY.features.algorithms.display.geometry;
+  protected readonly RACKS = I18N_KEY.features.algorithms.display.racks;
+  protected readonly clipId = `delaunay-plot-${nextClipId++}`;
+
+  readonly array = input<readonly number[]>([]);
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
 
-  readonly geoState = computed<DelaunayTriangulationStepState | null>(() => {
+  private readonly planeRef = viewChild<ElementRef<HTMLElement>>('plane');
+  private readonly box = observePlaneBox(this.planeRef);
+
+  protected readonly state = computed<DelaunayTriangulationStepState | null>(() => {
     const geometry = this.step()?.geometry ?? null;
     return isDelaunayTriangulationState(geometry) ? geometry : null;
   });
 
-  readonly phaseLabel = computed<TranslatableText>(() => {
-    const phase = this.geoState()?.phase;
-    switch (phase) {
-      case 'init': return I18N.phases.init;
-      case 'circumcircle': return I18N.phases.circumcircle;
-      case 'commit': return I18N.phases.commit;
-      case 'complete': return I18N.phases.complete;
-      default: return '';
-    }
+  protected readonly view = computed(() => {
+    const state = this.state();
+    return state ? delaunayView(state, this.box()) : null;
   });
-
-  readonly actionText = computed<TranslatableText>(() => {
-    const geo = this.geoState();
-    if (!geo) return '';
-    const count = geo.triangleCount;
-    const focus = geo.activeTriangleLabel;
-    if (focus) return i18nText(I18N.action.focusAndCount, { focus, count });
-    return i18nText(I18N.action.countOnly, { count });
-  });
-
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const phase = this.geoState()?.phase;
-    if (phase === 'complete') return 'sorted';
-    if (phase === 'commit') return 'sorted';
-    if (phase === 'circumcircle') return 'swap';
-    return 'default';
-  });
-
-  polygonPoints(region: GeometryPolygonRegion): string {
-    return region.vertices.map((vertex) => `${vertex.x},${100 - vertex.y}`).join(' ');
-  }
-
-  /** Map Delaunay's triangle tones to the shared `.geo-poly--*`
-   *  palette. `triangle-current` reads as "under circumcircle test",
-   *  `mesh` / `triangle` are committed parts of the final mesh. */
-  triangleToneClass(tone: GeometryPolygonRegion['tone']): string {
-    switch (tone) {
-      case 'triangle-current': return 'active';
-      case 'mesh':
-      case 'triangle':         return 'hull';
-      default:                 return 'preview';
-    }
-  }
 }

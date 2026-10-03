@@ -1,98 +1,54 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div #plane class="display__main plane" role="img" [attr.aria-label]="GEO.ariaMinkowski | transloco">
+    @if (view(); as scene) {
+      <svg class="plane__svg" [attr.viewBox]="scene.grid.viewBox" aria-hidden="true">
+        <g appGeoGraticule [grid]="scene.grid" />
 
-  @if (geoState()) {
-    <div class="mkv__stage">
-      <div class="mkv__gallery">
-        <article class="mkv__card">
-          <div class="mkv__card-head">
-            <span class="mkv__eyebrow">{{
-              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.inputALabel
-                | transloco
-            }}</span>
-            <span class="mkv__title">{{
-              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.obstacleLabel
-                | transloco
-            }}</span>
-          </div>
-          <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            @if (obstacle(); as polygon) {
-              <polygon
-                [attr.points]="galleryPoints(polygon)"
-                class="geo-poly geo-poly--accent"
-              />
-            }
-          </svg>
-        </article>
+        @for (shape of scene.shapes; track shape.id) {
+          <polygon
+            class="geo-poly"
+            [attr.data-tone]="shape.tone"
+            [attr.data-strong]="shape.strong"
+            [attr.data-dash]="shape.dashed"
+            [attr.data-hollow]="shape.hollow"
+            [attr.points]="shape.points"
+          />
+        }
 
-        <article class="mkv__card">
-          <div class="mkv__card-head">
-            <span class="mkv__eyebrow">{{
-              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.inputBLabel
-                | transloco
-            }}</span>
-            <span class="mkv__title">{{
-              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.robotLabel
-                | transloco
-            }}</span>
-          </div>
-          <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            @if (robot(); as polygon) {
-              <polygon
-                [attr.points]="galleryPoints(polygon)"
-                class="geo-poly geo-poly--warm"
-              />
-            }
-          </svg>
-        </article>
+        @if (scene.path; as path) {
+          <polyline class="geo-line" data-tone="lime" data-weight="bold" [attr.points]="path" />
+        }
 
-        <article class="mkv__card">
-          <div class="mkv__card-head">
-            <span class="mkv__eyebrow">{{
-              I18N_KEY.features.algorithms.visualizations.minkowskiSum.overview.reflectedLabel
-                | transloco
-            }}</span>
-            <span class="mkv__title">-B</span>
-          </div>
-          <svg class="mkv__mini" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            @if (reflected(); as polygon) {
-              <polygon
-                [attr.points]="galleryPoints(polygon)"
-                class="geo-poly geo-poly--preview"
-              />
-            }
-          </svg>
-        </article>
-      </div>
+        @for (shape of scene.shapes; track shape.id) {
+          <text class="geo-label" text-anchor="middle" [attr.data-tone]="shape.tone" [attr.x]="shape.labelX" [attr.y]="shape.labelY">
+            {{ shape.label }}
+          </text>
+        }
 
-      <div class="mkv__sum-wrap">
-        <svg class="mkv__sum" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <pattern id="mkv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path
-                d="M 10 0 L 0 0 0 10"
-                fill="none"
-                stroke="rgba(255, 255, 255, 0.055)"
-                stroke-width="0.3"
-              />
-            </pattern>
-          </defs>
-          <rect x="-6" y="-6" width="112" height="112" fill="url(#mkv-grid)" />
+        @for (vertex of scene.vertices; track vertex.id) {
+          <g
+            class="geo-point"
+            [attr.data-tone]="vertex.current ? 'cyan' : 'lime'"
+            [attr.data-current]="vertex.current"
+            [attr.transform]="'translate(' + vertex.x + ' ' + vertex.y + ')'"
+          >
+            <circle class="point__dot" [attr.r]="vertex.current ? 5.5 : 3.5" />
+          </g>
+        }
+      </svg>
+    }
+  </div>
 
-          @if (result(); as polygon) {
-            <polygon
-              [attr.points]="stagePoints(polygon)"
-              class="geo-poly geo-poly--{{ polygonToneClass(polygon.tone) }}"
-            />
-            @for (vertex of polygon.vertices; track $index) {
-              <g [attr.transform]="stageVertexTransform(vertex)">
-                <circle class="geo-point__glow geo-point__glow--success" r="6.4" />
-                <circle class="geo-point geo-point--success" r="3.6" />
-              </g>
-            }
-          }
-        </svg>
-      </div>
-    </div>
-  }
-</app-viz-panel>
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as scene) {
+      <app-geo-readout [view]="scene.readout" />
+      <app-geo-rack
+        class="geo-racks__fill"
+        [title]="RACKS.vectors"
+        [meta]="scene.vectorMeta"
+        [rows]="scene.vectorRows"
+        [empty]="NOTES.empty"
+      />
+    }
+  </div>
+</div>

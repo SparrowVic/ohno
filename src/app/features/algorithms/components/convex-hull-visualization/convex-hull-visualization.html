@@ -1,59 +1,57 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div
+    #plane
+    class="display__main plane"
+    role="img"
+    [attr.aria-label]="GEO.ariaPlane | transloco: { count: view()?.points?.length ?? 0 }"
+  >
+    @if (view(); as hull) {
+      <svg class="plane__svg" [attr.viewBox]="hull.grid.viewBox" aria-hidden="true">
+        <g appGeoGraticule [grid]="hull.grid" />
 
-  @if (geoState()) {
-    <div class="geo-stage">
-      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <pattern id="chv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <circle cx="0" cy="0" r="0.4" fill="rgba(255, 255, 255, 0.07)" />
-          </pattern>
-        </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#chv-grid)" />
-
-        @if (isComplete()) {
-          <polygon [attr.points]="hullPolyPoints()" class="geo-poly geo-poly--hull" />
+        @if (hull.hullPolygon; as polygon) {
+          <polygon class="geo-poly" data-tone="lime" data-strong="true" [attr.points]="polygon" />
+        }
+        @if (hull.stackPath; as path) {
+          <polyline class="geo-line" data-tone="lime" data-weight="bold" [attr.points]="path" />
+        }
+        @if (hull.checkPath; as path) {
+          <polyline class="geo-line" data-tone="cyan" data-dash="true" data-weight="bold" [attr.points]="path" />
+        }
+        @if (hull.checkArc; as arc) {
+          <path class="geo-line" data-tone="cyan" [attr.d]="arc" />
         }
 
-        @if (turnTriPoints(); as triPts) {
-          <polygon [attr.points]="triPts" class="geo-poly geo-poly--turn" />
-        }
-
-        @for (edge of edges(); track edge.fromId + '-' + edge.toId) {
-          <line
-            [attr.x1]="ptSvgX(edge.fromId)"
-            [attr.y1]="ptSvgY(edge.fromId)"
-            [attr.x2]="ptSvgX(edge.toId)"
-            [attr.y2]="ptSvgY(edge.toId)"
-            class="geo-line geo-line--{{ edgeToneClass(edge.kind) }}"
-          />
-        }
-
-        @for (pt of points(); track pt.id) {
-          <g [attr.transform]="ptTransform(pt)">
-            @if (showGlow(pt)) {
-              <circle
-                class="geo-point__glow geo-point__glow--{{ pointToneClass(pt.status) }}"
-                r="6.4"
-              />
+        @for (point of hull.points; track point.id) {
+          <g
+            class="geo-point"
+            [attr.data-tone]="point.tone"
+            [attr.data-current]="point.current"
+            [attr.transform]="'translate(' + point.x + ' ' + point.y + ')'"
+          >
+            @if (point.rejected) {
+              <circle class="geo-reject" r="5.5" />
+              <path class="geo-reject" d="M -3.2 -3.2 L 3.2 3.2 M -3.2 3.2 L 3.2 -3.2" />
+            } @else {
+              <circle class="point__dot" [attr.r]="point.current ? 6 : 4.5" />
             }
-            <circle
-              class="geo-point geo-point--{{ pointToneClass(pt.status) }}"
-              r="3.6"
-            />
-
-            @if (pt.sortIndex !== null && pt.sortIndex !== undefined && pt.sortIndex > 0) {
-              <text class="geo-label chv__sort-badge" y="-6" text-anchor="middle">
-                {{ pt.sortIndex }}
-              </text>
-            }
-
-            <text class="geo-point__id" text-anchor="middle" dominant-baseline="middle">
-              {{ pt.id }}
-            </text>
+            <text class="point__id" x="8" y="-8">{{ point.id }}</text>
           </g>
         }
       </svg>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as hull) {
+      <app-geo-rack
+        class="geo-racks__fill"
+        [title]="RACKS.stack"
+        [meta]="RACKS.topUp"
+        [rows]="hull.stackRows"
+        [empty]="NOTES.empty"
+      />
+      <app-geo-readout [view]="hull.readout" />
+    }
+  </div>
+</div>

@@ -809,7 +809,6 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { VIZ_COLOR } from '../../utils/helpers/visualization-palette/visualization-palette';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import {
   BITMASK_DP_PRESETS,
@@ -988,14 +987,6 @@ const BLOCK_LEGEND: readonly LegendItem[] = [
   { label: 'Sorted', color: 'var(--viz-state-sorted)' },
   { label: 'Boundary', color: 'var(--viz-state-sorted)' },
 ];
-
-const VIZ_ACCENT = VIZ_COLOR.accent;
-const VIZ_WINDOW = VIZ_COLOR.window;
-const VIZ_WARNING = VIZ_COLOR.warning;
-const VIZ_SUCCESS = VIZ_COLOR.success;
-const VIZ_ROUTE = VIZ_COLOR.route;
-const VIZ_HIT = VIZ_COLOR.hit;
-const VIZ_EMBER = VIZ_COLOR.ember;
 
 const RADIX_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.inputStream, color: 'var(--slate)' },
@@ -1543,69 +1534,66 @@ const KRUSKAL_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.pendingEdge, color: 'var(--slate)' },
 ];
 
+const GEO_LEGEND = I18N_KEY.features.algorithms.display.geometry.legend;
+
 const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
-  { label: 'Pivot (base point)', color: VIZ_ACCENT },
-  { label: 'Sorted (waiting)', color: '#94a3b8', opacity: 0.7 },
-  { label: 'Checking (cross product)', color: VIZ_WARNING },
-  { label: 'Stack (hull candidate)', color: VIZ_WINDOW },
-  { label: 'Hull vertex (final)', color: VIZ_SUCCESS },
-  { label: 'Rejected (interior point)', color: 'rgba(244,63,94,0.55)' },
+  { label: GEO_LEGEND.pivot, color: 'var(--violet)' },
+  { label: GEO_LEGEND.onStack, color: 'var(--lime)' },
+  { label: GEO_LEGEND.checked, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.rejected, color: 'var(--pink)' },
+  { label: GEO_LEGEND.unvisited, color: 'var(--slate)', opacity: 0.6 },
 ];
 
 const CLOSEST_PAIR_LEGEND: readonly LegendItem[] = [
-  { label: 'Left recursive half', color: VIZ_ACCENT },
-  { label: 'Right recursive half', color: VIZ_EMBER },
-  { label: 'Strip corridor candidate', color: VIZ_ROUTE },
-  { label: 'Current distance check', color: VIZ_WARNING },
-  { label: 'Best pair so far', color: VIZ_HIT },
+  { label: GEO_LEGEND.leftHalf, color: 'var(--violet)' },
+  { label: GEO_LEGEND.rightHalf, color: 'var(--ink-2)' },
+  { label: GEO_LEGEND.strip, color: 'var(--amber)' },
+  { label: GEO_LEGEND.checkedPair, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.bestPair, color: 'var(--lime)' },
 ];
 
 const LINE_INTERSECTION_LEGEND: readonly LegendItem[] = [
-  { label: 'Pending segment', color: 'rgba(148,163,184,0.55)' },
-  { label: 'Active sweep segment', color: VIZ_ROUTE },
-  { label: 'Focused event segment', color: VIZ_WARNING },
-  { label: 'Confirmed crossing point', color: VIZ_ACCENT },
-  { label: 'Sweep line', color: VIZ_HIT },
+  { label: GEO_LEGEND.pendingSegment, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.activeSegment, color: 'var(--ink-2)' },
+  { label: GEO_LEGEND.eventSegment, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.crossing, color: 'var(--lime)' },
 ];
 
 const HALF_PLANE_LEGEND: readonly LegendItem[] = [
-  { label: 'Current boundary line', color: VIZ_HIT },
-  { label: 'Already applied constraint', color: VIZ_ROUTE },
-  { label: 'Forbidden side', color: 'rgba(244,63,94,0.52)' },
-  { label: 'Feasible polygon', color: VIZ_HIT },
-  { label: 'Final intersection polygon', color: VIZ_ROUTE },
+  { label: GEO_LEGEND.currentConstraint, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.appliedConstraint, color: 'var(--lime)', opacity: 0.6 },
+  { label: GEO_LEGEND.pendingConstraint, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.feasibleRegion, color: 'var(--lime)' },
+  { label: GEO_LEGEND.forbiddenSide, color: 'var(--pink)' },
+  { label: GEO_LEGEND.conflict, color: 'var(--red)' },
 ];
 
 const MINKOWSKI_SUM_LEGEND: readonly LegendItem[] = [
-  { label: 'Obstacle polygon A', color: 'rgba(244,63,94,0.6)' },
-  { label: 'Robot polygon B', color: VIZ_ACCENT },
-  { label: 'Reflected robot -B', color: VIZ_WINDOW },
-  { label: 'Growing sum path', color: VIZ_HIT },
-  { label: 'Final configuration obstacle', color: VIZ_ROUTE },
+  { label: GEO_LEGEND.obstacle, color: 'var(--violet)' },
+  { label: GEO_LEGEND.robot, color: 'var(--amber)' },
+  { label: GEO_LEGEND.reflected, color: 'var(--ink-2)' },
+  { label: GEO_LEGEND.sumPath, color: 'var(--lime)' },
+  { label: GEO_LEGEND.currentVertex, color: 'var(--cyan)' },
 ];
 
 const SWEEP_LINE_LEGEND: readonly LegendItem[] = [
-  { label: 'Pending rectangle', color: 'rgba(148,163,184,0.5)' },
-  { label: 'Active rectangle at sweep x', color: VIZ_ROUTE },
-  { label: 'Focused event rectangle', color: VIZ_WARNING },
-  { label: 'Merged vertical coverage span', color: VIZ_HIT },
-  { label: 'Sweep progress region', color: 'rgba(45,212,191,0.32)' },
+  { label: GEO_LEGEND.pendingRect, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.activeRect, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.eventRect, color: 'var(--pink)' },
+  { label: GEO_LEGEND.closedRect, color: 'var(--lime)' },
+  { label: GEO_LEGEND.coverage, color: 'var(--lime)', opacity: 0.5 },
 ];
 
 const VORONOI_LEGEND: readonly LegendItem[] = [
-  { label: 'Site points', color: 'rgba(255,255,255,0.92)' },
-  { label: 'Active site event', color: VIZ_EMBER },
-  { label: 'Settled Voronoi cell', color: 'rgba(186,230,253,0.5)' },
-  { label: 'Current cell freeze', color: VIZ_EMBER },
-  { label: 'Descending sweep line', color: VIZ_EMBER },
+  { label: GEO_LEGEND.site, color: 'var(--slate)', opacity: 0.8 },
+  { label: GEO_LEGEND.currentSite, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.closedCell, color: 'var(--lime)' },
 ];
 
 const DELAUNAY_LEGEND: readonly LegendItem[] = [
-  { label: 'Committed triangle mesh', color: 'rgba(56,189,248,0.45)' },
-  { label: 'Current candidate triangle', color: VIZ_WARNING },
-  { label: 'Active circumcircle', color: VIZ_HIT },
-  { label: 'Committed mesh edges', color: 'rgba(186,230,253,0.5)' },
-  { label: 'Active triangle vertices', color: VIZ_HIT },
+  { label: GEO_LEGEND.testedTriangle, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.meshTriangle, color: 'var(--lime)' },
+  { label: GEO_LEGEND.meshVertex, color: 'var(--slate)', opacity: 0.8 },
 ];
 
 const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [

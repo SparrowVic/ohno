@@ -834,6 +834,136 @@
           "treeNodes": "Tree nodes",
           "visited": "Visited"
         },
+        "geometry": {
+          "activeOrder": "Active segments",
+          "ariaConstraints": "XY plane with {{count}} half-planes",
+          "ariaMinkowski": "XY plane with the obstacle, the robot and the Minkowski sum",
+          "ariaPlane": "XY plane with {{count}} points",
+          "ariaRects": "XY plane with {{count}} rectangles",
+          "ariaSegments": "XY plane with {{count}} segments",
+          "circumcircle": "Circumcircle",
+          "closedCells": "Closed cells",
+          "closestPair": {
+            "bestPair": "Closest pair",
+            "noPair": "no pair yet",
+            "recursion": "Recursion",
+            "region": "region"
+          },
+          "coveredArea": "Covered area",
+          "crossCaption": "cross({{o}}, {{a}}, {{b}})",
+          "crossings": "Crossings",
+          "divider": {
+            "mergeLine": "merge line",
+            "mid": "mid",
+            "split": "split"
+          },
+          "events": {
+            "cross": "cross {{pair}}",
+            "end": "end {{segment}}",
+            "enter": "enter {{rect}}",
+            "leave": "leave {{rect}}",
+            "start": "start {{segment}}"
+          },
+          "feasibleArea": "Region area",
+          "legend": {
+            "activeRect": "In the sweep",
+            "activeSegment": "Segment in the sweep",
+            "appliedConstraint": "Applied",
+            "bestPair": "Closest pair",
+            "checked": "Checked",
+            "checkedPair": "Checked pair",
+            "closedCell": "Closed cell",
+            "closedRect": "Closed",
+            "conflict": "Conflict",
+            "coverage": "Coverage",
+            "crossing": "Crossing",
+            "currentConstraint": "Current constraint",
+            "currentSite": "Current site",
+            "currentVertex": "Current vertex",
+            "eventRect": "Event",
+            "eventSegment": "Current event",
+            "feasibleRegion": "Feasible region",
+            "forbiddenSide": "Cut-off side",
+            "leftHalf": "Left half",
+            "meshTriangle": "Mesh",
+            "meshVertex": "Vertex",
+            "obstacle": "Obstacle A",
+            "onStack": "On the stack",
+            "pendingConstraint": "Pending",
+            "pendingRect": "Pending",
+            "pendingSegment": "Pending segment",
+            "pivot": "Pivot",
+            "reflected": "Reflection −B",
+            "rejected": "Rejected",
+            "rightHalf": "Right half",
+            "robot": "Robot B",
+            "site": "Site",
+            "strip": "Strip",
+            "sumPath": "Sum A ⊕ −B",
+            "testedTriangle": "Tested triangle",
+            "unvisited": "Unvisited"
+          },
+          "minkowski": {
+            "area": "area {{value}}",
+            "edges": "Merged edges"
+          },
+          "region": {
+            "optimum": "global optimum",
+            "points": "{{count}} points on the plane",
+            "slice": "{{path}} · {{count}} pts",
+            "sorted": "sorted by x: {{first}} … {{last}}",
+            "whole": "whole set · {{count}} pts"
+          },
+          "sweepX": "x = {{value}}",
+          "sweepY": "y = {{value}}",
+          "top": "top",
+          "trail": {
+            "done": "done",
+            "left": "left half",
+            "merge": "merge",
+            "right": "right half",
+            "root": "whole set",
+            "strip": "strip"
+          },
+          "triangles": "Triangles",
+          "verdict": {
+            "areaDone": "area computed",
+            "better": "new minimum",
+            "candidate": "{{pair}} · {{value}}",
+            "cellClosed": "cell {{site}} closed",
+            "circleEmpty": "empty circle · no point inside",
+            "clipped": "clipped by {{constraint}}",
+            "closestFound": "closest pair found",
+            "crossFound": "crossing at ({{x}}, {{y}})",
+            "diagramDone": "{{count}} cells split the plane",
+            "edgeA": "edge from A",
+            "edgeB": "edge from −B",
+            "edgeBoth": "parallel · both edges",
+            "emptyRegion": "empty region · conflict",
+            "feasible": "feasible region",
+            "hullClosed": "hull closed",
+            "inserted": "{{segment}} enters the sweep",
+            "keep": "left turn · stays",
+            "keepLeft": "keep the left side",
+            "meshDone": "mesh ready · {{count}} triangles",
+            "popCollinear": "collinear · pop",
+            "popRight": "right turn · pop",
+            "popped": "popped {{id}}",
+            "pushed": "pushed {{id}}",
+            "rectEnter": "{{rect}} enters",
+            "rectLeave": "{{rect}} leaves",
+            "reflected": "robot reflected through the origin",
+            "regionDone": "region found",
+            "retired": "{{segment}} leaves the sweep",
+            "seeded": "start at A₀ + B₀",
+            "siteReached": "sweep reaches {{site}}",
+            "sumClosed": "sum closed",
+            "sweepDone": "sweep finished",
+            "triangleCommitted": "triangle in the mesh",
+            "waiting": "waiting for a test"
+          },
+          "vertexCount": "{{count}} vertices"
+        },
         "graph": {
           "clearRoute": "Clear route",
           "labels": {
@@ -6242,6 +6372,47 @@
             "root": "Representative root"
           }
         },
+        "geometry": {
+          "actions": {
+            "pop": "POP",
+            "push": "PUSH"
+          },
+          "base": "base",
+          "crossCheck": "Cross product check",
+          "crossValue": "cross = {{value}}",
+          "empty": "No geometry trace for this step.",
+          "hullStack": "Hull stack",
+          "legend": {
+            "checking": "Checking (cross product)",
+            "hull": "Hull vertex",
+            "pivot": "Pivot (base point)",
+            "rejected": "Rejected (interior)",
+            "sorted": "Sorted (waiting)",
+            "stack": "Stack (hull candidate)"
+          },
+          "legendAria": "Hull legend",
+          "onStack": "On stack",
+          "pointStatus": "Point status",
+          "rejected": "Rejected",
+          "roles": {
+            "candidate": "candidate",
+            "secondFromTop": "second from top",
+            "stackTop": "stack top"
+          },
+          "stackAria": "Hull stack",
+          "stackEmpty": "Stack is empty",
+          "standBy": "stand by",
+          "summaryAria": "Convex hull summary",
+          "top": "top",
+          "totalPoints": "Points",
+          "turnHint": "The turn test appears once the stack reaches the first orientation check.",
+          "verdict": {
+            "collinear": "Collinear",
+            "leftTurn": "Left turn (CCW)",
+            "rightTurn": "Right turn (CW)"
+          },
+          "waiting": "Waiting for the next turn test"
+        },
         "graph": {
           "calculationAriaLabel": "Current calculation",
           "columns": {
@@ -7539,27 +7710,7 @@
         }
       },
       "visualizations": {
-        "closestPair": {
-          "action": {
-            "regionAndBest": "{{region}} · best {{best}}"
-          },
-          "phases": {
-            "base": "Base case",
-            "compare": "Check distance",
-            "complete": "Closest pair",
-            "divide": "Divide",
-            "init": "Point field",
-            "merge": "Merge",
-            "sort": "Sort by x and y",
-            "strip": "Build middle strip",
-            "update": "Update best"
-          }
-        },
         "convexHull": {
-          "action": {
-            "detail": "{{turn}} · cross={{cross}} · hull {{hull}}",
-            "hullOnly": "hull {{hull}}"
-          },
           "phases": {
             "checking": "Cross-product check",
             "complete": "Hull complete",
@@ -7569,22 +7720,6 @@
             "pop": "Pop from stack",
             "push": "Push onto stack",
             "sort": "Polar sort"
-          },
-          "turn": {
-            "ccw": "CCW",
-            "cw": "CW"
-          }
-        },
-        "delaunay": {
-          "action": {
-            "countOnly": "{{count}} △",
-            "focusAndCount": "{{focus}} · {{count}} △"
-          },
-          "phases": {
-            "circumcircle": "Circumcircle test",
-            "commit": "Commit triangle",
-            "complete": "Mesh complete",
-            "init": "Point field"
           }
         },
         "dsu": {
@@ -7605,44 +7740,6 @@
           "initializeLabel": "Initialize graph",
           "inspectingLabel": "Inspecting {{node}}",
           "scanningLabel": "Scanning"
-        },
-        "halfPlane": {
-          "phases": {
-            "clip": "Clip region",
-            "complete": "Intersection complete",
-            "constraint": "Apply constraint",
-            "infeasible": "No feasible region",
-            "init": "Starting region"
-          }
-        },
-        "lineIntersection": {
-          "phases": {
-            "activate": "Activate endpoint",
-            "complete": "Sweep complete",
-            "init": "Sweep setup",
-            "intersection": "Crossing found",
-            "retire": "Retire endpoint"
-          }
-        },
-        "minkowskiSum": {
-          "action": {
-            "activeAndProgress": "{{active}} · {{merged}}/{{total}} edges",
-            "progress": "{{merged}}/{{total}} edges"
-          },
-          "overview": {
-            "inputALabel": "Input A",
-            "inputBLabel": "Input B",
-            "obstacleLabel": "Obstacle",
-            "reflectedLabel": "Reflected",
-            "robotLabel": "Robot"
-          },
-          "phases": {
-            "complete": "C-space hull",
-            "init": "Input shapes",
-            "merge": "Merge edges",
-            "reflect": "Reflect robot",
-            "seed": "Seed vertex"
-          }
         },
         "network": {
           "emptyLabel": "No layered network trace available for this step.",
@@ -7672,25 +7769,6 @@
           },
           "rle": {
             "waitingForFirstRun": "Waiting for first run…"
-          }
-        },
-        "sweepLine": {
-          "phases": {
-            "complete": "Area computed",
-            "event": "Edge event",
-            "init": "Scanner ready"
-          }
-        },
-        "voronoi": {
-          "action": {
-            "closedOnly": "{{closed}} closed",
-            "focusAndClosed": "{{focus}} · {{closed}} closed"
-          },
-          "phases": {
-            "cell": "Freeze cell",
-            "complete": "Diagram complete",
-            "init": "Site field",
-            "site": "Site event"
           }
         }
       },

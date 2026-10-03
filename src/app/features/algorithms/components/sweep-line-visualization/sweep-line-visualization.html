@@ -1,51 +1,50 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div
+    #plane
+    class="display__main plane"
+    role="img"
+    [attr.aria-label]="GEO.ariaRects | transloco: { count: view()?.rects?.length ?? 0 }"
+  >
+    @if (view(); as scene) {
+      <svg class="plane__svg" [attr.viewBox]="scene.grid.viewBox" aria-hidden="true">
+        <g appGeoGraticule [grid]="scene.grid" />
 
-  @if (geoState(); as geo) {
-    <div class="geo-stage">
-      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <pattern id="slv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path
-              d="M 10 0 L 0 0 0 10"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.055)"
-              stroke-width="0.3"
-            />
-          </pattern>
-        </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#slv-grid)" />
-
-        @if (geo.fillWidth !== null) {
-          <rect x="0" y="0" [attr.width]="geo.fillWidth" height="100" class="slv-progress" />
+        @if (scene.covered; as covered) {
+          <rect class="geo-swept" [attr.x]="covered.x" [attr.y]="covered.y" [attr.width]="covered.width" [attr.height]="covered.height" />
         }
 
-        @for (rect of geo.rectangles; track rect.id) {
+        @for (rect of scene.rects; track rect.id) {
           <rect
+            class="geo-poly"
+            [attr.data-tone]="rect.tone"
+            [attr.data-strong]="rect.strong"
+            [attr.data-dash]="rect.dashed"
             [attr.x]="rect.x"
-            [attr.y]="100 - rect.y - rect.height"
+            [attr.y]="rect.y"
             [attr.width]="rect.width"
             [attr.height]="rect.height"
-            class="slv-rect slv-rect--{{ rectToneClass(rect.tone) }}"
           />
+          <text class="geo-label" [attr.data-tone]="rect.tone" [attr.x]="rect.x + 5" [attr.y]="rect.y + 13">{{ rect.label }}</text>
         }
 
-        @if (geo.sweepX !== null) {
-          <line [attr.x1]="geo.sweepX" y1="0" [attr.x2]="geo.sweepX" y2="100" class="geo-sweep" />
-        }
-
-        <g transform="translate(92, 6)">
-          @for (span of geo.spans; track span.id) {
-            <rect
-              x="0"
-              [attr.y]="100 - span.y1"
-              width="4"
-              [attr.height]="span.y1 - span.y0"
-              class="slv-span"
-            />
+        @if (scene.sweep; as sweep) {
+          <line class="geo-sweep" [attr.x1]="sweep.x" [attr.y1]="sweep.y1" [attr.x2]="sweep.x" [attr.y2]="sweep.y2" />
+          @for (span of scene.spans; track span.id) {
+            <line class="geo-line" data-tone="lime" data-weight="heavy" [attr.x1]="sweep.x" [attr.y1]="span.y1" [attr.x2]="sweep.x" [attr.y2]="span.y2" />
           }
-        </g>
+          <text class="geo-label" data-tone="cyan" text-anchor="middle" [attr.x]="sweep.x" [attr.y]="sweep.y1 - 4">
+            {{ sweep.label | i18nText }}
+          </text>
+        }
       </svg>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as scene) {
+      <app-geo-readout [view]="scene.readout" />
+      <app-geo-rack class="geo-racks__fill" [title]="RACKS.events" [meta]="scene.eventMeta" [rows]="scene.eventRows" />
+      <app-geo-rack class="geo-racks__part" [title]="RACKS.spans" [rows]="scene.spanRows" [empty]="NOTES.empty" />
+    }
+  </div>
+</div>

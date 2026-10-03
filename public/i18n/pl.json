@@ -834,6 +834,136 @@
           "treeNodes": "Węzły drzewa",
           "visited": "Odwiedzone"
         },
+        "geometry": {
+          "activeOrder": "Aktywne odcinki",
+          "ariaConstraints": "Płaszczyzna XY z {{count}} półpłaszczyznami",
+          "ariaMinkowski": "Płaszczyzna XY z przeszkodą, robotem i sumą Minkowskiego",
+          "ariaPlane": "Płaszczyzna XY z {{count}} punktami",
+          "ariaRects": "Płaszczyzna XY z {{count}} prostokątami",
+          "ariaSegments": "Płaszczyzna XY z {{count}} odcinkami",
+          "circumcircle": "Okrąg opisany",
+          "closedCells": "Zamknięte komórki",
+          "closestPair": {
+            "bestPair": "Najbliższa para",
+            "noPair": "jeszcze brak pary",
+            "recursion": "Rekurencja",
+            "region": "obszar"
+          },
+          "coveredArea": "Pole pokrycia",
+          "crossCaption": "cross({{o}}, {{a}}, {{b}})",
+          "crossings": "Przecięcia",
+          "divider": {
+            "mergeLine": "linia scalania",
+            "mid": "środek",
+            "split": "podział"
+          },
+          "events": {
+            "cross": "przecięcie {{pair}}",
+            "end": "koniec {{segment}}",
+            "enter": "wejście {{rect}}",
+            "leave": "wyjście {{rect}}",
+            "start": "początek {{segment}}"
+          },
+          "feasibleArea": "Pole obszaru",
+          "legend": {
+            "activeRect": "W miotle",
+            "activeSegment": "Odcinek w miotle",
+            "appliedConstraint": "Zastosowane",
+            "bestPair": "Najbliższa para",
+            "checked": "Sprawdzany",
+            "checkedPair": "Sprawdzana para",
+            "closedCell": "Zamknięta komórka",
+            "closedRect": "Zamknięty",
+            "conflict": "Sprzeczność",
+            "coverage": "Pokrycie",
+            "crossing": "Przecięcie",
+            "currentConstraint": "Bieżące ograniczenie",
+            "currentSite": "Bieżący punkt",
+            "currentVertex": "Bieżący wierzchołek",
+            "eventRect": "Zdarzenie",
+            "eventSegment": "Bieżące zdarzenie",
+            "feasibleRegion": "Obszar dopuszczalny",
+            "forbiddenSide": "Odcięta strona",
+            "leftHalf": "Lewa połowa",
+            "meshTriangle": "Siatka",
+            "meshVertex": "Wierzchołek",
+            "obstacle": "Przeszkoda A",
+            "onStack": "Na stosie",
+            "pendingConstraint": "Oczekujące",
+            "pendingRect": "Oczekujący",
+            "pendingSegment": "Oczekujący odcinek",
+            "pivot": "Pivot",
+            "reflected": "Odbicie −B",
+            "rejected": "Odrzucony",
+            "rightHalf": "Prawa połowa",
+            "robot": "Robot B",
+            "site": "Punkt",
+            "strip": "Pas",
+            "sumPath": "Suma A ⊕ −B",
+            "testedTriangle": "Testowany trójkąt",
+            "unvisited": "Nieodwiedzony"
+          },
+          "minkowski": {
+            "area": "pole {{value}}",
+            "edges": "Scalone krawędzie"
+          },
+          "region": {
+            "optimum": "optimum globalne",
+            "points": "{{count}} punktów na płaszczyźnie",
+            "slice": "{{path}} · {{count}} pkt",
+            "sorted": "po x: {{first}} … {{last}}",
+            "whole": "całość · {{count}} pkt"
+          },
+          "sweepX": "x = {{value}}",
+          "sweepY": "y = {{value}}",
+          "top": "szczyt",
+          "trail": {
+            "done": "gotowe",
+            "left": "lewa połowa",
+            "merge": "scalanie",
+            "right": "prawa połowa",
+            "root": "całość",
+            "strip": "pas"
+          },
+          "triangles": "Trójkąty",
+          "verdict": {
+            "areaDone": "pole policzone",
+            "better": "nowe minimum",
+            "candidate": "{{pair}} · {{value}}",
+            "cellClosed": "komórka {{site}} zamknięta",
+            "circleEmpty": "okrąg pusty · bez punktów w środku",
+            "clipped": "przycięto przez {{constraint}}",
+            "closestFound": "znaleziono najbliższą parę",
+            "crossFound": "przecięcie w ({{x}}, {{y}})",
+            "diagramDone": "{{count}} komórek dzieli płaszczyznę",
+            "edgeA": "krawędź z A",
+            "edgeB": "krawędź z −B",
+            "edgeBoth": "równoległe · obie krawędzie",
+            "emptyRegion": "obszar pusty · sprzeczność",
+            "feasible": "obszar dopuszczalny",
+            "hullClosed": "otoczka zamknięta",
+            "inserted": "{{segment}} wchodzi do miotły",
+            "keep": "lewy skręt · zostaje",
+            "keepLeft": "zostaje lewa strona",
+            "meshDone": "siatka gotowa · {{count}} trójkątów",
+            "popCollinear": "współliniowe · zdejmij",
+            "popRight": "prawy skręt · zdejmij",
+            "popped": "zdjęto {{id}}",
+            "pushed": "wepchnięto {{id}}",
+            "rectEnter": "{{rect}} wchodzi",
+            "rectLeave": "{{rect}} wychodzi",
+            "reflected": "robot odbity przez początek",
+            "regionDone": "obszar wyznaczony",
+            "retired": "{{segment}} opuszcza miotłę",
+            "seeded": "start w A₀ + B₀",
+            "siteReached": "miotła dochodzi do {{site}}",
+            "sumClosed": "suma zamknięta",
+            "sweepDone": "miotła przeszła całą płaszczyznę",
+            "triangleCommitted": "trójkąt w siatce",
+            "waiting": "czeka na test"
+          },
+          "vertexCount": "{{count}} wierzchołków"
+        },
         "graph": {
           "clearRoute": "Wyczyść trasę",
           "labels": {
@@ -6242,6 +6372,47 @@
             "root": "Reprezentujący korzeń"
           }
         },
+        "geometry": {
+          "actions": {
+            "pop": "ZDEJMIJ",
+            "push": "WEPCHNIJ"
+          },
+          "base": "baza",
+          "crossCheck": "Test iloczynu wektorowego",
+          "crossValue": "cross = {{value}}",
+          "empty": "Brak śladu geometrii dla tego kroku.",
+          "hullStack": "Stos otoczki",
+          "legend": {
+            "checking": "Sprawdzany (iloczyn wektorowy)",
+            "hull": "Wierzchołek otoczki",
+            "pivot": "Pivot (punkt bazowy)",
+            "rejected": "Odrzucony (wewnątrz)",
+            "sorted": "Posortowany (czeka)",
+            "stack": "Na stosie (kandydat)"
+          },
+          "legendAria": "Legenda otoczki",
+          "onStack": "Na stosie",
+          "pointStatus": "Stan punktu",
+          "rejected": "Odrzucone",
+          "roles": {
+            "candidate": "kandydat",
+            "secondFromTop": "drugi od góry",
+            "stackTop": "szczyt stosu"
+          },
+          "stackAria": "Stos otoczki",
+          "stackEmpty": "Stos jest pusty",
+          "standBy": "czekaj",
+          "summaryAria": "Podsumowanie otoczki wypukłej",
+          "top": "szczyt",
+          "totalPoints": "Punkty",
+          "turnHint": "Test skrętu pojawi się, gdy stos dojdzie do pierwszego sprawdzenia orientacji.",
+          "verdict": {
+            "collinear": "Współliniowe",
+            "leftTurn": "Lewy skręt (CCW)",
+            "rightTurn": "Prawy skręt (CW)"
+          },
+          "waiting": "Czeka na kolejny test skrętu"
+        },
         "graph": {
           "calculationAriaLabel": "Bieżące obliczenie",
           "columns": {
@@ -7539,27 +7710,7 @@
         }
       },
       "visualizations": {
-        "closestPair": {
-          "action": {
-            "regionAndBest": "{{region}} · najlepsza {{best}}"
-          },
-          "phases": {
-            "base": "Przypadek bazowy",
-            "compare": "Test odległości",
-            "complete": "Najbliższa para",
-            "divide": "Podział",
-            "init": "Zbiór punktów",
-            "merge": "Łączenie",
-            "sort": "Sortowanie po x i y",
-            "strip": "Pas środkowy",
-            "update": "Aktualizacja najlepszej"
-          }
-        },
         "convexHull": {
-          "action": {
-            "detail": "{{turn}} · cross={{cross}} · otoczka {{hull}}",
-            "hullOnly": "otoczka {{hull}}"
-          },
           "phases": {
             "checking": "Test iloczynu wektorowego",
             "complete": "Otoczka gotowa",
@@ -7569,22 +7720,6 @@
             "pop": "Zdjęcie ze stosu",
             "push": "Wrzucenie na stos",
             "sort": "Sortowanie polarne"
-          },
-          "turn": {
-            "ccw": "CCW",
-            "cw": "CW"
-          }
-        },
-        "delaunay": {
-          "action": {
-            "countOnly": "{{count}} △",
-            "focusAndCount": "{{focus}} · {{count}} △"
-          },
-          "phases": {
-            "circumcircle": "Test okręgu opisanego",
-            "commit": "Zatwierdzenie trójkąta",
-            "complete": "Siatka gotowa",
-            "init": "Zbiór punktów"
           }
         },
         "dsu": {
@@ -7605,44 +7740,6 @@
           "initializeLabel": "Inicjalizacja grafu",
           "inspectingLabel": "Sprawdzam {{node}}",
           "scanningLabel": "Skanowanie"
-        },
-        "halfPlane": {
-          "phases": {
-            "clip": "Przycinanie regionu",
-            "complete": "Przecięcie gotowe",
-            "constraint": "Nałożenie ograniczenia",
-            "infeasible": "Brak regionu dopuszczalnego",
-            "init": "Region startowy"
-          }
-        },
-        "lineIntersection": {
-          "phases": {
-            "activate": "Wstawienie końca",
-            "complete": "Miotła zakończona",
-            "init": "Przygotowanie miotły",
-            "intersection": "Znaleziono przecięcie",
-            "retire": "Usunięcie końca"
-          }
-        },
-        "minkowskiSum": {
-          "action": {
-            "activeAndProgress": "{{active}} · {{merged}}/{{total}} krawędzi",
-            "progress": "{{merged}}/{{total}} krawędzi"
-          },
-          "overview": {
-            "inputALabel": "Wejście A",
-            "inputBLabel": "Wejście B",
-            "obstacleLabel": "Przeszkoda",
-            "reflectedLabel": "Odbicie",
-            "robotLabel": "Robot"
-          },
-          "phases": {
-            "complete": "Otoczka C-space",
-            "init": "Figury wejściowe",
-            "merge": "Łączenie krawędzi",
-            "reflect": "Odbicie robota",
-            "seed": "Wierzchołek startowy"
-          }
         },
         "network": {
           "emptyLabel": "Brak śladu warstwowej sieci dla tego kroku.",
@@ -7672,25 +7769,6 @@
           },
           "rle": {
             "waitingForFirstRun": "Oczekiwanie na pierwszy przebieg…"
-          }
-        },
-        "sweepLine": {
-          "phases": {
-            "complete": "Obszar obliczony",
-            "event": "Zdarzenie krawędzi",
-            "init": "Skaner gotowy"
-          }
-        },
-        "voronoi": {
-          "action": {
-            "closedOnly": "{{closed}} zamkniętych",
-            "focusAndClosed": "{{focus}} · {{closed}} zamkniętych"
-          },
-          "phases": {
-            "cell": "Zamknięcie komórki",
-            "complete": "Diagram gotowy",
-            "init": "Zbiór zarodków",
-            "site": "Zdarzenie zarodka"
           }
         }
       },

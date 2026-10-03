@@ -1,45 +1,71 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
-
-  @if (geoState(); as geo) {
-    <div class="geo-stage">
-      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
+<div class="display display--rack">
+  <div
+    #plane
+    class="display__main plane"
+    role="img"
+    [attr.aria-label]="GEO.ariaConstraints | transloco: { count: view()?.constraints?.length ?? 0 }"
+  >
+    @if (view(); as scene) {
+      <svg class="plane__svg" [attr.viewBox]="scene.grid.viewBox" aria-hidden="true">
         <defs>
-          <pattern id="hpv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path
-              d="M 10 0 L 0 0 0 10"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.055)"
-              stroke-width="0.3"
-            />
-          </pattern>
+          <clipPath [attr.id]="clipId">
+            <rect [attr.x]="scene.grid.plot.x" [attr.y]="scene.grid.plot.y" [attr.width]="scene.grid.plot.width" [attr.height]="scene.grid.plot.height" />
+          </clipPath>
         </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#hpv-grid)" />
 
-        @for (polygon of geo.polygons; track polygon.id) {
-          <polygon
-            [attr.points]="polygonPoints(polygon)"
-            class="geo-poly geo-poly--{{ polygonToneClass(polygon.tone) }}"
-          />
+        <g appGeoGraticule [grid]="scene.grid" />
+
+        <g [attr.clip-path]="'url(#' + clipId + ')'">
+          @for (region of scene.regions; track region.id) {
+            <polygon
+              class="geo-poly"
+              [attr.data-tone]="region.tone"
+              [attr.data-strong]="region.strong"
+              [attr.data-dash]="region.dashed"
+              [attr.data-hollow]="region.hollow"
+              [attr.points]="region.points"
+            />
+          }
+
+          @for (constraint of scene.constraints; track constraint.id) {
+            <line
+              class="geo-line"
+              [attr.data-tone]="constraint.tone"
+              [attr.data-weight]="constraint.bold ? 'bold' : null"
+              [attr.data-dash]="constraint.dashed"
+              [attr.x1]="constraint.x1"
+              [attr.y1]="constraint.y1"
+              [attr.x2]="constraint.x2"
+              [attr.y2]="constraint.y2"
+            />
+          }
+        </g>
+
+        @for (constraint of scene.constraints; track constraint.id) {
+          <text class="geo-label" [attr.data-tone]="constraint.tone" [attr.x]="constraint.labelX" [attr.y]="constraint.labelY">
+            {{ constraint.label }}
+          </text>
         }
 
-        @for (constraint of geo.constraints; track constraint.id) {
-          <line
-            [attr.x1]="constraint.start.x"
-            [attr.y1]="100 - constraint.start.y"
-            [attr.x2]="constraint.end.x"
-            [attr.y2]="100 - constraint.end.y"
-            class="geo-line geo-line--{{ constraintToneClass(constraint.tone) }}"
-          />
-        }
-
-        @for (marker of geo.markers; track marker.id) {
-          <g [attr.transform]="'translate(' + marker.x + ',' + (100 - marker.y) + ')'">
-            <circle class="geo-point__glow" r="3.7" />
-            <circle class="geo-point geo-point--route" r="1.9" />
+        @for (vertex of scene.vertices; track vertex.id) {
+          <g class="geo-point" data-tone="lime" [attr.transform]="'translate(' + vertex.x + ' ' + vertex.y + ')'">
+            <circle class="point__dot" r="3.5" />
+            <text class="point__id" x="6" y="-6">{{ vertex.label }}</text>
           </g>
         }
       </svg>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as scene) {
+      <app-geo-readout [view]="scene.readout" />
+      <app-geo-rack
+        class="geo-racks__fill"
+        [title]="RACKS.constraints"
+        [meta]="scene.constraintMeta"
+        [rows]="scene.constraintRows"
+      />
+    }
+  </div>
+</div>

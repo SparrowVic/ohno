@@ -1,54 +1,57 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div
+    #plane
+    class="display__main plane"
+    role="img"
+    [attr.aria-label]="GEO.ariaSegments | transloco: { count: view()?.segments?.length ?? 0 }"
+  >
+    @if (view(); as scene) {
+      <svg class="plane__svg" [attr.viewBox]="scene.grid.viewBox" aria-hidden="true">
+        <g appGeoGraticule [grid]="scene.grid" />
 
-  @if (geoState(); as geo) {
-    <div class="geo-stage">
-      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <pattern id="liv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path
-              d="M 10 0 L 0 0 0 10"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.055)"
-              stroke-width="0.3"
-            />
-          </pattern>
-        </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#liv-grid)" />
-
-        @if (geo.sweepX !== null) {
-          <line
-            [attr.x1]="geo.sweepX"
-            y1="0"
-            [attr.x2]="geo.sweepX"
-            y2="100"
-            class="geo-sweep"
-          />
+        @if (scene.sweep; as sweep) {
+          <line class="geo-sweep" [attr.x1]="sweep.x" [attr.y1]="sweep.y1" [attr.x2]="sweep.x" [attr.y2]="sweep.y2" />
+          <text class="geo-label" data-tone="cyan" text-anchor="middle" [attr.x]="sweep.x" [attr.y]="sweep.y1 - 4">
+            {{ sweep.label | i18nText }}
+          </text>
         }
 
-        @for (segment of segments(); track segment.id) {
-          <line
-            [attr.x1]="segment.start.x"
-            [attr.y1]="100 - segment.start.y"
-            [attr.x2]="segment.end.x"
-            [attr.y2]="100 - segment.end.y"
-            class="geo-line geo-line--{{ segmentToneClass(segment.tone) }}"
-          />
+        @for (segment of scene.segments; track segment.id) {
+          <g class="geo-point" [attr.data-tone]="segment.tone">
+            <line
+              class="geo-line"
+              [attr.data-tone]="segment.tone"
+              [attr.data-weight]="segment.bold ? 'bold' : null"
+              [attr.x1]="segment.x1"
+              [attr.y1]="segment.y1"
+              [attr.x2]="segment.x2"
+              [attr.y2]="segment.y2"
+            />
+            <circle class="point__dot" r="3" [attr.cx]="segment.x1" [attr.cy]="segment.y1" />
+            <circle class="point__dot" r="3" [attr.cx]="segment.x2" [attr.cy]="segment.y2" />
+            <text class="point__id" text-anchor="end" [attr.x]="segment.x1 - 7" [attr.y]="segment.y1 + 3">{{ segment.label }}</text>
+          </g>
         }
 
-        @for (marker of intersections(); track marker.id) {
-          <g [attr.transform]="'translate(' + marker.x + ',' + (100 - marker.y) + ')'">
-            <circle
-              class="geo-point__glow geo-point__glow--{{ hitToneClass(marker.tone) }}"
-              r="6.4"
-            />
-            <circle
-              class="geo-point geo-point--{{ hitToneClass(marker.tone) }}"
-              r="3.6"
-            />
+        @for (crossing of scene.crossings; track crossing.id) {
+          <g
+            class="geo-point"
+            [attr.data-tone]="crossing.tone"
+            [attr.data-current]="crossing.current"
+            [attr.transform]="'translate(' + crossing.x + ' ' + crossing.y + ')'"
+          >
+            <circle class="point__dot" [attr.r]="crossing.current ? 6 : 4.5" />
           </g>
         }
       </svg>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as scene) {
+      <app-geo-readout [view]="scene.readout" />
+      <app-geo-rack class="geo-racks__fill" [title]="RACKS.events" [meta]="scene.eventMeta" [rows]="scene.eventRows" />
+      <app-geo-rack class="geo-racks__part" [title]="GEO.activeOrder" [rows]="scene.orderRows" [empty]="NOTES.empty" />
+    }
+  </div>
+</div>
