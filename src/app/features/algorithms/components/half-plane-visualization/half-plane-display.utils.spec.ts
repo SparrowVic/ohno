@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { halfPlaneIntersectionGenerator } from '../../algorithms/half-plane-intersection';
 import { HalfPlaneIntersectionStepState, isHalfPlaneIntersectionState } from '../../models/geometry';
+import { labelBox, overlapArea } from '../geo-canvas/plane-display.utils';
 import { clipLineToBounds, halfPlaneReadout, halfPlaneView } from './half-plane-display.utils';
 
 const GEO = I18N_KEY.features.algorithms.display.geometry;
@@ -48,5 +49,12 @@ describe('half-plane-display.utils', () => {
   it('reports an empty region in red', () => {
     const empty = { ...states().at(-1)!, status: 'empty' as const };
     expect(halfPlaneReadout(empty)).toMatchObject({ value: '0', tone: 'red', led: 'red' });
+  });
+
+  it('never stacks two vertex ids on each other', () => {
+    for (const state of states()) {
+      const boxes = halfPlaneView(state, BOX).vertices.map((vertex) => labelBox(vertex.x, vertex.y, vertex.label, vertex.labelOffset));
+      boxes.forEach((box, index) => boxes.slice(index + 1).forEach((other) => expect(overlapArea(box, other)).toBe(0)));
+    }
   });
 });

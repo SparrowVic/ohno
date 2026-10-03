@@ -3,9 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { convexHullGenerator } from '../../algorithms/convex-hull';
 import { ConvexHullStepState, isConvexHullState } from '../../models/geometry';
-import { convexHullView, hullCandidateId, hullReadout, hullRejectedIds, hullStackRows } from './convex-hull-display.utils';
+import { convexHullView, hullCandidateId, hullDrawnRejectedIds, hullReadout, hullRejectedIds, hullStackRows } from './convex-hull-display.utils';
 
 const GEO = I18N_KEY.features.algorithms.display.geometry;
+const RACKS = I18N_KEY.features.algorithms.display.racks;
 const BOX = { width: 640, height: 420 };
 const POINTS = [
   { x: 50, y: 8 },
@@ -70,5 +71,21 @@ describe('convex-hull-display.utils', () => {
         expect(point.y).toBeLessThanOrEqual(BOX.height);
       }
     }
+  });
+
+  it('counts exactly the crosses it draws as rejected', () => {
+    for (const state of states()) {
+      const drawn = convexHullView(state, BOX).points.filter((point) => point.rejected).map((point) => point.id);
+      expect(new Set(drawn)).toEqual(hullDrawnRejectedIds(state));
+    }
+  });
+
+  it('titles the final readout with the hull vertex count instead of the cross product', () => {
+    const last = states().at(-1)!;
+    const readout = hullReadout(last);
+    expect(readout.title).toBe(RACKS.vertices);
+    expect(readout.value).toBe(String(last.stackIds.length));
+    const checking = states().find((entry) => entry.crossProduct !== null)!;
+    expect(hullReadout(checking).title).toBe(RACKS.crossProduct);
   });
 });

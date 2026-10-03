@@ -10,12 +10,16 @@ import {
   GeoRackRow,
   GeoReadoutView,
   GeoTone,
+  LabelOffset,
   PlaneBounds,
   PlaneBox,
   PlaneGrid,
   eventProgress,
   eventRows,
   formatNumber,
+  frameBounds,
+  labelBox,
+  placePointLabels,
   planeBounds,
   planeFrame,
   planeGrid,
@@ -53,6 +57,7 @@ export interface VertexView {
   readonly label: string;
   readonly x: number;
   readonly y: number;
+  readonly labelOffset: LabelOffset;
 }
 
 export interface HalfPlaneView {
@@ -130,6 +135,20 @@ export function halfPlaneView(state: HalfPlaneIntersectionStepState, box: PlaneB
   ];
   const bounds = planeBounds(coords);
   const frame = planeFrame(bounds, box);
+  const constraints = state.constraints.flatMap((constraint) => {
+    const clipped = clipLineToBounds(constraint.start, constraint.end, bounds);
+    if (!clipped) return [];
+    const a = project(frame, clipped[0]);
+    const b = project(frame, clipped[1]);
+    const mid = project(frame, { x: (constraint.start.x + constraint.end.x) / 2, y: (constraint.start.y + constraint.end.y) / 2 });
+    const look = CONSTRAINT_LOOK[constraint.tone];
+    return [{ id: constraint.id, label: constraint.label, x1: a.x, y1: a.y, x2: b.x, y2: b.y, labelX: mid.x + 6, labelY: mid.y - 6, ...look }];
+  });
+  const vertexPixels = state.markers.map((marker) => ({ ...project(frame, marker), text: marker.label ?? marker.id }));
+  const constraintBoxes = constraints.map((constraint) =>
+    labelBox(constraint.labelX, constraint.labelY, constraint.label, { dx: 0, dy: 0, anchor: 'start' }),
+  );
+  const vertexLabels = placePointLabels(vertexPixels, constraintBoxes, frameBounds(frame));
   return {
     grid: planeGrid(frame),
     regions: state.polygons.flatMap((polygon) => {
@@ -137,19 +156,14 @@ export function halfPlaneView(state: HalfPlaneIntersectionStepState, box: PlaneB
       if (!look || polygon.vertices.length < 3) return [];
       return [{ id: polygon.id, points: planePoints(frame, polygon.vertices), ...look }];
     }),
-    constraints: state.constraints.flatMap((constraint) => {
-      const clipped = clipLineToBounds(constraint.start, constraint.end, bounds);
-      if (!clipped) return [];
-      const a = project(frame, clipped[0]);
-      const b = project(frame, clipped[1]);
-      const mid = project(frame, { x: (constraint.start.x + constraint.end.x) / 2, y: (constraint.start.y + constraint.end.y) / 2 });
-      const look = CONSTRAINT_LOOK[constraint.tone];
-      return [{ id: constraint.id, label: constraint.label, x1: a.x, y1: a.y, x2: b.x, y2: b.y, labelX: mid.x + 6, labelY: mid.y - 6, ...look }];
-    }),
-    vertices: state.markers.map((marker) => {
-      const pixel = project(frame, marker);
-      return { id: marker.id, label: marker.label ?? marker.id, x: pixel.x, y: pixel.y };
-    }),
+    constraints,
+    vertices: state.markers.map((marker, index) => ({
+      id: marker.id,
+      label: vertexPixels[index]!.text,
+      x: vertexPixels[index]!.x,
+      y: vertexPixels[index]!.y,
+      labelOffset: vertexLabels[index]!,
+    })),
     constraintRows: eventRows(state.events, (event) => event.label, () => null),
     constraintMeta: eventProgress(state.events),
     readout: halfPlaneReadout(state),

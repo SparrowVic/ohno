@@ -6,10 +6,10 @@
     [attr.data-registers]="registers().length > 0"
   >
     @if (registers().length > 0) {
-      <app-notebook-register-rack class="lab__registers" aria-hidden="true" [title]="LAB.registers | transloco" [registers]="registers()" />
+      <app-notebook-register-rack class="lab__registers" aria-hidden="true" tabindex="-1" [title]="LAB.registers | transloco" [registers]="registers()" />
     }
 
-    <div class="lab__main" aria-hidden="true">
+    <div class="lab__main" aria-hidden="true" tabindex="-1">
       <section class="lab__formula">
         <ohno-engraving>{{ LAB.formula | transloco }}</ohno-engraving>
         @if (formula(); as rule) {

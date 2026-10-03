@@ -5,11 +5,14 @@ import {
   GeoRackRow,
   GeoReadoutView,
   GeoTone,
+  LabelOffset,
   PlaneBox,
   PlaneGrid,
   eventProgress,
   eventRows,
   formatNumber,
+  frameBounds,
+  placePointLabels,
   planeBounds,
   planeFrame,
   planeGrid,
@@ -36,6 +39,7 @@ export interface VoronoiSiteView {
   readonly y: number;
   readonly tone: GeoTone;
   readonly current: boolean;
+  readonly label: LabelOffset;
 }
 
 export interface VoronoiSweepView {
@@ -79,15 +83,27 @@ export function voronoiView(state: VoronoiDiagramStepState, box: PlaneBox): Voro
   const settled = voronoiSettledIds(state);
   const byId = new Map(state.points.map((point) => [point.id, point]));
   const live = state.sweepY !== null && state.phase !== 'complete';
+  const pixels = state.points.map((point) => project(frame, point));
+  const labels = placePointLabels(
+    state.points.map((point, index) => ({ ...pixels[index]!, text: String(point.id) })),
+    [],
+    frameBounds(frame),
+  );
   return {
     grid: planeGrid(frame),
     cells: state.cells
       .filter((cell) => cell.vertices.length >= 3)
       .map((cell) => ({ id: cell.id, points: planePoints(frame, cell.vertices), active: cell.tone === 'cell-active' })),
-    sites: state.points.map((point) => {
-      const pixel = project(frame, point);
+    sites: state.points.map((point, index) => {
       const active = point.id === state.activeSiteId;
-      return { id: point.id, x: pixel.x, y: pixel.y, tone: active ? 'cyan' : settled.has(point.id) ? 'lime' : 'slate', current: active };
+      return {
+        id: point.id,
+        x: pixels[index]!.x,
+        y: pixels[index]!.y,
+        tone: active ? 'cyan' : settled.has(point.id) ? 'lime' : 'slate',
+        current: active,
+        label: labels[index]!,
+      };
     }),
     sweep: live
       ? {

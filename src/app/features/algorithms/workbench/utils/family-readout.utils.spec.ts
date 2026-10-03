@@ -3,6 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { convexHullGenerator } from '../../algorithms/convex-hull';
+import { lineIntersectionGenerator } from '../../algorithms/line-intersection';
+import { sweepLineGenerator } from '../../algorithms/sweep-line';
+import { voronoiDiagramGenerator } from '../../algorithms/voronoi-diagram';
+import { convexHullView } from '../../components/convex-hull-visualization/convex-hull-display.utils';
 import { dijkstraGenerator } from '../../algorithms/dijkstra/dijkstra';
 import { dinicMaxFlowGenerator } from '../../algorithms/dinic-max-flow';
 import { hopcroftKarpGenerator } from '../../algorithms/hopcroft-karp';
@@ -96,7 +100,7 @@ const METER_IDS: readonly FamilyMeterId[] = [
   'rejected', 'frontier', 'visited', 'result', 'pivot', 'improved', 'prime', 'bound', 'components', 'merged',
   'output', 'low', 'high', 'probe', 'frames', 'returns', 'iteration', 'explored', 'depth', 'phases', 'lines', 'hits',
   'events', 'area', 'cells', 'triangles', 'vertices', 'pairs', 'distance', 'edges', 'rows', 'operations', 'capacity',
-  'best', 'amount', 'sum', 'indexI', 'indexJ', 'matched', 'zeros', 'path', 'closed', 'painted', 'crossed',
+  'best', 'amount', 'sum', 'indexI', 'indexJ', 'matched', 'zeros', 'path', 'closed', 'painted', 'crossed', 'active', 'spans',
 ];
 const GAUGE_IDS: readonly FamilyGaugeId[] = [
   'treeNodes', 'ranks', 'digits', 'settled', 'rows', 'phases', 'checked', 'textChars', 'visited', 'marked', 'eliminated', 'output', 'frames', 'explored', 'events', 'cells',
@@ -193,6 +197,35 @@ describe('familyStageReadout', () => {
     expect(readout.meters[1]!.total).toBe(11);
     expect(readout.registers.map((item) => item.label)).toEqual(['r:o', 'r:a', 'r:b', 'r:stack']);
     expect(readout.gaugeLabel).toBe('g:checked');
+    for (let index = 0; index < steps.length; index++) {
+      const state = steps[index]!.geometry;
+      if (state?.mode !== 'convex-hull') continue;
+      const drawn = convexHullView(state, { width: 640, height: 420 }).points.filter((point) => point.rejected).length;
+      expect(readoutAt(steps, index, 'convex-hull')!.meters[2]!.value).toBe(drawn);
+    }
+  });
+
+  it('labels the sweep-line structures as active segments and merged spans', () => {
+    const lines = history(
+      lineIntersectionGenerator({
+        segments: [
+          { x1: 10, y1: 10, x2: 90, y2: 80 },
+          { x1: 10, y1: 80, x2: 90, y2: 10 },
+        ],
+      }),
+    );
+    expect(readoutAt(lines, 1, 'line-intersection')!.meters.map((meter) => meter.id)).toEqual(['hits', 'events', 'active']);
+    const sweeps = history(sweepLineGenerator({ rectangles: [{ x: 10, y: 10, width: 30, height: 30 }, { x: 25, y: 25, width: 30, height: 40 }] }));
+    expect(readoutAt(sweeps, 1, 'sweep-line')!.meters.map((meter) => meter.id)).toEqual(['area', 'events', 'spans']);
+  });
+
+  it('grows the voronoi visited meter with the sweep instead of showing every site at once', () => {
+    const steps = history(voronoiDiagramGenerator({ points: [{ x: 20, y: 80 }, { x: 60, y: 50 }, { x: 40, y: 20 }] }));
+    const first = readoutAt(steps, 0, 'voronoi-diagram')!.meters[2]!;
+    const last = readoutAt(steps, steps.length - 1, 'voronoi-diagram')!.meters[2]!;
+    expect(first.total).toBe(3);
+    expect(Number(first.value)).toBeLessThan(3);
+    expect(last.value).toBe(3);
   });
 
   it('returns null when the step carries no family slot', () => {
@@ -289,8 +322,29 @@ describe('scratchpadReadout', () => {
       variant: 'scratchpad-lab',
       labels,
     });
-    expect(readout.meters.map((meter) => [meter.id, meter.value])).toEqual([['lines', 2], ['phases', 1], ['result', 1]]);
+    expect(readout.meters.map((meter) => [meter.id, meter.value])).toEqual([['lines', 2], ['phases', 1], ['result', 0]]);
     expect(readout.registers).toEqual([]);
+  });
+
+  it('counts the result rows, not the decisions, on the Wynik meter', () => {
+    const withResult: ScratchpadLabTraceState = {
+      ...scratchpad,
+      tone: 'complete',
+      lines: [
+        ...scratchpad.lines.map((line) => ({ ...line, state: 'settled' as const })),
+        { id: 'res', kind: 'result', indent: 0, marker: '✓', caption: null, content: 'Wynik', instruction: null, annotation: null, state: 'settled' },
+        { id: 'r1', kind: 'equation', indent: 1, marker: null, caption: null, content: 'x = 1', instruction: null, annotation: null, state: 'settled' },
+        { id: 'r2', kind: 'equation', indent: 1, marker: null, caption: null, content: 'y = 2', instruction: null, annotation: null, state: 'current' },
+      ],
+    };
+    const readout = scratchpadReadout(withResult, null, {
+      step: sortStep({ array: [], scratchpadLab: withResult }),
+      index: 11,
+      lastIndex: 11,
+      variant: 'scratchpad-lab',
+      labels,
+    });
+    expect(readout.meters.find((meter) => meter.id === 'result')?.value).toBe(2);
   });
 });
 

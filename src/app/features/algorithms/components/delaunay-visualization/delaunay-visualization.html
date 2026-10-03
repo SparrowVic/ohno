@@ -36,7 +36,7 @@
         </g>
 
         @for (circle of scene.circles; track circle.id) {
-          <g class="geo-chip" data-tone="cyan" [attr.transform]="'translate(' + circle.cx + ' ' + (circle.cy - 14) + ')'">
+          <g class="geo-chip" data-tone="cyan" [attr.transform]="'translate(' + circle.chipX + ' ' + circle.chipY + ')'">
             <rect class="chip__box" [attr.x]="-circle.chipWidth / 2" y="-8" [attr.width]="circle.chipWidth" height="16" />
             <text class="chip__text">{{ circle.chip }}</text>
           </g>
@@ -45,7 +45,7 @@
         @for (point of scene.points; track point.id) {
           <g class="geo-point" [attr.data-tone]="point.tone" [attr.transform]="'translate(' + point.x + ' ' + point.y + ')'">
             <circle class="point__dot" r="4.5" />
-            <text class="point__id" x="8" y="-8">{{ point.id }}</text>
+            <text class="point__id" [attr.x]="point.label.dx" [attr.y]="point.label.dy" [attr.text-anchor]="point.label.anchor">{{ point.id }}</text>
           </g>
         }
       </svg>

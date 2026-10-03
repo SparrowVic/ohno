@@ -9,9 +9,12 @@ import {
   isRowOperationLabel,
   matrixGridColumnLabel,
 } from '../../components/matrix-grid-visualization/matrix-grid-display.utils';
+import { hullDrawnRejectedIds } from '../../components/convex-hull-visualization/convex-hull-display.utils';
+import { delaunayMeshIds } from '../../components/delaunay-visualization/delaunay-display.utils';
 import { dpFocusCell } from '../../components/dp-visualization/dp-display.utils';
 import { matrixFocus, matrixPivotIndex } from '../../components/matrix-visualization/matrix-display.utils';
 import { searchProbeLabel } from '../../components/search-visualization/search-display.utils';
+import { notebookPhaseHead, notebookResultCount } from '../../components/scratchpad-lab-visualization/scratchpad-display.utils';
 import { smallestFactor } from '../../components/sieve-grid-visualization/sieve-display.utils';
 import { DpCell, DpMode, DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
@@ -23,7 +26,7 @@ import { MatrixGridTraceState } from '../../models/matrix-grid';
 import { NetworkEdgeSnapshot, NetworkTraceState } from '../../models/network';
 import { NumberLabTraceState } from '../../models/number-lab';
 import { PointerLabTraceState } from '../../models/pointer-lab';
-import { ScratchpadLabTraceState, ScratchpadLine } from '../../models/scratchpad-lab';
+import { ScratchpadLabTraceState } from '../../models/scratchpad-lab';
 import { SearchTraceState } from '../../models/search';
 import { SieveCellState, SieveGridCell, SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
@@ -120,7 +123,9 @@ export type FamilyMeterId =
   | 'path'
   | 'closed'
   | 'painted'
-  | 'crossed';
+  | 'crossed'
+  | 'active'
+  | 'spans';
 
 export type FamilyGaugeId =
   | 'treeNodes'
@@ -686,30 +691,20 @@ const SCRATCHPAD_TONES: Readonly<Record<ScratchpadLabTraceState['tone'], LedColo
   complete: 'lime',
 };
 
-const isSectionNote = (line: ScratchpadLine): boolean => line.kind === 'note' && line.indent === 0;
-const isCaptioned = (line: ScratchpadLine): boolean => line.caption !== null;
-const isDivider = (line: ScratchpadLine): boolean => line.kind === 'divider';
-
-function phaseHeadPredicate(lines: readonly ScratchpadLine[]): (line: ScratchpadLine) => boolean {
-  if (lines.some(isCaptioned)) return isCaptioned;
-  if (lines.some(isSectionNote)) return isSectionNote;
-  return isDivider;
-}
-
 export function scratchpadReadout(
   state: ScratchpadLabTraceState,
   registersState: NumberLabTraceState | null,
   ctx: FamilyReadoutContext,
 ): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const isPhaseHead = phaseHeadPredicate(state.lines);
+  const isPhaseHead = notebookPhaseHead(state.lines);
   const phaseCount = Math.max(1, state.lines.filter(isPhaseHead).length);
   const currentIndex = state.lines.findIndex((line) => line.state === 'current');
   const complete = currentIndex < 0 || index >= lastIndex;
   const currentPhase = Math.max(1, state.lines.slice(0, complete ? state.lines.length : currentIndex + 1).filter(isPhaseHead).length);
   const donePhases = complete ? currentPhase : currentPhase - 1;
   const equations = state.lines.filter((line) => line.kind === 'equation' || line.kind === 'substitute').length;
-  const decisions = state.lines.filter((line) => line.kind === 'decision').length;
+  const results = notebookResultCount(state.lines);
   const registerMeters: StageMeter[] = (registersState?.registers ?? [])
     .slice(0, 3)
     .map((item) => ({ id: item.id, label: labels.translate(item.label), value: item.value, total: null, pad: 2 }));
@@ -717,7 +712,7 @@ export function scratchpadReadout(
     meters:
       registerMeters.length > 0
         ? registerMeters
-        : [meter('lines', labels, equations), meter('phases', labels, currentPhase, phaseCount), meter('result', labels, decisions)],
+        : [meter('lines', labels, equations), meter('phases', labels, currentPhase, phaseCount), meter('result', labels, results)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, SCRATCHPAD_TONES[state.tone]),
     registers: (registersState?.registers ?? []).slice(0, 4).map((item) => ({ label: labels.translate(item.label), value: item.value })),
@@ -752,11 +747,13 @@ export function geometryReadout(state: GeometryStepState, ctx: FamilyReadoutCont
   const base = { phaseLabel: phaseText(labels, index, lastIndex, null), registers: [] as OpLineRegister[] };
   switch (state.mode) {
     case 'convex-hull': {
+      const rejectedIds = hullDrawnRejectedIds(state);
       const processed = new Set([
         ...state.stackIds,
-        ...state.points.filter((point) => point.status === 'rejected' || point.status === 'hull').map((point) => point.id),
+        ...rejectedIds,
+        ...state.points.filter((point) => point.status === 'hull').map((point) => point.id),
       ]).size;
-      const rejected = state.points.filter((point) => point.status === 'rejected').length;
+      const rejected = rejectedIds.size;
       const check = state.turnCheck;
       const tone = edgeTone(index, lastIndex, state.crossProduct !== null && state.crossProduct <= 0 ? 'pink' : check ? 'cyan' : 'slate');
       return {
@@ -798,7 +795,7 @@ export function geometryReadout(state: GeometryStepState, ctx: FamilyReadoutCont
       const done = state.events.filter((event) => event.tone === 'done').length;
       return {
         ...base,
-        meters: [meter('hits', labels, state.foundCount), meter('events', labels, done, state.events.length), meter('stack', labels, state.activeOrder.length)],
+        meters: [meter('hits', labels, state.foundCount), meter('events', labels, done, state.events.length), meter('active', labels, state.activeOrder.length)],
         tone: edgeTone(index, lastIndex, state.intersections.some((marker) => marker.tone === 'current') ? 'pink' : 'cyan'),
         registers: state.sweepX === null ? [] : [register('x', labels, state.sweepX)],
         gauge: gauge(state.events.length, done),
@@ -837,7 +834,7 @@ export function geometryReadout(state: GeometryStepState, ctx: FamilyReadoutCont
       const done = state.events.filter((event) => event.tone === 'done').length;
       return {
         ...base,
-        meters: [meter('area', labels, Math.round(state.coveredArea), null, 3), meter('events', labels, done, state.events.length), meter('stack', labels, state.spans.length)],
+        meters: [meter('area', labels, Math.round(state.coveredArea), null, 3), meter('events', labels, done, state.events.length), meter('spans', labels, state.spans.length)],
         tone: edgeTone(index, lastIndex, 'cyan'),
         registers: state.sweepX === null ? [] : [register('x', labels, state.sweepX)],
         gauge: gauge(state.events.length, done),
@@ -848,7 +845,7 @@ export function geometryReadout(state: GeometryStepState, ctx: FamilyReadoutCont
       const done = state.events.filter((event) => event.tone === 'done').length;
       return {
         ...base,
-        meters: [meter('cells', labels, state.closedCells, state.points.length), meter('events', labels, done, state.events.length), meter('visited', labels, state.points.length)],
+        meters: [meter('cells', labels, state.closedCells, state.points.length), meter('events', labels, done, state.events.length), meter('visited', labels, state.events.filter((event) => event.tone !== 'queued').length, state.points.length)],
         tone: edgeTone(index, lastIndex, state.activeSiteId === null ? 'slate' : 'cyan'),
         registers: state.sweepY === null ? [] : [register('y', labels, state.sweepY)],
         gauge: gauge(state.points.length, state.closedCells),
@@ -859,7 +856,7 @@ export function geometryReadout(state: GeometryStepState, ctx: FamilyReadoutCont
       const done = state.events.filter((event) => event.tone === 'done').length;
       return {
         ...base,
-        meters: [meter('triangles', labels, state.triangleCount), meter('events', labels, done, state.events.length), meter('visited', labels, state.points.length)],
+        meters: [meter('triangles', labels, state.triangleCount), meter('events', labels, done, state.events.length), meter('visited', labels, delaunayMeshIds(state).size, state.points.length)],
         tone: edgeTone(index, lastIndex, state.circles.some((circle) => circle.tone === 'rejected') ? 'pink' : 'cyan'),
         registers: [],
         gauge: gauge(state.events.length, done),

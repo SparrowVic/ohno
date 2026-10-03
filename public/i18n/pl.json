@@ -886,7 +886,6 @@
             "forbiddenSide": "Odcięta strona",
             "leftHalf": "Lewa połowa",
             "meshTriangle": "Siatka",
-            "meshVertex": "Wierzchołek",
             "obstacle": "Przeszkoda A",
             "onStack": "Na stosie",
             "pendingConstraint": "Oczekujące",
@@ -895,6 +894,7 @@
             "pivot": "Pivot",
             "reflected": "Odbicie −B",
             "rejected": "Odrzucony",
+            "retiredSegment": "Poza miotłą",
             "rightHalf": "Prawa połowa",
             "robot": "Robot B",
             "site": "Punkt",
@@ -1267,6 +1267,7 @@
           "tableAria": "Macierz {{size}}"
         },
         "meters": {
+          "active": "Aktywne",
           "amount": "Kwota",
           "area": "Pole",
           "best": "Najlepsze",
@@ -1332,6 +1333,7 @@
           "runs": "Serie",
           "settled": "Ustalone",
           "span": "Długość k",
+          "spans": "Odcinki",
           "stack": "Na stosie",
           "sum": "Suma",
           "symbols": "Symbole",

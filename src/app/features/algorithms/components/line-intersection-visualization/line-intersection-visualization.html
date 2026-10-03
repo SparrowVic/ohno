@@ -29,7 +29,7 @@
             />
             <circle class="point__dot" r="3" [attr.cx]="segment.x1" [attr.cy]="segment.y1" />
             <circle class="point__dot" r="3" [attr.cx]="segment.x2" [attr.cy]="segment.y2" />
-            <text class="point__id" text-anchor="end" [attr.x]="segment.x1 - 7" [attr.y]="segment.y1 + 3">{{ segment.label }}</text>
+            <text class="point__id" [attr.text-anchor]="segment.labelOffset.anchor" [attr.x]="segment.x1 + segment.labelOffset.dx" [attr.y]="segment.y1 + segment.labelOffset.dy">{{ segment.label }}</text>
           </g>
         }
 

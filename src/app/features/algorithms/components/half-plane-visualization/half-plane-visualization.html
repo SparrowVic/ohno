@@ -50,7 +50,7 @@
         @for (vertex of scene.vertices; track vertex.id) {
           <g class="geo-point" data-tone="lime" [attr.transform]="'translate(' + vertex.x + ' ' + vertex.y + ')'">
             <circle class="point__dot" r="3.5" />
-            <text class="point__id" x="6" y="-6">{{ vertex.label }}</text>
+            <text class="point__id" [attr.x]="vertex.labelOffset.dx" [attr.y]="vertex.labelOffset.dy" [attr.text-anchor]="vertex.labelOffset.anchor">{{ vertex.label }}</text>
           </g>
         }
       </svg>

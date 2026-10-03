@@ -886,7 +886,6 @@
             "forbiddenSide": "Cut-off side",
             "leftHalf": "Left half",
             "meshTriangle": "Mesh",
-            "meshVertex": "Vertex",
             "obstacle": "Obstacle A",
             "onStack": "On the stack",
             "pendingConstraint": "Pending",
@@ -895,6 +894,7 @@
             "pivot": "Pivot",
             "reflected": "Reflection −B",
             "rejected": "Rejected",
+            "retiredSegment": "Left the sweep",
             "rightHalf": "Right half",
             "robot": "Robot B",
             "site": "Site",
@@ -1267,6 +1267,7 @@
           "tableAria": "Matrix {{size}}"
         },
         "meters": {
+          "active": "Active",
           "amount": "Amount",
           "area": "Area",
           "best": "Best",
@@ -1332,6 +1333,7 @@
           "runs": "Runs",
           "settled": "Settled",
           "span": "Span k",
+          "spans": "Spans",
           "stack": "On stack",
           "sum": "Sum",
           "symbols": "Symbols",

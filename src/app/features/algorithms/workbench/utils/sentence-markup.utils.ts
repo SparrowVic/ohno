@@ -187,15 +187,19 @@ export function texToPlain(tex: string): string {
 }
 
 export function plainSentence(text: string): string {
-  return splitMathTextSegments(text)
+  return splitMathTextSegments(normalizeInequality(text))
     .map((segment) => (segment.kind === 'math' ? texToPlain(segment.content) : segment.content))
     .join('')
     .replace(/\s{2,}/g, ' ')
     .trim();
 }
 
+function normalizeInequality(text: string): string {
+  return text.replace(/!=/g, '≠');
+}
+
 export function sentenceParts(text: string): readonly SentencePart[] {
-  return splitMathTextSegments(text).map((segment): SentencePart =>
+  return splitMathTextSegments(normalizeInequality(text)).map((segment): SentencePart =>
     segment.kind === 'math' ? { kind: 'tex', tex: autoTextToTex(segment.content) } : { kind: 'html', html: markupSentence(segment.content) },
   );
 }

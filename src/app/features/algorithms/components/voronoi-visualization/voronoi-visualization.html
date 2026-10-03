@@ -33,7 +33,7 @@
             [attr.transform]="'translate(' + site.x + ' ' + site.y + ')'"
           >
             <circle class="point__dot" [attr.r]="site.current ? 6 : 4.5" />
-            <text class="point__id" x="8" y="-8">{{ site.id }}</text>
+            <text class="point__id" [attr.x]="site.label.dx" [attr.y]="site.label.dy" [attr.text-anchor]="site.label.anchor">{{ site.id }}</text>
           </g>
         }
       </svg>

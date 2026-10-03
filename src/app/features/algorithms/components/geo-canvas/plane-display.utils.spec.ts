@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   chipWidth,
+  dotBox,
+  labelBox,
+  overlapArea,
+  pickPlacement,
+  placePointLabels,
   eventProgress,
   eventRows,
   formatNumber,
@@ -99,5 +104,38 @@ describe('plane-display.utils', () => {
 
   it('sizes a chip from its text length', () => {
     expect(chipWidth('r = 12')).toBeGreaterThan(chipWidth('3'));
+  });
+});
+
+describe('label placement', () => {
+  it('measures label boxes from the anchor side', () => {
+    expect(labelBox(100, 50, 'V3', { dx: 8, dy: -8, anchor: 'start' }).x).toBe(108);
+    expect(labelBox(100, 50, 'V3', { dx: -8, dy: -8, anchor: 'end' }).x).toBeCloseTo(100 - 8 - 12.4);
+  });
+
+  it('picks the first free candidate and the least crowded one when none is free', () => {
+    const taken = [{ x: 0, y: 0, width: 10, height: 10 }];
+    expect(pickPlacement([{ x: 5, y: 5, width: 10, height: 10 }, { x: 20, y: 0, width: 10, height: 10 }], taken)).toBe(1);
+    expect(pickPlacement([{ x: 2, y: 2, width: 10, height: 10 }, { x: 8, y: 8, width: 10, height: 10 }], taken)).toBe(1);
+  });
+
+  it('keeps labels inside the plane when a free spot exists', () => {
+    const bounds = { x: 0, y: 0, width: 200, height: 200 };
+    const [offset] = placePointLabels([{ x: 195, y: 5, text: '12' }], [], bounds);
+    const box = labelBox(195, 5, '12', offset!);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(200);
+    expect(box.y).toBeGreaterThanOrEqual(0);
+  });
+
+  it('moves the second of two close labels off the first one and off both dots', () => {
+    const points = [
+      { x: 100, y: 100, text: 'V3' },
+      { x: 112, y: 104, text: 'V4' },
+    ];
+    const offsets = placePointLabels(points);
+    const boxes = points.map((point, index) => labelBox(point.x, point.y, point.text, offsets[index]!));
+    expect(overlapArea(boxes[0]!, boxes[1]!)).toBe(0);
+    for (const box of boxes) for (const point of points) expect(overlapArea(box, dotBox(point))).toBe(0);
   });
 });
