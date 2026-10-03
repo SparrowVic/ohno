@@ -12,7 +12,6 @@ import {
   notebookPhaseHead,
   notebookResultCount,
   notebookScrollTop,
-  notebookSectionTitle,
   notebookView,
 } from './scratchpad-display.utils';
 
@@ -120,11 +119,10 @@ describe('notebook view', () => {
     expect(view.sections[0]?.rows[0]?.caption).toBeNull();
   });
 
-  it('maps the generators’ Polish section titles onto keys', () => {
-    expect(notebookSectionTitle('Eliminacja w przód')).toBe(NOTEBOOK.sections.forwardElimination);
-    expect(notebookSectionTitle('Pivot 2')).toEqual(i18nText(NOTEBOOK.sections.pivot, { n: 2 }));
-    expect(notebookSectionTitle('Test bazy a = 2')).toEqual(i18nText(NOTEBOOK.sections.baseTest, { a: 2 }));
-    expect(notebookSectionTitle('Nieznany nagłówek')).toBe('Nieznany nagłówek');
+  it('takes section titles from the generator keys and numbers rows', () => {
+    const title = i18nText('features.algorithms.runtime.scratchpadLab.sections.forwardElimination');
+    const view = notebookView(pad([line('s1', 'note', 0, 'settled', { content: title }), line('e1', 'equation', 1, 'current')]));
+    expect(view.sections[0]?.title).toEqual(title);
     expect(notebookLineNumber(7)).toBe('07');
   });
 

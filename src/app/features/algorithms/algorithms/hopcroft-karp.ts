@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   NetworkComputation,
   NetworkEdgeSnapshot,
@@ -6,6 +9,44 @@ import {
 import { SortStep } from '../models/sort-step';
 import { HopcroftKarpScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+
+const I18N = {
+  phases: {
+    initialize: t('features.algorithms.runtime.network.hopcroftKarp.phases.initialize'),
+    bfs: t('features.algorithms.runtime.network.hopcroftKarp.phases.bfs'),
+    complete: t('features.algorithms.runtime.network.hopcroftKarp.phases.complete'),
+    dfs: t('features.algorithms.runtime.network.hopcroftKarp.phases.dfs'),
+    phaseDone: t('features.algorithms.runtime.network.hopcroftKarp.phases.phaseDone'),
+  },
+  statuses: {
+    empty: t('features.algorithms.runtime.network.hopcroftKarp.statuses.empty'),
+    seed: t('features.algorithms.runtime.network.hopcroftKarp.statuses.seed'),
+    expand: t('features.algorithms.runtime.network.hopcroftKarp.statuses.expand'),
+    inspect: t('features.algorithms.runtime.network.hopcroftKarp.statuses.inspect'),
+    noPath: t('features.algorithms.runtime.network.hopcroftKarp.statuses.noPath'),
+    layers: t('features.algorithms.runtime.network.hopcroftKarp.statuses.layers'),
+    pathFound: t('features.algorithms.runtime.network.hopcroftKarp.statuses.pathFound'),
+    updated: t('features.algorithms.runtime.network.hopcroftKarp.statuses.updated'),
+    stuck: t('features.algorithms.runtime.network.hopcroftKarp.statuses.stuck'),
+    packed: t('features.algorithms.runtime.network.hopcroftKarp.statuses.packed'),
+  },
+  results: {
+    matchingZero: t('features.algorithms.runtime.network.hopcroftKarp.results.matchingZero'),
+    matching: t('features.algorithms.runtime.network.hopcroftKarp.results.matching'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.initialize'),
+    seed: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.seed'),
+    expand: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.expand'),
+    inspect: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.inspect'),
+    noPath: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.noPath'),
+    layers: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.layers'),
+    pathFound: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.pathFound'),
+    augment: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.augment'),
+    stuck: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.stuck'),
+    phaseDone: t('features.algorithms.runtime.network.hopcroftKarp.descriptions.phaseDone'),
+  },
+} as const;
 
 const INF = Number.MAX_SAFE_INTEGER;
 
@@ -21,15 +62,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
     pairU,
     pairV,
     levelByNode: new Map(),
-    phaseLabel: 'Initialize matching',
-    statusLabel: 'No nodes are matched yet',
-    resultLabel: `matching 0/${scenario.rightIds.length}`,
+    phaseLabel: i18nText(I18N.phases.initialize),
+    statusLabel: i18nText(I18N.statuses.empty),
+    resultLabel: i18nText(I18N.results.matchingZero, { total: scenario.rightIds.length }),
     frontierLabel: 'BFS frontier',
     queueLabel: 'BFS queue',
     queue: [],
     focusItemsLabel: 'Current matching',
     focusItems: [],
-    description: 'Start with an empty matching and prepare the layered BFS/DFS phases.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -54,15 +95,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
       pairV,
       levelByNode,
       frontierIds: new Set(queue),
-      phaseLabel: `BFS phase ${phaseIndex}`,
-      statusLabel: 'Seed all free left nodes',
+      phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
+      statusLabel: i18nText(I18N.statuses.seed),
       resultLabel: matchingResult(pairU, scenario.rightIds.length),
       frontierLabel: 'BFS frontier',
       queueLabel: 'BFS queue',
       queue,
       focusItemsLabel: 'Current matching',
       focusItems: matchingLabels(pairU, labelById),
-      description: 'Free left-side nodes enter the queue as simultaneous BFS sources.',
+      description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
         label: 'Queue seeds',
@@ -84,15 +125,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         levelByNode,
         currentNodeId: currentLeft,
         frontierIds: new Set(queue.slice(queueIndex)),
-        phaseLabel: `BFS phase ${phaseIndex}`,
-        statusLabel: 'Expand one left node',
+        phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.expand),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
         frontierLabel: 'BFS frontier',
         queueLabel: 'BFS queue',
         queue: queue.slice(queueIndex),
         focusItemsLabel: 'Current matching',
         focusItems: matchingLabels(pairU, labelById),
-        description: `Inspect every candidate edge leaving ${labelById.get(currentLeft) ?? currentLeft}.`,
+        description: i18nText(I18N.descriptions.expand, { node: labelById.get(currentLeft) ?? currentLeft }),
         activeCodeLine: 4,
       });
 
@@ -116,15 +157,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
           currentNodeId: currentLeft,
           frontierIds: new Set(queue.slice(queueIndex)),
           activeEdgeId: edge.id,
-          phaseLabel: `BFS phase ${phaseIndex}`,
-          statusLabel: 'Inspect alternating edge',
+          phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
+          statusLabel: i18nText(I18N.statuses.inspect),
           resultLabel: matchingResult(pairU, scenario.rightIds.length),
           frontierLabel: 'BFS frontier',
           queueLabel: 'BFS queue',
           queue: queue.slice(queueIndex),
           focusItemsLabel: 'Current matching',
           focusItems: matchingLabels(pairU, labelById),
-          description: `Check whether ${labelById.get(currentLeft) ?? currentLeft} → ${labelById.get(rightId) ?? rightId} extends the shortest alternating frontier.`,
+          description: i18nText(I18N.descriptions.inspect, { from: labelById.get(currentLeft) ?? currentLeft, to: labelById.get(rightId) ?? rightId }),
           activeCodeLine: 5,
           computation: {
             label: 'Alternating step',
@@ -156,15 +197,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         pairU,
         pairV,
         levelByNode,
-        phaseLabel: `Complete after phase ${phaseIndex}`,
-        statusLabel: 'No augmenting path remains',
+        phaseLabel: i18nText(I18N.phases.complete, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.noPath),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
         frontierLabel: 'BFS frontier',
         queueLabel: 'BFS queue',
         queue: [],
         focusItemsLabel: 'Final matching',
         focusItems: matchingLabels(pairU, labelById),
-        description: 'BFS cannot reach any free right node, so the current matching is maximum.',
+        description: i18nText(I18N.descriptions.noPath),
         activeCodeLine: 10,
         phase: 'graph-complete',
         computation: {
@@ -184,15 +225,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
       pairV,
       levelByNode,
       candidateEdgeIds,
-      phaseLabel: `DFS phase ${phaseIndex}`,
-      statusLabel: 'Layer graph ready',
+      phaseLabel: i18nText(I18N.phases.dfs, { phase: phaseIndex }),
+      statusLabel: i18nText(I18N.statuses.layers),
       resultLabel: matchingResult(pairU, scenario.rightIds.length),
       frontierLabel: 'Shortest layers',
       queueLabel: 'Layer queue',
       queue: scenario.leftIds.filter((id) => (dist.get(id) ?? INF) !== INF),
       focusItemsLabel: 'Current matching',
       focusItems: matchingLabels(pairU, labelById),
-      description: 'The BFS layers now constrain DFS to shortest augmenting paths only.',
+      description: i18nText(I18N.descriptions.layers),
       activeCodeLine: 6,
       computation: {
         label: 'Level graph',
@@ -222,8 +263,8 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         candidateEdgeIds,
         activePathNodeIds: new Set(path),
         activePathEdgeIds: pathEdgeIds,
-        phaseLabel: `DFS phase ${phaseIndex}`,
-        statusLabel: 'Augmenting path found',
+        phaseLabel: i18nText(I18N.phases.dfs, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.pathFound),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
         frontierLabel: 'Shortest path',
         queueLabel: 'Layer queue',
@@ -231,7 +272,7 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         activeRouteLabel: labelsFor(path, labelById).join(' → '),
         focusItemsLabel: 'Current matching',
         focusItems: matchingLabels(pairU, labelById),
-        description: 'A shortest alternating path has been reconstructed and is ready for augmentation.',
+        description: i18nText(I18N.descriptions.pathFound),
         activeCodeLine: 7,
         computation: {
           label: 'Path length',
@@ -250,8 +291,8 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         levelByNode,
         activePathNodeIds: new Set(path),
         activePathEdgeIds: pathEdgeIds,
-        phaseLabel: `DFS phase ${phaseIndex}`,
-        statusLabel: 'Matching updated',
+        phaseLabel: i18nText(I18N.phases.dfs, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.updated),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
         frontierLabel: 'Current matching',
         queueLabel: 'Layer queue',
@@ -259,7 +300,7 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         activeRouteLabel: labelsFor(path, labelById).join(' → '),
         focusItemsLabel: 'Current matching',
         focusItems: matchingLabels(pairU, labelById),
-        description: 'Every edge on the alternating path toggles, increasing the matching by one.',
+        description: i18nText(I18N.descriptions.augment),
         activeCodeLine: 8,
         phase: 'relax',
         computation: {
@@ -278,15 +319,15 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         pairV,
         levelByNode,
         candidateEdgeIds,
-        phaseLabel: `Complete after phase ${phaseIndex}`,
-        statusLabel: 'Layer graph could not augment further',
+        phaseLabel: i18nText(I18N.phases.complete, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.stuck),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
         frontierLabel: 'Layer graph',
         queueLabel: 'Layer queue',
         queue: [],
         focusItemsLabel: 'Final matching',
         focusItems: matchingLabels(pairU, labelById),
-        description: 'No DFS path survived the shortest-layer constraints, so the current matching is final.',
+        description: i18nText(I18N.descriptions.stuck),
         activeCodeLine: 10,
         phase: 'graph-complete',
       });
@@ -298,21 +339,21 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
       pairU,
       pairV,
       levelByNode,
-      phaseLabel: `Phase ${phaseIndex} complete`,
-      statusLabel: `${augmentationsThisPhase} shortest path(s) packed`,
+      phaseLabel: i18nText(I18N.phases.phaseDone, { phase: phaseIndex }),
+      statusLabel: i18nText(I18N.statuses.packed, { count: augmentationsThisPhase }),
       resultLabel: matchingResult(pairU, scenario.rightIds.length),
       frontierLabel: 'Current matching',
       queueLabel: 'Layer queue',
       queue: [],
       focusItemsLabel: 'Current matching',
       focusItems: matchingLabels(pairU, labelById),
-      description: 'This phase is done; rebuild BFS layers to search for the next batch of shortest augmenting paths.',
+      description: i18nText(I18N.descriptions.phaseDone),
       activeCodeLine: 9,
       phase: 'pass-complete',
       computation: {
         label: 'Phase gain',
         expression: `${augmentationsThisPhase} augmenting path(s)`,
-        result: matchingResult(pairU, scenario.rightIds.length),
+        result: `${matchingSize(pairU)}/${scenario.rightIds.length}`,
         decision: 'Hopcroft-Karp accelerates matching by augmenting several shortest paths in one BFS phase.',
       },
     });
@@ -324,15 +365,15 @@ function createSnapshot(args: {
   readonly pairU: ReadonlyMap<string, string | null>;
   readonly pairV: ReadonlyMap<string, string | null>;
   readonly levelByNode: ReadonlyMap<string, number>;
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly frontierLabel: string;
   readonly queueLabel: string;
   readonly queue: readonly string[];
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
   readonly frontierIds?: ReadonlySet<string>;
@@ -526,6 +567,6 @@ function matchingSize(pairU: ReadonlyMap<string, string | null>): number {
   return [...pairU.values()].filter((value) => value !== null).length;
 }
 
-function matchingResult(pairU: ReadonlyMap<string, string | null>, totalRight: number): string {
-  return `matching ${matchingSize(pairU)}/${totalRight}`;
+function matchingResult(pairU: ReadonlyMap<string, string | null>, totalRight: number): TranslatableText {
+  return i18nText(I18N.results.matching, { size: matchingSize(pairU), total: totalRight });
 }

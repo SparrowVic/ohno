@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type NetworkMode = 'dinic' | 'hopcroft-karp' | 'edmonds-karp' | 'min-cost-max-flow';
 
 export type NetworkLane = 'source' | 'sink' | 'left' | 'right' | 'inner';
@@ -71,9 +73,9 @@ export interface NetworkComputation {
 export interface NetworkTraceState {
   readonly mode: NetworkMode;
   readonly modeLabel: string;
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly frontierLabel: string;
   readonly frontierCount: number;
   readonly queueLabel: string;

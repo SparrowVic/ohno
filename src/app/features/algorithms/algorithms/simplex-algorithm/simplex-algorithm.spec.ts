@@ -18,7 +18,7 @@ function finalLines(steps: readonly SortStep[]): readonly ScratchpadLine[] {
 }
 
 function contentOf(line: ScratchpadLine): string {
-  return typeof line.content === 'string' ? line.content : '';
+  return typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`;
 }
 
 function expectContains(lines: readonly ScratchpadLine[], fragment: string): void {
@@ -52,12 +52,12 @@ describe('simplex-algorithm', () => {
     expect(last?.resultLabel).toBeNull();
     expect(lines.find((line) => line.id === 'section-result')).toMatchObject({
       marker: '✓',
-      content: 'Wynik',
+      content: { key: 'features.algorithms.runtime.scratchpadLab.sections.result' },
     });
     expectContains(lines, 'max\\ z = 40x + 30y');
-    expectContains(lines, 'wchodzi\\ x');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.entering {"name":"x"');
     expectContains(lines, 's_2: 16 / 2 = 8');
-    expectContains(lines, 'wchodzi\\ y');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.entering {"name":"y"');
     expectContains(lines, 's_1: 4 / 0.5 = 8');
     expectContains(lines, 'x = 4,\\; y = 8');
     expectContains(lines, 'z = 400');
@@ -70,7 +70,7 @@ describe('simplex-algorithm', () => {
     expectContains(lines, 's_1 = 2');
     expectContains(lines, 's_2 = 0');
     expectContains(lines, 's_3 = 0');
-    expectContains(lines, 's_1 > 0');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.notes.slackPositive {"slacks":"s_1"}');
     expectContains(lines, 'x = 2,\\; y = 6');
     expectContains(lines, 'z = 36');
   });
@@ -78,10 +78,10 @@ describe('simplex-algorithm', () => {
   it('renders degeneracy and a min-ratio tie', () => {
     const lines = finalLines(run('degenerate-tie'));
 
-    expectContains(lines, 'Remis w teście ilorazów');
-    expectContains(lines, 's_1, s_3 mają iloraz 2');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.notes.tie');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.notes.tie {"rows":"s_1, s_3","ratio":"2"}');
     expectContains(lines, 's_3: 0 / 1 = 0');
-    expectContains(lines, 'Iloraz 0 oznacza pivot zdegenerowany');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.notes.degenerate');
     expectContains(lines, 'x = 2,\\; y = 0');
     expectContains(lines, 'z = 4');
   });
@@ -89,9 +89,9 @@ describe('simplex-algorithm', () => {
   it('renders alternative optimum detection', () => {
     const lines = finalLines(run('alternative-optimum'));
 
-    expectContains(lines, 'koszty\\ zredukowane = [0, 0, 1, 0, 0]');
-    expectContains(lines, 'koszt\\ zredukowany\\ s_2 = 0');
-    expectContains(lines, 'może wejść do bazy bez zmiany wartości z');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.reducedCosts {"costs":"[0, 0, 1, 0, 0]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.zeroReducedCost {"name":"s_2"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.notes.alternative');
     expectContains(lines, 'x = 3,\\; y = 1');
     expectContains(lines, 'z = 4');
   });
@@ -101,12 +101,23 @@ describe('simplex-algorithm', () => {
 
     expect(lines.find((line) => line.id === 'section-no-result')).toMatchObject({
       marker: '×',
-      content: 'Brak skończonego optimum',
+      content: { key: 'features.algorithms.runtime.scratchpadLab.simplex.sections.noOptimum' },
     });
-    expectContains(lines, 'wchodzi\\ x');
-    expectContains(lines, 's_1: -1 \\le 0 \\to pomiń');
-    expectContains(lines, 's_2: 0 \\le 0 \\to pomiń');
-    expectContains(lines, 'kolumna\\ x = [-1, 0]');
-    expectContains(lines, 'funkcja\\ celu\\ jest\\ nieograniczona');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.entering {"name":"x"');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.ratioSkip {"basis":"s_1","coefficient":"-1"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.ratioSkip {"basis":"s_2","coefficient":"0"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.column {"name":"x","values":"[-1, 0]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.simplex.lines.unbounded');
+  });
+
+  it('marks the entering column on the reduced-cost, entering and ratio steps', () => {
+    const steps = run('short');
+    const currentId = (step: SortStep) => step.scratchpadLab?.lines.find((line) => line.state === 'current')?.id ?? '';
+    for (const id of ['pivot-1-reduced-costs', 'pivot-1-entering', 'ratio-1-0']) {
+      const step = steps.find((candidate) => currentId(candidate) === id);
+      const enteringCells = step?.matrixGrid?.cells.filter((cell) => cell.state === 'pivot-col' || cell.state === 'pivot') ?? [];
+      expect(enteringCells.length).toBeGreaterThan(0);
+      expect(new Set(enteringCells.map((cell) => cell.col)).size).toBe(1);
+    }
   });
 });

@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GeometryCoord,
   GeometryEventChip,
@@ -6,6 +9,17 @@ import {
   MinkowskiSumStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.minkowskiSum.descriptions.initialize'),
+    reflect: t('features.algorithms.runtime.geometry.minkowskiSum.descriptions.reflect'),
+    seed: t('features.algorithms.runtime.geometry.minkowskiSum.descriptions.seed'),
+    advanceBoth: t('features.algorithms.runtime.geometry.minkowskiSum.descriptions.advanceBoth'),
+    advanceOne: t('features.algorithms.runtime.geometry.minkowskiSum.descriptions.advanceOne'),
+    complete: t('features.algorithms.runtime.geometry.minkowskiSum.descriptions.complete'),
+  },
+} as const;
 
 export interface MinkowskiSumScenario {
   readonly obstacle: readonly GeometryCoord[];
@@ -105,7 +119,7 @@ function makeStep(
   polygons: readonly GeometryPolygonRegion[],
   vectors: readonly GeometryVectorArrow[],
   events: readonly GeometryEventChip[],
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   phase: string,
   activeSource: 'a' | 'b' | 'both' | null,
@@ -156,7 +170,7 @@ export function* minkowskiSumGenerator(
     ],
     [],
     [],
-    'Start with the obstacle shape and the robot footprint.',
+    i18nText(I18N.descriptions.initialize),
     1,
     'init',
     null,
@@ -173,7 +187,7 @@ export function* minkowskiSumGenerator(
     ],
     [],
     [],
-    "Reflect the robot through the origin to build the configuration-space obstacle A ⊕ (-B).",
+    i18nText(I18N.descriptions.reflect),
     2,
     'reflect',
     null,
@@ -200,7 +214,7 @@ export function* minkowskiSumGenerator(
     ],
     makeVectors(aEdges, bEdges, { a: 0, b: 0 }, { a: 0, b: 0 }),
     makeEvents(totalSteps, 0),
-    `Seed the result polygon with A0 + B'0 = (${current.x.toFixed(1)}, ${current.y.toFixed(1)}).`,
+    i18nText(I18N.descriptions.seed, { x: current.x.toFixed(1), y: current.y.toFixed(1) }),
     3,
     'seed',
     null,
@@ -251,7 +265,9 @@ export function* minkowskiSumGenerator(
       ],
       makeVectors(aEdges, bEdges, { a: i < aEdges.length ? i : null, b: j < bEdges.length ? j : null }, { a: i, b: j }),
       makeEvents(totalSteps, Math.min(stepIndex, totalSteps - 1)),
-      `Advance by ${activeSource === 'both' ? 'both edge families' : `the ${activeSource.toUpperCase()} edge family`} and append the next result vertex.`,
+      activeSource === 'both'
+        ? i18nText(I18N.descriptions.advanceBoth)
+        : i18nText(I18N.descriptions.advanceOne, { family: activeSource.toUpperCase() }),
       5,
       'merge',
       activeSource,
@@ -270,7 +286,7 @@ export function* minkowskiSumGenerator(
     ],
     makeVectors(aEdges, bEdges, { a: null, b: null }, { a: aEdges.length, b: bEdges.length }),
     makeEvents(totalSteps, totalSteps),
-    'The merged edge walk closes the full Minkowski sum polygon.',
+    i18nText(I18N.descriptions.complete),
     6,
     'complete',
     null,

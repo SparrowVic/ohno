@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,27 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.prim.descriptions.initialize'),
+    pick: t('features.algorithms.runtime.graph.prim.descriptions.pick'),
+    inspect: t('features.algorithms.runtime.graph.prim.descriptions.inspect'),
+    update: t('features.algorithms.runtime.graph.prim.descriptions.update'),
+    keep: t('features.algorithms.runtime.graph.prim.descriptions.keep'),
+    lock: t('features.algorithms.runtime.graph.prim.descriptions.lock'),
+    complete: t('features.algorithms.runtime.graph.prim.descriptions.complete'),
+  },
+  phases: {
+    pick: t('features.algorithms.runtime.graph.prim.phases.pick'),
+    inspect: t('features.algorithms.runtime.graph.prim.phases.inspect'),
+    update: t('features.algorithms.runtime.graph.prim.phases.update'),
+    keep: t('features.algorithms.runtime.graph.prim.phases.keep'),
+    lock: t('features.algorithms.runtime.graph.prim.phases.lock'),
+    complete: t('features.algorithms.runtime.graph.prim.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.prim.phases.initialize'),
+  },
+} as const;
 
 export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -26,7 +50,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
     inTree,
     frontier,
     visitOrder,
-    description: `Initialize Prim from ${labelOf(labelMap, graph.sourceId)} with connection cost 0.`,
+    description: i18nText(I18N.descriptions.initialize, { source: labelOf(labelMap, graph.sourceId) }),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -45,7 +69,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
       frontier,
       visitOrder,
       currentNodeId,
-      description: `Pick ${labelOf(labelMap, currentNodeId)} as the cheapest node to connect into the MST.`,
+      description: i18nText(I18N.descriptions.pick, { node: labelOf(labelMap, currentNodeId) }),
       activeCodeLine: 5,
       phase: 'pick-node',
     });
@@ -65,7 +89,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
         visitOrder,
         currentNodeId,
         activeEdgeId: edge.id,
-        description: `Inspect edge ${labelOf(labelMap, currentNodeId)} → ${labelOf(labelMap, neighborId)} with weight ${edge.weight}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId), weight: edge.weight }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
         computation: {
@@ -91,7 +115,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
           currentNodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `Update ${labelOf(labelMap, neighborId)} to connect via ${labelOf(labelMap, currentNodeId)} at cost ${edge.weight}.`,
+          description: i18nText(I18N.descriptions.update, { node: labelOf(labelMap, neighborId), via: labelOf(labelMap, currentNodeId), cost: edge.weight }),
           activeCodeLine: 9,
           phase: 'relax',
           computation: {
@@ -111,7 +135,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
           visitOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Keep the existing cheaper connection for ${labelOf(labelMap, neighborId)}.`,
+          description: i18nText(I18N.descriptions.keep, { node: labelOf(labelMap, neighborId) }),
           activeCodeLine: 8,
           phase: 'skip-relax',
           computation: {
@@ -135,7 +159,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
       frontier,
       visitOrder,
       currentNodeId,
-      description: `Add ${labelOf(labelMap, currentNodeId)} to the minimum spanning tree.`,
+      description: i18nText(I18N.descriptions.lock, { node: labelOf(labelMap, currentNodeId) }),
       activeCodeLine: 12,
       phase: 'settle-node',
     });
@@ -148,7 +172,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
     inTree,
     frontier,
     visitOrder,
-    description: `Prim complete. The minimum spanning tree weight is ${totalWeight(keyMap, inTree)}.`,
+    description: i18nText(I18N.descriptions.complete, { weight: totalWeight(keyMap, inTree) }),
     activeCodeLine: 14,
     phase: 'graph-complete',
   });
@@ -161,7 +185,7 @@ function createStep(args: {
   readonly inTree: ReadonlySet<string>;
   readonly frontier: ReadonlySet<string>;
   readonly visitOrder: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -223,7 +247,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Best',
       secondaryLabel: 'Prev',
       frontierLabel: 'Candidate queue',
@@ -301,18 +325,18 @@ function labelOf(map: ReadonlyMap<string, string>, nodeId: string): string {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Pick cheapest connector';
+      return I18N.phases.pick;
     case 'inspect-edge':
-      return 'Inspect candidate edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Update best connection';
+      return I18N.phases.update;
     case 'skip-relax':
-      return 'Keep cheaper edge';
+      return I18N.phases.keep;
     case 'settle-node':
-      return 'Lock MST node';
+      return I18N.phases.lock;
     case 'graph-complete':
-      return 'MST ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize Prim';
+      return I18N.phases.initialize;
   }
 }

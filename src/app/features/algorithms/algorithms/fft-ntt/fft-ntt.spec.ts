@@ -18,7 +18,7 @@ function finalLines(steps: readonly SortStep[]): readonly ScratchpadLine[] {
 }
 
 function contentOf(line: ScratchpadLine): string {
-  return typeof line.content === 'string' ? line.content : '';
+  return typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`;
 }
 
 function expectContains(lines: readonly ScratchpadLine[], fragment: string): void {
@@ -80,7 +80,7 @@ describe('fft-ntt', () => {
     expect(last?.resultLabel).toBeNull();
     expect(lines.find((line) => line.id === 'section-result')).toMatchObject({
       marker: '✓',
-      content: 'Wynik',
+      content: { key: 'features.algorithms.runtime.scratchpadLab.sections.result' },
     });
     expectContains(lines, '4^2 \\;\\mathrm{mod}\\; 17 = 16 = -1');
     expectContains(lines, 'NTT(A) = [6, 6, 2, 7]');
@@ -121,7 +121,7 @@ describe('fft-ntt', () => {
     expectContains(lines, 'NTT([3, 2, 1, 0]) = [6, 10, 2, 11]');
     expectContains(lines, 'C_hat = [1, 9, 2, 12]');
     expectContains(lines, 'INTT(C_hat) = [6, 7, 4, 1]');
-    expectContains(lines, 'c_3 = 1 \\to digit 1, carry 0');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.fftNtt.lines.carryRow {"index":3,"value":1,"digit":1,"carry":0}');
     expectContains(lines, '123 * 12 = 1476');
   });
 
@@ -134,7 +134,7 @@ describe('fft-ntt', () => {
     expectContains(lines, 'NTT_bad(B) = [1, 1, 1, 1, 1, 1, 1, 1]');
     expectContains(lines, '2^4 \\;\\mathrm{mod}\\; 17 = 16 = -1');
     expectContains(lines, 'NTT_good(B) = [1, 16, 1, 16, 1, 16, 1, 16]');
-    expectContains(lines, '\\omega = 4 \\to niepoprawny pierwiastek dla n = 8');
-    expectContains(lines, '\\omega = 2 \\to poprawny pierwiastek dla n = 8');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.fftNtt.lines.badRoot {"omega":4,"n":8}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.fftNtt.lines.goodRoot {"omega":2,"n":8}');
   });
 });

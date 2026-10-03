@@ -53,6 +53,9 @@ const I18N = {
       'features.algorithms.runtime.dp.climbingStairs.decisions.recurrenceCommitted',
     ),
   },
+  items: {
+    step: t('features.algorithms.runtime.dp.climbingStairs.items.step'),
+  },
 } as const;
 
 export function* climbingStairsGenerator(scenario: ClimbingStairsScenario): Generator<SortStep> {
@@ -211,7 +214,7 @@ function createStep(args: {
         : i18nText(I18N.labels.activeStep, { step: args.activeIndex }),
     pathLabel: i18nText(I18N.labels.pathValue, { sequence: args.ways.join(' · ') }),
     primaryItemsLabel: I18N.labels.landingIndicesLabel,
-    primaryItems: args.ways.map((_, index) => `step ${index}`),
+    primaryItems: args.ways.map((_, index) => i18nText(I18N.items.step, { n: index })),
     secondaryItemsLabel: I18N.labels.computedWaysLabel,
     secondaryItems: args.ways.map((value, index) => `w${index}=${value}`),
     insights,

@@ -72,7 +72,7 @@ describe('dp display labels', () => {
     expect(dpLabelText('0 items')).toEqual(i18nText(DP.labels.zeroItems));
     expect(dpLabelText('amt')).toEqual(i18nText(DP.labels.amount));
     expect(dpLabelText('3 assigned')).toEqual(i18nText(DP.labels.assigned, { count: 3 }));
-    expect(dpLabelText('step 4')).toEqual(i18nText(DP.labels.stairIndex, { n: 4 }));
+    expect(dpLabelText('skip')).toEqual(i18nText(I18N_KEY.features.algorithms.display.notes.skip));
     expect(dpLabelText('Compass')).toBe('Compass');
     expect(dpLabelText('w2 · v6')).toBe('w2 · v6');
     expect(dpLabelText(null)).toBe('');
@@ -82,8 +82,6 @@ describe('dp display labels', () => {
     expect(dpParseItem('Compass w2/v6')).toEqual({ lead: 'Compass', value: 'w2 · v6' });
     expect(dpParseItem('1:A')).toEqual({ lead: '1', value: 'A' });
     expect(dpParseItem('p1: y=-2x+1')).toEqual({ lead: 'p1', value: 'y=-2x+1' });
-    expect(dpParseItem('A (start)')).toEqual({ lead: 'A', value: i18nText(DP.labels.start) });
-    expect(dpParseItem('opt row 2')).toEqual({ lead: i18nText(DP.labels.optRow, { n: 2 }), value: null });
     const key = i18nText('features.x.y', { value: 1 });
     expect(dpParseItem(key)).toEqual({ lead: key, value: null });
   });

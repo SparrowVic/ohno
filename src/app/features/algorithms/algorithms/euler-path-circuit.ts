@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -9,6 +12,35 @@ import {
   WeightedGraphEdge,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    circuitStart: t('features.algorithms.runtime.graph.eulerTrail.descriptions.circuitStart'),
+    pathStart: t('features.algorithms.runtime.graph.eulerTrail.descriptions.pathStart'),
+    inspectTop: t('features.algorithms.runtime.graph.eulerTrail.descriptions.inspectTop'),
+    chooseEdge: t('features.algorithms.runtime.graph.eulerTrail.descriptions.chooseEdge'),
+    traverse: t('features.algorithms.runtime.graph.eulerTrail.descriptions.traverse'),
+    sealCircuit: t('features.algorithms.runtime.graph.eulerTrail.descriptions.sealCircuit'),
+    sealPath: t('features.algorithms.runtime.graph.eulerTrail.descriptions.sealPath'),
+    completeCircuit: t('features.algorithms.runtime.graph.eulerTrail.descriptions.completeCircuit'),
+    completePath: t('features.algorithms.runtime.graph.eulerTrail.descriptions.completePath'),
+  },
+  results: {
+    circuit: t('features.algorithms.runtime.graph.eulerTrail.results.circuit'),
+    path: t('features.algorithms.runtime.graph.eulerTrail.results.path'),
+    backtrack: t('features.algorithms.runtime.graph.eulerTrail.results.backtrack'),
+    unused: t('features.algorithms.runtime.graph.eulerTrail.results.unused'),
+  },
+  phases: {
+    prepare: t('features.algorithms.runtime.graph.eulerTrail.phases.prepare'),
+    inspectTop: t('features.algorithms.runtime.graph.eulerTrail.phases.inspectTop'),
+    chooseEdge: t('features.algorithms.runtime.graph.eulerTrail.phases.chooseEdge'),
+    extend: t('features.algorithms.runtime.graph.eulerTrail.phases.extend'),
+    backtrack: t('features.algorithms.runtime.graph.eulerTrail.phases.backtrack'),
+    complete: t('features.algorithms.runtime.graph.eulerTrail.phases.complete'),
+    step: t('features.algorithms.runtime.graph.eulerTrail.phases.step'),
+  },
+} as const;
 
 interface EulerAdjacencyEntry {
   readonly edge: WeightedGraphEdge;
@@ -22,7 +54,8 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
   const oddNodeIds = graph.nodes.filter((node) => ((degreeByNode.get(node.id) ?? 0) & 1) === 1).map((node) => node.id);
   const startId = oddNodeIds[0] ?? graph.sourceId;
   const endId = oddNodeIds[1] ?? startId;
-  const trailKind = oddNodeIds.length === 0 ? 'Euler circuit' : 'Euler path';
+  const isCircuit = oddNodeIds.length === 0;
+  const trailKind = isCircuit ? 'Euler circuit' : 'Euler path';
   const usedEdgeIds = new Set<string>();
   const stack: string[] = [startId];
   const trail: string[] = [];
@@ -39,8 +72,8 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
     trail,
     description:
       oddNodeIds.length === 0
-        ? `All node degrees are even, so start Hierholzer from ${labelOf(labelById, startId)} and expect a circuit.`
-        : `Only ${labelOf(labelById, startId)} and ${labelOf(labelById, endId)} have odd degree, so the walk must start and end there.`,
+        ? i18nText(I18N.descriptions.circuitStart, { node: labelOf(labelById, startId) })
+        : i18nText(I18N.descriptions.pathStart, { start: labelOf(labelById, startId), end: labelOf(labelById, endId) }),
     activeCodeLine: 2,
     phase: 'init',
     computation: {
@@ -49,7 +82,7 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
         oddNodeIds.length === 0
           ? 'every degree is even'
           : `${labelOf(labelById, startId)} / ${labelOf(labelById, endId)} are odd`,
-      result: trailKind,
+      result: i18nText(isCircuit ? I18N.results.circuit : I18N.results.path),
       decision: 'Hierholzer will grow a live stack and backtrack to lock the final trail.',
     },
   });
@@ -69,13 +102,13 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
       stack,
       trail,
       currentNodeId,
-      description: `Look at the stack top ${labelOf(labelById, currentNodeId)} and decide whether the trail can still extend from it.`,
+      description: i18nText(I18N.descriptions.inspectTop, { node: labelOf(labelById, currentNodeId) }),
       activeCodeLine: 4,
       phase: 'pick-node',
       computation: {
         candidateLabel: labelOf(labelById, currentNodeId),
         expression: `unused incident edges = ${available.length}`,
-        result: available.length > 0 ? labelOf(labelById, available[0]!.neighborId) : 'backtrack',
+        result: available.length > 0 ? labelOf(labelById, available[0]!.neighborId) : i18nText(I18N.results.backtrack),
         decision: available.length > 0 ? 'extend trail' : 'seal this node into the final route',
       },
     });
@@ -95,13 +128,13 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
         trail,
         currentNodeId,
         activeEdgeId: next.edge.id,
-        description: `Choose the next unused edge ${labelOf(labelById, currentNodeId)} → ${labelOf(labelById, next.neighborId)} from the current stack top.`,
+        description: i18nText(I18N.descriptions.chooseEdge, { from: labelOf(labelById, currentNodeId), to: labelOf(labelById, next.neighborId) }),
         activeCodeLine: 5,
         phase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelById, currentNodeId),
           expression: `${labelOf(labelById, currentNodeId)} → ${labelOf(labelById, next.neighborId)}`,
-          result: 'unused',
+          result: i18nText(I18N.results.unused),
           decision: 'Traverse it now and remove it from future choices.',
         },
       });
@@ -122,7 +155,7 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
         currentNodeId: next.neighborId,
         activeEdgeId: next.edge.id,
         relaxedEdgeId: next.edge.id,
-        description: `Traverse ${labelOf(labelById, currentNodeId)} → ${labelOf(labelById, next.neighborId)} and push ${labelOf(labelById, next.neighborId)} onto the live stack.`,
+        description: i18nText(I18N.descriptions.traverse, { from: labelOf(labelById, currentNodeId), to: labelOf(labelById, next.neighborId) }),
         activeCodeLine: 6,
         phase: 'relax',
         computation: {
@@ -150,7 +183,7 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
       stack,
       trail,
       currentNodeId: sealedNodeId,
-      description: `${labelOf(labelById, sealedNodeId)} has no unused incident edge left, so pop it into the final ${trailKind.toLowerCase()}.`,
+      description: i18nText(isCircuit ? I18N.descriptions.sealCircuit : I18N.descriptions.sealPath, { node: labelOf(labelById, sealedNodeId) }),
       activeCodeLine: 8,
       phase: 'settle-node',
       computation: {
@@ -173,7 +206,7 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
     usedEdgeIds,
     stack,
     trail,
-    description: `${trailKind} complete. The route ${describeTrail(finalTrail, labelById)} uses every edge exactly once.`,
+    description: i18nText(isCircuit ? I18N.descriptions.completeCircuit : I18N.descriptions.completePath, { route: describeTrail(finalTrail, labelById) }),
     activeCodeLine: 9,
     phase: 'graph-complete',
     computation: {
@@ -195,7 +228,7 @@ function createStep(args: {
   readonly usedEdgeIds: ReadonlySet<string>;
   readonly stack: readonly string[];
   readonly trail: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -281,7 +314,7 @@ function createStep(args: {
     nodes,
     edges,
     sourceId: args.startId,
-    phaseLabel: phaseLabel(args.phase),
+    phaseLabel: i18nText(phaseLabel(args.phase)),
     metricLabel: 'Unused',
     secondaryLabel: 'State',
     frontierLabel: 'Stack',
@@ -370,18 +403,18 @@ function labelOf(labelById: ReadonlyMap<string, string>, nodeId: string): string
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'init':
-      return 'Prepare degrees';
+      return I18N.phases.prepare;
     case 'pick-node':
-      return 'Inspect stack top';
+      return I18N.phases.inspectTop;
     case 'inspect-edge':
-      return 'Choose next edge';
+      return I18N.phases.chooseEdge;
     case 'relax':
-      return 'Extend live walk';
+      return I18N.phases.extend;
     case 'settle-node':
-      return 'Backtrack into trail';
+      return I18N.phases.backtrack;
     case 'graph-complete':
-      return 'Euler trail complete';
+      return I18N.phases.complete;
     default:
-      return 'Euler step';
+      return I18N.phases.step;
   }
 }

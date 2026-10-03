@@ -70,6 +70,9 @@ const I18N = {
       'features.algorithms.runtime.dp.knuthDpOptimization.decisions.openSubintervals',
     ),
   },
+  items: {
+    optRow: t('features.algorithms.runtime.dp.knuthDpOptimization.items.optRow'),
+  },
 } as const;
 
 export function* knuthDpOptimizationGenerator(
@@ -334,7 +337,7 @@ function createStep(args: {
     primaryItemsLabel: I18N.labels.fileSizesLabel,
     primaryItems: args.scenario.files.map((file, index) => `F${index + 1}:${file}`),
     secondaryItemsLabel: I18N.labels.optWindowsLabel,
-    secondaryItems: args.scenario.files.map((_, index) => `opt row ${index + 1}`),
+    secondaryItems: args.scenario.files.map((_, index) => i18nText(I18N.items.optRow, { n: index + 1 })),
     insights,
     rowHeaders: headers,
     colHeaders: headers,

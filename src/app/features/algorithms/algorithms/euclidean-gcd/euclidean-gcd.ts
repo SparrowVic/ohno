@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { NumberLabRegister, NumberLabTone, NumberLabTraceState } from '../../models/number-lab';
 import {
   ScratchpadLabTraceState,
@@ -9,11 +10,40 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { EuclideanGcdScenario } from '../../utils/scenarios/number-lab/number-lab-scenarios';
 import { createNumberLabStep } from '../number-lab-step';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.numberLab.gcd.modeLabel'),
   scratchpadModeLabel: t('features.algorithms.runtime.scratchpadLab.gcd.modeLabel'),
+  notes: {
+    check: t('features.algorithms.runtime.scratchpadLab.gcd.notes.check'),
+    slowDecrease: t('features.algorithms.runtime.scratchpadLab.gcd.notes.slowDecrease'),
+    blockSize: t('features.algorithms.runtime.scratchpadLab.gcd.notes.blockSize'),
+    blockCount: t('features.algorithms.runtime.scratchpadLab.gcd.notes.blockCount'),
+    firstSubtractions: t('features.algorithms.runtime.scratchpadLab.gcd.notes.firstSubtractions'),
+    nextSubtractions: t('features.algorithms.runtime.scratchpadLab.gcd.notes.nextSubtractions'),
+    tileSide: t('features.algorithms.runtime.scratchpadLab.gcd.notes.tileSide'),
+    tileCount: t('features.algorithms.runtime.scratchpadLab.gcd.notes.tileCount'),
+  },
+  sections: {
+    lengthConclusion: t('features.algorithms.runtime.scratchpadLab.gcd.sections.lengthConclusion'),
+    foldStep: t('features.algorithms.runtime.scratchpadLab.gcd.sections.foldStep'),
+    gcdComputation: t('features.algorithms.runtime.scratchpadLab.gcd.sections.gcdComputation'),
+    gcd: t('features.algorithms.runtime.scratchpadLab.gcd.sections.gcd'),
+    fractionReduction: t('features.algorithms.runtime.scratchpadLab.gcd.sections.fractionReduction'),
+    subtractive: t('features.algorithms.runtime.scratchpadLab.gcd.sections.subtractive'),
+    lastPositive: t('features.algorithms.runtime.scratchpadLab.gcd.sections.lastPositive'),
+    division: t('features.algorithms.runtime.scratchpadLab.gcd.sections.division'),
+    gcdResult: t('features.algorithms.runtime.scratchpadLab.gcd.sections.gcdResult'),
+    geometry: t('features.algorithms.runtime.scratchpadLab.gcd.sections.geometry'),
+    finalResult: t('features.algorithms.runtime.scratchpadLab.gcd.sections.finalResult'),
+  },
+  lines: {
+    mostQuotients: t('features.algorithms.runtime.scratchpadLab.gcd.lines.mostQuotients'),
+    tileSide: t('features.algorithms.runtime.scratchpadLab.gcd.lines.tileSide'),
+    tileCount: t('features.algorithms.runtime.scratchpadLab.gcd.lines.tileCount'),
+  },
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -153,11 +183,11 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -170,7 +200,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     });
   }
 
-  function resultSection(id = 'section-result', content = 'Wynik'): LineBuilder {
+  function resultSection(id = 'section-result', content: TranslatableText = i18nText(NOTEBOOK_TEXT.sections.result)): LineBuilder {
     return paperLine({
       id,
       kind: 'result',
@@ -201,23 +231,23 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     const steps = euclideanSteps(values.a, values.b);
     const result = gcd(values.a, values.b);
 
-    yield* emit(section('section-calculations', 'Obliczenia'));
+    yield* emit(section('section-calculations', i18nText(NOTEBOOK_TEXT.sections.computation)));
     yield* emitDivisionChain('calculation', steps);
 
-    yield* emit(section('section-last-remainder', 'Ostatnia niezerowa reszta'));
+    yield* emit(section('section-last-remainder', i18nText(NOTEBOOK_TEXT.sections.lastRemainder)));
     yield* emit(math('last-remainder', String(result)));
 
     currentResult = result;
     yield* emit(resultSection());
     yield* emit(math('result-gcd', `gcd(${values.a}, ${values.b}) = ${result}`));
 
-    yield* emit(section('section-check', 'Sprawdzenie'));
+    yield* emit(section('section-check', i18nText(NOTEBOOK_TEXT.sections.check)));
     yield* emit(math('check-a', `${values.a} / ${result} = ${values.a / result}`));
     yield* emit(math('check-b', `${values.b} / ${result} = ${values.b / result}`));
     yield* emit(
       note(
         'check-note',
-        `${result} dzieli obie liczby, a następny krok algorytmu zakończył się resztą 0.`,
+        i18nText(I18N.notes.check, { result }),
       ),
     );
   }
@@ -226,19 +256,19 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     const steps = euclideanSteps(values.a, values.b);
     const result = gcd(values.a, values.b);
 
-    yield* emit(section('section-calculations', 'Obliczenia'));
+    yield* emit(section('section-calculations', i18nText(NOTEBOOK_TEXT.sections.computation)));
     yield* emitDivisionChain('calculation', steps);
 
-    yield* emit(section('section-last-remainder', 'Ostatnia niezerowa reszta'));
+    yield* emit(section('section-last-remainder', i18nText(NOTEBOOK_TEXT.sections.lastRemainder)));
     yield* emit(math('last-remainder', String(result)));
 
     currentResult = result;
     yield* emit(resultSection());
     yield* emit(math('result-gcd', `gcd(${values.a}, ${values.b}) = ${result}`));
 
-    yield* emit(section('section-length-conclusion', 'Wniosek o długości'));
-    yield* emit(math('length-quotients', 'większość\\ ilorazów = 1'));
-    yield* emit(note('length-note', 'To oznacza wolne zmniejszanie reszt:'));
+    yield* emit(section('section-length-conclusion', i18nText(I18N.sections.lengthConclusion)));
+    yield* emit(paperLine({ id: 'length-quotients', kind: 'equation', content: i18nText(I18N.lines.mostQuotients) }));
+    yield* emit(note('length-note', i18nText(I18N.notes.slowDecrease)));
     yield* emit(math('length-chain', valuesOfChain(steps).join(', ')));
   }
 
@@ -251,7 +281,7 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       const previous = accumulator;
       const stepNumber = index;
       yield* emit(
-        section(`section-fold-${stepNumber}`, `Krok ${stepNumber}: gcd(${previous}, ${next})`),
+        section(`section-fold-${stepNumber}`, i18nText(I18N.sections.foldStep, { step: stepNumber, a: previous, b: next })),
       );
       const steps = euclideanSteps(previous, next);
       yield* emitDivisionChain(`fold-${stepNumber}`, steps);
@@ -263,15 +293,15 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     yield* emit(resultSection());
     yield* emit(math('result-gcd', `gcd(${list.join(', ')}) = ${accumulator}`));
 
-    yield* emit(section('section-interpretation', 'Interpretacja'));
+    yield* emit(section('section-interpretation', i18nText(NOTEBOOK_TEXT.sections.interpretation)));
     yield* emit(
       note(
         'interpretation-note',
-        'Jeśli liczby oznaczają rozmiary partii danych, największy wspólny rozmiar bloku wynosi:',
+        i18nText(I18N.notes.blockSize),
       ),
     );
     yield* emit(math('interpretation-block', String(accumulator)));
-    yield* emit(note('interpretation-count-label', 'Liczba bloków:'));
+    yield* emit(note('interpretation-count-label', i18nText(I18N.notes.blockCount)));
     for (const value of list) {
       yield* emit(
         math(`interpretation-count-${value}`, `${value} / ${accumulator} = ${value / accumulator}`),
@@ -285,17 +315,17 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     const steps = euclideanSteps(numerator, denominator);
     const result = gcd(numerator, denominator);
 
-    yield* emit(section('section-calculations', 'Obliczenia NWD'));
+    yield* emit(section('section-calculations', i18nText(I18N.sections.gcdComputation)));
     yield* emitDivisionChain('calculation', steps);
 
-    yield* emit(section('section-last-remainder', 'Ostatnia niezerowa reszta'));
+    yield* emit(section('section-last-remainder', i18nText(NOTEBOOK_TEXT.sections.lastRemainder)));
     yield* emit(math('last-remainder', String(result)));
 
-    yield* emit(section('section-gcd', 'NWD'));
+    yield* emit(section('section-gcd', i18nText(I18N.sections.gcd)));
     currentResult = result;
     yield* emit(math('gcd-result', `gcd(${numerator}, ${denominator}) = ${result}`));
 
-    yield* emit(section('section-reduction', 'Skracanie ułamka'));
+    yield* emit(section('section-reduction', i18nText(I18N.sections.fractionReduction)));
     yield* emit(math('reduce-numerator', `${numerator} / ${result} = ${numerator / result}`));
     yield* emit(math('reduce-denominator', `${denominator} / ${result} = ${denominator / result}`));
 
@@ -313,21 +343,21 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
     const divisionSteps = euclideanSteps(values.a, values.b);
     const result = gcd(values.a, values.b);
 
-    yield* emit(section('section-subtractive', 'Wersja przez odejmowanie'));
+    yield* emit(section('section-subtractive', i18nText(I18N.sections.subtractive)));
     for (let index = 0; index < steps.length; index++) {
       const step = steps[index];
       yield* emit(math(`subtract-${index}`, `${step.left} - ${step.right} = ${step.result}`));
     }
 
-    yield* emit(section('section-last-positive', 'Ostatnia dodatnia wartość'));
+    yield* emit(section('section-last-positive', i18nText(I18N.sections.lastPositive)));
     yield* emit(math('last-positive', String(result)));
 
-    yield* emit(section('section-division', 'Ten sam proces przez dzielenie'));
+    yield* emit(section('section-division', i18nText(I18N.sections.division)));
     if (divisionSteps[0]) {
       yield* emit(
         note(
           'division-note-1',
-          `Pierwsze odejmowania ${divisionSteps[0].divisor} od ${divisionSteps[0].dividend} można zapisać jako:`,
+          i18nText(I18N.notes.firstSubtractions, { divisor: divisionSteps[0].divisor, dividend: divisionSteps[0].dividend }),
         ),
       );
       yield* emit(math('division-1', formatDivisionStep(divisionSteps[0])));
@@ -336,20 +366,20 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       yield* emit(
         note(
           'division-note-2',
-          `Następne odejmowania ${divisionSteps[1].divisor} od ${divisionSteps[1].dividend} można zapisać jako:`,
+          i18nText(I18N.notes.nextSubtractions, { divisor: divisionSteps[1].divisor, dividend: divisionSteps[1].dividend }),
         ),
       );
       yield* emit(math('division-2', formatDivisionStep(divisionSteps[1])));
     }
 
-    yield* emit(section('section-gcd-result', 'Wynik NWD'));
+    yield* emit(section('section-gcd-result', i18nText(I18N.sections.gcdResult)));
     currentResult = result;
     yield* emit(math('gcd-result', `gcd(${values.a}, ${values.b}) = ${result}`));
 
-    yield* emit(section('section-geometry', 'Interpretacja geometryczna'));
-    yield* emit(note('geometry-side-label', 'Największy kwadratowy kafelek ma bok:'));
+    yield* emit(section('section-geometry', i18nText(I18N.sections.geometry)));
+    yield* emit(note('geometry-side-label', i18nText(I18N.notes.tileSide)));
     yield* emit(math('geometry-side', String(result)));
-    yield* emit(note('geometry-count-label', 'Liczba kafelków w prostokącie:'));
+    yield* emit(note('geometry-count-label', i18nText(I18N.notes.tileCount)));
     yield* emit(math('geometry-a', `${values.a} / ${result} = ${values.a / result}`));
     yield* emit(math('geometry-b', `${values.b} / ${result} = ${values.b / result}`));
     yield* emit(
@@ -359,10 +389,15 @@ export function* euclideanGcdGenerator(scenario: EuclideanGcdScenario): Generato
       ),
     );
 
-    yield* emit(resultSection('section-final-result', 'Wynik końcowy'));
-    yield* emit(math('final-side', `bok\\ kafelka = ${result}`));
+    yield* emit(resultSection('section-final-result', i18nText(I18N.sections.finalResult)));
+    yield* emit(paperLine({ id: 'final-side', kind: 'equation', indent: CALCULATION_INDENT, content: i18nText(I18N.lines.tileSide, { side: result }) }));
     yield* emit(
-      math('final-count', `liczba\\ kafelków = ${(values.a / result) * (values.b / result)}`),
+      paperLine({
+        id: 'final-count',
+        kind: 'equation',
+        indent: CALCULATION_INDENT,
+        content: i18nText(I18N.lines.tileCount, { count: (values.a / result) * (values.b / result) }),
+      }),
     );
   }
 
@@ -458,17 +493,17 @@ function subtractiveSteps(
   return steps;
 }
 
-function phaseFor(builder: LineBuilder): string {
-  if (builder.id.includes('result')) return 'Wynik';
-  if (builder.id.includes('check') || builder.id.includes('interpretation')) return 'Sprawdzenie';
-  if (builder.id.includes('last')) return 'Ostatnia niezerowa reszta';
-  return 'Obliczenia';
+function phaseFor(builder: LineBuilder): TranslatableText {
+  if (builder.id.includes('result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('check') || builder.id.includes('interpretation')) return i18nText(NOTEBOOK_TEXT.sections.check);
+  if (builder.id.includes('last')) return i18nText(NOTEBOOK_TEXT.sections.lastRemainder);
+  return i18nText(NOTEBOOK_TEXT.sections.computation);
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.kind === 'result') return 'Zapisujemy wynik.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
-  return 'Liczymy kolejny wiersz.';
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function scratchpadToneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {

@@ -86,6 +86,9 @@ const I18N = {
       'features.algorithms.runtime.dp.travelingSalesman.decisions.jumpToPredecessor',
     ),
   },
+  items: {
+    start: t('features.algorithms.runtime.dp.travelingSalesman.items.start'),
+  },
 } as const;
 
 export function* travelingSalesmanDpGenerator(
@@ -441,7 +444,9 @@ function createStep(args: {
         : null,
     pathLabel: finalTourLabel(args.scenario, reverseTrace),
     primaryItemsLabel: I18N.labels.citiesItemsLabel,
-    primaryItems: args.scenario.labels.map((label, index) => `${label}${index === args.scenario.startIndex ? ' (start)' : ''}`),
+    primaryItems: args.scenario.labels.map((label, index) =>
+      index === args.scenario.startIndex ? i18nText(I18N.items.start, { city: label }) : label,
+    ),
     secondaryItemsLabel: I18N.labels.distanceLensLabel,
     secondaryItems: args.activeCell
       ? args.scenario.distances[args.activeCell[1]]!.map((value, index) =>

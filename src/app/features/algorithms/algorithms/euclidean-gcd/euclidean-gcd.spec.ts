@@ -18,7 +18,7 @@ function finalLines(steps: readonly SortStep[]): readonly ScratchpadLine[] {
 }
 
 function contentOf(line: ScratchpadLine): string {
-  return typeof line.content === 'string' ? line.content : '';
+  return typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`;
 }
 
 function expectContains(lines: readonly ScratchpadLine[], fragment: string): void {
@@ -57,7 +57,7 @@ describe('euclidean-gcd', () => {
     expect(last?.resultLabel).toBeNull();
     expect(lines.find((line) => line.id === 'section-result')).toMatchObject({
       marker: '✓',
-      content: 'Wynik',
+      content: { key: 'features.algorithms.runtime.scratchpadLab.sections.result' },
     });
     expectContains(lines, '60 = 1 * 48 + 12');
     expectContains(lines, '48 = 4 * 12 + 0');
@@ -80,12 +80,12 @@ describe('euclidean-gcd', () => {
   it('renders multi-number gcd as pairwise folding', () => {
     const lines = finalLines(run('multi-number-fold'));
 
-    expectContains(lines, 'Krok 1: gcd(252, 198)');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.gcd.sections.foldStep {"step":1,"a":252,"b":198}');
     expectContains(lines, '252 = 1 * 198 + 54');
     expectContains(lines, 'gcd(252, 198) = 18');
-    expectContains(lines, 'Krok 2: gcd(18, 126)');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.gcd.sections.foldStep {"step":2,"a":18,"b":126}');
     expectContains(lines, '126 = 7 * 18 + 0');
-    expectContains(lines, 'Krok 3: gcd(18, 90)');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.gcd.sections.foldStep {"step":3,"a":18,"b":90}');
     expectContains(lines, '90 = 5 * 18 + 0');
     expectContains(lines, 'gcd(252, 198, 126, 90) = 18');
     expectContains(lines, '198 / 18 = 11');
@@ -115,6 +115,6 @@ describe('euclidean-gcd', () => {
     expectContains(lines, 'gcd(168, 72) = 24');
     expectContains(lines, '168 / 24 = 7');
     expectContains(lines, '7 * 3 = 21');
-    expectContains(lines, 'liczba\\ kafelków = 21');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.gcd.lines.tileCount {"count":21}');
   });
 });

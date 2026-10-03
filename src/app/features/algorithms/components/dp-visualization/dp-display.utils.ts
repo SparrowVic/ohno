@@ -194,7 +194,7 @@ const LABEL_KEYS: Readonly<Record<string, string>> = {
   exclude: LABELS.exclude,
   weight: LABELS.weight,
   take: LABELS.take,
-  target: LABELS.target,
+  skip: NOTES.skip,
   none: LABELS.none,
   point: LABELS.point,
   'best j': LABELS.bestIndex,
@@ -210,8 +210,6 @@ const LABEL_PATTERNS: readonly (readonly [RegExp, string, string])[] = [
   [/^(\d+) assigned$/, LABELS.assigned, 'count'],
   [/^(\d+) groups$/, LABELS.groups, 'count'],
   [/^bit (\d+)$/, LABELS.bit, 'n'],
-  [/^step (\d+)$/, LABELS.stairIndex, 'n'],
-  [/^opt row (\d+)$/, LABELS.optRow, 'n'],
 ];
 
 const ROLE_TAGS: readonly (readonly [DpTraceTag, string])[] = [
@@ -418,8 +416,6 @@ export function dpDisplayHeaders(headers: readonly DpHeader[], withMeta: boolean
 
 export function dpParseItem(item: TranslatableText): { readonly lead: TranslatableText; readonly value: TranslatableText | null } {
   if (typeof item !== 'string') return { lead: item, value: null };
-  const start = item.match(/^(.+?) \(start\)$/);
-  if (start) return { lead: start[1]!, value: i18nText(LABELS.start) };
   const knapsack = item.match(/^(.+) w(\d+)\/v(\d+)$/);
   if (knapsack) return { lead: knapsack[1]!, value: `w${knapsack[2]} · v${knapsack[3]}` };
   const pair = item.match(/^([^:=]+?)\s*[:=]\s*(.+)$/);

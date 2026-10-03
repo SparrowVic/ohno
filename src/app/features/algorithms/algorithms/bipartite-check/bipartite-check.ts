@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,34 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.initialize'),
+    seed: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.seed'),
+    expand: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.expand'),
+    inspect: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.inspect'),
+    color: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.color'),
+    conflict: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.conflict'),
+    failed: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.failed'),
+    crosses: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.crosses'),
+    close: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.close'),
+    complete: t('features.algorithms.runtime.graph.bipartiteCheck.descriptions.complete'),
+  },
+  results: {
+    invalid: t('features.algorithms.runtime.graph.bipartiteCheck.results.invalid'),
+    valid: t('features.algorithms.runtime.graph.bipartiteCheck.results.valid'),
+  },
+  phases: {
+    color: t('features.algorithms.runtime.graph.bipartiteCheck.phases.color'),
+    inspect: t('features.algorithms.runtime.graph.bipartiteCheck.phases.inspect'),
+    assign: t('features.algorithms.runtime.graph.bipartiteCheck.phases.assign'),
+    validate: t('features.algorithms.runtime.graph.bipartiteCheck.phases.validate'),
+    close: t('features.algorithms.runtime.graph.bipartiteCheck.phases.close'),
+    complete: t('features.algorithms.runtime.graph.bipartiteCheck.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.bipartiteCheck.phases.initialize'),
+  },
+} as const;
 
 type Partition = 0 | 1;
 
@@ -29,7 +60,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
     closed,
     frontierOrder: queue,
     visitOrder,
-    description: 'Initialize every node without a side and try to two-color each connected region.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
     conflictEdgeId,
@@ -54,7 +85,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
       frontierOrder: queue,
       visitOrder,
       currentNodeId: node.id,
-      description: `Start a new BFS wave at ${labelOf(labelMap, node.id)} and color it side 0.`,
+      description: i18nText(I18N.descriptions.seed, { node: labelOf(labelMap, node.id) }),
       activeCodeLine: 5,
       phase: 'pick-node',
       conflictEdgeId,
@@ -76,7 +107,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
         frontierOrder: queue,
         visitOrder,
         currentNodeId,
-        description: `Expand ${labelOf(labelMap, currentNodeId)} and force all neighbors to the opposite side.`,
+        description: i18nText(I18N.descriptions.expand, { node: labelOf(labelMap, currentNodeId) }),
         activeCodeLine: 7,
         phase: 'pick-node',
         conflictEdgeId,
@@ -97,7 +128,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
           visitOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Inspect ${labelOf(labelMap, currentNodeId)} ↔ ${labelOf(labelMap, neighborId)}.`,
+          description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId) }),
           activeCodeLine: 8,
           phase: 'inspect-edge',
           conflictEdgeId,
@@ -132,7 +163,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
             currentNodeId,
             activeEdgeId: edge.id,
             relaxedEdgeId: edge.id,
-            description: `Color ${labelOf(labelMap, neighborId)} side ${nextColor} and enqueue it.`,
+            description: i18nText(I18N.descriptions.color, { node: labelOf(labelMap, neighborId), side: nextColor }),
             activeCodeLine: 10,
             phase: 'relax',
             conflictEdgeId,
@@ -161,7 +192,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
             visitOrder,
             currentNodeId,
             activeEdgeId: edge.id,
-            description: `Conflict: ${labelOf(labelMap, currentNodeId)} and ${labelOf(labelMap, neighborId)} share side ${currentColor}.`,
+            description: i18nText(I18N.descriptions.conflict, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId), side: currentColor }),
             activeCodeLine: 12,
             phase: 'skip-relax',
             conflictEdgeId,
@@ -169,7 +200,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
             computation: {
               candidateLabel: labelOf(labelMap, neighborId),
               expression: `${currentColor} = ${neighborColor}`,
-              result: 'invalid',
+              result: i18nText(I18N.results.invalid),
               decision: 'odd cycle / same-side edge found',
             },
           });
@@ -182,7 +213,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
             closed,
             frontierOrder: queue,
             visitOrder,
-            description: `Bipartite check failed on edge ${labelOf(labelMap, currentNodeId)} ↔ ${labelOf(labelMap, neighborId)}.`,
+            description: i18nText(I18N.descriptions.failed, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId) }),
             activeCodeLine: 15,
             phase: 'graph-complete',
             conflictEdgeId,
@@ -201,7 +232,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
           visitOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Edge ${labelOf(labelMap, currentNodeId)} ↔ ${labelOf(labelMap, neighborId)} correctly crosses the two partitions.`,
+          description: i18nText(I18N.descriptions.crosses, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId) }),
           activeCodeLine: 13,
           phase: 'skip-relax',
           conflictEdgeId,
@@ -209,7 +240,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `${currentColor} → ${neighborColor}`,
-            result: 'valid',
+            result: i18nText(I18N.results.valid),
             decision: 'keep current coloring',
           },
         });
@@ -227,7 +258,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
         frontierOrder: queue,
         visitOrder,
         currentNodeId,
-        description: `Close ${labelOf(labelMap, currentNodeId)} after checking all incident edges.`,
+        description: i18nText(I18N.descriptions.close, { node: labelOf(labelMap, currentNodeId) }),
         activeCodeLine: 14,
         phase: 'settle-node',
         conflictEdgeId,
@@ -244,7 +275,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
     closed,
     frontierOrder: [],
     visitOrder,
-    description: 'Bipartite check complete. Every edge connects opposite sides.',
+    description: i18nText(I18N.descriptions.complete),
     activeCodeLine: 15,
     phase: 'graph-complete',
     conflictEdgeId,
@@ -260,7 +291,7 @@ function createStep(args: {
   readonly closed: ReadonlySet<string>;
   readonly frontierOrder: readonly string[];
   readonly visitOrder: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly conflictEdgeId: string | null;
@@ -329,7 +360,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Side',
       secondaryLabel: 'Color',
       frontierLabel: 'Color queue',
@@ -386,18 +417,18 @@ function labelOf(map: ReadonlyMap<string, string>, nodeId: string): string {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Color next node';
+      return I18N.phases.color;
     case 'inspect-edge':
-      return 'Inspect partition edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Assign opposite side';
+      return I18N.phases.assign;
     case 'skip-relax':
-      return 'Validate or reject coloring';
+      return I18N.phases.validate;
     case 'settle-node':
-      return 'Close colored node';
+      return I18N.phases.close;
     case 'graph-complete':
-      return 'Bipartite verdict ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize partition scan';
+      return I18N.phases.initialize;
   }
 }

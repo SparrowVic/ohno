@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, isI18nText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { OpLineRegister } from '../../../../shared/instrument/opline/opline.types';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
@@ -15,7 +15,6 @@ import { dpFocusCell } from '../../components/dp-visualization/dp-display.utils'
 import { matrixFocus, matrixPivotIndex } from '../../components/matrix-visualization/matrix-display.utils';
 import { searchProbeLabel } from '../../components/search-visualization/search-display.utils';
 import { notebookPhaseHead, notebookResultCount } from '../../components/scratchpad-lab-visualization/scratchpad-display.utils';
-import { smallestFactor } from '../../components/sieve-grid-visualization/sieve-display.utils';
 import { DpCell, DpMode, DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
 import { GeometryStepState } from '../../models/geometry';
@@ -255,14 +254,14 @@ export function graphReadout(state: GraphStepState, ctx: FamilyReadoutContext): 
     registers.push(register('v', labels, candidate.label));
     if (state.showEdgeWeights) registers.push(register('w', labels, activeEdge.weight));
   }
-  if (state.computation) registers.push(register('alt', labels, state.computation.result));
+  if (state.computation) registers.push(register('alt', labels, labels.translate(state.computation.result)));
   return {
     meters: [
       meter('settled', labels, settled, state.nodes.length),
       meter('queue', labels, state.queue.length),
       meter('relaxed', labels, relaxed, null, 3),
     ],
-    phaseLabel: phaseText(labels, index, lastIndex, state.phaseLabel),
+    phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone,
     registers,
     gauge: gauge(state.nodes.length, settled),
@@ -885,43 +884,9 @@ export function gridReadout(state: GridTraceState, ctx: FamilyReadoutContext): S
   };
 }
 
-type MatrixPhaseId = keyof typeof I18N_KEY.features.algorithms.display.phases.matrix;
-
-const MATRIX_PHASES: readonly (readonly [RegExp, MatrixPhaseId, string | null])[] = [
-  [/^Initialize distance matrix$/, 'distanceMatrix', null],
-  [/^Pivot (.+) complete$/, 'pivotDone', 'pivot'],
-  [/^Pivot (.+)$/, 'pivot', 'pivot'],
-  [/^All-pairs shortest paths ready$/, 'distancesReady', null],
-  [/^Initialize cost matrix$/, 'costMatrix', null],
-  [/^Row reduction$/, 'rowReduction', null],
-  [/^Column reduction$/, 'columnReduction', null],
-  [/^Zero matching (\d+)$/, 'zeroMatching', 'round'],
-  [/^Cover zeros (\d+)$/, 'coverZeros', 'round'],
-  [/^Adjust matrix (\d+)$/, 'adjustMatrix', 'round'],
-  [/^Optimal assignment ready$/, 'assignmentReady', null],
-];
-
-export function matrixPhaseText(phaseLabel: string): TranslatableText | null {
-  for (const [pattern, id, param] of MATRIX_PHASES) {
-    const match = pattern.exec(phaseLabel);
-    if (!match) continue;
-    const key = I18N_KEY.features.algorithms.display.phases.matrix[id];
-    return param ? i18nText(key, { [param]: match[1] }) : i18nText(key);
-  }
-  return null;
-}
-
-const MATRIX_RESULT_COUNT = /^(?:updates|matched) (\d+)$/;
-const PIVOT_FINISHED = /^Pivot .+ complete$/;
-
 export function matrixResultCount(state: MatrixTraceState): number | null {
-  const match = MATRIX_RESULT_COUNT.exec(state.resultLabel);
-  return match ? Number(match[1]) : null;
-}
-
-function matrixPhase(state: MatrixTraceState, labels: FamilyReadoutLabels): string | null {
-  const text = matrixPhaseText(state.phaseLabel);
-  return text === null ? null : labels.translate(text);
+  const count = isI18nText(state.resultLabel) ? state.resultLabel.params?.['count'] : undefined;
+  return typeof count === 'number' ? count : null;
 }
 
 function floydWarshallReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
@@ -929,7 +894,7 @@ function floydWarshallReadout(state: MatrixTraceState, ctx: FamilyReadoutContext
   const improved = matrixResultCount(state) ?? state.cells.filter((cell) => cell.status === 'improved').length;
   const size = state.rowHeaders.length;
   const pivotIndex = matrixPivotIndex(state);
-  const pivotFinished = PIVOT_FINISHED.test(state.phaseLabel);
+  const pivotFinished = ctx.step.phase === 'pass-complete';
   const done = pivotIndex < 0 ? (index >= lastIndex ? size : 0) : pivotFinished ? pivotIndex + 1 : pivotIndex;
   const focus = matrixFocus(state);
   const updating = state.cells.some((cell) => cell.status === 'improved');
@@ -939,7 +904,7 @@ function floydWarshallReadout(state: MatrixTraceState, ctx: FamilyReadoutContext
       meter('improved', labels, improved, null, 3),
       meter('rows', labels, state.rowHeaders.length),
     ],
-    phaseLabel: phaseText(labels, index, lastIndex, matrixPhase(state, labels)),
+    phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, updating ? 'pink' : focus ? 'cyan' : 'slate'),
     registers: focus
       ? [register('row', labels, state.rowHeaders[focus.row]?.label ?? null), register('col', labels, state.colHeaders[focus.col]?.label ?? null)]
@@ -964,7 +929,7 @@ function hungarianReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): S
   if (activeCol) registers.push(register('col', labels, activeCol.label));
   return {
     meters: [meter('matched', labels, matched, size), meter('lines', labels, lines, size), meter('zeros', labels, zeros)],
-    phaseLabel: phaseText(labels, index, lastIndex, matrixPhase(state, labels)),
+    phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, adjusting ? 'pink' : lines > 0 ? 'amber' : activeRow || activeCol ? 'cyan' : 'slate'),
     registers,
     gauge: gauge(size, matched),
@@ -1053,7 +1018,7 @@ const SIEVE_TONES: Readonly<Record<SieveGridTraceState['tone'], LedColor>> = {
 const CROSSED_STATES: ReadonlySet<SieveCellState> = new Set<SieveCellState>(['composite', 'marking', 'just-marked']);
 
 export function isCrossedSieveCell(cell: SieveGridCell): boolean {
-  return CROSSED_STATES.has(cell.state) || (cell.state === 'current' && smallestFactor(cell.value) !== null);
+  return CROSSED_STATES.has(cell.state) || (cell.state === 'current' && cell.markedBy !== null);
 }
 
 export function sieveReadout(state: SieveGridTraceState, ctx: FamilyReadoutContext): StageReadout {
@@ -1085,7 +1050,7 @@ export function networkReadout(state: NetworkTraceState, ctx: FamilyReadoutConte
   const augmenting = state.edges.some((edge) => edge.status === 'augment');
   return {
     meters: [meter('frontier', labels, state.frontierCount), meter('queue', labels, state.queue.length), meter('edges', labels, flowEdges)],
-    phaseLabel: phaseText(labels, index, lastIndex, state.phaseLabel),
+    phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, augmenting ? 'pink' : current ? 'cyan' : 'slate'),
     registers: current
       ? [register('u', labels, current.label), register(state.mode === 'min-cost-max-flow' ? 'cost' : 'level', labels, current.level)]

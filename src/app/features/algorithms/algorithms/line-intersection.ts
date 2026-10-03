@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GeometryEventChip,
   GeometryMarker,
@@ -5,6 +8,16 @@ import {
   LineIntersectionStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.lineIntersection.descriptions.initialize'),
+    start: t('features.algorithms.runtime.geometry.lineIntersection.descriptions.start'),
+    end: t('features.algorithms.runtime.geometry.lineIntersection.descriptions.end'),
+    intersection: t('features.algorithms.runtime.geometry.lineIntersection.descriptions.intersection'),
+    complete: t('features.algorithms.runtime.geometry.lineIntersection.descriptions.complete'),
+  },
+} as const;
 
 export interface LineIntersectionScenario {
   readonly segments: readonly {
@@ -160,7 +173,7 @@ function makeStep(
   events: readonly SweepEvent[],
   currentIndex: number,
   sweepX: number | null,
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   phase: string,
   focusIds: ReadonlySet<number>,
@@ -266,7 +279,7 @@ export function* lineIntersectionGenerator(
     events,
     -1,
     null,
-    'Laser sweep is ready: sort all endpoints and potential crossings by x.',
+    i18nText(I18N.descriptions.initialize),
     1,
     'init',
     new Set<number>(),
@@ -286,7 +299,7 @@ export function* lineIntersectionGenerator(
         events,
         eventIndex,
         event.x,
-        `Sweep line reaches ${event.label} and inserts the segment into the active ordering.`,
+        i18nText(I18N.descriptions.start, { segment: `S${event.segmentIds[0]}` }),
         3,
         'activate',
         focusIds,
@@ -302,7 +315,7 @@ export function* lineIntersectionGenerator(
         events,
         eventIndex,
         event.x,
-        `Sweep line exits ${event.label}; the segment leaves the active set.`,
+        i18nText(I18N.descriptions.end, { segment: `S${event.segmentIds[0]}` }),
         4,
         'retire',
         focusIds,
@@ -319,7 +332,11 @@ export function* lineIntersectionGenerator(
         events,
         eventIndex,
         event.x,
-        `${event.label} sparks a valid intersection at (${event.intersection.x.toFixed(1)}, ${event.intersection.y.toFixed(1)}).`,
+        i18nText(I18N.descriptions.intersection, {
+          pair: event.segmentIds.map((id) => `S${id}`).join(' · '),
+          x: event.intersection.x.toFixed(1),
+          y: event.intersection.y.toFixed(1),
+        }),
         5,
         'intersection',
         focusIds,
@@ -334,7 +351,7 @@ export function* lineIntersectionGenerator(
     events,
     events.length,
     98,
-    `Sweep complete: found ${foundIntersections.length} intersections.`,
+    i18nText(I18N.descriptions.complete, { count: foundIntersections.length }),
     6,
     'complete',
     new Set<number>(),

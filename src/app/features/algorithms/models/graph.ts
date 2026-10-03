@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export interface WeightedGraphNode {
   readonly id: string;
   readonly label: string;
@@ -69,7 +71,7 @@ export interface GraphTraceRow {
 export interface GraphComputation {
   readonly candidateLabel: string;
   readonly expression: string;
-  readonly result: string;
+  readonly result: TranslatableText;
   readonly decision: string;
 }
 
@@ -77,7 +79,7 @@ export interface GraphStepState {
   readonly nodes: readonly GraphNodeSnapshot[];
   readonly edges: readonly GraphEdgeSnapshot[];
   readonly sourceId: string;
-  readonly phaseLabel: string;
+  readonly phaseLabel: TranslatableText;
   readonly metricLabel: string;
   readonly secondaryLabel: string;
   readonly frontierLabel: string;

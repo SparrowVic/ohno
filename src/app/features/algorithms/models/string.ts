@@ -229,7 +229,7 @@ export interface StringSuffixRow {
   readonly id: string;
   readonly startIndex: number;
   readonly suffix: string;
-  readonly pairLabel: string;
+  readonly pairLabel: TranslatableText;
   readonly rank: number;
   readonly order: number | null;
   readonly lcp: number | null;

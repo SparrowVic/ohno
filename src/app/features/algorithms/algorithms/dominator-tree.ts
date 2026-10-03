@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -8,6 +11,34 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.dominatorTree.descriptions.initialize'),
+    pick: t('features.algorithms.runtime.graph.dominatorTree.descriptions.pick'),
+    intersect: t('features.algorithms.runtime.graph.dominatorTree.descriptions.intersect'),
+    shrink: t('features.algorithms.runtime.graph.dominatorTree.descriptions.shrink'),
+    stable: t('features.algorithms.runtime.graph.dominatorTree.descriptions.stable'),
+    immediate: t('features.algorithms.runtime.graph.dominatorTree.descriptions.immediate'),
+    complete: t('features.algorithms.runtime.graph.dominatorTree.descriptions.complete'),
+  },
+  results: {
+    othersAll: t('features.algorithms.runtime.graph.dominatorTree.results.othersAll'),
+    unchanged: t('features.algorithms.runtime.graph.dominatorTree.results.unchanged'),
+    entry: t('features.algorithms.runtime.graph.dominatorTree.results.entry'),
+    treeReady: t('features.algorithms.runtime.graph.dominatorTree.results.treeReady'),
+  },
+  phases: {
+    seed: t('features.algorithms.runtime.graph.dominatorTree.phases.seed'),
+    pick: t('features.algorithms.runtime.graph.dominatorTree.phases.pick'),
+    intersect: t('features.algorithms.runtime.graph.dominatorTree.phases.intersect'),
+    shrink: t('features.algorithms.runtime.graph.dominatorTree.phases.shrink'),
+    stable: t('features.algorithms.runtime.graph.dominatorTree.phases.stable'),
+    immediate: t('features.algorithms.runtime.graph.dominatorTree.phases.immediate'),
+    complete: t('features.algorithms.runtime.graph.dominatorTree.phases.complete'),
+    step: t('features.algorithms.runtime.graph.dominatorTree.phases.step'),
+  },
+} as const;
 
 export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelById = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -32,13 +63,13 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
     idomByNode,
     queueOrder,
     currentPass: pass,
-    description: 'Initialize the entry block to dominate only itself, while every other block starts with the full node set.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
     computation: {
       candidateLabel: labelOf(labelById, graph.sourceId),
       expression: `${labelOf(labelById, graph.sourceId)} = {${labelOf(labelById, graph.sourceId)}}`,
-      result: 'others = all nodes',
+      result: i18nText(I18N.results.othersAll),
       decision: 'Iterative intersection will now remove impossible dominators.',
     },
   });
@@ -62,7 +93,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
         currentPass: pass,
         currentNodeId: nodeId,
         activeEdgeId,
-        description: `Recompute dominators of ${labelOf(labelById, nodeId)} from the intersection of all predecessor dominator sets.`,
+        description: i18nText(I18N.descriptions.pick, { node: labelOf(labelById, nodeId) }),
         activeCodeLine: 4,
         phase: 'pick-node',
         computation: {
@@ -87,7 +118,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
           currentPass: pass,
           currentNodeId: nodeId,
           activeEdgeId,
-          description: `Intersect with the dominators of predecessor ${labelOf(labelById, predId)}.`,
+          description: i18nText(I18N.descriptions.intersect, { node: labelOf(labelById, predId) }),
           activeCodeLine: 5,
           phase: 'inspect-edge',
           computation: {
@@ -117,7 +148,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
           currentPass: pass,
           currentNodeId: nodeId,
           activeEdgeId,
-          description: `${labelOf(labelById, nodeId)} shrinks to a tighter dominator set after this pass.`,
+          description: i18nText(I18N.descriptions.shrink, { node: labelOf(labelById, nodeId) }),
           activeCodeLine: 6,
           phase: 'relax',
           computation: {
@@ -136,13 +167,13 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
           currentPass: pass,
           currentNodeId: nodeId,
           activeEdgeId,
-          description: `${labelOf(labelById, nodeId)} keeps the same dominator set on this pass.`,
+          description: i18nText(I18N.descriptions.stable, { node: labelOf(labelById, nodeId) }),
           activeCodeLine: 6,
           phase: 'skip-relax',
           computation: {
             candidateLabel: labelOf(labelById, nodeId),
             expression: setLabel(nextSet, labelById),
-            result: 'unchanged',
+            result: i18nText(I18N.results.unchanged),
             decision: 'This block is already stable for the current predecessor information.',
           },
         });
@@ -166,13 +197,13 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
       currentPass: pass,
       currentNodeId: nodeId,
       activeEdgeId: immediate ? edgeId(graph, immediate, nodeId) : null,
-      description: `Choose the deepest strict dominator of ${labelOf(labelById, nodeId)} as its immediate dominator.`,
+      description: i18nText(I18N.descriptions.immediate, { node: labelOf(labelById, nodeId) }),
       activeCodeLine: 8,
       phase: 'settle-node',
       computation: {
         candidateLabel: labelOf(labelById, nodeId),
         expression: setLabel(new Set(strictDominators), labelById),
-        result: immediate ? labelOf(labelById, immediate) : 'entry',
+        result: immediate ? labelOf(labelById, immediate) : i18nText(I18N.results.entry),
         decision: 'The immediate dominator becomes the parent in the dominator tree.',
       },
     });
@@ -184,13 +215,13 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
     idomByNode,
     queueOrder,
     currentPass: pass,
-    description: 'Dominator analysis complete. Teal arrows now show the final immediate-dominator tree over the control-flow graph.',
+    description: i18nText(I18N.descriptions.complete),
     activeCodeLine: 9,
     phase: 'graph-complete',
     computation: {
       candidateLabel: 'Immediate dominators',
       expression: queueOrder.map((nodeId) => `${labelOf(labelById, nodeId)}←${labelOf(labelById, idomByNode.get(nodeId) ?? graph.sourceId)}`).join(' · '),
-      result: 'tree ready',
+      result: i18nText(I18N.results.treeReady),
       decision: 'Every reachable block now has exactly one parent in the dominator tree.',
     },
   });
@@ -202,7 +233,7 @@ function createStep(args: {
   readonly idomByNode: ReadonlyMap<string, string | null>;
   readonly queueOrder: readonly string[];
   readonly currentPass: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -342,23 +373,23 @@ function labelOf(labelById: ReadonlyMap<string, string>, nodeId: string): string
   return labelById.get(nodeId) ?? nodeId;
 }
 
-function phaseLabel(phase: SortStep['phase'], pass: number): string {
+function phaseLabel(phase: SortStep['phase'], pass: number): TranslatableText {
   switch (phase) {
     case 'init':
-      return 'Seed dominator sets';
+      return i18nText(I18N.phases.seed);
     case 'pick-node':
-      return `Pass ${pass} · pick block`;
+      return i18nText(I18N.phases.pick, { pass });
     case 'inspect-edge':
-      return `Pass ${pass} · intersect predecessor`;
+      return i18nText(I18N.phases.intersect, { pass });
     case 'relax':
-      return `Pass ${pass} · set shrinks`;
+      return i18nText(I18N.phases.shrink, { pass });
     case 'skip-relax':
-      return `Pass ${pass} · set stable`;
+      return i18nText(I18N.phases.stable, { pass });
     case 'settle-node':
-      return 'Extract immediate dominator';
+      return i18nText(I18N.phases.immediate);
     case 'graph-complete':
-      return 'Dominator tree ready';
+      return i18nText(I18N.phases.complete);
     default:
-      return 'Dominator step';
+      return i18nText(I18N.phases.step);
   }
 }

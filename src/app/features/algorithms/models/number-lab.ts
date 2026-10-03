@@ -24,7 +24,7 @@ export type NumberLabTone =
 export interface NumberLabRegister {
   readonly id: string;
   /** Pretty name shown on the chip (e.g. "a", "b", "Fₙ"). Mono font. */
-  readonly label: string;
+  readonly label: TranslatableText;
   /** Current value. Rendered as a large numeric string. */
   readonly value: string;
   /** Optional caption under the value (e.g. "= F(n-1) + F(n-2)"). */

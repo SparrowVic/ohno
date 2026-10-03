@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -8,6 +11,27 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.dijkstra.descriptions.initialize'),
+    pick: t('features.algorithms.runtime.graph.dijkstra.descriptions.pick'),
+    inspect: t('features.algorithms.runtime.graph.dijkstra.descriptions.inspect'),
+    relax: t('features.algorithms.runtime.graph.dijkstra.descriptions.relax'),
+    keep: t('features.algorithms.runtime.graph.dijkstra.descriptions.keep'),
+    settle: t('features.algorithms.runtime.graph.dijkstra.descriptions.settle'),
+    complete: t('features.algorithms.runtime.graph.dijkstra.descriptions.complete'),
+  },
+  phases: {
+    pick: t('features.algorithms.runtime.graph.dijkstra.phases.pick'),
+    inspect: t('features.algorithms.runtime.graph.dijkstra.phases.inspect'),
+    relax: t('features.algorithms.runtime.graph.dijkstra.phases.relax'),
+    keep: t('features.algorithms.runtime.graph.dijkstra.phases.keep'),
+    settle: t('features.algorithms.runtime.graph.dijkstra.phases.settle'),
+    complete: t('features.algorithms.runtime.graph.dijkstra.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.dijkstra.phases.initialize'),
+  },
+} as const;
 
 export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -27,7 +51,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
     settled,
     frontier,
     visitOrder,
-    description: `Initialize ${labelOf(nodeMap, graph.sourceId)} with distance 0 and mark every other node as ∞.`,
+    description: i18nText(I18N.descriptions.initialize, { source: labelOf(nodeMap, graph.sourceId) }),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -46,7 +70,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
       frontier,
       visitOrder,
       currentNodeId,
-      description: `Pick ${labelOf(nodeMap, currentNodeId)} as the next closest unsettled node.`,
+      description: i18nText(I18N.descriptions.pick, { node: labelOf(nodeMap, currentNodeId) }),
       activeCodeLine: 5,
       phase: 'pick-node',
     });
@@ -75,7 +99,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
         visitOrder,
         currentNodeId,
         activeEdgeId: edge.id,
-        description: `Inspect edge ${labelOf(nodeMap, currentNodeId)} → ${neighborLabel} with weight ${edge.weight}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(nodeMap, currentNodeId), to: neighborLabel, weight: edge.weight }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
         computation: {
@@ -104,7 +128,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
           currentNodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `Relax ${neighborLabel}: update distance to ${candidateDistance} via ${labelOf(nodeMap, currentNodeId)}.`,
+          description: i18nText(I18N.descriptions.relax, { node: neighborLabel, distance: candidateDistance, via: labelOf(nodeMap, currentNodeId) }),
           activeCodeLine: 9,
           phase: 'relax',
           computation: {
@@ -127,7 +151,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
           visitOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Skip ${neighborLabel}: current best ${previousDistance} stays better than ${candidateDistance}.`,
+          description: i18nText(I18N.descriptions.keep, { node: neighborLabel, best: previousDistance, candidate: candidateDistance }),
           activeCodeLine: 8,
           phase: 'skip-relax',
           computation: {
@@ -151,7 +175,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
       frontier,
       visitOrder,
       currentNodeId,
-      description: `Settle ${labelOf(nodeMap, currentNodeId)}. Its shortest distance is now final.`,
+      description: i18nText(I18N.descriptions.settle, { node: labelOf(nodeMap, currentNodeId) }),
       activeCodeLine: 12,
       phase: 'settle-node',
     });
@@ -164,7 +188,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
     settled,
     frontier,
     visitOrder,
-    description: `Dijkstra complete. Shortest paths from ${labelOf(nodeMap, graph.sourceId)} are finalized.`,
+    description: i18nText(I18N.descriptions.complete, { source: labelOf(nodeMap, graph.sourceId) }),
     activeCodeLine: 14,
     phase: 'graph-complete',
   });
@@ -177,7 +201,7 @@ function createStep(args: {
   readonly settled: ReadonlySet<string>;
   readonly frontier: ReadonlySet<string>;
   readonly visitOrder: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -239,7 +263,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Distance',
       secondaryLabel: 'Prev',
       frontierLabel: 'Priority queue',
@@ -264,19 +288,19 @@ function createStep(args: {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Pick next node';
+      return I18N.phases.pick;
     case 'inspect-edge':
-      return 'Inspect edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Relax edge';
+      return I18N.phases.relax;
     case 'skip-relax':
-      return 'Keep current best';
+      return I18N.phases.keep;
     case 'settle-node':
-      return 'Finalize node';
+      return I18N.phases.settle;
     case 'graph-complete':
-      return 'Shortest paths ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize graph';
+      return I18N.phases.initialize;
   }
 }
 

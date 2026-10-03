@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type MatrixMode = 'floyd-warshall' | 'hungarian';
 
 export type MatrixHeaderStatus = 'idle' | 'active' | 'pivot' | 'covered' | 'assignment';
@@ -54,9 +56,9 @@ export interface MatrixComputation {
 export interface MatrixTraceState {
   readonly mode: MatrixMode;
   readonly modeLabel: string;
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly dimensionsLabel: string;
   readonly activeRowLabel: string | null;
   readonly activeColLabel: string | null;

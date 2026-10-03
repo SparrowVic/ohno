@@ -1,3 +1,4 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -29,8 +30,8 @@ export interface SccStepArgs {
   readonly detailLabel: string;
   readonly detailValue: string;
   readonly visitOrderLabel: string;
-  readonly phaseLabel: string;
-  readonly description: string;
+  readonly phaseLabel: TranslatableText;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly componentMap?: ReadonlyMap<string, number | null>;

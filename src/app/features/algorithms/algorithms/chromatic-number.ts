@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -9,6 +12,37 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.initialize'),
+    tryPalette: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.tryPalette'),
+    paletteFailed: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.paletteFailed'),
+    complete: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.complete'),
+    pick: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.pick'),
+    test: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.test'),
+    assign: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.assign'),
+    backtrack: t('features.algorithms.runtime.graph.chromaticNumber.descriptions.backtrack'),
+  },
+  results: {
+    startWith: t('features.algorithms.runtime.graph.chromaticNumber.results.startWith'),
+    palette: t('features.algorithms.runtime.graph.chromaticNumber.results.palette'),
+    candidates: t('features.algorithms.runtime.graph.chromaticNumber.results.candidates'),
+    conflict: t('features.algorithms.runtime.graph.chromaticNumber.results.conflict'),
+    fail: t('features.algorithms.runtime.graph.chromaticNumber.results.fail'),
+    legal: t('features.algorithms.runtime.graph.chromaticNumber.results.legal'),
+    undo: t('features.algorithms.runtime.graph.chromaticNumber.results.undo'),
+  },
+  phases: {
+    order: t('features.algorithms.runtime.graph.chromaticNumber.phases.order'),
+    select: t('features.algorithms.runtime.graph.chromaticNumber.phases.select'),
+    test: t('features.algorithms.runtime.graph.chromaticNumber.phases.test'),
+    commit: t('features.algorithms.runtime.graph.chromaticNumber.phases.commit'),
+    backtrack: t('features.algorithms.runtime.graph.chromaticNumber.phases.backtrack'),
+    decision: t('features.algorithms.runtime.graph.chromaticNumber.phases.decision'),
+    step: t('features.algorithms.runtime.graph.chromaticNumber.phases.step'),
+  },
+} as const;
 
 const COLOR_TONES: readonly GraphTone[] = ['component-a', 'component-b', 'component-c', 'component-d'];
 
@@ -39,13 +73,13 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
     colorByNode,
     degreeByNode,
     stack,
-    description: `Order nodes by degree, then test whether the graph fits into ${startLimit} color classes before increasing the palette.`,
+    description: i18nText(I18N.descriptions.initialize, { count: startLimit }),
     activeCodeLine: 2,
     phase: 'init',
     computation: {
       candidateLabel: 'Lower bound',
       expression: `ω(G) = ${cliqueLowerBound}`,
-      result: `start with ${startLimit}`,
+      result: i18nText(I18N.results.startWith, { count: startLimit }),
       decision: 'A clique gives the minimum number of colors worth trying first.',
     },
   });
@@ -65,13 +99,13 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
       colorByNode,
       degreeByNode,
       stack,
-      description: `Try to color the graph with only ${limit} color${limit === 1 ? '' : 's'}.`,
+      description: i18nText(I18N.descriptions.tryPalette, { count: limit }),
       activeCodeLine: 3,
       phase: 'pick-node',
       computation: {
         candidateLabel: `χ ≤ ${limit}`,
         expression: `${order.length} node(s)`,
-        result: `${limit} color palette`,
+        result: i18nText(I18N.results.palette, { count: limit }),
         decision: 'Backtracking will attempt colors in node order and undo assignments on conflicts.',
       },
     });
@@ -92,13 +126,13 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
       colorByNode,
       degreeByNode,
       stack,
-      description: `${limit} colors are not enough for this graph, so increase the palette and restart the search.`,
+      description: i18nText(I18N.descriptions.paletteFailed, { count: limit }),
       activeCodeLine: 8,
       phase: 'graph-complete',
       computation: {
         candidateLabel: `χ ≤ ${limit}`,
         expression: 'backtracking exhausted',
-        result: 'fail',
+        result: i18nText(I18N.results.fail),
         decision: 'At least one more color is necessary.',
       },
     });
@@ -117,7 +151,7 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
     colorByNode,
     degreeByNode,
     stack: order.filter((nodeId) => (colorByNode.get(nodeId) ?? null) !== null),
-    description: `Chromatic search complete. The graph needs ${bestK ?? COLOR_TONES.length} color${bestK === 1 ? '' : 's'}.`,
+    description: i18nText(I18N.descriptions.complete, { count: bestK ?? COLOR_TONES.length }),
     activeCodeLine: 9,
     phase: 'graph-complete',
     computation: {
@@ -153,13 +187,13 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
       degreeByNode,
       stack,
       currentNodeId: nodeId,
-      description: `Choose a legal color for ${nodeLabel}. Colors used by adjacent nodes are temporarily forbidden.`,
+      description: i18nText(I18N.descriptions.pick, { node: nodeLabel }),
       activeCodeLine: 4,
       phase: 'pick-node',
       computation: {
         candidateLabel: nodeLabel,
         expression: `forbidden = {${[...forbidden].sort((a, b) => a - b).join(', ')}}`,
-        result: `${limit - forbidden.size} candidate(s)`,
+        result: i18nText(I18N.results.candidates, { count: limit - forbidden.size }),
         decision: 'Try palette slots from left to right and backtrack on dead ends.',
       },
     });
@@ -180,13 +214,13 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
         currentNodeId: nodeId,
         activeEdgeId: conflictEdgeId,
         activeColor: color,
-        description: `Test color ${color} for ${nodeLabel}.`,
+        description: i18nText(I18N.descriptions.test, { color, node: nodeLabel }),
         activeCodeLine: 5,
         phase: 'inspect-edge',
         computation: {
           candidateLabel: nodeLabel,
           expression: `try color ${color}`,
-          result: conflictNeighborId ? `conflicts with ${labelById.get(conflictNeighborId) ?? conflictNeighborId}` : 'legal',
+          result: conflictNeighborId ? i18nText(I18N.results.conflict, { node: labelById.get(conflictNeighborId) ?? conflictNeighborId }) : i18nText(I18N.results.legal),
           decision: conflictNeighborId ? 'reject this color and keep searching' : 'commit color and recurse',
         },
       });
@@ -209,7 +243,7 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
         stack,
         currentNodeId: nodeId,
         activeColor: color,
-        description: `Assign color ${color} to ${nodeLabel} and continue with the next uncolored node.`,
+        description: i18nText(I18N.descriptions.assign, { color, node: nodeLabel }),
         activeCodeLine: 6,
         phase: 'relax',
         computation: {
@@ -239,13 +273,13 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
         stack,
         currentNodeId: nodeId,
         activeColor: color,
-        description: `Backtrack from ${nodeLabel}: deeper recursion failed, so release color ${color} and try the next option.`,
+        description: i18nText(I18N.descriptions.backtrack, { node: nodeLabel, color }),
         activeCodeLine: 7,
         phase: 'settle-node',
         computation: {
           candidateLabel: nodeLabel,
           expression: `${nodeLabel} = ${color}`,
-          result: 'undo',
+          result: i18nText(I18N.results.undo),
           decision: 'This branch cannot finish a legal coloring.',
         },
       });
@@ -264,7 +298,7 @@ function createStep(args: {
   readonly colorByNode: ReadonlyMap<string, number | null>;
   readonly degreeByNode: ReadonlyMap<string, number>;
   readonly stack: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -326,7 +360,7 @@ function createStep(args: {
     nodes,
     edges,
     sourceId: args.order[0] ?? args.graph.sourceId,
-    phaseLabel: phaseLabel(args.phase),
+    phaseLabel: i18nText(phaseLabel(args.phase)),
     metricLabel: 'Color',
     secondaryLabel: 'State',
     frontierLabel: 'Uncolored',
@@ -458,18 +492,18 @@ function colorSummary(
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'init':
-      return 'Order by degree';
+      return I18N.phases.order;
     case 'pick-node':
-      return 'Select next node';
+      return I18N.phases.select;
     case 'inspect-edge':
-      return 'Test color';
+      return I18N.phases.test;
     case 'relax':
-      return 'Commit color';
+      return I18N.phases.commit;
     case 'settle-node':
-      return 'Backtrack';
+      return I18N.phases.backtrack;
     case 'graph-complete':
-      return 'Palette decision';
+      return I18N.phases.decision;
     default:
-      return 'Color step';
+      return I18N.phases.step;
   }
 }

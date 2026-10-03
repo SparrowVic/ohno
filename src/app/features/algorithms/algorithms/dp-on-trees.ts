@@ -51,6 +51,10 @@ const I18N = {
     takeDominates: t('features.algorithms.runtime.dp.dpOnTrees.decisions.takeDominates'),
     skipDominates: t('features.algorithms.runtime.dp.dpOnTrees.decisions.skipDominates'),
   },
+  results: {
+    take: t('features.algorithms.runtime.dp.dpOnTrees.results.take'),
+    skip: t('features.algorithms.runtime.dp.dpOnTrees.results.skip'),
+  },
 } as const;
 
 export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortStep> {
@@ -236,7 +240,7 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
       computation: {
         label: nodes[nodeIndex]!.label,
         expression: parentTaken ? 'parent selected' : `${take[nodeIndex]!} vs ${skip[nodeIndex]!}`,
-        result: takeNode ? 'take' : 'skip',
+        result: i18nText(takeNode ? I18N.results.take : I18N.results.skip),
         decision: independentSetLabel(scenario, chosen),
       },
     });
@@ -273,7 +277,7 @@ function createStep(args: {
   const rowHeaders: DpHeaderConfig[] = [
     { id: 'row-weight', label: 'weight', status: 'source', metaLabel: 'node' },
     { id: 'row-take', label: 'take', status: 'accent', metaLabel: 'include' },
-    { id: 'row-skip', label: 'target', status: 'accent', metaLabel: 'exclude' },
+    { id: 'row-skip', label: 'skip', status: 'accent', metaLabel: 'exclude' },
     { id: 'row-best', label: 'best', status: 'target', metaLabel: 'max' },
   ];
 

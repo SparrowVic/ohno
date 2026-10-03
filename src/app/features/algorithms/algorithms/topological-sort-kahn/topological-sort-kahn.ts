@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,27 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.topologicalSort.descriptions.initialize'),
+    dequeue: t('features.algorithms.runtime.graph.topologicalSort.descriptions.dequeue'),
+    removeEdge: t('features.algorithms.runtime.graph.topologicalSort.descriptions.removeEdge'),
+    unlock: t('features.algorithms.runtime.graph.topologicalSort.descriptions.unlock'),
+    blocked: t('features.algorithms.runtime.graph.topologicalSort.descriptions.blocked'),
+    commit: t('features.algorithms.runtime.graph.topologicalSort.descriptions.commit'),
+    complete: t('features.algorithms.runtime.graph.topologicalSort.descriptions.complete'),
+  },
+  phases: {
+    dequeue: t('features.algorithms.runtime.graph.topologicalSort.phases.dequeue'),
+    removeEdge: t('features.algorithms.runtime.graph.topologicalSort.phases.removeEdge'),
+    unlock: t('features.algorithms.runtime.graph.topologicalSort.phases.unlock'),
+    blocked: t('features.algorithms.runtime.graph.topologicalSort.phases.blocked'),
+    commit: t('features.algorithms.runtime.graph.topologicalSort.phases.commit'),
+    complete: t('features.algorithms.runtime.graph.topologicalSort.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.topologicalSort.phases.initialize'),
+  },
+} as const;
 
 export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -35,7 +59,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
     removed,
     queue,
     topoOrder,
-    description: `Compute all in-degrees and enqueue nodes that start with in-degree 0.`,
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 8,
     phase: 'init',
   });
@@ -54,7 +78,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
       queue,
       topoOrder,
       currentNodeId,
-      description: `Dequeue ${labelOf(labelMap, currentNodeId)} and place it next in topological order.`,
+      description: i18nText(I18N.descriptions.dequeue, { node: labelOf(labelMap, currentNodeId) }),
       activeCodeLine: 10,
       phase: 'pick-node',
     });
@@ -73,7 +97,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
         topoOrder,
         currentNodeId,
         activeEdgeId: edge.id,
-        description: `Remove edge ${labelOf(labelMap, currentNodeId)} → ${labelOf(labelMap, neighborId)} and decrement ${labelOf(labelMap, neighborId)} in-degree.`,
+        description: i18nText(I18N.descriptions.removeEdge, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId) }),
         activeCodeLine: 13,
         phase: 'inspect-edge',
         computation: {
@@ -100,7 +124,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
           currentNodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `${labelOf(labelMap, neighborId)} now has in-degree 0, so it joins the queue.`,
+          description: i18nText(I18N.descriptions.unlock, { node: labelOf(labelMap, neighborId) }),
           activeCodeLine: 15,
           phase: 'relax',
           computation: {
@@ -121,7 +145,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
           topoOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `${labelOf(labelMap, neighborId)} stays out of the queue because its in-degree is still ${nextInDegree}.`,
+          description: i18nText(I18N.descriptions.blocked, { node: labelOf(labelMap, neighborId), inDegree: nextInDegree }),
           activeCodeLine: 14,
           phase: 'skip-relax',
           computation: {
@@ -145,7 +169,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
       queue,
       topoOrder,
       currentNodeId,
-      description: `${labelOf(labelMap, currentNodeId)} is fixed in the ordering. Continue with the next zero in-degree node.`,
+      description: i18nText(I18N.descriptions.commit, { node: labelOf(labelMap, currentNodeId) }),
       activeCodeLine: 17,
       phase: 'settle-node',
     });
@@ -159,7 +183,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
     removed,
     queue,
     topoOrder,
-    description: `Kahn complete. Produced topological order: ${topoOrder.map((id) => labelOf(labelMap, id)).join(' → ')}.`,
+    description: i18nText(I18N.descriptions.complete, { order: topoOrder.map((id) => labelOf(labelMap, id)).join(' → ') }),
     activeCodeLine: 18,
     phase: 'graph-complete',
   });
@@ -173,7 +197,7 @@ function createStep(args: {
   readonly removed: ReadonlySet<string>;
   readonly queue: readonly string[];
   readonly topoOrder: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -235,7 +259,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'InDeg',
       secondaryLabel: 'Order',
       frontierLabel: 'Zero in-degree queue',
@@ -272,18 +296,18 @@ function labelOf(map: ReadonlyMap<string, string>, nodeId: string): string {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Dequeue zero in-degree node';
+      return I18N.phases.dequeue;
     case 'inspect-edge':
-      return 'Remove outgoing edge';
+      return I18N.phases.removeEdge;
     case 'relax':
-      return 'Enqueue unlocked node';
+      return I18N.phases.unlock;
     case 'skip-relax':
-      return 'Still has prerequisites';
+      return I18N.phases.blocked;
     case 'settle-node':
-      return 'Commit topo slot';
+      return I18N.phases.commit;
     case 'graph-complete':
-      return 'Topological order ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize in-degrees';
+      return I18N.phases.initialize;
   }
 }

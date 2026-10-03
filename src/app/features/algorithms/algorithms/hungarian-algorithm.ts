@@ -1,7 +1,50 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../models/matrix';
 import { SortStep } from '../models/sort-step';
 import { HungarianScenario } from '../utils/scenarios/matrix/matrix-scenarios';
 import { cellId, createMatrixStep } from './matrix-step';
+
+const I18N = {
+  phases: {
+    initialize: t('features.algorithms.runtime.matrix.hungarian.phases.initialize'),
+    rowReduction: t('features.algorithms.runtime.matrix.hungarian.phases.rowReduction'),
+    columnReduction: t('features.algorithms.runtime.matrix.hungarian.phases.columnReduction'),
+    zeroMatching: t('features.algorithms.runtime.matrix.hungarian.phases.zeroMatching'),
+    complete: t('features.algorithms.runtime.matrix.hungarian.phases.complete'),
+    coverZeros: t('features.algorithms.runtime.matrix.hungarian.phases.coverZeros'),
+    adjustMatrix: t('features.algorithms.runtime.matrix.hungarian.phases.adjustMatrix'),
+  },
+  statuses: {
+    initialize: t('features.algorithms.runtime.matrix.hungarian.statuses.initialize'),
+    rowMinimum: t('features.algorithms.runtime.matrix.hungarian.statuses.rowMinimum'),
+    rowDone: t('features.algorithms.runtime.matrix.hungarian.statuses.rowDone'),
+    columnMinimum: t('features.algorithms.runtime.matrix.hungarian.statuses.columnMinimum'),
+    columnDone: t('features.algorithms.runtime.matrix.hungarian.statuses.columnDone'),
+    matching: t('features.algorithms.runtime.matrix.hungarian.statuses.matching'),
+    perfect: t('features.algorithms.runtime.matrix.hungarian.statuses.perfect'),
+    cover: t('features.algorithms.runtime.matrix.hungarian.statuses.cover'),
+    smallest: t('features.algorithms.runtime.matrix.hungarian.statuses.smallest'),
+    adjusted: t('features.algorithms.runtime.matrix.hungarian.statuses.adjusted'),
+  },
+  results: {
+    matched: t('features.algorithms.runtime.matrix.hungarian.results.matched'),
+    totalCost: t('features.algorithms.runtime.matrix.hungarian.results.totalCost'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.matrix.hungarian.descriptions.initialize'),
+    rowMinimum: t('features.algorithms.runtime.matrix.hungarian.descriptions.rowMinimum'),
+    rowDone: t('features.algorithms.runtime.matrix.hungarian.descriptions.rowDone'),
+    columnMinimum: t('features.algorithms.runtime.matrix.hungarian.descriptions.columnMinimum'),
+    columnDone: t('features.algorithms.runtime.matrix.hungarian.descriptions.columnDone'),
+    matching: t('features.algorithms.runtime.matrix.hungarian.descriptions.matching'),
+    complete: t('features.algorithms.runtime.matrix.hungarian.descriptions.complete'),
+    cover: t('features.algorithms.runtime.matrix.hungarian.descriptions.cover'),
+    smallest: t('features.algorithms.runtime.matrix.hungarian.descriptions.smallest'),
+    adjusted: t('features.algorithms.runtime.matrix.hungarian.descriptions.adjusted'),
+  },
+} as const;
 
 export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Generator<SortStep> {
   const working = scenario.costs.map((row) => [...row]);
@@ -10,14 +53,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
   yield createStep({
     scenario,
     working,
-    phaseLabel: 'Initialize cost matrix',
-    statusLabel: 'Original assignment costs loaded',
-    resultLabel: 'matched 0',
+    phaseLabel: i18nText(I18N.phases.initialize),
+    statusLabel: i18nText(I18N.statuses.initialize),
+    resultLabel: i18nText(I18N.results.matched, { count: 0 }),
     focusItemsLabel: 'Workers',
     focusItems: scenario.rowLabels,
     secondaryItemsLabel: 'Jobs',
     secondaryItems: scenario.colLabels,
-    description: 'Start from the original cost matrix before any reductions.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -27,14 +70,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: 'Row reduction',
-      statusLabel: `Find the minimum in row ${scenario.rowLabels[row]}`,
-      resultLabel: 'matched 0',
+      phaseLabel: i18nText(I18N.phases.rowReduction),
+      statusLabel: i18nText(I18N.statuses.rowMinimum, { row: scenario.rowLabels[row] }),
+      resultLabel: i18nText(I18N.results.matched, { count: 0 }),
       focusItemsLabel: 'Active row',
       focusItems: [scenario.rowLabels[row]!],
       secondaryItemsLabel: 'Reduced rows',
       secondaryItems: scenario.rowLabels.slice(0, row),
-      description: `Subtract the smallest value in row ${scenario.rowLabels[row]} from every cell in that row.`,
+      description: i18nText(I18N.descriptions.rowMinimum, { row: scenario.rowLabels[row] }),
       activeCodeLine: 4,
       activeRow: row,
       computation: {
@@ -52,14 +95,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: 'Row reduction',
-      statusLabel: `Row ${scenario.rowLabels[row]} normalized`,
-      resultLabel: 'matched 0',
+      phaseLabel: i18nText(I18N.phases.rowReduction),
+      statusLabel: i18nText(I18N.statuses.rowDone, { row: scenario.rowLabels[row] }),
+      resultLabel: i18nText(I18N.results.matched, { count: 0 }),
       focusItemsLabel: 'Active row',
       focusItems: [scenario.rowLabels[row]!],
       secondaryItemsLabel: 'Reduced rows',
       secondaryItems: scenario.rowLabels.slice(0, row + 1),
-      description: `Row ${scenario.rowLabels[row]} now contains a zero and preserves the same optimal assignment structure.`,
+      description: i18nText(I18N.descriptions.rowDone, { row: scenario.rowLabels[row] }),
       activeCodeLine: 4,
       activeRow: row,
       phase: 'relax',
@@ -79,14 +122,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: 'Column reduction',
-      statusLabel: `Find the minimum in column ${scenario.colLabels[col]}`,
-      resultLabel: 'matched 0',
+      phaseLabel: i18nText(I18N.phases.columnReduction),
+      statusLabel: i18nText(I18N.statuses.columnMinimum, { column: scenario.colLabels[col] }),
+      resultLabel: i18nText(I18N.results.matched, { count: 0 }),
       focusItemsLabel: 'Active column',
       focusItems: [scenario.colLabels[col]!],
       secondaryItemsLabel: 'Reduced columns',
       secondaryItems: scenario.colLabels.slice(0, col),
-      description: `Subtract the smallest value in column ${scenario.colLabels[col]} from the entire column.`,
+      description: i18nText(I18N.descriptions.columnMinimum, { column: scenario.colLabels[col] }),
       activeCodeLine: 5,
       activeCol: col,
       computation: {
@@ -104,14 +147,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: 'Column reduction',
-      statusLabel: `Column ${scenario.colLabels[col]} normalized`,
-      resultLabel: 'matched 0',
+      phaseLabel: i18nText(I18N.phases.columnReduction),
+      statusLabel: i18nText(I18N.statuses.columnDone, { column: scenario.colLabels[col] }),
+      resultLabel: i18nText(I18N.results.matched, { count: 0 }),
       focusItemsLabel: 'Active column',
       focusItems: [scenario.colLabels[col]!],
       secondaryItemsLabel: 'Reduced columns',
       secondaryItems: scenario.colLabels.slice(0, col + 1),
-      description: `Column ${scenario.colLabels[col]} now contains a zero while preserving assignment optimality.`,
+      description: i18nText(I18N.descriptions.columnDone, { column: scenario.colLabels[col] }),
       activeCodeLine: 5,
       activeCol: col,
       phase: 'relax',
@@ -136,14 +179,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: `Zero matching ${iteration}`,
-      statusLabel: `Maximum zero matching size ${matchedCount}`,
-      resultLabel: `matched ${matchedCount}`,
+      phaseLabel: i18nText(I18N.phases.zeroMatching, { round: iteration }),
+      statusLabel: i18nText(I18N.statuses.matching, { size: matchedCount }),
+      resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
       focusItemsLabel: 'Current matches',
       focusItems: pairLabels(scenario, matching),
       secondaryItemsLabel: 'Zeros',
       secondaryItems: zeroLocations(scenario, zeroMap).slice(0, 8),
-      description: 'Build the bipartite zero graph and find the largest set of non-conflicting zero assignments.',
+      description: i18nText(I18N.descriptions.matching),
       activeCodeLine: 6,
       assignmentCells: assignmentSet,
       computation: {
@@ -161,14 +204,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       yield createStep({
         scenario,
         working,
-        phaseLabel: 'Optimal assignment ready',
-        statusLabel: `Perfect zero matching size ${matchedCount}`,
-        resultLabel: `total cost ${totalCost}`,
+        phaseLabel: i18nText(I18N.phases.complete),
+        statusLabel: i18nText(I18N.statuses.perfect, { size: matchedCount }),
+        resultLabel: i18nText(I18N.results.totalCost, { cost: totalCost }),
         focusItemsLabel: 'Optimal pairs',
         focusItems: pairLabels(scenario, matching),
         secondaryItemsLabel: 'Why it works',
         secondaryItems: ['Perfect zero matching on the reduced matrix corresponds to the minimum original cost'],
-        description: 'The Hungarian algorithm is complete: every worker is matched to one job at minimum total cost.',
+        description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 10,
         phase: 'graph-complete',
         assignmentCells: assignmentSet,
@@ -186,14 +229,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: `Cover zeros ${iteration}`,
-      statusLabel: `${cover.coveredRows.size + cover.coveredCols.size} line(s) cover all zeros`,
-      resultLabel: `matched ${matchedCount}`,
+      phaseLabel: i18nText(I18N.phases.coverZeros, { round: iteration }),
+      statusLabel: i18nText(I18N.statuses.cover, { lines: cover.coveredRows.size + cover.coveredCols.size }),
+      resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
       focusItemsLabel: 'Covered rows',
       focusItems: [...cover.coveredRows].map((row) => scenario.rowLabels[row]!),
       secondaryItemsLabel: 'Covered columns',
       secondaryItems: [...cover.coveredCols].map((col) => scenario.colLabels[col]!),
-      description: 'Use the maximum zero matching to derive the minimum set of covering lines via König’s theorem.',
+      description: i18nText(I18N.descriptions.cover),
       activeCodeLine: 7,
       coveredRows: cover.coveredRows,
       coveredCols: cover.coveredCols,
@@ -210,14 +253,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: `Adjust matrix ${iteration}`,
-      statusLabel: `Smallest uncovered value is ${minUncovered}`,
-      resultLabel: `matched ${matchedCount}`,
+      phaseLabel: i18nText(I18N.phases.adjustMatrix, { round: iteration }),
+      statusLabel: i18nText(I18N.statuses.smallest, { value: minUncovered }),
+      resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
       focusItemsLabel: 'Covered rows',
       focusItems: [...cover.coveredRows].map((row) => scenario.rowLabels[row]!),
       secondaryItemsLabel: 'Covered columns',
       secondaryItems: [...cover.coveredCols].map((col) => scenario.colLabels[col]!),
-      description: 'Find the smallest uncovered value before shifting the matrix to create new zeros.',
+      description: i18nText(I18N.descriptions.smallest),
       activeCodeLine: 8,
       coveredRows: cover.coveredRows,
       coveredCols: cover.coveredCols,
@@ -253,14 +296,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     yield createStep({
       scenario,
       working,
-      phaseLabel: `Adjust matrix ${iteration}`,
-      statusLabel: 'Matrix shifted to create fresh zeros',
-      resultLabel: `matched ${matchedCount}`,
+      phaseLabel: i18nText(I18N.phases.adjustMatrix, { round: iteration }),
+      statusLabel: i18nText(I18N.statuses.adjusted),
+      resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
       focusItemsLabel: 'Current matches',
       focusItems: pairLabels(scenario, matching),
       secondaryItemsLabel: 'Next step',
       secondaryItems: ['Rebuild zero matching on the adjusted matrix'],
-      description: 'The adjusted matrix preserves optimal assignments while exposing new independent zeros.',
+      description: i18nText(I18N.descriptions.adjusted),
       activeCodeLine: 9,
       phase: 'pass-complete',
       coveredRows: cover.coveredRows,
@@ -281,14 +324,14 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
 function createStep(args: {
   readonly scenario: HungarianScenario;
   readonly working: readonly (readonly number[])[];
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
   readonly secondaryItemsLabel: string;
   readonly secondaryItems: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
   readonly activeRow?: number | null;

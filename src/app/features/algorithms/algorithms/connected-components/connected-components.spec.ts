@@ -31,7 +31,7 @@ describe('connected-components', () => {
     );
 
     expect(finalStep?.phase).toBe('graph-complete');
-    expect(finalStep?.description).toContain('Found 2 disconnected groups');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.connectedComponents.descriptions.complete', params: { count: 2 } });
     expect(finalStep?.graph?.detailValue).toBe('C1: A, B, C · C2: D, E');
     expect(byLabel).toEqual({ A: 1, B: 1, C: 1, D: 2, E: 2 });
   });

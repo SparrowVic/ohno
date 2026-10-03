@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -9,6 +12,28 @@ import {
   WeightedGraphEdge,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.steinerTree.descriptions.initialize'),
+    seedTerminal: t('features.algorithms.runtime.graph.steinerTree.descriptions.seedTerminal'),
+    merge: t('features.algorithms.runtime.graph.steinerTree.descriptions.merge'),
+    propagate: t('features.algorithms.runtime.graph.steinerTree.descriptions.propagate'),
+    complete: t('features.algorithms.runtime.graph.steinerTree.descriptions.complete'),
+  },
+  results: {
+    terminals: t('features.algorithms.runtime.graph.steinerTree.results.terminals'),
+    cost: t('features.algorithms.runtime.graph.steinerTree.results.cost'),
+  },
+  phases: {
+    seed: t('features.algorithms.runtime.graph.steinerTree.phases.seed'),
+    base: t('features.algorithms.runtime.graph.steinerTree.phases.base'),
+    merge: t('features.algorithms.runtime.graph.steinerTree.phases.merge'),
+    propagate: t('features.algorithms.runtime.graph.steinerTree.phases.propagate'),
+    complete: t('features.algorithms.runtime.graph.steinerTree.phases.complete'),
+    step: t('features.algorithms.runtime.graph.steinerTree.phases.step'),
+  },
+} as const;
 
 type SteinerParent =
   | { readonly kind: 'base'; readonly terminalId: string }
@@ -37,13 +62,13 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
     parent,
     bestRootId,
     history,
-    description: `Choose terminal set ${terminals.map((id) => labelOf(labelById, id)).join(', ')} and seed single-terminal shortest-path states.`,
+    description: i18nText(I18N.descriptions.initialize, { terminals: terminals.map((id) => labelOf(labelById, id)).join(', ') }),
     activeCodeLine: 2,
     phase: 'init',
     computation: {
       candidateLabel: 'Terminals',
       expression: terminals.map((id) => labelOf(labelById, id)).join(' · '),
-      result: `${terminals.length} terminal(s)`,
+      result: i18nText(I18N.results.terminals, { count: terminals.length }),
       decision: 'Dreyfus-Wagner grows exact DP states over terminal subsets.',
     },
   });
@@ -71,7 +96,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
       bestRootId: terminalId,
       history,
       currentNodeId: terminalId,
-      description: `Seed all nodes with their shortest distance to terminal ${labelOf(labelById, terminalId)}.`,
+      description: i18nText(I18N.descriptions.seedTerminal, { terminal: labelOf(labelById, terminalId) }),
       activeCodeLine: 3,
       phase: 'pick-node',
       computation: {
@@ -127,7 +152,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
         bestRootId: nodeId,
         history,
         currentNodeId: nodeId,
-        description: `Merge two smaller terminal groups at node ${labelOf(labelById, nodeId)}.`,
+        description: i18nText(I18N.descriptions.merge, { node: labelOf(labelById, nodeId) }),
         activeCodeLine: 4,
         phase: 'inspect-edge',
         computation: {
@@ -184,7 +209,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
         bestRootId: targetId,
         history,
         currentNodeId: targetId,
-        description: `Propagate the merged terminal subset through shortest paths so every node can serve as the root of this subset state.`,
+        description: i18nText(I18N.descriptions.propagate),
         activeCodeLine: 5,
         phase: 'relax',
         computation: {
@@ -220,13 +245,13 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
     parent,
     bestRootId,
     history,
-    description: `Steiner tree complete. Total cost ${bestCost} connects all terminals with only the necessary connector nodes.`,
+    description: i18nText(I18N.descriptions.complete, { cost: bestCost }),
     activeCodeLine: 6,
     phase: 'graph-complete',
     computation: {
       candidateLabel: 'Best root',
       expression: `${labelOf(labelById, bestRootId)} for ${maskLabel(fullMask, terminals, labelById)}`,
-      result: `cost ${bestCost}`,
+      result: i18nText(I18N.results.cost, { cost: bestCost }),
       decision: 'Teal edges form the exact minimum-cost tree for this terminal set.',
     },
   });
@@ -242,7 +267,7 @@ function createStep(args: {
   readonly parent: ReadonlyMap<string, SteinerParent>;
   readonly bestRootId: string;
   readonly history: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -314,7 +339,7 @@ function createStep(args: {
     nodes,
     edges,
     sourceId: args.graph.sourceId,
-    phaseLabel: phaseLabel(args.phase),
+    phaseLabel: i18nText(phaseLabel(args.phase)),
     metricLabel: 'Cost',
     secondaryLabel: 'Role / Via',
     frontierLabel: 'Best roots',
@@ -511,16 +536,16 @@ function labelOf(labelById: ReadonlyMap<string, string>, nodeId: string): string
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'init':
-      return 'Seed terminal states';
+      return I18N.phases.seed;
     case 'pick-node':
-      return 'Single-terminal base';
+      return I18N.phases.base;
     case 'inspect-edge':
-      return 'Merge terminal subsets';
+      return I18N.phases.merge;
     case 'relax':
-      return 'Propagate subset root';
+      return I18N.phases.propagate;
     case 'graph-complete':
-      return 'Exact Steiner tree';
+      return I18N.phases.complete;
     default:
-      return 'Steiner step';
+      return I18N.phases.step;
   }
 }

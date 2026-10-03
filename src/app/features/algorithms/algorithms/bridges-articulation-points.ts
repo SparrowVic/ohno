@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,34 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.bridges.descriptions.initialize'),
+    complete: t('features.algorithms.runtime.graph.bridges.descriptions.complete'),
+    enter: t('features.algorithms.runtime.graph.bridges.descriptions.enter'),
+    inspect: t('features.algorithms.runtime.graph.bridges.descriptions.inspect'),
+    descend: t('features.algorithms.runtime.graph.bridges.descriptions.descend'),
+    bridge: t('features.algorithms.runtime.graph.bridges.descriptions.bridge'),
+    articulation: t('features.algorithms.runtime.graph.bridges.descriptions.articulation'),
+    propagate: t('features.algorithms.runtime.graph.bridges.descriptions.propagate'),
+    backEdge: t('features.algorithms.runtime.graph.bridges.descriptions.backEdge'),
+    leave: t('features.algorithms.runtime.graph.bridges.descriptions.leave'),
+  },
+  results: {
+    treeEdge: t('features.algorithms.runtime.graph.bridges.results.treeEdge'),
+    backEdge: t('features.algorithms.runtime.graph.bridges.results.backEdge'),
+  },
+  phases: {
+    enter: t('features.algorithms.runtime.graph.bridges.phases.enter'),
+    inspect: t('features.algorithms.runtime.graph.bridges.phases.inspect'),
+    descend: t('features.algorithms.runtime.graph.bridges.phases.descend'),
+    update: t('features.algorithms.runtime.graph.bridges.phases.update'),
+    propagate: t('features.algorithms.runtime.graph.bridges.phases.propagate'),
+    complete: t('features.algorithms.runtime.graph.bridges.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.bridges.phases.initialize'),
+  },
+} as const;
 
 export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -30,7 +61,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
     order,
     articulation,
     bridges,
-    description: 'Initialize discovery and low-link values, then run DFS to reveal critical cuts.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -50,7 +81,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
     order,
     articulation,
     bridges,
-    description: `Bridge scan complete. Found ${bridges.size} bridge(s) and ${articulation.size} articulation point(s).`,
+    description: i18nText(I18N.descriptions.complete, { bridges: bridges.size, points: articulation.size }),
     activeCodeLine: 16,
     phase: 'graph-complete',
   });
@@ -73,7 +104,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
       articulation,
       bridges,
       currentNodeId: nodeId,
-      description: `Enter ${labelOf(labelMap, nodeId)} with discovery time ${time}.`,
+      description: i18nText(I18N.descriptions.enter, { node: labelOf(labelMap, nodeId), time }),
       activeCodeLine: 4,
       phase: 'pick-node',
     });
@@ -96,13 +127,13 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
         bridges,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `Inspect edge ${labelOf(labelMap, nodeId)} ↔ ${labelOf(labelMap, neighborId)}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, nodeId), to: labelOf(labelMap, neighborId) }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
           expression: discMap.get(neighborId) === null ? 'unvisited' : `disc=${discMap.get(neighborId)}`,
-          result: discMap.get(neighborId) === null ? 'tree edge' : 'back edge',
+          result: i18nText(discMap.get(neighborId) === null ? I18N.results.treeEdge : I18N.results.backEdge),
           decision: discMap.get(neighborId) === null ? 'descend into child' : 'update low-link',
         },
       });
@@ -124,7 +155,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `Tree edge found. Descend from ${labelOf(labelMap, nodeId)} to ${labelOf(labelMap, neighborId)}.`,
+          description: i18nText(I18N.descriptions.descend, { from: labelOf(labelMap, nodeId), to: labelOf(labelMap, neighborId) }),
           activeCodeLine: 10,
           phase: 'relax',
           computation: {
@@ -163,10 +194,10 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
           description: isBridge
-            ? `${labelOf(labelMap, edge.from)} ↔ ${labelOf(labelMap, edge.to)} is a bridge because low[child] > disc[parent].`
+            ? i18nText(I18N.descriptions.bridge, { from: labelOf(labelMap, edge.from), to: labelOf(labelMap, edge.to) })
             : isArticulation
-              ? `${labelOf(labelMap, nodeId)} is an articulation point because one child cannot reach above it.`
-              : `Update low[${labelOf(labelMap, nodeId)}] after returning from ${labelOf(labelMap, neighborId)}.`,
+              ? i18nText(I18N.descriptions.articulation, { node: labelOf(labelMap, nodeId) })
+              : i18nText(I18N.descriptions.propagate, { node: labelOf(labelMap, nodeId), child: labelOf(labelMap, neighborId) }),
           activeCodeLine: isBridge || isArticulation ? 13 : 12,
           phase: 'settle-node',
           computation: {
@@ -193,7 +224,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
         bridges,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `Back edge to ${labelOf(labelMap, neighborId)} lowers low[${labelOf(labelMap, nodeId)}] if needed.`,
+        description: i18nText(I18N.descriptions.backEdge, { target: labelOf(labelMap, neighborId), node: labelOf(labelMap, nodeId) }),
         activeCodeLine: 8,
         phase: 'skip-relax',
         computation: {
@@ -220,7 +251,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
       articulation,
       bridges,
       currentNodeId: nodeId,
-      description: `Leave ${labelOf(labelMap, nodeId)} with disc=${discMap.get(nodeId)} and low=${lowMap.get(nodeId)}.`,
+      description: i18nText(I18N.descriptions.leave, { node: labelOf(labelMap, nodeId), disc: discMap.get(nodeId), low: lowMap.get(nodeId) }),
       activeCodeLine: 15,
       phase: 'settle-node',
     });
@@ -237,7 +268,7 @@ function createStep(args: {
   readonly order: readonly string[];
   readonly articulation: ReadonlySet<string>;
   readonly bridges: ReadonlySet<string>;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -303,7 +334,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Disc',
       secondaryLabel: 'Low',
       frontierLabel: 'DFS stack',
@@ -355,18 +386,18 @@ function labelOf(map: ReadonlyMap<string, string>, nodeId: string): string {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Enter DFS node';
+      return I18N.phases.enter;
     case 'inspect-edge':
-      return 'Inspect DFS edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Descend to child';
+      return I18N.phases.descend;
     case 'skip-relax':
-      return 'Update low-link';
+      return I18N.phases.update;
     case 'settle-node':
-      return 'Propagate low-link';
+      return I18N.phases.propagate;
     case 'graph-complete':
-      return 'Critical cuts ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize low-link scan';
+      return I18N.phases.initialize;
   }
 }

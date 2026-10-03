@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   NumberLabHistoryEntry,
   NumberLabRegister,
@@ -14,11 +15,41 @@ import {
 import { SortStep } from '../../models/sort-step';
 import type { PollardsRhoScenario } from '../../utils/scenarios/number-lab/pollards-rho-scenarios';
 import { createNumberLabStep } from '../number-lab-step';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.pollardsRho.modeLabel'),
   numberLabModeLabel: t('features.algorithms.runtime.numberLab.pollardsRho.modeLabel'),
+  sections: {
+    failedRun: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.failedRun'),
+    attempt: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.attempt'),
+    attemptConclusion: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.attemptConclusion'),
+    block: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.block'),
+    blockFirstBatch: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.blockFirstBatch'),
+    blockSecondBatch: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.blockSecondBatch'),
+    callFirst: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.callFirst'),
+    callSecond: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.callSecond'),
+    callThird: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.callThird'),
+    callNth: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.callNth'),
+    firstSplit: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.firstSplit'),
+    splitDivisor: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.splitDivisor'),
+    splitQuotient: t('features.algorithms.runtime.scratchpadLab.pollardsRho.sections.splitQuotient'),
+  },
+  notes: {
+    nontrivialDivisor: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.nontrivialDivisor'),
+    secondFactor: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.secondFactor'),
+    cycle: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.cycle'),
+    splitFirst: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.splitFirst'),
+    splitSecond: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.splitSecond'),
+    splitThird: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.splitThird'),
+    splitNth: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.splitNth'),
+    sorted: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.sorted'),
+    compositeFactor: t('features.algorithms.runtime.scratchpadLab.pollardsRho.notes.compositeFactor'),
+  },
+  decisions: {
+    noFactor: t('features.algorithms.runtime.scratchpadLab.pollardsRho.decisions.noFactor'),
+  },
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -323,11 +354,11 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -345,11 +376,11 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
       id: 'section-result',
       kind: 'result',
       marker: RESULT_MARKER,
-      content: 'Wynik',
+      content: i18nText(NOTEBOOK_TEXT.sections.result),
     });
   }
 
-  function noResultSection(content = 'Nieudany przebieg'): LineBuilder {
+  function noResultSection(content: TranslatableText = i18nText(I18N.sections.failedRun)): LineBuilder {
     return paperLine({
       id: 'section-no-result',
       kind: 'result',
@@ -391,7 +422,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
     readonly functionName: string;
     readonly rows: readonly FloydRow[];
   }): Generator<SortStep> {
-    yield* emit(section(`${opts.idPrefix}-iterations`, 'Iteracje'));
+    yield* emit(section(`${opts.idPrefix}-iterations`, i18nText(NOTEBOOK_TEXT.sections.iterations)));
     for (const row of opts.rows) {
       yield* emit(note(`${opts.idPrefix}-iter-${row.index}-label`, `i = ${row.index}`));
       yield* emit(
@@ -423,7 +454,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
 
   function* emitFloydRun(opts: {
     readonly idPrefix: string;
-    readonly title: string;
+    readonly title: TranslatableText;
     readonly n: number;
     readonly c: number;
     readonly x0: number;
@@ -449,12 +480,12 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
     readonly includeNonTrivialCheck?: boolean;
   }): Generator<SortStep> {
     const quotient = opts.n / opts.factor;
-    yield* emit(section(`${opts.idPrefix}-split`, 'Rozbicie'));
+    yield* emit(section(`${opts.idPrefix}-split`, i18nText(NOTEBOOK_TEXT.sections.factorisation)));
     if (opts.includeNonTrivialCheck) {
       yield* emit(math(`${opts.idPrefix}-nontrivial`, `1 < ${opts.factor} < ${opts.n}`));
-      yield* emit(note(`${opts.idPrefix}-factor-label`, 'Znaleziono nietrywialny dzielnik:'));
+      yield* emit(note(`${opts.idPrefix}-factor-label`, i18nText(I18N.notes.nontrivialDivisor)));
       yield* emit(math(`${opts.idPrefix}-factor`, `d = ${opts.factor}`));
-      yield* emit(note(`${opts.idPrefix}-quotient-label`, 'Drugi czynnik:'));
+      yield* emit(note(`${opts.idPrefix}-quotient-label`, i18nText(I18N.notes.secondFactor)));
     } else {
       yield* emit(math(`${opts.idPrefix}-factor`, `d = ${opts.factor}`));
     }
@@ -462,7 +493,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
   }
 
   function* emitBasicFloyd(): Generator<SortStep> {
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emitFloydParameters({
       idPrefix: 'basic-params',
       n: scenario.n,
@@ -497,7 +528,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
   function* emitRetryAfterCycle(): Generator<SortStep> {
     const firstOutcome = yield* emitFloydRun({
       idPrefix: 'retry-first',
-      title: 'Próba 1',
+      title: i18nText(I18N.sections.attempt, { n: 1 }),
       n: scenario.n,
       c: scenario.cFail,
       x0: scenario.x0,
@@ -505,18 +536,18 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
     });
 
     const lastFirstRow = firstOutcome.rows.at(-1);
-    yield* emit(section('retry-first-conclusion-section', 'Wniosek po próbie 1'));
+    yield* emit(section('retry-first-conclusion-section', i18nText(I18N.sections.attemptConclusion, { n: 1 })));
     yield* emit(math('retry-first-cycle', `d = ${lastFirstRow?.gcd ?? scenario.n} = n`));
     yield* emit(
       note(
         'retry-first-cycle-note',
-        'To nie jest nietrywialny dzielnik. Trafiliśmy w cykl w taki sposób, że x = y modulo n, więc gcd(0, n) oddaje całe n. Algorytm nie znalazł faktora.',
+        i18nText(I18N.notes.cycle),
       ),
     );
 
     const retryOutcome = yield* emitFloydRun({
       idPrefix: 'retry-second',
-      title: 'Próba 2',
+      title: i18nText(I18N.sections.attempt, { n: 2 }),
       n: scenario.n,
       c: scenario.cRetry,
       x0: scenario.x0,
@@ -547,7 +578,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
       scenario.maxIterations,
     );
 
-    yield* emit(section('brent-parameters', 'Parametry'));
+    yield* emit(section('brent-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emitFloydParameters({
       idPrefix: 'brent-params',
       n: scenario.n,
@@ -562,8 +593,8 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
       const batchIndex = sameR.indexOf(batch);
       const label =
         sameR.length > 1
-          ? `Blok r = ${batch.r}, ${batchIndex === 0 ? 'pierwsza' : 'druga'} paczka`
-          : `Blok r = ${batch.r}`;
+          ? i18nText(batchIndex === 0 ? I18N.sections.blockFirstBatch : I18N.sections.blockSecondBatch, { r: batch.r })
+          : i18nText(I18N.sections.block, { r: batch.r });
       yield* emit(section(`brent-r-${batch.r}-${batchIndex}`, label));
       yield* emit(math(`brent-r-${batch.r}-${batchIndex}-x`, `x = ${batch.x}`));
       for (let i = 0; i < batch.rows.length; i++) {
@@ -607,7 +638,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
       callIndex += 1;
       const outcome = yield* emitFloydRun({
         idPrefix: `recursive-call-${callIndex}`,
-        title: `${ordinalCall(callIndex)} wywołanie`,
+        title: callTitle(callIndex),
         n: current,
         c: scenario.c,
         x0: scenario.x0,
@@ -624,7 +655,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
         ),
       );
       yield* emit(
-        note(`recursive-call-${callIndex}-split-label`, `${ordinalSplit(callIndex)} rozbicie:`),
+        note(`recursive-call-${callIndex}-split-label`, splitTitle(callIndex)),
       );
       yield* emit(
         math(`recursive-call-${callIndex}-split`, `${current} = ${outcome.factor} * ${quotient}`),
@@ -638,7 +669,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
 
     yield* emit(resultSection());
     yield* emit(math('recursive-result-discovery', `${scenario.n} = ${factors.join(' * ')}`));
-    yield* emit(note('recursive-result-sorted-label', 'Po uporządkowaniu:'));
+    yield* emit(note('recursive-result-sorted-label', i18nText(I18N.notes.sorted)));
     yield* emit(
       math(
         'recursive-result-sorted',
@@ -650,7 +681,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
   function* emitCompositeFactorSplit(): Generator<SortStep> {
     const firstOutcome = yield* emitFloydRun({
       idPrefix: 'composite-first-call',
-      title: 'Pierwsze wywołanie',
+      title: i18nText(I18N.sections.callFirst),
       n: scenario.n,
       c: scenario.c,
       x0: scenario.x0,
@@ -663,7 +694,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
 
     const firstFactor = firstOutcome.factor;
     const quotient = scenario.n / firstFactor;
-    yield* emit(section('composite-first-split-section', 'Pierwsze rozbicie'));
+    yield* emit(section('composite-first-split-section', i18nText(I18N.sections.firstSplit)));
     yield* emit(math('composite-first-factor', `d = ${firstFactor}`));
     yield* emit(math('composite-first-quotient', `${scenario.n} / ${firstFactor} = ${quotient}`));
     yield* emit(math('composite-first-product', `${scenario.n} = ${firstFactor} * ${quotient}`));
@@ -675,12 +706,12 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
       yield* emit(
         note(
           'composite-factor-not-prime',
-          `Dzielnik ${firstFactor} nie jest pierwszy, więc nie wolno kończyć. No chyba że celem jest oddanie rozwiązania, które wygląda jak niedokończona kanapka.`,
+          i18nText(I18N.notes.compositeFactor, { factor: firstFactor }),
         ),
       );
       const splitFactorOutcome = yield* emitFloydRun({
         idPrefix: 'composite-factor-call',
-        title: `Rozbicie dzielnika ${firstFactor}`,
+        title: i18nText(I18N.sections.splitDivisor, { factor: firstFactor }),
         n: firstFactor,
         c: scenario.cForCompositeFactor,
         x0: scenario.x0,
@@ -711,7 +742,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
     } else {
       const splitQuotientOutcome = yield* emitFloydRun({
         idPrefix: 'composite-quotient-call',
-        title: `Rozbicie ilorazu ${quotient}`,
+        title: i18nText(I18N.sections.splitQuotient, { quotient }),
         n: quotient,
         c: scenario.c,
         x0: scenario.x0,
@@ -738,7 +769,7 @@ export function* pollardsRhoGenerator(scenario: PollardsRhoScenario): Generator<
 
     yield* emit(resultSection());
     yield* emit(math('composite-result-discovery', `${scenario.n} = ${factors.join(' * ')}`));
-    yield* emit(note('composite-result-sorted-label', 'Po uporządkowaniu:'));
+    yield* emit(note('composite-result-sorted-label', i18nText(I18N.notes.sorted)));
     yield* emit(
       math(
         'composite-result-sorted',
@@ -849,19 +880,19 @@ function groupBatchesByR(batches: readonly BrentBatch[]): Map<number, BrentBatch
   return result;
 }
 
-function phaseFor(builder: LineBuilder): string {
-  if (builder.id.includes('result')) return 'Wynik';
-  if (builder.id.includes('split') || builder.id.includes('quotient')) return 'Rozbicie';
-  if (builder.id.includes('iter') || builder.id.includes('brent-r')) return 'Iteracje';
-  if (builder.id.includes('params') || builder.id.includes('parameters')) return 'Parametry';
-  return 'Obliczenia';
+function phaseFor(builder: LineBuilder): TranslatableText {
+  if (builder.id.includes('result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('split') || builder.id.includes('quotient')) return i18nText(NOTEBOOK_TEXT.sections.factorisation);
+  if (builder.id.includes('iter') || builder.id.includes('brent-r')) return i18nText(NOTEBOOK_TEXT.sections.iterations);
+  if (builder.id.includes('params') || builder.id.includes('parameters')) return i18nText(NOTEBOOK_TEXT.sections.parameters);
+  return i18nText(NOTEBOOK_TEXT.sections.computation);
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.id === 'section-no-result') return 'Przebieg nie znalazł faktora.';
-  if (builder.kind === 'result') return 'Zapisujemy wynik.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
-  return 'Liczymy kolejny wiersz.';
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.id === 'section-no-result') return i18nText(I18N.decisions.noFactor);
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
@@ -878,29 +909,29 @@ function numberLabToneFor(builder: LineBuilder): NumberLabTone {
   return 'update';
 }
 
-function ordinalCall(index: number): string {
+function callTitle(index: number): TranslatableText {
   switch (index) {
     case 1:
-      return 'Pierwsze';
+      return i18nText(I18N.sections.callFirst);
     case 2:
-      return 'Drugie';
+      return i18nText(I18N.sections.callSecond);
     case 3:
-      return 'Trzecie';
+      return i18nText(I18N.sections.callThird);
     default:
-      return `${index}.`;
+      return i18nText(I18N.sections.callNth, { n: index });
   }
 }
 
-function ordinalSplit(index: number): string {
+function splitTitle(index: number): TranslatableText {
   switch (index) {
     case 1:
-      return 'Pierwsze';
+      return i18nText(I18N.notes.splitFirst);
     case 2:
-      return 'Drugie';
+      return i18nText(I18N.notes.splitSecond);
     case 3:
-      return 'Trzecie';
+      return i18nText(I18N.notes.splitThird);
     default:
-      return `${index}.`;
+      return i18nText(I18N.notes.splitNth, { n: index });
   }
 }
 

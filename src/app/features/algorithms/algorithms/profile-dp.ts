@@ -6,16 +6,18 @@ import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { ProfileDpScenario } from '../utils/scenarios/dp/dp-scenarios';
 
-type ProfileTransition = { readonly nextMask: number; readonly label: string };
+type ProfileTransitionKind = 'verticalDomino' | 'twoHorizontals' | 'bottomHorizontal' | 'topHorizontal' | 'alreadyFilled';
+
+type ProfileTransition = { readonly nextMask: number; readonly kind: ProfileTransitionKind };
 
 const PROFILE_TRANSITIONS: Record<number, readonly ProfileTransition[]> = {
   0: [
-    { nextMask: 0, label: 'vertical domino' },
-    { nextMask: 3, label: 'two horizontals' },
+    { nextMask: 0, kind: 'verticalDomino' },
+    { nextMask: 3, kind: 'twoHorizontals' },
   ],
-  1: [{ nextMask: 2, label: 'bottom horizontal' }],
-  2: [{ nextMask: 1, label: 'top horizontal' }],
-  3: [{ nextMask: 0, label: 'already filled' }],
+  1: [{ nextMask: 2, kind: 'bottomHorizontal' }],
+  2: [{ nextMask: 1, kind: 'topHorizontal' }],
+  3: [{ nextMask: 0, kind: 'alreadyFilled' }],
 };
 
 const I18N = {
@@ -29,7 +31,6 @@ const I18N = {
   },
   descriptions: {
     initialize: t('features.algorithms.runtime.dp.profileDp.descriptions.initialize'),
-    inspectTransition: t('features.algorithms.runtime.dp.profileDp.descriptions.inspectTransition'),
     commitCount: t('features.algorithms.runtime.dp.profileDp.descriptions.commitCount'),
     backtrackRoute: t('features.algorithms.runtime.dp.profileDp.descriptions.backtrackRoute'),
     complete: t('features.algorithms.runtime.dp.profileDp.descriptions.complete'),
@@ -58,6 +59,13 @@ const I18N = {
     storeParentFrontier: t('features.algorithms.runtime.dp.profileDp.decisions.storeParentFrontier'),
     originReached: t('features.algorithms.runtime.dp.profileDp.decisions.originReached'),
     jumpToParent: t('features.algorithms.runtime.dp.profileDp.decisions.jumpToParent'),
+  },
+  transitions: {
+    verticalDomino: t('features.algorithms.runtime.dp.profileDp.transitions.verticalDomino'),
+    twoHorizontals: t('features.algorithms.runtime.dp.profileDp.transitions.twoHorizontals'),
+    bottomHorizontal: t('features.algorithms.runtime.dp.profileDp.transitions.bottomHorizontal'),
+    topHorizontal: t('features.algorithms.runtime.dp.profileDp.transitions.topHorizontal'),
+    alreadyFilled: t('features.algorithms.runtime.dp.profileDp.transitions.alreadyFilled'),
   },
 } as const;
 
@@ -101,11 +109,10 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
           route,
           activeCell: [column + 1, nextMask],
           candidateCells: [[column, mask]],
-          description: i18nText(I18N.descriptions.inspectTransition, {
+          description: i18nText(I18N.transitions[transition.kind], {
             column: column + 1,
             from: profileLabel(mask, scenario.height),
             to: profileLabel(nextMask, scenario.height),
-            transition: transition.label,
           }),
           activeCodeLine: 5,
           phaseLabel: I18N.phases.inspectTransition,

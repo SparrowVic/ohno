@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,27 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.dfs.descriptions.initialize'),
+    pop: t('features.algorithms.runtime.graph.dfs.descriptions.pop'),
+    inspect: t('features.algorithms.runtime.graph.dfs.descriptions.inspect'),
+    skip: t('features.algorithms.runtime.graph.dfs.descriptions.skip'),
+    discover: t('features.algorithms.runtime.graph.dfs.descriptions.discover'),
+    finish: t('features.algorithms.runtime.graph.dfs.descriptions.finish'),
+    complete: t('features.algorithms.runtime.graph.dfs.descriptions.complete'),
+  },
+  phases: {
+    pop: t('features.algorithms.runtime.graph.dfs.phases.pop'),
+    inspect: t('features.algorithms.runtime.graph.dfs.phases.inspect'),
+    push: t('features.algorithms.runtime.graph.dfs.phases.push'),
+    skip: t('features.algorithms.runtime.graph.dfs.phases.skip'),
+    backtrack: t('features.algorithms.runtime.graph.dfs.phases.backtrack'),
+    complete: t('features.algorithms.runtime.graph.dfs.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.dfs.phases.initialize'),
+  },
+} as const;
 
 export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -27,7 +51,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
     visited,
     stackOrder: stack,
     visitOrder,
-    description: `Initialize stack with ${labelOf(nodeMap, graph.sourceId)} and set its depth to 0.`,
+    description: i18nText(I18N.descriptions.initialize, { source: labelOf(nodeMap, graph.sourceId) }),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -45,7 +69,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
       stackOrder: stack,
       visitOrder,
       currentNodeId,
-      description: `Pop ${labelOf(nodeMap, currentNodeId)} and dive deeper before backtracking.`,
+      description: i18nText(I18N.descriptions.pop, { node: labelOf(nodeMap, currentNodeId) }),
       activeCodeLine: 6,
       phase: 'pick-node',
     });
@@ -64,7 +88,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
         visitOrder,
         currentNodeId,
         activeEdgeId: edge.id,
-        description: `Inspect ${labelOf(nodeMap, currentNodeId)} → ${neighborLabel}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(nodeMap, currentNodeId), to: neighborLabel }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
         computation: {
@@ -86,7 +110,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
           visitOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Skip ${neighborLabel}; DFS has already seen it.`,
+          description: i18nText(I18N.descriptions.skip, { node: neighborLabel }),
           activeCodeLine: 8,
           phase: 'skip-relax',
           computation: {
@@ -115,7 +139,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
         currentNodeId,
         activeEdgeId: edge.id,
         relaxedEdgeId: edge.id,
-        description: `Discover ${neighborLabel} at depth ${currentDepth + 1} and push it onto the stack.`,
+        description: i18nText(I18N.descriptions.discover, { node: neighborLabel, depth: currentDepth + 1 }),
         activeCodeLine: 10,
         phase: 'relax',
         computation: {
@@ -139,7 +163,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
       stackOrder: stack,
       visitOrder,
       currentNodeId,
-      description: `Finish ${labelOf(nodeMap, currentNodeId)} and backtrack to the current stack top.`,
+      description: i18nText(I18N.descriptions.finish, { node: labelOf(nodeMap, currentNodeId) }),
       activeCodeLine: 13,
       phase: 'settle-node',
     });
@@ -153,7 +177,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
     visited,
     stackOrder: stack,
     visitOrder,
-    description: `DFS complete. Every reachable node has been explored depth-first from ${labelOf(nodeMap, graph.sourceId)}.`,
+    description: i18nText(I18N.descriptions.complete, { source: labelOf(nodeMap, graph.sourceId) }),
     activeCodeLine: 15,
     phase: 'graph-complete',
   });
@@ -167,7 +191,7 @@ function createStep(args: {
   readonly visited: ReadonlySet<string>;
   readonly stackOrder: readonly string[];
   readonly visitOrder: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -237,7 +261,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Depth',
       secondaryLabel: 'Prev',
       frontierLabel: 'Stack',
@@ -292,18 +316,18 @@ function describePath(
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Pop stack top';
+      return I18N.phases.pop;
     case 'inspect-edge':
-      return 'Inspect edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Push neighbor';
+      return I18N.phases.push;
     case 'skip-relax':
-      return 'Skip discovered neighbor';
+      return I18N.phases.skip;
     case 'settle-node':
-      return 'Backtrack';
+      return I18N.phases.backtrack;
     case 'graph-complete':
-      return 'Traversal complete';
+      return I18N.phases.complete;
     default:
-      return 'Initialize DFS';
+      return I18N.phases.initialize;
   }
 }

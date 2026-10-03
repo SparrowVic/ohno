@@ -1,3 +1,4 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   MatrixCell,
   MatrixCellStatus,
@@ -14,14 +15,14 @@ export interface MatrixStepArgs {
   readonly rowLabels: readonly string[];
   readonly colLabels: readonly string[];
   readonly values: readonly (readonly (number | null)[])[];
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
   readonly secondaryItemsLabel: string;
   readonly secondaryItems: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortPhase;
   readonly activeRow?: number | null;

@@ -25,7 +25,7 @@ describe('cycle-detection', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.description).toContain('Cycle detected');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.cycleDetection.descriptions.cycleFound', params: { path: 'A → B → C → A' } });
     expect(finalStep?.graph?.detailValue).toBe('A → B → C → A');
     expect(steps.some((step) => step.phase === 'skip-relax')).toBe(true);
   });
@@ -48,7 +48,7 @@ describe('cycle-detection', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.description).toContain('The graph is acyclic');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.cycleDetection.descriptions.acyclic' });
     expect(finalStep?.graph?.visitOrder).toHaveLength(4);
   });
 });

@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   NumberLabHistoryEntry,
   NumberLabRegister,
@@ -14,11 +15,59 @@ import {
 import { SortStep } from '../../models/sort-step';
 import type { ReservoirSamplingScenario } from '../../utils/scenarios/number-lab/reservoir-sampling-scenarios';
 import { createNumberLabStep } from '../number-lab-step';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.modeLabel'),
   numberLabModeLabel: t('features.algorithms.runtime.numberLab.reservoirSampling.modeLabel'),
+  registers: {
+    decision: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.registers.decision'),
+  },
+  sections: {
+    init: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sections.init'),
+    keys: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sections.keys'),
+    ranking: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sections.ranking'),
+    merge: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sections.merge'),
+    shard: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.sections.shard'),
+  },
+  phases: {
+    stream: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.stream'),
+    draws: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.draws'),
+    reservoirState: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.phases.reservoirState'),
+  },
+  notes: {
+    firstElement: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.firstElement'),
+    elementE: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.elementE'),
+    predicateCounter: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.predicateCounter'),
+    keepLargest: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.keepLargest'),
+    largestKeys: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.largestKeys'),
+    smallerPriority: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.smallerPriority'),
+    smallestPriorities: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.smallestPriorities'),
+  },
+  lines: {
+    reservoir: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir'),
+    stream: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.stream'),
+    predicate: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicate'),
+    keyFormula: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.keyFormula'),
+    kOneStart: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.kOneStart'),
+    kOneCompare: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.kOneCompare'),
+    kOneAccept: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.kOneAccept'),
+    kOneKeep: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.kOneKeep'),
+    checkAProduct: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkAProduct'),
+    checkAResult: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkAResult'),
+    checkESelected: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkESelected'),
+    checkESurvives: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkESurvives'),
+    checkEResult: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkEResult'),
+    fixedDraw: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedDraw'),
+    fixedReplace: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedReplace'),
+    fixedSkip: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedSkip'),
+    predicateIgnore: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateIgnore'),
+    predicateAdd: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateAdd'),
+    predicateReplace: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateReplace'),
+    predicateSkip: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateSkip'),
+    weightedKey: t('features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.weightedKey'),
+  },
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -37,41 +86,16 @@ type LineBuilder = {
 };
 
 interface LiveState {
-  /** Current stream index (1-based, matching the chalkboard's `i = N`
-   *  notation). Null until the run loop starts. */
   i: number | null;
-  /** Most recent random draw / index decision (the `j` term in
-   *  fixed-k-updates, or the `random[i]` value in k-one). */
   draw: number | null;
-  /** Decision verdict from the most recent stream tick — readable
-   *  one-word string ("zastąp", "pomiń", "start", "dodaj", "ignoruj"). */
   decision: string | null;
-  /** Reservoir snapshot at the latest emission. */
   reservoir: readonly string[];
-  /** Final reservoir once the result section is reached. */
   resultReservoir: string | null;
-  /** Counter of items that pass the predicate (predicate flow). */
   realCounter: number | null;
-  /** History tape — one entry per processed stream item. */
   history: { id: string; label: string; value: string }[];
 }
 
-function decisionGloss(decision: string | null): string | null {
-  switch (decision) {
-    case 'start':
-      return 'start';
-    case 'replace':
-      return 'zastąp';
-    case 'skip':
-      return 'pomiń';
-    case 'add':
-      return 'dodaj';
-    case 'ignore':
-      return 'ignoruj';
-    default:
-      return null;
-  }
-}
+const NO_CHANGE = '—';
 
 export function* reservoirSamplingGenerator(
   scenario: ReservoirSamplingScenario,
@@ -137,7 +161,7 @@ export function* reservoirSamplingGenerator(
       readonly tone: ScratchpadLabTraceState['tone'];
     },
   ): SortStep {
-    syncLiveFromBuilder(builder);
+    recordHistory(builder);
     lineBuilders.push(builder);
     stepIndex += 1;
     return withScratchpad(
@@ -150,63 +174,23 @@ export function* reservoirSamplingGenerator(
     );
   }
 
-  /** Lift register-relevant facts out of the chalkboard line we're
-   *  about to emit. The reservoir-sampling generator emits one line
-   *  per stream tick with predictable id prefixes (run-N, run-N-...);
-   *  parsing the math content gives us i, the draw, the decision,
-   *  and the running reservoir snapshot. */
-  function syncLiveFromBuilder(builder: LineBuilder): void {
-    const id = builder.id;
-    const text = typeof builder.content === 'string' ? builder.content : '';
+  function track(patch: Partial<Omit<LiveState, 'history'>>): void {
+    Object.assign(live, patch);
+  }
 
-    const iMatch = text.match(/i = (\d+)/);
-    if (iMatch) live.i = Number(iMatch[1]);
-
-    const indexMatch = text.match(/indeks = (\d+)/);
-    if (indexMatch) live.i = Number(indexMatch[1]);
-
-    const realMatch = text.match(/r = (\d+)/);
-    if (realMatch) live.realCounter = Number(realMatch[1]);
-
-    const drawMatch = text.match(/j = (-?\d+)/);
-    if (drawMatch) live.draw = Number(drawMatch[1]);
-    const randomMatch = text.match(/random\[\d+\] = ([0-9.]+)/);
-    if (randomMatch) live.draw = Number(randomMatch[1]);
-
-    if (text.includes('decyzja = start')) live.decision = 'start';
-    else if (text.includes('zastąp')) live.decision = 'replace';
-    else if (text.includes('pomiń')) live.decision = 'skip';
-    else if (text.includes('dodaj')) live.decision = 'add';
-    else if (text.includes('ignoruj')) live.decision = 'ignore';
-
-    const reservoirMatch = text.match(/reservoir = \[(.*?)\]/);
-    if (reservoirMatch) {
-      const items = reservoirMatch[1]
-        .split(',')
-        .map((piece) => piece.trim())
-        .filter((piece) => piece.length > 0);
-      live.reservoir = items;
-    }
-
-    if (id === 'result-reservoir') {
-      const captureMatch = text.match(/= \[(.*?)\]$/);
-      if (captureMatch) live.resultReservoir = `[${captureMatch[1].trim()}]`;
-    }
-
-    // Append a stream tick to the history when the line is per-item.
-    if (id.match(/^run-\d+$|^run-\d+-/) && builder.kind === 'equation') {
-      const slot = `run-${live.i ?? 'n/a'}`;
-      const exists = live.history.find((entry) => entry.id === slot);
-      const decisionLabel = decisionGloss(live.decision) ?? '…';
-      if (!exists) {
-        live.history.push({
-          id: slot,
-          label: `i=${live.i ?? '?'}`,
-          value: decisionLabel,
-        });
-      } else if (decisionLabel !== '…') {
-        exists.value = decisionLabel;
-      }
+  function recordHistory(builder: LineBuilder): void {
+    if (!/^run-\d+$|^run-\d+-/.test(builder.id) || builder.kind !== 'equation') return;
+    const slot = `run-${live.i ?? 'n/a'}`;
+    const exists = live.history.find((entry) => entry.id === slot);
+    const decisionLabel = live.decision ?? '…';
+    if (!exists) {
+      live.history.push({
+        id: slot,
+        label: `i=${live.i ?? '?'}`,
+        value: decisionLabel,
+      });
+    } else if (decisionLabel !== '…') {
+      exists.value = decisionLabel;
     }
   }
 
@@ -244,8 +228,8 @@ export function* reservoirSamplingGenerator(
     if (live.decision !== null) {
       registers.push({
         id: 'decision',
-        label: 'decyzja',
-        value: decisionGloss(live.decision) ?? live.decision,
+        label: i18nText(I18N.registers.decision),
+        value: live.decision,
         hint: null,
         tone: 'active',
       });
@@ -310,11 +294,11 @@ export function* reservoirSamplingGenerator(
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -327,12 +311,16 @@ export function* reservoirSamplingGenerator(
     });
   }
 
+  function mathText(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'equation', indent, content });
+  }
+
   function resultSection(): LineBuilder {
     return paperLine({
       id: 'section-result',
       kind: 'result',
       marker: RESULT_MARKER,
-      content: 'Wynik',
+      content: i18nText(NOTEBOOK_TEXT.sections.result),
     });
   }
 
@@ -345,15 +333,20 @@ export function* reservoirSamplingGenerator(
     });
   }
 
+  function* emitResult(reservoir: string): Generator<SortStep> {
+    track({ reservoir: listItems(reservoir), resultReservoir: reservoir });
+    yield* emit(mathText('result-reservoir', i18nText(I18N.lines.reservoir, { reservoir })));
+  }
+
   function* emitKOne(): Generator<SortStep> {
     const stream = values.stream;
     const reservoir: string[] = [];
 
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emit(math('parameters-k', `k = ${values.k}`));
-    yield* emit(math('parameters-stream', `stream = ${formatList(stream)}`));
+    yield* emit(mathText('parameters-stream', i18nText(I18N.lines.stream, { stream: formatList(stream) })));
 
-    yield* emit(section('section-run', 'Przebieg'));
+    yield* emit(section('section-run', i18nText(NOTEBOOK_TEXT.sections.run)));
     stream.forEach((item, index) => {
       const i = index + 1;
       if (i === 1) {
@@ -371,10 +364,11 @@ export function* reservoirSamplingGenerator(
       const item = stream[index];
       if (i === 1) {
         runningReservoir[0] = item;
+        track({ i, decision: replaceToken(1, item), reservoir: [...runningReservoir] });
         yield* emit(
-          math(
+          mathText(
             `run-${i}`,
-            `i = ${i}, element = ${item}, decyzja = start, reservoir = ${formatList(runningReservoir)}`,
+            i18nText(I18N.lines.kOneStart, { i, item, reservoir: formatList(runningReservoir) }),
           ),
         );
         continue;
@@ -383,39 +377,43 @@ export function* reservoirSamplingGenerator(
       const draw = values.random[i] ?? 1;
       const threshold = 1 / i;
       const accepted = draw < threshold;
-      if (accepted) runningReservoir[0] = item;
+      track({ i, draw });
       yield* emit(
-        math(
+        mathText(
           `run-${i}-compare`,
-          `i = ${i}, element = ${item}, random[${i}] = ${formatDraw(draw)}, próg = 1 / ${i} = ${formatThreshold(threshold, i)}`,
+          i18nText(I18N.lines.kOneCompare, {
+            i,
+            item,
+            draw: formatDraw(draw),
+            threshold: formatThreshold(threshold, i),
+          }),
         ),
       );
+      if (accepted) runningReservoir[0] = item;
+      track({ decision: accepted ? replaceToken(1, item) : NO_CHANGE, reservoir: [...runningReservoir] });
       yield* emit(
-        math(
+        mathText(
           `run-${i}-decision`,
-          `${formatDraw(draw)} ${accepted ? '<' : '>='} ${formatThreshold(threshold, i)} \\to ${accepted ? 'zastąp' : 'nie\\ zastępuj'}, reservoir = ${formatList(runningReservoir)}`,
+          i18nText(accepted ? I18N.lines.kOneAccept : I18N.lines.kOneKeep, {
+            draw: formatDraw(draw),
+            threshold: formatThreshold(threshold, i),
+            reservoir: formatList(runningReservoir),
+          }),
         ),
       );
     }
 
-    yield* emit(section('section-check', 'Sprawdzenie idei prawdopodobieństwa'));
-    yield* emit(note('check-a-label', 'Dla pierwszego elementu:'));
-    yield* emit(
-      math(
-        'check-a-product',
-        'P(A\\ zostaje\\ do\\ końca) = (1 - 1/2)(1 - 1/3)(1 - 1/4)(1 - 1/5)(1 - 1/6)',
-      ),
-    );
-    yield* emit(
-      math('check-a-result', 'P(A\\ zostaje\\ do\\ końca) = (1/2)(2/3)(3/4)(4/5)(5/6) = 1/6'),
-    );
-    yield* emit(note('check-e-label', 'Dla elementu E:'));
-    yield* emit(math('check-e-selected', 'P(E\\ jest\\ wybrane\\ na\\ i = 5) = 1/5'));
-    yield* emit(math('check-e-survives', 'P(E\\ przetrwa\\ i = 6) = 1 - 1/6 = 5/6'));
-    yield* emit(math('check-e-result', 'P(E\\ w\\ końcowej\\ próbce) = (1/5)(5/6) = 1/6'));
+    yield* emit(section('section-check', i18nText(NOTEBOOK_TEXT.sections.probabilityCheck)));
+    yield* emit(note('check-a-label', i18nText(I18N.notes.firstElement)));
+    yield* emit(mathText('check-a-product', i18nText(I18N.lines.checkAProduct)));
+    yield* emit(mathText('check-a-result', i18nText(I18N.lines.checkAResult)));
+    yield* emit(note('check-e-label', i18nText(I18N.notes.elementE)));
+    yield* emit(mathText('check-e-selected', i18nText(I18N.lines.checkESelected)));
+    yield* emit(mathText('check-e-survives', i18nText(I18N.lines.checkESurvives)));
+    yield* emit(mathText('check-e-result', i18nText(I18N.lines.checkEResult)));
 
     yield* emit(resultSection());
-    yield* emit(math('result-reservoir', `reservoir = ${formatList(reservoir)}`));
+    yield* emitResult(formatList(reservoir));
   }
 
   function* emitFixedKUpdates(): Generator<SortStep> {
@@ -423,36 +421,40 @@ export function* reservoirSamplingGenerator(
     const k = values.k;
     const reservoir = stream.slice(0, k);
 
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emit(math('parameters-k', `k = ${k}`));
-    yield* emit(math('parameters-stream', `stream = ${formatList(stream)}`));
+    yield* emit(mathText('parameters-stream', i18nText(I18N.lines.stream, { stream: formatList(stream) })));
 
-    yield* emit(section('section-init', 'Inicjalizacja'));
-    yield* emit(math('init-reservoir', `reservoir = ${formatList(reservoir)}`));
+    yield* emit(section('section-init', i18nText(I18N.sections.init)));
+    track({ reservoir: [...reservoir] });
+    yield* emit(mathText('init-reservoir', i18nText(I18N.lines.reservoir, { reservoir: formatList(reservoir) })));
 
-    yield* emit(section('section-run', 'Przebieg'));
+    yield* emit(section('section-run', i18nText(NOTEBOOK_TEXT.sections.run)));
     for (let index = k; index < stream.length; index++) {
       const i = index + 1;
       const item = stream[index];
       const draw = values.draws[i] ?? i;
-      yield* emit(math(`run-${i}-draw`, `i = ${i}, element = ${item}, j = ${draw}`));
+      track({ i, draw });
+      yield* emit(mathText(`run-${i}-draw`, i18nText(I18N.lines.fixedDraw, { i, item, draw })));
       if (draw <= k) {
         reservoir[draw - 1] = item;
+        track({ decision: replaceToken(draw, item), reservoir: [...reservoir] });
         yield* emit(
-          math(
+          mathText(
             `run-${i}-replace`,
-            `${draw} <= ${k} \\to zastąp\\ pozycję\\ ${draw}, reservoir = ${formatList(reservoir)}`,
+            i18nText(I18N.lines.fixedReplace, { draw, k, reservoir: formatList(reservoir) }),
           ),
         );
       } else {
+        track({ decision: NO_CHANGE, reservoir: [...reservoir] });
         yield* emit(
-          math(`run-${i}-skip`, `${draw} > ${k} \\to pomiń, reservoir = ${formatList(reservoir)}`),
+          mathText(`run-${i}-skip`, i18nText(I18N.lines.fixedSkip, { draw, k, reservoir: formatList(reservoir) })),
         );
       }
     }
 
     yield* emit(resultSection());
-    yield* emit(math('result-reservoir', `reservoir = ${formatList(reservoir)}`));
+    yield* emitResult(formatList(reservoir));
   }
 
   function* emitPredicateReservoir(): Generator<SortStep> {
@@ -460,20 +462,26 @@ export function* reservoirSamplingGenerator(
     const reservoir: string[] = [];
     let realCounter = 0;
 
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emit(math('parameters-k', `k = ${k}`));
-    yield* emit(math('parameters-predicate', `predicate = ${values.predicate}`));
+    yield* emit(mathText('parameters-predicate', i18nText(I18N.lines.predicate, { predicate: values.predicate })));
 
-    yield* emit(section('section-run', 'Przebieg'));
+    yield* emit(section('section-run', i18nText(NOTEBOOK_TEXT.sections.run)));
     for (let index = 0; index < values.predicateStream.length; index++) {
       const streamIndex = index + 1;
       const item = values.predicateStream[index];
       const passes = matchesPredicate(item.status, values.predicate);
       if (!passes) {
+        track({ i: streamIndex, realCounter, decision: NO_CHANGE, reservoir: [...reservoir] });
         yield* emit(
-          math(
+          mathText(
             `run-${streamIndex}`,
-            `indeks = ${streamIndex}, element = ${item.label}, predykat = nie, r = ${realCounter}, decyzja = ignoruj, reservoir = ${formatList(reservoir)}`,
+            i18nText(I18N.lines.predicateIgnore, {
+              index: streamIndex,
+              item: item.label,
+              r: realCounter,
+              reservoir: formatList(reservoir),
+            }),
           ),
         );
         continue;
@@ -482,10 +490,16 @@ export function* reservoirSamplingGenerator(
       realCounter += 1;
       if (realCounter <= k) {
         reservoir.push(item.label);
+        track({ i: streamIndex, realCounter, decision: replaceToken(realCounter, item.label), reservoir: [...reservoir] });
         yield* emit(
-          math(
+          mathText(
             `run-${streamIndex}`,
-            `indeks = ${streamIndex}, element = ${item.label}, predykat = tak, r = ${realCounter}, decyzja = dodaj, reservoir = ${formatList(reservoir)}`,
+            i18nText(I18N.lines.predicateAdd, {
+              index: streamIndex,
+              item: item.label,
+              r: realCounter,
+              reservoir: formatList(reservoir),
+            }),
           ),
         );
         continue;
@@ -494,32 +508,43 @@ export function* reservoirSamplingGenerator(
       const draw = values.drawsForRealItems[realCounter] ?? realCounter;
       if (draw <= k) {
         reservoir[draw - 1] = item.label;
+        track({ i: streamIndex, realCounter, draw, decision: replaceToken(draw, item.label), reservoir: [...reservoir] });
         yield* emit(
-          math(
+          mathText(
             `run-${streamIndex}`,
-            `indeks = ${streamIndex}, element = ${item.label}, predykat = tak, r = ${realCounter}, j = ${draw}, ${draw} <= ${k} \\to zastąp\\ pozycję\\ ${draw}, reservoir = ${formatList(reservoir)}`,
+            i18nText(I18N.lines.predicateReplace, {
+              index: streamIndex,
+              item: item.label,
+              r: realCounter,
+              draw,
+              k,
+              reservoir: formatList(reservoir),
+            }),
           ),
         );
       } else {
+        track({ i: streamIndex, realCounter, draw, decision: NO_CHANGE, reservoir: [...reservoir] });
         yield* emit(
-          math(
+          mathText(
             `run-${streamIndex}`,
-            `indeks = ${streamIndex}, element = ${item.label}, predykat = tak, r = ${realCounter}, j = ${draw}, ${draw} > ${k} \\to pomiń, reservoir = ${formatList(reservoir)}`,
+            i18nText(I18N.lines.predicateSkip, {
+              index: streamIndex,
+              item: item.label,
+              r: realCounter,
+              draw,
+              k,
+              reservoir: formatList(reservoir),
+            }),
           ),
         );
       }
     }
 
     yield* emit(resultSection());
-    yield* emit(math('result-reservoir', `reservoir = ${formatList(reservoir)}`));
+    yield* emitResult(formatList(reservoir));
 
-    yield* emit(section('section-conclusion', 'Wniosek'));
-    yield* emit(
-      note(
-        'conclusion-counter',
-        'Losowania są liczone względem liczby elementów spełniających predykat, nie względem całej długości strumienia.',
-      ),
-    );
+    yield* emit(section('section-conclusion', i18nText(NOTEBOOK_TEXT.sections.conclusion)));
+    yield* emit(note('conclusion-counter', i18nText(I18N.notes.predicateCounter)));
   }
 
   function* emitWeightedReservoir(): Generator<SortStep> {
@@ -535,29 +560,34 @@ export function* reservoirSamplingGenerator(
     });
     const selected = ranking.slice(0, k).map((item) => item.label);
 
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emit(math('parameters-k', `k = ${k}`));
-    yield* emit(math('parameters-key', `key = ${values.keyFormula}`));
-    yield* emit(note('parameters-keep', 'wybieramy największe klucze'));
+    yield* emit(mathText('parameters-key', i18nText(I18N.lines.keyFormula, { formula: values.keyFormula })));
+    yield* emit(note('parameters-keep', i18nText(I18N.notes.keepLargest)));
 
-    yield* emit(section('section-keys', 'Obliczenia kluczy'));
+    yield* emit(section('section-keys', i18nText(I18N.sections.keys)));
     for (const item of keyed) {
       yield* emit(
-        math(
+        mathText(
           `key-${item.label}`,
-          `${item.label}: weight = ${formatNumber(item.weight)}, u = ${formatNumber(item.u)}, key = ${formatNumber(item.u)}^{1 / ${formatNumber(item.weight)}} = ${formatKey(item.key)}`,
+          i18nText(I18N.lines.weightedKey, {
+            label: item.label,
+            weight: formatNumber(item.weight),
+            u: formatNumber(item.u),
+            key: formatKey(item.key),
+          }),
         ),
       );
     }
 
-    yield* emit(section('section-ranking', 'Ranking'));
+    yield* emit(section('section-ranking', i18nText(I18N.sections.ranking)));
     for (const item of ranking) {
       yield* emit(math(`ranking-${item.label}`, `${item.label}: ${formatKey(item.key)}`));
     }
 
     yield* emit(resultSection());
-    yield* emit(note('result-label', 'Wybieramy dwa największe klucze:'));
-    yield* emit(math('result-reservoir', `reservoir = ${formatList(selected)}`));
+    yield* emit(note('result-label', i18nText(I18N.notes.largestKeys)));
+    yield* emitResult(formatList(selected));
   }
 
   function* emitDistributedMerge(): Generator<SortStep> {
@@ -570,22 +600,22 @@ export function* reservoirSamplingGenerator(
     );
     const selected = candidates.slice(0, k);
 
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emit(math('parameters-k', `k = ${k}`));
-    yield* emit(note('parameters-priority', 'mniejszy priority = lepszy'));
+    yield* emit(note('parameters-priority', i18nText(I18N.notes.smallerPriority)));
 
     yield* emitShard('A', values.shardA, shardA);
     yield* emitShard('B', values.shardB, shardB);
     yield* emitShard('C', values.shardC, shardC);
 
-    yield* emit(section('section-merge', 'Scalanie kandydatów'));
+    yield* emit(section('section-merge', i18nText(I18N.sections.merge)));
     for (const item of candidates) {
       yield* emit(math(`merge-${item.label}`, `${item.label}: ${formatPriority(item.priority)}`));
     }
 
     yield* emit(resultSection());
-    yield* emit(note('result-global-label', 'Wybieramy dwa najmniejsze priorytety:'));
-    yield* emit(math('result-reservoir', `reservoir = ${formatPriorityList(selected)}`));
+    yield* emit(note('result-global-label', i18nText(I18N.notes.smallestPriorities)));
+    yield* emitResult(formatPriorityList(selected));
   }
 
   function* emitShard(
@@ -593,7 +623,7 @@ export function* reservoirSamplingGenerator(
     items: readonly { readonly label: string; readonly priority: number }[],
     local: readonly { readonly label: string; readonly priority: number }[],
   ): Generator<SortStep> {
-    yield* emit(section(`section-shard-${label}`, `Shard ${label}`));
+    yield* emit(section(`section-shard-${label}`, i18nText(I18N.sections.shard, { label })));
     for (const item of items) {
       yield* emit(
         math(`shard-${label}-${item.label}`, `${item.label}: ${formatPriority(item.priority)}`),
@@ -621,20 +651,32 @@ export function* reservoirSamplingGenerator(
   }
 }
 
-function phaseFor(builder: LineBuilder): string {
-  if (builder.id.includes('result')) return 'Wynik';
-  if (builder.id.includes('parameter')) return 'Parametry';
-  if (builder.id.includes('run') || builder.id.includes('stream')) return 'Strumień';
-  if (builder.id.includes('key') || builder.id.includes('ranking')) return 'Losowania';
-  if (builder.id.includes('shard') || builder.id.includes('merge')) return 'Stan rezerwuaru';
-  if (builder.id.includes('check') || builder.id.includes('conclusion')) return 'Sprawdzenie';
-  return 'Obliczenia';
+function replaceToken(slot: number, item: string): string {
+  return `R[${slot}] ← ${item}`;
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.kind === 'result') return 'Zapisujemy wynik.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
-  return 'Liczymy kolejny wiersz.';
+function listItems(list: string): readonly string[] {
+  return list
+    .replace(/^\[|\]$/g, '')
+    .split(/,(?![^()]*\))/)
+    .map((piece) => piece.trim())
+    .filter((piece) => piece.length > 0);
+}
+
+function phaseFor(builder: LineBuilder): TranslatableText {
+  if (builder.id.includes('result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('parameter')) return i18nText(NOTEBOOK_TEXT.sections.parameters);
+  if (builder.id.includes('run') || builder.id.includes('stream')) return i18nText(I18N.phases.stream);
+  if (builder.id.includes('key') || builder.id.includes('ranking')) return i18nText(I18N.phases.draws);
+  if (builder.id.includes('shard') || builder.id.includes('merge')) return i18nText(I18N.phases.reservoirState);
+  if (builder.id.includes('check') || builder.id.includes('conclusion')) return i18nText(NOTEBOOK_TEXT.sections.check);
+  return i18nText(NOTEBOOK_TEXT.sections.computation);
+}
+
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {

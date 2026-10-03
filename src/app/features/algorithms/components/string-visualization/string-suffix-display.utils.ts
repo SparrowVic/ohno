@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { i18nText } from '../../../../core/i18n/translatable-text';
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { RackRowTone } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import {
@@ -40,7 +40,7 @@ const SUFFIX_LEDS: Readonly<Record<StringSuffixRow['tone'], LedColor | null>> = 
   sorted: 'slate',
 };
 
-function suffixRackRow(entry: StringSuffixRow, value: string, complete: boolean, body: string | null): StringRackRow {
+function suffixRackRow(entry: StringSuffixRow, value: string, complete: boolean, body: TranslatableText | null): StringRackRow {
   return {
     id: entry.id,
     lead: entry.suffix,

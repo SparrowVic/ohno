@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   NetworkComputation,
   NetworkEdgeSnapshot,
@@ -6,6 +9,39 @@ import {
 import { SortStep } from '../models/sort-step';
 import { DinicScenario, LayeredNetworkEdge } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+
+const I18N = {
+  phases: {
+    initialize: t('features.algorithms.runtime.network.edmondsKarp.phases.initialize'),
+    bfs: t('features.algorithms.runtime.network.edmondsKarp.phases.bfs'),
+    complete: t('features.algorithms.runtime.network.edmondsKarp.phases.complete'),
+    augment: t('features.algorithms.runtime.network.edmondsKarp.phases.augment'),
+  },
+  statuses: {
+    zeroFlow: t('features.algorithms.runtime.network.edmondsKarp.statuses.zeroFlow'),
+    seed: t('features.algorithms.runtime.network.edmondsKarp.statuses.seed'),
+    expand: t('features.algorithms.runtime.network.edmondsKarp.statuses.expand'),
+    inspect: t('features.algorithms.runtime.network.edmondsKarp.statuses.inspect'),
+    attach: t('features.algorithms.runtime.network.edmondsKarp.statuses.attach'),
+    unreachable: t('features.algorithms.runtime.network.edmondsKarp.statuses.unreachable'),
+    pathFound: t('features.algorithms.runtime.network.edmondsKarp.statuses.pathFound'),
+    pushed: t('features.algorithms.runtime.network.edmondsKarp.statuses.pushed'),
+  },
+  results: {
+    maxFlowZero: t('features.algorithms.runtime.network.edmondsKarp.results.maxFlowZero'),
+    maxFlow: t('features.algorithms.runtime.network.edmondsKarp.results.maxFlow'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.network.edmondsKarp.descriptions.initialize'),
+    seed: t('features.algorithms.runtime.network.edmondsKarp.descriptions.seed'),
+    expand: t('features.algorithms.runtime.network.edmondsKarp.descriptions.expand'),
+    inspect: t('features.algorithms.runtime.network.edmondsKarp.descriptions.inspect'),
+    attach: t('features.algorithms.runtime.network.edmondsKarp.descriptions.attach'),
+    complete: t('features.algorithms.runtime.network.edmondsKarp.descriptions.complete'),
+    pathFound: t('features.algorithms.runtime.network.edmondsKarp.descriptions.pathFound'),
+    augment: t('features.algorithms.runtime.network.edmondsKarp.descriptions.augment'),
+  },
+} as const;
 
 export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortStep> {
   const flow = new Map<string, number>(scenario.edges.map((edge) => [edge.id, 0]));
@@ -19,15 +55,15 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
     flow,
     level: new Map(),
     parentEdgeByNode: new Map(),
-    phaseLabel: 'Initialize residual network',
-    statusLabel: 'All flows start at zero',
-    resultLabel: 'max flow 0',
+    phaseLabel: i18nText(I18N.phases.initialize),
+    statusLabel: i18nText(I18N.statuses.zeroFlow),
+    resultLabel: i18nText(I18N.results.maxFlowZero),
     frontierLabel: 'BFS frontier',
     queueLabel: 'Residual queue',
     queue: [],
     focusItemsLabel: 'Positive flow',
     focusItems: [],
-    description: 'Edmonds-Karp repeatedly runs BFS on the residual network and augments one shortest path at a time.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -45,15 +81,15 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
       level,
       parentEdgeByNode,
       frontierIds: new Set(queue),
-      phaseLabel: `BFS round ${bfsRound}`,
-      statusLabel: 'Seed source layer',
-      resultLabel: `max flow ${totalFlow}`,
+      phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
+      statusLabel: i18nText(I18N.statuses.seed),
+      resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
       frontierLabel: 'BFS frontier',
       queueLabel: 'Residual queue',
       queue,
       focusItemsLabel: 'Positive flow',
       focusItems: positiveFlowLabels(scenario, flow, labelById),
-      description: 'Start BFS from the source and only follow edges whose residual capacity stays positive.',
+      description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
         label: 'Start layer',
@@ -75,15 +111,15 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
         parentEdgeByNode,
         currentNodeId,
         frontierIds: new Set(queue.slice(queueIndex)),
-        phaseLabel: `BFS round ${bfsRound}`,
-        statusLabel: 'Expand one BFS layer',
-        resultLabel: `max flow ${totalFlow}`,
+        phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
+        statusLabel: i18nText(I18N.statuses.expand),
+        resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
         frontierLabel: 'BFS frontier',
         queueLabel: 'Residual queue',
         queue: queue.slice(queueIndex),
         focusItemsLabel: 'Positive flow',
         focusItems: positiveFlowLabels(scenario, flow, labelById),
-        description: `Explore residual outgoing edges from ${labelById.get(currentNodeId) ?? currentNodeId}.`,
+        description: i18nText(I18N.descriptions.expand, { node: labelById.get(currentNodeId) ?? currentNodeId }),
         activeCodeLine: 4,
       });
 
@@ -106,15 +142,15 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
           currentNodeId,
           activeEdgeId: edge.id,
           frontierIds: new Set(queue.slice(queueIndex)),
-          phaseLabel: `BFS round ${bfsRound}`,
-          statusLabel: 'Inspect residual edge',
-          resultLabel: `max flow ${totalFlow}`,
+          phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
+          statusLabel: i18nText(I18N.statuses.inspect),
+          resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
           frontierLabel: 'BFS frontier',
           queueLabel: 'Residual queue',
           queue: queue.slice(queueIndex),
           focusItemsLabel: 'Positive flow',
           focusItems: positiveFlowLabels(scenario, flow, labelById),
-          description: `Check whether ${labelById.get(currentNodeId) ?? currentNodeId} → ${targetLabel} can still carry more flow.`,
+          description: i18nText(I18N.descriptions.inspect, { from: labelById.get(currentNodeId) ?? currentNodeId, to: targetLabel }),
           activeCodeLine: 4,
           phase: 'inspect-edge',
           computation: {
@@ -143,15 +179,15 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
           activeEdgeId: edge.id,
           frontierIds: new Set(queue.slice(queueIndex)),
           candidateEdgeIds: new Set(Array.from(parentEdgeByNode.values(), (parentEdge) => parentEdge.id)),
-          phaseLabel: `BFS round ${bfsRound}`,
-          statusLabel: 'Attach node to BFS tree',
-          resultLabel: `max flow ${totalFlow}`,
+          phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
+          statusLabel: i18nText(I18N.statuses.attach),
+          resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
           frontierLabel: 'BFS frontier',
           queueLabel: 'Residual queue',
           queue: queue.slice(queueIndex),
           focusItemsLabel: 'Positive flow',
           focusItems: positiveFlowLabels(scenario, flow, labelById),
-          description: `${targetLabel} now stores its parent edge so the augmenting path can be reconstructed if BFS reaches the sink.`,
+          description: i18nText(I18N.descriptions.attach, { node: targetLabel }),
           activeCodeLine: 5,
           phase: 'relax',
           computation: {
@@ -175,15 +211,15 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
         flow,
         level,
         parentEdgeByNode,
-        phaseLabel: `Complete after round ${bfsRound}`,
-        statusLabel: 'Sink is unreachable',
-        resultLabel: `max flow ${totalFlow}`,
+        phaseLabel: i18nText(I18N.phases.complete, { round: bfsRound }),
+        statusLabel: i18nText(I18N.statuses.unreachable),
+        resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
         frontierLabel: 'Residual BFS',
         queueLabel: 'Residual queue',
         queue: [],
         focusItemsLabel: 'Final positive flow',
         focusItems: positiveFlowLabels(scenario, flow, labelById),
-        description: 'If BFS can no longer reach the sink in the residual network, the current flow is maximum.',
+        description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 9,
         phase: 'graph-complete',
         computation: {
@@ -209,16 +245,16 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
       activePathNodeIds: new Set(pathNodeIds),
       activePathEdgeIds: pathEdgeIds,
       candidateEdgeIds: pathEdgeIds,
-      phaseLabel: `Augment round ${bfsRound}`,
-      statusLabel: 'Shortest augmenting path found',
-      resultLabel: `max flow ${totalFlow}`,
+      phaseLabel: i18nText(I18N.phases.augment, { round: bfsRound }),
+      statusLabel: i18nText(I18N.statuses.pathFound),
+      resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
       frontierLabel: 'Augment path',
       queueLabel: 'Residual queue',
       queue: [],
       activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
       focusItemsLabel: 'Positive flow',
       focusItems: positiveFlowLabels(scenario, flow, labelById),
-      description: 'BFS gives the shortest residual path to the sink; the smallest residual edge becomes the bottleneck.',
+      description: i18nText(I18N.descriptions.pathFound),
       activeCodeLine: 7,
       computation: {
         label: 'Bottleneck',
@@ -240,16 +276,16 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
       parentEdgeByNode,
       activePathNodeIds: new Set(pathNodeIds),
       activePathEdgeIds: pathEdgeIds,
-      phaseLabel: `Augment round ${bfsRound}`,
-      statusLabel: 'Flow pushed through path',
-      resultLabel: `max flow ${totalFlow}`,
+      phaseLabel: i18nText(I18N.phases.augment, { round: bfsRound }),
+      statusLabel: i18nText(I18N.statuses.pushed),
+      resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
       frontierLabel: 'Positive flow',
       queueLabel: 'Residual queue',
       queue: [],
       activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
       focusItemsLabel: 'Positive flow',
       focusItems: positiveFlowLabels(scenario, flow, labelById),
-      description: 'Increase the flow on every edge of the augmenting path by the bottleneck amount and restart BFS.',
+      description: i18nText(I18N.descriptions.augment),
       activeCodeLine: 8,
       phase: 'relax',
       computation: {
@@ -267,15 +303,15 @@ function createSnapshot(args: {
   readonly flow: ReadonlyMap<string, number>;
   readonly level: ReadonlyMap<string, number>;
   readonly parentEdgeByNode: ReadonlyMap<string, LayeredNetworkEdge>;
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly frontierLabel: string;
   readonly queueLabel: string;
   readonly queue: readonly string[];
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
   readonly frontierIds?: ReadonlySet<string>;

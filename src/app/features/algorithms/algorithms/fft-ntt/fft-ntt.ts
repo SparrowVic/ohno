@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   ScratchpadLabTraceState,
   ScratchpadLine,
@@ -7,10 +8,52 @@ import {
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import type { FftNttScenario } from '../../utils/scenarios/number-lab/fft-ntt-scenarios';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.fftNtt.modeLabel'),
+  notes: {
+    rootConclusion: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.rootConclusion'),
+    beforeReduction: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.beforeReduction'),
+    lengthTwoRoot: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.lengthTwoRoot'),
+    forK: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.forK'),
+    cyclic: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.cyclic'),
+    digitsOrder: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.digitsOrder'),
+    digitsLowFirst: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.digitsLowFirst'),
+    reversed: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.reversed'),
+    checkPowers: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.checkPowers'),
+    primitiveRequirement: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.primitiveRequirement'),
+    badOrder: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.badOrder'),
+    twoVectors: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.twoVectors'),
+    collision: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.collision'),
+    repairConclusion: t('features.algorithms.runtime.scratchpadLab.fftNtt.notes.repairConclusion'),
+  },
+  sections: {
+    split: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.split'),
+    evenFft: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.evenFft'),
+    oddFft: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.oddFft'),
+    butterflies: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.butterflies'),
+    badSettings: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.badSettings'),
+    nttLength: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.nttLength'),
+    goodSettings: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.goodSettings'),
+    goodNtt: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.goodNtt'),
+    digits: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.digits'),
+    transform: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.transform'),
+    carry: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.carry'),
+    badRoot: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.badRoot'),
+    collision: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.collision'),
+    repair: t('features.algorithms.runtime.scratchpadLab.fftNtt.sections.repair'),
+  },
+  lines: {
+    carryRow: t('features.algorithms.runtime.scratchpadLab.fftNtt.lines.carryRow'),
+    badRoot: t('features.algorithms.runtime.scratchpadLab.fftNtt.lines.badRoot'),
+    goodRoot: t('features.algorithms.runtime.scratchpadLab.fftNtt.lines.goodRoot'),
+  },
+  phases: {
+    root: t('features.algorithms.runtime.scratchpadLab.fftNtt.phases.root'),
+    carries: t('features.algorithms.runtime.scratchpadLab.fftNtt.phases.carries'),
+  },
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -119,11 +162,11 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -136,12 +179,16 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     });
   }
 
+  function mathText(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'equation', indent, content });
+  }
+
   function resultSection(): LineBuilder {
     return paperLine({
       id: 'section-result',
       kind: 'result',
       marker: RESULT_MARKER,
-      content: 'Wynik',
+      content: i18nText(NOTEBOOK_TEXT.sections.result),
     });
   }
 
@@ -166,14 +213,14 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     const omegaHalf = modPow(values.omega, Math.floor(values.n / 2), values.mod);
     const omegaFull = modPow(values.omega, values.n, values.mod);
 
-    yield* emit(section('section-parameters', 'Parametry'));
+    yield* emit(section('section-parameters', i18nText(NOTEBOOK_TEXT.sections.parameters)));
     yield* emit(math('parameters-mod', `mod = ${values.mod}`));
     yield* emit(math('parameters-n', `n = ${values.n}`));
     yield* emit(math('parameters-omega', `\\omega = ${values.omega}`));
     yield* emit(math('parameters-a', `A = ${formatVector(a)}`));
     yield* emit(math('parameters-b', `B = ${formatVector(b)}`));
 
-    yield* emit(section('section-root', 'Sprawdzenie pierwiastka'));
+    yield* emit(section('section-root', i18nText(NOTEBOOK_TEXT.sections.rootCheck)));
     yield* emit(
       math(
         'root-half',
@@ -189,17 +236,17 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     yield* emit(
       note(
         'root-conclusion',
-        `Zatem ${values.omega} jest pierwiastkiem ${values.n}. stopnia modulo ${values.mod}.`,
+        i18nText(I18N.notes.rootConclusion, { omega: values.omega, n: values.n, mod: values.mod }),
       ),
     );
 
-    yield* emit(section('section-transform-a', 'Transformata A'));
+    yield* emit(section('section-transform-a', i18nText(NOTEBOOK_TEXT.sections.transformA)));
     yield* emit(math('transform-a', `NTT(A) = ${formatVector(transformedA)}`));
 
-    yield* emit(section('section-transform-b', 'Transformata B'));
+    yield* emit(section('section-transform-b', i18nText(NOTEBOOK_TEXT.sections.transformB)));
     yield* emit(math('transform-b', `NTT(B) = ${formatVector(transformedB)}`));
 
-    yield* emit(section('section-pointwise', 'Mnożenie punktowe'));
+    yield* emit(section('section-pointwise', i18nText(NOTEBOOK_TEXT.sections.pointwise)));
     for (let i = 0; i < values.n; i++) {
       yield* emit(
         math(
@@ -210,7 +257,7 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     }
     yield* emit(math('pointwise-vector', `C_hat = ${formatVector(multiplied)}`));
 
-    yield* emit(section('section-inverse', 'Transformata odwrotna'));
+    yield* emit(section('section-inverse', i18nText(NOTEBOOK_TEXT.sections.inverse)));
     yield* emit(
       math(
         'inverse-omega',
@@ -227,7 +274,7 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
 
     yield* emit(resultSection());
     yield* emit(math('result-polynomial', `C(x) = ${formatPolynomial(inverse)}`));
-    yield* emit(note('result-before-reduction', 'W liczbach całkowitych przed redukcją:'));
+    yield* emit(note('result-before-reduction', i18nText(I18N.notes.beforeReduction)));
     yield* emit(
       math(
         'result-reduction',
@@ -247,12 +294,12 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     const x1 = { re: evenFft[1], im: oddFft[1] };
     const x3 = { re: evenFft[1], im: -oddFft[1] };
 
-    yield* emit(section('section-split', 'Podział wejścia'));
+    yield* emit(section('section-split', i18nText(I18N.sections.split)));
     yield* emit(math('split-even', `A_even = ${formatVector(even)}`));
     yield* emit(math('split-odd', `A_odd = ${formatVector(odd)}`));
 
-    yield* emit(section('section-even-fft', 'FFT części parzystej'));
-    yield* emit(note('even-root', 'Dla długości 2 pierwiastkiem jest -1:'));
+    yield* emit(section('section-even-fft', i18nText(I18N.sections.evenFft)));
+    yield* emit(note('even-root', i18nText(I18N.notes.lengthTwoRoot)));
     yield* emit(
       math(
         'even-formula',
@@ -261,7 +308,7 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     );
     yield* emit(math('even-result', `FFT(${formatVector(even)}) = ${formatVector(evenFft)}`));
 
-    yield* emit(section('section-odd-fft', 'FFT części nieparzystej'));
+    yield* emit(section('section-odd-fft', i18nText(I18N.sections.oddFft)));
     yield* emit(
       math(
         'odd-formula',
@@ -270,18 +317,18 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     );
     yield* emit(math('odd-result', `FFT(${formatVector(odd)}) = ${formatVector(oddFft)}`));
 
-    yield* emit(section('section-butterflies', 'Składanie motylkami'));
+    yield* emit(section('section-butterflies', i18nText(I18N.sections.butterflies)));
     yield* emit(math('butterflies-e', `E = ${formatVector(evenFft)}`));
     yield* emit(math('butterflies-o', `O = ${formatVector(oddFft)}`));
     yield* emit(math('butterflies-omega', `\\omega = ${values.omegaLabel}`));
-    yield* emit(note('butterflies-k0', 'Dla k = 0:'));
+    yield* emit(note('butterflies-k0', i18nText(I18N.notes.forK, { k: 0 })));
     yield* emit(
       math('butterflies-x0', `X_0 = E_0 + \\omega^0 * O_0 = ${evenFft[0]} + ${oddFft[0]} = ${x0}`),
     );
     yield* emit(
       math('butterflies-x2', `X_2 = E_0 - \\omega^0 * O_0 = ${evenFft[0]} - ${oddFft[0]} = ${x2}`),
     );
-    yield* emit(note('butterflies-k1', 'Dla k = 1:'));
+    yield* emit(note('butterflies-k1', i18nText(I18N.notes.forK, { k: 1 })));
     yield* emit(
       math(
         'butterflies-x1',
@@ -326,17 +373,17 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     );
     const linearResult = goodInverse.slice(0, requiredLength);
 
-    yield* emit(section('section-bad-settings', `Błędne ustawienie: n = ${values.badN}`));
+    yield* emit(section('section-bad-settings', i18nText(I18N.sections.badSettings, { n: values.badN })));
     yield* emit(math('bad-a', `A = ${formatVector(badA)}`));
     yield* emit(math('bad-b', `B = ${formatVector(badB)}`));
     yield* emit(math('bad-mod', `mod = ${values.mod}`));
     yield* emit(math('bad-omega', `\\omega_4 = ${values.omega4}`));
 
-    yield* emit(section('section-bad-transform', `NTT długości ${values.badN}`));
+    yield* emit(section('section-bad-transform', i18nText(I18N.sections.nttLength, { n: values.badN })));
     yield* emit(math('bad-transform-a', `NTT(A) = ${formatVector(badTransformA)}`));
     yield* emit(math('bad-transform-b', `NTT(B) = ${formatVector(badTransformB)}`));
 
-    yield* emit(section('section-bad-pointwise', 'Mnożenie punktowe'));
+    yield* emit(section('section-bad-pointwise', i18nText(NOTEBOOK_TEXT.sections.pointwise)));
     yield* emit(
       math(
         'bad-pointwise-formula',
@@ -345,16 +392,16 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     );
     yield* emit(math('bad-pointwise-vector', `C_hat = ${formatVector(badPointwise)}`));
 
-    yield* emit(section('section-bad-inverse', 'Transformata odwrotna'));
+    yield* emit(section('section-bad-inverse', i18nText(NOTEBOOK_TEXT.sections.inverse)));
     yield* emit(math('bad-inverse-vector', `INTT(C_hat) = ${formatVector(badInverse)}`));
     yield* emit(
       note(
         'bad-cyclic-note',
-        'To jest konwolucja cykliczna, czyli współczynniki z końca zawinęły się na początek.',
+        i18nText(I18N.notes.cyclic),
       ),
     );
 
-    yield* emit(section('section-good-settings', `Poprawne ustawienie: n = ${values.goodN}`));
+    yield* emit(section('section-good-settings', i18nText(I18N.sections.goodSettings, { n: values.goodN })));
     yield* emit(
       math(
         'good-required-length',
@@ -365,7 +412,7 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     yield* emit(math('good-b', `B = ${formatVector(goodB)}`));
     yield* emit(math('good-omega', `\\omega_8 = ${values.omega8}`));
 
-    yield* emit(section('section-good-ntt', `Poprawny wynik przez NTT długości ${values.goodN}`));
+    yield* emit(section('section-good-ntt', i18nText(I18N.sections.goodNtt, { n: values.goodN })));
     yield* emit(
       math('good-inverse-vector', `INTT(NTT(A) * NTT(B)) = ${formatVector(goodInverse)}`),
     );
@@ -385,12 +432,12 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     const finalDigits = carryRows.map((row) => row.digit);
     const product = fromDigits(finalDigits, values.base);
 
-    yield* emit(section('section-digits', 'Zamiana liczb na wektory cyfr'));
-    yield* emit(note('digits-note', 'Cyfry zapisujemy od najmniej znaczącej:'));
+    yield* emit(section('section-digits', i18nText(I18N.sections.digits)));
+    yield* emit(note('digits-note', i18nText(I18N.notes.digitsOrder)));
     yield* emit(math('digits-left', `${values.left} \\to ${formatVector(leftDigits)}`));
     yield* emit(math('digits-right', `${values.right} \\to ${formatVector(rightDigits)}`));
 
-    yield* emit(section('section-transform', 'Transformata'));
+    yield* emit(section('section-transform', i18nText(I18N.sections.transform)));
     yield* emit(
       math('transform-left', `NTT(${formatVector(leftDigits)}) = ${formatVector(transformedLeft)}`),
     );
@@ -401,7 +448,7 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
       ),
     );
 
-    yield* emit(section('section-pointwise', 'Mnożenie punktowe'));
+    yield* emit(section('section-pointwise', i18nText(NOTEBOOK_TEXT.sections.pointwise)));
     for (let i = 0; i < values.n; i++) {
       yield* emit(
         math(
@@ -412,21 +459,21 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     }
     yield* emit(math('pointwise-vector', `C_hat = ${formatVector(multiplied)}`));
 
-    yield* emit(section('section-inverse', 'Transformata odwrotna'));
+    yield* emit(section('section-inverse', i18nText(NOTEBOOK_TEXT.sections.inverse)));
     yield* emit(math('inverse-vector', `INTT(C_hat) = ${formatVector(inverse)}`));
 
-    yield* emit(section('section-carry', `Przeniesienia w bazie ${values.base}`));
+    yield* emit(section('section-carry', i18nText(I18N.sections.carry, { base: values.base })));
     for (const row of carryRows) {
       yield* emit(
-        math(
+        mathText(
           `carry-${row.index}`,
-          `c_${row.index} = ${row.value} \\to digit ${row.digit}, carry ${row.carry}`,
+          i18nText(I18N.lines.carryRow, { index: row.index, value: row.value, digit: row.digit, carry: row.carry }),
         ),
       );
     }
-    yield* emit(note('carry-digits-note', 'Cyfry od najmniej znaczącej:'));
+    yield* emit(note('carry-digits-note', i18nText(I18N.notes.digitsLowFirst)));
     yield* emit(math('carry-digits', formatVector(finalDigits)));
-    yield* emit(note('carry-reverse-note', 'Po odwróceniu:'));
+    yield* emit(note('carry-reverse-note', i18nText(I18N.notes.reversed)));
     yield* emit(math('carry-reversed', String(product)));
 
     yield* emit(resultSection());
@@ -447,11 +494,11 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
       modPow(values.omegaGood, Math.floor(values.n / 2) * index, values.mod),
     );
 
-    yield* emit(section('section-bad-root', `Próba z omega = ${values.omegaBad}`));
+    yield* emit(section('section-bad-root', i18nText(I18N.sections.badRoot, { omega: values.omegaBad })));
     yield* emit(math('bad-mod', `mod = ${values.mod}`));
     yield* emit(math('bad-n', `n = ${values.n}`));
     yield* emit(math('bad-omega', `\\omega = ${values.omegaBad}`));
-    yield* emit(note('bad-powers-note', 'Sprawdzamy potęgi:'));
+    yield* emit(note('bad-powers-note', i18nText(I18N.notes.checkPowers)));
     yield* emit(
       math(
         'bad-full',
@@ -464,18 +511,18 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
         `${values.omegaBad}^${Math.floor(values.n / 2)} \\;\\mathrm{mod}\\; ${values.mod} = ${badHalf}`,
       ),
     );
-    yield* emit(note('bad-requirement-note', 'Dla pierwiastka pierwotnego stopnia n powinno być:'));
+    yield* emit(note('bad-requirement-note', i18nText(I18N.notes.primitiveRequirement)));
     yield* emit(math('bad-requirement-full', `\\omega^${values.n} = 1`));
     yield* emit(math('bad-requirement-half', `\\omega^${Math.floor(values.n / 2)} != 1`));
     yield* emit(
       note(
         'bad-order-note',
-        `Tutaj ${values.omegaBad}^${Math.floor(values.n / 2)} = 1, więc ${values.omegaBad} ma rząd ${Math.floor(values.n / 2)}, a nie ${values.n}.`,
+        i18nText(I18N.notes.badOrder, { omega: values.omegaBad, half: Math.floor(values.n / 2), n: values.n }),
       ),
     );
 
-    yield* emit(section('section-collision', 'Kolizja transformaty'));
-    yield* emit(note('collision-vectors-note', 'Weźmy dwa różne wektory:'));
+    yield* emit(section('section-collision', i18nText(I18N.sections.collision)));
+    yield* emit(note('collision-vectors-note', i18nText(I18N.notes.twoVectors)));
     yield* emit(math('collision-a', `A = ${formatVector(collisionA)}`));
     yield* emit(math('collision-b', `B = ${formatVector(collisionB)}`));
     yield* emit(math('collision-bad-a-formula', `NTT_bad(A)[k] = 1`));
@@ -492,11 +539,11 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     yield* emit(
       note(
         'collision-conclusion',
-        'Dwa różne wejścia mają tę samą transformatę, więc transformata nie jest odwracalna.',
+        i18nText(I18N.notes.collision),
       ),
     );
 
-    yield* emit(section('section-repair', `Naprawa: omega = ${values.omegaGood}`));
+    yield* emit(section('section-repair', i18nText(I18N.sections.repair, { omega: values.omegaGood })));
     yield* emit(
       math(
         'repair-full',
@@ -512,7 +559,7 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
     yield* emit(
       note(
         'repair-conclusion',
-        `Zatem ${values.omegaGood} jest poprawnym pierwiastkiem pierwotnym stopnia ${values.n} modulo ${values.mod}.`,
+        i18nText(I18N.notes.repairConclusion, { omega: values.omegaGood, n: values.n, mod: values.mod }),
       ),
     );
     yield* emit(
@@ -526,16 +573,10 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
 
     yield* emit(resultSection());
     yield* emit(
-      math(
-        'result-bad-root',
-        `\\omega = ${values.omegaBad} \\to niepoprawny pierwiastek dla n = ${values.n}`,
-      ),
+      mathText('result-bad-root', i18nText(I18N.lines.badRoot, { omega: values.omegaBad, n: values.n })),
     );
     yield* emit(
-      math(
-        'result-good-root',
-        `\\omega = ${values.omegaGood} \\to poprawny pierwiastek dla n = ${values.n}`,
-      ),
+      mathText('result-good-root', i18nText(I18N.lines.goodRoot, { omega: values.omegaGood, n: values.n })),
     );
   }
 
@@ -558,21 +599,21 @@ export function* fftNttGenerator(scenario: FftNttScenario): Generator<SortStep> 
   }
 }
 
-function phaseFor(builder: LineBuilder): string {
-  if (builder.id.includes('result')) return 'Wynik';
-  if (builder.id.includes('parameter')) return 'Parametry';
-  if (builder.id.includes('root') || builder.id.includes('repair')) return 'Pierwiastek';
-  if (builder.id.includes('transform') || builder.id.includes('split')) return 'Transformata';
-  if (builder.id.includes('pointwise')) return 'Mnożenie punktowe';
-  if (builder.id.includes('inverse')) return 'Transformata odwrotna';
-  if (builder.id.includes('carry')) return 'Przeniesienia';
-  return 'Obliczenia';
+function phaseFor(builder: LineBuilder): TranslatableText {
+  if (builder.id.includes('result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('parameter')) return i18nText(NOTEBOOK_TEXT.sections.parameters);
+  if (builder.id.includes('root') || builder.id.includes('repair')) return i18nText(I18N.phases.root);
+  if (builder.id.includes('transform') || builder.id.includes('split')) return i18nText(I18N.sections.transform);
+  if (builder.id.includes('pointwise')) return i18nText(NOTEBOOK_TEXT.sections.pointwise);
+  if (builder.id.includes('inverse')) return i18nText(NOTEBOOK_TEXT.sections.inverse);
+  if (builder.id.includes('carry')) return i18nText(I18N.phases.carries);
+  return i18nText(NOTEBOOK_TEXT.sections.computation);
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.kind === 'result') return 'Zapisujemy wynik.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
-  return 'Liczymy kolejny wiersz.';
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {

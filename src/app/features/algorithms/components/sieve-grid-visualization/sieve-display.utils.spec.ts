@@ -13,11 +13,10 @@ import {
   sieveStatRows,
   sieveStatTone,
   sieveVisibleCells,
-  smallestFactor,
 } from './sieve-display.utils';
 
-function cell(value: number, state: SieveCellState, factorLabel: string | null = null): SieveGridCell {
-  return { value, state, factorLabel };
+function cell(value: number, state: SieveCellState, factorLabel: string | null = null, markedBy: number | null = null): SieveGridCell {
+  return { value, state, factorLabel, markedBy };
 }
 
 function trace(cells: SieveGridCell[]): SieveGridTraceState {
@@ -62,17 +61,6 @@ describe('sieve display utils', () => {
     expect(sieveStatTone('danger')).toBe('red');
   });
 
-  it('finds the smallest prime factor of composites only', () => {
-    expect(smallestFactor(1)).toBeNull();
-    expect(smallestFactor(2)).toBeNull();
-    expect(smallestFactor(3)).toBeNull();
-    expect(smallestFactor(4)).toBe(2);
-    expect(smallestFactor(35)).toBe(5);
-    expect(smallestFactor(49)).toBe(7);
-    expect(smallestFactor(97)).toBeNull();
-    expect(smallestFactor(391)).toBe(17);
-  });
-
   it('focuses the cell being crossed before the pivot and the checked cell', () => {
     expect(sieveFocusValue([cell(2, 'current-prime'), cell(4, 'marking')])).toBe(4);
     expect(sieveFocusValue([cell(2, 'prime'), cell(3, 'current-prime')])).toBe(3);
@@ -87,9 +75,9 @@ describe('sieve display utils', () => {
         cell(1, 'skipped'),
         cell(2, 'current-prime'),
         cell(3, 'unchecked'),
-        cell(4, 'composite'),
+        cell(4, 'composite', null, 2),
         cell(5, 'unchecked'),
-        cell(6, 'marking', '×3'),
+        cell(6, 'marking', '×3', 2),
       ]),
       5,
     );
@@ -178,7 +166,7 @@ describe('sieve display utils', () => {
       }
       const last = run[run.length - 1]!;
       const primes = sievePrimeChips(last.cells).map((chip) => chip.value);
-      expect(primes.every((value) => smallestFactor(value) === null && value > 1)).toBe(true);
+      expect(primes.every((value) => value > 1 && last.cells.find((item) => item.value === value)?.markedBy === null)).toBe(true);
       expect(primes.length).toBe(last.cells.filter((item) => item.state === 'prime').length);
     }
   });

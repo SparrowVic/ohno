@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   NumberLabHistoryEntry,
   NumberLabRegister,
@@ -14,11 +15,43 @@ import {
 import { SortStep } from '../../models/sort-step';
 import type { MillerRabinScenario } from '../../utils/scenarios/number-lab/miller-rabin-scenarios';
 import { createNumberLabStep } from '../number-lab-step';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { withScratchpad } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.millerRabin.modeLabel'),
   numberLabModeLabel: t('features.algorithms.runtime.numberLab.millerRabin.modeLabel'),
+  notes: {
+    since: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.since'),
+    noSquares: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.noSquares'),
+    nextSquare: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.nextSquare'),
+    basePasses: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.basePasses'),
+    isPrime: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.isPrime'),
+    onlySquare: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.onlySquare'),
+    missed: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.missed'),
+    witness: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.witness'),
+    additionally: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.additionally'),
+    commonDivisor: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.commonDivisor'),
+    square: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.square'),
+    but: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.but'),
+    nontrivialMeaning: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.nontrivialMeaning'),
+    sorted: t('features.algorithms.runtime.scratchpadLab.millerRabin.notes.sorted'),
+  },
+  lines: {
+    probablePrime: t('features.algorithms.runtime.scratchpadLab.millerRabin.lines.probablePrime'),
+    witnessOf: t('features.algorithms.runtime.scratchpadLab.millerRabin.lines.witnessOf'),
+    composite: t('features.algorithms.runtime.scratchpadLab.millerRabin.lines.composite'),
+    basePasses: t('features.algorithms.runtime.scratchpadLab.millerRabin.lines.basePasses'),
+    baseFails: t('features.algorithms.runtime.scratchpadLab.millerRabin.lines.baseFails'),
+  },
+  sections: {
+    baseCheck: t('features.algorithms.runtime.scratchpadLab.millerRabin.sections.baseCheck'),
+    nontrivialRoot: t('features.algorithms.runtime.scratchpadLab.millerRabin.sections.nontrivialRoot'),
+    recoverFactors: t('features.algorithms.runtime.scratchpadLab.millerRabin.sections.recoverFactors'),
+  },
+  phases: {
+    baseTest: t('features.algorithms.runtime.scratchpadLab.millerRabin.phases.baseTest'),
+  },
 } as const;
 
 const CALCULATION_INDENT = 1;
@@ -62,7 +95,7 @@ interface LiveState {
   /** History of x_i values witnessed during the active base test. */
   squaringChain: { readonly index: number; readonly value: number }[];
   /** Final verdict text shown in the result slot once we conclude. */
-  verdictText: string | null;
+  verdictText: TranslatableText | null;
 }
 
 export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<SortStep> {
@@ -191,9 +224,9 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     }
     if (id.endsWith('-result') && builder.kind === 'equation') {
       // The math line under the result section captures the verdict.
-      const text = typeof builder.content === 'string' ? builder.content : '';
-      const stripped = text.replace(/\[\[\/?math\]\]/g, '').replace(/\\;/g, ' ').trim();
-      live.verdictText = stripped;
+      const content = builder.content;
+      live.verdictText =
+        typeof content === 'string' ? content.replace(/\[\[\/?math\]\]/g, '').replace(/\\;/g, ' ').trim() : content;
     }
   }
 
@@ -298,11 +331,11 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -315,12 +348,16 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     });
   }
 
+  function mathText(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'equation', indent, content });
+  }
+
   function resultSection(): LineBuilder {
     return paperLine({
       id: 'section-result',
       kind: 'result',
       marker: RESULT_MARKER,
-      content: 'Wynik',
+      content: i18nText(NOTEBOOK_TEXT.sections.result),
     });
   }
 
@@ -334,7 +371,7 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
   }
 
   function* emitDecomposition(): Generator<SortStep> {
-    yield* emit(section('section-decomposition', 'Rozkład n - 1'));
+    yield* emit(section('section-decomposition', i18nText(NOTEBOOK_TEXT.sections.decomposition)));
     yield* emit(math('decomposition-n', `n = ${n}`));
     yield* emit(math('decomposition-n-minus-one', `n - 1 = ${n - 1}`));
     yield* emit(
@@ -348,12 +385,12 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     idPrefix: string,
     base: number,
     opts?: {
-      readonly squareLabel?: string;
+      readonly squareLabel?: TranslatableText;
       readonly includeNoSquaresNote?: boolean;
     },
   ): Generator<SortStep, BaseTest, unknown> {
     const test = runBaseTest(base, decomposition, n);
-    yield* emit(section(`${idPrefix}-section`, `Test bazy a = ${base}`));
+    yield* emit(section(`${idPrefix}-section`, i18nText(NOTEBOOK_TEXT.sections.baseTest, { a: base })));
     yield* emit(
       math(`${idPrefix}-x0-formula`, `x_0 = ${base}^${decomposition.d} \\;\\mathrm{mod}\\; ${n}`),
     );
@@ -364,7 +401,7 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     yield* emit(math(`${idPrefix}-x0-value`, `x_0 = ${test.seed}`));
 
     if (test.seed === 1) {
-      yield* emit(note(`${idPrefix}-since-label`, 'Skoro:'));
+      yield* emit(note(`${idPrefix}-since-label`, i18nText(I18N.notes.since)));
       yield* emit(math(`${idPrefix}-seed-one`, `x_0 = 1`));
       return test;
     }
@@ -376,7 +413,7 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
       yield* emit(
         note(
           `${idPrefix}-no-squares`,
-          'Ponieważ s = 1, nie ma kolejnych kwadratów do sprawdzenia.',
+          i18nText(I18N.notes.noSquares),
         ),
       );
       return test;
@@ -384,7 +421,7 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
 
     if (test.squares.length > 0) {
       yield* emit(
-        note(`${idPrefix}-square-label`, opts?.squareLabel ?? 'Liczymy kolejny kwadrat:'),
+        note(`${idPrefix}-square-label`, opts?.squareLabel ?? i18nText(I18N.notes.nextSquare)),
       );
     }
 
@@ -422,21 +459,19 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     yield* emitDecomposition();
     const test = yield* emitBaseTest('short-base', base);
 
-    yield* emit(section('short-conclusion-section', 'Wniosek'));
+    yield* emit(section('short-conclusion-section', i18nText(NOTEBOOK_TEXT.sections.conclusion)));
     if (test.verdict === 'pass-square-minus-one') {
       const square = test.squares.find((candidate) => candidate.value === n - 1);
       yield* emit(math('short-conclusion-hit', `x_${square?.index ?? 1} = n - 1`));
     } else {
       yield* emit(math('short-conclusion-hit', `x_0 = ${test.seed}`));
     }
-    yield* emit(note('short-base-passes', `Baza ${base} przechodzi test.`));
+    yield* emit(note('short-base-passes', i18nText(I18N.notes.basePasses, { base })));
 
     yield* emit(resultSection());
+    yield* emit(mathText('short-result', i18nText(I18N.lines.probablePrime, { n, base })));
     yield* emit(
-      math('short-result', `${n}\\;\\text{jest strong probable prime dla bazy}\\;${base}`),
-    );
-    yield* emit(
-      note('short-prime-note', `W tym konkretnym przykładzie ${n} jest liczbą pierwszą.`),
+      note('short-prime-note', i18nText(I18N.notes.isPrime, { n })),
     );
   }
 
@@ -444,23 +479,21 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     const base = scenario.bases[0];
     yield* emitDecomposition();
     const test = yield* emitBaseTest('single-base', base, {
-      squareLabel: 'Liczymy jedyny wymagany kwadrat:',
+      squareLabel: i18nText(I18N.notes.onlySquare),
     });
 
-    yield* emit(section('single-conclusion-section', 'Wniosek'));
+    yield* emit(section('single-conclusion-section', i18nText(NOTEBOOK_TEXT.sections.conclusion)));
     if (test.verdict === 'witness') {
       yield* emit(
         note(
           'single-conclusion-note',
-          'Ciąg nie trafił ani w 1 na początku, ani w n - 1 w żadnym dozwolonym kroku.',
+          i18nText(I18N.notes.missed),
         ),
       );
-      yield* emit(
-        math('single-witness-line', `${base}\\;\\text{jest świadkiem złożoności liczby}\\;${n}`),
-      );
+      yield* emit(mathText('single-witness-line', i18nText(I18N.lines.witnessOf, { base, n })));
     }
     yield* emit(resultSection());
-    yield* emit(math('single-result', `${n}\\;\\text{jest liczbą złożoną}`));
+    yield* emit(mathText('single-result', i18nText(I18N.lines.composite, { n })));
   }
 
   function* emitStrongLiarMultibase(): Generator<SortStep> {
@@ -468,32 +501,22 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     yield* emitDecomposition();
 
     const first = yield* emitBaseTest('liar-base-one', base1);
-    yield* emit(note('liar-base-one-pass', `baza ${base1} przechodzi test.`));
+    yield* emit(note('liar-base-one-pass', i18nText(I18N.notes.basePasses, { base: base1 })));
 
     const second = yield* emitBaseTest('liar-base-two', base2, {
       includeNoSquaresNote: true,
     });
 
-    yield* emit(section('liar-conclusion-section', 'Wniosek'));
-    yield* emit(
-      math(
-        'liar-summary',
-        `\\mathrm{base}\\;${base1}:\\;${isPassing(first) ? 'przechodzi' : 'nie\\;przechodzi'}`,
-      ),
-    );
-    yield* emit(
-      math(
-        'liar-summary-2',
-        `\\mathrm{base}\\;${base2}:\\;${isPassing(second) ? 'przechodzi' : 'nie\\;przechodzi'}`,
-      ),
-    );
-    yield* emit(note('liar-witness-note', `Baza ${base2} jest świadkiem złożoności.`));
+    yield* emit(section('liar-conclusion-section', i18nText(NOTEBOOK_TEXT.sections.conclusion)));
+    yield* emit(mathText('liar-summary', baseSummary(base1, first)));
+    yield* emit(mathText('liar-summary-2', baseSummary(base2, second)));
+    yield* emit(note('liar-witness-note', i18nText(I18N.notes.witness, { base: base2 })));
 
     yield* emit(resultSection());
-    yield* emit(math('liar-result', `${n}\\;\\text{jest liczbą złożoną}`));
+    yield* emit(mathText('liar-result', i18nText(I18N.lines.composite, { n })));
     const factor = findSmallFactor(n);
     if (factor !== null) {
-      yield* emit(note('liar-factor-label', 'Dodatkowo:'));
+      yield* emit(note('liar-factor-label', i18nText(I18N.notes.additionally)));
       yield* emit(math('liar-factorization', `${n} = ${factor} * ${n / factor}`));
     }
   }
@@ -501,18 +524,18 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
   function* emitGcdPrecheck(): Generator<SortStep> {
     const base = scenario.bases[0];
     const divisor = gcd(base, n);
-    yield* emit(section('gcd-precheck-section', 'Sprawdzenie bazy'));
+    yield* emit(section('gcd-precheck-section', i18nText(I18N.sections.baseCheck)));
     yield* emit(math('gcd-precheck-n', `n = ${n}`));
     yield* emit(math('gcd-precheck-base', `a = ${base}`));
     yield* emit(math('gcd-precheck-gcd', `\\gcd(${base}, ${n}) = ${divisor}`));
 
-    yield* emit(section('gcd-precheck-conclusion-section', 'Wniosek'));
+    yield* emit(section('gcd-precheck-conclusion-section', i18nText(NOTEBOOK_TEXT.sections.conclusion)));
     yield* emit(math('gcd-precheck-condition', `1 < \\gcd(a, n) < n`));
     yield* emit(
-      note('gcd-precheck-note', `Baza ${base} ma wspólny dzielnik z n, więc n jest złożone.`),
+      note('gcd-precheck-note', i18nText(I18N.notes.commonDivisor, { base })),
     );
 
-    yield* emit(section('gcd-precheck-split-section', 'Rozbicie'));
+    yield* emit(section('gcd-precheck-split-section', i18nText(NOTEBOOK_TEXT.sections.factorisation)));
     yield* emit(math('gcd-precheck-quotient', `${n} / ${divisor} = ${n / divisor}`));
 
     yield* emit(resultSection());
@@ -523,22 +546,22 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
     const base = scenario.bases[0];
     yield* emitDecomposition();
     const test = yield* emitBaseTest('sqrt-base', base, {
-      squareLabel: 'Liczymy kwadrat:',
+      squareLabel: i18nText(I18N.notes.square),
     });
     const root = test.leakRoot ?? test.seed;
     const leftFactor = gcd(root - 1, n);
     const rightFactor = gcd(root + 1, n);
 
-    yield* emit(section('sqrt-root-section', 'Nietrywialny pierwiastek'));
+    yield* emit(section('sqrt-root-section', i18nText(I18N.sections.nontrivialRoot)));
     yield* emit(math('sqrt-root-square', `${root}^2 = 1\\;(\\mathrm{mod}\\; ${n})`));
-    yield* emit(note('sqrt-root-but-label', 'ale:'));
+    yield* emit(note('sqrt-root-but-label', i18nText(I18N.notes.but)));
     yield* emit(math('sqrt-root-not-one', `${root} != 1`));
     yield* emit(math('sqrt-root-not-minus-one', `${root} != -1\\;(\\mathrm{mod}\\; ${n})`));
     yield* emit(
-      note('sqrt-root-note', 'To oznacza nietrywialny pierwiastek z 1 modulo liczby złożonej.'),
+      note('sqrt-root-note', i18nText(I18N.notes.nontrivialMeaning)),
     );
 
-    yield* emit(section('sqrt-recover-section', 'Odzyskanie czynników'));
+    yield* emit(section('sqrt-recover-section', i18nText(I18N.sections.recoverFactors)));
     yield* emit(
       math(
         'sqrt-recover-left',
@@ -554,7 +577,7 @@ export function* millerRabinGenerator(scenario: MillerRabinScenario): Generator<
 
     yield* emit(resultSection());
     yield* emit(math('sqrt-result', `${n} = ${leftFactor} * ${rightFactor}`));
-    yield* emit(note('sqrt-result-sorted-label', 'Po uporządkowaniu:'));
+    yield* emit(note('sqrt-result-sorted-label', i18nText(I18N.notes.sorted)));
     yield* emit(
       math(
         'sqrt-result-sorted',
@@ -638,6 +661,10 @@ function runBaseTest(base: number, decomposition: Decomposition, n: number): Bas
   };
 }
 
+function baseSummary(base: number, test: BaseTest): TranslatableText {
+  return i18nText(isPassing(test) ? I18N.lines.basePasses : I18N.lines.baseFails, { base });
+}
+
 function isPassing(test: BaseTest): boolean {
   return test.verdict !== 'witness';
 }
@@ -684,19 +711,19 @@ function findSmallFactor(value: number): number | null {
   return null;
 }
 
-function phaseFor(builder: LineBuilder): string {
-  if (builder.id.includes('result')) return 'Wynik';
-  if (builder.id.includes('conclusion')) return 'Wniosek';
-  if (builder.id.includes('recover') || builder.id.includes('split')) return 'Rozbicie';
-  if (builder.id.includes('decomposition')) return 'Rozkład n - 1';
-  if (builder.id.includes('base')) return 'Test bazy';
-  return 'Obliczenia';
+function phaseFor(builder: LineBuilder): TranslatableText {
+  if (builder.id.includes('result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('conclusion')) return i18nText(NOTEBOOK_TEXT.sections.conclusion);
+  if (builder.id.includes('recover') || builder.id.includes('split')) return i18nText(NOTEBOOK_TEXT.sections.factorisation);
+  if (builder.id.includes('decomposition')) return i18nText(NOTEBOOK_TEXT.sections.decomposition);
+  if (builder.id.includes('base')) return i18nText(I18N.phases.baseTest);
+  return i18nText(NOTEBOOK_TEXT.sections.computation);
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.kind === 'result') return 'Zapisujemy wynik.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
-  return 'Liczymy kolejny wiersz.';
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {

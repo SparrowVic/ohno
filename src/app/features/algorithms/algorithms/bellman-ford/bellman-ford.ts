@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,33 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.bellmanFord.descriptions.initialize'),
+    startPass: t('features.algorithms.runtime.graph.bellmanFord.descriptions.startPass'),
+    inspect: t('features.algorithms.runtime.graph.bellmanFord.descriptions.inspect'),
+    unreachable: t('features.algorithms.runtime.graph.bellmanFord.descriptions.unreachable'),
+    relax: t('features.algorithms.runtime.graph.bellmanFord.descriptions.relax'),
+    keep: t('features.algorithms.runtime.graph.bellmanFord.descriptions.keep'),
+    passUpdated: t('features.algorithms.runtime.graph.bellmanFord.descriptions.passUpdated'),
+    passStable: t('features.algorithms.runtime.graph.bellmanFord.descriptions.passStable'),
+    negativeEvidence: t('features.algorithms.runtime.graph.bellmanFord.descriptions.negativeEvidence'),
+    negativeCycle: t('features.algorithms.runtime.graph.bellmanFord.descriptions.negativeCycle'),
+    complete: t('features.algorithms.runtime.graph.bellmanFord.descriptions.complete'),
+  },
+  phases: {
+    startPass: t('features.algorithms.runtime.graph.bellmanFord.phases.startPass'),
+    inspect: t('features.algorithms.runtime.graph.bellmanFord.phases.inspect'),
+    relax: t('features.algorithms.runtime.graph.bellmanFord.phases.relax'),
+    negativeEvidence: t('features.algorithms.runtime.graph.bellmanFord.phases.negativeEvidence'),
+    keep: t('features.algorithms.runtime.graph.bellmanFord.phases.keep'),
+    closePass: t('features.algorithms.runtime.graph.bellmanFord.phases.closePass'),
+    negativeCycle: t('features.algorithms.runtime.graph.bellmanFord.phases.negativeCycle'),
+    stable: t('features.algorithms.runtime.graph.bellmanFord.phases.stable'),
+    initialize: t('features.algorithms.runtime.graph.bellmanFord.phases.initialize'),
+  },
+} as const;
 
 export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -31,7 +61,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
     visitOrder,
     currentPass,
     maxPasses,
-    description: `Initialize ${labelOf(labelMap, graph.sourceId)} with distance 0 and all other nodes as ∞.`,
+    description: i18nText(I18N.descriptions.initialize, { source: labelOf(labelMap, graph.sourceId) }),
     activeCodeLine: 2,
     phase: 'init',
     negativeCycleEdgeId,
@@ -51,7 +81,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
       visitOrder,
       currentPass,
       maxPasses,
-      description: `Start pass ${pass} and scan every edge for a better distance.`,
+      description: i18nText(I18N.descriptions.startPass, { pass }),
       activeCodeLine: 5,
       phase: 'pick-node',
       negativeCycleEdgeId,
@@ -73,7 +103,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
         maxPasses,
         currentNodeId: edge.from,
         activeEdgeId: edge.id,
-        description: `Inspect ${labelOf(labelMap, edge.from)} → ${labelOf(labelMap, edge.to)} with weight ${edge.weight}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, edge.from), to: labelOf(labelMap, edge.to), weight: edge.weight }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
         negativeCycleEdgeId,
@@ -102,7 +132,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
           maxPasses,
           currentNodeId: edge.from,
           activeEdgeId: edge.id,
-          description: `Skip ${labelOf(labelMap, edge.to)} because ${labelOf(labelMap, edge.from)} is still unreachable.`,
+          description: i18nText(I18N.descriptions.unreachable, { node: labelOf(labelMap, edge.to), from: labelOf(labelMap, edge.from) }),
           activeCodeLine: 8,
           phase: 'skip-relax',
           negativeCycleEdgeId,
@@ -135,7 +165,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
           currentNodeId: edge.from,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `Relax ${labelOf(labelMap, edge.to)} to distance ${candidate} via ${labelOf(labelMap, edge.from)}.`,
+          description: i18nText(I18N.descriptions.relax, { node: labelOf(labelMap, edge.to), distance: candidate, via: labelOf(labelMap, edge.from) }),
           activeCodeLine: 9,
           phase: 'relax',
           negativeCycleEdgeId,
@@ -158,7 +188,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
           maxPasses,
           currentNodeId: edge.from,
           activeEdgeId: edge.id,
-          description: `Keep the current best distance for ${labelOf(labelMap, edge.to)}.`,
+          description: i18nText(I18N.descriptions.keep, { node: labelOf(labelMap, edge.to) }),
           activeCodeLine: 8,
           phase: 'skip-relax',
           negativeCycleEdgeId,
@@ -184,8 +214,8 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
       currentPass,
       maxPasses,
       description: relaxedInPass
-        ? `Pass ${pass} finished with updates.`
-        : `Pass ${pass} made no updates, so the distances are already stable.`,
+        ? i18nText(I18N.descriptions.passUpdated, { pass })
+        : i18nText(I18N.descriptions.passStable, { pass }),
       activeCodeLine: 12,
       phase: 'settle-node',
       negativeCycleEdgeId,
@@ -215,7 +245,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
         maxPasses,
         currentNodeId: edge.from,
         activeEdgeId: edge.id,
-        description: `Extra scan still improves ${labelOf(labelMap, edge.to)}, so a negative cycle is reachable.`,
+        description: i18nText(I18N.descriptions.negativeEvidence, { node: labelOf(labelMap, edge.to) }),
         activeCodeLine: 14,
         phase: 'skip-relax',
         negativeCycleEdgeId,
@@ -240,8 +270,8 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
     currentPass,
     maxPasses,
     description: negativeCycleEdgeId
-      ? 'Bellman-Ford found a reachable negative cycle.'
-      : 'Bellman-Ford complete. Shortest paths remain stable after the final check.',
+      ? i18nText(I18N.descriptions.negativeCycle)
+      : i18nText(I18N.descriptions.complete),
     activeCodeLine: 16,
     phase: 'graph-complete',
     negativeCycleEdgeId,
@@ -257,7 +287,7 @@ function createStep(args: {
   readonly visitOrder: readonly string[];
   readonly currentPass: number;
   readonly maxPasses: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly negativeCycleEdgeId: string | null;
@@ -364,21 +394,23 @@ function phaseLabel(
   currentPass: number,
   maxPasses: number,
   hasNegativeCycle: boolean,
-): string {
+): TranslatableText {
   switch (phase) {
     case 'pick-node':
-      return `Start pass ${currentPass}`;
+      return i18nText(I18N.phases.startPass, { pass: currentPass });
     case 'inspect-edge':
-      return `Inspect edge in pass ${currentPass}`;
+      return i18nText(I18N.phases.inspect, { pass: currentPass });
     case 'relax':
-      return 'Relax distance';
+      return i18nText(I18N.phases.relax);
     case 'skip-relax':
-      return hasNegativeCycle ? 'Negative-cycle evidence' : 'Keep current best';
+      return i18nText(hasNegativeCycle ? I18N.phases.negativeEvidence : I18N.phases.keep);
     case 'settle-node':
-      return `Close pass ${currentPass}`;
+      return i18nText(I18N.phases.closePass, { pass: currentPass });
     case 'graph-complete':
-      return hasNegativeCycle ? 'Negative cycle found' : `Stable after ${Math.min(currentPass, maxPasses)} pass(es)`;
+      return hasNegativeCycle
+        ? i18nText(I18N.phases.negativeCycle)
+        : i18nText(I18N.phases.stable, { passes: Math.min(currentPass, maxPasses) });
     default:
-      return 'Initialize Bellman-Ford';
+      return i18nText(I18N.phases.initialize);
   }
 }
