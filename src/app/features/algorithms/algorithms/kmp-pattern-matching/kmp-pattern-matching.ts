@@ -177,7 +177,7 @@ function makeState(args: {
     stage: args.stage,
     text: args.scenario.text,
     pattern: args.scenario.pattern,
-    failure: args.failure,
+    failure: [...args.failure],
     failureReadyIndex: args.failureReadyIndex,
     alignment: args.alignment,
     textIndex: args.textIndex,
@@ -186,7 +186,7 @@ function makeState(args: {
     comparePatternIndex: args.comparePatternIndex,
     fallbackFrom: args.fallbackFrom,
     fallbackTo: args.fallbackTo,
-    matches: args.matches,
+    matches: [...args.matches],
   };
 }
 

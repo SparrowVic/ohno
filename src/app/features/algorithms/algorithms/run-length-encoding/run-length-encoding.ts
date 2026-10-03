@@ -159,7 +159,7 @@ function makeState(args: {
     groupStart: args.groupStart,
     groupChar: args.groupChar,
     groupCount: args.groupCount,
-    completedRuns: args.completedRuns,
+    completedRuns: [...args.completedRuns],
     output: args.output,
     phase: args.phase,
     compressionRatio: args.compressionRatio,

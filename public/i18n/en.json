@@ -1229,6 +1229,24 @@
             "zeroMatching": "Zero matching · round {{round}}"
           }
         },
+        "pointerLab": {
+          "ariaDisplay": "Tape of {{count}} cells with pointers {{pointers}}",
+          "legend": {
+            "best": "Best",
+            "discarded": "Discarded",
+            "left": "Pointer L",
+            "match": "Match",
+            "mismatch": "Mismatch",
+            "pointerI": "Pointer i",
+            "right": "Pointer R",
+            "settled": "Settled",
+            "window": "Window"
+          },
+          "offTape": "off the tape",
+          "pending": "in progress",
+          "tape": "Sequence",
+          "window": "window [{{left}}..{{right}}]"
+        },
         "racks": {
           "base": "base",
           "best": "Best",
@@ -1366,6 +1384,26 @@
           "y": "y",
           "zValue": "Z[i]"
         },
+        "search": {
+          "ariaDisplay": "Search tape of {{count}} values, target {{target}}",
+          "candidates": {
+            "both": "first- and last-match candidate",
+            "first": "first-match candidate",
+            "last": "last-match candidate"
+          },
+          "decision": "Decision",
+          "emptyRange": "empty range",
+          "legend": {
+            "candidate": "Bound candidate",
+            "discarded": "Discarded",
+            "found": "Found",
+            "probe": "Probe",
+            "range": "Range lo–hi"
+          },
+          "range": "range [{{low}}, {{high}}]",
+          "tape": "Array · A",
+          "target": "target x = {{target}}"
+        },
         "sieve": {
           "boardAria": "Number board from 1 to {{n}}",
           "cellAria": "{{value}}: {{state}}",
@@ -1379,6 +1417,152 @@
             "prime": "prime",
             "skipped": "outside the sieve",
             "unchecked": "not checked yet"
+          }
+        },
+        "string": {
+          "ariaDisplay": "String tape: {{count}} characters",
+          "aside": {
+            "at": "at i = {{i}}",
+            "lpsReady": "ready {{ready}}/{{total}}",
+            "patternLength": "m = {{m}}",
+            "shift": "shift i − j = {{shift}}",
+            "sorted": "sorted {{sorted}}/{{total}}",
+            "symbolCount": "{{n}} symbols",
+            "textLength": "n = {{n}}",
+            "window": "window {{from}}–{{to}}"
+          },
+          "captions": {
+            "combined": "P $ T · combined string",
+            "frequencies": "Frequencies",
+            "huffmanTree": "Huffman tree",
+            "input": "Input",
+            "lastColumn": "L · last column",
+            "output": "Output · runs",
+            "prefix": "Prefix P under position i",
+            "radii": "P · palindrome radius",
+            "ranks": "Rank[i]",
+            "ranksNext": "Rank[i + {{k}}]",
+            "rotations": "Rotations · F … L",
+            "source": "String · S",
+            "suffixAt": "Suffix i = {{i}}",
+            "suffixPrev": "Previous in the array j = {{j}}",
+            "symbols": "Symbols",
+            "transformed": "String with separators · #",
+            "trie": "Pattern trie",
+            "zValues": "Z · matching prefix length"
+          },
+          "facts": {
+            "base": "base",
+            "char": "char",
+            "h": "h · common prefix",
+            "k": "k · step length",
+            "longestSuffix": "longest suffix",
+            "lpsPrev": "lps[j−1]",
+            "lpsPrevK": "lps[k−1]",
+            "mirror": "mirror i′",
+            "mod": "modulus",
+            "patternHash": "h(P)",
+            "radius": "radius P[i]",
+            "ratio": "compression",
+            "rightEdge": "right edge R",
+            "roll": "out → in",
+            "state": "state",
+            "windowHash": "h(T[window])",
+            "zBox": "Z-box [l, r]",
+            "zValue": "Z[i]"
+          },
+          "fallback": {
+            "buildJump": "k = lps[{{k}}] = {{to}}",
+            "buildMismatch": "q = {{q}}: {{a}} ≠ {{b}}",
+            "hit": "hit from i = {{start}}",
+            "jump": "j = lps[{{k}}] = {{to}}",
+            "mismatch": "i = {{i}}: {{text}} ≠ {{pattern}}"
+          },
+          "legend": {
+            "center": "Center",
+            "codes": "Codes and root",
+            "collision": "Hash collision",
+            "commonPrefix": "Common prefix",
+            "compare": "Comparison",
+            "comparedRotations": "Rotation comparison",
+            "comparedSuffixes": "Compared suffixes",
+            "currentChar": "Current character",
+            "currentState": "Current state",
+            "currentSuffix": "Current suffix",
+            "currentSymbol": "Current symbol",
+            "emittedRun": "Emitted run",
+            "failureLink": "Failure link",
+            "failurePath": "Failure path",
+            "firstColumn": "Column F",
+            "frequencies": "Frequencies",
+            "growingRun": "Growing run",
+            "hashWindow": "Hash window",
+            "insertedRotation": "Inserted rotation",
+            "internalNode": "Internal node",
+            "lastColumn": "Column L · output",
+            "lcp": "LCP",
+            "longestSuffix": "Longest suffix palindrome",
+            "lpsTable": "LPS table",
+            "matched": "Matched",
+            "mergedNodes": "Merged nodes",
+            "mirror": "Mirror and right edge",
+            "mismatch": "Mismatch",
+            "mismatchFallback": "Mismatch · fallback",
+            "palindrome": "Palindrome",
+            "radii": "Radii P",
+            "ranks": "Ranks",
+            "read": "Read",
+            "root": "Root",
+            "runCount": "Run count",
+            "suffixI": "Suffix i",
+            "suffixJ": "Suffix j",
+            "suffixLink": "Suffix link",
+            "trieMatch": "Match",
+            "unread": "Unread",
+            "unsorted": "Unsorted",
+            "zBox": "Pattern and Z-box",
+            "zTable": "Z table"
+          },
+          "marks": {
+            "center": "center",
+            "fallback": "fallback",
+            "hit": "hit",
+            "longestSuffix": "longest suffix",
+            "match": "h = {{h}}",
+            "mirror": "mirror",
+            "rightEdge": "reach R",
+            "run": "run",
+            "span": "2k = {{length}}",
+            "window": "window",
+            "zBox": "Z-box"
+          },
+          "nodes": {
+            "evenRoot": "root 0 · ε",
+            "internal": "node",
+            "oddRoot": "root −1"
+          },
+          "notes": {
+            "codesPending": "Codes appear once the tree is built.",
+            "collisionBody": "h(T) = h(P), but the characters differ — a false alarm.",
+            "collisionTitle": "Hash collision",
+            "firstAt": "The first one appears at i = {{index}}.",
+            "heapPending": "The heap is built after counting characters.",
+            "mirrorIndex": "i′ = 2c − i = {{mirror}}",
+            "mirrorTitle": "Mirror",
+            "mirrorValue": "start: P[i′] = {{value}}",
+            "neverOccurs": "The pattern does not occur in this text.",
+            "noPalindromeYet": "No palindrome longer than 1 yet.",
+            "noRunsYet": "The first run is still being counted.",
+            "noTrieMatch": "No pattern found in the text yet.",
+            "suffixPathTitle": "Suffix chain"
+          },
+          "racks": {
+            "longest": "Longest palindrome",
+            "patterns": "Patterns"
+          },
+          "rows": {
+            "occurrences": "×{{count}}",
+            "span": "T[{{from}}..{{to}}]"
           }
         },
         "tree": {

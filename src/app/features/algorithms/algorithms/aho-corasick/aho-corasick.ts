@@ -194,7 +194,7 @@ function makeState(args: {
     currentChar: args.currentChar,
     activeNodeId: String(args.activeNodeId),
     failurePath: args.failurePath.map(String),
-    matches: args.matches,
+    matches: [...args.matches],
   };
 }
 

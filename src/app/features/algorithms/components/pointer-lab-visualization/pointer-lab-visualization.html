@@ -1,115 +1,96 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
-
-  @if (state(); as lab) {
-    <div class="pointer-lab">
-      <!-- Cell row + pointer markers. Pointers sit in a sibling grid
-           aligned to the same columns, so a pointer at index 3 lands
-           exactly over the centre of cell 3 regardless of count. -->
-      <div class="pointer-lab__stage">
-        <div class="pointer-lab__pointers pointer-lab__pointers--top"
-             [style.grid-template-columns]="gridColumns()">
-          @for (ptr of lab.pointers; track ptr.id) {
-            @if (ptr.side === 'top') {
-              <span
-                class="pointer-lab__pointer pointer-lab__pointer--{{ ptr.tone }}"
-                [style.grid-column]="(ptr.index + 1) + ' / span 1'"
-              >
-                <span class="pointer-lab__pointer-label">{{ ptr.label }}</span>
-                <span class="pointer-lab__pointer-stem" aria-hidden="true"></span>
-              </span>
-            }
+@if (state(); as lab) {
+  @if (view(); as tape) {
+    <div class="display display--rack lab" [attr.data-mode]="lab.mode">
+      <div
+        #main
+        class="display__main lab__main"
+        role="img"
+        [attr.aria-label]="LAB.ariaDisplay | transloco: { count: tape.cells.length, pointers: pointerNames() }"
+      >
+        <div class="lab__caption" aria-hidden="true">
+          <ohno-engraving>{{ LAB.tape | transloco }}</ohno-engraving>
+          @if (band(); as span) {
+            <ohno-engraving [tone]="span.tone">{{ LAB.window | transloco: { left: span.from, right: span.to } }}</ohno-engraving>
           }
         </div>
 
-        <div class="pointer-lab__row"
-             [style.grid-template-columns]="gridColumns()">
-          @if (lab.window; as win) {
-            <span
-              class="pointer-lab__window pointer-lab__window--{{ win.tone }}"
-              [style.grid-column]="(win.left + 1) + ' / ' + (win.right + 2)"
-              aria-hidden="true"
-            ></span>
-          }
-
-          @for (cell of lab.cells; track cell.index) {
-            <article
-              class="pointer-lab__cell pointer-lab__cell--{{ cell.status }}"
-              [attr.data-cell-index]="cell.index"
-            >
-              <span class="pointer-lab__cell-index">{{ cell.index }}</span>
-              <app-math-text
-                class="pointer-lab__cell-value"
-                [content]="cell.value"
-                variant="cell"
-              />
-              @if (cell.overlay; as overlay) {
-                <span class="pointer-lab__cell-overlay">{{ overlay }}</span>
+        <div class="lab__tape" aria-hidden="true">
+          <div
+            #track
+            tabindex="-1"
+            class="lab__track"
+            [style.--cell-width.px]="layout().cell"
+            [style.--cell-font.px]="layout().font"
+            [style.--tape-gap.px]="METRICS.gap"
+            [style.--tape-inset.px]="METRICS.inset"
+            [style.--lanes-top]="lanes().top"
+            [style.--lanes-bottom]="lanes().bottom"
+          >
+            <div class="lab__row">
+              @if (band(); as span) {
+                <span class="lab__band" [attr.data-tone]="span.tone" [style.left.px]="span.left" [style.width.px]="span.width"></span>
               }
-            </article>
-          }
-        </div>
 
-        <div class="pointer-lab__pointers pointer-lab__pointers--bottom"
-             [style.grid-template-columns]="gridColumns()">
-          @for (ptr of lab.pointers; track ptr.id) {
-            @if (ptr.side === 'bottom') {
-              <span
-                class="pointer-lab__pointer pointer-lab__pointer--{{ ptr.tone }} pointer-lab__pointer--below"
-                [style.grid-column]="(ptr.index + 1) + ' / span 1'"
-              >
-                <span class="pointer-lab__pointer-stem" aria-hidden="true"></span>
-                <span class="pointer-lab__pointer-label">{{ ptr.label }}</span>
-              </span>
-            }
-          }
+              @for (cell of tape.cells; track cell.index) {
+                <span class="lab__cell" [attr.data-tone]="cell.tone" [attr.data-focus]="cell.focus">
+                  @if (cell.overlay; as overlay) {
+                    <span class="lab__overlay">{{ overlay }}</span>
+                  }
+                  <span class="tape-cell__char lab__glyph" [attr.data-symbol]="cell.symbol">{{ cell.glyph }}</span>
+                  <span class="tape-cell__index">{{ cell.index }}</span>
+                </span>
+              }
+
+              @for (cursor of cursors(); track cursor.id) {
+                <span
+                  class="lab__cursor"
+                  [attr.data-tone]="cursor.tone"
+                  [attr.data-side]="cursor.side"
+                  [attr.data-off]="cursor.off"
+                  [attr.title]="cursor.off ? (LAB.offTape | transloco) : null"
+                  [style.left.px]="cursor.x"
+                  [style.--lane]="cursor.lane"
+                >{{ cursor.label }}</span>
+              }
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Stats strip — always rendered; stats list is stable per run,
-           but we wrap in a min-height container to absorb per-step
-           value-width differences without nudging the row below. -->
-      <section class="pointer-lab__stats">
-        @for (stat of lab.stats; track $index) {
-          <article class="pointer-lab__stat pointer-lab__stat--{{ stat.tone }}">
-            <app-math-text
-              class="pointer-lab__stat-label"
-              [content]="stat.label | i18nText"
-              variant="chip"
-            />
-            <app-math-text
-              class="pointer-lab__stat-value"
-              [content]="stat.value | i18nText"
-              variant="chip"
-            />
-          </article>
+      <div class="display__rack lab__side">
+        @if (lab.pointers.length > 0) {
+          <ohno-rack [title]="RACKS.pointers | transloco">
+            @for (cursor of cursors(); track cursor.id) {
+              <ohno-rack-row>
+                <ohno-led rackLead size="sm" [color]="cursor.tone" />
+                <span class="lab__stat-label">{{ cursor.label }}</span>
+                <span rackValue class="lab__stat-value" data-dot="true">{{ cursor.index }}</span>
+              </ohno-rack-row>
+            }
+          </ohno-rack>
         }
-      </section>
 
-      <!-- Result footer — always rendered so it doesn't jump in at the
-           end of the run. Content swaps between placeholder and real
-           value; the slot stays the same height. -->
-      <footer
-        class="pointer-lab__result"
-        [class.pointer-lab__result--pending]="!lab.resultLabel"
-      >
-        <span class="pointer-lab__result-label">result</span>
-        @if (lab.resultLabel; as result) {
-          <app-math-text
-            class="pointer-lab__result-value"
-            [content]="result | i18nText"
-            variant="formula"
-          />
-        } @else {
-          <span class="pointer-lab__result-value">—</span>
+        @if (stats().length > 0) {
+          <ohno-rack [title]="RACKS.stats | transloco">
+            @for (row of stats(); track row.id) {
+              <ohno-rack-row>
+                <ohno-led rackLead size="sm" [color]="row.led" />
+                <span class="lab__stat-label">{{ row.label | i18nText }}</span>
+                <span rackValue class="lab__stat-value" [attr.data-dot]="row.dot">{{ row.value | i18nText }}</span>
+              </ohno-rack-row>
+            }
+          </ohno-rack>
         }
-      </footer>
+
+        <div class="lab__result" [attr.data-tone]="lab.resultLabel ? 'lime' : 'slate'">
+          <span class="lab__result-title">{{ RACKS.result | transloco }}</span>
+          @if (lab.resultLabel; as result) {
+            <span class="lab__result-text">{{ result | i18nText }}</span>
+          } @else {
+            <span class="lab__result-text lab__result-text--pending">{{ LAB.pending | transloco }}</span>
+          }
+        </div>
+      </div>
     </div>
   }
-</app-viz-panel>
+}

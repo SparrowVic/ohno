@@ -1229,6 +1229,24 @@
             "zeroMatching": "Skojarzenie zer · runda {{round}}"
           }
         },
+        "pointerLab": {
+          "ariaDisplay": "Taśma ze wskaźnikami {{pointers}}, liczba komórek: {{count}}",
+          "legend": {
+            "best": "Rekord",
+            "discarded": "Odrzucone",
+            "left": "Wskaźnik L",
+            "match": "Zgodne",
+            "mismatch": "Niezgodne",
+            "pointerI": "Wskaźnik i",
+            "right": "Wskaźnik R",
+            "settled": "Ustalone",
+            "window": "Okno"
+          },
+          "offTape": "poza taśmą",
+          "pending": "w toku",
+          "tape": "Ciąg",
+          "window": "okno [{{left}}..{{right}}]"
+        },
         "racks": {
           "base": "baza",
           "best": "Najlepsze",
@@ -1366,6 +1384,26 @@
           "y": "y",
           "zValue": "Z[i]"
         },
+        "search": {
+          "ariaDisplay": "Wyszukiwanie na taśmie {{count}} wartości, szukane {{target}}",
+          "candidates": {
+            "both": "kandydat na pierwsze i ostatnie trafienie",
+            "first": "kandydat na pierwsze trafienie",
+            "last": "kandydat na ostatnie trafienie"
+          },
+          "decision": "Decyzja",
+          "emptyRange": "zakres pusty",
+          "legend": {
+            "candidate": "Kandydat brzegu",
+            "discarded": "Odrzucone",
+            "found": "Znalezione",
+            "probe": "Sprawdzana komórka",
+            "range": "Zakres lo–hi"
+          },
+          "range": "zakres [{{low}}, {{high}}]",
+          "tape": "Tablica · A",
+          "target": "szukane x = {{target}}"
+        },
         "sieve": {
           "boardAria": "Tablica liczb od 1 do {{n}}",
           "cellAria": "{{value}}: {{state}}",
@@ -1379,6 +1417,152 @@
             "prime": "pierwsza",
             "skipped": "poza sitem",
             "unchecked": "jeszcze nie sprawdzona"
+          }
+        },
+        "string": {
+          "ariaDisplay": "Taśma napisu: {{count}} znaków",
+          "aside": {
+            "at": "przy i = {{i}}",
+            "lpsReady": "gotowe {{ready}}/{{total}}",
+            "patternLength": "m = {{m}}",
+            "shift": "przesunięcie i − j = {{shift}}",
+            "sorted": "posortowane {{sorted}}/{{total}}",
+            "symbolCount": "{{n}} symboli",
+            "textLength": "n = {{n}}",
+            "window": "okno {{from}}–{{to}}"
+          },
+          "captions": {
+            "combined": "P $ T · połączony napis",
+            "frequencies": "Częstości",
+            "huffmanTree": "Drzewo Huffmana",
+            "input": "Wejście",
+            "lastColumn": "L · ostatnia kolumna",
+            "output": "Wyjście · serie",
+            "prefix": "Prefiks P pod pozycją i",
+            "radii": "P · promień palindromu",
+            "ranks": "Ranga[i]",
+            "ranksNext": "Ranga[i + {{k}}]",
+            "rotations": "Rotacje · F … L",
+            "source": "Napis · S",
+            "suffixAt": "Sufiks i = {{i}}",
+            "suffixPrev": "Poprzedni w tablicy j = {{j}}",
+            "symbols": "Symbole",
+            "transformed": "Napis z separatorami · #",
+            "trie": "Drzewo wzorców",
+            "zValues": "Z · długość zgodnego prefiksu"
+          },
+          "facts": {
+            "base": "baza",
+            "char": "znak",
+            "h": "h · wspólny prefiks",
+            "k": "k · długość kroku",
+            "longestSuffix": "najdłuższy sufiks",
+            "lpsPrev": "lps[j−1]",
+            "lpsPrevK": "lps[k−1]",
+            "mirror": "lustro i′",
+            "mod": "moduł",
+            "patternHash": "h(P)",
+            "radius": "promień P[i]",
+            "ratio": "kompresja",
+            "rightEdge": "prawa granica R",
+            "roll": "wychodzi → wchodzi",
+            "state": "stan",
+            "windowHash": "h(T[okno])",
+            "zBox": "okno Z [l, r]",
+            "zValue": "Z[i]"
+          },
+          "fallback": {
+            "buildJump": "k = lps[{{k}}] = {{to}}",
+            "buildMismatch": "q = {{q}}: {{a}} ≠ {{b}}",
+            "hit": "trafienie od i = {{start}}",
+            "jump": "j = lps[{{k}}] = {{to}}",
+            "mismatch": "i = {{i}}: {{text}} ≠ {{pattern}}"
+          },
+          "legend": {
+            "center": "Środek",
+            "codes": "Kody i korzeń",
+            "collision": "Kolizja haszy",
+            "commonPrefix": "Wspólny prefiks",
+            "compare": "Porównanie",
+            "comparedRotations": "Porównanie rotacji",
+            "comparedSuffixes": "Porównywane sufiksy",
+            "currentChar": "Bieżący znak",
+            "currentState": "Bieżący stan",
+            "currentSuffix": "Bieżący sufiks",
+            "currentSymbol": "Bieżący symbol",
+            "emittedRun": "Zapisana seria",
+            "failureLink": "Łącze powrotu",
+            "failurePath": "Ścieżka powrotów",
+            "firstColumn": "Kolumna F",
+            "frequencies": "Częstości",
+            "growingRun": "Wydłużana seria",
+            "hashWindow": "Okno haszu",
+            "insertedRotation": "Wstawiana rotacja",
+            "internalNode": "Węzeł wewnętrzny",
+            "lastColumn": "Kolumna L · wynik",
+            "lcp": "LCP",
+            "longestSuffix": "Najdłuższy sufiks-palindrom",
+            "lpsTable": "Tablica LPS",
+            "matched": "Zgodne",
+            "mergedNodes": "Łączone węzły",
+            "mirror": "Lustro i prawa granica",
+            "mismatch": "Niezgodność",
+            "mismatchFallback": "Niezgodność · powrót",
+            "palindrome": "Palindrom",
+            "radii": "Promienie P",
+            "ranks": "Rangi",
+            "read": "Przeczytane",
+            "root": "Korzeń",
+            "runCount": "Licznik serii",
+            "suffixI": "Sufiks i",
+            "suffixJ": "Sufiks j",
+            "suffixLink": "Łącze sufiksowe",
+            "trieMatch": "Dopasowanie",
+            "unread": "Nieprzeczytane",
+            "unsorted": "Nieposortowane",
+            "zBox": "Wzorzec i okno Z",
+            "zTable": "Tablica Z"
+          },
+          "marks": {
+            "center": "środek",
+            "fallback": "powrót",
+            "hit": "trafienie",
+            "longestSuffix": "najdłuższy sufiks",
+            "match": "h = {{h}}",
+            "mirror": "lustro",
+            "rightEdge": "zasięg R",
+            "run": "seria",
+            "span": "2k = {{length}}",
+            "window": "okno",
+            "zBox": "okno Z"
+          },
+          "nodes": {
+            "evenRoot": "korzeń 0 · ε",
+            "internal": "węzeł",
+            "oddRoot": "korzeń −1"
+          },
+          "notes": {
+            "codesPending": "Kody powstaną po zbudowaniu drzewa.",
+            "collisionBody": "h(T) = h(P), ale znaki się różnią — fałszywy alarm.",
+            "collisionTitle": "Kolizja haszy",
+            "firstAt": "Pierwsze pojawi się przy i = {{index}}.",
+            "heapPending": "Kopiec powstanie po zliczeniu znaków.",
+            "mirrorIndex": "i′ = 2c − i = {{mirror}}",
+            "mirrorTitle": "Lustro",
+            "mirrorValue": "start: P[i′] = {{value}}",
+            "neverOccurs": "Wzorzec nie występuje w tym tekście.",
+            "noPalindromeYet": "Jeszcze żadnego palindromu dłuższego niż 1.",
+            "noRunsYet": "Pierwsza seria jeszcze się liczy.",
+            "noTrieMatch": "Jeszcze żadnego wzorca w tekście.",
+            "suffixPathTitle": "Łańcuch sufiksowy"
+          },
+          "racks": {
+            "longest": "Najdłuższy palindrom",
+            "patterns": "Wzorce"
+          },
+          "rows": {
+            "occurrences": "×{{count}}",
+            "span": "T[{{from}}..{{to}}]"
           }
         },
         "tree": {

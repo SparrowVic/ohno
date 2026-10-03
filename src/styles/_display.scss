@@ -454,6 +454,7 @@
 @mixin rack-value-dot {
   font: 900 14px/1 var(--font-dot);
   font-variation-settings: var(--dot-settings);
+  font-variant-numeric: tabular-nums;
 }
 
 @mixin visually-hidden {

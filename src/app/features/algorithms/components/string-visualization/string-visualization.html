@@ -1,611 +1,177 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
-
-  @if (state(); as stringState) {
-    <div class="string-stage-wrap" #container>
-      @switch (stringState.mode) {
-        @case ('kmp') {
-          @if (kmpState(); as kmp) {
-            <div class="string-stage">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of kmp.text; track $index; let index = $index) {
-                    <div
-                      class="{{ kmpTextClass(index) }}"
-                      [attr.data-kmp-text]="index"
-                    >
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
-                }}</span>
-                <div class="cell-track cell-track--floating">
-                  <div
-                    class="float-track"
-                    [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
-                  >
-                    @for (char of kmp.pattern; track $index; let index = $index) {
-                      <div
-                        class="{{ kmpPatternClass(index) }}"
-                        [attr.data-kmp-pattern]="index"
-                      >
-                        <span>{{ char }}</span>
-                        <small>{{ index }}</small>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.kmp.failureTableLabel | transloco
-                }}</span>
-                <div class="cell-track cell-track--floating">
-                  <div
-                    class="float-track"
-                    [style.--offset-cells]="patternOffset(kmp.stage === 'scan' ? kmp.alignment : 0)"
-                  >
-                    @for (value of kmp.failure; track $index; let index = $index) {
-                      <div class="{{ failureClass(index) }}">
-                        <span>{{ index <= kmp.failureReadyIndex ? value : '·' }}</span>
-                        <small>f{{ index }}</small>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-        }
-
-        @case ('rabin-karp') {
-          @if (rabinState(); as rabin) {
-            <div class="string-stage">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of rabin.text; track $index; let index = $index) {
-                    <div class="{{ rabinTextClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.pattern | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of rabin.pattern; track $index; let index = $index) {
-                    <div class="{{ rabinPatternClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="hash-strip">
-                <div class="hash-card">
-                  <span class="hash-card__label">{{
-                    I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.patternLabel | transloco
-                  }}</span>
-                  <span class="hash-card__value">{{ rabin.patternHash }}</span>
-                </div>
-                <div class="hash-card hash-card--window">
-                  <span class="hash-card__label">{{
-                    I18N_KEY.features.algorithms.tracePanels.string.rabinKarp.windowLabel | transloco
-                  }}</span>
-                  <span class="hash-card__value">{{ rabin.windowHash }}</span>
-                </div>
-              </div>
-            </div>
-          }
-        }
-
-        @case ('z-algorithm') {
-          @if (zState(); as zStateValue) {
-            <div class="string-stage string-stage--z">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.combined | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of zStateValue.combined; track $index; let index = $index) {
-                    <div class="{{ zCharClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="z-landscape">
-                @for (value of zStateValue.zValues; track $index; let index = $index) {
-                  <div class="z-col">
-                    <div
-                      class="{{ zBarClass(index) }}"
-                      [style.height]="zBarHeight(value)"
-                      [attr.data-z-bar]="index"
-                    ></div>
-                    <span class="z-col__label">{{ value }}</span>
-                  </div>
+@if (state(); as current) {
+  <div
+    class="display str"
+    [class.display--rack]="hasRack()"
+    role="img"
+    [attr.aria-label]="STRING.ariaDisplay | transloco: { count: length() }"
+    [attr.data-mode]="current.mode"
+  >
+    <div class="display__main str__main" aria-hidden="true">
+      <div
+        #tapes
+        class="str__tapes"
+        [attr.data-tree]="display().tree !== null"
+        [style.--cell-w.px]="metrics().width"
+        [style.--cell-font.px]="metrics().font"
+        [style.--gap.px]="gap"
+        [style.--inset.px]="inset"
+        [style.--view-w.px]="viewWidth()"
+      >
+        <div
+          class="str__grid"
+          [style.grid-template-rows]="grid().template"
+          [style.grid-template-columns]="'repeat(' + grid().columns + ', var(--cell-w))'"
+        >
+          @for (entry of display().rows; track entry.id) {
+            @if (grid().caption[entry.id]; as line) {
+              <div class="str__caption" [style.grid-row]="line" [attr.data-tone]="entry.captionTone">
+                <span class="str__caption-text">{{ entry.caption | i18nText }}</span>
+                @if (entry.aside; as aside) {
+                  <span class="str__aside">{{ aside | i18nText }}</span>
                 }
               </div>
-            </div>
-          }
-        }
-
-        @case ('aho-corasick') {
-          @if (ahoState(); as aho) {
-            <div class="string-stage string-stage--aho">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.text | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of aho.text; track $index; let index = $index) {
-                    <div class="{{ ahoTextClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.patterns | transloco
-                }}</span>
-                <div class="chip-track">
-                  @for (pattern of aho.patterns; track pattern) {
-                    <span class="value-chip" [class.value-chip--soft]="!ahoPatternMatched(pattern)">
-                      {{ pattern }}
-                    </span>
-                  }
-                </div>
-              </div>
-
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.nodes | transloco
-                }}</span>
-                <div class="node-grid">
-                  @for (node of aho.nodes; track node.id) {
-                    <div class="node-card node-card--{{ node.tone }}">
-                      <div class="node-card__title">
-                        <span>q{{ node.index }}</span>
-                        <small>{{ node.char }}</small>
-                      </div>
-                      <div class="node-card__meta">f → {{ node.failId ?? '—' }}</div>
-                      <div class="node-card__meta">
-                        {{ node.outputs.length > 0 ? node.outputs.join(', ') : '—' }}
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-          }
-        }
-
-        @case ('suffix-array-construction') {
-          @if (suffixArrayState(); as suffixArray) {
-            <div class="string-stage string-stage--suffix">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of suffixArray.source; track $index; let index = $index) {
-                    <div class="{{ suffixSourceClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="bwt-summary">
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">{{
-                    I18N_KEY.features.algorithms.tracePanels.string.suffixArray.stepSizeLabel
-                      | transloco
-                  }}</span>
-                  <span class="bwt-summary__value">{{ suffixArray.stepSize }}</span>
-                </div>
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">{{
-                    I18N_KEY.features.algorithms.tracePanels.string.suffixArray.distinctRanksLabel
-                      | transloco
-                  }}</span>
-                  <span class="bwt-summary__value">{{ suffixArray.distinctRanks }}</span>
-                </div>
-              </div>
-
-              <div class="suffix-list">
-                @for (row of suffixArray.rows; track row.id) {
-                  <div class="suffix-row suffix-row--{{ row.tone }}">
-                    <span class="suffix-row__order">{{ row.order }}</span>
-                    <span class="suffix-row__index">{{ row.startIndex }}</span>
-                    <span class="suffix-row__text">{{ row.suffix }}</span>
-                    <span class="suffix-row__pair">{{ row.pairLabel }}</span>
-                    <span class="suffix-row__rank">r{{ row.rank }}</span>
-                  </div>
+            }
+            @if (entry.kind !== 'values') {
+              <div class="str__strip" [attr.data-kind]="entry.kind" [style.grid-row]="grid().body[entry.id]"></div>
+            }
+            @for (item of entry.cells; track item.key) {
+              <span
+                class="str__cell"
+                [attr.data-kind]="entry.kind"
+                [attr.data-tone]="item.tone"
+                [attr.data-strong]="item.strong"
+                [attr.data-lead]="item.lead"
+                [style.grid-row]="grid().body[entry.id]"
+                [style.grid-column]="item.column + 1"
+              >
+                <span class="str__glyph">{{ item.glyph }}</span>
+                @if (item.index !== null) {
+                  <span class="str__index">{{ item.index }}</span>
                 }
-              </div>
-            </div>
+              </span>
+            }
           }
-        }
-
-        @case ('suffix-array-lcp-kasai') {
-          @if (suffixLcpState(); as suffixLcp) {
-            <div class="string-stage string-stage--suffix">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of suffixLcp.source; track $index; let index = $index) {
-                    <div class="{{ suffixSourceClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="suffix-list">
-                @for (row of suffixLcp.rows; track row.id) {
-                  <div class="suffix-row suffix-row--{{ row.tone }}">
-                    <span class="suffix-row__order">{{ row.order }}</span>
-                    <span class="suffix-row__index">{{ row.startIndex }}</span>
-                    <span class="suffix-row__text">{{ row.suffix }}</span>
-                    <span class="suffix-row__pair">LCP {{ row.lcp ?? '—' }}</span>
-                    <span class="suffix-row__rank">r{{ suffixLcp.rankArray[row.startIndex] }}</span>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        }
-
-        @case ('manacher') {
-          @if (manacherState(); as manacher) {
-            <div class="string-stage string-stage--manacher">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of manacher.source; track $index; let index = $index) {
-                    <div class="str-cell str-cell--accent">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="arc-board-wrap">
-                <div class="manacher-stage" [style.width.px]="manacherTrackWidth()">
-                  <svg
-                    class="arc-board"
-                    [attr.width]="manacherTrackWidth()"
-                    height="128"
-                    [attr.viewBox]="manacherArcViewBox()"
-                  >
-                    <defs>
-                      <filter id="mch-glow-warm" x="-60%" y="-60%" width="220%" height="220%">
-                        <feGaussianBlur stdDeviation="4" result="b"/>
-                        <feMerge>
-                          <feMergeNode in="b"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                      <filter id="mch-glow-cool" x="-60%" y="-60%" width="220%" height="220%">
-                        <feGaussianBlur stdDeviation="5" result="b"/>
-                        <feMerge>
-                          <feMergeNode in="b"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
-
-                    @if (manacher.leftBoundary !== null && manacher.rightBoundary !== null && manacher.rightBoundary > manacher.leftBoundary) {
-                      <rect
-                        class="mch-window"
-                        [attr.x]="manacherWindowX(manacher.leftBoundary)"
-                        y="0"
-                        [attr.width]="manacherWindowW(manacher.leftBoundary, manacher.rightBoundary)"
-                        height="128"
-                        rx="8"
-                      />
-                    }
-
-                    @for (arc of manacherArcs(); track arc.id) {
-                      <path
-                        class="arc arc--{{ arc.tone }}"
-                        [attr.d]="arc.path"
-                        pathLength="1"
-                      />
-                    }
-
-                    @if (manacher.currentCenter !== null) {
-                      <line
-                        class="mch-beam"
-                        [attr.x1]="manacherCenterX(manacher.currentCenter)"
-                        [attr.x2]="manacherCenterX(manacher.currentCenter)"
-                        y1="0"
-                        y2="128"
-                      />
-                    }
-                  </svg>
-
-                  <div class="cell-track cell-track--inline">
-                    @for (char of manacher.transformed; track $index; let index = $index) {
-                      <div
-                        class="{{ manacherCharClass(index) }}"
-                        [attr.data-manacher-char]="index"
-                      >
-                        <span>{{ char }}</span>
-                        <small>{{ index }}</small>
-                      </div>
-                    }
-                  </div>
-
-                  <div class="mch-radius-row">
-                    @for (value of manacher.radii; track $index; let index = $index) {
-                      <div class="{{ radiusClass(index) }}">
-                        <span>{{ value }}</span>
-                        <small>P{{ index }}</small>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-        }
-
-        @case ('palindromic-tree') {
-          @if (palindromicTreeState(); as palTree) {
-            <div class="string-stage string-stage--pal-tree">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.source | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of palTree.source; track $index; let index = $index) {
-                    <div class="{{ palSourceClass(index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="bwt-summary">
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">{{
-                    I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.distinctLabel
-                      | transloco
-                  }}</span>
-                  <span class="bwt-summary__value">{{ palTree.distinctCount }}</span>
-                </div>
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">{{
-                    I18N_KEY.features.algorithms.tracePanels.string.palindromicTree.processedLabel
-                      | transloco
-                  }}</span>
-                  <span class="bwt-summary__value">{{ palTree.processedIndex + 1 }}</span>
-                </div>
-              </div>
-
-              <div class="node-grid">
-                @for (node of palTree.nodes; track node.id) {
-                    <div class="node-card node-card--{{ node.tone }}">
-                      <div class="node-card__title">
-                        <span>{{ node.palindrome }}</span>
-                        <small>#{{ node.id }}</small>
-                      </div>
-                      <div class="node-card__meta">|s| = {{ node.length }}</div>
-                      <div class="node-card__meta">↘ {{ node.suffixLinkId ?? '—' }}</div>
-                      <div class="node-card__meta">×{{ node.occurrences }}</div>
-                    </div>
-                  }
-                </div>
-            </div>
-          }
-        }
-
-        @case ('burrows-wheeler-transform') {
-          @if (bwtState(); as bwt) {
-            <div class="string-stage string-stage--bwt">
-              <div class="bwt-summary">
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">{{
-                    I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
-                  }}</span>
-                  <span class="bwt-summary__value">{{ bwt.source }}</span>
-                </div>
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">F</span>
-                  <span class="bwt-summary__value">{{ bwt.firstColumn || '—' }}</span>
-                </div>
-                <div class="bwt-summary__card">
-                  <span class="bwt-summary__label">L</span>
-                  <span class="bwt-summary__value bwt-summary__value--output">{{ bwt.lastColumn || '—' }}</span>
-                </div>
-              </div>
-
-              <div class="bwt-matrix-wrap">
-                @for (row of bwt.rotations; track row.id) {
-                  <div
-                    class="{{ bwtRowClass(row) }}"
-                    [attr.data-bwt-row]="row.id"
-                  >
-                    <span class="bwt-row__index">{{ row.startIndex }}</span>
-                    <div class="bwt-row__chars">
-                      @for (char of row.text; track $index; let index = $index) {
-                        <span class="{{ bwtCellClass(row, index) }}">{{ char }}</span>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        }
-
-        @case ('rle') {
-          @if (rleState(); as rle) {
-            <div class="string-stage string-stage--rle">
-              <div class="string-row">
-                <span class="string-row__label">{{
-                  I18N_KEY.features.algorithms.visualizations.string.labels.input | transloco
-                }}</span>
-                <div class="cell-track">
-                  @for (char of rle.source; track $index; let index = $index) {
-                    <div class="{{ rleCellClass(rle, index) }}">
-                      <span>{{ char }}</span>
-                      <small>{{ index }}</small>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="rle-output-wrap">
-                <span class="rle-output-label">{{
-                  I18N_KEY.features.algorithms.tracePanels.string.rle.outputLabel | transloco
-                }}</span>
-                <div class="rle-chips-row">
-                  @for (run of rle.completedRuns; track run.id) {
-                    <div class="rle-chip rle-chip--done">
-                      <span class="rle-chip__count">{{ run.count }}</span>
-                      <span class="rle-chip__char">{{ run.char }}</span>
-                    </div>
-                  }
-                  @if (rle.phase !== 'complete' && rle.groupCount > 0) {
-                    <div class="rle-chip rle-chip--active">
-                      <span class="rle-chip__count">{{ rle.groupCount }}</span>
-                      <span class="rle-chip__char">{{ rle.groupChar }}</span>
-                    </div>
-                  }
-                  @if (rle.completedRuns.length === 0 && rle.groupCount === 0) {
-                    <span class="rle-empty">{{
-                      I18N_KEY.features.algorithms.visualizations.string.rle.waitingForFirstRun | transloco
-                    }}</span>
-                  }
-                </div>
-              </div>
-            </div>
-          }
-        }
-
-        @case ('huffman') {
-          @if (huffmanState(); as huffman) {
-            <div class="string-stage string-stage--huffman">
-              @if (huffman.phase === 'freq') {
-                <div class="freq-chart">
-                  @for (f of huffman.charFreqs; track f.char) {
-                    <div class="freq-col" [class.freq-col--active]="f.isActive">
-                      <div class="freq-bar-wrap">
-                        @if (f.isActive) {
-                          <span class="freq-count">{{ f.freq }}</span>
-                        }
-                        <div class="freq-bar" [style.height]="freqBarHeight(f.freq)"></div>
-                      </div>
-                      <div class="freq-char">'{{ f.char }}'</div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <div class="huff-arena">
-                  <div class="huff-tree-wrap">
-                    <svg
-                      class="huff-tree-svg"
-                      [attr.width]="huffmanSvgWidth()"
-                      [attr.height]="huffmanSvgHeight()"
-                      [attr.viewBox]="'0 0 ' + huffmanSvgWidth() + ' ' + huffmanSvgHeight()"
-                    >
-                      @for (edge of huffmanVisibleEdges(); track edge.fromId + edge.toId) {
-                        @if (huffNodeById(edge.fromId); as fromNode) {
-                          @if (huffNodeById(edge.toId); as toNode) {
-                            <line
-                              class="huff-edge"
-                              [attr.x1]="fromNode.x"
-                              [attr.y1]="fromNode.y"
-                              [attr.x2]="toNode.x"
-                              [attr.y2]="toNode.y"
-                            />
-                            <text
-                              class="huff-edge-label huff-edge-label--{{ edge.label }}"
-                              [attr.x]="(fromNode.x + toNode.x) / 2"
-                              [attr.y]="(fromNode.y + toNode.y) / 2 - 6"
-                              text-anchor="middle"
-                            >{{ edge.label }}</text>
-                          }
-                        }
-                      }
-                      @for (node of huffmanVisibleNodes(); track node.id) {
-                        <g class="huff-node-g huff-node-g--{{ node.tone }}" [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
-                          <circle class="huff-node" r="22" />
-                          <text class="huff-node__freq" text-anchor="middle" dy="-3">{{ node.freq }}</text>
-                          @if (node.char) {
-                            <text class="huff-node__char" text-anchor="middle" dy="11">'{{ node.char }}'</text>
-                          }
-                        </g>
-                      }
-                    </svg>
-                  </div>
-                </div>
-
-                @if (huffman.phase === 'codes' && huffman.codeTable.length > 0) {
-                  <div class="huff-code-table">
-                    @for (entry of huffman.codeTable; track entry.char) {
-                      <div class="huff-code-row">
-                        <span class="huff-code-row__char">'{{ entry.char }}'</span>
-                        <span class="huff-code-row__freq">f={{ entry.freq }}</span>
-                        <div class="huff-code-row__bits">
-                          @for (bit of entry.code.split(''); track $index) {
-                            <span class="huff-bit huff-bit--{{ bit }}">{{ bit }}</span>
-                          }
-                        </div>
-                        <span class="huff-code-row__len">{{ entry.code.length }}b</span>
-                      </div>
-                    }
-                  </div>
-                }
+          @for (marker of markers(); track marker.id) {
+            <span
+              class="str__marker"
+              [attr.data-variant]="marker.variant"
+              [attr.data-tone]="marker.tone"
+              [attr.data-follow]="marker.variant === 'head'"
+              [style.grid-row]="marker.gridRow"
+              [style.grid-column]="marker.gridColumn"
+            >
+              @if (marker.label; as label) {
+                <span class="str__marker-label">{{ label | i18nText }}</span>
               }
-            </div>
+            </span>
           }
-        }
+        </div>
+      </div>
+
+      @if (display().tree; as tree) {
+        <div class="str__tree-head">
+          <ohno-engraving>{{ tree.caption | i18nText }}</ohno-engraving>
+        </div>
+        <div #tree class="str__tree">
+          <svg
+            class="str__svg"
+            [attr.width]="tree.width"
+            [attr.height]="tree.height"
+            [attr.viewBox]="'0 0 ' + tree.width + ' ' + tree.height"
+          >
+            @for (edge of tree.edges; track edge.id) {
+              @if (edge.curved) {
+                <path
+                  class="str__edge"
+                  data-curved="true"
+                  [attr.data-tone]="edge.tone"
+                  [attr.d]="'M ' + edge.x1 + ' ' + edge.y1 + ' Q ' + ((edge.x1 + edge.x2) / 2 + 30) + ' ' + ((edge.y1 + edge.y2) / 2) + ' ' + edge.x2 + ' ' + edge.y2"
+                />
+              } @else {
+                <line
+                  class="str__edge"
+                  [attr.data-tone]="edge.tone"
+                  [attr.x1]="edge.x1"
+                  [attr.y1]="edge.y1"
+                  [attr.x2]="edge.x2"
+                  [attr.y2]="edge.y2"
+                />
+              }
+            }
+            @for (edge of tree.edges; track edge.id) {
+              @if (edge.label; as label) {
+                <g class="str__chip" [attr.data-tone]="edge.tone === 'plain' ? null : edge.tone" [attr.transform]="'translate(' + (edge.x1 + edge.x2) / 2 + ' ' + (edge.y1 + edge.y2) / 2 + ')'">
+                  <rect class="chip__box" x="-7" y="-8" width="14" height="16" />
+                  <text class="chip__text">{{ label }}</text>
+                </g>
+              }
+            }
+            @for (node of tree.nodes; track node.id) {
+              <g
+                class="str__node"
+                [attr.data-tone]="node.tone"
+                [attr.data-current]="node.current"
+                [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+              >
+                <circle class="node__halo" r="19" />
+                <circle class="node__ring" r="14" />
+                <text class="node__label">{{ node.label }}</text>
+                @if (node.value !== null) {
+                  <text class="node__value" x="13" y="27">{{ node.value }}</text>
+                }
+              </g>
+            }
+          </svg>
+        </div>
       }
     </div>
-  } @else {
-    <p class="string-lab__empty">{{
-      I18N_KEY.features.algorithms.visualizations.string.emptyLabel | transloco
-    }}</p>
-  }
-</app-viz-panel>
+
+    @if (hasRack()) {
+      <div #rack class="display__rack str__rack" aria-hidden="true">
+        @for (rack of display().racks; track rack.id) {
+          <ohno-rack class="str__rack-list" [title]="rack.title | i18nText" [meta]="rack.meta">
+            @for (entry of rack.rows; track entry.id) {
+              <ohno-rack-row [tone]="entry.tone">
+                <ohno-led rackLead size="sm" [color]="entry.led ?? 'slate'" [on]="entry.led !== null" />
+                <span class="str__row-lead">{{ entry.lead | i18nText }}</span>
+                @if (entry.body; as body) {
+                  <span class="str__row-body">{{ body | i18nText }}</span>
+                }
+                @if (entry.value !== null) {
+                  <span rackValue class="str__row-value">{{ entry.value }}</span>
+                }
+              </ohno-rack-row>
+            }
+            @if (rack.empty.length > 0) {
+              <p class="str__empty">
+                @for (line of rack.empty; track $index) {
+                  <span>{{ line | i18nText }}</span>
+                }
+              </p>
+            }
+          </ohno-rack>
+        }
+
+        @if (display().facts.length > 0) {
+          <div class="str__facts">
+            @for (fact of display().facts; track fact.id) {
+              <ohno-rack-row>
+                <span class="str__fact-label">{{ fact.label | i18nText }}</span>
+                <span rackValue class="str__fact-value" [attr.data-tone]="fact.tone">{{ fact.value }}</span>
+              </ohno-rack-row>
+            }
+          </div>
+        }
+
+        @for (note of display().notes; track note.id) {
+          <div class="str__note" [attr.data-tone]="note.tone">
+            <span class="str__note-title">{{ note.title | i18nText }}</span>
+            @for (line of note.lines; track $index) {
+              <span class="str__note-line">{{ line | i18nText }}</span>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
