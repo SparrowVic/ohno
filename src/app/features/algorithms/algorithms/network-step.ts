@@ -1,3 +1,4 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   NetworkComputation,
   NetworkEdgeSnapshot,
@@ -23,9 +24,9 @@ export interface NetworkStepArgs {
   readonly nodes: readonly LayeredNetworkNode[];
   readonly nodeState: ReadonlyMap<string, NetworkStepNodeState>;
   readonly edges: readonly NetworkEdgeSnapshot[];
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly frontierLabel: string;
   readonly frontierCount: number;
   readonly queueLabel: string;
@@ -34,7 +35,7 @@ export interface NetworkStepArgs {
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
   readonly computation: NetworkComputation | null;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortPhase;
 }

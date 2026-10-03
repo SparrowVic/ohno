@@ -103,6 +103,18 @@ const I18N = {
     noHit: t('features.algorithms.runtime.string.rabinKarp.labels.noHit'),
     hitCount: t('features.algorithms.runtime.string.rabinKarp.labels.hitCount'),
   },
+  active: {
+    window: t('features.algorithms.runtime.string.rabinKarp.active.window'),
+    windowAt: t('features.algorithms.runtime.string.rabinKarp.active.windowAt'),
+    check: t('features.algorithms.runtime.string.rabinKarp.active.check'),
+    collision: t('features.algorithms.runtime.string.rabinKarp.active.collision'),
+    hit: t('features.algorithms.runtime.string.rabinKarp.active.hit'),
+  },
+  results: {
+    possibleMatch: t('features.algorithms.runtime.string.rabinKarp.results.possibleMatch'),
+    skipWindow: t('features.algorithms.runtime.string.rabinKarp.results.skipWindow'),
+    match: t('features.algorithms.runtime.string.rabinKarp.results.match'),
+  },
 } as const;
 
 function hashOf(source: string, base: number, mod: number): number {
@@ -207,7 +219,7 @@ export function* rabinKarpGenerator(
     string: makeState({
       scenario,
       phaseLabel: I18N.phases.setup,
-      activeLabel: `window 0..${m - 1}`,
+      activeLabel: i18nText(I18N.active.window, { start: 0, end: m - 1 }),
       resultLabel: I18N.labels.noMatchesYet,
       decisionLabel: I18N.decisions.seedHashes,
       windowStart: 0,
@@ -242,7 +254,7 @@ export function* rabinKarpGenerator(
       string: makeState({
         scenario,
         phaseLabel: I18N.phases.hashCompare,
-        activeLabel: `window @ ${start}`,
+        activeLabel: i18nText(I18N.active.windowAt, { index: start }),
         resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
         decisionLabel:
           hashesMatch ? I18N.decisions.verifyOnEqualHash : I18N.decisions.slideOnDifferentHash,
@@ -258,7 +270,7 @@ export function* rabinKarpGenerator(
         computation: {
           label: I18N.computation.labels.hashGate,
           expression: `${windowHash} ${hashesMatch ? '=' : '≠'} ${patternHash}`,
-          result: hashesMatch ? 'possible match' : 'skip window',
+          result: i18nText(hashesMatch ? I18N.results.possibleMatch : I18N.results.skipWindow),
           note:
             hashesMatch
               ? I18N.computation.notes.hashGateMatch
@@ -283,7 +295,7 @@ export function* rabinKarpGenerator(
           string: makeState({
             scenario,
             phaseLabel: same ? I18N.phases.verifyHit : I18N.phases.verifyCollision,
-            activeLabel: `check ${offset + 1} / ${m}`,
+            activeLabel: i18nText(I18N.active.check, { index: offset + 1, total: m }),
             resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
             decisionLabel: same ? I18N.decisions.charsAgree : I18N.decisions.collision,
             windowStart: start,
@@ -316,7 +328,7 @@ export function* rabinKarpGenerator(
             string: makeState({
               scenario,
               phaseLabel: I18N.phases.falseAlarm,
-              activeLabel: `collision @ ${start}`,
+              activeLabel: i18nText(I18N.active.collision, { index: start }),
               resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
               decisionLabel: I18N.decisions.keepSliding,
               windowStart: start,
@@ -349,7 +361,7 @@ export function* rabinKarpGenerator(
           string: makeState({
             scenario,
             phaseLabel: I18N.phases.verifiedMatch,
-            activeLabel: `hit @ ${start}`,
+            activeLabel: i18nText(I18N.active.hit, { index: start }),
             resultLabel: matches.join(', '),
             decisionLabel: I18N.decisions.survivedVerification,
             windowStart: start,
@@ -364,7 +376,7 @@ export function* rabinKarpGenerator(
             computation: {
               label: I18N.computation.labels.verifiedHit,
               expression: `text[${start}..${start + m}) = pattern`,
-              result: 'match',
+              result: i18nText(I18N.results.match),
               note: I18N.computation.notes.verifiedHit,
             },
           }),
@@ -391,7 +403,7 @@ export function* rabinKarpGenerator(
       string: makeState({
         scenario,
         phaseLabel: I18N.phases.rollHash,
-        activeLabel: `window ${start + 1}..${start + m}`,
+        activeLabel: i18nText(I18N.active.window, { start: start + 1, end: start + m }),
         resultLabel: matches.length === 0 ? I18N.labels.noVerifiedHitYet : matches.join(', '),
         decisionLabel: I18N.decisions.constantTimeRoll,
         windowStart: start + 1,

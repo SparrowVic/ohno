@@ -21,7 +21,9 @@ function finalState(taskId: string | null = null) {
 }
 
 function contents(lines: readonly ScratchpadLine[]): readonly string[] {
-  return lines.map((line) => (typeof line.content === 'string' ? line.content : line.content.key));
+  return lines.map((line) =>
+    typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`,
+  );
 }
 
 function hasLine(lines: readonly ScratchpadLine[], fragment: string): boolean {
@@ -57,7 +59,7 @@ describe('miller-rabin', () => {
     expect(hasLine(lines, 'x_0 = 512 \\;\\mathrm{mod}\\; 37')).toBe(true);
     expect(hasLine(lines, 'x_1 = 961 \\;\\mathrm{mod}\\; 37')).toBe(true);
     expect(hasLine(lines, 'x_1 = n - 1')).toBe(true);
-    expect(hasLine(lines, '37\\;\\text{jest strong probable prime dla bazy}\\;2')).toBe(true);
+    expect(hasLine(lines, 'features.algorithms.runtime.scratchpadLab.millerRabin.lines.probablePrime {"n":37,"base":2}')).toBe(true);
   });
 
   it('renders a single compositeness witness for 221', () => {
@@ -66,8 +68,8 @@ describe('miller-rabin', () => {
     expect(hasLine(lines, '220 = 2^2 * 55')).toBe(true);
     expect(hasLine(lines, 'x_0 = 188')).toBe(true);
     expect(hasLine(lines, 'x_1 = 35344 \\;\\mathrm{mod}\\; 221')).toBe(true);
-    expect(hasLine(lines, '137\\;\\text{jest świadkiem złożoności liczby}\\;221')).toBe(true);
-    expect(hasLine(lines, '221\\;\\text{jest liczbą złożoną}')).toBe(true);
+    expect(hasLine(lines, 'features.algorithms.runtime.scratchpadLab.millerRabin.lines.witnessOf {"base":137,"n":221}')).toBe(true);
+    expect(hasLine(lines, 'features.algorithms.runtime.scratchpadLab.millerRabin.lines.composite {"n":221}')).toBe(true);
   });
 
   it('renders strong liar then second-base witness for 2047', () => {
@@ -76,7 +78,7 @@ describe('miller-rabin', () => {
     expect(hasLine(lines, '2046 = 2^1 * 1023')).toBe(true);
     expect(hasLine(lines, 'x_0 = 1')).toBe(true);
     expect(hasLine(lines, 'x_0 = 1565')).toBe(true);
-    expect(hasLine(lines, 'Ponieważ s = 1')).toBe(true);
+    expect(hasLine(lines, 'features.algorithms.runtime.scratchpadLab.millerRabin.notes.noSquares')).toBe(true);
     expect(hasLine(lines, '2047 = 23 * 89')).toBe(true);
   });
 

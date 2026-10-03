@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { Delaunay } from 'd3-delaunay';
 
 import {
@@ -8,6 +11,15 @@ import {
   VoronoiDiagramStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.voronoi.descriptions.initialize'),
+    site: t('features.algorithms.runtime.geometry.voronoi.descriptions.site'),
+    cell: t('features.algorithms.runtime.geometry.voronoi.descriptions.cell'),
+    complete: t('features.algorithms.runtime.geometry.voronoi.descriptions.complete'),
+  },
+} as const;
 
 export interface VoronoiDiagramScenario {
   readonly points: readonly { readonly x: number; readonly y: number }[];
@@ -59,7 +71,7 @@ function makeStep(
   activeSiteId: number | null,
   currentIndex: number,
   sweepY: number | null,
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   phase: string,
   currentCellLabel: string,
@@ -123,7 +135,7 @@ export function* voronoiDiagramGenerator(
     null,
     -1,
     100,
-    'Scatter the seed points and prepare the descending sweep line.',
+    i18nText(I18N.descriptions.initialize),
     1,
     'init',
     'seed field',
@@ -139,7 +151,7 @@ export function* voronoiDiagramGenerator(
       site.id,
       index,
       site.y,
-      `Sweep reaches P${site.id}; its Voronoi influence front becomes active.`,
+      i18nText(I18N.descriptions.site, { site: site.id }),
       3,
       'site',
       `site P${site.id}`,
@@ -152,7 +164,7 @@ export function* voronoiDiagramGenerator(
       site.id,
       index + 1,
       site.y,
-      `Cell P${site.id} crystallizes from the bisector constraints around the site.`,
+      i18nText(I18N.descriptions.cell, { site: site.id }),
       4,
       'cell',
       `cell P${site.id}`,
@@ -165,7 +177,7 @@ export function* voronoiDiagramGenerator(
     null,
     sites.length,
     0,
-    `Voronoi diagram complete: ${sites.length} cells partition the plane.`,
+    i18nText(I18N.descriptions.complete, { count: sites.length }),
     5,
     'complete',
     'all cells',

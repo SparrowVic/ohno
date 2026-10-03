@@ -53,6 +53,9 @@ const I18N = {
     pendingLcp: t('features.algorithms.runtime.string.suffixArrayLcp.labels.pendingLcp'),
     readyValue: t('features.algorithms.runtime.string.suffixArrayLcp.labels.readyValue'),
   },
+  rows: {
+    rank: t('features.algorithms.runtime.string.suffixArrayLcp.rows.rank'),
+  },
 } as const;
 
 interface RankTuple {
@@ -118,7 +121,7 @@ function buildRows(
     id: `suffix-${startIndex}`,
     startIndex,
     suffix: source.slice(startIndex),
-    pairLabel: `rank ${order}`,
+    pairLabel: i18nText(I18N.rows.rank, { rank: order }),
     rank: order,
     order,
     lcp: order < suffixArray.length - 1 ? (lcpValues[order] ?? 0) : null,

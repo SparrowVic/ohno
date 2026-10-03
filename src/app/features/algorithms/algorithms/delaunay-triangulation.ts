@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { Delaunay } from 'd3-delaunay';
 
 import {
@@ -10,6 +13,15 @@ import {
   PointStatus,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.delaunay.descriptions.initialize'),
+    circumcircle: t('features.algorithms.runtime.geometry.delaunay.descriptions.circumcircle'),
+    commit: t('features.algorithms.runtime.geometry.delaunay.descriptions.commit'),
+    complete: t('features.algorithms.runtime.geometry.delaunay.descriptions.complete'),
+  },
+} as const;
 
 export interface DelaunayTriangulationScenario {
   readonly points: readonly { readonly x: number; readonly y: number }[];
@@ -130,7 +142,7 @@ function makeStep(
   triangles: readonly TriangleRuntime[],
   committedCount: number,
   currentIndex: number,
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   phase: string,
   complete = false,
@@ -205,7 +217,7 @@ export function* delaunayTriangulationGenerator(
     triangles,
     0,
     -1,
-    'Star points are ready; now grow the empty-circumcircle mesh triangle by triangle.',
+    i18nText(I18N.descriptions.initialize),
     1,
     'init',
   );
@@ -216,7 +228,7 @@ export function* delaunayTriangulationGenerator(
       triangles,
       index,
       index,
-      `Test triangle ${triangles[index]!.id} with its circumcircle before committing it to the mesh.`,
+      i18nText(I18N.descriptions.circumcircle, { triangle: triangles[index]!.id }),
       3,
       'circumcircle',
     );
@@ -226,7 +238,7 @@ export function* delaunayTriangulationGenerator(
       triangles,
       index + 1,
       index + 1,
-      `Triangle ${triangles[index]!.id} locks into the Delaunay mesh.`,
+      i18nText(I18N.descriptions.commit, { triangle: triangles[index]!.id }),
       4,
       'commit',
     );
@@ -237,7 +249,7 @@ export function* delaunayTriangulationGenerator(
     triangles,
     triangles.length,
     triangles.length,
-    `Delaunay triangulation complete: ${triangles.length} triangles form the final mesh.`,
+    i18nText(I18N.descriptions.complete, { count: triangles.length }),
     5,
     'complete',
     true,

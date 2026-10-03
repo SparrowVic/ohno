@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   MatrixGridCell,
   MatrixGridCellState,
@@ -13,11 +14,52 @@ import {
 } from '../../models/scratchpad-lab';
 import { SortStep } from '../../models/sort-step';
 import type { SimplexAlgorithmScenario } from '../../utils/scenarios/number-lab/simplex-algorithm-scenarios';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.scratchpadLab.simplex.modeLabel'),
   matrixGridModeLabel: t('features.algorithms.runtime.matrixGrid.simplex.modeLabel'),
+  sections: {
+    noOptimum: t('features.algorithms.runtime.scratchpadLab.simplex.sections.noOptimum'),
+    noLeavingRow: t('features.algorithms.runtime.scratchpadLab.simplex.sections.noLeavingRow'),
+    slack: t('features.algorithms.runtime.scratchpadLab.simplex.sections.slack'),
+    alternative: t('features.algorithms.runtime.scratchpadLab.simplex.sections.alternative'),
+  },
+  results: {
+    unbounded: t('features.algorithms.runtime.scratchpadLab.simplex.results.unbounded'),
+    exhausted: t('features.algorithms.runtime.scratchpadLab.simplex.results.exhausted'),
+  },
+  lines: {
+    initialBasis: t('features.algorithms.runtime.scratchpadLab.simplex.lines.initialBasis'),
+    columns: t('features.algorithms.runtime.scratchpadLab.simplex.lines.columns'),
+    reducedCosts: t('features.algorithms.runtime.scratchpadLab.simplex.lines.reducedCosts'),
+    entering: t('features.algorithms.runtime.scratchpadLab.simplex.lines.entering'),
+    ratioSkip: t('features.algorithms.runtime.scratchpadLab.simplex.lines.ratioSkip'),
+    column: t('features.algorithms.runtime.scratchpadLab.simplex.lines.column'),
+    leaving: t('features.algorithms.runtime.scratchpadLab.simplex.lines.leaving'),
+    newBasis: t('features.algorithms.runtime.scratchpadLab.simplex.lines.newBasis'),
+    unbounded: t('features.algorithms.runtime.scratchpadLab.simplex.lines.unbounded'),
+    exhausted: t('features.algorithms.runtime.scratchpadLab.simplex.lines.exhausted'),
+    zeroReducedCost: t('features.algorithms.runtime.scratchpadLab.simplex.lines.zeroReducedCost'),
+  },
+  notes: {
+    unbounded: t('features.algorithms.runtime.scratchpadLab.simplex.notes.unbounded'),
+    tie: t('features.algorithms.runtime.scratchpadLab.simplex.notes.tie'),
+    degenerate: t('features.algorithms.runtime.scratchpadLab.simplex.notes.degenerate'),
+    optimal: t('features.algorithms.runtime.scratchpadLab.simplex.notes.optimal'),
+    slackPositive: t('features.algorithms.runtime.scratchpadLab.simplex.notes.slackPositive'),
+    alternative: t('features.algorithms.runtime.scratchpadLab.simplex.notes.alternative'),
+    alternativeNone: t('features.algorithms.runtime.scratchpadLab.simplex.notes.alternativeNone'),
+  },
+  phases: {
+    pivot: t('features.algorithms.runtime.scratchpadLab.simplex.phases.pivot'),
+    slack: t('features.algorithms.runtime.scratchpadLab.simplex.phases.slack'),
+    tableau: t('features.algorithms.runtime.scratchpadLab.simplex.phases.tableau'),
+    noOptimum: t('features.algorithms.runtime.scratchpadLab.simplex.phases.noOptimum'),
+    pivotLimit: t('features.algorithms.runtime.scratchpadLab.simplex.phases.pivotLimit'),
+    optimum: t('features.algorithms.runtime.scratchpadLab.simplex.phases.optimum'),
+  },
 } as const;
 
 const EPSILON = 1e-9;
@@ -104,9 +146,9 @@ export function* simplexAlgorithmGenerator(
    *  view can colour the pivot row/col/cell correctly. */
   const pivotsPerIteration = new Map<
     number,
-    { readonly row: number; readonly col: number }
+    { readonly row: number | null; readonly col: number }
   >();
-  let currentResultText: string | null = null;
+  let currentResultText: TranslatableText | null = null;
 
   function appendStep(
     builder: LineBuilder,
@@ -132,18 +174,18 @@ export function* simplexAlgorithmGenerator(
 
   function captureResultFromBuilder(builder: LineBuilder): void {
     if (builder.id === 'no-result-unbounded') {
-      currentResultText = 'funkcja celu nieograniczona';
+      currentResultText = i18nText(I18N.results.unbounded);
       return;
     }
     if (builder.id === 'no-result-exhausted') {
-      currentResultText = 'limit pivotów przekroczony';
+      currentResultText = i18nText(I18N.results.exhausted);
       return;
     }
     if (!builder.id.startsWith('result-')) return;
     const text = typeof builder.content === 'string' ? builder.content : '';
     const stripped = text.replace(/\[\[\/?math\]\]/g, '').trim();
     if (!stripped) return;
-    currentResultText = currentResultText ? `${currentResultText};  ${stripped}` : stripped;
+    currentResultText = typeof currentResultText === 'string' ? `${currentResultText};  ${stripped}` : stripped;
   }
 
   function buildMatrixGridState(builder: LineBuilder): MatrixGridTraceState {
@@ -202,11 +244,11 @@ export function* simplexAlgorithmGenerator(
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -219,12 +261,16 @@ export function* simplexAlgorithmGenerator(
     });
   }
 
+  function mathText(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
+    return paperLine({ id, kind: 'equation', indent, content });
+  }
+
   function resultSection(): LineBuilder {
     return paperLine({
       id: 'section-result',
       kind: 'result',
       marker: RESULT_MARKER,
-      content: 'Wynik',
+      content: i18nText(NOTEBOOK_TEXT.sections.result),
     });
   }
 
@@ -233,7 +279,7 @@ export function* simplexAlgorithmGenerator(
       id: 'section-no-result',
       kind: 'result',
       marker: NO_RESULT_MARKER,
-      content: 'Brak skończonego optimum',
+      content: i18nText(I18N.sections.noOptimum),
     });
   }
 
@@ -246,7 +292,7 @@ export function* simplexAlgorithmGenerator(
     });
   }
 
-  yield* emit(section('section-model', 'Model'));
+  yield* emit(section('section-model', i18nText(NOTEBOOK_TEXT.sections.model)));
   yield* emit(math('model-objective', `max\\ z = ${formatLinearCombination(scenario.objective)}`));
   for (let i = 0; i < m; i++) {
     yield* emit(
@@ -258,7 +304,7 @@ export function* simplexAlgorithmGenerator(
   }
   yield* emit(math('model-nonnegative', `${decisionVariableNames(n).join(', ')} \\ge 0`));
 
-  yield* emit(section('section-standard-form', 'Postać standardowa'));
+  yield* emit(section('section-standard-form', i18nText(NOTEBOOK_TEXT.sections.standardForm)));
   for (let i = 0; i < m; i++) {
     yield* emit(
       math(
@@ -274,14 +320,14 @@ export function* simplexAlgorithmGenerator(
     ),
   );
   yield* emit(
-    math(
+    mathText(
       'standard-basis',
-      `baza\\ początkowa = [${basis.map((col) => columnName(col, n)).join(', ')}]`,
+      i18nText(I18N.lines.initialBasis, { basis: `[${basis.map((col) => columnName(col, n)).join(', ')}]` }),
     ),
   );
 
-  yield* emit(section('section-initial-tableau', 'Tableau początkowe'));
-  yield* emit(math('initial-columns', `kolumny = [${columnNames(varColumns, n).join(', ')}, RHS]`));
+  yield* emit(section('section-initial-tableau', i18nText(NOTEBOOK_TEXT.sections.initialTableau)));
+  yield* emit(mathText('initial-columns', i18nText(I18N.lines.columns, { columns: columnNames(varColumns, n).join(', ') })));
   yield* emit(math('initial-tableau', tableauLatex(tableau, varColumns)));
 
   let outcome: 'optimal' | 'unbounded' | 'exhausted' = 'optimal';
@@ -296,28 +342,29 @@ export function* simplexAlgorithmGenerator(
     const ratios = ratioCandidates(tableau, basis, enteringCol, totalColumns, m);
     const leaving = chooseLeavingRow(ratios);
     const enteringName = columnName(enteringCol, n);
+    pivotsPerIteration.set(iteration + 1, { row: leaving?.row ?? null, col: enteringCol });
 
-    yield* emit(section(`section-pivot-${iteration + 1}`, `Pivot ${iteration + 1}`));
+    yield* emit(section(`section-pivot-${iteration + 1}`, i18nText(NOTEBOOK_TEXT.sections.pivot, { n: iteration + 1 })));
     yield* emit(
-      math(
+      mathText(
         `pivot-${iteration + 1}-reduced-costs`,
-        `koszty\\ zredukowane = [${tableau[m].slice(0, varColumns).map(formatCell).join(', ')}]`,
+        i18nText(I18N.lines.reducedCosts, { costs: `[${tableau[m].slice(0, varColumns).map(formatCell).join(', ')}]` }),
       ),
     );
     yield* emit(
-      math(
+      mathText(
         `pivot-${iteration + 1}-entering`,
-        `wchodzi\\ ${enteringName},\\ bo\\ ${formatCell(tableau[m][enteringCol])}\\ jest\\ najbardziej\\ ujemne`,
+        i18nText(I18N.lines.entering, { name: enteringName, value: formatCell(tableau[m][enteringCol]) }),
       ),
     );
-    yield* emit(section(`section-ratio-${iteration + 1}`, 'Test ilorazów'));
+    yield* emit(section(`section-ratio-${iteration + 1}`, i18nText(NOTEBOOK_TEXT.sections.ratioTest)));
     for (const candidate of ratios) {
       const basisName = columnName(candidate.basisColumn, n);
       if (candidate.ratio === null) {
         yield* emit(
-          math(
+          mathText(
             `ratio-${iteration + 1}-${candidate.row}`,
-            `${basisName}: ${formatCell(candidate.coefficient)} \\le 0 \\to pomiń`,
+            i18nText(I18N.lines.ratioSkip, { basis: basisName, coefficient: formatCell(candidate.coefficient) }),
           ),
         );
       } else {
@@ -332,17 +379,20 @@ export function* simplexAlgorithmGenerator(
 
     if (leaving === null) {
       outcome = 'unbounded';
-      yield* emit(section('section-unbounded', 'Brak wiersza wychodzącego'));
+      yield* emit(section('section-unbounded', i18nText(I18N.sections.noLeavingRow)));
       yield* emit(
-        math(
+        mathText(
           'unbounded-column',
-          `kolumna\\ ${enteringName} = [${ratios.map((ratio) => formatCell(ratio.coefficient)).join(', ')}]`,
+          i18nText(I18N.lines.column, {
+            name: enteringName,
+            values: `[${ratios.map((ratio) => formatCell(ratio.coefficient)).join(', ')}]`,
+          }),
         ),
       );
       yield* emit(
         note(
           'unbounded-note',
-          'W kolumnie wchodzącej nie ma dodatniego elementu, więc nie da się wykonać testu ilorazów.',
+          i18nText(I18N.notes.unbounded),
         ),
       );
       break;
@@ -356,7 +406,7 @@ export function* simplexAlgorithmGenerator(
       yield* emit(
         note(
           `pivot-${iteration + 1}-tie`,
-          `Remis w teście ilorazów: ${tiedRows.map((row) => columnName(row.basisColumn, n)).join(', ')} mają iloraz ${formatCell(leavingRatio)}.`,
+          i18nText(I18N.notes.tie, { rows: tiedRows.map((row) => columnName(row.basisColumn, n)).join(', '), ratio: formatCell(leavingRatio) }),
         ),
       );
     }
@@ -364,26 +414,25 @@ export function* simplexAlgorithmGenerator(
       yield* emit(
         note(
           `pivot-${iteration + 1}-degenerate`,
-          'Iloraz 0 oznacza pivot zdegenerowany: baza się zmieni, ale wartość funkcji celu nie wzrośnie.',
+          i18nText(I18N.notes.degenerate),
         ),
       );
     }
 
     const leavingName = columnName(leaving.basisColumn, n);
-    pivotsPerIteration.set(iteration + 1, { row: leaving.row, col: enteringCol });
     yield* emit(
-      math(
+      mathText(
         `pivot-${iteration + 1}-leaving`,
-        `wychodzi\\ ${leavingName},\\ pivot = ${formatCell(leaving.coefficient)}`,
+        i18nText(I18N.lines.leaving, { name: leavingName, pivot: formatCell(leaving.coefficient) }),
       ),
     );
 
     pivot(tableau, leaving.row, enteringCol, totalColumns, m);
     basis[leaving.row] = enteringCol;
     yield* emit(
-      math(
+      mathText(
         `pivot-${iteration + 1}-basis`,
-        `nowa\\ baza = [${basis.map((col) => columnName(col, n)).join(', ')}]`,
+        i18nText(I18N.lines.newBasis, { basis: `[${basis.map((col) => columnName(col, n)).join(', ')}]` }),
       ),
     );
     yield* emit(math(`pivot-${iteration + 1}-tableau`, tableauLatex(tableau, varColumns)));
@@ -393,27 +442,27 @@ export function* simplexAlgorithmGenerator(
 
   if (outcome === 'unbounded') {
     yield* emit(noResultSection());
-    yield* emit(math('no-result-unbounded', 'funkcja\\ celu\\ jest\\ nieograniczona'));
+    yield* emit(mathText('no-result-unbounded', i18nText(I18N.lines.unbounded)));
     return;
   }
 
   if (outcome === 'exhausted') {
     yield* emit(noResultSection());
-    yield* emit(math('no-result-exhausted', `przekroczono\\ limit\\ ${MAX_ITERATIONS}\\ pivotów`));
+    yield* emit(mathText('no-result-exhausted', i18nText(I18N.lines.exhausted, { limit: MAX_ITERATIONS })));
     return;
   }
 
-  yield* emit(section('section-optimality', 'Test optymalności'));
+  yield* emit(section('section-optimality', i18nText(NOTEBOOK_TEXT.sections.optimality)));
   yield* emit(
-    math(
+    mathText(
       'optimality-reduced-costs',
-      `koszty\\ zredukowane = [${tableau[m].slice(0, varColumns).map(formatCell).join(', ')}]`,
+      i18nText(I18N.lines.reducedCosts, { costs: `[${tableau[m].slice(0, varColumns).map(formatCell).join(', ')}]` }),
     ),
   );
   yield* emit(
     note(
       'optimality-note',
-      'Wszystkie koszty zredukowane są nieujemne, więc bieżąca baza jest optymalna.',
+      i18nText(I18N.notes.optimal),
     ),
   );
 
@@ -423,7 +472,7 @@ export function* simplexAlgorithmGenerator(
   const alternativeColumns = nonBasicZeroReducedCosts(tableau, basis, varColumns, n, m);
 
   if (scenario.notebookFlow.kind === 'slack-non-binding') {
-    yield* emit(section('section-slack', 'Ograniczenie niewiążące'));
+    yield* emit(section('section-slack', i18nText(I18N.sections.slack)));
     for (let i = 0; i < slackValues.length; i++) {
       yield* emit(math(`slack-${i + 1}`, `s_${i + 1} = ${formatCell(slackValues[i])}`));
     }
@@ -434,27 +483,27 @@ export function* simplexAlgorithmGenerator(
       yield* emit(
         note(
           'slack-positive-note',
-          `${positive.map((item) => `s_${item.index + 1}`).join(', ')} > 0, więc odpowiadające ograniczenie nie jest wiążące.`,
+          i18nText(I18N.notes.slackPositive, { slacks: positive.map((item) => `s_${item.index + 1}`).join(', ') }),
         ),
       );
     }
   }
 
   if (scenario.notebookFlow.kind === 'alternative-optimum') {
-    yield* emit(section('section-alternative', 'Alternatywne optimum'));
+    yield* emit(section('section-alternative', i18nText(I18N.sections.alternative)));
     if (alternativeColumns.length > 0) {
       for (const col of alternativeColumns) {
-        yield* emit(math(`alternative-${col}`, `koszt\\ zredukowany\\ ${columnName(col, n)} = 0`));
+        yield* emit(mathText(`alternative-${col}`, i18nText(I18N.lines.zeroReducedCost, { name: columnName(col, n) })));
       }
       yield* emit(
         note(
           'alternative-note',
-          'Zmienna niebazowa z kosztem zredukowanym 0 może wejść do bazy bez zmiany wartości z.',
+          i18nText(I18N.notes.alternative),
         ),
       );
     } else {
       yield* emit(
-        note('alternative-none', 'Brak niebazowej zmiennej z zerowym kosztem zredukowanym.'),
+        note('alternative-none', i18nText(I18N.notes.alternativeNone)),
       );
     }
   }
@@ -655,19 +704,19 @@ function columnName(col: number, originalVariables: number): string {
   return `s_${col - originalVariables + 1}`;
 }
 
-function phaseFor(builder: LineBuilder): string {
-  if (builder.id.includes('result') || builder.id.includes('no-result')) return 'Wynik';
-  if (builder.id.includes('pivot') || builder.id.includes('ratio')) return 'Pivot';
+function phaseFor(builder: LineBuilder): TranslatableText {
+  if (builder.id.includes('result') || builder.id.includes('no-result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('pivot') || builder.id.includes('ratio')) return i18nText(I18N.phases.pivot);
   if (builder.id.includes('optimal') || builder.id.includes('alternative'))
-    return 'Test optymalności';
-  if (builder.id.includes('slack')) return 'Slack';
-  return 'Tableau';
+    return i18nText(NOTEBOOK_TEXT.sections.optimality);
+  if (builder.id.includes('slack')) return i18nText(I18N.phases.slack);
+  return i18nText(I18N.phases.tableau);
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.kind === 'result') return 'Zapisujemy wynik.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejny fragment rozwiązania.';
-  return 'Liczymy kolejny wiersz.';
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
@@ -700,7 +749,7 @@ interface SimplexOp {
 
 function parseSimplexOperation(
   builder: LineBuilder,
-  pivots: ReadonlyMap<number, { readonly row: number; readonly col: number }>,
+  pivots: ReadonlyMap<number, { readonly row: number | null; readonly col: number }>,
 ): SimplexOp {
   const id = builder.id;
   const text = typeof builder.content === 'string' ? builder.content : '';
@@ -832,22 +881,22 @@ function simplexCellState(
   return 'idle';
 }
 
-function simplexPhaseLabel(builder: LineBuilder): string {
-  if (builder.id === 'no-result-unbounded') return 'Brak optimum';
-  if (builder.id === 'no-result-exhausted') return 'Limit pivotów';
-  if (builder.id.startsWith('result-') || builder.id === 'section-result') return 'Optimum';
+function simplexPhaseLabel(builder: LineBuilder): TranslatableText {
+  if (builder.id === 'no-result-unbounded') return i18nText(I18N.phases.noOptimum);
+  if (builder.id === 'no-result-exhausted') return i18nText(I18N.phases.pivotLimit);
+  if (builder.id.startsWith('result-') || builder.id === 'section-result') return i18nText(I18N.phases.optimum);
   if (builder.id.startsWith('optimality-') || builder.id === 'section-optimality') {
-    return 'Test optymalności';
+    return i18nText(NOTEBOOK_TEXT.sections.optimality);
   }
   if (builder.id.startsWith('ratio-') || builder.id.startsWith('section-ratio-')) {
-    return 'Test ilorazów';
+    return i18nText(NOTEBOOK_TEXT.sections.ratioTest);
   }
   if (builder.id.startsWith('pivot-') || builder.id.startsWith('section-pivot-')) {
-    return 'Pivot';
+    return i18nText(I18N.phases.pivot);
   }
-  if (builder.id.startsWith('initial-')) return 'Tableau początkowe';
-  if (builder.id.startsWith('standard-')) return 'Postać standardowa';
-  return 'Model';
+  if (builder.id.startsWith('initial-')) return i18nText(NOTEBOOK_TEXT.sections.initialTableau);
+  if (builder.id.startsWith('standard-')) return i18nText(NOTEBOOK_TEXT.sections.standardForm);
+  return i18nText(NOTEBOOK_TEXT.sections.model);
 }
 
 function simplexMatrixTone(op: SimplexOp): MatrixGridTone {

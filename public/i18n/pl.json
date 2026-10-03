@@ -758,20 +758,17 @@
             "noNumbers": "bez liczb",
             "node": "węzeł",
             "none": "brak",
-            "optRow": "opt wiersz {{n}}",
             "pattern": "wzorzec",
             "point": "punkt",
             "prefix": "prefiks",
             "previous": "poprz.",
             "query": "zapytanie",
             "stair": "stopień",
-            "stairIndex": "stopień {{n}}",
             "star": "gwiazdka",
             "start": "start",
             "state": "stan",
             "sum": "suma",
             "take": "weź",
-            "target": "cel",
             "term": "wyraz",
             "text": "tekst",
             "value": "wartość",
@@ -1394,39 +1391,6 @@
           "margins": "Marginesy",
           "registers": "Rejestry",
           "result": "Wynik",
-          "sections": {
-            "augmented": "Macierz rozszerzona",
-            "backElimination": "Eliminacja wstecz",
-            "baseTest": "Test bazy a = {{a}}",
-            "check": "Sprawdzenie",
-            "computation": "Obliczenia",
-            "conclusion": "Wniosek",
-            "construction": "Konstrukcja CRT",
-            "coprimality": "Test względnej pierwszości",
-            "decomposition": "Rozkład n − 1",
-            "factorisation": "Rozbicie",
-            "forwardElimination": "Eliminacja w przód",
-            "initialTableau": "Tableau początkowe",
-            "inverse": "Transformata odwrotna",
-            "iterations": "Iteracje",
-            "lastRemainder": "Ostatnia niezerowa reszta",
-            "model": "Model",
-            "modulus": "Moduł łączny",
-            "optimality": "Test optymalności",
-            "parameters": "Parametry",
-            "pivot": "Pivot {{n}}",
-            "pointwise": "Mnożenie punktowe",
-            "probabilityCheck": "Sprawdzenie idei prawdopodobieństwa",
-            "ratioTest": "Test ilorazów",
-            "result": "Wynik",
-            "rootCheck": "Sprawdzenie pierwiastka",
-            "run": "Przebieg",
-            "standardForm": "Postać standardowa",
-            "sum": "Suma CRT",
-            "system": "Układ równań",
-            "transformA": "Transformata A",
-            "transformB": "Transformata B"
-          },
           "task": "Zadanie"
         },
         "notes": {
@@ -1458,21 +1422,6 @@
           "pending": "w toku",
           "registers": "Rejestry",
           "result": "Wynik"
-        },
-        "phases": {
-          "matrix": {
-            "adjustMatrix": "Korekta macierzy · runda {{round}}",
-            "assignmentReady": "Optymalny przydział gotowy",
-            "columnReduction": "Redukcja kolumn",
-            "costMatrix": "Macierz kosztów",
-            "coverZeros": "Pokrycie zer · runda {{round}}",
-            "distanceMatrix": "Macierz odległości",
-            "distancesReady": "Najkrótsze trasy gotowe",
-            "pivot": "Węzeł pośredni {{pivot}}",
-            "pivotDone": "Węzeł {{pivot}} przetworzony",
-            "rowReduction": "Redukcja wierszy",
-            "zeroMatching": "Skojarzenie zer · runda {{round}}"
-          }
         },
         "pointerLab": {
           "ariaDisplay": "Taśma ze wskaźnikami {{pointers}}, liczba komórek: {{count}}",
@@ -1980,7 +1929,7 @@
             },
             "modeLabel": "Monte Carlo Tree Search",
             "phases": {
-              "backprop": "Backprop",
+              "backprop": "Propagacja wstecz",
               "complete": "Zakończone",
               "expand": "Ekspansja",
               "select": "Selekcja",
@@ -2031,7 +1980,7 @@
             "resultFormat": "Wartość minimax w korzeniu = {{value}}",
             "stats": {
               "alpha": "α",
-              "best": "Best",
+              "best": "Najlepszy",
               "beta": "β",
               "evaluated": "Ocenione",
               "leaf": "liść",
@@ -2072,7 +2021,7 @@
               "pathPending": "Przypisz: oczekuje",
               "pathValue": "Przypisz: {{assignments}}",
               "pendingValue": "oczekuje",
-              "resultCost": "cost = {{value}}",
+              "resultCost": "koszt = {{value}}",
               "resultPending": "koszt oczekuje",
               "stateLabel": "dp[{{worker}}][{{mask}}]",
               "unreachable": "nieosiągalne",
@@ -2114,20 +2063,20 @@
               "activeInterval": "#{{left}}..#{{right}}",
               "balloonValuesLabel": "Wartości balonów",
               "burstLabel": "Pęknij #{{pivot}}",
-              "burstValue": "burst = {{value}}",
+              "burstValue": "przebicie = {{value}}",
               "dpCell": "dp[{{left}}][{{right}}]",
               "intervalComputation": "Przedział #{{left}}..#{{right}}",
               "intervalLensLabel": "Soczewka przedziału",
               "intervalRange": "Przedział #{{left}}..#{{right}}",
-              "lastPivot": "last #{{pivot}}",
-              "leftValue": "left = {{value}}",
+              "lastPivot": "ostatni #{{pivot}}",
+              "leftValue": "lewy = {{value}}",
               "orderSizeValue": "rozmiar kolejności = {{size}}",
               "pathPending": "Kolejność: oczekiwanie",
               "pathValue": "Kolejność: {{order}}",
               "pending": "oczekiwanie",
-              "resultCoins": "coins = {{value}}",
-              "resultPending": "coins pending",
-              "rightValue": "right = {{value}}",
+              "resultCoins": "monety = {{value}}",
+              "resultPending": "monety w toku",
+              "rightValue": "prawy = {{value}}",
               "sentinelsValue": "wartownicy = 1 | {{values}} | 1",
               "traceInterval": "Śledź #{{left}}..#{{right}}",
               "upperTriangle": "górny trójkąt"
@@ -2178,6 +2127,9 @@
               "complete": "Liczba sposobów gotowa",
               "initializeLandings": "Zainicjalizuj pierwsze lądowania",
               "inspectParents": "Sprawdź rodziców rekurencji"
+            },
+            "items": {
+              "step": "stopień {{n}}"
             }
           },
           "coinChange": {
@@ -2209,7 +2161,7 @@
             "labels": {
               "activeCell": "wiersz monety {{row}} · kwota {{amount}}",
               "amountValue": "kwota {{amount}}",
-              "bestValue": "best = {{value}}",
+              "bestValue": "min = {{value}}",
               "coinAmountComputation": "{{coin}} dla kwoty {{amount}}",
               "coinPath": "Monety: {{coins}}",
               "coinValue": "moneta {{coin}}",
@@ -2217,13 +2169,13 @@
               "currentLensLabel": "Bieżąca soczewka",
               "denominationsLabel": "Nominały",
               "dpCellComputation": "dp[{{row}}][{{amount}}]",
-              "resultMinCoins": "min coins = {{value}}",
+              "resultMinCoins": "min. monet = {{value}}",
               "rowValue": "wiersz {{row}}",
               "skipCoinComputation": "Pomiń {{coin}}",
-              "skipValue": "skip = {{value}}",
+              "skipValue": "pomiń = {{value}}",
               "takeCoinComputation": "Weź {{coin}}",
-              "takeUnavailable": "gałąź take niedostępna",
-              "takeValue": "take = {{value}}",
+              "takeUnavailable": "gałąź „weź” niedostępna",
+              "takeValue": "weź = {{value}}",
               "unboundedRowHint": "nieograniczony wybór zostaje w tym samym wierszu"
             },
             "modeLabel": "Coin Change",
@@ -2265,7 +2217,7 @@
               "inputValuesLabel": "Wartości wejściowe",
               "pathPending": "Cięcia: oczekuje",
               "pathValue": "Cięcia: {{cuts}}",
-              "resultCost": "cost = {{value}}",
+              "resultCost": "koszt = {{value}}",
               "resultPending": "koszt oczekuje",
               "stateLabel": "dp[{{group}}][{{end}}]"
             },
@@ -2347,7 +2299,7 @@
             "insights": {
               "chosenLabel": "Wybrane",
               "nodesLabel": "Węzły",
-              "postorderLabel": "Postorder",
+              "postorderLabel": "Kolejność postorder",
               "rootBestLabel": "Najlepszy korzeń",
               "stripLabel": "Pasek"
             },
@@ -2359,7 +2311,7 @@
               "pathValue": "Wybrane: {{nodes}}",
               "postorderNodesLabel": "Węzły postorder",
               "postorderValue": "{{value}}",
-              "resultBest": "best = {{value}}",
+              "resultBest": "najlepiej = {{value}}",
               "stripValue": "4 × {{length}}",
               "treeEdgesLabel": "Krawędzie drzewa"
             },
@@ -2371,6 +2323,10 @@
               "complete": "Wybrane węzły gotowe",
               "initializeTree": "Zainicjalizuj ukorzenione drzewo",
               "inspectLeaf": "Sprawdź stan liścia"
+            },
+            "results": {
+              "take": "weź",
+              "skip": "pomiń"
             }
           },
           "editDistance": {
@@ -2417,7 +2373,7 @@
               "pathValue": "Edycje: {{operations}}",
               "pendingOpsValue": "w toku",
               "replaceOperation": "zamień {{from}} -> {{to}}",
-              "resultDistance": "dist = {{value}}",
+              "resultDistance": "odl. = {{value}}",
               "sourceWordLabel": "Słowo źródłowe",
               "targetOpsLabel": "Cel / operacje"
             },
@@ -2500,7 +2456,7 @@
             "labels": {
               "activeCell": "wiersz {{row}} · pojemność {{cap}}",
               "backtrackItem": "Odtwarzaj {{item}}",
-              "bestSoFar": "best so far = {{value}}",
+              "bestSoFar": "najlepiej dotąd = {{value}}",
               "capValue": "pojemność {{cap}}",
               "currentLensLabel": "Bieżąca soczewka",
               "dpCellComputation": "dp[{{row}}][{{cap}}]",
@@ -2509,13 +2465,13 @@
               "itemsListLabel": "Przedmioty",
               "packPath": "Plecak: {{items}}",
               "packPending": "Plecak: jeszcze bez odtworzenia",
-              "resultBest": "best = {{value}}",
+              "resultBest": "najlepiej = {{value}}",
               "rowValue": "wiersz {{row}}",
-              "skipValue": "skip = {{value}}",
+              "skipValue": "pomiń = {{value}}",
               "skippedHere": "{{item}} pominięty tutaj",
               "tableFill": "wypełnianie tabeli",
-              "takeUnavailable": "gałąź take niedostępna",
-              "takeValue": "take = {{value}}"
+              "takeUnavailable": "gałąź „weź” niedostępna",
+              "takeValue": "weź = {{value}}"
             },
             "modeLabel": "Knapsack 0/1",
             "phases": {
@@ -2559,7 +2515,7 @@
               "optWindowsLabel": "Okna opt",
               "pathPending": "Plan: oczekuje",
               "pathValue": "Plan: {{value}}",
-              "resultCost": "cost = {{value}}",
+              "resultCost": "koszt = {{value}}",
               "resultPending": "koszt oczekuje",
               "traceLabel": "ślad F{{left}}..F{{right}}",
               "upperTriangle": "górny trójkąt"
@@ -2572,6 +2528,9 @@
               "inspectWindow": "Sprawdź okno Knutha",
               "traceLeaf": "Śledź liść",
               "traceSplit": "Śledź optymalny podział"
+            },
+            "items": {
+              "optRow": "opt wiersz {{n}}"
             }
           },
           "longestCommonSubsequence": {
@@ -2609,14 +2568,14 @@
               "coords": "({{row}}, {{col}})",
               "dpCell": "dp[{{row}}][{{col}}]",
               "ellipsis": "...",
-              "leftValue": "left = {{value}}",
+              "leftValue": "lewo = {{value}}",
               "matchItem": "zgodność {{char}}",
               "pathPending": "LCS: oczekiwanie",
               "pathValue": "LCS: {{value}}",
-              "resultLength": "len = {{value}}",
+              "resultLength": "dł. = {{value}}",
               "sourceStringLabel": "Łańcuch źródłowy",
               "targetStringLabel": "Łańcuch docelowy",
-              "topValue": "top = {{value}}"
+              "topValue": "góra = {{value}}"
             },
             "modeLabel": "Longest Common Subsequence",
             "phases": {
@@ -2659,7 +2618,7 @@
               "valuesLabel": "Wartości"
             },
             "labels": {
-              "activeIndex": "idx {{index}} = {{value}}",
+              "activeIndex": "ind. {{index}} = {{value}}",
               "bestEndpoint": "Najlepszy koniec",
               "blocked": "zablokowane",
               "currentLengthsLabel": "Bieżące długości",
@@ -2670,8 +2629,8 @@
               "lenIndex": "len[{{index}}]",
               "pathPending": "LIS: oczekiwanie",
               "pathValue": "LIS: {{values}}",
-              "prevValue": "prev {{value}}",
-              "resultLength": "len = {{value}}",
+              "prevValue": "poprz. {{value}}",
+              "resultLength": "dł. = {{value}}",
               "startValue": "start",
               "stripValue": "3 × n",
               "traceValue": "Śledź {{value}}"
@@ -2732,7 +2691,7 @@
               "pathPending": "LPS: oczekuje",
               "pathValue": "LPS: {{value}}",
               "pendingValue": "oczekuje",
-              "resultLength": "len = {{value}}",
+              "resultLength": "dł. = {{value}}",
               "skipLeftLabel": "Pomiń {{char}}",
               "skipRightLabel": "Pomiń {{char}}",
               "sourceStringLabel": "Łańcuch źródłowy",
@@ -2812,8 +2771,7 @@
               "backtrackRoute": "Prześledź jedną poprawną trasę frontu kończącą się pustą maską {{mask}}.",
               "commitCount": "Zapisz nową liczbę ułożeń dla kolumny {{column}} i frontu {{mask}}.",
               "complete": "Zakończono liczenie przejść profilowych dla planszy {{board}}.",
-              "initialize": "Ustaw kolumnę 0 z pustą maską frontu, zanim zostaną położone jakiekolwiek domina.",
-              "inspectTransition": "W kolumnie {{column}} front {{from}} może przejść do {{to}} przez {{transition}}."
+              "initialize": "Ustaw kolumnę 0 z pustą maską frontu, zanim zostaną położone jakiekolwiek domina."
             },
             "insights": {
               "boardLabel": "Plansza",
@@ -2831,7 +2789,7 @@
               "pathPending": "Trasa: oczekuje",
               "pathValue": "Trasa: {{route}}",
               "profilesLabel": "Profile",
-              "resultTilings": "tilings = {{value}}",
+              "resultTilings": "pokrycia = {{value}}",
               "transitionLabel": "{{from}} -> {{to}}"
             },
             "modeLabel": "DP profilowe",
@@ -2841,6 +2799,13 @@
               "complete": "Liczności ułożeń gotowe",
               "initializeProfile": "Zainicjalizuj pusty profil",
               "inspectTransition": "Sprawdź przejście profilu"
+            },
+            "transitions": {
+              "verticalDomino": "W kolumnie {{column}} front {{from}} może przejść do {{to}} przez pionowe domino.",
+              "twoHorizontals": "W kolumnie {{column}} front {{from}} może przejść do {{to}} przez dwa poziome domina.",
+              "bottomHorizontal": "W kolumnie {{column}} front {{from}} może przejść do {{to}} przez dolne poziome domino.",
+              "topHorizontal": "W kolumnie {{column}} front {{from}} może przejść do {{to}} przez górne poziome domino.",
+              "alreadyFilled": "W kolumnie {{column}} front {{from}} przechodzi do {{to}}, bo kolumna jest już wypełniona."
             }
           },
           "regexMatching": {
@@ -2889,7 +2854,7 @@
               "patternItemsLabel": "Wzorzec regex",
               "regexConsumes": "{{token}}* pochłania {{char}}",
               "regexEmpty": "{{token}}* zostaje puste",
-              "resultMatch": "match = {{value}}",
+              "resultMatch": "dopasowanie = {{value}}",
               "starGroupVsChar": "{{token}}* vs {{char}}",
               "textItemsLabel": "Tekst",
               "tokenMatches": "{{token}} pasuje do {{char}}"
@@ -2942,7 +2907,7 @@
               "mergeLabel": "{{mask}} przez bit {{bit}}",
               "pathPending": "Submaski: oczekuje",
               "pathValue": "Submaski: {{masks}}",
-              "resultSum": "sum = {{value}}",
+              "resultSum": "suma = {{value}}",
               "stageLabel": "{{mask}} @ etap {{stage}}"
             },
             "modeLabel": "SOS DP",
@@ -2989,14 +2954,14 @@
               "currentLensLabel": "Bieżąca soczewka",
               "dpCellComputation": "dp[{{row}}][{{sum}}]",
               "numbersLabel": "Liczby",
-              "resultTarget": "target = {{value}}",
+              "resultTarget": "cel = {{value}}",
               "rowValue": "wiersz {{row}}",
-              "skipValue": "skip = {{value}}",
+              "skipValue": "pomiń = {{value}}",
               "skipValueComputation": "Pomiń {{value}}",
               "subsetPath": "Podzbiór: {{values}}",
               "subsetPending": "Podzbiór: oczekiwanie",
-              "takeUnavailable": "gałąź take niedostępna",
-              "takeValue": "take = {{value}}",
+              "takeUnavailable": "gałąź „weź” niedostępna",
+              "takeValue": "weź = {{value}}",
               "takeValueComputation": "Weź {{value}}",
               "valueForSumComputation": "{{value}} dla sumy {{sum}}"
             },
@@ -3051,7 +3016,7 @@
               "pathValue": "Trasa: {{tour}}",
               "pendingValue": "oczekuje",
               "resultPending": "trasa oczekuje",
-              "resultTour": "tour = {{value}}",
+              "resultTour": "trasa = {{value}}",
               "stateLabel": "dp[{{mask}}][{{city}}]",
               "traceValue": "Śledzenie: {{city}}"
             },
@@ -3064,6 +3029,9 @@
               "inspectClosure": "Sprawdź domknięcie cyklu",
               "inspectExtension": "Sprawdź rozszerzenie podzbioru",
               "pickClosingCity": "Wybierz najlepsze miasto domknięcia"
+            },
+            "items": {
+              "start": "{{city}} (start)"
             }
           },
           "wildcardMatching": {
@@ -3115,7 +3083,7 @@
               "pathValue": "Trasa: {{route}}",
               "patternItemsLabel": "Wzorzec",
               "questionWildcard": "? wildcard",
-              "resultMatch": "match = {{value}}",
+              "resultMatch": "dopasowanie = {{value}}",
               "starConsumes": "* pochłania {{char}}",
               "starEmpty": "Gwiazdka zostaje pusta",
               "starVsChar": "* vs {{char}}",
@@ -3329,7 +3297,7 @@
               "setup": "Przygotowujemy okno iteracji dla [[math]]F({{n}})[[/math]]."
             },
             "hints": {
-              "nextSum": "prev + curr",
+              "nextSum": "poprz. + bież.",
               "rollWindow": "przesuwa się co krok",
               "terminal": "indeks docelowy"
             },
@@ -3409,7 +3377,7 @@
               "complete": "Zakończone",
               "extend": "Rozszerzenie",
               "init": "Start",
-              "restart": "Restart"
+              "restart": "Od nowa"
             },
             "resultFormat": "Największa suma podtablicy = {{sum}} @ [{{left}}..{{right}}]",
             "stats": {
@@ -3503,6 +3471,9 @@
               "best": "Najlepsza",
               "windowSize": "Szerokość",
               "windowSum": "Suma okna"
+            },
+            "statValues": {
+              "best": "{{best}} @[{{left}}..{{right}}]"
             }
           },
           "twoPointers": {
@@ -3553,7 +3524,8 @@
               "done": "Rozwiązanie jednoznaczne ustalone.",
               "product": "Liczymy iloczyn modułów [[math]]M[[/math]].",
               "reducing": "Redukujemy sumę modulo [[math]]M[[/math]].",
-              "summing": "Sumujemy człony cząstkowe."
+              "summing": "Sumujemy człony cząstkowe.",
+              "inconsistent": "Układ sprzeczny."
             },
             "goal": "Znajdź [[math]]x \\pmod{ {{M}} }[[/math]] spełniające układ {{count}} kongruencji.",
             "invariant": "Moduły muszą być parami względnie pierwsze — to warunek jednoznaczności rozwiązania.",
@@ -3562,7 +3534,9 @@
               "combine": "Sumowanie",
               "complete": "Koniec",
               "setup": "Iloczyn modułów",
-              "terms": "Człony"
+              "terms": "Człony",
+              "test": "Test",
+              "merge": "Łączenie"
             },
             "result": {
               "line": "[[math]]x \\equiv {{x}} \\pmod{ {{M}} }[[/math]]",
@@ -3591,6 +3565,64 @@
               "partialInstruction": "Policz [[math]]{{r}} \\cdot {{Mi}} \\cdot {{y}}[[/math]]",
               "reducedM": "[[math]]M_{{index}} \\bmod {{m}} = {{Mi}} \\bmod {{m}} = {{r}}[[/math]]",
               "reducedMInstruction": "Policz [[math]]{{Mi}} \\bmod {{m}}[[/math]]"
+            },
+            "sections": {
+              "noSolutions": "Brak rozwiązań",
+              "mergeFirstTwo": "Łączenie pierwszych dwóch kongruencji",
+              "attachThird": "Dołączenie trzeciej kongruencji",
+              "compatibility": "Test zgodności",
+              "finalModulus": "Moduł końcowy",
+              "firstPairCompatibility": "Test zgodności pierwszej pary",
+              "contradiction": "Diagnoza sprzeczności",
+              "coefficient": "Współczynnik c{{index}}",
+              "compose": "Złożenie liczby"
+            },
+            "notes": {
+              "coprimeUnique": "Moduły są parami względnie pierwsze, więc istnieje dokładnie jedno rozwiązanie modulo ich iloczyn.",
+              "coprime": "Moduły są parami względnie pierwsze.",
+              "solutionFamily": "Czyli wszystkie rozwiązania mają postać:",
+              "forEachCondition": "Dla każdego warunku liczymy:",
+              "forFirst": "Dla pierwszej kongruencji:",
+              "forSecond": "Dla drugiej kongruencji:",
+              "forThird": "Dla trzeciej kongruencji:",
+              "forNth": "Dla {{n}}. kongruencji:",
+              "reduceModM": "Redukcja modulo [[math]]M[[/math]]:",
+              "fromFirst": "Z pierwszej kongruencji:",
+              "substituteSecond": "Podstawiamy do drugiej:",
+              "inverseOf": "Odwrotność [[math]]{{value}}[[/math]] modulo [[math]]{{modulus}}[[/math]]:",
+              "therefore": "Zatem:",
+              "thatIs": "Czyli:",
+              "backToX": "Wracamy do [[math]]x[[/math]]:",
+              "afterFirstMerge": "Po pierwszym łączeniu mamy:",
+              "nowSubstitute": "Teraz podstawiamy:",
+              "thirdCondition": "Warunek trzeci:",
+              "reduce": "Redukujemy:",
+              "weGet": "Dostajemy:",
+              "compatibilityRule": "Dla modułów, które nie są względnie pierwsze, warunek zgodności pary jest taki:",
+              "pairCompatibleOne": "Ta para jest zgodna, bo [[math]]1[[/math]] dzieli każdą liczbę.",
+              "pairAlsoCompatible": "Ta para też jest zgodna.",
+              "pairCompatible": "Ta para jest zgodna.",
+              "pairInconsistent": "Ta para jest sprzeczna.",
+              "commonDivisor": "Wspólny dzielnik:",
+              "divideBy": "Dzielimy kongruencję przez [[math]]{{divisor}}[[/math]]:",
+              "afterMergeTwo": "Po scaleniu pierwszych dwóch warunków:",
+              "lcmHere": "Tutaj [[math]]{{modulus}} = \\mathrm{lcm}({{left}}, {{right}})[[/math]].",
+              "substitute": "Podstawiamy:",
+              "pairCheck": "Dla pary kongruencji trzeba sprawdzić:",
+              "here": "Tutaj:",
+              "firstForces": "Pierwsza kongruencja wymusza:",
+              "secondForces": "Druga kongruencja wymusza:",
+              "sameX": "Ten sam [[math]]x[[/math]] nie może jednocześnie spełniać:",
+              "thirdIrrelevant": "Trzecia kongruencja nie ma znaczenia dla końcowego wniosku, bo sprzeczność jest już w pierwszych dwóch warunkach.",
+              "mixedRadix": "W reprezentacji mieszanej:",
+              "allButC0": "Wszystkie składniki poza [[math]]c_0[[/math]] są wielokrotnościami [[math]]{{modulus}}[[/math]], więc:",
+              "substituteC0": "Podstawiamy [[math]]c_0 = {{c0}}[[/math]] i patrzymy modulo [[math]]{{modulus}}[[/math]]:",
+              "termsVanish": "Składniki [[math]]{{first}}c_2[[/math]] i [[math]]{{second}}c_3[[/math]] znikają modulo [[math]]{{modulus}}[[/math]], więc:",
+              "currentForm": "Aktualna postać:",
+              "lookModulo": "Patrzymy modulo [[math]]{{modulus}}[[/math]]:",
+              "pairFirstSecond": "Pierwsza i druga kongruencja:",
+              "pairFirstThird": "Pierwsza i trzecia kongruencja:",
+              "pairSecondThird": "Druga i trzecia kongruencja:"
             }
           },
           "extendedEuclidean": {
@@ -3734,7 +3766,9 @@
             "phases": {
               "butterflies": "Etapy butterfly",
               "complete": "Koniec",
-              "setup": "Start"
+              "setup": "Start",
+              "root": "Pierwiastek",
+              "carries": "Przeniesienia"
             },
             "result": {
               "invalid": "Długość wejścia [[math]]N = {{N}}[[/math]] nie jest potęgą dwójki — radix-2 FFT wymaga [[math]]N = 2^k[[/math]].",
@@ -3753,6 +3787,43 @@
               "header": "Etap {{stage}}: łączymy bloki długości [[math]]m = {{m}}[[/math]].",
               "headerInstruction": "Dla każdego bloku długości [[math]]{{m}}[[/math]] zastosuj butterflies z twiddle [[math]]\\omega_{m}^j[[/math]].",
               "twiddle": "[[math]]\\omega_{{m}}^{{j}} = {{value}}[[/math]]"
+            },
+            "notes": {
+              "rootConclusion": "Zatem [[math]]{{omega}}[[/math]] jest pierwiastkiem [[math]]{{n}}[[/math]]. stopnia modulo [[math]]{{mod}}[[/math]].",
+              "beforeReduction": "W liczbach całkowitych przed redukcją:",
+              "lengthTwoRoot": "Dla długości [[math]]2[[/math]] pierwiastkiem jest [[math]]-1[[/math]]:",
+              "forK": "Dla [[math]]k = {{k}}[[/math]]:",
+              "cyclic": "To jest konwolucja cykliczna, czyli współczynniki z końca zawinęły się na początek.",
+              "digitsOrder": "Cyfry zapisujemy od najmniej znaczącej:",
+              "digitsLowFirst": "Cyfry od najmniej znaczącej:",
+              "reversed": "Po odwróceniu:",
+              "checkPowers": "Sprawdzamy potęgi:",
+              "primitiveRequirement": "Dla pierwiastka pierwotnego stopnia [[math]]n[[/math]] powinno być:",
+              "badOrder": "Tutaj [[math]]{{omega}}^{{half}} = 1[[/math]], więc [[math]]{{omega}}[[/math]] ma rząd [[math]]{{half}}[[/math]], a nie [[math]]{{n}}[[/math]].",
+              "twoVectors": "Weźmy dwa różne wektory:",
+              "collision": "Dwa różne wejścia mają tę samą transformatę, więc transformata nie jest odwracalna.",
+              "repairConclusion": "Zatem [[math]]{{omega}}[[/math]] jest poprawnym pierwiastkiem pierwotnym stopnia [[math]]{{n}}[[/math]] modulo [[math]]{{mod}}[[/math]]."
+            },
+            "sections": {
+              "split": "Podział wejścia",
+              "evenFft": "FFT części parzystej",
+              "oddFft": "FFT części nieparzystej",
+              "butterflies": "Składanie motylkami",
+              "badSettings": "Błędne ustawienie: n = {{n}}",
+              "nttLength": "NTT długości {{n}}",
+              "goodSettings": "Poprawne ustawienie: n = {{n}}",
+              "goodNtt": "Poprawny wynik przez NTT długości {{n}}",
+              "digits": "Zamiana liczb na wektory cyfr",
+              "transform": "Transformata",
+              "carry": "Przeniesienia w bazie {{base}}",
+              "badRoot": "Próba z ω = {{omega}}",
+              "collision": "Kolizja transformaty",
+              "repair": "Naprawa: ω = {{omega}}"
+            },
+            "lines": {
+              "carryRow": "[[math]]c_{{index}} = {{value}} \\to \\text{cyfra } {{digit}},\\ \\text{przeniesienie } {{carry}}[[/math]]",
+              "badRoot": "[[math]]\\omega = {{omega}} \\to \\text{niepoprawny pierwiastek dla } n = {{n}}[[/math]]",
+              "goodRoot": "[[math]]\\omega = {{omega}} \\to \\text{poprawny pierwiastek dla } n = {{n}}[[/math]]"
             }
           },
           "gaussianElimination": {
@@ -3799,6 +3870,17 @@
             "setup": {
               "initial": "Zapisz macierz rozszerzoną układu.",
               "initialAnnotation": "Pionowa kreska oddziela współczynniki od wektora wyrazów wolnych."
+            },
+            "sections": {
+              "noSolution": "Brak rozwiązania",
+              "contradiction": "Sprzeczność",
+              "freeVariables": "Zmienne wolne"
+            },
+            "notes": {
+              "inconsistent": "układ jest sprzeczny"
+            },
+            "results": {
+              "inconsistent": "układ sprzeczny"
             }
           },
           "gcd": {
@@ -3833,7 +3915,35 @@
             "resultLine": "= [[math]]{{gcd}}[[/math]]",
             "resultSignoff": "[[math]]\\gcd({{a}}, {{b}}) = {{gcd}}[[/math]]",
             "rule": "Algorytm Euklidesa: [[math]]\\gcd(a, b) = \\gcd(b, a \\bmod b)[[/math]], powtarzaj aż [[math]]b = 0[[/math]].",
-            "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]"
+            "substitute": "= [[math]]\\gcd({{a}}, {{b}})[[/math]]",
+            "notes": {
+              "check": "[[math]]{{result}}[[/math]] dzieli obie liczby, a następny krok algorytmu zakończył się resztą 0.",
+              "slowDecrease": "To oznacza wolne zmniejszanie reszt:",
+              "blockSize": "Jeśli liczby oznaczają rozmiary partii danych, największy wspólny rozmiar bloku wynosi:",
+              "blockCount": "Liczba bloków:",
+              "firstSubtractions": "Pierwsze odejmowania [[math]]{{divisor}}[[/math]] od [[math]]{{dividend}}[[/math]] można zapisać jako:",
+              "nextSubtractions": "Następne odejmowania [[math]]{{divisor}}[[/math]] od [[math]]{{dividend}}[[/math]] można zapisać jako:",
+              "tileSide": "Największy kwadratowy kafelek ma bok:",
+              "tileCount": "Liczba kafelków w prostokącie:"
+            },
+            "sections": {
+              "lengthConclusion": "Wniosek o długości",
+              "foldStep": "Krok {{step}}: gcd({{a}}, {{b}})",
+              "gcdComputation": "Obliczenia NWD",
+              "gcd": "NWD",
+              "fractionReduction": "Skracanie ułamka",
+              "subtractive": "Wersja przez odejmowanie",
+              "lastPositive": "Ostatnia dodatnia wartość",
+              "division": "Ten sam proces przez dzielenie",
+              "gcdResult": "Wynik NWD",
+              "geometry": "Interpretacja geometryczna",
+              "finalResult": "Wynik końcowy"
+            },
+            "lines": {
+              "mostQuotients": "[[math]]\\text{większość ilorazów} = 1[[/math]]",
+              "tileSide": "[[math]]\\text{bok kafelka} = {{side}}[[/math]]",
+              "tileCount": "[[math]]\\text{liczba kafelków} = {{count}}[[/math]]"
+            }
           },
           "millerRabin": {
             "captions": {
@@ -3859,7 +3969,8 @@
               "complete": "Koniec",
               "decide": "Werdykt",
               "setup": "Rozkład",
-              "witness": "Świadek"
+              "witness": "Świadek",
+              "baseTest": "Test bazy"
             },
             "result": {
               "composite": "[[math]]n = {{n}}[[/math]] jest złożone — świadek [[math]]a = {{a}}[[/math]] to potwierdza.",
@@ -3882,6 +3993,34 @@
               "squareStep": "[[math]]x \\leftarrow {{prev}}^2 \\bmod {{n}} = {{x}}[[/math]]  (krok {{step}})",
               "squareStepInstruction": "Podnieś [[math]]{{prev}}^2 \\bmod {{n}}[[/math]]",
               "witnessFound": "Łańcuch nie trafił w [[math]]n - 1[[/math]] — [[math]]a = {{a}}[[/math]] jest świadkiem złożoności [[math]]n = {{n}}[[/math]]."
+            },
+            "notes": {
+              "since": "Skoro:",
+              "noSquares": "Ponieważ [[math]]s = 1[[/math]], nie ma kolejnych kwadratów do sprawdzenia.",
+              "nextSquare": "Liczymy kolejny kwadrat:",
+              "basePasses": "Baza [[math]]{{base}}[[/math]] przechodzi test.",
+              "isPrime": "W tym konkretnym przykładzie [[math]]{{n}}[[/math]] jest liczbą pierwszą.",
+              "onlySquare": "Liczymy jedyny wymagany kwadrat:",
+              "missed": "Ciąg nie trafił ani w [[math]]1[[/math]] na początku, ani w [[math]]n - 1[[/math]] w żadnym dozwolonym kroku.",
+              "witness": "Baza [[math]]{{base}}[[/math]] jest świadkiem złożoności.",
+              "additionally": "Dodatkowo:",
+              "commonDivisor": "Baza [[math]]{{base}}[[/math]] ma wspólny dzielnik z [[math]]n[[/math]], więc [[math]]n[[/math]] jest złożona.",
+              "square": "Liczymy kwadrat:",
+              "but": "ale:",
+              "nontrivialMeaning": "To oznacza nietrywialny pierwiastek z [[math]]1[[/math]] modulo liczby złożonej.",
+              "sorted": "Po uporządkowaniu:"
+            },
+            "lines": {
+              "probablePrime": "[[math]]{{n}}\\;\\text{jest silnie prawdopodobnie pierwsza przy bazie}\\;{{base}}[[/math]]",
+              "witnessOf": "[[math]]{{base}}\\;\\text{jest świadkiem złożoności liczby}\\;{{n}}[[/math]]",
+              "composite": "[[math]]{{n}}\\;\\text{jest liczbą złożoną}[[/math]]",
+              "basePasses": "[[math]]\\text{baza}\\;{{base}}:\\;\\text{przechodzi}[[/math]]",
+              "baseFails": "[[math]]\\text{baza}\\;{{base}}:\\;\\text{nie przechodzi}[[/math]]"
+            },
+            "sections": {
+              "baseCheck": "Sprawdzenie bazy",
+              "nontrivialRoot": "Nietrywialny pierwiastek",
+              "recoverFactors": "Odzyskanie czynników"
             }
           },
           "pollardsRho": {
@@ -3895,7 +4034,8 @@
               "exhausted": "Limit iteracji osiągnięty.",
               "factorFound": "[[math]]\\gcd[[/math]] mieści się w [[math]](1, n)[[/math]] — to dzielnik.",
               "iterating": "Robimy krok żółw-zając i sprawdzamy [[math]]\\gcd[[/math]].",
-              "seeding": "Ustalamy funkcję i ziarna."
+              "seeding": "Ustalamy funkcję i ziarna.",
+              "noFactor": "Przebieg nie znalazł czynnika."
             },
             "goal": "Znajdź nietrywialny dzielnik [[math]]n = {{n}}[[/math]].",
             "invariant": "Gdy wskaźniki się spotkają bez wcześniejszego gcd ∈ (1, n), [[math]]n[[/math]] może być pierwsze albo trzeba zmienić [[math]]c[[/math]] i zacząć od nowa.",
@@ -3923,6 +4063,32 @@
               "annotation": "[[math]]\\gcd({{diff}}, n) = {{g}}[[/math]]",
               "instruction": "Wykonaj krok {{i}} — jedno [[math]]f[[/math]] dla [[math]]x[[/math]], dwa [[math]]f[[/math]] dla [[math]]y[[/math]], potem [[math]]\\gcd(|x - y|, n)[[/math]]",
               "line": "Krok {{i}}: [[math]]x = {{x}}, \\; y = {{y}}, \\; |x - y| = {{diff}}, \\; \\gcd = {{g}}[[/math]]"
+            },
+            "sections": {
+              "failedRun": "Nieudany przebieg",
+              "attempt": "Próba {{n}}",
+              "attemptConclusion": "Wniosek po próbie {{n}}",
+              "block": "Blok r = {{r}}",
+              "blockFirstBatch": "Blok r = {{r}}, pierwsza paczka",
+              "blockSecondBatch": "Blok r = {{r}}, druga paczka",
+              "callFirst": "Pierwsze wywołanie",
+              "callSecond": "Drugie wywołanie",
+              "callThird": "Trzecie wywołanie",
+              "callNth": "{{n}}. wywołanie",
+              "firstSplit": "Pierwsze rozbicie",
+              "splitDivisor": "Rozbicie dzielnika {{factor}}",
+              "splitQuotient": "Rozbicie ilorazu {{quotient}}"
+            },
+            "notes": {
+              "nontrivialDivisor": "Znaleziono nietrywialny dzielnik:",
+              "secondFactor": "Drugi czynnik:",
+              "cycle": "To nie jest nietrywialny dzielnik. Trafiliśmy w cykl w taki sposób, że [[math]]x = y[[/math]] modulo [[math]]n[[/math]], więc [[math]]\\gcd(0, n)[[/math]] oddaje całe [[math]]n[[/math]]. Algorytm nie znalazł czynnika.",
+              "splitFirst": "Pierwsze rozbicie:",
+              "splitSecond": "Drugie rozbicie:",
+              "splitThird": "Trzecie rozbicie:",
+              "splitNth": "{{n}}. rozbicie:",
+              "sorted": "Po uporządkowaniu:",
+              "compositeFactor": "Dzielnik [[math]]{{factor}}[[/math]] nie jest pierwszy, więc nie wolno kończyć. No chyba że celem jest oddanie rozwiązania, które wygląda jak niedokończona kanapka."
             }
           },
           "reservoirSampling": {
@@ -3951,7 +4117,10 @@
               "complete": "Koniec",
               "fill": "Wypełnianie rezerwuaru",
               "sample": "Losowanie",
-              "setup": "Start"
+              "setup": "Start",
+              "stream": "Strumień",
+              "draws": "Losowania",
+              "reservoirState": "Stan rezerwuaru"
             },
             "result": {
               "emptySignoff": "Strumień pusty — brak próbki.",
@@ -3971,6 +4140,48 @@
               "reservoirInit": "Rezerwuar: [[math]]{{reservoir}}[[/math]] (pusty)",
               "streamInstruction": "Rezerwuar pojemności [[math]]k = {{k}}[[/math]], strumień o długości [[math]]n = {{n}}[[/math]].",
               "streamLine": "Strumień: [[math]]{{stream}}[[/math]]"
+            },
+            "registers": {
+              "decision": "decyzja"
+            },
+            "sections": {
+              "init": "Inicjalizacja",
+              "keys": "Obliczenia kluczy",
+              "ranking": "Ranking",
+              "merge": "Scalanie kandydatów",
+              "shard": "Shard {{label}}"
+            },
+            "notes": {
+              "firstElement": "Dla pierwszego elementu:",
+              "elementE": "Dla elementu E:",
+              "predicateCounter": "Losowania są liczone względem liczby elementów spełniających predykat, nie względem całej długości strumienia.",
+              "keepLargest": "wybieramy największe klucze",
+              "largestKeys": "Wybieramy dwa największe klucze:",
+              "smallerPriority": "mniejszy priorytet = lepszy",
+              "smallestPriorities": "Wybieramy dwa najmniejsze priorytety:"
+            },
+            "lines": {
+              "reservoir": "[[math]]\\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "stream": "[[math]]\\text{strumień} = {{stream}}[[/math]]",
+              "predicate": "[[math]]\\text{predykat} = \\text{ {{predicate}} }[[/math]]",
+              "keyFormula": "[[math]]\\text{klucz} = {{formula}}[[/math]]",
+              "kOneStart": "[[math]]i = {{i}},\\ \\text{element} = {{item}},\\ \\text{decyzja} = \\text{start},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "kOneCompare": "[[math]]i = {{i}},\\ \\text{element} = {{item}},\\ \\text{random}[{{i}}] = {{draw}},\\ \\text{próg} = 1 / {{i}} = {{threshold}}[[/math]]",
+              "kOneAccept": "[[math]]{{draw}} < {{threshold}} \\to \\text{zastąp},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "kOneKeep": "[[math]]{{draw}} \\ge {{threshold}} \\to \\text{nie zastępuj},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "checkAProduct": "[[math]]P(\\text{A zostaje do końca}) = (1 - 1/2)(1 - 1/3)(1 - 1/4)(1 - 1/5)(1 - 1/6)[[/math]]",
+              "checkAResult": "[[math]]P(\\text{A zostaje do końca}) = (1/2)(2/3)(3/4)(4/5)(5/6) = 1/6[[/math]]",
+              "checkESelected": "[[math]]P(\\text{E wybrane przy } i = 5) = 1/5[[/math]]",
+              "checkESurvives": "[[math]]P(\\text{E przetrwa } i = 6) = 1 - 1/6 = 5/6[[/math]]",
+              "checkEResult": "[[math]]P(\\text{E w końcowej próbce}) = (1/5)(5/6) = 1/6[[/math]]",
+              "fixedDraw": "[[math]]i = {{i}},\\ \\text{element} = {{item}},\\ j = {{draw}}[[/math]]",
+              "fixedReplace": "[[math]]{{draw}} \\le {{k}} \\to \\text{zastąp pozycję } {{draw}},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "fixedSkip": "[[math]]{{draw}} > {{k}} \\to \\text{pomiń},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "predicateIgnore": "[[math]]\\text{indeks} = {{index}},\\ \\text{element} = {{item}},\\ \\text{predykat} = \\text{nie},\\ r = {{r}},\\ \\text{decyzja} = \\text{ignoruj},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "predicateAdd": "[[math]]\\text{indeks} = {{index}},\\ \\text{element} = {{item}},\\ \\text{predykat} = \\text{tak},\\ r = {{r}},\\ \\text{decyzja} = \\text{dodaj},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "predicateReplace": "[[math]]\\text{indeks} = {{index}},\\ \\text{element} = {{item}},\\ \\text{predykat} = \\text{tak},\\ r = {{r}},\\ j = {{draw}},\\ {{draw}} \\le {{k}} \\to \\text{zastąp pozycję } {{draw}},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "predicateSkip": "[[math]]\\text{indeks} = {{index}},\\ \\text{element} = {{item}},\\ \\text{predykat} = \\text{tak},\\ r = {{r}},\\ j = {{draw}},\\ {{draw}} > {{k}} \\to \\text{pomiń},\\ \\text{rezerwuar} = {{reservoir}}[[/math]]",
+              "weightedKey": "[[math]]{{label}}:\\ \\text{waga} = {{weight}},\\ u = {{u}},\\ \\text{klucz} = {{u}}^{1 / {{weight}} } = {{key}}[[/math]]"
             }
           },
           "simplex": {
@@ -4005,7 +4216,13 @@
             "phases": {
               "complete": "Koniec",
               "iterate": "Iteracja",
-              "setup": "Tableau startowe"
+              "setup": "Tableau startowe",
+              "pivot": "Pivot",
+              "slack": "Zmienne swobodne",
+              "tableau": "Tableau",
+              "noOptimum": "Brak optimum",
+              "pivotLimit": "Limit pivotów",
+              "optimum": "Optimum"
             },
             "result": {
               "optimal": "Optimum: [[math]]{{solution}}[[/math]], [[math]]z = {{objective}}[[/math]].",
@@ -4017,7 +4234,78 @@
               "basis": "Baza startowa: {{basis}}",
               "initial": "Dodaj zmienne dopełniające, żeby przerobić nierówności w równości. Pierwsza macierz ma współczynniki oryginalne po lewej i macierz jednostkową (dla slacków) po prawej.",
               "initialAnnotation": "Wiersz celu zapisany jako [[math]]-c^T[/math] dla zmiennych oryginalnych; zera w kolumnach slacków."
+            },
+            "sections": {
+              "noOptimum": "Brak skończonego optimum",
+              "noLeavingRow": "Brak wiersza wychodzącego",
+              "slack": "Ograniczenie niewiążące",
+              "alternative": "Alternatywne optimum"
+            },
+            "results": {
+              "unbounded": "funkcja celu nieograniczona",
+              "exhausted": "limit pivotów przekroczony"
+            },
+            "lines": {
+              "initialBasis": "[[math]]\\text{baza początkowa} = {{basis}}[[/math]]",
+              "columns": "[[math]]\\text{kolumny} = [{{columns}}, \\text{RHS}][[/math]]",
+              "reducedCosts": "Koszty zredukowane: [[math]]{{costs}}[[/math]]",
+              "entering": "Wchodzi [[math]]{{name}}[[/math]], bo [[math]]{{value}}[[/math]] jest najbardziej ujemne.",
+              "ratioSkip": "[[math]]{{basis}}: {{coefficient}} \\le 0 \\to \\text{pomiń}[[/math]]",
+              "column": "[[math]]\\text{kolumna } {{name}} = {{values}}[[/math]]",
+              "leaving": "Wychodzi [[math]]{{name}}[[/math]], pivot [[math]]= {{pivot}}[[/math]].",
+              "newBasis": "[[math]]\\text{nowa baza} = {{basis}}[[/math]]",
+              "unbounded": "[[math]]\\text{funkcja celu jest nieograniczona}[[/math]]",
+              "exhausted": "[[math]]\\text{przekroczono limit } {{limit}} \\text{ pivotów}[[/math]]",
+              "zeroReducedCost": "[[math]]\\text{koszt zredukowany } {{name}} = 0[[/math]]"
+            },
+            "notes": {
+              "unbounded": "W kolumnie wchodzącej nie ma dodatniego elementu, więc nie da się wykonać testu ilorazów.",
+              "tie": "Remis w teście ilorazów: [[math]]{{rows}}[[/math]] mają iloraz [[math]]{{ratio}}[[/math]].",
+              "degenerate": "Iloraz [[math]]0[[/math]] oznacza pivot zdegenerowany: baza się zmieni, ale wartość funkcji celu nie wzrośnie.",
+              "optimal": "Wszystkie koszty zredukowane są nieujemne, więc bieżąca baza jest optymalna.",
+              "slackPositive": "[[math]]{{slacks}} > 0[[/math]], więc odpowiadające ograniczenie nie jest wiążące.",
+              "alternative": "Zmienna niebazowa z kosztem zredukowanym [[math]]0[[/math]] może wejść do bazy bez zmiany wartości [[math]]z[[/math]].",
+              "alternativeNone": "Brak niebazowej zmiennej z zerowym kosztem zredukowanym."
             }
+          },
+          "sections": {
+            "augmented": "Macierz rozszerzona",
+            "backElimination": "Eliminacja wstecz",
+            "check": "Sprawdzenie",
+            "computation": "Obliczenia",
+            "conclusion": "Wniosek",
+            "construction": "Konstrukcja CRT",
+            "coprimality": "Test względnej pierwszości",
+            "decomposition": "Rozkład n − 1",
+            "factorisation": "Rozbicie",
+            "forwardElimination": "Eliminacja w przód",
+            "initialTableau": "Tableau początkowe",
+            "inverse": "Transformata odwrotna",
+            "iterations": "Iteracje",
+            "lastRemainder": "Ostatnia niezerowa reszta",
+            "model": "Model",
+            "modulus": "Moduł łączny",
+            "optimality": "Test optymalności",
+            "parameters": "Parametry",
+            "pivot": "Pivot {{n}}",
+            "pointwise": "Mnożenie punktowe",
+            "probabilityCheck": "Sprawdzenie idei prawdopodobieństwa",
+            "ratioTest": "Test ilorazów",
+            "result": "Wynik",
+            "rootCheck": "Sprawdzenie pierwiastka",
+            "run": "Przebieg",
+            "standardForm": "Postać standardowa",
+            "sum": "Suma CRT",
+            "system": "Układ równań",
+            "transformA": "Transformata A",
+            "transformB": "Transformata B",
+            "baseTest": "Test bazy a = {{a}}",
+            "interpretation": "Interpretacja"
+          },
+          "decisions": {
+            "note": "Zapisujemy kolejny fragment rozwiązania.",
+            "compute": "Liczymy kolejny wiersz.",
+            "result": "Zapisujemy wynik."
           }
         },
         "search": {
@@ -4326,6 +4614,11 @@
               "complete": "Skan zakończony",
               "reportMatch": "Raport trafień",
               "scanText": "Skan tekstu"
+            },
+            "active": {
+              "state": "stan {{state}}",
+              "fail": "fail {{from}} → {{to}}",
+              "matches": "dopasowania = {{count}}"
             }
           },
           "burrowsWheelerTransform": {
@@ -4556,6 +4849,10 @@
               "searchReady": "Gotowe do szukania",
               "setup": "Przygotowanie",
               "shiftText": "Przesunięcie tekstu"
+            },
+            "active": {
+              "prefix": "prefiks {{from}} → {{to}}",
+              "hit": "trafienie @ {{index}}"
             }
           },
           "manacher": {
@@ -4608,6 +4905,12 @@
               "mirrorReuse": "Użycie lustra",
               "setup": "Przygotowanie",
               "shiftWindow": "Przesunięcie okna"
+            },
+            "active": {
+              "centerZero": "środek = 0",
+              "center": "środek {{center}}",
+              "centerRight": "środek {{center}}, prawy {{right}}",
+              "best": "najlepszy środek {{center}}"
             }
           },
           "palindromicTree": {
@@ -4658,6 +4961,12 @@
               "insertNode": "Wstawienie węzła",
               "reuseNode": "Ponowne użycie węzła",
               "roots": "Korzenie gotowe"
+            },
+            "active": {
+              "roots": "korzeń(-1), korzeń(0)",
+              "char": "znak '{{char}}'",
+              "node": "węzeł {{node}}",
+              "distinct": "różne = {{count}}"
             }
           },
           "rabinKarp": {
@@ -4730,6 +5039,18 @@
               "verifiedMatch": "Zweryfikowane dopasowanie",
               "verifyCollision": "Weryfikacja kolizji",
               "verifyHit": "Weryfikacja trafienia"
+            },
+            "active": {
+              "window": "okno {{start}}..{{end}}",
+              "windowAt": "okno @ {{index}}",
+              "check": "sprawdzenie {{index}} / {{total}}",
+              "collision": "kolizja @ {{index}}",
+              "hit": "trafienie @ {{index}}"
+            },
+            "results": {
+              "possibleMatch": "możliwe dopasowanie",
+              "skipWindow": "pomiń okno",
+              "match": "dopasowanie"
             }
           },
           "runLengthEncoding": {
@@ -4841,6 +5162,9 @@
               "complete": "Porządek gotowy",
               "seedRanks": "Rangi startowe",
               "sortPairs": "Sortowanie par rang"
+            },
+            "active": {
+              "classes": "klasy = {{count}}"
             }
           },
           "suffixArrayLcp": {
@@ -4884,6 +5208,9 @@
               "complete": "LCP gotowe",
               "kasaiScan": "Skan Kasaiego",
               "seedOrder": "Wczytanie porządku"
+            },
+            "rows": {
+              "rank": "ranga {{rank}}"
             }
           },
           "zAlgorithm": {
@@ -4948,6 +5275,9 @@
               "reuseBox": "Użycie boxa",
               "setup": "Przygotowanie",
               "shiftBox": "Przesunięcie boxa"
+            },
+            "active": {
+              "match": "dopasowanie @ {{index}}"
             }
           }
         },
@@ -4997,6 +5327,721 @@
               "init": "Inicjalizacja",
               "push": "Wrzucenie na stos",
               "visit": "Odwiedzenie"
+            }
+          }
+        },
+        "graph": {
+          "bfs": {
+            "phases": {
+              "initialize": "Start BFS",
+              "dequeue": "Zdejmij węzeł",
+              "inspect": "Sprawdź krawędź",
+              "enqueue": "Dodaj sąsiada do kolejki",
+              "skip": "Pomiń odwiedzonego sąsiada",
+              "close": "Zamknij bieżący węzeł",
+              "complete": "Przejście zakończone"
+            },
+            "descriptions": {
+              "initialize": "Wstaw {{source}} do kolejki i ustaw jego poziom na 0.",
+              "dequeue": "Zdejmij {{node}} z kolejki i rozwiń jego sąsiadów wszerz.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}}.",
+              "skip": "Pomiń {{node}} — BFS odkrył go już wcześniej.",
+              "discover": "Odkryj {{node}} na poziomie {{level}} i dodaj go do kolejki.",
+              "close": "Oznacz {{node}} jako odwiedzony i weź następny węzeł z kolejki.",
+              "complete": "BFS zakończony. Każdy osiągalny węzeł odwiedzono poziom po poziomie, zaczynając od {{source}}."
+            }
+          },
+          "dfs": {
+            "descriptions": {
+              "initialize": "Połóż {{source}} na stosie i ustaw jego głębokość na 0.",
+              "pop": "Zdejmij {{node}} ze stosu i schodź głębiej, zanim się wycofasz.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}}.",
+              "skip": "Pomiń {{node}} — DFS już go widział.",
+              "discover": "Odkryj {{node}} na głębokości {{depth}} i połóż go na stosie.",
+              "finish": "Zakończ {{node}} i wróć do bieżącego szczytu stosu.",
+              "complete": "DFS zakończony. Każdy osiągalny węzeł zbadano w głąb, zaczynając od {{source}}."
+            },
+            "phases": {
+              "pop": "Zdejmij szczyt stosu",
+              "inspect": "Sprawdź krawędź",
+              "push": "Połóż sąsiada na stosie",
+              "skip": "Pomiń odkrytego sąsiada",
+              "backtrack": "Wycofanie",
+              "complete": "Przejście zakończone",
+              "initialize": "Start DFS"
+            }
+          },
+          "dijkstra": {
+            "descriptions": {
+              "initialize": "Ustaw odległość {{source}} na 0, a każdemu innemu węzłowi przypisz ∞.",
+              "pick": "Wybierz {{node}} jako najbliższy jeszcze nieustalony węzeł.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}} o wadze {{weight}}.",
+              "relax": "Relaksacja {{node}}: nowa odległość {{distance}} przez {{via}}.",
+              "keep": "Pomiń {{node}}: obecne minimum {{best}} jest lepsze niż {{candidate}}.",
+              "settle": "Ustal {{node}}. Jego najkrótsza odległość jest już ostateczna.",
+              "complete": "Dijkstra zakończony. Najkrótsze ścieżki z {{source}} są ustalone."
+            },
+            "phases": {
+              "pick": "Wybierz następny węzeł",
+              "inspect": "Sprawdź krawędź",
+              "relax": "Relaksacja krawędzi",
+              "keep": "Zostaw obecne minimum",
+              "settle": "Ustal węzeł",
+              "complete": "Najkrótsze ścieżki gotowe",
+              "initialize": "Inicjalizacja grafu"
+            }
+          },
+          "connectedComponents": {
+            "descriptions": {
+              "initialize": "Oznacz każdy węzeł jako nieprzypisany i przygotuj przegląd grafu składowa po składowej.",
+              "seed": "Zacznij składową C{{component}} od {{node}}.",
+              "expand": "Rozwiń {{node}} wewnątrz składowej C{{component}}.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}}.",
+              "skip": "Pomiń {{node}}, bo należy już do składowej C{{component}}.",
+              "assign": "Przypisz {{node}} do składowej C{{component}} i dodaj go do kolejki.",
+              "close": "Zamknij {{node}} i dalej wypełniaj składową C{{component}}.",
+              "complete": "Składowe spójne gotowe. Znaleziono rozłącznych grup: {{count}}."
+            },
+            "results": {
+              "unassigned": "nieprzypisany"
+            },
+            "phases": {
+              "seed": "Ziarno lub zdjęcie z kolejki",
+              "inspect": "Sprawdź krawędź do sąsiada",
+              "assign": "Przypisz składową",
+              "keep": "Zostaw obecną składową",
+              "close": "Zamknij przypisany węzeł",
+              "complete": "Składowe gotowe",
+              "initialize": "Inicjalizacja przeglądu składowych"
+            }
+          },
+          "cycleDetection": {
+            "descriptions": {
+              "initialize": "Oznacz każdy węzeł jako nieodwiedzony i uruchom DFS po grafie skierowanym.",
+              "cycleFound": "Wykryto cykl: {{path}}.",
+              "acyclic": "Brak cyklu skierowanego. Graf jest acykliczny.",
+              "enter": "Wejdź do {{node}} i połóż go na stosie rekurencji.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}}.",
+              "descend": "Zejdź głębiej do {{node}} z {{from}}.",
+              "backEdge": "Krawędź powrotna do {{node}}, który wciąż jest na stosie rekurencji.",
+              "closed": "{{node}} jest już zamknięty, więc ta krawędź nie utworzy nowego cyklu.",
+              "leave": "Opuść {{node}} i oznacz go jako zamknięty."
+            },
+            "results": {
+              "new": "nowy",
+              "stack": "na stosie",
+              "done": "zamknięty",
+              "cycle": "cykl"
+            },
+            "phases": {
+              "enter": "Wejście w rekurencję",
+              "inspect": "Sprawdź krawędź skierowaną",
+              "descend": "Zejdź głębiej",
+              "evaluate": "Oceń ślad cyklu",
+              "leave": "Wyjście z rekurencji",
+              "complete": "Analiza cykli gotowa",
+              "initialize": "Inicjalizacja stanów DFS"
+            }
+          },
+          "topologicalSort": {
+            "descriptions": {
+              "initialize": "Policz stopnie wejściowe i dodaj do kolejki węzły o stopniu wejściowym 0.",
+              "dequeue": "Zdejmij {{node}} z kolejki i wstaw go jako następny w porządku topologicznym.",
+              "removeEdge": "Usuń krawędź {{from}} → {{to}} i zmniejsz stopień wejściowy {{to}}.",
+              "unlock": "{{node}} ma teraz stopień wejściowy 0, więc trafia do kolejki.",
+              "blocked": "{{node}} zostaje poza kolejką, bo jego stopień wejściowy to wciąż {{inDegree}}.",
+              "commit": "{{node}} ma już stałe miejsce w porządku. Weź następny węzeł o stopniu wejściowym 0.",
+              "complete": "Kahn zakończony. Porządek topologiczny: {{order}}."
+            },
+            "phases": {
+              "dequeue": "Zdejmij węzeł o stopniu 0",
+              "removeEdge": "Usuń krawędź wychodzącą",
+              "unlock": "Dodaj odblokowany węzeł",
+              "blocked": "Wciąż ma poprzedników",
+              "commit": "Zatwierdź miejsce w porządku",
+              "complete": "Porządek topologiczny gotowy",
+              "initialize": "Policz stopnie wejściowe"
+            }
+          },
+          "bellmanFord": {
+            "descriptions": {
+              "initialize": "Ustaw odległość {{source}} na 0, a wszystkim innym węzłom przypisz ∞.",
+              "startPass": "Rozpocznij przebieg {{pass}} i przejrzyj każdą krawędź w poszukiwaniu krótszej odległości.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}} o wadze {{weight}}.",
+              "unreachable": "Pomiń {{node}}, bo {{from}} jest wciąż nieosiągalny.",
+              "relax": "Relaksacja {{node}}: nowa odległość {{distance}} przez {{via}}.",
+              "keep": "Zostaw obecną najlepszą odległość dla {{node}}.",
+              "passUpdated": "Przebieg {{pass}} zakończony ze zmianami.",
+              "passStable": "Przebieg {{pass}} nic nie zmienił, więc odległości są już stabilne.",
+              "negativeEvidence": "Dodatkowy przebieg wciąż poprawia {{node}}, więc osiągalny jest ujemny cykl.",
+              "negativeCycle": "Bellman-Ford znalazł osiągalny ujemny cykl.",
+              "complete": "Bellman-Ford zakończony. Najkrótsze ścieżki są stabilne po ostatnim sprawdzeniu."
+            },
+            "phases": {
+              "startPass": "Start przebiegu {{pass}}",
+              "inspect": "Krawędź w przebiegu {{pass}}",
+              "relax": "Relaksacja odległości",
+              "negativeEvidence": "Ślad ujemnego cyklu",
+              "keep": "Zostaw obecne minimum",
+              "closePass": "Koniec przebiegu {{pass}}",
+              "negativeCycle": "Znaleziono ujemny cykl",
+              "stable": "Stabilne po przebiegach: {{passes}}",
+              "initialize": "Inicjalizacja Bellmana-Forda"
+            }
+          },
+          "bipartiteCheck": {
+            "descriptions": {
+              "initialize": "Zostaw każdy węzeł bez strony i spróbuj pokolorować dwoma kolorami każdy spójny fragment.",
+              "seed": "Rozpocznij nową falę BFS w {{node}} i przypisz mu stronę 0.",
+              "expand": "Rozwiń {{node}} i wymuś przeciwną stronę u wszystkich sąsiadów.",
+              "inspect": "Sprawdź krawędź {{from}} ↔ {{to}}.",
+              "color": "Przypisz {{node}} stronę {{side}} i dodaj go do kolejki.",
+              "conflict": "Konflikt: {{from}} i {{to}} mają tę samą stronę {{side}}.",
+              "failed": "Test dwudzielności nie przeszedł na krawędzi {{from}} ↔ {{to}}.",
+              "crosses": "Krawędź {{from}} ↔ {{to}} poprawnie łączy obie strony podziału.",
+              "close": "Zamknij {{node}} po sprawdzeniu wszystkich jego krawędzi.",
+              "complete": "Test dwudzielności zakończony. Każda krawędź łączy przeciwne strony."
+            },
+            "results": {
+              "invalid": "błąd",
+              "valid": "poprawne"
+            },
+            "phases": {
+              "color": "Pokoloruj następny węzeł",
+              "inspect": "Sprawdź krawędź podziału",
+              "assign": "Przypisz przeciwną stronę",
+              "validate": "Potwierdź lub odrzuć kolorowanie",
+              "close": "Zamknij pokolorowany węzeł",
+              "complete": "Werdykt dwudzielności gotowy",
+              "initialize": "Inicjalizacja podziału"
+            }
+          },
+          "prim": {
+            "descriptions": {
+              "initialize": "Zacznij algorytm Prima od {{source}} z kosztem połączenia 0.",
+              "pick": "Wybierz {{node}} jako najtańszy węzeł do dołączenia do MST.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}} o wadze {{weight}}.",
+              "update": "Zmień połączenie {{node}}: przez {{via}} za koszt {{cost}}.",
+              "keep": "Zostaw tańsze dotychczasowe połączenie dla {{node}}.",
+              "lock": "Dodaj {{node}} do minimalnego drzewa rozpinającego.",
+              "complete": "Prim zakończony. Waga minimalnego drzewa rozpinającego to {{weight}}."
+            },
+            "phases": {
+              "pick": "Wybierz najtańsze połączenie",
+              "inspect": "Sprawdź krawędź kandydata",
+              "update": "Popraw najlepsze połączenie",
+              "keep": "Zostaw tańszą krawędź",
+              "lock": "Dołącz węzeł do MST",
+              "complete": "MST gotowe",
+              "initialize": "Inicjalizacja Prima"
+            }
+          },
+          "bridges": {
+            "descriptions": {
+              "initialize": "Przygotuj czasy odkrycia i wartości low, a potem uruchom DFS, aby znaleźć krytyczne cięcia.",
+              "complete": "Przegląd zakończony. Mosty: {{bridges}}, punkty artykulacji: {{points}}.",
+              "enter": "Wejdź do {{node}} z czasem odkrycia {{time}}.",
+              "inspect": "Sprawdź krawędź {{from}} ↔ {{to}}.",
+              "descend": "Krawędź drzewowa. Zejdź z {{from}} do {{to}}.",
+              "bridge": "{{from}} ↔ {{to}} jest mostem, bo low[dziecko] > disc[rodzic].",
+              "articulation": "{{node}} jest punktem artykulacji, bo jedno z dzieci nie sięga ponad niego.",
+              "propagate": "Popraw low[{{node}}] po powrocie z {{child}}.",
+              "backEdge": "Krawędź powrotna do {{target}} w razie potrzeby obniża low[{{node}}].",
+              "leave": "Opuść {{node}} z disc={{disc}} i low={{low}}."
+            },
+            "results": {
+              "treeEdge": "krawędź drzewowa",
+              "backEdge": "krawędź powrotna"
+            },
+            "phases": {
+              "enter": "Wejdź do węzła DFS",
+              "inspect": "Sprawdź krawędź DFS",
+              "descend": "Zejdź do dziecka",
+              "update": "Popraw low",
+              "propagate": "Przekaż low w górę",
+              "complete": "Krytyczne cięcia gotowe",
+              "initialize": "Inicjalizacja przeglądu low"
+            }
+          },
+          "kosaraju": {
+            "descriptions": {
+              "initializePass1": "Przebieg 1 uruchamia DFS na oryginalnym grafie i buduje stos kolejności zakończeń.",
+              "seedPass1": "Rozpocznij przebieg 1 od {{node}}, aby zebrać czasy zakończenia.",
+              "initializePass2": "Przebieg 2 odwraca każdą krawędź i rozwija ziarna w malejącej kolejności zakończeń, aby wydzielić SSS.",
+              "seedPass2": "Zdejmij {{node}} ze stosu zakończeń i rozpocznij odwrotny DFS dla SSS {{component}}.",
+              "sealComponent": "Odwrotny DFS z {{node}} zamyka {{component}}.",
+              "complete": "Kosaraju zakończony. Znalezione silnie spójne składowe: {{count}}.",
+              "enterPass1": "Wejdź do {{node}} w przebiegu 1 i dalej badaj oryginalne krawędzie wychodzące.",
+              "inspectPass1": "Przebieg 1 sprawdza krawędź {{from}} → {{to}}.",
+              "seenPass1": "{{node}} był już widziany w przebiegu 1, więc kontynuuj bieżące przeszukiwanie.",
+              "descendPass1": "Zejdź głębiej do {{node}}, aby dostał późniejszy czas zakończenia.",
+              "finishPass1": "Zakończ {{node}} i połóż go na stosie zakończeń z numerem {{rank}}.",
+              "enterPass2": "Wejdź do {{node}} w odwróconym grafie i przypisz go do SSS {{component}}.",
+              "inspectPass2": "Przebieg 2 sprawdza odwróconą krawędź {{from}} → {{to}}.",
+              "sealedPass2": "{{node}} jest już zamknięty w {{component}}, więc go pomiń.",
+              "joinPass2": "{{node}} jest wciąż wolny w przebiegu 2, więc dołącza do SSS {{component}}.",
+              "leavePass2": "Opuść {{node}}, a SSS {{component}} dalej wchłania węzły osiągalne wstecz."
+            },
+            "results": {
+              "new": "nowy",
+              "stack": "na stosie",
+              "done": "zakończony",
+              "seen": "widziany",
+              "dfsChild": "dziecko DFS",
+              "assigned": "przypisany"
+            },
+            "phases": {
+              "pass1Open": "Przebieg 1: otwórz DFS",
+              "pass1Inspect": "Przebieg 1: sprawdź krawędź",
+              "pass1Descend": "Przebieg 1: zejdź głębiej",
+              "pass1Skip": "Przebieg 1: pomiń widziany węzeł",
+              "pass1Finish": "Przebieg 1: zapisz zakończenie",
+              "pass1Complete": "Przebieg 1 zakończony",
+              "pass1Initialize": "Inicjalizacja przebiegu 1",
+              "pass2Open": "Przebieg 2: otwórz odwrotny DFS",
+              "pass2Inspect": "Przebieg 2: sprawdź odwróconą krawędź",
+              "pass2Expand": "Przebieg 2: rozszerz SSS",
+              "pass2Keep": "Przebieg 2: zachowaj granicę SSS",
+              "pass2Seal": "Przebieg 2: zamknij SSS",
+              "complete": "Kosaraju zakończony",
+              "pass2Initialize": "Inicjalizacja przebiegu 2"
+            }
+          },
+          "tarjan": {
+            "descriptions": {
+              "initialize": "Przygotuj tablice index i low, a potem uruchom jeden DFS, który trzyma aktywne węzły na stosie Tarjana.",
+              "seed": "Rozpocznij DFS od {{node}}, bo nie ma jeszcze indeksu.",
+              "complete": "Tarjan zakończony. Znalezione silnie spójne składowe: {{count}}.",
+              "open": "Nadaj {{node}} indeks {{index}} i połóż go na stosie Tarjana.",
+              "inspect": "Sprawdź krawędź {{from}} → {{to}}.",
+              "descend": "{{node}} jest nowy, więc zejdź do niego i kontynuuj tam DFS.",
+              "propagate": "Wróć z {{child}} i przekaż jego low z powrotem do {{node}}.",
+              "backEdge": "{{child}} jest wciąż na stosie Tarjana, więc jego indeks może obniżyć low węzła {{node}}.",
+              "assigned": "{{node}} należy już do zamkniętej SSS, więc ta krawędź nie zmieni aktywnego low.",
+              "emit": "{{node}} jest korzeniem SSS, więc zdejmuj ze stosu, aż zamknie się {{component}}.",
+              "stay": "{{node}} zostaje na stosie Tarjana, bo jego SSS jest wciąż otwarta."
+            },
+            "results": {
+              "visitChild": "odwiedź dziecko",
+              "assigned": "przypisany",
+              "unseen": "nieodwiedzony",
+              "onStack": "na stosie",
+              "closedScc": "zamknięta SSS"
+            },
+            "phases": {
+              "open": "Otwórz węzeł DFS",
+              "inspect": "Sprawdź krawędź wychodzącą",
+              "descend": "Zejdź do dziecka",
+              "backEdge": "Krawędź powrotna obniża low",
+              "close": "Zamknij lub wydziel SSS",
+              "complete": "Wyszukiwanie SSS zakończone",
+              "initialize": "Inicjalizacja Tarjana"
+            }
+          },
+          "chromaticNumber": {
+            "descriptions": {
+              "initialize": "Uporządkuj węzły według stopnia, a potem sprawdź, czy graf mieści się w {{count}} klasach kolorów, zanim powiększysz paletę.",
+              "tryPalette": "Spróbuj pokolorować graf, używając tylko {{count}} kolorów.",
+              "paletteFailed": "Paleta {{count}} kolorów to za mało dla tego grafu, więc powiększ ją i zacznij szukanie od nowa.",
+              "complete": "Szukanie liczby chromatycznej zakończone. Graf potrzebuje kolorów: {{count}}.",
+              "pick": "Wybierz dozwolony kolor dla {{node}}. Kolory sąsiadów są chwilowo zabronione.",
+              "test": "Sprawdź kolor {{color}} dla {{node}}.",
+              "assign": "Nadaj {{node}} kolor {{color}} i przejdź do następnego niepokolorowanego węzła.",
+              "backtrack": "Wycofaj się z {{node}}: głębsza rekurencja zawiodła, więc zwolnij kolor {{color}} i spróbuj następnej opcji."
+            },
+            "results": {
+              "startWith": "zacznij od {{count}}",
+              "palette": "paleta {{count}} kolorów",
+              "candidates": "kandydaci: {{count}}",
+              "conflict": "konflikt z {{node}}",
+              "fail": "porażka",
+              "legal": "dozwolony",
+              "undo": "cofnij"
+            },
+            "phases": {
+              "order": "Porządek według stopnia",
+              "select": "Wybierz następny węzeł",
+              "test": "Sprawdź kolor",
+              "commit": "Zatwierdź kolor",
+              "backtrack": "Wycofanie",
+              "decision": "Decyzja o palecie",
+              "step": "Krok kolorowania"
+            }
+          },
+          "eulerTrail": {
+            "descriptions": {
+              "circuitStart": "Wszystkie stopnie są parzyste, więc zacznij Hierholzera od {{node}} i spodziewaj się cyklu.",
+              "pathStart": "Tylko {{start}} i {{end}} mają nieparzysty stopień, więc spacer musi się tam zacząć i skończyć.",
+              "inspectTop": "Spójrz na szczyt stosu {{node}} i zdecyduj, czy szlak da się z niego jeszcze przedłużyć.",
+              "chooseEdge": "Wybierz następną nieużytą krawędź {{from}} → {{to}} z bieżącego szczytu stosu.",
+              "traverse": "Przejdź {{from}} → {{to}} i połóż {{to}} na stosie bieżącego spaceru.",
+              "sealCircuit": "{{node}} nie ma już nieużytych krawędzi, więc zdejmij go do końcowego cyklu Eulera.",
+              "sealPath": "{{node}} nie ma już nieużytych krawędzi, więc zdejmij go do końcowej ścieżki Eulera.",
+              "completeCircuit": "Cykl Eulera gotowy. Trasa {{route}} używa każdej krawędzi dokładnie raz.",
+              "completePath": "Ścieżka Eulera gotowa. Trasa {{route}} używa każdej krawędzi dokładnie raz."
+            },
+            "results": {
+              "circuit": "cykl Eulera",
+              "path": "ścieżka Eulera",
+              "backtrack": "wycofanie",
+              "unused": "nieużyta"
+            },
+            "phases": {
+              "prepare": "Przygotuj stopnie",
+              "inspectTop": "Sprawdź szczyt stosu",
+              "chooseEdge": "Wybierz następną krawędź",
+              "extend": "Przedłuż spacer",
+              "backtrack": "Wycofaj do szlaku",
+              "complete": "Szlak Eulera gotowy",
+              "step": "Krok Eulera"
+            }
+          },
+          "dominatorTree": {
+            "descriptions": {
+              "initialize": "Blok wejściowy dominuje tylko sam siebie, a każdy inny blok startuje z pełnym zbiorem węzłów.",
+              "pick": "Przelicz dominatorów {{node}} jako przecięcie zbiorów dominatorów wszystkich poprzedników.",
+              "intersect": "Przetnij ze zbiorem dominatorów poprzednika {{node}}.",
+              "shrink": "Zbiór dominatorów {{node}} kurczy się po tym przebiegu.",
+              "stable": "{{node}} zachowuje ten sam zbiór dominatorów w tym przebiegu.",
+              "immediate": "Wybierz najgłębszego ścisłego dominatora {{node}} jako jego bezpośredniego dominatora.",
+              "complete": "Analiza dominatorów zakończona. Wyróżnione strzałki pokazują końcowe drzewo bezpośrednich dominatorów w grafie przepływu sterowania."
+            },
+            "results": {
+              "othersAll": "pozostałe = wszystkie węzły",
+              "unchanged": "bez zmian",
+              "entry": "wejście",
+              "treeReady": "drzewo gotowe"
+            },
+            "phases": {
+              "seed": "Inicjalizacja zbiorów dominatorów",
+              "pick": "Przebieg {{pass}} · wybór bloku",
+              "intersect": "Przebieg {{pass}} · przecięcie z poprzednikiem",
+              "shrink": "Przebieg {{pass}} · zbiór maleje",
+              "stable": "Przebieg {{pass}} · zbiór stabilny",
+              "immediate": "Wyznacz bezpośredniego dominatora",
+              "complete": "Drzewo dominatorów gotowe",
+              "step": "Krok dominatorów"
+            }
+          },
+          "steinerTree": {
+            "descriptions": {
+              "initialize": "Wybierz zbiór terminali {{terminals}} i zainicjuj stany najkrótszych ścieżek dla pojedynczych terminali.",
+              "seedTerminal": "Wpisz każdemu węzłowi najkrótszą odległość do terminala {{terminal}}.",
+              "merge": "Połącz dwie mniejsze grupy terminali w węźle {{node}}.",
+              "propagate": "Rozprowadź połączony podzbiór terminali najkrótszymi ścieżkami, aby każdy węzeł mógł być korzeniem tego stanu.",
+              "complete": "Drzewo Steinera gotowe. Łączny koszt {{cost}} łączy wszystkie terminale tylko niezbędnymi węzłami pośrednimi."
+            },
+            "results": {
+              "terminals": "terminale: {{count}}",
+              "cost": "koszt {{cost}}"
+            },
+            "phases": {
+              "seed": "Inicjalizacja stanów terminali",
+              "base": "Baza pojedynczych terminali",
+              "merge": "Łączenie podzbiorów terminali",
+              "propagate": "Propagacja korzenia podzbioru",
+              "complete": "Dokładne drzewo Steinera",
+              "step": "Krok Steinera"
+            }
+          }
+        },
+        "matrix": {
+          "floydWarshall": {
+            "phases": {
+              "initialize": "Macierz odległości",
+              "pivot": "Węzeł pośredni {{pivot}}",
+              "pivotDone": "Węzeł {{pivot}} przetworzony",
+              "complete": "Najkrótsze trasy gotowe"
+            },
+            "statuses": {
+              "initialize": "Wczytano bezpośrednie krawędzie i odległości własne",
+              "pivot": "Dopuść trasy przechodzące przez {{pivot}}",
+              "compare": "Porównaj {{from}} → {{to}}",
+              "update": "Popraw {{from}} → {{to}}",
+              "pivotDone": "Poprawione pary: {{count}}",
+              "complete": "Każdy węzeł pośredni został przetworzony"
+            },
+            "results": {
+              "updates": "zmiany {{count}}"
+            },
+            "descriptions": {
+              "initialize": "Zacznij od macierzy sąsiedztwa: znamy bezpośrednie krawędzie, wszystko inne jest nieosiągalne.",
+              "pivot": "Dopuść {{pivot}} jako nowy węzeł pośredni dla każdej pary (i, j).",
+              "compare": "Sprawdź, czy {{from}} → {{pivot}} → {{to}} jest krótsza od obecnej trasy.",
+              "update": "Zastąp starą wartość krótszą trasą przez {{pivot}}.",
+              "pivotDone": "Wszystkie pary sprawdzono względem węzła pośredniego {{pivot}}.",
+              "complete": "Floyd-Warshall zakończony: macierz przechowuje najkrótsze odległości dla każdej uporządkowanej pary."
+            }
+          },
+          "hungarian": {
+            "phases": {
+              "initialize": "Macierz kosztów",
+              "rowReduction": "Redukcja wierszy",
+              "columnReduction": "Redukcja kolumn",
+              "zeroMatching": "Skojarzenie zer · runda {{round}}",
+              "complete": "Optymalny przydział gotowy",
+              "coverZeros": "Pokrycie zer · runda {{round}}",
+              "adjustMatrix": "Korekta macierzy · runda {{round}}"
+            },
+            "statuses": {
+              "initialize": "Wczytano oryginalne koszty przydziału",
+              "rowMinimum": "Znajdź minimum w wierszu {{row}}",
+              "rowDone": "Wiersz {{row}} zredukowany",
+              "columnMinimum": "Znajdź minimum w kolumnie {{column}}",
+              "columnDone": "Kolumna {{column}} zredukowana",
+              "matching": "Największe skojarzenie zer: {{size}}",
+              "perfect": "Pełne skojarzenie zer: {{size}}",
+              "cover": "Linie pokrywające wszystkie zera: {{lines}}",
+              "smallest": "Najmniejsza niepokryta wartość to {{value}}",
+              "adjusted": "Macierz przesunięta, by powstały nowe zera"
+            },
+            "results": {
+              "matched": "skojarzone {{count}}",
+              "totalCost": "koszt całkowity {{cost}}"
+            },
+            "descriptions": {
+              "initialize": "Zacznij od oryginalnej macierzy kosztów, zanim cokolwiek zredukujesz.",
+              "rowMinimum": "Odejmij najmniejszą wartość wiersza {{row}} od każdej komórki tego wiersza.",
+              "rowDone": "Wiersz {{row}} ma teraz zero i zachowuje tę samą strukturę optymalnego przydziału.",
+              "columnMinimum": "Odejmij najmniejszą wartość kolumny {{column}} od całej kolumny.",
+              "columnDone": "Kolumna {{column}} ma teraz zero, a optymalność przydziału zostaje zachowana.",
+              "matching": "Zbuduj dwudzielny graf zer i znajdź największy zbiór niekolidujących przydziałów na zerach.",
+              "complete": "Algorytm węgierski zakończony: każdy pracownik ma jedno zadanie przy minimalnym koszcie całkowitym.",
+              "cover": "Z największego skojarzenia zer wyprowadź minimalny zbiór linii pokrywających (twierdzenie Königa).",
+              "smallest": "Znajdź najmniejszą niepokrytą wartość, zanim przesuniesz macierz, by utworzyć nowe zera.",
+              "adjusted": "Skorygowana macierz zachowuje optymalne przydziały i odsłania nowe niezależne zera."
+            }
+          }
+        },
+        "network": {
+          "dinic": {
+            "phases": {
+              "initialize": "Inicjalizacja sieci residualnej",
+              "bfs": "Faza BFS {{phase}}",
+              "complete": "Koniec po fazie {{phase}}",
+              "blocking": "Przepływ blokujący {{phase}}",
+              "phaseDone": "Faza {{phase}} zakończona"
+            },
+            "statuses": {
+              "zeroFlow": "Wszystkie przepływy zaczynają od zera",
+              "seed": "Poziom źródła",
+              "expand": "Rozwiń jedną warstwę residualną",
+              "inspect": "Sprawdź krawędź residualną",
+              "unreachable": "Ujście jest nieosiągalne",
+              "levelGraph": "Graf warstwowy gotowy",
+              "pathFound": "Znaleziono ścieżkę powiększającą",
+              "pushed": "Przepływ przepchnięty ścieżką",
+              "blockingAdded": "Przepływ blokujący dodał {{flow}}"
+            },
+            "results": {
+              "maxFlowZero": "maks. przepływ 0",
+              "maxFlow": "maks. przepływ {{flow}}"
+            },
+            "descriptions": {
+              "initialize": "Zacznij od zerowego przepływu i wielokrotnie odbudowuj najkrótszy residualny graf warstwowy.",
+              "seed": "BFS warstwowy startuje ze źródła i idzie tylko krawędziami o dodatniej przepustowości residualnej.",
+              "expand": "Odwiedź residualne krawędzie wychodzące z {{node}}.",
+              "inspect": "Sprawdź, czy {{from}} → {{to}} może przenieść jeszcze więcej przepływu.",
+              "complete": "Gdy ujście znika z residualnego BFS, bieżący przepływ jest maksymalny.",
+              "levelGraph": "W przepływie blokującym biorą udział tylko krawędzie prowadzące o jedną warstwę głębiej.",
+              "pathFound": "Jedna dopuszczalna ścieżka ze źródła do ujścia jest gotowa przenieść kolejną porcję przepływu blokującego.",
+              "augment": "Każda krawędź dopuszczalnej ścieżki dostaje nowy przepływ równy wąskiemu gardłu.",
+              "phaseDone": "Ten graf warstwowy jest nasycony i nie ma już dopuszczalnej ścieżki; teraz odbuduj warstwy BFS."
+            }
+          },
+          "edmondsKarp": {
+            "phases": {
+              "initialize": "Inicjalizacja sieci residualnej",
+              "bfs": "Runda BFS {{round}}",
+              "complete": "Koniec po rundzie {{round}}",
+              "augment": "Powiększanie w rundzie {{round}}"
+            },
+            "statuses": {
+              "zeroFlow": "Wszystkie przepływy zaczynają od zera",
+              "seed": "Warstwa źródła",
+              "expand": "Rozwiń jedną warstwę BFS",
+              "inspect": "Sprawdź krawędź residualną",
+              "attach": "Dołącz węzeł do drzewa BFS",
+              "unreachable": "Ujście jest nieosiągalne",
+              "pathFound": "Znaleziono najkrótszą ścieżkę powiększającą",
+              "pushed": "Przepływ przepchnięty ścieżką"
+            },
+            "results": {
+              "maxFlowZero": "maks. przepływ 0",
+              "maxFlow": "maks. przepływ {{flow}}"
+            },
+            "descriptions": {
+              "initialize": "Edmonds-Karp wielokrotnie uruchamia BFS w sieci residualnej i za każdym razem powiększa przepływ jedną najkrótszą ścieżką.",
+              "seed": "Uruchom BFS ze źródła i idź tylko krawędziami o dodatniej przepustowości residualnej.",
+              "expand": "Zbadaj residualne krawędzie wychodzące z {{node}}.",
+              "inspect": "Sprawdź, czy {{from}} → {{to}} może przenieść jeszcze więcej przepływu.",
+              "attach": "{{node}} zapamiętuje krawędź rodzica, aby odtworzyć ścieżkę powiększającą, jeśli BFS dotrze do ujścia.",
+              "complete": "Jeśli BFS nie dociera już do ujścia w sieci residualnej, bieżący przepływ jest maksymalny.",
+              "pathFound": "BFS daje najkrótszą ścieżkę residualną do ujścia; najmniejsza krawędź residualna staje się wąskim gardłem.",
+              "augment": "Zwiększ przepływ na każdej krawędzi ścieżki o wartość wąskiego gardła i uruchom BFS od nowa."
+            }
+          },
+          "hopcroftKarp": {
+            "phases": {
+              "initialize": "Inicjalizacja skojarzenia",
+              "bfs": "Faza BFS {{phase}}",
+              "complete": "Koniec po fazie {{phase}}",
+              "dfs": "Faza DFS {{phase}}",
+              "phaseDone": "Faza {{phase}} zakończona"
+            },
+            "statuses": {
+              "empty": "Żaden węzeł nie jest jeszcze skojarzony",
+              "seed": "Startują wszystkie wolne węzły lewe",
+              "expand": "Rozwiń jeden węzeł lewy",
+              "inspect": "Sprawdź krawędź naprzemienną",
+              "noPath": "Nie ma już ścieżki powiększającej",
+              "layers": "Graf warstwowy gotowy",
+              "pathFound": "Znaleziono ścieżkę powiększającą",
+              "updated": "Skojarzenie zaktualizowane",
+              "stuck": "Graf warstwowy nie pozwala już powiększyć skojarzenia",
+              "packed": "Upakowane najkrótsze ścieżki: {{count}}"
+            },
+            "results": {
+              "matchingZero": "skojarzenie 0/{{total}}",
+              "matching": "skojarzenie {{size}}/{{total}}"
+            },
+            "descriptions": {
+              "initialize": "Zacznij od pustego skojarzenia i przygotuj warstwowe fazy BFS/DFS.",
+              "seed": "Wolne węzły lewej strony trafiają do kolejki jako równoczesne źródła BFS.",
+              "expand": "Sprawdź każdą krawędź kandydującą wychodzącą z {{node}}.",
+              "inspect": "Sprawdź, czy {{from}} → {{to}} poszerza najkrótszy front naprzemienny.",
+              "noPath": "BFS nie dociera do żadnego wolnego węzła prawego, więc bieżące skojarzenie jest maksymalne.",
+              "layers": "Warstwy BFS ograniczają teraz DFS tylko do najkrótszych ścieżek powiększających.",
+              "pathFound": "Najkrótsza ścieżka naprzemienna została odtworzona i jest gotowa do powiększenia.",
+              "augment": "Każda krawędź ścieżki naprzemiennej zmienia stan, więc skojarzenie rośnie o jeden.",
+              "stuck": "Żadna ścieżka DFS nie spełniła ograniczeń najkrótszych warstw, więc bieżące skojarzenie jest ostateczne.",
+              "phaseDone": "Faza zakończona; odbuduj warstwy BFS, aby szukać kolejnej porcji najkrótszych ścieżek powiększających."
+            }
+          },
+          "minCostMaxFlow": {
+            "phases": {
+              "initialize": "Inicjalizacja przepływu z kosztem",
+              "costPath": "Najtańsza ścieżka, runda {{round}}",
+              "relax": "Przebieg relaksacji {{pass}}",
+              "complete": "Koniec po rundzie {{round}}",
+              "augment": "Powiększanie w rundzie {{round}}"
+            },
+            "statuses": {
+              "zeroFlow": "Wszystkie przepływy zaczynają od zera",
+              "seed": "Koszt źródła",
+              "inspect": "Sprawdź krawędź z kosztem",
+              "updated": "Najtańszy poprzednik zaktualizowany",
+              "unreachable": "Ujście jest nieosiągalne",
+              "routeFound": "Znaleziono najtańszą trasę powiększającą",
+              "committed": "Przepływ i koszt zatwierdzone"
+            },
+            "results": {
+              "zero": "przepływ 0 · koszt 0",
+              "flowCost": "przepływ {{flow}} · koszt {{cost}}"
+            },
+            "descriptions": {
+              "initialize": "Min-Cost Max Flow wielokrotnie szuka najtańszej residualnej trasy ze źródła do ujścia i powiększa nią przepływ.",
+              "seed": "Zacznij od zerowej odległości w źródle, a potem relaksuj krawędzie residualne według łącznego kosztu.",
+              "inspect": "Sprawdź, czy trasa przez {{via}} obniża łączny koszt dotarcia do {{node}}.",
+              "updated": "{{node}} zapamiętuje tę krawędź jako najtańszego znanego poprzednika residualnego.",
+              "complete": "Gdy nie ma już residualnej ścieżki ze źródła do ujścia, bieżący przepływ jest maksymalny i ma już minimalny koszt.",
+              "routeFound": "Najtańsza trasa residualna jest gotowa; jej wąskie gardło określa, ile dodatkowego przepływu przejdzie po tej cenie jednostkowej.",
+              "augment": "Przepchnij wąskie gardło najtańszą trasą, zaktualizuj łączny koszt i szukaj kolejnego najtańszego powiększenia."
+            }
+          }
+        },
+        "geometry": {
+          "convexHull": {
+            "descriptions": {
+              "initialize": "Skan Grahama: zacznij od nieoznaczonych punktów.",
+              "tooFew": "Otoczka wypukła potrzebuje co najmniej 3 punktów.",
+              "pivot": "Punkt bazowy P{{point}} w ({{x}}, {{y}}) — najniższy punkt.",
+              "sort": "Punkty posortowane według kąta biegunowego przeciwnie do ruchu wskazówek zegara. Liczby pokazują kolejność kątową.",
+              "initStack": "Stos na start: [P{{first}}, P{{second}}].",
+              "checkLeft": "cross(P{{below}}, P{{top}}, P{{current}}) = {{cross}}. Skręt w lewo → zostaw i połóż P{{current}}.",
+              "checkCollinear": "cross(P{{below}}, P{{top}}, P{{current}}) = {{cross}}. Współliniowe → zdejmij P{{top}}.",
+              "checkRight": "cross(P{{below}}, P{{top}}, P{{current}}) = {{cross}}. Skręt w prawo → zdejmij P{{top}}.",
+              "pop": "Zdjęto P{{point}} ze stosu (to nie skręt w lewo).",
+              "push": "Położono P{{point}}. Stos: [{{stack}}].",
+              "complete": "Otoczka wypukła: wierzchołki {{count}} — {{hull}}."
+            }
+          },
+          "lineIntersection": {
+            "descriptions": {
+              "initialize": "Miotła gotowa: posortuj wszystkie końce odcinków i możliwe przecięcia według x.",
+              "start": "Miotła dociera do początku {{segment}} i wstawia odcinek do aktywnego porządku.",
+              "end": "Miotła mija koniec {{segment}}; odcinek opuszcza zbiór aktywnych.",
+              "intersection": "Przecięcie {{pair}} w punkcie ({{x}}, {{y}}).",
+              "complete": "Przegląd zakończony: znalezione przecięcia: {{count}}."
+            }
+          },
+          "sweepLine": {
+            "descriptions": {
+              "initialize": "Ustaw w kolejce wszystkie krawędzie prostokątów i przygotuj skaner pola.",
+              "enter": "Miotła trafia na lewą krawędź {{rect}}; przelicz scalone przedziały y.",
+              "leave": "Miotła trafia na prawą krawędź {{rect}}; przelicz scalone przedziały y.",
+              "complete": "Przegląd zakończony: pole sumy prostokątów = {{area}}."
+            }
+          },
+          "closestPair": {
+            "descriptions": {
+              "initialize": "Rozrzuć punkty i przygotuj płótno dla metody dziel i zwyciężaj.",
+              "sort": "Posortuj raz według x i y, aby każdy podział rekurencyjny korzystał z tego samego porządku.",
+              "baseSingle": {
+                "whole": "Przypadek bazowy (cała płaszczyzna, punkty: {{count}}): jeden punkt nie tworzy jeszcze pary.",
+                "slice": "Przypadek bazowy w obszarze {{path}} (punkty: {{count}}): jeden punkt nie tworzy jeszcze pary."
+              },
+              "baseBrute": {
+                "whole": "Przypadek bazowy (cała płaszczyzna, punkty: {{count}}): sprawdź małą grupę siłowo.",
+                "slice": "Przypadek bazowy w obszarze {{path}} (punkty: {{count}}): sprawdź małą grupę siłowo."
+              },
+              "split": {
+                "whole": "Podziel całą płaszczyznę (punkty: {{count}}) w x = {{x}} i rozwiąż rekurencyjnie obie połowy.",
+                "slice": "Podziel obszar {{path}} (punkty: {{count}}) w x = {{x}} i rozwiąż rekurencyjnie obie połowy."
+              },
+              "compare": "Porównaj {{pair}} w małym obszarze.",
+              "localBest": "{{pair}} to nowe lokalne minimum z odległością {{distance}}.",
+              "merge": "Weź lepsze z rozwiązań połówek i przygotuj pas wokół linii podziału.",
+              "strip": "Tylko punkty w pasie o szerokości {{width}} mogą jeszcze pobić obecne minimum.",
+              "stripCheck": "Sprawdź {{pair}} w pasie posortowanym według y.",
+              "stripWin": "Pas wygrywa: {{pair}} poprawia najlepszą odległość do {{distance}}.",
+              "complete": "Najbliższa para: {{pair}} w odległości {{distance}}.",
+              "noPair": "Nie znaleziono poprawnej pary."
+            }
+          },
+          "delaunay": {
+            "descriptions": {
+              "initialize": "Punkty gotowe; teraz buduj siatkę o pustych okręgach opisanych, trójkąt po trójkącie.",
+              "circumcircle": "Sprawdź trójkąt {{triangle}} jego okręgiem opisanym, zanim dodasz go do siatki.",
+              "commit": "Trójkąt {{triangle}} zostaje w siatce Delaunaya.",
+              "complete": "Triangulacja Delaunaya gotowa: końcowa siatka ma trójkątów: {{count}}."
+            }
+          },
+          "halfPlane": {
+            "descriptions": {
+              "initialize": "Zacznij od całego płótna i przycinaj je ograniczenie po ograniczeniu.",
+              "constraint": "Zastosuj H{{constraint}}: zostaw tylko lewą stronę aktywnej prostej brzegowej.",
+              "infeasible": "H{{constraint}} całkowicie usuwa obszar dopuszczalny.",
+              "clip": "Przytnij przez H{{constraint}}: wierzchołki wielokąta dopuszczalnego: {{count}}.",
+              "complete": "Przecięcie gotowe: w wielokącie dopuszczalnym zostało wierzchołków: {{count}}."
+            }
+          },
+          "minkowskiSum": {
+            "descriptions": {
+              "initialize": "Zacznij od kształtu przeszkody i obrysu robota.",
+              "reflect": "Odbij robota względem początku układu, aby zbudować przeszkodę w przestrzeni konfiguracji A ⊕ (-B).",
+              "seed": "Zacznij wielokąt wynikowy od A0 + B'0 = ({{x}}, {{y}}).",
+              "advanceBoth": "Przesuń się po krawędziach obu wielokątów i dopisz kolejny wierzchołek wyniku.",
+              "advanceOne": "Przesuń się po krawędzi wielokąta {{family}} i dopisz kolejny wierzchołek wyniku.",
+              "complete": "Scalony obchód krawędzi zamyka pełny wielokąt sumy Minkowskiego."
+            }
+          },
+          "voronoi": {
+            "descriptions": {
+              "initialize": "Rozrzuć punkty-zarodki i przygotuj miotłę przesuwającą się w dół.",
+              "site": "Miotła dociera do P{{site}}; jego front wpływu Woronoja staje się aktywny.",
+              "cell": "Komórka P{{site}} krystalizuje się z ograniczeń symetralnych wokół punktu.",
+              "complete": "Diagram Woronoja gotowy: komórki dzielące płaszczyznę: {{count}}."
             }
           }
         }

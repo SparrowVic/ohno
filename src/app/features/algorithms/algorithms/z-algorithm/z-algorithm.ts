@@ -89,6 +89,9 @@ const I18N = {
     noHit: t('features.algorithms.runtime.string.zAlgorithm.labels.noHit'),
     hitCount: t('features.algorithms.runtime.string.zAlgorithm.labels.hitCount'),
   },
+  active: {
+    match: t('features.algorithms.runtime.string.zAlgorithm.active.match'),
+  },
 } as const;
 
 function makeState(args: {
@@ -318,7 +321,7 @@ export function* zAlgorithmGenerator(
           scenario,
           combined,
           phaseLabel: I18N.phases.patternHit,
-          activeLabel: `match @ ${textOffset}`,
+          activeLabel: i18nText(I18N.active.match, { index: textOffset }),
           resultLabel: matches.join(', '),
           decisionLabel: I18N.decisions.fullHeightBar,
           zValues,

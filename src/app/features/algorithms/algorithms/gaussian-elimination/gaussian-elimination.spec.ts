@@ -52,11 +52,11 @@ describe('gaussian-elimination notebook', () => {
   it('solves the start task with forward elimination, back elimination and final result', () => {
     const contents = finalContents(runTask('short'));
 
-    expect(contents).toContain('Eliminacja w przód');
+    expect(contents).toContain('features.algorithms.runtime.scratchpadLab.sections.forwardElimination');
     expect(contents).toContain('R_2 \\leftarrow R_2 - R_1');
-    expect(contents).toContain('Eliminacja wstecz');
+    expect(contents).toContain('features.algorithms.runtime.scratchpadLab.sections.backElimination');
     expect(contents).toContain('R_1 \\leftarrow R_1 - R_2');
-    expect(contents).toContain('Wynik');
+    expect(contents).toContain('features.algorithms.runtime.scratchpadLab.sections.result');
     expect(contents).toContain('x = 3');
     expect(contents).toContain('y = 2');
   });
@@ -85,7 +85,7 @@ describe('gaussian-elimination notebook', () => {
   it('renders a parametric result for infinitely many solutions', () => {
     const contents = finalContents(runTask('infinite-solutions'));
 
-    expect(contents).toContain('Zmienne wolne');
+    expect(contents).toContain('features.algorithms.runtime.scratchpadLab.gaussianElimination.sections.freeVariables');
     expect(contents).toContain('z = t');
     expect(contents).toContain('x = 3 - (1/2)t');
     expect(contents).toContain('y = 3 - (1/2)t');
@@ -97,9 +97,9 @@ describe('gaussian-elimination notebook', () => {
     const contents = finalContents(steps);
     const noResultLine = finalLines(steps).find((line) => line.id === 'section-no-result');
 
-    expect(contents).toContain('Sprzeczność');
+    expect(contents).toContain('features.algorithms.runtime.scratchpadLab.gaussianElimination.sections.contradiction');
     expect(contents).toContain('0 = 1');
-    expect(contents).toContain('Brak rozwiązania');
+    expect(contents).toContain('features.algorithms.runtime.scratchpadLab.gaussianElimination.sections.noSolution');
     expect(noResultLine?.marker).toBe('×');
   });
 

@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GeometryConstraintLine,
   GeometryCoord,
@@ -7,6 +10,16 @@ import {
   HalfPlaneIntersectionStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.halfPlane.descriptions.initialize'),
+    constraint: t('features.algorithms.runtime.geometry.halfPlane.descriptions.constraint'),
+    infeasible: t('features.algorithms.runtime.geometry.halfPlane.descriptions.infeasible'),
+    clip: t('features.algorithms.runtime.geometry.halfPlane.descriptions.clip'),
+    complete: t('features.algorithms.runtime.geometry.halfPlane.descriptions.complete'),
+  },
+} as const;
 
 export interface HalfPlaneIntersectionScenario {
   readonly constraints: readonly {
@@ -138,7 +151,7 @@ function makeStep(
   processed: number,
   polygons: readonly GeometryPolygonRegion[],
   markers: readonly GeometryMarker[],
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   phase: string,
   currentConstraintLabel: string,
@@ -202,7 +215,7 @@ export function* halfPlaneIntersectionGenerator(
       },
     ],
     makeMarkers(feasible),
-    'Start from the full canvas and clip it constraint by constraint.',
+    i18nText(I18N.descriptions.initialize),
     1,
     'init',
     'global region',
@@ -232,7 +245,7 @@ export function* halfPlaneIntersectionGenerator(
         },
       ],
       makeMarkers(feasible),
-      `Apply H${constraint.id}: keep only the left side of the active boundary line.`,
+      i18nText(I18N.descriptions.constraint, { constraint: constraint.id }),
       3,
       'constraint',
       `H${constraint.id}`,
@@ -256,7 +269,7 @@ export function* halfPlaneIntersectionGenerator(
           },
         ],
         [],
-        `H${constraint.id} eliminates the feasible region entirely.`,
+        i18nText(I18N.descriptions.infeasible, { constraint: constraint.id }),
         5,
         'infeasible',
         `H${constraint.id}`,
@@ -284,7 +297,7 @@ export function* halfPlaneIntersectionGenerator(
         },
       ],
       makeMarkers(feasible),
-      `Clip with H${constraint.id}: the feasible polygon now has ${feasible.length} vertices.`,
+      i18nText(I18N.descriptions.clip, { constraint: constraint.id, count: feasible.length }),
       4,
       'clip',
       `H${constraint.id}`,
@@ -305,7 +318,7 @@ export function* halfPlaneIntersectionGenerator(
       },
     ],
     makeMarkers(feasible),
-    `Intersection complete: ${feasible.length} vertices remain in the feasible polygon.`,
+    i18nText(I18N.descriptions.complete, { count: feasible.length }),
     6,
     'complete',
     'final feasible polygon',

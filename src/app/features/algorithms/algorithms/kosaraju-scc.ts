@@ -1,8 +1,62 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { GraphComputation, WeightedGraphData, WeightedGraphEdge } from '../models/graph';
 import { SortStep } from '../models/sort-step';
 import { createSccStep } from './scc-step';
 
+const I18N = {
+  descriptions: {
+    initializePass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.initializePass1'),
+    seedPass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.seedPass1'),
+    initializePass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.initializePass2'),
+    seedPass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.seedPass2'),
+    sealComponent: t('features.algorithms.runtime.graph.kosaraju.descriptions.sealComponent'),
+    complete: t('features.algorithms.runtime.graph.kosaraju.descriptions.complete'),
+    enterPass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.enterPass1'),
+    inspectPass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.inspectPass1'),
+    seenPass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.seenPass1'),
+    descendPass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.descendPass1'),
+    finishPass1: t('features.algorithms.runtime.graph.kosaraju.descriptions.finishPass1'),
+    enterPass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.enterPass2'),
+    inspectPass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.inspectPass2'),
+    sealedPass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.sealedPass2'),
+    joinPass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.joinPass2'),
+    leavePass2: t('features.algorithms.runtime.graph.kosaraju.descriptions.leavePass2'),
+  },
+  results: {
+    new: t('features.algorithms.runtime.graph.kosaraju.results.new'),
+    stack: t('features.algorithms.runtime.graph.kosaraju.results.stack'),
+    done: t('features.algorithms.runtime.graph.kosaraju.results.done'),
+    seen: t('features.algorithms.runtime.graph.kosaraju.results.seen'),
+    dfsChild: t('features.algorithms.runtime.graph.kosaraju.results.dfsChild'),
+    assigned: t('features.algorithms.runtime.graph.kosaraju.results.assigned'),
+  },
+  phases: {
+    pass1Open: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Open'),
+    pass1Inspect: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Inspect'),
+    pass1Descend: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Descend'),
+    pass1Skip: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Skip'),
+    pass1Finish: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Finish'),
+    pass1Complete: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Complete'),
+    pass1Initialize: t('features.algorithms.runtime.graph.kosaraju.phases.pass1Initialize'),
+    pass2Open: t('features.algorithms.runtime.graph.kosaraju.phases.pass2Open'),
+    pass2Inspect: t('features.algorithms.runtime.graph.kosaraju.phases.pass2Inspect'),
+    pass2Expand: t('features.algorithms.runtime.graph.kosaraju.phases.pass2Expand'),
+    pass2Keep: t('features.algorithms.runtime.graph.kosaraju.phases.pass2Keep'),
+    pass2Seal: t('features.algorithms.runtime.graph.kosaraju.phases.pass2Seal'),
+    complete: t('features.algorithms.runtime.graph.kosaraju.phases.complete'),
+    pass2Initialize: t('features.algorithms.runtime.graph.kosaraju.phases.pass2Initialize'),
+  },
+} as const;
+
 type VisitState = 'new' | 'stack' | 'done';
+
+const VISIT_RESULTS: Readonly<Record<VisitState, TranslatableText>> = {
+  new: i18nText(I18N.results.new),
+  stack: i18nText(I18N.results.stack),
+  done: i18nText(I18N.results.done),
+};
 
 export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -33,7 +87,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
     componentOrder,
     currentSeedId,
     phase,
-    description: 'Pass 1 runs DFS on the original graph to build a finish-order stack.',
+    description: i18nText(I18N.descriptions.initializePass1),
     activeCodeLine: 2,
     stepPhase: 'init',
   });
@@ -56,7 +110,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: node.id,
-      description: `Start pass 1 from ${labelOf(labelMap, node.id)} to collect finishing times.`,
+      description: i18nText(I18N.descriptions.seedPass1, { node: labelOf(labelMap, node.id) }),
       activeCodeLine: 4,
       stepPhase: 'pick-node',
     });
@@ -84,7 +138,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
     componentOrder,
     currentSeedId: finishStack[finishStack.length - 1] ?? graph.sourceId,
     phase,
-    description: 'Pass 2 reverses every edge and expands seeds in decreasing finish order to isolate SCCs.',
+    description: i18nText(I18N.descriptions.initializePass2),
     activeCodeLine: 9,
     stepPhase: 'init',
   });
@@ -110,7 +164,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: nodeId,
-      description: `Pop ${labelOf(labelMap, nodeId)} from the finish stack and start reverse DFS for SCC ${componentCount}.`,
+      description: i18nText(I18N.descriptions.seedPass2, { node: labelOf(labelMap, nodeId), component: componentCount }),
       activeCodeLine: 11,
       stepPhase: 'pick-node',
     });
@@ -133,7 +187,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: nodeId,
-      description: `Reverse DFS from ${labelOf(labelMap, nodeId)} closes ${summary}.`,
+      description: i18nText(I18N.descriptions.sealComponent, { node: labelOf(labelMap, nodeId), component: summary }),
       activeCodeLine: 13,
       stepPhase: 'settle-node',
       computation: {
@@ -158,7 +212,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
     componentOrder,
     currentSeedId,
     phase,
-    description: `Kosaraju complete. Found ${componentCount} strongly connected component(s).`,
+    description: i18nText(I18N.descriptions.complete, { count: componentCount }),
     activeCodeLine: 15,
     stepPhase: 'graph-complete',
   });
@@ -181,7 +235,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: nodeId,
-      description: `Enter ${labelOf(labelMap, nodeId)} in pass 1 and keep exploring original outgoing edges.`,
+      description: i18nText(I18N.descriptions.enterPass1, { node: labelOf(labelMap, nodeId) }),
       activeCodeLine: 5,
       stepPhase: 'pick-node',
     });
@@ -205,13 +259,13 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         phase,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `Pass 1 inspects ${labelOf(labelMap, nodeId)} → ${labelOf(labelMap, neighborId)}.`,
+        description: i18nText(I18N.descriptions.inspectPass1, { from: labelOf(labelMap, nodeId), to: labelOf(labelMap, neighborId) }),
         activeCodeLine: 6,
         stepPhase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
           expression: neighborState.toUpperCase(),
-          result: neighborState,
+          result: VISIT_RESULTS[neighborState],
           decision: neighborState === 'new' ? 'visit child' : 'skip visited node',
         },
       });
@@ -232,13 +286,13 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
           phase,
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
-          description: `${labelOf(labelMap, neighborId)} was already seen in pass 1, so keep the current finish search moving.`,
+          description: i18nText(I18N.descriptions.seenPass1, { node: labelOf(labelMap, neighborId) }),
           activeCodeLine: 7,
           stepPhase: 'skip-relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
             expression: neighborState.toUpperCase(),
-            result: 'seen',
+            result: i18nText(I18N.results.seen),
             decision: 'no recursive call',
           },
         });
@@ -262,13 +316,13 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
         relaxedEdgeId: edge.id,
-        description: `Go deeper to ${labelOf(labelMap, neighborId)} so it can receive a later finishing time.`,
+        description: i18nText(I18N.descriptions.descendPass1, { node: labelOf(labelMap, neighborId) }),
         activeCodeLine: 6,
         stepPhase: 'relax',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
           expression: 'NEW',
-          result: 'DFS child',
+          result: i18nText(I18N.results.dfsChild),
           decision: 'descend',
         },
       });
@@ -295,7 +349,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: nodeId,
-      description: `Finish ${labelOf(labelMap, nodeId)} and push it onto the finish-order stack with rank ${finishIndex}.`,
+      description: i18nText(I18N.descriptions.finishPass1, { node: labelOf(labelMap, nodeId), rank: finishIndex }),
       activeCodeLine: 8,
       stepPhase: 'settle-node',
       computation: {
@@ -329,7 +383,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: nodeId,
-      description: `Enter ${labelOf(labelMap, nodeId)} on the reversed graph and assign it to SCC ${componentId}.`,
+      description: i18nText(I18N.descriptions.enterPass2, { node: labelOf(labelMap, nodeId), component: componentId }),
       activeCodeLine: 12,
       stepPhase: 'pick-node',
     });
@@ -352,7 +406,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         phase,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `Pass 2 inspects reversed edge ${labelOf(labelMap, nodeId)} → ${labelOf(labelMap, neighborId)}.`,
+        description: i18nText(I18N.descriptions.inspectPass2, { from: labelOf(labelMap, nodeId), to: labelOf(labelMap, neighborId) }),
         activeCodeLine: 12,
         stepPhase: 'inspect-edge',
         computation: reverseInspection(neighborId, componentId),
@@ -374,13 +428,13 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
           phase,
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
-          description: `${labelOf(labelMap, neighborId)} is already sealed into ${componentLabel(componentMap.get(neighborId))}, so skip it.`,
+          description: i18nText(I18N.descriptions.sealedPass2, { node: labelOf(labelMap, neighborId), component: componentLabel(componentMap.get(neighborId)) }),
           activeCodeLine: 12,
           stepPhase: 'skip-relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
             expression: componentLabel(componentMap.get(neighborId)),
-            result: 'assigned',
+            result: i18nText(I18N.results.assigned),
             decision: 'keep current SCC boundary',
           },
         });
@@ -404,7 +458,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
         relaxedEdgeId: edge.id,
-        description: `${labelOf(labelMap, neighborId)} is still free in pass 2, so it joins SCC ${componentId}.`,
+        description: i18nText(I18N.descriptions.joinPass2, { node: labelOf(labelMap, neighborId), component: componentId }),
         activeCodeLine: 12,
         stepPhase: 'relax',
         computation: {
@@ -435,7 +489,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       currentSeedId,
       phase,
       currentNodeId: nodeId,
-      description: `Leave ${labelOf(labelMap, nodeId)} while SCC ${componentId} continues absorbing reverse-reachable nodes.`,
+      description: i18nText(I18N.descriptions.leavePass2, { node: labelOf(labelMap, nodeId), component: componentId }),
       activeCodeLine: 12,
       stepPhase: 'settle-node',
     });
@@ -449,7 +503,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       return {
         candidateLabel: neighborLabel,
         expression: componentLabel(componentMap.get(neighborId)),
-        result: 'assigned',
+        result: i18nText(I18N.results.assigned),
         decision: 'skip finished SCC',
       };
     }
@@ -476,7 +530,7 @@ function createStep(args: {
   readonly componentOrder: readonly string[];
   readonly currentSeedId: string;
   readonly phase: 1 | 2;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly stepPhase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -515,7 +569,7 @@ function createStep(args: {
     detailLabel: args.phase === 1 ? 'Finish stack' : 'Kosaraju SCC map',
     detailValue: args.phase === 1 ? summarizeFinishStack(args.finishStack, args.graph) : summarizeAllComponents(args.componentOrder),
     visitOrderLabel: args.phase === 1 ? 'Finish stack' : 'SCC order',
-    phaseLabel: phaseLabel(args.phase, args.stepPhase),
+    phaseLabel: i18nText(phaseLabel(args.phase, args.stepPhase)),
     description: args.description,
     activeCodeLine: args.activeCodeLine,
     phase: args.stepPhase,
@@ -580,36 +634,36 @@ function phaseLabel(pass: 1 | 2, stepPhase: SortStep['phase']): string {
   if (pass === 1) {
     switch (stepPhase) {
       case 'pick-node':
-        return 'Pass 1: open DFS';
+        return I18N.phases.pass1Open;
       case 'inspect-edge':
-        return 'Pass 1: inspect original edge';
+        return I18N.phases.pass1Inspect;
       case 'relax':
-        return 'Pass 1: descend';
+        return I18N.phases.pass1Descend;
       case 'skip-relax':
-        return 'Pass 1: skip seen node';
+        return I18N.phases.pass1Skip;
       case 'settle-node':
-        return 'Pass 1: push finish order';
+        return I18N.phases.pass1Finish;
       case 'graph-complete':
-        return 'Pass 1 complete';
+        return I18N.phases.pass1Complete;
       default:
-        return 'Initialize pass 1';
+        return I18N.phases.pass1Initialize;
     }
   }
 
   switch (stepPhase) {
     case 'pick-node':
-      return 'Pass 2: open reverse DFS';
+      return I18N.phases.pass2Open;
     case 'inspect-edge':
-      return 'Pass 2: inspect reversed edge';
+      return I18N.phases.pass2Inspect;
     case 'relax':
-      return 'Pass 2: expand SCC';
+      return I18N.phases.pass2Expand;
     case 'skip-relax':
-      return 'Pass 2: keep SCC boundary';
+      return I18N.phases.pass2Keep;
     case 'settle-node':
-      return 'Pass 2: seal SCC';
+      return I18N.phases.pass2Seal;
     case 'graph-complete':
-      return 'Kosaraju complete';
+      return I18N.phases.complete;
     default:
-      return 'Initialize pass 2';
+      return I18N.phases.pass2Initialize;
   }
 }

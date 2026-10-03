@@ -63,6 +63,9 @@ const I18N = {
     pendingArray: t('features.algorithms.runtime.string.suffixArray.labels.pendingArray'),
     readyValue: t('features.algorithms.runtime.string.suffixArray.labels.readyValue'),
   },
+  active: {
+    classes: t('features.algorithms.runtime.string.suffixArray.active.classes'),
+  },
 } as const;
 
 interface RankTuple {
@@ -297,7 +300,7 @@ export function* suffixArrayConstructionGenerator(
         scenario,
         phase: 'rank',
         phaseLabel: I18N.phases.assignRanks,
-        activeLabel: `classes = ${rank + 1}`,
+        activeLabel: i18nText(I18N.active.classes, { count: rank + 1 }),
         decisionLabel: I18N.decisions.compressClasses,
         source,
         stepSize,

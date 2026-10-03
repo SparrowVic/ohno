@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   NetworkComputation,
   NetworkEdgeSnapshot,
@@ -6,6 +9,42 @@ import {
 import { SortStep } from '../models/sort-step';
 import { DinicScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+
+const I18N = {
+  phases: {
+    initialize: t('features.algorithms.runtime.network.dinic.phases.initialize'),
+    bfs: t('features.algorithms.runtime.network.dinic.phases.bfs'),
+    complete: t('features.algorithms.runtime.network.dinic.phases.complete'),
+    blocking: t('features.algorithms.runtime.network.dinic.phases.blocking'),
+    phaseDone: t('features.algorithms.runtime.network.dinic.phases.phaseDone'),
+  },
+  statuses: {
+    zeroFlow: t('features.algorithms.runtime.network.dinic.statuses.zeroFlow'),
+    seed: t('features.algorithms.runtime.network.dinic.statuses.seed'),
+    expand: t('features.algorithms.runtime.network.dinic.statuses.expand'),
+    inspect: t('features.algorithms.runtime.network.dinic.statuses.inspect'),
+    unreachable: t('features.algorithms.runtime.network.dinic.statuses.unreachable'),
+    levelGraph: t('features.algorithms.runtime.network.dinic.statuses.levelGraph'),
+    pathFound: t('features.algorithms.runtime.network.dinic.statuses.pathFound'),
+    pushed: t('features.algorithms.runtime.network.dinic.statuses.pushed'),
+    blockingAdded: t('features.algorithms.runtime.network.dinic.statuses.blockingAdded'),
+  },
+  results: {
+    maxFlowZero: t('features.algorithms.runtime.network.dinic.results.maxFlowZero'),
+    maxFlow: t('features.algorithms.runtime.network.dinic.results.maxFlow'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.network.dinic.descriptions.initialize'),
+    seed: t('features.algorithms.runtime.network.dinic.descriptions.seed'),
+    expand: t('features.algorithms.runtime.network.dinic.descriptions.expand'),
+    inspect: t('features.algorithms.runtime.network.dinic.descriptions.inspect'),
+    complete: t('features.algorithms.runtime.network.dinic.descriptions.complete'),
+    levelGraph: t('features.algorithms.runtime.network.dinic.descriptions.levelGraph'),
+    pathFound: t('features.algorithms.runtime.network.dinic.descriptions.pathFound'),
+    augment: t('features.algorithms.runtime.network.dinic.descriptions.augment'),
+    phaseDone: t('features.algorithms.runtime.network.dinic.descriptions.phaseDone'),
+  },
+} as const;
 
 export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortStep> {
   const flow = new Map<string, number>(scenario.edges.map((edge) => [edge.id, 0]));
@@ -18,15 +57,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
     scenario,
     flow,
     level: new Map(),
-    phaseLabel: 'Initialize residual network',
-    statusLabel: 'All flows start at zero',
-    resultLabel: 'max flow 0',
+    phaseLabel: i18nText(I18N.phases.initialize),
+    statusLabel: i18nText(I18N.statuses.zeroFlow),
+    resultLabel: i18nText(I18N.results.maxFlowZero),
     frontierLabel: 'BFS frontier',
     queueLabel: 'Level queue',
     queue: [],
     focusItemsLabel: 'Positive flow',
     focusItems: [],
-    description: 'Start with zero flow and repeatedly rebuild the shortest residual level graph.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -42,15 +81,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       flow,
       level,
       frontierIds: new Set(queue),
-      phaseLabel: `BFS phase ${phaseIndex}`,
-      statusLabel: 'Seed source level',
-      resultLabel: `max flow ${totalFlow}`,
+      phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
+      statusLabel: i18nText(I18N.statuses.seed),
+      resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
       frontierLabel: 'BFS frontier',
       queueLabel: 'Level queue',
       queue,
       focusItemsLabel: 'Positive flow',
       focusItems: positiveFlowLabels(scenario, flow, labelById),
-      description: 'Level BFS starts from the source and only follows edges with positive residual capacity.',
+      description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
         label: 'Start level',
@@ -70,15 +109,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         level,
         currentNodeId,
         frontierIds: new Set(queue.slice(queueIndex)),
-        phaseLabel: `BFS phase ${phaseIndex}`,
-        statusLabel: 'Expand one residual layer',
-        resultLabel: `max flow ${totalFlow}`,
+        phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.expand),
+        resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
         frontierLabel: 'BFS frontier',
         queueLabel: 'Level queue',
         queue: queue.slice(queueIndex),
         focusItemsLabel: 'Positive flow',
         focusItems: positiveFlowLabels(scenario, flow, labelById),
-        description: `Visit outgoing residual edges from ${labelById.get(currentNodeId) ?? currentNodeId}.`,
+        description: i18nText(I18N.descriptions.expand, { node: labelById.get(currentNodeId) ?? currentNodeId }),
         activeCodeLine: 4,
       });
 
@@ -97,15 +136,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
           currentNodeId,
           frontierIds: new Set(queue.slice(queueIndex)),
           activeEdgeId: edge.id,
-          phaseLabel: `BFS phase ${phaseIndex}`,
-          statusLabel: 'Inspect residual edge',
-          resultLabel: `max flow ${totalFlow}`,
+          phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
+          statusLabel: i18nText(I18N.statuses.inspect),
+          resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
           frontierLabel: 'BFS frontier',
           queueLabel: 'Level queue',
           queue: queue.slice(queueIndex),
           focusItemsLabel: 'Positive flow',
           focusItems: positiveFlowLabels(scenario, flow, labelById),
-          description: `Check whether ${labelById.get(currentNodeId) ?? currentNodeId} → ${labelById.get(targetId) ?? targetId} can still carry more flow.`,
+          description: i18nText(I18N.descriptions.inspect, { from: labelById.get(currentNodeId) ?? currentNodeId, to: labelById.get(targetId) ?? targetId }),
           activeCodeLine: 4,
           computation: {
             label: 'Residual capacity',
@@ -129,15 +168,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         scenario,
         flow,
         level,
-        phaseLabel: `Complete after phase ${phaseIndex}`,
-        statusLabel: 'Sink is unreachable',
-        resultLabel: `max flow ${totalFlow}`,
+        phaseLabel: i18nText(I18N.phases.complete, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.unreachable),
+        resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
         frontierLabel: 'Residual BFS',
         queueLabel: 'Level queue',
         queue: [],
         focusItemsLabel: 'Final positive flow',
         focusItems: positiveFlowLabels(scenario, flow, labelById),
-        description: 'Once the sink disappears from the residual BFS, the current flow is maximum.',
+        description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 10,
         phase: 'graph-complete',
         computation: {
@@ -156,15 +195,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       flow,
       level,
       candidateEdgeIds,
-      phaseLabel: `Blocking flow ${phaseIndex}`,
-      statusLabel: 'Admissible level graph ready',
-      resultLabel: `max flow ${totalFlow}`,
+      phaseLabel: i18nText(I18N.phases.blocking, { phase: phaseIndex }),
+      statusLabel: i18nText(I18N.statuses.levelGraph),
+      resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
       frontierLabel: 'Admissible edges',
       queueLabel: 'Level queue',
       queue: [],
       focusItemsLabel: 'Positive flow',
       focusItems: positiveFlowLabels(scenario, flow, labelById),
-      description: 'Only edges that move one layer deeper can participate in the blocking flow.',
+      description: i18nText(I18N.descriptions.levelGraph),
       activeCodeLine: 5,
       computation: {
         label: 'Level graph',
@@ -192,16 +231,16 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         candidateEdgeIds,
         activePathNodeIds: new Set(pathNodeIds),
         activePathEdgeIds: pathEdgeIds,
-        phaseLabel: `Blocking flow ${phaseIndex}`,
-        statusLabel: 'Augmenting path found',
-        resultLabel: `max flow ${totalFlow}`,
+        phaseLabel: i18nText(I18N.phases.blocking, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.pathFound),
+        resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
         frontierLabel: 'Admissible path',
         queueLabel: 'Level queue',
         queue: [],
         activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
         focusItemsLabel: 'Positive flow',
         focusItems: positiveFlowLabels(scenario, flow, labelById),
-        description: 'One admissible source-to-sink path is ready to carry the next chunk of blocking flow.',
+        description: i18nText(I18N.descriptions.pathFound),
         activeCodeLine: 7,
         computation: {
           label: 'Bottleneck',
@@ -224,16 +263,16 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         candidateEdgeIds: admissibleEdgeIds(scenario, level, flow),
         activePathNodeIds: new Set(pathNodeIds),
         activePathEdgeIds: pathEdgeIds,
-        phaseLabel: `Blocking flow ${phaseIndex}`,
-        statusLabel: 'Flow pushed through path',
-        resultLabel: `max flow ${totalFlow}`,
+        phaseLabel: i18nText(I18N.phases.blocking, { phase: phaseIndex }),
+        statusLabel: i18nText(I18N.statuses.pushed),
+        resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
         frontierLabel: 'Positive flow',
         queueLabel: 'Level queue',
         queue: [],
         activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
         focusItemsLabel: 'Positive flow',
         focusItems: positiveFlowLabels(scenario, flow, labelById),
-        description: 'Every edge on the admissible path receives the bottleneck amount of new flow.',
+        description: i18nText(I18N.descriptions.augment),
         activeCodeLine: 8,
         phase: 'relax',
         computation: {
@@ -249,15 +288,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       scenario,
       flow,
       level,
-      phaseLabel: `Phase ${phaseIndex} complete`,
-      statusLabel: `Blocking flow added ${pushedThisPhase}`,
-      resultLabel: `max flow ${totalFlow}`,
+      phaseLabel: i18nText(I18N.phases.phaseDone, { phase: phaseIndex }),
+      statusLabel: i18nText(I18N.statuses.blockingAdded, { flow: pushedThisPhase }),
+      resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
       frontierLabel: 'Positive flow',
       queueLabel: 'Level queue',
       queue: [],
       focusItemsLabel: 'Positive flow',
       focusItems: positiveFlowLabels(scenario, flow, labelById),
-      description: 'This level graph is saturated enough that no more admissible path remains; rebuild BFS layers next.',
+      description: i18nText(I18N.descriptions.phaseDone),
       activeCodeLine: 9,
       phase: 'pass-complete',
       computation: {
@@ -274,15 +313,15 @@ function createSnapshot(args: {
   readonly scenario: DinicScenario;
   readonly flow: ReadonlyMap<string, number>;
   readonly level: ReadonlyMap<string, number>;
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly frontierLabel: string;
   readonly queueLabel: string;
   readonly queue: readonly string[];
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
   readonly frontierIds?: ReadonlySet<string>;

@@ -98,15 +98,6 @@ export function sieveStatTone(tone: SieveStatChip['tone']): SieveStatTone {
   return STAT_TONES[tone];
 }
 
-export function smallestFactor(value: number): number | null {
-  if (!Number.isInteger(value) || value < 4) return null;
-  if (value % 2 === 0) return 2;
-  for (let divisor = 3; divisor * divisor <= value; divisor += 2) {
-    if (value % divisor === 0) return divisor;
-  }
-  return null;
-}
-
 export function sieveFocusValue(cells: readonly SieveGridCell[]): number | null {
   for (const state of FOCUS_ORDER) {
     const cell = cells.find((item) => item.state === state);
@@ -136,7 +127,7 @@ export function sieveBoardRows(state: SieveGridTraceState, columns: number): Sie
 
 function boardCell(cell: SieveGridCell, row: number, column: number, focus: number | null): SieveBoardCell {
   const crossedNow = cell.state === 'marking' || cell.state === 'just-marked';
-  const factor = cell.state === 'composite' || cell.state === 'current' ? smallestFactor(cell.value) : null;
+  const factor = cell.state === 'composite' || cell.state === 'current' ? cell.markedBy : null;
   return {
     value: cell.value,
     tone: sieveCellTone(cell.state),

@@ -116,6 +116,10 @@ const I18N = {
     noHit: t('features.algorithms.runtime.string.kmp.labels.noHit'),
     hitCount: t('features.algorithms.runtime.string.kmp.labels.hitCount'),
   },
+  active: {
+    prefix: t('features.algorithms.runtime.string.kmp.active.prefix'),
+    hit: t('features.algorithms.runtime.string.kmp.active.hit'),
+  },
 } as const;
 
 function makeState(args: {
@@ -277,7 +281,7 @@ export function* kmpPatternMatchingGenerator(
         string: makeState({
           scenario,
           phaseLabel: I18N.phases.failureFallback,
-          activeLabel: `prefix ${prefix} → ${nextPrefix}`,
+          activeLabel: i18nText(I18N.active.prefix, { from: prefix, to: nextPrefix }),
           resultLabel: failure.slice(0, Math.max(index, 1)).join(' · ') || '0',
           decisionLabel: I18N.decisions.keepPaidWork,
           failure,
@@ -441,7 +445,7 @@ export function* kmpPatternMatchingGenerator(
           string: makeState({
             scenario,
             phaseLabel: I18N.phases.matchReported,
-            activeLabel: `hit @ ${hitStart}`,
+            activeLabel: i18nText(I18N.active.hit, { index: hitStart }),
             resultLabel: matches.join(', '),
             decisionLabel:
               fallback === 0

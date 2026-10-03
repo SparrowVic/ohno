@@ -21,7 +21,9 @@ function finalState(taskId: string | null = null) {
 }
 
 function contents(lines: readonly ScratchpadLine[]): readonly string[] {
-  return lines.map((line) => (typeof line.content === 'string' ? line.content : line.content.key));
+  return lines.map((line) =>
+    typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`,
+  );
 }
 
 function hasLine(lines: readonly ScratchpadLine[], fragment: string): boolean {
@@ -85,7 +87,7 @@ describe('pollards-rho', () => {
   it('renders Brent batches with q accumulation and batched gcd', () => {
     const lines = finalLines('brent-batch-gcd');
 
-    expect(hasLine(lines, 'Blok r = 4, pierwsza paczka')).toBe(true);
+    expect(hasLine(lines, 'features.algorithms.runtime.scratchpadLab.pollardsRho.sections.blockFirstBatch {"r":4}')).toBe(true);
     expect(hasLine(lines, 'q = 8225')).toBe(true);
     expect(hasLine(lines, '\\gcd(3636, 10403) = 101')).toBe(true);
     expect(hasLine(lines, '10403 = 101 * 103')).toBe(true);
@@ -104,7 +106,7 @@ describe('pollards-rho', () => {
     const lines = finalLines('composite-factor-split');
 
     expect(hasLine(lines, '169071 = 21 * 8051')).toBe(true);
-    expect(hasLine(lines, 'Dzielnik 21 nie jest pierwszy')).toBe(true);
+    expect(hasLine(lines, 'features.algorithms.runtime.scratchpadLab.pollardsRho.notes.compositeFactor {"factor":21}')).toBe(true);
     expect(hasLine(lines, '21 = 3 * 7')).toBe(true);
     expect(hasLine(lines, '8051 = 97 * 83')).toBe(true);
     expect(hasLine(lines, '169071 = 3 * 7 * 83 * 97')).toBe(true);

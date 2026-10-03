@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -8,7 +11,42 @@ import {
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
 
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.cycleDetection.descriptions.initialize'),
+    cycleFound: t('features.algorithms.runtime.graph.cycleDetection.descriptions.cycleFound'),
+    acyclic: t('features.algorithms.runtime.graph.cycleDetection.descriptions.acyclic'),
+    enter: t('features.algorithms.runtime.graph.cycleDetection.descriptions.enter'),
+    inspect: t('features.algorithms.runtime.graph.cycleDetection.descriptions.inspect'),
+    descend: t('features.algorithms.runtime.graph.cycleDetection.descriptions.descend'),
+    backEdge: t('features.algorithms.runtime.graph.cycleDetection.descriptions.backEdge'),
+    closed: t('features.algorithms.runtime.graph.cycleDetection.descriptions.closed'),
+    leave: t('features.algorithms.runtime.graph.cycleDetection.descriptions.leave'),
+  },
+  results: {
+    new: t('features.algorithms.runtime.graph.cycleDetection.results.new'),
+    stack: t('features.algorithms.runtime.graph.cycleDetection.results.stack'),
+    done: t('features.algorithms.runtime.graph.cycleDetection.results.done'),
+    cycle: t('features.algorithms.runtime.graph.cycleDetection.results.cycle'),
+  },
+  phases: {
+    enter: t('features.algorithms.runtime.graph.cycleDetection.phases.enter'),
+    inspect: t('features.algorithms.runtime.graph.cycleDetection.phases.inspect'),
+    descend: t('features.algorithms.runtime.graph.cycleDetection.phases.descend'),
+    evaluate: t('features.algorithms.runtime.graph.cycleDetection.phases.evaluate'),
+    leave: t('features.algorithms.runtime.graph.cycleDetection.phases.leave'),
+    complete: t('features.algorithms.runtime.graph.cycleDetection.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.cycleDetection.phases.initialize'),
+  },
+} as const;
+
 type ColorState = 'new' | 'stack' | 'done';
+
+const COLOR_RESULTS: Readonly<Record<ColorState, TranslatableText>> = {
+  new: i18nText(I18N.results.new),
+  stack: i18nText(I18N.results.stack),
+  done: i18nText(I18N.results.done),
+};
 
 export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -30,7 +68,7 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
     stack,
     order,
     cyclePath,
-    description: 'Initialize every node as unvisited and start a DFS over the directed graph.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 4,
     phase: 'init',
   });
@@ -57,8 +95,8 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
     order,
     cyclePath,
     description: foundCycle
-      ? `Cycle detected: ${cyclePath}.`
-      : 'No directed cycle found. The graph is acyclic.',
+      ? i18nText(I18N.descriptions.cycleFound, { path: cyclePath })
+      : i18nText(I18N.descriptions.acyclic),
     activeCodeLine: 9,
     phase: 'graph-complete',
   });
@@ -80,7 +118,7 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
       order,
       cyclePath,
       currentNodeId: nodeId,
-      description: `Enter ${labelOf(labelMap, nodeId)} and push it onto the recursion stack.`,
+      description: i18nText(I18N.descriptions.enter, { node: labelOf(labelMap, nodeId) }),
       activeCodeLine: 11,
       phase: 'pick-node',
     });
@@ -100,13 +138,13 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
         cyclePath,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `Inspect ${labelOf(labelMap, nodeId)} → ${labelOf(labelMap, neighborId)}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, nodeId), to: labelOf(labelMap, neighborId) }),
         activeCodeLine: 12,
         phase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
           expression: color,
-          result: color,
+          result: COLOR_RESULTS[color],
           decision:
             color === 'new'
               ? 'visit neighbor'
@@ -130,13 +168,13 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `Go deeper into ${labelOf(labelMap, neighborId)} from ${labelOf(labelMap, nodeId)}.`,
+          description: i18nText(I18N.descriptions.descend, { node: labelOf(labelMap, neighborId), from: labelOf(labelMap, nodeId) }),
           activeCodeLine: 15,
           phase: 'relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
             expression: 'new',
-            result: 'stack',
+            result: COLOR_RESULTS.stack,
             decision: 'descend recursively',
           },
         });
@@ -161,13 +199,13 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
           cyclePath,
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
-          description: `Back edge to ${labelOf(labelMap, neighborId)} found while it is still on the recursion stack.`,
+          description: i18nText(I18N.descriptions.backEdge, { node: labelOf(labelMap, neighborId) }),
           activeCodeLine: 13,
           phase: 'skip-relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
             expression: 'stack',
-            result: 'cycle',
+            result: i18nText(I18N.results.cycle),
             decision: cyclePath,
           },
         });
@@ -185,13 +223,13 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
         cyclePath,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `${labelOf(labelMap, neighborId)} is already closed, so this edge cannot create a new cycle.`,
+        description: i18nText(I18N.descriptions.closed, { node: labelOf(labelMap, neighborId) }),
         activeCodeLine: 14,
         phase: 'skip-relax',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
           expression: 'done',
-          result: 'done',
+          result: COLOR_RESULTS.done,
           decision: 'ignore closed node',
         },
       });
@@ -212,7 +250,7 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
       order,
       cyclePath,
       currentNodeId: nodeId,
-      description: `Leave ${labelOf(labelMap, nodeId)} and mark it as closed.`,
+      description: i18nText(I18N.descriptions.leave, { node: labelOf(labelMap, nodeId) }),
       activeCodeLine: 18,
       phase: 'settle-node',
     });
@@ -230,7 +268,7 @@ function createStep(args: {
   readonly stack: readonly string[];
   readonly order: readonly string[];
   readonly cyclePath: string;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -297,7 +335,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Depth',
       secondaryLabel: 'State',
       frontierLabel: 'Recursion stack',
@@ -350,18 +388,18 @@ function describeCycle(
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Enter recursion';
+      return I18N.phases.enter;
     case 'inspect-edge':
-      return 'Inspect directed edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Descend deeper';
+      return I18N.phases.descend;
     case 'skip-relax':
-      return 'Evaluate cycle evidence';
+      return I18N.phases.evaluate;
     case 'settle-node':
-      return 'Leave recursion';
+      return I18N.phases.leave;
     case 'graph-complete':
-      return 'Cycle analysis ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize DFS states';
+      return I18N.phases.initialize;
   }
 }

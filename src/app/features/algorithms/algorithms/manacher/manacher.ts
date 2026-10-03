@@ -75,6 +75,12 @@ const I18N = {
   labels: {
     noPalindromeYet: t('features.algorithms.runtime.string.manacher.labels.noPalindromeYet'),
   },
+  active: {
+    centerZero: t('features.algorithms.runtime.string.manacher.active.centerZero'),
+    center: t('features.algorithms.runtime.string.manacher.active.center'),
+    centerRight: t('features.algorithms.runtime.string.manacher.active.centerRight'),
+    best: t('features.algorithms.runtime.string.manacher.active.best'),
+  },
 } as const;
 
 function transform(source: string): string {
@@ -187,7 +193,7 @@ export function* manacherGenerator(
       scenario,
       transformed,
       phaseLabel: I18N.phases.setup,
-      activeLabel: 'center = 0',
+      activeLabel: i18nText(I18N.active.centerZero),
       resultLabel: I18N.labels.noPalindromeYet,
       decisionLabel: I18N.decisions.addSeparators,
       radii,
@@ -273,7 +279,7 @@ export function* manacherGenerator(
           scenario,
           transformed,
           phaseLabel: I18N.phases.expandPalindrome,
-          activeLabel: `center ${index}`,
+          activeLabel: i18nText(I18N.active.center, { center: index }),
           resultLabel:
             extractPalindrome(scenario.source, longestCenter, longestRadius) ||
             I18N.labels.noPalindromeYet,
@@ -317,7 +323,7 @@ export function* manacherGenerator(
           scenario,
           transformed,
           phaseLabel: I18N.phases.shiftWindow,
-          activeLabel: `center ${center}, right ${right}`,
+          activeLabel: i18nText(I18N.active.centerRight, { center, right }),
           resultLabel:
             extractPalindrome(scenario.source, longestCenter, longestRadius) ||
             I18N.labels.noPalindromeYet,
@@ -353,7 +359,7 @@ export function* manacherGenerator(
       scenario,
       transformed,
       phaseLabel: I18N.phases.complete,
-      activeLabel: `best center ${longestCenter}`,
+      activeLabel: i18nText(I18N.active.best, { center: longestCenter }),
       resultLabel:
         extractPalindrome(scenario.source, longestCenter, longestRadius) || I18N.labels.noPalindromeYet,
       decisionLabel: I18N.decisions.allRadiiKnown,

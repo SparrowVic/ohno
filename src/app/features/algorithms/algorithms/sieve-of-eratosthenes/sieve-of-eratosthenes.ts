@@ -85,7 +85,7 @@ function buildCells(
       m.value !== currentPrime && (state === 'marking' || state === 'just-marked') && currentPrime
         ? `×${Math.round(m.value / currentPrime)}`
         : null;
-    return { value: m.value, state, factorLabel };
+    return { value: m.value, state, factorLabel, markedBy: m.markedBy };
   });
 }
 

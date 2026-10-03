@@ -1,5 +1,6 @@
 import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   MatrixGridCell,
   MatrixGridCellState,
@@ -13,6 +14,7 @@ import {
 } from '../../models/scratchpad-lab';
 import type { SortStep } from '../../models/sort-step';
 import type { GaussianEliminationScenario } from '../../utils/scenarios/number-lab/gaussian-elimination-scenarios';
+import { NOTEBOOK_TEXT } from '../notebook-text';
 import { createScratchpadLabStep } from '../scratchpad-lab-step';
 
 const I18N = {
@@ -29,9 +31,21 @@ const I18N = {
     ),
     complete: t('features.algorithms.runtime.matrixGrid.gaussianElimination.phases.complete'),
   },
+  sections: {
+    noSolution: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.sections.noSolution'),
+    contradiction: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.sections.contradiction'),
+    freeVariables: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.sections.freeVariables'),
+  },
+  notes: {
+    inconsistent: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.notes.inconsistent'),
+  },
+  results: {
+    inconsistent: t('features.algorithms.runtime.scratchpadLab.gaussianElimination.results.inconsistent'),
+  },
 } as const;
 
 const EPSILON = 1e-9;
+const ROW_OPERATION_KINDS: ReadonlySet<MatrixOp['kind']> = new Set<MatrixOp['kind']>(['swap', 'scale', 'eliminate']);
 const CALCULATION_INDENT = 1;
 const RESULT_MARKER = '✓';
 const NO_RESULT_MARKER = '×';
@@ -117,7 +131,7 @@ export function* gaussianEliminationGenerator(
 
   /** Plain-text result string we accumulate as the chalkboard reaches
    *  the result section — used to drive the matrix-grid footer. */
-  let currentResult: string | null = null;
+  let currentResult: TranslatableText | null = null;
 
   function appendStep(
     builder: LineBuilder,
@@ -143,15 +157,17 @@ export function* gaussianEliminationGenerator(
 
   function captureResultFromBuilder(builder: LineBuilder): void {
     if (builder.id === 'no-solution') {
-      currentResult = 'układ sprzeczny';
+      currentResult = i18nText(I18N.results.inconsistent);
       return;
     }
     if (!builder.id.startsWith('result-')) return;
     const text = typeof builder.content === 'string' ? builder.content : '';
     const stripped = text.replace(/\[\[\/?math\]\]/g, '').trim();
     if (!stripped) return;
-    currentResult = currentResult ? `${currentResult};  ${stripped}` : stripped;
+    currentResult = typeof currentResult === 'string' ? `${currentResult};  ${stripped}` : stripped;
   }
+
+  let lastOperationLabel: string | null = null;
 
   function buildMatrixGridState(
     builder: LineBuilder,
@@ -161,6 +177,8 @@ export function* gaussianEliminationGenerator(
     },
   ): MatrixGridTraceState {
     const op = parseOperation(builder);
+    if (!op.isCommitted && op.label) lastOperationLabel = op.label;
+    const operationLabel = op.isCommitted && ROW_OPERATION_KINDS.has(op.kind) ? lastOperationLabel : op.label;
     const cells: MatrixGridCell[] = [];
     for (let row = 0; row < rowCount; row++) {
       const colCount = matrix[row].length;
@@ -184,7 +202,7 @@ export function* gaussianEliminationGenerator(
       cols: variableCount + 1,
       dividerCol: variableCount,
       cells,
-      operationLabel: op.label,
+      operationLabel,
       resultLabel: currentResult,
       iteration: stepIndex,
     };
@@ -214,11 +232,11 @@ export function* gaussianEliminationGenerator(
     };
   }
 
-  function section(id: string, content: string): LineBuilder {
+  function section(id: string, content: TranslatableText): LineBuilder {
     return paperLine({ id, kind: 'note', content });
   }
 
-  function note(id: string, content: string, indent = CALCULATION_INDENT): LineBuilder {
+  function note(id: string, content: TranslatableText, indent = CALCULATION_INDENT): LineBuilder {
     return paperLine({ id, kind: 'note', content, indent });
   }
 
@@ -236,7 +254,7 @@ export function* gaussianEliminationGenerator(
       id: 'section-result',
       kind: 'result',
       marker: RESULT_MARKER,
-      content: 'Wynik',
+      content: i18nText(NOTEBOOK_TEXT.sections.result),
     });
   }
 
@@ -245,7 +263,7 @@ export function* gaussianEliminationGenerator(
       id: 'section-no-result',
       kind: 'result',
       marker: NO_RESULT_MARKER,
-      content: 'Brak rozwiązania',
+      content: i18nText(I18N.sections.noSolution),
     });
   }
 
@@ -267,15 +285,15 @@ export function* gaussianEliminationGenerator(
     yield* emit(math(`${id}-matrix`, matrixLatex(matrix, variableCount)), activeCodeLine);
   }
 
-  yield* emit(section('section-system', 'Układ równań'));
+  yield* emit(section('section-system', i18nText(NOTEBOOK_TEXT.sections.system)));
   for (let row = 0; row < rowCount; row++) {
     yield* emit(math(`system-row-${row + 1}`, equationLatex(initialMatrix[row], variableCount)));
   }
 
-  yield* emit(section('section-augmented-matrix', 'Macierz rozszerzona'));
+  yield* emit(section('section-augmented-matrix', i18nText(NOTEBOOK_TEXT.sections.augmented)));
   yield* emit(math('matrix-initial', matrixLatex(matrix, variableCount)));
 
-  yield* emit(section('section-forward', 'Eliminacja w przód'));
+  yield* emit(section('section-forward', i18nText(NOTEBOOK_TEXT.sections.forwardElimination)));
   let pivotRow = 0;
   for (let col = 0; col < variableCount && pivotRow < rowCount; col++) {
     const swapRow = findPivotRow(matrix, pivotRow, col);
@@ -318,15 +336,15 @@ export function* gaussianEliminationGenerator(
 
   const forwardContradiction = findContradiction(matrix, variableCount);
   if (forwardContradiction) {
-    yield* emit(section('section-contradiction', 'Sprzeczność'));
+    yield* emit(section('section-contradiction', i18nText(I18N.sections.contradiction)));
     yield* emit(math('contradiction-row', `0 = ${formatCell(forwardContradiction.rhs)}`));
     yield* emit(noResultSection());
-    yield* emit(note('no-solution', 'układ jest sprzeczny'));
+    yield* emit(note('no-solution', i18nText(I18N.notes.inconsistent)));
     return;
   }
 
   if (pivots.length > 0) {
-    yield* emit(section('section-backward', 'Eliminacja wstecz'));
+    yield* emit(section('section-backward', i18nText(NOTEBOOK_TEXT.sections.backElimination)));
     for (let index = pivots.length - 1; index >= 0; index--) {
       const pivot = pivots[index];
       for (let row = 0; row < pivot.row; row++) {
@@ -346,16 +364,16 @@ export function* gaussianEliminationGenerator(
 
   const backwardContradiction = findContradiction(matrix, variableCount);
   if (backwardContradiction) {
-    yield* emit(section('section-contradiction', 'Sprzeczność'));
+    yield* emit(section('section-contradiction', i18nText(I18N.sections.contradiction)));
     yield* emit(math('contradiction-row', `0 = ${formatCell(backwardContradiction.rhs)}`));
     yield* emit(noResultSection());
-    yield* emit(note('no-solution', 'układ jest sprzeczny'));
+    yield* emit(note('no-solution', i18nText(I18N.notes.inconsistent)));
     return;
   }
 
   if (pivots.length < variableCount) {
     const freeVariables = buildFreeVariables(pivots, variableCount);
-    yield* emit(section('section-free-variables', 'Zmienne wolne'));
+    yield* emit(section('section-free-variables', i18nText(I18N.sections.freeVariables)));
     for (const free of freeVariables) {
       yield* emit(math(`free-${free.col}`, `${variableName(free.col)} = ${free.parameter}`));
     }
@@ -382,7 +400,7 @@ export function* gaussianEliminationGenerator(
   }
 
   const solution = readUniqueSolution(matrix, variableCount);
-  yield* emit(section('section-check', 'Sprawdzenie'));
+  yield* emit(section('section-check', i18nText(NOTEBOOK_TEXT.sections.check)));
   for (let row = 0; row < initialMatrix.length; row++) {
     yield* emit(
       math(
@@ -582,24 +600,24 @@ function variableName(index: number): string {
   return VARIABLE_NAMES[index] ?? `x_{${index + 1}}`;
 }
 
-function phaseFor(builder: LineBuilder): string {
+function phaseFor(builder: LineBuilder): TranslatableText {
   if (builder.id.includes('no-solution') || builder.id.includes('no-result')) {
-    return 'Brak rozwiązania';
+    return i18nText(I18N.sections.noSolution);
   }
-  if (builder.id.includes('result')) return 'Wynik';
-  if (builder.id.includes('check')) return 'Sprawdzenie';
-  if (builder.id.includes('free')) return 'Zmienne wolne';
-  if (builder.id.includes('contradiction')) return 'Sprzeczność';
-  if (builder.id.includes('backward')) return 'Eliminacja wstecz';
-  if (builder.id.includes('forward')) return 'Eliminacja w przód';
-  if (builder.id.includes('matrix')) return 'Macierz rozszerzona';
-  return 'Układ równań';
+  if (builder.id.includes('result')) return i18nText(NOTEBOOK_TEXT.sections.result);
+  if (builder.id.includes('check')) return i18nText(NOTEBOOK_TEXT.sections.check);
+  if (builder.id.includes('free')) return i18nText(I18N.sections.freeVariables);
+  if (builder.id.includes('contradiction')) return i18nText(I18N.sections.contradiction);
+  if (builder.id.includes('backward')) return i18nText(NOTEBOOK_TEXT.sections.backElimination);
+  if (builder.id.includes('forward')) return i18nText(NOTEBOOK_TEXT.sections.forwardElimination);
+  if (builder.id.includes('matrix')) return i18nText(NOTEBOOK_TEXT.sections.augmented);
+  return i18nText(NOTEBOOK_TEXT.sections.system);
 }
 
-function decisionFor(builder: LineBuilder): string {
-  if (builder.kind === 'result') return 'Zapisujemy końcowy wniosek.';
-  if (builder.kind === 'note') return 'Zapisujemy kolejną sekcję rozwiązania.';
-  return 'Dopisujemy kolejny rachunek.';
+function decisionFor(builder: LineBuilder): TranslatableText {
+  if (builder.kind === 'result') return i18nText(NOTEBOOK_TEXT.decisions.result);
+  if (builder.kind === 'note') return i18nText(NOTEBOOK_TEXT.decisions.note);
+  return i18nText(NOTEBOOK_TEXT.decisions.compute);
 }
 
 function toneFor(builder: LineBuilder): ScratchpadLabTraceState['tone'] {
@@ -657,7 +675,7 @@ function parseOperation(builder: LineBuilder): MatrixOp {
       affectedRow: Number(swapMatch[2]),
       isCommitted,
       kind: 'swap',
-      label: text || null,
+      label: isCommitted ? null : text || null,
     };
   }
 
@@ -669,7 +687,7 @@ function parseOperation(builder: LineBuilder): MatrixOp {
       affectedRow: Number(scaleMatch[1]),
       isCommitted,
       kind: 'scale',
-      label: text || null,
+      label: isCommitted ? null : text || null,
     };
   }
 
@@ -681,7 +699,7 @@ function parseOperation(builder: LineBuilder): MatrixOp {
       affectedRow: Number(elimMatch[2]),
       isCommitted,
       kind: 'eliminate',
-      label: text || null,
+      label: isCommitted ? null : text || null,
     };
   }
 
@@ -727,21 +745,21 @@ function cellStateFor(row: number, _col: number, op: MatrixOp): MatrixGridCellSt
   return 'idle';
 }
 
-function matrixPhaseLabel(builder: LineBuilder): string {
+function matrixPhaseLabel(builder: LineBuilder): TranslatableText {
   if (builder.id.includes('contradiction') || builder.id === 'no-solution') {
-    return 'Sprzeczność';
+    return i18nText(I18N.matrixGridPhases.contradiction);
   }
   if (builder.id.startsWith('result-') || builder.id === 'section-result') {
-    return 'Wynik';
+    return i18nText(I18N.matrixGridPhases.complete);
   }
-  if (builder.id.includes('forward')) return 'Eliminacja w przód';
-  if (builder.id.includes('backward')) return 'Eliminacja wstecz';
+  if (builder.id.includes('forward')) return i18nText(I18N.matrixGridPhases.forward);
+  if (builder.id.includes('backward')) return i18nText(I18N.matrixGridPhases.backward);
   if (builder.id === 'matrix-initial' || builder.id.includes('augmented')) {
-    return 'Macierz rozszerzona';
+    return i18nText(I18N.matrixGridPhases.setup);
   }
-  if (builder.id.includes('check')) return 'Sprawdzenie';
-  if (builder.id.includes('free')) return 'Zmienne wolne';
-  return 'Układ równań';
+  if (builder.id.includes('check')) return i18nText(NOTEBOOK_TEXT.sections.check);
+  if (builder.id.includes('free')) return i18nText(I18N.sections.freeVariables);
+  return i18nText(NOTEBOOK_TEXT.sections.system);
 }
 
 function matrixGridTone(builder: LineBuilder, op: MatrixOp): MatrixGridTone {

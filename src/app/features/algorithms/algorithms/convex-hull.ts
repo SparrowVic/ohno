@@ -1,5 +1,24 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { ConvexHullStepState, GeometryEdge, GeometryPoint, PointStatus } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.convexHull.descriptions.initialize'),
+    tooFew: t('features.algorithms.runtime.geometry.convexHull.descriptions.tooFew'),
+    pivot: t('features.algorithms.runtime.geometry.convexHull.descriptions.pivot'),
+    sort: t('features.algorithms.runtime.geometry.convexHull.descriptions.sort'),
+    initStack: t('features.algorithms.runtime.geometry.convexHull.descriptions.initStack'),
+    checkLeft: t('features.algorithms.runtime.geometry.convexHull.descriptions.checkLeft'),
+    checkCollinear: t('features.algorithms.runtime.geometry.convexHull.descriptions.checkCollinear'),
+    checkRight: t('features.algorithms.runtime.geometry.convexHull.descriptions.checkRight'),
+    pop: t('features.algorithms.runtime.geometry.convexHull.descriptions.pop'),
+    push: t('features.algorithms.runtime.geometry.convexHull.descriptions.push'),
+    complete: t('features.algorithms.runtime.geometry.convexHull.descriptions.complete'),
+  },
+} as const;
 
 export interface ConvexHullScenario {
   readonly points: readonly { readonly x: number; readonly y: number }[];
@@ -25,7 +44,7 @@ function makeStep(
   edges: readonly GeometryEdge[],
   stackIds: readonly number[],
   phase: string,
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   turnCheck: readonly [number, number, number] | null,
   crossProduct: number | null,
@@ -65,11 +84,11 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
     sortIndex: null,
   }));
 
-  yield makeStep(pts, [], [], 'init', 'Graham Scan: begin with all points unmarked.', 1, null, null);
+  yield makeStep(pts, [], [], 'init', i18nText(I18N.descriptions.initialize), 1, null, null);
 
   if (n < 3) {
     pts = pts.map((p) => ({ ...p, status: 'hull' as PointStatus }));
-    yield makeStep(pts, [], pts.map((p) => p.id), 'complete', 'Need at least 3 points for a convex hull.', 10, null, null);
+    yield makeStep(pts, [], pts.map((p) => p.id), 'complete', i18nText(I18N.descriptions.tooFew), 10, null, null);
     return;
   }
 
@@ -92,7 +111,7 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
     [],
     [],
     'pivot',
-    `Pivot P${pivotId} at (${raw[pivotId]!.x.toFixed(0)}, ${raw[pivotId]!.y.toFixed(0)}) — bottommost point.`,
+    i18nText(I18N.descriptions.pivot, { point: pivotId, x: raw[pivotId]!.x.toFixed(0), y: raw[pivotId]!.y.toFixed(0) }),
     2,
     null,
     null,
@@ -119,7 +138,7 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
     return { ...p, status: 'sorted' as PointStatus, sortIndex: si + 1 };
   });
 
-  yield makeStep(pts, [], [], 'sort', 'Points sorted by polar angle CCW from pivot. Numbers show angular order.', 3, null, null);
+  yield makeStep(pts, [], [], 'sort', i18nText(I18N.descriptions.sort), 3, null, null);
 
   // Phase 4 – initialize stack with pivot + first sorted point
   const sorted = [pivotId, ...otherIds];
@@ -136,7 +155,7 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
     edges,
     stackIds,
     'init-stack',
-    `Stack initialized: [P${stackIds[0]}, P${stackIds[1]}].`,
+    i18nText(I18N.descriptions.initStack, { first: stackIds[0], second: stackIds[1] }),
     4,
     null,
     null,
@@ -160,19 +179,15 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
       });
       edges = buildStackEdges(stackIds);
 
-      const verdict =
-        cpVal > 0
-          ? `Left turn → keep, then push P${curId}`
-          : cpVal === 0
-            ? `Collinear → pop P${topId}`
-            : `Right turn → pop P${topId}`;
+      const verdictKey =
+        cpVal > 0 ? I18N.descriptions.checkLeft : cpVal === 0 ? I18N.descriptions.checkCollinear : I18N.descriptions.checkRight;
 
       yield makeStep(
         pts,
         edges,
         stackIds,
         'checking',
-        `cross(P${belowId}, P${topId}, P${curId}) = ${cpVal.toFixed(1)}. ${verdict}.`,
+        i18nText(verdictKey, { below: belowId, top: topId, current: curId, cross: cpVal.toFixed(1) }),
         7,
         [belowId, topId, curId],
         cpVal,
@@ -197,7 +212,7 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
         edges,
         stackIds,
         'pop',
-        `Popped P${poppedId} from stack (not a left turn).`,
+        i18nText(I18N.descriptions.pop, { point: poppedId }),
         8,
         null,
         null,
@@ -217,7 +232,7 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
       edges,
       stackIds,
       'push',
-      `Pushed P${curId}. Stack: [${stackIds.map((id) => 'P' + id).join(', ')}].`,
+      i18nText(I18N.descriptions.push, { point: curId, stack: stackIds.map((id) => 'P' + id).join(', ') }),
       9,
       null,
       null,
@@ -241,7 +256,7 @@ export function* convexHullGenerator(scenario: ConvexHullScenario): Generator<So
     hullEdges,
     hullIds,
     'complete',
-    `Convex hull: ${hullIds.length} vertices — ${hullIds.map((id) => 'P' + id).join(' → ')}.`,
+    i18nText(I18N.descriptions.complete, { count: hullIds.length, hull: hullIds.map((id) => 'P' + id).join(' → ') }),
     10,
     null,
     null,

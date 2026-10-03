@@ -18,7 +18,7 @@ function finalLines(steps: readonly SortStep[]): readonly ScratchpadLine[] {
 }
 
 function contentOf(line: ScratchpadLine): string {
-  return typeof line.content === 'string' ? line.content : '';
+  return typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`;
 }
 
 function expectContains(lines: readonly ScratchpadLine[], fragment: string): void {
@@ -77,48 +77,47 @@ describe('reservoir-sampling', () => {
     expect(last?.resultLabel).toBeNull();
     expect(lines.find((line) => line.id === 'section-result')).toMatchObject({
       marker: '✓',
-      content: 'Wynik',
+      content: { key: 'features.algorithms.runtime.scratchpadLab.sections.result' },
     });
-    expectContains(lines, 'stream = [A, B, C, D, E, F]');
-    expectContains(lines, 'random[3] = 0.20, próg = 1 / 3 = 0.333...');
-    expectContains(lines, '0.10 < 0.20 \\to zastąp, reservoir = [E]');
-    expectContains(lines, 'P(A\\ zostaje\\ do\\ końca)');
-    expectContains(lines, 'P(E\\ w\\ końcowej\\ próbce) = (1/5)(5/6) = 1/6');
-    expectContains(lines, 'reservoir = [E]');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.stream {"stream":"[A, B, C, D, E, F]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.kOneCompare {"i":3,"item":"C","draw":"0.20","threshold":"0.333..."}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.kOneAccept {"draw":"0.10","threshold":"0.20","reservoir":"[E]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkAResult');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.checkEResult');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir {"reservoir":"[E]"}');
   });
 
   it('renders fixed k updates with replacement indices', () => {
     const lines = finalLines(run('fixed-k-updates'));
 
-    expectContains(lines, 'reservoir = [a, b, c]');
-    expectContains(lines, '2 <= 3 \\to zastąp\\ pozycję\\ 2, reservoir = [a, d, c]');
-    expectContains(lines, '5 > 3 \\to pomiń, reservoir = [a, d, c]');
-    expectContains(lines, '1 <= 3 \\to zastąp\\ pozycję\\ 1, reservoir = [f, d, c]');
-    expectContains(lines, '3 <= 3 \\to zastąp\\ pozycję\\ 3, reservoir = [f, d, g]');
-    expectContains(lines, 'reservoir = [f, d, g]');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir {"reservoir":"[a, b, c]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedReplace {"draw":2,"k":3,"reservoir":"[a, d, c]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedSkip {"draw":5,"k":3,"reservoir":"[a, d, c]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedReplace {"draw":1,"k":3,"reservoir":"[f, d, c]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.fixedReplace {"draw":3,"k":3,"reservoir":"[f, d, g]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir {"reservoir":"[f, d, g]"}');
   });
 
   it('renders predicate reservoir sampling with a real counter', () => {
     const lines = finalLines(run('predicate-reservoir'));
 
-    expectContains(lines, 'predicate = status == ERROR');
-    expectContains(lines, 'indeks = 1, element = (1, OK), predykat = nie, r = 0');
-    expectContains(lines, 'indeks = 5, element = (5, ERROR), predykat = tak, r = 3, j = 1');
-    expectContains(lines, '1 <= 2 \\to zastąp\\ pozycję\\ 1');
-    expectContains(lines, 'indeks = 7, element = (7, ERROR), predykat = tak, r = 4, j = 4');
-    expectContains(lines, 'reservoir = [(5, ERROR), (4, ERROR)]');
-    expectContains(lines, 'Losowania są liczone względem liczby elementów spełniających predykat');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicate {"predicate":"status == ERROR"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateIgnore {"index":1,"item":"(1, OK)","r":0');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateReplace {"index":5,"item":"(5, ERROR)","r":3,"draw":1,"k":2');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.predicateSkip {"index":7,"item":"(7, ERROR)","r":4,"draw":4');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir {"reservoir":"[(5, ERROR), (4, ERROR)]"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.notes.predicateCounter');
   });
 
   it('renders weighted reservoir sampling by priority keys', () => {
     const lines = finalLines(run('weighted-reservoir'));
 
-    expectContains(lines, 'key = u^(1 / weight)');
-    expectContains(lines, 'A: weight = 1, u = 0.64, key = 0.64^{1 / 1} = 0.6400');
-    expectContains(lines, 'C: weight = 4, u = 0.81, key = 0.81^{1 / 4} = 0.9487');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.keyFormula {"formula":"u^(1 / weight)"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.weightedKey {"label":"A","weight":"1","u":"0.64","key":"0.6400"}');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.weightedKey {"label":"C","weight":"4","u":"0.81","key":"0.9487"}');
     expectContains(lines, 'C: 0.9487');
     expectContains(lines, 'E: 0.9000');
-    expectContains(lines, 'reservoir = [C, E]');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir {"reservoir":"[C, E]"}');
   });
 
   it('renders distributed reservoir merge by global priority', () => {
@@ -129,6 +128,6 @@ describe('reservoir-sampling', () => {
     expectContains(lines, 'C_local = [(c5, 0.02), (c2, 0.07)]');
     expectContains(lines, 'c5: 0.02');
     expectContains(lines, 'a4: 0.05');
-    expectContains(lines, 'reservoir = [(c5, 0.02), (a4, 0.05)]');
+    expectContains(lines, 'features.algorithms.runtime.scratchpadLab.reservoirSampling.lines.reservoir {"reservoir":"[(c5, 0.02), (a4, 0.05)]"}');
   });
 });

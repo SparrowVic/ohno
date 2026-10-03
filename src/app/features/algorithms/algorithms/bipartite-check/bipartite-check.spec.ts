@@ -28,7 +28,7 @@ describe('bipartite-check', () => {
     const finalStep = steps.at(-1);
 
     expect(finalStep?.phase).toBe('graph-complete');
-    expect(finalStep?.description).toContain('Every edge connects opposite sides');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bipartiteCheck.descriptions.complete' });
     expect(finalStep?.graph?.detailValue).toBe('Left: A, D · Right: B, C');
     expect(steps.some((step) => step.phase === 'skip-relax')).toBe(true);
   });
@@ -49,7 +49,7 @@ describe('bipartite-check', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.description).toContain('Bipartite check failed');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bipartiteCheck.descriptions.failed', params: { from: 'B', to: 'C' } });
     expect(finalStep?.graph?.detailValue).toBe('Conflict: B ↔ C');
     expect(
       finalStep?.graph?.nodes.filter((node) => node.tone === 'critical').map((node) => node.label),

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { OhnoLed } from '../../../../shared/instrument/led/led';
 import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
 import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
@@ -41,8 +42,8 @@ const TAG_CHIPS: Readonly<Record<MatrixTraceTag, { readonly label: TraceValue; r
   infinite: { label: '∞', tone: 'slate' },
 };
 
-function sentence(raw: string) {
-  return toTraceValue(matrixSentenceText(raw) ?? raw);
+function sentence(raw: TranslatableText) {
+  return typeof raw === 'string' ? toTraceValue(matrixSentenceText(raw) ?? raw) : toTraceValue(raw);
 }
 
 const TABLE_COLUMNS: readonly TraceColumn[] = [

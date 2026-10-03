@@ -1,6 +1,41 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import { GraphComputation, WeightedGraphData } from '../models/graph';
 import { SortStep } from '../models/sort-step';
 import { createSccStep } from './scc-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.tarjan.descriptions.initialize'),
+    seed: t('features.algorithms.runtime.graph.tarjan.descriptions.seed'),
+    complete: t('features.algorithms.runtime.graph.tarjan.descriptions.complete'),
+    open: t('features.algorithms.runtime.graph.tarjan.descriptions.open'),
+    inspect: t('features.algorithms.runtime.graph.tarjan.descriptions.inspect'),
+    descend: t('features.algorithms.runtime.graph.tarjan.descriptions.descend'),
+    propagate: t('features.algorithms.runtime.graph.tarjan.descriptions.propagate'),
+    backEdge: t('features.algorithms.runtime.graph.tarjan.descriptions.backEdge'),
+    assigned: t('features.algorithms.runtime.graph.tarjan.descriptions.assigned'),
+    emit: t('features.algorithms.runtime.graph.tarjan.descriptions.emit'),
+    stay: t('features.algorithms.runtime.graph.tarjan.descriptions.stay'),
+  },
+  results: {
+    visitChild: t('features.algorithms.runtime.graph.tarjan.results.visitChild'),
+    assigned: t('features.algorithms.runtime.graph.tarjan.results.assigned'),
+    unseen: t('features.algorithms.runtime.graph.tarjan.results.unseen'),
+    onStack: t('features.algorithms.runtime.graph.tarjan.results.onStack'),
+    closedScc: t('features.algorithms.runtime.graph.tarjan.results.closedScc'),
+  },
+  phases: {
+    open: t('features.algorithms.runtime.graph.tarjan.phases.open'),
+    inspect: t('features.algorithms.runtime.graph.tarjan.phases.inspect'),
+    descend: t('features.algorithms.runtime.graph.tarjan.phases.descend'),
+    backEdge: t('features.algorithms.runtime.graph.tarjan.phases.backEdge'),
+    close: t('features.algorithms.runtime.graph.tarjan.phases.close'),
+    complete: t('features.algorithms.runtime.graph.tarjan.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.tarjan.phases.initialize'),
+  },
+} as const;
 
 export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -26,7 +61,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
     tarjanStack,
     componentOrder,
     currentSeedId,
-    description: 'Initialize index and low-link arrays, then run one DFS that keeps active nodes on the Tarjan stack.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -46,7 +81,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
       componentOrder,
       currentSeedId,
       currentNodeId: node.id,
-      description: `Start a DFS seed at ${labelOf(labelMap, node.id)} because it has not received an index yet.`,
+      description: i18nText(I18N.descriptions.seed, { node: labelOf(labelMap, node.id) }),
       activeCodeLine: 4,
       phase: 'pick-node',
     });
@@ -64,7 +99,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
     tarjanStack,
     componentOrder,
     currentSeedId,
-    description: `Tarjan complete. Found ${componentCount} strongly connected component(s).`,
+    description: i18nText(I18N.descriptions.complete, { count: componentCount }),
     activeCodeLine: 18,
     phase: 'graph-complete',
   });
@@ -87,7 +122,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
       componentOrder,
       currentSeedId,
       currentNodeId: nodeId,
-      description: `Assign index ${index} to ${labelOf(labelMap, nodeId)} and push it onto the Tarjan stack.`,
+      description: i18nText(I18N.descriptions.open, { index, node: labelOf(labelMap, nodeId) }),
       activeCodeLine: 6,
       phase: 'pick-node',
     });
@@ -108,7 +143,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
         currentSeedId,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `Inspect ${labelOf(labelMap, nodeId)} → ${neighborLabel}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, nodeId), to: neighborLabel }),
         activeCodeLine: 8,
         phase: 'inspect-edge',
         computation: inspectionComputation(neighborId),
@@ -130,13 +165,13 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `${neighborLabel} is new, so descend and continue the DFS there.`,
+          description: i18nText(I18N.descriptions.descend, { node: neighborLabel }),
           activeCodeLine: 10,
           phase: 'relax',
           computation: {
             candidateLabel: neighborLabel,
             expression: `index[${neighborLabel}] = ∅`,
-            result: 'visit child',
+            result: i18nText(I18N.results.visitChild),
             decision: 'tree edge',
           },
         });
@@ -158,7 +193,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
           currentSeedId,
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
-          description: `Return from ${neighborLabel} and propagate its low-link back to ${labelOf(labelMap, nodeId)}.`,
+          description: i18nText(I18N.descriptions.propagate, { child: neighborLabel, node: labelOf(labelMap, nodeId) }),
           activeCodeLine: 11,
           phase: 'settle-node',
           computation: {
@@ -187,7 +222,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
           currentSeedId,
           currentNodeId: nodeId,
           activeEdgeId: edge.id,
-          description: `${neighborLabel} is still on the Tarjan stack, so its index can tighten the low-link of ${labelOf(labelMap, nodeId)}.`,
+          description: i18nText(I18N.descriptions.backEdge, { child: neighborLabel, node: labelOf(labelMap, nodeId) }),
           activeCodeLine: 13,
           phase: 'skip-relax',
           computation: {
@@ -212,13 +247,13 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
         currentSeedId,
         currentNodeId: nodeId,
         activeEdgeId: edge.id,
-        description: `${neighborLabel} already belongs to a finished SCC, so this edge cannot change the active low-link.`,
+        description: i18nText(I18N.descriptions.assigned, { node: neighborLabel }),
         activeCodeLine: 14,
         phase: 'skip-relax',
         computation: {
           candidateLabel: neighborLabel,
           expression: `component = ${componentLabel(componentMap.get(neighborId))}`,
-          result: 'assigned',
+          result: i18nText(I18N.results.assigned),
           decision: 'ignore finished SCC',
         },
       });
@@ -251,7 +286,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
         componentOrder,
         currentSeedId,
         currentNodeId: nodeId,
-        description: `${labelOf(labelMap, nodeId)} is the root of an SCC, so pop until it closes ${summary}.`,
+        description: i18nText(I18N.descriptions.emit, { node: labelOf(labelMap, nodeId), component: summary }),
         activeCodeLine: 16,
         phase: 'settle-node',
         computation: {
@@ -275,7 +310,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
       componentOrder,
       currentSeedId,
       currentNodeId: nodeId,
-      description: `${labelOf(labelMap, nodeId)} stays on the Tarjan stack because its SCC is still open.`,
+      description: i18nText(I18N.descriptions.stay, { node: labelOf(labelMap, nodeId) }),
       activeCodeLine: 17,
       phase: 'settle-node',
     });
@@ -287,7 +322,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
       return {
         candidateLabel: neighborLabel,
         expression: `index[${neighborLabel}] = ∅`,
-        result: 'unseen',
+        result: i18nText(I18N.results.unseen),
         decision: 'visit child',
       };
     }
@@ -296,7 +331,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
       return {
         candidateLabel: neighborLabel,
         expression: `index = ${indexOrDash(indexMap, neighborId)}`,
-        result: 'on stack',
+        result: i18nText(I18N.results.onStack),
         decision: 'use back edge for low-link',
       };
     }
@@ -304,7 +339,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
     return {
       candidateLabel: neighborLabel,
       expression: componentLabel(componentMap.get(neighborId)),
-      result: 'closed SCC',
+      result: i18nText(I18N.results.closedScc),
       decision: 'ignore assigned component',
     };
   }
@@ -320,7 +355,7 @@ function createStep(args: {
   readonly tarjanStack: readonly string[];
   readonly componentOrder: readonly string[];
   readonly currentSeedId: string;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -358,7 +393,7 @@ function createStep(args: {
     detailLabel: 'Tarjan SCC map',
     detailValue: summarizeAllComponents(args.componentOrder),
     visitOrderLabel: 'SCC order',
-    phaseLabel: phaseLabel(args.phase),
+    phaseLabel: i18nText(phaseLabel(args.phase)),
     description: args.description,
     activeCodeLine: args.activeCodeLine,
     phase: args.phase,
@@ -405,18 +440,18 @@ function componentLabel(componentId: number | null | undefined): string {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Open DFS node';
+      return I18N.phases.open;
     case 'inspect-edge':
-      return 'Inspect outgoing edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Descend into child';
+      return I18N.phases.descend;
     case 'skip-relax':
-      return 'Back-edge low-link update';
+      return I18N.phases.backEdge;
     case 'settle-node':
-      return 'Close or emit SCC';
+      return I18N.phases.close;
     case 'graph-complete':
-      return 'SCC discovery complete';
+      return I18N.phases.complete;
     default:
-      return 'Initialize Tarjan';
+      return I18N.phases.initialize;
   }
 }

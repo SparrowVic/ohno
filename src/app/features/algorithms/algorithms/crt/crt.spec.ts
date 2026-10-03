@@ -12,7 +12,9 @@ function finalLines(taskId: string | null = null): readonly ScratchpadLine[] {
 }
 
 function contents(lines: readonly ScratchpadLine[]): readonly string[] {
-  return lines.map((line) => (typeof line.content === 'string' ? line.content : line.content.key));
+  return lines.map((line) =>
+    typeof line.content === 'string' ? line.content : `${line.content.key} ${JSON.stringify(line.content.params ?? {})}`,
+  );
 }
 
 function hasLine(lines: readonly ScratchpadLine[], fragment: string): boolean {
@@ -82,7 +84,7 @@ describe('crt', () => {
 
     expect(noResult?.kind).toBe('result');
     expect(noResult?.marker).toBe('×');
-    expect(noResult?.content).toBe('Brak rozwiazan');
+    expect(noResult?.content).toMatchObject({ key: 'features.algorithms.runtime.scratchpadLab.crt.sections.noSolutions' });
     expect(hasLine(lines, '6 \\nmid 9')).toBe(true);
     expect(hasLine(lines, '^{-1}')).toBe(false);
   });

@@ -28,7 +28,7 @@ describe('floyd-warshall', () => {
     const finalStep = steps.at(-1);
 
     expect(finalStep?.phase).toBe('graph-complete');
-    expect(finalStep?.matrix?.resultLabel).toBe('updates 22');
+    expect(finalStep?.matrix?.resultLabel).toEqual({ key: 'features.algorithms.runtime.matrix.floydWarshall.results.updates', params: { count: 22 } });
     expect(cellValue(finalStep, 0, 3)).toBe('6');
     expect(cellValue(finalStep, 1, 0)).toBe('5');
     expect(cellValue(finalStep, 4, 1)).toBe('7');
@@ -47,7 +47,7 @@ describe('floyd-warshall', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.matrix?.resultLabel).toBe('updates 0');
+    expect(finalStep?.matrix?.resultLabel).toEqual({ key: 'features.algorithms.runtime.matrix.floydWarshall.results.updates', params: { count: 0 } });
     expect(cellValue(finalStep, 0, 2)).toBe('∞');
     expect(cellValue(finalStep, 2, 0)).toBe('∞');
   });

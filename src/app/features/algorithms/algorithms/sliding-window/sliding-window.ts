@@ -39,6 +39,9 @@ const I18N = {
     best: t('features.algorithms.runtime.pointerLab.slidingWindow.stats.best'),
     windowSize: t('features.algorithms.runtime.pointerLab.slidingWindow.stats.windowSize'),
   },
+  statValues: {
+    best: t('features.algorithms.runtime.pointerLab.slidingWindow.statValues.best'),
+  },
 } as const;
 
 function buildCells(
@@ -104,7 +107,7 @@ export function* slidingWindowGenerator(scenario: SlidingWindowScenario): Genera
       },
       {
         label: I18N.stats.best,
-        value: `${partial.best}  @[${partial.bestLeft}..${partial.bestRight}]`,
+        value: i18nText(I18N.statValues.best, { best: partial.best, left: partial.bestLeft, right: partial.bestRight }),
         tone: 'success',
       },
       {

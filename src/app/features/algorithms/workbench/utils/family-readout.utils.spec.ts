@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { convexHullGenerator } from '../../algorithms/convex-hull';
 import { lineIntersectionGenerator } from '../../algorithms/line-intersection';
@@ -83,7 +84,6 @@ import {
   graphReadout,
   isRadixStep,
   matrixGridOperationCounts,
-  matrixPhaseText,
   matrixResultCount,
   networkReadout,
   operationProgress,
@@ -159,7 +159,7 @@ describe('familyStageReadout', () => {
     expect(readout.gauge?.count).toBe(8);
     const last = readoutAt(steps, steps.length - 1, 'dijkstra-graph')!;
     expect(last.tone).toBe('lime');
-    expect(last.phaseLabel).toBe(steps.at(-1)!.graph!.phaseLabel);
+    expect(last.phaseLabel).toBe('features.algorithms.runtime.graph.dijkstra.phases.complete');
   });
 
   it('reads the text and pattern cursors from a KMP step and counts scanned characters', () => {
@@ -590,7 +590,8 @@ describe('networkReadout', () => {
   });
 });
 
-const MATRIX_PHASE_KEY = 'features.algorithms.display.phases.matrix';
+const FLOYD_PHASE_KEY = 'features.algorithms.runtime.matrix.floydWarshall.phases';
+const HUNGARIAN_PHASE_KEY = 'features.algorithms.runtime.matrix.hungarian.phases';
 
 function meterIds(readout: StageReadout): readonly string[] {
   return readout.meters.map((item) => item.id);
@@ -701,19 +702,12 @@ describe('dpReadout', () => {
 describe('matrixReadout', () => {
   const floyd = history(floydWarshallGenerator(createFloydWarshallScenario(5)));
 
-  it('maps every Floyd-Warshall phase to a display key so no English reaches the op-line', () => {
+  it('reads every Floyd-Warshall phase from a runtime key so no English reaches the op-line', () => {
     floyd.forEach((step, index) => {
-      expect(readoutAt(floyd, index, 'matrix')!.phaseLabel.startsWith(MATRIX_PHASE_KEY)).toBe(true);
+      expect(readoutAt(floyd, index, 'matrix')!.phaseLabel.startsWith(FLOYD_PHASE_KEY)).toBe(true);
     });
-    expect(matrixPhaseText('Pivot C')).toEqual({ key: `${MATRIX_PHASE_KEY}.pivot`, params: { pivot: 'C' } });
-    expect(matrixPhaseText('Pivot C complete')).toEqual({ key: `${MATRIX_PHASE_KEY}.pivotDone`, params: { pivot: 'C' } });
-    expect(matrixPhaseText('Adjust matrix 2')).toEqual({ key: `${MATRIX_PHASE_KEY}.adjustMatrix`, params: { round: '2' } });
-  });
-
-  it('falls back to the generic phase when a matrix phase is unknown', () => {
-    const step = floyd[3]!;
-    const unknown = { ...step, matrix: { ...step.matrix!, phaseLabel: 'Something new' } };
-    expect(readoutAt([floyd[0]!, floyd[1]!, floyd[2]!, unknown, floyd[4]!], 3, 'matrix')!.phaseLabel).toBe('Krok');
+    const pivot = floyd.find((step) => step.phase === 'pass-complete')!.matrix!;
+    expect(pivot.phaseLabel).toEqual({ key: `${FLOYD_PHASE_KEY}.pivotDone`, params: { pivot: 'A' } });
   });
 
   it('counts cumulative Floyd-Warshall improvements instead of the current step only', () => {
@@ -754,7 +748,7 @@ describe('matrixReadout', () => {
   );
 
   it('shows matched, lines and zeros for Hungarian and reaches a cover step', () => {
-    const coverIndex = hungarian.findIndex((step) => step.matrix?.phaseLabel.startsWith('Cover zeros'));
+    const coverIndex = hungarian.findIndex((step) => isI18nText(step.matrix?.phaseLabel) && step.matrix.phaseLabel.key === `${HUNGARIAN_PHASE_KEY}.coverZeros`);
     expect(coverIndex).toBeGreaterThan(0);
     const cover = readoutAt(hungarian, coverIndex, 'matrix')!;
     expect(meterIds(cover)).toEqual(['matched', 'lines', 'zeros']);
@@ -763,7 +757,7 @@ describe('matrixReadout', () => {
     expect(covered).toBeGreaterThan(0);
     expect(meterOf(cover, 'lines')).toMatchObject({ value: covered, total: 4 });
     expect(meterOf(cover, 'matched')).toMatchObject({ value: matrixResultCount(state), total: 4 });
-    expect(cover.phaseLabel).toBe(`${MATRIX_PHASE_KEY}.coverZeros`);
+    expect(cover.phaseLabel).toBe(`${HUNGARIAN_PHASE_KEY}.coverZeros`);
     expect(cover.gaugeLabel).toBe('g:matched');
     const last = readoutAt(hungarian, hungarian.length - 1, 'matrix')!;
     expect(meterValue(last, 'matched')).toBe(4);
@@ -818,7 +812,9 @@ describe('matrixGridReadout', () => {
   it('labels the Simplex pivot with the entering column and fills the gauge by the end', () => {
     const selectIndex = simplex.findIndex((step) => step.matrixGrid?.tone === 'compute');
     expect(meterValue(gridAt(simplex, selectIndex), 'pivot')).toBe('x');
-    const pivotIndex = simplex.findIndex((step) => step.matrixGrid?.cells.some((cell) => cell.state === 'pivot'));
+    const pivotIndex = simplex.findIndex((step) =>
+      step.matrixGrid?.cells.some((cell) => cell.state === 'pivot' && cell.row < step.matrixGrid!.rows - 1),
+    );
     const pivot = gridAt(simplex, pivotIndex);
     expect(meterValue(pivot, 'pivot')).toBe('x');
     expect(registerMap(pivot)).toEqual({ 'r:row': 'R₂', 'r:col': 'x' });

@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -8,6 +11,27 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  phases: {
+    initialize: t('features.algorithms.runtime.graph.bfs.phases.initialize'),
+    dequeue: t('features.algorithms.runtime.graph.bfs.phases.dequeue'),
+    inspect: t('features.algorithms.runtime.graph.bfs.phases.inspect'),
+    enqueue: t('features.algorithms.runtime.graph.bfs.phases.enqueue'),
+    skip: t('features.algorithms.runtime.graph.bfs.phases.skip'),
+    close: t('features.algorithms.runtime.graph.bfs.phases.close'),
+    complete: t('features.algorithms.runtime.graph.bfs.phases.complete'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.bfs.descriptions.initialize'),
+    dequeue: t('features.algorithms.runtime.graph.bfs.descriptions.dequeue'),
+    inspect: t('features.algorithms.runtime.graph.bfs.descriptions.inspect'),
+    skip: t('features.algorithms.runtime.graph.bfs.descriptions.skip'),
+    discover: t('features.algorithms.runtime.graph.bfs.descriptions.discover'),
+    close: t('features.algorithms.runtime.graph.bfs.descriptions.close'),
+    complete: t('features.algorithms.runtime.graph.bfs.descriptions.complete'),
+  },
+} as const;
 
 export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -28,7 +52,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
     visited,
     frontierOrder: queue,
     visitOrder,
-    description: `Initialize queue with ${labelOf(nodeMap, graph.sourceId)} and set its level to 0.`,
+    description: i18nText(I18N.descriptions.initialize, { source: labelOf(nodeMap, graph.sourceId) }),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -46,7 +70,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
       frontierOrder: queue,
       visitOrder,
       currentNodeId,
-      description: `Dequeue ${labelOf(nodeMap, currentNodeId)} and expand its neighbors breadth-first.`,
+      description: i18nText(I18N.descriptions.dequeue, { node: labelOf(nodeMap, currentNodeId) }),
       activeCodeLine: 6,
       phase: 'pick-node',
     });
@@ -65,7 +89,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
         visitOrder,
         currentNodeId,
         activeEdgeId: edge.id,
-        description: `Inspect ${labelOf(nodeMap, currentNodeId)} → ${neighborLabel}.`,
+        description: i18nText(I18N.descriptions.inspect, { from: labelOf(nodeMap, currentNodeId), to: neighborLabel }),
         activeCodeLine: 7,
         phase: 'inspect-edge',
         computation: {
@@ -87,7 +111,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
           visitOrder,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Skip ${neighborLabel}; BFS already discovered it earlier.`,
+          description: i18nText(I18N.descriptions.skip, { node: neighborLabel }),
           activeCodeLine: 8,
           phase: 'skip-relax',
           computation: {
@@ -116,7 +140,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
         currentNodeId,
         activeEdgeId: edge.id,
         relaxedEdgeId: edge.id,
-        description: `Discover ${neighborLabel} at level ${currentLevel + 1} and enqueue it.`,
+        description: i18nText(I18N.descriptions.discover, { node: neighborLabel, level: currentLevel + 1 }),
         activeCodeLine: 10,
         phase: 'relax',
         computation: {
@@ -140,7 +164,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
       frontierOrder: queue,
       visitOrder,
       currentNodeId,
-      description: `Mark ${labelOf(nodeMap, currentNodeId)} as visited and continue with the next queue node.`,
+      description: i18nText(I18N.descriptions.close, { node: labelOf(nodeMap, currentNodeId) }),
       activeCodeLine: 13,
       phase: 'settle-node',
     });
@@ -154,7 +178,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
     visited,
     frontierOrder: queue,
     visitOrder,
-    description: `BFS complete. Every reachable node has been visited level by level from ${labelOf(nodeMap, graph.sourceId)}.`,
+    description: i18nText(I18N.descriptions.complete, { source: labelOf(nodeMap, graph.sourceId) }),
     activeCodeLine: 15,
     phase: 'graph-complete',
   });
@@ -168,7 +192,7 @@ function createStep(args: {
   readonly visited: ReadonlySet<string>;
   readonly frontierOrder: readonly string[];
   readonly visitOrder: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -236,7 +260,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Level',
       secondaryLabel: 'Prev',
       frontierLabel: 'Queue',
@@ -291,18 +315,18 @@ function describePath(
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Dequeue node';
+      return I18N.phases.dequeue;
     case 'inspect-edge':
-      return 'Inspect edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Enqueue neighbor';
+      return I18N.phases.enqueue;
     case 'skip-relax':
-      return 'Skip visited neighbor';
+      return I18N.phases.skip;
     case 'settle-node':
-      return 'Close current node';
+      return I18N.phases.close;
     case 'graph-complete':
-      return 'Traversal complete';
+      return I18N.phases.complete;
     default:
-      return 'Initialize BFS';
+      return I18N.phases.initialize;
   }
 }

@@ -44,6 +44,18 @@ const COVER_SCENARIO: HungarianScenario = {
   ],
 };
 
+const DIRECT_SCENARIO: HungarianScenario = {
+  kind: 'hungarian',
+  rowLabels: ['Ava', 'Ben', 'Cara', 'Dean'],
+  colLabels: ['UI', 'API', 'DB', 'QA'],
+  costs: [
+    [9, 2, 7, 8],
+    [6, 4, 3, 7],
+    [5, 8, 1, 8],
+    [7, 6, 9, 4],
+  ],
+};
+
 function collect(generator: Generator<SortStep>): SortStep[] {
   return [...generator];
 }
@@ -54,7 +66,7 @@ function matrixOf(step: SortStep | undefined): MatrixTraceState {
 }
 
 const floydSteps = collect(floydWarshallGenerator(createFloydWarshallScenario(5)));
-const hungarianSteps = collect(hungarianAlgorithmGenerator(createHungarianScenario(4)));
+const hungarianSteps = collect(hungarianAlgorithmGenerator(DIRECT_SCENARIO));
 const coverSteps = collect(hungarianAlgorithmGenerator(COVER_SCENARIO));
 
 function findFloyd(predicate: (state: MatrixTraceState) => boolean): MatrixTraceState {
@@ -299,5 +311,17 @@ describe('matrixDensity', () => {
     expect(matrixDensity(4)).toBe('regular');
     expect(matrixDensity(6)).toBe('compact');
     expect(matrixDensity(9)).toBe('dense');
+  });
+});
+
+describe('Hungarian scenarios', () => {
+  it('reach the cover-and-adjust branch at both sizes', () => {
+    for (const size of [4, 5]) {
+      const labels = collect(hungarianAlgorithmGenerator(createHungarianScenario(size))).map(
+        (step) => step.matrix?.computation?.label,
+      );
+      expect(labels).toContain('Minimum cover');
+      expect(labels).toContain('Adjustment');
+    }
   });
 });

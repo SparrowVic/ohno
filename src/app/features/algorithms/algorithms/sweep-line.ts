@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   GeometryEventChip,
   GeometryRect,
@@ -5,6 +8,15 @@ import {
   SweepLineStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.sweepLine.descriptions.initialize'),
+    enter: t('features.algorithms.runtime.geometry.sweepLine.descriptions.enter'),
+    leave: t('features.algorithms.runtime.geometry.sweepLine.descriptions.leave'),
+    complete: t('features.algorithms.runtime.geometry.sweepLine.descriptions.complete'),
+  },
+} as const;
 
 export interface SweepLineScenario {
   readonly rectangles: readonly {
@@ -102,7 +114,7 @@ function makeStep(
   sweepX: number | null,
   coveredArea: number,
   currentEventLabel: string,
-  description: string,
+  description: TranslatableText,
   activeCodeLine: number,
   phase: string,
   activeId: number | null,
@@ -158,7 +170,7 @@ export function* sweepLineGenerator(scenario: SweepLineScenario): Generator<Sort
     null,
     coveredArea,
     'boot',
-    'Queue all rectangle edges and prepare the area scanner.',
+    i18nText(I18N.descriptions.initialize),
     1,
     'init',
     null,
@@ -185,7 +197,7 @@ export function* sweepLineGenerator(scenario: SweepLineScenario): Generator<Sort
       event.x,
       coveredArea,
       `${event.kind === 'start' ? 'Enter' : 'Leave'} R${event.rectId}`,
-      `Sweep hits ${event.kind === 'start' ? 'the left edge of' : 'the right edge of'} R${event.rectId}; recompute merged y-spans.`,
+      i18nText(event.kind === 'start' ? I18N.descriptions.enter : I18N.descriptions.leave, { rect: `R${event.rectId}` }),
       event.kind === 'start' ? 3 : 4,
       'event',
       event.rectId,
@@ -200,7 +212,7 @@ export function* sweepLineGenerator(scenario: SweepLineScenario): Generator<Sort
     96,
     coveredArea,
     'complete',
-    `Sweep complete: covered union area = ${coveredArea.toFixed(1)}.`,
+    i18nText(I18N.descriptions.complete, { area: coveredArea.toFixed(1) }),
     5,
     'complete',
     null,

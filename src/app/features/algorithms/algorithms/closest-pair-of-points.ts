@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { I18nTextParams, i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   ClosestPairStepState,
   GeometryBand,
@@ -7,6 +10,33 @@ import {
   PointStatus,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.geometry.closestPair.descriptions.initialize'),
+    sort: t('features.algorithms.runtime.geometry.closestPair.descriptions.sort'),
+    baseSingle: {
+      whole: t('features.algorithms.runtime.geometry.closestPair.descriptions.baseSingle.whole'),
+      slice: t('features.algorithms.runtime.geometry.closestPair.descriptions.baseSingle.slice'),
+    },
+    baseBrute: {
+      whole: t('features.algorithms.runtime.geometry.closestPair.descriptions.baseBrute.whole'),
+      slice: t('features.algorithms.runtime.geometry.closestPair.descriptions.baseBrute.slice'),
+    },
+    split: {
+      whole: t('features.algorithms.runtime.geometry.closestPair.descriptions.split.whole'),
+      slice: t('features.algorithms.runtime.geometry.closestPair.descriptions.split.slice'),
+    },
+    compare: t('features.algorithms.runtime.geometry.closestPair.descriptions.compare'),
+    localBest: t('features.algorithms.runtime.geometry.closestPair.descriptions.localBest'),
+    merge: t('features.algorithms.runtime.geometry.closestPair.descriptions.merge'),
+    strip: t('features.algorithms.runtime.geometry.closestPair.descriptions.strip'),
+    stripCheck: t('features.algorithms.runtime.geometry.closestPair.descriptions.stripCheck'),
+    stripWin: t('features.algorithms.runtime.geometry.closestPair.descriptions.stripWin'),
+    complete: t('features.algorithms.runtime.geometry.closestPair.descriptions.complete'),
+    noPair: t('features.algorithms.runtime.geometry.closestPair.descriptions.noPair'),
+  },
+} as const;
 
 export interface ClosestPairScenario {
   readonly points: readonly { readonly x: number; readonly y: number }[];
@@ -25,7 +55,7 @@ interface PairResult {
 
 interface ClosestPairStepOptions {
   readonly phase: string;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly activeIds: ReadonlySet<number>;
   readonly leftIds?: ReadonlySet<number>;
@@ -66,6 +96,16 @@ function comparePairs(left: PairResult | null, right: PairResult | null): PairRe
   if (!left) return right;
   if (!right) return left;
   return left.distance <= right.distance ? left : right;
+}
+
+function regionDescription(
+  keys: { readonly whole: string; readonly slice: string },
+  trail: readonly string[],
+  count: number,
+  extra: I18nTextParams = {},
+): TranslatableText {
+  const path = trail.filter((part) => part !== 'root').join(' / ');
+  return path ? i18nText(keys.slice, { path, count, ...extra }) : i18nText(keys.whole, { count, ...extra });
 }
 
 function pairLabel(pair: readonly [number, number] | null | undefined): string {
@@ -218,7 +258,7 @@ export function* closestPairOfPointsGenerator(
 
   yield makeStep(rawPoints, {
     phase: 'init',
-    description: 'Scatter the points and prepare the divide-and-conquer canvas.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 1,
     activeIds: allIds,
     regionBounds: buildRegionBounds(rawPoints),
@@ -239,7 +279,7 @@ export function* closestPairOfPointsGenerator(
 
   yield makeStep(rawPoints, {
     phase: 'sort',
-    description: 'Sort once by x and y so every recursive split can reuse the same geometry ordering.',
+    description: i18nText(I18N.descriptions.sort),
     activeCodeLine: 2,
     activeIds: allIds,
     regionBounds: buildRegionBounds(rawPoints),
@@ -271,7 +311,7 @@ export function* closestPairOfPointsGenerator(
     if (px.length <= 1) {
       yield makeStep(rawPoints, {
         phase: 'base',
-        description: `Base case in ${regionLabel}: one point cannot form a pair yet.`,
+        description: regionDescription(I18N.descriptions.baseSingle, trail, px.length),
         activeCodeLine: 6,
         activeIds,
         regionBounds,
@@ -291,7 +331,7 @@ export function* closestPairOfPointsGenerator(
 
       yield makeStep(rawPoints, {
         phase: 'base',
-        description: `Base case in ${regionLabel}: brute-force the small cluster.`,
+        description: regionDescription(I18N.descriptions.baseBrute, trail, px.length),
         activeCodeLine: 6,
         activeIds,
         regionBounds,
@@ -312,7 +352,7 @@ export function* closestPairOfPointsGenerator(
 
           yield makeStep(rawPoints, {
             phase: 'compare',
-            description: `Compare ${pairLabel(currentPair)} inside the small region.`,
+            description: i18nText(I18N.descriptions.compare, { pair: pairLabel(currentPair) }),
             activeCodeLine: 6,
             activeIds,
             currentPair,
@@ -333,7 +373,7 @@ export function* closestPairOfPointsGenerator(
             best = { pointIds: currentPair, distance: currentDistance };
             yield makeStep(rawPoints, {
               phase: 'update',
-              description: `${pairLabel(currentPair)} becomes the local best with distance ${currentDistance.toFixed(2)}.`,
+              description: i18nText(I18N.descriptions.localBest, { pair: pairLabel(currentPair), distance: currentDistance.toFixed(2) }),
               activeCodeLine: 6,
               activeIds,
               bestPair: best.pointIds,
@@ -368,7 +408,7 @@ export function* closestPairOfPointsGenerator(
 
     yield makeStep(rawPoints, {
       phase: 'divide',
-      description: `Split ${regionLabel} at x = ${midX.toFixed(1)} and recurse on both halves.`,
+      description: regionDescription(I18N.descriptions.split, trail, px.length, { x: midX.toFixed(1) }),
       activeCodeLine: 7,
       activeIds,
       leftIds,
@@ -396,7 +436,7 @@ export function* closestPairOfPointsGenerator(
 
     yield makeStep(rawPoints, {
       phase: 'merge',
-      description: `Take the better half-solution and prepare the strip around the split line.`,
+      description: i18nText(I18N.descriptions.merge),
       activeCodeLine: 8,
       activeIds,
       leftIds,
@@ -430,7 +470,7 @@ export function* closestPairOfPointsGenerator(
 
     yield makeStep(rawPoints, {
       phase: 'strip',
-      description: `Only points inside the ${currentBest.distance.toFixed(2)} strip can still beat the current best.`,
+      description: i18nText(I18N.descriptions.strip, { width: currentBest.distance.toFixed(2) }),
       activeCodeLine: 9,
       activeIds,
       stripIds,
@@ -474,7 +514,7 @@ export function* closestPairOfPointsGenerator(
 
         yield makeStep(rawPoints, {
           phase: 'compare-strip',
-          description: `Check ${pairLabel(currentPair)} inside the strip sorted by y.`,
+          description: i18nText(I18N.descriptions.stripCheck, { pair: pairLabel(currentPair) }),
           activeCodeLine: 10,
           activeIds,
           stripIds,
@@ -512,7 +552,7 @@ export function* closestPairOfPointsGenerator(
           currentBest = { pointIds: currentPair, distance: currentDistance };
           yield makeStep(rawPoints, {
             phase: 'update',
-            description: `Strip comparison wins: ${pairLabel(currentPair)} improves the best distance to ${currentDistance.toFixed(2)}.`,
+            description: i18nText(I18N.descriptions.stripWin, { pair: pairLabel(currentPair), distance: currentDistance.toFixed(2) }),
             activeCodeLine: 10,
             activeIds,
             stripIds,
@@ -555,8 +595,8 @@ export function* closestPairOfPointsGenerator(
   yield makeStep(rawPoints, {
     phase: 'complete',
     description: best
-      ? `Closest pair found: ${pairLabel(best.pointIds)} at distance ${best.distance.toFixed(2)}.`
-      : 'No valid pair found.',
+      ? i18nText(I18N.descriptions.complete, { pair: pairLabel(best.pointIds), distance: best.distance.toFixed(2) })
+      : i18nText(I18N.descriptions.noPair),
     activeCodeLine: 11,
     activeIds: allIds,
     bestPair: best?.pointIds ?? null,

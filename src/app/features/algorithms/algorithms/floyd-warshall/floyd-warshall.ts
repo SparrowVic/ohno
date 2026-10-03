@@ -1,7 +1,38 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../../models/matrix';
 import { SortStep } from '../../models/sort-step';
 import { FloydWarshallScenario } from '../../utils/scenarios/matrix/matrix-scenarios';
 import { cellId, createMatrixStep } from '../matrix-step';
+
+const I18N = {
+  phases: {
+    initialize: t('features.algorithms.runtime.matrix.floydWarshall.phases.initialize'),
+    pivot: t('features.algorithms.runtime.matrix.floydWarshall.phases.pivot'),
+    pivotDone: t('features.algorithms.runtime.matrix.floydWarshall.phases.pivotDone'),
+    complete: t('features.algorithms.runtime.matrix.floydWarshall.phases.complete'),
+  },
+  statuses: {
+    initialize: t('features.algorithms.runtime.matrix.floydWarshall.statuses.initialize'),
+    pivot: t('features.algorithms.runtime.matrix.floydWarshall.statuses.pivot'),
+    compare: t('features.algorithms.runtime.matrix.floydWarshall.statuses.compare'),
+    update: t('features.algorithms.runtime.matrix.floydWarshall.statuses.update'),
+    pivotDone: t('features.algorithms.runtime.matrix.floydWarshall.statuses.pivotDone'),
+    complete: t('features.algorithms.runtime.matrix.floydWarshall.statuses.complete'),
+  },
+  results: {
+    updates: t('features.algorithms.runtime.matrix.floydWarshall.results.updates'),
+  },
+  descriptions: {
+    initialize: t('features.algorithms.runtime.matrix.floydWarshall.descriptions.initialize'),
+    pivot: t('features.algorithms.runtime.matrix.floydWarshall.descriptions.pivot'),
+    compare: t('features.algorithms.runtime.matrix.floydWarshall.descriptions.compare'),
+    update: t('features.algorithms.runtime.matrix.floydWarshall.descriptions.update'),
+    pivotDone: t('features.algorithms.runtime.matrix.floydWarshall.descriptions.pivotDone'),
+    complete: t('features.algorithms.runtime.matrix.floydWarshall.descriptions.complete'),
+  },
+} as const;
 
 export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Generator<SortStep> {
   const dist = scenario.matrix.map((row) => [...row]);
@@ -10,14 +41,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
   yield createStep({
     scenario,
     dist,
-    phaseLabel: 'Initialize distance matrix',
-    statusLabel: 'Direct edges and self-distances loaded',
-    resultLabel: 'updates 0',
+    phaseLabel: i18nText(I18N.phases.initialize),
+    statusLabel: i18nText(I18N.statuses.initialize),
+    resultLabel: i18nText(I18N.results.updates, { count: 0 }),
     focusItemsLabel: 'Nodes',
     focusItems: scenario.labels,
     secondaryItemsLabel: 'Meaning',
     secondaryItems: ['∞ means currently unreachable'],
-    description: 'Start from the adjacency matrix: direct edges are known, everything else is unreachable.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -29,14 +60,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
     yield createStep({
       scenario,
       dist,
-      phaseLabel: `Pivot ${pivotLabel}`,
-      statusLabel: `Allow routes that pass through ${pivotLabel}`,
-      resultLabel: `updates ${totalUpdates}`,
+      phaseLabel: i18nText(I18N.phases.pivot, { pivot: pivotLabel }),
+      statusLabel: i18nText(I18N.statuses.pivot, { pivot: pivotLabel }),
+      resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
       focusItemsLabel: 'Pivot node',
       focusItems: [pivotLabel],
       secondaryItemsLabel: 'Changed pairs',
       secondaryItems: pivotUpdates,
-      description: `Use ${pivotLabel} as the newest allowed intermediate node for every pair (i, j).`,
+      description: i18nText(I18N.descriptions.pivot, { pivot: pivotLabel }),
       activeCodeLine: 3,
       pivotIndex: k,
       computation: {
@@ -58,14 +89,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
         yield createStep({
           scenario,
           dist,
-          phaseLabel: `Pivot ${pivotLabel}`,
-          statusLabel: `Compare ${scenario.labels[i]} → ${scenario.labels[j]}`,
-          resultLabel: `updates ${totalUpdates}`,
+          phaseLabel: i18nText(I18N.phases.pivot, { pivot: pivotLabel }),
+          statusLabel: i18nText(I18N.statuses.compare, { from: scenario.labels[i], to: scenario.labels[j] }),
+          resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
           focusItemsLabel: 'Pivot node',
           focusItems: [pivotLabel],
           secondaryItemsLabel: 'Changed pairs',
           secondaryItems: pivotUpdates.slice(-5),
-          description: `Check whether ${scenario.labels[i]} → ${pivotLabel} → ${scenario.labels[j]} beats the current path.`,
+          description: i18nText(I18N.descriptions.compare, { from: scenario.labels[i], pivot: pivotLabel, to: scenario.labels[j] }),
           activeCodeLine: 4,
           activeRow: i,
           activeCol: j,
@@ -98,14 +129,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
         yield createStep({
           scenario,
           dist,
-          phaseLabel: `Pivot ${pivotLabel}`,
-          statusLabel: `Update ${scenario.labels[i]} → ${scenario.labels[j]}`,
-          resultLabel: `updates ${totalUpdates}`,
+          phaseLabel: i18nText(I18N.phases.pivot, { pivot: pivotLabel }),
+          statusLabel: i18nText(I18N.statuses.update, { from: scenario.labels[i], to: scenario.labels[j] }),
+          resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
           focusItemsLabel: 'Pivot node',
           focusItems: [pivotLabel],
           secondaryItemsLabel: 'Changed pairs',
           secondaryItems: pivotUpdates.slice(-5),
-          description: `Replace the old value with the shorter route that passes through ${pivotLabel}.`,
+          description: i18nText(I18N.descriptions.update, { pivot: pivotLabel }),
           activeCodeLine: 5,
           activeRow: i,
           activeCol: j,
@@ -127,14 +158,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
     yield createStep({
       scenario,
       dist,
-      phaseLabel: `Pivot ${pivotLabel} complete`,
-      statusLabel: `${pivotUpdates.length} pair(s) improved`,
-      resultLabel: `updates ${totalUpdates}`,
+      phaseLabel: i18nText(I18N.phases.pivotDone, { pivot: pivotLabel }),
+      statusLabel: i18nText(I18N.statuses.pivotDone, { count: pivotUpdates.length }),
+      resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
       focusItemsLabel: 'Pivot node',
       focusItems: [pivotLabel],
       secondaryItemsLabel: 'Changed pairs',
       secondaryItems: pivotUpdates.length > 0 ? pivotUpdates : ['no change this pivot'],
-      description: `All pairs have been tested against pivot ${pivotLabel}.`,
+      description: i18nText(I18N.descriptions.pivotDone, { pivot: pivotLabel }),
       activeCodeLine: 6,
       pivotIndex: k,
       phase: 'pass-complete',
@@ -144,14 +175,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
   yield createStep({
     scenario,
     dist,
-    phaseLabel: 'All-pairs shortest paths ready',
-    statusLabel: 'Every pivot has been processed',
-    resultLabel: `updates ${totalUpdates}`,
+    phaseLabel: i18nText(I18N.phases.complete),
+    statusLabel: i18nText(I18N.statuses.complete),
+    resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
     focusItemsLabel: 'Example shortest pairs',
     focusItems: summarizeShortestPairs(scenario.labels, dist),
     secondaryItemsLabel: 'Matrix status',
     secondaryItems: ['All rows now encode the shortest known distance to every destination'],
-    description: 'Floyd-Warshall is complete: the matrix now stores shortest-path distances for every ordered pair.',
+    description: i18nText(I18N.descriptions.complete),
     activeCodeLine: 6,
     phase: 'graph-complete',
   });
@@ -160,14 +191,14 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
 function createStep(args: {
   readonly scenario: FloydWarshallScenario;
   readonly dist: readonly (readonly (number | null)[])[];
-  readonly phaseLabel: string;
-  readonly statusLabel: string;
-  readonly resultLabel: string;
+  readonly phaseLabel: TranslatableText;
+  readonly statusLabel: TranslatableText;
+  readonly resultLabel: TranslatableText;
   readonly focusItemsLabel: string;
   readonly focusItems: readonly string[];
   readonly secondaryItemsLabel: string;
   readonly secondaryItems: readonly string[];
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
   readonly activeRow?: number | null;

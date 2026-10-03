@@ -302,6 +302,10 @@ function createAStarStep(args: {
   };
 }
 
+function scoreLabel(g: number | undefined, f: number | undefined): string | null {
+  return g === undefined || f === undefined ? null : `g${g} · f${f}`;
+}
+
 function buildAStarCells(
   scenario: AStarScenario,
   open: ReadonlySet<string>,
@@ -347,6 +351,7 @@ function buildAStarCells(
         status = 'source';
         tags = ['seed'];
         valueLabel = 'S';
+        metaLabel = scoreLabel(gScore.get(id), fScore.get(id));
       } else if (id === goalId) {
         status = path.has(id) ? 'path' : 'goal';
         tags = path.has(id) ? ['goal', 'path'] : ['goal'];
@@ -355,7 +360,7 @@ function buildAStarCells(
         const g = gScore.get(id);
         const f = fScore.get(id);
         valueLabel = f === undefined ? '·' : String(f);
-        metaLabel = g === undefined || f === undefined ? labelForCell(row, col) : `g${g} · f${f}`;
+        metaLabel = scoreLabel(g, f) ?? labelForCell(row, col);
       }
 
       cells.push({

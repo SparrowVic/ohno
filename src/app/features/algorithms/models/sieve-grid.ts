@@ -28,6 +28,7 @@ export interface SieveGridCell {
   /** Optional factor annotation — e.g. "×2" when the cell is being
    *  marked as a multiple of 2. Rendered as a faint subscript. */
   readonly factorLabel: string | null;
+  readonly markedBy: number | null;
 }
 
 export interface SieveStatChip {

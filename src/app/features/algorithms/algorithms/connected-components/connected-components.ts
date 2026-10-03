@@ -1,3 +1,6 @@
+import { marker as t } from '@jsverse/transloco-keys-manager/marker';
+
+import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import {
   GraphComputation,
   GraphEdgeSnapshot,
@@ -7,6 +10,31 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+
+const I18N = {
+  descriptions: {
+    initialize: t('features.algorithms.runtime.graph.connectedComponents.descriptions.initialize'),
+    seed: t('features.algorithms.runtime.graph.connectedComponents.descriptions.seed'),
+    expand: t('features.algorithms.runtime.graph.connectedComponents.descriptions.expand'),
+    inspect: t('features.algorithms.runtime.graph.connectedComponents.descriptions.inspect'),
+    skip: t('features.algorithms.runtime.graph.connectedComponents.descriptions.skip'),
+    assign: t('features.algorithms.runtime.graph.connectedComponents.descriptions.assign'),
+    close: t('features.algorithms.runtime.graph.connectedComponents.descriptions.close'),
+    complete: t('features.algorithms.runtime.graph.connectedComponents.descriptions.complete'),
+  },
+  results: {
+    unassigned: t('features.algorithms.runtime.graph.connectedComponents.results.unassigned'),
+  },
+  phases: {
+    seed: t('features.algorithms.runtime.graph.connectedComponents.phases.seed'),
+    inspect: t('features.algorithms.runtime.graph.connectedComponents.phases.inspect'),
+    assign: t('features.algorithms.runtime.graph.connectedComponents.phases.assign'),
+    keep: t('features.algorithms.runtime.graph.connectedComponents.phases.keep'),
+    close: t('features.algorithms.runtime.graph.connectedComponents.phases.close'),
+    complete: t('features.algorithms.runtime.graph.connectedComponents.phases.complete'),
+    initialize: t('features.algorithms.runtime.graph.connectedComponents.phases.initialize'),
+  },
+} as const;
 
 export function* connectedComponentsGenerator(graph: WeightedGraphData): Generator<SortStep> {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
@@ -27,7 +55,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
     frontierOrder: queue,
     visitOrder,
     activeComponent,
-    description: 'Initialize every node as unassigned and prepare to sweep the graph component by component.',
+    description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
   });
@@ -53,7 +81,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
       visitOrder,
       activeComponent,
       currentNodeId: node.id,
-      description: `Start component C${activeComponent} from ${labelOf(labelMap, node.id)}.`,
+      description: i18nText(I18N.descriptions.seed, { component: activeComponent, node: labelOf(labelMap, node.id) }),
       activeCodeLine: 5,
       phase: 'pick-node',
     });
@@ -71,7 +99,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
         visitOrder,
         activeComponent,
         currentNodeId,
-        description: `Expand ${labelOf(labelMap, currentNodeId)} inside component C${activeComponent}.`,
+        description: i18nText(I18N.descriptions.expand, { node: labelOf(labelMap, currentNodeId), component: activeComponent }),
         activeCodeLine: 7,
         phase: 'pick-node',
       });
@@ -91,13 +119,13 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
           activeComponent,
           currentNodeId,
           activeEdgeId: edge.id,
-          description: `Inspect edge ${labelOf(labelMap, currentNodeId)} → ${labelOf(labelMap, neighborId)}.`,
+          description: i18nText(I18N.descriptions.inspect, { from: labelOf(labelMap, currentNodeId), to: labelOf(labelMap, neighborId) }),
           activeCodeLine: 8,
           phase: 'inspect-edge',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `component C${activeComponent}`,
-            result: neighborComponent === null ? 'unassigned' : `C${neighborComponent}`,
+            result: neighborComponent === null ? i18nText(I18N.results.unassigned) : `C${neighborComponent}`,
             decision: neighborComponent === null ? 'claim node for this component' : 'already assigned',
           },
         });
@@ -114,7 +142,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
             activeComponent,
             currentNodeId,
             activeEdgeId: edge.id,
-            description: `Skip ${labelOf(labelMap, neighborId)} because it already belongs to component C${neighborComponent}.`,
+            description: i18nText(I18N.descriptions.skip, { node: labelOf(labelMap, neighborId), component: neighborComponent }),
             activeCodeLine: 9,
             phase: 'skip-relax',
             computation: {
@@ -144,7 +172,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
           currentNodeId,
           activeEdgeId: edge.id,
           relaxedEdgeId: edge.id,
-          description: `Assign ${labelOf(labelMap, neighborId)} to component C${activeComponent} and enqueue it.`,
+          description: i18nText(I18N.descriptions.assign, { node: labelOf(labelMap, neighborId), component: activeComponent }),
           activeCodeLine: 10,
           phase: 'relax',
           computation: {
@@ -169,7 +197,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
         visitOrder,
         activeComponent,
         currentNodeId,
-        description: `Close ${labelOf(labelMap, currentNodeId)} and continue filling component C${activeComponent}.`,
+        description: i18nText(I18N.descriptions.close, { node: labelOf(labelMap, currentNodeId), component: activeComponent }),
         activeCodeLine: 12,
         phase: 'settle-node',
       });
@@ -185,7 +213,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
     frontierOrder: [],
     visitOrder,
     activeComponent,
-    description: `Connected-components complete. Found ${activeComponent} disconnected groups.`,
+    description: i18nText(I18N.descriptions.complete, { count: activeComponent }),
     activeCodeLine: 15,
     phase: 'graph-complete',
   });
@@ -200,7 +228,7 @@ function createStep(args: {
   readonly frontierOrder: readonly string[];
   readonly visitOrder: readonly string[];
   readonly activeComponent: number;
-  readonly description: string;
+  readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
   readonly currentNodeId?: string | null;
@@ -270,7 +298,7 @@ function createStep(args: {
       nodes,
       edges,
       sourceId: args.graph.sourceId,
-      phaseLabel: phaseLabel(args.phase),
+      phaseLabel: i18nText(phaseLabel(args.phase)),
       metricLabel: 'Comp',
       secondaryLabel: 'Seed',
       frontierLabel: 'Component queue',
@@ -329,18 +357,18 @@ function labelOf(map: ReadonlyMap<string, string>, nodeId: string): string {
 function phaseLabel(phase: SortStep['phase']): string {
   switch (phase) {
     case 'pick-node':
-      return 'Seed or dequeue node';
+      return I18N.phases.seed;
     case 'inspect-edge':
-      return 'Inspect neighbor edge';
+      return I18N.phases.inspect;
     case 'relax':
-      return 'Assign component';
+      return I18N.phases.assign;
     case 'skip-relax':
-      return 'Keep current component';
+      return I18N.phases.keep;
     case 'settle-node':
-      return 'Close assigned node';
+      return I18N.phases.close;
     case 'graph-complete':
-      return 'Components ready';
+      return I18N.phases.complete;
     default:
-      return 'Initialize component scan';
+      return I18N.phases.initialize;
   }
 }

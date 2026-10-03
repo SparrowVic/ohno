@@ -1,5 +1,5 @@
 import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText, isI18nText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, isI18nText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { ScratchpadLabTraceState, ScratchpadLine, ScratchpadMarginTone } from '../../models/scratchpad-lab';
 
@@ -50,43 +50,6 @@ export interface NotebookMarginView {
 }
 
 const NOTEBOOK = I18N_KEY.features.algorithms.display.notebook;
-const SECTIONS = NOTEBOOK.sections;
-
-const SECTION_KEYS: Readonly<Record<string, I18nKey>> = {
-  Obliczenia: SECTIONS.computation,
-  'Ostatnia niezerowa reszta': SECTIONS.lastRemainder,
-  Wynik: SECTIONS.result,
-  Sprawdzenie: SECTIONS.check,
-  Parametry: SECTIONS.parameters,
-  Przebieg: SECTIONS.run,
-  'Sprawdzenie idei prawdopodobieństwa': SECTIONS.probabilityCheck,
-  'Sprawdzenie pierwiastka': SECTIONS.rootCheck,
-  'Transformata A': SECTIONS.transformA,
-  'Transformata B': SECTIONS.transformB,
-  'Mnożenie punktowe': SECTIONS.pointwise,
-  'Transformata odwrotna': SECTIONS.inverse,
-  'Układ równań': SECTIONS.system,
-  'Macierz rozszerzona': SECTIONS.augmented,
-  'Eliminacja w przód': SECTIONS.forwardElimination,
-  'Eliminacja wstecz': SECTIONS.backElimination,
-  Model: SECTIONS.model,
-  'Postać standardowa': SECTIONS.standardForm,
-  'Tableau początkowe': SECTIONS.initialTableau,
-  'Test ilorazów': SECTIONS.ratioTest,
-  'Test optymalności': SECTIONS.optimality,
-  'Rozkład n - 1': SECTIONS.decomposition,
-  Wniosek: SECTIONS.conclusion,
-  Iteracje: SECTIONS.iterations,
-  Rozbicie: SECTIONS.factorisation,
-  'Test wzglednej pierwszosci': SECTIONS.coprimality,
-  'Modul laczny': SECTIONS.modulus,
-  'Konstrukcja CRT': SECTIONS.construction,
-  'Suma CRT': SECTIONS.sum,
-};
-
-const PIVOT_TITLE = /^Pivot (\d+)$/;
-const BASE_TEST_TITLE = /^Test bazy a = (\d+)$/;
-
 const MARGIN_TONES: Readonly<Record<NotebookMarginKind, LedColor>> = {
   invariant: 'violet',
   hint: 'amber',
@@ -115,18 +78,6 @@ export function notebookPhaseHead(lines: readonly ScratchpadLine[]): (line: Scra
   if (lines.some(isCaptioned)) return isCaptioned;
   if (lines.some(isSectionNote)) return isSectionNote;
   return isDivider;
-}
-
-export function notebookSectionTitle(content: TranslatableText): TranslatableText {
-  if (isI18nText(content)) return content;
-  const title = content.trim();
-  const known = SECTION_KEYS[title];
-  if (known) return known;
-  const pivot = PIVOT_TITLE.exec(title);
-  if (pivot) return i18nText(SECTIONS.pivot, { n: Number(pivot[1]) });
-  const base = BASE_TEST_TITLE.exec(title);
-  if (base) return i18nText(SECTIONS.baseTest, { a: Number(base[1]) });
-  return content;
 }
 
 const ASCII_NOT_EQUAL = /\s*!=\s*/g;
@@ -206,7 +157,7 @@ export function notebookView(state: ScratchpadLabTraceState): NotebookView {
     if (isHead(line)) {
       section = {
         id: line.id,
-        title: line.kind === 'divider' ? null : notebookSectionTitle(headIsCaption ? (line.caption ?? line.content) : line.content),
+        title: line.kind === 'divider' ? null : headIsCaption ? (line.caption ?? line.content) : line.content,
         rows: [],
         current: false,
       };
@@ -227,7 +178,7 @@ export function notebookView(state: ScratchpadLabTraceState): NotebookView {
       id: line.id,
       kind,
       number: numbered ? notebookLineNumber(position) : null,
-      content: kind === 'result-head' ? notebookSectionTitle(line.content) : notebookMathText(line.content),
+      content: kind === 'result-head' ? line.content : notebookMathText(line.content),
       caption: !headIsCaption && line.caption && (current || line.captionPinned) ? notebookMathText(line.caption) : null,
       instruction: notebookMathText(line.instruction),
       annotation: notebookMathText(line.annotation),

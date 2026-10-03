@@ -54,10 +54,10 @@ function compactHungarianScenario(): HungarianScenario {
     rowLabels: ['Ava', 'Ben', 'Cara', 'Dean'],
     colLabels: ['UI', 'API', 'DB', 'QA'],
     costs: [
-      [9, 2, 7, 8],
-      [6, 4, 3, 7],
-      [5, 8, 1, 8],
-      [7, 6, 9, 4],
+      [82, 83, 69, 92],
+      [77, 37, 49, 92],
+      [11, 69, 5, 86],
+      [8, 9, 98, 23],
     ],
   };
 }
@@ -68,11 +68,11 @@ function largeHungarianScenario(): HungarianScenario {
     rowLabels: ['Ava', 'Ben', 'Cara', 'Dean', 'Eli'],
     colLabels: ['UI', 'API', 'DB', 'QA', 'Ops'],
     costs: [
-      [14, 5, 8, 7, 15],
-      [2, 12, 6, 5, 3],
-      [7, 8, 3, 9, 7],
-      [2, 4, 6, 10, 1],
-      [8, 6, 7, 4, 9],
+      [7, 53, 183, 439, 863],
+      [497, 383, 563, 79, 973],
+      [287, 63, 343, 169, 583],
+      [627, 343, 773, 959, 943],
+      [767, 473, 103, 699, 303],
     ],
   };
 }

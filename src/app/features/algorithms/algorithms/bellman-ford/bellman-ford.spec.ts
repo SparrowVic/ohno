@@ -30,7 +30,7 @@ describe('bellman-ford', () => {
     const trace = finalStep?.graph?.traceRows ?? [];
 
     expect(finalStep?.phase).toBe('graph-complete');
-    expect(finalStep?.description).toContain('Shortest paths remain stable');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bellmanFord.descriptions.complete' });
     expect(finalStep?.graph?.visitOrder).toContain('Pass 1');
     expect(finalStep?.graph?.visitOrder).toContain('Pass 2');
     expect(trace.find((row) => row.nodeId === 'b')?.distance).toBe(4);
@@ -56,8 +56,8 @@ describe('bellman-ford', () => {
     });
     const finalStep = steps.at(-1);
 
-    expect(finalStep?.description).toContain('negative cycle');
-    expect(finalStep?.graph?.phaseLabel).toBe('Negative cycle found');
+    expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bellmanFord.descriptions.negativeCycle' });
+    expect(finalStep?.graph?.phaseLabel).toMatchObject({ key: 'features.algorithms.runtime.graph.bellmanFord.phases.negativeCycle' });
     expect(finalStep?.graph?.edges.some((edge) => edge.tone === 'critical')).toBe(true);
   });
 });
