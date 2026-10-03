@@ -17,6 +17,7 @@
       <div
         #track
         class="strip__track"
+        tabindex="-1"
         [style.--cell-width.px]="tape().cell"
         [style.--cell-font.px]="tape().font"
         [style.--tape-gap.px]="TAPE.gap"
@@ -56,7 +57,7 @@
             <span class="strip__bin-number">{{ bin.bucket }}</span>
             <span class="strip__bin-count">{{ bin.count }}</span>
           </div>
-          <div class="strip__stack">
+          <div class="strip__stack" tabindex="-1">
             @for (card of bin.cards; track card.id) {
               <span class="strip__card" [attr.data-fresh]="card.fresh">
                 @for (digit of card.digits; track digit.exponent) {

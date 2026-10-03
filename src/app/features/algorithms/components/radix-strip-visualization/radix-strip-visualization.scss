@@ -96,7 +96,7 @@
 
   min-width: 7px;
   padding: 1px 0;
-  border-radius: 2px;
+  border-radius: var(--radius-kbd);
   font: 500 9px/1 var(--font-mono);
   text-align: center;
   color: var(--ink-3);
@@ -217,7 +217,7 @@
   align-items: center;
   justify-content: center;
   height: 22px;
-  border-radius: 5px;
+  border-radius: var(--radius-kbd);
   background: rgb(var(--white-rgb) / 0.04);
   box-shadow: inset 0 0 0 1px rgb(var(--white-rgb) / 0.06);
   font: 900 14px/1 var(--font-dot);
@@ -243,6 +243,14 @@
 
 .strip__card[data-fresh='true'] .strip__card-digit {
   color: inherit;
+}
+
+.strip__bin-number,
+.strip__bin-count,
+.strip__card,
+.strip__digit,
+.strip__label {
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: no-preference) {

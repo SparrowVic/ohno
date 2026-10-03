@@ -19,6 +19,7 @@ import { JSAnimation, animate } from 'animejs';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { SortStep } from '../../models/sort-step';
 import { VisualizationRenderer } from '../../models/visualization-renderer';
+import { radixSuperscript } from '../radix-strip-visualization/radix-digits.utils';
 import {
   createMotionProfile,
   prefersReducedMotion,
@@ -63,7 +64,7 @@ interface PaintedScene {
 type FlightPath = 'arc' | 'line';
 
 const MAX_ANIMATED_ZONE_CHANGES = 2;
-const CARD_RADIUS = 6;
+const CARD_RADIUS = 7;
 const BIN_RADIUS = 7;
 
 @Component({
@@ -122,7 +123,7 @@ export class RadixBucketVisualization implements VisualizationRenderer {
     return {
       tone: place.tone,
       key: place.name === 'power' ? keys.power : keys[place.name],
-      params: { power: place.exponent },
+      params: { power: radixSuperscript(place.exponent) },
     };
   });
 
