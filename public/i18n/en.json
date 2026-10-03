@@ -306,6 +306,8 @@
         "card": {
           "live": "Live",
           "openAriaLabel": "Open {{name}}",
+          "pending": "Being rebuilt",
+          "pendingAriaLabel": "{{name}}: display being rebuilt, available soon",
           "time": "time"
         },
         "empty": {
@@ -1304,7 +1306,7 @@
           "digitPlace": {
             "hundreds": "hundreds",
             "ones": "ones",
-            "power": "10^{{power}} place",
+            "power": "10{{power}} place",
             "tens": "tens"
           },
           "input": "Input",
@@ -3791,11 +3793,11 @@
           },
           "radixSort": {
             "descriptions": {
-              "distributeToBucket": "Send {{value}} to bucket {{bucket}} using digit position 10^{{digitPower}}.",
+              "distributeToBucket": "Send {{value}} to bucket {{bucket}} using digit position [[math]]10^{ {{digitPower}} }[[/math]].",
               "finalPassComplete": "All digit passes are complete; the array is sorted.",
-              "focusDigit": "Focus digit position 10^{{digitPower}} across {{count}} values.",
+              "focusDigit": "Focus digit position [[math]]10^{ {{digitPower}} }[[/math]] across {{count}} values.",
               "gatherFromBucket": "Gather {{value}} from bucket {{bucket}} back into the output stream.",
-              "passComplete": "Pass {{pass}}/{{maxDigits}} complete; order is fixed for digit position 10^{{digitPower}}.",
+              "passComplete": "Pass {{pass}}/{{maxDigits}} complete; order is fixed for digit position [[math]]10^{ {{digitPower}} }[[/math]].",
               "start": "Start radix sort (base 10, maxDigits = {{maxDigits}})."
             }
           },

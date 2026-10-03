@@ -15,6 +15,7 @@ import { OhnoPlate } from '../../../shared/instrument/plate/plate';
 import { OhnoReadout } from '../../../shared/instrument/readout/readout';
 import { OhnoScreen } from '../../../shared/instrument/screen/screen';
 import { OhnoSearchField } from '../../../shared/instrument/search-field/search-field';
+import { isDisplayReady } from '../data/catalog/display-readiness/display-readiness';
 import { ALL_DIFFICULTIES, toggleDifficulty } from '../data/catalog/difficulty-filter/difficulty-filter';
 import { moduleId } from '../data/catalog/module-id/module-id';
 import { pathProgress } from '../data/catalog/path-progress/path-progress';
@@ -56,6 +57,7 @@ export class AlgorithmsPage {
   private readonly transloco = inject(TranslocoService);
 
   protected readonly I18N_KEY = I18N_KEY;
+  protected readonly isDisplayReady = isDisplayReady;
   private readonly activeDifficulties = signal<ReadonlySet<Difficulty>>(ALL_DIFFICULTIES);
 
   private readonly moduleIds = computed(() => {

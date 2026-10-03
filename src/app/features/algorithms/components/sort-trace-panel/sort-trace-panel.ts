@@ -18,6 +18,7 @@ import { UiTagModel } from '../../../../shared/components/ui-tag/ui-tag';
 import { SORT_ALGORITHM_TUTORIALS } from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
 import { TraceHint } from '../trace-hint/trace-hint';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
+import { MathText } from '../../../../shared/components/math-text/math-text';
 
 interface TagLegendItem {
   readonly id: SortTraceTag;
@@ -72,7 +73,7 @@ const TABLE_COLUMNS: readonly TableColumn[] = [
 
 @Component({
   selector: 'app-sort-trace-panel',
-  imports: [I18nTextPipe, SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
+  imports: [I18nTextPipe, MathText, SegmentedPanel, SegmentedPanelSection, Table, TraceHint, TranslocoPipe],
   templateUrl: './sort-trace-panel.html',
   styleUrl: './sort-trace-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

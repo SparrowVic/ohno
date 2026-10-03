@@ -6,7 +6,7 @@
   [style.--radix-move-ms.ms]="moveMs()"
 >
   <div #main class="display__main matrix__main" aria-hidden="true">
-    <div class="matrix__scroller" [attr.data-scrolls]="layout().scrolls">
+    <div class="matrix__scroller" tabindex="-1" [attr.data-scrolls]="layout().scrolls">
       <div
         class="matrix__groups"
         [attr.data-dot]="layout().font !== null"
@@ -77,7 +77,7 @@
     </div>
   </div>
 
-  <div #rack class="display__rack matrix__rack" aria-hidden="true">
+  <div #rack class="display__rack matrix__rack" tabindex="-1" aria-hidden="true">
     <ohno-rack [title]="RADIX.buckets | transloco">
       <div class="matrix__bins">
         @for (bin of view().bins; track bin.bucket) {

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
@@ -14,6 +15,7 @@ import { LedColor } from '../../../shared/instrument/led/led.types';
 import { OhnoPlate } from '../../../shared/instrument/plate/plate';
 import { OhnoReadout } from '../../../shared/instrument/readout/readout';
 import { OhnoScreen } from '../../../shared/instrument/screen/screen';
+import { isDisplayReady } from '../data/catalog/display-readiness/display-readiness';
 import { previewFamily } from '../data/catalog/preview-family/preview-family';
 import { AlgorithmItem, Difficulty } from '../models/algorithm';
 import { OhnoModulePreview } from './module-preview/module-preview';
@@ -28,7 +30,7 @@ const DIFFICULTY_LED: Readonly<Record<Difficulty, LedColor>> = {
 
 @Component({
   selector: 'ohno-module-card',
-  imports: [FaIconComponent, OhnoEngraving, OhnoLed, OhnoModulePreview, OhnoPlate, OhnoReadout, OhnoScreen, RouterLink, TranslocoPipe],
+  imports: [FaIconComponent, NgTemplateOutlet, OhnoEngraving, OhnoLed, OhnoModulePreview, OhnoPlate, OhnoReadout, OhnoScreen, RouterLink, TranslocoPipe],
   templateUrl: './module-card.html',
   styleUrl: './module-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +46,7 @@ export class OhnoModuleCard {
   protected readonly icons = { open: faChevronRight };
   protected readonly live = signal(false);
 
+  protected readonly ready = computed(() => isDisplayReady(this.algorithm().id));
   protected readonly link = computed(() => ['/algorithms', this.algorithm().id]);
   protected readonly family = computed(() => previewFamily(this.algorithm()));
   protected readonly seed = computed(() => hashSeed(this.algorithm().id));
@@ -56,6 +59,10 @@ export class OhnoModuleCard {
   });
   protected readonly openAriaLabel = computed(() =>
     this.translate(I18N_KEY.features.algorithms.catalog.card.openAriaLabel, { name: this.algorithm().name }),
+  );
+
+  protected readonly pendingAriaLabel = computed(() =>
+    this.translate(I18N_KEY.features.algorithms.catalog.card.pendingAriaLabel, { name: this.algorithm().name }),
   );
 
   private translate(key: string, params?: Record<string, string | number>): string {

@@ -306,6 +306,8 @@
         "card": {
           "live": "Na żywo",
           "openAriaLabel": "Otwórz {{name}}",
+          "pending": "W przebudowie",
+          "pendingAriaLabel": "{{name}}: widok w przebudowie, wkrótce dostępny",
           "time": "czas"
         },
         "empty": {
@@ -1304,7 +1306,7 @@
           "digitPlace": {
             "hundreds": "setki",
             "ones": "jedności",
-            "power": "pozycja 10^{{power}}",
+            "power": "pozycja 10{{power}}",
             "tens": "dziesiątki"
           },
           "input": "Wejście",
@@ -3791,11 +3793,11 @@
           },
           "radixSort": {
             "descriptions": {
-              "distributeToBucket": "Wyślij {{value}} do kubełka {{bucket}} według cyfry na pozycji 10^{{digitPower}}.",
+              "distributeToBucket": "Wyślij {{value}} do kubełka {{bucket}} według cyfry na pozycji [[math]]10^{ {{digitPower}} }[[/math]].",
               "finalPassComplete": "Wszystkie przebiegi cyfr są zakończone; tablica jest posortowana.",
-              "focusDigit": "Skup się na cyfrze na pozycji 10^{{digitPower}} we wszystkich {{count}} wartościach.",
+              "focusDigit": "Skup się na cyfrze na pozycji [[math]]10^{ {{digitPower}} }[[/math]] we wszystkich {{count}} wartościach.",
               "gatherFromBucket": "Zbierz {{value}} z kubełka {{bucket}} z powrotem do strumienia wyjściowego.",
-              "passComplete": "Przebieg {{pass}}/{{maxDigits}} zakończony; kolejność według pozycji 10^{{digitPower}} jest ustalona.",
+              "passComplete": "Przebieg {{pass}}/{{maxDigits}} zakończony; kolejność według pozycji [[math]]10^{ {{digitPower}} }[[/math]] jest ustalona.",
               "start": "Rozpocznij sortowanie pozycyjne (system dziesiętny, cyfr: {{maxDigits}})."
             }
           },

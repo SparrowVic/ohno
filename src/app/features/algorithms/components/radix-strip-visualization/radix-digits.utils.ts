@@ -77,11 +77,17 @@ export function radixDigits(value: number, maxDigits: number): RadixDigit[] {
   });
 }
 
+const SUPERSCRIPT_DIGITS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'] as const;
+
+export function radixSuperscript(exponent: number): string {
+  return [...String(Math.max(0, Math.floor(exponent)))].map((digit) => SUPERSCRIPT_DIGITS[Number(digit)]).join('');
+}
+
 export function radixPlaceLabel(exponent: number): I18nText {
   if (exponent === 0) return i18nText(PLACES.ones);
   if (exponent === 1) return i18nText(PLACES.tens);
   if (exponent === 2) return i18nText(PLACES.hundreds);
-  return i18nText(PLACES.power, { power: exponent });
+  return i18nText(PLACES.power, { power: radixSuperscript(exponent) });
 }
 
 export function radixPad(value: number, width: number): string {

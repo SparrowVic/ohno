@@ -7,7 +7,7 @@
   width: 100%;
   min-width: 0;
   min-height: 0;
-  contain: size;
+  contain: size paint;
 }
 
 .radix {
@@ -24,7 +24,7 @@
 }
 
 .radix__engraving {
-  font: 500 9.5px var(--font-mono);
+  font: 500 10px var(--font-mono);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   fill: var(--ink-3);

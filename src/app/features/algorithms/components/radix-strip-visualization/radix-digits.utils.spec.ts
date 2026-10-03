@@ -51,7 +51,7 @@ describe('radix digit utils', () => {
     expect(radixPlaceLabel(0)).toEqual({ key: PLACES.ones, params: undefined });
     expect(radixPlaceLabel(1)).toEqual({ key: PLACES.tens, params: undefined });
     expect(radixPlaceLabel(2)).toEqual({ key: PLACES.hundreds, params: undefined });
-    expect(radixPlaceLabel(4)).toEqual({ key: PLACES.power, params: { power: 4 } });
+    expect(radixPlaceLabel(4)).toEqual({ key: PLACES.power, params: { power: '⁴' } });
   });
 
   it('pads positions and recognises the radix phases', () => {

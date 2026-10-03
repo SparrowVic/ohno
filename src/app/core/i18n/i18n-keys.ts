@@ -190,6 +190,8 @@ export const I18N_KEY = {
         time: t('features.algorithms.catalog.card.time'),
         live: t('features.algorithms.catalog.card.live'),
         openAriaLabel: t('features.algorithms.catalog.card.openAriaLabel'),
+        pending: t('features.algorithms.catalog.card.pending'),
+        pendingAriaLabel: t('features.algorithms.catalog.card.pendingAriaLabel'),
       },
       empty: {
         title: t('features.algorithms.catalog.empty.title'),

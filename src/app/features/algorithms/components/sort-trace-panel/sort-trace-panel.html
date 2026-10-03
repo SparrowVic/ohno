@@ -52,7 +52,7 @@
           [valueMono]="true"
         >
           <code class="trace__calc-expression">{{ pairValues() }}</code>
-          <p class="trace__calc-note">{{ sortState.description | i18nText }}</p>
+          <p class="trace__calc-note"><app-math-text [content]="sortState.description | i18nText" /></p>
         </app-segmented-panel-section>
 
         @if (digitLabel()) {
