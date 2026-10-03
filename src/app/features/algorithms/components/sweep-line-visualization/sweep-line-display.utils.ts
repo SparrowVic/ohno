@@ -6,11 +6,17 @@ import {
   GeoRackRow,
   GeoReadoutView,
   GeoTone,
+  LabelAnchor,
+  LabelOffset,
   PlaneBox,
   PlaneGrid,
+  PlaneRect,
   eventProgress,
   eventRows,
   formatNumber,
+  frameBounds,
+  labelBox,
+  pickPlacement,
   planeBounds,
   planeFrame,
   planeGrid,
@@ -32,6 +38,9 @@ export interface SweepRectView {
   readonly tone: GeoTone;
   readonly strong: boolean;
   readonly dashed: boolean;
+  readonly labelX: number;
+  readonly labelY: number;
+  readonly labelAnchor: LabelAnchor;
 }
 
 export interface SweepSpanView {
@@ -96,6 +105,38 @@ export function sweepSpanRows(state: SweepLineStepState): readonly GeoRackRow[] 
   );
 }
 
+const LABEL_INSET = 5;
+const LABEL_DROP = 13;
+const SWEEP_CLEARANCE = 5;
+
+type RectBox = Pick<SweepRectView, 'x' | 'y' | 'width' | 'height' | 'label'>;
+
+export function rectLabelOffsets(rect: RectBox): readonly LabelOffset[] {
+  const left = LABEL_INSET;
+  const right = rect.width - LABEL_INSET;
+  const top = LABEL_DROP;
+  const bottom = rect.height - LABEL_INSET + 1;
+  return [
+    { dx: left, dy: top, anchor: 'start' },
+    { dx: right, dy: top, anchor: 'end' },
+    { dx: left, dy: bottom, anchor: 'start' },
+    { dx: right, dy: bottom, anchor: 'end' },
+    { dx: 0, dy: -4, anchor: 'start' },
+    { dx: rect.width, dy: rect.height + 12, anchor: 'end' },
+  ];
+}
+
+export function placeRectLabels(rects: readonly RectBox[], obstacles: readonly PlaneRect[], bounds: PlaneRect | null): readonly LabelOffset[] {
+  const taken: PlaneRect[] = [...obstacles];
+  return rects.map((rect) => {
+    const offsets = rectLabelOffsets(rect);
+    const boxes = offsets.map((offset) => labelBox(rect.x, rect.y, rect.label, offset));
+    const index = pickPlacement(boxes, taken, bounds);
+    taken.push(boxes[index]!);
+    return offsets[index]!;
+  });
+}
+
 export function sweepLineView(state: SweepLineStepState, box: PlaneBox): SweepLineView {
   const coords = state.rectangles.flatMap((rect) => [
     { x: rect.x, y: rect.y },
@@ -106,24 +147,30 @@ export function sweepLineView(state: SweepLineStepState, box: PlaneBox): SweepLi
   const bottom = frame.top + frame.plotHeight;
   const sweepX = state.sweepX === null ? null : Math.min(right, Math.max(frame.left, projectX(frame, state.sweepX)));
   const live = sweepX !== null && state.phase !== 'complete';
+  const rects = state.rectangles.map((rect) => {
+    const corner = project(frame, { x: rect.x, y: rect.y + rect.height });
+    return {
+      id: rect.id,
+      label: rect.label ?? rect.id,
+      x: corner.x,
+      y: corner.y,
+      width: Math.round(rect.width * frame.scale * 100) / 100,
+      height: Math.round(rect.height * frame.scale * 100) / 100,
+      ...RECT_LOOK[rect.tone],
+    };
+  });
+  const sweepLabel = i18nText(GEO.sweepX, { value: formatNumber(state.sweepX ?? 0) });
+  const obstacles: PlaneRect[] =
+    live && sweepX !== null ? [{ x: sweepX - SWEEP_CLEARANCE, y: frame.top - 14, width: SWEEP_CLEARANCE * 2, height: frame.plotHeight + 14 }] : [];
+  const labels = placeRectLabels(rects, obstacles, frameBounds(frame));
   return {
     grid: planeGrid(frame),
     covered: sweepX === null ? null : { x: frame.left, y: frame.top, width: Math.max(0, sweepX - frame.left), height: frame.plotHeight },
-    rects: state.rectangles.map((rect) => {
-      const corner = project(frame, { x: rect.x, y: rect.y + rect.height });
-      return {
-        id: rect.id,
-        label: rect.label ?? rect.id,
-        x: corner.x,
-        y: corner.y,
-        width: Math.round(rect.width * frame.scale * 100) / 100,
-        height: Math.round(rect.height * frame.scale * 100) / 100,
-        ...RECT_LOOK[rect.tone],
-      };
+    rects: rects.map((rect, index) => {
+      const offset = labels[index]!;
+      return { ...rect, labelX: rect.x + offset.dx, labelY: rect.y + offset.dy, labelAnchor: offset.anchor };
     }),
-    sweep: live
-      ? { x: sweepX, y1: frame.top, y2: bottom, label: i18nText(GEO.sweepX, { value: formatNumber(state.sweepX ?? 0) }) }
-      : null,
+    sweep: live ? { x: sweepX, y1: frame.top, y2: bottom, label: sweepLabel } : null,
     spans: live ? state.spans.map((span) => ({ id: span.id, y1: projectY(frame, span.y1), y2: projectY(frame, span.y0) })) : [],
     eventRows: eventRows(state.events, (event) => sweepEventText(event.label), (event) => formatNumber(event.x)),
     eventMeta: eventProgress(state.events),

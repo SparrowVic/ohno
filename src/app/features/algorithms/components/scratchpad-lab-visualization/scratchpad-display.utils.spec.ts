@@ -8,7 +8,9 @@ import { SortStep } from '../../models/sort-step';
 import {
   notebookLineNumber,
   notebookMargins,
+  notebookMathText,
   notebookPhaseHead,
+  notebookResultCount,
   notebookScrollTop,
   notebookSectionTitle,
   notebookView,
@@ -137,6 +139,45 @@ describe('notebook view', () => {
       expect(view.sections.flatMap((section) => section.rows).filter((row) => row.current).length).toBeLessThanOrEqual(1);
       expect(view.sections.filter((section) => section.status === 'current').length).toBeLessThanOrEqual(1);
     }
+  });
+
+  it('writes an ASCII inequality as ≠ so KaTeX never reads it as a factorial', () => {
+    expect(notebookMathText('[[math]]31 != 1[[/math]]')).toBe('[[math]]31 ≠ 1[[/math]]');
+    expect(notebookMathText('x_1 != 36')).toBe('x_1 ≠ 36');
+    expect(notebookMathText('[[math]]36 = 2^2 * 9[[/math]]')).toBe('[[math]]36 = 2^2 · 9[[/math]]');
+    expect(notebookMathText('INTT(C_hat) = [1, 2]')).toBe('INTT(\\hat{C}) = [1, 2]');
+    const key = i18nText(NOTEBOOK.result);
+    expect(notebookMathText(key)).toBe(key);
+    const view = notebookView({ ...pad([line('a', 'equation', 1, 'current', { content: '31 != 1' })]), taskPrompt: 'a != b' });
+    expect(view.sections[0]?.rows[0]?.content).toBe('31 ≠ 1');
+    expect(view.taskPrompt).toBe('a ≠ b');
+  });
+
+  it('counts the rows written under a result head', () => {
+    const lines = [
+      line('n1', 'note', 0),
+      line('e1', 'equation', 1),
+      line('x1', 'decision', 1),
+      line('r', 'result', 0),
+      line('e2', 'equation', 1),
+      line('e3', 'equation', 1),
+    ];
+    expect(notebookResultCount(lines)).toBe(2);
+    expect(notebookResultCount(lines.slice(0, 3))).toBe(0);
+  });
+
+  it.each(['fft-ntt', 'gaussian-elimination'])('%s ends with a non-zero result count', (id) => {
+    const steps = run(id);
+    const last = steps[steps.length - 1]?.scratchpadLab as ScratchpadLabTraceState;
+    expect(notebookResultCount(last.lines)).toBeGreaterThan(0);
+  });
+
+  it('never leaves an ASCII != in the Miller–Rabin notebook', () => {
+    const steps = run('miller-rabin');
+    const last = steps[steps.length - 1]?.scratchpadLab as ScratchpadLabTraceState;
+    const contents = notebookView(last).sections.flatMap((section) => section.rows.map((row) => row.content));
+    expect(contents.some((content) => typeof content === 'string' && content.includes('≠'))).toBe(true);
+    expect(contents.some((content) => typeof content === 'string' && content.includes('!='))).toBe(false);
   });
 
   it.each(NOTEBOOK_IDS)('%s titles every section through a key', (id) => {

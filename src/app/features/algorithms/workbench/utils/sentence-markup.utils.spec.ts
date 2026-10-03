@@ -71,4 +71,9 @@ describe('sentenceParts', () => {
   it('keeps a plain sentence as a single html part', () => {
     expect(sentenceParts('Gotowe.')).toEqual([{ kind: 'html', html: 'Gotowe.' }]);
   });
+
+  it('reads != as an inequality instead of a factorial', () => {
+    expect(plainSentence('Check 31 != 36.')).toBe('Check 31 ≠ 36.');
+    expect(sentenceParts('Check 31 != 36.').some((part) => part.kind === 'tex' && part.tex.includes('!'))).toBe(false);
+  });
 });

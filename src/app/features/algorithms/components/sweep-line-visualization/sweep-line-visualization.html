@@ -24,7 +24,6 @@
             [attr.width]="rect.width"
             [attr.height]="rect.height"
           />
-          <text class="geo-label" [attr.data-tone]="rect.tone" [attr.x]="rect.x + 5" [attr.y]="rect.y + 13">{{ rect.label }}</text>
         }
 
         @if (scene.sweep; as sweep) {
@@ -35,6 +34,10 @@
           <text class="geo-label" data-tone="cyan" text-anchor="middle" [attr.x]="sweep.x" [attr.y]="sweep.y1 - 4">
             {{ sweep.label | i18nText }}
           </text>
+        }
+
+        @for (rect of scene.rects; track rect.id) {
+          <text class="geo-label" [attr.data-tone]="rect.tone" [attr.text-anchor]="rect.labelAnchor" [attr.x]="rect.labelX" [attr.y]="rect.labelY">{{ rect.label }}</text>
         }
       </svg>
     }

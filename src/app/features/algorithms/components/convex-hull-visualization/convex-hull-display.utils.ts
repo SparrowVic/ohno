@@ -7,11 +7,14 @@ import {
   GeoTone,
   PlaneBox,
   PlaneGrid,
+  LabelOffset,
   formatSigned,
+  frameBounds,
   planeBounds,
   planeFrame,
   planeGrid,
   planePoints,
+  placePointLabels,
   project,
   rackRow,
   turnArcPath,
@@ -28,6 +31,7 @@ export interface HullPointView {
   readonly tone: GeoTone;
   readonly current: boolean;
   readonly rejected: boolean;
+  readonly label: LabelOffset;
 }
 
 export interface ConvexHullView {
@@ -64,6 +68,11 @@ export function hullRejectedIds(state: ConvexHullStepState): ReadonlySet<number>
     if (index > 0 && index < frontier && !stack.has(point.id)) rejected.add(point.id);
   }
   return rejected;
+}
+
+export function hullDrawnRejectedIds(state: ConvexHullStepState): ReadonlySet<number> {
+  const candidate = hullCandidateId(state);
+  return new Set([...hullRejectedIds(state)].filter((id) => id !== candidate));
 }
 
 function pointTone(id: number, state: ConvexHullStepState, pivot: number | null, candidate: number | null): GeoTone {
@@ -123,7 +132,7 @@ export function hullReadout(state: ConvexHullStepState): GeoReadoutView {
     return { ...base, value: formatSigned(cross), tone: 'pink', verdict: GEO.verdict.popRight, led: 'pink' };
   }
   if (state.phase === 'complete') {
-    return { ...base, value: String(state.stackIds.length), tone: 'lime', verdict: GEO.verdict.hullClosed, led: 'lime' };
+    return { ...base, title: RACKS.vertices, value: String(state.stackIds.length), tone: 'lime', verdict: GEO.verdict.hullClosed, led: 'lime' };
   }
   const popped = state.phase === 'pop' ? state.points.find((point) => point.status === 'rejected') : undefined;
   if (popped) {
@@ -142,23 +151,29 @@ export function convexHullView(state: ConvexHullStepState, box: PlaneBox): Conve
   const pivot = hullPivotId(state);
   const candidate = hullCandidateId(state);
   const current = currentPointId(state, pivot, candidate);
-  const rejected = hullRejectedIds(state);
+  const rejected = hullDrawnRejectedIds(state);
   const complete = state.phase === 'complete';
   const stackCoords = state.stackIds.map((id) => byId.get(id)).filter((point): point is GeometryPoint => !!point);
   const check = state.turnCheck?.map((id) => byId.get(id));
   const checkPixels = check && check.every(Boolean) ? (check as GeometryPoint[]).map((point) => project(frame, point)) : null;
+  const pixels = state.points.map((point) => project(frame, point));
+  const labels = placePointLabels(
+    state.points.map((point, index) => ({ ...pixels[index]!, text: String(point.id) })),
+    [],
+    frameBounds(frame),
+  );
   return {
     grid: planeGrid(frame),
-    points: state.points.map((point) => {
-      const pixel = project(frame, point);
-      const isRejected = rejected.has(point.id) && point.id !== candidate;
+    points: state.points.map((point, index) => {
+      const isRejected = rejected.has(point.id);
       return {
         id: point.id,
-        x: pixel.x,
-        y: pixel.y,
+        x: pixels[index]!.x,
+        y: pixels[index]!.y,
         tone: isRejected ? 'pink' : pointTone(point.id, state, pivot, candidate),
         current: point.id === current,
         rejected: isRejected,
+        label: labels[index]!,
       };
     }),
     stackPath: !complete && stackCoords.length > 1 ? planePoints(frame, stackCoords) : null,

@@ -33,6 +33,8 @@ export interface NotebookSection {
 }
 
 export interface NotebookView {
+  readonly taskPrompt: TranslatableText | null;
+  readonly resultLabel: TranslatableText | null;
   readonly sections: readonly NotebookSection[];
   readonly currentId: string | null;
   readonly lineCount: number;
@@ -127,6 +129,33 @@ export function notebookSectionTitle(content: TranslatableText): TranslatableTex
   return content;
 }
 
+const ASCII_NOT_EQUAL = /\s*!=\s*/g;
+const ASCII_TIMES = /(\S)\s+\*\s+(\S)/g;
+const HAT_SUFFIX = /\b([A-Za-z])_hat\b/g;
+
+export function notebookMathText(text: TranslatableText): TranslatableText;
+export function notebookMathText(text: TranslatableText | null): TranslatableText | null;
+export function notebookMathText(text: TranslatableText | null): TranslatableText | null {
+  if (text === null || isI18nText(text)) return text;
+  return text.replace(ASCII_NOT_EQUAL, ' ≠ ').replace(ASCII_TIMES, '$1 · $2').replace(HAT_SUFFIX, '\\hat{$1}');
+}
+
+export function notebookResultCount(lines: readonly ScratchpadLine[]): number {
+  const isHead = notebookPhaseHead(lines);
+  let inResult = false;
+  let count = 0;
+  for (const line of lines) {
+    if (isResultHead(line)) {
+      inResult = true;
+      continue;
+    }
+    if (isHead(line)) inResult = false;
+    if (line.kind === 'divider' || isSectionNote(line)) continue;
+    if (inResult || line.kind === 'result') count += 1;
+  }
+  return count;
+}
+
 export function notebookLineNumber(position: number): string {
   return String(position).padStart(2, '0');
 }
@@ -198,10 +227,10 @@ export function notebookView(state: ScratchpadLabTraceState): NotebookView {
       id: line.id,
       kind,
       number: numbered ? notebookLineNumber(position) : null,
-      content: kind === 'result-head' ? notebookSectionTitle(line.content) : line.content,
-      caption: !headIsCaption && line.caption && (current || line.captionPinned) ? line.caption : null,
-      instruction: line.instruction,
-      annotation: line.annotation,
+      content: kind === 'result-head' ? notebookSectionTitle(line.content) : notebookMathText(line.content),
+      caption: !headIsCaption && line.caption && (current || line.captionPinned) ? notebookMathText(line.caption) : null,
+      instruction: notebookMathText(line.instruction),
+      annotation: notebookMathText(line.annotation),
       marker: line.marker,
       indent: Math.max(0, line.indent - 1),
       tone: rowTone(line, inResult && kind !== 'result-head', current),
@@ -219,7 +248,14 @@ export function notebookView(state: ScratchpadLabTraceState): NotebookView {
     status: index < currentSection || currentSection < 0 ? 'done' : index === currentSection ? 'current' : 'pending',
   }));
 
-  return { sections, currentId, lineCount: position, complete };
+  return {
+    taskPrompt: notebookMathText(state.taskPrompt),
+    resultLabel: notebookMathText(state.resultLabel),
+    sections,
+    currentId,
+    lineCount: position,
+    complete,
+  };
 }
 
 export function notebookMargins(state: ScratchpadLabTraceState, currentId: string | null): readonly NotebookMarginView[] {
@@ -231,10 +267,10 @@ export function notebookMargins(state: ScratchpadLabTraceState, currentId: strin
       kind: margin.tone,
       tone: MARGIN_TONES[margin.tone],
       title: MARGIN_TITLES[margin.tone],
-      text: margin.text,
+      text: notebookMathText(margin.text),
     }));
   if (hasText(state.decisionLabel)) {
-    margins.push({ id: 'now', kind: 'now', tone: MARGIN_TONES.now, title: MARGIN_TITLES.now, text: state.decisionLabel });
+    margins.push({ id: 'now', kind: 'now', tone: MARGIN_TONES.now, title: MARGIN_TITLES.now, text: notebookMathText(state.decisionLabel) });
   }
   return margins.sort((left, right) => MARGIN_ORDER.indexOf(left.kind) - MARGIN_ORDER.indexOf(right.kind));
 }

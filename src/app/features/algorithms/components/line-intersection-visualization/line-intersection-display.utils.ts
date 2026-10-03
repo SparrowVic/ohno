@@ -6,11 +6,15 @@ import {
   GeoRackRow,
   GeoReadoutView,
   GeoTone,
+  LabelOffset,
   PlaneBox,
   PlaneGrid,
   eventProgress,
   eventRows,
+  dotBox,
   formatNumber,
+  frameBounds,
+  placeLabels,
   planeBounds,
   planeFrame,
   planeGrid,
@@ -30,6 +34,7 @@ export interface SegmentView {
   readonly y2: number;
   readonly tone: GeoTone;
   readonly bold: boolean;
+  readonly labelOffset: LabelOffset;
 }
 
 export interface CrossingView {
@@ -91,17 +96,45 @@ export function lineOrderRows(state: LineIntersectionStepState): readonly GeoRac
   );
 }
 
+const SEGMENT_LABEL_OFFSETS: readonly LabelOffset[] = [
+  { dx: -7, dy: 3, anchor: 'end' },
+  { dx: 0, dy: -8, anchor: 'middle' },
+  { dx: 0, dy: 15, anchor: 'middle' },
+  { dx: -7, dy: -7, anchor: 'end' },
+  { dx: -7, dy: 13, anchor: 'end' },
+];
+
 export function lineIntersectionView(state: LineIntersectionStepState, box: PlaneBox): LineIntersectionView {
   const coords = state.segments.flatMap((segment) => [segment.start, segment.end]);
   const frame = planeFrame(planeBounds(coords), box);
   const sweepX = state.sweepX === null ? null : Math.min(frame.left + frame.plotWidth, Math.max(frame.left, projectX(frame, state.sweepX)));
+  const ends = state.segments.map((segment) => [project(frame, segment.start), project(frame, segment.end)] as const);
+  const obstacles = [
+    ...ends.flatMap(([start, end]) => [dotBox(start, 4), dotBox(end, 4)]),
+    ...state.intersections.map((marker) => dotBox(project(frame, marker))),
+  ];
+  const labels = placeLabels(
+    state.segments.map((segment, index) => ({ ...ends[index]![0], text: segment.label })),
+    obstacles,
+    frameBounds(frame),
+    SEGMENT_LABEL_OFFSETS,
+  );
   return {
     grid: planeGrid(frame),
-    segments: state.segments.map((segment) => {
-      const start = project(frame, segment.start);
-      const end = project(frame, segment.end);
+    segments: state.segments.map((segment, index) => {
+      const [start, end] = ends[index]!;
       const tone = SEGMENT_TONES[segment.tone];
-      return { id: segment.id, label: segment.label, x1: start.x, y1: start.y, x2: end.x, y2: end.y, tone, bold: tone === 'cyan' || tone === 'lime' };
+      return {
+        id: segment.id,
+        label: segment.label,
+        x1: start.x,
+        y1: start.y,
+        x2: end.x,
+        y2: end.y,
+        tone,
+        bold: tone === 'cyan' || tone === 'lime',
+        labelOffset: labels[index]!,
+      };
     }),
     crossings: state.intersections.map((marker) => {
       const pixel = project(frame, marker);

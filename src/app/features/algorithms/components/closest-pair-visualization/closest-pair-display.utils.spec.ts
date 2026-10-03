@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { closestPairOfPointsGenerator } from '../../algorithms/closest-pair-of-points';
 import { ClosestPairStepState, isClosestPairState } from '../../models/geometry';
-import { closestPairView, closestReadout, closestTrailRows } from './closest-pair-display.utils';
+import { chipBox, dotBox, labelBox, overlapArea } from '../geo-canvas/plane-display.utils';
+import { chipCenters, closestPairView, closestReadout, closestTrailRows } from './closest-pair-display.utils';
 
 const GEO = I18N_KEY.features.algorithms.display.geometry;
 const BOX = { width: 640, height: 420 };
@@ -53,6 +54,26 @@ describe('closest-pair-display.utils', () => {
       const view = closestPairView(state, BOX);
       for (const band of view.bands) expect(band.x + band.width).toBeLessThanOrEqual(BOX.width);
       for (const divider of view.dividers) expect(divider.x).toBeLessThanOrEqual(BOX.width);
+    }
+  });
+
+  it('offers chip spots on both sides of a pair line', () => {
+    const centers = chipCenters({ x: 0, y: 100 }, { x: 100, y: 100 });
+    expect(centers[0]).toEqual({ x: 50, y: 86 });
+    expect(centers[1]).toEqual({ x: 50, y: 114 });
+  });
+
+  it('keeps distance chips off the point ids and dots', () => {
+    for (const state of states()) {
+      const view = closestPairView(state, BOX);
+      const taken = view.points.flatMap((point) => [
+        dotBox(point),
+        labelBox(point.x, point.y, String(point.id), point.label),
+      ]);
+      for (const pair of view.pairs) {
+        const chip = chipBox({ x: pair.chipX, y: pair.chipY }, pair.chipWidth);
+        expect(taken.reduce((sum, box) => sum + overlapArea(chip, box), 0)).toBe(0);
+      }
     }
   });
 });

@@ -6,13 +6,20 @@ import {
   GeoRackRow,
   GeoReadoutView,
   GeoTone,
+  LabelOffset,
   PlaneBox,
   PlaneGrid,
   PlaneRect,
+  chipBox,
   chipWidth,
+  dotBox,
   eventProgress,
   eventRows,
   formatNumber,
+  frameBounds,
+  labelBox,
+  pickPlacement,
+  placePointLabels,
   planeBounds,
   planeFrame,
   planeGrid,
@@ -44,6 +51,8 @@ export interface DelaunayCircleView {
   readonly r: number;
   readonly chip: string;
   readonly chipWidth: number;
+  readonly chipX: number;
+  readonly chipY: number;
 }
 
 export interface DelaunayPointView {
@@ -51,6 +60,7 @@ export interface DelaunayPointView {
   readonly x: number;
   readonly y: number;
   readonly tone: GeoTone;
+  readonly label: LabelOffset;
 }
 
 export interface DelaunayView {
@@ -106,11 +116,27 @@ export function delaunayReadout(state: DelaunayTriangulationStepState): GeoReado
   return { title: GEO.triangles, caption: null, value: count, tone: 'dim', verdict: GEO.verdict.waiting, led: null };
 }
 
+const CHIP_LIFT = 14;
+const CHIP_SHIFTS: readonly (readonly [number, number])[] = [
+  [0, -CHIP_LIFT],
+  [0, CHIP_LIFT],
+  [-1, -CHIP_LIFT],
+  [1, -CHIP_LIFT],
+];
+
 export function delaunayView(state: DelaunayTriangulationStepState, box: PlaneBox): DelaunayView {
   const frame = planeFrame(planeBounds(state.points), box);
   const active = new Set(state.points.filter((point) => point.status === 'compare').map((point) => point.id));
   const mesh = delaunayMeshIds(state);
   const grid = planeGrid(frame);
+  const bounds = frameBounds(frame);
+  const pixels = state.points.map((point) => project(frame, point));
+  const requests = state.points.map((point, index) => ({ ...pixels[index]!, text: String(point.id) }));
+  const labels = placePointLabels(requests, [], bounds);
+  const taken: PlaneRect[] = [
+    ...pixels.map((pixel) => dotBox(pixel)),
+    ...requests.map((request, index) => labelBox(request.x, request.y, request.text, labels[index]!)),
+  ];
   return {
     grid,
     clip: grid.plot,
@@ -127,12 +153,29 @@ export function delaunayView(state: DelaunayTriangulationStepState, box: PlaneBo
     circles: state.circles.map((circle) => {
       const center = project(frame, { x: circle.cx, y: circle.cy });
       const chip = `r = ${formatNumber(circle.r)}`;
-      return { id: circle.id, cx: center.x, cy: center.y, r: projectLength(frame, circle.r), chip, chipWidth: chipWidth(chip) };
+      const width = chipWidth(chip);
+      const centers = CHIP_SHIFTS.map(([side, lift]) => ({ x: center.x + side * (width / 2 + 6), y: center.y + lift }));
+      const boxes = centers.map((candidate) => chipBox(candidate, width));
+      const index = pickPlacement(boxes, taken, bounds);
+      taken.push(boxes[index]!);
+      return {
+        id: circle.id,
+        cx: center.x,
+        cy: center.y,
+        r: projectLength(frame, circle.r),
+        chip,
+        chipWidth: width,
+        chipX: centers[index]!.x,
+        chipY: centers[index]!.y,
+      };
     }),
-    points: state.points.map((point) => {
-      const pixel = project(frame, point);
-      return { id: point.id, x: pixel.x, y: pixel.y, tone: active.has(point.id) ? 'cyan' : mesh.has(point.id) ? 'lime' : 'slate' };
-    }),
+    points: state.points.map((point, index) => ({
+      id: point.id,
+      x: pixels[index]!.x,
+      y: pixels[index]!.y,
+      tone: active.has(point.id) ? 'cyan' : mesh.has(point.id) ? 'lime' : 'slate',
+      label: labels[index]!,
+    })),
     eventRows: eventRows(
       state.events,
       (event) => event.label,

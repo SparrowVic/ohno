@@ -1541,7 +1541,7 @@ const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
   { label: GEO_LEGEND.onStack, color: 'var(--lime)' },
   { label: GEO_LEGEND.checked, color: 'var(--cyan)' },
   { label: GEO_LEGEND.rejected, color: 'var(--pink)' },
-  { label: GEO_LEGEND.unvisited, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.unvisited, color: 'var(--slate)' },
 ];
 
 const CLOSEST_PAIR_LEGEND: readonly LegendItem[] = [
@@ -1557,6 +1557,7 @@ const LINE_INTERSECTION_LEGEND: readonly LegendItem[] = [
   { label: GEO_LEGEND.activeSegment, color: 'var(--ink-2)' },
   { label: GEO_LEGEND.eventSegment, color: 'var(--cyan)' },
   { label: GEO_LEGEND.crossing, color: 'var(--lime)' },
+  { label: GEO_LEGEND.retiredSegment, color: 'var(--ink-4)' },
 ];
 
 const HALF_PLANE_LEGEND: readonly LegendItem[] = [
@@ -1585,7 +1586,7 @@ const SWEEP_LINE_LEGEND: readonly LegendItem[] = [
 ];
 
 const VORONOI_LEGEND: readonly LegendItem[] = [
-  { label: GEO_LEGEND.site, color: 'var(--slate)', opacity: 0.8 },
+  { label: GEO_LEGEND.site, color: 'var(--slate)' },
   { label: GEO_LEGEND.currentSite, color: 'var(--cyan)' },
   { label: GEO_LEGEND.closedCell, color: 'var(--lime)' },
 ];
@@ -1593,7 +1594,7 @@ const VORONOI_LEGEND: readonly LegendItem[] = [
 const DELAUNAY_LEGEND: readonly LegendItem[] = [
   { label: GEO_LEGEND.testedTriangle, color: 'var(--cyan)' },
   { label: GEO_LEGEND.meshTriangle, color: 'var(--lime)' },
-  { label: GEO_LEGEND.meshVertex, color: 'var(--slate)', opacity: 0.8 },
+  { label: GEO_LEGEND.unvisited, color: 'var(--slate)' },
 ];
 
 const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [

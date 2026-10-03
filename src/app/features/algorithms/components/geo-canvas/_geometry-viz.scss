@@ -63,11 +63,6 @@
     pointer-events: none;
   }
 
-  &[data-tone='slate'] .point__dot,
-  &[data-tone='slate'] .point__id {
-    fill: var(--ink-3);
-  }
-
   &[data-current='true'] .point__dot {
     filter: drop-shadow(0 0 5px rgb(var(--tone-rgb) / 0.9));
   }

@@ -6,12 +6,21 @@ import {
   GeoRackRow,
   GeoReadoutView,
   GeoTone,
+  LabelOffset,
   PlaneBox,
   PlaneGrid,
+  PlanePixel,
+  PlaneRect,
+  chipBox,
   chipWidth,
+  dotBox,
   formatNumber,
+  frameBounds,
+  labelBox,
   planeBounds,
   planeFrame,
+  pickPlacement,
+  placePointLabels,
   planeGrid,
   project,
   projectX,
@@ -26,6 +35,7 @@ export interface ClosestPointView {
   readonly y: number;
   readonly tone: GeoTone;
   readonly current: boolean;
+  readonly label: LabelOffset;
 }
 
 export interface ClosestBandView {
@@ -132,6 +142,24 @@ export function closestReadout(state: ClosestPairStepState): GeoReadoutView {
   return { ...base, verdict: state.bestDistance === null ? GEO.closestPair.noPair : null, led: null };
 }
 
+const CHIP_LIFTS = [14, 26];
+const CHIP_STOPS = [0.5, 0.3, 0.7, 0.15, 0.85];
+
+export function chipCenters(a: PlanePixel, b: PlanePixel): readonly PlanePixel[] {
+  const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+  const normal = { x: -(b.y - a.y) / length, y: (b.x - a.x) / length };
+  const upward = normal.y <= 0 ? normal : { x: -normal.x, y: -normal.y };
+  return CHIP_LIFTS.flatMap((lift) =>
+    CHIP_STOPS.flatMap((stop) => {
+      const base = { x: a.x + (b.x - a.x) * stop, y: a.y + (b.y - a.y) * stop };
+      return [1, -1].map((side) => ({
+        x: Math.round(base.x + upward.x * lift * side),
+        y: Math.round(base.y + upward.y * lift * side),
+      }));
+    }),
+  );
+}
+
 export function closestPairView(state: ClosestPairStepState, box: PlaneBox): ClosestPairView {
   const frame = planeFrame(planeBounds(state.points), box);
   const byId = new Map(state.points.map((point) => [point.id, point]));
@@ -139,6 +167,14 @@ export function closestPairView(state: ClosestPairStepState, box: PlaneBox): Clo
   const bottom = frame.top + frame.plotHeight;
   const clampX = (x: number) => Math.min(frame.left + frame.plotWidth, Math.max(frame.left, projectX(frame, x)));
   const current = state.currentPair?.[1] ?? null;
+  const bounds = frameBounds(frame);
+  const pixels = state.points.map((point) => project(frame, point));
+  const requests = state.points.map((point, index) => ({ ...pixels[index]!, text: String(point.id) }));
+  const labels = placePointLabels(requests, [], bounds);
+  const taken: PlaneRect[] = [
+    ...pixels.map((pixel) => dotBox(pixel)),
+    ...requests.map((request, index) => labelBox(request.x, request.y, request.text, labels[index]!)),
+  ];
   return {
     grid: planeGrid(frame),
     bands: state.bands.map((band, index) => {
@@ -161,6 +197,12 @@ export function closestPairView(state: ClosestPairStepState, box: PlaneBox): Clo
       const a = project(frame, from);
       const b = project(frame, to);
       const look = PAIR_TONES[pair.tone];
+      const distance = formatNumber(pair.distance, 2);
+      const width = chipWidth(distance);
+      const centers = chipCenters(a, b);
+      const boxes = centers.map((center) => chipBox(center, width));
+      const slot = pickPlacement(boxes, taken, bounds);
+      taken.push(boxes[slot]!);
       return [{
         id: `pair-${index}-${pair.tone}`,
         x1: a.x,
@@ -169,16 +211,20 @@ export function closestPairView(state: ClosestPairStepState, box: PlaneBox): Clo
         y2: b.y,
         tone: look.tone,
         dashed: look.dashed,
-        chipX: Math.round((a.x + b.x) / 2),
-        chipY: Math.round((a.y + b.y) / 2) - 14,
-        distance: formatNumber(pair.distance, 2),
-        chipWidth: chipWidth(formatNumber(pair.distance, 2)),
+        chipX: centers[slot]!.x,
+        chipY: centers[slot]!.y,
+        distance,
+        chipWidth: width,
       }];
     }),
-    points: state.points.map((point) => {
-      const pixel = project(frame, point);
-      return { id: point.id, x: pixel.x, y: pixel.y, tone: closestPointTone(point), current: point.id === current };
-    }),
+    points: state.points.map((point, index) => ({
+      id: point.id,
+      x: pixels[index]!.x,
+      y: pixels[index]!.y,
+      tone: closestPointTone(point),
+      current: point.id === current,
+      label: labels[index]!,
+    })),
     trailRows: closestTrailRows(state),
     readout: closestReadout(state),
   };

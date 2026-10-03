@@ -102,6 +102,7 @@ const MAX_DIVISIONS = 10;
 const MINUS = '−';
 const CHIP_GLYPH = 6.2;
 const CHIP_PADDING = 6;
+const CHIP_HEIGHT = 16;
 
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
@@ -182,6 +183,102 @@ export function planePoints(frame: PlaneFrame, coords: readonly GeometryCoord[])
 
 export function chipWidth(text: string): number {
   return Math.round(text.length * CHIP_GLYPH + CHIP_PADDING * 2);
+}
+
+export function chipBox(center: PlanePixel, width: number): PlaneRect {
+  return { x: center.x - width / 2, y: center.y - CHIP_HEIGHT / 2, width, height: CHIP_HEIGHT };
+}
+
+export type LabelAnchor = 'start' | 'middle' | 'end';
+
+export interface LabelOffset {
+  readonly dx: number;
+  readonly dy: number;
+  readonly anchor: LabelAnchor;
+}
+
+export interface LabelRequest {
+  readonly x: number;
+  readonly y: number;
+  readonly text: string;
+}
+
+export const POINT_LABEL_OFFSETS: readonly LabelOffset[] = [
+  { dx: 8, dy: -8, anchor: 'start' },
+  { dx: -8, dy: -8, anchor: 'end' },
+  { dx: 8, dy: 15, anchor: 'start' },
+  { dx: -8, dy: 15, anchor: 'end' },
+  { dx: 0, dy: -11, anchor: 'middle' },
+  { dx: 0, dy: 19, anchor: 'middle' },
+  { dx: 10, dy: 4, anchor: 'start' },
+  { dx: -10, dy: 4, anchor: 'end' },
+];
+
+const LABEL_GLYPH = 6.2;
+const LABEL_ASCENT = 8;
+const LABEL_HEIGHT = 11;
+const DOT_RADIUS = 5;
+
+export function labelBox(x: number, y: number, text: string, offset: LabelOffset): PlaneRect {
+  const width = text.length * LABEL_GLYPH;
+  const anchorX = x + offset.dx;
+  const left = offset.anchor === 'start' ? anchorX : offset.anchor === 'end' ? anchorX - width : anchorX - width / 2;
+  return { x: round2(left), y: round2(y + offset.dy - LABEL_ASCENT), width: round2(width), height: LABEL_HEIGHT };
+}
+
+export function dotBox(pixel: PlanePixel, radius = DOT_RADIUS): PlaneRect {
+  return { x: pixel.x - radius, y: pixel.y - radius, width: radius * 2, height: radius * 2 };
+}
+
+export function overlapArea(a: PlaneRect, b: PlaneRect): number {
+  const width = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+  const height = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+  return width > 0 && height > 0 ? width * height : 0;
+}
+
+function outsideArea(box: PlaneRect, bounds: PlaneRect | null): number {
+  if (!bounds) return 0;
+  return box.width * box.height - overlapArea(box, bounds);
+}
+
+export function pickPlacement(candidates: readonly PlaneRect[], taken: readonly PlaneRect[], bounds: PlaneRect | null = null): number {
+  let best = 0;
+  let bestCost = Number.POSITIVE_INFINITY;
+  candidates.forEach((candidate, index) => {
+    const cost = taken.reduce((sum, box) => sum + overlapArea(candidate, box), 0) + outsideArea(candidate, bounds) * 2;
+    if (cost < bestCost - 1e-6) {
+      best = index;
+      bestCost = cost;
+    }
+  });
+  return best;
+}
+
+export function placeLabels(
+  requests: readonly LabelRequest[],
+  obstacles: readonly PlaneRect[] = [],
+  bounds: PlaneRect | null = null,
+  offsets: readonly LabelOffset[] = POINT_LABEL_OFFSETS,
+): readonly LabelOffset[] {
+  const taken: PlaneRect[] = [...obstacles];
+  return requests.map((request) => {
+    const candidates = offsets.map((offset) => labelBox(request.x, request.y, request.text, offset));
+    const index = pickPlacement(candidates, taken, bounds);
+    taken.push(candidates[index]!);
+    return offsets[index]!;
+  });
+}
+
+export function placePointLabels(
+  points: readonly LabelRequest[],
+  obstacles: readonly PlaneRect[] = [],
+  bounds: PlaneRect | null = null,
+): readonly LabelOffset[] {
+  return placeLabels(points, [...points.map((point) => dotBox(point)), ...obstacles], bounds);
+}
+
+export function frameBounds(frame: PlaneFrame): PlaneRect {
+  return { x: 0, y: 0, width: frame.width, height: frame.height };
 }
 
 export function formatNumber(value: number, digits = 1): string {

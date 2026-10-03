@@ -35,7 +35,7 @@
             } @else {
               <circle class="point__dot" [attr.r]="point.current ? 6 : 4.5" />
             }
-            <text class="point__id" x="8" y="-8">{{ point.id }}</text>
+            <text class="point__id" [attr.x]="point.label.dx" [attr.y]="point.label.dy" [attr.text-anchor]="point.label.anchor">{{ point.id }}</text>
           </g>
         }
       </svg>

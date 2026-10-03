@@ -1,102 +1,100 @@
-@if (state(); as pad) {
-  @if (view(); as notebook) {
-    <div
-      class="display notebook"
-      role="img"
-      [attr.aria-label]="NOTEBOOK.ariaDisplay | transloco: { count: notebook.lineCount }"
-      [attr.data-registers]="registers().length > 0"
-      [attr.data-margins]="margins().length > 0"
-    >
-      @if (registers().length > 0) {
-        <app-notebook-register-rack class="notebook__registers" aria-hidden="true" [title]="NOTEBOOK.registers | transloco" [registers]="registers()" />
-      }
+@if (view(); as notebook) {
+  <div
+    class="display notebook"
+    role="img"
+    [attr.aria-label]="NOTEBOOK.ariaDisplay | transloco: { count: notebook.lineCount }"
+    [attr.data-registers]="registers().length > 0"
+    [attr.data-margins]="margins().length > 0"
+  >
+    @if (registers().length > 0) {
+      <app-notebook-register-rack class="notebook__registers" aria-hidden="true" tabindex="-1" [title]="NOTEBOOK.registers | transloco" [registers]="registers()" />
+    }
 
-      <div class="notebook__main" aria-hidden="true">
-        <div
-          #scroller
-          class="notebook__scroller"
-          tabindex="-1"
-        >
-          @if (pad.taskPrompt; as prompt) {
-            <div class="notebook__task">
-              <ohno-engraving>{{ NOTEBOOK.task | transloco }}</ohno-engraving>
-              <p class="notebook__task-body"><app-math-text mode="mixed" [content]="prompt | i18nText" /></p>
-            </div>
-          }
+    <div class="notebook__main" aria-hidden="true">
+      <div
+        #scroller
+        class="notebook__scroller"
+        tabindex="-1"
+      >
+        @if (notebook.taskPrompt; as prompt) {
+          <div class="notebook__task">
+            <ohno-engraving>{{ NOTEBOOK.task | transloco }}</ohno-engraving>
+            <p class="notebook__task-body"><app-math-text mode="mixed" [content]="prompt | i18nText" /></p>
+          </div>
+        }
 
-          @for (section of notebook.sections; track section.id; let first = $first) {
-            <section class="notebook__section" [attr.data-status]="section.status">
-              @if (section.title; as title) {
-                <h4 class="notebook__divider">
-                  <ohno-led size="sm" [color]="SECTION_LEDS[section.status]" [on]="section.status !== 'pending'" />
-                  <span class="notebook__divider-text">{{ title | i18nText }}</span>
-                </h4>
-              } @else if (!first) {
-                <hr class="notebook__rule" />
-              }
+        @for (section of notebook.sections; track section.id; let first = $first) {
+          <section class="notebook__section" [attr.data-status]="section.status">
+            @if (section.title; as title) {
+              <h4 class="notebook__divider">
+                <ohno-led size="sm" [color]="SECTION_LEDS[section.status]" [on]="section.status !== 'pending'" />
+                <span class="notebook__divider-text">{{ title | i18nText }}</span>
+              </h4>
+            } @else if (!first) {
+              <hr class="notebook__rule" />
+            }
 
-              <ol class="notebook__lines">
-                @for (row of section.rows; track row.id) {
-                  @switch (row.kind) {
-                    @case ('rule') {
-                      <li class="notebook__rule" aria-hidden="true"></li>
-                    }
-                    @case ('result-head') {
-                      <li class="notebook__result-head" [attr.data-current]="row.current">
-                        <span class="notebook__result-mark" aria-hidden="true">{{ row.marker ?? '✓' }}</span>
-                        <span>{{ row.content | i18nText }}</span>
-                      </li>
-                    }
-                    @default {
-                      <li
-                        class="notebook__line"
-                        [attr.data-kind]="row.kind"
-                        [attr.data-tone]="row.tone"
-                        [attr.data-current]="row.current"
-                        [style.--indent]="row.indent"
-                      >
-                        <span class="notebook__number">{{ row.number }}</span>
-                        <div class="notebook__body">
-                          @if (row.caption; as caption) {
-                            <span class="notebook__caption"><app-math-text mode="mixed" [content]="caption | i18nText" /></span>
-                          }
-                          <span class="notebook__content"><app-math-text mode="mixed" [content]="row.content | i18nText" /></span>
-                          @if (row.instruction; as instruction) {
-                            <span class="notebook__instruction"><app-math-text mode="mixed" [content]="instruction | i18nText" /></span>
-                          }
-                        </div>
-                        @if (row.annotation; as annotation) {
-                          <span class="notebook__annotation"><app-math-text mode="mixed" [content]="annotation | i18nText" /></span>
+            <ol class="notebook__lines">
+              @for (row of section.rows; track row.id) {
+                @switch (row.kind) {
+                  @case ('rule') {
+                    <li class="notebook__rule" aria-hidden="true"></li>
+                  }
+                  @case ('result-head') {
+                    <li class="notebook__result-head" [attr.data-current]="row.current">
+                      <span class="notebook__result-mark" aria-hidden="true">{{ row.marker ?? '✓' }}</span>
+                      <span>{{ row.content | i18nText }}</span>
+                    </li>
+                  }
+                  @default {
+                    <li
+                      class="notebook__line"
+                      [attr.data-kind]="row.kind"
+                      [attr.data-tone]="row.tone"
+                      [attr.data-current]="row.current"
+                      [style.--indent]="row.indent"
+                    >
+                      <span class="notebook__number">{{ row.number }}</span>
+                      <div class="notebook__body">
+                        @if (row.caption; as caption) {
+                          <span class="notebook__caption"><app-math-text mode="mixed" [content]="caption | i18nText" /></span>
                         }
-                      </li>
-                    }
+                        <span class="notebook__content" tabindex="-1"><app-math-text mode="mixed" [content]="row.content | i18nText" /></span>
+                        @if (row.instruction; as instruction) {
+                          <span class="notebook__instruction"><app-math-text mode="mixed" [content]="instruction | i18nText" /></span>
+                        }
+                      </div>
+                      @if (row.annotation; as annotation) {
+                        <span class="notebook__annotation"><app-math-text mode="mixed" [content]="annotation | i18nText" /></span>
+                      }
+                    </li>
                   }
                 }
-              </ol>
-            </section>
-          }
+              }
+            </ol>
+          </section>
+        }
 
-          @if (pad.resultLabel; as result) {
-            <div class="notebook__result">
-              <ohno-engraving tone="lime">{{ NOTEBOOK.result | transloco }}</ohno-engraving>
-              <app-math-text mode="mixed" [content]="result | i18nText" />
-            </div>
-          }
-        </div>
+        @if (notebook.resultLabel; as result) {
+          <div class="notebook__result">
+            <ohno-engraving tone="lime">{{ NOTEBOOK.result | transloco }}</ohno-engraving>
+            <app-math-text mode="mixed" [content]="result | i18nText" />
+          </div>
+        }
       </div>
-
-      @if (margins().length > 0) {
-        <aside class="notebook__margins" aria-hidden="true">
-          <ohno-rack [title]="NOTEBOOK.margins | transloco">
-            @for (margin of margins(); track margin.id) {
-              <article class="margin" [attr.data-tone]="margin.tone">
-                <span class="margin__title">{{ margin.title | transloco }}</span>
-                <p class="margin__text"><app-math-text mode="mixed" [content]="margin.text | i18nText" /></p>
-              </article>
-            }
-          </ohno-rack>
-        </aside>
-      }
     </div>
-  }
+
+    @if (margins().length > 0) {
+      <aside class="notebook__margins" aria-hidden="true" tabindex="-1">
+        <ohno-rack [title]="NOTEBOOK.margins | transloco">
+          @for (margin of margins(); track margin.id) {
+            <article class="margin" [attr.data-tone]="margin.tone">
+              <span class="margin__title">{{ margin.title | transloco }}</span>
+              <p class="margin__text"><app-math-text mode="mixed" [content]="margin.text | i18nText" /></p>
+            </article>
+          }
+        </ohno-rack>
+      </aside>
+    }
+  </div>
 }
