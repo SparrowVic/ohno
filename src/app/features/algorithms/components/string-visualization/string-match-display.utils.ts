@@ -18,6 +18,7 @@ import {
   row,
   valueCells,
 } from './string-tape.utils';
+import { phaseIs } from './string-truth.utils';
 
 const STRING = I18N_KEY.features.algorithms.display.string;
 const RACKS = I18N_KEY.features.algorithms.display.racks;
@@ -321,14 +322,15 @@ export function zAlgorithmDisplay(state: ZAlgorithmTraceState): StringDisplay {
   const equal = comparing && combined[prefixIndex] === combined[matchIndex];
   const compareTone: StringTone = comparing && !equal ? 'pink' : 'cyan';
   const hitColumns = state.matches.map((offset) => offset + m + 1);
-  const zKnown = (index: number): boolean => index > 0 && active !== null && index <= active;
+  const complete = phaseIs(state.phaseLabel, 'complete');
+  const zKnown = (index: number): boolean => index > 0 && (complete || (active !== null && index <= active));
   const isMirror = comparing && active !== null && matchIndex - active !== prefixIndex;
   const combinedTone = (index: number): StringTone => {
     if (comparing && index === matchIndex) return isMirror ? 'cyan' : compareTone;
     if (isMirror && index === prefixIndex) return 'violet';
     if (index === m) return 'dim';
     if (hitColumns.some((column) => inRange(index, column, m))) return 'lime';
-    if (index < m) return 'violet';
+    if (index < m) return 'ink';
     return active !== null && index < active ? 'dim' : 'idle';
   };
   const rows: StringRow[] = [

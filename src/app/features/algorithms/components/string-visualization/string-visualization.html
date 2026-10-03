@@ -10,6 +10,7 @@
       <div
         #tapes
         class="str__tapes"
+        tabindex="-1"
         [attr.data-tree]="display().tree !== null"
         [style.--cell-w.px]="metrics().width"
         [style.--cell-font.px]="metrics().font"
@@ -72,7 +73,7 @@
         <div class="str__tree-head">
           <ohno-engraving>{{ tree.caption | i18nText }}</ohno-engraving>
         </div>
-        <div #tree class="str__tree">
+        <div #tree class="str__tree" tabindex="-1">
           <svg
             class="str__svg"
             [attr.width]="tree.width"
@@ -80,27 +81,11 @@
             [attr.viewBox]="'0 0 ' + tree.width + ' ' + tree.height"
           >
             @for (edge of tree.edges; track edge.id) {
-              @if (edge.curved) {
-                <path
-                  class="str__edge"
-                  data-curved="true"
-                  [attr.data-tone]="edge.tone"
-                  [attr.d]="'M ' + edge.x1 + ' ' + edge.y1 + ' Q ' + ((edge.x1 + edge.x2) / 2 + 30) + ' ' + ((edge.y1 + edge.y2) / 2) + ' ' + edge.x2 + ' ' + edge.y2"
-                />
-              } @else {
-                <line
-                  class="str__edge"
-                  [attr.data-tone]="edge.tone"
-                  [attr.x1]="edge.x1"
-                  [attr.y1]="edge.y1"
-                  [attr.x2]="edge.x2"
-                  [attr.y2]="edge.y2"
-                />
-              }
+              <path class="str__edge" [attr.data-tone]="edge.tone" [attr.d]="edge.d" />
             }
             @for (edge of tree.edges; track edge.id) {
               @if (edge.label; as label) {
-                <g class="str__chip" [attr.data-tone]="edge.tone === 'plain' ? null : edge.tone" [attr.transform]="'translate(' + (edge.x1 + edge.x2) / 2 + ' ' + (edge.y1 + edge.y2) / 2 + ')'">
+                <g class="str__chip" [attr.data-tone]="edge.tone === 'plain' ? null : edge.tone" [attr.transform]="'translate(' + edge.labelX + ' ' + edge.labelY + ')'">
                   <rect class="chip__box" x="-7" y="-8" width="14" height="16" />
                   <text class="chip__text">{{ label }}</text>
                 </g>
@@ -113,7 +98,6 @@
                 [attr.data-current]="node.current"
                 [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
               >
-                <circle class="node__halo" r="19" />
                 <circle class="node__ring" r="14" />
                 <text class="node__label">{{ node.label }}</text>
                 @if (node.value !== null) {
@@ -127,7 +111,7 @@
     </div>
 
     @if (hasRack()) {
-      <div #rack class="display__rack str__rack" aria-hidden="true">
+      <div #rack class="display__rack str__rack" tabindex="-1" aria-hidden="true">
         @for (rack of display().racks; track rack.id) {
           <ohno-rack class="str__rack-list" [title]="rack.title | i18nText" [meta]="rack.meta">
             @for (entry of rack.rows; track entry.id) {
@@ -154,10 +138,10 @@
 
         @if (display().facts.length > 0) {
           <div class="str__facts">
-            @for (fact of display().facts; track fact.id) {
+            @for (fact of facts(); track fact.id) {
               <ohno-rack-row>
                 <span class="str__fact-label">{{ fact.label | i18nText }}</span>
-                <span rackValue class="str__fact-value" [attr.data-tone]="fact.tone">{{ fact.value }}</span>
+                <span rackValue class="str__fact-value" [attr.data-tone]="fact.tone" [attr.data-text]="fact.text">{{ fact.value }}</span>
               </ohno-rack-row>
             }
           </div>

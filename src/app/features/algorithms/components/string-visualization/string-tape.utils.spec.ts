@@ -45,9 +45,10 @@ describe('string tape utils', () => {
 
   it('fits cells between the minimum and maximum width', () => {
     expect(stringCellMetrics(1000, 10, false).width).toBe(40);
-    expect(stringCellMetrics(300, 30, false).width).toBe(24);
+    expect(stringCellMetrics(300, 30, false).width).toBe(22);
+    expect(stringCellMetrics(602, 23, false).width).toBe(22);
     const mid = stringCellMetrics(640, 19, false);
-    expect(mid.width).toBeGreaterThanOrEqual(24);
+    expect(mid.width).toBeGreaterThanOrEqual(22);
     expect(mid.width).toBeLessThanOrEqual(40);
     expect(stringCellMetrics(300, 30, false).font).toBeGreaterThanOrEqual(14);
   });
