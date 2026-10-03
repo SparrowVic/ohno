@@ -144,13 +144,13 @@ function makeState(args: {
     ],
     combined: args.combined,
     patternLength: args.scenario.pattern.length,
-    zValues: args.zValues,
+    zValues: [...args.zValues],
     activeIndex: args.activeIndex,
     boxLeft: args.boxLeft,
     boxRight: args.boxRight,
     comparePrefixIndex: args.comparePrefixIndex,
     compareMatchIndex: args.compareMatchIndex,
-    matches: args.matches,
+    matches: [...args.matches],
   };
 }
 

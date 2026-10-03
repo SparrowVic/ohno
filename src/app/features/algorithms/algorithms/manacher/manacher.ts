@@ -151,7 +151,7 @@ function makeState(args: {
     ],
     source: args.scenario.source,
     transformed: args.transformed,
-    radii: args.radii,
+    radii: [...args.radii],
     currentCenter: args.currentCenter,
     mirrorIndex: args.mirrorIndex,
     leftBoundary: args.leftBoundary,

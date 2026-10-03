@@ -184,7 +184,7 @@ function makeState(args: {
     verifying: args.verifying,
     verificationIndex: args.verificationIndex,
     collision: args.collision,
-    matches: args.matches,
+    matches: [...args.matches],
     outgoingChar: args.outgoingChar,
     incomingChar: args.incomingChar,
   };

@@ -18,20 +18,10 @@ export const REBUILT_DISPLAY_VARIANTS: ReadonlySet<VisualizationVariant> = new S
   'sieve-grid',
   'search',
   'pointer-lab',
+  'string',
 ]);
 
 export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
-  'kmp-pattern-matching',
-  'rabin-karp',
-  'z-algorithm',
-  'aho-corasick',
-  'manacher',
-  'suffix-array-construction',
-  'suffix-array-lcp-kasai',
-  'palindromic-tree',
-  'burrows-wheeler-transform',
-  'run-length-encoding',
-  'huffman-coding',
   'convex-hull',
   'line-intersection',
   'closest-pair-of-points',

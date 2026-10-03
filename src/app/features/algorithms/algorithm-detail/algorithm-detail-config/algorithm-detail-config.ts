@@ -1178,11 +1178,89 @@ const KADANE_LEGEND: readonly LegendItem[] = [
 ];
 
 const STRING_LEGEND: readonly LegendItem[] = [
-  { label: 'Source symbols', color: 'rgba(255,255,255,0.42)' },
-  { label: 'Current compare / center', color: VIZ_WARNING },
-  { label: 'Reusable shortcut', color: VIZ_ACCENT },
-  { label: 'Active window / box', color: VIZ_WINDOW },
-  { label: 'Confirmed hit / best output', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.string.legend.matched, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.compare, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mismatchFallback, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.lpsTable, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.unread, color: 'var(--slate)' },
+];
+
+const RABIN_KARP_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.matched, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.hashWindow, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mismatch, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.collision, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.unread, color: 'var(--slate)' },
+];
+
+const Z_ALGORITHM_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.matched, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.compare, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mismatch, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.zTable, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.zBox, color: 'var(--violet)' },
+];
+
+const MANACHER_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.center, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mismatch, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.palindrome, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.radii, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mirror, color: 'var(--violet)' },
+];
+
+const RLE_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.currentChar, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.growingRun, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.emittedRun, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.runCount, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.read, color: 'var(--slate)', opacity: 0.5 },
+];
+
+const BWT_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.insertedRotation, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.comparedRotations, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.firstColumn, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.lastColumn, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.unsorted, color: 'var(--slate)', opacity: 0.5 },
+];
+
+const HUFFMAN_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.currentSymbol, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mergedNodes, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.frequencies, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.internalNode, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.codes, color: 'var(--lime)' },
+];
+
+const AHO_CORASICK_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.root, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.currentState, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.failurePath, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.failureLink, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.trieMatch, color: 'var(--lime)' },
+];
+
+const SUFFIX_ARRAY_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.currentSuffix, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.comparedSuffixes, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.ranks, color: 'var(--amber)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.unsorted, color: 'var(--slate)', opacity: 0.5 },
+];
+
+const SUFFIX_LCP_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.suffixI, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.suffixJ, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.commonPrefix, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.mismatch, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.lcp, color: 'var(--amber)' },
+];
+
+const PALINDROMIC_TREE_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.string.legend.currentChar, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.suffixLink, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.longestSuffix, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.root, color: 'var(--slate)', opacity: 0.5 },
 ];
 
 const FLOOD_FILL_LEGEND: readonly LegendItem[] = [
@@ -2103,6 +2181,7 @@ function createStringViewConfig<TScenario>(args: {
   readonly defaultSize?: number;
   readonly sizeUnit?: string;
   readonly randomizeLabel?: string;
+  readonly legendItems?: readonly LegendItem[];
 }): StringAlgorithmViewConfig<TScenario> {
   const sizeOptions = args.sizeOptions ?? [12, 18, 24];
   const defaultPresetId = args.presetOptions[0]?.id ?? 'default';
@@ -2120,7 +2199,7 @@ function createStringViewConfig<TScenario>(args: {
     defaultPresetId,
     createScenario: args.createScenario,
     generator: args.generator,
-    legendItems: () => STRING_LEGEND,
+    legendItems: () => args.legendItems ?? STRING_LEGEND,
     sizeUnit: args.sizeUnit ?? 'chars',
     randomizeLabel: args.randomizeLabel ?? 'New string case',
   };
@@ -2330,6 +2409,7 @@ const KMP_VIEW_CONFIG = createStringViewConfig<KmpScenario>({
 });
 
 const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
+  legendItems: RABIN_KARP_LEGEND,
   codeLines: RABIN_KARP_CODE,
   codeRegions: RABIN_KARP_CODE_REGIONS,
   codeHighlightMap: RABIN_KARP_CODE_HIGHLIGHT_MAP,
@@ -2344,6 +2424,7 @@ const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
 });
 
 const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
+  legendItems: Z_ALGORITHM_LEGEND,
   codeLines: Z_ALGORITHM_CODE,
   codeRegions: Z_ALGORITHM_CODE_REGIONS,
   codeHighlightMap: Z_ALGORITHM_CODE_HIGHLIGHT_MAP,
@@ -2358,6 +2439,7 @@ const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
 });
 
 const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
+  legendItems: MANACHER_LEGEND,
   codeLines: MANACHER_CODE,
   codeRegions: MANACHER_CODE_REGIONS,
   codeHighlightMap: MANACHER_CODE_HIGHLIGHT_MAP,
@@ -2372,6 +2454,7 @@ const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
 });
 
 const AHO_CORASICK_VIEW_CONFIG = createStringViewConfig<AhoCorasickScenario>({
+  legendItems: AHO_CORASICK_LEGEND,
   codeLines: AHO_CORASICK_CODE,
   codeRegions: AHO_CORASICK_CODE_REGIONS,
   codeHighlightMap: AHO_CORASICK_CODE_HIGHLIGHT_MAP,
@@ -2386,6 +2469,7 @@ const AHO_CORASICK_VIEW_CONFIG = createStringViewConfig<AhoCorasickScenario>({
 });
 
 const SUFFIX_ARRAY_VIEW_CONFIG = createStringViewConfig<SuffixArrayScenario>({
+  legendItems: SUFFIX_ARRAY_LEGEND,
   codeLines: SUFFIX_ARRAY_CONSTRUCTION_CODE,
   codeRegions: SUFFIX_ARRAY_CONSTRUCTION_CODE_REGIONS,
   codeHighlightMap: SUFFIX_ARRAY_CONSTRUCTION_CODE_HIGHLIGHT_MAP,
@@ -2400,6 +2484,7 @@ const SUFFIX_ARRAY_VIEW_CONFIG = createStringViewConfig<SuffixArrayScenario>({
 });
 
 const SUFFIX_ARRAY_LCP_VIEW_CONFIG = createStringViewConfig<SuffixArrayLcpScenario>({
+  legendItems: SUFFIX_LCP_LEGEND,
   codeLines: SUFFIX_ARRAY_LCP_KASAI_CODE,
   codeRegions: SUFFIX_ARRAY_LCP_KASAI_CODE_REGIONS,
   codeHighlightMap: SUFFIX_ARRAY_LCP_KASAI_CODE_HIGHLIGHT_MAP,
@@ -2414,6 +2499,7 @@ const SUFFIX_ARRAY_LCP_VIEW_CONFIG = createStringViewConfig<SuffixArrayLcpScenar
 });
 
 const PALINDROMIC_TREE_VIEW_CONFIG = createStringViewConfig<PalindromicTreeScenario>({
+  legendItems: PALINDROMIC_TREE_LEGEND,
   codeLines: PALINDROMIC_TREE_CODE,
   codeRegions: PALINDROMIC_TREE_CODE_REGIONS,
   codeHighlightMap: PALINDROMIC_TREE_CODE_HIGHLIGHT_MAP,
@@ -2428,6 +2514,7 @@ const PALINDROMIC_TREE_VIEW_CONFIG = createStringViewConfig<PalindromicTreeScena
 });
 
 const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenario>({
+  legendItems: BWT_LEGEND,
   codeLines: BURROWS_WHEELER_TRANSFORM_CODE,
   codeRegions: BURROWS_WHEELER_TRANSFORM_CODE_REGIONS,
   codeHighlightMap: BURROWS_WHEELER_TRANSFORM_CODE_HIGHLIGHT_MAP,
@@ -2442,6 +2529,7 @@ const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenari
 });
 
 const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
+  legendItems: RLE_LEGEND,
   codeLines: RLE_CODE,
   codeRegions: RLE_CODE_REGIONS,
   codeHighlightMap: RLE_CODE_HIGHLIGHT_MAP,
@@ -2456,6 +2544,7 @@ const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
 });
 
 const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
+  legendItems: HUFFMAN_LEGEND,
   codeLines: HUFFMAN_CODE,
   codeRegions: HUFFMAN_CODE_REGIONS,
   codeHighlightMap: HUFFMAN_CODE_HIGHLIGHT_MAP,
