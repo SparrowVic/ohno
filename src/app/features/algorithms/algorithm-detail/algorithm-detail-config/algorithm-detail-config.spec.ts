@@ -125,6 +125,49 @@ describe('table family legends', () => {
   });
 });
 
+const NOTEBOOK_FAMILY_IDS = [
+  'euclidean-gcd',
+  'extended-euclidean',
+  'reservoir-sampling',
+  'fft-ntt',
+  'gaussian-elimination',
+  'simplex-algorithm',
+  'miller-rabin',
+  'pollards-rho',
+  'chinese-remainder-theorem',
+  'fibonacci-iterative',
+  'factorial',
+];
+
+describe('notebook family legends', () => {
+  const NOTEBOOK_PREFIX = 'features.algorithms.display.notebook.legend.';
+  const NUMBER_LAB_PREFIX = 'features.algorithms.display.numberLab.legend.';
+
+  it.each(NOTEBOOK_FAMILY_IDS)('%s gives its notebook and number-lab views keyed, token-coloured legends', (id) => {
+    const config = getAlgorithmViewConfig(id);
+    for (const option of config.variantOptions ?? []) {
+      const items = config.legendItems(option.value);
+      if (option.value !== 'scratchpad-lab' && option.value !== 'number-lab') continue;
+      const prefix = option.value === 'scratchpad-lab' ? NOTEBOOK_PREFIX : NUMBER_LAB_PREFIX;
+      expect(items.length).toBeGreaterThan(0);
+      for (const item of items) {
+        expect(item.label.startsWith(prefix), item.label).toBe(true);
+        expect(item.color, item.label).toMatch(TOKEN_COLOR);
+      }
+    }
+  });
+
+  it('follows the image 10 set for the notebook', () => {
+    expect(legendOf('extended-euclidean').map((item) => [item.label.slice(NOTEBOOK_PREFIX.length), legendLedColor(item.color)])).toEqual([
+      ['currentLine', 'cyan'],
+      ['decision', 'pink'],
+      ['result', 'lime'],
+      ['invariant', 'violet'],
+      ['hint', 'amber'],
+    ]);
+  });
+});
+
 describe('algorithm-detail-config', () => {
   it('exposes stable inspector storage keys and humanizes dashed labels', () => {
     expect(INSPECTOR_COLLAPSED_KEY).toBe('ohno:algorithm-detail:inspector-collapsed');

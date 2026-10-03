@@ -1,122 +1,102 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-    <app-viz-options-menu [options]="vizOptions()" (optionChange)="onOptionChange($event)" />
-  </app-viz-header>
-
-  @if (state(); as pad) {
-    <div class="scratchpad">
-      <!-- Task prompt — the exam-style "Zadanie:" / "Task:" block,
-           pulled from the active NotebookTask's `instruction`. Frames
-           *what the student is being asked to compute / prove* on this
-           run. Rendered as editorial prose so it reads like a textbook
-           prompt rather than a debug label. -->
-      @if (pad.taskPrompt; as prompt) {
-        <section class="scratchpad__task" role="note">
-          <span class="scratchpad__task-eyebrow">
-            {{ I18N_KEY.features.algorithms.scratchpadLab.taskLabel | transloco }}
-          </span>
-          <p class="scratchpad__task-body">
-            <app-math-text mode="mixed" [content]="prompt | i18nText" />
-          </p>
-        </section>
+@if (state(); as pad) {
+  @if (view(); as notebook) {
+    <div
+      class="display notebook"
+      role="img"
+      [attr.aria-label]="NOTEBOOK.ariaDisplay | transloco: { count: notebook.lineCount }"
+      [attr.data-registers]="registers().length > 0"
+      [attr.data-margins]="margins().length > 0"
+    >
+      @if (registers().length > 0) {
+        <app-notebook-register-rack class="notebook__registers" aria-hidden="true" [title]="NOTEBOOK.registers | transloco" [registers]="registers()" />
       }
 
-      <!-- Global margin notes (invariants, reminders) — pinned at the
-           top of the margin column, visible throughout the run. -->
-      @if (globalMargins().length > 0) {
-        <aside class="scratchpad__global-margin">
-          @for (margin of globalMargins(); track margin.id) {
-            <article class="scratchpad__sticky scratchpad__sticky--{{ margin.tone }}">
-              <span class="scratchpad__sticky-body">
-                <app-math-text mode="mixed" [content]="margin.text | i18nText" />
-              </span>
-            </article>
+      <div class="notebook__main" aria-hidden="true">
+        <div
+          #scroller
+          class="notebook__scroller"
+          tabindex="-1"
+        >
+          @if (pad.taskPrompt; as prompt) {
+            <div class="notebook__task">
+              <ohno-engraving>{{ NOTEBOOK.task | transloco }}</ohno-engraving>
+              <p class="notebook__task-body"><app-math-text mode="mixed" [content]="prompt | i18nText" /></p>
+            </div>
           }
-        </aside>
-      }
 
-      <!-- Main scratchpad page — lines stack top-down as the algorithm
-           writes them out. Each line is a typed row: goal, note,
-           equation, substitute, decision, result, divider. -->
-      <section class="scratchpad__page" role="region" aria-label="Scratchpad derivation">
-        @for (line of pad.lines; track line.id) {
-          @if (line.kind === 'divider') {
-            <hr class="scratchpad__divider" aria-hidden="true" />
-          } @else {
-            <article
-              class="scratchpad__line scratchpad__line--{{ line.kind }} scratchpad__line--{{ line.state }}"
-              [attr.data-line-id]="line.id"
-              [style.--scratchpad-indent]="line.indent"
-            >
-              <!-- Caption policy: always show on the current line; on
-                   settled lines only show when `captionPinned` is true
-                   (phase-entry markers — goal, first/terminal forward
-                   row, gcd announce, back-seed, verify, result). Keeps
-                   repetitive loop-body captions from cluttering long
-                   derivations while preserving one-shot narrative
-                   anchors. Entire behaviour gated by the viz-options
-                   "Show step titles" toggle. -->
-              @if (
-                showCaptions()
-                && line.caption
-                && (line.state === 'current' || line.captionPinned)
-              ) {
-                <span class="scratchpad__line-caption">
-                  <app-math-text mode="mixed" [content]="line.caption | i18nText" />
-                </span>
+          @for (section of notebook.sections; track section.id; let first = $first) {
+            <section class="notebook__section" [attr.data-status]="section.status">
+              @if (section.title; as title) {
+                <h4 class="notebook__divider">
+                  <ohno-led size="sm" [color]="SECTION_LEDS[section.status]" [on]="section.status !== 'pending'" />
+                  <span class="notebook__divider-text">{{ title | i18nText }}</span>
+                </h4>
+              } @else if (!first) {
+                <hr class="notebook__rule" />
               }
-              <span class="scratchpad__line-marker" aria-hidden="true">
-                @if (line.marker) {
-                  <app-math-text [content]="line.marker" />
-                }
-              </span>
-              <span class="scratchpad__line-body">
-                <app-math-text mode="mixed" [content]="line.content | i18nText" />
-              </span>
-              <!-- Imperative instruction chip — persistent "what we
-                   did here" tag (e.g. "Policz 48 mod 36"). Distinct
-                   from the annotation which carries the numeric
-                   result. Toggleable via the viz-options menu. -->
-              @if (showInstructions() && line.instruction) {
-                <span class="scratchpad__line-instruction">
-                  <app-math-text mode="mixed" [content]="line.instruction | i18nText" />
-                </span>
-              }
-              @if (line.annotation; as annotation) {
-                <span class="scratchpad__line-annotation">
-                  <span class="scratchpad__line-annotation-mark" aria-hidden="true">∴</span>
-                  <app-math-text mode="mixed" [content]="annotation | i18nText" />
-                </span>
-              }
-              <!-- Sticky notes anchored directly to this line — used
-                   now for transient previews (e.g. "→ Policz 48 mod
-                   36" during the compute step before the substitute
-                   line actually appears). -->
-              @if (showInstructions() && marginsForLine(line.id).length > 0) {
-                <aside class="scratchpad__line-margin" aria-hidden="false">
-                  @for (margin of marginsForLine(line.id); track margin.id) {
-                    <span class="scratchpad__sticky scratchpad__sticky--{{ margin.tone }} scratchpad__sticky--inline">
-                      <app-math-text mode="mixed" [content]="margin.text | i18nText" />
-                    </span>
+
+              <ol class="notebook__lines">
+                @for (row of section.rows; track row.id) {
+                  @switch (row.kind) {
+                    @case ('rule') {
+                      <li class="notebook__rule" aria-hidden="true"></li>
+                    }
+                    @case ('result-head') {
+                      <li class="notebook__result-head" [attr.data-current]="row.current">
+                        <span class="notebook__result-mark" aria-hidden="true">{{ row.marker ?? '✓' }}</span>
+                        <span>{{ row.content | i18nText }}</span>
+                      </li>
+                    }
+                    @default {
+                      <li
+                        class="notebook__line"
+                        [attr.data-kind]="row.kind"
+                        [attr.data-tone]="row.tone"
+                        [attr.data-current]="row.current"
+                        [style.--indent]="row.indent"
+                      >
+                        <span class="notebook__number">{{ row.number }}</span>
+                        <div class="notebook__body">
+                          @if (row.caption; as caption) {
+                            <span class="notebook__caption"><app-math-text mode="mixed" [content]="caption | i18nText" /></span>
+                          }
+                          <span class="notebook__content"><app-math-text mode="mixed" [content]="row.content | i18nText" /></span>
+                          @if (row.instruction; as instruction) {
+                            <span class="notebook__instruction"><app-math-text mode="mixed" [content]="instruction | i18nText" /></span>
+                          }
+                        </div>
+                        @if (row.annotation; as annotation) {
+                          <span class="notebook__annotation"><app-math-text mode="mixed" [content]="annotation | i18nText" /></span>
+                        }
+                      </li>
+                    }
                   }
-                </aside>
-              }
-            </article>
+                }
+              </ol>
+            </section>
           }
-        }
-      </section>
 
-      @if (pad.resultLabel; as result) {
-        <footer class="scratchpad__signoff" aria-live="polite">
-          <span class="scratchpad__signoff-mark" aria-hidden="true">∎</span>
-          <app-math-text mode="mixed" [content]="result | i18nText" />
-        </footer>
+          @if (pad.resultLabel; as result) {
+            <div class="notebook__result">
+              <ohno-engraving tone="lime">{{ NOTEBOOK.result | transloco }}</ohno-engraving>
+              <app-math-text mode="mixed" [content]="result | i18nText" />
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (margins().length > 0) {
+        <aside class="notebook__margins" aria-hidden="true">
+          <ohno-rack [title]="NOTEBOOK.margins | transloco">
+            @for (margin of margins(); track margin.id) {
+              <article class="margin" [attr.data-tone]="margin.tone">
+                <span class="margin__title">{{ margin.title | transloco }}</span>
+                <p class="margin__text"><app-math-text mode="mixed" [content]="margin.text | i18nText" /></p>
+              </article>
+            }
+          </ohno-rack>
+        </aside>
       }
     </div>
   }
-</app-viz-panel>
+}

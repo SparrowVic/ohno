@@ -1,0 +1,108 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+ohno-rack {
+  min-height: 0;
+}
+
+.registers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.register {
+  --tone: var(--ink);
+  --tone-rgb: var(--white-rgb);
+
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  min-height: 48px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: rgb(var(--white-rgb) / 0.035);
+  box-shadow: inset 0 0 0 1px rgb(var(--white-rgb) / 0.06);
+  transition:
+    box-shadow var(--duration-fast) var(--ease-soft),
+    background-color var(--duration-fast) var(--ease-soft);
+
+  &[data-tone='cyan'] {
+    --tone: var(--cyan);
+    --tone-rgb: var(--cyan-rgb);
+
+    background: rgb(var(--cyan-rgb) / 0.08);
+    box-shadow: inset 0 0 0 1.5px rgb(var(--cyan-rgb) / 0.8);
+  }
+
+  &[data-tone='lime'] {
+    --tone: var(--lime);
+    --tone-rgb: var(--lime-rgb);
+
+    background: rgb(var(--lime-rgb) / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(var(--lime-rgb) / 0.3);
+  }
+
+  &[data-tone='dim'] {
+    --tone: var(--ink-4);
+
+    background: rgb(var(--white-rgb) / 0.015);
+  }
+}
+
+.register__label {
+  min-width: 0;
+  font: 500 13px/1.2 var(--font-mono);
+  color: var(--ink-3);
+  overflow: hidden;
+}
+
+.register[data-tone='dim'] .register__label {
+  color: var(--ink-4);
+}
+
+.register__value {
+  justify-self: end;
+  min-width: 0;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 13px/1.1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--tone);
+
+  &[data-numeric='true'] {
+    font: 900 26px/1 var(--font-dot);
+    font-variation-settings: var(--dot-settings);
+  }
+
+  &[data-numeric='true'][data-size='md'] {
+    font-size: 19px;
+  }
+
+  &[data-numeric='true'][data-size='sm'] {
+    font-size: 14px;
+  }
+}
+
+.register__hint {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  font: 400 11px/1.35 var(--font-ui);
+  color: var(--ink-3);
+}
+
+@media (max-width: 1023px) {
+  .registers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  }
+}

@@ -1243,6 +1243,60 @@
           },
           "routeTitle": "Ścieżka powiększająca"
         },
+        "notebook": {
+          "ariaDisplay": "Notatnik z wyprowadzeniem: {{count}} wierszy",
+          "legend": {
+            "currentLine": "Bieżąca linia",
+            "decision": "Decyzja",
+            "hint": "Wskazówka",
+            "invariant": "Niezmiennik",
+            "result": "Wynik"
+          },
+          "marginTitles": {
+            "hint": "Wskazówka",
+            "invariant": "Niezmiennik",
+            "now": "Teraz",
+            "success": "Gotowe",
+            "warning": "Uwaga"
+          },
+          "margins": "Marginesy",
+          "registers": "Rejestry",
+          "result": "Wynik",
+          "sections": {
+            "augmented": "Macierz rozszerzona",
+            "backElimination": "Eliminacja wstecz",
+            "baseTest": "Test bazy a = {{a}}",
+            "check": "Sprawdzenie",
+            "computation": "Obliczenia",
+            "conclusion": "Wniosek",
+            "construction": "Konstrukcja CRT",
+            "coprimality": "Test względnej pierwszości",
+            "decomposition": "Rozkład n − 1",
+            "factorisation": "Rozbicie",
+            "forwardElimination": "Eliminacja w przód",
+            "initialTableau": "Tableau początkowe",
+            "inverse": "Transformata odwrotna",
+            "iterations": "Iteracje",
+            "lastRemainder": "Ostatnia niezerowa reszta",
+            "model": "Model",
+            "modulus": "Moduł łączny",
+            "optimality": "Test optymalności",
+            "parameters": "Parametry",
+            "pivot": "Pivot {{n}}",
+            "pointwise": "Mnożenie punktowe",
+            "probabilityCheck": "Sprawdzenie idei prawdopodobieństwa",
+            "ratioTest": "Test ilorazów",
+            "result": "Wynik",
+            "rootCheck": "Sprawdzenie pierwiastka",
+            "run": "Przebieg",
+            "standardForm": "Postać standardowa",
+            "sum": "Suma CRT",
+            "system": "Układ równań",
+            "transformA": "Transformata A",
+            "transformB": "Transformata B"
+          },
+          "task": "Zadanie"
+        },
         "notes": {
           "ariaDisplay": "Wizualizacja algorytmu",
           "collinear": "współliniowe",
@@ -1257,6 +1311,21 @@
           "skip": "pomiń",
           "stays": "zostaje",
           "take": "weź"
+        },
+        "numberLab": {
+          "ariaDisplay": "Laboratorium liczb: {{count}} rejestrów, {{history}} wartości w historii",
+          "emptyHistory": "Jeszcze żadnej wartości.",
+          "formula": "Reguła",
+          "history": "Historia",
+          "legend": {
+            "current": "Bieżąca wartość",
+            "settled": "Ustalone",
+            "unused": "Nieużywane"
+          },
+          "noFormula": "W tym kroku żadna reguła nie działa.",
+          "pending": "w toku",
+          "registers": "Rejestry",
+          "result": "Wynik"
         },
         "phases": {
           "matrix": {
@@ -5966,6 +6035,7 @@
           "blockSwap": "Zamiana bloków",
           "bucketFlow": "Przepływ kubełków",
           "cfgDominance": "Dominacja CFG",
+          "chalkboard": "Notatnik",
           "colorSearch": "Wyszukiwanie kolorów",
           "constraintClip": "Cięcie ograniczeń",
           "costedResiduals": "Kosztowe residuale",
@@ -5987,6 +6057,7 @@
           "lowLinkScc": "SCC low-link",
           "matchingLayers": "Warstwy skojarzeń",
           "matrixLab": "Laboratorium macierzy",
+          "numberLab": "Rejestry",
           "passRelaxation": "Relaksacja przebiegu",
           "pathNetwork": "Sieć ścieżek",
           "pointCloud": "Chmura punktów",

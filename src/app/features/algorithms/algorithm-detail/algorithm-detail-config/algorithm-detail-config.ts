@@ -1140,6 +1140,26 @@ const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.search.legend.found, color: 'var(--lime)' },
 ];
 
+const NOTEBOOK_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.currentLine, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.decision, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.result, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.invariant, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.hint, color: 'var(--amber)' },
+];
+
+const NUMBER_LAB_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.numberLab.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.numberLab.legend.settled, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.numberLab.legend.unused, color: 'var(--slate)', opacity: 0.55 },
+];
+
+const notebookLegend = (variant: VisualizationVariant): readonly LegendItem[] => {
+  if (variant === 'scratchpad-lab') return NOTEBOOK_LEGEND;
+  if (variant === 'number-lab') return NUMBER_LAB_LEGEND;
+  return [];
+};
+
 const TWO_POINTERS_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.pointerLab.legend.right, color: 'var(--pink)' },
@@ -2571,7 +2591,7 @@ const FIBONACCI_ITER_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 10,
   sizeUnit: 'iterations',
   randomizeLabel: 'New Fibonacci run',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: FIBONACCI_ITER_PRESETS,
   defaultPresetId: DEFAULT_FIBONACCI_ITER_PRESET_ID,
   createScenario: (size, presetId) => createFibonacciIterScenario(size, presetId),
@@ -2590,7 +2610,7 @@ const FACTORIAL_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 6,
   sizeUnit: 'iterations',
   randomizeLabel: 'New factorial run',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: FACTORIAL_PRESETS,
   defaultPresetId: DEFAULT_FACTORIAL_PRESET_ID,
   createScenario: (size, presetId) => createFactorialScenario(size, presetId),
@@ -2615,7 +2635,7 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New GCD pair',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   /* `presetOptions` stays populated for now so the legacy scratchpad
    *  per-viz picker keeps working during migration; once the toolbar
    *  task picker is live it'll be hidden via an empty array at the
@@ -2652,7 +2672,7 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New pair',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: EXTENDED_EUCLIDEAN_PRESETS,
   defaultPresetId: DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
   tasks: EXTENDED_EUCLIDEAN_TASKS,
@@ -2681,7 +2701,7 @@ const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New candidate',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: MILLER_RABIN_PRESETS,
   defaultPresetId: DEFAULT_MILLER_RABIN_PRESET_ID,
   tasks: MILLER_RABIN_TASKS,
@@ -2706,7 +2726,7 @@ const CRT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<CrtScenario, CrtValues> = {
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New system',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: CRT_PRESETS,
   defaultPresetId: DEFAULT_CRT_PRESET_ID,
   tasks: CRT_TASKS,
@@ -2734,7 +2754,7 @@ const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New composite',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: POLLARDS_RHO_PRESETS,
   defaultPresetId: DEFAULT_POLLARDS_RHO_PRESET_ID,
   tasks: POLLARDS_RHO_TASKS,
@@ -2763,7 +2783,7 @@ const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New system',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: GAUSSIAN_ELIMINATION_PRESETS,
   defaultPresetId: DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
   tasks: GAUSSIAN_ELIMINATION_TASKS,
@@ -2792,7 +2812,7 @@ const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New LP',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: SIMPLEX_ALGORITHM_PRESETS,
   defaultPresetId: DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
   tasks: SIMPLEX_ALGORITHM_TASKS,
@@ -2821,7 +2841,7 @@ const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New stream',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: RESERVOIR_SAMPLING_PRESETS,
   defaultPresetId: DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
   tasks: RESERVOIR_SAMPLING_TASKS,
@@ -2847,7 +2867,7 @@ const FFT_NTT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<FftNttScenario, FftNttVa
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New signal',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: FFT_NTT_PRESETS,
   defaultPresetId: DEFAULT_FFT_NTT_PRESET_ID,
   tasks: FFT_NTT_TASKS,

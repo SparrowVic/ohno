@@ -21,6 +21,8 @@ export const REBUILT_DISPLAY_VARIANTS: ReadonlySet<VisualizationVariant> = new S
   'string',
   'call-stack-lab',
   'call-tree-lab',
+  'scratchpad-lab',
+  'number-lab',
 ]);
 
 export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
@@ -32,17 +34,6 @@ export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
   'delaunay-triangulation',
   'minkowski-sum',
   'half-plane-intersection',
-  'fibonacci-iterative',
-  'factorial',
-  'euclidean-gcd',
-  'reservoir-sampling',
-  'fft-ntt',
-  'gaussian-elimination',
-  'simplex-algorithm',
-  'miller-rabin',
-  'pollards-rho',
-  'chinese-remainder-theorem',
-  'extended-euclidean',
 ]);
 
 export function isDisplayReady(algorithmId: string): boolean {

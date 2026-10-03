@@ -1243,6 +1243,60 @@
           },
           "routeTitle": "Augmenting route"
         },
+        "notebook": {
+          "ariaDisplay": "Derivation notebook: {{count}} lines",
+          "legend": {
+            "currentLine": "Current line",
+            "decision": "Decision",
+            "hint": "Hint",
+            "invariant": "Invariant",
+            "result": "Result"
+          },
+          "marginTitles": {
+            "hint": "Hint",
+            "invariant": "Invariant",
+            "now": "Now",
+            "success": "Done",
+            "warning": "Warning"
+          },
+          "margins": "Margins",
+          "registers": "Registers",
+          "result": "Result",
+          "sections": {
+            "augmented": "Augmented matrix",
+            "backElimination": "Back substitution",
+            "baseTest": "Testing base a = {{a}}",
+            "check": "Check",
+            "computation": "Computation",
+            "conclusion": "Conclusion",
+            "construction": "CRT construction",
+            "coprimality": "Coprimality test",
+            "decomposition": "Decomposing n − 1",
+            "factorisation": "Factorisation",
+            "forwardElimination": "Forward elimination",
+            "initialTableau": "Initial tableau",
+            "inverse": "Inverse transform",
+            "iterations": "Iterations",
+            "lastRemainder": "Last non-zero remainder",
+            "model": "Model",
+            "modulus": "Combined modulus",
+            "optimality": "Optimality test",
+            "parameters": "Parameters",
+            "pivot": "Pivot {{n}}",
+            "pointwise": "Pointwise product",
+            "probabilityCheck": "Checking the probability argument",
+            "ratioTest": "Ratio test",
+            "result": "Result",
+            "rootCheck": "Checking the root",
+            "run": "Run",
+            "standardForm": "Standard form",
+            "sum": "CRT sum",
+            "system": "System of equations",
+            "transformA": "Transform of A",
+            "transformB": "Transform of B"
+          },
+          "task": "Task"
+        },
         "notes": {
           "ariaDisplay": "Algorithm visualization",
           "collinear": "collinear",
@@ -1257,6 +1311,21 @@
           "skip": "skip",
           "stays": "stays",
           "take": "take"
+        },
+        "numberLab": {
+          "ariaDisplay": "Number lab: {{count}} registers, {{history}} values in the history",
+          "emptyHistory": "No values yet.",
+          "formula": "Rule",
+          "history": "History",
+          "legend": {
+            "current": "Current value",
+            "settled": "Settled",
+            "unused": "Unused"
+          },
+          "noFormula": "No rule fires on this step.",
+          "pending": "pending",
+          "registers": "Registers",
+          "result": "Result"
         },
         "phases": {
           "matrix": {
@@ -5966,6 +6035,7 @@
           "blockSwap": "Block Swap",
           "bucketFlow": "Bucket Flow",
           "cfgDominance": "CFG Dominance",
+          "chalkboard": "Notebook",
           "colorSearch": "Color Search",
           "constraintClip": "Constraint Clip",
           "costedResiduals": "Costed Residuals",
@@ -5987,6 +6057,7 @@
           "lowLinkScc": "Low-Link SCC",
           "matchingLayers": "Matching Layers",
           "matrixLab": "Matrix Lab",
+          "numberLab": "Registers",
           "passRelaxation": "Pass Relaxation",
           "pathNetwork": "Path Network",
           "pointCloud": "Point Cloud",
