@@ -33,15 +33,16 @@ import {
   graphRouteMode,
   graphRouteNodeIds,
   graphValueFont,
+  GRAPH_NODE_RADIUS,
+  GRAPH_VIEW_PADDING,
   graphValueText,
   graphViewBox,
   graphViewBoxAttr,
   trimSegment,
 } from './graph-display.utils';
 
-const NODE_RADIUS = 16;
-const HALO_RADIUS = 23;
-const FOCUS_RADIUS = 27;
+const HALO_RADIUS = 20;
+const FOCUS_RADIUS = 24;
 const VALUE_GAP = 6;
 const VALUE_CAP_RATIO = 0.8;
 const ARROW_GAP = 1.5;
@@ -50,7 +51,7 @@ const CHIP_GLYPH_WIDTH = 6.2;
 const CHIP_PADDING_X = 6;
 const MARKER_SIZE = 8;
 const VALUE_FONT_SIZE = 14;
-const VIEW_PADDING = { x: 44, top: 34, bottom: 48 };
+const NO_PADDING = { x: 0, top: 0, bottom: 0 };
 
 interface GraphGlyphs {
   readonly scale: number;
@@ -73,6 +74,7 @@ interface DisplayNode {
   readonly y: number;
   readonly tone: GraphDisplayTone;
   readonly value: string;
+  readonly source: boolean;
   readonly current: boolean;
   readonly frontier: boolean;
   readonly onRoute: boolean;
@@ -147,19 +149,32 @@ export class GraphVisualization {
     return ids.map((id) => labels.get(id) ?? id).join(' → ');
   });
 
-  private readonly baseViewBox = computed(() => graphViewBox(this.state()?.nodes ?? [], VIEW_PADDING));
+  private readonly contentBox = computed(() => graphViewBox(this.state()?.nodes ?? [], NO_PADDING));
+
+  private readonly glyphScale = computed(() => {
+    const { width, height } = this.svgSize();
+    return graphGlyphScale(this.contentBox(), width, height, GRAPH_VIEW_PADDING);
+  });
+
+  private readonly fittedViewBox = computed(() => {
+    const scale = this.glyphScale();
+    return graphViewBox(this.state()?.nodes ?? [], {
+      x: GRAPH_VIEW_PADDING.x * scale,
+      top: GRAPH_VIEW_PADDING.top * scale,
+      bottom: GRAPH_VIEW_PADDING.bottom * scale,
+    });
+  });
 
   protected readonly glyphs = computed<GraphGlyphs>(() => {
     const { width, height } = this.svgSize();
-    const box = this.baseViewBox();
-    const scale = graphGlyphScale(box, width, height);
-    const valueFont = graphValueFont(box, width, height, scale, VALUE_FONT_SIZE);
+    const scale = this.glyphScale();
+    const valueFont = graphValueFont(this.fittedViewBox(), width, height, scale, VALUE_FONT_SIZE);
     return {
       scale,
-      nodeRadius: NODE_RADIUS * scale,
+      nodeRadius: GRAPH_NODE_RADIUS * scale,
       haloRadius: HALO_RADIUS * scale,
       focusRadius: FOCUS_RADIUS * scale,
-      valueOffset: NODE_RADIUS * scale + VALUE_GAP + valueFont.size * VALUE_CAP_RATIO,
+      valueOffset: (GRAPH_NODE_RADIUS + VALUE_GAP) * scale + valueFont.size * VALUE_CAP_RATIO,
       chipHeight: CHIP_HEIGHT * scale,
       markerSize: MARKER_SIZE * scale,
       valueFontSize: valueFont.size,
@@ -167,16 +182,7 @@ export class GraphVisualization {
     };
   });
 
-  protected readonly viewBox = computed(() => {
-    const scale = this.glyphs().scale;
-    return graphViewBoxAttr(
-      graphViewBox(this.state()?.nodes ?? [], {
-        x: VIEW_PADDING.x * scale,
-        top: VIEW_PADDING.top * scale,
-        bottom: VIEW_PADDING.bottom * scale,
-      }),
-    );
-  });
+  protected readonly viewBox = computed(() => graphViewBoxAttr(this.fittedViewBox()));
 
   protected readonly nodes = computed<readonly DisplayNode[]>(() => {
     const state = this.state();
@@ -189,8 +195,9 @@ export class GraphVisualization {
       label: node.label,
       x: node.x,
       y: node.y,
-      tone: graphNodeTone(node),
+      tone: graphNodeTone(node, state.detailLabel),
       value: graphValueText(node.distance, state.metricLabel),
+      source: node.isSource,
       current: node.isCurrent,
       frontier: node.isFrontier && !node.isCurrent && !node.isSettled,
       onRoute: route.has(node.id),
@@ -265,6 +272,12 @@ export class GraphVisualization {
   }
 
   protected clearRoute(): void {
+    const targetId = this.focusTargetId();
+    if (targetId) {
+      this.svgRef()
+        ?.nativeElement.querySelector<SVGGElement>(`[data-node-id="${CSS.escape(targetId)}"]`)
+        ?.focus();
+    }
     this.focusedNodeIdChange.emit(null);
   }
 }

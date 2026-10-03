@@ -54,13 +54,11 @@ const DEFAULT_GAPS: TreeGaps = { horizontal: 62, vertical: 82 };
 const EMPTY_VIEW_BOX: TreeViewBox = { x: 0, y: 0, width: 320, height: 200 };
 const MIN_SPAN = { width: 160, height: 80 };
 const RING_MIN_PX = 9;
-const RING_MAX_PX = 18;
+const RING_MAX_PX = 14;
 const RING_SHARE_H = 0.4;
 const RING_SHARE_V = 0.3;
 const DOT_MIN_RING_PX = 13;
 const DOT_MIN_PX = 14;
-const DOT_MAX_PX = 16;
-const DOT_RING_RATIO = 0.88;
 const MONO_MIN_PX = 9;
 const MONO_RING_RATIO = 0.95;
 const TAG_ROOM_V = 26;
@@ -170,9 +168,7 @@ export function treeGlyphMetrics(gaps: TreeGaps, pxPerUnit: number): TreeGlyphMe
   const verticalPx = gaps.vertical * pxPerUnit;
   const ringPx = clamp(Math.min(horizontalPx * RING_SHARE_H, verticalPx * RING_SHARE_V), RING_MIN_PX, RING_MAX_PX);
   const valueDot = ringPx >= DOT_MIN_RING_PX;
-  const valuePx = valueDot
-    ? clamp(ringPx * DOT_RING_RATIO, DOT_MIN_PX, DOT_MAX_PX)
-    : Math.max(MONO_MIN_PX, ringPx * MONO_RING_RATIO);
+  const valuePx = valueDot ? DOT_MIN_PX : Math.max(MONO_MIN_PX, ringPx * MONO_RING_RATIO);
   const showTags = verticalPx >= ringPx * 2 + TAG_ROOM_V && horizontalPx >= ringPx * 2 + TAG_ROOM_H;
   return { ringPx, valuePx, valueDot, showTags };
 }
@@ -203,13 +199,14 @@ export function treeOutputCells(state: TreeTraversalTraceState | null): TreeOutp
   }
   const lastIndex = state.output.length - 1;
   const settled = treeIsComplete(state);
+  const currentLabel = state.nodes.find((node) => node.id === state.currentNodeId)?.label ?? null;
   return state.output.map((label, index) => {
     const node = byLabel.get(label);
     return {
       key: `${index}:${label}`,
       text: node ? treeNodeValueText(node) : label,
       dot: node?.value !== null && node?.value !== undefined,
-      tone: index === lastIndex && !settled ? 'cyan' : 'lime',
+      tone: index === lastIndex && !settled && label === currentLabel ? 'cyan' : 'lime',
     };
   });
 }

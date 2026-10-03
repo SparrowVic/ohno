@@ -66,7 +66,14 @@ import {
   resolveTaskId,
 } from './utils/scenario.utils';
 import { plainSentence, sentenceParts } from './utils/sentence-markup.utils';
-import { FamilyReadoutLabels, familyStageReadout } from './utils/family-readout.utils';
+import {
+  FamilyReadoutLabels,
+  familyStageReadout,
+  isRadixStep,
+  matrixGridOperationCounts,
+  operationProgress,
+  relaxationCounts,
+} from './utils/family-readout.utils';
 import { FamilyTapeLabels, familyTapeOverrides } from './utils/family-tape.utils';
 import { genericStageReadout, sortingStageReadout, StageReadout, StageReadoutLabels } from './utils/stage-readout.utils';
 import { StepEventKind } from './utils/step-events.utils';
@@ -267,11 +274,13 @@ export class Workbench {
     return { events, passSeparator: (index) => this.translate(log.events.pass, { index }) };
   });
   private readonly isSorting = computed(() => this.config()?.kind === 'array');
+  private readonly relaxationCounts = computed(() => relaxationCounts(this.playback.history()));
+  private readonly operationCounts = computed(() => matrixGridOperationCounts(this.playback.history()));
 
   protected readonly readout = computed<StageReadout>(() => {
     const step = this.step();
     const labels = this.readoutLabels();
-    if (step && this.isSorting()) {
+    if (step && this.isSorting() && !isRadixStep(step)) {
       return sortingStageReadout(step, this.playback.events(), this.cursor(), labels);
     }
     const family =
@@ -282,6 +291,8 @@ export class Workbench {
         lastIndex: this.lastIndex(),
         variant: this.variantState(),
         labels: this.familyLabels(),
+        relaxations: this.relaxationCounts()[this.cursor()],
+        operations: operationProgress(this.operationCounts(), this.cursor()),
       });
     return family ?? genericStageReadout(this.cursor(), this.lastIndex(), labels);
   });
@@ -302,10 +313,19 @@ export class Workbench {
       skipRelax: this.translate(phases.skipRelax),
       settleNode: this.translate(phases.settleNode),
       complete: this.translate(phases.complete),
+      focusDigit: this.translate(phases.focusDigit),
+      distribute: this.translate(phases.distribute),
+      gather: this.translate(phases.gather),
+      compare: this.translate(phases.compare),
+      match: this.translate(phases.match),
+      fallback: this.translate(phases.fallback),
+      shift: this.translate(phases.shift),
+      hit: this.translate(phases.hit),
+      lps: this.translate(phases.lps),
     };
   });
   private readonly tapeOverrides = computed(() =>
-    this.isSorting() ? [] : familyTapeOverrides(this.playback.history(), this.familyTapeLabels()),
+    familyTapeOverrides(this.playback.history(), this.familyTapeLabels()),
   );
   protected readonly tapeRows = computed(() =>
     buildTapeRows(
@@ -322,7 +342,11 @@ export class Workbench {
   protected readonly legendItems = computed<readonly LegendEntry[]>(() =>
     (this.config()?.legendItems(this.variantState()) ?? []).map((item) => {
       const key = legendLabelKey(item.label);
-      return { label: key ? this.translate(key) : item.label, color: legendLedColor(item.color) };
+      return {
+        label: key ? this.translate(key) : item.label,
+        color: legendLedColor(item.color),
+        dim: item.opacity !== undefined && item.opacity < 1,
+      };
     }),
   );
   protected readonly legendHints = computed<readonly LegendHint[]>(() => {

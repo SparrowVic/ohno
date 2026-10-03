@@ -117,7 +117,7 @@ describe('tree geometry', () => {
 
   it('keeps Doto values at 14px or more and drops to mono when cramped', () => {
     const roomy = treeGlyphMetrics({ horizontal: 62, vertical: 82 }, 1);
-    expect(roomy.ringPx).toBe(18);
+    expect(roomy.ringPx).toBe(14);
     expect(roomy.valueDot).toBe(true);
     expect(roomy.valuePx).toBeGreaterThanOrEqual(14);
     expect(roomy.showTags).toBe(true);
@@ -156,6 +156,13 @@ describe('tree racks', () => {
     const cells = treeOutputCells(state());
     expect(cells.map((cell) => cell.text)).toEqual(['1', '2', '4']);
     expect(cells.map((cell) => cell.tone)).toEqual(['lime', 'lime', 'cyan']);
+  });
+
+  it('settles the newest cell once the cursor has moved past it', () => {
+    const moved = state({ currentNodeId: 'e' });
+    expect(treeOutputCells(moved).map((cell) => cell.tone)).toEqual(['lime', 'lime', 'lime']);
+    const idle = state({ currentNodeId: null });
+    expect(treeOutputCells(idle).map((cell) => cell.tone)).toEqual(['lime', 'lime', 'lime']);
   });
 
   it('settles every cell once the traversal is complete', () => {

@@ -13,6 +13,7 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { OhnoLed } from '../../../../shared/instrument/led/led';
 import { OhnoRack } from '../../../../shared/instrument/rack/rack';
 import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
@@ -35,6 +36,7 @@ import {
   dsuMovedNodeIds,
   dsuNoteTone,
   dsuOperationRows,
+  dsuRevealScrollDelta,
 } from './dsu-display.utils';
 
 interface ChipPosition {
@@ -47,7 +49,7 @@ const NO_FILTER: readonly [string, string, string] = ['none', 'none', 'none'];
 
 @Component({
   selector: 'app-dsu-visualization',
-  imports: [I18nTextPipe, TranslocoPipe, OhnoRack, OhnoRackRow],
+  imports: [I18nTextPipe, TranslocoPipe, OhnoLed, OhnoRack, OhnoRackRow],
   templateUrl: './dsu-visualization.html',
   styleUrl: './dsu-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -208,17 +210,11 @@ export class DsuVisualization implements AfterViewInit, OnDestroy, Visualization
     const focusId = dsuFocusOperationId(state);
     if (!rack || !focusId) return;
     const row = rack.querySelector<HTMLElement>(`[data-op-id="${CSS.escape(focusId)}"]`);
-    if (row) this.scrollWithin(rack, row);
+    if (row) this.scrollWithin(rack.querySelector<HTMLElement>('.ohno-rack__rows') ?? rack, row);
   }
 
   private scrollWithin(container: HTMLElement, target: HTMLElement): void {
-    const box = container.getBoundingClientRect();
-    const rect = target.getBoundingClientRect();
-    const margin = 8;
-    if (rect.top < box.top + margin) {
-      container.scrollTop -= box.top + margin - rect.top;
-    } else if (rect.bottom > box.bottom - margin) {
-      container.scrollTop += rect.bottom - (box.bottom - margin);
-    }
+    const delta = dsuRevealScrollDelta(container.getBoundingClientRect(), target.getBoundingClientRect());
+    if (delta !== 0) container.scrollTop += delta;
   }
 }

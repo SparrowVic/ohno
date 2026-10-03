@@ -2,7 +2,7 @@
   <ul class="legend__items">
     @for (item of items(); track item.label) {
       <li class="legend__item">
-        <ohno-led [color]="item.color" />
+        <ohno-led class="legend__led" [class.legend__led--dim]="item.dim" [color]="item.color" />
         <span class="legend__label">{{ item.label }}</span>
       </li>
     }

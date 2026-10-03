@@ -1,53 +1,143 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+@if (state(); as matrix) {
+  <div class="display display--rack">
+    <div class="display__main matrix" [attr.data-mode]="matrix.mode">
+      <div #scroll class="matrix__scroll">
+        <div
+          class="matrix__table"
+          role="table"
+          [attr.aria-label]="
+            MATRIX.tableAria | transloco: { rows: rows().length, cols: columns().length }
+          "
+          [attr.data-density]="density()"
+          [style.grid-template-columns]="gridColumns()"
+        >
+          <div class="matrix__row" role="row">
+            <div
+              class="matrix__corner"
+              role="columnheader"
+              [style.grid-row]="1"
+              [style.grid-column]="1"
+            >
+              <span class="matrix__corner-word">{{ cornerKey() | transloco }}</span>
+              <span class="matrix__corner-size">{{ rows().length }} × {{ columns().length }}</span>
+            </div>
+            @for (column of columns(); track column.id) {
+              <div
+                class="matrix__col-head"
+                role="columnheader"
+                [attr.data-tone]="column.tone"
+                [style.grid-row]="1"
+                [style.grid-column]="column.index + 2"
+              >
+                @if (column.pivot) {
+                  <span class="matrix__pivot-tag" aria-hidden="true">k</span>
+                }
+                <span class="matrix__col-label">{{ column.label }}</span>
+              </div>
+            }
+          </div>
 
-  @if (state(); as matrixState) {
-    <div class="matrix-board-wrap" #container>
-      <div
-        class="matrix-board"
-        [style.grid-template-columns]="gridCols()"
-        [style.--matrix-cols]="matrixState.colHeaders.length"
-      >
-        <div class="matrix-corner">{{ matrixState.dimensionsLabel }}</div>
-
-        @for (colHeader of matrixState.colHeaders; track colHeader.id) {
-          <div class="{{ headerClass(colHeader.status) }}">{{ colHeader.label }}</div>
-        }
-
-        @for (rowHeader of matrixState.rowHeaders; track rowHeader.id; let rowIndex = $index) {
-          <div class="{{ headerClass(rowHeader.status) }}">{{ rowHeader.label }}</div>
-
-          @for (cell of rowCells(rowIndex); track cell.id) {
-            <div class="{{ cellClass(cell) }}" [attr.data-cell-id]="cell.id">
-              <span class="matrix-cell__value">{{ cell.valueLabel }}</span>
-              @if (cell.metaLabel) {
-                <span class="matrix-cell__meta">{{ cell.metaLabel }}</span>
+          @for (row of rows(); track row.header.id) {
+            <div class="matrix__row" role="row">
+              <div
+                class="matrix__row-head"
+                role="rowheader"
+                [attr.data-tone]="row.header.tone"
+                [style.grid-row]="row.header.index + 2"
+                [style.grid-column]="1"
+              >
+                <span class="matrix__row-label">
+                  @if (row.header.pivot) {
+                    <span class="matrix__pivot-tag" aria-hidden="true">k</span>
+                  }
+                  {{ row.header.label }}
+                </span>
+                @if (row.header.sub) {
+                  <span class="matrix__row-sub">{{ row.header.sub }}</span>
+                }
+              </div>
+              @for (cell of row.cells; track cell.id) {
+                <div
+                  class="matrix__cell"
+                  role="cell"
+                  [attr.data-cell-id]="cell.id"
+                  [attr.data-tone]="cell.tone"
+                  [attr.data-font]="cell.font"
+                  [attr.data-ring]="cell.ring"
+                  [attr.data-zero]="cell.zero"
+                  [attr.data-current]="cell.current"
+                  [attr.data-settled]="cell.settled"
+                  [attr.aria-label]="cell.ariaLabel"
+                  [style.grid-row]="cell.row + 2"
+                  [style.grid-column]="cell.col + 2"
+                >
+                  @if (cell.tag; as tag) {
+                    <span class="matrix__cell-tag" aria-hidden="true">{{ tag | i18nText }}</span>
+                  }
+                  @if (cell.mark) {
+                    <span class="matrix__cell-mark" aria-hidden="true">{{ cell.mark }}</span>
+                  }
+                  <span class="matrix__cell-value">{{ cell.value }}</span>
+                </div>
               }
             </div>
           }
-        }
 
-        <!-- Covering-lines overlay — one bar per covered row/col.
-             Rendered AFTER the cells so they paint on top. Cells
-             live on grid rows 2..N+1 / cols 2..N+1 (row 1 + col 1
-             hold the headers), so the overlay offsets need +2. -->
-        @for (rowIndex of coveredRowIndices(); track rowIndex) {
-          <div
-            class="matrix-cover matrix-cover--row"
-            [style.grid-row]="rowIndex + 2"
-            style="grid-column: 2 / -1"
-            aria-hidden="true"
-          ></div>
-        }
-        @for (colIndex of coveredColIndices(); track colIndex) {
-          <div
-            class="matrix-cover matrix-cover--col"
-            [style.grid-column]="colIndex + 2"
-            style="grid-row: 2 / -1"
-            aria-hidden="true"
-          ></div>
-        }
+          @for (band of bands(); track band.id) {
+            <div
+              class="matrix__band"
+              aria-hidden="true"
+              [attr.data-axis]="band.axis"
+              [attr.data-tone]="band.tone"
+              [style.grid-row]="bandRow(band)"
+              [style.grid-column]="bandColumn(band)"
+            ></div>
+          }
+        </div>
       </div>
     </div>
-  }
-</app-viz-panel>
+
+    <div class="display__rack matrix__rack">
+      @for (rack of racks(); track $index) {
+        <ohno-rack class="matrix__rack-list" [title]="rack.title | i18nText" [meta]="rack.meta">
+          @for (row of rack.rows; track row.id) {
+            @if (row.sentence; as sentence) {
+              <ohno-rack-row class="matrix__rack-row matrix__rack-row--sentence" [tone]="row.tone">
+                <span class="matrix__rack-sentence">{{ sentence | i18nText }}</span>
+              </ohno-rack-row>
+            } @else {
+              <ohno-rack-row
+                class="matrix__rack-row"
+                [tone]="row.tone"
+                [attr.data-pivot]="row.pivot"
+              >
+                <span rackLead class="matrix__rack-lead">
+                  @if (row.led) {
+                    <span class="matrix__led" [attr.data-tone]="row.led" aria-hidden="true"></span>
+                  }
+                  {{ row.lead }}
+                </span>
+                <span rackValue class="matrix__rack-value">{{ row.value }}</span>
+              </ohno-rack-row>
+            }
+          } @empty {
+            <ohno-rack-row tone="dim">
+              <span rackLead class="matrix__rack-lead">—</span>
+              {{ NOTES.empty | transloco }}
+            </ohno-rack-row>
+          }
+        </ohno-rack>
+      }
+
+      @if (note(); as teaching) {
+        <div class="matrix__note" [attr.data-tone]="teaching.tone">
+          <span class="matrix__note-title">{{ teaching.title | i18nText }}</span>
+          <span class="matrix__note-formula">{{ teaching.formula | i18nText }}</span>
+          @if (teaching.verdict; as verdict) {
+            <span class="matrix__note-verdict">{{ verdict | i18nText }}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

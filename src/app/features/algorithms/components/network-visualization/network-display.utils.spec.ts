@@ -82,7 +82,9 @@ describe('network display labels', () => {
     expect(networkEdgeText('match')).toEqual(i18nText(LABELS.match));
     expect(networkEdgeText('free')).toEqual(i18nText(LABELS.freeEdge));
     expect(networkEdgeText('res 4')).toEqual(i18nText(LABELS.residual, { value: 4 }));
-    expect(networkEdgeText('c 2 · r 1')).toBe('c 2 · r 1');
+    expect(networkEdgeText('c 2 · r 1')).toEqual(i18nText(LABELS.costResidual, { cost: 2, residual: 1 }));
+    expect(networkEdgeText('c -3 · r 0')).toEqual(i18nText(LABELS.costResidual, { cost: -3, residual: 0 }));
+    expect(networkEdgeText('c 2 · r x')).toBe('c 2 · r x');
     expect(networkEdgeText(null)).toBeNull();
   });
 
@@ -104,7 +106,13 @@ describe('network rack entries', () => {
   it('splits flow items with and without spaces and an optional cost', () => {
     expect(networkFocusEntry('S → A 3/5')).toEqual({ lead: 'S', body: '→ A', value: '3/5' });
     expect(networkFocusEntry('S→A 3/4')).toEqual({ lead: 'S', body: '→ A', value: '3/4' });
-    expect(networkFocusEntry('A → D 1/1 @ 2')).toEqual({ lead: 'A', body: '→ D · c 2', value: '1/1' });
+    expect(networkFocusEntry('A → D 1/1 @ 2')).toEqual({
+      lead: 'A',
+      body: '→ D',
+      value: '1/1',
+      detail: i18nText(LABELS.cost, { value: 2 }),
+    });
+    expect(networkFocusEntry('S → A 3/5').detail).toBeUndefined();
   });
 
   it('splits matching pairs and falls back to the raw text', () => {

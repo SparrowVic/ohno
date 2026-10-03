@@ -1,10 +1,11 @@
 <div class="display display--rack">
   <div class="display__main graph">
     @if (routeText(); as route) {
-      <button class="graph__route" type="button" (click)="clearRoute()" [attr.aria-label]="I18N.clearRoute | transloco">
+      <button class="graph__route" type="button" (click)="clearRoute()">
         <span class="graph__route-title">{{ I18N.route | transloco }}</span>
         <span class="graph__route-path">{{ route }}</span>
         <span class="graph__route-close" aria-hidden="true">×</span>
+        <span class="graph__route-hint">{{ I18N.clearRoute | transloco }}</span>
       </button>
     }
 
@@ -36,7 +37,7 @@
         }
       </defs>
 
-      <g class="graph__edges">
+      <g class="graph__edges" aria-hidden="true">
         @for (edge of edges(); track edge.id) {
           <line
             class="graph__edge"
@@ -52,7 +53,7 @@
       </g>
 
       @if (showWeights()) {
-        <g class="graph__chips">
+        <g class="graph__chips" aria-hidden="true">
           @for (edge of edges(); track edge.id) {
             <g
               class="graph__chip"
@@ -77,6 +78,8 @@
         @for (node of nodes(); track node.id) {
           <g
             class="graph__node"
+            [attr.data-node-id]="node.id"
+            [attr.data-source]="node.source"
             [attr.data-tone]="node.tone"
             [attr.data-current]="node.current"
             [attr.data-frontier]="node.frontier"
@@ -112,7 +115,13 @@
       @for (row of frontierRows(); track row.id) {
         <ohno-rack-row [tone]="row.tone">
           <span rackLead class="graph__rack-lead">{{ row.label }}</span>
-          <span class="graph__rack-body">{{ row.fromLabel ? '← ' + row.fromLabel : '—' }}</span>
+          <span class="graph__rack-body">
+            @if (row.secondary; as secondary) {
+              {{ secondary | i18nText }}
+            } @else {
+              {{ row.fromLabel ? '← ' + row.fromLabel : '—' }}
+            }
+          </span>
           <span rackValue class="graph__rack-value">{{ row.value }}</span>
         </ohno-rack-row>
       } @empty {

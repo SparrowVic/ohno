@@ -1,58 +1,140 @@
 @if (state(); as grid) {
   <div class="trace">
-    <ohno-rack [title]="I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco">
-      <ohno-rack-row>
-        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.common.modeLabel | transloco }}</span>
-        {{ grid.modeLabel | i18nText }}
-      </ohno-rack-row>
-      <ohno-rack-row tone="now">
-        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.common.phaseLabel | transloco }}</span>
-        {{ grid.phaseLabel | i18nText }}
-      </ohno-rack-row>
-      <ohno-rack-row>
-        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.iterationLabel | transloco }}</span>
-        <span rackValue class="trace__dot">{{ grid.iteration }}</span>
-      </ohno-rack-row>
-      <ohno-rack-row>
-        <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.sizeLabel | transloco }}</span>
-        <span rackValue>{{ sizeLabel() }}</span>
-      </ohno-rack-row>
-      @if (pivotLabel(); as pivot) {
-        <ohno-rack-row tone="head">
-          <span rackLead>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.pivotLabel | transloco }}</span>
-          <span rackValue>{{ pivot }}</span>
+    @if (facts(); as fact) {
+      <ohno-rack [title]="PANEL.factsLabel | transloco" [meta]="table()?.size ?? null">
+        <ohno-rack-row>
+          <span rackLead class="trace__lead">{{ COMMON.phaseLabel | transloco }}</span>
+          <span class="trace__body">{{ grid.phaseLabel | i18nText }}</span>
+        </ohno-rack-row>
+        <ohno-rack-row>
+          <span rackLead class="trace__lead">{{ PANEL.iterationLabel | transloco }}</span>
+          <span rackValue class="trace__dot">{{ grid.iteration }}</span>
+        </ohno-rack-row>
+        <ohno-rack-row [tone]="fact.pivot ? 'head' : 'dim'">
+          <span rackLead class="trace__lead">{{ PANEL.pivotLabel | transloco }}</span>
+          <span class="trace__body trace__mono">{{ fact.pivot ?? '—' }}</span>
+          @if (fact.pivotValue) {
+            <span rackValue class="trace__value">{{ fact.pivotValue }}</span>
+          }
+        </ohno-rack-row>
+        @if (isSimplex()) {
+          <ohno-rack-row [tone]="fact.entering ? 'now' : 'dim'">
+            <span rackLead class="trace__lead">{{ PANEL.enteringLabel | transloco }}</span>
+            <span rackValue class="trace__value">{{ fact.entering ?? '—' }}</span>
+          </ohno-rack-row>
+        } @else {
+          <ohno-rack-row [tone]="operation() ? 'now' : 'dim'">
+            <span rackLead class="trace__lead">{{ PANEL.operationLabel | transloco }}</span>
+            <span class="trace__body trace__mono">{{ operation() ?? '—' }}</span>
+          </ohno-rack-row>
+        }
+        @if (!isSimplex()) {
+          <ohno-rack-row [tone]="fact.sources ? 'default' : 'dim'">
+            <span rackLead class="trace__lead">{{ PANEL.sourceRowLabel | transloco }}</span>
+            <span rackValue class="trace__value" data-tone="cyan">{{ fact.sources ?? '—' }}</span>
+          </ohno-rack-row>
+        }
+        <ohno-rack-row [tone]="fact.targets ? 'default' : 'dim'">
+          <span rackLead class="trace__lead">{{ PANEL.targetRowLabel | transloco }}</span>
+          <span rackValue class="trace__value" data-tone="pink">{{ fact.targets ?? '—' }}</span>
+        </ohno-rack-row>
+      </ohno-rack>
+    }
+
+    @if (table(); as snapshot) {
+      <section class="trace__block">
+        <h3 class="trace__head">
+          <ohno-engraving>{{ PANEL.snapshotLabel | transloco }}</ohno-engraving>
+          <ohno-engraving tone="dim">{{ snapshot.symbol }} {{ snapshot.size }}</ohno-engraving>
+        </h3>
+        <div class="trace__matrix-scroll">
+          <table class="trace__matrix" [attr.aria-label]="GRID.tableAria | transloco: { size: snapshot.size }">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                @for (column of snapshot.columns; track column.index) {
+                  <th class="trace__col" scope="col" [attr.data-active]="column.active" [attr.data-rhs]="column.rhs">
+                    {{ column.label }}
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of snapshot.rows; track row.index) {
+                <tr [attr.data-objective]="row.objective">
+                  <th class="trace__row-head" scope="row" [attr.data-tone]="row.tone">{{ row.label }}</th>
+                  @for (cell of row.cells; track cell.key) {
+                    <td class="trace__slot" [attr.data-rhs]="cell.rhs">
+                      <span
+                        class="trace__cell"
+                        [attr.data-tone]="cell.tone === 'idle' ? null : cell.tone"
+                        [attr.data-band]="cell.band"
+                      >{{ cell.value }}</span>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <ohno-rack [title]="PANEL.historyLabel | transloco" [meta]="history().length ? '' + history().length : null">
+      @for (entry of history(); track entry.id) {
+        <ohno-rack-row [tone]="entry.tone">
+          <span rackLead class="trace__lead trace__mono">{{ entry.order }}</span>
+          <span class="trace__body">
+            @switch (entry.kind) {
+              @case ('pivot') {
+                {{ GRID.pivotEntry | transloco: { entering: entry.entering, leaving: entry.leaving } }}
+              }
+              @case ('pending') {
+                {{ GRID.pendingEntry | transloco: { entering: entry.entering } }}
+              }
+              @default {
+                {{ entry.text }}
+              }
+            }
+          </span>
+          @if (entry.value !== null) {
+            <span rackValue class="trace__value">{{ entry.value }}</span>
+          }
+        </ohno-rack-row>
+      } @empty {
+        <ohno-rack-row tone="dim">
+          <span rackLead class="trace__lead">—</span>
+          <span class="trace__body">{{ PANEL.noneLabel | transloco }}</span>
         </ohno-rack-row>
       }
     </ohno-rack>
 
-    @if (grid.operationLabel; as operation) {
-      <section class="trace__block">
-        <ohno-engraving>{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.operationLabel | transloco }}</ohno-engraving>
-        <app-math-text class="trace__math" [content]="operation | i18nText" mode="mixed" variant="formula" />
-      </section>
+    @if (solution().length) {
+      <ohno-rack [title]="(isSimplex() ? RACKS.base : COMMON.resultLabel) | transloco">
+        @for (row of solution(); track row.id) {
+          <ohno-rack-row [tone]="row.tone">
+            <span rackLead class="trace__lead trace__mono">{{ row.label }}</span>
+            <span class="trace__body">
+              @switch (row.kind) {
+                @case ('free') {
+                  {{ GRID.free | transloco }}
+                }
+                @case ('none') {
+                  {{ GRID.noSolution | transloco }}
+                }
+                @default {
+                  {{ row.sub ?? (GRID.objective | transloco) }}
+                }
+              }
+            </span>
+            @if (row.kind === 'value') {
+              <span rackValue class="trace__value">{{ row.value }}</span>
+            }
+          </ohno-rack-row>
+        }
+      </ohno-rack>
     }
-    @if (grid.decisionLabel; as decision) {
-      <section class="trace__block">
-        <ohno-engraving tone="pink">{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.decisionLabel | transloco }}</ohno-engraving>
-        <p class="trace__copy">{{ decision | i18nText }}</p>
-      </section>
-    }
-    @if (grid.resultLabel; as result) {
-      <section class="trace__block">
-        <ohno-engraving tone="lime">{{ I18N_KEY.features.algorithms.tracePanels.common.resultLabel | transloco }}</ohno-engraving>
-        <app-math-text class="trace__math" [content]="result | i18nText" mode="mixed" variant="formula" />
-      </section>
-    }
-
-    <ohno-rack [title]="I18N_KEY.features.algorithms.tracePanels.matrixGrid.rowsLabel | transloco" [meta]="sizeLabel()">
-      @for (row of rows(); track row.index) {
-        <ohno-rack-row [tone]="row.tone">
-          <span rackLead>{{ row.label }}</span>
-          <span class="trace__values">{{ row.values }}</span>
-        </ohno-rack-row>
-      }
-    </ohno-rack>
   </div>
 } @else {
-  <p class="trace__empty">{{ I18N_KEY.features.algorithms.tracePanels.matrixGrid.emptyLabel | transloco }}</p>
+  <p class="trace__empty">{{ PANEL.emptyLabel | transloco }}</p>
 }

@@ -92,7 +92,153 @@ export function dsuChipPoint(
 }
 
 export function dsuWeightChipWidth(weight: number): number {
-  return 14 + String(weight).length * 9;
+  return 10 + String(weight).length * 6;
+}
+
+export interface DsuGraphPoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface DsuGraphSegment {
+  readonly x1: number;
+  readonly y1: number;
+  readonly x2: number;
+  readonly y2: number;
+}
+
+export interface DsuGraphPadding {
+  readonly x: number;
+  readonly top: number;
+  readonly bottom: number;
+}
+
+export interface DsuGraphFrame {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly unit: number;
+}
+
+export interface DsuGraphGlyphs {
+  readonly ring: number;
+  readonly crown: number;
+  readonly halo: number;
+  readonly valueY: number;
+  readonly rankX: number;
+  readonly rankY: number;
+  readonly chipHeight: number;
+  readonly marker: number;
+  readonly edgeInset: number;
+}
+
+export const DSU_GRAPH_VIEW_PADDING_PX: DsuGraphPadding = { x: 56, top: 46, bottom: 30 };
+
+const DSU_GRAPH_FALLBACK_SIZE = { width: 960, height: 620 };
+const DSU_GRAPH_MAX_PX_PER_UNIT = 1;
+const DSU_GRAPH_MIN_PX_PER_UNIT = 0.05;
+const RING_PX = 14;
+const CROWN_PX = 18;
+const HALO_PX = 22;
+const VALUE_GAP_PX = 6;
+const RANK_GAP_PX = 4;
+const RANK_RISE_PX = 10;
+const CHIP_HEIGHT_PX = 16;
+const MARKER_PX = 8;
+const ARROW_GAP_PX = 2;
+
+export function dsuGraphFrame(
+  points: Iterable<DsuGraphPoint>,
+  width: number,
+  height: number,
+  padding: DsuGraphPadding = DSU_GRAPH_VIEW_PADDING_PX,
+): DsuGraphFrame {
+  const list = [...points];
+  const viewWidth = width > 0 ? width : DSU_GRAPH_FALLBACK_SIZE.width;
+  const viewHeight = height > 0 ? height : DSU_GRAPH_FALLBACK_SIZE.height;
+  if (list.length === 0) return { x: 0, y: 0, width: viewWidth, height: viewHeight, unit: 1 };
+  const xs = list.map((point) => point.x);
+  const ys = list.map((point) => point.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const fitX = maxX > minX ? (viewWidth - padding.x * 2) / (maxX - minX) : Infinity;
+  const fitY = maxY > minY ? (viewHeight - padding.top - padding.bottom) / (maxY - minY) : Infinity;
+  const pxPerUnit = Math.min(
+    DSU_GRAPH_MAX_PX_PER_UNIT,
+    Math.max(DSU_GRAPH_MIN_PX_PER_UNIT, Math.min(fitX, fitY)),
+  );
+  const unit = 1 / pxPerUnit;
+  const frameWidth = viewWidth * unit;
+  const frameHeight = viewHeight * unit;
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY - padding.top * unit + maxY + padding.bottom * unit) / 2;
+  return { x: centerX - frameWidth / 2, y: centerY - frameHeight / 2, width: frameWidth, height: frameHeight, unit };
+}
+
+export interface DsuGraphScreen {
+  readonly width: number;
+  readonly height: number;
+}
+
+export const DSU_GRAPH_NODE_CLEARANCE_PX = 40;
+
+export function dsuGraphMinScreen(
+  points: Iterable<DsuGraphPoint>,
+  padding: DsuGraphPadding = DSU_GRAPH_VIEW_PADDING_PX,
+  clearance = DSU_GRAPH_NODE_CLEARANCE_PX,
+): DsuGraphScreen {
+  const list = [...points];
+  let closest = Infinity;
+  for (let i = 0; i < list.length; i++) {
+    for (let j = i + 1; j < list.length; j++) {
+      const distance = Math.hypot(list[i]!.x - list[j]!.x, list[i]!.y - list[j]!.y);
+      if (distance > 0 && distance < closest) closest = distance;
+    }
+  }
+  if (!Number.isFinite(closest)) return { width: 0, height: 0 };
+  const pxPerUnit = clearance / closest;
+  const xs = list.map((point) => point.x);
+  const ys = list.map((point) => point.y);
+  return {
+    width: Math.ceil((Math.max(...xs) - Math.min(...xs)) * pxPerUnit + padding.x * 2),
+    height: Math.ceil((Math.max(...ys) - Math.min(...ys)) * pxPerUnit + padding.top + padding.bottom),
+  };
+}
+
+export function dsuGraphViewBoxAttr(frame: DsuGraphFrame): string {
+  return `${frame.x} ${frame.y} ${frame.width} ${frame.height}`;
+}
+
+export function dsuGraphGlyphs(unit: number): DsuGraphGlyphs {
+  return {
+    ring: RING_PX * unit,
+    crown: CROWN_PX * unit,
+    halo: HALO_PX * unit,
+    valueY: -(CROWN_PX + VALUE_GAP_PX) * unit,
+    rankX: (CROWN_PX + RANK_GAP_PX) * unit,
+    rankY: -RANK_RISE_PX * unit,
+    chipHeight: CHIP_HEIGHT_PX * unit,
+    marker: MARKER_PX * unit,
+    edgeInset: (RING_PX + ARROW_GAP_PX) * unit,
+  };
+}
+
+export function dsuTrimSegment(from: DsuGraphPoint, to: DsuGraphPoint, inset: number): DsuGraphSegment {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const trim = Math.min(inset, Math.max(0, length / 2 - 0.5));
+  const ux = dx / length;
+  const uy = dy / length;
+  return {
+    x1: from.x + ux * trim,
+    y1: from.y + uy * trim,
+    x2: to.x - ux * trim,
+    y2: to.y - uy * trim,
+  };
 }
 
 export function dsuGroupsByNodeId(

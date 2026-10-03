@@ -1,39 +1,129 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div class="display__main mgrid">
+    @if (table(); as grid) {
+      <div class="mgrid__scroll">
+        <table
+          class="mgrid__table"
+          [attr.data-mode]="state()?.mode"
+          [style.--mgrid-cols]="grid.columns.length"
+          [attr.aria-label]="GRID.tableAria | transloco: { size: grid.size }"
+        >
+          <thead>
+            <tr>
+              <th class="mgrid__corner" scope="col">
+                <span class="mgrid__corner-symbol">{{ grid.symbol }}</span>
+                <span class="mgrid__corner-size">{{ grid.size }}</span>
+              </th>
+              @for (column of grid.columns; track column.index) {
+                <th class="mgrid__col" scope="col" [attr.data-active]="column.active" [attr.data-rhs]="column.rhs">
+                  {{ column.label }}
+                </th>
+              }
+              <th class="mgrid__tag-head" scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of grid.rows; track row.index) {
+              <tr class="mgrid__row" [attr.data-objective]="row.objective">
+                <th class="mgrid__row-head" scope="row" [attr.data-tone]="row.tone">
+                  <span class="mgrid__row-label">{{ row.label }}</span>
+                  @if (row.sub) {
+                    <span class="mgrid__row-sub">{{ row.sub }}</span>
+                  } @else if (row.objective) {
+                    <span class="mgrid__row-sub">{{ GRID.objective | transloco }}</span>
+                  }
+                </th>
+                @for (cell of row.cells; track cell.key) {
+                  <td class="mgrid__slot" [attr.data-rhs]="cell.rhs">
+                    <span
+                      class="mgrid__cell"
+                      [attr.data-tone]="cell.tone === 'idle' ? null : cell.tone"
+                      [attr.data-band]="cell.band"
+                      [attr.data-strong]="cell.strong"
+                      [attr.data-glyph]="cell.glyph"
+                    >
+                      @if (cell.pivot) {
+                        <span class="mgrid__cell-tag">{{ RACKS.pivot | transloco }}</span>
+                      }
+                      {{ cell.value }}
+                    </span>
+                  </td>
+                }
+                <td class="mgrid__tag-slot">
+                  @if (row.tag; as tag) {
+                    <span class="mgrid__tag" [attr.data-tone]="tag.tone">
+                      @if (tag.kind === 'operation') {
+                        ← {{ tag.text }}
+                      } @else if (tag.kind === 'skip') {
+                        {{ tag.text }} · {{ NOTES.skip | transloco }}
+                      } @else {
+                        {{ tag.text }}
+                      }
+                    </span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
 
-  @if (state(); as grid) {
-    <div class="mgrid">
-      @if (grid.operationLabel; as op) {
-        <header class="mgrid__op">
-          <app-math-text [content]="op | i18nText" variant="formula" />
-        </header>
+  <div class="display__rack mgrid__racks">
+    <ohno-rack class="mgrid__rack mgrid__rack--history" [title]="RACKS.history | transloco" [meta]="history().length ? '' + history().length : null">
+      @for (entry of history(); track entry.id) {
+        <ohno-rack-row [tone]="entry.tone">
+          <span rackLead class="mgrid__rack-lead">{{ entry.order }}</span>
+          <span class="mgrid__rack-body">
+            @switch (entry.kind) {
+              @case ('pivot') {
+                {{ GRID.pivotEntry | transloco: { entering: entry.entering, leaving: entry.leaving } }}
+              }
+              @case ('pending') {
+                {{ GRID.pendingEntry | transloco: { entering: entry.entering } }}
+              }
+              @default {
+                {{ entry.text }}
+              }
+            }
+          </span>
+          @if (entry.kind === 'pending' && entry.tone === 'head') {
+            <span rackValue class="mgrid__rack-value" data-glyph="mono">?</span>
+          }
+        </ohno-rack-row>
+      } @empty {
+        <ohno-rack-row tone="dim">
+          <span rackLead class="mgrid__rack-lead">—</span>
+          <span class="mgrid__rack-body">{{ NOTES.empty | transloco }}</span>
+        </ohno-rack-row>
       }
+    </ohno-rack>
 
-      <section
-        class="mgrid__matrix"
-        [style.grid-template-columns]="gridTemplate()"
-        [attr.data-rows]="grid.rows"
-        [attr.data-cols]="grid.cols"
-      >
-        @for (cell of grid.cells; track cell.id) {
-          <article
-            class="mgrid__cell mgrid__cell--{{ cell.state }}"
-            [style.grid-row]="cell.row + 1"
-            [style.grid-column]="cellGridColumn(cell.col)"
-          >
-            <span class="mgrid__cell-value">{{ cell.value }}</span>
-          </article>
+    @if (solution().length) {
+      <ohno-rack class="mgrid__rack" [title]="(isSimplex() ? RACKS.base : RACKS.result) | transloco">
+        @for (row of solution(); track row.id) {
+          <ohno-rack-row [tone]="row.tone">
+            <span rackLead class="mgrid__rack-lead">{{ row.label }}</span>
+            <span class="mgrid__rack-body">
+              @switch (row.kind) {
+                @case ('free') {
+                  {{ GRID.free | transloco }}
+                }
+                @case ('none') {
+                  {{ GRID.noSolution | transloco }}
+                }
+                @default {
+                  {{ row.sub ?? (GRID.objective | transloco) }}
+                }
+              }
+            </span>
+            @if (row.kind === 'value') {
+              <span rackValue class="mgrid__rack-value" [attr.data-glyph]="row.glyph">{{ row.value }}</span>
+            }
+          </ohno-rack-row>
         }
-      </section>
-
-      <footer class="mgrid__result" [class.mgrid__result--pending]="!grid.resultLabel">
-        <span class="mgrid__result-label">result</span>
-        @if (grid.resultLabel; as result) {
-          <app-math-text class="mgrid__result-value" [content]="result | i18nText" variant="formula" />
-        } @else {
-          <span class="mgrid__result-value">—</span>
-        }
-      </footer>
-    </div>
-  }
-</app-viz-panel>
+      </ohno-rack>
+    }
+  </div>
+</div>

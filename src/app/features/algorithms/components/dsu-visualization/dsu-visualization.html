@@ -16,7 +16,7 @@
           [attr.aria-label]="DSU.groupAria | transloco: { root: row.root.label, members: memberList(row) }"
         >
           <div class="dsu__root" [attr.data-node-id]="row.root.id" [attr.data-tone]="row.root.tone" [attr.data-query]="row.root.query">
-            <span class="dsu__led" aria-hidden="true"></span>
+            <ohno-led [color]="row.root.tone" [on]="row.root.tone !== 'slate'" />
             <span class="dsu__root-label">{{ row.root.label }}</span>
             <span class="dsu__root-rank">
               <span class="dsu__caption">{{ DSU.rank | transloco }}</span>
@@ -27,7 +27,7 @@
           <div class="dsu__chips">
             @for (chip of row.members; track chip.id) {
               <span class="dsu__chip" [attr.data-node-id]="chip.id" [attr.data-tone]="chip.tone" [attr.data-query]="chip.query">
-                <span class="dsu__led" aria-hidden="true"></span>
+                <ohno-led [color]="chip.tone" [on]="chip.tone !== 'slate'" />
                 <span class="dsu__chip-label">{{ chip.label }}</span>
                 @if (chip.parentHint) {
                   <span class="dsu__chip-parent">↑{{ chip.parentHint }}</span>
@@ -66,10 +66,12 @@
             <span class="dsu__op-verdict" [attr.data-verdict]="op.verdict">
               @switch (op.verdict) {
                 @case ('accepted') {
-                  ✓
+                  <span aria-hidden="true">✓</span>
+                  <span class="dsu__sr">{{ DSU.verdict.accepted | transloco }}</span>
                 }
                 @case ('rejected') {
-                  ×
+                  <span aria-hidden="true">×</span>
+                  <span class="dsu__sr">{{ DSU.verdict.rejected | transloco }}</span>
                 }
               }
             </span>

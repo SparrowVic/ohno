@@ -8,7 +8,40 @@ import {
   GraphTone,
 } from '../../models/graph';
 
+export const GRAPH_NODE_RADIUS = 14;
+export const GRAPH_VIEW_PADDING = { x: 28, top: 34, bottom: 40 } as const;
+
 const LABELS = I18N_KEY.features.algorithms.display.graph.labels;
+const SECONDARY = I18N_KEY.features.algorithms.display.graph.secondary;
+
+const GRAPH_SECONDARY_KEYS: Readonly<Record<string, string>> = {
+  BLUE: SECONDARY.sideZero,
+  AMBER: SECONDARY.sideOne,
+  NEW: SECONDARY.new,
+  STACK: SECONDARY.onStack,
+  DONE: SECONDARY.done,
+  start: SECONDARY.start,
+  finish: SECONDARY.finish,
+  'start / finish': SECONDARY.startFinish,
+  sealed: SECONDARY.sealed,
+  terminal: SECONDARY.terminal,
+  split: SECONDARY.split,
+  steiner: SECONDARY.steiner,
+  idle: SECONDARY.idle,
+};
+
+interface SecondaryPattern {
+  readonly pattern: RegExp;
+  readonly key: string;
+  readonly params: (match: RegExpMatchArray) => Readonly<Record<string, string>>;
+}
+
+const GRAPH_SECONDARY_PATTERNS: readonly SecondaryPattern[] = [
+  { pattern: /^via (.+)$/, key: SECONDARY.via, params: (match) => ({ node: match[1] ?? '' }) },
+  { pattern: /^next (.+)$/, key: SECONDARY.next, params: (match) => ({ node: match[1] ?? '' }) },
+  { pattern: /^(\d+)\/(\d+) used$/, key: SECONDARY.used, params: (match) => ({ used: match[1] ?? '', total: match[2] ?? '' }) },
+  { pattern: /^deg (\d+)$/, key: SECONDARY.degree, params: (match) => ({ degree: match[1] ?? '' }) },
+];
 
 const GRAPH_LABEL_KEYS: Readonly<Record<string, string>> = {
   Distance: LABELS.distance,
@@ -148,8 +181,12 @@ const DISTANCE_METRICS: ReadonlySet<string> = new Set(['Distance', 'Level', 'Dep
 
 const DEFAULT_VIEW_BOX: GraphViewBox = { x: 0, y: 0, width: 960, height: 620 };
 const MIN_VIEW_SPAN = 240;
-const GLYPH_TARGET_SCALE = 0.62;
-const GLYPH_MAX_SCALE = 1.8;
+const GLYPH_MAX_SCALE = 6;
+const ZERO_PADDING: GraphViewPadding = { x: 0, top: 0, bottom: 0 };
+const COMPONENT_TONES: ReadonlySet<GraphTone> = new Set(['component-a', 'component-b', 'component-c', 'component-d']);
+const ENDPOINT_TONES: ReadonlySet<GraphTone> = new Set(['left', 'right']);
+const EULER_PATH_DETAIL = 'Euler path';
+const PREDECESSOR_LABEL = 'Prev';
 const DOT_MIN_PX = 14;
 const DOT_MAX_GROWTH = 1.4;
 
@@ -184,6 +221,7 @@ export interface GraphRackRow {
   readonly id: string;
   readonly label: string;
   readonly fromLabel: string | null;
+  readonly secondary: TranslatableText | null;
   readonly isSource: boolean;
   readonly value: string;
   readonly tone: RackRowTone;
@@ -199,12 +237,28 @@ export function graphLabelText(label: string | null | undefined): TranslatableTe
   return key ? i18nText(key) : (label ?? '');
 }
 
+export function graphSecondaryText(value: string): TranslatableText {
+  const key = GRAPH_SECONDARY_KEYS[value];
+  if (key) return i18nText(key);
+  for (const { pattern, key: patternKey, params } of GRAPH_SECONDARY_PATTERNS) {
+    const match = value.match(pattern);
+    if (match) return i18nText(patternKey, params(match));
+  }
+  return value;
+}
+
 export function graphToneColor(tone: GraphTone | null | undefined): GraphDisplayTone | null {
   return tone ? GRAPH_TONE_COLORS[tone] : null;
 }
 
-export function graphNodeTone(node: GraphNodeSnapshot): GraphDisplayTone {
-  const override = graphToneColor(node.tone);
+export function graphNodeTone(node: GraphNodeSnapshot, detailLabel?: string | null): GraphDisplayTone {
+  const tone = node.tone ?? null;
+  if (tone && COMPONENT_TONES.has(tone)) {
+    if (node.isCurrent) return 'cyan';
+    if (node.isFrontier) return 'amber';
+  }
+  if (tone && ENDPOINT_TONES.has(tone) && detailLabel === EULER_PATH_DETAIL) return 'violet';
+  const override = graphToneColor(tone);
   if (override) return override;
   if (node.isCurrent) return 'cyan';
   if (node.isSettled) return 'lime';
@@ -291,10 +345,18 @@ export function graphViewBox(nodes: readonly GraphPoint[], padding: GraphViewPad
   };
 }
 
-export function graphGlyphScale(box: GraphViewBox, width: number, height: number): number {
+export function graphGlyphScale(
+  content: GraphViewBox,
+  width: number,
+  height: number,
+  screenPadding: GraphViewPadding = ZERO_PADDING,
+): number {
   if (width <= 0 || height <= 0) return 1;
-  const scale = Math.min(width / box.width, height / box.height);
-  return Math.min(GLYPH_MAX_SCALE, Math.max(1, GLYPH_TARGET_SCALE / scale));
+  const usableWidth = width - screenPadding.x * 2;
+  const usableHeight = height - screenPadding.top - screenPadding.bottom;
+  if (usableWidth <= 0 || usableHeight <= 0) return GLYPH_MAX_SCALE;
+  const pixelsPerUnit = Math.min(usableWidth / content.width, usableHeight / content.height);
+  return Math.min(GLYPH_MAX_SCALE, 1 / pixelsPerUnit);
 }
 
 export interface GraphValueFont {
@@ -342,6 +404,7 @@ export function trimSegment(from: GraphPoint, to: GraphPoint, startInset: number
 export function graphFrontierRows(state: GraphStepState | null): GraphRackRow[] {
   if (!state) return [];
   const byId = new Map(state.nodes.map((node) => [node.id, node]));
+  const showsPredecessor = state.secondaryLabel === PREDECESSOR_LABEL;
   let headAssigned = false;
   return state.queue.map((entry, index) => {
     const node = byId.get(entry.nodeId) ?? null;
@@ -351,7 +414,8 @@ export function graphFrontierRows(state: GraphStepState | null): GraphRackRow[] 
     return {
       id: `${index}:${entry.nodeId}`,
       label: entry.label,
-      fromLabel: node ? previousLabel(node, byId) : null,
+      fromLabel: node && showsPredecessor ? previousLabel(node, byId) : null,
+      secondary: node?.secondaryText && !showsPredecessor ? graphSecondaryText(node.secondaryText) : null,
       isSource: false,
       value: graphValueText(entry.distance, state.metricLabel),
       tone,
@@ -381,6 +445,7 @@ export function graphCompletionRows(state: GraphStepState | null): GraphRackRow[
       id: node.id,
       label: node.label,
       fromLabel: node.isSource ? null : previousLabel(node, byId),
+      secondary: null,
       isSource: node.isSource,
       value: graphValueText(node.distance, state.metricLabel),
       tone: 'done' as const,

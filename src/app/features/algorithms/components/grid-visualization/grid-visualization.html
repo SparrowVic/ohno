@@ -1,26 +1,130 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div class="display__main grid" #area>
+    @if (state(); as grid) {
+      <div class="grid__scroll">
+        <div
+          #board
+          class="grid__board"
+          role="img"
+          [attr.data-detail]="metrics().detail"
+          [style.grid-template-columns]="boardColumns()"
+          [style.grid-template-rows]="boardRows()"
+          [style.--grid-gap]="metrics().gap + 'px'"
+          [style.--grid-value-size]="metrics().valueSize + 'px'"
+          [attr.aria-label]="
+            I18N.boardAria
+              | transloco
+                : {
+                    rows: grid.rows,
+                    cols: grid.cols,
+                    frontier: grid.frontierCount,
+                    visited: grid.visitedCount,
+                    result: grid.resultCount,
+                  }
+          "
+        >
+          <span class="grid__corner" aria-hidden="true"></span>
+          @for (col of colIndices(); track col) {
+            <span class="grid__head grid__head--col" aria-hidden="true" [attr.data-active]="active()?.col === col">{{ col }}</span>
+          }
 
-  @if (gridState(); as grid) {
-    <div class="grid-viz__board-shell" #container>
-      <div
-        class="grid-viz__board"
-        [style.grid-template-columns]="boardColumns()"
-        [style.--grid-cols]="grid.cols"
-      >
-        @for (cell of grid.cells; track cell.id) {
-          <div
-            [class]="cellClass(cell.status)"
-            [attr.data-cell-id]="cell.id"
-            [attr.data-tone]="cell.tone ?? null"
-          >
-            <div class="grid-cell__chrome">
-              <span class="grid-cell__meta">{{ cell.metaLabel ?? ' ' }}</span>
-            </div>
-            <div class="grid-cell__value">{{ cellCoreLabel(cell) }}</div>
-          </div>
-        }
+          @for (row of rows(); track row.index) {
+            <span class="grid__head grid__head--row" aria-hidden="true" [attr.data-active]="active()?.row === row.index">{{
+              row.index
+            }}</span>
+            @for (cell of row.cells; track cell.id) {
+              <span
+                class="grid__cell"
+                aria-hidden="true"
+                [attr.data-cell-id]="cell.id"
+                [attr.data-status]="cell.status"
+                [attr.data-tone]="cell.tone"
+                [attr.data-source]="cell.isSource"
+                [attr.data-target]="cell.isTarget"
+                [attr.data-current]="cell.isCurrent"
+                [attr.data-shade]="cell.shade"
+              >
+                @if (metrics().detail === 'full' && cell.scores) {
+                  <span class="grid__tag grid__tag--g">g{{ cell.scores.g }}</span>
+                  <span class="grid__tag grid__tag--h">h{{ cell.scores.h }}</span>
+                } @else if (cell.isCurrent && cell.numeric && metrics().mark) {
+                  <span class="grid__mark">?</span>
+                }
+                @if (cell.value) {
+                  <span class="grid__value" [attr.data-dot]="cell.numeric && cell.value.length <= metrics().dotCapacity">{{ cell.value }}</span>
+                }
+              </span>
+            }
+          }
+        </div>
       </div>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack grid__racks">
+    @if (pathRows().length > 0) {
+      <ohno-rack class="grid__rack" [title]="RACKS.path | transloco" [meta]="'' + (pathRows().length - 1)">
+        @for (row of pathRows(); track row.id) {
+          <ohno-rack-row [tone]="row.tone">
+            <span rackLead class="grid__rack-lead">{{ row.label }}</span>
+            <span class="grid__rack-body">
+              @switch (row.role) {
+                @case ('source') {
+                  {{ RACKS.source | transloco }}
+                }
+                @case ('goal') {
+                  {{ I18N.goal | transloco }}
+                }
+              }
+            </span>
+            <span rackValue class="grid__rack-value">{{ row.value }}</span>
+          </ohno-rack-row>
+        }
+      </ohno-rack>
+    } @else {
+      <ohno-rack
+        class="grid__rack"
+        [title]="(state()?.mode === 'a-star' ? I18N.openSet : RACKS.queue) | transloco"
+        [meta]="'' + (state()?.frontierCount ?? 0)"
+      >
+        @for (row of frontierRows(); track row.id) {
+          <ohno-rack-row [tone]="row.tone">
+            <span rackLead class="grid__rack-lead">{{ row.label }}</span>
+            <span class="grid__rack-body">{{ row.role === 'source' ? (RACKS.source | transloco) : row.detail }}</span>
+            <span rackValue class="grid__rack-value">{{ row.value }}</span>
+          </ohno-rack-row>
+        } @empty {
+          <ohno-rack-row tone="dim">
+            <span rackLead class="grid__rack-lead">—</span>
+            <span class="grid__rack-body">{{ NOTES.empty | transloco }}</span>
+          </ohno-rack-row>
+        }
+      </ohno-rack>
+    }
+
+    <ohno-rack
+      class="grid__rack grid__rack--fill"
+      [title]="RACKS.visitOrder | transloco"
+      [meta]="'' + visitTotal()"
+    >
+      @for (row of visitRows(); track row.id) {
+        <ohno-rack-row [tone]="row.tone">
+          <span rackLead class="grid__rack-lead">{{ row.label }}</span>
+          <span rackValue class="grid__rack-value">{{ row.value }}</span>
+        </ohno-rack-row>
+      } @empty {
+        <ohno-rack-row tone="dim">
+          <span rackLead class="grid__rack-lead">—</span>
+          <span class="grid__rack-body">{{ NOTES.empty | transloco }}</span>
+        </ohno-rack-row>
+      }
+    </ohno-rack>
+
+    @if (state()?.decision; as decision) {
+      <p class="grid__note" [attr.data-tone]="decisionTone()">
+        <span class="grid__note-title">{{ I18N.decision | transloco }}</span>
+        {{ decision | i18nText }}
+      </p>
+    }
+  </div>
+</div>

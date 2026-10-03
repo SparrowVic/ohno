@@ -1,29 +1,71 @@
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { OpLineRegister } from '../../../../shared/instrument/opline/opline.types';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { CallTreeLabTraceState } from '../../models/call-tree-lab';
-import { DpTraceState } from '../../models/dp';
+import {
+  buildMatrixGridTable,
+  isRowOperationLabel,
+  matrixGridColumnLabel,
+} from '../../components/matrix-grid-visualization/matrix-grid-display.utils';
+import { dpFocusCell } from '../../components/dp-visualization/dp-display.utils';
+import { matrixFocus, matrixPivotIndex } from '../../components/matrix-visualization/matrix-display.utils';
+import { smallestFactor } from '../../components/sieve-grid-visualization/sieve-display.utils';
+import { DpCell, DpMode, DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
 import { GeometryStepState } from '../../models/geometry';
 import { GraphStepState } from '../../models/graph';
 import { GridTraceState } from '../../models/grid';
 import { MatrixTraceState } from '../../models/matrix';
 import { MatrixGridTraceState } from '../../models/matrix-grid';
-import { NetworkTraceState } from '../../models/network';
+import { NetworkEdgeSnapshot, NetworkTraceState } from '../../models/network';
 import { NumberLabTraceState } from '../../models/number-lab';
 import { PointerLabTraceState } from '../../models/pointer-lab';
 import { ScratchpadLabTraceState, ScratchpadLine } from '../../models/scratchpad-lab';
 import { SearchTraceState } from '../../models/search';
-import { SieveGridTraceState } from '../../models/sieve-grid';
+import { SieveCellState, SieveGridCell, SieveGridTraceState } from '../../models/sieve-grid';
 import { SortStep } from '../../models/sort-step';
-import { StringTraceState } from '../../models/string';
+import {
+  AhoCorasickTraceState,
+  BurrowsWheelerTraceState,
+  HuffmanTraceState,
+  KmpTraceState,
+  ManacherTraceState,
+  PalindromicTreeTraceState,
+  RabinKarpTraceState,
+  RleTraceState,
+  StringTraceState,
+  SuffixArrayConstructionTraceState,
+  SuffixArrayLcpTraceState,
+  ZAlgorithmTraceState,
+} from '../../models/string';
 import { TreeTraversalTraceState } from '../../models/tree';
 import { VisualizationVariant } from '../../models/visualization-renderer';
 import { PassGauge, StageMeter, StageReadout } from './stage-readout.utils';
 
 export type FamilyMeterId =
+  | 'hash'
+  | 'zBox'
+  | 'center'
+  | 'radius'
+  | 'longest'
+  | 'runs'
+  | 'rotations'
+  | 'symbols'
+  | 'heap'
+  | 'bits'
+  | 'nodes'
+  | 'round'
+  | 'span'
+  | 'ranks'
+  | 'lcp'
+  | 'computed'
+  | 'palindromes'
   | 'settled'
+  | 'digit'
+  | 'bucket'
+  | 'placed'
   | 'queue'
   | 'relaxed'
   | 'row'
@@ -42,7 +84,6 @@ export type FamilyMeterId =
   | 'improved'
   | 'prime'
   | 'bound'
-  | 'primes'
   | 'components'
   | 'merged'
   | 'output'
@@ -65,10 +106,26 @@ export type FamilyMeterId =
   | 'pairs'
   | 'distance'
   | 'edges'
-  | 'rows';
+  | 'rows'
+  | 'operations'
+  | 'capacity'
+  | 'best'
+  | 'amount'
+  | 'sum'
+  | 'indexI'
+  | 'indexJ'
+  | 'matched'
+  | 'zeros'
+  | 'path'
+  | 'closed'
+  | 'painted'
+  | 'crossed';
 
 export type FamilyGaugeId =
+  | 'treeNodes'
+  | 'ranks'
   | 'settled'
+  | 'digits'
   | 'rows'
   | 'phases'
   | 'checked'
@@ -80,10 +137,29 @@ export type FamilyGaugeId =
   | 'frames'
   | 'explored'
   | 'events'
-  | 'cells';
+  | 'cells'
+  | 'matched'
+  | 'operations'
+  | 'closed';
 
 export type FamilyRegisterId =
+  | 'textChar'
+  | 'patternChar'
+  | 'patternHash'
+  | 'windowHash'
+  | 'boxLeft'
+  | 'boxRight'
+  | 'zValue'
+  | 'center'
+  | 'mirror'
+  | 'rightEdge'
+  | 'char'
+  | 'count'
+  | 'node'
+  | 'matchLength'
   | 'u'
+  | 'digit'
+  | 'bucket'
   | 'v'
   | 'w'
   | 'alt'
@@ -104,7 +180,9 @@ export type FamilyRegisterId =
   | 'y'
   | 'depth'
   | 'row'
-  | 'col';
+  | 'col'
+  | 'level'
+  | 'cost';
 
 export interface FamilyReadoutLabels {
   readonly meters: Readonly<Record<FamilyMeterId, string>>;
@@ -120,6 +198,8 @@ export interface FamilyReadoutContext {
   readonly lastIndex: number;
   readonly variant: VisualizationVariant;
   readonly labels: FamilyReadoutLabels;
+  readonly relaxations?: number;
+  readonly operations?: { readonly done: number; readonly total: number };
 }
 
 const EMPTY = '—';
@@ -149,13 +229,19 @@ function phaseText(labels: FamilyReadoutLabels, index: number, lastIndex: number
   return labels.phases.step;
 }
 
+export function relaxationCounts(history: readonly SortStep[]): readonly number[] {
+  let count = 0;
+  return history.map((step) => (step.phase === 'relax' ? ++count : count));
+}
+
 export function graphReadout(state: GraphStepState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
   const settled = state.nodes.filter((node) => node.isSettled).length;
-  const relaxed = state.nodes.filter((node) => node.previousId !== null).length;
+  const relaxed = ctx.relaxations ?? state.nodes.filter((node) => node.previousId !== null).length;
   const current = state.nodes.find((node) => node.id === state.currentNodeId) ?? null;
   const activeEdge = state.edges.find((edge) => edge.id === state.activeEdgeId) ?? null;
-  const candidate = activeEdge ? (state.nodes.find((node) => node.id === activeEdge.to) ?? null) : null;
+  const candidateId = activeEdge && activeEdge.to === state.currentNodeId ? activeEdge.from : activeEdge?.to;
+  const candidate = candidateId === undefined ? null : (state.nodes.find((node) => node.id === candidateId) ?? null);
   const tone = edgeTone(index, lastIndex, activeEdge ? 'pink' : current ? 'cyan' : 'slate');
   const registers: OpLineRegister[] = [];
   if (current) registers.push(register('u', labels, current.label));
@@ -178,150 +264,414 @@ export function graphReadout(state: GraphStepState, ctx: FamilyReadoutContext): 
   };
 }
 
-export function dpReadout(state: DpTraceState, ctx: FamilyReadoutContext): StageReadout {
-  const { labels, index, lastIndex } = ctx;
-  const active = state.cells.find((cell) => cell.status === 'active') ?? null;
-  const touchedRows = new Set(
+interface DpAxes {
+  readonly row: FamilyMeterId;
+  readonly column: FamilyMeterId;
+  readonly value: FamilyMeterId;
+}
+
+const DP_BASE_AXES: Partial<Readonly<Record<DpMode, DpAxes>>> = {
+  'knapsack-01': { row: 'row', column: 'capacity', value: 'best' },
+  'coin-change': { row: 'row', column: 'amount', value: 'value' },
+  'subset-sum': { row: 'row', column: 'sum', value: 'value' },
+  'longest-common-subsequence': { row: 'indexI', column: 'indexJ', value: 'value' },
+  'edit-distance': { row: 'indexI', column: 'indexJ', value: 'value' },
+  'wildcard-matching': { row: 'textIndex', column: 'patternIndex', value: 'value' },
+  'regex-matching-dp': { row: 'textIndex', column: 'patternIndex', value: 'value' },
+};
+
+const DP_PLAIN_AXES: DpAxes = { row: 'row', column: 'column', value: 'value' };
+const DP_RESULT = /^(-?\d+|T|F|∞)$/;
+const KNAPSACK_ITEM = /^w(\d+) · v(\d+)$/;
+
+export function dpResultValue(state: DpTraceState): string | null {
+  const result = state.computation?.result;
+  return typeof result === 'string' && DP_RESULT.test(result) ? result : null;
+}
+
+function dpAnswerCell(state: DpTraceState): DpCell | null {
+  const lastRow = state.rowHeaders.length - 1;
+  const lastCol = state.colHeaders.length - 1;
+  return state.cells.find((cell) => cell.row === lastRow && cell.col === lastCol && cell.valueLabel !== '·') ?? null;
+}
+
+function dpBestValue(state: DpTraceState, active: DpCell | null, complete: boolean): string {
+  const result = dpResultValue(state);
+  if (result !== null) return result;
+  if (active && active.valueLabel !== '·' && !complete) return active.valueLabel;
+  const improved = state.cells.find((cell) => cell.status === 'improved')?.valueLabel;
+  if (improved) return improved;
+  return (complete ? dpAnswerCell(state)?.valueLabel : active?.valueLabel) ?? EMPTY;
+}
+
+function dpRegisters(state: DpTraceState, active: DpCell | null, labels: FamilyReadoutLabels): OpLineRegister[] {
+  if (!active) return [];
+  if (state.mode !== 'knapsack-01') return [register('i', labels, active.rowLabel), register('c', labels, active.colLabel)];
+  const item = state.rowHeaders[active.row]?.metaLabel?.match(KNAPSACK_ITEM) ?? null;
+  const registers = [register('i', labels, active.row), register('c', labels, active.col)];
+  if (item) registers.push(register('w', labels, item[1]!), register('v', labels, item[2]!));
+  return registers;
+}
+
+interface DpProgress {
+  readonly row: number | string;
+  readonly done: number;
+  readonly lit: number;
+}
+
+function dpTouchedRows(state: DpTraceState): number {
+  return new Set(
     state.cells.filter((cell) => cell.status !== 'idle' && cell.status !== 'base' && cell.status !== 'blocked').map((cell) => cell.row),
-  );
-  const rowCount = state.rowHeaders.length;
-  const doneRows = state.rowHeaders.filter((_, row) =>
+  ).size;
+}
+
+function dpRowMajorProgress(state: DpTraceState, focus: DpCell | null, complete: boolean): DpProgress {
+  const rowCount = state.rowHeaders.length - 1;
+  if (complete) return { row: rowCount, done: rowCount, lit: rowCount };
+  const focusRow = focus?.row ?? state.rowHeaders.findIndex((header) => header.status === 'active');
+  if (focusRow >= 0) return { row: focusRow, done: Math.max(0, focusRow - 1), lit: focusRow };
+  return { row: EMPTY, done: 0, lit: 0 };
+}
+
+function dpTableProgress(state: DpTraceState, focus: DpCell | null): DpProgress {
+  const touched = dpTouchedRows(state);
+  const done = state.rowHeaders.filter((_, row) =>
     state.cells.filter((cell) => cell.row === row).every((cell) => cell.status !== 'idle'),
   ).length;
+  return { row: focus ? focus.row + 1 : touched, done, lit: Math.max(done, touched) };
+}
+
+export function dpReadout(state: DpTraceState, ctx: FamilyReadoutContext): StageReadout {
+  const { labels, index, lastIndex } = ctx;
+  const baseAxes = DP_BASE_AXES[state.mode];
+  const axes = baseAxes ?? DP_PLAIN_AXES;
+  const offset = baseAxes ? 1 : 0;
+  const focus = dpFocusCell(state);
   const hasPath = state.cells.some((cell) => cell.status === 'chosen' || cell.status === 'backtrack');
   const hasCandidate = state.cells.some((cell) => cell.status === 'candidate');
-  const tone = edgeTone(index, lastIndex, hasPath ? 'lime' : hasCandidate ? 'pink' : active ? 'cyan' : 'slate');
-  const best = active?.valueLabel ?? state.cells.find((cell) => cell.status === 'improved')?.valueLabel ?? EMPTY;
+  const tone = edgeTone(index, lastIndex, hasPath ? 'lime' : hasCandidate ? 'pink' : focus ? 'cyan' : 'slate');
+  const complete = state.cells.some((cell) => cell.status === 'backtrack') || index >= lastIndex;
+  const progress = baseAxes ? dpRowMajorProgress(state, focus, complete) : dpTableProgress(state, focus);
+  const rowCount = state.rowHeaders.length - offset;
+  const answerCol = state.colHeaders.length - 1 - offset;
+  const column = complete && baseAxes ? answerCol : focus ? focus.col + 1 - offset : baseAxes ? EMPTY : 0;
   return {
     meters: [
-      meter('row', labels, active ? active.row + 1 : touchedRows.size, rowCount),
-      meter('column', labels, active ? active.col + 1 : 0, state.colHeaders.length),
-      meter('value', labels, best, null, 2),
+      meter(axes.row, labels, progress.row, rowCount),
+      meter(axes.column, labels, column, state.colHeaders.length - offset),
+      meter(axes.value, labels, dpBestValue(state, focus, complete), null, 2),
     ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone,
-    registers: active ? [register('i', labels, active.rowLabel), register('c', labels, active.colLabel)] : [],
-    gauge: gauge(rowCount, doneRows, Math.max(doneRows, touchedRows.size)),
+    registers: dpRegisters(state, focus, labels),
+    gauge: gauge(rowCount, progress.done, progress.lit),
     gaugeLabel: labels.gauges.rows,
   };
 }
 
-interface TapeCursor {
-  readonly textIndex: number | null;
-  readonly textLength: number;
-  readonly patternIndex: number | null;
-  readonly patternLength: number;
-  readonly matches: number;
+function charAt(source: string, index: number | null): string | null {
+  return index === null ? null : (source[index] ?? null);
 }
 
-function tapeCursor(state: StringTraceState): TapeCursor {
+function scannedCount(length: number, index: number | null, complete: boolean): number {
+  if (complete) return length;
+  return index === null ? 0 : Math.min(length, index + 1);
+}
+
+interface StringReadoutParts {
+  readonly meters: readonly StageMeter[];
+  readonly tone: LedColor;
+  readonly registers: readonly OpLineRegister[];
+  readonly gauge: PassGauge;
+  readonly gaugeLabel: string;
+}
+
+function kmpParts(state: KmpTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const comparing = state.compareTextIndex !== null && state.comparePatternIndex !== null;
+  const tone: LedColor =
+    state.stage === 'done' ? 'lime' : state.fallbackFrom !== null ? 'pink' : state.stage === 'failure' ? 'amber' : comparing ? 'cyan' : 'slate';
+  const registers = [register('i', labels, state.textIndex), register('j', labels, state.patternIndex)];
+  if (comparing) {
+    registers.push(
+      register('textChar', labels, charAt(state.text, state.compareTextIndex)),
+      register('patternChar', labels, charAt(state.pattern, state.comparePatternIndex)),
+    );
+  }
+  return {
+    meters: [
+      meter('textIndex', labels, state.textIndex ?? EMPTY, state.text.length),
+      meter('patternIndex', labels, state.patternIndex ?? EMPTY, state.pattern.length),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers,
+    gauge: gauge(state.text.length, scannedCount(state.text.length, state.textIndex, complete || state.stage === 'done')),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function rabinKarpParts(state: RabinKarpTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const tone: LedColor = state.collision
+    ? 'amber'
+    : state.verifying
+      ? 'cyan'
+      : state.patternHash === state.windowHash
+        ? 'lime'
+        : 'pink';
+  const windowEnd = state.windowStart + state.windowLength - 1;
+  return {
+    meters: [
+      meter('textIndex', labels, state.windowStart, state.text.length),
+      meter('hash', labels, state.windowHash, null, 2),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, state.windowStart),
+      register('patternHash', labels, state.patternHash),
+      register('windowHash', labels, state.windowHash),
+    ],
+    gauge: gauge(state.text.length, scannedCount(state.text.length, windowEnd, complete)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function zAlgorithmParts(state: ZAlgorithmTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const active = state.activeIndex;
+  const zValue = active === null ? null : (state.zValues[active] ?? null);
+  const box = state.boxLeft !== null && state.boxRight !== null ? `${state.boxLeft}–${state.boxRight}` : EMPTY;
+  const tone: LedColor =
+    state.comparePrefixIndex !== null ? 'cyan' : zValue !== null && zValue >= state.patternLength && state.patternLength > 0 ? 'lime' : 'slate';
+  return {
+    meters: [
+      meter('textIndex', labels, active ?? EMPTY, state.combined.length),
+      meter('zBox', labels, box),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, active),
+      register('boxLeft', labels, state.boxLeft),
+      register('boxRight', labels, state.boxRight),
+      register('zValue', labels, zValue),
+    ],
+    gauge: gauge(state.combined.length, scannedCount(state.combined.length, active, complete)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function manacherParts(state: ManacherTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const tone: LedColor =
+    state.compareLeft !== null ? 'cyan' : state.currentCenter !== null && state.currentCenter === state.longestCenter && state.longestRadius > 0 ? 'lime' : 'slate';
+  return {
+    meters: [
+      meter('center', labels, state.currentCenter ?? EMPTY, state.transformed.length),
+      meter('radius', labels, state.activeRadius),
+      meter('longest', labels, state.longestPalindrome.length, state.source.length),
+    ],
+    tone,
+    registers: [
+      register('center', labels, state.currentCenter),
+      register('mirror', labels, state.mirrorIndex),
+      register('rightEdge', labels, state.rightBoundary),
+    ],
+    gauge: gauge(state.transformed.length, scannedCount(state.transformed.length, state.currentCenter, complete)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function rleParts(state: RleTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const tone: LedColor = state.phase === 'emit' || done ? 'lime' : state.phase === 'extend' ? 'pink' : 'cyan';
+  return {
+    meters: [
+      meter('textIndex', labels, state.scanIndex ?? EMPTY, state.source.length),
+      meter('runs', labels, state.completedRuns.length),
+      meter('output', labels, state.output.length),
+    ],
+    tone,
+    registers: state.groupChar ? [register('char', labels, state.groupChar), register('count', labels, state.groupCount)] : [],
+    gauge: gauge(state.source.length, scannedCount(state.source.length, state.scanIndex, done)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function burrowsWheelerParts(state: BurrowsWheelerTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const comparing = state.rotations.some((row) => row.tone === 'compare');
+  const active = state.rotations.some((row) => row.tone === 'active');
+  const outputDone = complete || (state.output.length > 0 && state.output.length >= state.source.length);
+  const tone: LedColor = outputDone ? 'lime' : comparing ? 'pink' : active ? 'cyan' : 'slate';
+  return {
+    meters: [
+      meter('rotations', labels, state.rotations.length),
+      meter('output', labels, state.output.length, state.source.length),
+      meter('runs', labels, state.runGroups.length),
+    ],
+    tone,
+    registers: [],
+    gauge: gauge(state.source.length, outputDone ? state.source.length : state.output.length),
+    gaugeLabel: labels.gauges.output,
+  };
+}
+
+const HUFFMAN_TONES: Readonly<Record<HuffmanTraceState['phase'], LedColor>> = {
+  freq: 'cyan',
+  heap: 'amber',
+  merge: 'pink',
+  codes: 'lime',
+};
+
+function huffmanParts(state: HuffmanTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const nodeCount = Math.max(1, state.allNodes.length);
+  return {
+    meters: [
+      meter('symbols', labels, state.charFreqs.length),
+      meter('heap', labels, state.heapItems.length),
+      meter('bits', labels, state.totalCompressedBits, state.totalOriginalBits || null, 2),
+    ],
+    tone: complete ? 'lime' : HUFFMAN_TONES[state.phase],
+    registers: [],
+    gauge: gauge(nodeCount, complete ? nodeCount : state.visibleNodeIds.length),
+    gaugeLabel: labels.gauges.treeNodes,
+  };
+}
+
+function ahoCorasickParts(state: AhoCorasickTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const matchedHere = state.currentTextIndex !== null && state.matches.some((match) => match.endIndex === state.currentTextIndex);
+  const tone: LedColor = done
+    ? 'lime'
+    : state.phase === 'build'
+      ? 'amber'
+      : state.phase === 'link'
+        ? 'violet'
+        : state.failurePath.length > 0
+          ? 'pink'
+          : matchedHere
+            ? 'lime'
+            : 'cyan';
+  const activeNode = state.nodes.find((node) => node.id === state.activeNodeId) ?? null;
+  return {
+    meters: [
+      meter('textIndex', labels, state.currentTextIndex ?? EMPTY, state.text.length),
+      meter('nodes', labels, state.nodes.length),
+      meter('matches', labels, state.matches.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, state.currentTextIndex),
+      register('char', labels, state.currentChar),
+      register('node', labels, activeNode ? activeNode.index : null),
+    ],
+    gauge: gauge(state.text.length, scannedCount(state.text.length, state.currentTextIndex, done)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+const SUFFIX_ARRAY_TONES: Readonly<Record<SuffixArrayConstructionTraceState['phase'], LedColor>> = {
+  seed: 'slate',
+  sort: 'pink',
+  rank: 'cyan',
+  complete: 'lime',
+};
+
+function suffixArrayParts(state: SuffixArrayConstructionTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const total = state.source.length;
+  return {
+    meters: [
+      meter('round', labels, state.round),
+      meter('span', labels, state.stepSize),
+      meter('ranks', labels, state.distinctRanks, total),
+    ],
+    tone: complete ? 'lime' : SUFFIX_ARRAY_TONES[state.phase],
+    registers: state.activeSuffixes.slice(0, 2).map((start, position) => register(position === 0 ? 'i' : 'j', labels, start)),
+    gauge: gauge(Math.max(1, total), complete ? total : state.distinctRanks),
+    gaugeLabel: labels.gauges.ranks,
+  };
+}
+
+function suffixArrayLcpParts(state: SuffixArrayLcpTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const computed = state.rows.filter((row) => row.lcp !== null).length;
+  const tone: LedColor = done ? 'lime' : state.phase === 'scan' ? 'cyan' : 'slate';
+  return {
+    meters: [
+      meter('row', labels, state.activeOrder === null ? EMPTY : state.activeOrder + 1, state.rows.length),
+      meter('lcp', labels, state.currentMatchLength),
+      meter('computed', labels, computed, state.rows.length),
+    ],
+    tone,
+    registers: [
+      register('i', labels, state.activeSuffixes[0] ?? null),
+      register('j', labels, state.compareWith),
+      register('matchLength', labels, state.currentMatchLength),
+    ],
+    gauge: gauge(Math.max(1, state.rows.length), done ? state.rows.length : computed),
+    gaugeLabel: labels.gauges.rows,
+  };
+}
+
+const PALINDROMIC_TREE_TONES: Readonly<Record<PalindromicTreeTraceState['phase'], LedColor>> = {
+  roots: 'slate',
+  followLink: 'pink',
+  reuse: 'cyan',
+  insert: 'lime',
+  complete: 'lime',
+};
+
+function palindromicTreeParts(state: PalindromicTreeTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
+  const done = complete || state.phase === 'complete';
+  const processed = state.processedIndex >= 0 ? state.processedIndex : null;
+  return {
+    meters: [
+      meter('textIndex', labels, processed ?? EMPTY, state.source.length),
+      meter('palindromes', labels, state.distinctCount),
+      meter('longest', labels, state.longestSuffix.length, state.source.length),
+    ],
+    tone: done ? 'lime' : PALINDROMIC_TREE_TONES[state.phase],
+    registers: [register('i', labels, processed), register('char', labels, state.currentChar)],
+    gauge: gauge(state.source.length, scannedCount(state.source.length, processed, done)),
+    gaugeLabel: labels.gauges.textChars,
+  };
+}
+
+function stringParts(state: StringTraceState, labels: FamilyReadoutLabels, complete: boolean): StringReadoutParts {
   switch (state.mode) {
     case 'kmp':
-      return {
-        textIndex: state.textIndex,
-        textLength: state.text.length,
-        patternIndex: state.patternIndex,
-        patternLength: state.pattern.length,
-        matches: state.matches.length,
-      };
+      return kmpParts(state, labels, complete);
     case 'rabin-karp':
-      return {
-        textIndex: state.windowStart,
-        textLength: state.text.length,
-        patternIndex: state.verificationIndex,
-        patternLength: state.pattern.length,
-        matches: state.matches.length,
-      };
+      return rabinKarpParts(state, labels, complete);
     case 'z-algorithm':
-      return {
-        textIndex: state.activeIndex,
-        textLength: state.combined.length,
-        patternIndex: state.comparePrefixIndex,
-        patternLength: state.patternLength,
-        matches: state.matches.length,
-      };
+      return zAlgorithmParts(state, labels, complete);
     case 'manacher':
-      return {
-        textIndex: state.currentCenter,
-        textLength: state.transformed.length,
-        patternIndex: state.activeRadius,
-        patternLength: state.longestRadius,
-        matches: state.longestRadius,
-      };
+      return manacherParts(state, labels, complete);
     case 'rle':
-      return {
-        textIndex: state.scanIndex,
-        textLength: state.source.length,
-        patternIndex: state.groupCount,
-        patternLength: state.completedRuns.length,
-        matches: state.completedRuns.length,
-      };
+      return rleParts(state, labels, complete);
     case 'burrows-wheeler-transform':
-      return {
-        textIndex: state.activeRows.length,
-        textLength: state.rotations.length,
-        patternIndex: null,
-        patternLength: state.source.length,
-        matches: state.runGroups.length,
-      };
+      return burrowsWheelerParts(state, labels, complete);
     case 'huffman':
-      return {
-        textIndex: state.heapItems.length,
-        textLength: state.charFreqs.length,
-        patternIndex: state.visibleNodeIds.length,
-        patternLength: state.allNodes.length,
-        matches: state.codeTable.length,
-      };
+      return huffmanParts(state, labels, complete);
     case 'aho-corasick':
-      return {
-        textIndex: state.currentTextIndex,
-        textLength: state.text.length,
-        patternIndex: null,
-        patternLength: state.nodes.length,
-        matches: state.matches.length,
-      };
+      return ahoCorasickParts(state, labels, complete);
     case 'suffix-array-construction':
-      return {
-        textIndex: state.activeSuffixes[0] ?? null,
-        textLength: state.rows.length,
-        patternIndex: state.stepSize,
-        patternLength: state.source.length,
-        matches: state.distinctRanks,
-      };
+      return suffixArrayParts(state, labels, complete);
     case 'suffix-array-lcp-kasai':
-      return {
-        textIndex: state.activeOrder,
-        textLength: state.rows.length,
-        patternIndex: state.currentMatchLength,
-        patternLength: state.source.length,
-        matches: state.lcpValues.length,
-      };
+      return suffixArrayLcpParts(state, labels, complete);
     case 'palindromic-tree':
-      return {
-        textIndex: state.processedIndex,
-        textLength: state.source.length,
-        patternIndex: null,
-        patternLength: state.nodes.length,
-        matches: state.distinctCount,
-      };
+      return palindromicTreeParts(state, labels, complete);
   }
 }
 
 export function stringReadout(state: StringTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const cursor = tapeCursor(state);
-  const scanned = cursor.textIndex === null ? 0 : Math.min(cursor.textLength, cursor.textIndex + 1);
+  const parts = stringParts(state, labels, index >= lastIndex);
   return {
-    meters: [
-      meter('textIndex', labels, cursor.textIndex ?? EMPTY, cursor.textLength),
-      meter('patternIndex', labels, cursor.patternIndex ?? EMPTY, cursor.patternLength),
-      meter('matches', labels, cursor.matches),
-    ],
+    meters: parts.meters,
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
-    tone: edgeTone(index, lastIndex, 'cyan'),
-    registers: [register('i', labels, cursor.textIndex), register('j', labels, cursor.patternIndex)],
-    gauge: gauge(cursor.textLength, scanned),
-    gaugeLabel: labels.gauges.textChars,
+    tone: edgeTone(index, lastIndex, parts.tone),
+    registers: parts.registers,
+    gauge: parts.gauge,
+    gaugeLabel: parts.gaugeLabel,
   };
 }
 
@@ -522,33 +872,110 @@ export function gridReadout(state: GridTraceState, ctx: FamilyReadoutContext): S
   const { labels, index, lastIndex } = ctx;
   const total = state.rows * state.cols;
   const active = state.cells.find((cell) => cell.id === state.activeCellId) ?? null;
+  const aStar = state.mode === 'a-star';
   return {
-    meters: [meter('frontier', labels, state.frontierCount), meter('visited', labels, state.visitedCount, total, 3), meter('result', labels, state.resultCount, null, 3)],
+    meters: [
+      meter('frontier', labels, state.frontierCount),
+      meter(aStar ? 'closed' : 'visited', labels, state.visitedCount, total, 3),
+      meter(aStar ? 'path' : 'painted', labels, state.resultCount, null, 3),
+    ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.statusLabel)),
     tone: edgeTone(index, lastIndex, state.cells.some((cell) => cell.status === 'path') ? 'lime' : active ? 'cyan' : 'slate'),
     registers: active ? [register('row', labels, active.row), register('col', labels, active.col)] : [],
     gauge: gauge(total, state.visitedCount),
-    gaugeLabel: labels.gauges.visited,
+    gaugeLabel: aStar ? labels.gauges.closed : labels.gauges.visited,
   };
 }
 
-export function matrixReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
+type MatrixPhaseId = keyof typeof I18N_KEY.features.algorithms.display.phases.matrix;
+
+const MATRIX_PHASES: readonly (readonly [RegExp, MatrixPhaseId, string | null])[] = [
+  [/^Initialize distance matrix$/, 'distanceMatrix', null],
+  [/^Pivot (.+) complete$/, 'pivotDone', 'pivot'],
+  [/^Pivot (.+)$/, 'pivot', 'pivot'],
+  [/^All-pairs shortest paths ready$/, 'distancesReady', null],
+  [/^Initialize cost matrix$/, 'costMatrix', null],
+  [/^Row reduction$/, 'rowReduction', null],
+  [/^Column reduction$/, 'columnReduction', null],
+  [/^Zero matching (\d+)$/, 'zeroMatching', 'round'],
+  [/^Cover zeros (\d+)$/, 'coverZeros', 'round'],
+  [/^Adjust matrix (\d+)$/, 'adjustMatrix', 'round'],
+  [/^Optimal assignment ready$/, 'assignmentReady', null],
+];
+
+export function matrixPhaseText(phaseLabel: string): TranslatableText | null {
+  for (const [pattern, id, param] of MATRIX_PHASES) {
+    const match = pattern.exec(phaseLabel);
+    if (!match) continue;
+    const key = I18N_KEY.features.algorithms.display.phases.matrix[id];
+    return param ? i18nText(key, { [param]: match[1] }) : i18nText(key);
+  }
+  return null;
+}
+
+const MATRIX_RESULT_COUNT = /^(?:updates|matched) (\d+)$/;
+const PIVOT_FINISHED = /^Pivot .+ complete$/;
+
+export function matrixResultCount(state: MatrixTraceState): number | null {
+  const match = MATRIX_RESULT_COUNT.exec(state.resultLabel);
+  return match ? Number(match[1]) : null;
+}
+
+function matrixPhase(state: MatrixTraceState, labels: FamilyReadoutLabels): string | null {
+  const text = matrixPhaseText(state.phaseLabel);
+  return text === null ? null : labels.translate(text);
+}
+
+function floydWarshallReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const improved = state.cells.filter((cell) => cell.status === 'improved' || cell.status === 'assignment').length;
-  const pivotIndex = state.rowHeaders.findIndex((header) => header.status === 'pivot');
-  const active = state.cells.find((cell) => cell.status === 'active' || cell.status === 'candidate') ?? null;
+  const improved = matrixResultCount(state) ?? state.cells.filter((cell) => cell.status === 'improved').length;
+  const size = state.rowHeaders.length;
+  const pivotIndex = matrixPivotIndex(state);
+  const pivotFinished = PIVOT_FINISHED.test(state.phaseLabel);
+  const done = pivotIndex < 0 ? (index >= lastIndex ? size : 0) : pivotFinished ? pivotIndex + 1 : pivotIndex;
+  const focus = matrixFocus(state);
+  const updating = state.cells.some((cell) => cell.status === 'improved');
   return {
     meters: [
       meter('pivot', labels, state.pivotLabel ?? EMPTY, state.rowHeaders.length),
       meter('improved', labels, improved, null, 3),
       meter('rows', labels, state.rowHeaders.length),
     ],
-    phaseLabel: phaseText(labels, index, lastIndex, state.phaseLabel),
-    tone: edgeTone(index, lastIndex, improved > 0 && active?.status === 'candidate' ? 'pink' : active ? 'cyan' : 'slate'),
-    registers: active ? [register('row', labels, active.rowLabel), register('col', labels, active.colLabel)] : [],
-    gauge: gauge(state.rowHeaders.length, pivotIndex < 0 ? 0 : pivotIndex, pivotIndex < 0 ? 0 : pivotIndex + 1),
+    phaseLabel: phaseText(labels, index, lastIndex, matrixPhase(state, labels)),
+    tone: edgeTone(index, lastIndex, updating ? 'pink' : focus ? 'cyan' : 'slate'),
+    registers: focus
+      ? [register('row', labels, state.rowHeaders[focus.row]?.label ?? null), register('col', labels, state.colHeaders[focus.col]?.label ?? null)]
+      : [],
+    gauge: gauge(size, done, pivotIndex < 0 ? done : pivotIndex + 1),
     gaugeLabel: labels.gauges.rows,
   };
+}
+
+function hungarianReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
+  const { labels, index, lastIndex } = ctx;
+  const size = state.rowHeaders.length;
+  const assigned = state.cells.filter((cell) => cell.status === 'assignment').length;
+  const matched = matrixResultCount(state) ?? assigned;
+  const lines = [...state.rowHeaders, ...state.colHeaders].filter((header) => header.status === 'covered').length;
+  const zeros = state.cells.filter((cell) => cell.valueLabel === '0').length;
+  const activeRow = state.rowHeaders.find((header) => header.status === 'active') ?? null;
+  const activeCol = state.colHeaders.find((header) => header.status === 'active') ?? null;
+  const adjusting = state.cells.some((cell) => cell.status === 'adjusted');
+  const registers: OpLineRegister[] = [];
+  if (activeRow) registers.push(register('row', labels, activeRow.label));
+  if (activeCol) registers.push(register('col', labels, activeCol.label));
+  return {
+    meters: [meter('matched', labels, matched, size), meter('lines', labels, lines, size), meter('zeros', labels, zeros)],
+    phaseLabel: phaseText(labels, index, lastIndex, matrixPhase(state, labels)),
+    tone: edgeTone(index, lastIndex, adjusting ? 'pink' : lines > 0 ? 'amber' : activeRow || activeCol ? 'cyan' : 'slate'),
+    registers,
+    gauge: gauge(size, matched),
+    gaugeLabel: labels.gauges.matched,
+  };
+}
+
+export function matrixReadout(state: MatrixTraceState, ctx: FamilyReadoutContext): StageReadout {
+  return state.mode === 'hungarian' ? hungarianReadout(state, ctx) : floydWarshallReadout(state, ctx);
 }
 
 const MATRIX_GRID_TONES: Readonly<Record<MatrixGridTraceState['tone'], LedColor>> = {
@@ -560,17 +987,60 @@ const MATRIX_GRID_TONES: Readonly<Record<MatrixGridTraceState['tone'], LedColor>
   fail: 'red',
 };
 
+const SUBSCRIPT_DIGITS = /[₀-₉]/g;
+
+function plainDigits(label: string): string {
+  return label.replace(SUBSCRIPT_DIGITS, (digit) => String(digit.charCodeAt(0) - 0x2080));
+}
+
+export function isMatrixGridOperation(state: MatrixGridTraceState, previous: MatrixGridTraceState | null): boolean {
+  if (state.mode === 'simplex') {
+    const pivot = state.cells.find((cell) => cell.state === 'pivot' && cell.row < state.rows - 1);
+    if (!pivot) return false;
+    return !previous?.cells.some((cell) => cell.state === 'pivot' && cell.row === pivot.row && cell.col === pivot.col);
+  }
+  return isRowOperationLabel(state.operationLabel) && state.operationLabel !== previous?.operationLabel;
+}
+
+export function matrixGridOperationCounts(history: readonly SortStep[]): readonly number[] {
+  let count = 0;
+  let previous: MatrixGridTraceState | null = null;
+  return history.map((step) => {
+    const state = step.matrixGrid ?? null;
+    if (state && isMatrixGridOperation(state, previous)) count += 1;
+    previous = state;
+    return count;
+  });
+}
+
+export function operationProgress(counts: readonly number[], index: number): FamilyReadoutContext['operations'] {
+  const total = counts.at(-1) ?? 0;
+  if (total === 0) return undefined;
+  return { done: counts[index] ?? 0, total };
+}
+
 export function matrixGridReadout(state: MatrixGridTraceState, ctx: FamilyReadoutContext): StageReadout {
-  const { labels, index, lastIndex } = ctx;
-  const pivot = state.cells.find((cell) => cell.state === 'pivot') ?? null;
+  const { labels, index, lastIndex, operations } = ctx;
+  const table = buildMatrixGridTable(state);
+  const pivot = table.pivot;
+  const entering = state.mode === 'simplex' ? (table.columns.find((column) => column.active) ?? null) : null;
+  const columnLabel = entering?.label ?? (pivot ? matrixGridColumnLabel(state, pivot.col) : null);
+  const pivotValue = columnLabel !== null ? plainDigits(columnLabel) : EMPTY;
+  const registers: OpLineRegister[] = [];
+  if (pivot) registers.push(register('row', labels, table.rows[pivot.row]?.label ?? null));
+  if (columnLabel !== null) registers.push(register('col', labels, columnLabel));
   const leading = state.cells.filter((cell) => cell.state === 'leading').length;
   return {
-    meters: [meter('iteration', labels, state.iteration), meter('pivot', labels, pivot ? `${pivot.row + 1}:${pivot.col + 1}` : EMPTY), meter('rows', labels, state.rows)],
+    meters: [
+      operations ? meter('operations', labels, operations.done, operations.total) : meter('iteration', labels, state.iteration),
+      meter('pivot', labels, pivotValue),
+      meter('rows', labels, state.rows),
+    ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, MATRIX_GRID_TONES[state.tone]),
-    registers: pivot ? [register('row', labels, pivot.row + 1), register('col', labels, pivot.col + 1)] : [],
-    gauge: gauge(state.rows, leading, pivot ? pivot.row + 1 : leading),
-    gaugeLabel: labels.gauges.rows,
+    registers,
+    gauge: operations ? gauge(Math.max(1, operations.total), operations.done) : gauge(state.rows, leading, pivot ? pivot.row + 1 : leading),
+    gaugeLabel: operations ? labels.gauges.operations : labels.gauges.rows,
   };
 }
 
@@ -582,30 +1052,46 @@ const SIEVE_TONES: Readonly<Record<SieveGridTraceState['tone'], LedColor>> = {
   complete: 'lime',
 };
 
+const CROSSED_STATES: ReadonlySet<SieveCellState> = new Set<SieveCellState>(['composite', 'marking', 'just-marked']);
+
+export function isCrossedSieveCell(cell: SieveGridCell): boolean {
+  return CROSSED_STATES.has(cell.state) || (cell.state === 'current' && smallestFactor(cell.value) !== null);
+}
+
 export function sieveReadout(state: SieveGridTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const primes = state.cells.filter((cell) => cell.state === 'prime' || cell.state === 'current-prime').length;
-  const marked = state.cells.filter((cell) => cell.state !== 'unchecked').length;
+  const candidates = state.cells.filter((cell) => cell.value >= 2);
+  const crossed = candidates.filter(isCrossedSieveCell).length;
+  const marked = candidates.filter((cell) => cell.state !== 'unchecked').length;
+  const upper = state.cells.at(-1)?.value ?? null;
   return {
-    meters: [meter('prime', labels, state.activePrime ?? EMPTY), meter('bound', labels, state.bound), meter('primes', labels, primes)],
+    meters: [meter('prime', labels, state.activePrime ?? EMPTY), meter('bound', labels, state.bound), meter('crossed', labels, crossed, null, 2)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, SIEVE_TONES[state.tone]),
-    registers: [register('p', labels, state.activePrime), register('n', labels, state.cells.length)],
-    gauge: gauge(state.cells.length, marked),
+    registers: [register('p', labels, state.activePrime), register('n', labels, upper)],
+    gauge: gauge(candidates.length, marked),
     gaugeLabel: labels.gauges.marked,
   };
 }
 
+export function edgeFlow(edge: NetworkEdgeSnapshot): number {
+  if (edge.primaryText === 'match') return 1;
+  const flow = Number(edge.primaryText.split('/')[0]);
+  return Number.isFinite(flow) ? flow : 0;
+}
+
 export function networkReadout(state: NetworkTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const flowEdges = state.edges.filter((edge) => edge.status === 'flow' || edge.status === 'matched' || edge.status === 'saturated').length;
+  const flowEdges = state.edges.filter((edge) => edgeFlow(edge) > 0).length;
   const current = state.nodes.find((node) => node.status === 'current') ?? null;
   const augmenting = state.edges.some((edge) => edge.status === 'augment');
   return {
     meters: [meter('frontier', labels, state.frontierCount), meter('queue', labels, state.queue.length), meter('edges', labels, flowEdges)],
     phaseLabel: phaseText(labels, index, lastIndex, state.phaseLabel),
     tone: edgeTone(index, lastIndex, augmenting ? 'pink' : current ? 'cyan' : 'slate'),
-    registers: current ? [register('u', labels, current.label), register('lo', labels, current.level)] : [],
+    registers: current
+      ? [register('u', labels, current.label), register(state.mode === 'min-cost-max-flow' ? 'cost' : 'level', labels, current.level)]
+      : [],
     gauge: gauge(state.nodes.length, state.nodes.filter((node) => node.status === 'visited' || node.status === 'linked').length),
     gaugeLabel: labels.gauges.visited,
   };
@@ -631,15 +1117,22 @@ export function treeReadout(state: TreeTraversalTraceState, ctx: FamilyReadoutCo
 
 export function dsuReadout(state: DsuTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
-  const accepted = state.edges.filter((edge) => edge.status === 'accepted').length;
+  const merged = state.nodes.length - state.componentCount;
   const decided = state.edges.filter((edge) => edge.status === 'accepted' || edge.status === 'rejected').length;
   const active = state.edges.find((edge) => edge.status === 'active') ?? null;
   const merging = state.nodes.some((node) => node.status === 'merged');
+  const registers = active ? [register('a', labels, active.fromLabel)] : [];
+  if (active && active.fromId !== active.toId) registers.push(register('b', labels, active.toLabel));
+  if (active && active.weight !== null) registers.push(register('w', labels, active.weight));
   return {
-    meters: [meter('components', labels, state.componentCount), meter('merged', labels, accepted), meter('edges', labels, decided, state.edges.length)],
+    meters: [
+      meter('components', labels, state.componentCount),
+      meter('merged', labels, merged),
+      meter(state.mode === 'union-find' ? 'operations' : 'edges', labels, decided, state.edges.length),
+    ],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.statusLabel)),
     tone: edgeTone(index, lastIndex, merging ? 'pink' : active ? 'cyan' : 'slate'),
-    registers: active ? [register('a', labels, active.fromLabel), register('b', labels, active.toLabel), register('w', labels, active.weight)] : [],
+    registers,
     gauge: gauge(Math.max(1, state.edges.length), decided),
     gaugeLabel: labels.gauges.checked,
   };
@@ -725,8 +1218,83 @@ export function callTreeReadout(state: CallTreeLabTraceState, ctx: FamilyReadout
   };
 }
 
+type RadixPhase = 'idle' | 'focus-digit' | 'distribute' | 'gather' | 'pass-complete' | 'complete';
+
+const RADIX_PHASES = I18N_KEY.features.algorithms.display.radix.phases;
+
+const RADIX_PHASE_KEYS: Readonly<Record<RadixPhase, string>> = {
+  idle: RADIX_PHASES.idle,
+  'focus-digit': RADIX_PHASES.focus,
+  distribute: RADIX_PHASES.distribute,
+  gather: RADIX_PHASES.gather,
+  'pass-complete': RADIX_PHASES.passComplete,
+  complete: RADIX_PHASES.complete,
+};
+
+const RADIX_TONES: Readonly<Record<RadixPhase, LedColor>> = {
+  idle: 'slate',
+  'focus-digit': 'cyan',
+  distribute: 'pink',
+  gather: 'lime',
+  'pass-complete': 'lime',
+  complete: 'lime',
+};
+
+function isRadixPhase(phase: SortStep['phase']): phase is RadixPhase {
+  return phase !== undefined && phase in RADIX_PHASE_KEYS;
+}
+
+export function isRadixStep(step: SortStep): boolean {
+  return Array.isArray(step.buckets) && typeof step.maxDigits === 'number';
+}
+
+export function radixDigit(value: number, digitIndex: number): number {
+  return Math.floor(Math.abs(value) / 10 ** digitIndex) % 10;
+}
+
+function radixActiveValue(step: SortStep): number | null {
+  if (!step.activeItemId) return null;
+  const pools = [step.items ?? [], step.sourceItems ?? [], ...(step.buckets ?? []).map((bucket) => bucket.items)];
+  for (const pool of pools) {
+    const item = pool.find((candidate) => candidate.id === step.activeItemId);
+    if (item) return item.value;
+  }
+  return null;
+}
+
+export function radixReadout(step: SortStep, ctx: FamilyReadoutContext): StageReadout {
+  const { labels, index, lastIndex } = ctx;
+  const maxDigits = Math.max(1, step.maxDigits ?? 1);
+  const phase: RadixPhase = isRadixPhase(step.phase) ? step.phase : 'idle';
+  const digitIndex = step.digitIndex ?? null;
+  const complete = phase === 'complete' || index >= lastIndex;
+  const placed = (step.buckets ?? []).reduce((total, bucket) => total + bucket.items.length, 0);
+  const currentDigit = complete ? maxDigits : digitIndex === null ? null : digitIndex + 1;
+  const passesDone = complete ? maxDigits : phase === 'pass-complete' && digitIndex !== null ? digitIndex + 1 : (digitIndex ?? 0);
+  const activeValue = radixActiveValue(step);
+  const registers: OpLineRegister[] = [];
+  if (activeValue !== null) {
+    registers.push(register('x', labels, activeValue));
+    if (digitIndex !== null) registers.push(register('digit', labels, radixDigit(activeValue, digitIndex)));
+  }
+  if (step.activeBucket !== null && step.activeBucket !== undefined) registers.push(register('bucket', labels, step.activeBucket));
+  return {
+    meters: [
+      meter('digit', labels, currentDigit ?? EMPTY, maxDigits),
+      meter('bucket', labels, step.activeBucket ?? EMPTY, null, 1),
+      meter('placed', labels, placed, step.array.length),
+    ],
+    phaseLabel: labels.translate(RADIX_PHASE_KEYS[complete ? 'complete' : phase]),
+    tone: edgeTone(index, lastIndex, RADIX_TONES[phase]),
+    registers,
+    gauge: gauge(maxDigits, passesDone, currentDigit ?? passesDone),
+    gaugeLabel: labels.gauges.digits,
+  };
+}
+
 export function familyStageReadout(ctx: FamilyReadoutContext): StageReadout | null {
   const { step, variant } = ctx;
+  if (isRadixStep(step)) return radixReadout(step, ctx);
   if (step.graph) return graphReadout(step.graph, ctx);
   if (step.network) return networkReadout(step.network, ctx);
   if (step.dsu) return dsuReadout(step.dsu, ctx);

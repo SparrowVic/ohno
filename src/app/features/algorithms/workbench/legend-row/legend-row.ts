@@ -7,6 +7,7 @@ import { LedColor } from '../../../../shared/instrument/led/led.types';
 export interface LegendEntry {
   readonly label: string;
   readonly color: LedColor;
+  readonly dim?: boolean;
 }
 
 export interface LegendHint {

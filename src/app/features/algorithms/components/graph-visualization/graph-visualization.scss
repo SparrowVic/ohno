@@ -151,6 +151,10 @@
     opacity: 1;
   }
 
+  &[data-source='true'] .node__label {
+    fill: var(--violet);
+  }
+
   &[data-route='true'] .node__ring {
     stroke-width: 2.25;
   }
@@ -200,6 +204,12 @@
   color: var(--cyan);
   white-space: nowrap;
   cursor: pointer;
+
+  &:focus-visible {
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--cyan-rgb) / 0.45),
+      var(--focus-ring);
+  }
 }
 
 .graph__route-title {
@@ -214,6 +224,18 @@
 
 .graph__route-close {
   color: var(--ink-3);
+}
+
+.graph__route-hint {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .graph__rack {

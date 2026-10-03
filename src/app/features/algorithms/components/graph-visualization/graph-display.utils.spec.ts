@@ -46,12 +46,16 @@ import {
   graphRouteEdgeIds,
   graphRouteMode,
   graphRouteNodeIds,
+  GRAPH_NODE_RADIUS,
+  GRAPH_VIEW_PADDING,
+  graphSecondaryText,
   graphValueText,
   graphViewBox,
   trimSegment,
 } from './graph-display.utils';
 
 const LABELS = I18N_KEY.features.algorithms.display.graph.labels;
+const SECONDARY = I18N_KEY.features.algorithms.display.graph.secondary;
 
 const GRAPH_RUNS: readonly (readonly [string, (graph: WeightedGraphData) => Generator<SortStep>, (size: number) => WeightedGraphData])[] = [
   ['dijkstra', dijkstraGenerator, generateDijkstraGraph],
@@ -168,6 +172,36 @@ describe('graph display tones', () => {
     expect(graphNodeTone(node({ id: 'a', tone: 'component-d' }))).toBe('violet');
   });
 
+  it('keeps current and frontier over SCC component colours', () => {
+    expect(graphNodeTone(node({ id: 'a', tone: 'component-b', isCurrent: true, isSettled: true }))).toBe('cyan');
+    expect(graphNodeTone(node({ id: 'a', tone: 'component-d', isFrontier: true, isSettled: true }))).toBe('amber');
+    expect(graphNodeTone(node({ id: 'a', tone: 'component-c', isSettled: true }))).toBe('amber');
+    expect(graphNodeTone(node({ id: 'a', tone: 'component-b', isSettled: true }))).toBe('pink');
+  });
+
+  it('paints Euler path endpoints violet and keeps bipartite sides cyan and pink', () => {
+    expect(graphNodeTone(node({ id: 'a', tone: 'left', isFrontier: true }), 'Euler path')).toBe('violet');
+    expect(graphNodeTone(node({ id: 'a', tone: 'right', isCurrent: true }), 'Euler path')).toBe('violet');
+    expect(graphNodeTone(node({ id: 'a', tone: 'left' }), 'Partition check')).toBe('cyan');
+    expect(graphNodeTone(node({ id: 'a', tone: 'right' }), 'Partition check')).toBe('pink');
+    expect(graphNodeTone(node({ id: 'a', tone: 'critical' }), 'Euler path')).toBe('red');
+  });
+
+  it('never paints an Euler path endpoint in the inspected-edge pink', () => {
+    const run = GRAPH_RUNS.find(([name]) => name === 'euler-path-circuit');
+    if (!run) throw new Error('missing euler run');
+    const [, generator, createGraph] = run;
+    for (const size of [6, 8, 10]) {
+      for (const step of generator(createGraph(size))) {
+        const graph = step.graph;
+        if (!graph || graph.detailLabel !== 'Euler path') continue;
+        for (const item of graph.nodes) {
+          if (item.tone === 'left' || item.tone === 'right') expect(graphNodeTone(item, graph.detailLabel)).toBe('violet');
+        }
+      }
+    }
+  });
+
   it('paints the active edge pink unless it is a conflict, then tones, route, tree and relaxed', () => {
     expect(graphEdgeTone(edge({ id: 'e', from: 'a', to: 'b', isActive: true, isTree: true }), false)).toBe('pink');
     expect(graphEdgeTone(edge({ id: 'e', from: 'a', to: 'b', isActive: true, tone: 'critical' }), false)).toBe('red');
@@ -200,13 +234,40 @@ describe('graph display geometry', () => {
     expect(graphViewBox([], { x: 0, top: 0, bottom: 0 }).width).toBe(960);
   });
 
-  it('grows glyphs only when the graph is drawn small, within a cap', () => {
+  it('sizes glyphs in screen pixels: one glyph unit per CSS pixel, within a cap', () => {
     const box = { x: 0, y: 0, width: 1000, height: 500 };
     expect(graphGlyphScale(box, 1000, 500)).toBe(1);
-    expect(graphGlyphScale(box, 2000, 1000)).toBe(1);
-    expect(graphGlyphScale(box, 500, 500)).toBeCloseTo(1.24);
-    expect(graphGlyphScale(box, 100, 500)).toBe(1.8);
+    expect(graphGlyphScale(box, 2000, 1000)).toBe(0.5);
+    expect(graphGlyphScale(box, 500, 500)).toBe(2);
+    expect(graphGlyphScale(box, 100, 500)).toBe(6);
     expect(graphGlyphScale(box, 0, 0)).toBe(1);
+  });
+
+  it('keeps the screen padding constant in pixels when fitting the content', () => {
+    const content = { x: 0, y: 0, width: 800, height: 400 };
+    const padding = { x: 50, top: 30, bottom: 70 };
+    const scale = graphGlyphScale(content, 900, 600, padding);
+    expect(scale).toBe(1);
+    const fitted = graphGlyphScale(content, 500, 600, padding);
+    expect(fitted).toBe(2);
+    const framed = { width: content.width + padding.x * 2 * fitted, height: content.height + 100 * fitted };
+    expect(Math.min(500 / framed.width, 600 / framed.height)).toBeCloseTo(1 / fitted);
+    expect(graphGlyphScale(content, 80, 600, padding)).toBe(6);
+  });
+
+  it('draws the ring at 14px and keeps the value in Doto at the 1440 Dijkstra stage', () => {
+    const run = GRAPH_RUNS[0];
+    const first = graphStates(run)[0];
+    const content = graphViewBox(first.nodes, { x: 0, top: 0, bottom: 0 });
+    const padding = GRAPH_VIEW_PADDING;
+    const scale = graphGlyphScale(content, 608, 382, padding);
+    const box = graphViewBox(first.nodes, { x: padding.x * scale, top: padding.top * scale, bottom: padding.bottom * scale });
+    const pixelsPerUnit = Math.min(608 / box.width, 382 / box.height);
+    expect(GRAPH_NODE_RADIUS * scale * pixelsPerUnit).toBeCloseTo(14);
+    expect(scale * pixelsPerUnit).toBeCloseTo(1);
+    const value = graphValueFont(box, 608, 382, scale, 14);
+    expect(value.dot).toBe(true);
+    expect(value.size * pixelsPerUnit).toBeGreaterThanOrEqual(14 - 1e-9);
   });
 
   it('keeps the Doto value at 14px on screen or falls back to mono when it would grow too much', () => {
@@ -271,8 +332,32 @@ describe('graph display racks', () => {
       }),
     );
     expect(rows).toEqual([
-      { id: '0:c', label: 'C', fromLabel: 'A', isSource: false, value: '4', tone: 'head' },
-      { id: '1:d', label: 'D', fromLabel: null, isSource: false, value: '∞', tone: 'dim' },
+      { id: '0:c', label: 'C', fromLabel: 'A', secondary: null, isSource: false, value: '4', tone: 'head' },
+      { id: '1:d', label: 'D', fromLabel: null, secondary: null, isSource: false, value: '∞', tone: 'dim' },
+    ]);
+  });
+
+  it('shows the secondary column instead of the predecessor when the trace is not a Prev trace', () => {
+    const rows = graphFrontierRows(
+      state({
+        metricLabel: 'Index',
+        secondaryLabel: 'Low / SCC',
+        nodes: [
+          node({ id: 'a', previousId: 'b', secondaryText: '0' }),
+          node({ id: 'b', secondaryText: 'sealed' }),
+          node({ id: 'c' }),
+        ],
+        queue: [
+          { nodeId: 'a', label: 'A', distance: 0 },
+          { nodeId: 'b', label: 'B', distance: 1 },
+          { nodeId: 'c', label: 'C', distance: 2 },
+        ],
+      }),
+    );
+    expect(rows.map((row) => [row.fromLabel, row.secondary])).toEqual([
+      [null, '0'],
+      [null, { key: SECONDARY.sealed, params: undefined }],
+      [null, null],
     ]);
   });
 
@@ -290,8 +375,25 @@ describe('graph display racks', () => {
       }),
     );
     expect(rows.map((row) => row.label)).toEqual(['A', 'F', 'B', 'G']);
-    expect(rows[0]).toEqual({ id: 'a', label: 'A', fromLabel: null, isSource: true, value: '0', tone: 'done' });
+    expect(rows[0]).toEqual({ id: 'a', label: 'A', fromLabel: null, secondary: null, isSource: true, value: '0', tone: 'done' });
     expect(rows[2].fromLabel).toBe('F');
+  });
+
+  it('translates the generator secondary words and keeps the rest verbatim', () => {
+    expect(graphSecondaryText('BLUE')).toEqual({ key: SECONDARY.sideZero, params: undefined });
+    expect(graphSecondaryText('AMBER')).toEqual({ key: SECONDARY.sideOne, params: undefined });
+    expect(graphSecondaryText('start / finish')).toEqual({ key: SECONDARY.startFinish, params: undefined });
+    expect(graphSecondaryText('L2 S1')).toBe('L2 S1');
+    expect(graphSecondaryText('steiner')).toEqual({ key: SECONDARY.steiner, params: undefined });
+    expect(graphSecondaryText('idle')).toEqual({ key: SECONDARY.idle, params: undefined });
+  });
+
+  it('translates the patterned generator secondary texts with their parameters', () => {
+    expect(graphSecondaryText('via C')).toEqual({ key: SECONDARY.via, params: { node: 'C' } });
+    expect(graphSecondaryText('next B')).toEqual({ key: SECONDARY.next, params: { node: 'B' } });
+    expect(graphSecondaryText('2/4 used')).toEqual({ key: SECONDARY.used, params: { used: '2', total: '4' } });
+    expect(graphSecondaryText('deg 3')).toEqual({ key: SECONDARY.degree, params: { degree: '3' } });
+    expect(graphSecondaryText('c1')).toBe('c1');
   });
 
   it('returns empty racks without a state', () => {

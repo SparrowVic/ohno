@@ -102,7 +102,7 @@
       <ohno-rack [title]="queueTitle() | i18nText">
         @for (row of queueRows(); track $index; let first = $first) {
           <ohno-rack-row [tone]="first ? 'head' : 'default'">
-            <span rackLead>{{ row.lead }}</span>
+            <span rackLead class="network__rack-lead">{{ row.lead }}</span>
             {{ row.body }}
             <span rackValue class="network__rack-value">{{ row.value ?? '∞' }}</span>
           </ohno-rack-row>
@@ -114,8 +114,11 @@
       <ohno-rack [title]="focusTitle() | i18nText" [meta]="focusRows().length > 0 ? '' + focusRows().length : null">
         @for (row of focusRows(); track $index) {
           <ohno-rack-row tone="done">
-            <span rackLead>{{ row.lead }}</span>
+            <span rackLead class="network__rack-lead">{{ row.lead }}</span>
             {{ row.body }}
+            @if (row.detail; as detail) {
+              <span class="network__rack-detail">{{ detail | i18nText }}</span>
+            }
             @if (row.value; as value) {
               <span rackValue class="network__rack-value">{{ value }}</span>
             }

@@ -163,6 +163,19 @@ export function dsuMovedNodeIds(previous: DsuTraceState | null, current: DsuTrac
     .map((node) => node.id);
 }
 
+export interface DsuVerticalSpan {
+  readonly top: number;
+  readonly bottom: number;
+}
+
+export function dsuRevealScrollDelta(container: DsuVerticalSpan, target: DsuVerticalSpan, margin = 8): number {
+  if (target.top < container.top + margin) return target.top - (container.top + margin);
+  if (target.bottom > container.bottom - margin) {
+    return Math.min(target.bottom - (container.bottom - margin), target.top - (container.top + margin));
+  }
+  return 0;
+}
+
 export function dsuActivePairChanged(previous: DsuTraceState | null, current: DsuTraceState): boolean {
   if (current.activePairLabel === null) return false;
   return JSON.stringify(current.activePairLabel) !== JSON.stringify(previous?.activePairLabel ?? null);
