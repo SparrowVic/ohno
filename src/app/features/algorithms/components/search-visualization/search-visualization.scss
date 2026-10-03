@@ -120,8 +120,8 @@
 .search__span--range {
   top: -6px;
   bottom: -6px;
-  border-radius: 9px;
-  box-shadow: 0 0 10px rgb(var(--tone-rgb) / 0.18);
+  border-radius: var(--radius-md);
+  box-shadow: none;
 }
 
 .search__cursor {

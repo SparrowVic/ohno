@@ -87,6 +87,10 @@
   white-space: nowrap;
 }
 
+.lab__glyph[data-symbol='true'] {
+  font-family: var(--font-mono);
+}
+
 .lab__overlay {
   @include display.cell-tag;
 }
@@ -97,7 +101,7 @@
   position: absolute;
   top: -5px;
   bottom: -5px;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   background: rgb(var(--tone-rgb) / 0.07);
   border: 1px dashed rgb(var(--tone-rgb) / 0.6);
   pointer-events: none;
@@ -159,6 +163,12 @@
 
   flex: none;
   margin-top: auto;
+}
+
+@media (max-width: 1023px) {
+  .lab__result {
+    margin-top: 0;
+  }
 }
 
 .lab__result-title {

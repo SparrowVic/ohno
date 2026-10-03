@@ -29,6 +29,7 @@ export type PointerBandTone = 'cyan' | 'lime' | 'amber';
 export interface PointerTapeCell {
   readonly index: number;
   readonly glyph: string;
+  readonly symbol: boolean;
   readonly tone: PointerCellTone;
   readonly overlay: string | null;
   readonly focus: boolean;
@@ -152,6 +153,7 @@ export function pointerTapeView(state: PointerLabTraceState): PointerTapeView {
     cells: state.cells.map((cell) => ({
       index: cell.index,
       glyph: pointerGlyph(cell.value),
+      symbol: cell.value in VISIBLE_GLYPHS,
       tone: pointerCellTone(state.mode, cell.status),
       overlay: cell.overlay,
       focus: cell.index === focus,

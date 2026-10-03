@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { AppLanguageService } from '../../../../core/i18n/app-language.service';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
 import { OhnoLed } from '../../../../shared/instrument/led/led';
@@ -51,6 +52,7 @@ export class PointerLabVisualization {
   readonly speed = input<number>(5);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly language = inject(AppLanguageService);
   private readonly mainRef = viewChild<ElementRef<HTMLElement>>('main');
   private readonly trackRef = viewChild<ElementRef<HTMLElement>>('track');
   private readonly width = signal(0);
@@ -83,7 +85,9 @@ export class PointerLabVisualization {
     return state ? pointerStatRows(state) : [];
   });
   protected readonly pointerNames = computed(() =>
-    (this.state()?.pointers ?? []).map((pointer) => pointer.label).join(', '),
+    new Intl.ListFormat(this.language.activeLang(), { style: 'short', type: 'conjunction' }).format(
+      (this.state()?.pointers ?? []).map((pointer) => pointer.label),
+    ),
   );
 
   constructor() {
@@ -104,7 +108,12 @@ export class PointerLabVisualization {
       this.view();
       this.layout();
       const track = this.trackRef()?.nativeElement;
-      if (track) keepTapeFocusInView(track, track.querySelector<HTMLElement>('[data-focus="true"]'));
+      if (!track) return;
+      const cells = Array.from(track.querySelectorAll<HTMLElement>('.lab__cell'));
+      const pointed = (this.state()?.pointers ?? [])
+        .map((pointer) => cells[Math.min(Math.max(pointer.index, 0), cells.length - 1)])
+        .filter((cell): cell is HTMLElement => cell !== undefined);
+      keepTapeFocusInView(track, track.querySelector<HTMLElement>('[data-focus="true"]'), pointed);
     });
 
     this.destroyRef.onDestroy(() => {

@@ -1397,7 +1397,7 @@
             "candidate": "Bound candidate",
             "discarded": "Discarded",
             "found": "Found",
-            "probe": "Probe · mid",
+            "probe": "Probe",
             "range": "Range lo–hi"
           },
           "range": "range [{{low}}, {{high}}]",

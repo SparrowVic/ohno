@@ -17,6 +17,7 @@
         <div class="lab__tape" aria-hidden="true">
           <div
             #track
+            tabindex="-1"
             class="lab__track"
             [style.--cell-width.px]="layout().cell"
             [style.--cell-font.px]="layout().font"
@@ -35,7 +36,7 @@
                   @if (cell.overlay; as overlay) {
                     <span class="lab__overlay">{{ overlay }}</span>
                   }
-                  <span class="tape-cell__char lab__glyph">{{ cell.glyph }}</span>
+                  <span class="tape-cell__char lab__glyph" [attr.data-symbol]="cell.symbol">{{ cell.glyph }}</span>
                   <span class="tape-cell__index">{{ cell.index }}</span>
                 </span>
               }

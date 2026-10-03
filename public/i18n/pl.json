@@ -1230,7 +1230,7 @@
           }
         },
         "pointerLab": {
-          "ariaDisplay": "Taśma {{count}} komórek ze wskaźnikami {{pointers}}",
+          "ariaDisplay": "Taśma ze wskaźnikami {{pointers}}, liczba komórek: {{count}}",
           "legend": {
             "best": "Rekord",
             "discarded": "Odrzucone",
@@ -1397,7 +1397,7 @@
             "candidate": "Kandydat brzegu",
             "discarded": "Odrzucone",
             "found": "Znalezione",
-            "probe": "Sonda · mid",
+            "probe": "Sprawdzana komórka",
             "range": "Zakres lo–hi"
           },
           "range": "zakres [{{low}}, {{high}}]",
