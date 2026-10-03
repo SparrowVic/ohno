@@ -1,323 +1,191 @@
-@use '../../../../shared/styles/eyebrow' as type;
+@use '../../../../../styles/display';
 
 :host {
   display: flex;
   flex: 1;
+  width: 100%;
+  height: 100%;
   min-height: 0;
+  contain: size;
 }
 
-.number-lab {
+.lab {
   display: grid;
   flex: 1;
-  min-height: 0;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: 18px;
-  padding: 22px 24px;
-  overflow: auto;
-  scrollbar-gutter: stable both-edges;
+  width: 100%;
+  min-height: 0;
+
+  &[data-registers='true'] {
+    grid-template-columns: 196px minmax(0, 1fr);
+  }
 }
 
-/* ============================================================= */
-/*  REGISTERS                                                     */
-/* ============================================================= */
-/* Live scalar chips — Fibonacci shows Fₙ, Fₙ₋₁, Fₙ₋₂; GCD shows
-   a, b; Factorial shows n, product. Tones are set per-register by
-   the generator so the view doesn't commit to a palette. */
-.number-lab__registers {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+.lab__registers {
+  min-height: 0;
+  padding-right: 18px;
+  overflow-y: auto;
+  border-right: 1px solid var(--hairline);
+  scrollbar-width: thin;
 }
 
-.number-lab__register {
+.lab__main {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: center;
+  gap: 22px;
   min-width: 0;
-  min-height: 94px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.02);
-  transition:
-    background var(--duration-fast) var(--ease-soft),
-    border-color var(--duration-fast) var(--ease-soft),
-    box-shadow var(--duration-fast) var(--ease-soft);
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
 
-  &--active {
-    border-color: rgb(var(--viz-warning-rgb) / 0.38);
-    background:
-      linear-gradient(180deg, rgb(var(--viz-warning-rgb) / 0.14), rgb(var(--viz-warning-rgb) / 0.04)),
-      rgba(255, 255, 255, 0.02);
-    box-shadow: 0 0 18px rgb(var(--viz-warning-rgb) / 0.22);
+.lab__formula,
+.lab__result,
+.lab__history {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.lab__rule {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  min-height: 52px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: rgb(var(--white-rgb) / 0.03);
+  box-shadow: inset 0 0 0 1px rgb(var(--white-rgb) / 0.06);
+  font: 400 24px/1.3 var(--font-ui);
+  color: var(--ink);
+}
+
+.lab__rule--empty {
+  align-items: center;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.lab__part {
+  @include display.tone-vars;
+
+  &[data-tone='dim'] {
+    color: var(--ink-3);
   }
 
-  &--settled {
-    border-color: rgb(var(--accent-rgb) / 0.28);
-    background:
-      linear-gradient(180deg, rgb(var(--accent-rgb) / 0.1), rgb(var(--accent-rgb) / 0.03)),
-      rgba(255, 255, 255, 0.02);
-  }
-
-  &--muted {
-    opacity: 0.55;
-    filter: saturate(0.75);
+  &[data-tone='lime'],
+  &[data-tone='cyan'] {
+    color: var(--tone);
   }
 }
 
-.number-lab__register-label {
-  @include type.eyebrow($size: 10px, $tracking: 0.18em, $mono: true);
-}
-
-.number-lab__register-value {
-  font-family: var(--font-mono);
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
+.lab__result-value {
+  font: 400 20px/1.35 var(--font-ui);
   font-variant-numeric: tabular-nums;
+  color: var(--lime);
   overflow-wrap: anywhere;
 }
 
-.number-lab__register--active .number-lab__register-value {
-  color: var(--viz-warning);
-}
-
-.number-lab__register--settled .number-lab__register-value {
-  color: var(--accent-strong);
-}
-
-.number-lab__register-hint {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--text-secondary);
-  letter-spacing: 0.01em;
-  line-height: 1.35;
-}
-
-/* ============================================================= */
-/*  FORMULA                                                       */
-/* ============================================================= */
-/* The rule fired this step — operand / operator / result parts
-   colour-match the register tones so the eye can trace values
-   from the top chips into the formula. */
-.number-lab__formula {
-  display: flex;
-  align-items: center;
-  min-height: 52px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 0.5px solid rgba(255, 255, 255, 0.07);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-    rgba(13, 16, 24, 0.55);
-  transition: opacity var(--duration-fast) var(--ease-soft);
-
-  &--empty {
-    opacity: 0.5;
-  }
-}
-
-.number-lab__formula-placeholder {
-  font-family: var(--font-mono);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-tertiary);
-}
-
-.number-lab__formula-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 8px;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-
-.number-lab__part {
-  display: inline-flex;
-  align-items: baseline;
-  color: var(--text-secondary);
-  transition: color var(--duration-fast) var(--ease-soft);
-
-  &--operand {
-    color: var(--viz-accent-ink);
-  }
-
-  &--active {
-    color: var(--viz-warning);
-    font-weight: 800;
-  }
-
-  &--operator {
-    color: var(--text-tertiary);
-    padding: 0 2px;
-  }
-
-  &--result {
-    color: var(--accent-strong);
-    font-weight: 800;
-  }
-}
-
-.number-lab__part app-math-text {
-  min-width: 0;
-}
-
-/* ============================================================= */
-/*  HISTORY TAPE                                                  */
-/* ============================================================= */
-.number-lab__history {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.number-lab__history-head {
-  @include type.eyebrow($size: 9px, $tracking: 0.16em, $mono: true);
-
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-}
-
-.number-lab__history-tape {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  min-height: 42px;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-gutter: stable;
-  padding-bottom: 2px;
-}
-
-.number-lab__history-placeholder {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-tertiary);
-  padding: 0 4px;
-}
-
-.number-lab__history-chip {
-  display: grid;
-  grid-template-rows: auto auto;
-  gap: 2px;
-  padding: 8px 10px;
-  min-width: 58px;
-  border-radius: 9px;
-  border: 0.5px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.03);
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-  transition:
-    border-color var(--duration-fast) var(--ease-soft),
-    background var(--duration-fast) var(--ease-soft),
-    box-shadow var(--duration-fast) var(--ease-soft);
-
-  &--current {
-    border-color: rgb(var(--accent-rgb) / 0.45);
-    background:
-      linear-gradient(180deg, rgb(var(--accent-rgb) / 0.18), rgb(var(--accent-rgb) / 0.04)),
-      rgba(13, 16, 24, 0.55);
-    box-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.26);
-    animation: number-lab-pulse 700ms var(--ease-out-expo);
-  }
-}
-
-.number-lab__history-chip-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+.lab__result-value--pending {
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-tertiary);
+  color: var(--ink-4);
 }
 
-.number-lab__history-chip-value {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.number-lab__history-chip--current .number-lab__history-chip-value {
-  color: var(--accent-strong);
-}
-
-@keyframes number-lab-pulse {
-  0% {
-    transform: scale(1);
-  }
-  45% {
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* ============================================================= */
-/*  RESULT FOOTER                                                 */
-/* ============================================================= */
-.number-lab__result {
+.lab__history-head {
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
-  gap: 14px;
-  min-height: 58px;
-  padding: 14px 18px;
-  border-radius: 14px;
-  border: 0.5px solid rgb(var(--accent-rgb) / 0.3);
-  background:
-    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.12), rgb(var(--accent-rgb) / 0.04)),
-    rgba(13, 16, 24, 0.55);
-  transition:
-    border-color var(--duration-fast) var(--ease-soft),
-    background var(--duration-fast) var(--ease-soft),
-    opacity var(--duration-fast) var(--ease-soft);
+  gap: 12px;
+}
 
-  &--pending {
-    border-color: rgba(255, 255, 255, 0.06);
-    background: rgba(255, 255, 255, 0.025);
-    opacity: 0.7;
+.lab__tape {
+  @include display.tape;
+
+  padding: 0;
+  overflow: hidden;
+}
+
+.lab__track {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 18px 12px;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+.lab__cell {
+  @include display.tape-cell(var(--cell-width), 58px);
+
+  background: rgb(var(--white-rgb) / 0.03);
+  box-shadow: inset 0 0 0 1px rgb(var(--white-rgb) / 0.05);
+  color: var(--ink-2);
+}
+
+.lab__cell-label {
+  font: 500 10px/1 var(--font-mono);
+  color: var(--ink-4);
+}
+
+.lab__cell[data-current='true'] .lab__cell-label {
+  color: var(--cyan);
+}
+
+.lab__cell-value {
+  max-width: calc(100% - 8px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 12px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+
+  &[data-numeric='true'] {
+    font: 900 18px/1 var(--font-dot);
+    font-variation-settings: var(--dot-settings);
   }
 }
 
-.number-lab__result--pending .number-lab__result-label {
-  color: var(--text-tertiary);
+.lab__empty {
+  margin: 0;
+  padding: 22px 16px;
+  font: 400 13px/1.4 var(--font-ui);
+  color: var(--ink-3);
 }
 
-.number-lab__result--pending .number-lab__result-value {
-  color: var(--text-tertiary);
-}
+@media (max-width: 1023px) {
+  :host {
+    min-height: 560px;
+  }
 
-.number-lab__result-label {
-  @include type.eyebrow(
-    $size: 10px,
-    $tracking: 0.18em,
-    $mono: true,
-    $color: var(--accent-ink)
-  );
-}
+  .lab,
+  .lab[data-registers='true'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 12px;
+  }
 
-.number-lab__result-value {
-  display: inline-flex;
-  align-items: baseline;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--accent-strong);
-  font-variant-numeric: tabular-nums;
-}
+  .lab__registers {
+    max-height: 168px;
+    padding: 0 0 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--hairline);
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .number-lab__history-chip--current {
-    animation: none;
+  .lab__main {
+    justify-content: flex-start;
+  }
+
+  .lab__rule {
+    font-size: 19px;
   }
 }

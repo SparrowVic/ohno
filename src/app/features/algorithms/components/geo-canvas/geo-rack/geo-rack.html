@@ -1,0 +1,34 @@
+<ohno-rack class="geo-rack" [title]="title() | i18nText" [meta]="meta() ? (meta() | i18nText) : null">
+  <div #scroller class="geo-rack__scroll" tabindex="-1">
+    @for (row of rows(); track row.id) {
+      <ohno-rack-row
+        class="geo-rack__row"
+        [tone]="row.tone"
+        [attr.data-accent]="row.accent"
+        [attr.data-strong]="row.strong"
+        [attr.data-current]="row.current"
+      >
+        @if (row.led) {
+          <ohno-led rackLead size="sm" [color]="row.led" />
+        }
+        <span class="geo-rack__line">
+          <span class="geo-rack__lead">{{ row.lead | i18nText }}</span>
+          @if (row.body) {
+            <span class="geo-rack__body">{{ row.body | i18nText }}</span>
+          }
+        </span>
+        @if (row.value !== null) {
+          <span rackValue class="geo-rack__value">{{ row.value }}</span>
+        }
+      </ohno-rack-row>
+    } @empty {
+      @if (empty(); as text) {
+        <ohno-rack-row tone="dim">
+          <span class="geo-rack__line">
+            <span class="geo-rack__lead">{{ text | i18nText }}</span>
+          </span>
+        </ohno-rack-row>
+      }
+    }
+  </div>
+</ohno-rack>

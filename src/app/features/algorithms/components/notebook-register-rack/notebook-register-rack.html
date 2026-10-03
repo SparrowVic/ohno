@@ -1,0 +1,19 @@
+<ohno-rack [title]="title()">
+  <dl class="registers">
+    @for (register of registers(); track register.id) {
+      <div class="register" [attr.data-tone]="register.tone">
+        <dt class="register__label">
+          <app-math-text [mode]="register.labelMode" [content]="register.label | i18nText" />
+        </dt>
+        <dd class="register__value" [attr.data-numeric]="register.numeric" [attr.data-size]="register.size">
+          {{ register.value }}
+        </dd>
+        @if (register.hint; as hint) {
+          <dd class="register__hint">
+            <app-math-text mode="mixed" [content]="hint | i18nText" />
+          </dd>
+        }
+      </div>
+    }
+  </dl>
+</ohno-rack>

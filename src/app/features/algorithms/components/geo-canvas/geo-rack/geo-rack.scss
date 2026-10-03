@@ -1,0 +1,87 @@
+@use '../../../../../../styles/display';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.geo-rack {
+  flex: 1 1 auto;
+}
+
+.geo-rack__scroll {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.geo-rack__row {
+  @include display.tone-vars;
+
+  flex: none;
+  min-height: 30px;
+
+  &[data-accent] {
+    background: rgb(var(--tone-rgb) / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(var(--tone-rgb) / 0.32);
+  }
+
+  &[data-strong='true'] {
+    background: rgb(var(--tone-rgb) / 0.14);
+    box-shadow: inset 0 0 0 1px rgb(var(--tone-rgb) / 0.75);
+  }
+
+  &[data-accent] .geo-rack__value {
+    color: var(--tone);
+  }
+
+  &[data-strong='true'] .geo-rack__lead {
+    color: var(--tone);
+  }
+
+  @each $tone in ('cyan', 'lime', 'violet', 'pink', 'amber', 'red') {
+    &[data-accent='#{$tone}'] {
+      --tone-rgb: var(--#{$tone}-rgb);
+      --tone: var(--#{$tone});
+    }
+  }
+}
+
+.geo-rack__line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.geo-rack__lead {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font: 500 11px/1 var(--font-mono);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.geo-rack__body {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 10px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.geo-rack__value {
+  @include display.rack-value-dot;
+
+  color: var(--ink);
+}

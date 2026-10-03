@@ -809,7 +809,6 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { VisualizationOption } from '../../models/visualization-option';
 import { VisualizationVariant } from '../../models/visualization-renderer';
-import { VIZ_COLOR } from '../../utils/helpers/visualization-palette/visualization-palette';
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import {
   BITMASK_DP_PRESETS,
@@ -989,14 +988,6 @@ const BLOCK_LEGEND: readonly LegendItem[] = [
   { label: 'Boundary', color: 'var(--viz-state-sorted)' },
 ];
 
-const VIZ_ACCENT = VIZ_COLOR.accent;
-const VIZ_WINDOW = VIZ_COLOR.window;
-const VIZ_WARNING = VIZ_COLOR.warning;
-const VIZ_SUCCESS = VIZ_COLOR.success;
-const VIZ_ROUTE = VIZ_COLOR.route;
-const VIZ_HIT = VIZ_COLOR.hit;
-const VIZ_EMBER = VIZ_COLOR.ember;
-
 const RADIX_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.inputStream, color: 'var(--slate)' },
   { label: I18N_KEY.features.algorithms.display.legend.currentDigit, color: 'var(--cyan)' },
@@ -1139,6 +1130,26 @@ const SEARCH_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.search.legend.candidate, color: 'var(--lime)', opacity: 0.55 },
   { label: I18N_KEY.features.algorithms.display.search.legend.found, color: 'var(--lime)' },
 ];
+
+const NOTEBOOK_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.currentLine, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.decision, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.result, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.invariant, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.notebook.legend.hint, color: 'var(--amber)' },
+];
+
+const NUMBER_LAB_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.numberLab.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.numberLab.legend.settled, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.numberLab.legend.unused, color: 'var(--slate)', opacity: 0.55 },
+];
+
+const notebookLegend = (variant: VisualizationVariant): readonly LegendItem[] => {
+  if (variant === 'scratchpad-lab') return NOTEBOOK_LEGEND;
+  if (variant === 'number-lab') return NUMBER_LAB_LEGEND;
+  return [];
+};
 
 const TWO_POINTERS_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
@@ -1523,69 +1534,66 @@ const KRUSKAL_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.legend.pendingEdge, color: 'var(--slate)' },
 ];
 
+const GEO_LEGEND = I18N_KEY.features.algorithms.display.geometry.legend;
+
 const CONVEX_HULL_LEGEND: readonly LegendItem[] = [
-  { label: 'Pivot (base point)', color: VIZ_ACCENT },
-  { label: 'Sorted (waiting)', color: '#94a3b8', opacity: 0.7 },
-  { label: 'Checking (cross product)', color: VIZ_WARNING },
-  { label: 'Stack (hull candidate)', color: VIZ_WINDOW },
-  { label: 'Hull vertex (final)', color: VIZ_SUCCESS },
-  { label: 'Rejected (interior point)', color: 'rgba(244,63,94,0.55)' },
+  { label: GEO_LEGEND.pivot, color: 'var(--violet)' },
+  { label: GEO_LEGEND.onStack, color: 'var(--lime)' },
+  { label: GEO_LEGEND.checked, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.rejected, color: 'var(--pink)' },
+  { label: GEO_LEGEND.unvisited, color: 'var(--slate)', opacity: 0.6 },
 ];
 
 const CLOSEST_PAIR_LEGEND: readonly LegendItem[] = [
-  { label: 'Left recursive half', color: VIZ_ACCENT },
-  { label: 'Right recursive half', color: VIZ_EMBER },
-  { label: 'Strip corridor candidate', color: VIZ_ROUTE },
-  { label: 'Current distance check', color: VIZ_WARNING },
-  { label: 'Best pair so far', color: VIZ_HIT },
+  { label: GEO_LEGEND.leftHalf, color: 'var(--violet)' },
+  { label: GEO_LEGEND.rightHalf, color: 'var(--ink-2)' },
+  { label: GEO_LEGEND.strip, color: 'var(--amber)' },
+  { label: GEO_LEGEND.checkedPair, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.bestPair, color: 'var(--lime)' },
 ];
 
 const LINE_INTERSECTION_LEGEND: readonly LegendItem[] = [
-  { label: 'Pending segment', color: 'rgba(148,163,184,0.55)' },
-  { label: 'Active sweep segment', color: VIZ_ROUTE },
-  { label: 'Focused event segment', color: VIZ_WARNING },
-  { label: 'Confirmed crossing point', color: VIZ_ACCENT },
-  { label: 'Sweep line', color: VIZ_HIT },
+  { label: GEO_LEGEND.pendingSegment, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.activeSegment, color: 'var(--ink-2)' },
+  { label: GEO_LEGEND.eventSegment, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.crossing, color: 'var(--lime)' },
 ];
 
 const HALF_PLANE_LEGEND: readonly LegendItem[] = [
-  { label: 'Current boundary line', color: VIZ_HIT },
-  { label: 'Already applied constraint', color: VIZ_ROUTE },
-  { label: 'Forbidden side', color: 'rgba(244,63,94,0.52)' },
-  { label: 'Feasible polygon', color: VIZ_HIT },
-  { label: 'Final intersection polygon', color: VIZ_ROUTE },
+  { label: GEO_LEGEND.currentConstraint, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.appliedConstraint, color: 'var(--lime)', opacity: 0.6 },
+  { label: GEO_LEGEND.pendingConstraint, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.feasibleRegion, color: 'var(--lime)' },
+  { label: GEO_LEGEND.forbiddenSide, color: 'var(--pink)' },
+  { label: GEO_LEGEND.conflict, color: 'var(--red)' },
 ];
 
 const MINKOWSKI_SUM_LEGEND: readonly LegendItem[] = [
-  { label: 'Obstacle polygon A', color: 'rgba(244,63,94,0.6)' },
-  { label: 'Robot polygon B', color: VIZ_ACCENT },
-  { label: 'Reflected robot -B', color: VIZ_WINDOW },
-  { label: 'Growing sum path', color: VIZ_HIT },
-  { label: 'Final configuration obstacle', color: VIZ_ROUTE },
+  { label: GEO_LEGEND.obstacle, color: 'var(--violet)' },
+  { label: GEO_LEGEND.robot, color: 'var(--amber)' },
+  { label: GEO_LEGEND.reflected, color: 'var(--ink-2)' },
+  { label: GEO_LEGEND.sumPath, color: 'var(--lime)' },
+  { label: GEO_LEGEND.currentVertex, color: 'var(--cyan)' },
 ];
 
 const SWEEP_LINE_LEGEND: readonly LegendItem[] = [
-  { label: 'Pending rectangle', color: 'rgba(148,163,184,0.5)' },
-  { label: 'Active rectangle at sweep x', color: VIZ_ROUTE },
-  { label: 'Focused event rectangle', color: VIZ_WARNING },
-  { label: 'Merged vertical coverage span', color: VIZ_HIT },
-  { label: 'Sweep progress region', color: 'rgba(45,212,191,0.32)' },
+  { label: GEO_LEGEND.pendingRect, color: 'var(--slate)', opacity: 0.6 },
+  { label: GEO_LEGEND.activeRect, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.eventRect, color: 'var(--pink)' },
+  { label: GEO_LEGEND.closedRect, color: 'var(--lime)' },
+  { label: GEO_LEGEND.coverage, color: 'var(--lime)', opacity: 0.5 },
 ];
 
 const VORONOI_LEGEND: readonly LegendItem[] = [
-  { label: 'Site points', color: 'rgba(255,255,255,0.92)' },
-  { label: 'Active site event', color: VIZ_EMBER },
-  { label: 'Settled Voronoi cell', color: 'rgba(186,230,253,0.5)' },
-  { label: 'Current cell freeze', color: VIZ_EMBER },
-  { label: 'Descending sweep line', color: VIZ_EMBER },
+  { label: GEO_LEGEND.site, color: 'var(--slate)', opacity: 0.8 },
+  { label: GEO_LEGEND.currentSite, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.closedCell, color: 'var(--lime)' },
 ];
 
 const DELAUNAY_LEGEND: readonly LegendItem[] = [
-  { label: 'Committed triangle mesh', color: 'rgba(56,189,248,0.45)' },
-  { label: 'Current candidate triangle', color: VIZ_WARNING },
-  { label: 'Active circumcircle', color: VIZ_HIT },
-  { label: 'Committed mesh edges', color: 'rgba(186,230,253,0.5)' },
-  { label: 'Active triangle vertices', color: VIZ_HIT },
+  { label: GEO_LEGEND.testedTriangle, color: 'var(--cyan)' },
+  { label: GEO_LEGEND.meshTriangle, color: 'var(--lime)' },
+  { label: GEO_LEGEND.meshVertex, color: 'var(--slate)', opacity: 0.8 },
 ];
 
 const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
@@ -2571,7 +2579,7 @@ const FIBONACCI_ITER_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 10,
   sizeUnit: 'iterations',
   randomizeLabel: 'New Fibonacci run',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: FIBONACCI_ITER_PRESETS,
   defaultPresetId: DEFAULT_FIBONACCI_ITER_PRESET_ID,
   createScenario: (size, presetId) => createFibonacciIterScenario(size, presetId),
@@ -2590,7 +2598,7 @@ const FACTORIAL_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 6,
   sizeUnit: 'iterations',
   randomizeLabel: 'New factorial run',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: FACTORIAL_PRESETS,
   defaultPresetId: DEFAULT_FACTORIAL_PRESET_ID,
   createScenario: (size, presetId) => createFactorialScenario(size, presetId),
@@ -2615,7 +2623,7 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New GCD pair',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   /* `presetOptions` stays populated for now so the legacy scratchpad
    *  per-viz picker keeps working during migration; once the toolbar
    *  task picker is live it'll be hidden via an empty array at the
@@ -2652,7 +2660,7 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New pair',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: EXTENDED_EUCLIDEAN_PRESETS,
   defaultPresetId: DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
   tasks: EXTENDED_EUCLIDEAN_TASKS,
@@ -2681,7 +2689,7 @@ const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New candidate',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: MILLER_RABIN_PRESETS,
   defaultPresetId: DEFAULT_MILLER_RABIN_PRESET_ID,
   tasks: MILLER_RABIN_TASKS,
@@ -2706,7 +2714,7 @@ const CRT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<CrtScenario, CrtValues> = {
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New system',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: CRT_PRESETS,
   defaultPresetId: DEFAULT_CRT_PRESET_ID,
   tasks: CRT_TASKS,
@@ -2734,7 +2742,7 @@ const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New composite',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: POLLARDS_RHO_PRESETS,
   defaultPresetId: DEFAULT_POLLARDS_RHO_PRESET_ID,
   tasks: POLLARDS_RHO_TASKS,
@@ -2763,7 +2771,7 @@ const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New system',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: GAUSSIAN_ELIMINATION_PRESETS,
   defaultPresetId: DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
   tasks: GAUSSIAN_ELIMINATION_TASKS,
@@ -2792,7 +2800,7 @@ const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New LP',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: SIMPLEX_ALGORITHM_PRESETS,
   defaultPresetId: DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
   tasks: SIMPLEX_ALGORITHM_TASKS,
@@ -2821,7 +2829,7 @@ const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New stream',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: RESERVOIR_SAMPLING_PRESETS,
   defaultPresetId: DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
   tasks: RESERVOIR_SAMPLING_TASKS,
@@ -2847,7 +2855,7 @@ const FFT_NTT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<FftNttScenario, FftNttVa
   defaultSize: 1,
   sizeUnit: 'scenario',
   randomizeLabel: 'New signal',
-  legendItems: () => [],
+  legendItems: notebookLegend,
   presetOptions: FFT_NTT_PRESETS,
   defaultPresetId: DEFAULT_FFT_NTT_PRESET_ID,
   tasks: FFT_NTT_TASKS,

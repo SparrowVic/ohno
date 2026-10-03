@@ -1,10 +1,1 @@
-/* Shared point / line / polygon primitives ship from geo-canvas. The
-   only convex-hull-specific tweak is the small "sort order" badge
-   above each polar-sorted point — it needs to sit slightly closer
-   than the shared .geo-label baseline. */
 @use '../geo-canvas/geometry-viz';
-
-.chv__sort-badge {
-  fill: rgba(255, 255, 255, 0.55);
-  font-weight: 700;
-}

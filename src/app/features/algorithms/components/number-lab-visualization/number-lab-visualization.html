@@ -1,102 +1,61 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
+@if (state(); as lab) {
+  <div
+    class="display lab"
+    role="img"
+    [attr.aria-label]="LAB.ariaDisplay | transloco: { count: lab.registers.length, history: lab.history.length }"
+    [attr.data-registers]="registers().length > 0"
+  >
+    @if (registers().length > 0) {
+      <app-notebook-register-rack class="lab__registers" aria-hidden="true" [title]="LAB.registers | transloco" [registers]="registers()" />
+    }
 
-  @if (state(); as lab) {
-    <div class="number-lab">
-      <!-- Registers deck — live named scalars as mono chips. Tones
-           tell the user at a glance which one just moved. -->
-      <section class="number-lab__registers">
-        @for (reg of lab.registers; track reg.id) {
-          <article class="number-lab__register number-lab__register--{{ reg.tone }}">
-            <app-math-text class="number-lab__register-label" [content]="reg.label | i18nText" variant="chip" />
-            <app-math-text
-              class="number-lab__register-value"
-              [content]="reg.value"
-              variant="metric"
-            />
-            @if (reg.hint; as hint) {
-              <span class="number-lab__register-hint">{{ hint | i18nText }}</span>
+    <div class="lab__main" aria-hidden="true">
+      <section class="lab__formula">
+        <ohno-engraving>{{ LAB.formula | transloco }}</ohno-engraving>
+        @if (formula(); as rule) {
+          <p class="lab__rule">
+            @for (part of rule.lhs; track $index) {
+              <span class="lab__part" [attr.data-tone]="part.tone"><app-math-text mode="math" [content]="part.text" /></span>
             }
-          </article>
-        }
-      </section>
-
-      <!-- Formula card — always rendered with reserved space so the
-           layout below doesn't shift when the rule fires. -->
-      <section class="number-lab__formula" [class.number-lab__formula--empty]="!lab.formula">
-        <div class="number-lab__formula-row">
-          @if (lab.formula; as formula) {
-            @for (part of formula.lhs; track $index) {
-              <span class="number-lab__part number-lab__part--{{ part.role }}">
-                <app-math-text [content]="part.text" mode="math" variant="formula" />
-              </span>
+            <span class="lab__part" data-tone="dim"><app-math-text mode="math" content="=" /></span>
+            @for (part of rule.rhs; track $index) {
+              <span class="lab__part" [attr.data-tone]="part.tone"><app-math-text mode="math" [content]="part.text" /></span>
             }
-            <span class="number-lab__part number-lab__part--operator">
-              <app-math-text content="=" mode="math" variant="formula" />
-            </span>
-            @for (part of formula.rhs; track $index) {
-              <span class="number-lab__part number-lab__part--{{ part.role }}">
-                <app-math-text [content]="part.text" mode="math" variant="formula" />
-              </span>
-            }
-          } @else {
-            <span class="number-lab__formula-placeholder">—</span>
-          }
-        </div>
-      </section>
-
-      <!-- History tape — always rendered; placeholder shown before
-           any value has been emitted so the grid row keeps its size. -->
-      <section class="number-lab__history">
-        <header class="number-lab__history-head">
-          <span class="number-lab__history-label">n</span>
-          <span class="number-lab__history-value">value</span>
-        </header>
-        <div class="number-lab__history-tape">
-          @if (lab.history.length === 0) {
-            <span class="number-lab__history-placeholder">—</span>
-          } @else {
-            @for (entry of lab.history; track entry.id) {
-              <article
-                class="number-lab__history-chip"
-                [class.number-lab__history-chip--current]="entry.isCurrent"
-              >
-                <app-math-text
-                  class="number-lab__history-chip-label"
-                  [content]="entry.label"
-                  variant="chip"
-                />
-                <app-math-text
-                  class="number-lab__history-chip-value"
-                  [content]="entry.value"
-                  variant="chip"
-                />
-              </article>
-            }
-          }
-        </div>
-      </section>
-
-      <!-- Result footer — always rendered. Value fills in when the
-           algorithm finishes; until then a neutral placeholder holds
-           the slot so the stage below doesn't jump. -->
-      <footer
-        class="number-lab__result"
-        [class.number-lab__result--pending]="!lab.resultLabel"
-      >
-        <span class="number-lab__result-label">result</span>
-        @if (lab.resultLabel; as result) {
-          <app-math-text class="number-lab__result-value" [content]="result | i18nText" variant="formula" />
+          </p>
         } @else {
-          <span class="number-lab__result-value">—</span>
+          <p class="lab__rule lab__rule--empty">{{ LAB.noFormula | transloco }}</p>
         }
-      </footer>
+      </section>
+
+      <section class="lab__result" [attr.data-ready]="lab.resultLabel !== null">
+        <ohno-engraving [tone]="lab.resultLabel ? 'lime' : 'dim'">{{ LAB.result | transloco }}</ohno-engraving>
+        @if (lab.resultLabel; as result) {
+          <span class="lab__result-value"><app-math-text [mode]="resultMode()" [content]="spacedTex(result | i18nText)" /></span>
+        } @else {
+          <span class="lab__result-value lab__result-value--pending">{{ LAB.pending | transloco }}</span>
+        }
+      </section>
+
+      <section class="lab__history">
+        <div class="lab__history-head">
+          <ohno-engraving>{{ LAB.history | transloco }}</ohno-engraving>
+          <ohno-engraving tone="dim">{{ lab.history.length }}</ohno-engraving>
+        </div>
+        <div class="lab__tape">
+          @if (history().length === 0) {
+            <p class="lab__empty">{{ LAB.emptyHistory | transloco }}</p>
+          } @else {
+            <ol #track class="lab__track" tabindex="-1" [style.--cell-width.px]="cellWidth()">
+              @for (cell of history(); track cell.id) {
+                <li class="lab__cell" [attr.data-tone]="cell.current ? 'cyan' : null" [attr.data-current]="cell.current">
+                  <span class="lab__cell-label"><app-math-text [mode]="cell.labelMode" [content]="cell.label" /></span>
+                  <span class="lab__cell-value" [attr.data-numeric]="cell.numeric">{{ cell.value }}</span>
+                </li>
+              }
+            </ol>
+          }
+        </div>
+      </section>
     </div>
-  }
-</app-viz-panel>
+  </div>
+}

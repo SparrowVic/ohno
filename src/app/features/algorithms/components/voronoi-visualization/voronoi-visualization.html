@@ -1,55 +1,49 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+<div class="display display--rack">
+  <div
+    #plane
+    class="display__main plane"
+    role="img"
+    [attr.aria-label]="GEO.ariaPlane | transloco: { count: view()?.sites?.length ?? 0 }"
+  >
+    @if (view(); as scene) {
+      <svg class="plane__svg" [attr.viewBox]="scene.grid.viewBox" aria-hidden="true">
+        <g appGeoGraticule [grid]="scene.grid" />
 
-  @if (geoState(); as geo) {
-    <div class="geo-stage">
-      <svg class="geo-svg" viewBox="-6 -6 112 112" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <pattern id="vrv-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path
-              d="M 10 0 L 0 0 0 10"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.055)"
-              stroke-width="0.3"
-            />
-          </pattern>
-        </defs>
-        <rect x="-6" y="-6" width="112" height="112" fill="url(#vrv-grid)" />
-
-        @if (geo.sweepY !== null) {
-          <line
-            x1="0"
-            [attr.y1]="100 - geo.sweepY"
-            x2="100"
-            [attr.y2]="100 - geo.sweepY"
-            class="geo-sweep"
-          />
-        }
-
-        @for (cell of geo.cells; track cell.id) {
+        @for (cell of scene.cells; track cell.id) {
           <polygon
-            [attr.points]="polygonPoints(cell)"
-            class="vrv-cell"
-            [class.vrv-cell--active]="cell.tone === 'cell-active'"
-            [attr.fill]="cellColor(cell.id)"
-            [attr.stroke]="cellStroke(cell.id)"
+            class="geo-poly"
+            [attr.data-tone]="cell.active ? 'cyan' : 'lime'"
+            [attr.data-strong]="cell.active"
+            [attr.points]="cell.points"
           />
         }
 
-        @for (point of geo.points; track point.id) {
-          <g [attr.transform]="'translate(' + point.x + ',' + (100 - point.y) + ')'">
-            <circle
-              class="geo-point__glow geo-point__glow--{{ geo.activeSiteId === point.id ? 'active' : '' }}"
-              r="6.4"
-              [attr.opacity]="geo.activeSiteId === point.id ? 0.22 : 0.1"
-            />
-            <circle
-              class="geo-point geo-point--{{ geo.activeSiteId === point.id ? 'active' : 'default' }}"
-              r="3.6"
-            />
+        @if (scene.sweep; as sweep) {
+          <line class="geo-sweep" [attr.x1]="sweep.x1" [attr.y1]="sweep.y" [attr.x2]="sweep.x2" [attr.y2]="sweep.y" />
+          <text class="geo-label" data-tone="cyan" text-anchor="end" [attr.x]="sweep.x2 - 4" [attr.y]="sweep.y - 5">
+            {{ sweep.label | i18nText }}
+          </text>
+        }
+
+        @for (site of scene.sites; track site.id) {
+          <g
+            class="geo-point"
+            [attr.data-tone]="site.tone"
+            [attr.data-current]="site.current"
+            [attr.transform]="'translate(' + site.x + ' ' + site.y + ')'"
+          >
+            <circle class="point__dot" [attr.r]="site.current ? 6 : 4.5" />
+            <text class="point__id" x="8" y="-8">{{ site.id }}</text>
           </g>
         }
       </svg>
-    </div>
-  }
-</app-viz-panel>
+    }
+  </div>
+
+  <div class="display__rack geo-racks" aria-hidden="true">
+    @if (view(); as scene) {
+      <app-geo-readout [view]="scene.readout" />
+      <app-geo-rack class="geo-racks__fill" [title]="RACKS.events" [meta]="scene.eventMeta" [rows]="scene.eventRows" />
+    }
+  </div>
+</div>

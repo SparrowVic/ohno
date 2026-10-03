@@ -3,24 +3,31 @@
     <div class="trace__header">
       <app-segmented-panel
         class="trace__summary trace__summary--{{ geo.phase }}"
-        aria-label="Convex hull summary"
+        [attr.aria-label]="TRACE.summaryAria | transloco"
       >
-        <app-segmented-panel-section eyebrow="Phase" [value]="phaseLabel()" />
-        <app-segmented-panel-section eyebrow="On stack" [value]="hullCount()" [valueMono]="true" />
         <app-segmented-panel-section
-          eyebrow="Rejected"
+          [eyebrow]="COMMON.phaseLabel | transloco"
+          [value]="phaseKey() ? (phaseKey()! | transloco) : (geo.phase || '—')"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="TRACE.onStack | transloco"
+          [value]="hullCount()"
+          [valueMono]="true"
+        />
+        <app-segmented-panel-section
+          [eyebrow]="TRACE.rejected | transloco"
           [value]="rejectedCount()"
           [valueMono]="true"
         />
         <app-segmented-panel-section
-          eyebrow="Total pts"
+          [eyebrow]="TRACE.totalPoints | transloco"
           [value]="pointCount()"
           [valueMono]="true"
         />
       </app-segmented-panel>
 
       <div class="trace__check" [class.trace__check--idle]="!turnPoints()">
-        <div class="trace__check-header">Cross Product Check</div>
+        <div class="trace__check-header">{{ TRACE.crossCheck | transloco }}</div>
         <app-math-text class="trace__check-formula" [tex]="crossProductFormula" variant="formula" />
 
         @if (showTurnDetails()) {
@@ -33,7 +40,7 @@
                 <span class="trace__badge trace__badge--{{ slot.tone }}">{{ slot.key }}</span>
                 <div class="trace__check-info">
                   <span class="trace__check-pid">P{{ slot.point?.id ?? '—' }}</span>
-                  <span class="trace__check-role">{{ slot.role }}</span>
+                  <span class="trace__check-role">{{ slot.role | transloco }}</span>
                   <span class="trace__check-coord"
                     >({{ fmt(slot.point?.x) }}, {{ fmt(slot.point?.y) }})</span
                   >
@@ -49,25 +56,21 @@
             [class.trace__check-result--idle]="geo.crossProduct === null"
           >
             <span class="trace__check-cp">
-              @if (geo.crossProduct !== null) {
-                cross = {{ geo.crossProduct >= 0 ? '+' : '' }}{{ geo.crossProduct.toFixed(2) }}
-              } @else {
-                cross = —
-              }
+              {{ TRACE.crossValue | transloco: { value: crossText() } }}
             </span>
             @if (turnVerdict(); as verdict) {
-              <span class="trace__check-verdict">{{ verdict.text }}</span>
+              <span class="trace__check-verdict">{{ verdict.text | transloco }}</span>
               <span class="trace__check-action trace__check-action--{{ verdict.tone }}">
-                → {{ verdict.action }}
+                → {{ verdict.action | transloco }}
               </span>
             } @else {
-              <span class="trace__check-verdict">Waiting for next turn test</span>
-              <span class="trace__check-action trace__check-action--idle">stand by</span>
+              <span class="trace__check-verdict">{{ TRACE.waiting | transloco }}</span>
+              <span class="trace__check-action trace__check-action--idle">{{ TRACE.standBy | transloco }}</span>
             }
           </div>
         } @else {
           <div class="trace__status-note">
-            Turn test appears once the stack reaches the first orientation check.
+            {{ TRACE.turnHint | transloco }}
           </div>
         }
       </div>
@@ -76,11 +79,11 @@
         <app-segmented-panel
           class="trace__detail"
           orientation="vertical"
-          aria-label="Convex hull stack"
+          [attr.aria-label]="TRACE.stackAria | transloco"
         >
-          <app-segmented-panel-section eyebrow="Hull stack" [badge]="geo.stackIds.length">
+          <app-segmented-panel-section [eyebrow]="TRACE.hullStack | transloco" [badge]="geo.stackIds.length">
             @if (stackPoints().length === 0) {
-              <div class="trace__stack-empty">Stack is empty</div>
+              <div class="trace__stack-empty">{{ TRACE.stackEmpty | transloco }}</div>
             } @else {
               <div class="trace__stack-list">
                 @for (pt of stackPoints(); track pt?.id; let last = $last; let first = $first) {
@@ -99,10 +102,10 @@
                       <span class="trace__stack-pid">P{{ pt?.id }}</span>
                       <span class="trace__stack-coord">({{ fmt(pt?.x) }}, {{ fmt(pt?.y) }})</span>
                       @if (last) {
-                        <span class="trace__stack-tag trace__stack-tag--top">top</span>
+                        <span class="trace__stack-tag trace__stack-tag--top">{{ TRACE.top | transloco }}</span>
                       }
                       @if (first && stackPoints().length > 1) {
-                        <span class="trace__stack-tag trace__stack-tag--base">base</span>
+                        <span class="trace__stack-tag trace__stack-tag--base">{{ TRACE.base | transloco }}</span>
                       }
                     </div>
                   </div>
@@ -115,40 +118,22 @@
         <app-segmented-panel
           class="trace__detail"
           orientation="vertical"
-          aria-label="Convex hull legend"
+          [attr.aria-label]="TRACE.legendAria | transloco"
         >
-          <app-segmented-panel-section eyebrow="Point status">
+          <app-segmented-panel-section [eyebrow]="TRACE.pointStatus | transloco">
             <div class="trace__legend-grid">
-              <div class="trace__legend-item">
-                <span class="trace__dot trace__dot--pivot"></span>
-                <span>Pivot (base point)</span>
-              </div>
-              <div class="trace__legend-item">
-                <span class="trace__dot trace__dot--sorted"></span>
-                <span>Sorted (waiting)</span>
-              </div>
-              <div class="trace__legend-item">
-                <span class="trace__dot trace__dot--checking"></span>
-                <span>Checking (cross product)</span>
-              </div>
-              <div class="trace__legend-item">
-                <span class="trace__dot trace__dot--stack"></span>
-                <span>Stack (hull candidate)</span>
-              </div>
-              <div class="trace__legend-item">
-                <span class="trace__dot trace__dot--hull"></span>
-                <span>Hull vertex (final)</span>
-              </div>
-              <div class="trace__legend-item">
-                <span class="trace__dot trace__dot--rejected"></span>
-                <span>Rejected (interior)</span>
-              </div>
+              @for (item of legendItems; track item.tone) {
+                <div class="trace__legend-item">
+                  <span class="trace__dot trace__dot--{{ item.tone }}"></span>
+                  <span>{{ item.label | transloco }}</span>
+                </div>
+              }
             </div>
           </app-segmented-panel-section>
         </app-segmented-panel>
       </div>
     </div>
   } @else {
-    <div class="trace__empty">No geometry trace for this step.</div>
+    <div class="trace__empty">{{ TRACE.empty | transloco }}</div>
   }
 </div>

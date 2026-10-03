@@ -21,29 +21,19 @@ export const REBUILT_DISPLAY_VARIANTS: ReadonlySet<VisualizationVariant> = new S
   'string',
   'call-stack-lab',
   'call-tree-lab',
+  'scratchpad-lab',
+  'number-lab',
+  'convex-hull',
+  'closest-pair',
+  'line-intersection',
+  'half-plane',
+  'minkowski-sum',
+  'sweep-line',
+  'voronoi',
+  'delaunay',
 ]);
 
-export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
-  'convex-hull',
-  'line-intersection',
-  'closest-pair-of-points',
-  'sweep-line',
-  'voronoi-diagram',
-  'delaunay-triangulation',
-  'minkowski-sum',
-  'half-plane-intersection',
-  'fibonacci-iterative',
-  'factorial',
-  'euclidean-gcd',
-  'reservoir-sampling',
-  'fft-ntt',
-  'gaussian-elimination',
-  'simplex-algorithm',
-  'miller-rabin',
-  'pollards-rho',
-  'chinese-remainder-theorem',
-  'extended-euclidean',
-]);
+export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([]);
 
 export function isDisplayReady(algorithmId: string): boolean {
   return !PENDING_DISPLAY_IDS.has(algorithmId);

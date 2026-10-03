@@ -1,0 +1,23 @@
+@use '../../../../../../styles/display';
+
+@include display.graticule;
+
+.graticule__line {
+  stroke-width: 1;
+}
+
+.graticule__axis {
+  stroke: rgb(var(--cyan-rgb) / 0.32);
+  stroke-width: 1;
+}
+
+.graticule__tick {
+  font: 500 9px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  fill: rgb(var(--cyan-rgb) / 0.55);
+  dominant-baseline: middle;
+}
+
+.graticule__tick--y {
+  text-anchor: end;
+}
