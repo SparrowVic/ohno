@@ -1182,15 +1182,15 @@ const STRING_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.string.legend.compare, color: 'var(--cyan)' },
   { label: I18N_KEY.features.algorithms.display.string.legend.mismatchFallback, color: 'var(--pink)' },
   { label: I18N_KEY.features.algorithms.display.string.legend.lpsTable, color: 'var(--amber)' },
-  { label: I18N_KEY.features.algorithms.display.string.legend.unread, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.unread, color: 'var(--slate)', opacity: 0.5 },
 ];
 
 const RABIN_KARP_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.string.legend.matched, color: 'var(--lime)' },
-  { label: I18N_KEY.features.algorithms.display.string.legend.hashWindow, color: 'var(--cyan)' },
-  { label: I18N_KEY.features.algorithms.display.string.legend.mismatch, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.equalHash, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.hashMismatch, color: 'var(--pink)' },
   { label: I18N_KEY.features.algorithms.display.string.legend.collision, color: 'var(--amber)' },
-  { label: I18N_KEY.features.algorithms.display.string.legend.unread, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.unread, color: 'var(--slate)', opacity: 0.5 },
 ];
 
 const Z_ALGORITHM_LEGEND: readonly LegendItem[] = [
@@ -1207,6 +1207,7 @@ const MANACHER_LEGEND: readonly LegendItem[] = [
   { label: I18N_KEY.features.algorithms.display.string.legend.palindrome, color: 'var(--lime)' },
   { label: I18N_KEY.features.algorithms.display.string.legend.radii, color: 'var(--amber)' },
   { label: I18N_KEY.features.algorithms.display.string.legend.mirror, color: 'var(--violet)' },
+  { label: I18N_KEY.features.algorithms.display.string.legend.reach, color: 'var(--slate)' },
 ];
 
 const RLE_LEGEND: readonly LegendItem[] = [

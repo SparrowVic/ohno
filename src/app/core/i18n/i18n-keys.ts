@@ -1209,7 +1209,6 @@ export const I18N_KEY = {
             firstColumn: t('features.algorithms.display.string.legend.firstColumn'),
             frequencies: t('features.algorithms.display.string.legend.frequencies'),
             growingRun: t('features.algorithms.display.string.legend.growingRun'),
-            hashWindow: t('features.algorithms.display.string.legend.hashWindow'),
             insertedRotation: t('features.algorithms.display.string.legend.insertedRotation'),
             internalNode: t('features.algorithms.display.string.legend.internalNode'),
             lastColumn: t('features.algorithms.display.string.legend.lastColumn'),
@@ -1235,6 +1234,9 @@ export const I18N_KEY = {
             unsorted: t('features.algorithms.display.string.legend.unsorted'),
             zBox: t('features.algorithms.display.string.legend.zBox'),
             zTable: t('features.algorithms.display.string.legend.zTable'),
+            equalHash: t('features.algorithms.display.string.legend.equalHash'),
+            hashMismatch: t('features.algorithms.display.string.legend.hashMismatch'),
+            reach: t('features.algorithms.display.string.legend.reach'),
           },
           marks: {
             center: t('features.algorithms.display.string.marks.center'),

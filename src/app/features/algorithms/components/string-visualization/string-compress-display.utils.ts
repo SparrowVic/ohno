@@ -28,14 +28,10 @@ import {
   row,
   valueCells,
 } from './string-tape.utils';
+import { TREE_PAD, TreeBox, fitSpacing, treeEdge } from './string-trie-display.utils';
 
 const STRING = I18N_KEY.features.algorithms.display.string;
 const RACKS = I18N_KEY.features.algorithms.display.racks;
-
-export interface TreeBox {
-  readonly width: number;
-  readonly height: number;
-}
 
 function ratioFact(ratio: number | null): StringFact[] {
   return ratio === null ? [] : [{ id: 'ratio', label: STRING.facts.ratio, value: `${ratio.toFixed(2)}×`, tone: 'lime' }];
@@ -61,8 +57,8 @@ export function rleDisplay(state: RleTraceState): StringDisplay {
   });
   if (activeGroup && state.phase !== 'emit') {
     const column = state.completedRuns.length * 2;
-    outputCells.push(cell('pc', column, String(state.groupCount), 'cyan'));
-    outputCells.push(cell('px', column + 1, displayChar(state.groupChar), 'cyan'));
+    outputCells.push(cell('pc', column, String(state.groupCount), groupTone));
+    outputCells.push(cell('px', column + 1, displayChar(state.groupChar), groupTone));
   }
   const markers: StringMarker[] = [];
   if (activeGroup) markers.push(band('run', groupTone, 'source', state.groupStart, groupEnd, STRING.marks.run));
@@ -76,7 +72,7 @@ export function rleDisplay(state: RleTraceState): StringDisplay {
     led: 'lime',
   }));
   if (activeGroup && state.phase !== 'emit') {
-    runRows.push({ id: 'pending', lead: displayChar(state.groupChar), body: null, value: String(state.groupCount), tone: 'now', led: 'cyan' });
+    runRows.push({ id: 'pending', lead: displayChar(state.groupChar), body: null, value: String(state.groupCount), tone: 'now', led: groupTone === 'pink' ? 'pink' : 'cyan' });
   }
   return {
     rows: [
@@ -171,13 +167,6 @@ const NODE_Y = 72;
 const LEAF_X0 = 38;
 const LEVEL_Y0 = 20;
 
-export const TREE_PAD = 26;
-
-export function fitSpacing(available: number, slots: number, min: number, max: number): number {
-  if (slots <= 0) return max;
-  return Math.max(min, Math.min(max, Math.floor(available / slots)));
-}
-
 export function huffmanTree(state: HuffmanTraceState, box: TreeBox): StringTree | null {
   if (state.phase === 'freq' || state.allNodes.length === 0) return null;
   const leaves = Math.max(1, ...state.allNodes.map((node) => Math.round((node.x - LEAF_X0) / NODE_X) + 1));
@@ -197,7 +186,7 @@ export function huffmanTree(state: HuffmanTraceState, box: TreeBox): StringTree 
     .map((node) => {
       const role = roles.get(node.id) ?? null;
       const point = positions.get(node.id)!;
-      const tone: LedColor = role ? HEAP_LEDS[role] : node.char !== null ? (coded ? 'lime' : 'slate') : node.tone === 'root' ? 'lime' : 'violet';
+      const tone: LedColor = role ? HEAP_LEDS[role] : node.char !== null ? (coded ? 'lime' : 'slate') : node.tone === 'root' && coded ? 'lime' : 'violet';
       return {
         id: node.id,
         x: point.x,
@@ -215,16 +204,7 @@ export function huffmanTree(state: HuffmanTraceState, box: TreeBox): StringTree 
       const from = positions.get(edge.fromId)!;
       const to = positions.get(edge.toId)!;
       const fresh = roles.get(edge.fromId) === 'new';
-      return {
-        id: `${edge.fromId}|${edge.toId}`,
-        x1: from.x,
-        y1: from.y,
-        x2: to.x,
-        y2: to.y,
-        tone: fresh ? 'cyan' : coded ? 'lime' : 'plain',
-        label: edge.label,
-        curved: false,
-      };
+      return treeEdge(`${edge.fromId}|${edge.toId}`, from, to, fresh ? 'cyan' : coded ? 'lime' : 'plain', edge.label);
     });
   return {
     caption: STRING.captions.huffmanTree,

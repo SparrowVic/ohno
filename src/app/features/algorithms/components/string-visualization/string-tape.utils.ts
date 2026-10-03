@@ -2,7 +2,7 @@ import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { RackRowTone } from '../../../../shared/instrument/rack/rack-row/rack-row';
 
-export type StringTone = 'idle' | 'dim' | 'ink' | 'cyan' | 'pink' | 'lime' | 'amber' | 'violet';
+export type StringTone = 'idle' | 'dim' | 'ink' | 'cyan' | 'pink' | 'lime' | 'amber' | 'violet' | 'slate';
 export type StringRowKind = 'tape' | 'values' | 'compact';
 export type StringCaptionTone = 'default' | 'amber' | 'cyan' | 'lime';
 export type StringMarkerVariant = 'head' | 'band';
@@ -79,13 +79,14 @@ export interface StringTreeNode {
   readonly current: boolean;
 }
 
+export type StringTreeEdgeTone = 'plain' | 'lime' | 'pink' | 'cyan' | 'amber';
+
 export interface StringTreeEdge {
   readonly id: string;
-  readonly x1: number;
-  readonly y1: number;
-  readonly x2: number;
-  readonly y2: number;
-  readonly tone: 'plain' | 'lime' | 'pink' | 'cyan' | 'amber' | 'dim';
+  readonly d: string;
+  readonly labelX: number;
+  readonly labelY: number;
+  readonly tone: StringTreeEdgeTone;
   readonly label: string | null;
   readonly curved: boolean;
 }
@@ -273,7 +274,7 @@ export interface StringCellMetrics {
 }
 
 export function stringCellMetrics(available: number, columns: number, compact: boolean): StringCellMetrics {
-  const min = compact ? 22 : 24;
+  const min = 22;
   const max = compact ? 30 : 40;
   const usable = available - GRID_INSET * 2 + CELL_GAP;
   const fit = columns > 0 ? Math.floor(usable / columns) - CELL_GAP : max;

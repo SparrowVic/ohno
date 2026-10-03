@@ -17,6 +17,7 @@ import {
   row,
   valueCells,
 } from './string-tape.utils';
+import { phaseIs } from './string-truth.utils';
 
 const STRING = I18N_KEY.features.algorithms.display.string;
 const RACKS = I18N_KEY.features.algorithms.display.racks;
@@ -44,17 +45,18 @@ export function manacherDisplay(state: ManacherTraceState): StringDisplay {
     if (center !== null && radius > 0 && Math.abs(index - center) <= radius) return 'lime';
     return state.transformed[index] === '#' ? 'dim' : 'idle';
   };
-  const known = (index: number): boolean => center !== null && index <= center;
+  const complete = phaseIs(state.phaseLabel, 'complete');
+  const known = (index: number): boolean => complete || (center !== null && index <= center);
   const markers: StringMarker[] = [];
   if (state.leftBoundary !== null && state.rightBoundary !== null && state.rightBoundary > state.leftBoundary) {
-    markers.push(band('reach', 'violet', 'transformed', state.leftBoundary, state.rightBoundary, STRING.marks.rightEdge));
+    markers.push(band('reach', 'slate', 'transformed', state.leftBoundary, state.rightBoundary, STRING.marks.rightEdge));
   }
   if (center !== null) markers.push(head('head', comparing ? compareTone : 'cyan', 'transformed', 'radii', center, STRING.marks.center));
   const facts: StringFact[] = [
     { id: 'radius', label: STRING.facts.radius, value: String(radius), tone: 'amber' },
   ];
   if (state.mirrorIndex !== null) facts.push({ id: 'mirror', label: STRING.facts.mirror, value: String(state.mirrorIndex), tone: 'violet' });
-  if (state.rightBoundary !== null) facts.push({ id: 'edge', label: STRING.facts.rightEdge, value: String(state.rightBoundary), tone: 'violet' });
+  if (state.rightBoundary !== null) facts.push({ id: 'edge', label: STRING.facts.rightEdge, value: String(state.rightBoundary), tone: 'ink' });
   const notes: StringNote[] = [];
   if (state.mirrorIndex !== null && center !== null) {
     notes.push({

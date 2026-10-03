@@ -1,11 +1,11 @@
 import { SortStep } from '../../models/sort-step';
 import { StringTraceState } from '../../models/string';
-import { TreeBox, bwtDisplay, huffmanDisplay, rleDisplay } from './string-compress-display.utils';
+import { bwtDisplay, huffmanDisplay, rleDisplay } from './string-compress-display.utils';
 import { kmpDisplay, kmpFallbackChain, rabinKarpDisplay, zAlgorithmDisplay } from './string-match-display.utils';
 import { manacherDisplay, palindromicTreeDisplay } from './string-palindrome-display.utils';
 import { suffixArrayDisplay, suffixLcpDisplay } from './string-suffix-display.utils';
 import { StringDisplay, StringMarker, StringRow, emptyDisplay } from './string-tape.utils';
-import { ahoCorasickDisplay } from './string-trie-display.utils';
+import { TreeBox, ahoCorasickDisplay } from './string-trie-display.utils';
 import { stringTruth } from './string-truth.utils';
 
 export interface StringDisplayContext {
@@ -64,7 +64,6 @@ export function stringSourceLength(state: StringTraceState | null): number {
 export interface PlacedMarker extends StringMarker {
   readonly gridRow: string;
   readonly gridColumn: string;
-  readonly labelBelow: boolean;
 }
 
 export function placeMarkers(
@@ -80,7 +79,6 @@ export function placeMarkers(
         ...marker,
         gridRow: `${Math.min(from, to)} / ${Math.max(from, to) + 1}`,
         gridColumn: `${marker.fromColumn + 1} / ${marker.toColumn + 2}`,
-        labelBelow: marker.variant === 'head',
       };
     });
 }

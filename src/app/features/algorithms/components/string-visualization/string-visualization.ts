@@ -29,6 +29,7 @@ import { CELL_GAP, GRID_INSET, stringCellMetrics, stringGridLines } from './stri
 const FALLBACK_WIDTH = 640;
 const FALLBACK_TREE = { width: 520, height: 240 };
 const SCROLL_MARGIN = 24;
+const NUMERIC_VALUE = /^[\d\s/–-]+$/;
 
 @Component({
   selector: 'app-string-visualization',
@@ -64,6 +65,9 @@ export class StringVisualization implements VisualizationRenderer {
   protected readonly grid = computed(() => stringGridLines(this.display().rows));
   protected readonly metrics = computed(() =>
     stringCellMetrics(this.width() || FALLBACK_WIDTH, this.grid().columns, hasCompactRows(this.display().rows)),
+  );
+  protected readonly facts = computed(() =>
+    this.display().facts.map((fact) => ({ ...fact, text: !NUMERIC_VALUE.test(fact.value) })),
   );
   protected readonly markers = computed(() => placeMarkers(this.display().markers, this.grid().body));
   protected readonly hasRack = computed(() => {
@@ -107,7 +111,7 @@ export class StringVisualization implements VisualizationRenderer {
       this.markers();
       this.metrics();
       const tapes = this.tapesRef()?.nativeElement;
-      if (tapes) keepInView(tapes, tapes.querySelector<HTMLElement>('[data-follow="true"]'));
+      if (tapes) followHead(tapes);
       this.rackRef()
         ?.nativeElement.querySelectorAll<HTMLElement>('.ohno-rack__rows')
         .forEach((rows) => {
@@ -125,12 +129,18 @@ export class StringVisualization implements VisualizationRenderer {
 
   render(_: SortStep): void {
     const tapes = this.tapesRef()?.nativeElement;
-    if (tapes) keepInView(tapes, tapes.querySelector<HTMLElement>('[data-follow="true"]'));
+    if (tapes) followHead(tapes);
   }
 
   destroy(): void {
     this.width.set(0);
   }
+}
+
+function followHead(tapes: HTMLElement): void {
+  const target = tapes.querySelector<HTMLElement>('[data-follow="true"]');
+  if (target) keepInView(tapes, target);
+  else if (tapes.scrollLeft !== 0) tapes.scrollTo({ left: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
 
 function keepInView(container: HTMLElement, target: HTMLElement | null): void {

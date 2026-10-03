@@ -2,7 +2,6 @@ import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { i18nText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { AhoCorasickNodeView, AhoCorasickTraceState } from '../../models/string';
-import { TREE_PAD, TreeBox, fitSpacing } from './string-compress-display.utils';
 import {
   StringDisplay,
   StringFact,
@@ -11,6 +10,7 @@ import {
   StringTone,
   StringTree,
   StringTreeEdge,
+  StringTreeEdgeTone,
   StringTreeNode,
   charCells,
   displayChar,
@@ -20,6 +20,49 @@ import {
 
 const STRING = I18N_KEY.features.algorithms.display.string;
 const RACKS = I18N_KEY.features.algorithms.display.racks;
+
+export interface TreeBox {
+  readonly width: number;
+  readonly height: number;
+}
+
+export const TREE_PAD = 26;
+export const NODE_RADIUS = 14;
+export const CURVE_BEND = 30;
+
+export function fitSpacing(available: number, slots: number, min: number, max: number): number {
+  if (slots <= 0) return max;
+  return Math.max(min, Math.min(max, Math.floor(available / slots)));
+}
+
+function round(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function towards(from: TriePoint, to: TriePoint, distance: number): TriePoint {
+  const length = Math.hypot(to.x - from.x, to.y - from.y);
+  if (length === 0) return from;
+  const step = Math.min(distance, length / 2) / length;
+  return { x: from.x + (to.x - from.x) * step, y: from.y + (to.y - from.y) * step };
+}
+
+export function treeEdge(
+  id: string,
+  from: TriePoint,
+  to: TriePoint,
+  tone: StringTreeEdgeTone,
+  label: string | null = null,
+  curved = false,
+): StringTreeEdge {
+  const mid = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
+  const control = curved ? { x: mid.x + CURVE_BEND, y: mid.y } : null;
+  const start = towards(from, control ?? to, NODE_RADIUS);
+  const end = towards(to, control ?? from, NODE_RADIUS);
+  const d = control
+    ? `M ${round(start.x)} ${round(start.y)} Q ${round(control.x)} ${round(control.y)} ${round(end.x)} ${round(end.y)}`
+    : `M ${round(start.x)} ${round(start.y)} L ${round(end.x)} ${round(end.y)}`;
+  return { id, d, labelX: round(mid.x), labelY: round(mid.y), tone, label, curved };
+}
 
 export function trieParents(patterns: readonly string[]): ReadonlyMap<number, number> {
   const parents = new Map<number, number>();
@@ -116,22 +159,13 @@ export function ahoTrie(state: AhoCorasickTraceState, box: TreeBox): StringTree 
     if (node.index === 0 || parent === undefined || !slots.has(parent)) continue;
     const from = point(parent);
     const to = point(node.index);
-    edges.push({
-      id: `t${node.index}`,
-      x1: from.x,
-      y1: from.y,
-      x2: to.x,
-      y2: to.y,
-      tone: node.id === state.activeNodeId ? 'cyan' : node.tone === 'failure' ? 'pink' : 'plain',
-      label: null,
-      curved: false,
-    });
+    edges.push(treeEdge(`t${node.index}`, from, to, node.id === state.activeNodeId ? 'cyan' : node.tone === 'failure' ? 'pink' : 'plain'));
   }
   const active = state.nodes.find((node) => node.id === state.activeNodeId);
   if (active && active.failId !== null && active.index !== 0 && state.phase !== 'build') {
     const from = point(active.index);
     const to = point(Number(active.failId));
-    edges.push({ id: 'fail', x1: from.x, y1: from.y, x2: to.x, y2: to.y, tone: 'amber', label: null, curved: true });
+    edges.push(treeEdge('fail', from, to, 'amber', null, true));
   }
   return {
     caption: STRING.captions.trie,

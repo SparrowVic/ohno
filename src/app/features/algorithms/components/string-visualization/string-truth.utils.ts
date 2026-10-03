@@ -9,7 +9,7 @@ import {
   ZAlgorithmTraceState,
 } from '../../models/string';
 
-function phaseIs(label: TranslatableText, leaf: string): boolean {
+export function phaseIs(label: TranslatableText, leaf: string): boolean {
   const key = isI18nText(label) ? label.key : label;
   return key.endsWith(`.phases.${leaf}`);
 }
