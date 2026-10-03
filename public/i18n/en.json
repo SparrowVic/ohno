@@ -678,6 +678,50 @@
         "unavailableLabel": "Visualization is not implemented yet."
       },
       "display": {
+        "callStack": {
+          "ariaDisplay": "Call stack: {{count}} frames, {{top}} on top",
+          "ariaEmpty": "The call stack is empty",
+          "empty": "stack empty",
+          "legend": {
+            "frame": "Frame on the stack",
+            "returning": "Returned value",
+            "top": "Top of the stack"
+          },
+          "locals": {
+            "left": "left",
+            "right": "right"
+          },
+          "phases": {
+            "active": "active",
+            "cached": "cached",
+            "combining": "combines",
+            "descendingLeft": "calls left",
+            "descendingRight": "calls right",
+            "entering": "enter",
+            "pruned": "pruned",
+            "returning": "returns"
+          }
+        },
+        "callTree": {
+          "ariaDisplay": "Call tree: {{count}} nodes, current {{current}}",
+          "boardAria": "{{size}}×{{size}} board: {{placed}} of {{size}} queens",
+          "legend": {
+            "backtracked": "Backtracked",
+            "bestArm": "Best arm",
+            "path": "Call path",
+            "pruned": "Pruned",
+            "solution": "Solution"
+          },
+          "titles": {
+            "arm": "arm {{arm}}",
+            "leaf": "leaf {{value}}",
+            "max": "MAX · depth {{depth}}",
+            "min": "MIN · depth {{depth}}",
+            "queen": "row {{row}} · col {{col}}",
+            "rollout": "leaf #{{leaf}}",
+            "root": "root"
+          }
+        },
         "dp": {
           "capacityAxis": "cap",
           "captions": {

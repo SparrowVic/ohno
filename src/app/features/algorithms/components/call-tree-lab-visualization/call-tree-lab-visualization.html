@@ -1,142 +1,110 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
-
-  @if (state(); as tree) {
-    <div class="ctlab">
-      <!-- Stats strip always visible so the viewer sees counters
-           even while the tree is still growing. -->
-      <section class="ctlab__stats">
-        @for (stat of tree.stats; track stat.label) {
-          <div class="ctlab__stat ctlab__stat--{{ stat.tone }}">
-            <app-math-text class="ctlab__stat-label" [content]="stat.label | i18nText" variant="chip" />
-            <app-math-text class="ctlab__stat-value" [content]="stat.value | i18nText" variant="formula" />
-          </div>
-        }
-      </section>
-
-      <!-- Sidecar — optional physical state (e.g. N-Queens board).
-           Pinned above the tree so the two views read top-down. -->
-      @if (tree.sidecar; as board) {
-        <section class="ctlab__sidecar">
-          <header class="ctlab__sidecar-head">
-            <app-math-text [content]="board.title | i18nText" variant="chip" />
-          </header>
-          <div
-            class="ctlab__board"
-            [style.grid-template-columns]="'repeat(' + board.cols + ', 1fr)'"
+@if (state(); as tree) {
+  <div class="display display--rack ctree" [attr.data-mode]="tree.mode">
+    <div
+      class="display__main ctree__main"
+      role="img"
+      [attr.aria-label]="CALL_TREE.ariaDisplay | transloco: { count: tree.nodes.length, current: currentTitle() | i18nText }"
+    >
+      <div #viewport class="ctree__viewport" aria-hidden="true">
+        <div
+          #scroller
+          class="ctree__scroller"
+          tabindex="-1"
+          (pointerdown)="onPointerDown($event)"
+          (pointermove)="onPointerMove($event)"
+          (pointerup)="onPointerUp($event)"
+          (pointercancel)="onPointerUp($event)"
+        >
+          <svg
+            class="ctree__svg"
+            [attr.width]="scene().width"
+            [attr.height]="scene().height"
+            [attr.viewBox]="'0 0 ' + scene().width + ' ' + scene().height"
           >
-            @for (cell of board.cells; track cell.row + ':' + cell.col) {
-              <article class="ctlab__board-cell ctlab__board-cell--{{ cell.state }}">
-                @if (cell.value) {
-                  <span class="ctlab__board-cell-value">{{ cell.value }}</span>
-                }
-              </article>
+            <g class="ctree__edges">
+              @for (edge of scene().edges; track edge.id) {
+                <line
+                  class="ctree__edge"
+                  [attr.data-tone]="edge.tone"
+                  [attr.x1]="edge.x1"
+                  [attr.y1]="edge.y1"
+                  [attr.x2]="edge.x2"
+                  [attr.y2]="edge.y2"
+                />
+              }
+            </g>
+
+            <g class="ctree__nodes">
+              @for (node of scene().nodes; track node.id) {
+                <g
+                  class="ctree__node"
+                  [attr.data-tone]="node.tone"
+                  [attr.data-dim]="node.dim"
+                  [attr.data-current]="node.current"
+                  [attr.transform]="'translate(' + node.x + ' ' + node.y + ')'"
+                >
+                  @if (node.current) {
+                    <circle class="node__halo" [attr.r]="HALO_RADIUS" />
+                  }
+                  <circle class="node__ring" [attr.r]="NODE_RADIUS" />
+                  @if (node.glyph.text) {
+                    <text class="node__label" [attr.data-dot]="node.glyph.dot">{{ node.glyph.text }}</text>
+                  } @else {
+                    <circle class="ctree__pip" r="2.5" />
+                  }
+                  @if (node.value !== null) {
+                    <text class="node__value" [attr.y]="VALUE_OFFSET">{{ node.value }}</text>
+                  }
+                  @if (node.mark; as mark) {
+                    <text class="ctree__mark" [attr.data-mark]="mark" [attr.x]="MARK_OFFSET" [attr.y]="-MARK_OFFSET">{{ MARK_GLYPHS[mark] }}</text>
+                  }
+                </g>
+              }
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="display__rack ctree__racks">
+      @if (board(); as sidecar) {
+        <ohno-rack class="ctree__rack ctree__rack--board" [title]="RACKS.board | transloco" [meta]="placed() + ' / ' + sidecar.rows">
+          <div
+            class="ctree__board"
+            role="img"
+            [attr.aria-label]="CALL_TREE.boardAria | transloco: { size: sidecar.rows, placed: placed() }"
+            [style.grid-template-columns]="'repeat(' + sidecar.cols + ', minmax(0, 28px))'"
+          >
+            @for (cell of cells(); track cell.id) {
+              <span class="ctree__cell" [attr.data-tone]="cell.tone">{{ cell.glyph }}</span>
             }
           </div>
-          @if (board.footer) {
-            <footer class="ctlab__sidecar-footer">
-              <app-math-text [content]="board.footer | i18nText" variant="chip" />
-            </footer>
-          }
-        </section>
+        </ohno-rack>
       }
 
-      <!-- Tree stage: SVG edges + HTML node cards. -->
-      <section
-        #stage
-        class="ctlab__stage"
-        (pointerdown)="onStagePointerDown($event)"
-        (pointermove)="onStagePointerMove($event)"
-        (pointerup)="onStagePointerUp($event)"
-        (pointercancel)="onStagePointerUp($event)"
-      >
-        @if (tree.nodes.length === 0) {
-          <div class="ctlab__empty">—</div>
-        } @else {
-          <div
-            class="ctlab__canvas"
-            [style.width.px]="pixelWidth()"
-            [style.height.px]="pixelHeight()"
-          >
-            <svg
-              class="ctlab__edges"
-              [attr.viewBox]="viewBox()"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              @for (edge of layout().edges; track edge.id) {
-                <path
-                  class="ctlab__edge"
-                  [class.ctlab__edge--active]="edge.isOnPath"
-                  [attr.d]="edge.path"
-                />
-                @if (edge.label; as label) {
-                  <g [attr.transform]="'translate(' + edge.labelX + ' ' + edge.labelY + ')'">
-                    <rect
-                      class="ctlab__edge-label-bg"
-                      x="-16"
-                      y="-8"
-                      width="32"
-                      height="16"
-                      rx="5"
-                    />
-                    <text class="ctlab__edge-label" text-anchor="middle" dy="4">{{ label }}</text>
-                  </g>
-                }
-              }
-            </svg>
-
-            @for (node of layout().nodes; track node.id) {
-              <article
-                class="ctlab__node ctlab__node--{{ node.phase }}"
-                [class.ctlab__node--active-path]="isOnPath(node.id)"
-                [style.left.px]="nodeLeftPx(node)"
-                [style.top.px]="nodeTopPx(node)"
-                [style.width.px]="nodeWidthPx"
-                [style.min-height.px]="nodeHeightPx"
-              >
-                <header class="ctlab__node-head">
-                  <app-math-text class="ctlab__node-title" [content]="node.title" variant="formula" />
-                  @if (node.badge) {
-                    <span class="ctlab__node-badge">{{ node.badge }}</span>
-                  }
-                </header>
-                @if (node.subtitle) {
-                  <span class="ctlab__node-subtitle">{{ node.subtitle | i18nText }}</span>
-                }
-                @if (node.stats.length > 0) {
-                  <div class="ctlab__node-stats">
-                    @for (stat of node.stats; track stat.label) {
-                      <span class="ctlab__node-stat ctlab__node-stat--{{ stat.tone }}">
-                        <app-math-text class="ctlab__node-stat-label" [content]="stat.label | i18nText" variant="cell" />
-                        <app-math-text class="ctlab__node-stat-value" [content]="stat.value | i18nText" variant="chip" />
-                      </span>
-                    }
-                  </div>
-                }
-              </article>
-            }
-          </div>
+      <ohno-rack class="ctree__rack" [title]="RACKS.stats | transloco">
+        @for (stat of tree.stats; track $index) {
+          <ohno-rack-row>
+            <span class="ctree__rack-body">{{ stat.label | i18nText }}</span>
+            <span rackValue class="ctree__rack-value">{{ stat.value | i18nText }}</span>
+          </ohno-rack-row>
         }
-      </section>
+      </ohno-rack>
 
-      <footer
-        class="ctlab__result"
-        [class.ctlab__result--pending]="!tree.resultLabel"
-      >
-        <span class="ctlab__result-label">result</span>
-        @if (tree.resultLabel; as result) {
-          <app-math-text class="ctlab__result-value" [content]="result | i18nText" variant="formula" />
-        } @else {
-          <span class="ctlab__result-value">—</span>
+      <ohno-rack class="ctree__rack ctree__rack--path" [title]="RACKS.path | transloco">
+        @for (row of pathRows(); track row.id) {
+          <ohno-rack-row [tone]="row.tone">
+            <span rackLead class="ctree__rack-lead">{{ row.depth }}</span>
+            <span class="ctree__rack-body">{{ row.title | i18nText }}</span>
+            <span rackValue class="ctree__rack-value">{{ row.value ?? '' }}</span>
+          </ohno-rack-row>
+        } @empty {
+          <ohno-rack-row tone="dim">
+            <span rackLead class="ctree__rack-lead">—</span>
+            <span class="ctree__rack-body">{{ NOTES.empty | transloco }}</span>
+          </ohno-rack-row>
         }
-      </footer>
+      </ohno-rack>
     </div>
-  }
-</app-viz-panel>
+  </div>
+}

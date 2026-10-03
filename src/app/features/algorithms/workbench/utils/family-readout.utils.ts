@@ -1181,7 +1181,7 @@ const CALL_STACK_TONES: Readonly<Record<CallStackLabTraceState['tone'], LedColor
   idle: 'slate',
   descend: 'cyan',
   combine: 'amber',
-  return: 'pink',
+  return: 'lime',
   complete: 'lime',
 };
 
@@ -1192,7 +1192,7 @@ export function callStackReadout(state: CallStackLabTraceState, ctx: FamilyReado
     meters: [meter('frames', labels, state.frames.length), meter('depth', labels, depth), meter('returns', labels, state.recentReturns.length)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, CALL_STACK_TONES[state.tone]),
-    registers: state.frames.length > 0 ? [register('depth', labels, state.frames.length), register('n', labels, state.iteration)] : [],
+    registers: state.frames.length > 0 ? [register('depth', labels, state.frames.length)] : [],
     gauge: gauge(Math.max(1, state.frames.length + state.recentReturns.length), state.recentReturns.length),
     gaugeLabel: labels.gauges.frames,
   };
@@ -1201,7 +1201,7 @@ export function callStackReadout(state: CallStackLabTraceState, ctx: FamilyReado
 const CALL_TREE_TONES: Readonly<Record<CallTreeLabTraceState['tone'], LedColor>> = {
   idle: 'slate',
   descend: 'cyan',
-  prune: 'red',
+  prune: 'pink',
   solve: 'lime',
   return: 'pink',
   complete: 'lime',
@@ -1214,7 +1214,7 @@ export function callTreeReadout(state: CallTreeLabTraceState, ctx: FamilyReadout
     meters: [meter('explored', labels, explored, state.nodes.length), meter('depth', labels, state.activePath.length), meter('iteration', labels, state.iteration)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.phaseLabel)),
     tone: edgeTone(index, lastIndex, CALL_TREE_TONES[state.tone]),
-    registers: [register('depth', labels, state.activePath.length), register('n', labels, state.iteration)],
+    registers: [register('depth', labels, state.activePath.length)],
     gauge: gauge(Math.max(1, state.nodes.length), explored),
     gaugeLabel: labels.gauges.explored,
   };

@@ -1,123 +1,91 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()">
-    <app-viz-preset-picker
-      [options]="presetOptions()"
-      [activeId]="presetId()"
-      (selected)="selectPreset($event)"
-    />
-  </app-viz-header>
-
-  @if (state(); as stack) {
-    <div class="cslab">
-      <!-- Stats strip — total calls, max depth, current depth. -->
-      <section class="cslab__stats">
-        @for (stat of stack.stats; track stat.label) {
-          <div class="cslab__stat cslab__stat--{{ stat.tone }}">
-            <app-math-text
-              class="cslab__stat-label"
-              [content]="stat.label | i18nText"
-              variant="chip"
-            />
-            <app-math-text
-              class="cslab__stat-value"
-              [content]="stat.value | i18nText"
-              variant="metric"
-            />
-          </div>
-        }
-      </section>
-
-      <!-- Stack column — top-of-stack on top. Frames animate in from
-           the top and out when returning. Each frame shows its
-           signature, locals, and a return-value callout when popping. -->
-      <section class="cslab__stage">
-        <div class="cslab__stack">
-          @if (framesTopDown().length === 0) {
-            <div class="cslab__empty">∅ stack</div>
-          }
-          @for (frame of framesTopDown(); track frame.id) {
-            <article
-              class="cslab__frame cslab__frame--{{ frame.phase }}"
-              [class.cslab__frame--active]="$first"
-            >
-              <header class="cslab__frame-head">
-                <span class="cslab__frame-depth"
-                  ><span aria-hidden="true">#</span
-                  ><app-math-text [content]="frame.depth.toString()" variant="chip"
-                /></span>
-                <app-math-text
-                  class="cslab__frame-title"
-                  [content]="frame.title"
-                  mode="math"
-                  variant="formula"
-                />
-                @if (frame.returnValue !== null) {
-                  <span class="cslab__frame-return"
-                    ><span aria-hidden="true">→&nbsp;</span
-                    ><app-math-text [content]="frame.returnValue" variant="chip"
-                  /></span>
-                }
-              </header>
-              @if (frame.subtitle; as subtitle) {
-                <span class="cslab__frame-subtitle">{{ subtitle | i18nText }}</span>
-              }
-              @if (frame.locals.length > 0) {
-                <div class="cslab__frame-locals">
-                  @for (local of frame.locals; track local.label) {
-                    <span class="cslab__local cslab__local--{{ local.tone }}">
-                      <app-math-text
-                        class="cslab__local-label"
-                        [content]="local.label"
-                        variant="chip"
-                      />
-                      <app-math-text
-                        class="cslab__local-value"
-                        [content]="local.value"
-                        variant="chip"
-                      />
-                    </span>
-                  }
-                </div>
-              }
-            </article>
-          }
+@if (state(); as stack) {
+  <div class="display display--rack cstack">
+    <div
+      class="display__main cstack__main"
+      role="img"
+      [attr.aria-label]="
+        topTitle()
+          ? (CALL_STACK.ariaDisplay | transloco: { count: frames().length, top: topTitle() })
+          : (CALL_STACK.ariaEmpty | transloco)
+      "
+    >
+      <div class="cstack__body" aria-hidden="true">
+        <div class="cstack__caption">
+          <ohno-engraving>{{ RACKS.stack | transloco }}</ohno-engraving>
+          <ohno-engraving tone="dim">{{ RACKS.topUp | transloco }}</ohno-engraving>
         </div>
 
-        <!-- Return rail — breadcrumb of recent pops so the user can
-             visualise the unwind without scrolling the log. -->
-        <aside class="cslab__rail">
-          <header class="cslab__rail-head">returns</header>
-          @if (stack.recentReturns.length === 0) {
-            <div class="cslab__rail-empty">—</div>
-          } @else {
-            <ol class="cslab__rail-list">
-              @for (ret of stack.recentReturns; track ret.id) {
-                <li class="cslab__rail-item" [style.opacity]="1 - ret.age * 0.14">
-                  <app-math-text class="cslab__rail-title" [content]="ret.title" mode="math" variant="formula" />
-                  <span class="cslab__rail-arrow">→</span>
-                  <app-math-text
-                    class="cslab__rail-value"
-                    [content]="ret.returnValue"
-                    variant="chip"
-                  />
+        <div #scroller class="cstack__scroller" tabindex="-1">
+          @if (frames().length > 0) {
+            <ol class="cstack__frames">
+              @for (frame of frames(); track frame.id) {
+                <li class="cstack__frame" [attr.data-tone]="frame.tone" [attr.data-top]="frame.top">
+                  <span class="cstack__depth">{{ frame.depth }}</span>
+                  <span class="cstack__sig">
+                    <span class="cstack__name">{{ frame.name }}</span>
+                    <span class="cstack__paren">(</span>
+                    <span class="cstack__args">{{ frame.args }}</span>
+                    <span class="cstack__paren">)</span>
+                  </span>
+                  <span class="cstack__locals">
+                    @for (local of frame.locals; track local.id) {
+                      <span class="cstack__local" [attr.data-tone]="local.tone">
+                        <span class="cstack__local-label">{{ local.label | i18nText }}</span>
+                        <span class="cstack__local-value">{{ local.value }}</span>
+                      </span>
+                    }
+                  </span>
+                  <span class="cstack__end">
+                    <span class="cstack__phase">{{ frame.phaseKey | transloco }}</span>
+                    @if (frame.returnValue !== null) {
+                      <span class="cstack__return">
+                        <span class="cstack__arrow">→</span>
+                        <span class="cstack__return-value">{{ frame.returnValue }}</span>
+                      </span>
+                    }
+                  </span>
                 </li>
               }
             </ol>
+          } @else {
+            <div class="cstack__empty">
+              <ohno-engraving tone="dim">{{ CALL_STACK.empty | transloco }}</ohno-engraving>
+              @if (stack.resultLabel; as result) {
+                <div class="cstack__note" data-tone="lime">
+                  <span class="cstack__note-title">{{ RACKS.result | transloco }}</span>
+                  <app-math-text class="cstack__note-text" [content]="result | i18nText" />
+                </div>
+              }
+            </div>
           }
-        </aside>
-      </section>
-
-      <footer
-        class="cslab__result"
-        [class.cslab__result--pending]="!stack.resultLabel"
-      >
-        <span class="cslab__result-label">result</span>
-        @if (stack.resultLabel; as result) {
-          <app-math-text class="cslab__result-value" [content]="result | i18nText" variant="formula" />
-        } @else {
-          <span class="cslab__result-value">—</span>
-        }
-      </footer>
+        </div>
+      </div>
     </div>
-  }
-</app-viz-panel>
+
+    <div class="display__rack cstack__racks">
+      <ohno-rack class="cstack__rack" [title]="RACKS.returns | transloco">
+        @for (row of returns(); track row.id) {
+          <ohno-rack-row [tone]="row.tone">
+            <span rackLead class="cstack__rack-lead">{{ row.name }}({{ row.args }})</span>
+            <span class="cstack__rack-body"></span>
+            <span rackValue class="cstack__rack-value">{{ row.value }}</span>
+          </ohno-rack-row>
+        } @empty {
+          <ohno-rack-row tone="dim">
+            <span rackLead class="cstack__rack-lead">—</span>
+            <span class="cstack__rack-body">{{ NOTES.empty | transloco }}</span>
+          </ohno-rack-row>
+        }
+      </ohno-rack>
+
+      <ohno-rack class="cstack__rack" [title]="RACKS.stats | transloco">
+        @for (stat of stack.stats; track $index) {
+          <ohno-rack-row>
+            <span class="cstack__rack-body">{{ stat.label | i18nText }}</span>
+            <span rackValue class="cstack__rack-value">{{ stat.value | i18nText }}</span>
+          </ohno-rack-row>
+        }
+      </ohno-rack>
+    </div>
+  </div>
+}
