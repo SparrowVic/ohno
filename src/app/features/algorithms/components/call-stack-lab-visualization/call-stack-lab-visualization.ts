@@ -1,77 +1,52 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  input,
+  viewChild,
+} from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { MathText } from '../../../../shared/components/math-text/math-text';
+import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
+import { OhnoRack } from '../../../../shared/instrument/rack/rack';
+import { OhnoRackRow } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import { I18nTextPipe } from '../../../../shared/pipes/i18n-text.pipe';
 import { CallStackLabTraceState } from '../../models/call-stack-lab';
 import { SortStep } from '../../models/sort-step';
-import { CallStackLabPresetOption } from '../../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
-import { VizHeader, VizHeaderTone } from '../viz-header/viz-header';
-import { VizPanel } from '../viz-panel/viz-panel';
-import { VizPresetPicker } from '../viz-preset-picker/viz-preset-picker';
+import { callStackFrames, callStackReturnRows, callStackTopTitle } from './call-stack-display.utils';
 
-/**
- * Shared canvas for recursion-driven algorithms — Call Stack demo,
- * Backtracking, Minimax, MCTS. Splits the stage into:
- *
- *   - **Stack column** — live frames stacked bottom-up; the top frame
- *     is "active" and pulses warm. Completed frames flash their
- *     return value briefly before popping.
- *   - **Return rail** — breadcrumb of the most recent pops with their
- *     return values, so the user can see the unwind trail.
- *   - **Stats strip** — total calls, max depth, current depth.
- *
- * No SVG — the stack is a vertical CSS flex column with entering /
- * exiting frames animated via keyframes.
- */
 @Component({
   selector: 'app-call-stack-lab-visualization',
-  imports: [I18nTextPipe, MathText, VizHeader, VizPanel, VizPresetPicker],
+  imports: [TranslocoPipe, I18nTextPipe, MathText, OhnoEngraving, OhnoRack, OhnoRackRow],
   templateUrl: './call-stack-lab-visualization.html',
   styleUrl: './call-stack-lab-visualization.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CallStackLabVisualization {
+  protected readonly CALL_STACK = I18N_KEY.features.algorithms.display.callStack;
+  protected readonly RACKS = I18N_KEY.features.algorithms.display.racks;
+  protected readonly NOTES = I18N_KEY.features.algorithms.display.notes;
+
   readonly array = input.required<readonly number[]>();
   readonly step = input<SortStep | null>(null);
   readonly speed = input<number>(5);
-  readonly presetOptions = input<readonly CallStackLabPresetOption[]>([]);
-  readonly presetId = input<string | null>(null);
-  readonly presetChange = output<string>();
 
-  readonly state = computed<CallStackLabTraceState | null>(
-    () => this.step()?.callStackLab ?? null,
-  );
+  private readonly scrollerRef = viewChild<ElementRef<HTMLElement>>('scroller');
 
-  readonly phaseLabel = computed<TranslatableText>(() => this.state()?.modeLabel ?? '');
+  protected readonly state = computed<CallStackLabTraceState | null>(() => this.step()?.callStackLab ?? null);
+  protected readonly frames = computed(() => callStackFrames(this.state()));
+  protected readonly returns = computed(() => callStackReturnRows(this.state()));
+  protected readonly topTitle = computed(() => callStackTopTitle(this.state()));
 
-  readonly actionText = computed<TranslatableText>(() => {
-    const state = this.state();
-    if (!state) return '';
-    return state.decisionLabel ?? state.phaseLabel ?? '';
-  });
-
-  readonly headerTone = computed<VizHeaderTone>(() => {
-    const tone = this.state()?.tone ?? 'idle';
-    switch (tone) {
-      case 'descend':
-        return 'compare';
-      case 'combine':
-        return 'swap';
-      case 'return':
-        return 'sorted';
-      case 'complete':
-        return 'complete';
-      default:
-        return 'default';
-    }
-  });
-
-  /** Reverse the frames so the top-of-stack renders at the top
-   *  visually while the generator's internal array keeps root at 0. */
-  readonly framesTopDown = computed(() => [...(this.state()?.frames ?? [])].reverse());
-
-  selectPreset(id: string): void {
-    this.presetChange.emit(id);
+  constructor() {
+    afterRenderEffect(() => {
+      this.frames();
+      const scroller = this.scrollerRef()?.nativeElement;
+      if (scroller && scroller.scrollTop !== 0) scroller.scrollTop = 0;
+    });
   }
 }

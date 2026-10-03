@@ -3008,6 +3008,34 @@ const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: SieveGridAlgorithmViewConfig<
   generator: sieveOfEratosthenesGenerator,
 };
 
+const CALL_STACK_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.callStack.legend.frame, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.callStack.legend.top, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.callStack.legend.returning, color: 'var(--lime)' },
+];
+
+const BACKTRACKING_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.path, color: 'var(--cyan)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.legend.conflict, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.backtracked, color: 'var(--slate)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.solution, color: 'var(--lime)' },
+];
+
+const MINIMAX_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.path, color: 'var(--cyan)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.legend.settled, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.pruned, color: 'var(--pink)', opacity: 0.55 },
+];
+
+const MCTS_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.legend.current, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.path, color: 'var(--cyan)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.legend.visited, color: 'var(--slate)' },
+  { label: I18N_KEY.features.algorithms.display.callTree.legend.bestArm, color: 'var(--lime)' },
+];
+
 const RECURSION_CALL_STACK_VIEW_CONFIG: AlgorithmViewConfig = {
   kind: 'call-stack-lab',
   codeLines: RECURSION_CALL_STACK_CODE,
@@ -3020,7 +3048,7 @@ const RECURSION_CALL_STACK_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 5,
   sizeUnit: 'n',
   randomizeLabel: 'New depth',
-  legendItems: () => [],
+  legendItems: () => CALL_STACK_LEGEND,
   presetOptions: RECURSIVE_FIBONACCI_PRESETS,
   defaultPresetId: DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
   createScenario: (size, presetId) => createRecursiveFibonacciScenario(size, presetId),
@@ -3039,7 +3067,7 @@ const BACKTRACKING_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 5,
   sizeUnit: 'board',
   randomizeLabel: 'New scenario',
-  legendItems: () => [],
+  legendItems: () => BACKTRACKING_LEGEND,
   presetOptions: N_QUEENS_PRESETS,
   defaultPresetId: DEFAULT_N_QUEENS_PRESET_ID,
   createScenario: (size, presetId) => createNQueensScenario(size, presetId),
@@ -3058,7 +3086,7 @@ const MINIMAX_ALPHA_BETA_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 9,
   sizeUnit: 'leaves',
   randomizeLabel: 'New game tree',
-  legendItems: () => [],
+  legendItems: () => MINIMAX_LEGEND,
   presetOptions: MINIMAX_PRESETS,
   defaultPresetId: DEFAULT_MINIMAX_PRESET_ID,
   createScenario: (size, presetId) => createMinimaxScenario(size, presetId),
@@ -3077,7 +3105,7 @@ const MCTS_VIEW_CONFIG: AlgorithmViewConfig = {
   defaultSize: 10,
   sizeUnit: 'iterations',
   randomizeLabel: 'New playout',
-  legendItems: () => [],
+  legendItems: () => MCTS_LEGEND,
   presetOptions: MCTS_PRESETS,
   defaultPresetId: DEFAULT_MCTS_PRESET_ID,
   createScenario: (size, presetId) => createMcTsScenario(size, presetId),

@@ -678,6 +678,50 @@
         "unavailableLabel": "Ta wizualizacja nie jest jeszcze zaimplementowana."
       },
       "display": {
+        "callStack": {
+          "ariaDisplay": "Stos wywołań: {{count}} ramek, na szczycie {{top}}",
+          "ariaEmpty": "Stos wywołań jest pusty",
+          "empty": "stos pusty",
+          "legend": {
+            "frame": "Ramka na stosie",
+            "returning": "Zwracana wartość",
+            "top": "Szczyt stosu"
+          },
+          "locals": {
+            "left": "lewy",
+            "right": "prawy"
+          },
+          "phases": {
+            "active": "aktywna",
+            "cached": "z pamięci",
+            "combining": "łączy",
+            "descendingLeft": "woła lewe",
+            "descendingRight": "woła prawe",
+            "entering": "wejście",
+            "pruned": "odcięta",
+            "returning": "zwraca"
+          }
+        },
+        "callTree": {
+          "ariaDisplay": "Drzewo wywołań: {{count}} węzłów, bieżący {{current}}",
+          "boardAria": "Plansza {{size}}×{{size}}: {{placed}} z {{size}} hetmanów",
+          "legend": {
+            "backtracked": "Cofnięte",
+            "bestArm": "Najlepsze ramię",
+            "path": "Ścieżka wywołań",
+            "pruned": "Odcięte",
+            "solution": "Rozwiązanie"
+          },
+          "titles": {
+            "arm": "ramię {{arm}}",
+            "leaf": "liść {{value}}",
+            "max": "MAX · głęb. {{depth}}",
+            "min": "MIN · głęb. {{depth}}",
+            "queen": "wiersz {{row}} · kol. {{col}}",
+            "rollout": "liść #{{leaf}}",
+            "root": "korzeń"
+          }
+        },
         "dp": {
           "capacityAxis": "poj.",
           "captions": {

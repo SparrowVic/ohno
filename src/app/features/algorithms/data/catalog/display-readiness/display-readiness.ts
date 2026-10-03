@@ -19,6 +19,8 @@ export const REBUILT_DISPLAY_VARIANTS: ReadonlySet<VisualizationVariant> = new S
   'search',
   'pointer-lab',
   'string',
+  'call-stack-lab',
+  'call-tree-lab',
 ]);
 
 export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
@@ -33,10 +35,6 @@ export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
   'fibonacci-iterative',
   'factorial',
   'euclidean-gcd',
-  'backtracking',
-  'recursion-call-stack',
-  'minimax-alpha-beta',
-  'monte-carlo-tree-search',
   'reservoir-sampling',
   'fft-ntt',
   'gaussian-elimination',
