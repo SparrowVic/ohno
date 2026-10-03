@@ -1229,6 +1229,24 @@
             "zeroMatching": "Skojarzenie zer · runda {{round}}"
           }
         },
+        "pointerLab": {
+          "ariaDisplay": "Taśma {{count}} komórek ze wskaźnikami {{pointers}}",
+          "legend": {
+            "best": "Rekord",
+            "discarded": "Odrzucone",
+            "left": "Wskaźnik L",
+            "match": "Zgodne",
+            "mismatch": "Niezgodne",
+            "pointerI": "Wskaźnik i",
+            "right": "Wskaźnik R",
+            "settled": "Ustalone",
+            "window": "Okno"
+          },
+          "offTape": "poza taśmą",
+          "pending": "w toku",
+          "tape": "Ciąg",
+          "window": "okno [{{left}}..{{right}}]"
+        },
         "racks": {
           "base": "baza",
           "best": "Najlepsze",
@@ -1365,6 +1383,26 @@
           "x": "x",
           "y": "y",
           "zValue": "Z[i]"
+        },
+        "search": {
+          "ariaDisplay": "Wyszukiwanie na taśmie {{count}} wartości, szukane {{target}}",
+          "candidates": {
+            "both": "kandydat na pierwsze i ostatnie trafienie",
+            "first": "kandydat na pierwsze trafienie",
+            "last": "kandydat na ostatnie trafienie"
+          },
+          "decision": "Decyzja",
+          "emptyRange": "zakres pusty",
+          "legend": {
+            "candidate": "Kandydat brzegu",
+            "discarded": "Odrzucone",
+            "found": "Znalezione",
+            "probe": "Sonda · mid",
+            "range": "Zakres lo–hi"
+          },
+          "range": "zakres [{{low}}, {{high}}]",
+          "tape": "Tablica · A",
+          "target": "szukane x = {{target}}"
         },
         "sieve": {
           "boardAria": "Tablica liczb od 1 do {{n}}",

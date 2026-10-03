@@ -1,26 +1,77 @@
-<app-viz-panel>
-  <app-viz-header [phase]="phaseLabel()" [action]="actionText()" [tone]="headerTone()" />
+@if (state(); as search) {
+  @if (view(); as tape) {
+    <div
+      class="display search"
+      role="img"
+      [attr.aria-label]="SEARCH.ariaDisplay | transloco: { count: tape.cells.length, target: search.target }"
+    >
+      <div #main class="display__main search__main" aria-hidden="true">
+        <div class="search__caption">
+          <ohno-engraving>{{ SEARCH.tape | transloco }}</ohno-engraving>
+          <span class="search__caption-end">
+            @if (search.low !== null && search.high !== null) {
+              <ohno-engraving tone="cyan">{{ SEARCH.range | transloco: { low: search.low, high: search.high } }}</ohno-engraving>
+            } @else {
+              <ohno-engraving tone="dim">{{ SEARCH.emptyRange | transloco }}</ohno-engraving>
+            }
+            <ohno-engraving tone="bright">{{ SEARCH.target | transloco: { target: search.target } }}</ohno-engraving>
+          </span>
+        </div>
 
-  @if (searchState(); as search) {
-    <div class="search-viz__board" #container>
-      <div class="search-viz__row">
-        @for (value of step()?.array ?? []; track $index) {
+        <div class="search__tape">
           <div
-            [class]="cellClass($index)"
-            [class.cell--window-glow]="isInsideWindow($index)"
-            [attr.data-index]="$index"
+            #track
+            class="search__track"
+            [style.--cell-width.px]="layout().cell"
+            [style.--cell-font.px]="layout().font"
+            [style.--tape-gap.px]="METRICS.gap"
+            [style.--tape-inset.px]="METRICS.inset"
           >
-            <div class="cell__beam"></div>
-            <div class="cell__chrome">
-              <span class="cell__index">#{{ $index }}</span>
-              @if (boundLabelKey($index); as labelKey) {
-                <span class="cell__bound">{{ labelKey | transloco }}</span>
+            <div class="search__row">
+              @for (cell of tape.cells; track cell.index) {
+                <span
+                  class="search__cell"
+                  [attr.data-tone]="cell.tone"
+                  [attr.data-focus]="cell.focus"
+                  [attr.title]="cell.candidate ? (CANDIDATE_LABELS[cell.candidate] | transloco) : null"
+                >
+                  @if (cell.candidate; as candidate) {
+                    <span class="search__mark">{{ CANDIDATE_MARKS[candidate] }}</span>
+                  }
+                  <span class="tape-cell__char search__value">{{ cell.value }}</span>
+                  <span class="tape-cell__index">{{ cell.index }}</span>
+                </span>
+              }
+
+              @if (range(); as span) {
+                <span class="search__span search__span--range" [attr.data-tone]="span.tone" [style.left.px]="span.left" [style.width.px]="span.width"></span>
+              }
+              @if (hit(); as span) {
+                <span class="search__span" [attr.data-tone]="span.tone" [style.left.px]="span.left" [style.width.px]="span.width"></span>
+              }
+              @if (probe(); as span) {
+                <span class="search__span" [attr.data-tone]="span.tone" [style.left.px]="span.left" [style.width.px]="span.width"></span>
+              }
+
+              @for (cursor of cursors(); track cursor.id) {
+                <span class="search__cursor" [attr.data-tone]="cursor.tone" [attr.data-side]="cursor.side" [style.left.px]="cursor.x">
+                  @for (label of cursor.labels; track label; let last = $last) {
+                    <span>{{ label | transloco }}</span>
+                    @if (!last) {
+                      <span class="search__cursor-eq">=</span>
+                    }
+                  }
+                </span>
               }
             </div>
-            <div class="cell__value">{{ value }}</div>
           </div>
-        }
+        </div>
+
+        <div class="search__note" [attr.data-tone]="tape.noteTone">
+          <span class="search__note-title">{{ SEARCH.decision | transloco }}</span>
+          <span class="search__note-text">{{ tape.note | i18nText }}</span>
+        </div>
       </div>
     </div>
   }
-</app-viz-panel>
+}

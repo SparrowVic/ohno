@@ -1133,11 +1133,48 @@ const STEINER_TREE_LEGEND: readonly LegendItem[] = [
 ];
 
 const SEARCH_LEGEND: readonly LegendItem[] = [
-  { label: 'Candidate window', color: VIZ_WINDOW },
-  { label: 'Probe', color: VIZ_WARNING },
-  { label: 'Visited', color: VIZ_ACCENT },
-  { label: 'Eliminated', color: 'var(--text-secondary)', opacity: 0.55 },
-  { label: 'Found', color: VIZ_SUCCESS },
+  { label: I18N_KEY.features.algorithms.display.search.legend.range, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.search.legend.probe, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.search.legend.discarded, color: 'var(--slate)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.search.legend.candidate, color: 'var(--lime)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.search.legend.found, color: 'var(--lime)' },
+];
+
+const TWO_POINTERS_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.right, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.discarded, color: 'var(--slate)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.match, color: 'var(--lime)' },
+];
+
+const SLIDING_WINDOW_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.right, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.window, color: 'var(--cyan)', opacity: 0.45 },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.discarded, color: 'var(--slate)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.best, color: 'var(--lime)' },
+];
+
+const PALINDROME_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.right, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.match, color: 'var(--lime)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.settled, color: 'var(--lime)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.mismatch, color: 'var(--red)' },
+];
+
+const REVERSE_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.right, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.settled, color: 'var(--lime)', opacity: 0.55 },
+];
+
+const KADANE_LEGEND: readonly LegendItem[] = [
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.left, color: 'var(--cyan)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.pointerI, color: 'var(--pink)' },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.window, color: 'var(--cyan)', opacity: 0.45 },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.discarded, color: 'var(--slate)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.display.pointerLab.legend.best, color: 'var(--lime)' },
 ];
 
 const STRING_LEGEND: readonly LegendItem[] = [
@@ -2745,7 +2782,7 @@ const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New sorted array',
-  legendItems: () => [],
+  legendItems: () => TWO_POINTERS_LEGEND,
   presetOptions: TWO_POINTERS_PRESETS,
   defaultPresetId: DEFAULT_TWO_POINTERS_PRESET_ID,
   tasks: TWO_POINTERS_TASKS,
@@ -2770,7 +2807,7 @@ const SLIDING_WINDOW_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New stream',
-  legendItems: () => [],
+  legendItems: () => SLIDING_WINDOW_LEGEND,
   presetOptions: SLIDING_WINDOW_PRESETS,
   defaultPresetId: DEFAULT_SLIDING_WINDOW_PRESET_ID,
   tasks: SLIDING_WINDOW_TASKS,
@@ -2795,7 +2832,7 @@ const PALINDROME_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'characters',
   randomizeLabel: 'New word',
-  legendItems: () => [],
+  legendItems: () => PALINDROME_LEGEND,
   presetOptions: PALINDROME_PRESETS,
   defaultPresetId: DEFAULT_PALINDROME_PRESET_ID,
   tasks: PALINDROME_TASKS,
@@ -2820,7 +2857,7 @@ const REVERSE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New sequence',
-  legendItems: () => [],
+  legendItems: () => REVERSE_LEGEND,
   presetOptions: REVERSE_PRESETS,
   defaultPresetId: DEFAULT_REVERSE_PRESET_ID,
   tasks: REVERSE_TASKS,
@@ -2845,7 +2882,7 @@ const KADANE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   defaultSize: 1,
   sizeUnit: 'elements',
   randomizeLabel: 'New sequence',
-  legendItems: () => [],
+  legendItems: () => KADANE_LEGEND,
   presetOptions: KADANE_PRESETS,
   defaultPresetId: DEFAULT_KADANE_PRESET_ID,
   tasks: KADANE_TASKS,

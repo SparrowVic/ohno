@@ -1229,6 +1229,24 @@
             "zeroMatching": "Zero matching · round {{round}}"
           }
         },
+        "pointerLab": {
+          "ariaDisplay": "Tape of {{count}} cells with pointers {{pointers}}",
+          "legend": {
+            "best": "Best",
+            "discarded": "Discarded",
+            "left": "Pointer L",
+            "match": "Match",
+            "mismatch": "Mismatch",
+            "pointerI": "Pointer i",
+            "right": "Pointer R",
+            "settled": "Settled",
+            "window": "Window"
+          },
+          "offTape": "off the tape",
+          "pending": "in progress",
+          "tape": "Sequence",
+          "window": "window [{{left}}..{{right}}]"
+        },
         "racks": {
           "base": "base",
           "best": "Best",
@@ -1365,6 +1383,26 @@
           "x": "x",
           "y": "y",
           "zValue": "Z[i]"
+        },
+        "search": {
+          "ariaDisplay": "Search tape of {{count}} values, target {{target}}",
+          "candidates": {
+            "both": "first- and last-match candidate",
+            "first": "first-match candidate",
+            "last": "last-match candidate"
+          },
+          "decision": "Decision",
+          "emptyRange": "empty range",
+          "legend": {
+            "candidate": "Bound candidate",
+            "discarded": "Discarded",
+            "found": "Found",
+            "probe": "Probe · mid",
+            "range": "Range lo–hi"
+          },
+          "range": "range [{{low}}, {{high}}]",
+          "tape": "Array · A",
+          "target": "target x = {{target}}"
         },
         "sieve": {
           "boardAria": "Number board from 1 to {{n}}",

@@ -11,6 +11,7 @@ import {
 } from '../../components/matrix-grid-visualization/matrix-grid-display.utils';
 import { dpFocusCell } from '../../components/dp-visualization/dp-display.utils';
 import { matrixFocus, matrixPivotIndex } from '../../components/matrix-visualization/matrix-display.utils';
+import { searchProbeLabel } from '../../components/search-visualization/search-display.utils';
 import { smallestFactor } from '../../components/sieve-grid-visualization/sieve-display.utils';
 import { DpCell, DpMode, DpTraceState } from '../../models/dp';
 import { DsuTraceState } from '../../models/dsu';
@@ -1141,11 +1142,12 @@ export function dsuReadout(state: DsuTraceState, ctx: FamilyReadoutContext): Sta
 export function searchReadout(state: SearchTraceState, ctx: FamilyReadoutContext): StageReadout {
   const { labels, index, lastIndex } = ctx;
   const found = state.resultIndices.length > 0;
+  const probeRegister: FamilyRegisterId = searchProbeLabel(state) === I18N_KEY.features.algorithms.display.registers.i ? 'i' : 'mid';
   return {
     meters: [meter('low', labels, state.low ?? EMPTY), meter('probe', labels, state.probeIndex ?? EMPTY), meter('high', labels, state.high ?? EMPTY)],
     phaseLabel: phaseText(labels, index, lastIndex, labels.translate(state.statusLabel)),
-    tone: edgeTone(index, lastIndex, found ? 'lime' : state.probeIndex === null ? 'slate' : 'cyan'),
-    registers: [register('lo', labels, state.low), register('mid', labels, state.probeIndex), register('hi', labels, state.high), register('x', labels, state.target)],
+    tone: edgeTone(index, lastIndex, found ? 'lime' : state.probeIndex === null ? 'slate' : 'pink'),
+    registers: [register('lo', labels, state.low), register(probeRegister, labels, state.probeIndex), register('hi', labels, state.high), register('x', labels, state.target)],
     gauge: gauge(state.rows.length, state.eliminated.length, state.eliminated.length + state.visitedOrder.length),
     gaugeLabel: labels.gauges.eliminated,
   };

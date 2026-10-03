@@ -16,12 +16,11 @@ export const REBUILT_DISPLAY_VARIANTS: ReadonlySet<VisualizationVariant> = new S
   'matrix',
   'matrix-grid',
   'sieve-grid',
+  'search',
+  'pointer-lab',
 ]);
 
 export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
-  'linear-search',
-  'binary-search',
-  'binary-search-variants',
   'kmp-pattern-matching',
   'rabin-karp',
   'z-algorithm',
@@ -44,12 +43,7 @@ export const PENDING_DISPLAY_IDS: ReadonlySet<string> = new Set<string>([
   'fibonacci-iterative',
   'factorial',
   'euclidean-gcd',
-  'two-pointers',
-  'sliding-window',
-  'palindrome-check',
-  'reverse-string-array',
   'backtracking',
-  'kadane',
   'recursion-call-stack',
   'minimax-alpha-beta',
   'monte-carlo-tree-search',
