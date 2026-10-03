@@ -1,13 +1,23 @@
-<a
-  class="module"
-  [routerLink]="link()"
-  queryParamsHandling="preserve"
-  [attr.aria-label]="openAriaLabel()"
-  (mouseenter)="live.set(true)"
-  (mouseleave)="live.set(false)"
-  (focus)="live.set(true)"
-  (blur)="live.set(false)"
->
+@if (ready()) {
+  <a
+    class="module"
+    [routerLink]="link()"
+    queryParamsHandling="preserve"
+    [attr.aria-label]="openAriaLabel()"
+    (mouseenter)="live.set(true)"
+    (mouseleave)="live.set(false)"
+    (focus)="live.set(true)"
+    (blur)="live.set(false)"
+  >
+    <ng-container [ngTemplateOutlet]="plate" />
+  </a>
+} @else {
+  <div class="module module--pending" role="group" aria-disabled="true" [attr.aria-label]="pendingAriaLabel()">
+    <ng-container [ngTemplateOutlet]="plate" />
+  </div>
+}
+
+<ng-template #plate>
   <ohno-plate class="module__plate" [class.module__plate--live]="live()" [screws]="true" screwCorners="top" padding="none">
     <div class="module__top">
       <ohno-engraving>{{ moduleId() }}</ohno-engraving>
@@ -30,9 +40,16 @@
     <div class="module__foot">
       <ohno-readout class="module__complexity" [value]="algorithm().complexity.timeAverage" size="sm" />
       <ohno-engraving>{{ I18N_KEY.features.algorithms.catalog.card.time | transloco }}</ohno-engraving>
-      <span class="module__go" [class.module__go--signal]="live()" aria-hidden="true">
-        <fa-icon [icon]="icons.open" />
-      </span>
+      @if (ready()) {
+        <span class="module__go" [class.module__go--signal]="live()" aria-hidden="true">
+          <fa-icon [icon]="icons.open" />
+        </span>
+      } @else {
+        <span class="module__pending">
+          <ohno-led color="slate" size="sm" />
+          <ohno-engraving>{{ I18N_KEY.features.algorithms.catalog.card.pending | transloco }}</ohno-engraving>
+        </span>
+      }
     </div>
   </ohno-plate>
-</a>
+</ng-template>

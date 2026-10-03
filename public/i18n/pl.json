@@ -306,6 +306,8 @@
         "card": {
           "live": "Na żywo",
           "openAriaLabel": "Otwórz {{name}}",
+          "pending": "W przebudowie",
+          "pendingAriaLabel": "{{name}}: widok w przebudowie, wkrótce dostępny",
           "time": "czas"
         },
         "empty": {

@@ -45,9 +45,10 @@
           [prefix]="'0' + step.index"
           [label]="step.name"
           [led]="step.done ? 'lime' : 'signal'"
-          [ledOn]="step.done || step.current"
+          [ledOn]="isDisplayReady(step.id) && (step.done || step.current)"
           [pressed]="step.done"
           [routerLink]="['/algorithms', step.id]"
+          [disabled]="!isDisplayReady(step.id)"
           [ariaLabel]="stepAriaLabel(step.index, step.name)"
         />
       }

@@ -111,3 +111,23 @@
   background: var(--gradient-key-signal);
   box-shadow: var(--shadow-key-signal);
 }
+
+.module--pending {
+  cursor: not-allowed;
+  user-select: none;
+}
+
+.module--pending .module__plate {
+  opacity: 0.55;
+}
+
+.module--pending .module__screen {
+  filter: grayscale(1);
+}
+
+.module__pending {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}

@@ -306,6 +306,8 @@
         "card": {
           "live": "Live",
           "openAriaLabel": "Open {{name}}",
+          "pending": "Being rebuilt",
+          "pendingAriaLabel": "{{name}}: display being rebuilt, available soon",
           "time": "time"
         },
         "empty": {
