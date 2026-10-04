@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.connectedComponents;
 
 const I18N = {
   descriptions: {
@@ -124,9 +128,9 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
           phase: 'inspect-edge',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
-            expression: `component C${activeComponent}`,
+            expression: i18nText(TEXT.decisions.componentExpression, { component: activeComponent }),
             result: neighborComponent === null ? i18nText(I18N.results.unassigned) : `C${neighborComponent}`,
-            decision: neighborComponent === null ? 'claim node for this component' : 'already assigned',
+            decision: neighborComponent === null ? i18nText(TEXT.decisions.claim) : i18nText(TEXT.decisions.alreadyAssigned),
           },
         });
 
@@ -149,7 +153,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
               candidateLabel: labelOf(labelMap, neighborId),
               expression: `C${activeComponent}`,
               result: `C${neighborComponent}`,
-              decision: 'keep existing component label',
+              decision: i18nText(TEXT.decisions.keepLabel),
             },
           });
           continue;
@@ -179,7 +183,7 @@ export function* connectedComponentsGenerator(graph: WeightedGraphData): Generat
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `C${activeComponent}`,
             result: `C${activeComponent}`,
-            decision: 'added to component frontier',
+            decision: i18nText(TEXT.decisions.addedToFrontier),
           },
         });
       }
@@ -299,17 +303,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Comp',
-      secondaryLabel: 'Seed',
-      frontierLabel: 'Component queue',
-      frontierHeadLabel: 'Queue head',
-      completionLabel: 'Assigned',
-      frontierStatusLabel: 'queued',
-      completionStatusLabel: 'assigned',
+      metricLabel: graphLabel('component'),
+      secondaryLabel: graphLabel('seed'),
+      frontierLabel: graphLabel('componentQueue'),
+      frontierHeadLabel: graphLabel('queueHead'),
+      completionLabel: graphLabel('assigned'),
+      frontierStatusLabel: graphLabel('statusQueued'),
+      completionStatusLabel: graphLabel('statusAssigned'),
       showEdgeWeights: false,
-      detailLabel: 'Component sweep',
+      detailLabel: graphLabel('componentSweep'),
       detailValue: describeComponents(args.componentMap, labelMap, args.activeComponent),
-      visitOrderLabel: 'Assignment order',
+      visitOrderLabel: graphLabel('assignmentOrder'),
       currentNodeId,
       activeEdgeId,
       queue,
@@ -324,8 +328,8 @@ function describeComponents(
   componentMap: ReadonlyMap<string, number | null>,
   labelMap: ReadonlyMap<string, string>,
   total: number,
-): string {
-  if (total === 0) return 'Waiting for the first seed';
+): TranslatableText {
+  if (total === 0) return i18nText(TEXT.details.waitingSeed);
   const groups = new Map<number, string[]>();
   for (const [nodeId, component] of componentMap.entries()) {
     if (component === null) continue;

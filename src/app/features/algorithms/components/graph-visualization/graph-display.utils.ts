@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, translatableKey } from '../../../../core/i18n/translatable-text';
 import { RackRowTone } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import {
   GraphEdgeSnapshot,
@@ -12,142 +12,6 @@ export const GRAPH_NODE_RADIUS = 14;
 export const GRAPH_VIEW_PADDING = { x: 28, top: 34, bottom: 40 } as const;
 
 const LABELS = I18N_KEY.features.algorithms.display.graph.labels;
-const SECONDARY = I18N_KEY.features.algorithms.display.graph.secondary;
-
-const GRAPH_SECONDARY_KEYS: Readonly<Record<string, string>> = {
-  BLUE: SECONDARY.sideZero,
-  AMBER: SECONDARY.sideOne,
-  NEW: SECONDARY.new,
-  STACK: SECONDARY.onStack,
-  DONE: SECONDARY.done,
-  start: SECONDARY.start,
-  finish: SECONDARY.finish,
-  'start / finish': SECONDARY.startFinish,
-  sealed: SECONDARY.sealed,
-  terminal: SECONDARY.terminal,
-  split: SECONDARY.split,
-  steiner: SECONDARY.steiner,
-  idle: SECONDARY.idle,
-};
-
-interface SecondaryPattern {
-  readonly pattern: RegExp;
-  readonly key: string;
-  readonly params: (match: RegExpMatchArray) => Readonly<Record<string, string>>;
-}
-
-const GRAPH_SECONDARY_PATTERNS: readonly SecondaryPattern[] = [
-  { pattern: /^via (.+)$/, key: SECONDARY.via, params: (match) => ({ node: match[1] ?? '' }) },
-  { pattern: /^next (.+)$/, key: SECONDARY.next, params: (match) => ({ node: match[1] ?? '' }) },
-  { pattern: /^(\d+)\/(\d+) used$/, key: SECONDARY.used, params: (match) => ({ used: match[1] ?? '', total: match[2] ?? '' }) },
-  { pattern: /^deg (\d+)$/, key: SECONDARY.degree, params: (match) => ({ degree: match[1] ?? '' }) },
-];
-
-const GRAPH_LABEL_KEYS: Readonly<Record<string, string>> = {
-  Distance: LABELS.distance,
-  Level: LABELS.level,
-  Depth: LABELS.depth,
-  InDeg: LABELS.inDegree,
-  Comp: LABELS.component,
-  Side: LABELS.side,
-  Best: LABELS.best,
-  Disc: LABELS.discovery,
-  Index: LABELS.index,
-  Post: LABELS.post,
-  Unused: LABELS.unused,
-  Color: LABELS.color,
-  Cost: LABELS.cost,
-  'Dom#': LABELS.dominatorCount,
-  Prev: LABELS.previous,
-  Order: LABELS.order,
-  State: LABELS.state,
-  Seed: LABELS.seed,
-  Low: LABELS.low,
-  'Low / SCC': LABELS.lowScc,
-  SCC: LABELS.scc,
-  'Role / Via': LABELS.roleVia,
-  'IDom / Set': LABELS.idomSet,
-  'Priority queue': LABELS.priorityQueue,
-  Queue: LABELS.queue,
-  Stack: LABELS.stack,
-  'Zero in-degree queue': LABELS.zeroInDegreeQueue,
-  'Recursion stack': LABELS.recursionStack,
-  'Component queue': LABELS.componentQueue,
-  'Color queue': LABELS.colorQueue,
-  'Updated this pass': LABELS.updatedThisPass,
-  'Candidate queue': LABELS.candidateQueue,
-  'DFS stack': LABELS.dfsStack,
-  'Tarjan stack': LABELS.tarjanStack,
-  'Reverse stack': LABELS.reverseStack,
-  Uncolored: LABELS.uncolored,
-  'Best roots': LABELS.bestRoots,
-  Worklist: LABELS.worklist,
-  'Queue head': LABELS.queueHead,
-  'Stack top': LABELS.stackTop,
-  'Latest update': LABELS.latestUpdate,
-  'Cheapest next': LABELS.cheapestNext,
-  Top: LABELS.top,
-  'Next node': LABELS.nextNode,
-  'Cheapest root': LABELS.cheapestRoot,
-  'Next block': LABELS.nextBlock,
-  Settled: LABELS.settled,
-  Visited: LABELS.visited,
-  Ordered: LABELS.ordered,
-  Closed: LABELS.closed,
-  Assigned: LABELS.assigned,
-  Colored: LABELS.colored,
-  Reached: LABELS.reached,
-  'In tree': LABELS.inTree,
-  Sealed: LABELS.sealed,
-  'Tree nodes': LABELS.treeNodes,
-  Fixed: LABELS.fixed,
-  queued: LABELS.statusQueued,
-  stacked: LABELS.statusStacked,
-  updated: LABELS.statusUpdated,
-  candidate: LABELS.statusCandidate,
-  pending: LABELS.statusPending,
-  settled: LABELS.statusSettled,
-  visited: LABELS.statusVisited,
-  ordered: LABELS.statusOrdered,
-  closed: LABELS.statusClosed,
-  assigned: LABELS.statusAssigned,
-  colored: LABELS.statusColored,
-  reached: LABELS.statusReached,
-  'in-tree': LABELS.statusInTree,
-  sealed: LABELS.statusSealed,
-  fixed: LABELS.statusFixed,
-  Path: LABELS.path,
-  'Layer path': LABELS.layerPath,
-  'Depth path': LABELS.depthPath,
-  'Topo order': LABELS.topoOrder,
-  Cycle: LABELS.cycle,
-  'Component sweep': LABELS.componentSweep,
-  'Partition check': LABELS.partitionCheck,
-  'MST tree': LABELS.mstTree,
-  'Critical links': LABELS.criticalLinks,
-  'Tarjan SCC map': LABELS.tarjanSccMap,
-  'Finish stack': LABELS.finishStack,
-  'Kosaraju SCC map': LABELS.kosarajuSccMap,
-  'Euler circuit': LABELS.eulerCircuit,
-  'Euler path': LABELS.eulerPath,
-  'Color search': LABELS.colorSearch,
-  'Steiner tree': LABELS.steinerTree,
-  'Dominator tree': LABELS.dominatorTree,
-  'Settled order': LABELS.settledOrder,
-  'Visit order': LABELS.visitOrder,
-  'Closed order': LABELS.closedOrder,
-  'Assignment order': LABELS.assignmentOrder,
-  'Color order': LABELS.colorOrder,
-  'Pass log': LABELS.passLog,
-  'Tree order': LABELS.treeOrder,
-  'Exit order': LABELS.exitOrder,
-  'SCC order': LABELS.sccOrder,
-  'Final trail': LABELS.finalTrail,
-  'Color stack': LABELS.colorStack,
-  'Subset journal': LABELS.subsetJournal,
-  'Immediate dominators': LABELS.immediateDominators,
-};
-
 export type GraphDisplayTone = 'cyan' | 'pink' | 'lime' | 'violet' | 'amber' | 'red' | 'slate';
 export type GraphEdgeTone = Exclude<GraphDisplayTone, 'slate'> | 'rose' | 'soft' | 'base';
 export type GraphRouteMode = 'shortest-tree' | 'bfs-tree' | 'dfs-tree';
@@ -177,7 +41,7 @@ const GRAPH_TONE_COLORS: Readonly<Record<GraphTone, GraphDisplayTone>> = {
   'component-d': 'violet',
 };
 
-const DISTANCE_METRICS: ReadonlySet<string> = new Set(['Distance', 'Level', 'Depth', 'Best', 'Cost']);
+const DISTANCE_METRICS: ReadonlySet<string> = new Set([LABELS.distance, LABELS.level, LABELS.depth, LABELS.best, LABELS.cost]);
 
 const DEFAULT_VIEW_BOX: GraphViewBox = { x: 0, y: 0, width: 960, height: 620 };
 const MIN_VIEW_SPAN = 240;
@@ -185,8 +49,6 @@ const GLYPH_MAX_SCALE = 6;
 const ZERO_PADDING: GraphViewPadding = { x: 0, top: 0, bottom: 0 };
 const COMPONENT_TONES: ReadonlySet<GraphTone> = new Set(['component-a', 'component-b', 'component-c', 'component-d']);
 const ENDPOINT_TONES: ReadonlySet<GraphTone> = new Set(['left', 'right']);
-const EULER_PATH_DETAIL = 'Euler path';
-const PREDECESSOR_LABEL = 'Prev';
 const DOT_MIN_PX = 14;
 const DOT_MAX_GROWTH = 1.4;
 
@@ -227,37 +89,17 @@ export interface GraphRackRow {
   readonly tone: RackRowTone;
 }
 
-export function graphLabelKey(label: string | null | undefined): string | null {
-  if (!label) return null;
-  return GRAPH_LABEL_KEYS[label] ?? null;
-}
-
-export function graphLabelText(label: string | null | undefined): TranslatableText {
-  const key = graphLabelKey(label);
-  return key ? i18nText(key) : (label ?? '');
-}
-
-export function graphSecondaryText(value: string): TranslatableText {
-  const key = GRAPH_SECONDARY_KEYS[value];
-  if (key) return i18nText(key);
-  for (const { pattern, key: patternKey, params } of GRAPH_SECONDARY_PATTERNS) {
-    const match = value.match(pattern);
-    if (match) return i18nText(patternKey, params(match));
-  }
-  return value;
-}
-
 export function graphToneColor(tone: GraphTone | null | undefined): GraphDisplayTone | null {
   return tone ? GRAPH_TONE_COLORS[tone] : null;
 }
 
-export function graphNodeTone(node: GraphNodeSnapshot, detailLabel?: string | null): GraphDisplayTone {
+export function graphNodeTone(node: GraphNodeSnapshot, detailLabel?: TranslatableText | null): GraphDisplayTone {
   const tone = node.tone ?? null;
   if (tone && COMPONENT_TONES.has(tone)) {
     if (node.isCurrent) return 'cyan';
     if (node.isFrontier) return 'amber';
   }
-  if (tone && ENDPOINT_TONES.has(tone) && detailLabel === EULER_PATH_DETAIL) return 'violet';
+  if (tone && ENDPOINT_TONES.has(tone) && translatableKey(detailLabel) === LABELS.eulerPath) return 'violet';
   const override = graphToneColor(tone);
   if (override) return override;
   if (node.isCurrent) return 'cyan';
@@ -278,20 +120,22 @@ export function graphEdgeTone(edge: GraphEdgeSnapshot, onRoute: boolean): GraphE
   return 'base';
 }
 
-export function isDistanceMetric(metricLabel: string | null | undefined): boolean {
-  return metricLabel ? DISTANCE_METRICS.has(metricLabel) : false;
+export function isDistanceMetric(metricLabel: TranslatableText | null | undefined): boolean {
+  const key = translatableKey(metricLabel);
+  return key ? DISTANCE_METRICS.has(key) : false;
 }
 
-export function graphValueText(value: number | null, metricLabel: string | null | undefined): string {
+export function graphValueText(value: number | null, metricLabel: TranslatableText | null | undefined): string {
   if (value !== null) return String(value);
   return isDistanceMetric(metricLabel) ? '∞' : '—';
 }
 
 export function graphRouteMode(state: GraphStepState | null): GraphRouteMode | null {
   if (!state) return null;
-  if (state.metricLabel === 'Distance') return 'shortest-tree';
-  if (state.metricLabel === 'Level') return 'bfs-tree';
-  if (state.metricLabel === 'Depth' && state.detailLabel === 'Depth path') return 'dfs-tree';
+  const metric = translatableKey(state.metricLabel);
+  if (metric === LABELS.distance) return 'shortest-tree';
+  if (metric === LABELS.level) return 'bfs-tree';
+  if (metric === LABELS.depth && translatableKey(state.detailLabel) === LABELS.depthPath) return 'dfs-tree';
   return null;
 }
 
@@ -404,7 +248,7 @@ export function trimSegment(from: GraphPoint, to: GraphPoint, startInset: number
 export function graphFrontierRows(state: GraphStepState | null): GraphRackRow[] {
   if (!state) return [];
   const byId = new Map(state.nodes.map((node) => [node.id, node]));
-  const showsPredecessor = state.secondaryLabel === PREDECESSOR_LABEL;
+  const showsPredecessor = translatableKey(state.secondaryLabel) === LABELS.previous;
   let headAssigned = false;
   return state.queue.map((entry, index) => {
     const node = byId.get(entry.nodeId) ?? null;
@@ -415,7 +259,7 @@ export function graphFrontierRows(state: GraphStepState | null): GraphRackRow[] 
       id: `${index}:${entry.nodeId}`,
       label: entry.label,
       fromLabel: node && showsPredecessor ? previousLabel(node, byId) : null,
-      secondary: node?.secondaryText && !showsPredecessor ? graphSecondaryText(node.secondaryText) : null,
+      secondary: node?.secondaryText && !showsPredecessor ? node.secondaryText : null,
       isSource: false,
       value: graphValueText(entry.distance, state.metricLabel),
       tone,
@@ -428,7 +272,7 @@ export function graphCompletionRows(state: GraphStepState | null): GraphRackRow[
   const byId = new Map(state.nodes.map((node) => [node.id, node]));
   const rank = new Map<string, number>();
   state.visitOrder.forEach((entry, index) => {
-    if (!rank.has(entry)) rank.set(entry, index);
+    if (typeof entry === 'string' && !rank.has(entry)) rank.set(entry, index);
   });
   const orderOf = (node: GraphNodeSnapshot): number =>
     rank.get(node.id) ?? rank.get(node.label) ?? Number.POSITIVE_INFINITY;

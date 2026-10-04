@@ -55,6 +55,7 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
     scenario,
     filled,
     frontier,
+    queue,
     visited,
     order,
     activeId: seedId,
@@ -81,6 +82,7 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
       scenario,
       filled,
       frontier,
+      queue,
       visited,
       order,
       activeId: currentId,
@@ -101,6 +103,7 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
         scenario,
         filled,
         frontier,
+        queue,
         visited,
         order,
         activeId: currentId,
@@ -122,6 +125,7 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
       scenario,
       filled,
       frontier,
+      queue,
       visited,
       order,
       activeId: currentId,
@@ -150,6 +154,7 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
         scenario,
         filled,
         frontier,
+        queue,
         visited,
         order,
         activeId: nextId,
@@ -168,6 +173,7 @@ export function* floodFillGenerator(scenario: FloodFillScenario): Generator<Sort
     scenario,
     filled,
     frontier,
+    queue,
     visited,
     order,
     activeId: null,
@@ -183,6 +189,7 @@ function createFloodFillStep(args: {
   readonly scenario: FloodFillScenario;
   readonly filled: ReadonlySet<string>;
   readonly frontier: ReadonlySet<string>;
+  readonly queue: readonly (readonly [number, number, number])[];
   readonly visited: ReadonlySet<string>;
   readonly order: readonly string[];
   readonly activeId: string | null;
@@ -203,6 +210,7 @@ function createFloodFillStep(args: {
     targetCellId: null,
     activeCellId: args.activeId,
     frontierCount: args.frontier.size,
+    frontierOrder: args.queue.map(([row, col]) => cellId(row, col)),
     visitedCount: args.visited.size,
     resultCount: args.filled.size,
     sourceLabel: labelForCell(args.scenario.startRow, args.scenario.startCol),

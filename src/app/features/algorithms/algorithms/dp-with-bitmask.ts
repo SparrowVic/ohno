@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step'
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { BitmaskDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.bitmaskDp.modeLabel'),
@@ -198,7 +202,7 @@ export function* dpWithBitmaskGenerator(scenario: BitmaskDpScenario): Generator<
           worker: scenario.workers[worker - 1],
           job: scenario.jobs[job],
         }),
-        expression: `mask ${maskLabel(mask, scenario.jobs.length)}`,
+        expression: i18nText(COMMON.mask, { mask: maskLabel(mask, scenario.jobs.length) }),
         result: assignmentLabel(scenario, assignment),
         decision: I18N.decisions.removeJobFromMask,
       },
@@ -243,7 +247,7 @@ function createStep(args: {
     id: `row-${worker}`,
     label: worker === 0 ? '0' : args.scenario.workers[worker - 1]!,
     status: (args.activeCell?.[0] === worker ? 'active' : worker === 0 ? 'source' : 'accent') as DpHeaderConfig['status'],
-    metaLabel: worker === 0 ? 'base' : `${worker} assigned`,
+    metaLabel: worker === 0 ? dpLabel('base') : dpLabel('assigned', { count: worker }),
   }));
   const colHeaders: DpHeaderConfig[] = Array.from({ length: 1 << args.scenario.jobs.length }, (_, mask) => ({
     id: `col-${mask}`,
@@ -278,7 +282,7 @@ function createStep(args: {
           ? null
           : args.parentJob[row]![col] === null
             ? row === 0 && col === 0
-              ? 'start'
+              ? dpLabel('start')
               : null
             : args.scenario.jobs[args.parentJob[row]![col]!]!,
         status: args.backtrackCells.has(id)
@@ -326,7 +330,7 @@ function createStep(args: {
     activeLabel:
       args.activeCell
         ? i18nText(I18N.labels.activeState, {
-            worker: rowHeaders[args.activeCell[0]]!.label,
+            worker: args.activeCell[0] === 0 ? '0' : args.scenario.workers[args.activeCell[0] - 1]!,
             mask: maskLabel(args.activeCell[1], args.scenario.jobs.length),
           })
         : null,
@@ -360,9 +364,9 @@ function maskLabel(mask: number, width: number): string {
   return mask.toString(2).padStart(width, '0');
 }
 
-function jobMembers(mask: number, jobs: readonly string[]): string {
+function jobMembers(mask: number, jobs: readonly string[]): TranslatableText {
   const members = jobs.filter((_, index) => (mask & (1 << index)) !== 0);
-  return members.length > 0 ? members.join(' · ') : 'none';
+  return members.length > 0 ? members.join(' · ') : dpLabel('none');
 }
 
 function assignmentLabel(

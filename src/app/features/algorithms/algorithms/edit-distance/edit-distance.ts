@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { EditDistanceScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.editDistance.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.editDistance.modeLabel'),
@@ -136,7 +140,7 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
         phase: 'compare',
         computation: {
           label: i18nText(I18N.labels.charPair, { leftChar, rightChar }),
-          expression: `min(diag ${replaceCost}, up ${deleteCost}, left ${insertCost})`,
+          expression: i18nText(TEXT.minOf, { diag: replaceCost, up: deleteCost, left: insertCost }),
           result: String(Math.min(replaceCost, deleteCost, insertCost)),
           decision:
             leftChar === rightChar
@@ -228,7 +232,7 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
                   from: leftChar,
                   to: rightChar,
                 }),
-          expression: `diag = ${diagonalCost}`,
+          expression: i18nText(TEXT.diagValue, { value: diagonalCost }),
           result: i18nText(I18N.labels.coords, { row: row - 1, col: col - 1 }),
           decision:
             leftChar === rightChar ? I18N.decisions.carryMatch : I18N.decisions.replaceAndContinue,
@@ -259,7 +263,7 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
         phase: 'skip-relax',
         computation: {
           label: i18nText(I18N.labels.deleteOperation, { char: source[row - 1] }),
-          expression: `up = ${deleteCost}`,
+          expression: i18nText(TEXT.upValue, { value: deleteCost }),
           result: i18nText(I18N.labels.coords, { row: row - 1, col }),
           decision: I18N.decisions.moveUpward,
         },
@@ -285,7 +289,7 @@ export function* editDistanceGenerator(scenario: EditDistanceScenario): Generato
       phase: 'skip-relax',
       computation: {
         label: i18nText(I18N.labels.insertOperation, { char: target[col - 1] }),
-        expression: `left = ${insertCost}`,
+        expression: i18nText(TEXT.leftValue, { value: insertCost }),
         result: i18nText(I18N.labels.coords, { row, col: col - 1 }),
         decision: I18N.decisions.moveLeft,
       },
@@ -332,7 +336,7 @@ function createStep(args: {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: '∅', status: 'source', metaLabel: 'del base' },
+    { id: 'row-0', label: '∅', status: 'source', metaLabel: dpLabel('deleteBase') },
     ...args.source.map((char, index) => ({
       id: `row-${index + 1}`,
       label: char,
@@ -341,7 +345,7 @@ function createStep(args: {
     })),
   ];
   const colHeaders: DpHeaderConfig[] = [
-    { id: 'col-0', label: '∅', status: 'target', metaLabel: 'ins base' },
+    { id: 'col-0', label: '∅', status: 'target', metaLabel: dpLabel('insertBase') },
     ...args.target.map((char, index) => ({
       id: `col-${index + 1}`,
       label: char,
@@ -365,9 +369,9 @@ function createStep(args: {
       if (isMatch) tags.push('match');
 
       const opHint = isBacktrack
-        ? 'script'
+        ? dpLabel('script')
         : isMatch
-          ? 'keep'
+          ? dpLabel('keep')
           : null;
 
       cells.push({

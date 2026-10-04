@@ -9,6 +9,11 @@ import {
 import { SortStep } from '../models/sort-step';
 import { HopcroftKarpScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+import { networkFrontier, networkRack } from './network-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const C = RUNTIME_KEY.network.common.computation;
+const TEXT = RUNTIME_KEY.network.hopcroftKarp.computation;
 
 const I18N = {
   phases: {
@@ -65,10 +70,10 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
     phaseLabel: i18nText(I18N.phases.initialize),
     statusLabel: i18nText(I18N.statuses.empty),
     resultLabel: i18nText(I18N.results.matchingZero, { total: scenario.rightIds.length }),
-    frontierLabel: 'BFS frontier',
-    queueLabel: 'BFS queue',
+    frontierLabel: networkFrontier('bfsFrontier'),
+    queueLabel: networkRack('bfsQueue'),
     queue: [],
-    focusItemsLabel: 'Current matching',
+    focusItemsLabel: networkRack('currentMatching'),
     focusItems: [],
     description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
@@ -98,18 +103,18 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
       phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
       statusLabel: i18nText(I18N.statuses.seed),
       resultLabel: matchingResult(pairU, scenario.rightIds.length),
-      frontierLabel: 'BFS frontier',
-      queueLabel: 'BFS queue',
+      frontierLabel: networkFrontier('bfsFrontier'),
+      queueLabel: networkRack('bfsQueue'),
       queue,
-      focusItemsLabel: 'Current matching',
+      focusItemsLabel: networkRack('currentMatching'),
       focusItems: matchingLabels(pairU, labelById),
       description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
-        label: 'Queue seeds',
+        label: i18nText(TEXT.queueSeeds),
         expression: queue.map((id) => labelById.get(id) ?? id).join(', ') || '∅',
-        result: `${queue.length} source(s)`,
-        decision: 'Only unmatched left nodes can start shortest augmenting paths.',
+        result: i18nText(TEXT.sources, { count: queue.length }),
+        decision: i18nText(TEXT.onlyUnmatched),
       },
     });
 
@@ -128,10 +133,10 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.expand),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
-        frontierLabel: 'BFS frontier',
-        queueLabel: 'BFS queue',
+        frontierLabel: networkFrontier('bfsFrontier'),
+        queueLabel: networkRack('bfsQueue'),
         queue: queue.slice(queueIndex),
-        focusItemsLabel: 'Current matching',
+        focusItemsLabel: networkRack('currentMatching'),
         focusItems: matchingLabels(pairU, labelById),
         description: i18nText(I18N.descriptions.expand, { node: labelById.get(currentLeft) ?? currentLeft }),
         activeCodeLine: 4,
@@ -144,9 +149,9 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
           levelByNode.set(rightId, (dist.get(currentLeft) ?? 0) + 1);
         }
 
-        let decision = `${labelById.get(rightId) ?? rightId} is free and can end an augmenting path.`;
+        let decision: TranslatableText = i18nText(TEXT.freeEnds, { node: labelById.get(rightId) ?? rightId });
         if (mate) {
-          decision = `${labelById.get(rightId) ?? rightId} is matched with ${labelById.get(mate) ?? mate}; queue that mate one layer deeper.`;
+          decision = i18nText(TEXT.matchedQueue, { node: labelById.get(rightId) ?? rightId, mate: labelById.get(mate) ?? mate });
         }
 
         yield createSnapshot({
@@ -160,17 +165,17 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
           phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
           statusLabel: i18nText(I18N.statuses.inspect),
           resultLabel: matchingResult(pairU, scenario.rightIds.length),
-          frontierLabel: 'BFS frontier',
-          queueLabel: 'BFS queue',
+          frontierLabel: networkFrontier('bfsFrontier'),
+          queueLabel: networkRack('bfsQueue'),
           queue: queue.slice(queueIndex),
-          focusItemsLabel: 'Current matching',
+          focusItemsLabel: networkRack('currentMatching'),
           focusItems: matchingLabels(pairU, labelById),
           description: i18nText(I18N.descriptions.inspect, { from: labelById.get(currentLeft) ?? currentLeft, to: labelById.get(rightId) ?? rightId }),
           activeCodeLine: 5,
           computation: {
-            label: 'Alternating step',
+            label: i18nText(TEXT.alternatingStep),
             expression: `${labelById.get(currentLeft) ?? currentLeft} → ${labelById.get(rightId) ?? rightId}`,
-            result: mate ? `matched to ${labelById.get(mate) ?? mate}` : 'free right node',
+            result: mate ? i18nText(TEXT.matchedTo, { node: labelById.get(mate) ?? mate }) : i18nText(TEXT.freeRight),
             decision,
           },
         });
@@ -200,19 +205,19 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         phaseLabel: i18nText(I18N.phases.complete, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.noPath),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
-        frontierLabel: 'BFS frontier',
-        queueLabel: 'BFS queue',
+        frontierLabel: networkFrontier('bfsFrontier'),
+        queueLabel: networkRack('bfsQueue'),
         queue: [],
-        focusItemsLabel: 'Final matching',
+        focusItemsLabel: networkRack('finalMatching'),
         focusItems: matchingLabels(pairU, labelById),
         description: i18nText(I18N.descriptions.noPath),
         activeCodeLine: 10,
         phase: 'graph-complete',
         computation: {
-          label: 'Shortest-path test',
-          expression: 'reachable free right = false',
+          label: i18nText(TEXT.shortestTest),
+          expression: i18nText(TEXT.noFreeReachable),
           result: `|M| = ${matchingSize(pairU)}`,
-          decision: 'Hopcroft-Karp stops when the layered graph has no augmenting path.',
+          decision: i18nText(TEXT.stops),
         },
       });
       return;
@@ -228,18 +233,18 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
       phaseLabel: i18nText(I18N.phases.dfs, { phase: phaseIndex }),
       statusLabel: i18nText(I18N.statuses.layers),
       resultLabel: matchingResult(pairU, scenario.rightIds.length),
-      frontierLabel: 'Shortest layers',
-      queueLabel: 'Layer queue',
+      frontierLabel: networkFrontier('shortestLayers'),
+      queueLabel: networkRack('layerQueue'),
       queue: scenario.leftIds.filter((id) => (dist.get(id) ?? INF) !== INF),
-      focusItemsLabel: 'Current matching',
+      focusItemsLabel: networkRack('currentMatching'),
       focusItems: matchingLabels(pairU, labelById),
       description: i18nText(I18N.descriptions.layers),
       activeCodeLine: 6,
       computation: {
-        label: 'Level graph',
-        expression: `${candidateEdgeIds.size} admissible edge(s)`,
-        result: `${matchingSize(pairU)} matched`,
-        decision: 'DFS now tries to pack as many shortest augmenting paths as possible into this phase.',
+        label: i18nText(C.levelGraph),
+        expression: i18nText(C.admissibleEdges, { count: candidateEdgeIds.size }),
+        result: i18nText(TEXT.matchedCount, { count: matchingSize(pairU) }),
+        decision: i18nText(TEXT.pack),
       },
     });
 
@@ -266,19 +271,19 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         phaseLabel: i18nText(I18N.phases.dfs, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.pathFound),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
-        frontierLabel: 'Shortest path',
-        queueLabel: 'Layer queue',
+        frontierLabel: networkFrontier('shortestPath'),
+        queueLabel: networkRack('layerQueue'),
         queue: [],
         activeRouteLabel: labelsFor(path, labelById).join(' → '),
-        focusItemsLabel: 'Current matching',
+        focusItemsLabel: networkRack('currentMatching'),
         focusItems: matchingLabels(pairU, labelById),
         description: i18nText(I18N.descriptions.pathFound),
         activeCodeLine: 7,
         computation: {
-          label: 'Path length',
+          label: i18nText(TEXT.pathLength),
           expression: labelsFor(path, labelById).join(' → '),
-          result: `+1 match`,
-          decision: 'Flip matched/unmatched edges along this alternating path.',
+          result: i18nText(TEXT.plusOne),
+          decision: i18nText(TEXT.flip),
         },
       });
 
@@ -294,20 +299,20 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         phaseLabel: i18nText(I18N.phases.dfs, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.updated),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
-        frontierLabel: 'Current matching',
-        queueLabel: 'Layer queue',
+        frontierLabel: networkRack('currentMatching'),
+        queueLabel: networkRack('layerQueue'),
         queue: [],
         activeRouteLabel: labelsFor(path, labelById).join(' → '),
-        focusItemsLabel: 'Current matching',
+        focusItemsLabel: networkRack('currentMatching'),
         focusItems: matchingLabels(pairU, labelById),
         description: i18nText(I18N.descriptions.augment),
         activeCodeLine: 8,
         phase: 'relax',
         computation: {
-          label: 'Matching size',
+          label: i18nText(TEXT.matchingSize),
           expression: `${matchingSize(pairU) - 1} + 1`,
           result: String(matchingSize(pairU)),
-          decision: 'The augmenting path increases the matching cardinality by exactly one.',
+          decision: i18nText(TEXT.plusOneCardinality),
         },
       });
     }
@@ -322,10 +327,10 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
         phaseLabel: i18nText(I18N.phases.complete, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.stuck),
         resultLabel: matchingResult(pairU, scenario.rightIds.length),
-        frontierLabel: 'Layer graph',
-        queueLabel: 'Layer queue',
+        frontierLabel: networkFrontier('layerGraph'),
+        queueLabel: networkRack('layerQueue'),
         queue: [],
-        focusItemsLabel: 'Final matching',
+        focusItemsLabel: networkRack('finalMatching'),
         focusItems: matchingLabels(pairU, labelById),
         description: i18nText(I18N.descriptions.stuck),
         activeCodeLine: 10,
@@ -342,19 +347,19 @@ export function* hopcroftKarpGenerator(scenario: HopcroftKarpScenario): Generato
       phaseLabel: i18nText(I18N.phases.phaseDone, { phase: phaseIndex }),
       statusLabel: i18nText(I18N.statuses.packed, { count: augmentationsThisPhase }),
       resultLabel: matchingResult(pairU, scenario.rightIds.length),
-      frontierLabel: 'Current matching',
-      queueLabel: 'Layer queue',
+      frontierLabel: networkRack('currentMatching'),
+      queueLabel: networkRack('layerQueue'),
       queue: [],
-      focusItemsLabel: 'Current matching',
+      focusItemsLabel: networkRack('currentMatching'),
       focusItems: matchingLabels(pairU, labelById),
       description: i18nText(I18N.descriptions.phaseDone),
       activeCodeLine: 9,
       phase: 'pass-complete',
       computation: {
-        label: 'Phase gain',
-        expression: `${augmentationsThisPhase} augmenting path(s)`,
+        label: i18nText(C.phaseGain),
+        expression: i18nText(TEXT.augmentingPaths, { count: augmentationsThisPhase }),
         result: `${matchingSize(pairU)}/${scenario.rightIds.length}`,
-        decision: 'Hopcroft-Karp accelerates matching by augmenting several shortest paths in one BFS phase.',
+        decision: i18nText(TEXT.accelerates),
       },
     });
   }
@@ -368,10 +373,10 @@ function createSnapshot(args: {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly frontierLabel: string;
-  readonly queueLabel: string;
+  readonly frontierLabel: TranslatableText;
+  readonly queueLabel: TranslatableText;
   readonly queue: readonly string[];
-  readonly focusItemsLabel: string;
+  readonly focusItemsLabel: TranslatableText;
   readonly focusItems: readonly string[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;

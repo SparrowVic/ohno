@@ -5,6 +5,11 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step'
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { DivideConquerDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
+const TEXT = RUNTIME_KEY.dp.divideConquerDpOptimization.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.divideConquerDpOptimization.modeLabel'),
@@ -141,7 +146,7 @@ export function* divideConquerDpOptimizationGenerator(
       phase: 'relax',
       computation: {
         label: i18nText(I18N.labels.stateLabel, { group, end }),
-        expression: `split = ${split}`,
+        expression: i18nText(COMMON.split, { split }),
         result: partitionsLabelText(partitions),
         decision: i18nText(I18N.decisions.jumpPrevPrefix, { split }),
       },
@@ -232,7 +237,7 @@ export function* divideConquerDpOptimizationGenerator(
       phase: 'settle-node',
       computation: {
         label: i18nText(I18N.labels.stateLabel, { group: groupIndex, end: mid }),
-        expression: `search ${optLeft}..${upper}`,
+        expression: i18nText(TEXT.search, { from: optLeft, to: upper }),
         result: Number.isFinite(bestCost) ? String(bestCost) : '∞',
         decision: i18nText(I18N.decisions.recursionWindows, {
           left: `${optLeft}..${bestSplit}`,
@@ -268,13 +273,13 @@ function createStep(args: {
     id: `row-${row}`,
     label: row === 0 ? '0' : `g${row}`,
     status: (args.activeCell?.[0] === row ? 'active' : row === 0 ? 'source' : 'accent') as DpHeaderConfig['status'],
-    metaLabel: row === 0 ? 'base' : `${row} groups`,
+    metaLabel: row === 0 ? dpLabel('base') : dpLabel('groups', { count: row }),
   }));
   const colHeaders: DpHeaderConfig[] = Array.from({ length: args.dp[0]!.length }, (_, col) => ({
     id: `col-${col}`,
     label: String(col),
     status: (args.activeCell?.[1] === col ? 'active' : col === 0 ? 'source' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: col === 0 ? 'empty' : 'prefix',
+    metaLabel: col === 0 ? dpLabel('empty') : dpLabel('prefix'),
   }));
 
   const cells: DpCellConfig[] = [];

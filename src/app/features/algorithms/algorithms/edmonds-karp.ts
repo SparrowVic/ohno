@@ -9,6 +9,11 @@ import {
 import { SortStep } from '../models/sort-step';
 import { DinicScenario, LayeredNetworkEdge } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+import { networkFrontier, networkRack } from './network-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const C = RUNTIME_KEY.network.common.computation;
+const TEXT = RUNTIME_KEY.network.edmondsKarp.computation;
 
 const I18N = {
   phases: {
@@ -58,10 +63,10 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
     phaseLabel: i18nText(I18N.phases.initialize),
     statusLabel: i18nText(I18N.statuses.zeroFlow),
     resultLabel: i18nText(I18N.results.maxFlowZero),
-    frontierLabel: 'BFS frontier',
-    queueLabel: 'Residual queue',
+    frontierLabel: networkFrontier('bfsFrontier'),
+    queueLabel: networkRack('residualQueue'),
     queue: [],
-    focusItemsLabel: 'Positive flow',
+    focusItemsLabel: networkRack('positiveFlow'),
     focusItems: [],
     description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
@@ -84,18 +89,18 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
       phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
       statusLabel: i18nText(I18N.statuses.seed),
       resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-      frontierLabel: 'BFS frontier',
-      queueLabel: 'Residual queue',
+      frontierLabel: networkFrontier('bfsFrontier'),
+      queueLabel: networkRack('residualQueue'),
       queue,
-      focusItemsLabel: 'Positive flow',
+      focusItemsLabel: networkRack('positiveFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
-        label: 'Start layer',
+        label: i18nText(C.startLayer),
         expression: `${labelById.get(scenario.sourceId) ?? scenario.sourceId} = 0`,
-        result: 'residual BFS ready',
-        decision: 'The next augmenting path must be shortest in number of edges.',
+        result: i18nText(C.residualBfsReady),
+        decision: i18nText(TEXT.shortestNext),
       },
     });
 
@@ -114,10 +119,10 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
         phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
         statusLabel: i18nText(I18N.statuses.expand),
         resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-        frontierLabel: 'BFS frontier',
-        queueLabel: 'Residual queue',
+        frontierLabel: networkFrontier('bfsFrontier'),
+        queueLabel: networkRack('residualQueue'),
         queue: queue.slice(queueIndex),
-        focusItemsLabel: 'Positive flow',
+        focusItemsLabel: networkRack('positiveFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.expand, { node: labelById.get(currentNodeId) ?? currentNodeId }),
         activeCodeLine: 4,
@@ -129,10 +134,10 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
         const targetLabel = labelById.get(targetId) ?? targetId;
         const decision =
           residual <= 0
-            ? 'Residual capacity is zero, so BFS cannot use this edge.'
+            ? i18nText(C.residualZeroBfs)
             : discovered.has(targetId)
-              ? `${targetLabel} already has the shortest residual parent for this round.`
-              : `${targetLabel} joins the BFS tree through this edge.`;
+              ? i18nText(TEXT.alreadyParent, { node: targetLabel })
+              : i18nText(TEXT.joinsTree, { node: targetLabel });
 
         yield createSnapshot({
           scenario,
@@ -145,16 +150,16 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
           phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
           statusLabel: i18nText(I18N.statuses.inspect),
           resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-          frontierLabel: 'BFS frontier',
-          queueLabel: 'Residual queue',
+          frontierLabel: networkFrontier('bfsFrontier'),
+          queueLabel: networkRack('residualQueue'),
           queue: queue.slice(queueIndex),
-          focusItemsLabel: 'Positive flow',
+          focusItemsLabel: networkRack('positiveFlow'),
           focusItems: positiveFlowLabels(scenario, flow, labelById),
           description: i18nText(I18N.descriptions.inspect, { from: labelById.get(currentNodeId) ?? currentNodeId, to: targetLabel }),
           activeCodeLine: 4,
           phase: 'inspect-edge',
           computation: {
-            label: 'Residual capacity',
+            label: i18nText(C.residualCapacity),
             expression: `${edge.capacity ?? 0} - ${flow.get(edge.id) ?? 0}`,
             result: String(residual),
             decision,
@@ -182,19 +187,19 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
           phaseLabel: i18nText(I18N.phases.bfs, { round: bfsRound }),
           statusLabel: i18nText(I18N.statuses.attach),
           resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-          frontierLabel: 'BFS frontier',
-          queueLabel: 'Residual queue',
+          frontierLabel: networkFrontier('bfsFrontier'),
+          queueLabel: networkRack('residualQueue'),
           queue: queue.slice(queueIndex),
-          focusItemsLabel: 'Positive flow',
+          focusItemsLabel: networkRack('positiveFlow'),
           focusItems: positiveFlowLabels(scenario, flow, labelById),
           description: i18nText(I18N.descriptions.attach, { node: targetLabel }),
           activeCodeLine: 5,
           phase: 'relax',
           computation: {
-            label: 'Parent update',
+            label: i18nText(C.parentUpdate),
             expression: `${targetLabel} ← ${labelById.get(currentNodeId) ?? currentNodeId}`,
-            result: `level ${level.get(targetId) ?? 0}`,
-            decision: 'shortest residual parent recorded',
+            result: i18nText(C.levelValue, { level: level.get(targetId) ?? 0 }),
+            decision: i18nText(TEXT.parentRecorded),
           },
         });
 
@@ -214,19 +219,19 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
         phaseLabel: i18nText(I18N.phases.complete, { round: bfsRound }),
         statusLabel: i18nText(I18N.statuses.unreachable),
         resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-        frontierLabel: 'Residual BFS',
-        queueLabel: 'Residual queue',
+        frontierLabel: networkFrontier('residualBfs'),
+        queueLabel: networkRack('residualQueue'),
         queue: [],
-        focusItemsLabel: 'Final positive flow',
+        focusItemsLabel: networkRack('finalPositiveFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 9,
         phase: 'graph-complete',
         computation: {
-          label: 'Reachability',
-          expression: `${labelById.get(scenario.sinkId) ?? scenario.sinkId} ∉ BFS tree`,
-          result: `max flow ${totalFlow}`,
-          decision: 'No more augmenting path exists.',
+          label: i18nText(C.reachability),
+          expression: i18nText(TEXT.sinkNotInTree, { node: labelById.get(scenario.sinkId) ?? scenario.sinkId }),
+          result: i18nText(C.maxFlow, { flow: totalFlow }),
+          decision: i18nText(C.noAugmentingPath),
         },
       });
       return;
@@ -248,19 +253,19 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
       phaseLabel: i18nText(I18N.phases.augment, { round: bfsRound }),
       statusLabel: i18nText(I18N.statuses.pathFound),
       resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-      frontierLabel: 'Augment path',
-      queueLabel: 'Residual queue',
+      frontierLabel: networkFrontier('augmentPath'),
+      queueLabel: networkRack('residualQueue'),
       queue: [],
       activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
-      focusItemsLabel: 'Positive flow',
+      focusItemsLabel: networkRack('positiveFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.pathFound),
       activeCodeLine: 7,
       computation: {
-        label: 'Bottleneck',
+        label: i18nText(C.bottleneck),
         expression: `min(${pathEdges.map((edge) => residualCapacity(edge, flow)).join(', ')})`,
         result: String(bottleneck),
-        decision: 'Every edge on this path can increase flow by at most the bottleneck.',
+        decision: i18nText(TEXT.bottleneckLimit),
       },
     });
 
@@ -279,20 +284,20 @@ export function* edmondsKarpGenerator(scenario: DinicScenario): Generator<SortSt
       phaseLabel: i18nText(I18N.phases.augment, { round: bfsRound }),
       statusLabel: i18nText(I18N.statuses.pushed),
       resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-      frontierLabel: 'Positive flow',
-      queueLabel: 'Residual queue',
+      frontierLabel: networkRack('positiveFlow'),
+      queueLabel: networkRack('residualQueue'),
       queue: [],
       activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
-      focusItemsLabel: 'Positive flow',
+      focusItemsLabel: networkRack('positiveFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.augment),
       activeCodeLine: 8,
       phase: 'relax',
       computation: {
-        label: 'Flow update',
+        label: i18nText(C.flowUpdate),
         expression: `${totalFlow - bottleneck} + ${bottleneck}`,
         result: String(totalFlow),
-        decision: 'The residual network changes, so Edmonds-Karp launches a fresh BFS.',
+        decision: i18nText(TEXT.freshBfs),
       },
     });
   }
@@ -306,10 +311,10 @@ function createSnapshot(args: {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly frontierLabel: string;
-  readonly queueLabel: string;
+  readonly frontierLabel: TranslatableText;
+  readonly queueLabel: TranslatableText;
   readonly queue: readonly string[];
-  readonly focusItemsLabel: string;
+  readonly focusItemsLabel: TranslatableText;
   readonly focusItems: readonly string[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;

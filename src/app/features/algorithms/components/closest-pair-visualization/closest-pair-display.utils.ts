@@ -1,7 +1,7 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
 import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
 import { ClosestPairStepState, GeometryBand, GeometryPairLine, GeometryPoint } from '../../models/geometry';
-import { closestRegionText, dividerText, trailText } from '../geo-canvas/geometry-labels.utils';
+import { dividerText } from '../geo-canvas/geometry-labels.utils';
 import {
   GeoRackRow,
   GeoReadoutView,
@@ -112,14 +112,14 @@ export function closestTrailRows(state: ClosestPairStepState): readonly GeoRackR
     rackRow({
       id: `trail-${index}`,
       lead: String(index).padStart(2, '0'),
-      body: trailText(step),
+      body: step,
       tone: index === state.trail.length - 1 ? 'head' : 'default',
       current: index === state.trail.length - 1,
     }),
   );
   return [
     ...steps,
-    rackRow({ id: 'region', lead: GEO.closestPair.region, body: closestRegionText(state.regionLabel), accent: 'violet' }),
+    rackRow({ id: 'region', lead: GEO.closestPair.region, body: state.regionLabel, accent: 'violet' }),
   ];
 }
 

@@ -24,11 +24,6 @@ export const CALL_STACK_PHASE_KEYS: Readonly<Record<CallStackFramePhase, string>
   pruned: CALL_STACK.phases.pruned,
 };
 
-const LOCAL_LABEL_KEYS: Readonly<Record<string, string>> = {
-  left: CALL_STACK.locals.left,
-  right: CALL_STACK.locals.right,
-};
-
 const LOCAL_TONES: Readonly<Record<CallStackFrameLocal['tone'], CallStackLocalTone>> = {
   default: 'idle',
   arg: 'arg',
@@ -77,10 +72,6 @@ export function frameSignature(title: string): CallStackSignature {
   return { name: match[1] ?? '', args: match[2] ?? '' };
 }
 
-export function localLabel(label: string): TranslatableText {
-  return LOCAL_LABEL_KEYS[label] ?? label;
-}
-
 export function frameTone(frame: CallStackFrame, top: boolean): CallStackFrameTone {
   if (frame.phase === 'returning' || frame.phase === 'cached') return 'lime';
   if (frame.phase === 'pruned') return 'pink';
@@ -103,9 +94,9 @@ export function callStackFrames(state: CallStackLabTraceState | null): readonly 
         tone: frameTone(frame, top),
         top,
         returnValue: frame.returnValue,
-        locals: frame.locals.map((local) => ({
-          id: `${frame.id}:${local.label}`,
-          label: localLabel(local.label),
+        locals: frame.locals.map((local, index) => ({
+          id: `${frame.id}:${index}`,
+          label: local.label,
           value: local.value,
           tone: LOCAL_TONES[local.tone],
         })),

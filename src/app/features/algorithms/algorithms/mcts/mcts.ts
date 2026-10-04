@@ -11,6 +11,9 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { McTsScenario } from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { createCallTreeLabStep } from '../call-tree-lab-step';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TITLES = I18N_KEY.features.algorithms.display.callTree.titles;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.callTreeLab.mcts.modeLabel'),
@@ -120,10 +123,10 @@ export function* mctsGenerator(scenario: McTsScenario): Generator<SortStep> {
     const outNodes: CallTreeNode[] = nodes.map((m) => {
       const parent = m.parentId ? (byId.get(m.parentId) ?? null) : null;
       const title = m.parentId === null
-        ? 'root'
+        ? i18nText(TITLES.root)
         : m.leafRewardIndex !== null
-          ? `leaf #${m.armIndex + 1}`
-          : `arm #${m.armIndex + 1}`;
+          ? i18nText(TITLES.rollout, { leaf: m.armIndex + 1 })
+          : i18nText(TITLES.arm, { arm: m.armIndex + 1 });
       return {
         id: m.id,
         parentId: m.parentId,

@@ -8,7 +8,6 @@ import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/
 import { TraceChip, TraceFact, TraceTone } from '../../../../shared/instrument/trace/trace.types';
 import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { ClosestPairStepState, GeometryPoint } from '../../models/geometry';
-import { closestRegionText, trailText } from '../geo-canvas/geometry-labels.utils';
 
 const PAIR_KEYS = I18N_KEY.features.algorithms.tracePanels.closestPair;
 const GEOMETRY_KEYS = I18N_KEY.features.algorithms.tracePanels.geometry;
@@ -71,7 +70,7 @@ export class ClosestPairTracePanel {
     const geo = this.state();
     if (!geo) return [];
     return [
-      { id: 'region', label: PAIR_KEYS.regionLabel, value: toTraceValue(closestRegionText(geo.regionLabel)), kind: 'mono' },
+      { id: 'region', label: PAIR_KEYS.regionLabel, value: toTraceValue(geo.regionLabel), kind: 'mono' },
       {
         id: 'corridor',
         label: PAIR_KEYS.stripCorridorLabel,
@@ -106,7 +105,7 @@ export class ClosestPairTracePanel {
   });
 
   protected readonly trailChips = computed<readonly TraceChip[]>(() =>
-    (this.state()?.trail ?? []).map((part, index) => ({ id: index, label: toTraceValue(trailText(part)), tone: 'violet' })),
+    (this.state()?.trail ?? []).map((part, index) => ({ id: index, label: toTraceValue(part), tone: 'violet' })),
   );
 
   private pairFacts(

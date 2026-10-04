@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isI18nText } from '../../../../core/i18n/translatable-text';
 import { regexMatchingDpGenerator } from './regex-matching-dp';
 import type { SortStep } from '../../models/sort-step';
+import { createRegexMatchingScenario, REGEX_PRESETS } from '../../utils/scenarios/dp/dp-scenarios';
 import type { RegexMatchingScenario } from '../../utils/scenarios/dp/dp-scenarios';
 
 function collectSteps(scenario: RegexMatchingScenario): SortStep[] {
@@ -19,6 +20,15 @@ function paramsOf(value: unknown): Record<string, unknown> | null {
 }
 
 describe('regex-matching-dp', () => {
+  it('ends the default preset at the default size in a match', () => {
+    const scenario = createRegexMatchingScenario(6, REGEX_PRESETS[0]!.id);
+    const last = collectSteps(scenario).at(-1);
+    expect(scenario.source).toBe('AABBBC');
+    expect(keyOf(last?.dp?.resultLabel)).toBe('features.algorithms.runtime.dp.regexMatching.labels.resultMatch');
+    expect(paramsOf(last?.dp?.resultLabel)?.value).toBe('T');
+  });
+
+
   it('traces a star group across repeated characters and zero occurrences', () => {
     const steps = collectSteps({
       kind: 'regex-matching-dp',

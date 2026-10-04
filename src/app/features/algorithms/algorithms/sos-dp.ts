@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step'
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { SosDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.sosDp.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.sosDp.modeLabel'),
@@ -35,7 +39,6 @@ const I18N = {
   },
   labels: {
     resultSum: t('features.algorithms.runtime.dp.sosDp.labels.resultSum'),
-    activeState: t('features.algorithms.runtime.dp.sosDp.labels.activeState'),
     pathValue: t('features.algorithms.runtime.dp.sosDp.labels.pathValue'),
     pathPending: t('features.algorithms.runtime.dp.sosDp.labels.pathPending'),
     baseValuesLabel: t('features.algorithms.runtime.dp.sosDp.labels.baseValuesLabel'),
@@ -225,8 +228,8 @@ export function* sosDpGenerator(scenario: SosDpScenario): Generator<SortStep> {
         }),
         expression:
           (mask & (1 << (stage - 1))) !== 0
-            ? 'came from mask and submask'
-            : 'came only from the same mask',
+            ? i18nText(TEXT.fromMaskAndSubmask)
+            : i18nText(TEXT.fromSameMask),
         result: contributorsLabel(scenario, contributingMasks),
         decision: I18N.decisions.followBranches,
       },
@@ -257,15 +260,15 @@ function createStep(args: {
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = Array.from({ length: args.table.length }, (_, stage) => ({
     id: `row-${stage}`,
-    label: stage === 0 ? 'base' : `bit ${stage - 1}`,
+    label: stage === 0 ? dpLabel('base') : dpLabel('bit', { n: stage - 1 }),
     status: (args.activeCell?.[0] === stage ? 'active' : stage === 0 ? 'source' : 'accent') as DpHeaderConfig['status'],
-    metaLabel: stage === 0 ? 'f[mask]' : 'after merge',
+    metaLabel: stage === 0 ? 'f[mask]' : dpLabel('afterMerge'),
   }));
   const colHeaders: DpHeaderConfig[] = Array.from({ length: args.table[0]!.length }, (_, mask) => ({
     id: `col-${mask}`,
     label: maskLabel(mask, args.scenario.bitCount),
     status: (args.activeCell?.[1] === mask ? 'active' : mask === args.scenario.focusMask ? 'target' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: mask === args.scenario.focusMask ? 'focus' : null,
+    metaLabel: mask === args.scenario.focusMask ? dpLabel('focus') : null,
   }));
 
   const cells: DpCellConfig[] = [];
@@ -282,14 +285,14 @@ function createStep(args: {
       cells.push({
         row,
         col,
-        rowLabel: row === 0 ? 'base' : `bit ${row - 1}`,
+        rowLabel: row === 0 ? dpLabel('base') : dpLabel('bit', { n: row - 1 }),
         colLabel: maskLabel(col, args.scenario.bitCount),
         valueLabel: String(args.table[row]![col]!),
         metaLabel:
           row === 0 && args.contributingMasks.has(col)
-            ? 'src'
+            ? dpLabel('source')
             : col === args.scenario.focusMask
-              ? 'focus'
+              ? dpLabel('focus')
               : null,
         status: args.traced.has(id)
           ? 'backtrack'
@@ -328,16 +331,15 @@ function createStep(args: {
     dimensionsLabel: `${args.table.length} × ${args.table[0]!.length}`,
     activeLabel:
       args.activeCell
-        ? i18nText(I18N.labels.activeState, {
-            row: rowHeaders[args.activeCell[0]]!.label,
-            mask: maskLabel(args.activeCell[1], args.scenario.bitCount),
-          })
+        ? args.activeCell[0] === 0
+          ? i18nText(TEXT.activeBase, { mask: maskLabel(args.activeCell[1], args.scenario.bitCount) })
+          : i18nText(TEXT.activeBit, { bit: args.activeCell[0] - 1, mask: maskLabel(args.activeCell[1], args.scenario.bitCount) })
         : null,
     pathLabel: contributorsLabel(args.scenario, args.contributingMasks),
     primaryItemsLabel: I18N.labels.baseValuesLabel,
     primaryItems: args.scenario.baseValues.map((value, mask) => `${maskLabel(mask, args.scenario.bitCount)}=${value}`),
     secondaryItemsLabel: I18N.labels.activeBitsLabel,
-    secondaryItems: Array.from({ length: args.scenario.bitCount }, (_, bit) => `bit ${bit}`),
+    secondaryItems: Array.from({ length: args.scenario.bitCount }, (_, bit) => dpLabel('bit', { n: bit })),
     insights,
     rowHeaders,
     colHeaders,

@@ -4,6 +4,10 @@ import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text
 import { GraphComputation, WeightedGraphData, WeightedGraphEdge } from '../models/graph';
 import { SortStep } from '../models/sort-step';
 import { createSccStep } from './scc-step';
+import { graphLabel, graphSecondary } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.kosaraju;
 
 const I18N = {
   descriptions: {
@@ -51,6 +55,12 @@ const I18N = {
 } as const;
 
 type VisitState = 'new' | 'stack' | 'done';
+
+const VISIT_STATES: Readonly<Record<VisitState, TranslatableText>> = {
+  new: graphSecondary('new'),
+  stack: graphSecondary('onStack'),
+  done: graphSecondary('done'),
+};
 
 const VISIT_RESULTS: Readonly<Record<VisitState, TranslatableText>> = {
   new: i18nText(I18N.results.new),
@@ -192,9 +202,9 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       stepPhase: 'settle-node',
       computation: {
         candidateLabel: labelOf(labelMap, nodeId),
-        expression: `reverse DFS from ${labelOf(labelMap, nodeId)}`,
+        expression: i18nText(TEXT.decisions.reverseDfsFrom, { node: labelOf(labelMap, nodeId) }),
         result: summary,
-        decision: 'emit SCC',
+        decision: i18nText(RUNTIME_KEY.graph.common.emitScc),
       },
     });
   }
@@ -264,9 +274,9 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         stepPhase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
-          expression: neighborState.toUpperCase(),
+          expression: VISIT_STATES[neighborState],
           result: VISIT_RESULTS[neighborState],
-          decision: neighborState === 'new' ? 'visit child' : 'skip visited node',
+          decision: neighborState === 'new' ? i18nText(TEXT.decisions.visitChild) : i18nText(TEXT.decisions.skipVisited),
         },
       });
 
@@ -291,9 +301,9 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
           stepPhase: 'skip-relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
-            expression: neighborState.toUpperCase(),
+            expression: VISIT_STATES[neighborState],
             result: i18nText(I18N.results.seen),
-            decision: 'no recursive call',
+            decision: i18nText(TEXT.decisions.noRecursion),
           },
         });
         continue;
@@ -321,9 +331,9 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         stepPhase: 'relax',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
-          expression: 'NEW',
+          expression: VISIT_STATES.new,
           result: i18nText(I18N.results.dfsChild),
-          decision: 'descend',
+          decision: i18nText(TEXT.decisions.descend),
         },
       });
       yield* dfsOriginal(neighborId);
@@ -356,7 +366,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         candidateLabel: labelOf(labelMap, nodeId),
         expression: `push ${labelOf(labelMap, nodeId)}`,
         result: `post = ${finishIndex}`,
-        decision: 'append to finish stack',
+        decision: i18nText(TEXT.decisions.appendFinish),
       },
     });
   }
@@ -435,7 +445,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
             candidateLabel: labelOf(labelMap, neighborId),
             expression: componentLabel(componentMap.get(neighborId)),
             result: i18nText(I18N.results.assigned),
-            decision: 'keep current SCC boundary',
+            decision: i18nText(TEXT.decisions.keepBoundary),
           },
         });
         continue;
@@ -463,9 +473,9 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         stepPhase: 'relax',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
-          expression: 'unassigned on reversed graph',
+          expression: i18nText(TEXT.decisions.unassignedReversed),
           result: componentLabel(componentId),
-          decision: 'expand SCC',
+          decision: i18nText(TEXT.decisions.expand),
         },
       });
       const childMembers = yield* dfsReverse(neighborId, componentId);
@@ -504,7 +514,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
         candidateLabel: neighborLabel,
         expression: componentLabel(componentMap.get(neighborId)),
         result: i18nText(I18N.results.assigned),
-        decision: 'skip finished SCC',
+        decision: i18nText(RUNTIME_KEY.graph.common.ignoreFinishedScc),
       };
     }
 
@@ -512,7 +522,7 @@ export function* kosarajuSccGenerator(graph: WeightedGraphData): Generator<SortS
       candidateLabel: neighborLabel,
       expression: `post = ${finishOrDash(finishMap, neighborId)}`,
       result: componentLabel(componentId),
-      decision: 'reverse DFS can absorb it',
+      decision: i18nText(TEXT.decisions.absorb),
     };
   }
 }
@@ -538,14 +548,14 @@ function createStep(args: {
   readonly relaxedEdgeId?: string | null;
   readonly computation?: GraphComputation | null;
 }): SortStep {
-  const secondaryMap = new Map<string, string | null>(
+  const secondaryMap = new Map<string, TranslatableText | null>(
     args.graph.nodes.map((node) => {
       const component = args.componentMap.get(node.id);
       if (args.phase === 2 && component !== null) {
         return [node.id, `S${component}`];
       }
       const state = args.stateMap.get(node.id) ?? 'new';
-      return [node.id, state.toUpperCase()];
+      return [node.id, VISIT_STATES[state]];
     }),
   );
 
@@ -559,16 +569,16 @@ function createStep(args: {
     settled: args.assigned,
     frontierOrder: [...args.dfsStack].reverse(),
     visitOrder: args.phase === 1 ? [...args.finishStack].map((nodeId) => labelOf(new Map(args.graph.nodes.map((node) => [node.id, node.label])), nodeId)) : [...args.componentOrder],
-    metricLabel: 'Post',
-    secondaryLabel: args.phase === 1 ? 'State' : 'SCC',
-    frontierLabel: args.phase === 1 ? 'DFS stack' : 'Reverse stack',
-    frontierHeadLabel: 'Stack top',
-    completionLabel: args.phase === 1 ? 'Closed' : 'Assigned',
-    frontierStatusLabel: 'stacked',
-    completionStatusLabel: args.phase === 1 ? 'closed' : 'assigned',
-    detailLabel: args.phase === 1 ? 'Finish stack' : 'Kosaraju SCC map',
+    metricLabel: graphLabel('post'),
+    secondaryLabel: args.phase === 1 ? graphLabel('state') : graphLabel('scc'),
+    frontierLabel: args.phase === 1 ? graphLabel('dfsStack') : graphLabel('reverseStack'),
+    frontierHeadLabel: graphLabel('stackTop'),
+    completionLabel: args.phase === 1 ? graphLabel('closed') : graphLabel('assigned'),
+    frontierStatusLabel: graphLabel('statusStacked'),
+    completionStatusLabel: args.phase === 1 ? graphLabel('statusClosed') : graphLabel('statusAssigned'),
+    detailLabel: args.phase === 1 ? graphLabel('finishStack') : graphLabel('kosarajuSccMap'),
     detailValue: args.phase === 1 ? summarizeFinishStack(args.finishStack, args.graph) : summarizeAllComponents(args.componentOrder),
-    visitOrderLabel: args.phase === 1 ? 'Finish stack' : 'SCC order',
+    visitOrderLabel: args.phase === 1 ? graphLabel('finishStack') : graphLabel('sccOrder'),
     phaseLabel: i18nText(phaseLabel(args.phase, args.stepPhase)),
     description: args.description,
     activeCodeLine: args.activeCodeLine,
@@ -611,13 +621,13 @@ function summarizeComponent(
   return `S${componentId}: ${labels.join(', ')}`;
 }
 
-function summarizeAllComponents(componentOrder: readonly string[]): string {
-  return componentOrder.length > 0 ? componentOrder.join(' · ') : 'No SCC closed yet';
+function summarizeAllComponents(componentOrder: readonly string[]): TranslatableText {
+  return componentOrder.length > 0 ? componentOrder.join(' · ') : i18nText(RUNTIME_KEY.graph.common.noSccClosed);
 }
 
-function summarizeFinishStack(finishStack: readonly string[], graph: WeightedGraphData): string {
+function summarizeFinishStack(finishStack: readonly string[], graph: WeightedGraphData): TranslatableText {
   const labelMap = new Map(graph.nodes.map((node) => [node.id, node.label]));
-  if (finishStack.length === 0) return 'No finish order yet';
+  if (finishStack.length === 0) return i18nText(TEXT.details.noFinishOrder);
   return finishStack.map((nodeId) => labelOf(labelMap, nodeId)).join(' → ');
 }
 

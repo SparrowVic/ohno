@@ -1,4 +1,4 @@
-import { TranslatableText } from '../../../core/i18n/translatable-text';
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   NetworkComputation,
   NetworkEdgeSnapshot,
@@ -11,6 +11,16 @@ import {
 } from '../models/network';
 import { SortPhase, SortStep } from '../models/sort-step';
 import { LayeredNetworkNode } from '../utils/scenarios/network/network-scenarios';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.network.common;
+
+const MODE_NAMES = {
+  dinic: 'dinic',
+  'min-cost-max-flow': 'minCostMaxFlow',
+  'edmonds-karp': 'edmondsKarp',
+  'hopcroft-karp': 'hopcroftKarp',
+} as const satisfies Readonly<Record<NetworkTraceState['mode'], string>>;
 
 export interface NetworkStepNodeState {
   readonly level: number | null;
@@ -27,12 +37,12 @@ export interface NetworkStepArgs {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly frontierLabel: string;
+  readonly frontierLabel: TranslatableText;
   readonly frontierCount: number;
-  readonly queueLabel: string;
+  readonly queueLabel: TranslatableText;
   readonly queue: readonly string[];
   readonly activeRouteLabel: string | null;
-  readonly focusItemsLabel: string;
+  readonly focusItemsLabel: TranslatableText;
   readonly focusItems: readonly string[];
   readonly computation: NetworkComputation | null;
   readonly description: TranslatableText;
@@ -79,14 +89,7 @@ export function createNetworkStep(args: NetworkStepArgs): SortStep {
     phase: args.phase,
     network: {
       mode: args.mode,
-      modeLabel:
-        args.mode === 'dinic'
-          ? "Dinic's Max Flow"
-          : args.mode === 'min-cost-max-flow'
-            ? 'Min-Cost Max Flow'
-          : args.mode === 'edmonds-karp'
-            ? 'Edmonds-Karp'
-            : 'Hopcroft-Karp',
+      modeLabel: i18nText(TEXT.modes[MODE_NAMES[args.mode]]),
       phaseLabel: args.phaseLabel,
       statusLabel: args.statusLabel,
       resultLabel: args.resultLabel,
@@ -131,17 +134,6 @@ function defaultLaneStatus(lane: NetworkLane): NetworkNodeStatus {
   }
 }
 
-function laneLabel(lane: NetworkLane): string {
-  switch (lane) {
-    case 'source':
-      return 'Source';
-    case 'sink':
-      return 'Sink';
-    case 'left':
-      return 'Left';
-    case 'right':
-      return 'Right';
-    default:
-      return 'Inner';
-  }
+function laneLabel(lane: NetworkLane): TranslatableText {
+  return i18nText(TEXT.lanes[lane]);
 }

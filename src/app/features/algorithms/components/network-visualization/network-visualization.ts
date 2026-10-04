@@ -40,7 +40,6 @@ import {
   networkLinkLabel,
   networkNodeTone,
   networkQueueEntry,
-  networkRackTitle,
   networkViewBox,
   placeEdgeChips,
 } from './network-display.utils';
@@ -188,14 +187,14 @@ export class NetworkVisualization implements AfterViewInit, OnDestroy, Visualiza
     return drafts.map((draft, index) => ({ ...draft, chipX: positions[index].x, chipY: positions[index].y }));
   });
 
-  readonly queueTitle = computed<TranslatableText>(() => networkRackTitle(this.state()?.queueLabel ?? ''));
+  readonly queueTitle = computed<TranslatableText>(() => this.state()?.queueLabel ?? '');
   readonly queueRows = computed<readonly NetworkRackEntry[]>(() => {
     const state = this.state();
     if (!state) return [];
     return state.queue.map((label) => networkQueueEntry(label, state.nodes));
   });
 
-  readonly focusTitle = computed<TranslatableText>(() => networkRackTitle(this.state()?.focusItemsLabel ?? ''));
+  readonly focusTitle = computed<TranslatableText>(() => this.state()?.focusItemsLabel ?? '');
   readonly focusRows = computed<readonly NetworkRackEntry[]>(() =>
     (this.state()?.focusItems ?? []).map((item) => networkFocusEntry(item)),
   );

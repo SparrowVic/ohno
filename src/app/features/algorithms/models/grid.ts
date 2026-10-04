@@ -48,6 +48,7 @@ export interface GridTraceState {
   readonly targetCellId: string | null;
   readonly activeCellId: string | null;
   readonly frontierCount: number;
+  readonly frontierOrder?: readonly string[];
   readonly visitedCount: number;
   readonly resultCount: number;
   readonly sourceLabel: TranslatableText;

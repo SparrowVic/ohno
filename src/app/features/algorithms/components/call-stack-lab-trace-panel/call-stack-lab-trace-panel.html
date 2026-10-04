@@ -2,8 +2,8 @@
   <ohno-trace-facts [facts]="summaryFacts()" />
   @if (frameFacts().length > 0) {
     <ohno-trace-facts [facts]="frameFacts()" />
-    @if (localChips().length > 0) {
-      <ohno-trace-chips [chips]="localChips()" />
+    @if (localFacts().length > 0) {
+      <ohno-trace-facts [facts]="localFacts()" />
     }
   }
   <ohno-trace-facts [title]="keys.statsLabel" [meta]="stack.stats.length" [facts]="statFacts()" />

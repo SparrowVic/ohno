@@ -311,8 +311,11 @@ function dpBestValue(state: DpTraceState, active: DpCell | null, complete: boole
 
 function dpRegisters(state: DpTraceState, active: DpCell | null, labels: FamilyReadoutLabels): OpLineRegister[] {
   if (!active) return [];
-  if (state.mode !== 'knapsack-01') return [register('i', labels, active.rowLabel), register('c', labels, active.colLabel)];
-  const item = state.rowHeaders[active.row]?.metaLabel?.match(KNAPSACK_ITEM) ?? null;
+  if (state.mode !== 'knapsack-01') {
+    return [register('i', labels, labels.translate(active.rowLabel)), register('c', labels, labels.translate(active.colLabel))];
+  }
+  const meta = state.rowHeaders[active.row]?.metaLabel;
+  const item = typeof meta === 'string' ? meta.match(KNAPSACK_ITEM) : null;
   const registers = [register('i', labels, active.row), register('c', labels, active.col)];
   if (item) registers.push(register('w', labels, item[1]!), register('v', labels, item[2]!));
   return registers;

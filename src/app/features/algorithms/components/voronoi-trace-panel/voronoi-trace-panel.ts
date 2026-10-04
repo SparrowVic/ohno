@@ -28,7 +28,7 @@ export class VoronoiTracePanel {
     const geo = this.state();
     if (!geo) return [];
     return [
-      { id: 'cell', label: VORONOI_KEYS.cellLabel, value: geo.currentCellLabel, kind: 'mono', tone: 'cyan' },
+      { id: 'cell', label: VORONOI_KEYS.cellLabel, value: toTraceValue(geo.currentCellLabel), kind: 'mono', tone: 'cyan' },
       { id: 'closed', label: VORONOI_KEYS.closedCellsLabel, value: geo.closedCells, tone: 'lime' },
       {
         id: 'sweep',

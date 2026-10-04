@@ -10,6 +10,9 @@ import {
   HalfPlaneIntersectionStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.geometry.halfPlane.labels;
 
 const I18N = {
   descriptions: {
@@ -154,7 +157,7 @@ function makeStep(
   description: TranslatableText,
   activeCodeLine: number,
   phase: string,
-  currentConstraintLabel: string,
+  currentConstraintLabel: TranslatableText,
   status: 'feasible' | 'empty' | 'complete',
 ): SortStep {
   const feasiblePolygon = polygons.find((polygon) => polygon.tone === 'feasible' || polygon.tone === 'result');
@@ -218,7 +221,7 @@ export function* halfPlaneIntersectionGenerator(
     i18nText(I18N.descriptions.initialize),
     1,
     'init',
-    'global region',
+    i18nText(TEXT.globalRegion),
     'feasible',
   );
 
@@ -321,7 +324,7 @@ export function* halfPlaneIntersectionGenerator(
     i18nText(I18N.descriptions.complete, { count: feasible.length }),
     6,
     'complete',
-    'final feasible polygon',
+    i18nText(TEXT.finalPolygon),
     'complete',
   );
 }

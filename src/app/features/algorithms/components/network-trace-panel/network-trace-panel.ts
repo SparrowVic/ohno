@@ -10,7 +10,7 @@ import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../..
 import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { NetworkNodeStatus, NetworkTraceState, NetworkTraceTag } from '../../models/network';
-import { networkLinkLabel, networkRackTitle } from '../network-visualization/network-display.utils';
+import { networkLinkLabel } from '../network-visualization/network-display.utils';
 
 const NETWORK_KEYS = I18N_KEY.features.algorithms.tracePanels.network;
 const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
@@ -72,7 +72,7 @@ export class NetworkTracePanel {
     return [
       { id: 'mode', label: COMMON_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' },
       { id: 'phase', label: COMMON_KEYS.phaseLabel, value: toTraceValue(state.phaseLabel), kind: 'mono' },
-      { id: 'frontier', label: networkRackTitle(state.frontierLabel), value: state.frontierCount, tone: 'amber' },
+      { id: 'frontier', label: state.frontierLabel, value: state.frontierCount, tone: 'amber' },
       { id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(state.resultLabel), kind: 'mono', tone: 'lime' },
     ];
   });
@@ -86,11 +86,11 @@ export class NetworkTracePanel {
       { id: 'route', label: COMMON_KEYS.routeLabel, value: state.activeRouteLabel, kind: 'mono', tone: 'pink' },
     ];
     if (computation) {
-      const result = computation.result ? ` = ${computation.result}` : '';
-      facts.push(
-        { id: 'expression', label: computation.label, value: `${computation.expression}${result}`, kind: 'mono', wide: true },
-        { id: 'decision', label: COMMON_KEYS.decisionLabel, value: toTraceValue(computation.decision), kind: 'text', wide: true },
-      );
+      facts.push({ id: 'expression', label: computation.label, value: toTraceValue(computation.expression), kind: 'mono', wide: true });
+      if (computation.result !== null) {
+        facts.push({ id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(computation.result), kind: 'mono', tone: 'lime' });
+      }
+      facts.push({ id: 'decision', label: COMMON_KEYS.decisionLabel, value: toTraceValue(computation.decision), kind: 'text', wide: true });
     } else {
       facts.push({
         id: 'decision',
@@ -103,8 +103,8 @@ export class NetworkTracePanel {
     return facts;
   });
 
-  protected readonly queueTitle = computed(() => networkRackTitle(this.state()?.queueLabel ?? ''));
-  protected readonly focusTitle = computed(() => networkRackTitle(this.state()?.focusItemsLabel ?? ''));
+  protected readonly queueTitle = computed(() => this.state()?.queueLabel ?? '');
+  protected readonly focusTitle = computed(() => this.state()?.focusItemsLabel ?? '');
 
   protected readonly queueChips = computed<readonly TraceChip[]>(() =>
     (this.state()?.queue ?? []).map((item, index) => ({ id: index, label: item, tone: index === 0 ? 'cyan' : 'amber', active: index === 0 })),
@@ -138,7 +138,7 @@ export class NetworkTracePanel {
           tone: highlighted ? tone : null,
           cells: {
             node: row.label,
-            lane: row.laneLabel,
+            lane: toTraceValue(row.laneLabel),
             link: toTraceValue(networkLinkLabel(row.linkLabel)),
             level: row.level,
             status: [{ id: row.status, label: toTraceValue(NETWORK_KEYS.statuses[row.status]), tone }],

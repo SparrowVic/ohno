@@ -1,3 +1,5 @@
+import { TranslatableText } from '../../../core/i18n/translatable-text';
+
 export type PointStatus =
   | 'default'
   | 'pivot'
@@ -166,8 +168,8 @@ export interface ClosestPairStepState {
   readonly dividers: readonly GeometryDivider[];
   readonly pairLines: readonly GeometryPairLine[];
   readonly regionBounds: readonly [number, number] | null;
-  readonly regionLabel: string;
-  readonly trail: readonly string[];
+  readonly regionLabel: TranslatableText;
+  readonly trail: readonly TranslatableText[];
   readonly depth: number;
   readonly midX: number | null;
   readonly stripWidth: number | null;
@@ -200,7 +202,7 @@ export interface HalfPlaneIntersectionStepState {
   readonly feasibleArea: number | null;
   readonly vertexCount: number;
   readonly status: 'feasible' | 'empty' | 'complete';
-  readonly currentConstraintLabel: string;
+  readonly currentConstraintLabel: TranslatableText;
 }
 
 export interface MinkowskiSumStepState {
@@ -225,7 +227,7 @@ export interface SweepLineStepState {
   readonly fillWidth: number | null;
   readonly events: readonly GeometryEventChip[];
   readonly coveredArea: number;
-  readonly currentEventLabel: string;
+  readonly currentEventLabel: TranslatableText;
 }
 
 export interface VoronoiDiagramStepState {
@@ -237,7 +239,7 @@ export interface VoronoiDiagramStepState {
   readonly events: readonly GeometryEventChip[];
   readonly activeSiteId: number | null;
   readonly closedCells: number;
-  readonly currentCellLabel: string;
+  readonly currentCellLabel: TranslatableText;
 }
 
 export interface DelaunayTriangulationStepState {
@@ -248,7 +250,7 @@ export interface DelaunayTriangulationStepState {
   readonly edges: readonly GeometrySegmentLine[];
   readonly circles: readonly GeometryCircleOverlay[];
   readonly events: readonly GeometryEventChip[];
-  readonly activeTriangleLabel: string;
+  readonly activeTriangleLabel: TranslatableText;
   readonly triangleCount: number;
 }
 

@@ -10,6 +10,9 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { MinimaxScenario } from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { createCallTreeLabStep } from '../call-tree-lab-step';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TITLES = I18N_KEY.features.algorithms.display.callTree.titles;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.callTreeLab.minimax.modeLabel'),
@@ -95,10 +98,9 @@ export function* minimaxAlphaBetaGenerator(scenario: MinimaxScenario): Generator
     resultLabel: CallTreeLabTraceState['resultLabel'];
   }): CallTreeLabTraceState => {
     const outNodes: CallTreeNode[] = nodes.map((m) => {
-      const labelKey = m.isMax ? 'MAX' : 'MIN';
       const title = m.leafValue !== null
-        ? `leaf=${m.leafValue}`
-        : `${labelKey}(d=${depth - m.depth})`;
+        ? i18nText(TITLES.leaf, { value: m.leafValue })
+        : i18nText(m.isMax ? TITLES.max : TITLES.min, { depth: depth - m.depth });
       return {
         id: m.id,
         parentId: m.parentId,

@@ -2089,6 +2089,10 @@
               "initializeCanvas": "Inicjalizacja płótna przedziałów",
               "inspectCandidate": "Sprawdzenie kandydata na ostatni balon",
               "traceSplit": "Śledzenie zapisanego podziału"
+            },
+            "trace": {
+              "last": "ostatni = #{{index}}",
+              "lastBurst": "ostatnio pęka = #{{index}}"
             }
           },
           "climbingStairs": {
@@ -2187,6 +2191,9 @@
               "initializeUnreachable": "Inicjalizacja nieosiągalnych stanów",
               "noSolution": "Brak rozwiązania",
               "optimalChangeReady": "Gotowa optymalna reszta"
+            },
+            "trace": {
+              "coinBlocked": "{{coin}} > {{amount}} lub wcześniejsza kwota nieosiągalna"
             }
           },
           "divideConquerDpOptimization": {
@@ -2228,6 +2235,9 @@
               "complete": "Cięcia gotowe",
               "initializeRows": "Zainicjalizuj wiersze",
               "inspectRange": "Sprawdź zakres środka"
+            },
+            "trace": {
+              "search": "szukaj {{from}}..{{to}}"
             }
           },
           "dpConvexHullTrick": {
@@ -2277,6 +2287,9 @@
               "initializeHull": "Zainicjalizuj hull",
               "insertLine": "Wstaw nową prostą",
               "pruneLine": "Usuń zdominowaną prostą"
+            },
+            "trace": {
+              "origin": "początek"
             }
           },
           "dpOnTrees": {
@@ -2327,6 +2340,9 @@
             "results": {
               "take": "weź",
               "skip": "pomiń"
+            },
+            "trace": {
+              "parentSelected": "rodzic wybrany"
             }
           },
           "editDistance": {
@@ -2387,6 +2403,12 @@
               "compareOperations": "Porównaj operacje edycji",
               "complete": "Skrypt edycji gotowy",
               "initializeBorders": "Zainicjalizuj brzegi"
+            },
+            "trace": {
+              "minOf": "min(skos {{diag}}, góra {{up}}, lewo {{left}})",
+              "diagValue": "skos = {{value}}",
+              "upValue": "góra = {{value}}",
+              "leftValue": "lewo = {{value}}"
             }
           },
           "fibonacci": {
@@ -2481,6 +2503,9 @@
               "compareSkipTake": "Porównanie pomiń kontra weź",
               "initializeBaseRow": "Inicjalizacja wiersza bazowego",
               "optimalSolutionReady": "Gotowe optymalne rozwiązanie"
+            },
+            "trace": {
+              "itemTooHeavy": "waga przedmiotu {{weight}} > pojemność {{cap}}"
             }
           },
           "knuthDpOptimization": {
@@ -2531,6 +2556,10 @@
             },
             "items": {
               "optRow": "opt wiersz {{n}}"
+            },
+            "trace": {
+              "window": "okno {{from}}..{{to}}",
+              "leaf": "liść"
             }
           },
           "longestCommonSubsequence": {
@@ -2709,6 +2738,9 @@
               "skipRight": "Pomiń prawą granicę",
               "takePair": "Weź lustrzaną parę",
               "traceCenter": "Śledź środek palindromu"
+            },
+            "trace": {
+              "singleCharacter": "pojedynczy znak"
             }
           },
           "matrixChain": {
@@ -2758,6 +2790,10 @@
               "inspectCandidate": "Sprawdź kandydat podziału",
               "traceLeaf": "Śledź liść przedziału",
               "traceSplit": "Śledź optymalny podział"
+            },
+            "trace": {
+              "bestSplit": "najlepszy podział = {{split}}",
+              "singleMatrix": "pojedyncza macierz"
             }
           },
           "profileDp": {
@@ -2872,6 +2908,10 @@
               "traceDirect": "Śledź bezpośrednie dopasowanie",
               "traceStarConsume": "Śledź pochłanianie przez gwiazdkę",
               "traceStarEmpty": "Śledź pustą grupę z gwiazdką"
+            },
+            "trace": {
+              "zeroOccurrences": "zero wystąpień",
+              "diagonal": "przekątna"
             }
           },
           "sosDp": {
@@ -2900,7 +2940,6 @@
             },
             "labels": {
               "activeBitsLabel": "Aktywne bity",
-              "activeState": "{{row}} × {{mask}}",
               "baseValuesLabel": "Wartości bazowe",
               "carryLabel": "{{mask}} @ bit {{bit}}",
               "cellLabel": "dp[{{stage}}][{{mask}}]",
@@ -2919,6 +2958,12 @@
               "mergeSubmask": "Scal wkład submaski",
               "traceBase": "Śledź bazowego współtwórcę",
               "traceContributors": "Śledź ścieżkę wkładów SOS"
+            },
+            "trace": {
+              "activeBase": "baza × {{mask}}",
+              "activeBit": "bit {{bit}} × {{mask}}",
+              "fromMaskAndSubmask": "z maski i jej podmaski",
+              "fromSameMask": "tylko z tej samej maski"
             }
           },
           "subsetSum": {
@@ -2974,6 +3019,10 @@
               "initializeBooleanTable": "Inicjalizacja tabeli boolowskiej",
               "noSubsetFound": "Nie znaleziono podzbioru",
               "subsetReady": "Podzbiór gotowy"
+            },
+            "trace": {
+              "reachableAbove": "osiągalne wyżej",
+              "sumStep": "suma {{from}} → {{to}}"
             }
           },
           "travelingSalesman": {
@@ -3103,6 +3152,49 @@
               "traceDiagonal": "Śledź dopasowanie po przekątnej",
               "traceStarConsume": "Śledź pochłanianie przez gwiazdkę",
               "traceStarEmpty": "Śledź pustą gałąź gwiazdki"
+            }
+          },
+          "common": {
+            "labels": {
+              "packed": "spakowany",
+              "tooHeavy": "za ciężki",
+              "compare": "porównanie",
+              "commit": "zapis",
+              "trace": "ślad",
+              "diagonal": "przekątna",
+              "path": "ścieżka",
+              "picked": "wybrany",
+              "keep": "zostaw",
+              "script": "skrypt",
+              "goal": "cel",
+              "target": "cel",
+              "leaf": "liść",
+              "children": "dzieci: {{count}}",
+              "blockedByParent": "zablokowany przez rodzica?",
+              "solo": "pojedynczy",
+              "pair": "para",
+              "yes": "tak",
+              "no": "nie",
+              "subset": "podzbiór",
+              "match": "zgodne",
+              "wild": "dowolny",
+              "group": "grupa",
+              "route": "trasa",
+              "seed": "ziarno",
+              "minLine": "min. prosta",
+              "source": "źródło",
+              "regex": "regex",
+              "max": "maks.",
+              "fib": "fib",
+              "noCoin": "bez monety",
+              "capacity": "poj. {{cap}}",
+              "column": "kolumna {{column}}"
+            },
+            "trace": {
+              "only": "tylko {{value}}",
+              "split": "podział = {{split}}",
+              "mask": "maska {{mask}}",
+              "andMatch": "{{cell}} ORAZ zgodność"
             }
           }
         },
@@ -4967,6 +5059,9 @@
               "char": "znak '{{char}}'",
               "node": "węzeł {{node}}",
               "distinct": "różne = {{count}}"
+            },
+            "trace": {
+              "roots": "korzeń nieparzysty = -1, korzeń parzysty = 0"
             }
           },
           "rabinKarp": {
@@ -5051,6 +5146,11 @@
               "possibleMatch": "możliwe dopasowanie",
               "skipWindow": "pomiń okno",
               "match": "dopasowanie"
+            },
+            "trace": {
+              "collision": "{{window}} = {{pattern}}, ale text[{{text}}] ≠ pattern[{{offset}}]",
+              "reject": "odrzuć",
+              "verifiedMatches": "potwierdzone dopasowania"
             }
           },
           "runLengthEncoding": {
@@ -5413,6 +5513,16 @@
               "close": "Zamknij przypisany węzeł",
               "complete": "Składowe gotowe",
               "initialize": "Inicjalizacja przeglądu składowych"
+            },
+            "decisions": {
+              "componentExpression": "składowa C{{component}}",
+              "claim": "przypisz węzeł do tej składowej",
+              "alreadyAssigned": "już przypisany",
+              "keepLabel": "zostaw dotychczasową etykietę składowej",
+              "addedToFrontier": "dodany do frontu składowej"
+            },
+            "details": {
+              "waitingSeed": "Czekam na pierwsze ziarno"
             }
           },
           "cycleDetection": {
@@ -5441,6 +5551,16 @@
               "leave": "Wyjście z rekurencji",
               "complete": "Analiza cykli gotowa",
               "initialize": "Inicjalizacja stanów DFS"
+            },
+            "decisions": {
+              "visitNeighbor": "odwiedź sąsiada",
+              "backEdgeFound": "znaleziono krawędź wsteczną",
+              "alreadyClosed": "już zamknięty",
+              "descend": "zejdź rekurencyjnie",
+              "ignoreClosed": "pomiń zamknięty węzeł"
+            },
+            "details": {
+              "searching": "szukam…"
             }
           },
           "topologicalSort": {
@@ -5461,6 +5581,14 @@
               "commit": "Zatwierdź miejsce w porządku",
               "complete": "Porządek topologiczny gotowy",
               "initialize": "Policz stopnie wejściowe"
+            },
+            "decisions": {
+              "enqueueAtZero": "dodaj do kolejki, gdy spadnie do 0",
+              "stillBlocked": "nadal zablokowany",
+              "waitIncoming": "czekaj, aż znikną kolejne krawędzie wchodzące"
+            },
+            "details": {
+              "pending": "oczekuje"
             }
           },
           "bellmanFord": {
@@ -5514,6 +5642,18 @@
               "close": "Zamknij pokolorowany węzeł",
               "complete": "Werdykt dwudzielności gotowy",
               "initialize": "Inicjalizacja podziału"
+            },
+            "decisions": {
+              "assignOpposite": "przypisz przeciwną stronę",
+              "sameSideConflict": "konflikt po tej samej stronie",
+              "crossesPartitions": "krawędź łączy obie części",
+              "consistentOpposite": "zgodna przeciwna strona",
+              "oddCycle": "nieparzysty cykl / krawędź w jednej części",
+              "keepColoring": "zostaw bieżące kolorowanie"
+            },
+            "details": {
+              "conflict": "Konflikt: {{nodes}}",
+              "partitions": "Lewa: {{left}} · Prawa: {{right}}"
             }
           },
           "prim": {
@@ -5561,6 +5701,18 @@
               "propagate": "Przekaż low w górę",
               "complete": "Krytyczne cięcia gotowe",
               "initialize": "Inicjalizacja przeglądu low"
+            },
+            "decisions": {
+              "unvisited": "nieodwiedzony",
+              "descendChild": "zejdź do dziecka",
+              "updateLowLink": "zaktualizuj low-link",
+              "discoverSubtree": "odkryj poddrzewo dziecka",
+              "bridgeFound": "znaleziono most",
+              "articulationFound": "znaleziono punkt artykulacji",
+              "backEdgeConnected": "krawędź wsteczna utrzymuje spójność"
+            },
+            "details": {
+              "critical": "Mosty: {{bridges}} · Punkty artykulacji: {{articulation}}"
             }
           },
           "kosaraju": {
@@ -5605,6 +5757,21 @@
               "pass2Seal": "Przebieg 2: zamknij SSS",
               "complete": "Kosaraju zakończony",
               "pass2Initialize": "Inicjalizacja przebiegu 2"
+            },
+            "decisions": {
+              "reverseDfsFrom": "odwrócony DFS z {{node}}",
+              "noRecursion": "bez wywołania rekurencyjnego",
+              "descend": "zejdź głębiej",
+              "appendFinish": "dopisz do stosu zakończeń",
+              "keepBoundary": "zostaw bieżącą granicę SCC",
+              "unassignedReversed": "nieprzypisany w odwróconym grafie",
+              "expand": "rozszerz SCC",
+              "absorb": "odwrócony DFS może go wchłonąć",
+              "visitChild": "odwiedź dziecko",
+              "skipVisited": "pomiń odwiedzony węzeł"
+            },
+            "details": {
+              "noFinishOrder": "Brak jeszcze kolejności zakończeń"
             }
           },
           "tarjan": {
@@ -5636,6 +5803,13 @@
               "close": "Zamknij lub wydziel SSS",
               "complete": "Wyszukiwanie SSS zakończone",
               "initialize": "Inicjalizacja Tarjana"
+            },
+            "decisions": {
+              "treeEdge": "krawędź drzewa",
+              "backEdgeInside": "krawędź wsteczna wewnątrz aktywnej SCC",
+              "visitChild": "odwiedź dziecko",
+              "useBackEdge": "użyj krawędzi wstecznej do low-link",
+              "ignoreAssigned": "pomiń przypisaną składową"
             }
           },
           "chromaticNumber": {
@@ -5666,6 +5840,26 @@
               "backtrack": "Wycofanie",
               "decision": "Decyzja o palecie",
               "step": "Krok kolorowania"
+            },
+            "decisions": {
+              "lowerBound": "Dolne ograniczenie",
+              "cliqueBound": "Klika wyznacza najmniejszą liczbę kolorów, od której warto zacząć.",
+              "nodeCount": "węzły: {{count}}",
+              "backtrackPlan": "Backtracking próbuje kolorów w kolejności węzłów i cofa przypisania przy konfliktach.",
+              "exhausted": "backtracking wyczerpany",
+              "needMore": "Potrzebny jest co najmniej jeszcze jeden kolor.",
+              "chromaticNumber": "Liczba chromatyczna",
+              "smallestPalette": "To najmniejsza paleta, która koloruje każdą parę sąsiadów inaczej.",
+              "tryPalette": "Próbuj kolejnych miejsc palety od lewej i cofaj się w ślepych zaułkach.",
+              "tryColor": "spróbuj koloru {{color}}",
+              "rejectColor": "odrzuć ten kolor i szukaj dalej",
+              "commitColor": "zatwierdź kolor i zejdź głębiej",
+              "partialValid": "Bieżące częściowe kolorowanie jest nadal poprawne.",
+              "branchDead": "Ta gałąź nie da poprawnego kolorowania.",
+              "forbidden": "zakazane = {{colors}}"
+            },
+            "details": {
+              "trying": "Próba χ ≤ {{limit}} · ograniczenie {{bound}}"
             }
           },
           "eulerTrail": {
@@ -5694,6 +5888,25 @@
               "backtrack": "Wycofaj do szlaku",
               "complete": "Szlak Eulera gotowy",
               "step": "Krok Eulera"
+            },
+            "decisions": {
+              "degreeCheck": "Sprawdzenie stopni",
+              "oddEndpoints": "Nieparzyste końce",
+              "allEven": "każdy stopień jest parzysty",
+              "oddPair": "{{start}} / {{end}} mają stopień nieparzysty",
+              "plan": "Hierholzer rozbudowuje żywy stos i cofa się, by zamknąć ostateczną ścieżkę.",
+              "unusedIncident": "nieużyte krawędzie incydentne = {{count}}",
+              "extend": "wydłuż ścieżkę",
+              "seal": "zamknij ten węzeł w ostatecznej trasie",
+              "traverse": "Przejdź ją teraz i usuń z przyszłych wyborów.",
+              "stackDepth": "głębokość stosu {{depth}} + 1",
+              "keepWalking": "Żywy spacer rośnie, dopóki węzeł na szczycie nie wyczerpie nieużytych krawędzi.",
+              "fixSuffix": "Cofanie na stałe wpisuje ten węzeł w gotowy sufiks trasy.",
+              "allUsed": "krawędzie użyte dokładnie raz: {{count}}",
+              "finish": "Hierholzer kończy, gdy żywy stos i zbiór nieużytych krawędzi są puste."
+            },
+            "details": {
+              "trailPending": "Kolejność ścieżki pojawi się podczas cofania."
             }
           },
           "dominatorTree": {
@@ -5721,6 +5934,15 @@
               "immediate": "Wyznacz bezpośredniego dominatora",
               "complete": "Drzewo dominatorów gotowe",
               "step": "Krok dominatorów"
+            },
+            "decisions": {
+              "iterate": "Iteracyjne przecięcia usuną teraz niemożliwe dominatory.",
+              "startPredecessor": "Zacznij od pierwszego poprzednika i przecinaj dalej.",
+              "commonBlocks": "Ten węzeł mogą dominować tylko bloki wspólne dla wszystkich ścieżek poprzedników.",
+              "setChanged": "Zbiór się zmienił, więc potrzebny jest kolejny pełny przebieg.",
+              "stable": "Ten blok jest już stabilny dla bieżących danych o poprzednikach.",
+              "immediateParent": "Bezpośredni dominator zostaje rodzicem w drzewie dominatorów.",
+              "treeDone": "Każdy osiągalny blok ma teraz dokładnie jednego rodzica w drzewie dominatorów."
             }
           },
           "steinerTree": {
@@ -5742,7 +5964,49 @@
               "propagate": "Propagacja korzenia podzbioru",
               "complete": "Dokładne drzewo Steinera",
               "step": "Krok Steinera"
+            },
+            "decisions": {
+              "terminals": "Terminale",
+              "plan": "Dreyfus-Wagner buduje dokładne stany DP nad podzbiorami terminali.",
+              "singleTerminal": "Stany z jednym terminalem to zwykłe odległości najkrótszych ścieżek.",
+              "merge": "Dwa częściowe poddrzewa Steinera mogą spotkać się w tym samym korzeniu.",
+              "stayPath": "zostań + ścieżka",
+              "viaPath": "{{node}} + ścieżka",
+              "meetingOptimal": "punkt spotkania już optymalny",
+              "moveRoot": "przesuń korzeń podzbioru najtańszą ścieżką łączącą",
+              "bestRoot": "Najlepszy korzeń",
+              "rootFor": "{{node}} dla {{subset}}",
+              "finalTree": "Turkusowe krawędzie tworzą dokładne drzewo minimalnego kosztu dla tego zbioru terminali."
+            },
+            "details": {
+              "subsetReady": "{{subset}} gotowy",
+              "seeding": "Rozsiewanie terminali",
+              "subsetAt": "Podzbiór {{mask}} @ {{node}}"
             }
+          },
+          "common": {
+            "keep": "zostaw {{value}}",
+            "betterThan": "lepsze niż {{value}}",
+            "stillBetterThan": "nadal lepsze niż {{value}}",
+            "noActiveNode": "Brak aktywnego węzła",
+            "sourceUnreachable": "źródło krawędzi wciąż nieosiągalne",
+            "keepUnreachable": "zostaw stan nieosiągalny",
+            "firstFiniteDistance": "pierwsza skończona odległość",
+            "passLabel": "Przebieg {{pass}}",
+            "passOf": "Przebieg {{pass}} z {{total}}",
+            "alreadyDiscovered": "już odkryty",
+            "enqueueNeighbor": "dodaj sąsiada do kolejki",
+            "keepDiscovery": "zostaw wcześniejsze odkrycie",
+            "addedToQueue": "dodany do kolejki",
+            "pushNeighbor": "połóż sąsiada na stosie",
+            "pushedToStack": "położony na stosie",
+            "bestVsInfinity": "najlepsze dotąd wobec ∞",
+            "firstConnection": "pierwszy wybór połączenia",
+            "treeWeight": "Waga drzewa: {{weight}}",
+            "lowLinkPropagated": "low-link przekazany w górę",
+            "emitScc": "wydziel SCC",
+            "ignoreFinishedScc": "pomiń zamkniętą SCC",
+            "noSccClosed": "Żadna SCC nie jest jeszcze zamknięta"
           }
         },
         "matrix": {
@@ -5771,7 +6035,8 @@
               "update": "Zastąp starą wartość krótszą trasą przez {{pivot}}.",
               "pivotDone": "Wszystkie pary sprawdzono względem węzła pośredniego {{pivot}}.",
               "complete": "Floyd-Warshall zakończony: macierz przechowuje najkrótsze odległości dla każdej uporządkowanej pary."
-            }
+            },
+            "via": "przez {{pivot}}"
           },
           "hungarian": {
             "phases": {
@@ -5810,6 +6075,19 @@
               "cover": "Z największego skojarzenia zer wyprowadź minimalny zbiór linii pokrywających (twierdzenie Königa).",
               "smallest": "Znajdź najmniejszą niepokrytą wartość, zanim przesuniesz macierz, by utworzyć nowe zera.",
               "adjusted": "Skorygowana macierz zachowuje optymalne przydziały i odsłania nowe niezależne zera."
+            },
+            "computation": {
+              "rowsReduced": "Macierz jest bliżej przydziału opartego na zerach.",
+              "columnsReduced": "Graf zer jest gotowy do analizy skojarzeń.",
+              "perfectFound": "znaleziono pełny przydział",
+              "needMoreZeros": "potrzeba więcej niezależnych zer",
+              "newZeros": "nowy układ zer"
+            }
+          },
+          "common": {
+            "modes": {
+              "floydWarshall": "Floyd-Warshall",
+              "hungarian": "Algorytm węgierski"
             }
           }
         },
@@ -5847,6 +6125,17 @@
               "pathFound": "Jedna dopuszczalna ścieżka ze źródła do ujścia jest gotowa przenieść kolejną porcję przepływu blokującego.",
               "augment": "Każda krawędź dopuszczalnej ścieżki dostaje nowy przepływ równy wąskiemu gardłu.",
               "phaseDone": "Ten graf warstwowy jest nasycony i nie ma już dopuszczalnej ścieżki; teraz odbuduj warstwy BFS."
+            },
+            "computation": {
+              "rebuild": "Dinic odbudowuje warstwy przed każdą fazą przepływu blokującego.",
+              "residualPositive": "Przepustowość residualna pozostaje dodatnia.",
+              "entersLayer": "{{node}} wchodzi do następnej warstwy BFS.",
+              "sinkNotInLevel": "{{node}} ∉ graf poziomów",
+              "noPathResidual": "W sieci residualnej nie ma już ścieżki powiększającej.",
+              "sendBlocking": "DFS wyśle teraz przepływ blokujący przez ten warstwowy DAG.",
+              "smallestLimits": "Najmniejsza krawędź residualna ogranicza, ile przepływu można jeszcze przepchnąć.",
+              "repeat": "Dinic powtarza to, aż cały graf poziomów stanie się blokujący.",
+              "blockingExhausts": "Przepływ blokujący wyczerpuje każdą pozostałą ścieżkę ze źródła do ujścia w bieżącym grafie poziomów."
             }
           },
           "edmondsKarp": {
@@ -5879,6 +6168,15 @@
               "complete": "Jeśli BFS nie dociera już do ujścia w sieci residualnej, bieżący przepływ jest maksymalny.",
               "pathFound": "BFS daje najkrótszą ścieżkę residualną do ujścia; najmniejsza krawędź residualna staje się wąskim gardłem.",
               "augment": "Zwiększ przepływ na każdej krawędzi ścieżki o wartość wąskiego gardła i uruchom BFS od nowa."
+            },
+            "computation": {
+              "shortestNext": "Następna ścieżka powiększająca musi mieć najmniej krawędzi.",
+              "alreadyParent": "{{node}} ma już najkrótszego rodzica residualnego w tej rundzie.",
+              "joinsTree": "{{node}} dołącza do drzewa BFS przez tę krawędź.",
+              "parentRecorded": "zapisano najkrótszego rodzica residualnego",
+              "sinkNotInTree": "{{node}} ∉ drzewo BFS",
+              "bottleneckLimit": "Każda krawędź tej ścieżki może zwiększyć przepływ najwyżej o wąskie gardło.",
+              "freshBfs": "Sieć residualna się zmienia, więc Edmonds-Karp uruchamia nowy BFS."
             }
           },
           "hopcroftKarp": {
@@ -5916,6 +6214,28 @@
               "augment": "Każda krawędź ścieżki naprzemiennej zmienia stan, więc skojarzenie rośnie o jeden.",
               "stuck": "Żadna ścieżka DFS nie spełniła ograniczeń najkrótszych warstw, więc bieżące skojarzenie jest ostateczne.",
               "phaseDone": "Faza zakończona; odbuduj warstwy BFS, aby szukać kolejnej porcji najkrótszych ścieżek powiększających."
+            },
+            "computation": {
+              "queueSeeds": "Ziarna kolejki",
+              "sources": "źródła: {{count}}",
+              "onlyUnmatched": "Najkrótsze ścieżki powiększające mogą zaczynać tylko nieskojarzone węzły lewe.",
+              "freeEnds": "{{node}} jest wolny i może zakończyć ścieżkę powiększającą.",
+              "matchedQueue": "{{node}} jest skojarzony z {{mate}}; dodaj tego partnera do kolejki warstwę głębiej.",
+              "alternatingStep": "Krok naprzemienny",
+              "matchedTo": "skojarzony z {{node}}",
+              "freeRight": "wolny węzeł prawy",
+              "shortestTest": "Test najkrótszej ścieżki",
+              "noFreeReachable": "osiągalny wolny prawy = fałsz",
+              "stops": "Hopcroft-Karp kończy, gdy graf warstwowy nie ma ścieżki powiększającej.",
+              "matchedCount": "skojarzone: {{count}}",
+              "pack": "DFS próbuje zmieścić w tej fazie jak najwięcej najkrótszych ścieżek powiększających.",
+              "pathLength": "Długość ścieżki",
+              "plusOne": "+1 para",
+              "flip": "Odwróć krawędzie skojarzone i wolne wzdłuż tej ścieżki naprzemiennej.",
+              "matchingSize": "Rozmiar skojarzenia",
+              "plusOneCardinality": "Ścieżka powiększająca zwiększa liczność skojarzenia dokładnie o jeden.",
+              "augmentingPaths": "ścieżki powiększające: {{count}}",
+              "accelerates": "Hopcroft-Karp przyspiesza skojarzenie, powiększając kilka najkrótszych ścieżek w jednej fazie BFS."
             }
           },
           "minCostMaxFlow": {
@@ -5947,6 +6267,66 @@
               "complete": "Gdy nie ma już residualnej ścieżki ze źródła do ujścia, bieżący przepływ jest maksymalny i ma już minimalny koszt.",
               "routeFound": "Najtańsza trasa residualna jest gotowa; jej wąskie gardło określa, ile dodatkowego przepływu przejdzie po tej cenie jednostkowej.",
               "augment": "Przepchnij wąskie gardło najtańszą trasą, zaktualizuj łączny koszt i szukaj kolejnego najtańszego powiększenia."
+            },
+            "computation": {
+              "sourceCost": "Koszt źródła",
+              "ready": "gotowe",
+              "minimizeCost": "Następna ścieżka powiększająca powinna minimalizować dodany koszt transportu.",
+              "costRelaxation": "Relaksacja kosztu",
+              "costUpdated": "zaktualizowano najlepszy łączny koszt",
+              "noPredecessor": "{{node}} nie ma poprzednika residualnego",
+              "flowCost": "przepływ {{flow}} · koszt {{cost}}",
+              "routePrice": "Cena trasy",
+              "unitCost": "koszt jednostkowy {{unit}}, wąskie gardło {{bottleneck}}",
+              "totalCost": "Koszt całkowity",
+              "newBaseline": "Następne wyszukiwanie startuje od tej nowej bazy kosztu."
+            }
+          },
+          "common": {
+            "frontiers": {
+              "bfsFrontier": "Front BFS",
+              "residualBfs": "BFS w sieci residualnej",
+              "augmentPath": "Ścieżka powiększająca",
+              "admissibleEdges": "Krawędzie dopuszczalne",
+              "admissiblePath": "Ścieżka dopuszczalna",
+              "shortestLayers": "Najkrótsze warstwy",
+              "shortestPath": "Najkrótsza ścieżka",
+              "layerGraph": "Graf warstwowy",
+              "shortestCostFrontier": "Front najtańszego kosztu",
+              "residualCheapestPath": "Najtańsza ścieżka residualna",
+              "augmentRoute": "Trasa powiększająca"
+            },
+            "computation": {
+              "startLayer": "Warstwa startowa",
+              "startLevel": "Poziom startowy",
+              "residualBfsReady": "BFS w sieci residualnej gotowy",
+              "residualZeroBfs": "Przepustowość residualna wynosi zero, więc BFS nie może użyć tej krawędzi.",
+              "residualZero": "przepustowość residualna wynosi zero",
+              "residualCapacity": "Przepustowość residualna",
+              "parentUpdate": "Aktualizacja rodzica",
+              "levelValue": "poziom {{level}}",
+              "reachability": "Osiągalność",
+              "maxFlow": "maks. przepływ {{flow}}",
+              "flowValue": "przepływ {{flow}}",
+              "noAugmentingPath": "Nie ma już ścieżki powiększającej.",
+              "bottleneck": "Wąskie gardło",
+              "flowUpdate": "Aktualizacja przepływu",
+              "levelGraph": "Graf poziomów",
+              "admissibleEdges": "krawędzie dopuszczalne: {{count}}",
+              "phaseGain": "Zysk fazy"
+            },
+            "modes": {
+              "dinic": "Maksymalny przepływ Dinica",
+              "minCostMaxFlow": "Maks. przepływ o min. koszcie",
+              "edmondsKarp": "Edmonds-Karp",
+              "hopcroftKarp": "Hopcroft-Karp"
+            },
+            "lanes": {
+              "source": "Źródło",
+              "sink": "Ujście",
+              "left": "Lewa",
+              "right": "Prawa",
+              "inner": "Wewnątrz"
             }
           }
         },
@@ -5981,6 +6361,10 @@
               "enter": "Miotła trafia na lewą krawędź {{rect}}; przelicz scalone przedziały y.",
               "leave": "Miotła trafia na prawą krawędź {{rect}}; przelicz scalone przedziały y.",
               "complete": "Przegląd zakończony: pole sumy prostokątów = {{area}}."
+            },
+            "labels": {
+              "boot": "start",
+              "complete": "koniec"
             }
           },
           "closestPair": {
@@ -6015,6 +6399,9 @@
               "circumcircle": "Sprawdź trójkąt {{triangle}} jego okręgiem opisanym, zanim dodasz go do siatki.",
               "commit": "Trójkąt {{triangle}} zostaje w siatce Delaunaya.",
               "complete": "Triangulacja Delaunaya gotowa: końcowa siatka ma trójkątów: {{count}}."
+            },
+            "labels": {
+              "meshReady": "siatka gotowa"
             }
           },
           "halfPlane": {
@@ -6024,6 +6411,10 @@
               "infeasible": "H{{constraint}} całkowicie usuwa obszar dopuszczalny.",
               "clip": "Przytnij przez H{{constraint}}: wierzchołki wielokąta dopuszczalnego: {{count}}.",
               "complete": "Przecięcie gotowe: w wielokącie dopuszczalnym zostało wierzchołków: {{count}}."
+            },
+            "labels": {
+              "globalRegion": "cała płaszczyzna",
+              "finalPolygon": "końcowy wielokąt dopuszczalny"
             }
           },
           "minkowskiSum": {
@@ -6042,6 +6433,12 @@
               "site": "Miotła dociera do P{{site}}; jego front wpływu Woronoja staje się aktywny.",
               "cell": "Komórka P{{site}} krystalizuje się z ograniczeń symetralnych wokół punktu.",
               "complete": "Diagram Woronoja gotowy: komórki dzielące płaszczyznę: {{count}}."
+            },
+            "labels": {
+              "seedField": "pole ziaren",
+              "site": "ziarno {{site}}",
+              "cell": "komórka {{site}}",
+              "allCells": "wszystkie komórki"
             }
           }
         }
@@ -7319,7 +7716,7 @@
           "recursionTrailLabel": "Ślad rekurencji",
           "recursionTrailPlaceholder": "Ślad rekurencji pojawi się po rozpoczęciu podziału.",
           "regionAriaLabel": "Region najbliższej pary",
-          "regionLabel": "Region",
+          "regionLabel": "Obszar",
           "rightHalfLabel": "Prawa połowa",
           "splitXLabel": "Podział x",
           "stripCandidateLabel": "Kandydat z pasa",
@@ -7373,7 +7770,7 @@
           "presetNoteLabel": "Notatka presetu",
           "statuses": {
             "active": "aktywna",
-            "backtrack": "backtrack",
+            "backtrack": "ślad wstecz",
             "base": "bazowa",
             "blocked": "zablokowana",
             "candidate": "kandydat",
@@ -7404,7 +7801,7 @@
           "componentsLabel": "Składowe",
           "currentSetsLabel": "Bieżące zbiory",
           "emptyLabel": "Brak śladu DSU dla tego kroku.",
-          "findOperationLabel": "find {{label}}",
+          "findOperationLabel": "znajdź {{label}}",
           "railLabel": "Szyna",
           "statuses": {
             "active": "aktywny",
@@ -7519,7 +7916,7 @@
           },
           "emptyLabel": "Brak śladu siatki dla tego kroku.",
           "filledCount": "{{count}} wypełn.",
-          "frontierLabel": "Frontier",
+          "frontierLabel": "Front",
           "modeLabel": "Tryb",
           "notStartedLabel": "nie rozpoczęto",
           "pathCount": "{{count}} w ścieżce",
@@ -7530,7 +7927,7 @@
             "closed": "zamknięta",
             "current": "bieżąca",
             "filled": "wypełniona",
-            "frontier": "frontier",
+            "frontier": "front",
             "goal": "cel",
             "idle": "bezczynna",
             "path": "ścieżka",
@@ -7591,7 +7988,7 @@
             "retire": "Usunięcie odcinka"
           },
           "summaryAriaLabel": "Podsumowanie przecięć odcinków",
-          "sweepXLabel": "Sweep x",
+          "sweepXLabel": "Miotła x",
           "upcomingQueueLabel": "Nadchodząca kolejka"
         },
         "matrix": {
@@ -7677,7 +8074,7 @@
           "statuses": {
             "blocked": "zablokowany",
             "current": "bieżący",
-            "frontier": "frontier",
+            "frontier": "front",
             "idle": "bezczynny",
             "linked": "połączony",
             "sink": "ujście",
@@ -7959,7 +8356,7 @@
           "noQueuedSitesLabel": "Brak oczekujących punktów.",
           "siteEventRailLabel": "Szyna zdarzeń punktów",
           "summaryAriaLabel": "Podsumowanie Voronoia",
-          "sweepYLabel": "Sweep y"
+          "sweepYLabel": "Miotła y"
         }
       },
       "traits": {

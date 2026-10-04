@@ -11,6 +11,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const GRAPH_TEXT = RUNTIME_KEY.graph.common;
 
 const I18N = {
   descriptions: {
@@ -135,10 +139,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
             candidateLabel: neighborLabel,
             expression: `${currentDistance} + ${edge.weight}`,
             result: `${candidateDistance}`,
-            decision:
-              previousDistance === null
-                ? `better than ∞`
-                : `better than ${previousDistance}`,
+            decision: i18nText(GRAPH_TEXT.betterThan, { value: previousDistance ?? '∞' }),
           },
         });
       } else {
@@ -158,7 +159,7 @@ export function* dijkstraGenerator(graph: WeightedGraphData): Generator<SortStep
             candidateLabel: neighborLabel,
             expression: `${currentDistance} + ${edge.weight}`,
             result: `${candidateDistance}`,
-            decision: `keep ${previousDistance}`,
+            decision: i18nText(GRAPH_TEXT.keep, { value: previousDistance }),
           },
         });
       }
@@ -264,17 +265,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Distance',
-      secondaryLabel: 'Prev',
-      frontierLabel: 'Priority queue',
-      frontierHeadLabel: 'Queue head',
-      completionLabel: 'Settled',
-      frontierStatusLabel: 'queued',
-      completionStatusLabel: 'settled',
+      metricLabel: graphLabel('distance'),
+      secondaryLabel: graphLabel('previous'),
+      frontierLabel: graphLabel('priorityQueue'),
+      frontierHeadLabel: graphLabel('queueHead'),
+      completionLabel: graphLabel('settled'),
+      frontierStatusLabel: graphLabel('statusQueued'),
+      completionStatusLabel: graphLabel('statusSettled'),
       showEdgeWeights: true,
-      detailLabel: 'Path',
-      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : 'No active node',
-      visitOrderLabel: 'Settled order',
+      detailLabel: graphLabel('path'),
+      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : i18nText(GRAPH_TEXT.noActiveNode),
+      visitOrderLabel: graphLabel('settledOrder'),
       currentNodeId,
       activeEdgeId,
       queue,

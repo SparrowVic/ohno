@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { I18N_KEY, I18nKey } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
+import { I18N_KEY, I18nKey, RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+import { TranslatableText, translatableKey } from '../../../../core/i18n/translatable-text';
 import { OhnoLed } from '../../../../shared/instrument/led/led';
 import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
 import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
@@ -11,26 +11,42 @@ import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../..
 import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { GraphStepState, GraphTraceRow } from '../../models/graph';
-import { graphLabelText, graphSecondaryText } from '../graph-visualization/graph-display.utils';
 
 const GRAPH_KEYS = I18N_KEY.features.algorithms.tracePanels.graph;
 const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
 
-const SEED_DETAILS = new Set([
-  'Component sweep',
-  'Partition check',
-  'Critical links',
-  'Tarjan SCC map',
-  'Finish stack',
-  'Kosaraju SCC map',
+const LABELS = I18N_KEY.features.algorithms.display.graph.labels;
+const RUNTIME = RUNTIME_KEY.graph;
+
+const SEED_DETAILS: ReadonlySet<string> = new Set([
+  LABELS.componentSweep,
+  LABELS.partitionCheck,
+  LABELS.criticalLinks,
+  LABELS.tarjanSccMap,
+  LABELS.finishStack,
+  LABELS.kosarajuSccMap,
 ]);
 
-function sourceCardKey(detail: string | undefined): I18nKey {
-  if (!detail) return GRAPH_KEYS.sourceLabel;
-  if (detail.startsWith('Euler') || detail === 'MST tree') return GRAPH_KEYS.startLabel;
-  if (detail === 'Steiner tree') return GRAPH_KEYS.terminalLabel;
-  if (detail === 'Dominator tree') return GRAPH_KEYS.entryLabel;
-  if (SEED_DETAILS.has(detail)) return GRAPH_KEYS.seedLabel;
+const START_DETAILS: ReadonlySet<string> = new Set([LABELS.eulerCircuit, LABELS.eulerPath, LABELS.mstTree]);
+
+const KEEP_DECISIONS: ReadonlySet<string> = new Set([
+  RUNTIME.common.keep,
+  RUNTIME.common.keepDiscovery,
+  RUNTIME.common.keepUnreachable,
+  RUNTIME.connectedComponents.decisions.keepLabel,
+  RUNTIME.bipartiteCheck.decisions.keepColoring,
+  RUNTIME.kosaraju.decisions.keepBoundary,
+]);
+
+const UNBOUNDED_METRICS: ReadonlySet<string> = new Set([LABELS.color, LABELS.dominatorCount]);
+
+function sourceCardKey(detail: TranslatableText | undefined): I18nKey {
+  const key = translatableKey(detail);
+  if (!key) return GRAPH_KEYS.sourceLabel;
+  if (START_DETAILS.has(key)) return GRAPH_KEYS.startLabel;
+  if (key === LABELS.steinerTree) return GRAPH_KEYS.terminalLabel;
+  if (key === LABELS.dominatorTree) return GRAPH_KEYS.entryLabel;
+  if (SEED_DETAILS.has(key)) return GRAPH_KEYS.seedLabel;
   return GRAPH_KEYS.sourceLabel;
 }
 
@@ -52,7 +68,7 @@ export class GraphTracePanel {
   readonly focusModeLabel = input<string | null>(null);
   readonly focusHint = input<string | null>(null);
 
-  private readonly metricLabel = computed<string | null>(() => this.state()?.metricLabel ?? null);
+  private readonly metricLabel = computed<TranslatableText | null>(() => this.state()?.metricLabel ?? null);
   protected readonly frontierLabel = computed<TranslatableText>(
     () => this.labelOr(this.state()?.frontierLabel, GRAPH_KEYS.frontierFallbackLabel),
   );
@@ -90,9 +106,9 @@ export class GraphTracePanel {
   });
 
   protected readonly decisionTone = computed<TraceTone | null>(() => {
-    const decision = this.state()?.computation?.decision;
+    const decision = translatableKey(this.state()?.computation?.decision);
     if (!decision) return null;
-    return decision.startsWith('keep') ? 'slate' : 'pink';
+    return KEEP_DECISIONS.has(decision) ? 'slate' : 'pink';
   });
 
   protected readonly decisionFacts = computed<readonly TraceFact[]>(() => {
@@ -150,7 +166,7 @@ export class GraphTracePanel {
       {
         id: 'detail',
         label: this.labelOr(state.detailLabel, GRAPH_KEYS.graphStateBadgeLabel),
-        value: state.detailValue ?? toTraceValue(GRAPH_KEYS.noDetailLabel),
+        value: toTraceValue(state.detailValue || GRAPH_KEYS.noDetailLabel),
         kind: 'mono',
         wide: true,
       },
@@ -168,7 +184,7 @@ export class GraphTracePanel {
   );
 
   protected readonly visitChips = computed<readonly TraceChip[]>(() =>
-    (this.state()?.visitOrder ?? []).map((label, index) => ({ id: `${index}-${label}`, label, tone: 'lime' })),
+    (this.state()?.visitOrder ?? []).map((label, index) => ({ id: index, label: toTraceValue(label), tone: 'lime' })),
   );
 
   protected readonly columns = computed<readonly TraceColumn[]>(() => [
@@ -187,7 +203,7 @@ export class GraphTracePanel {
         cells: {
           node: row.label,
           metric: this.formatDistance(row.distance),
-          secondary: row.secondaryText ? toTraceValue(graphSecondaryText(row.secondaryText)) : null,
+          secondary: toTraceValue(row.secondaryText),
           status: [{ id: 'status', label: this.statusLabel(row), tone }],
         },
       };
@@ -211,13 +227,13 @@ export class GraphTracePanel {
     return toTraceValue(GRAPH_KEYS.statuses.unseen);
   }
 
-  private labelOr(label: string | null | undefined, fallback: I18nKey): TranslatableText {
-    return label ? graphLabelText(label) : fallback;
+  private labelOr(label: TranslatableText | null | undefined, fallback: I18nKey): TranslatableText {
+    return label || fallback;
   }
 
   private formatDistance(distance: number | null): string {
-    const metric = this.metricLabel();
-    if (distance === null && (metric === 'Color' || metric === 'Dom#')) return '—';
+    const metric = translatableKey(this.metricLabel());
+    if (distance === null && metric !== null && UNBOUNDED_METRICS.has(metric)) return '—';
     return distance === null ? '∞' : String(distance);
   }
 }

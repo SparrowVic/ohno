@@ -13,6 +13,9 @@ import {
   PointStatus,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.geometry.delaunay.labels;
 
 const I18N = {
   descriptions: {
@@ -168,7 +171,7 @@ function makeStep(
     edges: buildEdges(points, complete ? triangles : committed),
     circles: currentCircle,
     events: buildEvents(triangles, currentIndex),
-    activeTriangleLabel: current?.id ?? 'mesh ready',
+    activeTriangleLabel: current?.id ?? i18nText(TEXT.meshReady),
     triangleCount: complete ? triangles.length : committed.length,
   };
 

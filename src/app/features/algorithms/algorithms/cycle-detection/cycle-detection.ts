@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel, graphSecondary } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.cycleDetection;
 
 const I18N = {
   descriptions: {
@@ -42,6 +46,12 @@ const I18N = {
 
 type ColorState = 'new' | 'stack' | 'done';
 
+const COLOR_STATES: Readonly<Record<ColorState, TranslatableText>> = {
+  new: graphSecondary('new'),
+  stack: graphSecondary('onStack'),
+  done: graphSecondary('done'),
+};
+
 const COLOR_RESULTS: Readonly<Record<ColorState, TranslatableText>> = {
   new: i18nText(I18N.results.new),
   stack: i18nText(I18N.results.stack),
@@ -56,7 +66,7 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
   const closed = new Set<string>();
   const stack: string[] = [];
   const order: string[] = [];
-  let cyclePath = 'searching...';
+  let cyclePath: string | null = null;
   let foundCycle = false;
 
   yield createStep({
@@ -143,14 +153,14 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
         phase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
-          expression: color,
+          expression: COLOR_STATES[color],
           result: COLOR_RESULTS[color],
           decision:
             color === 'new'
-              ? 'visit neighbor'
+              ? i18nText(TEXT.decisions.visitNeighbor)
               : color === 'stack'
-                ? 'back edge found'
-                : 'already closed',
+                ? i18nText(TEXT.decisions.backEdgeFound)
+                : i18nText(TEXT.decisions.alreadyClosed),
         },
       });
 
@@ -173,9 +183,9 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
           phase: 'relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
-            expression: 'new',
+            expression: COLOR_STATES.new,
             result: COLOR_RESULTS.stack,
-            decision: 'descend recursively',
+            decision: i18nText(TEXT.decisions.descend),
           },
         });
 
@@ -204,9 +214,9 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
           phase: 'skip-relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
-            expression: 'stack',
+            expression: COLOR_STATES.stack,
             result: i18nText(I18N.results.cycle),
-            decision: cyclePath,
+            decision: cyclePath ?? '',
           },
         });
         return true;
@@ -228,9 +238,9 @@ export function* cycleDetectionGenerator(graph: WeightedGraphData): Generator<So
         phase: 'skip-relax',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
-          expression: 'done',
+          expression: COLOR_STATES.done,
           result: COLOR_RESULTS.done,
-          decision: 'ignore closed node',
+          decision: i18nText(TEXT.decisions.ignoreClosed),
         },
       });
     }
@@ -267,7 +277,7 @@ function createStep(args: {
   readonly closed: ReadonlySet<string>;
   readonly stack: readonly string[];
   readonly order: readonly string[];
-  readonly cyclePath: string;
+  readonly cyclePath: string | null;
   readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
@@ -288,7 +298,7 @@ function createStep(args: {
       ...node,
       distance: args.depthMap.get(node.id) ?? null,
       previousId: args.previousMap.get(node.id) ?? null,
-      secondaryText: state.toUpperCase(),
+      secondaryText: COLOR_STATES[state],
       isSource: node.id === args.graph.sourceId,
       isCurrent: node.id === currentNodeId,
       isSettled: args.closed.has(node.id),
@@ -336,17 +346,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Depth',
-      secondaryLabel: 'State',
-      frontierLabel: 'Recursion stack',
-      frontierHeadLabel: 'Stack top',
-      completionLabel: 'Closed',
-      frontierStatusLabel: 'stacked',
-      completionStatusLabel: 'closed',
+      metricLabel: graphLabel('depth'),
+      secondaryLabel: graphLabel('state'),
+      frontierLabel: graphLabel('recursionStack'),
+      frontierHeadLabel: graphLabel('stackTop'),
+      completionLabel: graphLabel('closed'),
+      frontierStatusLabel: graphLabel('statusStacked'),
+      completionStatusLabel: graphLabel('statusClosed'),
       showEdgeWeights: false,
-      detailLabel: 'Cycle',
-      detailValue: args.cyclePath,
-      visitOrderLabel: 'Closed order',
+      detailLabel: graphLabel('cycle'),
+      detailValue: args.cyclePath ?? i18nText(TEXT.details.searching),
+      visitOrderLabel: graphLabel('closedOrder'),
       currentNodeId,
       activeEdgeId,
       queue,

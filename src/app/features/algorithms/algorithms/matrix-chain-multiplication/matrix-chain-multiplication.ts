@@ -2,9 +2,14 @@ import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
+import { dpLabel } from '../dp-text';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { MatrixChainScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
+const TEXT = RUNTIME_KEY.dp.matrixChain.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.matrixChain.modeLabel'),
@@ -149,7 +154,7 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
         phase: 'settle-node',
         computation: {
           label: i18nText(I18N.labels.cellLabel, { row: i + 1, col: j + 1 }),
-          expression: `best split = ${(bestSplit ?? i) + 1}`,
+          expression: i18nText(TEXT.bestSplit, { split: (bestSplit ?? i) + 1 }),
           result: String(best),
           decision: i18nText(I18N.decisions.splitSaved, { left: i + 1, right: j + 1 }),
         },
@@ -189,7 +194,7 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
         phase: 'relax',
         computation: {
           label: i18nText(I18N.labels.leafMatrix, { index: i + 1 }),
-          expression: 'single matrix',
+          expression: i18nText(TEXT.singleMatrix),
           result: '0',
           decision: I18N.decisions.leafInterval,
         },
@@ -216,7 +221,7 @@ export function* matrixChainMultiplicationGenerator(scenario: MatrixChainScenari
       phase: 'relax',
       computation: {
         label: i18nText(I18N.labels.traceInterval, { left: i + 1, right: j + 1 }),
-        expression: `split = ${k + 1}`,
+        expression: i18nText(COMMON.split, { split: k + 1 }),
         result: parenthesizationFor(split, i, j),
         decision: I18N.decisions.expandChildren,
       },
@@ -278,7 +283,7 @@ function createStep(args: {
             ? null
             : args.split[row]![col] === null
               ? row === col
-                ? 'diag'
+                ? dpLabel('diagonal')
                 : null
               : `k${(args.split[row]![col] ?? row) + 1}`,
         status: isBlocked

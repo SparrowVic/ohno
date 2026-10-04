@@ -14,6 +14,9 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { NQueensScenario } from '../../utils/scenarios/call-tree-lab/call-tree-lab-scenarios';
 import { createCallTreeLabStep } from '../call-tree-lab-step';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TITLES = I18N_KEY.features.algorithms.display.callTree.titles;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.callTreeLab.backtracking.modeLabel'),
@@ -183,7 +186,7 @@ export function* backtrackingGenerator(scenario: NQueensScenario): Generator<Sor
       id: m.id,
       parentId: m.parentId,
       title:
-        m.col === null ? `row ${m.row}` : `r${m.row}, c${m.col}`,
+        m.col === null ? i18nText(TITLES.root) : i18nText(TITLES.queen, { row: m.row, col: m.col }),
       subtitle: null,
       badge: m.badge,
       phase: m.phase,

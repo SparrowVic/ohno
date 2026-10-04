@@ -69,10 +69,11 @@ export class CallStackLabTracePanel {
     return [{ id: 'title', label: STACK_KEYS.activeLabel, value: frame.title, kind: 'math', wide: true, tone: 'cyan' }];
   });
 
-  protected readonly localChips = computed<readonly TraceChip[]>(() =>
-    (this.activeFrame()?.locals ?? []).map((local) => ({
-      id: local.label,
-      label: `${local.label} = ${local.value}`,
+  protected readonly localFacts = computed<readonly TraceFact[]>(() =>
+    (this.activeFrame()?.locals ?? []).map((local, index) => ({
+      id: `local-${index}`,
+      label: local.label,
+      value: local.value,
       kind: 'math',
       tone: LOCAL_TONES[local.tone],
     })),

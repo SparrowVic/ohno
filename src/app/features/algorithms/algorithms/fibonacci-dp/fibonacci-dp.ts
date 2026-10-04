@@ -5,6 +5,7 @@ import { DpCellConfig, DpHeaderConfig, createDpStep } from '../dp-step';
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { FibonacciScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.fibonacci.modeLabel'),
@@ -126,21 +127,21 @@ function createStep(args: {
   readonly computation?: DpComputation | null;
 }): SortStep {
   const candidateSet = new Set(args.candidateIndexes ?? []);
-  const rowHeaders: DpHeaderConfig[] = [{ id: 'row-fib', label: 'fib', status: 'accent', metaLabel: 'cache' }];
+  const rowHeaders: DpHeaderConfig[] = [{ id: 'row-fib', label: dpLabel('fib'), status: 'accent', metaLabel: dpLabel('cache') }];
   const colHeaders: DpHeaderConfig[] = args.fib.map((_, index) => ({
     id: `col-${index}`,
     label: String(index),
     status: (args.activeIndex === index ? 'active' : candidateSet.has(index) ? 'accent' : index <= 1 ? 'source' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: index <= 1 ? 'base' : 'term',
+    metaLabel: index <= 1 ? dpLabel('base') : dpLabel('term'),
   }));
 
   const cells: DpCellConfig[] = args.fib.map((value, index) => ({
     row: 0,
     col: index,
-    rowLabel: 'fib',
+    rowLabel: dpLabel('fib'),
     colLabel: `${index}`,
     valueLabel: String(value),
-    metaLabel: index === args.scenario.n ? 'target' : null,
+    metaLabel: index === args.scenario.n ? dpLabel('target') : null,
     status:
       args.activeIndex === index
         ? (args.activeStatus ?? 'active')

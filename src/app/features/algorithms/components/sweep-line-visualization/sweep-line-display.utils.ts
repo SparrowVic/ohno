@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, i18nText, isI18nText, translatableKey } from '../../../../core/i18n/translatable-text';
 import { GeometryRect, SweepLineStepState } from '../../models/geometry';
 import { sweepEventText } from '../geo-canvas/geometry-labels.utils';
 import {
@@ -75,9 +75,10 @@ const RECT_LOOK: Readonly<Record<GeometryRect['tone'], Pick<SweepRectView, 'tone
   done: { tone: 'lime', strong: false, dashed: false },
 };
 
-export function sweepEventRect(label: string): string | null {
-  const match = label.match(/^(?:Enter|Leave) (R\d+)$/);
-  return match ? match[1]! : null;
+export function sweepEventRect(label: TranslatableText): string | null {
+  if (!isI18nText(label) || (label.key !== GEO.events.enter && label.key !== GEO.events.leave)) return null;
+  const rect = label.params?.['rect'];
+  return rect === undefined || rect === null ? null : String(rect);
 }
 
 export function sweepReadout(state: SweepLineStepState): GeoReadoutView {
@@ -89,7 +90,7 @@ export function sweepReadout(state: SweepLineStepState): GeoReadoutView {
   };
   const rect = sweepEventRect(state.currentEventLabel);
   if (state.phase === 'complete') return { ...base, verdict: GEO.verdict.areaDone, led: 'lime' };
-  if (rect && state.currentEventLabel.startsWith('Enter')) return { ...base, verdict: i18nText(GEO.verdict.rectEnter, { rect }), led: 'cyan' };
+  if (rect && translatableKey(state.currentEventLabel) === GEO.events.enter) return { ...base, verdict: i18nText(GEO.verdict.rectEnter, { rect }), led: 'cyan' };
   if (rect) return { ...base, verdict: i18nText(GEO.verdict.rectLeave, { rect }), led: 'pink' };
   return { ...base, verdict: GEO.verdict.waiting, led: null };
 }

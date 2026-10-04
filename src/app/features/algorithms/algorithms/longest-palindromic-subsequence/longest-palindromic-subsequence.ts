@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { LpsScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.longestPalindromicSubsequence.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.longestPalindromicSubsequence.modeLabel'),
@@ -274,7 +278,7 @@ export function* longestPalindromicSubsequenceGenerator(scenario: LpsScenario): 
         phase: 'relax',
         computation: {
           label: i18nText(I18N.labels.centerLabel, { char: chars[start] }),
-          expression: 'single character',
+          expression: i18nText(TEXT.singleCharacter),
           result: previewLabel(leftPart, rightPart),
           decision: I18N.decisions.centerLocked,
         },
@@ -432,7 +436,7 @@ function createStep(args: {
         rowLabel: args.chars[row] ?? '∅',
         colLabel: args.chars[col] ?? '∅',
         valueLabel: blocked ? '—' : args.table[row]![col] === null ? '·' : String(args.table[row]![col]!),
-        metaLabel: blocked ? null : isBacktrack ? 'path' : diagonal ? 'solo' : mirrorMatch ? 'pair' : null,
+        metaLabel: blocked ? null : isBacktrack ? dpLabel('path') : diagonal ? dpLabel('solo') : mirrorMatch ? dpLabel('pair') : null,
         status: blocked
           ? 'blocked'
           : isBacktrack

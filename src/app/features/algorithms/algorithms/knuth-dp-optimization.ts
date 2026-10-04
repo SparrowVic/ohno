@@ -5,6 +5,11 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step'
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { KnuthDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
+const TEXT = RUNTIME_KEY.dp.knuthDpOptimization.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.knuthDpOptimization.modeLabel'),
@@ -167,7 +172,7 @@ export function* knuthDpOptimizationGenerator(
         phase: 'settle-node',
         computation: {
           label: i18nText(I18N.labels.cellLabel, { left: left + 1, right: right + 1 }),
-          expression: `window ${low + 1}..${high + 1}`,
+          expression: i18nText(TEXT.window, { from: low + 1, to: high + 1 }),
           result: String(bestCost),
           decision: i18nText(I18N.decisions.saveOptSplit, { split: bestSplit + 1 }),
         },
@@ -204,7 +209,7 @@ export function* knuthDpOptimizationGenerator(
         phase: 'relax',
         computation: {
           label: i18nText(I18N.labels.leafLabel, { index: left + 1 }),
-          expression: 'leaf',
+          expression: i18nText(TEXT.leaf),
           result: mergePlanLabel(opt, 0, n - 1),
           decision: I18N.decisions.noFurtherSplit,
         },
@@ -231,7 +236,7 @@ export function* knuthDpOptimizationGenerator(
       phase: 'relax',
       computation: {
         label: i18nText(I18N.labels.traceLabel, { left: left + 1, right: right + 1 }),
-        expression: `split = ${split + 1}`,
+        expression: i18nText(COMMON.split, { split: split + 1 }),
         result: mergePlanLabel(opt, 0, n - 1),
         decision: I18N.decisions.openSubintervals,
       },
@@ -286,7 +291,7 @@ function createStep(args: {
         rowLabel: `F${row + 1}`,
         colLabel: `F${col + 1}`,
         valueLabel: blocked ? '—' : diagonal ? '0' : args.dp[row]![col] === null ? '·' : String(args.dp[row]![col]!),
-        metaLabel: blocked ? null : diagonal ? 'diag' : args.opt[row]![col] === null ? null : `k${(args.opt[row]![col] ?? row) + 1}`,
+        metaLabel: blocked ? null : diagonal ? dpLabel('diagonal') : args.opt[row]![col] === null ? null : `k${(args.opt[row]![col] ?? row) + 1}`,
         status: blocked
           ? 'blocked'
           : args.traced.has(id)

@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+import { graphLabel } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.bridges;
 
 const I18N = {
   descriptions: {
@@ -132,9 +136,9 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
         phase: 'inspect-edge',
         computation: {
           candidateLabel: labelOf(labelMap, neighborId),
-          expression: discMap.get(neighborId) === null ? 'unvisited' : `disc=${discMap.get(neighborId)}`,
+          expression: discMap.get(neighborId) === null ? i18nText(TEXT.decisions.unvisited) : `disc=${discMap.get(neighborId)}`,
           result: i18nText(discMap.get(neighborId) === null ? I18N.results.treeEdge : I18N.results.backEdge),
-          decision: discMap.get(neighborId) === null ? 'descend into child' : 'update low-link',
+          decision: discMap.get(neighborId) === null ? i18nText(TEXT.decisions.descendChild) : i18nText(TEXT.decisions.updateLowLink),
         },
       });
 
@@ -160,9 +164,9 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
           phase: 'relax',
           computation: {
             candidateLabel: labelOf(labelMap, neighborId),
-            expression: 'tree edge',
+            expression: i18nText(I18N.results.treeEdge),
             result: 'dfs(child)',
-            decision: 'discover child subtree',
+            decision: i18nText(TEXT.decisions.discoverSubtree),
           },
         });
 
@@ -204,7 +208,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `min(${lowMap.get(nodeId)}, ${childLow})`,
             result: `${lowMap.get(nodeId)}`,
-            decision: isBridge ? 'bridge found' : isArticulation ? 'articulation found' : 'low-link propagated',
+            decision: isBridge ? i18nText(TEXT.decisions.bridgeFound) : isArticulation ? i18nText(TEXT.decisions.articulationFound) : i18nText(RUNTIME_KEY.graph.common.lowLinkPropagated),
           },
         });
         continue;
@@ -231,7 +235,7 @@ export function* bridgesArticulationPointsGenerator(graph: WeightedGraphData): G
           candidateLabel: labelOf(labelMap, neighborId),
           expression: `min(${lowMap.get(nodeId)}, ${discMap.get(neighborId)})`,
           result: `${lowMap.get(nodeId)}`,
-          decision: 'back edge keeps component connected',
+          decision: i18nText(TEXT.decisions.backEdgeConnected),
         },
       });
     }
@@ -335,17 +339,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Disc',
-      secondaryLabel: 'Low',
-      frontierLabel: 'DFS stack',
-      frontierHeadLabel: 'Stack top',
-      completionLabel: 'Closed',
-      frontierStatusLabel: 'stacked',
-      completionStatusLabel: 'closed',
+      metricLabel: graphLabel('discovery'),
+      secondaryLabel: graphLabel('low'),
+      frontierLabel: graphLabel('dfsStack'),
+      frontierHeadLabel: graphLabel('stackTop'),
+      completionLabel: graphLabel('closed'),
+      frontierStatusLabel: graphLabel('statusStacked'),
+      completionStatusLabel: graphLabel('statusClosed'),
       showEdgeWeights: false,
-      detailLabel: 'Critical links',
+      detailLabel: graphLabel('criticalLinks'),
       detailValue: describeCritical(args.bridges, args.articulation, labelMap),
-      visitOrderLabel: 'Exit order',
+      visitOrderLabel: graphLabel('exitOrder'),
       currentNodeId,
       activeEdgeId,
       queue,
@@ -360,13 +364,13 @@ function describeCritical(
   bridges: ReadonlySet<string>,
   articulation: ReadonlySet<string>,
   labelMap: ReadonlyMap<string, string>,
-): string {
+): TranslatableText {
   const articulationLabels = [...articulation].map((nodeId) => labelOf(labelMap, nodeId)).sort();
   const bridgeLabels = [...bridges]
     .map((edgeId) => edgeId.split('__').map((nodeId) => labelOf(labelMap, nodeId)).join('–'))
     .sort();
 
-  return `Bridges: ${bridgeLabels.join(', ') || '—'} · Articulation: ${articulationLabels.join(', ') || '—'}`;
+  return i18nText(TEXT.details.critical, { bridges: bridgeLabels.join(', ') || '—', articulation: articulationLabels.join(', ') || '—' });
 }
 
 function outgoingEdges(graph: WeightedGraphData, nodeId: string) {

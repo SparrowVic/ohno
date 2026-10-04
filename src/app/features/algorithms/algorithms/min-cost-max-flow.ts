@@ -9,6 +9,11 @@ import {
 import { SortStep } from '../models/sort-step';
 import { LayeredNetworkEdge, MinCostMaxFlowScenario } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+import { networkFrontier, networkRack } from './network-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const C = RUNTIME_KEY.network.common.computation;
+const TEXT = RUNTIME_KEY.network.minCostMaxFlow.computation;
 
 const I18N = {
   phases: {
@@ -57,10 +62,10 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
     phaseLabel: i18nText(I18N.phases.initialize),
     statusLabel: i18nText(I18N.statuses.zeroFlow),
     resultLabel: i18nText(I18N.results.zero),
-    frontierLabel: 'Shortest-cost frontier',
-    queueLabel: 'Cost scan',
+    frontierLabel: networkFrontier('shortestCostFrontier'),
+    queueLabel: networkRack('costScan'),
     queue: [],
-    focusItemsLabel: 'Committed flow',
+    focusItemsLabel: networkRack('committedFlow'),
     focusItems: [],
     description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
@@ -82,18 +87,18 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
       phaseLabel: i18nText(I18N.phases.costPath, { round }),
       statusLabel: i18nText(I18N.statuses.seed),
       resultLabel: i18nText(I18N.results.flowCost, { flow: totalFlow, cost: totalCost }),
-      frontierLabel: 'Shortest-cost frontier',
-      queueLabel: 'Cost scan',
+      frontierLabel: networkFrontier('shortestCostFrontier'),
+      queueLabel: networkRack('costScan'),
       queue: [scenario.sourceId],
-      focusItemsLabel: 'Committed flow',
+      focusItemsLabel: networkRack('committedFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
-        label: 'Source cost',
+        label: i18nText(TEXT.sourceCost),
         expression: `${labelById.get(scenario.sourceId) ?? scenario.sourceId} = 0`,
-        result: 'ready',
-        decision: 'The next augmenting path should minimize added transport cost.',
+        result: i18nText(TEXT.ready),
+        decision: i18nText(TEXT.minimizeCost),
       },
     });
 
@@ -123,24 +128,24 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
           phaseLabel: i18nText(I18N.phases.relax, { pass: pass + 1 }),
           statusLabel: i18nText(I18N.statuses.inspect),
           resultLabel: i18nText(I18N.results.flowCost, { flow: totalFlow, cost: totalCost }),
-          frontierLabel: 'Shortest-cost frontier',
-          queueLabel: 'Cost scan',
+          frontierLabel: networkFrontier('shortestCostFrontier'),
+          queueLabel: networkRack('costScan'),
           queue: [...activeFrontier],
-          focusItemsLabel: 'Committed flow',
+          focusItemsLabel: networkRack('committedFlow'),
           focusItems: positiveFlowLabels(scenario, flow, labelById),
           description: i18nText(I18N.descriptions.inspect, { via: labelById.get(edge.fromId) ?? edge.fromId, node: labelById.get(edge.toId) ?? edge.toId }),
           activeCodeLine: 4,
           phase: 'inspect-edge',
           computation: {
-            label: 'Cost relaxation',
+            label: i18nText(TEXT.costRelaxation),
             expression: `${fromDistance} + ${edgeCost}`,
             result: String(candidateCost),
             decision:
               residual <= 0
-                ? 'residual capacity is zero'
+                ? i18nText(C.residualZero)
                 : improves
-                  ? `better than ${currentCost ?? '∞'}`
-                  : `keep ${currentCost}`,
+                  ? i18nText(RUNTIME_KEY.graph.common.betterThan, { value: currentCost ?? '∞' })
+                  : i18nText(RUNTIME_KEY.graph.common.keep, { value: currentCost }),
           },
         });
 
@@ -165,19 +170,19 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
           phaseLabel: i18nText(I18N.phases.relax, { pass: pass + 1 }),
           statusLabel: i18nText(I18N.statuses.updated),
           resultLabel: i18nText(I18N.results.flowCost, { flow: totalFlow, cost: totalCost }),
-          frontierLabel: 'Shortest-cost frontier',
-          queueLabel: 'Cost scan',
+          frontierLabel: networkFrontier('shortestCostFrontier'),
+          queueLabel: networkRack('costScan'),
           queue: [...activeFrontier],
-          focusItemsLabel: 'Committed flow',
+          focusItemsLabel: networkRack('committedFlow'),
           focusItems: positiveFlowLabels(scenario, flow, labelById),
           description: i18nText(I18N.descriptions.updated, { node: labelById.get(edge.toId) ?? edge.toId }),
           activeCodeLine: 5,
           phase: 'relax',
           computation: {
-            label: 'Parent update',
+            label: i18nText(C.parentUpdate),
             expression: `${labelById.get(edge.toId) ?? edge.toId} ← ${labelById.get(edge.fromId) ?? edge.fromId}`,
             result: String(candidateCost),
-            decision: 'best cumulative cost updated',
+            decision: i18nText(TEXT.costUpdated),
           },
         });
       }
@@ -196,19 +201,19 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
         phaseLabel: i18nText(I18N.phases.complete, { round }),
         statusLabel: i18nText(I18N.statuses.unreachable),
         resultLabel: i18nText(I18N.results.flowCost, { flow: totalFlow, cost: totalCost }),
-        frontierLabel: 'Residual cheapest path',
-        queueLabel: 'Cost scan',
+        frontierLabel: networkFrontier('residualCheapestPath'),
+        queueLabel: networkRack('costScan'),
         queue: [],
-        focusItemsLabel: 'Final committed flow',
+        focusItemsLabel: networkRack('finalCommittedFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 8,
         phase: 'graph-complete',
         computation: {
-          label: 'Reachability',
-          expression: `${labelById.get(scenario.sinkId) ?? scenario.sinkId} has no residual predecessor`,
-          result: `flow ${totalFlow} · cost ${totalCost}`,
-          decision: 'No more augmenting path exists.',
+          label: i18nText(C.reachability),
+          expression: i18nText(TEXT.noPredecessor, { node: labelById.get(scenario.sinkId) ?? scenario.sinkId }),
+          result: i18nText(TEXT.flowCost, { flow: totalFlow, cost: totalCost }),
+          decision: i18nText(C.noAugmentingPath),
         },
       });
       return;
@@ -232,19 +237,19 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
       phaseLabel: i18nText(I18N.phases.augment, { round }),
       statusLabel: i18nText(I18N.statuses.routeFound),
       resultLabel: i18nText(I18N.results.flowCost, { flow: totalFlow, cost: totalCost }),
-      frontierLabel: 'Augment route',
-      queueLabel: 'Cost scan',
+      frontierLabel: networkFrontier('augmentRoute'),
+      queueLabel: networkRack('costScan'),
       queue: [],
       activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
-      focusItemsLabel: 'Committed flow',
+      focusItemsLabel: networkRack('committedFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.routeFound),
       activeCodeLine: 6,
       computation: {
-        label: 'Route price',
+        label: i18nText(TEXT.routePrice),
         expression: `${pathEdges.map((edge) => edge.cost ?? 0).join(' + ')} × ${bottleneck}`,
         result: String(pathTotalCost),
-        decision: `unit cost ${pathUnitCost}, bottleneck ${bottleneck}`,
+        decision: i18nText(TEXT.unitCost, { unit: pathUnitCost, bottleneck }),
       },
     });
 
@@ -264,20 +269,20 @@ export function* minCostMaxFlowGenerator(scenario: MinCostMaxFlowScenario): Gene
       phaseLabel: i18nText(I18N.phases.augment, { round }),
       statusLabel: i18nText(I18N.statuses.committed),
       resultLabel: i18nText(I18N.results.flowCost, { flow: totalFlow, cost: totalCost }),
-      frontierLabel: 'Committed flow',
-      queueLabel: 'Cost scan',
+      frontierLabel: networkRack('committedFlow'),
+      queueLabel: networkRack('costScan'),
       queue: [],
       activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
-      focusItemsLabel: 'Committed flow',
+      focusItemsLabel: networkRack('committedFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.augment),
       activeCodeLine: 7,
       phase: 'relax',
       computation: {
-        label: 'Total cost',
+        label: i18nText(TEXT.totalCost),
         expression: `${totalCost - pathTotalCost} + ${pathTotalCost}`,
         result: String(totalCost),
-        decision: 'The next search starts from this new cost baseline.',
+        decision: i18nText(TEXT.newBaseline),
       },
     });
   }
@@ -291,10 +296,10 @@ function createSnapshot(args: {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly frontierLabel: string;
-  readonly queueLabel: string;
+  readonly frontierLabel: TranslatableText;
+  readonly queueLabel: TranslatableText;
   readonly queue: readonly string[];
-  readonly focusItemsLabel: string;
+  readonly focusItemsLabel: TranslatableText;
   readonly focusItems: readonly string[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;

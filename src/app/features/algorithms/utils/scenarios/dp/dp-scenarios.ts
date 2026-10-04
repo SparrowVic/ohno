@@ -525,7 +525,7 @@ const LIS_TEMPLATES = {
 } satisfies Record<string, readonly number[]>;
 
 const REGEX_TEMPLATES = {
-  alias: ['AABBC', 'A.*BC'],
+  alias: ['AABBBC', 'A.*BC'],
   logs: ['MISSIONS', 'MI.*I.*S'],
   pulse: ['ABCCD', 'A.*C.D'],
 } satisfies Record<string, readonly [string, string]>;

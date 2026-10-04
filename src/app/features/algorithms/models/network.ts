@@ -56,7 +56,7 @@ export interface NetworkEdgeSnapshot {
 export interface NetworkTraceRow {
   readonly nodeId: string;
   readonly label: string;
-  readonly laneLabel: string;
+  readonly laneLabel: TranslatableText;
   readonly level: number | null;
   readonly linkLabel: string | null;
   readonly status: NetworkNodeStatus;
@@ -64,24 +64,24 @@ export interface NetworkTraceRow {
 }
 
 export interface NetworkComputation {
-  readonly label: string;
-  readonly expression: string;
-  readonly result: string | null;
-  readonly decision: string;
+  readonly label: TranslatableText;
+  readonly expression: TranslatableText;
+  readonly result: TranslatableText | null;
+  readonly decision: TranslatableText;
 }
 
 export interface NetworkTraceState {
   readonly mode: NetworkMode;
-  readonly modeLabel: string;
+  readonly modeLabel: TranslatableText;
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly frontierLabel: string;
+  readonly frontierLabel: TranslatableText;
   readonly frontierCount: number;
-  readonly queueLabel: string;
+  readonly queueLabel: TranslatableText;
   readonly queue: readonly string[];
   readonly activeRouteLabel: string | null;
-  readonly focusItemsLabel: string;
+  readonly focusItemsLabel: TranslatableText;
   readonly focusItems: readonly string[];
   readonly nodes: readonly NetworkNodeSnapshot[];
   readonly edges: readonly NetworkEdgeSnapshot[];

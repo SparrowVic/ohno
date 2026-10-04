@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { isI18nText } from '../../../../core/i18n/translatable-text';
+import { i18nText, isI18nText } from '../../../../core/i18n/translatable-text';
 import { backtrackingGenerator } from '../../algorithms/backtracking/backtracking';
 import { mctsGenerator } from '../../algorithms/mcts/mcts';
 import { minimaxAlphaBetaGenerator } from '../../algorithms/minimax-alpha-beta/minimax-alpha-beta';
@@ -24,7 +24,6 @@ import {
   callTreePathRows,
   callTreeScene,
   callTreeSlots,
-  callTreeTitle,
   followScroll,
 } from './call-tree-display.utils';
 
@@ -123,21 +122,19 @@ describe('call-tree tones', () => {
 
 describe('call-tree labels', () => {
   it('puts the decision inside the ring', () => {
-    expect(callTreeGlyph('backtracking', 'r2, c3')).toEqual({ text: '3', dot: true });
-    expect(callTreeGlyph('backtracking', 'row -1')).toEqual({ text: '', dot: false });
-    expect(callTreeGlyph('minimax', 'MAX(d=2)')).toEqual({ text: '▲', dot: false });
-    expect(callTreeGlyph('minimax', 'MIN(d=1)')).toEqual({ text: '▼', dot: false });
-    expect(callTreeGlyph('minimax', 'leaf=4')).toEqual({ text: '', dot: false });
-    expect(callTreeGlyph('mcts', 'arm #2')).toEqual({ text: '2', dot: true });
-    expect(callTreeGlyph('mcts', 'root')).toEqual({ text: '', dot: false });
+    expect(callTreeGlyph('backtracking', i18nText(TITLES.queen, { row: 2, col: 3 }))).toEqual({ text: '3', dot: true });
+    expect(callTreeGlyph('backtracking', i18nText(TITLES.root))).toEqual({ text: '', dot: false });
+    expect(callTreeGlyph('minimax', i18nText(TITLES.max, { depth: 2 }))).toEqual({ text: '▲', dot: false });
+    expect(callTreeGlyph('minimax', i18nText(TITLES.min, { depth: 1 }))).toEqual({ text: '▼', dot: false });
+    expect(callTreeGlyph('minimax', i18nText(TITLES.leaf, { value: 4 }))).toEqual({ text: '', dot: false });
+    expect(callTreeGlyph('mcts', i18nText(TITLES.arm, { arm: 2 }))).toEqual({ text: '2', dot: true });
+    expect(callTreeGlyph('mcts', i18nText(TITLES.root))).toEqual({ text: '', dot: false });
   });
 
-  it('maps every generator title onto a key', () => {
-    const titles = new Set([...queens(), ...minimax(), ...mcts()].flatMap((state) => state.nodes.map((entry) => entry.title)));
+  it('emits every generator title as a title key', () => {
+    const titles = [...queens(), ...minimax(), ...mcts()].flatMap((state) => state.nodes.map((entry) => entry.title));
     for (const title of titles) {
-      const mapped = callTreeTitle(title);
-      const key = isI18nText(mapped) ? mapped.key : mapped;
-      expect(Object.values(TITLES)).toContain(key);
+      expect(isI18nText(title) && Object.values(TITLES).includes(title.key as never)).toBe(true);
     }
   });
 
@@ -152,7 +149,7 @@ describe('call-tree labels', () => {
   it('lists the active path frontier first like a stack with the root at the bottom', () => {
     const probe = queens().find((state) => state.activePath.length > 2 && state.tone === 'descend');
     const rows = callTreePathRows(probe ?? null);
-    expect(rows.at(-1)?.title).toBe(TITLES.root);
+    expect(rows.at(-1)?.title).toEqual(i18nText(TITLES.root));
     expect(rows[0]?.tone).toBe('now');
     expect(rows.map((row) => row.depth)).toEqual(rows.map((_, index) => rows.length - 1 - index));
   });

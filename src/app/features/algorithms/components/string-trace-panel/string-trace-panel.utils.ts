@@ -306,7 +306,7 @@ function palindromicTreeSections(tree: PalindromicTreeTraceState): readonly Stri
       id: 'nodes',
       title: KEYS.palindromicTree.nodesLabel,
       meta: tree.nodes.length,
-      chips: plainChips(tree.nodes.filter((node) => node.length > 0).map((node) => `${node.palindrome}(${node.occurrences})`)),
+      chips: plainChips(tree.nodes.flatMap((node) => (typeof node.palindrome === 'string' ? [`${node.palindrome}(${node.occurrences})`] : []))),
     },
   ];
 }

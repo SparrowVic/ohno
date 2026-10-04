@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { CoinChangeScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.coinChange.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.coinChange.modeLabel'),
@@ -137,7 +141,7 @@ export function* coinChangeGenerator(scenario: CoinChangeScenario): Generator<So
           label: i18nText(I18N.labels.coinAmountComputation, { coin, amount }),
           expression: canTake
             ? `min(dp[${row - 1}][${amount}] = ${formatCost(skipValue)}, dp[${row}][${amount - coin}] + 1 = ${formatCost(takeValue)})`
-            : `${coin} > ${amount} or prior amount unreachable`,
+            : i18nText(TEXT.coinBlocked, { coin, amount }),
           result: formatCost(Math.min(skipValue, takeValue)),
           decision:
             canTake && takeValue < skipValue
@@ -284,19 +288,19 @@ function createStep(args: {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: 'no coins', status: 'source', metaLabel: 'base' },
+    { id: 'row-0', label: dpLabel('noCoins'), status: 'source', metaLabel: dpLabel('base') },
     ...args.scenario.coins.map((coin, index) => ({
       id: `row-${index + 1}`,
       label: `${coin}`,
       status: (args.activeCell?.[0] === index + 1 ? 'active' : 'accent') as DpHeaderConfig['status'],
-      metaLabel: 'coin',
+      metaLabel: dpLabel('coin'),
     })),
   ];
   const colHeaders: DpHeaderConfig[] = Array.from({ length: args.scenario.target + 1 }, (_, amount) => ({
     id: `col-${amount}`,
     label: String(amount),
     status: (args.activeCell?.[1] === amount ? 'active' : amount === 0 ? 'source' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: amount === 0 ? 'base' : 'amt',
+    metaLabel: amount === 0 ? dpLabel('base') : dpLabel('amount'),
   }));
 
   const cells: DpCellConfig[] = [];
@@ -317,10 +321,10 @@ function createStep(args: {
       cells.push({
         row,
         col: amount,
-        rowLabel: row === 0 ? 'no coin' : `${args.scenario.coins[row - 1]!}`,
+        rowLabel: row === 0 ? dpLabel('noCoin') : `${args.scenario.coins[row - 1]!}`,
         colLabel: `${amount}`,
         valueLabel: formatCost(value),
-        metaLabel: unreachable ? '∞' : isBacktrack ? 'picked' : null,
+        metaLabel: unreachable ? '∞' : isBacktrack ? dpLabel('picked') : null,
         status: isBacktrack
           ? 'backtrack'
           : id === activeCellId

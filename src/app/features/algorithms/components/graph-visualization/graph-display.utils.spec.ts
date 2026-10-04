@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { i18nText, isI18nText } from '../../../../core/i18n/translatable-text';
 import { bellmanFordGenerator } from '../../algorithms/bellman-ford/bellman-ford';
 import { bfsGenerator } from '../../algorithms/bfs/bfs';
 import { bipartiteCheckGenerator } from '../../algorithms/bipartite-check/bipartite-check';
@@ -40,15 +41,12 @@ import {
   graphFrontierRows,
   graphGlyphScale,
   graphValueFont,
-  graphLabelKey,
-  graphLabelText,
   graphNodeTone,
   graphRouteEdgeIds,
   graphRouteMode,
   graphRouteNodeIds,
   GRAPH_NODE_RADIUS,
   GRAPH_VIEW_PADDING,
-  graphSecondaryText,
   graphValueText,
   graphViewBox,
   trimSegment,
@@ -107,17 +105,17 @@ function state(overrides: Partial<GraphStepState>): GraphStepState {
     edges: [],
     sourceId: 'a',
     phaseLabel: '',
-    metricLabel: 'Distance',
-    secondaryLabel: 'Prev',
-    frontierLabel: 'Priority queue',
-    frontierHeadLabel: 'Queue head',
-    completionLabel: 'Settled',
-    frontierStatusLabel: 'queued',
-    completionStatusLabel: 'settled',
+    metricLabel: i18nText(LABELS.distance),
+    secondaryLabel: i18nText(LABELS.previous),
+    frontierLabel: i18nText(LABELS.priorityQueue),
+    frontierHeadLabel: i18nText(LABELS.queueHead),
+    completionLabel: i18nText(LABELS.settled),
+    frontierStatusLabel: i18nText(LABELS.statusQueued),
+    completionStatusLabel: i18nText(LABELS.statusSettled),
     showEdgeWeights: true,
-    detailLabel: 'Path',
+    detailLabel: i18nText(LABELS.path),
     detailValue: '',
-    visitOrderLabel: 'Settled order',
+    visitOrderLabel: i18nText(LABELS.settledOrder),
     currentNodeId: null,
     activeEdgeId: null,
     queue: [],
@@ -129,7 +127,9 @@ function state(overrides: Partial<GraphStepState>): GraphStepState {
 }
 
 describe('graph display labels', () => {
-  it.each(GRAPH_RUNS.map((run) => [run[0], run] as const))('maps every %s label to a key', (_, run) => {
+  const labelKeys = new Set<string>(Object.values(LABELS));
+
+  it.each(GRAPH_RUNS.map((run) => [run[0], run] as const))('emits every %s label as a graph label key', (_, run) => {
     const unmapped = new Set<string>();
     for (const graph of graphStates(run)) {
       for (const label of [
@@ -143,21 +143,23 @@ describe('graph display labels', () => {
         graph.detailLabel,
         graph.visitOrderLabel,
       ]) {
-        if (!graphLabelKey(label)) unmapped.add(label);
+        if (!isI18nText(label) || !labelKeys.has(label.key)) unmapped.add(JSON.stringify(label));
       }
     }
     expect([...unmapped]).toEqual([]);
   });
 
-  it('keeps the case-sensitive status labels apart from the rack titles', () => {
-    expect(graphLabelKey('Settled')).toBe(LABELS.settled);
-    expect(graphLabelKey('settled')).toBe(LABELS.statusSettled);
-  });
-
-  it('falls back to the raw label when no key exists', () => {
-    expect(graphLabelText('Priority queue')).toEqual({ key: LABELS.priorityQueue, params: undefined });
-    expect(graphLabelText('Mystery')).toBe('Mystery');
-    expect(graphLabelText(null)).toBe('');
+  it.each(GRAPH_RUNS.map((run) => [run[0], run] as const))('emits %s node secondaries without English words', (_, run) => {
+    const prose = new Set<string>();
+    for (const graph of graphStates(run)) {
+      for (const item of graph.nodes) {
+        const text = item.secondaryText;
+        if (typeof text === 'string' && /[a-z]{3,}/.test(text)) prose.add(text);
+      }
+      const detail = graph.detailValue;
+      if (typeof detail === 'string' && /\b[a-z]{3,}\b/.test(detail)) prose.add(detail);
+    }
+    expect([...prose]).toEqual([]);
   });
 });
 
@@ -180,11 +182,13 @@ describe('graph display tones', () => {
   });
 
   it('paints Euler path endpoints violet and keeps bipartite sides cyan and pink', () => {
-    expect(graphNodeTone(node({ id: 'a', tone: 'left', isFrontier: true }), 'Euler path')).toBe('violet');
-    expect(graphNodeTone(node({ id: 'a', tone: 'right', isCurrent: true }), 'Euler path')).toBe('violet');
-    expect(graphNodeTone(node({ id: 'a', tone: 'left' }), 'Partition check')).toBe('cyan');
-    expect(graphNodeTone(node({ id: 'a', tone: 'right' }), 'Partition check')).toBe('pink');
-    expect(graphNodeTone(node({ id: 'a', tone: 'critical' }), 'Euler path')).toBe('red');
+    const eulerPath = i18nText(LABELS.eulerPath);
+    const partition = i18nText(LABELS.partitionCheck);
+    expect(graphNodeTone(node({ id: 'a', tone: 'left', isFrontier: true }), eulerPath)).toBe('violet');
+    expect(graphNodeTone(node({ id: 'a', tone: 'right', isCurrent: true }), eulerPath)).toBe('violet');
+    expect(graphNodeTone(node({ id: 'a', tone: 'left' }), partition)).toBe('cyan');
+    expect(graphNodeTone(node({ id: 'a', tone: 'right' }), partition)).toBe('pink');
+    expect(graphNodeTone(node({ id: 'a', tone: 'critical' }), eulerPath)).toBe('red');
   });
 
   it('never paints an Euler path endpoint in the inspected-edge pink', () => {
@@ -194,7 +198,7 @@ describe('graph display tones', () => {
     for (const size of [6, 8, 10]) {
       for (const step of generator(createGraph(size))) {
         const graph = step.graph;
-        if (!graph || graph.detailLabel !== 'Euler path') continue;
+        if (!graph || !isI18nText(graph.detailLabel) || graph.detailLabel.key !== LABELS.eulerPath) continue;
         for (const item of graph.nodes) {
           if (item.tone === 'left' || item.tone === 'right') expect(graphNodeTone(item, graph.detailLabel)).toBe('violet');
         }
@@ -214,9 +218,9 @@ describe('graph display tones', () => {
   });
 
   it('prints infinity only for distance-like metrics', () => {
-    expect(graphValueText(null, 'Distance')).toBe('∞');
-    expect(graphValueText(null, 'Color')).toBe('—');
-    expect(graphValueText(0, 'Color')).toBe('0');
+    expect(graphValueText(null, i18nText(LABELS.distance))).toBe('∞');
+    expect(graphValueText(null, i18nText(LABELS.color))).toBe('—');
+    expect(graphValueText(0, i18nText(LABELS.color))).toBe('0');
   });
 });
 
@@ -312,10 +316,10 @@ describe('graph display routes', () => {
   });
 
   it('offers routes only for shortest-path, BFS and DFS traces', () => {
-    expect(graphRouteMode(state({ metricLabel: 'Distance' }))).toBe('shortest-tree');
-    expect(graphRouteMode(state({ metricLabel: 'Level' }))).toBe('bfs-tree');
-    expect(graphRouteMode(state({ metricLabel: 'Depth', detailLabel: 'Depth path' }))).toBe('dfs-tree');
-    expect(graphRouteMode(state({ metricLabel: 'Depth', detailLabel: 'Cycle' }))).toBeNull();
+    expect(graphRouteMode(state({ metricLabel: i18nText(LABELS.distance) }))).toBe('shortest-tree');
+    expect(graphRouteMode(state({ metricLabel: i18nText(LABELS.level) }))).toBe('bfs-tree');
+    expect(graphRouteMode(state({ metricLabel: i18nText(LABELS.depth), detailLabel: i18nText(LABELS.depthPath) }))).toBe('dfs-tree');
+    expect(graphRouteMode(state({ metricLabel: i18nText(LABELS.depth), detailLabel: i18nText(LABELS.cycle) }))).toBeNull();
     expect(graphRouteMode(null)).toBeNull();
   });
 });
@@ -340,11 +344,11 @@ describe('graph display racks', () => {
   it('shows the secondary column instead of the predecessor when the trace is not a Prev trace', () => {
     const rows = graphFrontierRows(
       state({
-        metricLabel: 'Index',
-        secondaryLabel: 'Low / SCC',
+        metricLabel: i18nText(LABELS.index),
+        secondaryLabel: i18nText(LABELS.lowScc),
         nodes: [
           node({ id: 'a', previousId: 'b', secondaryText: '0' }),
-          node({ id: 'b', secondaryText: 'sealed' }),
+          node({ id: 'b', secondaryText: i18nText(SECONDARY.sealed) }),
           node({ id: 'c' }),
         ],
         queue: [
@@ -377,23 +381,6 @@ describe('graph display racks', () => {
     expect(rows.map((row) => row.label)).toEqual(['A', 'F', 'B', 'G']);
     expect(rows[0]).toEqual({ id: 'a', label: 'A', fromLabel: null, secondary: null, isSource: true, value: '0', tone: 'done' });
     expect(rows[2].fromLabel).toBe('F');
-  });
-
-  it('translates the generator secondary words and keeps the rest verbatim', () => {
-    expect(graphSecondaryText('BLUE')).toEqual({ key: SECONDARY.sideZero, params: undefined });
-    expect(graphSecondaryText('AMBER')).toEqual({ key: SECONDARY.sideOne, params: undefined });
-    expect(graphSecondaryText('start / finish')).toEqual({ key: SECONDARY.startFinish, params: undefined });
-    expect(graphSecondaryText('L2 S1')).toBe('L2 S1');
-    expect(graphSecondaryText('steiner')).toEqual({ key: SECONDARY.steiner, params: undefined });
-    expect(graphSecondaryText('idle')).toEqual({ key: SECONDARY.idle, params: undefined });
-  });
-
-  it('translates the patterned generator secondary texts with their parameters', () => {
-    expect(graphSecondaryText('via C')).toEqual({ key: SECONDARY.via, params: { node: 'C' } });
-    expect(graphSecondaryText('next B')).toEqual({ key: SECONDARY.next, params: { node: 'B' } });
-    expect(graphSecondaryText('2/4 used')).toEqual({ key: SECONDARY.used, params: { used: '2', total: '4' } });
-    expect(graphSecondaryText('deg 3')).toEqual({ key: SECONDARY.degree, params: { degree: '3' } });
-    expect(graphSecondaryText('c1')).toBe('c1');
   });
 
   it('returns empty racks without a state', () => {

@@ -29,7 +29,7 @@ describe('bipartite-check', () => {
 
     expect(finalStep?.phase).toBe('graph-complete');
     expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bipartiteCheck.descriptions.complete' });
-    expect(finalStep?.graph?.detailValue).toBe('Left: A, D · Right: B, C');
+    expect(finalStep?.graph?.detailValue).toEqual({ key: 'features.algorithms.runtime.graph.bipartiteCheck.details.partitions', params: { left: 'A, D', right: 'B, C' } });
     expect(steps.some((step) => step.phase === 'skip-relax')).toBe(true);
   });
 
@@ -50,7 +50,7 @@ describe('bipartite-check', () => {
     const finalStep = steps.at(-1);
 
     expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bipartiteCheck.descriptions.failed', params: { from: 'B', to: 'C' } });
-    expect(finalStep?.graph?.detailValue).toBe('Conflict: B ↔ C');
+    expect(finalStep?.graph?.detailValue).toEqual({ key: 'features.algorithms.runtime.graph.bipartiteCheck.details.conflict', params: { nodes: 'B ↔ C' } });
     expect(
       finalStep?.graph?.nodes.filter((node) => node.tone === 'critical').map((node) => node.label),
     ).toEqual(['B', 'C']);

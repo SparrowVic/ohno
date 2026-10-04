@@ -12,6 +12,10 @@ import {
   WeightedGraphEdge,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+import { graphLabel, graphSecondary } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.eulerTrail;
 
 const I18N = {
   descriptions: {
@@ -55,7 +59,7 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
   const startId = oddNodeIds[0] ?? graph.sourceId;
   const endId = oddNodeIds[1] ?? startId;
   const isCircuit = oddNodeIds.length === 0;
-  const trailKind = isCircuit ? 'Euler circuit' : 'Euler path';
+  const trailKind = graphLabel(isCircuit ? 'eulerCircuit' : 'eulerPath');
   const usedEdgeIds = new Set<string>();
   const stack: string[] = [startId];
   const trail: string[] = [];
@@ -77,13 +81,13 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
     activeCodeLine: 2,
     phase: 'init',
     computation: {
-      candidateLabel: oddNodeIds.length === 0 ? 'Degree check' : 'Odd endpoints',
+      candidateLabel: i18nText(oddNodeIds.length === 0 ? TEXT.decisions.degreeCheck : TEXT.decisions.oddEndpoints),
       expression:
         oddNodeIds.length === 0
-          ? 'every degree is even'
-          : `${labelOf(labelById, startId)} / ${labelOf(labelById, endId)} are odd`,
+          ? i18nText(TEXT.decisions.allEven)
+          : i18nText(TEXT.decisions.oddPair, { start: labelOf(labelById, startId), end: labelOf(labelById, endId) }),
       result: i18nText(isCircuit ? I18N.results.circuit : I18N.results.path),
-      decision: 'Hierholzer will grow a live stack and backtrack to lock the final trail.',
+      decision: i18nText(TEXT.decisions.plan),
     },
   });
 
@@ -107,9 +111,9 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
       phase: 'pick-node',
       computation: {
         candidateLabel: labelOf(labelById, currentNodeId),
-        expression: `unused incident edges = ${available.length}`,
+        expression: i18nText(TEXT.decisions.unusedIncident, { count: available.length }),
         result: available.length > 0 ? labelOf(labelById, available[0]!.neighborId) : i18nText(I18N.results.backtrack),
-        decision: available.length > 0 ? 'extend trail' : 'seal this node into the final route',
+        decision: available.length > 0 ? i18nText(TEXT.decisions.extend) : i18nText(TEXT.decisions.seal),
       },
     });
 
@@ -135,7 +139,7 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
           candidateLabel: labelOf(labelById, currentNodeId),
           expression: `${labelOf(labelById, currentNodeId)} → ${labelOf(labelById, next.neighborId)}`,
           result: i18nText(I18N.results.unused),
-          decision: 'Traverse it now and remove it from future choices.',
+          decision: i18nText(TEXT.decisions.traverse),
         },
       });
 
@@ -160,9 +164,9 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
         phase: 'relax',
         computation: {
           candidateLabel: labelOf(labelById, next.neighborId),
-          expression: `stack depth ${stack.length - 1} + 1`,
+          expression: i18nText(TEXT.decisions.stackDepth, { depth: stack.length - 1 }),
           result: String(stack.length),
-          decision: 'The live walk keeps growing until the top node runs out of unused edges.',
+          decision: i18nText(TEXT.decisions.keepWalking),
         },
       });
 
@@ -188,9 +192,9 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
       phase: 'settle-node',
       computation: {
         candidateLabel: labelOf(labelById, sealedNodeId),
-        expression: 'unused incident edges = 0',
+        expression: i18nText(TEXT.decisions.unusedIncident, { count: 0 }),
         result: describeTrail(trail, labelById),
-        decision: 'Backtracking fixes this node permanently in the finished route suffix.',
+        decision: i18nText(TEXT.decisions.fixSuffix),
       },
     });
   }
@@ -211,9 +215,9 @@ export function* eulerPathCircuitGenerator(graph: WeightedGraphData): Generator<
     phase: 'graph-complete',
     computation: {
       candidateLabel: trailKind,
-      expression: `${graph.edges.length} edge(s) used exactly once`,
+      expression: i18nText(TEXT.decisions.allUsed, { count: graph.edges.length }),
       result: describeTrail(finalTrail, labelById),
-      decision: 'Hierholzer finishes once both the live stack and the unused-edge set are empty.',
+      decision: i18nText(TEXT.decisions.finish),
     },
   });
 }
@@ -222,7 +226,7 @@ function createStep(args: {
   readonly graph: WeightedGraphData;
   readonly startId: string;
   readonly endId: string;
-  readonly trailKind: string;
+  readonly trailKind: TranslatableText;
   readonly degreeByNode: ReadonlyMap<string, number>;
   readonly adjacency: ReadonlyMap<string, readonly EulerAdjacencyEntry[]>;
   readonly usedEdgeIds: ReadonlySet<string>;
@@ -262,15 +266,15 @@ function createStep(args: {
       previousId: null,
       secondaryText: node.id === args.startId
         ? args.startId === args.endId
-          ? 'start / finish'
-          : 'start'
+          ? graphSecondary('startFinish')
+          : graphSecondary('start')
         : node.id === args.endId
-          ? 'finish'
+          ? graphSecondary('finish')
           : node.id === currentNodeId && nextNeighbor
-            ? `next ${labelOf(labelById, nextNeighbor)}`
+            ? graphSecondary('next', { node: labelOf(labelById, nextNeighbor) })
             : remaining === 0 && sealedSet.has(node.id)
-              ? 'sealed'
-              : `${usedCountByNode.get(node.id) ?? 0}/${total} used`,
+              ? graphSecondary('sealed')
+              : graphSecondary('used', { used: usedCountByNode.get(node.id) ?? 0, total }),
       isSource: node.id === args.startId,
       isCurrent: node.id === currentNodeId,
       isSettled: sealedSet.has(node.id),
@@ -315,20 +319,20 @@ function createStep(args: {
     edges,
     sourceId: args.startId,
     phaseLabel: i18nText(phaseLabel(args.phase)),
-    metricLabel: 'Unused',
-    secondaryLabel: 'State',
-    frontierLabel: 'Stack',
-    frontierHeadLabel: 'Top',
-    completionLabel: 'Sealed',
-    frontierStatusLabel: 'stacked',
-    completionStatusLabel: 'sealed',
+    metricLabel: graphLabel('unused'),
+    secondaryLabel: graphLabel('state'),
+    frontierLabel: graphLabel('stack'),
+    frontierHeadLabel: graphLabel('top'),
+    completionLabel: graphLabel('sealed'),
+    frontierStatusLabel: graphLabel('statusStacked'),
+    completionStatusLabel: graphLabel('statusSealed'),
     showEdgeWeights: false,
     detailLabel: args.trailKind,
     detailValue:
       displayTrail.length > 0
         ? describeTrail(displayTrail, labelById)
-        : 'Trail order appears during backtracking.',
-    visitOrderLabel: 'Final trail',
+        : i18nText(TEXT.details.trailPending),
+    visitOrderLabel: graphLabel('finalTrail'),
     currentNodeId,
     activeEdgeId,
     queue,

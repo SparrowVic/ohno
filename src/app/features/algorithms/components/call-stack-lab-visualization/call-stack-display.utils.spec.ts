@@ -10,7 +10,6 @@ import {
   callStackReturnRows,
   callStackTopTitle,
   frameSignature,
-  localLabel,
   returnRowTone,
 } from './call-stack-display.utils';
 
@@ -27,12 +26,6 @@ describe('call-stack display utils', () => {
     expect(frameSignature('fib(5)')).toEqual({ name: 'fib', args: '5' });
     expect(frameSignature('solve(row=2, col=3)')).toEqual({ name: 'solve', args: 'row=2, col=3' });
     expect(frameSignature('main')).toEqual({ name: 'main', args: '' });
-  });
-
-  it('maps English local names onto keys and keeps identifiers', () => {
-    expect(localLabel('left')).toBe(CALL_STACK.locals.left);
-    expect(localLabel('right')).toBe(CALL_STACK.locals.right);
-    expect(localLabel('n')).toBe('n');
   });
 
   it('has a key for every frame phase', () => {

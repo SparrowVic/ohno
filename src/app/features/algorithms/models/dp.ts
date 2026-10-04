@@ -58,19 +58,19 @@ export type DpTraceTag =
 
 export interface DpHeader {
   readonly id: string;
-  readonly label: string;
+  readonly label: TranslatableText;
   readonly status: DpHeaderStatus;
-  readonly metaLabel: string | null;
+  readonly metaLabel: TranslatableText | null;
 }
 
 export interface DpCell {
   readonly id: string;
   readonly row: number;
   readonly col: number;
-  readonly rowLabel: string;
-  readonly colLabel: string;
+  readonly rowLabel: TranslatableText;
+  readonly colLabel: TranslatableText;
   readonly valueLabel: string;
-  readonly metaLabel: string | null;
+  readonly metaLabel: TranslatableText | null;
   readonly status: DpCellStatus;
   readonly tags: readonly DpTraceTag[];
 }

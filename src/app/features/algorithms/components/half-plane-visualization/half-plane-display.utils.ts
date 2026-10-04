@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { i18nText } from '../../../../core/i18n/translatable-text';
+import { i18nText, translatableKey } from '../../../../core/i18n/translatable-text';
 import {
   GeometryConstraintLine,
   GeometryCoord,
@@ -123,7 +123,7 @@ export function halfPlaneReadout(state: HalfPlaneIntersectionStepState): GeoRead
   };
   if (empty) return { ...base, verdict: GEO.verdict.emptyRegion, led: 'red' };
   if (state.phase === 'complete') return { ...base, verdict: GEO.verdict.regionDone, led: 'lime' };
-  if (state.phase === 'clip') return { ...base, verdict: i18nText(GEO.verdict.clipped, { constraint: state.currentConstraintLabel }), led: 'pink' };
+  if (state.phase === 'clip') return { ...base, verdict: i18nText(GEO.verdict.clipped, { constraint: translatableKey(state.currentConstraintLabel) }), led: 'pink' };
   if (state.phase === 'constraint') return { ...base, verdict: GEO.verdict.keepLeft, led: 'cyan' };
   return { ...base, verdict: GEO.verdict.feasible, led: 'lime' };
 }

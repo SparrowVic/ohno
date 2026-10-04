@@ -9,6 +9,11 @@ import {
 import { SortStep } from '../models/sort-step';
 import { DinicScenario, LayeredNetworkEdge, LayeredNetworkNode } from '../utils/scenarios/network/network-scenarios';
 import { createNetworkStep, NetworkStepNodeState } from './network-step';
+import { networkFrontier, networkRack } from './network-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const C = RUNTIME_KEY.network.common.computation;
+const TEXT = RUNTIME_KEY.network.dinic.computation;
 
 const I18N = {
   phases: {
@@ -60,10 +65,10 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
     phaseLabel: i18nText(I18N.phases.initialize),
     statusLabel: i18nText(I18N.statuses.zeroFlow),
     resultLabel: i18nText(I18N.results.maxFlowZero),
-    frontierLabel: 'BFS frontier',
-    queueLabel: 'Level queue',
+    frontierLabel: networkFrontier('bfsFrontier'),
+    queueLabel: networkRack('levelQueue'),
     queue: [],
-    focusItemsLabel: 'Positive flow',
+    focusItemsLabel: networkRack('positiveFlow'),
     focusItems: [],
     description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
@@ -84,18 +89,18 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
       statusLabel: i18nText(I18N.statuses.seed),
       resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-      frontierLabel: 'BFS frontier',
-      queueLabel: 'Level queue',
+      frontierLabel: networkFrontier('bfsFrontier'),
+      queueLabel: networkRack('levelQueue'),
       queue,
-      focusItemsLabel: 'Positive flow',
+      focusItemsLabel: networkRack('positiveFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.seed),
       activeCodeLine: 3,
       computation: {
-        label: 'Start level',
+        label: i18nText(C.startLevel),
         expression: `${labelById.get(scenario.sourceId) ?? scenario.sourceId} = 0`,
-        result: 'residual BFS ready',
-        decision: 'Dinic rebuilds layers before each blocking-flow phase.',
+        result: i18nText(C.residualBfsReady),
+        decision: i18nText(TEXT.rebuild),
       },
     });
 
@@ -112,10 +117,10 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.expand),
         resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-        frontierLabel: 'BFS frontier',
-        queueLabel: 'Level queue',
+        frontierLabel: networkFrontier('bfsFrontier'),
+        queueLabel: networkRack('levelQueue'),
         queue: queue.slice(queueIndex),
-        focusItemsLabel: 'Positive flow',
+        focusItemsLabel: networkRack('positiveFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.expand, { node: labelById.get(currentNodeId) ?? currentNodeId }),
         activeCodeLine: 4,
@@ -124,9 +129,9 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       for (const edge of adjacency.get(currentNodeId) ?? []) {
         const residual = residualCapacity(edge, flow);
         const targetId = edge.toId;
-        let decision = residual > 0 ? 'Residual capacity stays positive.' : 'Residual capacity is zero, so BFS cannot use this edge.';
+        let decision: TranslatableText = i18nText(residual > 0 ? TEXT.residualPositive : C.residualZeroBfs);
         if (residual > 0 && !level.has(targetId)) {
-          decision = `${labelById.get(targetId) ?? targetId} enters the next BFS layer.`;
+          decision = i18nText(TEXT.entersLayer, { node: labelById.get(targetId) ?? targetId });
         }
 
         yield createSnapshot({
@@ -139,15 +144,15 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
           phaseLabel: i18nText(I18N.phases.bfs, { phase: phaseIndex }),
           statusLabel: i18nText(I18N.statuses.inspect),
           resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-          frontierLabel: 'BFS frontier',
-          queueLabel: 'Level queue',
+          frontierLabel: networkFrontier('bfsFrontier'),
+          queueLabel: networkRack('levelQueue'),
           queue: queue.slice(queueIndex),
-          focusItemsLabel: 'Positive flow',
+          focusItemsLabel: networkRack('positiveFlow'),
           focusItems: positiveFlowLabels(scenario, flow, labelById),
           description: i18nText(I18N.descriptions.inspect, { from: labelById.get(currentNodeId) ?? currentNodeId, to: labelById.get(targetId) ?? targetId }),
           activeCodeLine: 4,
           computation: {
-            label: 'Residual capacity',
+            label: i18nText(C.residualCapacity),
             expression: `${edge.capacity ?? 0} - ${flow.get(edge.id) ?? 0}`,
             result: String(residual),
             decision,
@@ -171,19 +176,19 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         phaseLabel: i18nText(I18N.phases.complete, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.unreachable),
         resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-        frontierLabel: 'Residual BFS',
-        queueLabel: 'Level queue',
+        frontierLabel: networkFrontier('residualBfs'),
+        queueLabel: networkRack('levelQueue'),
         queue: [],
-        focusItemsLabel: 'Final positive flow',
+        focusItemsLabel: networkRack('finalPositiveFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 10,
         phase: 'graph-complete',
         computation: {
-          label: 'Reachability',
-          expression: `${labelById.get(scenario.sinkId) ?? scenario.sinkId} ∉ level graph`,
-          result: `max flow ${totalFlow}`,
-          decision: 'No more augmenting path exists in the residual network.',
+          label: i18nText(C.reachability),
+          expression: i18nText(TEXT.sinkNotInLevel, { node: labelById.get(scenario.sinkId) ?? scenario.sinkId }),
+          result: i18nText(C.maxFlow, { flow: totalFlow }),
+          decision: i18nText(TEXT.noPathResidual),
         },
       });
       return;
@@ -198,18 +203,18 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       phaseLabel: i18nText(I18N.phases.blocking, { phase: phaseIndex }),
       statusLabel: i18nText(I18N.statuses.levelGraph),
       resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-      frontierLabel: 'Admissible edges',
-      queueLabel: 'Level queue',
+      frontierLabel: networkFrontier('admissibleEdges'),
+      queueLabel: networkRack('levelQueue'),
       queue: [],
-      focusItemsLabel: 'Positive flow',
+      focusItemsLabel: networkRack('positiveFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.levelGraph),
       activeCodeLine: 5,
       computation: {
-        label: 'Level graph',
-        expression: `${candidateEdgeIds.size} admissible edge(s)`,
-        result: `flow ${totalFlow}`,
-        decision: 'DFS will now send blocking flow through this layered DAG.',
+        label: i18nText(C.levelGraph),
+        expression: i18nText(C.admissibleEdges, { count: candidateEdgeIds.size }),
+        result: i18nText(C.flowValue, { flow: totalFlow }),
+        decision: i18nText(TEXT.sendBlocking),
       },
     });
 
@@ -234,19 +239,19 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         phaseLabel: i18nText(I18N.phases.blocking, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.pathFound),
         resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-        frontierLabel: 'Admissible path',
-        queueLabel: 'Level queue',
+        frontierLabel: networkFrontier('admissiblePath'),
+        queueLabel: networkRack('levelQueue'),
         queue: [],
         activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
-        focusItemsLabel: 'Positive flow',
+        focusItemsLabel: networkRack('positiveFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.pathFound),
         activeCodeLine: 7,
         computation: {
-          label: 'Bottleneck',
+          label: i18nText(C.bottleneck),
           expression: `min(${path.map((edge) => residualCapacity(edge, flow)).join(', ')})`,
           result: String(bottleneck),
-          decision: 'The smallest residual edge limits how much additional flow can be pushed.',
+          decision: i18nText(TEXT.smallestLimits),
         },
       });
 
@@ -266,20 +271,20 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
         phaseLabel: i18nText(I18N.phases.blocking, { phase: phaseIndex }),
         statusLabel: i18nText(I18N.statuses.pushed),
         resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-        frontierLabel: 'Positive flow',
-        queueLabel: 'Level queue',
+        frontierLabel: networkRack('positiveFlow'),
+        queueLabel: networkRack('levelQueue'),
         queue: [],
         activeRouteLabel: labelsFor(pathNodeIds, labelById).join(' → '),
-        focusItemsLabel: 'Positive flow',
+        focusItemsLabel: networkRack('positiveFlow'),
         focusItems: positiveFlowLabels(scenario, flow, labelById),
         description: i18nText(I18N.descriptions.augment),
         activeCodeLine: 8,
         phase: 'relax',
         computation: {
-          label: 'Flow update',
+          label: i18nText(C.flowUpdate),
           expression: `${totalFlow - bottleneck} + ${bottleneck}`,
           result: String(totalFlow),
-          decision: 'Dinic repeats this until the whole level graph becomes blocking.',
+          decision: i18nText(TEXT.repeat),
         },
       });
     }
@@ -291,19 +296,19 @@ export function* dinicMaxFlowGenerator(scenario: DinicScenario): Generator<SortS
       phaseLabel: i18nText(I18N.phases.phaseDone, { phase: phaseIndex }),
       statusLabel: i18nText(I18N.statuses.blockingAdded, { flow: pushedThisPhase }),
       resultLabel: i18nText(I18N.results.maxFlow, { flow: totalFlow }),
-      frontierLabel: 'Positive flow',
-      queueLabel: 'Level queue',
+      frontierLabel: networkRack('positiveFlow'),
+      queueLabel: networkRack('levelQueue'),
       queue: [],
-      focusItemsLabel: 'Positive flow',
+      focusItemsLabel: networkRack('positiveFlow'),
       focusItems: positiveFlowLabels(scenario, flow, labelById),
       description: i18nText(I18N.descriptions.phaseDone),
       activeCodeLine: 9,
       phase: 'pass-complete',
       computation: {
-        label: 'Phase gain',
+        label: i18nText(C.phaseGain),
         expression: `+${pushedThisPhase}`,
-        result: `flow ${totalFlow}`,
-        decision: 'A blocking flow exhausts every remaining source-to-sink path inside the current level graph.',
+        result: i18nText(C.flowValue, { flow: totalFlow }),
+        decision: i18nText(TEXT.blockingExhausts),
       },
     });
   }
@@ -316,10 +321,10 @@ function createSnapshot(args: {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly frontierLabel: string;
-  readonly queueLabel: string;
+  readonly frontierLabel: TranslatableText;
+  readonly queueLabel: TranslatableText;
   readonly queue: readonly string[];
-  readonly focusItemsLabel: string;
+  readonly focusItemsLabel: TranslatableText;
   readonly focusItems: readonly string[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;

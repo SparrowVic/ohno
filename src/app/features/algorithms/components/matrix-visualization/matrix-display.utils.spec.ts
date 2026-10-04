@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { i18nText } from '../../../../core/i18n/translatable-text';
+import { i18nText, translatableKey } from '../../../../core/i18n/translatable-text';
 import { floydWarshallGenerator } from '../../algorithms/floyd-warshall/floyd-warshall';
 import { hungarianAlgorithmGenerator } from '../../algorithms/hungarian-algorithm';
 import { MatrixTraceState } from '../../models/matrix';
@@ -26,7 +26,6 @@ import {
   matrixRackRows,
   matrixRackSpec,
   matrixRowHeaderViews,
-  matrixSentenceText,
   parseRackPair,
 } from './matrix-display.utils';
 
@@ -75,48 +74,41 @@ function findFloyd(predicate: (state: MatrixTraceState) => boolean): MatrixTrace
 }
 
 function findCover(label: string): MatrixTraceState {
-  return matrixOf(coverSteps.find((entry) => entry.matrix?.computation?.label === label));
+  return matrixOf(coverSteps.find((entry) => translatableKey(entry.matrix?.computation?.label) === label));
 }
 
 describe('matrixRackSpec', () => {
-  it('maps generator rack labels to keys and kinds', () => {
-    expect(matrixRackSpec('Pivot node')).toEqual({
+  it('reads the rack kind from the generator label key', () => {
+    expect(matrixRackSpec(i18nText(MATRIX.racks.pivotNode))).toEqual({
       title: i18nText(MATRIX.racks.pivotNode),
       kind: 'pivot',
     });
-    expect(matrixRackSpec('Current matches')).toEqual({
-      title: i18nText(MATRIX.racks.currentMatches),
-      kind: 'done',
-    });
-    expect(matrixRackSpec('Covered columns').kind).toBe('covered');
-    expect(matrixRackSpec('Why it works').kind).toBe('sentence');
-    expect(matrixRackSpec('Nodes').title).toEqual(
-      i18nText(I18N_KEY.features.algorithms.display.racks.nodes),
-    );
+    expect(matrixRackSpec(i18nText(MATRIX.racks.currentMatches)).kind).toBe('done');
+    expect(matrixRackSpec(i18nText(MATRIX.racks.coveredColumns)).kind).toBe('covered');
+    expect(matrixRackSpec(i18nText(MATRIX.racks.whyItWorks)).kind).toBe('sentence');
+    expect(matrixRackSpec(i18nText(I18N_KEY.features.algorithms.display.racks.nodes)).kind).toBe('list');
   });
 
-  it('falls back to the raw label as a plain list', () => {
+  it('falls back to a plain list', () => {
     expect(matrixRackSpec('Mystery')).toEqual({ title: 'Mystery', kind: 'list' });
     expect(matrixRackSpec(null)).toEqual({ title: '', kind: 'list' });
   });
 
-  it('covers every label the two generators emit', () => {
-    const labels = new Set(
-      [...floydSteps, ...hungarianSteps, ...coverSteps].flatMap((step) => [
-        step.matrix?.focusItemsLabel ?? '',
-        step.matrix?.secondaryItemsLabel ?? '',
-      ]),
-    );
-    for (const label of labels) {
-      expect(typeof matrixRackSpec(label).title, label).toBe('object');
+  it('emits every rack label and sentence as a key', () => {
+    for (const step of [...floydSteps, ...hungarianSteps, ...coverSteps]) {
+      const state = matrixOf(step);
+      expect(typeof state.focusItemsLabel).toBe('object');
+      expect(typeof state.secondaryItemsLabel).toBe('object');
+      expect(typeof state.modeLabel).toBe('object');
+      for (const item of [...state.focusItems, ...state.secondaryItems]) {
+        if (typeof item === 'string') expect(item).not.toMatch(/[a-z]{3,} [a-z]{3,}/);
+      }
+      const computation = state.computation;
+      if (computation) {
+        expect(typeof computation.label).toBe('object');
+        expect(typeof computation.decision).toBe('object');
+      }
     }
-  });
-});
-
-describe('matrixSentenceText', () => {
-  it('translates known sentences and ignores the rest', () => {
-    expect(matrixSentenceText('no change this pivot')).toEqual(i18nText(MATRIX.sentences.noChange));
-    expect(matrixSentenceText('A→B 3')).toBeNull();
   });
 });
 
@@ -152,7 +144,7 @@ describe('matrixRackRows', () => {
 
   it('renders sentences without an LED and dims the quiet ones', () => {
     const rows = matrixRackRows(
-      ['no change this pivot', 'Rebuild zero matching on the adjusted matrix'],
+      [i18nText(MATRIX.sentences.noChange), i18nText(MATRIX.sentences.rebuildMatching)],
       'done',
     );
     expect(rows[0]).toMatchObject({
@@ -264,7 +256,7 @@ describe('Hungarian cells', () => {
     const row = matrixCellViews(state).filter((cell) => cell.row === 0);
     expect(row.every((cell) => cell.tone === 'pink' && cell.tag === '−2')).toBe(true);
     expect(matrixNote(state)?.formula).toEqual(
-      i18nText(MATRIX.notes.formulas.subtractRow, { label: 'Ava', value: '2' }),
+      i18nText(MATRIX.notes.formulas.subtractRow, { label: 'Ava', value: 2 }),
     );
   });
 
@@ -278,23 +270,23 @@ describe('Hungarian cells', () => {
   });
 
   it('draws amber bands for covered lines and explains the cover', () => {
-    const cover = findCover('Minimum cover');
+    const cover = findCover(MATRIX.notes.titles.minimumCover);
     expect(matrixBands(cover).every((band) => band.tone === 'amber')).toBe(true);
     expect(matrixBands(cover).length).toBe(3);
     expect(matrixNote(cover)?.formula).toEqual(
-      i18nText(MATRIX.notes.formulas.cover, { rows: '2', cols: '1', total: '3' }),
+      i18nText(MATRIX.notes.formulas.cover, { rows: 2, cols: 1, total: 3 }),
     );
   });
 
   it('marks the smallest uncovered value and the shifted cells', () => {
-    const smallest = findCover('Smallest uncovered');
+    const smallest = findCover(MATRIX.notes.titles.smallestUncovered);
     expect([...matrixMinimumIds(smallest)]).toEqual(['r2c0']);
-    const adjusted = findCover('Adjustment');
+    const adjusted = findCover(MATRIX.notes.titles.adjustment);
     const views = matrixCellViews(adjusted);
     expect(views.filter((cell) => cell.tag === '+6')).toHaveLength(2);
     expect(views.some((cell) => cell.tag === '−6')).toBe(true);
     expect(matrixNote(adjusted)?.formula).toEqual(
-      i18nText(MATRIX.notes.formulas.adjustment, { value: '6' }),
+      i18nText(MATRIX.notes.formulas.adjustment, { value: 6 }),
     );
   });
 
@@ -318,10 +310,10 @@ describe('Hungarian scenarios', () => {
   it('reach the cover-and-adjust branch at both sizes', () => {
     for (const size of [4, 5]) {
       const labels = collect(hungarianAlgorithmGenerator(createHungarianScenario(size))).map(
-        (step) => step.matrix?.computation?.label,
+        (step) => translatableKey(step.matrix?.computation?.label),
       );
-      expect(labels).toContain('Minimum cover');
-      expect(labels).toContain('Adjustment');
+      expect(labels).toContain(MATRIX.notes.titles.minimumCover);
+      expect(labels).toContain(MATRIX.notes.titles.adjustment);
     }
   });
 });

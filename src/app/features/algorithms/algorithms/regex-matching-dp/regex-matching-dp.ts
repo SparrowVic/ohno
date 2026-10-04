@@ -5,6 +5,11 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { RegexMatchingScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
+const TEXT = RUNTIME_KEY.dp.regexMatching.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.regexMatching.modeLabel'),
@@ -246,7 +251,7 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
         phase: 'compare',
         computation: {
           label: i18nText(I18N.labels.charVsToken, { token, char }),
-          expression: `dp[${row - 1}][${col - 1}] AND match`,
+          expression: i18nText(COMMON.andMatch, { cell: `dp[${row - 1}][${col - 1}]` }),
           result: boolLabel(diagonal),
           decision: diagonal ? I18N.decisions.diagonalRegexMatch : I18N.decisions.literalBranchFails,
         },
@@ -354,7 +359,7 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
           phase: 'skip-relax',
           computation: {
             label: i18nText(I18N.labels.regexEmpty, { token: prevToken }),
-            expression: 'zero occurrences',
+            expression: i18nText(TEXT.zeroOccurrences),
             result: routeLabel(routeTokens),
             decision: I18N.decisions.jumpLeftTwo,
           },
@@ -381,7 +386,7 @@ export function* regexMatchingDpGenerator(scenario: RegexMatchingScenario): Gene
         phase: 'relax',
         computation: {
           label: i18nText(I18N.labels.tokenMatches, { token, char }),
-          expression: 'diagonal',
+          expression: i18nText(TEXT.diagonal),
           result: routeLabel(routeTokens),
           decision: I18N.decisions.consumeTextAndRegex,
         },
@@ -431,7 +436,7 @@ function createStep(args: {
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
 
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: '∅', status: 'source', metaLabel: 'text' },
+    { id: 'row-0', label: '∅', status: 'source', metaLabel: dpLabel('text') },
     ...args.text.map((char, index) => ({
       id: `row-${index + 1}`,
       label: char,
@@ -440,12 +445,12 @@ function createStep(args: {
     })),
   ];
   const colHeaders: DpHeaderConfig[] = [
-    { id: 'col-0', label: '∅', status: 'target', metaLabel: 'regex' },
+    { id: 'col-0', label: '∅', status: 'target', metaLabel: dpLabel('regex') },
     ...args.pattern.map((char, index) => ({
       id: `col-${index + 1}`,
       label: char,
       status: (args.activeCell?.[1] === index + 1 ? 'active' : 'target') as DpHeaderConfig['status'],
-      metaLabel: char === '*' ? 'star' : char === '.' ? 'dot' : `p${index + 1}`,
+      metaLabel: char === '*' ? dpLabel('star') : char === '.' ? dpLabel('dot') : `p${index + 1}`,
     })),
   ];
 
@@ -476,13 +481,13 @@ function createStep(args: {
         colLabel: col === 0 ? '∅' : args.pattern[col - 1]!,
         valueLabel: boolLabel(args.table[row]![col]!),
         metaLabel: args.backtrackCells.has(id)
-          ? 'route'
+          ? dpLabel('route')
           : token === '*'
-            ? 'group'
+            ? dpLabel('group')
             : token === '.'
-              ? 'wild'
+              ? dpLabel('wild')
               : args.table[row]![col]!
-                ? 'match'
+                ? dpLabel('match')
                 : null,
         status: args.backtrackCells.has(id)
           ? 'backtrack'

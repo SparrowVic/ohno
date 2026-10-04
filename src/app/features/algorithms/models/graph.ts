@@ -36,7 +36,7 @@ export type GraphTone =
 export interface GraphNodeSnapshot extends WeightedGraphNode {
   readonly distance: number | null;
   readonly previousId: string | null;
-  readonly secondaryText: string | null;
+  readonly secondaryText: TranslatableText | null;
   readonly isSource: boolean;
   readonly isCurrent: boolean;
   readonly isSettled: boolean;
@@ -61,7 +61,7 @@ export interface GraphTraceRow {
   readonly nodeId: string;
   readonly label: string;
   readonly distance: number | null;
-  readonly secondaryText: string | null;
+  readonly secondaryText: TranslatableText | null;
   readonly isSource: boolean;
   readonly isCurrent: boolean;
   readonly isSettled: boolean;
@@ -69,10 +69,10 @@ export interface GraphTraceRow {
 }
 
 export interface GraphComputation {
-  readonly candidateLabel: string;
-  readonly expression: string;
+  readonly candidateLabel: TranslatableText;
+  readonly expression: TranslatableText;
   readonly result: TranslatableText;
-  readonly decision: string;
+  readonly decision: TranslatableText;
 }
 
 export interface GraphStepState {
@@ -80,21 +80,21 @@ export interface GraphStepState {
   readonly edges: readonly GraphEdgeSnapshot[];
   readonly sourceId: string;
   readonly phaseLabel: TranslatableText;
-  readonly metricLabel: string;
-  readonly secondaryLabel: string;
-  readonly frontierLabel: string;
-  readonly frontierHeadLabel: string;
-  readonly completionLabel: string;
-  readonly frontierStatusLabel: string;
-  readonly completionStatusLabel: string;
+  readonly metricLabel: TranslatableText;
+  readonly secondaryLabel: TranslatableText;
+  readonly frontierLabel: TranslatableText;
+  readonly frontierHeadLabel: TranslatableText;
+  readonly completionLabel: TranslatableText;
+  readonly frontierStatusLabel: TranslatableText;
+  readonly completionStatusLabel: TranslatableText;
   readonly showEdgeWeights: boolean;
-  readonly detailLabel: string;
-  readonly detailValue: string;
-  readonly visitOrderLabel: string;
+  readonly detailLabel: TranslatableText;
+  readonly detailValue: TranslatableText;
+  readonly visitOrderLabel: TranslatableText;
   readonly currentNodeId: string | null;
   readonly activeEdgeId: string | null;
   readonly queue: readonly GraphQueueEntry[];
-  readonly visitOrder: readonly string[];
+  readonly visitOrder: readonly TranslatableText[];
   readonly traceRows: readonly GraphTraceRow[];
   readonly computation: GraphComputation | null;
 }

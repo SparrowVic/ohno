@@ -14,7 +14,6 @@ import {
   networkNodeTone,
   networkParentLabel,
   networkQueueEntry,
-  networkRackTitle,
   networkViewBox,
   placeEdgeChips,
 } from './network-display.utils';
@@ -62,12 +61,6 @@ describe('network display tones', () => {
 });
 
 describe('network display labels', () => {
-  it('maps generator rack titles to keys and falls back to the raw string', () => {
-    expect(networkRackTitle('Level queue')).toEqual(i18nText(LABELS.levelQueue));
-    expect(networkRackTitle('Final matching')).toEqual(i18nText(LABELS.finalMatching));
-    expect(networkRackTitle('Something new')).toBe('Something new');
-  });
-
   it('translates node link labels and keeps symbols', () => {
     expect(networkLinkLabel(null)).toBeNull();
     expect(networkLinkLabel('goal')).toEqual(i18nText(LABELS.goal));

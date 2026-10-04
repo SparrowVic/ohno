@@ -5,6 +5,9 @@ import { createStringStep } from '../string-step';
 import { SortStep } from '../../models/sort-step';
 import { RabinKarpTraceState } from '../../models/string';
 import { RabinKarpScenario } from '../../utils/scenarios/string/string-scenarios';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.string.rabinKarp.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.string.rabinKarp.modeLabel'),
@@ -342,8 +345,8 @@ export function* rabinKarpGenerator(
               incomingChar: null,
               computation: {
                 label: I18N.computation.labels.collision,
-                expression: `${windowHash} = ${patternHash}, but text[${start + offset}] ≠ pattern[${offset}]`,
-                result: 'reject',
+                expression: i18nText(TEXT.collision, { window: windowHash, pattern: patternHash, text: start + offset, offset }),
+                result: i18nText(TEXT.reject),
                 note: I18N.computation.notes.collision,
               },
             }),
@@ -457,7 +460,7 @@ export function* rabinKarpGenerator(
       incomingChar: null,
       computation: {
         label: I18N.computation.labels.finalOutcome,
-        expression: 'verified matches',
+        expression: i18nText(TEXT.verifiedMatches),
         result: matches.length === 0 ? '∅' : matches.join(', '),
         note: I18N.computation.notes.finalOutcome,
       },

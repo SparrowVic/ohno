@@ -6,7 +6,7 @@ import { OhnoLed } from '../../../../shared/instrument/led/led';
 import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
 import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
 import { OhnoTraceTable } from '../../../../shared/instrument/trace/trace-table/trace-table';
-import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
+import { TraceCell, TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone } from '../../../../shared/instrument/trace/trace.types';
 import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { DpCell, DpTraceState, DpTraceTag } from '../../models/dp';
 
@@ -48,6 +48,14 @@ const TABLE_COLUMNS: readonly TraceColumn[] = [
   { id: 'status', header: DP_KEYS.columns.status, kind: 'chips' },
   { id: 'tags', header: DP_KEYS.columns.tags, kind: 'chips' },
 ];
+
+function cellLabel(cell: DpCell): TraceCell {
+  if (typeof cell.rowLabel === 'string' && typeof cell.colLabel === 'string') return `${cell.rowLabel} × ${cell.colLabel}`;
+  return [
+    { id: 'row', label: toTraceValue(cell.rowLabel) },
+    { id: 'col', label: toTraceValue(cell.colLabel) },
+  ];
+}
 
 @Component({
   selector: 'app-dp-trace-panel',
@@ -123,9 +131,9 @@ export class DpTracePanel {
           id: cell.id,
           tone: highlighted ? tone : null,
           cells: {
-            cell: `${cell.rowLabel} × ${cell.colLabel}`,
+            cell: cellLabel(cell),
             value: cell.valueLabel,
-            meta: cell.metaLabel,
+            meta: toTraceValue(cell.metaLabel),
             status: [{ id: cell.status, label: toTraceValue(DP_KEYS.statuses[cell.status]), tone }],
             tags: cell.tags.map((tag) => ({ id: tag, label: toTraceValue(TAG_CHIPS[tag].label), tone: TAG_CHIPS[tag].tone })),
           },

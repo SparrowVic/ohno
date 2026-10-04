@@ -12,6 +12,9 @@ import {
 import { SortStep } from '../../models/sort-step';
 import { RecursiveFibonacciScenario } from '../../utils/scenarios/call-stack-lab/call-stack-lab-scenarios';
 import { createCallStackLabStep } from '../call-stack-lab-step';
+import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+
+const LOCALS = I18N_KEY.features.algorithms.display.callStack.locals;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.callStackLab.recursiveFibonacci.modeLabel'),
@@ -77,10 +80,10 @@ function locals(model: FrameModel): readonly CallStackFrameLocal[] {
     { label: 'n', value: String(model.n), tone: 'arg' },
   ];
   if (model.left !== null) {
-    out.push({ label: 'left', value: String(model.left), tone: 'result' });
+    out.push({ label: i18nText(LOCALS.left), value: String(model.left), tone: 'result' });
   }
   if (model.right !== null) {
-    out.push({ label: 'right', value: String(model.right), tone: 'result' });
+    out.push({ label: i18nText(LOCALS.right), value: String(model.right), tone: 'result' });
   }
   return out;
 }
