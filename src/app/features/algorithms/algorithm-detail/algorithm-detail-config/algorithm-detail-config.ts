@@ -974,18 +974,18 @@ const TREE_TRAVERSALS_LEGEND: readonly LegendItem[] = [
 ];
 
 const BAR_LEGEND: readonly LegendItem[] = [
-  { label: 'Unsorted', color: 'var(--viz-state-default)', opacity: 0.55 },
-  { label: 'Comparing', color: 'var(--viz-state-compare)' },
-  { label: 'Swapping', color: 'var(--viz-state-swap)' },
-  { label: 'Sorted', color: 'var(--viz-state-sorted)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.unsorted, color: 'var(--viz-state-default)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.workbench.legend.comparing, color: 'var(--viz-state-compare)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.swapping, color: 'var(--viz-state-swap)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.sorted, color: 'var(--viz-state-sorted)' },
 ];
 
 const BLOCK_LEGEND: readonly LegendItem[] = [
-  { label: 'Unsorted', color: 'var(--viz-state-default)', opacity: 0.55 },
-  { label: 'Comparing', color: 'var(--viz-state-compare)' },
-  { label: 'Swapping', color: 'var(--viz-state-swap)' },
-  { label: 'Sorted', color: 'var(--viz-state-sorted)' },
-  { label: 'Boundary', color: 'var(--viz-state-sorted)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.unsorted, color: 'var(--viz-state-default)', opacity: 0.55 },
+  { label: I18N_KEY.features.algorithms.workbench.legend.comparing, color: 'var(--viz-state-compare)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.swapping, color: 'var(--viz-state-swap)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.sorted, color: 'var(--viz-state-sorted)' },
+  { label: I18N_KEY.features.algorithms.workbench.legend.boundary, color: 'var(--viz-state-sorted)' },
 ];
 
 const RADIX_LEGEND: readonly LegendItem[] = [
@@ -1598,75 +1598,75 @@ const DELAUNAY_LEGEND: readonly LegendItem[] = [
 ];
 
 const CONVEX_HULL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'convex-hull', label: 'Point Cloud' },
+  { value: 'convex-hull', label: I18N_KEY.features.algorithms.toolbar.variants.pointCloud },
 ];
 
 const CLOSEST_PAIR_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'closest-pair', label: 'Divide & Strip' },
+  { value: 'closest-pair', label: I18N_KEY.features.algorithms.toolbar.variants.divideAndStrip },
 ];
 
 const LINE_INTERSECTION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'line-intersection', label: 'Laser Sweep' },
+  { value: 'line-intersection', label: I18N_KEY.features.algorithms.toolbar.variants.laserSweep },
 ];
 
 const HALF_PLANE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'half-plane', label: 'Constraint Clip' },
+  { value: 'half-plane', label: I18N_KEY.features.algorithms.toolbar.variants.constraintClip },
 ];
 
 const MINKOWSKI_SUM_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'minkowski-sum', label: 'Vector Merge' },
+  { value: 'minkowski-sum', label: I18N_KEY.features.algorithms.toolbar.variants.vectorMerge },
 ];
 
 const SWEEP_LINE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'sweep-line', label: 'Area Scanner' },
+  { value: 'sweep-line', label: I18N_KEY.features.algorithms.toolbar.variants.areaScanner },
 ];
 
 const VORONOI_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'voronoi', label: 'Crystal Cells' },
+  { value: 'voronoi', label: I18N_KEY.features.algorithms.toolbar.variants.crystalCells },
 ];
 
 const DELAUNAY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'delaunay', label: 'Triangle Mesh' },
+  { value: 'delaunay', label: I18N_KEY.features.algorithms.toolbar.variants.triangleMesh },
 ];
 
 const BUBBLE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'bar', label: 'Bar Chart' },
-  { value: 'block', label: 'Block Swap' },
+  { value: 'bar', label: I18N_KEY.features.algorithms.toolbar.variants.barChart },
+  { value: 'block', label: I18N_KEY.features.algorithms.toolbar.variants.blockSwap },
 ];
 
 const SORT_BAR_BLOCK_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'bar', label: 'Bar Chart' },
-  { value: 'block', label: 'Block Swap' },
+  { value: 'bar', label: I18N_KEY.features.algorithms.toolbar.variants.barChart },
+  { value: 'block', label: I18N_KEY.features.algorithms.toolbar.variants.blockSwap },
 ];
 
 const RADIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'radix', label: 'Bucket Flow' },
-  { value: 'radix-strip', label: 'Digit Strip' },
-  { value: 'radix-matrix', label: 'Digit Matrix' },
+  { value: 'radix', label: I18N_KEY.features.algorithms.toolbar.variants.bucketFlow },
+  { value: 'radix-strip', label: I18N_KEY.features.algorithms.toolbar.variants.digitStrip },
+  { value: 'radix-matrix', label: I18N_KEY.features.algorithms.toolbar.variants.digitMatrix },
 ];
 
 const SEARCH_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'search', label: 'Signal Sweep' },
+  { value: 'search', label: I18N_KEY.features.algorithms.toolbar.variants.signalSweep },
 ];
 
 const STRING_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'string', label: 'String Lab' },
+  { value: 'string', label: I18N_KEY.features.algorithms.toolbar.variants.stringLab },
 ];
 
 const TREE_TRAVERSALS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'tree', label: 'Tree Walk' },
+  { value: 'tree', label: I18N_KEY.features.algorithms.toolbar.variants.treeWalk },
 ];
 
 const NUMBER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'number-lab', label: 'Number Lab' },
+  { value: 'number-lab', label: I18N_KEY.features.algorithms.toolbar.variants.numberLab },
 ];
 
 /** Variant pair offered for math-heavy algorithms that should default
  *  to the chalkboard (derivational) view but can also be explored in
  *  the register dashboard. Students toggle from the toolbar. */
 const NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'scratchpad-lab', label: 'Chalkboard' },
-  { value: 'number-lab', label: 'Number Lab' },
+  { value: 'scratchpad-lab', label: I18N_KEY.features.algorithms.toolbar.variants.chalkboard },
+  { value: 'number-lab', label: I18N_KEY.features.algorithms.toolbar.variants.numberLab },
 ];
 
 /** Chalkboard-only option for algorithms whose derivational story is
@@ -1674,7 +1674,7 @@ const NUMBER_LAB_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[]
  *  dashboard view would only restate the registers without adding
  *  pedagogical value, so we skip it. */
 const SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'scratchpad-lab', label: 'Chalkboard' },
+  { value: 'scratchpad-lab', label: I18N_KEY.features.algorithms.toolbar.variants.chalkboard },
 ];
 
 /** Variant pair for matrix-pivoting algorithms (Gaussian, Simplex):
@@ -1682,124 +1682,124 @@ const SCRATCHPAD_LAB_ONLY_VARIANT_OPTIONS: readonly VisualizationOption[] = [
  *  grid renders the augmented matrix as a colour-coded cell grid so
  *  pivots / row-operations / eliminations are visible in place. */
 const MATRIX_GRID_WITH_SCRATCHPAD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'scratchpad-lab', label: 'Chalkboard' },
-  { value: 'matrix-grid', label: 'Matrix Grid' },
+  { value: 'scratchpad-lab', label: I18N_KEY.features.algorithms.toolbar.variants.chalkboard },
+  { value: 'matrix-grid', label: I18N_KEY.features.algorithms.toolbar.variants.matrixGrid },
 ];
 
 const POINTER_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'pointer-lab', label: 'Pointer Lab' },
+  { value: 'pointer-lab', label: I18N_KEY.features.algorithms.toolbar.variants.pointerLab },
 ];
 
 const SIEVE_GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'sieve-grid', label: 'Sieve Grid' },
+  { value: 'sieve-grid', label: I18N_KEY.features.algorithms.toolbar.variants.sieveGrid },
 ];
 
 const CALL_STACK_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'call-stack-lab', label: 'Call Stack Lab' },
+  { value: 'call-stack-lab', label: I18N_KEY.features.algorithms.toolbar.variants.callStackLab },
 ];
 
 const CALL_TREE_LAB_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'call-tree-lab', label: 'Call Tree Lab' },
+  { value: 'call-tree-lab', label: I18N_KEY.features.algorithms.toolbar.variants.callTreeLab },
 ];
 
 const GRID_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'grid', label: 'Grid Board' },
+  { value: 'grid', label: I18N_KEY.features.algorithms.toolbar.variants.gridBoard },
 ];
 
 const MATRIX_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'matrix', label: 'Matrix Lab' },
+  { value: 'matrix', label: I18N_KEY.features.algorithms.toolbar.variants.matrixLab },
 ];
 
-const DP_VARIANT_OPTIONS: readonly VisualizationOption[] = [{ value: 'dp', label: 'DP Lab' }];
+const DP_VARIANT_OPTIONS: readonly VisualizationOption[] = [{ value: 'dp', label: I18N_KEY.features.algorithms.toolbar.variants.dpLab }];
 
 const UNION_FIND_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dsu-graph', label: 'Tree Graph' },
-  { value: 'dsu', label: 'Set Forest' },
+  { value: 'dsu-graph', label: I18N_KEY.features.algorithms.toolbar.variants.treeGraph },
+  { value: 'dsu', label: I18N_KEY.features.algorithms.toolbar.variants.setForest },
 ];
 
 const KRUSKAL_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dsu-graph', label: 'Edge Graph' },
-  { value: 'dsu', label: 'Edge Forest' },
+  { value: 'dsu-graph', label: I18N_KEY.features.algorithms.toolbar.variants.edgeGraph },
+  { value: 'dsu', label: I18N_KEY.features.algorithms.toolbar.variants.edgeForest },
 ];
 
 const HOPCROFT_KARP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'network', label: 'Matching Layers' },
+  { value: 'network', label: I18N_KEY.features.algorithms.toolbar.variants.matchingLayers },
 ];
 
 const DINIC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'network', label: 'Residual Layers' },
+  { value: 'network', label: I18N_KEY.features.algorithms.toolbar.variants.residualLayers },
 ];
 
 const EDMONDS_KARP_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'network', label: 'Augmenting Route' },
+  { value: 'network', label: I18N_KEY.features.algorithms.toolbar.variants.augmentingRoute },
 ];
 
 const MIN_COST_MAX_FLOW_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'network', label: 'Costed Residuals' },
+  { value: 'network', label: I18N_KEY.features.algorithms.toolbar.variants.costedResiduals },
 ];
 
 const DIJKSTRA_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Path Network' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.pathNetwork },
 ];
 
 const BFS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Layer Wave' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.layerWave },
 ];
 
 const DFS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Depth Chase' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.depthChase },
 ];
 
 const TOPOLOGICAL_SORT_KAHN_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'DAG Flow' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.dagFlow },
 ];
 
 const CYCLE_DETECTION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Back Edge Hunt' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.backEdgeHunt },
 ];
 
 const CONNECTED_COMPONENTS_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Island Sweep' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.islandSweep },
 ];
 
 const BIPARTITE_CHECK_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Two-Side Check' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.twoSideCheck },
 ];
 
 const BELLMAN_FORD_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Pass Relaxation' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.passRelaxation },
 ];
 
 const PRIMS_MST_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Tree Builder' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.treeBuilder },
 ];
 
 const BRIDGES_ARTICULATION_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Critical Cuts' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.criticalCuts },
 ];
 
 const TARJAN_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Low-Link SCC' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.lowLinkScc },
 ];
 
 const KOSARAJU_SCC_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Two-Pass SCC' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.twoPassScc },
 ];
 
 const EULER_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Edge Trail' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.edgeTrail },
 ];
 
 const CHROMATIC_NUMBER_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Color Search' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.colorSearch },
 ];
 
 const STEINER_TREE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'Terminal DP Tree' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.terminalDpTree },
 ];
 
 const DOMINATOR_TREE_VARIANT_OPTIONS: readonly VisualizationOption[] = [
-  { value: 'dijkstra-graph', label: 'CFG Dominance' },
+  { value: 'dijkstra-graph', label: I18N_KEY.features.algorithms.toolbar.variants.cfgDominance },
 ];
 
 const BUBBLE_SIZE_OPTIONS: readonly number[] = [16, 32, 64];
@@ -2013,7 +2013,7 @@ const BUBBLE_VIEW_CONFIG: AlgorithmViewConfig = {
     return BAR_LEGEND;
   },
   sizeUnit: 'elements',
-  randomizeLabel: 'Randomize',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.randomize,
 };
 
 const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -2030,7 +2030,7 @@ const RADIX_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: radixSortGenerator,
   legendItems: () => RADIX_LEGEND,
   sizeUnit: 'elements',
-  randomizeLabel: 'Randomize',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.randomize,
 };
 
 function createSortViewConfig(args: {
@@ -2058,7 +2058,7 @@ function createSortViewConfig(args: {
     generator: args.generator,
     legendItems: (variant) => (variant === 'block' ? BLOCK_LEGEND : BAR_LEGEND),
     sizeUnit: 'elements',
-    randomizeLabel: 'Randomize',
+    randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.randomize,
   };
 }
 
@@ -2148,7 +2148,7 @@ function createSearchViewConfig(args: {
     generator: args.generator,
     legendItems: () => SEARCH_LEGEND,
     sizeUnit: 'items',
-    randomizeLabel: 'New challenge',
+    randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newChallenge,
   };
 }
 
@@ -2415,7 +2415,7 @@ const KMP_VIEW_CONFIG = createStringViewConfig<KmpScenario>({
   sizeOptions: [14, 20, 28],
   defaultSize: 20,
   sizeUnit: 'text chars',
-  randomizeLabel: 'New KMP case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newKmpCase,
 });
 
 const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
@@ -2430,7 +2430,7 @@ const RABIN_KARP_VIEW_CONFIG = createStringViewConfig<RabinKarpScenario>({
   sizeOptions: [14, 20, 28],
   defaultSize: 20,
   sizeUnit: 'text chars',
-  randomizeLabel: 'New rolling-hash case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newRollingHashCase,
 });
 
 const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
@@ -2445,7 +2445,7 @@ const Z_ALGORITHM_VIEW_CONFIG = createStringViewConfig<ZAlgorithmScenario>({
   sizeOptions: [14, 20, 28],
   defaultSize: 20,
   sizeUnit: 'combined chars',
-  randomizeLabel: 'New Z skyline',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newZSkyline,
 });
 
 const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
@@ -2460,7 +2460,7 @@ const MANACHER_VIEW_CONFIG = createStringViewConfig<ManacherScenario>({
   sizeOptions: [10, 14, 18],
   defaultSize: 14,
   sizeUnit: 'chars',
-  randomizeLabel: 'New palindrome field',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPalindromeField,
 });
 
 const AHO_CORASICK_VIEW_CONFIG = createStringViewConfig<AhoCorasickScenario>({
@@ -2475,7 +2475,7 @@ const AHO_CORASICK_VIEW_CONFIG = createStringViewConfig<AhoCorasickScenario>({
   sizeOptions: [12, 18, 24],
   defaultSize: 18,
   sizeUnit: 'text chars',
-  randomizeLabel: 'New string case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStringCase,
 });
 
 const SUFFIX_ARRAY_VIEW_CONFIG = createStringViewConfig<SuffixArrayScenario>({
@@ -2490,7 +2490,7 @@ const SUFFIX_ARRAY_VIEW_CONFIG = createStringViewConfig<SuffixArrayScenario>({
   sizeOptions: [8, 12, 16],
   defaultSize: 12,
   sizeUnit: 'chars',
-  randomizeLabel: 'New string case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStringCase,
 });
 
 const SUFFIX_ARRAY_LCP_VIEW_CONFIG = createStringViewConfig<SuffixArrayLcpScenario>({
@@ -2505,7 +2505,7 @@ const SUFFIX_ARRAY_LCP_VIEW_CONFIG = createStringViewConfig<SuffixArrayLcpScenar
   sizeOptions: [8, 12, 16],
   defaultSize: 12,
   sizeUnit: 'chars',
-  randomizeLabel: 'New string case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStringCase,
 });
 
 const PALINDROMIC_TREE_VIEW_CONFIG = createStringViewConfig<PalindromicTreeScenario>({
@@ -2520,7 +2520,7 @@ const PALINDROMIC_TREE_VIEW_CONFIG = createStringViewConfig<PalindromicTreeScena
   sizeOptions: [8, 12, 16],
   defaultSize: 12,
   sizeUnit: 'chars',
-  randomizeLabel: 'New string case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStringCase,
 });
 
 const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenario>({
@@ -2535,7 +2535,7 @@ const BURROWS_WHEELER_VIEW_CONFIG = createStringViewConfig<BurrowsWheelerScenari
   sizeOptions: [6, 8, 10],
   defaultSize: 8,
   sizeUnit: 'chars',
-  randomizeLabel: 'New BWT matrix',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newBwtMatrix,
 });
 
 const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
@@ -2550,7 +2550,7 @@ const RLE_VIEW_CONFIG = createStringViewConfig<RleScenario>({
   sizeOptions: [10, 16, 22],
   defaultSize: 16,
   sizeUnit: 'chars',
-  randomizeLabel: 'New run sequence',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newRunSequence,
 });
 
 const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
@@ -2565,7 +2565,7 @@ const HUFFMAN_VIEW_CONFIG = createStringViewConfig<HuffmanScenario>({
   sizeOptions: [8, 12, 16],
   defaultSize: 12,
   sizeUnit: 'chars',
-  randomizeLabel: 'New frequency set',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFrequencySet,
 });
 
 const FIBONACCI_ITER_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -2579,7 +2579,7 @@ const FIBONACCI_ITER_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeOptions: [6, 10, 15],
   defaultSize: 10,
   sizeUnit: 'iterations',
-  randomizeLabel: 'New Fibonacci run',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFibonacciRun,
   legendItems: notebookLegend,
   presetOptions: FIBONACCI_ITER_PRESETS,
   defaultPresetId: DEFAULT_FIBONACCI_ITER_PRESET_ID,
@@ -2598,7 +2598,7 @@ const FACTORIAL_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeOptions: [4, 6, 10],
   defaultSize: 6,
   sizeUnit: 'iterations',
-  randomizeLabel: 'New factorial run',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFactorialRun,
   legendItems: notebookLegend,
   presetOptions: FACTORIAL_PRESETS,
   defaultPresetId: DEFAULT_FACTORIAL_PRESET_ID,
@@ -2623,7 +2623,7 @@ const EUCLIDEAN_GCD_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New GCD pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGcdPair,
   legendItems: notebookLegend,
   /* `presetOptions` stays populated for now so the legacy scratchpad
    *  per-viz picker keeps working during migration; once the toolbar
@@ -2660,7 +2660,7 @@ const EXTENDED_EUCLIDEAN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPair,
   legendItems: notebookLegend,
   presetOptions: EXTENDED_EUCLIDEAN_PRESETS,
   defaultPresetId: DEFAULT_EXTENDED_EUCLIDEAN_PRESET_ID,
@@ -2689,7 +2689,7 @@ const MILLER_RABIN_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New candidate',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newCandidate,
   legendItems: notebookLegend,
   presetOptions: MILLER_RABIN_PRESETS,
   defaultPresetId: DEFAULT_MILLER_RABIN_PRESET_ID,
@@ -2714,7 +2714,7 @@ const CRT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<CrtScenario, CrtValues> = {
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New system',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSystem,
   legendItems: notebookLegend,
   presetOptions: CRT_PRESETS,
   defaultPresetId: DEFAULT_CRT_PRESET_ID,
@@ -2742,7 +2742,7 @@ const POLLARDS_RHO_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New composite',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newComposite,
   legendItems: notebookLegend,
   presetOptions: POLLARDS_RHO_PRESETS,
   defaultPresetId: DEFAULT_POLLARDS_RHO_PRESET_ID,
@@ -2771,7 +2771,7 @@ const GAUSSIAN_ELIMINATION_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New system',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSystem,
   legendItems: notebookLegend,
   presetOptions: GAUSSIAN_ELIMINATION_PRESETS,
   defaultPresetId: DEFAULT_GAUSSIAN_ELIMINATION_PRESET_ID,
@@ -2800,7 +2800,7 @@ const SIMPLEX_ALGORITHM_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New LP',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newLp,
   legendItems: notebookLegend,
   presetOptions: SIMPLEX_ALGORITHM_PRESETS,
   defaultPresetId: DEFAULT_SIMPLEX_ALGORITHM_PRESET_ID,
@@ -2829,7 +2829,7 @@ const RESERVOIR_SAMPLING_VIEW_CONFIG: NumberLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New stream',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStream,
   legendItems: notebookLegend,
   presetOptions: RESERVOIR_SAMPLING_PRESETS,
   defaultPresetId: DEFAULT_RESERVOIR_SAMPLING_PRESET_ID,
@@ -2855,7 +2855,7 @@ const FFT_NTT_VIEW_CONFIG: NumberLabAlgorithmViewConfig<FftNttScenario, FftNttVa
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'scenario',
-  randomizeLabel: 'New signal',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSignal,
   legendItems: notebookLegend,
   presetOptions: FFT_NTT_PRESETS,
   defaultPresetId: DEFAULT_FFT_NTT_PRESET_ID,
@@ -2880,7 +2880,7 @@ const TWO_POINTERS_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'elements',
-  randomizeLabel: 'New sorted array',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSortedArray,
   legendItems: () => TWO_POINTERS_LEGEND,
   presetOptions: TWO_POINTERS_PRESETS,
   defaultPresetId: DEFAULT_TWO_POINTERS_PRESET_ID,
@@ -2905,7 +2905,7 @@ const SLIDING_WINDOW_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'elements',
-  randomizeLabel: 'New stream',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStream,
   legendItems: () => SLIDING_WINDOW_LEGEND,
   presetOptions: SLIDING_WINDOW_PRESETS,
   defaultPresetId: DEFAULT_SLIDING_WINDOW_PRESET_ID,
@@ -2930,7 +2930,7 @@ const PALINDROME_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'characters',
-  randomizeLabel: 'New word',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newWord,
   legendItems: () => PALINDROME_LEGEND,
   presetOptions: PALINDROME_PRESETS,
   defaultPresetId: DEFAULT_PALINDROME_PRESET_ID,
@@ -2955,7 +2955,7 @@ const REVERSE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'elements',
-  randomizeLabel: 'New sequence',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSequence,
   legendItems: () => REVERSE_LEGEND,
   presetOptions: REVERSE_PRESETS,
   defaultPresetId: DEFAULT_REVERSE_PRESET_ID,
@@ -2980,7 +2980,7 @@ const KADANE_VIEW_CONFIG: PointerLabAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'elements',
-  randomizeLabel: 'New sequence',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSequence,
   legendItems: () => KADANE_LEGEND,
   presetOptions: KADANE_PRESETS,
   defaultPresetId: DEFAULT_KADANE_PRESET_ID,
@@ -3007,7 +3007,7 @@ const SIEVE_OF_ERATOSTHENES_VIEW_CONFIG: SieveGridAlgorithmViewConfig<
   sizeOptions: [1],
   defaultSize: 1,
   sizeUnit: 'integers',
-  randomizeLabel: 'New range',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newRange,
   legendItems: () => SIEVE_LEGEND,
   presetOptions: ERATOSTHENES_PRESETS,
   defaultPresetId: DEFAULT_ERATOSTHENES_PRESET_ID,
@@ -3057,7 +3057,7 @@ const RECURSION_CALL_STACK_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeOptions: [3, 4, 5, 6, 7],
   defaultSize: 5,
   sizeUnit: 'n',
-  randomizeLabel: 'New depth',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newDepth,
   legendItems: () => CALL_STACK_LEGEND,
   presetOptions: RECURSIVE_FIBONACCI_PRESETS,
   defaultPresetId: DEFAULT_RECURSIVE_FIBONACCI_PRESET_ID,
@@ -3076,7 +3076,7 @@ const BACKTRACKING_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeOptions: [4, 5, 6],
   defaultSize: 5,
   sizeUnit: 'board',
-  randomizeLabel: 'New scenario',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newScenario,
   legendItems: () => BACKTRACKING_LEGEND,
   presetOptions: N_QUEENS_PRESETS,
   defaultPresetId: DEFAULT_N_QUEENS_PRESET_ID,
@@ -3095,7 +3095,7 @@ const MINIMAX_ALPHA_BETA_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeOptions: [8, 9, 16],
   defaultSize: 9,
   sizeUnit: 'leaves',
-  randomizeLabel: 'New game tree',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGameTree,
   legendItems: () => MINIMAX_LEGEND,
   presetOptions: MINIMAX_PRESETS,
   defaultPresetId: DEFAULT_MINIMAX_PRESET_ID,
@@ -3114,7 +3114,7 @@ const MCTS_VIEW_CONFIG: AlgorithmViewConfig = {
   sizeOptions: [6, 10, 12],
   defaultSize: 10,
   sizeUnit: 'iterations',
-  randomizeLabel: 'New playout',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPlayout,
   legendItems: () => MCTS_LEGEND,
   presetOptions: MCTS_PRESETS,
   defaultPresetId: DEFAULT_MCTS_PRESET_ID,
@@ -3138,7 +3138,7 @@ const TREE_TRAVERSALS_VIEW_CONFIG: TreeAlgorithmViewConfig<
   sizeOptions: [7, 15, 31],
   defaultSize: 15,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New tree shape',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newTreeShape,
   legendItems: () => TREE_TRAVERSALS_LEGEND,
   presetOptions: TREE_TRAVERSALS_PRESETS,
   defaultPresetId: DEFAULT_TREE_TRAVERSALS_PRESET_ID,
@@ -3163,7 +3163,7 @@ const DIJKSTRA_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: dijkstraGenerator,
   legendItems: () => DIJKSTRA_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const BFS_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3180,7 +3180,7 @@ const BFS_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: bfsGenerator,
   legendItems: () => BFS_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const DFS_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3197,7 +3197,7 @@ const DFS_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: dfsGenerator,
   legendItems: () => DFS_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const TOPOLOGICAL_SORT_KAHN_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3214,7 +3214,7 @@ const TOPOLOGICAL_SORT_KAHN_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: topologicalSortKahnGenerator,
   legendItems: () => TOPOLOGICAL_SORT_KAHN_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New DAG',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newDag,
 };
 
 const CYCLE_DETECTION_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3231,7 +3231,7 @@ const CYCLE_DETECTION_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: cycleDetectionGenerator,
   legendItems: () => CYCLE_DETECTION_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const CONNECTED_COMPONENTS_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3248,7 +3248,7 @@ const CONNECTED_COMPONENTS_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: connectedComponentsGenerator,
   legendItems: () => CONNECTED_COMPONENTS_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const BIPARTITE_CHECK_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3265,7 +3265,7 @@ const BIPARTITE_CHECK_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: bipartiteCheckGenerator,
   legendItems: () => BIPARTITE_CHECK_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const BELLMAN_FORD_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3282,7 +3282,7 @@ const BELLMAN_FORD_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: bellmanFordGenerator,
   legendItems: () => BELLMAN_FORD_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const PRIMS_MST_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3299,7 +3299,7 @@ const PRIMS_MST_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: primsMstGenerator,
   legendItems: () => PRIMS_MST_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3316,7 +3316,7 @@ const BRIDGES_ARTICULATION_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: bridgesArticulationPointsGenerator,
   legendItems: () => BRIDGES_ARTICULATION_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const TARJAN_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3333,7 +3333,7 @@ const TARJAN_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: tarjanSccGenerator,
   legendItems: () => TARJAN_SCC_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const KOSARAJU_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3350,7 +3350,7 @@ const KOSARAJU_SCC_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: kosarajuSccGenerator,
   legendItems: () => KOSARAJU_SCC_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 };
 
 const EULER_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3367,7 +3367,7 @@ const EULER_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: eulerPathCircuitGenerator,
   legendItems: () => EULER_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New trail graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newTrailGraph,
 };
 
 const CHROMATIC_NUMBER_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3384,7 +3384,7 @@ const CHROMATIC_NUMBER_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: chromaticNumberGenerator,
   legendItems: () => CHROMATIC_NUMBER_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New conflict graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newConflictGraph,
 };
 
 const STEINER_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3401,7 +3401,7 @@ const STEINER_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: steinerTreeGenerator,
   legendItems: () => STEINER_TREE_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New terminal graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newTerminalGraph,
 };
 
 const DOMINATOR_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
@@ -3418,7 +3418,7 @@ const DOMINATOR_TREE_VIEW_CONFIG: AlgorithmViewConfig = {
   generator: dominatorTreeGenerator,
   legendItems: () => DOMINATOR_TREE_LEGEND,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New CFG',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newCfg,
 };
 
 const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
@@ -3429,7 +3429,7 @@ const FLOOD_FILL_VIEW_CONFIG = createGridViewConfig<FloodFillScenario>({
   legendItems: FLOOD_FILL_LEGEND,
   sizeOptions: [8, 10, 12],
   defaultSize: 10,
-  randomizeLabel: 'New board',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newBoard,
 });
 
 const A_STAR_VIEW_CONFIG = createGridViewConfig<AStarScenario>({
@@ -3440,7 +3440,7 @@ const A_STAR_VIEW_CONFIG = createGridViewConfig<AStarScenario>({
   legendItems: A_STAR_LEGEND,
   sizeOptions: [8, 10, 12],
   defaultSize: 10,
-  randomizeLabel: 'New board',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newBoard,
 });
 
 const FLOYD_WARSHALL_VIEW_CONFIG = createMatrixViewConfig<FloydWarshallScenario>({
@@ -3451,7 +3451,7 @@ const FLOYD_WARSHALL_VIEW_CONFIG = createMatrixViewConfig<FloydWarshallScenario>
   legendItems: FLOYD_WARSHALL_LEGEND,
   sizeOptions: [5, 6],
   defaultSize: 5,
-  randomizeLabel: 'New matrix',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newMatrix,
 });
 
 const HUNGARIAN_VIEW_CONFIG = createMatrixViewConfig<HungarianScenario>({
@@ -3462,7 +3462,7 @@ const HUNGARIAN_VIEW_CONFIG = createMatrixViewConfig<HungarianScenario>({
   legendItems: HUNGARIAN_LEGEND,
   sizeOptions: [4, 5],
   defaultSize: 4,
-  randomizeLabel: 'New assignment grid',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newAssignmentGrid,
 });
 
 const KNAPSACK_VIEW_CONFIG = createDpViewConfig<KnapsackScenario>({
@@ -3477,7 +3477,7 @@ const KNAPSACK_VIEW_CONFIG = createDpViewConfig<KnapsackScenario>({
   sizeOptions: [4, 5, 6],
   defaultSize: 5,
   sizeUnit: 'items',
-  randomizeLabel: 'New backpack case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newBackpackCase,
 });
 
 const LCS_VIEW_CONFIG = createDpViewConfig<LcsScenario>({
@@ -3492,7 +3492,7 @@ const LCS_VIEW_CONFIG = createDpViewConfig<LcsScenario>({
   sizeOptions: [5, 6, 7],
   defaultSize: 6,
   sizeUnit: 'chars',
-  randomizeLabel: 'New string pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStringPair,
 });
 
 const EDIT_DISTANCE_VIEW_CONFIG = createDpViewConfig<EditDistanceScenario>({
@@ -3507,7 +3507,7 @@ const EDIT_DISTANCE_VIEW_CONFIG = createDpViewConfig<EditDistanceScenario>({
   sizeOptions: [5, 6, 7],
   defaultSize: 6,
   sizeUnit: 'chars',
-  randomizeLabel: 'New word pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newWordPair,
 });
 
 const MATRIX_CHAIN_VIEW_CONFIG = createDpViewConfig<MatrixChainScenario>({
@@ -3522,7 +3522,7 @@ const MATRIX_CHAIN_VIEW_CONFIG = createDpViewConfig<MatrixChainScenario>({
   sizeOptions: [4, 5, 6],
   defaultSize: 5,
   sizeUnit: 'matrices',
-  randomizeLabel: 'New matrix chain',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newMatrixChain,
 });
 
 const COIN_CHANGE_VIEW_CONFIG = createDpViewConfig<CoinChangeScenario>({
@@ -3537,7 +3537,7 @@ const COIN_CHANGE_VIEW_CONFIG = createDpViewConfig<CoinChangeScenario>({
   sizeOptions: [4, 5, 6],
   defaultSize: 5,
   sizeUnit: 'coins',
-  randomizeLabel: 'New change case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newChangeCase,
 });
 
 const SUBSET_SUM_VIEW_CONFIG = createDpViewConfig<SubsetSumScenario>({
@@ -3552,7 +3552,7 @@ const SUBSET_SUM_VIEW_CONFIG = createDpViewConfig<SubsetSumScenario>({
   sizeOptions: [5, 6],
   defaultSize: 5,
   sizeUnit: 'numbers',
-  randomizeLabel: 'New target sum',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newTargetSum,
 });
 
 const LPS_VIEW_CONFIG = createDpViewConfig<LpsScenario>({
@@ -3567,7 +3567,7 @@ const LPS_VIEW_CONFIG = createDpViewConfig<LpsScenario>({
   sizeOptions: [5, 7, 9],
   defaultSize: 7,
   sizeUnit: 'chars',
-  randomizeLabel: 'New palindrome case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPalindromeCase,
 });
 
 const BURST_BALLOONS_VIEW_CONFIG = createDpViewConfig<BurstBalloonsScenario>({
@@ -3582,7 +3582,7 @@ const BURST_BALLOONS_VIEW_CONFIG = createDpViewConfig<BurstBalloonsScenario>({
   sizeOptions: [4, 5, 6],
   defaultSize: 5,
   sizeUnit: 'balloons',
-  randomizeLabel: 'New burst board',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newBurstBoard,
 });
 
 const WILDCARD_VIEW_CONFIG = createDpViewConfig<WildcardMatchingScenario>({
@@ -3597,7 +3597,7 @@ const WILDCARD_VIEW_CONFIG = createDpViewConfig<WildcardMatchingScenario>({
   sizeOptions: [5, 6, 7],
   defaultSize: 6,
   sizeUnit: 'chars',
-  randomizeLabel: 'New wildcard pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newWildcardPair,
 });
 
 const LIS_VIEW_CONFIG = createDpViewConfig<LisScenario>({
@@ -3612,7 +3612,7 @@ const LIS_VIEW_CONFIG = createDpViewConfig<LisScenario>({
   sizeOptions: [6, 8],
   defaultSize: 6,
   sizeUnit: 'values',
-  randomizeLabel: 'New LIS strip',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newLisStrip,
 });
 
 const CLIMBING_STAIRS_VIEW_CONFIG = createDpViewConfig<ClimbingStairsScenario>({
@@ -3627,7 +3627,7 @@ const CLIMBING_STAIRS_VIEW_CONFIG = createDpViewConfig<ClimbingStairsScenario>({
   sizeOptions: [6, 8, 10],
   defaultSize: 8,
   sizeUnit: 'stairs',
-  randomizeLabel: 'New staircase',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStaircase,
 });
 
 const FIBONACCI_VIEW_CONFIG = createDpViewConfig<FibonacciScenario>({
@@ -3642,7 +3642,7 @@ const FIBONACCI_VIEW_CONFIG = createDpViewConfig<FibonacciScenario>({
   sizeOptions: [6, 8, 10],
   defaultSize: 8,
   sizeUnit: 'terms',
-  randomizeLabel: 'New Fibonacci run',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFibonacciRun,
 });
 
 const REGEX_VIEW_CONFIG = createDpViewConfig<RegexMatchingScenario>({
@@ -3657,7 +3657,7 @@ const REGEX_VIEW_CONFIG = createDpViewConfig<RegexMatchingScenario>({
   sizeOptions: [5, 6, 7],
   defaultSize: 6,
   sizeUnit: 'text chars',
-  randomizeLabel: 'New regex pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newRegexPair,
 });
 
 const TSP_VIEW_CONFIG = createDpViewConfig<TravelingSalesmanScenario>({
@@ -3672,7 +3672,7 @@ const TSP_VIEW_CONFIG = createDpViewConfig<TravelingSalesmanScenario>({
   sizeOptions: [4, 5],
   defaultSize: 4,
   sizeUnit: 'cities',
-  randomizeLabel: 'New city loop',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newCityLoop,
 });
 
 const SOS_VIEW_CONFIG = createDpViewConfig<SosDpScenario>({
@@ -3687,7 +3687,7 @@ const SOS_VIEW_CONFIG = createDpViewConfig<SosDpScenario>({
   sizeOptions: [3, 4],
   defaultSize: 3,
   sizeUnit: 'bits',
-  randomizeLabel: 'New subset family',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSubsetFamily,
 });
 
 const PROFILE_VIEW_CONFIG = createDpViewConfig<ProfileDpScenario>({
@@ -3702,7 +3702,7 @@ const PROFILE_VIEW_CONFIG = createDpViewConfig<ProfileDpScenario>({
   sizeOptions: [5, 6, 7],
   defaultSize: 5,
   sizeUnit: 'columns',
-  randomizeLabel: 'New frontier board',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFrontierBoard,
 });
 
 const TREE_DP_VIEW_CONFIG = createDpViewConfig<TreeDpScenario>({
@@ -3717,7 +3717,7 @@ const TREE_DP_VIEW_CONFIG = createDpViewConfig<TreeDpScenario>({
   sizeOptions: [6, 7],
   defaultSize: 7,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New rooted tree',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newRootedTree,
 });
 
 const BITMASK_DP_VIEW_CONFIG = createDpViewConfig<BitmaskDpScenario>({
@@ -3732,7 +3732,7 @@ const BITMASK_DP_VIEW_CONFIG = createDpViewConfig<BitmaskDpScenario>({
   sizeOptions: [3, 4],
   defaultSize: 4,
   sizeUnit: 'jobs',
-  randomizeLabel: 'New mask assignment',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newMaskAssignment,
 });
 
 const CHT_VIEW_CONFIG = createDpViewConfig<ChtDpScenario>({
@@ -3747,7 +3747,7 @@ const CHT_VIEW_CONFIG = createDpViewConfig<ChtDpScenario>({
   sizeOptions: [4, 6],
   defaultSize: 6,
   sizeUnit: 'points',
-  randomizeLabel: 'New hull run',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newHullRun,
 });
 
 const DIVIDE_CONQUER_VIEW_CONFIG = createDpViewConfig<DivideConquerDpScenario>({
@@ -3762,7 +3762,7 @@ const DIVIDE_CONQUER_VIEW_CONFIG = createDpViewConfig<DivideConquerDpScenario>({
   sizeOptions: [5, 7],
   defaultSize: 7,
   sizeUnit: 'values',
-  randomizeLabel: 'New partition case',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPartitionCase,
 });
 
 const KNUTH_VIEW_CONFIG = createDpViewConfig<KnuthDpScenario>({
@@ -3777,7 +3777,7 @@ const KNUTH_VIEW_CONFIG = createDpViewConfig<KnuthDpScenario>({
   sizeOptions: [4, 6],
   defaultSize: 6,
   sizeUnit: 'files',
-  randomizeLabel: 'New merge chain',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newMergeChain,
 });
 
 const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
@@ -3790,7 +3790,7 @@ const UNION_FIND_VIEW_CONFIG = createDsuViewConfig<UnionFindScenario>({
   sizeOptions: [6, 8, 10],
   defaultSize: 8,
   sizeUnit: 'elements',
-  randomizeLabel: 'New scenario',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newScenario,
 });
 
 const KRUSKAL_VIEW_CONFIG = createDsuViewConfig<KruskalScenario>({
@@ -3803,7 +3803,7 @@ const KRUSKAL_VIEW_CONFIG = createDsuViewConfig<KruskalScenario>({
   sizeOptions: [6, 8, 10],
   defaultSize: 8,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newGraph,
 });
 
 const HOPCROFT_KARP_VIEW_CONFIG = createNetworkViewConfig<HopcroftKarpScenario>({
@@ -3816,7 +3816,7 @@ const HOPCROFT_KARP_VIEW_CONFIG = createNetworkViewConfig<HopcroftKarpScenario>(
   sizeOptions: [8, 10],
   defaultSize: 8,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New matching graph',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newMatchingGraph,
 });
 
 const DINIC_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
@@ -3829,7 +3829,7 @@ const DINIC_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
   sizeOptions: [8, 10],
   defaultSize: 8,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New flow network',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFlowNetwork,
 });
 
 const EDMONDS_KARP_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
@@ -3842,7 +3842,7 @@ const EDMONDS_KARP_VIEW_CONFIG = createNetworkViewConfig<DinicScenario>({
   sizeOptions: [8, 10],
   defaultSize: 8,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New augmenting network',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newAugmentingNetwork,
 });
 
 const MIN_COST_MAX_FLOW_VIEW_CONFIG = createNetworkViewConfig<MinCostMaxFlowScenario>({
@@ -3855,7 +3855,7 @@ const MIN_COST_MAX_FLOW_VIEW_CONFIG = createNetworkViewConfig<MinCostMaxFlowScen
   sizeOptions: [8, 10],
   defaultSize: 8,
   sizeUnit: 'nodes',
-  randomizeLabel: 'New priced network',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPricedNetwork,
 });
 
 const CONVEX_HULL_VIEW_CONFIG: GeometryAlgorithmViewConfig<ConvexHullScenario> = {
@@ -3872,7 +3872,7 @@ const CONVEX_HULL_VIEW_CONFIG: GeometryAlgorithmViewConfig<ConvexHullScenario> =
   generator: convexHullGenerator,
   legendItems: () => CONVEX_HULL_LEGEND,
   sizeUnit: 'points',
-  randomizeLabel: 'New point cloud',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newPointCloud,
 };
 
 const CLOSEST_PAIR_VIEW_CONFIG: GeometryAlgorithmViewConfig<ClosestPairScenario> = {
@@ -3889,7 +3889,7 @@ const CLOSEST_PAIR_VIEW_CONFIG: GeometryAlgorithmViewConfig<ClosestPairScenario>
   generator: closestPairOfPointsGenerator,
   legendItems: () => CLOSEST_PAIR_LEGEND,
   sizeUnit: 'points',
-  randomizeLabel: 'New split cloud',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSplitCloud,
 };
 
 const LINE_INTERSECTION_VIEW_CONFIG: GeometryAlgorithmViewConfig<LineIntersectionScenario> = {
@@ -3906,7 +3906,7 @@ const LINE_INTERSECTION_VIEW_CONFIG: GeometryAlgorithmViewConfig<LineIntersectio
   generator: lineIntersectionGenerator,
   legendItems: () => LINE_INTERSECTION_LEGEND,
   sizeUnit: 'segments',
-  randomizeLabel: 'New segment field',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newSegmentField,
 };
 
 const HALF_PLANE_VIEW_CONFIG: GeometryAlgorithmViewConfig<HalfPlaneIntersectionScenario> = {
@@ -3923,7 +3923,7 @@ const HALF_PLANE_VIEW_CONFIG: GeometryAlgorithmViewConfig<HalfPlaneIntersectionS
   generator: halfPlaneIntersectionGenerator,
   legendItems: () => HALF_PLANE_LEGEND,
   sizeUnit: 'planes',
-  randomizeLabel: 'New feasible cut',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newFeasibleCut,
 };
 
 const MINKOWSKI_SUM_VIEW_CONFIG: GeometryAlgorithmViewConfig<MinkowskiSumScenario> = {
@@ -3940,7 +3940,7 @@ const MINKOWSKI_SUM_VIEW_CONFIG: GeometryAlgorithmViewConfig<MinkowskiSumScenari
   generator: minkowskiSumGenerator,
   legendItems: () => MINKOWSKI_SUM_LEGEND,
   sizeUnit: 'verts',
-  randomizeLabel: 'New shape pair',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newShapePair,
 };
 
 const SWEEP_LINE_VIEW_CONFIG: GeometryAlgorithmViewConfig<SweepLineScenario> = {
@@ -3957,7 +3957,7 @@ const SWEEP_LINE_VIEW_CONFIG: GeometryAlgorithmViewConfig<SweepLineScenario> = {
   generator: sweepLineGenerator,
   legendItems: () => SWEEP_LINE_LEGEND,
   sizeUnit: 'rects',
-  randomizeLabel: 'New scan field',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newScanField,
 };
 
 const VORONOI_VIEW_CONFIG: GeometryAlgorithmViewConfig<VoronoiDiagramScenario> = {
@@ -3974,7 +3974,7 @@ const VORONOI_VIEW_CONFIG: GeometryAlgorithmViewConfig<VoronoiDiagramScenario> =
   generator: voronoiDiagramGenerator,
   legendItems: () => VORONOI_LEGEND,
   sizeUnit: 'sites',
-  randomizeLabel: 'New crystal field',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newCrystalField,
 };
 
 const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationScenario> = {
@@ -3991,7 +3991,7 @@ const DELAUNAY_VIEW_CONFIG: GeometryAlgorithmViewConfig<DelaunayTriangulationSce
   generator: delaunayTriangulationGenerator,
   legendItems: () => DELAUNAY_LEGEND,
   sizeUnit: 'sites',
-  randomizeLabel: 'New star mesh',
+  randomizeLabel: I18N_KEY.features.algorithms.toolbar.actions.newStarMesh,
 };
 
 export function humanizeLabel(value: string): string {

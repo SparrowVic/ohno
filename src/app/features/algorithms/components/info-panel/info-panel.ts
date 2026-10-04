@@ -7,7 +7,7 @@ import { looksLikeI18nKey } from '../../../../core/i18n/looks-like-i18n-key';
 import { AlgorithmItem } from '../../models/algorithm';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { SORT_ALGORITHM_TUTORIALS } from '../../data/sort-algorithm-tutorial/sort-algorithm-tutorial';
-import { UiTag } from '../../../../shared/components/ui-tag/ui-tag';
+import { OhnoEngraving } from '../../../../shared/instrument/engraving/engraving';
 import { MathText } from '../../../../shared/components/math-text/math-text';
 
 interface AlgorithmTutorial {
@@ -34,7 +34,7 @@ function humanize(value: string): string {
 
 @Component({
   selector: 'app-info-panel',
-  imports: [MathText, UiTag, TranslocoPipe],
+  imports: [MathText, OhnoEngraving, TranslocoPipe],
   templateUrl: './info-panel.html',
   styleUrl: './info-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,11 +73,6 @@ export class InfoPanel {
   });
   readonly tags = computed(() => this.algorithm().tags);
 
-  /** Full tutorial for the current algorithm — rendered as a separate
-   *  section below the profile so the Info tab doubles as a concise
-   *  reference / learning page. We check the sorting and graph
-   *  catalogs in turn; null for algorithms without a catalog entry,
-   *  which keep the minimal profile-only view. */
   readonly tutorial = computed<AlgorithmTutorial | null>(() => {
     const id = this.algorithm().id;
     return SORT_ALGORITHM_TUTORIALS[id] ?? GRAPH_ALGORITHM_TUTORIALS[id] ?? null;

@@ -21,12 +21,10 @@ The app runs **three distinct visual idioms** that coexist. Don't blur them.
 
 Navbar, sidebar, card grid, toolbar, language switcher, modals. This is the **Linear / Vercel / Raycast** school — a bit more editorial:
 
-- Solid dark-first surfaces with a subtle surface ladder (`--surface-0` → `--surface-4`).
-- Hairline borders (`--border`) + elevated shadows (`--elevation-*`).
-- A **brand aurora** (violet → cyan → lime) living in the backdrop, never yelling.
-- A 1px **brand rail** across the top of the viewport (`body::after`) that slowly animates — the signature mark.
-- Subtle **film grain** (`body::before`, 4% opacity) giving surfaces a photographic weight.
-- Typography: Sora for UI, IBM Plex Mono for code/numbers.
+- Instrument materials: graphite plates (`--plate-hi`/`--plate-lo`), inset black screens (`--screen`) with the dot texture, raised keys (`--key-*`).
+- Hairlines (`--hairline`, `--groove`) and the shadow recipes (`--shadow-plate`, `--shadow-key`, `--shadow-screen`); nothing lifts on hover.
+- One orange action colour (`--signal`), Doto readouts for numbers.
+- Typography: Instrument Sans (`--font-ui`) for UI, Geist Mono (`--font-mono`) for engravings and code, Doto (`--font-dot`) for numbers only.
 
 ### 2. Flat viz (sorting family)
 
@@ -43,13 +41,11 @@ See open polish backlog: `ohno-viz-polish-checklist` skill.
 
 Euclidean GCD, Extended Euclidean, Miller-Rabin, CRT, Gaussian elim. This is the **tutor writing in the margin of a scholarly text** idiom — Tufte sidenotes rather than chalk on a blackboard:
 
-- **Newsreader italic** for narrative chrome (markers, captions, goal, rule, instruction chips, annotation marks, signoff). Screen-optimized serif that scales cleanly up to dense/ultrawide layouts; holds its presence next to KaTeX math without feeling cheap the way a cursive hand can at larger sizes.
+- The notebook display (image 10): register rack, numbered derivation lines, phase dividers, margins rack; UI font for narrative chrome, KaTeX / mono for math bodies.
 - Lines grow as the algorithm progresses, each typed (goal / note / equation / substitute / decision / result / divider).
 - Margins carry invariants and hints — the stuff the student needs to keep in mind.
 - Math renders with KaTeX inline (`[[math]] … [[/math]]` markers).
 - Tone is teaching, not performing. A line lands, the student reads it, then it settles.
-
-Earlier iterations used Caveat cursive ("chalkboard hand"). That direction was walked back on 2026-04-23 because at larger sizes and on high-DPI displays Caveat reads as a Figma-mockup placeholder rather than authentic tutor handwriting. Caveat remains loaded (`--font-notebook` fallback chain still ships it) in case a future scene genuinely needs a cursive hand; don't reach for it by default.
 
 See `ohno-scratchpad-narrative` skill.
 
@@ -102,7 +98,6 @@ See `ohno-scratchpad-narrative` skill.
 Things the user has validated or asked for repeatedly:
 
 - **Semantic state colors everywhere** — same cyan/pink/lime language across all viz families, so students transfer the visual vocabulary.
-- **Newsreader italic for narrative chrome** — editorial serif italic reads as a scholar's margin note, holds up at any viewport size. (Historical: Caveat cursive was the earlier choice; see `ohno-scratchpad-narrative` for why it was walked back.)
 - **Hairline strokes + subtle drop shadow** over heavy fills. Flat > textured.
 - **One signature motion per scene** — a sweep, a pulse, a partition line — rather than many small flourishes.
 - **Margin annotations** (small, cursive, anchored) instead of tooltips.

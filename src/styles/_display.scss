@@ -47,49 +47,30 @@
   }
 }
 
+$tones: 'cyan', 'pink', 'lime', 'violet', 'amber', 'red', 'signal', 'slate';
+
+@mixin tone-scope {
+  @property --tone-pick {
+    syntax: '*';
+    inherits: false;
+  }
+
+  @property --tone-pick-rgb {
+    syntax: '*';
+    inherits: false;
+  }
+
+  @each $tone in $tones {
+    [data-tone='#{$tone}'] {
+      --tone-pick: var(--#{$tone});
+      --tone-pick-rgb: var(--#{$tone}-rgb);
+    }
+  }
+}
+
 @mixin tone-vars {
-  --tone-rgb: var(--white-rgb);
-  --tone: var(--ink-2);
-
-  &[data-tone='cyan'] {
-    --tone-rgb: var(--cyan-rgb);
-    --tone: var(--cyan);
-  }
-
-  &[data-tone='pink'] {
-    --tone-rgb: var(--pink-rgb);
-    --tone: var(--pink);
-  }
-
-  &[data-tone='lime'] {
-    --tone-rgb: var(--lime-rgb);
-    --tone: var(--lime);
-  }
-
-  &[data-tone='violet'] {
-    --tone-rgb: var(--violet-rgb);
-    --tone: var(--violet);
-  }
-
-  &[data-tone='amber'] {
-    --tone-rgb: var(--amber-rgb);
-    --tone: var(--amber);
-  }
-
-  &[data-tone='red'] {
-    --tone-rgb: var(--red-rgb);
-    --tone: var(--red);
-  }
-
-  &[data-tone='signal'] {
-    --tone-rgb: var(--signal-rgb);
-    --tone: var(--signal);
-  }
-
-  &[data-tone='slate'] {
-    --tone-rgb: var(--slate-rgb);
-    --tone: var(--slate);
-  }
+  --tone-rgb: var(--tone-pick-rgb, var(--white-rgb));
+  --tone: var(--tone-pick, var(--ink-2));
 }
 
 @mixin cell($size: 46px) {

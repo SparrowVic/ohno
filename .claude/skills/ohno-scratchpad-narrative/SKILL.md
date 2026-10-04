@@ -122,19 +122,15 @@ yield withScratchpad(createNumberLabStep({ … }), scratchpadSnapshot({ … }));
 
 ## Visual language rules
 
-- **Newsreader italic** (via `var(--font-notebook)` + `font-style: italic`) for markers, captions, instructions, annotation marks, signoff — the editorial margin-note voice. Body text for equations stays mono / KaTeX. (Caveat was the earlier choice for the "chalk hand" feel; walked back because it read as Figma-mockup-cheap at larger sizes and on dense ultrawide layouts. The cursive stack is still defined — don't reach for it by default.)
+- UI font (`--font-ui`) for markers, captions, instructions, annotation marks and signoff; mono / KaTeX for equations. Newsreader, Caveat and `--font-notebook` are gone.
 - **Math in `content`** uses `[[math]] … [[/math]]` (or per the helpers in this file — check existing usage) so KaTeX lights up inline.
 - **Indent** reads as a ladder — keep it monotonic within a logical block; reset to 0 across dividers.
 - **Don't pile margins.** Max 1 invariant (top) + 1 current hint (per line) on screen at once.
 - **Resist adding new line kinds.** The 7 existing kinds cover every algorithm we've mapped so far. If you think you need a new one, post it as a question first — likely a variant of `note` + a marker.
 
-## View-options (gear menu)
+## Captions and instructions
 
-`scratchpad-lab-visualization` exposes two user toggles (persisted to localStorage):
-- `captions` — show italic step-titles above each line.
-- `instructions` — show imperative pill chips.
-
-New scenes don't need to re-implement the gear menu — it's driven by the host component.
+The notebook display always renders captions and instruction chips; the old gear menu (`viz-options-menu`) and its localStorage toggles are gone. Keep captions short so the derivation column stays readable at 360px.
 
 ## When to add a new `ScratchpadLabMode`
 

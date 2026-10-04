@@ -7123,12 +7123,10 @@
           "newMatrix": "Nowa macierz",
           "newMatrixChain": "Nowy łańcuch macierzy",
           "newMergeChain": "Nowy łańcuch scalań",
-          "newNetwork": "Nowa sieć",
           "newPalindromeCase": "Nowy przypadek palindromu",
           "newPalindromeField": "Nowe pole palindromów",
           "newPartitionCase": "Nowy przypadek podziału",
           "newPointCloud": "Nowa chmura punktów",
-          "newPresetCase": "Nowy preset",
           "newPricedNetwork": "Nowa wyceniona sieć",
           "newRegexPair": "Nowa para regexów",
           "newRollingHashCase": "Nowy przypadek rolling hasha",
@@ -7151,7 +7149,23 @@
           "newWildcardPair": "Nowa para wildcard",
           "newWordPair": "Nowa para słów",
           "newZSkyline": "Nowa panorama Z",
-          "randomize": "Losuj"
+          "randomize": "Losuj",
+          "newGcdPair": "Nowa para do NWD",
+          "newLp": "Nowy program liniowy",
+          "newCandidate": "Nowy kandydat",
+          "newComposite": "Nowa liczba złożona",
+          "newDepth": "Nowa głębokość",
+          "newFactorialRun": "Nowy przebieg silni",
+          "newGameTree": "Nowe drzewo gry",
+          "newPair": "Nowa para",
+          "newPlayout": "Nowa rozgrywka",
+          "newRange": "Nowy zakres",
+          "newSequence": "Nowy ciąg",
+          "newSignal": "Nowy sygnał",
+          "newSortedArray": "Nowa posortowana tablica",
+          "newStream": "Nowy strumień",
+          "newSystem": "Nowy układ",
+          "newWord": "Nowe słowo"
         },
         "counterLabel": "Krok {{current}} / {{total}}",
         "customizeValues": {
@@ -7249,7 +7263,12 @@
           "triangleMesh": "Siatka trójkątów",
           "twoPassScc": "SCC w dwóch przebiegach",
           "twoSideCheck": "Kontrola dwóch stron",
-          "vectorMerge": "Scalanie wektorów"
+          "vectorMerge": "Scalanie wektorów",
+          "sieveGrid": "Siatka sita",
+          "pointerLab": "Wskaźniki",
+          "matrixGrid": "Siatka macierzy",
+          "callTreeLab": "Drzewo wywołań",
+          "callStackLab": "Stos wywołań"
         },
         "viewLabel": "Widok"
       },
@@ -8822,9 +8841,7 @@
           "trace": "Ślad"
         },
         "legend": {
-          "activeDigit": "Aktywna cyfra",
           "boundary": "Granica",
-          "bucketLane": "Kubełek",
           "comparing": "Porównanie",
           "gatheredOutput": "Zebrane wyjście",
           "hintCode": "kod",
@@ -8984,10 +9001,6 @@
     },
     "roadmap": {
       "chip": "Roadmap"
-    },
-    "vizOptionsMenu": {
-      "title": "Opcje widoku",
-      "triggerLabel": "Opcje widoku"
     }
   }
 }

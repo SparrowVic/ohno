@@ -1,3 +1,5 @@
 @use './styles/instrument-tokens';
-@use './styles/compat-tokens';
+@use './styles/display';
 @use './styles/base';
+
+@include display.tone-scope;
