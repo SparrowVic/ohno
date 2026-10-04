@@ -5,6 +5,10 @@ import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../models/m
 import { SortStep } from '../models/sort-step';
 import { HungarianScenario } from '../utils/scenarios/matrix/matrix-scenarios';
 import { cellId, createMatrixStep } from './matrix-step';
+import { I18N_KEY, RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.matrix.hungarian.computation;
+const MATRIX = I18N_KEY.features.algorithms.display.matrix;
 
 const I18N = {
   phases: {
@@ -56,9 +60,9 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
     phaseLabel: i18nText(I18N.phases.initialize),
     statusLabel: i18nText(I18N.statuses.initialize),
     resultLabel: i18nText(I18N.results.matched, { count: 0 }),
-    focusItemsLabel: 'Workers',
+    focusItemsLabel: i18nText(MATRIX.racks.workers),
     focusItems: scenario.rowLabels,
-    secondaryItemsLabel: 'Jobs',
+    secondaryItemsLabel: i18nText(MATRIX.racks.jobs),
     secondaryItems: scenario.colLabels,
     description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
@@ -73,18 +77,18 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.rowReduction),
       statusLabel: i18nText(I18N.statuses.rowMinimum, { row: scenario.rowLabels[row] }),
       resultLabel: i18nText(I18N.results.matched, { count: 0 }),
-      focusItemsLabel: 'Active row',
+      focusItemsLabel: i18nText(MATRIX.racks.activeRow),
       focusItems: [scenario.rowLabels[row]!],
-      secondaryItemsLabel: 'Reduced rows',
+      secondaryItemsLabel: i18nText(MATRIX.racks.reducedRows),
       secondaryItems: scenario.rowLabels.slice(0, row),
       description: i18nText(I18N.descriptions.rowMinimum, { row: scenario.rowLabels[row] }),
       activeCodeLine: 4,
       activeRow: row,
       computation: {
-        label: 'Row minimum',
+        label: i18nText(MATRIX.notes.titles.rowMinimum),
         expression: working[row]!.join(', '),
         result: String(minValue),
-        decision: 'This keeps every assignment difference intact while creating at least one zero in the row.',
+        decision: i18nText(MATRIX.notes.verdicts.rowMinimum),
       },
     });
 
@@ -98,9 +102,9 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.rowReduction),
       statusLabel: i18nText(I18N.statuses.rowDone, { row: scenario.rowLabels[row] }),
       resultLabel: i18nText(I18N.results.matched, { count: 0 }),
-      focusItemsLabel: 'Active row',
+      focusItemsLabel: i18nText(MATRIX.racks.activeRow),
       focusItems: [scenario.rowLabels[row]!],
-      secondaryItemsLabel: 'Reduced rows',
+      secondaryItemsLabel: i18nText(MATRIX.racks.reducedRows),
       secondaryItems: scenario.rowLabels.slice(0, row + 1),
       description: i18nText(I18N.descriptions.rowDone, { row: scenario.rowLabels[row] }),
       activeCodeLine: 4,
@@ -109,10 +113,10 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       cellStatuses: rowStatusMap(row, working[row]!.length, 'adjusted'),
       cellTags: rowTagMap(row, working[row]!.length, ['adjusted']),
       computation: {
-        label: 'Subtract minimum',
-        expression: `row - ${minValue}`,
-        result: `0 created in ${scenario.rowLabels[row]}`,
-        decision: 'The matrix is closer to a zero-based assignment search.',
+        label: i18nText(MATRIX.notes.titles.subtractMinimum),
+        expression: i18nText(MATRIX.notes.formulas.subtractRow, { label: scenario.rowLabels[row], value: minValue }),
+        result: i18nText(MATRIX.notes.verdicts.zeroCreated, { label: scenario.rowLabels[row] }),
+        decision: i18nText(TEXT.rowsReduced),
       },
     });
   }
@@ -125,18 +129,18 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.columnReduction),
       statusLabel: i18nText(I18N.statuses.columnMinimum, { column: scenario.colLabels[col] }),
       resultLabel: i18nText(I18N.results.matched, { count: 0 }),
-      focusItemsLabel: 'Active column',
+      focusItemsLabel: i18nText(MATRIX.racks.activeColumn),
       focusItems: [scenario.colLabels[col]!],
-      secondaryItemsLabel: 'Reduced columns',
+      secondaryItemsLabel: i18nText(MATRIX.racks.reducedColumns),
       secondaryItems: scenario.colLabels.slice(0, col),
       description: i18nText(I18N.descriptions.columnMinimum, { column: scenario.colLabels[col] }),
       activeCodeLine: 5,
       activeCol: col,
       computation: {
-        label: 'Column minimum',
+        label: i18nText(MATRIX.notes.titles.columnMinimum),
         expression: working.map((row) => row[col]!).join(', '),
         result: String(minValue),
-        decision: 'Now every column also gains at least one zero.',
+        decision: i18nText(MATRIX.notes.verdicts.columnMinimum),
       },
     });
 
@@ -150,9 +154,9 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.columnReduction),
       statusLabel: i18nText(I18N.statuses.columnDone, { column: scenario.colLabels[col] }),
       resultLabel: i18nText(I18N.results.matched, { count: 0 }),
-      focusItemsLabel: 'Active column',
+      focusItemsLabel: i18nText(MATRIX.racks.activeColumn),
       focusItems: [scenario.colLabels[col]!],
-      secondaryItemsLabel: 'Reduced columns',
+      secondaryItemsLabel: i18nText(MATRIX.racks.reducedColumns),
       secondaryItems: scenario.colLabels.slice(0, col + 1),
       description: i18nText(I18N.descriptions.columnDone, { column: scenario.colLabels[col] }),
       activeCodeLine: 5,
@@ -161,10 +165,10 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       cellStatuses: colStatusMap(working.length, col, 'adjusted'),
       cellTags: colTagMap(working.length, col, ['adjusted']),
       computation: {
-        label: 'Subtract minimum',
-        expression: `column - ${minValue}`,
-        result: `0 created in ${scenario.colLabels[col]}`,
-        decision: 'The zero graph is ready for matching analysis.',
+        label: i18nText(MATRIX.notes.titles.subtractMinimum),
+        expression: i18nText(MATRIX.notes.formulas.subtractColumn, { label: scenario.colLabels[col], value: minValue }),
+        result: i18nText(MATRIX.notes.verdicts.zeroCreated, { label: scenario.colLabels[col] }),
+        decision: i18nText(TEXT.columnsReduced),
       },
     });
   }
@@ -182,20 +186,18 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.zeroMatching, { round: iteration }),
       statusLabel: i18nText(I18N.statuses.matching, { size: matchedCount }),
       resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
-      focusItemsLabel: 'Current matches',
+      focusItemsLabel: i18nText(MATRIX.racks.currentMatches),
       focusItems: pairLabels(scenario, matching),
-      secondaryItemsLabel: 'Zeros',
+      secondaryItemsLabel: i18nText(MATRIX.racks.zeros),
       secondaryItems: zeroLocations(scenario, zeroMap).slice(0, 8),
       description: i18nText(I18N.descriptions.matching),
       activeCodeLine: 6,
       assignmentCells: assignmentSet,
       computation: {
-        label: 'Zero matching',
+        label: i18nText(MATRIX.notes.titles.zeroMatching),
         expression: `${matchedCount}/${working.length}`,
-        result: matchedCount === working.length ? 'perfect assignment found' : 'need more independent zeros',
-        decision: matchedCount === working.length
-          ? 'A full zero assignment exists, so the optimal solution can now be read off.'
-          : 'The matrix still lacks enough independent zeros.',
+        result: i18nText(matchedCount === working.length ? TEXT.perfectFound : TEXT.needMoreZeros),
+        decision: i18nText(matchedCount === working.length ? MATRIX.notes.verdicts.perfect : MATRIX.notes.verdicts.needMore),
       },
     });
 
@@ -207,19 +209,19 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
         phaseLabel: i18nText(I18N.phases.complete),
         statusLabel: i18nText(I18N.statuses.perfect, { size: matchedCount }),
         resultLabel: i18nText(I18N.results.totalCost, { cost: totalCost }),
-        focusItemsLabel: 'Optimal pairs',
+        focusItemsLabel: i18nText(MATRIX.racks.optimalPairs),
         focusItems: pairLabels(scenario, matching),
-        secondaryItemsLabel: 'Why it works',
-        secondaryItems: ['Perfect zero matching on the reduced matrix corresponds to the minimum original cost'],
+        secondaryItemsLabel: i18nText(MATRIX.racks.whyItWorks),
+        secondaryItems: [i18nText(MATRIX.sentences.perfectMatchingOptimal)],
         description: i18nText(I18N.descriptions.complete),
         activeCodeLine: 10,
         phase: 'graph-complete',
         assignmentCells: assignmentSet,
         computation: {
-          label: 'Original total',
+          label: i18nText(MATRIX.notes.titles.originalTotal),
           expression: pairCostExpression(scenario, matching),
           result: String(totalCost),
-          decision: 'Read the assignment from the zero matching, but evaluate it with the original costs.',
+          decision: i18nText(MATRIX.notes.verdicts.readOff),
         },
       });
       return;
@@ -232,9 +234,9 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.coverZeros, { round: iteration }),
       statusLabel: i18nText(I18N.statuses.cover, { lines: cover.coveredRows.size + cover.coveredCols.size }),
       resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
-      focusItemsLabel: 'Covered rows',
+      focusItemsLabel: i18nText(MATRIX.racks.coveredRows),
       focusItems: [...cover.coveredRows].map((row) => scenario.rowLabels[row]!),
-      secondaryItemsLabel: 'Covered columns',
+      secondaryItemsLabel: i18nText(MATRIX.racks.coveredColumns),
       secondaryItems: [...cover.coveredCols].map((col) => scenario.colLabels[col]!),
       description: i18nText(I18N.descriptions.cover),
       activeCodeLine: 7,
@@ -242,10 +244,10 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       coveredCols: cover.coveredCols,
       assignmentCells: assignmentSet,
       computation: {
-        label: 'Minimum cover',
-        expression: `${cover.coveredRows.size} row(s) + ${cover.coveredCols.size} column(s)`,
+        label: i18nText(MATRIX.notes.titles.minimumCover),
+        expression: i18nText(MATRIX.notes.formulas.cover, { rows: cover.coveredRows.size, cols: cover.coveredCols.size, total: cover.coveredRows.size + cover.coveredCols.size }),
         result: `${cover.coveredRows.size + cover.coveredCols.size}`,
-        decision: 'If these lines are fewer than n, the matrix needs another adjustment.',
+        decision: i18nText(MATRIX.notes.verdicts.cover),
       },
     });
 
@@ -256,9 +258,9 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.adjustMatrix, { round: iteration }),
       statusLabel: i18nText(I18N.statuses.smallest, { value: minUncovered }),
       resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
-      focusItemsLabel: 'Covered rows',
+      focusItemsLabel: i18nText(MATRIX.racks.coveredRows),
       focusItems: [...cover.coveredRows].map((row) => scenario.rowLabels[row]!),
-      secondaryItemsLabel: 'Covered columns',
+      secondaryItemsLabel: i18nText(MATRIX.racks.coveredColumns),
       secondaryItems: [...cover.coveredCols].map((col) => scenario.colLabels[col]!),
       description: i18nText(I18N.descriptions.smallest),
       activeCodeLine: 8,
@@ -266,10 +268,10 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       coveredCols: cover.coveredCols,
       assignmentCells: assignmentSet,
       computation: {
-        label: 'Smallest uncovered',
-        expression: 'min(uncovered cells)',
+        label: i18nText(MATRIX.notes.titles.smallestUncovered),
+        expression: i18nText(MATRIX.notes.formulas.smallest, { value: minUncovered }),
         result: String(minUncovered),
-        decision: 'Subtract it from uncovered cells and add it on row-column intersections that are covered twice.',
+        decision: i18nText(MATRIX.notes.verdicts.smallest),
       },
     });
 
@@ -299,10 +301,10 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       phaseLabel: i18nText(I18N.phases.adjustMatrix, { round: iteration }),
       statusLabel: i18nText(I18N.statuses.adjusted),
       resultLabel: i18nText(I18N.results.matched, { count: matchedCount }),
-      focusItemsLabel: 'Current matches',
+      focusItemsLabel: i18nText(MATRIX.racks.currentMatches),
       focusItems: pairLabels(scenario, matching),
-      secondaryItemsLabel: 'Next step',
-      secondaryItems: ['Rebuild zero matching on the adjusted matrix'],
+      secondaryItemsLabel: i18nText(MATRIX.racks.nextStep),
+      secondaryItems: [i18nText(MATRIX.sentences.rebuildMatching)],
       description: i18nText(I18N.descriptions.adjusted),
       activeCodeLine: 9,
       phase: 'pass-complete',
@@ -312,10 +314,10 @@ export function* hungarianAlgorithmGenerator(scenario: HungarianScenario): Gener
       cellStatuses: adjustedStatuses,
       cellTags: adjustedTags,
       computation: {
-        label: 'Adjustment',
-        expression: `uncovered - ${minUncovered}, double-covered + ${minUncovered}`,
-        result: 'new zero structure',
-        decision: 'Repeat the matching test on the updated zero graph.',
+        label: i18nText(MATRIX.notes.titles.adjustment),
+        expression: i18nText(MATRIX.notes.formulas.adjustment, { value: minUncovered }),
+        result: i18nText(TEXT.newZeros),
+        decision: i18nText(MATRIX.notes.verdicts.adjustment),
       },
     });
   }
@@ -327,10 +329,10 @@ function createStep(args: {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly focusItemsLabel: string;
-  readonly focusItems: readonly string[];
-  readonly secondaryItemsLabel: string;
-  readonly secondaryItems: readonly string[];
+  readonly focusItemsLabel: TranslatableText;
+  readonly focusItems: readonly TranslatableText[];
+  readonly secondaryItemsLabel: TranslatableText;
+  readonly secondaryItems: readonly TranslatableText[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];

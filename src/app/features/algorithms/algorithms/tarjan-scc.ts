@@ -4,6 +4,10 @@ import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text
 import { GraphComputation, WeightedGraphData } from '../models/graph';
 import { SortStep } from '../models/sort-step';
 import { createSccStep } from './scc-step';
+import { graphLabel } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.tarjan;
 
 const I18N = {
   descriptions: {
@@ -172,7 +176,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
             candidateLabel: neighborLabel,
             expression: `index[${neighborLabel}] = ∅`,
             result: i18nText(I18N.results.visitChild),
-            decision: 'tree edge',
+            decision: i18nText(TEXT.decisions.treeEdge),
           },
         });
 
@@ -200,7 +204,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
             candidateLabel: neighborLabel,
             expression: `min(${indexOrDash(lowMap, nodeId)}, ${indexOrDash(lowMap, neighborId)})`,
             result: String(updatedLow),
-            decision: 'low-link propagated',
+            decision: i18nText(RUNTIME_KEY.graph.common.lowLinkPropagated),
           },
         });
         continue;
@@ -229,7 +233,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
             candidateLabel: neighborLabel,
             expression: `min(${indexOrDash(lowMap, nodeId)}, ${indexOrDash(indexMap, neighborId)})`,
             result: String(updatedLow),
-            decision: 'back edge inside active SCC',
+            decision: i18nText(TEXT.decisions.backEdgeInside),
           },
         });
         continue;
@@ -254,7 +258,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
           candidateLabel: neighborLabel,
           expression: `component = ${componentLabel(componentMap.get(neighborId))}`,
           result: i18nText(I18N.results.assigned),
-          decision: 'ignore finished SCC',
+          decision: i18nText(RUNTIME_KEY.graph.common.ignoreFinishedScc),
         },
       });
     }
@@ -293,7 +297,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
           candidateLabel: labelOf(labelMap, nodeId),
           expression: `low = index = ${indexOrDash(indexMap, nodeId)}`,
           result: summary,
-          decision: 'emit SCC',
+          decision: i18nText(RUNTIME_KEY.graph.common.emitScc),
         },
       });
       return;
@@ -323,7 +327,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
         candidateLabel: neighborLabel,
         expression: `index[${neighborLabel}] = ∅`,
         result: i18nText(I18N.results.unseen),
-        decision: 'visit child',
+        decision: i18nText(TEXT.decisions.visitChild),
       };
     }
 
@@ -332,7 +336,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
         candidateLabel: neighborLabel,
         expression: `index = ${indexOrDash(indexMap, neighborId)}`,
         result: i18nText(I18N.results.onStack),
-        decision: 'use back edge for low-link',
+        decision: i18nText(TEXT.decisions.useBackEdge),
       };
     }
 
@@ -340,7 +344,7 @@ export function* tarjanSccGenerator(graph: WeightedGraphData): Generator<SortSte
       candidateLabel: neighborLabel,
       expression: componentLabel(componentMap.get(neighborId)),
       result: i18nText(I18N.results.closedScc),
-      decision: 'ignore assigned component',
+      decision: i18nText(TEXT.decisions.ignoreAssigned),
     };
   }
 }
@@ -383,16 +387,16 @@ function createStep(args: {
     settled: args.assigned,
     frontierOrder: [...args.tarjanStack].reverse(),
     visitOrder: [...args.componentOrder],
-    metricLabel: 'Index',
-    secondaryLabel: 'Low / SCC',
-    frontierLabel: 'Tarjan stack',
-    frontierHeadLabel: 'Stack top',
-    completionLabel: 'Assigned',
-    frontierStatusLabel: 'stacked',
-    completionStatusLabel: 'assigned',
-    detailLabel: 'Tarjan SCC map',
+    metricLabel: graphLabel('index'),
+    secondaryLabel: graphLabel('lowScc'),
+    frontierLabel: graphLabel('tarjanStack'),
+    frontierHeadLabel: graphLabel('stackTop'),
+    completionLabel: graphLabel('assigned'),
+    frontierStatusLabel: graphLabel('statusStacked'),
+    completionStatusLabel: graphLabel('statusAssigned'),
+    detailLabel: graphLabel('tarjanSccMap'),
     detailValue: summarizeAllComponents(args.componentOrder),
-    visitOrderLabel: 'SCC order',
+    visitOrderLabel: graphLabel('sccOrder'),
     phaseLabel: i18nText(phaseLabel(args.phase)),
     description: args.description,
     activeCodeLine: args.activeCodeLine,
@@ -424,8 +428,8 @@ function summarizeComponent(
   return `S${componentId}: ${labels.join(', ')}`;
 }
 
-function summarizeAllComponents(componentOrder: readonly string[]): string {
-  return componentOrder.length > 0 ? componentOrder.join(' · ') : 'No SCC closed yet';
+function summarizeAllComponents(componentOrder: readonly string[]): TranslatableText {
+  return componentOrder.length > 0 ? componentOrder.join(' · ') : i18nText(RUNTIME_KEY.graph.common.noSccClosed);
 }
 
 function indexOrDash(map: ReadonlyMap<string, number | null>, nodeId: string): string {

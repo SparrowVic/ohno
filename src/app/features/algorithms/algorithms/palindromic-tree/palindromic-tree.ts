@@ -8,6 +8,11 @@ import {
   PalindromicTreeTraceState,
 } from '../../models/string';
 import { PalindromicTreeScenario } from '../../utils/scenarios/string/string-scenarios';
+import { I18N_KEY, RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.string.palindromicTree.trace;
+
+const NODES = I18N_KEY.features.algorithms.display.string.nodes;
 
 interface EertreeNode {
   readonly id: number;
@@ -103,9 +108,13 @@ function createNode(id: number, length: number, link: number, firstEnd: number):
 }
 
 function extractPalindrome(source: string, node: EertreeNode): string {
-  if (node.length < 0) return 'odd-root';
-  if (node.length === 0) return 'ε';
   return source.slice(node.firstEnd - node.length + 1, node.firstEnd + 1);
+}
+
+function nodePalindrome(source: string, node: EertreeNode): TranslatableText {
+  if (node.length < 0) return i18nText(NODES.oddRoot);
+  if (node.length === 0) return i18nText(NODES.evenRoot);
+  return extractPalindrome(source, node);
 }
 
 function buildNodeViews(
@@ -125,7 +134,7 @@ function buildNodeViews(
 
     return {
       id: String(node.id),
-      palindrome: extractPalindrome(source, node),
+      palindrome: nodePalindrome(source, node),
       length: node.length,
       suffixLinkId: node.id === 0 ? null : String(node.link),
       occurrences: node.occ,
@@ -256,7 +265,7 @@ export function* palindromicTreeGenerator(
       nodes,
       computation: {
         label: I18N.computation.labels.newNode,
-        expression: 'odd root = -1, even root = 0',
+        expression: i18nText(TEXT.roots),
         result: null,
         note: I18N.computation.notes.newNode,
       },

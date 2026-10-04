@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { SubsetSumScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.subsetSum.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.subsetSum.modeLabel'),
@@ -206,7 +210,7 @@ export function* subsetSumGenerator(scenario: SubsetSumScenario): Generator<Sort
         phase: 'skip-relax',
         computation: {
           label: i18nText(I18N.labels.skipValueComputation, { value }),
-          expression: 'reachable above',
+          expression: i18nText(TEXT.reachableAbove),
           result: i18nText(I18N.labels.rowValue, { row: row - 1 }),
           decision: I18N.decisions.skipValue,
         },
@@ -234,7 +238,7 @@ export function* subsetSumGenerator(scenario: SubsetSumScenario): Generator<Sort
         phase: 'relax',
         computation: {
           label: i18nText(I18N.labels.takeValueComputation, { value }),
-          expression: `sum ${sum} -> ${sum - value}`,
+          expression: i18nText(TEXT.sumStep, { from: sum, to: sum - value }),
           result: boolLabel(true),
           decision: I18N.decisions.includeValueInSubset,
         },
@@ -279,19 +283,19 @@ function createStep(args: {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: 'no nums', status: 'source', metaLabel: 'base' },
+    { id: 'row-0', label: dpLabel('noNumbers'), status: 'source', metaLabel: dpLabel('base') },
     ...args.scenario.numbers.map((value, index) => ({
       id: `row-${index + 1}`,
       label: `${value}`,
       status: (args.activeCell?.[0] === index + 1 ? 'active' : args.chosenIndexes.has(index) ? 'accent' : 'idle') as DpHeaderConfig['status'],
-      metaLabel: 'value',
+      metaLabel: dpLabel('value'),
     })),
   ];
   const colHeaders: DpHeaderConfig[] = Array.from({ length: args.scenario.target + 1 }, (_, sum) => ({
     id: `col-${sum}`,
     label: String(sum),
     status: (args.activeCell?.[1] === sum ? 'active' : sum === 0 ? 'source' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: sum === 0 ? 'base' : 'sum',
+    metaLabel: sum === 0 ? dpLabel('base') : dpLabel('sum'),
   }));
 
   const cells: DpCellConfig[] = [];
@@ -311,10 +315,10 @@ function createStep(args: {
       cells.push({
         row,
         col: sum,
-        rowLabel: row === 0 ? 'no nums' : `${args.scenario.numbers[row - 1]!}`,
+        rowLabel: row === 0 ? dpLabel('noNumbers') : `${args.scenario.numbers[row - 1]!}`,
         colLabel: `${sum}`,
         valueLabel: boolLabel(reachable),
-        metaLabel: isBacktrack ? 'subset' : reachable ? 'yes' : 'no',
+        metaLabel: isBacktrack ? dpLabel('subset') : reachable ? dpLabel('yes') : dpLabel('no'),
         status: isBacktrack
           ? 'backtrack'
           : id === activeCellId

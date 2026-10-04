@@ -56,20 +56,6 @@ export interface NetworkRackEntry {
 
 const LABELS = I18N_KEY.features.algorithms.display.network.labels;
 
-const NETWORK_RACK_TITLE_KEYS: Readonly<Record<string, string>> = {
-  'Level queue': LABELS.levelQueue,
-  'Residual queue': LABELS.residualQueue,
-  'Cost scan': LABELS.costScan,
-  'Layer queue': LABELS.layerQueue,
-  'BFS queue': LABELS.bfsQueue,
-  'Positive flow': LABELS.positiveFlow,
-  'Final positive flow': LABELS.finalPositiveFlow,
-  'Committed flow': LABELS.committedFlow,
-  'Final committed flow': LABELS.finalCommittedFlow,
-  'Current matching': LABELS.currentMatching,
-  'Final matching': LABELS.finalMatching,
-};
-
 const NETWORK_LINK_LABEL_KEYS: Readonly<Record<string, string>> = {
   start: LABELS.start,
   goal: LABELS.goal,
@@ -117,11 +103,6 @@ export function networkNodeTone(status: NetworkNodeStatus): NetworkTone {
 
 export function networkEdgeTone(status: NetworkEdgeStatus): NetworkTone {
   return EDGE_TONES[status];
-}
-
-export function networkRackTitle(raw: string): TranslatableText {
-  const key = NETWORK_RACK_TITLE_KEYS[raw];
-  return key ? i18nText(key) : raw;
 }
 
 export function networkLinkLabel(raw: string | null): TranslatableText | null {

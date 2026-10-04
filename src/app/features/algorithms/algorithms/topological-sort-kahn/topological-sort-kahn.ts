@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.topologicalSort;
 
 const I18N = {
   descriptions: {
@@ -104,7 +108,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
           candidateLabel: labelOf(labelMap, neighborId),
           expression: `${inDegreeMap.get(neighborId) ?? 0} - 1`,
           result: `${nextInDegree}`,
-          decision: nextInDegree === 0 ? 'enqueue when it reaches 0' : 'still blocked',
+          decision: nextInDegree === 0 ? i18nText(TEXT.decisions.enqueueAtZero) : i18nText(TEXT.decisions.stillBlocked),
         },
       });
 
@@ -131,7 +135,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `${inDegreeMap.get(neighborId) ?? 0}`,
             result: '0',
-            decision: 'added to queue',
+            decision: i18nText(RUNTIME_KEY.graph.common.addedToQueue),
           },
         });
       } else {
@@ -152,7 +156,7 @@ export function* topologicalSortKahnGenerator(graph: WeightedGraphData): Generat
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `${nextInDegree}`,
             result: `${nextInDegree}`,
-            decision: 'wait for more incoming edges to disappear',
+            decision: i18nText(TEXT.decisions.waitIncoming),
           },
         });
       }
@@ -260,19 +264,19 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'InDeg',
-      secondaryLabel: 'Order',
-      frontierLabel: 'Zero in-degree queue',
-      frontierHeadLabel: 'Queue head',
-      completionLabel: 'Ordered',
-      frontierStatusLabel: 'queued',
-      completionStatusLabel: 'ordered',
+      metricLabel: graphLabel('inDegree'),
+      secondaryLabel: graphLabel('order'),
+      frontierLabel: graphLabel('zeroInDegreeQueue'),
+      frontierHeadLabel: graphLabel('queueHead'),
+      completionLabel: graphLabel('ordered'),
+      frontierStatusLabel: graphLabel('statusQueued'),
+      completionStatusLabel: graphLabel('statusOrdered'),
       showEdgeWeights: false,
-      detailLabel: 'Topo order',
+      detailLabel: graphLabel('topoOrder'),
       detailValue: args.topoOrder.length > 0
         ? args.topoOrder.map((nodeId) => labelOf(labelMap, nodeId)).join(' → ')
-        : 'pending',
-      visitOrderLabel: 'Topo order',
+        : i18nText(TEXT.details.pending),
+      visitOrderLabel: graphLabel('topoOrder'),
       currentNodeId,
       activeEdgeId,
       queue,

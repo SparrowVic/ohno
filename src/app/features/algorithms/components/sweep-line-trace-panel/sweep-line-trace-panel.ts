@@ -36,7 +36,7 @@ export class SweepLineTracePanel {
     const geo = this.state();
     if (!geo) return [];
     return [
-      { id: 'scanline', label: SWEEP_KEYS.scanlineLabel, value: toTraceValue(sweepEventText(geo.currentEventLabel)), kind: 'mono', tone: 'cyan' },
+      { id: 'scanline', label: SWEEP_KEYS.scanlineLabel, value: toTraceValue(geo.currentEventLabel), kind: 'mono', tone: 'cyan' },
       { id: 'area', label: SWEEP_KEYS.areaLabel, value: geo.coveredArea.toFixed(1), tone: 'lime' },
       { id: 'spans', label: SWEEP_KEYS.spansLabel, value: geo.spans.length },
     ];

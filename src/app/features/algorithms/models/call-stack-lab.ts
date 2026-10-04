@@ -27,7 +27,7 @@ export type CallStackFramePhase =
 
 export interface CallStackFrameLocal {
   /** Short key for the local — "n", "depth", "acc". */
-  readonly label: string;
+  readonly label: TranslatableText;
   /** Rendered value as a string. */
   readonly value: string;
   readonly tone: 'default' | 'arg' | 'result' | 'active';

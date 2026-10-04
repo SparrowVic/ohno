@@ -62,7 +62,7 @@ export class HalfPlaneTracePanel {
       { id: 'verts', label: HALF_KEYS.vertsLabel, value: geo.vertexCount },
       { id: 'area', label: HALF_KEYS.areaLabel, value: (geo.feasibleArea ?? 0).toFixed(1), tone: 'lime' },
       { id: 'status', label: HALF_KEYS.statusLabel, value: toTraceValue(status.label), kind: 'mono', tone: status.tone },
-      { id: 'boundary', label: HALF_KEYS.currentBoundaryLabel, value: geo.currentConstraintLabel, kind: 'mono', wide: true },
+      { id: 'boundary', label: HALF_KEYS.currentBoundaryLabel, value: toTraceValue(geo.currentConstraintLabel), kind: 'mono', wide: true },
     ];
   });
 

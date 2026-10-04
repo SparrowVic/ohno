@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { WildcardMatchingScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.wildcardMatching.modeLabel'),
@@ -259,7 +263,7 @@ export function* wildcardMatchingGenerator(scenario: WildcardMatchingScenario): 
         phase: 'compare',
         computation: {
           label: i18nText(I18N.labels.charVsToken, { char, token }),
-          expression: `dp[${row - 1}][${col - 1}] AND match`,
+          expression: i18nText(COMMON.andMatch, { cell: `dp[${row - 1}][${col - 1}]` }),
           result: boolLabel(diagonal),
           decision: diagonal ? I18N.decisions.diagonalMatchSurvives : I18N.decisions.directTransitionFails,
         },
@@ -451,7 +455,7 @@ function createStep(args: {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: '∅', status: 'source', metaLabel: 'text' },
+    { id: 'row-0', label: '∅', status: 'source', metaLabel: dpLabel('text') },
     ...args.text.map((char, index) => ({
       id: `row-${index + 1}`,
       label: char,
@@ -460,7 +464,7 @@ function createStep(args: {
     })),
   ];
   const colHeaders: DpHeaderConfig[] = [
-    { id: 'col-0', label: '∅', status: 'target', metaLabel: 'pattern' },
+    { id: 'col-0', label: '∅', status: 'target', metaLabel: dpLabel('pattern') },
     ...args.pattern.map((char, index) => ({
       id: `col-${index + 1}`,
       label: char,
@@ -492,13 +496,13 @@ function createStep(args: {
         colLabel: col === 0 ? '∅' : args.pattern[col - 1]!,
         valueLabel: boolLabel(args.table[row]![col]!),
         metaLabel: args.backtrackCells.has(id)
-          ? 'route'
+          ? dpLabel('route')
           : token === '*'
-            ? 'star'
+            ? dpLabel('star')
             : token === '?'
-              ? 'wild'
+              ? dpLabel('wild')
               : args.table[row]![col]!
-                ? 'match'
+                ? dpLabel('match')
                 : null,
         status: args.backtrackCells.has(id)
           ? 'backtrack'

@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+import { graphLabel } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const GRAPH_TEXT = RUNTIME_KEY.graph.common;
 
 const I18N = {
   descriptions: {
@@ -96,7 +100,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
           candidateLabel: labelOf(labelMap, neighborId),
           expression: `${edge.weight}`,
           result: `${edge.weight}`,
-          decision: knownCost === null ? `best so far vs ∞` : `${edge.weight} < ${knownCost}`,
+          decision: knownCost === null ? i18nText(GRAPH_TEXT.bestVsInfinity) : `${edge.weight} < ${knownCost}`,
         },
       });
 
@@ -122,7 +126,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `${edge.weight}`,
             result: `${edge.weight}`,
-            decision: knownCost === null ? 'first connection choice' : `better than ${knownCost}`,
+            decision: knownCost === null ? i18nText(GRAPH_TEXT.firstConnection) : i18nText(GRAPH_TEXT.betterThan, { value: knownCost }),
           },
         });
       } else {
@@ -142,7 +146,7 @@ export function* primsMstGenerator(graph: WeightedGraphData): Generator<SortStep
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `${edge.weight}`,
             result: `${edge.weight}`,
-            decision: `keep ${knownCost}`,
+            decision: i18nText(GRAPH_TEXT.keep, { value: knownCost }),
           },
         });
       }
@@ -248,17 +252,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Best',
-      secondaryLabel: 'Prev',
-      frontierLabel: 'Candidate queue',
-      frontierHeadLabel: 'Cheapest next',
-      completionLabel: 'In tree',
-      frontierStatusLabel: 'candidate',
-      completionStatusLabel: 'in-tree',
+      metricLabel: graphLabel('best'),
+      secondaryLabel: graphLabel('previous'),
+      frontierLabel: graphLabel('candidateQueue'),
+      frontierHeadLabel: graphLabel('cheapestNext'),
+      completionLabel: graphLabel('inTree'),
+      frontierStatusLabel: graphLabel('statusCandidate'),
+      completionStatusLabel: graphLabel('statusInTree'),
       showEdgeWeights: true,
-      detailLabel: 'MST tree',
-      detailValue: `Tree weight: ${totalWeight(args.keyMap, args.inTree)}`,
-      visitOrderLabel: 'Tree order',
+      detailLabel: graphLabel('mstTree'),
+      detailValue: i18nText(GRAPH_TEXT.treeWeight, { weight: totalWeight(args.keyMap, args.inTree) }),
+      visitOrderLabel: graphLabel('treeOrder'),
       currentNodeId,
       activeEdgeId,
       queue,

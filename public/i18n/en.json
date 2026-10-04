@@ -2089,6 +2089,10 @@
               "initializeCanvas": "Initialize interval canvas",
               "inspectCandidate": "Inspect last-burst candidate",
               "traceSplit": "Trace saved split"
+            },
+            "trace": {
+              "last": "last = #{{index}}",
+              "lastBurst": "last burst = #{{index}}"
             }
           },
           "climbingStairs": {
@@ -2187,6 +2191,9 @@
               "initializeUnreachable": "Initialize unreachable states",
               "noSolution": "No solution",
               "optimalChangeReady": "Optimal change ready"
+            },
+            "trace": {
+              "coinBlocked": "{{coin}} > {{amount}} or prior amount unreachable"
             }
           },
           "divideConquerDpOptimization": {
@@ -2228,6 +2235,9 @@
               "complete": "Cuts ready",
               "initializeRows": "Initialize rows",
               "inspectRange": "Inspect midpoint range"
+            },
+            "trace": {
+              "search": "search {{from}}..{{to}}"
             }
           },
           "dpConvexHullTrick": {
@@ -2277,6 +2287,9 @@
               "initializeHull": "Initialize hull",
               "insertLine": "Insert new line",
               "pruneLine": "Prune dominated line"
+            },
+            "trace": {
+              "origin": "origin"
             }
           },
           "dpOnTrees": {
@@ -2327,6 +2340,9 @@
             "results": {
               "take": "take",
               "skip": "skip"
+            },
+            "trace": {
+              "parentSelected": "parent selected"
             }
           },
           "editDistance": {
@@ -2387,6 +2403,12 @@
               "compareOperations": "Compare edit operations",
               "complete": "Edit script ready",
               "initializeBorders": "Initialize borders"
+            },
+            "trace": {
+              "minOf": "min(diag {{diag}}, up {{up}}, left {{left}})",
+              "diagValue": "diag = {{value}}",
+              "upValue": "up = {{value}}",
+              "leftValue": "left = {{value}}"
             }
           },
           "fibonacci": {
@@ -2481,6 +2503,9 @@
               "compareSkipTake": "Compare skip vs take",
               "initializeBaseRow": "Initialize base row",
               "optimalSolutionReady": "Optimal solution ready"
+            },
+            "trace": {
+              "itemTooHeavy": "item weight {{weight}} > capacity {{cap}}"
             }
           },
           "knuthDpOptimization": {
@@ -2531,6 +2556,10 @@
             },
             "items": {
               "optRow": "opt row {{n}}"
+            },
+            "trace": {
+              "window": "window {{from}}..{{to}}",
+              "leaf": "leaf"
             }
           },
           "longestCommonSubsequence": {
@@ -2709,6 +2738,9 @@
               "skipRight": "Skip right boundary",
               "takePair": "Take mirrored pair",
               "traceCenter": "Trace palindrome center"
+            },
+            "trace": {
+              "singleCharacter": "single character"
             }
           },
           "matrixChain": {
@@ -2758,6 +2790,10 @@
               "inspectCandidate": "Inspect split candidate",
               "traceLeaf": "Trace leaf interval",
               "traceSplit": "Trace optimal split"
+            },
+            "trace": {
+              "bestSplit": "best split = {{split}}",
+              "singleMatrix": "single matrix"
             }
           },
           "profileDp": {
@@ -2872,6 +2908,10 @@
               "traceDirect": "Trace direct match",
               "traceStarConsume": "Trace star consume",
               "traceStarEmpty": "Trace empty star group"
+            },
+            "trace": {
+              "zeroOccurrences": "zero occurrences",
+              "diagonal": "diagonal"
             }
           },
           "sosDp": {
@@ -2900,7 +2940,6 @@
             },
             "labels": {
               "activeBitsLabel": "Active bits",
-              "activeState": "{{row}} × {{mask}}",
               "baseValuesLabel": "Base values",
               "carryLabel": "{{mask}} @ bit {{bit}}",
               "cellLabel": "dp[{{stage}}][{{mask}}]",
@@ -2919,6 +2958,12 @@
               "mergeSubmask": "Merge submask contribution",
               "traceBase": "Trace base contributor",
               "traceContributors": "Trace SOS contributor path"
+            },
+            "trace": {
+              "activeBase": "base × {{mask}}",
+              "activeBit": "bit {{bit}} × {{mask}}",
+              "fromMaskAndSubmask": "came from mask and submask",
+              "fromSameMask": "came only from the same mask"
             }
           },
           "subsetSum": {
@@ -2974,6 +3019,10 @@
               "initializeBooleanTable": "Initialize boolean table",
               "noSubsetFound": "No subset found",
               "subsetReady": "Subset ready"
+            },
+            "trace": {
+              "reachableAbove": "reachable above",
+              "sumStep": "sum {{from}} -> {{to}}"
             }
           },
           "travelingSalesman": {
@@ -3103,6 +3152,49 @@
               "traceDiagonal": "Trace diagonal match",
               "traceStarConsume": "Trace star consume",
               "traceStarEmpty": "Trace star empty branch"
+            }
+          },
+          "common": {
+            "labels": {
+              "packed": "packed",
+              "tooHeavy": "too heavy",
+              "compare": "compare",
+              "commit": "commit",
+              "trace": "trace",
+              "diagonal": "diag",
+              "path": "path",
+              "picked": "picked",
+              "keep": "keep",
+              "script": "script",
+              "goal": "goal",
+              "target": "target",
+              "leaf": "leaf",
+              "children": "{{count}} kids",
+              "blockedByParent": "blocked by parent?",
+              "solo": "solo",
+              "pair": "pair",
+              "yes": "yes",
+              "no": "no",
+              "subset": "subset",
+              "match": "match",
+              "wild": "wild",
+              "group": "group",
+              "route": "route",
+              "seed": "seed",
+              "minLine": "min line",
+              "source": "src",
+              "regex": "regex",
+              "max": "max",
+              "fib": "fib",
+              "noCoin": "no coin",
+              "capacity": "cap {{cap}}",
+              "column": "column {{column}}"
+            },
+            "trace": {
+              "only": "{{value}} only",
+              "split": "split = {{split}}",
+              "mask": "mask {{mask}}",
+              "andMatch": "{{cell}} AND match"
             }
           }
         },
@@ -4967,6 +5059,9 @@
               "char": "char '{{char}}'",
               "node": "node {{node}}",
               "distinct": "distinct = {{count}}"
+            },
+            "trace": {
+              "roots": "odd root = -1, even root = 0"
             }
           },
           "rabinKarp": {
@@ -5051,6 +5146,11 @@
               "possibleMatch": "possible match",
               "skipWindow": "skip window",
               "match": "match"
+            },
+            "trace": {
+              "collision": "{{window}} = {{pattern}}, but text[{{text}}] ≠ pattern[{{offset}}]",
+              "reject": "reject",
+              "verifiedMatches": "verified matches"
             }
           },
           "runLengthEncoding": {
@@ -5413,6 +5513,16 @@
               "close": "Close assigned node",
               "complete": "Components ready",
               "initialize": "Initialize component scan"
+            },
+            "decisions": {
+              "componentExpression": "component C{{component}}",
+              "claim": "claim node for this component",
+              "alreadyAssigned": "already assigned",
+              "keepLabel": "keep existing component label",
+              "addedToFrontier": "added to component frontier"
+            },
+            "details": {
+              "waitingSeed": "Waiting for the first seed"
             }
           },
           "cycleDetection": {
@@ -5441,6 +5551,16 @@
               "leave": "Leave recursion",
               "complete": "Cycle analysis ready",
               "initialize": "Initialize DFS states"
+            },
+            "decisions": {
+              "visitNeighbor": "visit neighbor",
+              "backEdgeFound": "back edge found",
+              "alreadyClosed": "already closed",
+              "descend": "descend recursively",
+              "ignoreClosed": "ignore closed node"
+            },
+            "details": {
+              "searching": "searching…"
             }
           },
           "topologicalSort": {
@@ -5461,6 +5581,14 @@
               "commit": "Commit topo slot",
               "complete": "Topological order ready",
               "initialize": "Initialize in-degrees"
+            },
+            "decisions": {
+              "enqueueAtZero": "enqueue when it reaches 0",
+              "stillBlocked": "still blocked",
+              "waitIncoming": "wait for more incoming edges to disappear"
+            },
+            "details": {
+              "pending": "pending"
             }
           },
           "bellmanFord": {
@@ -5514,6 +5642,18 @@
               "close": "Close colored node",
               "complete": "Bipartite verdict ready",
               "initialize": "Initialize partition scan"
+            },
+            "decisions": {
+              "assignOpposite": "assign opposite side",
+              "sameSideConflict": "same-side conflict",
+              "crossesPartitions": "edge crosses partitions",
+              "consistentOpposite": "consistent opposite side",
+              "oddCycle": "odd cycle / same-side edge found",
+              "keepColoring": "keep current coloring"
+            },
+            "details": {
+              "conflict": "Conflict: {{nodes}}",
+              "partitions": "Left: {{left}} · Right: {{right}}"
             }
           },
           "prim": {
@@ -5561,6 +5701,18 @@
               "propagate": "Propagate low-link",
               "complete": "Critical cuts ready",
               "initialize": "Initialize low-link scan"
+            },
+            "decisions": {
+              "unvisited": "unvisited",
+              "descendChild": "descend into child",
+              "updateLowLink": "update low-link",
+              "discoverSubtree": "discover child subtree",
+              "bridgeFound": "bridge found",
+              "articulationFound": "articulation found",
+              "backEdgeConnected": "back edge keeps component connected"
+            },
+            "details": {
+              "critical": "Bridges: {{bridges}} · Articulation: {{articulation}}"
             }
           },
           "kosaraju": {
@@ -5605,6 +5757,21 @@
               "pass2Seal": "Pass 2: seal SCC",
               "complete": "Kosaraju complete",
               "pass2Initialize": "Initialize pass 2"
+            },
+            "decisions": {
+              "reverseDfsFrom": "reverse DFS from {{node}}",
+              "noRecursion": "no recursive call",
+              "descend": "descend",
+              "appendFinish": "append to finish stack",
+              "keepBoundary": "keep current SCC boundary",
+              "unassignedReversed": "unassigned on reversed graph",
+              "expand": "expand SCC",
+              "absorb": "reverse DFS can absorb it",
+              "visitChild": "visit child",
+              "skipVisited": "skip visited node"
+            },
+            "details": {
+              "noFinishOrder": "No finish order yet"
             }
           },
           "tarjan": {
@@ -5636,6 +5803,13 @@
               "close": "Close or emit SCC",
               "complete": "SCC discovery complete",
               "initialize": "Initialize Tarjan"
+            },
+            "decisions": {
+              "treeEdge": "tree edge",
+              "backEdgeInside": "back edge inside active SCC",
+              "visitChild": "visit child",
+              "useBackEdge": "use back edge for low-link",
+              "ignoreAssigned": "ignore assigned component"
             }
           },
           "chromaticNumber": {
@@ -5666,6 +5840,26 @@
               "backtrack": "Backtrack",
               "decision": "Palette decision",
               "step": "Color step"
+            },
+            "decisions": {
+              "lowerBound": "Lower bound",
+              "cliqueBound": "A clique gives the minimum number of colors worth trying first.",
+              "nodeCount": "{{count}} node(s)",
+              "backtrackPlan": "Backtracking will attempt colors in node order and undo assignments on conflicts.",
+              "exhausted": "backtracking exhausted",
+              "needMore": "At least one more color is necessary.",
+              "chromaticNumber": "Chromatic number",
+              "smallestPalette": "This is the smallest palette that colors every adjacent pair differently.",
+              "tryPalette": "Try palette slots from left to right and backtrack on dead ends.",
+              "tryColor": "try color {{color}}",
+              "rejectColor": "reject this color and keep searching",
+              "commitColor": "commit color and recurse",
+              "partialValid": "The current partial coloring is still valid.",
+              "branchDead": "This branch cannot finish a legal coloring.",
+              "forbidden": "forbidden = {{colors}}"
+            },
+            "details": {
+              "trying": "Trying χ ≤ {{limit}} · bound {{bound}}"
             }
           },
           "eulerTrail": {
@@ -5694,6 +5888,25 @@
               "backtrack": "Backtrack into trail",
               "complete": "Euler trail complete",
               "step": "Euler step"
+            },
+            "decisions": {
+              "degreeCheck": "Degree check",
+              "oddEndpoints": "Odd endpoints",
+              "allEven": "every degree is even",
+              "oddPair": "{{start}} / {{end}} are odd",
+              "plan": "Hierholzer will grow a live stack and backtrack to lock the final trail.",
+              "unusedIncident": "unused incident edges = {{count}}",
+              "extend": "extend trail",
+              "seal": "seal this node into the final route",
+              "traverse": "Traverse it now and remove it from future choices.",
+              "stackDepth": "stack depth {{depth}} + 1",
+              "keepWalking": "The live walk keeps growing until the top node runs out of unused edges.",
+              "fixSuffix": "Backtracking fixes this node permanently in the finished route suffix.",
+              "allUsed": "{{count}} edge(s) used exactly once",
+              "finish": "Hierholzer finishes once both the live stack and the unused-edge set are empty."
+            },
+            "details": {
+              "trailPending": "Trail order appears during backtracking."
             }
           },
           "dominatorTree": {
@@ -5721,6 +5934,15 @@
               "immediate": "Extract immediate dominator",
               "complete": "Dominator tree ready",
               "step": "Dominator step"
+            },
+            "decisions": {
+              "iterate": "Iterative intersection will now remove impossible dominators.",
+              "startPredecessor": "Start from the first predecessor and keep intersecting.",
+              "commonBlocks": "Only blocks common to all predecessor paths can dominate this node.",
+              "setChanged": "The set changed, so another global pass is still required.",
+              "stable": "This block is already stable for the current predecessor information.",
+              "immediateParent": "The immediate dominator becomes the parent in the dominator tree.",
+              "treeDone": "Every reachable block now has exactly one parent in the dominator tree."
             }
           },
           "steinerTree": {
@@ -5742,7 +5964,49 @@
               "propagate": "Propagate subset root",
               "complete": "Exact Steiner tree",
               "step": "Steiner step"
+            },
+            "decisions": {
+              "terminals": "Terminals",
+              "plan": "Dreyfus-Wagner grows exact DP states over terminal subsets.",
+              "singleTerminal": "Single-terminal states are just shortest-path distances.",
+              "merge": "Two partial Steiner subtrees can meet at the same root node.",
+              "stayPath": "stay + path",
+              "viaPath": "{{node}} + path",
+              "meetingOptimal": "meeting point already optimal",
+              "moveRoot": "move the subset root along the cheapest connector path",
+              "bestRoot": "Best root",
+              "rootFor": "{{node}} for {{subset}}",
+              "finalTree": "Teal edges form the exact minimum-cost tree for this terminal set."
+            },
+            "details": {
+              "subsetReady": "{{subset}} ready",
+              "seeding": "Seeding terminals",
+              "subsetAt": "Subset {{mask}} @ {{node}}"
             }
+          },
+          "common": {
+            "keep": "keep {{value}}",
+            "betterThan": "better than {{value}}",
+            "stillBetterThan": "still better than {{value}}",
+            "noActiveNode": "No active node",
+            "sourceUnreachable": "source still unreachable",
+            "keepUnreachable": "keep unreachable state",
+            "firstFiniteDistance": "first finite distance",
+            "passLabel": "Pass {{pass}}",
+            "passOf": "Pass {{pass}} of {{total}}",
+            "alreadyDiscovered": "already discovered",
+            "enqueueNeighbor": "enqueue neighbor",
+            "keepDiscovery": "keep existing discovery",
+            "addedToQueue": "added to queue",
+            "pushNeighbor": "push neighbor",
+            "pushedToStack": "pushed to stack",
+            "bestVsInfinity": "best so far vs ∞",
+            "firstConnection": "first connection choice",
+            "treeWeight": "Tree weight: {{weight}}",
+            "lowLinkPropagated": "low-link propagated",
+            "emitScc": "emit SCC",
+            "ignoreFinishedScc": "ignore finished SCC",
+            "noSccClosed": "No SCC closed yet"
           }
         },
         "matrix": {
@@ -5771,7 +6035,8 @@
               "update": "Replace the old value with the shorter route that passes through {{pivot}}.",
               "pivotDone": "All pairs have been tested against pivot {{pivot}}.",
               "complete": "Floyd-Warshall is complete: the matrix now stores shortest-path distances for every ordered pair."
-            }
+            },
+            "via": "via {{pivot}}"
           },
           "hungarian": {
             "phases": {
@@ -5810,6 +6075,19 @@
               "cover": "Use the maximum zero matching to derive the minimum set of covering lines via König’s theorem.",
               "smallest": "Find the smallest uncovered value before shifting the matrix to create new zeros.",
               "adjusted": "The adjusted matrix preserves optimal assignments while exposing new independent zeros."
+            },
+            "computation": {
+              "rowsReduced": "The matrix is closer to a zero-based assignment search.",
+              "columnsReduced": "The zero graph is ready for matching analysis.",
+              "perfectFound": "perfect assignment found",
+              "needMoreZeros": "need more independent zeros",
+              "newZeros": "new zero structure"
+            }
+          },
+          "common": {
+            "modes": {
+              "floydWarshall": "Floyd-Warshall",
+              "hungarian": "Hungarian Algorithm"
             }
           }
         },
@@ -5847,6 +6125,17 @@
               "pathFound": "One admissible source-to-sink path is ready to carry the next chunk of blocking flow.",
               "augment": "Every edge on the admissible path receives the bottleneck amount of new flow.",
               "phaseDone": "This level graph is saturated enough that no more admissible path remains; rebuild BFS layers next."
+            },
+            "computation": {
+              "rebuild": "Dinic rebuilds layers before each blocking-flow phase.",
+              "residualPositive": "Residual capacity stays positive.",
+              "entersLayer": "{{node}} enters the next BFS layer.",
+              "sinkNotInLevel": "{{node}} ∉ level graph",
+              "noPathResidual": "No more augmenting path exists in the residual network.",
+              "sendBlocking": "DFS will now send blocking flow through this layered DAG.",
+              "smallestLimits": "The smallest residual edge limits how much additional flow can be pushed.",
+              "repeat": "Dinic repeats this until the whole level graph becomes blocking.",
+              "blockingExhausts": "A blocking flow exhausts every remaining source-to-sink path inside the current level graph."
             }
           },
           "edmondsKarp": {
@@ -5879,6 +6168,15 @@
               "complete": "If BFS can no longer reach the sink in the residual network, the current flow is maximum.",
               "pathFound": "BFS gives the shortest residual path to the sink; the smallest residual edge becomes the bottleneck.",
               "augment": "Increase the flow on every edge of the augmenting path by the bottleneck amount and restart BFS."
+            },
+            "computation": {
+              "shortestNext": "The next augmenting path must be shortest in number of edges.",
+              "alreadyParent": "{{node}} already has the shortest residual parent for this round.",
+              "joinsTree": "{{node}} joins the BFS tree through this edge.",
+              "parentRecorded": "shortest residual parent recorded",
+              "sinkNotInTree": "{{node}} ∉ BFS tree",
+              "bottleneckLimit": "Every edge on this path can increase flow by at most the bottleneck.",
+              "freshBfs": "The residual network changes, so Edmonds-Karp launches a fresh BFS."
             }
           },
           "hopcroftKarp": {
@@ -5916,6 +6214,28 @@
               "augment": "Every edge on the alternating path toggles, increasing the matching by one.",
               "stuck": "No DFS path survived the shortest-layer constraints, so the current matching is final.",
               "phaseDone": "This phase is done; rebuild BFS layers to search for the next batch of shortest augmenting paths."
+            },
+            "computation": {
+              "queueSeeds": "Queue seeds",
+              "sources": "{{count}} source(s)",
+              "onlyUnmatched": "Only unmatched left nodes can start shortest augmenting paths.",
+              "freeEnds": "{{node}} is free and can end an augmenting path.",
+              "matchedQueue": "{{node}} is matched with {{mate}}; queue that mate one layer deeper.",
+              "alternatingStep": "Alternating step",
+              "matchedTo": "matched to {{node}}",
+              "freeRight": "free right node",
+              "shortestTest": "Shortest-path test",
+              "noFreeReachable": "reachable free right = false",
+              "stops": "Hopcroft-Karp stops when the layered graph has no augmenting path.",
+              "matchedCount": "{{count}} matched",
+              "pack": "DFS now tries to pack as many shortest augmenting paths as possible into this phase.",
+              "pathLength": "Path length",
+              "plusOne": "+1 match",
+              "flip": "Flip matched/unmatched edges along this alternating path.",
+              "matchingSize": "Matching size",
+              "plusOneCardinality": "The augmenting path increases the matching cardinality by exactly one.",
+              "augmentingPaths": "{{count}} augmenting path(s)",
+              "accelerates": "Hopcroft-Karp accelerates matching by augmenting several shortest paths in one BFS phase."
             }
           },
           "minCostMaxFlow": {
@@ -5947,6 +6267,66 @@
               "complete": "When no residual source-to-sink path remains, the current flow is maximum and already cost-minimized for this network.",
               "routeFound": "The shortest-cost residual route is ready; its bottleneck defines how much additional flow can move with this unit price.",
               "augment": "Push the bottleneck through the cheapest route, update the accumulated cost, then search again for the next cheapest augment."
+            },
+            "computation": {
+              "sourceCost": "Source cost",
+              "ready": "ready",
+              "minimizeCost": "The next augmenting path should minimize added transport cost.",
+              "costRelaxation": "Cost relaxation",
+              "costUpdated": "best cumulative cost updated",
+              "noPredecessor": "{{node}} has no residual predecessor",
+              "flowCost": "flow {{flow}} · cost {{cost}}",
+              "routePrice": "Route price",
+              "unitCost": "unit cost {{unit}}, bottleneck {{bottleneck}}",
+              "totalCost": "Total cost",
+              "newBaseline": "The next search starts from this new cost baseline."
+            }
+          },
+          "common": {
+            "frontiers": {
+              "bfsFrontier": "BFS frontier",
+              "residualBfs": "Residual BFS",
+              "augmentPath": "Augment path",
+              "admissibleEdges": "Admissible edges",
+              "admissiblePath": "Admissible path",
+              "shortestLayers": "Shortest layers",
+              "shortestPath": "Shortest path",
+              "layerGraph": "Layer graph",
+              "shortestCostFrontier": "Shortest-cost frontier",
+              "residualCheapestPath": "Residual cheapest path",
+              "augmentRoute": "Augment route"
+            },
+            "computation": {
+              "startLayer": "Start layer",
+              "startLevel": "Start level",
+              "residualBfsReady": "residual BFS ready",
+              "residualZeroBfs": "Residual capacity is zero, so BFS cannot use this edge.",
+              "residualZero": "residual capacity is zero",
+              "residualCapacity": "Residual capacity",
+              "parentUpdate": "Parent update",
+              "levelValue": "level {{level}}",
+              "reachability": "Reachability",
+              "maxFlow": "max flow {{flow}}",
+              "flowValue": "flow {{flow}}",
+              "noAugmentingPath": "No more augmenting path exists.",
+              "bottleneck": "Bottleneck",
+              "flowUpdate": "Flow update",
+              "levelGraph": "Level graph",
+              "admissibleEdges": "{{count}} admissible edge(s)",
+              "phaseGain": "Phase gain"
+            },
+            "modes": {
+              "dinic": "Dinic's Max Flow",
+              "minCostMaxFlow": "Min-Cost Max Flow",
+              "edmondsKarp": "Edmonds-Karp",
+              "hopcroftKarp": "Hopcroft-Karp"
+            },
+            "lanes": {
+              "source": "Source",
+              "sink": "Sink",
+              "left": "Left",
+              "right": "Right",
+              "inner": "Inner"
             }
           }
         },
@@ -5981,6 +6361,10 @@
               "enter": "Sweep hits the left edge of {{rect}}; recompute merged y-spans.",
               "leave": "Sweep hits the right edge of {{rect}}; recompute merged y-spans.",
               "complete": "Sweep complete: covered union area = {{area}}."
+            },
+            "labels": {
+              "boot": "boot",
+              "complete": "complete"
             }
           },
           "closestPair": {
@@ -6015,6 +6399,9 @@
               "circumcircle": "Test triangle {{triangle}} with its circumcircle before committing it to the mesh.",
               "commit": "Triangle {{triangle}} locks into the Delaunay mesh.",
               "complete": "Delaunay triangulation complete: {{count}} triangles form the final mesh."
+            },
+            "labels": {
+              "meshReady": "mesh ready"
             }
           },
           "halfPlane": {
@@ -6024,6 +6411,10 @@
               "infeasible": "H{{constraint}} eliminates the feasible region entirely.",
               "clip": "Clip with H{{constraint}}: the feasible polygon now has {{count}} vertices.",
               "complete": "Intersection complete: {{count}} vertices remain in the feasible polygon."
+            },
+            "labels": {
+              "globalRegion": "global region",
+              "finalPolygon": "final feasible polygon"
             }
           },
           "minkowskiSum": {
@@ -6042,6 +6433,12 @@
               "site": "Sweep reaches P{{site}}; its Voronoi influence front becomes active.",
               "cell": "Cell P{{site}} crystallizes from the bisector constraints around the site.",
               "complete": "Voronoi diagram complete: {{count}} cells partition the plane."
+            },
+            "labels": {
+              "seedField": "seed field",
+              "site": "site {{site}}",
+              "cell": "cell {{site}}",
+              "allCells": "all cells"
             }
           }
         }

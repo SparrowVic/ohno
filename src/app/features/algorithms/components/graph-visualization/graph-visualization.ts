@@ -27,7 +27,6 @@ import {
   graphEdgeTone,
   graphFrontierRows,
   graphGlyphScale,
-  graphLabelText,
   graphNodeTone,
   graphRouteEdgeIds,
   graphRouteMode,
@@ -234,10 +233,10 @@ export class GraphVisualization {
     });
   });
 
-  protected readonly frontierTitle = computed(() => graphLabelText(this.state()?.frontierLabel));
-  protected readonly metricText = computed(() => graphLabelText(this.state()?.metricLabel));
-  protected readonly secondaryText = computed(() => graphLabelText(this.state()?.secondaryLabel));
-  protected readonly completionTitle = computed(() => graphLabelText(this.state()?.completionLabel));
+  protected readonly frontierTitle = computed(() => this.state()?.frontierLabel ?? '');
+  protected readonly metricText = computed(() => this.state()?.metricLabel ?? '');
+  protected readonly secondaryText = computed(() => this.state()?.secondaryLabel ?? '');
+  protected readonly completionTitle = computed(() => this.state()?.completionLabel ?? '');
   protected readonly frontierRows = computed(() => graphFrontierRows(this.state()));
   protected readonly completionRows = computed(() => graphCompletionRows(this.state()));
 

@@ -5,6 +5,10 @@ import { MatrixCellStatus, MatrixComputation, MatrixTraceTag } from '../../model
 import { SortStep } from '../../models/sort-step';
 import { FloydWarshallScenario } from '../../utils/scenarios/matrix/matrix-scenarios';
 import { cellId, createMatrixStep } from '../matrix-step';
+import { I18N_KEY, RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.matrix.floydWarshall;
+const MATRIX = I18N_KEY.features.algorithms.display.matrix;
 
 const I18N = {
   phases: {
@@ -44,10 +48,10 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
     phaseLabel: i18nText(I18N.phases.initialize),
     statusLabel: i18nText(I18N.statuses.initialize),
     resultLabel: i18nText(I18N.results.updates, { count: 0 }),
-    focusItemsLabel: 'Nodes',
+    focusItemsLabel: i18nText(I18N_KEY.features.algorithms.display.racks.nodes),
     focusItems: scenario.labels,
-    secondaryItemsLabel: 'Meaning',
-    secondaryItems: ['∞ means currently unreachable'],
+    secondaryItemsLabel: i18nText(MATRIX.racks.meaning),
+    secondaryItems: [i18nText(MATRIX.sentences.infinityUnreachable)],
     description: i18nText(I18N.descriptions.initialize),
     activeCodeLine: 2,
     phase: 'init',
@@ -63,18 +67,18 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
       phaseLabel: i18nText(I18N.phases.pivot, { pivot: pivotLabel }),
       statusLabel: i18nText(I18N.statuses.pivot, { pivot: pivotLabel }),
       resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
-      focusItemsLabel: 'Pivot node',
+      focusItemsLabel: i18nText(MATRIX.racks.pivotNode),
       focusItems: [pivotLabel],
-      secondaryItemsLabel: 'Changed pairs',
+      secondaryItemsLabel: i18nText(MATRIX.racks.changedPairs),
       secondaryItems: pivotUpdates,
       description: i18nText(I18N.descriptions.pivot, { pivot: pivotLabel }),
       activeCodeLine: 3,
       pivotIndex: k,
       computation: {
-        label: 'Pivot node',
+        label: i18nText(MATRIX.notes.titles.pivot),
         expression: `${pivotLabel}`,
         result: null,
-        decision: `Every route may now optionally pass through ${pivotLabel}.`,
+        decision: i18nText(MATRIX.notes.verdicts.throughPivot, { pivot: pivotLabel }),
       },
     });
 
@@ -92,9 +96,9 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
           phaseLabel: i18nText(I18N.phases.pivot, { pivot: pivotLabel }),
           statusLabel: i18nText(I18N.statuses.compare, { from: scenario.labels[i], to: scenario.labels[j] }),
           resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
-          focusItemsLabel: 'Pivot node',
+          focusItemsLabel: i18nText(MATRIX.racks.pivotNode),
           focusItems: [pivotLabel],
-          secondaryItemsLabel: 'Changed pairs',
+          secondaryItemsLabel: i18nText(MATRIX.racks.changedPairs),
           secondaryItems: pivotUpdates.slice(-5),
           description: i18nText(I18N.descriptions.compare, { from: scenario.labels[i], pivot: pivotLabel, to: scenario.labels[j] }),
           activeCodeLine: 4,
@@ -109,12 +113,12 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
             ],
           ]),
           computation: {
-            label: 'Relaxation test',
+            label: i18nText(MATRIX.notes.titles.relaxation),
             expression: `${formatValue(direct)} vs ${formatValue(left)} + ${formatValue(right)}`,
             result: throughPivot === null ? '∞' : String(throughPivot),
-            decision: improved ? 'Pivot route is shorter.' : 'Keep the current best distance.',
+            decision: improved ? i18nText(MATRIX.notes.verdicts.shorter, { pivot: pivotLabel }) : i18nText(MATRIX.notes.verdicts.keep),
           },
-          metaLabels: new Map([[cellId(i, j), `via ${pivotLabel}`]]),
+          metaLabels: new Map([[cellId(i, j), i18nText(TEXT.via, { pivot: pivotLabel })]]),
         });
 
         if (!improved) {
@@ -132,9 +136,9 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
           phaseLabel: i18nText(I18N.phases.pivot, { pivot: pivotLabel }),
           statusLabel: i18nText(I18N.statuses.update, { from: scenario.labels[i], to: scenario.labels[j] }),
           resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
-          focusItemsLabel: 'Pivot node',
+          focusItemsLabel: i18nText(MATRIX.racks.pivotNode),
           focusItems: [pivotLabel],
-          secondaryItemsLabel: 'Changed pairs',
+          secondaryItemsLabel: i18nText(MATRIX.racks.changedPairs),
           secondaryItems: pivotUpdates.slice(-5),
           description: i18nText(I18N.descriptions.update, { pivot: pivotLabel }),
           activeCodeLine: 5,
@@ -145,12 +149,12 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
           cellStatuses: new Map([[cellId(i, j), 'improved' satisfies MatrixCellStatus]]),
           cellTags: new Map([[cellId(i, j), ['improved'] satisfies readonly MatrixTraceTag[]]]),
           computation: {
-            label: 'Distance update',
+            label: i18nText(MATRIX.notes.titles.update),
             expression: `${formatValue(direct)} → ${throughPivot}`,
             result: pairLabel,
-            decision: `The shortest known path now goes through ${pivotLabel}.`,
+            decision: i18nText(MATRIX.notes.verdicts.updated, { pivot: pivotLabel }),
           },
-          metaLabels: new Map([[cellId(i, j), `old ${formatValue(direct)}`]]),
+          metaLabels: new Map([[cellId(i, j), i18nText(MATRIX.oldValue, { value: formatValue(direct) })]]),
         });
       }
     }
@@ -161,10 +165,10 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
       phaseLabel: i18nText(I18N.phases.pivotDone, { pivot: pivotLabel }),
       statusLabel: i18nText(I18N.statuses.pivotDone, { count: pivotUpdates.length }),
       resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
-      focusItemsLabel: 'Pivot node',
+      focusItemsLabel: i18nText(MATRIX.racks.pivotNode),
       focusItems: [pivotLabel],
-      secondaryItemsLabel: 'Changed pairs',
-      secondaryItems: pivotUpdates.length > 0 ? pivotUpdates : ['no change this pivot'],
+      secondaryItemsLabel: i18nText(MATRIX.racks.changedPairs),
+      secondaryItems: pivotUpdates.length > 0 ? pivotUpdates : [i18nText(MATRIX.sentences.noChange)],
       description: i18nText(I18N.descriptions.pivotDone, { pivot: pivotLabel }),
       activeCodeLine: 6,
       pivotIndex: k,
@@ -178,10 +182,10 @@ export function* floydWarshallGenerator(scenario: FloydWarshallScenario): Genera
     phaseLabel: i18nText(I18N.phases.complete),
     statusLabel: i18nText(I18N.statuses.complete),
     resultLabel: i18nText(I18N.results.updates, { count: totalUpdates }),
-    focusItemsLabel: 'Example shortest pairs',
+    focusItemsLabel: i18nText(MATRIX.racks.shortestPairs),
     focusItems: summarizeShortestPairs(scenario.labels, dist),
-    secondaryItemsLabel: 'Matrix status',
-    secondaryItems: ['All rows now encode the shortest known distance to every destination'],
+    secondaryItemsLabel: i18nText(MATRIX.racks.matrixStatus),
+    secondaryItems: [i18nText(MATRIX.sentences.allRowsShortest)],
     description: i18nText(I18N.descriptions.complete),
     activeCodeLine: 6,
     phase: 'graph-complete',
@@ -194,10 +198,10 @@ function createStep(args: {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly focusItemsLabel: string;
-  readonly focusItems: readonly string[];
-  readonly secondaryItemsLabel: string;
-  readonly secondaryItems: readonly string[];
+  readonly focusItemsLabel: TranslatableText;
+  readonly focusItems: readonly TranslatableText[];
+  readonly secondaryItemsLabel: TranslatableText;
+  readonly secondaryItems: readonly TranslatableText[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortStep['phase'];
@@ -207,7 +211,7 @@ function createStep(args: {
   readonly cellStatuses?: ReadonlyMap<string, MatrixCellStatus>;
   readonly cellTags?: ReadonlyMap<string, readonly MatrixTraceTag[]>;
   readonly computation?: MatrixComputation | null;
-  readonly metaLabels?: ReadonlyMap<string, string>;
+  readonly metaLabels?: ReadonlyMap<string, TranslatableText>;
 }): SortStep {
   return createMatrixStep({
     mode: 'floyd-warshall',

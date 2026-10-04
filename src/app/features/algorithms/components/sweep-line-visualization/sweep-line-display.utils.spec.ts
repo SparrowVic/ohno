@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
+import { i18nText } from '../../../../core/i18n/translatable-text';
 import { sweepLineGenerator } from '../../algorithms/sweep-line';
 import { SweepLineStepState, isSweepLineState } from '../../models/geometry';
 import { labelBox, overlapArea } from '../geo-canvas/plane-display.utils';
@@ -20,8 +21,8 @@ function states(): SweepLineStepState[] {
 
 describe('sweep-line-display.utils', () => {
   it('reads the rectangle from the event label', () => {
-    expect(sweepEventRect('Enter R2')).toBe('R2');
-    expect(sweepEventRect('boot')).toBeNull();
+    expect(sweepEventRect(i18nText(I18N_KEY.features.algorithms.display.geometry.events.enter, { rect: 'R2' }))).toBe('R2');
+    expect(sweepEventRect('R2')).toBeNull();
   });
 
   it('marks the event rectangle pink and draws the spans on the sweep', () => {

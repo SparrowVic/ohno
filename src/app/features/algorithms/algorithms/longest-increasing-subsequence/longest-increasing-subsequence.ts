@@ -5,6 +5,7 @@ import { DpCellConfig, DpHeaderConfig, createDpStep } from '../dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { LisScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.longestIncreasingSubsequence.modeLabel'),
@@ -306,9 +307,9 @@ function createStep(args: {
     metaLabel: `${value}`,
   }));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-values', label: 'value', status: 'source', metaLabel: 'input' },
-    { id: 'row-len', label: 'len', status: 'accent', metaLabel: 'best' },
-    { id: 'row-prev', label: 'prev', status: 'target', metaLabel: 'link' },
+    { id: 'row-values', label: dpLabel('value'), status: 'source', metaLabel: dpLabel('input') },
+    { id: 'row-len', label: dpLabel('length'), status: 'accent', metaLabel: dpLabel('best') },
+    { id: 'row-prev', label: dpLabel('previous'), status: 'target', metaLabel: dpLabel('link') },
   ];
 
   const cells: DpCellConfig[] = [];
@@ -335,7 +336,7 @@ function createStep(args: {
     cells.push({
       row: 0,
       col: index,
-      rowLabel: 'value',
+      rowLabel: dpLabel('value'),
       colLabel: `${index + 1}`,
       valueLabel: String(args.scenario.values[index]!),
       metaLabel: isChosen ? 'LIS' : null,
@@ -346,7 +347,7 @@ function createStep(args: {
     cells.push({
       row: 1,
       col: index,
-      rowLabel: 'len',
+      rowLabel: dpLabel('length'),
       colLabel: `${index + 1}`,
       valueLabel: String(args.lengths[index]!),
       metaLabel: `i${index + 1}`,
@@ -363,10 +364,10 @@ function createStep(args: {
     cells.push({
       row: 2,
       col: index,
-      rowLabel: 'prev',
+      rowLabel: dpLabel('previous'),
       colLabel: `${index + 1}`,
       valueLabel: args.prev[index] === null ? '—' : String(args.prev[index]! + 1),
-      metaLabel: args.prev[index] === null ? 'start' : `${args.scenario.values[args.prev[index]!]}`,
+      metaLabel: args.prev[index] === null ? dpLabel('start') : `${args.scenario.values[args.prev[index]!]}`,
       status: isChosen ? 'backtrack' : isActive ? 'active' : args.prev[index] === null ? 'base' : 'idle',
       tags: prevTags,
     });

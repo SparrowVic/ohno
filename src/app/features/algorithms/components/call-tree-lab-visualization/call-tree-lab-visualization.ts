@@ -27,7 +27,6 @@ import {
   boardPlacedCount,
   callTreePathRows,
   callTreeScene,
-  callTreeTitle,
   followScroll,
 } from './call-tree-display.utils';
 
@@ -89,7 +88,7 @@ export class CallTreeLabVisualization {
     const state = this.state();
     const id = state?.activePath[state.activePath.length - 1];
     const node = id ? state?.nodes.find((entry) => entry.id === id) : undefined;
-    return node ? callTreeTitle(node.title) : '—';
+    return node ? node.title : '—';
   });
 
   constructor() {

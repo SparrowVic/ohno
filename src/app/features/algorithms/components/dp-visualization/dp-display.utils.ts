@@ -1,14 +1,12 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, i18nText, isI18nText } from '../../../../core/i18n/translatable-text';
 import { LedColor } from '../../../../shared/instrument/led/led.types';
 import { RackRowTone } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import { DpCell, DpHeader, DpHeaderStatus, DpInsight, DpMode, DpTraceState, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 
 const DP = I18N_KEY.features.algorithms.display.dp;
-const LABELS = DP.labels;
 const NOTES = I18N_KEY.features.algorithms.display.notes;
-const RACKS = I18N_KEY.features.algorithms.display.racks;
 
 export type DpCellState =
   | 'void'
@@ -158,59 +156,8 @@ const PRIMARY_RACK_META: Partial<Record<DpMode, string>> = {
   'knapsack-01': DP.weightValue,
 };
 
-const LABEL_KEYS: Readonly<Record<string, string>> = {
-  '0 items': LABELS.zeroItems,
-  'no coins': LABELS.noCoins,
-  'no nums': LABELS.noNumbers,
-  base: RACKS.base,
-  'del base': LABELS.deleteBase,
-  'ins base': LABELS.insertBase,
-  coin: LABELS.coin,
-  amt: LABELS.amount,
-  value: LABELS.value,
-  sum: LABELS.sum,
-  text: LABELS.text,
-  pattern: LABELS.pattern,
-  dot: LABELS.dot,
-  star: LABELS.star,
-  count: LABELS.count,
-  ground: LABELS.ground,
-  step: LABELS.stair,
-  term: LABELS.term,
-  input: LABELS.input,
-  best: LABELS.best,
-  link: LABELS.link,
-  len: LABELS.length,
-  prev: LABELS.previous,
-  ways: LABELS.ways,
-  start: LABELS.start,
-  end: LABELS.end,
-  'after merge': LABELS.afterMerge,
-  frontier: LABELS.frontier,
-  empty: LABELS.empty,
-  'filled bits': LABELS.filledBits,
-  node: LABELS.node,
-  include: LABELS.include,
-  exclude: LABELS.exclude,
-  weight: LABELS.weight,
-  take: LABELS.take,
-  skip: NOTES.skip,
-  none: LABELS.none,
-  point: LABELS.point,
-  'best j': LABELS.bestIndex,
-  state: LABELS.state,
-  prefix: LABELS.prefix,
-  line: LABELS.line,
-  query: LABELS.query,
-  cache: LABELS.cache,
-  focus: LABELS.focus,
-};
-
-const LABEL_PATTERNS: readonly (readonly [RegExp, string, string])[] = [
-  [/^(\d+) assigned$/, LABELS.assigned, 'count'],
-  [/^(\d+) groups$/, LABELS.groups, 'count'],
-  [/^bit (\d+)$/, LABELS.bit, 'n'],
-];
+const CAPTION_KEYS: ReadonlySet<string> = new Set([DP.captions.last, DP.captions.from]);
+const HEADER_FALLBACK_CHARS = 6;
 
 const ROLE_TAGS: readonly (readonly [DpTraceTag, string])[] = [
   ['take', NOTES.take],
@@ -282,15 +229,13 @@ export function isDpNumber(value: TranslatableText | null | undefined): boolean 
   return typeof value === 'string' && /^-?\d+$/.test(value);
 }
 
-export function dpLabelText(label: string | null | undefined): TranslatableText {
-  if (!label) return '';
-  const key = LABEL_KEYS[label];
-  if (key) return i18nText(key);
-  for (const [pattern, patternKey, param] of LABEL_PATTERNS) {
-    const match = label.match(pattern);
-    if (match) return i18nText(patternKey, { [param]: Number(match[1]) });
-  }
-  return label;
+function textSignature(text: TranslatableText | null | undefined): string {
+  return JSON.stringify(text ?? null);
+}
+
+function textChars(text: TranslatableText | null | undefined): number {
+  if (!text) return 0;
+  return typeof text === 'string' ? text.length : HEADER_FALLBACK_CHARS;
 }
 
 export function dpFocusCell(state: DpTraceState | null | undefined): DpCell | null {
@@ -331,14 +276,10 @@ export function dpCandidateTag(cell: DpCell, focus: DpCell | null): Translatable
   return DIRECTION_ARROWS[`${Math.sign(cell.row - focus.row)},${Math.sign(cell.col - focus.col)}`] ?? null;
 }
 
-export function dpCellCaption(metaLabel: string | null): TranslatableText | null {
+export function dpCellCaption(metaLabel: TranslatableText | null): TranslatableText | null {
   if (!metaLabel) return null;
-  if (/^[ks]\d+$/.test(metaLabel) || /^[A-Z]\d+$/.test(metaLabel)) return metaLabel;
-  const last = metaLabel.match(/^last #(\d+)$/);
-  if (last) return i18nText(DP.captions.last, { id: Number(last[1]) });
-  const from = metaLabel.match(/^from (\S+)$/);
-  if (from) return i18nText(DP.captions.from, { city: from[1] });
-  return null;
+  if (isI18nText(metaLabel)) return CAPTION_KEYS.has(metaLabel.key) ? metaLabel : null;
+  return /^[ks]\d+$/.test(metaLabel) || /^[A-Z]\d+$/.test(metaLabel) ? metaLabel : null;
 }
 
 export function dpDisplayCell(
@@ -399,8 +340,9 @@ export function dpHeaderTones(headers: readonly DpHeader[]): readonly DpHeaderTo
 export function dpColumnAxis(state: DpTraceState): DpColumnAxis {
   if (state.mode === 'knapsack-01') return { caption: DP.capacityAxis, columnMeta: false };
   const metas = state.colHeaders.slice(1).map((header) => header.metaLabel);
-  const shared = metas.length > 1 && metas[0] && metas.every((meta) => meta === metas[0]);
-  if (shared) return { caption: dpLabelText(metas[0]), columnMeta: false };
+  const first = metas[0];
+  const shared = metas.length > 1 && first && metas.every((meta) => textSignature(meta) === textSignature(first));
+  if (shared) return { caption: first, columnMeta: false };
   return { caption: null, columnMeta: state.colHeaders.some((header) => header.metaLabel) };
 }
 
@@ -408,8 +350,8 @@ export function dpDisplayHeaders(headers: readonly DpHeader[], withMeta: boolean
   const tones = dpHeaderTones(headers);
   return headers.map((header, index) => ({
     id: header.id,
-    label: dpLabelText(header.label),
-    meta: withMeta && header.metaLabel ? dpLabelText(header.metaLabel) : null,
+    label: header.label,
+    meta: withMeta && header.metaLabel ? header.metaLabel : null,
     tone: tones[index] ?? 'idle',
   }));
 }
@@ -420,7 +362,7 @@ export function dpParseItem(item: TranslatableText): { readonly lead: Translatab
   if (knapsack) return { lead: knapsack[1]!, value: `w${knapsack[2]} · v${knapsack[3]}` };
   const pair = item.match(/^([^:=]+?)\s*[:=]\s*(.+)$/);
   if (pair) return { lead: pair[1]!, value: pair[2]! };
-  return { lead: dpLabelText(item), value: null };
+  return { lead: item, value: null };
 }
 
 export function dpPrimaryRackMeta(mode: DpMode): string | null {
@@ -453,7 +395,7 @@ export function dpMaxValueLength(state: DpTraceState): number {
 
 export function dpRowHeadChars(state: DpTraceState): number {
   return state.rowHeaders.reduce(
-    (max, header) => Math.max(max, header.label.length + 2, (header.metaLabel?.length ?? 0) + 2),
+    (max, header) => Math.max(max, textChars(header.label) + 2, textChars(header.metaLabel) + 2),
     4,
   );
 }
@@ -493,7 +435,7 @@ function dpRackRows(
     return items.map((item, index) => ({ id: `${prefix}-${index}`, ...plainRow(item), tone: 'default', led: null }));
   }
   const itemHeaders = headers.slice(axis.offset);
-  const metaVaries = new Set(itemHeaders.map((header) => header.metaLabel)).size === itemHeaders.length;
+  const metaVaries = new Set(itemHeaders.map((header) => textSignature(header.metaLabel))).size === itemHeaders.length;
   const focus = dpFocusCell(state);
   const tracing = state.cells.some((cell) => cell.status === 'backtrack');
   const focusIndex = focus && !tracing ? (axis.axis === 'row' ? focus.row : focus.col) - axis.offset : -1;
@@ -503,7 +445,7 @@ function dpRackRows(
   return items.map((item, index) => {
     const header = itemHeaders[index]!;
     const content = metaVaries
-      ? { lead: dpLabelText(header.label), value: header.metaLabel ? dpLabelText(header.metaLabel) : null }
+      ? { lead: header.label, value: header.metaLabel ?? null }
       : dpParseItem(item);
     const tone = itemTone(index, activeIndex, axis.progress, headerTones[index] === 'pink' && activeIndex < 0);
     return {

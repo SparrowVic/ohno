@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step'
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { ProfileDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
 
 type ProfileTransitionKind = 'verticalDomino' | 'twoHorizontals' | 'bottomHorizontal' | 'topHorizontal' | 'alreadyFilled';
 
@@ -186,8 +190,8 @@ export function* profileDpGenerator(scenario: ProfileDpScenario): Generator<Sort
       phaseLabel: I18N.phases.backtrackRoute,
       phase: 'relax',
       computation: {
-        label: `column ${column}`,
-        expression: `mask ${profileLabel(mask, scenario.height)}`,
+        label: dpLabel('column', { column }),
+        expression: i18nText(COMMON.mask, { mask: profileLabel(mask, scenario.height) }),
         result: routeLabel(route, scenario.height),
         decision:
           column === 0
@@ -240,13 +244,13 @@ function createStep(args: {
     id: `row-${column}`,
     label: `c${column}`,
     status: (args.activeCell?.[0] === column ? 'active' : column === 0 ? 'source' : 'accent') as DpHeaderConfig['status'],
-    metaLabel: column === 0 ? 'start' : 'frontier',
+    metaLabel: column === 0 ? dpLabel('start') : dpLabel('frontier'),
   }));
   const colHeaders: DpHeaderConfig[] = Array.from({ length: args.dp[0]!.length }, (_, mask) => ({
     id: `col-${mask}`,
     label: profileLabel(mask, args.scenario.height),
     status: (args.activeCell?.[1] === mask ? 'active' : mask === 0 ? 'target' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: mask === 0 ? 'empty' : 'filled bits',
+    metaLabel: mask === 0 ? dpLabel('empty') : dpLabel('filledBits'),
   }));
 
   const cells: DpCellConfig[] = [];
@@ -269,7 +273,7 @@ function createStep(args: {
         metaLabel:
           args.parentMask[row]![col] === null
             ? row === 0 && col === 0
-              ? 'seed'
+              ? dpLabel('seed')
               : null
             : profileLabel(args.parentMask[row]![col] ?? 0, args.scenario.height),
         status: args.traced.has(id)

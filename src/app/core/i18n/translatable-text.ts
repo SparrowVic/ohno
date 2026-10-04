@@ -20,3 +20,8 @@ export function isI18nText(value: unknown): value is I18nText {
     typeof value.key === 'string'
   );
 }
+
+export function translatableKey(value: TranslatableText | null | undefined): string | null {
+  if (value === null || value === undefined) return null;
+  return isI18nText(value) ? value.key : value;
+}

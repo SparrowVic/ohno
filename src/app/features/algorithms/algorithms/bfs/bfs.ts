@@ -11,6 +11,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const GRAPH_TEXT = RUNTIME_KEY.graph.common;
 
 const I18N = {
   phases: {
@@ -96,7 +100,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
           candidateLabel: neighborLabel,
           expression: `${currentLevel} + 1`,
           result: `${currentLevel + 1}`,
-          decision: discovered.has(neighborId) ? 'already discovered' : 'enqueue neighbor',
+          decision: discovered.has(neighborId) ? i18nText(GRAPH_TEXT.alreadyDiscovered) : i18nText(GRAPH_TEXT.enqueueNeighbor),
         },
       });
 
@@ -118,7 +122,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
             candidateLabel: neighborLabel,
             expression: `${currentLevel} + 1`,
             result: `${currentLevel + 1}`,
-            decision: 'keep existing discovery',
+            decision: i18nText(GRAPH_TEXT.keepDiscovery),
           },
         });
         continue;
@@ -147,7 +151,7 @@ export function* bfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
           candidateLabel: neighborLabel,
           expression: `${currentLevel} + 1`,
           result: `${currentLevel + 1}`,
-          decision: 'added to queue',
+          decision: i18nText(GRAPH_TEXT.addedToQueue),
         },
       });
     }
@@ -261,17 +265,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Level',
-      secondaryLabel: 'Prev',
-      frontierLabel: 'Queue',
-      frontierHeadLabel: 'Queue head',
-      completionLabel: 'Visited',
-      frontierStatusLabel: 'queued',
-      completionStatusLabel: 'visited',
+      metricLabel: graphLabel('level'),
+      secondaryLabel: graphLabel('previous'),
+      frontierLabel: graphLabel('queue'),
+      frontierHeadLabel: graphLabel('queueHead'),
+      completionLabel: graphLabel('visited'),
+      frontierStatusLabel: graphLabel('statusQueued'),
+      completionStatusLabel: graphLabel('statusVisited'),
       showEdgeWeights: false,
-      detailLabel: 'Layer path',
-      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : 'No active node',
-      visitOrderLabel: 'Visit order',
+      detailLabel: graphLabel('layerPath'),
+      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : i18nText(GRAPH_TEXT.noActiveNode),
+      visitOrderLabel: graphLabel('visitOrder'),
       currentNodeId,
       activeEdgeId,
       queue,

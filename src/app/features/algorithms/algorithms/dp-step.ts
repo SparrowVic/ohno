@@ -12,18 +12,18 @@ import { TranslatableText } from '../../../core/i18n/translatable-text';
 
 export interface DpHeaderConfig {
   readonly id: string;
-  readonly label: string;
+  readonly label: TranslatableText;
   readonly status?: DpHeader['status'];
-  readonly metaLabel?: string | null;
+  readonly metaLabel?: TranslatableText | null;
 }
 
 export interface DpCellConfig {
   readonly row: number;
   readonly col: number;
-  readonly rowLabel: string;
-  readonly colLabel: string;
+  readonly rowLabel: TranslatableText;
+  readonly colLabel: TranslatableText;
   readonly valueLabel: string;
-  readonly metaLabel?: string | null;
+  readonly metaLabel?: TranslatableText | null;
   readonly status?: DpCell['status'];
   readonly tags?: readonly DpTraceTag[];
 }

@@ -113,12 +113,6 @@ export function manacherDisplay(state: ManacherTraceState): StringDisplay {
   };
 }
 
-export function palindromeLabel(palindrome: string): TranslatableText {
-  if (palindrome === 'odd-root') return STRING.nodes.oddRoot;
-  if (palindrome === 'ε' || palindrome === '') return STRING.nodes.evenRoot;
-  return palindrome;
-}
-
 const PAL_ROW_TONES: Readonly<Record<PalindromicTreeNodeView['tone'], RackRowTone>> = {
   root: 'dim',
   active: 'now',
@@ -152,7 +146,7 @@ export function palindromicTreeDisplay(state: PalindromicTreeTraceState): String
   const byId = new Map(state.nodes.map((node) => [node.id, node] as const));
   const rows: StringRackRow[] = state.nodes.map((node) => ({
     id: node.id,
-    lead: palindromeLabel(node.palindrome),
+    lead: node.palindrome,
     body: node.length > 0 ? i18nText(STRING.rows.occurrences, { count: node.occurrences }) : null,
     value: String(node.length),
     tone: PAL_ROW_TONES[node.tone],
@@ -164,7 +158,7 @@ export function palindromicTreeDisplay(state: PalindromicTreeTraceState): String
     notes.push({
       id: 'suffix-path',
       title: STRING.notes.suffixPathTitle,
-      lines: path.map((node) => palindromeLabel(node.palindrome)),
+      lines: path.map((node) => node.palindrome),
       tone: 'pink',
     });
   }

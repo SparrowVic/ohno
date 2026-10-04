@@ -2,9 +2,13 @@ import { marker as t } from '@jsverse/transloco-keys-manager/marker';
 
 import { i18nText, TranslatableText } from '../../../../core/i18n/translatable-text';
 import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step';
+import { dpCaption } from '../dp-text';
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { BurstBalloonsScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.burstBalloons.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.burstBalloons.modeLabel'),
@@ -168,7 +172,7 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
         phase: 'settle-node',
         computation: {
           label: i18nText(I18N.labels.dpCell, { left, right }),
-          expression: `last = #${bestIndex}`,
+          expression: i18nText(TEXT.last, { index: bestIndex }),
           result: String(best),
           decision: i18nText(I18N.decisions.splitSaved, { left, right }),
         },
@@ -222,7 +226,7 @@ export function* burstBalloonsGenerator(scenario: BurstBalloonsScenario): Genera
       phase: 'relax',
       computation: {
         label: i18nText(I18N.labels.traceInterval, { left, right }),
-        expression: `last burst = #${pivotIndex}`,
+        expression: i18nText(TEXT.lastBurst, { index: pivotIndex }),
         result: orderLabel(order),
         decision: I18N.decisions.expandSubintervals,
       },
@@ -302,7 +306,7 @@ function createStep(args: {
         rowLabel: `#${row + 1}`,
         colLabel: `#${col + 1}`,
         valueLabel: blocked ? '—' : args.score[row]![col] === null ? '·' : String(args.score[row]![col]!),
-        metaLabel: blocked ? null : savedSplit === null ? null : `last #${savedSplit + 1}`,
+        metaLabel: blocked ? null : savedSplit === null ? null : dpCaption('last', { id: savedSplit + 1 }),
         status: blocked
           ? 'blocked'
           : args.solutionCells.has(id)

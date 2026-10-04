@@ -1,4 +1,4 @@
-import { TranslatableText } from '../../../core/i18n/translatable-text';
+import { i18nText, TranslatableText } from '../../../core/i18n/translatable-text';
 import {
   MatrixCell,
   MatrixCellStatus,
@@ -9,6 +9,9 @@ import {
   MatrixTraceTag,
 } from '../models/matrix';
 import { SortPhase, SortStep } from '../models/sort-step';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.matrix.common;
 
 export interface MatrixStepArgs {
   readonly mode: MatrixTraceState['mode'];
@@ -18,10 +21,10 @@ export interface MatrixStepArgs {
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
-  readonly focusItemsLabel: string;
-  readonly focusItems: readonly string[];
-  readonly secondaryItemsLabel: string;
-  readonly secondaryItems: readonly string[];
+  readonly focusItemsLabel: TranslatableText;
+  readonly focusItems: readonly TranslatableText[];
+  readonly secondaryItemsLabel: TranslatableText;
+  readonly secondaryItems: readonly TranslatableText[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase?: SortPhase;
@@ -34,7 +37,7 @@ export interface MatrixStepArgs {
   readonly coveredCols?: ReadonlySet<number>;
   readonly assignmentCells?: ReadonlySet<string>;
   readonly computation?: MatrixComputation | null;
-  readonly metaLabels?: ReadonlyMap<string, string>;
+  readonly metaLabels?: ReadonlyMap<string, TranslatableText>;
 }
 
 export function createMatrixStep(args: MatrixStepArgs): SortStep {
@@ -110,7 +113,7 @@ export function createMatrixStep(args: MatrixStepArgs): SortStep {
     phase: args.phase,
     matrix: {
       mode: args.mode,
-      modeLabel: args.mode === 'floyd-warshall' ? 'Floyd-Warshall' : 'Hungarian Algorithm',
+      modeLabel: i18nText(args.mode === 'floyd-warshall' ? TEXT.modes.floydWarshall : TEXT.modes.hungarian),
       phaseLabel: args.phaseLabel,
       statusLabel: args.statusLabel,
       resultLabel: args.resultLabel,

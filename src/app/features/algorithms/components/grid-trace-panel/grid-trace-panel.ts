@@ -59,6 +59,7 @@ const TABLE_COLUMNS: readonly TraceColumn[] = [
 })
 export class GridTracePanel {
   protected readonly keys = GRID_KEYS;
+  protected readonly commonKeys = COMMON_KEYS;
   protected readonly columns = TABLE_COLUMNS;
 
   readonly state = input<GridTraceState | null>(null);
@@ -108,6 +109,18 @@ export class GridTracePanel {
         wide: true,
       },
     ];
+  });
+
+  protected readonly queueChips = computed<readonly TraceChip[]>(() => {
+    const state = this.state();
+    if (!state?.frontierOrder) return [];
+    const labels = new Map(state.cells.map((cell) => [cell.id, cell.metaLabel ?? cell.id] as const));
+    return state.frontierOrder.map((id, index) => ({
+      id,
+      label: labels.get(id) ?? id,
+      tone: index === 0 ? 'cyan' : 'amber',
+      active: index === 0,
+    }));
   });
 
   protected readonly visitChips = computed<readonly TraceChip[]>(() =>

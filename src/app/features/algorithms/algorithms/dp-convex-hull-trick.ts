@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { ChtDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.dpConvexHullTrick.trace;
 
 interface HullLine {
   readonly index: number;
@@ -218,7 +222,7 @@ export function* dpConvexHullTrickGenerator(scenario: ChtDpScenario): Generator<
       phase: 'relax',
       computation: {
         label: i18nText(I18N.labels.queryLabel, { x: scenario.xValues[cursor] }),
-        expression: prev[cursor] === null ? 'origin' : `prev = ${prev[cursor]! + 1}`,
+        expression: prev[cursor] === null ? i18nText(TEXT.origin) : `prev = ${prev[cursor]! + 1}`,
         result: chtPathLabel(scenario, chosen),
         decision: prev[cursor] === null ? I18N.decisions.backtrackFinished : I18N.decisions.jumpPredecessor,
       },
@@ -265,10 +269,10 @@ function createStep(args: {
     metaLabel: `x=${x}`,
   }));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-x', label: 'x', status: 'source', metaLabel: 'point' },
-    { id: 'row-line', label: 'line', status: 'accent', metaLabel: 'best j' },
-    { id: 'row-query', label: 'query', status: 'target', metaLabel: 'm·x+b' },
-    { id: 'row-dp', label: 'dp', status: 'target', metaLabel: 'state' },
+    { id: 'row-x', label: 'x', status: 'source', metaLabel: dpLabel('point') },
+    { id: 'row-line', label: dpLabel('line'), status: 'accent', metaLabel: dpLabel('bestIndex') },
+    { id: 'row-query', label: dpLabel('query'), status: 'target', metaLabel: 'm·x+b' },
+    { id: 'row-dp', label: 'dp', status: 'target', metaLabel: dpLabel('state') },
   ];
 
   const cells: DpCellConfig[] = [];
@@ -283,7 +287,7 @@ function createStep(args: {
       rowLabel: 'x',
       colLabel: `p${index + 1}`,
       valueLabel: String(args.scenario.xValues[index]!),
-      metaLabel: isChosen ? 'path' : null,
+      metaLabel: isChosen ? dpLabel('path') : null,
       status: isChosen ? 'backtrack' : 'base',
       tags: [...(isChosen ? (['path'] as const) : []), ...(isActive ? (['active'] as const) : [])],
     });
@@ -296,7 +300,7 @@ function createStep(args: {
     cells.push({
       row: 1,
       col: index,
-      rowLabel: 'line',
+      rowLabel: dpLabel('line'),
       colLabel: `p${index + 1}`,
       valueLabel: args.bestLineIndex[index] === null ? '—' : `p${args.bestLineIndex[index]! + 1}`,
       metaLabel: args.bestLineIndex[index] === null ? null : `x=${args.scenario.xValues[args.bestLineIndex[index]!]}`,
@@ -312,10 +316,10 @@ function createStep(args: {
     cells.push({
       row: 2,
       col: index,
-      rowLabel: 'query',
+      rowLabel: dpLabel('query'),
       colLabel: `p${index + 1}`,
       valueLabel: args.queryValue[index] === null ? '—' : String(args.queryValue[index]!),
-      metaLabel: args.queryValue[index] === null ? null : 'min line',
+      metaLabel: args.queryValue[index] === null ? null : dpLabel('minLine'),
       status: isChosen ? 'backtrack' : isActive ? (args.activeStatus ?? 'active') : args.queryValue[index] === null ? 'idle' : 'chosen',
       tags: queryTags,
     });
@@ -331,7 +335,7 @@ function createStep(args: {
       rowLabel: 'dp',
       colLabel: `p${index + 1}`,
       valueLabel: Number.isFinite(args.dp[index]!) ? String(args.dp[index]!) : '∞',
-      metaLabel: index === 0 ? 'seed' : null,
+      metaLabel: index === 0 ? dpLabel('seed') : null,
       status: isChosen ? 'backtrack' : isActive ? (args.activeStatus ?? 'active') : Number.isFinite(args.dp[index]!) ? 'improved' : 'idle',
       tags: dpTags,
     });

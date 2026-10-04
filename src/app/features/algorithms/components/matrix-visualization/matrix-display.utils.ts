@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { TranslatableText, isI18nText, translatableKey } from '../../../../core/i18n/translatable-text';
 import { RackRowTone } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import {
   MatrixCell,
@@ -79,41 +79,27 @@ export interface MatrixNote {
   readonly tone: MatrixTone;
 }
 
-const RACK_SPECS: Readonly<
-  Record<string, { readonly key: string; readonly kind: MatrixRackKind }>
-> = {
-  Nodes: { key: RACKS.nodes, kind: 'list' },
-  Meaning: { key: MATRIX.racks.meaning, kind: 'sentence' },
-  'Pivot node': { key: MATRIX.racks.pivotNode, kind: 'pivot' },
-  'Changed pairs': { key: MATRIX.racks.changedPairs, kind: 'done' },
-  'Example shortest pairs': { key: MATRIX.racks.shortestPairs, kind: 'done' },
-  'Matrix status': { key: MATRIX.racks.matrixStatus, kind: 'sentence' },
-  Workers: { key: MATRIX.racks.workers, kind: 'list' },
-  Jobs: { key: MATRIX.racks.jobs, kind: 'list' },
-  'Active row': { key: MATRIX.racks.activeRow, kind: 'active' },
-  'Reduced rows': { key: MATRIX.racks.reducedRows, kind: 'done' },
-  'Active column': { key: MATRIX.racks.activeColumn, kind: 'active' },
-  'Reduced columns': { key: MATRIX.racks.reducedColumns, kind: 'done' },
-  'Current matches': { key: MATRIX.racks.currentMatches, kind: 'done' },
-  Zeros: { key: MATRIX.racks.zeros, kind: 'zero' },
-  'Optimal pairs': { key: MATRIX.racks.optimalPairs, kind: 'done' },
-  'Why it works': { key: MATRIX.racks.whyItWorks, kind: 'sentence' },
-  'Covered rows': { key: MATRIX.racks.coveredRows, kind: 'covered' },
-  'Covered columns': { key: MATRIX.racks.coveredColumns, kind: 'covered' },
-  'Next step': { key: MATRIX.racks.nextStep, kind: 'sentence' },
+const RACK_KINDS: Readonly<Record<string, MatrixRackKind>> = {
+  [RACKS.nodes]: 'list',
+  [MATRIX.racks.meaning]: 'sentence',
+  [MATRIX.racks.pivotNode]: 'pivot',
+  [MATRIX.racks.changedPairs]: 'done',
+  [MATRIX.racks.shortestPairs]: 'done',
+  [MATRIX.racks.matrixStatus]: 'sentence',
+  [MATRIX.racks.workers]: 'list',
+  [MATRIX.racks.jobs]: 'list',
+  [MATRIX.racks.activeRow]: 'active',
+  [MATRIX.racks.reducedRows]: 'done',
+  [MATRIX.racks.activeColumn]: 'active',
+  [MATRIX.racks.reducedColumns]: 'done',
+  [MATRIX.racks.currentMatches]: 'done',
+  [MATRIX.racks.zeros]: 'zero',
+  [MATRIX.racks.optimalPairs]: 'done',
+  [MATRIX.racks.whyItWorks]: 'sentence',
+  [MATRIX.racks.coveredRows]: 'covered',
+  [MATRIX.racks.coveredColumns]: 'covered',
+  [MATRIX.racks.nextStep]: 'sentence',
 };
-
-const SENTENCE_KEYS: Readonly<Record<string, string>> = {
-  '∞ means currently unreachable': MATRIX.sentences.infinityUnreachable,
-  'no change this pivot': MATRIX.sentences.noChange,
-  'All rows now encode the shortest known distance to every destination':
-    MATRIX.sentences.allRowsShortest,
-  'Perfect zero matching on the reduced matrix corresponds to the minimum original cost':
-    MATRIX.sentences.perfectMatchingOptimal,
-  'Rebuild zero matching on the adjusted matrix': MATRIX.sentences.rebuildMatching,
-};
-
-const QUIET_SENTENCES: ReadonlySet<string> = new Set(['no change this pivot']);
 
 const HEADER_TONES: Readonly<Record<MatrixHeaderStatus, MatrixHeaderTone>> = {
   idle: 'ink',
@@ -138,41 +124,33 @@ const RACK_TONES: Readonly<
 const NUMERIC = /^-?\d+(\.\d+)?$/;
 const DOT_MAX_CHARS = 4;
 
-export function matrixRackSpec(label: string | null | undefined): MatrixRackSpec {
-  const spec = label ? RACK_SPECS[label] : undefined;
-  return spec
-    ? { title: i18nText(spec.key), kind: spec.kind }
-    : { title: label ?? '', kind: 'list' };
-}
-
-export function matrixSentenceText(raw: string): TranslatableText | null {
-  const key = SENTENCE_KEYS[raw];
-  return key ? i18nText(key) : null;
+export function matrixRackSpec(label: TranslatableText | null | undefined): MatrixRackSpec {
+  const key = translatableKey(label);
+  return { title: label ?? '', kind: (key && RACK_KINDS[key]) || 'list' };
 }
 
 export function matrixRackRows(
-  items: readonly string[],
+  items: readonly TranslatableText[],
   kind: MatrixRackKind,
 ): MatrixRackRowView[] {
   const base = RACK_TONES[kind];
-  return items.map((raw, index) => {
-    const id = `${index}-${raw}`;
-    const sentence = matrixSentenceText(raw);
-    if (sentence || kind === 'sentence') {
+  return items.map((item, index) => {
+    const id = `${index}-${translatableKey(item)}`;
+    if (typeof item !== 'string' || kind === 'sentence') {
       return {
         id,
         lead: '',
         value: null,
-        sentence: sentence ?? raw,
-        tone: QUIET_SENTENCES.has(raw) ? 'dim' : 'default',
+        sentence: item,
+        tone: translatableKey(item) === MATRIX.sentences.noChange ? 'dim' : 'default',
         led: null,
         pivot: false,
       };
     }
-    const pair = parseRackPair(raw);
+    const pair = parseRackPair(item);
     return {
       id,
-      lead: pair ? `${pair.from} → ${pair.to}` : raw,
+      lead: pair ? `${pair.from} → ${pair.to}` : item,
       value: pair?.value ?? null,
       sentence: null,
       tone: base.tone,
@@ -184,11 +162,11 @@ export function matrixRackRows(
 
 export function matrixRackMeta(
   kind: MatrixRackKind,
-  items: readonly string[],
+  items: readonly TranslatableText[],
   size: number,
 ): string | null {
   if (kind === 'sentence' || items.length === 0) return null;
-  if (kind === 'done' && items.every((item) => /\(\S+\)$/.test(item)))
+  if (kind === 'done' && items.every((item) => typeof item === 'string' && /\(\S+\)$/.test(item)))
     return `${items.length}/${size}`;
   if (kind === 'list' || kind === 'zero' || kind === 'covered') return String(items.length);
   return null;
@@ -239,9 +217,10 @@ export function matrixCandidateIds(state: MatrixTraceState): ReadonlyMap<string,
 
 export function matrixMinimumIds(state: MatrixTraceState): ReadonlySet<string> {
   const computation = state.computation;
-  if (!computation || computation.result === null || !NUMERIC.test(computation.result))
+  if (!computation || typeof computation.result !== 'string' || !NUMERIC.test(computation.result))
     return new Set();
   const target = Number(computation.result);
+  const label = translatableKey(computation.label);
   const pick = (predicate: (cell: MatrixCell) => boolean): ReadonlySet<string> =>
     new Set(
       state.cells
@@ -252,15 +231,15 @@ export function matrixMinimumIds(state: MatrixTraceState): ReadonlySet<string> {
         .map((cell) => cell.id),
     );
 
-  if (computation.label === 'Row minimum') {
+  if (label === TITLES.rowMinimum) {
     const row = state.rowHeaders.findIndex((header) => header.status === 'active');
     return row < 0 ? new Set() : pick((cell) => cell.row === row);
   }
-  if (computation.label === 'Column minimum') {
+  if (label === TITLES.columnMinimum) {
     const col = state.colHeaders.findIndex((header) => header.status === 'active');
     return col < 0 ? new Set() : pick((cell) => cell.col === col);
   }
-  if (computation.label === 'Smallest uncovered') {
+  if (label === TITLES.smallestUncovered) {
     const rows = coveredIndices(state.rowHeaders);
     const cols = coveredIndices(state.colHeaders);
     return pick((cell) => !rows.has(cell.row) && !cols.has(cell.col));
@@ -272,11 +251,13 @@ export function matrixShiftAmount(state: MatrixTraceState): {
   minus: string | null;
   plus: string | null;
 } {
-  const expression = state.computation?.expression ?? '';
-  return {
-    minus: /-\s*(\d+)/.exec(expression)?.[1] ?? null,
-    plus: /\+\s*(\d+)/.exec(expression)?.[1] ?? null,
-  };
+  const expression = state.computation?.expression;
+  if (!isI18nText(expression)) return { minus: null, plus: null };
+  const value = expression.params?.['value'];
+  const amount = value === undefined || value === null ? null : String(value);
+  if (expression.key === FORMULAS.adjustment) return { minus: amount, plus: amount };
+  if (expression.key === FORMULAS.subtractRow || expression.key === FORMULAS.subtractColumn) return { minus: amount, plus: null };
+  return { minus: null, plus: null };
 }
 
 export function matrixCellViews(state: MatrixTraceState, complete = false): MatrixCellView[] {
@@ -410,112 +391,51 @@ export function matrixDensity(size: number): 'regular' | 'compact' | 'dense' {
 export function matrixNote(state: MatrixTraceState): MatrixNote | null {
   const computation = state.computation;
   if (!computation) return null;
-  const pivot = state.pivotLabel ?? '';
-  const result = computation.result ?? '';
-  const expression = computation.expression;
+  const { label, expression, result, decision } = computation;
+  const plainExpression = typeof expression === 'string' ? expression : null;
+  const plainResult = typeof result === 'string' ? result : null;
 
-  switch (computation.label) {
-    case 'Pivot node':
+  switch (translatableKey(label)) {
+    case TITLES.pivot:
+      return note(label, plainExpression === null ? expression : `k = ${plainExpression}`, decision, 'violet');
+    case TITLES.relaxation: {
+      const [direct, through] = plainExpression?.split(' vs ') ?? [];
+      const shorter = translatableKey(decision) === VERDICTS.shorter;
       return note(
-        i18nText(TITLES.pivot),
-        `k = ${expression}`,
-        i18nText(VERDICTS.throughPivot, { pivot }),
-        'violet',
-      );
-    case 'Relaxation test': {
-      const [direct, through] = expression.split(' vs ');
-      const shorter = computation.decision === 'Pivot route is shorter.';
-      return note(
-        i18nText(TITLES.relaxation),
-        `min(${direct ?? ''}, ${through ?? ''}) = ${shorter ? result : (direct ?? '')}`,
-        shorter ? i18nText(VERDICTS.shorter, { pivot }) : i18nText(VERDICTS.keep),
+        label,
+        `min(${direct ?? ''}, ${through ?? ''}) = ${shorter ? (plainResult ?? '') : (direct ?? '')}`,
+        decision,
         shorter ? 'pink' : 'cyan',
       );
     }
-    case 'Distance update':
+    case TITLES.update:
+      return note(label, expression, decision, 'lime');
+    case TITLES.rowMinimum:
+    case TITLES.columnMinimum:
       return note(
-        i18nText(TITLES.update),
-        expression,
-        i18nText(VERDICTS.updated, { pivot }),
-        'lime',
-      );
-    case 'Row minimum':
-      return note(
-        i18nText(TITLES.rowMinimum),
-        `min(${expression}) = ${result}`,
-        i18nText(VERDICTS.rowMinimum),
+        label,
+        plainExpression !== null && plainResult !== null ? `min(${plainExpression}) = ${plainResult}` : expression,
+        decision,
         'cyan',
       );
-    case 'Column minimum':
+    case TITLES.subtractMinimum:
+      return note(label, expression, result, 'pink');
+    case TITLES.zeroMatching:
+      return note(label, expression, decision, translatableKey(decision) === VERDICTS.perfect ? 'lime' : 'amber');
+    case TITLES.originalTotal:
       return note(
-        i18nText(TITLES.columnMinimum),
-        `min(${expression}) = ${result}`,
-        i18nText(VERDICTS.columnMinimum),
-        'cyan',
-      );
-    case 'Subtract minimum': {
-      const value = /-\s*(\d+)/.exec(expression)?.[1] ?? '';
-      const label = /^0 created in (.+)$/.exec(result)?.[1] ?? '';
-      const formulaKey = expression.startsWith('column')
-        ? FORMULAS.subtractColumn
-        : FORMULAS.subtractRow;
-      return note(
-        i18nText(TITLES.subtractMinimum),
-        i18nText(formulaKey, { label, value }),
-        label ? i18nText(VERDICTS.zeroCreated, { label }) : null,
-        'pink',
-      );
-    }
-    case 'Zero matching': {
-      const perfect = result === 'perfect assignment found';
-      return note(
-        i18nText(TITLES.zeroMatching),
-        expression,
-        i18nText(perfect ? VERDICTS.perfect : VERDICTS.needMore),
-        perfect ? 'lime' : 'amber',
-      );
-    }
-    case 'Original total':
-      return note(
-        i18nText(TITLES.originalTotal),
-        `${expression} = ${result}`,
-        i18nText(VERDICTS.readOff),
+        label,
+        plainExpression !== null && plainResult !== null ? `${plainExpression} = ${plainResult}` : expression,
+        decision,
         'lime',
       );
-    case 'Minimum cover': {
-      const match = /(\d+) row\(s\) \+ (\d+) column\(s\)/.exec(expression);
-      return note(
-        i18nText(TITLES.minimumCover),
-        match
-          ? i18nText(FORMULAS.cover, { rows: match[1], cols: match[2], total: result })
-          : expression,
-        i18nText(VERDICTS.cover),
-        'amber',
-      );
-    }
-    case 'Smallest uncovered':
-      return note(
-        i18nText(TITLES.smallestUncovered),
-        i18nText(FORMULAS.smallest, { value: result }),
-        i18nText(VERDICTS.smallest),
-        'amber',
-      );
-    case 'Adjustment': {
-      const value = /-\s*(\d+)/.exec(expression)?.[1];
-      return note(
-        i18nText(TITLES.adjustment),
-        value ? i18nText(FORMULAS.adjustment, { value }) : expression,
-        i18nText(VERDICTS.adjustment),
-        'pink',
-      );
-    }
+    case TITLES.minimumCover:
+    case TITLES.smallestUncovered:
+      return note(label, expression, decision, 'amber');
+    case TITLES.adjustment:
+      return note(label, expression, decision, 'pink');
     default:
-      return note(
-        computation.label,
-        result ? `${expression} = ${result}` : expression,
-        null,
-        'slate',
-      );
+      return note(label, expression, null, 'slate');
   }
 }
 
@@ -528,9 +448,8 @@ function note(
   return { title, formula, verdict, tone };
 }
 
-function oldValueTag(metaLabel: string | null): TranslatableText | null {
-  const value = metaLabel ? /^old (.+)$/.exec(metaLabel)?.[1] : undefined;
-  return value ? i18nText(MATRIX.oldValue, { value }) : null;
+function oldValueTag(metaLabel: TranslatableText | null): TranslatableText | null {
+  return isI18nText(metaLabel) && metaLabel.key === MATRIX.oldValue ? metaLabel : null;
 }
 
 function headerView(

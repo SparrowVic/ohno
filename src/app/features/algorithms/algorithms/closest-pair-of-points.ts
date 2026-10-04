@@ -10,6 +10,9 @@ import {
   PointStatus,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+import { I18N_KEY } from '../../../core/i18n/i18n-keys';
+
+const GEO = I18N_KEY.features.algorithms.display.geometry;
 
 const I18N = {
   descriptions: {
@@ -66,7 +69,7 @@ interface ClosestPairStepOptions {
   readonly bestDistance?: number | null;
   readonly candidateDistance?: number | null;
   readonly regionBounds: readonly [number, number] | null;
-  readonly regionLabel: string;
+  readonly regionLabel: TranslatableText;
   readonly trail: readonly string[];
   readonly depth: number;
   readonly midX?: number | null;
@@ -195,6 +198,25 @@ function buildPoints(rawPoints: readonly RawPoint[], options: ClosestPairStepOpt
   }));
 }
 
+const TRAIL_KEYS: Readonly<Record<string, string>> = {
+  root: GEO.trail.root,
+  L: GEO.trail.left,
+  R: GEO.trail.right,
+  merge: GEO.trail.merge,
+  strip: GEO.trail.strip,
+  done: GEO.trail.done,
+};
+
+function trailText(step: string): TranslatableText {
+  const key = TRAIL_KEYS[step];
+  return key ? i18nText(key) : step;
+}
+
+function regionText(trail: readonly string[], count: number): TranslatableText {
+  const path = trail.filter((part) => part !== 'root').join(' / ');
+  return path ? i18nText(GEO.region.slice, { path, count }) : i18nText(GEO.region.whole, { count });
+}
+
 function makeStep(
   rawPoints: readonly RawPoint[],
   options: ClosestPairStepOptions,
@@ -214,7 +236,7 @@ function makeStep(
     ),
     regionBounds: options.regionBounds,
     regionLabel: options.regionLabel,
-    trail: options.trail,
+    trail: options.trail.map(trailText),
     depth: options.depth,
     midX: options.midX ?? null,
     stripWidth: options.stripWidth ?? null,
@@ -262,7 +284,7 @@ export function* closestPairOfPointsGenerator(
     activeCodeLine: 1,
     activeIds: allIds,
     regionBounds: buildRegionBounds(rawPoints),
-    regionLabel: `${rawPoints.length} points on the plane`,
+    regionLabel: i18nText(GEO.region.points, { count: rawPoints.length }),
     trail: ['root'],
     depth: 0,
     checkedPairs,
@@ -283,7 +305,7 @@ export function* closestPairOfPointsGenerator(
     activeCodeLine: 2,
     activeIds: allIds,
     regionBounds: buildRegionBounds(rawPoints),
-    regionLabel: `x-sorted anchor: P${sortedByX[0]?.id ?? 0} … P${sortedByX[sortedByX.length - 1]?.id ?? 0}`,
+    regionLabel: i18nText(GEO.region.sorted, { first: `P${sortedByX[0]?.id ?? 0}`, last: `P${sortedByX[sortedByX.length - 1]?.id ?? 0}` }),
     trail: ['root'],
     depth: 0,
     checkedPairs,
@@ -306,7 +328,7 @@ export function* closestPairOfPointsGenerator(
   ): Generator<SortStep, PairResult | null> {
     const activeIds = new Set(px.map((point) => point.id));
     const regionBounds = buildRegionBounds(px);
-    const regionLabel = `${trail.join(' / ')} • ${px.length} pts`;
+    const regionLabel = regionText(trail, px.length);
 
     if (px.length <= 1) {
       yield makeStep(rawPoints, {
@@ -602,7 +624,7 @@ export function* closestPairOfPointsGenerator(
     bestPair: best?.pointIds ?? null,
     bestDistance: best?.distance ?? null,
     regionBounds: buildRegionBounds(rawPoints),
-    regionLabel: 'global optimum',
+    regionLabel: i18nText(GEO.region.optimum),
     trail: ['root', 'done'],
     depth: 0,
     checkedPairs,

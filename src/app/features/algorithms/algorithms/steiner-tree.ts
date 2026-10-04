@@ -12,6 +12,10 @@ import {
   WeightedGraphEdge,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+import { graphLabel, graphSecondary } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.steinerTree;
 
 const I18N = {
   descriptions: {
@@ -49,7 +53,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
   const fullMask = (1 << terminals.length) - 1;
   const dp = new Map<string, number>();
   const parent = new Map<string, SteinerParent>();
-  const history: string[] = [];
+  const history: TranslatableText[] = [];
   let bestRootId = graph.sourceId;
 
   yield createStep({
@@ -66,10 +70,10 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
     activeCodeLine: 2,
     phase: 'init',
     computation: {
-      candidateLabel: 'Terminals',
+      candidateLabel: i18nText(TEXT.decisions.terminals),
       expression: terminals.map((id) => labelOf(labelById, id)).join(' · '),
       result: i18nText(I18N.results.terminals, { count: terminals.length }),
-      decision: 'Dreyfus-Wagner grows exact DP states over terminal subsets.',
+      decision: i18nText(TEXT.decisions.plan),
     },
   });
 
@@ -83,7 +87,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
       parent.set(stateKey(mask, nodeId), { kind: 'base', terminalId });
     }
 
-    history.push(`${maskLabel(mask, terminals, labelById)} ready`);
+    history.push(i18nText(TEXT.details.subsetReady, { subset: maskLabel(mask, terminals, labelById) }));
 
     yield createStep({
       graph,
@@ -103,7 +107,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
         candidateLabel: labelOf(labelById, terminalId),
         expression: `dist(*, ${labelOf(labelById, terminalId)})`,
         result: maskLabel(mask, terminals, labelById),
-        decision: 'Single-terminal states are just shortest-path distances.',
+        decision: i18nText(TEXT.decisions.singleTerminal),
       },
     });
   }
@@ -159,7 +163,7 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
           candidateLabel: labelOf(labelById, nodeId),
           expression: `${maskLabel(bestSplit.leftMask, terminals, labelById)} + ${maskLabel(bestSplit.rightMask, terminals, labelById)}`,
           result: String(best),
-          decision: 'Two partial Steiner subtrees can meet at the same root node.',
+          decision: i18nText(TEXT.decisions.merge),
         },
       });
     }
@@ -214,9 +218,9 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
         phase: 'relax',
         computation: {
           candidateLabel: labelOf(labelById, targetId),
-          expression: `${bestViaId === targetId ? 'stay' : labelOf(labelById, bestViaId)} + path`,
+          expression: bestViaId === targetId ? i18nText(TEXT.decisions.stayPath) : i18nText(TEXT.decisions.viaPath, { node: labelOf(labelById, bestViaId) }),
           result: String(best),
-          decision: bestViaId === targetId ? 'meeting point already optimal' : 'move the subset root along the cheapest connector path',
+          decision: bestViaId === targetId ? i18nText(TEXT.decisions.meetingOptimal) : i18nText(TEXT.decisions.moveRoot),
         },
       });
     }
@@ -249,10 +253,10 @@ export function* steinerTreeGenerator(graph: WeightedGraphData): Generator<SortS
     activeCodeLine: 6,
     phase: 'graph-complete',
     computation: {
-      candidateLabel: 'Best root',
-      expression: `${labelOf(labelById, bestRootId)} for ${maskLabel(fullMask, terminals, labelById)}`,
+      candidateLabel: i18nText(TEXT.decisions.bestRoot),
+      expression: i18nText(TEXT.decisions.rootFor, { node: labelOf(labelById, bestRootId), subset: maskLabel(fullMask, terminals, labelById) }),
       result: i18nText(I18N.results.cost, { cost: bestCost }),
-      decision: 'Teal edges form the exact minimum-cost tree for this terminal set.',
+      decision: i18nText(TEXT.decisions.finalTree),
     },
   });
 }
@@ -266,7 +270,7 @@ function createStep(args: {
   readonly dp: ReadonlyMap<string, number>;
   readonly parent: ReadonlyMap<string, SteinerParent>;
   readonly bestRootId: string;
-  readonly history: readonly string[];
+  readonly history: readonly TranslatableText[];
   readonly description: TranslatableText;
   readonly activeCodeLine: number;
   readonly phase: SortStep['phase'];
@@ -281,14 +285,14 @@ function createStep(args: {
     const parentInfo = args.parent.get(stateKey(args.mask, node.id));
     const secondaryText =
       args.terminalSet.has(node.id)
-        ? 'terminal'
+        ? graphSecondary('terminal')
         : args.treeNodeIds.has(node.id)
-          ? 'steiner'
+          ? graphSecondary('steiner')
           : parentInfo?.kind === 'move'
-            ? `via ${labelOf(labelById, parentInfo.viaId)}`
+            ? graphSecondary('via', { node: labelOf(labelById, parentInfo.viaId) })
             : parentInfo?.kind === 'split'
-              ? 'split'
-              : 'idle';
+              ? graphSecondary('split')
+              : graphSecondary('idle');
 
     return {
       ...node,
@@ -340,17 +344,17 @@ function createStep(args: {
     edges,
     sourceId: args.graph.sourceId,
     phaseLabel: i18nText(phaseLabel(args.phase)),
-    metricLabel: 'Cost',
-    secondaryLabel: 'Role / Via',
-    frontierLabel: 'Best roots',
-    frontierHeadLabel: 'Cheapest root',
-    completionLabel: 'Tree nodes',
-    frontierStatusLabel: 'candidate',
-    completionStatusLabel: 'in-tree',
+    metricLabel: graphLabel('cost'),
+    secondaryLabel: graphLabel('roleVia'),
+    frontierLabel: graphLabel('bestRoots'),
+    frontierHeadLabel: graphLabel('cheapestRoot'),
+    completionLabel: graphLabel('treeNodes'),
+    frontierStatusLabel: graphLabel('statusCandidate'),
+    completionStatusLabel: graphLabel('statusInTree'),
     showEdgeWeights: true,
-    detailLabel: 'Steiner tree',
-    detailValue: args.mask === 0 ? 'Seeding terminals' : `Subset ${args.mask.toString(2)} @ ${labelOf(labelById, args.bestRootId)}`,
-    visitOrderLabel: 'Subset journal',
+    detailLabel: graphLabel('steinerTree'),
+    detailValue: args.mask === 0 ? i18nText(TEXT.details.seeding) : i18nText(TEXT.details.subsetAt, { mask: args.mask.toString(2), node: labelOf(labelById, args.bestRootId) }),
+    visitOrderLabel: graphLabel('subsetJournal'),
     currentNodeId,
     activeEdgeId: null,
     queue,

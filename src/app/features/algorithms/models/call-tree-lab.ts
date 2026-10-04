@@ -37,7 +37,7 @@ export interface CallTreeNode {
   readonly id: string;
   readonly parentId: string | null;
   /** Main label — "row=2, col=4", "MAX(d=3)", "UCB=1.24". Mono font. */
-  readonly title: string;
+  readonly title: TranslatableText;
   /** Optional caption shown beneath the title — e.g. "α=3, β=5" or
    *  "w/n = 3/7". */
   readonly subtitle: TranslatableText | null;

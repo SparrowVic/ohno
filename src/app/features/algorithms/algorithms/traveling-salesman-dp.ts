@@ -5,6 +5,7 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from './dp-step'
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { TravelingSalesmanScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpCaption, dpLabel } from './dp-text';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.travelingSalesman.modeLabel'),
@@ -360,7 +361,7 @@ function createStep(args: {
     id: `col-${index}`,
     label,
     status: (args.activeCell?.[1] === index ? 'active' : index === args.scenario.startIndex ? 'source' : 'target') as DpHeaderConfig['status'],
-    metaLabel: index === args.scenario.startIndex ? 'start' : 'end',
+    metaLabel: index === args.scenario.startIndex ? dpLabel('start') : dpLabel('end'),
   }));
 
   const cells: DpCellConfig[] = [];
@@ -389,9 +390,9 @@ function createStep(args: {
           ? null
           : args.parent[row]![col] === null
             ? col === args.scenario.startIndex && mask === (1 << args.scenario.startIndex)
-              ? 'start'
+              ? dpLabel('start')
               : null
-            : `from ${args.scenario.labels[args.parent[row]![col]!]}`,
+            : dpCaption('from', { city: args.scenario.labels[args.parent[row]![col]!] }),
         status: isBacktrack
           ? 'backtrack'
           : id === activeCellId

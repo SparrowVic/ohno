@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel, graphSecondary } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.bipartiteCheck;
 
 const I18N = {
   descriptions: {
@@ -139,10 +143,10 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
             result: `${nextColor}`,
             decision:
               neighborColor === null
-                ? 'assign opposite side'
+                ? i18nText(TEXT.decisions.assignOpposite)
                 : neighborColor === currentColor
-                  ? 'same-side conflict'
-                  : 'edge crosses partitions',
+                  ? i18nText(TEXT.decisions.sameSideConflict)
+                  : i18nText(TEXT.decisions.crossesPartitions),
           },
         });
 
@@ -172,7 +176,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
               candidateLabel: labelOf(labelMap, neighborId),
               expression: `${currentColor} xor 1`,
               result: `${nextColor}`,
-              decision: 'consistent opposite side',
+              decision: i18nText(TEXT.decisions.consistentOpposite),
             },
           });
           continue;
@@ -201,7 +205,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
               candidateLabel: labelOf(labelMap, neighborId),
               expression: `${currentColor} = ${neighborColor}`,
               result: i18nText(I18N.results.invalid),
-              decision: 'odd cycle / same-side edge found',
+              decision: i18nText(TEXT.decisions.oddCycle),
             },
           });
 
@@ -241,7 +245,7 @@ export function* bipartiteCheckGenerator(graph: WeightedGraphData): Generator<So
             candidateLabel: labelOf(labelMap, neighborId),
             expression: `${currentColor} → ${neighborColor}`,
             result: i18nText(I18N.results.valid),
-            decision: 'keep current coloring',
+            decision: i18nText(TEXT.decisions.keepColoring),
           },
         });
       }
@@ -313,7 +317,7 @@ function createStep(args: {
       ...node,
       distance: color,
       previousId: args.previousMap.get(node.id) ?? null,
-      secondaryText: color === null ? null : color === 0 ? 'BLUE' : 'AMBER',
+      secondaryText: color === null ? null : color === 0 ? graphSecondary('sideZero') : graphSecondary('sideOne'),
       isSource: node.id === args.graph.sourceId,
       isCurrent: node.id === currentNodeId,
       isSettled: args.closed.has(node.id),
@@ -361,17 +365,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Side',
-      secondaryLabel: 'Color',
-      frontierLabel: 'Color queue',
-      frontierHeadLabel: 'Queue head',
-      completionLabel: 'Colored',
-      frontierStatusLabel: 'queued',
-      completionStatusLabel: 'colored',
+      metricLabel: graphLabel('side'),
+      secondaryLabel: graphLabel('color'),
+      frontierLabel: graphLabel('colorQueue'),
+      frontierHeadLabel: graphLabel('queueHead'),
+      completionLabel: graphLabel('colored'),
+      frontierStatusLabel: graphLabel('statusQueued'),
+      completionStatusLabel: graphLabel('statusColored'),
       showEdgeWeights: false,
-      detailLabel: 'Partition check',
+      detailLabel: graphLabel('partitionCheck'),
       detailValue: describePartitions(args.colorMap, labelMap, args.conflictEdgeId ? args.conflictNodes : null),
-      visitOrderLabel: 'Color order',
+      visitOrderLabel: graphLabel('colorOrder'),
       currentNodeId,
       activeEdgeId,
       queue,
@@ -386,9 +390,9 @@ function describePartitions(
   colorMap: ReadonlyMap<string, Partition | null>,
   labelMap: ReadonlyMap<string, string>,
   conflictNodes: ReadonlySet<string> | null,
-): string {
+): TranslatableText {
   if (conflictNodes && conflictNodes.size > 0) {
-    return `Conflict: ${[...conflictNodes].map((nodeId) => labelOf(labelMap, nodeId)).join(' ↔ ')}`;
+    return i18nText(TEXT.details.conflict, { nodes: [...conflictNodes].map((nodeId) => labelOf(labelMap, nodeId)).join(' ↔ ') });
   }
 
   const left: string[] = [];
@@ -397,7 +401,7 @@ function describePartitions(
     if (color === 0) left.push(labelOf(labelMap, nodeId));
     if (color === 1) right.push(labelOf(labelMap, nodeId));
   }
-  return `Left: ${left.sort().join(', ') || '—'} · Right: ${right.sort().join(', ') || '—'}`;
+  return i18nText(TEXT.details.partitions, { left: left.sort().join(', ') || '—', right: right.sort().join(', ') || '—' });
 }
 
 function outgoingEdges(graph: WeightedGraphData, nodeId: string) {

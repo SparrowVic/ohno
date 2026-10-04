@@ -59,4 +59,27 @@ describe('flood-fill', () => {
     expect(finalStep?.grid?.resultCount).toBe(1);
     expect(finalStep?.grid?.visitOrder).toEqual(['r0 c0']);
   });
+
+  it('exposes the FIFO queue with the oldest entry first', () => {
+    const steps = collectSteps({
+      kind: 'flood-fill',
+      size: 3,
+      cells: [
+        [1, 1, 1],
+        [1, 1, 2],
+        [2, 2, 2],
+      ],
+      startRow: 1,
+      startCol: 1,
+      sourceColor: 1,
+      fillColor: 5,
+    });
+
+    expect(steps[0]?.grid?.frontierOrder).toEqual(['1:1']);
+    const queued = steps.filter((step) => step.phase === 'inspect-edge').map((step) => step.grid?.frontierOrder ?? []);
+    expect(queued[0]).toEqual(['0:1']);
+    expect(queued[1]).toEqual(['0:1', '1:0']);
+    const nextPick = steps.find((step, index) => index > 0 && step.phase === 'pick-node' && step.grid?.activeCellId === '0:1');
+    expect(nextPick?.grid?.frontierOrder).toEqual(['1:0']);
+  });
 });

@@ -8,6 +8,10 @@ import {
   SweepLineStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+import { I18N_KEY, RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.geometry.sweepLine.labels;
+const EVENTS = I18N_KEY.features.algorithms.display.geometry.events;
 
 const I18N = {
   descriptions: {
@@ -113,7 +117,7 @@ function makeStep(
   currentIndex: number,
   sweepX: number | null,
   coveredArea: number,
-  currentEventLabel: string,
+  currentEventLabel: TranslatableText,
   description: TranslatableText,
   activeCodeLine: number,
   phase: string,
@@ -169,7 +173,7 @@ export function* sweepLineGenerator(scenario: SweepLineScenario): Generator<Sort
     -1,
     null,
     coveredArea,
-    'boot',
+    i18nText(TEXT.boot),
     i18nText(I18N.descriptions.initialize),
     1,
     'init',
@@ -196,7 +200,7 @@ export function* sweepLineGenerator(scenario: SweepLineScenario): Generator<Sort
       index,
       event.x,
       coveredArea,
-      `${event.kind === 'start' ? 'Enter' : 'Leave'} R${event.rectId}`,
+      i18nText(event.kind === 'start' ? EVENTS.enter : EVENTS.leave, { rect: `R${event.rectId}` }),
       i18nText(event.kind === 'start' ? I18N.descriptions.enter : I18N.descriptions.leave, { rect: `R${event.rectId}` }),
       event.kind === 'start' ? 3 : 4,
       'event',
@@ -211,7 +215,7 @@ export function* sweepLineGenerator(scenario: SweepLineScenario): Generator<Sort
     events.length,
     96,
     coveredArea,
-    'complete',
+    i18nText(TEXT.complete),
     i18nText(I18N.descriptions.complete, { area: coveredArea.toFixed(1) }),
     5,
     'complete',

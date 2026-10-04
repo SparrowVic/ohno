@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const GRAPH_TEXT = RUNTIME_KEY.graph.common;
 
 const I18N = {
   descriptions: {
@@ -95,7 +99,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
           candidateLabel: neighborLabel,
           expression: `${currentDepth} + 1`,
           result: `${currentDepth + 1}`,
-          decision: discovered.has(neighborId) ? 'already discovered' : 'push neighbor',
+          decision: discovered.has(neighborId) ? i18nText(GRAPH_TEXT.alreadyDiscovered) : i18nText(GRAPH_TEXT.pushNeighbor),
         },
       });
 
@@ -117,7 +121,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
             candidateLabel: neighborLabel,
             expression: `${currentDepth} + 1`,
             result: `${currentDepth + 1}`,
-            decision: 'keep existing discovery',
+            decision: i18nText(GRAPH_TEXT.keepDiscovery),
           },
         });
         continue;
@@ -146,7 +150,7 @@ export function* dfsGenerator(graph: WeightedGraphData): Generator<SortStep> {
           candidateLabel: neighborLabel,
           expression: `${currentDepth} + 1`,
           result: `${currentDepth + 1}`,
-          decision: 'pushed to stack',
+          decision: i18nText(GRAPH_TEXT.pushedToStack),
         },
       });
     }
@@ -262,17 +266,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: i18nText(phaseLabel(args.phase)),
-      metricLabel: 'Depth',
-      secondaryLabel: 'Prev',
-      frontierLabel: 'Stack',
-      frontierHeadLabel: 'Stack top',
-      completionLabel: 'Visited',
-      frontierStatusLabel: 'stacked',
-      completionStatusLabel: 'visited',
+      metricLabel: graphLabel('depth'),
+      secondaryLabel: graphLabel('previous'),
+      frontierLabel: graphLabel('stack'),
+      frontierHeadLabel: graphLabel('stackTop'),
+      completionLabel: graphLabel('visited'),
+      frontierStatusLabel: graphLabel('statusStacked'),
+      completionStatusLabel: graphLabel('statusVisited'),
       showEdgeWeights: false,
-      detailLabel: 'Depth path',
-      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : 'No active node',
-      visitOrderLabel: 'Visit order',
+      detailLabel: graphLabel('depthPath'),
+      detailValue: currentNodeId ? describePath(currentNodeId, args.previousMap, labelMap) : i18nText(GRAPH_TEXT.noActiveNode),
+      visitOrderLabel: graphLabel('visitOrder'),
       currentNodeId,
       activeEdgeId,
       queue,

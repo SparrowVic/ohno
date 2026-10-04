@@ -5,6 +5,11 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { KnapsackScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const COMMON = RUNTIME_KEY.dp.common.trace;
+const TEXT = RUNTIME_KEY.dp.knapsack01.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.knapsack01.modeLabel'),
@@ -126,7 +131,7 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
           label: i18nText(I18N.labels.itemAtCapacity, { item: item.label, cap }),
           expression: canTake
             ? `max(dp[${row - 1}][${cap}] = ${skipValue}, dp[${row - 1}][${cap - item.weight}] + ${item.value} = ${takeValue})`
-            : `item weight ${item.weight} > capacity ${cap}`,
+            : i18nText(TEXT.itemTooHeavy, { weight: item.weight, cap }),
           result: canTake ? String(Math.max(skipValue, takeValue ?? 0)) : String(skipValue),
           decision: canTake
             ? takeValue! > skipValue
@@ -174,7 +179,7 @@ export function* knapsack01Generator(scenario: KnapsackScenario): Generator<Sort
         phase: 'settle-node',
         computation: {
           label: i18nText(I18N.labels.dpCellComputation, { row, cap }),
-          expression: canTake ? `${skipValue} vs ${takeValue}` : `${skipValue} only`,
+          expression: canTake ? `${skipValue} vs ${takeValue}` : i18nText(COMMON.only, { value: skipValue }),
           result: String(table[row]![cap]!),
           decision:
             canTake && (takeValue ?? Number.NEGATIVE_INFINITY) > skipValue
@@ -278,7 +283,7 @@ function createStep(args: {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: '0 items', status: 'source', metaLabel: 'base' },
+    { id: 'row-0', label: dpLabel('zeroItems'), status: 'source', metaLabel: dpLabel('base') },
     ...args.scenario.items.map((item, index) => ({
       id: `row-${index + 1}`,
       label: item.label,
@@ -296,7 +301,7 @@ function createStep(args: {
       id: `col-${cap}`,
       label: String(cap),
       status: args.activeCell?.[1] === cap ? 'active' : cap === 0 ? 'source' : 'idle',
-      metaLabel: cap === 0 ? 'base' : null,
+      metaLabel: cap === 0 ? dpLabel('base') : null,
     }),
   );
 
@@ -307,7 +312,7 @@ function createStep(args: {
     activeRow && activeRow > 0 ? (args.scenario.items[activeRow - 1] ?? null) : null;
 
   for (let row = 0; row < args.table.length; row++) {
-    const rowLabel = row === 0 ? 'base' : args.scenario.items[row - 1]!.label;
+    const rowLabel = row === 0 ? dpLabel('base') : args.scenario.items[row - 1]!.label;
     for (let cap = 0; cap < args.table[row]!.length; cap++) {
       const id = dpCellId(row, cap);
       const isBase = row === 0 || cap === 0;
@@ -346,23 +351,23 @@ function createStep(args: {
         row,
         col: cap,
         rowLabel,
-        colLabel: `cap ${cap}`,
+        colLabel: dpLabel('capacity', { cap }),
         valueLabel: String(args.table[row]![cap]!),
         metaLabel:
           row > 0 && args.chosenItems.has(row - 1) && isBacktrack
-            ? 'packed'
+            ? dpLabel('packed')
             : id === activeCellId && args.activeCellStatus === 'blocked'
-              ? 'too heavy'
+              ? dpLabel('tooHeavy')
               : id === activeCellId && args.phase === 'compare'
-                ? 'compare'
+                ? dpLabel('compare')
                 : id === activeCellId && args.phase === 'settle-node'
-                  ? 'commit'
+                  ? dpLabel('commit')
                   : id === activeCellId && (args.phase === 'relax' || args.phase === 'skip-relax')
-                    ? 'trace'
+                    ? dpLabel('trace')
                     : candidateRole === 'skip'
-                      ? 'skip'
+                      ? dpLabel('skip')
                       : candidateRole === 'take'
-                        ? 'take'
+                        ? dpLabel('take')
                         : null,
         status,
         tags,

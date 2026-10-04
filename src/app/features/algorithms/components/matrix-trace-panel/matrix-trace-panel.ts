@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText } from '../../../../core/i18n/translatable-text';
 import { OhnoLed } from '../../../../shared/instrument/led/led';
 import { OhnoTraceChips } from '../../../../shared/instrument/trace/trace-chips/trace-chips';
 import { OhnoTraceFacts } from '../../../../shared/instrument/trace/trace-facts/trace-facts';
@@ -11,7 +10,7 @@ import { TraceChip, TraceColumn, TraceFact, TraceRow, TraceTone, TraceValue } fr
 import { toTraceValue } from '../../../../shared/instrument/trace/trace-value.utils';
 import { GRAPH_ALGORITHM_TUTORIALS } from '../../data/graph-algorithm-tutorial/graph-algorithm-tutorial';
 import { MatrixCell, MatrixTraceState, MatrixTraceTag } from '../../models/matrix';
-import { matrixRackSpec, matrixSentenceText } from '../matrix-visualization/matrix-display.utils';
+import { matrixRackSpec } from '../matrix-visualization/matrix-display.utils';
 
 const MATRIX_KEYS = I18N_KEY.features.algorithms.tracePanels.matrix;
 const COMMON_KEYS = I18N_KEY.features.algorithms.tracePanels.common;
@@ -41,10 +40,6 @@ const TAG_CHIPS: Readonly<Record<MatrixTraceTag, { readonly label: TraceValue; r
   adjusted: { label: toTraceValue(MATRIX_KEYS.statuses.adjusted), tone: 'amber' },
   infinite: { label: '∞', tone: 'slate' },
 };
-
-function sentence(raw: TranslatableText) {
-  return typeof raw === 'string' ? toTraceValue(matrixSentenceText(raw) ?? raw) : toTraceValue(raw);
-}
 
 const TABLE_COLUMNS: readonly TraceColumn[] = [
   { id: 'cell', header: MATRIX_KEYS.columns.cell, kind: 'mono' },
@@ -83,12 +78,12 @@ export class MatrixTracePanel {
     const state = this.state();
     if (!state) return [];
     return [
-      { id: 'mode', label: COMMON_KEYS.modeLabel, value: sentence(state.modeLabel), kind: 'mono' },
-      { id: 'phase', label: COMMON_KEYS.phaseLabel, value: sentence(state.phaseLabel), kind: 'mono' },
+      { id: 'mode', label: COMMON_KEYS.modeLabel, value: toTraceValue(state.modeLabel), kind: 'mono' },
+      { id: 'phase', label: COMMON_KEYS.phaseLabel, value: toTraceValue(state.phaseLabel), kind: 'mono' },
       { id: 'row', label: MATRIX_KEYS.activeRowLabel, value: state.activeRowLabel, kind: 'mono', tone: 'cyan' },
       { id: 'col', label: MATRIX_KEYS.activeColLabel, value: state.activeColLabel, kind: 'mono', tone: 'cyan' },
       { id: 'pivot', label: MATRIX_KEYS.pivotLabel, value: state.pivotLabel, kind: 'mono', tone: 'violet' },
-      { id: 'result', label: COMMON_KEYS.resultLabel, value: sentence(state.resultLabel), kind: 'mono', tone: 'lime' },
+      { id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(state.resultLabel), kind: 'mono', tone: 'lime' },
     ];
   });
 
@@ -97,15 +92,15 @@ export class MatrixTracePanel {
     if (!state) return [];
     const computation = state.computation;
     const facts: TraceFact[] = [
-      { id: 'status', label: COMMON_KEYS.statusLabel, value: sentence(state.statusLabel), kind: 'mono' },
+      { id: 'status', label: COMMON_KEYS.statusLabel, value: toTraceValue(state.statusLabel), kind: 'mono' },
       { id: 'size', label: COMMON_KEYS.sizeLabel, value: state.dimensionsLabel, kind: 'mono' },
     ];
     if (computation) {
-      const result = computation.result ? ` = ${computation.result}` : '';
-      facts.push(
-        { id: 'expression', label: computation.label, value: `${computation.expression}${result}`, kind: 'mono', wide: true, tone: 'pink' },
-        { id: 'decision', label: COMMON_KEYS.decisionLabel, value: sentence(computation.decision), kind: 'text', wide: true },
-      );
+      facts.push({ id: 'expression', label: computation.label, value: toTraceValue(computation.expression), kind: 'mono', wide: true, tone: 'pink' });
+      if (computation.result !== null) {
+        facts.push({ id: 'result', label: COMMON_KEYS.resultLabel, value: toTraceValue(computation.result), kind: 'mono', tone: 'lime' });
+      }
+      facts.push({ id: 'decision', label: COMMON_KEYS.decisionLabel, value: toTraceValue(computation.decision), kind: 'text', wide: true });
     } else {
       facts.push({
         id: 'decision',
@@ -122,11 +117,11 @@ export class MatrixTracePanel {
   protected readonly secondaryTitle = computed(() => matrixRackSpec(this.state()?.secondaryItemsLabel).title);
 
   protected readonly focusChips = computed<readonly TraceChip[]>(() =>
-    (this.state()?.focusItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(matrixSentenceText(item) ?? item), tone: 'cyan' })),
+    (this.state()?.focusItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(item), tone: 'cyan' })),
   );
 
   protected readonly secondaryChips = computed<readonly TraceChip[]>(() =>
-    (this.state()?.secondaryItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(matrixSentenceText(item) ?? item) })),
+    (this.state()?.secondaryItems ?? []).map((item, index) => ({ id: index, label: toTraceValue(item) })),
   );
 
   protected readonly rows = computed<readonly TraceRow[]>(() =>
@@ -142,7 +137,7 @@ export class MatrixTracePanel {
           cells: {
             cell: `${cell.rowLabel}→${cell.colLabel}`,
             value: cell.valueLabel,
-            meta: cell.metaLabel,
+            meta: toTraceValue(cell.metaLabel),
             status: [{ id: cell.status, label: toTraceValue(MATRIX_KEYS.statuses[cell.status]), tone }],
             tags: cell.tags.map((tag) => ({ id: tag, label: TAG_CHIPS[tag].label, tone: TAG_CHIPS[tag].tone })),
           },

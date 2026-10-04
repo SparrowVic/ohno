@@ -5,6 +5,7 @@ import { DpCellConfig, DpHeaderConfig, createDpStep } from '../dp-step';
 import { DpComputation, DpInsight } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { ClimbingStairsScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.climbingStairs.modeLabel'),
@@ -140,21 +141,21 @@ function createStep(args: {
   readonly computation?: DpComputation | null;
 }): SortStep {
   const candidateSet = new Set(args.candidateIndexes ?? []);
-  const rowHeaders: DpHeaderConfig[] = [{ id: 'row-ways', label: 'ways', status: 'accent', metaLabel: 'count' }];
+  const rowHeaders: DpHeaderConfig[] = [{ id: 'row-ways', label: dpLabel('ways'), status: 'accent', metaLabel: dpLabel('count') }];
   const colHeaders: DpHeaderConfig[] = args.ways.map((_, index) => ({
     id: `col-${index}`,
     label: String(index),
     status: (args.activeIndex === index ? 'active' : candidateSet.has(index) ? 'accent' : index <= 1 ? 'source' : 'idle') as DpHeaderConfig['status'],
-    metaLabel: index === 0 ? 'ground' : 'step',
+    metaLabel: index === 0 ? dpLabel('ground') : dpLabel('stair'),
   }));
 
   const cells: DpCellConfig[] = args.ways.map((value, index) => ({
     row: 0,
     col: index,
-    rowLabel: 'ways',
+    rowLabel: dpLabel('ways'),
     colLabel: `${index}`,
     valueLabel: String(value),
-    metaLabel: index === 0 ? 'base' : index === args.scenario.steps ? 'goal' : null,
+    metaLabel: index === 0 ? dpLabel('base') : index === args.scenario.steps ? dpLabel('goal') : null,
     status:
       args.activeIndex === index
         ? (args.activeStatus ?? 'active')

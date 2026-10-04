@@ -31,8 +31,8 @@ describe('bellman-ford', () => {
 
     expect(finalStep?.phase).toBe('graph-complete');
     expect(finalStep?.description).toMatchObject({ key: 'features.algorithms.runtime.graph.bellmanFord.descriptions.complete' });
-    expect(finalStep?.graph?.visitOrder).toContain('Pass 1');
-    expect(finalStep?.graph?.visitOrder).toContain('Pass 2');
+    expect(finalStep?.graph?.visitOrder).toContainEqual({ key: 'features.algorithms.runtime.graph.common.passLabel', params: { pass: 1 } });
+    expect(finalStep?.graph?.visitOrder).toContainEqual({ key: 'features.algorithms.runtime.graph.common.passLabel', params: { pass: 2 } });
     expect(trace.find((row) => row.nodeId === 'b')?.distance).toBe(4);
     expect(trace.find((row) => row.nodeId === 'c')?.distance).toBe(2);
     expect(trace.find((row) => row.nodeId === 'c')?.secondaryText).toBe('B');

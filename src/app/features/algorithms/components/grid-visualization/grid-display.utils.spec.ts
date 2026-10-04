@@ -226,11 +226,13 @@ describe('flood-fill display', () => {
     expect(new Set(rows.map((row) => row.id)).size).toBe(rows.length);
   });
 
-  it('keeps the queue in reading order without a head', () => {
-    const state = trace.map(grid).find((item) => item.cells.filter((cell) => cell.status === 'frontier').length >= 2);
+  it('lists the queue in FIFO order with the head lit', () => {
+    const state = trace.map(grid).find((item) => item.cells.filter((cell) => cell.status === 'frontier').length >= 2 && item.activeCellId !== null && !item.frontierOrder?.includes(item.activeCellId));
     const rows = gridFrontierRows(state ?? null);
     expect(rows.length).toBeGreaterThanOrEqual(2);
-    expect(rows.some((row) => row.tone === 'head')).toBe(false);
+    expect(rows.map((row) => row.id)).toEqual(state?.frontierOrder);
+    expect(rows[0]?.tone).toBe('head');
+    expect(rows.slice(1).every((row) => row.tone === 'default')).toBe(true);
   });
 });
 

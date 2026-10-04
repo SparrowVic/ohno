@@ -5,6 +5,7 @@ import { DpCellConfig, DpHeaderConfig, createDpStep, dpCellId } from '../dp-step
 import { DpComputation, DpInsight, DpTraceTag } from '../../models/dp';
 import { SortStep } from '../../models/sort-step';
 import { LcsScenario } from '../../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from '../dp-text';
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.longestCommonSubsequence.modeLabel'),
@@ -320,7 +321,7 @@ function createStep(args: {
   const activeCellId = args.activeCell ? dpCellId(args.activeCell[0], args.activeCell[1]) : null;
   const candidateIds = new Set((args.candidateCells ?? []).map(([row, col]) => dpCellId(row, col)));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-0', label: '∅', status: 'source', metaLabel: 'base' },
+    { id: 'row-0', label: '∅', status: 'source', metaLabel: dpLabel('base') },
     ...args.source.map((char, index) => ({
       id: `row-${index + 1}`,
       label: char,
@@ -329,7 +330,7 @@ function createStep(args: {
     })),
   ];
   const colHeaders: DpHeaderConfig[] = [
-    { id: 'col-0', label: '∅', status: 'target', metaLabel: 'base' },
+    { id: 'col-0', label: '∅', status: 'target', metaLabel: dpLabel('base') },
     ...args.target.map((char, index) => ({
       id: `col-${index + 1}`,
       label: char,
@@ -358,7 +359,7 @@ function createStep(args: {
         rowLabel: row === 0 ? '∅' : args.source[row - 1]!,
         colLabel: col === 0 ? '∅' : args.target[col - 1]!,
         valueLabel: String(args.table[row]![col]!),
-        metaLabel: isBacktrack ? 'path' : isMatch ? 'diag' : null,
+        metaLabel: isBacktrack ? dpLabel('path') : isMatch ? dpLabel('diagonal') : null,
         status: isBacktrack
           ? 'backtrack'
           : id === activeCellId

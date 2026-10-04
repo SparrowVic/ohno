@@ -180,7 +180,7 @@ export class MatrixVisualization implements AfterViewInit, OnDestroy, Visualizat
     return band.axis === 'col' ? `${band.index + 2}` : `2 / span ${this.columns().length}`;
   }
 
-  private rackView(label: string, items: readonly string[], size: number): MatrixRackView {
+  private rackView(label: TranslatableText, items: readonly TranslatableText[], size: number): MatrixRackView {
     const spec = matrixRackSpec(label);
     return {
       title: spec.title,

@@ -11,6 +11,9 @@ import {
   VoronoiDiagramStepState,
 } from '../models/geometry';
 import { SortStep } from '../models/sort-step';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.geometry.voronoi.labels;
 
 const I18N = {
   descriptions: {
@@ -74,7 +77,7 @@ function makeStep(
   description: TranslatableText,
   activeCodeLine: number,
   phase: string,
-  currentCellLabel: string,
+  currentCellLabel: TranslatableText,
 ): SortStep {
   const cells: GeometryPolygonRegion[] = sites
     .filter((site) => settledSiteIds.has(site.id))
@@ -138,7 +141,7 @@ export function* voronoiDiagramGenerator(
     i18nText(I18N.descriptions.initialize),
     1,
     'init',
-    'seed field',
+    i18nText(TEXT.seedField),
   );
 
   const settled = new Set<number>();
@@ -154,7 +157,7 @@ export function* voronoiDiagramGenerator(
       i18nText(I18N.descriptions.site, { site: site.id }),
       3,
       'site',
-      `site P${site.id}`,
+      i18nText(TEXT.site, { site: `P${site.id}` }),
     );
 
     settled.add(site.id);
@@ -167,7 +170,7 @@ export function* voronoiDiagramGenerator(
       i18nText(I18N.descriptions.cell, { site: site.id }),
       4,
       'cell',
-      `cell P${site.id}`,
+      i18nText(TEXT.cell, { site: `P${site.id}` }),
     );
   }
 
@@ -180,6 +183,6 @@ export function* voronoiDiagramGenerator(
     i18nText(I18N.descriptions.complete, { count: sites.length }),
     5,
     'complete',
-    'all cells',
+    i18nText(TEXT.allCells),
   );
 }

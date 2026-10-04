@@ -3826,3 +3826,488 @@ export const I18N_KEY = {
 type DeepValueOf<T> = T extends object ? DeepValueOf<T[keyof T]> : T;
 
 export type I18nKey = DeepValueOf<typeof I18N_KEY>;
+
+export const RUNTIME_KEY = {
+  dp: {
+    common: {
+      labels: {
+        packed: t('features.algorithms.runtime.dp.common.labels.packed'),
+        tooHeavy: t('features.algorithms.runtime.dp.common.labels.tooHeavy'),
+        compare: t('features.algorithms.runtime.dp.common.labels.compare'),
+        commit: t('features.algorithms.runtime.dp.common.labels.commit'),
+        trace: t('features.algorithms.runtime.dp.common.labels.trace'),
+        diagonal: t('features.algorithms.runtime.dp.common.labels.diagonal'),
+        path: t('features.algorithms.runtime.dp.common.labels.path'),
+        picked: t('features.algorithms.runtime.dp.common.labels.picked'),
+        keep: t('features.algorithms.runtime.dp.common.labels.keep'),
+        script: t('features.algorithms.runtime.dp.common.labels.script'),
+        goal: t('features.algorithms.runtime.dp.common.labels.goal'),
+        target: t('features.algorithms.runtime.dp.common.labels.target'),
+        leaf: t('features.algorithms.runtime.dp.common.labels.leaf'),
+        children: t('features.algorithms.runtime.dp.common.labels.children'),
+        blockedByParent: t('features.algorithms.runtime.dp.common.labels.blockedByParent'),
+        solo: t('features.algorithms.runtime.dp.common.labels.solo'),
+        pair: t('features.algorithms.runtime.dp.common.labels.pair'),
+        yes: t('features.algorithms.runtime.dp.common.labels.yes'),
+        no: t('features.algorithms.runtime.dp.common.labels.no'),
+        subset: t('features.algorithms.runtime.dp.common.labels.subset'),
+        match: t('features.algorithms.runtime.dp.common.labels.match'),
+        wild: t('features.algorithms.runtime.dp.common.labels.wild'),
+        group: t('features.algorithms.runtime.dp.common.labels.group'),
+        route: t('features.algorithms.runtime.dp.common.labels.route'),
+        seed: t('features.algorithms.runtime.dp.common.labels.seed'),
+        minLine: t('features.algorithms.runtime.dp.common.labels.minLine'),
+        source: t('features.algorithms.runtime.dp.common.labels.source'),
+        regex: t('features.algorithms.runtime.dp.common.labels.regex'),
+        max: t('features.algorithms.runtime.dp.common.labels.max'),
+        fib: t('features.algorithms.runtime.dp.common.labels.fib'),
+        noCoin: t('features.algorithms.runtime.dp.common.labels.noCoin'),
+        capacity: t('features.algorithms.runtime.dp.common.labels.capacity'),
+        column: t('features.algorithms.runtime.dp.common.labels.column'),
+      },
+      trace: {
+        only: t('features.algorithms.runtime.dp.common.trace.only'),
+        split: t('features.algorithms.runtime.dp.common.trace.split'),
+        mask: t('features.algorithms.runtime.dp.common.trace.mask'),
+        andMatch: t('features.algorithms.runtime.dp.common.trace.andMatch'),
+      },
+    },
+    sosDp: {
+      trace: {
+        activeBase: t('features.algorithms.runtime.dp.sosDp.trace.activeBase'),
+        activeBit: t('features.algorithms.runtime.dp.sosDp.trace.activeBit'),
+        fromMaskAndSubmask: t('features.algorithms.runtime.dp.sosDp.trace.fromMaskAndSubmask'),
+        fromSameMask: t('features.algorithms.runtime.dp.sosDp.trace.fromSameMask'),
+      },
+    },
+    knapsack01: {
+      trace: {
+        itemTooHeavy: t('features.algorithms.runtime.dp.knapsack01.trace.itemTooHeavy'),
+      },
+    },
+    coinChange: {
+      trace: {
+        coinBlocked: t('features.algorithms.runtime.dp.coinChange.trace.coinBlocked'),
+      },
+    },
+    editDistance: {
+      trace: {
+        minOf: t('features.algorithms.runtime.dp.editDistance.trace.minOf'),
+        diagValue: t('features.algorithms.runtime.dp.editDistance.trace.diagValue'),
+        upValue: t('features.algorithms.runtime.dp.editDistance.trace.upValue'),
+        leftValue: t('features.algorithms.runtime.dp.editDistance.trace.leftValue'),
+      },
+    },
+    matrixChain: {
+      trace: {
+        bestSplit: t('features.algorithms.runtime.dp.matrixChain.trace.bestSplit'),
+        singleMatrix: t('features.algorithms.runtime.dp.matrixChain.trace.singleMatrix'),
+      },
+    },
+    knuthDpOptimization: {
+      trace: {
+        window: t('features.algorithms.runtime.dp.knuthDpOptimization.trace.window'),
+        leaf: t('features.algorithms.runtime.dp.knuthDpOptimization.trace.leaf'),
+      },
+    },
+    divideConquerDpOptimization: {
+      trace: {
+        search: t('features.algorithms.runtime.dp.divideConquerDpOptimization.trace.search'),
+      },
+    },
+    dpOnTrees: {
+      trace: {
+        parentSelected: t('features.algorithms.runtime.dp.dpOnTrees.trace.parentSelected'),
+      },
+    },
+    subsetSum: {
+      trace: {
+        reachableAbove: t('features.algorithms.runtime.dp.subsetSum.trace.reachableAbove'),
+        sumStep: t('features.algorithms.runtime.dp.subsetSum.trace.sumStep'),
+      },
+    },
+    regexMatching: {
+      trace: {
+        zeroOccurrences: t('features.algorithms.runtime.dp.regexMatching.trace.zeroOccurrences'),
+        diagonal: t('features.algorithms.runtime.dp.regexMatching.trace.diagonal'),
+      },
+    },
+    longestPalindromicSubsequence: {
+      trace: {
+        singleCharacter: t('features.algorithms.runtime.dp.longestPalindromicSubsequence.trace.singleCharacter'),
+      },
+    },
+    burstBalloons: {
+      trace: {
+        last: t('features.algorithms.runtime.dp.burstBalloons.trace.last'),
+        lastBurst: t('features.algorithms.runtime.dp.burstBalloons.trace.lastBurst'),
+      },
+    },
+    dpConvexHullTrick: {
+      trace: {
+        origin: t('features.algorithms.runtime.dp.dpConvexHullTrick.trace.origin'),
+      },
+    },
+  },
+  geometry: {
+    halfPlane: {
+      labels: {
+        globalRegion: t('features.algorithms.runtime.geometry.halfPlane.labels.globalRegion'),
+        finalPolygon: t('features.algorithms.runtime.geometry.halfPlane.labels.finalPolygon'),
+      },
+    },
+    voronoi: {
+      labels: {
+        seedField: t('features.algorithms.runtime.geometry.voronoi.labels.seedField'),
+        site: t('features.algorithms.runtime.geometry.voronoi.labels.site'),
+        cell: t('features.algorithms.runtime.geometry.voronoi.labels.cell'),
+        allCells: t('features.algorithms.runtime.geometry.voronoi.labels.allCells'),
+      },
+    },
+    delaunay: {
+      labels: {
+        meshReady: t('features.algorithms.runtime.geometry.delaunay.labels.meshReady'),
+      },
+    },
+    sweepLine: {
+      labels: {
+        boot: t('features.algorithms.runtime.geometry.sweepLine.labels.boot'),
+        complete: t('features.algorithms.runtime.geometry.sweepLine.labels.complete'),
+      },
+    },
+  },
+  graph: {
+    common: {
+      keep: t('features.algorithms.runtime.graph.common.keep'),
+      betterThan: t('features.algorithms.runtime.graph.common.betterThan'),
+      stillBetterThan: t('features.algorithms.runtime.graph.common.stillBetterThan'),
+      noActiveNode: t('features.algorithms.runtime.graph.common.noActiveNode'),
+      sourceUnreachable: t('features.algorithms.runtime.graph.common.sourceUnreachable'),
+      keepUnreachable: t('features.algorithms.runtime.graph.common.keepUnreachable'),
+      firstFiniteDistance: t('features.algorithms.runtime.graph.common.firstFiniteDistance'),
+      passLabel: t('features.algorithms.runtime.graph.common.passLabel'),
+      passOf: t('features.algorithms.runtime.graph.common.passOf'),
+      alreadyDiscovered: t('features.algorithms.runtime.graph.common.alreadyDiscovered'),
+      enqueueNeighbor: t('features.algorithms.runtime.graph.common.enqueueNeighbor'),
+      keepDiscovery: t('features.algorithms.runtime.graph.common.keepDiscovery'),
+      addedToQueue: t('features.algorithms.runtime.graph.common.addedToQueue'),
+      pushNeighbor: t('features.algorithms.runtime.graph.common.pushNeighbor'),
+      pushedToStack: t('features.algorithms.runtime.graph.common.pushedToStack'),
+      bestVsInfinity: t('features.algorithms.runtime.graph.common.bestVsInfinity'),
+      firstConnection: t('features.algorithms.runtime.graph.common.firstConnection'),
+      treeWeight: t('features.algorithms.runtime.graph.common.treeWeight'),
+      lowLinkPropagated: t('features.algorithms.runtime.graph.common.lowLinkPropagated'),
+      emitScc: t('features.algorithms.runtime.graph.common.emitScc'),
+      ignoreFinishedScc: t('features.algorithms.runtime.graph.common.ignoreFinishedScc'),
+      noSccClosed: t('features.algorithms.runtime.graph.common.noSccClosed'),
+    },
+    connectedComponents: {
+      decisions: {
+        componentExpression: t('features.algorithms.runtime.graph.connectedComponents.decisions.componentExpression'),
+        claim: t('features.algorithms.runtime.graph.connectedComponents.decisions.claim'),
+        alreadyAssigned: t('features.algorithms.runtime.graph.connectedComponents.decisions.alreadyAssigned'),
+        keepLabel: t('features.algorithms.runtime.graph.connectedComponents.decisions.keepLabel'),
+        addedToFrontier: t('features.algorithms.runtime.graph.connectedComponents.decisions.addedToFrontier'),
+      },
+      details: {
+        waitingSeed: t('features.algorithms.runtime.graph.connectedComponents.details.waitingSeed'),
+      },
+    },
+    bipartiteCheck: {
+      decisions: {
+        assignOpposite: t('features.algorithms.runtime.graph.bipartiteCheck.decisions.assignOpposite'),
+        sameSideConflict: t('features.algorithms.runtime.graph.bipartiteCheck.decisions.sameSideConflict'),
+        crossesPartitions: t('features.algorithms.runtime.graph.bipartiteCheck.decisions.crossesPartitions'),
+        consistentOpposite: t('features.algorithms.runtime.graph.bipartiteCheck.decisions.consistentOpposite'),
+        oddCycle: t('features.algorithms.runtime.graph.bipartiteCheck.decisions.oddCycle'),
+        keepColoring: t('features.algorithms.runtime.graph.bipartiteCheck.decisions.keepColoring'),
+      },
+      details: {
+        conflict: t('features.algorithms.runtime.graph.bipartiteCheck.details.conflict'),
+        partitions: t('features.algorithms.runtime.graph.bipartiteCheck.details.partitions'),
+      },
+    },
+    topologicalSort: {
+      decisions: {
+        enqueueAtZero: t('features.algorithms.runtime.graph.topologicalSort.decisions.enqueueAtZero'),
+        stillBlocked: t('features.algorithms.runtime.graph.topologicalSort.decisions.stillBlocked'),
+        waitIncoming: t('features.algorithms.runtime.graph.topologicalSort.decisions.waitIncoming'),
+      },
+      details: {
+        pending: t('features.algorithms.runtime.graph.topologicalSort.details.pending'),
+      },
+    },
+    cycleDetection: {
+      decisions: {
+        visitNeighbor: t('features.algorithms.runtime.graph.cycleDetection.decisions.visitNeighbor'),
+        backEdgeFound: t('features.algorithms.runtime.graph.cycleDetection.decisions.backEdgeFound'),
+        alreadyClosed: t('features.algorithms.runtime.graph.cycleDetection.decisions.alreadyClosed'),
+        descend: t('features.algorithms.runtime.graph.cycleDetection.decisions.descend'),
+        ignoreClosed: t('features.algorithms.runtime.graph.cycleDetection.decisions.ignoreClosed'),
+      },
+      details: {
+        searching: t('features.algorithms.runtime.graph.cycleDetection.details.searching'),
+      },
+    },
+    bridges: {
+      decisions: {
+        unvisited: t('features.algorithms.runtime.graph.bridges.decisions.unvisited'),
+        descendChild: t('features.algorithms.runtime.graph.bridges.decisions.descendChild'),
+        updateLowLink: t('features.algorithms.runtime.graph.bridges.decisions.updateLowLink'),
+        discoverSubtree: t('features.algorithms.runtime.graph.bridges.decisions.discoverSubtree'),
+        bridgeFound: t('features.algorithms.runtime.graph.bridges.decisions.bridgeFound'),
+        articulationFound: t('features.algorithms.runtime.graph.bridges.decisions.articulationFound'),
+        backEdgeConnected: t('features.algorithms.runtime.graph.bridges.decisions.backEdgeConnected'),
+      },
+      details: {
+        critical: t('features.algorithms.runtime.graph.bridges.details.critical'),
+      },
+    },
+    chromaticNumber: {
+      decisions: {
+        lowerBound: t('features.algorithms.runtime.graph.chromaticNumber.decisions.lowerBound'),
+        cliqueBound: t('features.algorithms.runtime.graph.chromaticNumber.decisions.cliqueBound'),
+        nodeCount: t('features.algorithms.runtime.graph.chromaticNumber.decisions.nodeCount'),
+        backtrackPlan: t('features.algorithms.runtime.graph.chromaticNumber.decisions.backtrackPlan'),
+        exhausted: t('features.algorithms.runtime.graph.chromaticNumber.decisions.exhausted'),
+        needMore: t('features.algorithms.runtime.graph.chromaticNumber.decisions.needMore'),
+        chromaticNumber: t('features.algorithms.runtime.graph.chromaticNumber.decisions.chromaticNumber'),
+        smallestPalette: t('features.algorithms.runtime.graph.chromaticNumber.decisions.smallestPalette'),
+        tryPalette: t('features.algorithms.runtime.graph.chromaticNumber.decisions.tryPalette'),
+        tryColor: t('features.algorithms.runtime.graph.chromaticNumber.decisions.tryColor'),
+        rejectColor: t('features.algorithms.runtime.graph.chromaticNumber.decisions.rejectColor'),
+        commitColor: t('features.algorithms.runtime.graph.chromaticNumber.decisions.commitColor'),
+        partialValid: t('features.algorithms.runtime.graph.chromaticNumber.decisions.partialValid'),
+        branchDead: t('features.algorithms.runtime.graph.chromaticNumber.decisions.branchDead'),
+        forbidden: t('features.algorithms.runtime.graph.chromaticNumber.decisions.forbidden'),
+      },
+      details: {
+        trying: t('features.algorithms.runtime.graph.chromaticNumber.details.trying'),
+      },
+    },
+    dominatorTree: {
+      decisions: {
+        iterate: t('features.algorithms.runtime.graph.dominatorTree.decisions.iterate'),
+        startPredecessor: t('features.algorithms.runtime.graph.dominatorTree.decisions.startPredecessor'),
+        commonBlocks: t('features.algorithms.runtime.graph.dominatorTree.decisions.commonBlocks'),
+        setChanged: t('features.algorithms.runtime.graph.dominatorTree.decisions.setChanged'),
+        stable: t('features.algorithms.runtime.graph.dominatorTree.decisions.stable'),
+        immediateParent: t('features.algorithms.runtime.graph.dominatorTree.decisions.immediateParent'),
+        treeDone: t('features.algorithms.runtime.graph.dominatorTree.decisions.treeDone'),
+      },
+    },
+    eulerTrail: {
+      decisions: {
+        degreeCheck: t('features.algorithms.runtime.graph.eulerTrail.decisions.degreeCheck'),
+        oddEndpoints: t('features.algorithms.runtime.graph.eulerTrail.decisions.oddEndpoints'),
+        allEven: t('features.algorithms.runtime.graph.eulerTrail.decisions.allEven'),
+        oddPair: t('features.algorithms.runtime.graph.eulerTrail.decisions.oddPair'),
+        plan: t('features.algorithms.runtime.graph.eulerTrail.decisions.plan'),
+        unusedIncident: t('features.algorithms.runtime.graph.eulerTrail.decisions.unusedIncident'),
+        extend: t('features.algorithms.runtime.graph.eulerTrail.decisions.extend'),
+        seal: t('features.algorithms.runtime.graph.eulerTrail.decisions.seal'),
+        traverse: t('features.algorithms.runtime.graph.eulerTrail.decisions.traverse'),
+        stackDepth: t('features.algorithms.runtime.graph.eulerTrail.decisions.stackDepth'),
+        keepWalking: t('features.algorithms.runtime.graph.eulerTrail.decisions.keepWalking'),
+        fixSuffix: t('features.algorithms.runtime.graph.eulerTrail.decisions.fixSuffix'),
+        allUsed: t('features.algorithms.runtime.graph.eulerTrail.decisions.allUsed'),
+        finish: t('features.algorithms.runtime.graph.eulerTrail.decisions.finish'),
+      },
+      details: {
+        trailPending: t('features.algorithms.runtime.graph.eulerTrail.details.trailPending'),
+      },
+    },
+    kosaraju: {
+      decisions: {
+        reverseDfsFrom: t('features.algorithms.runtime.graph.kosaraju.decisions.reverseDfsFrom'),
+        noRecursion: t('features.algorithms.runtime.graph.kosaraju.decisions.noRecursion'),
+        descend: t('features.algorithms.runtime.graph.kosaraju.decisions.descend'),
+        appendFinish: t('features.algorithms.runtime.graph.kosaraju.decisions.appendFinish'),
+        keepBoundary: t('features.algorithms.runtime.graph.kosaraju.decisions.keepBoundary'),
+        unassignedReversed: t('features.algorithms.runtime.graph.kosaraju.decisions.unassignedReversed'),
+        expand: t('features.algorithms.runtime.graph.kosaraju.decisions.expand'),
+        absorb: t('features.algorithms.runtime.graph.kosaraju.decisions.absorb'),
+        visitChild: t('features.algorithms.runtime.graph.kosaraju.decisions.visitChild'),
+        skipVisited: t('features.algorithms.runtime.graph.kosaraju.decisions.skipVisited'),
+      },
+      details: {
+        noFinishOrder: t('features.algorithms.runtime.graph.kosaraju.details.noFinishOrder'),
+      },
+    },
+    tarjan: {
+      decisions: {
+        treeEdge: t('features.algorithms.runtime.graph.tarjan.decisions.treeEdge'),
+        backEdgeInside: t('features.algorithms.runtime.graph.tarjan.decisions.backEdgeInside'),
+        visitChild: t('features.algorithms.runtime.graph.tarjan.decisions.visitChild'),
+        useBackEdge: t('features.algorithms.runtime.graph.tarjan.decisions.useBackEdge'),
+        ignoreAssigned: t('features.algorithms.runtime.graph.tarjan.decisions.ignoreAssigned'),
+      },
+    },
+    steinerTree: {
+      decisions: {
+        terminals: t('features.algorithms.runtime.graph.steinerTree.decisions.terminals'),
+        plan: t('features.algorithms.runtime.graph.steinerTree.decisions.plan'),
+        singleTerminal: t('features.algorithms.runtime.graph.steinerTree.decisions.singleTerminal'),
+        merge: t('features.algorithms.runtime.graph.steinerTree.decisions.merge'),
+        stayPath: t('features.algorithms.runtime.graph.steinerTree.decisions.stayPath'),
+        viaPath: t('features.algorithms.runtime.graph.steinerTree.decisions.viaPath'),
+        meetingOptimal: t('features.algorithms.runtime.graph.steinerTree.decisions.meetingOptimal'),
+        moveRoot: t('features.algorithms.runtime.graph.steinerTree.decisions.moveRoot'),
+        bestRoot: t('features.algorithms.runtime.graph.steinerTree.decisions.bestRoot'),
+        rootFor: t('features.algorithms.runtime.graph.steinerTree.decisions.rootFor'),
+        finalTree: t('features.algorithms.runtime.graph.steinerTree.decisions.finalTree'),
+      },
+      details: {
+        subsetReady: t('features.algorithms.runtime.graph.steinerTree.details.subsetReady'),
+        seeding: t('features.algorithms.runtime.graph.steinerTree.details.seeding'),
+        subsetAt: t('features.algorithms.runtime.graph.steinerTree.details.subsetAt'),
+      },
+    },
+  },
+  matrix: {
+    common: {
+      modes: {
+        floydWarshall: t('features.algorithms.runtime.matrix.common.modes.floydWarshall'),
+        hungarian: t('features.algorithms.runtime.matrix.common.modes.hungarian'),
+      },
+    },
+    floydWarshall: {
+      via: t('features.algorithms.runtime.matrix.floydWarshall.via'),
+    },
+    hungarian: {
+      computation: {
+        rowsReduced: t('features.algorithms.runtime.matrix.hungarian.computation.rowsReduced'),
+        columnsReduced: t('features.algorithms.runtime.matrix.hungarian.computation.columnsReduced'),
+        perfectFound: t('features.algorithms.runtime.matrix.hungarian.computation.perfectFound'),
+        needMoreZeros: t('features.algorithms.runtime.matrix.hungarian.computation.needMoreZeros'),
+        newZeros: t('features.algorithms.runtime.matrix.hungarian.computation.newZeros'),
+      },
+    },
+  },
+  network: {
+    common: {
+      frontiers: {
+        bfsFrontier: t('features.algorithms.runtime.network.common.frontiers.bfsFrontier'),
+        residualBfs: t('features.algorithms.runtime.network.common.frontiers.residualBfs'),
+        augmentPath: t('features.algorithms.runtime.network.common.frontiers.augmentPath'),
+        admissibleEdges: t('features.algorithms.runtime.network.common.frontiers.admissibleEdges'),
+        admissiblePath: t('features.algorithms.runtime.network.common.frontiers.admissiblePath'),
+        shortestLayers: t('features.algorithms.runtime.network.common.frontiers.shortestLayers'),
+        shortestPath: t('features.algorithms.runtime.network.common.frontiers.shortestPath'),
+        layerGraph: t('features.algorithms.runtime.network.common.frontiers.layerGraph'),
+        shortestCostFrontier: t('features.algorithms.runtime.network.common.frontiers.shortestCostFrontier'),
+        residualCheapestPath: t('features.algorithms.runtime.network.common.frontiers.residualCheapestPath'),
+        augmentRoute: t('features.algorithms.runtime.network.common.frontiers.augmentRoute'),
+      },
+      computation: {
+        startLayer: t('features.algorithms.runtime.network.common.computation.startLayer'),
+        startLevel: t('features.algorithms.runtime.network.common.computation.startLevel'),
+        residualBfsReady: t('features.algorithms.runtime.network.common.computation.residualBfsReady'),
+        residualZeroBfs: t('features.algorithms.runtime.network.common.computation.residualZeroBfs'),
+        residualZero: t('features.algorithms.runtime.network.common.computation.residualZero'),
+        residualCapacity: t('features.algorithms.runtime.network.common.computation.residualCapacity'),
+        parentUpdate: t('features.algorithms.runtime.network.common.computation.parentUpdate'),
+        levelValue: t('features.algorithms.runtime.network.common.computation.levelValue'),
+        reachability: t('features.algorithms.runtime.network.common.computation.reachability'),
+        maxFlow: t('features.algorithms.runtime.network.common.computation.maxFlow'),
+        flowValue: t('features.algorithms.runtime.network.common.computation.flowValue'),
+        noAugmentingPath: t('features.algorithms.runtime.network.common.computation.noAugmentingPath'),
+        bottleneck: t('features.algorithms.runtime.network.common.computation.bottleneck'),
+        flowUpdate: t('features.algorithms.runtime.network.common.computation.flowUpdate'),
+        levelGraph: t('features.algorithms.runtime.network.common.computation.levelGraph'),
+        admissibleEdges: t('features.algorithms.runtime.network.common.computation.admissibleEdges'),
+        phaseGain: t('features.algorithms.runtime.network.common.computation.phaseGain'),
+      },
+      modes: {
+        dinic: t('features.algorithms.runtime.network.common.modes.dinic'),
+        minCostMaxFlow: t('features.algorithms.runtime.network.common.modes.minCostMaxFlow'),
+        edmondsKarp: t('features.algorithms.runtime.network.common.modes.edmondsKarp'),
+        hopcroftKarp: t('features.algorithms.runtime.network.common.modes.hopcroftKarp'),
+      },
+      lanes: {
+        source: t('features.algorithms.runtime.network.common.lanes.source'),
+        sink: t('features.algorithms.runtime.network.common.lanes.sink'),
+        left: t('features.algorithms.runtime.network.common.lanes.left'),
+        right: t('features.algorithms.runtime.network.common.lanes.right'),
+        inner: t('features.algorithms.runtime.network.common.lanes.inner'),
+      },
+    },
+    edmondsKarp: {
+      computation: {
+        shortestNext: t('features.algorithms.runtime.network.edmondsKarp.computation.shortestNext'),
+        alreadyParent: t('features.algorithms.runtime.network.edmondsKarp.computation.alreadyParent'),
+        joinsTree: t('features.algorithms.runtime.network.edmondsKarp.computation.joinsTree'),
+        parentRecorded: t('features.algorithms.runtime.network.edmondsKarp.computation.parentRecorded'),
+        sinkNotInTree: t('features.algorithms.runtime.network.edmondsKarp.computation.sinkNotInTree'),
+        bottleneckLimit: t('features.algorithms.runtime.network.edmondsKarp.computation.bottleneckLimit'),
+        freshBfs: t('features.algorithms.runtime.network.edmondsKarp.computation.freshBfs'),
+      },
+    },
+    dinic: {
+      computation: {
+        rebuild: t('features.algorithms.runtime.network.dinic.computation.rebuild'),
+        residualPositive: t('features.algorithms.runtime.network.dinic.computation.residualPositive'),
+        entersLayer: t('features.algorithms.runtime.network.dinic.computation.entersLayer'),
+        sinkNotInLevel: t('features.algorithms.runtime.network.dinic.computation.sinkNotInLevel'),
+        noPathResidual: t('features.algorithms.runtime.network.dinic.computation.noPathResidual'),
+        sendBlocking: t('features.algorithms.runtime.network.dinic.computation.sendBlocking'),
+        smallestLimits: t('features.algorithms.runtime.network.dinic.computation.smallestLimits'),
+        repeat: t('features.algorithms.runtime.network.dinic.computation.repeat'),
+        blockingExhausts: t('features.algorithms.runtime.network.dinic.computation.blockingExhausts'),
+      },
+    },
+    hopcroftKarp: {
+      computation: {
+        queueSeeds: t('features.algorithms.runtime.network.hopcroftKarp.computation.queueSeeds'),
+        sources: t('features.algorithms.runtime.network.hopcroftKarp.computation.sources'),
+        onlyUnmatched: t('features.algorithms.runtime.network.hopcroftKarp.computation.onlyUnmatched'),
+        freeEnds: t('features.algorithms.runtime.network.hopcroftKarp.computation.freeEnds'),
+        matchedQueue: t('features.algorithms.runtime.network.hopcroftKarp.computation.matchedQueue'),
+        alternatingStep: t('features.algorithms.runtime.network.hopcroftKarp.computation.alternatingStep'),
+        matchedTo: t('features.algorithms.runtime.network.hopcroftKarp.computation.matchedTo'),
+        freeRight: t('features.algorithms.runtime.network.hopcroftKarp.computation.freeRight'),
+        shortestTest: t('features.algorithms.runtime.network.hopcroftKarp.computation.shortestTest'),
+        noFreeReachable: t('features.algorithms.runtime.network.hopcroftKarp.computation.noFreeReachable'),
+        stops: t('features.algorithms.runtime.network.hopcroftKarp.computation.stops'),
+        matchedCount: t('features.algorithms.runtime.network.hopcroftKarp.computation.matchedCount'),
+        pack: t('features.algorithms.runtime.network.hopcroftKarp.computation.pack'),
+        pathLength: t('features.algorithms.runtime.network.hopcroftKarp.computation.pathLength'),
+        plusOne: t('features.algorithms.runtime.network.hopcroftKarp.computation.plusOne'),
+        flip: t('features.algorithms.runtime.network.hopcroftKarp.computation.flip'),
+        matchingSize: t('features.algorithms.runtime.network.hopcroftKarp.computation.matchingSize'),
+        plusOneCardinality: t('features.algorithms.runtime.network.hopcroftKarp.computation.plusOneCardinality'),
+        augmentingPaths: t('features.algorithms.runtime.network.hopcroftKarp.computation.augmentingPaths'),
+        accelerates: t('features.algorithms.runtime.network.hopcroftKarp.computation.accelerates'),
+      },
+    },
+    minCostMaxFlow: {
+      computation: {
+        sourceCost: t('features.algorithms.runtime.network.minCostMaxFlow.computation.sourceCost'),
+        ready: t('features.algorithms.runtime.network.minCostMaxFlow.computation.ready'),
+        minimizeCost: t('features.algorithms.runtime.network.minCostMaxFlow.computation.minimizeCost'),
+        costRelaxation: t('features.algorithms.runtime.network.minCostMaxFlow.computation.costRelaxation'),
+        costUpdated: t('features.algorithms.runtime.network.minCostMaxFlow.computation.costUpdated'),
+        noPredecessor: t('features.algorithms.runtime.network.minCostMaxFlow.computation.noPredecessor'),
+        flowCost: t('features.algorithms.runtime.network.minCostMaxFlow.computation.flowCost'),
+        routePrice: t('features.algorithms.runtime.network.minCostMaxFlow.computation.routePrice'),
+        unitCost: t('features.algorithms.runtime.network.minCostMaxFlow.computation.unitCost'),
+        totalCost: t('features.algorithms.runtime.network.minCostMaxFlow.computation.totalCost'),
+        newBaseline: t('features.algorithms.runtime.network.minCostMaxFlow.computation.newBaseline'),
+      },
+    },
+  },
+  string: {
+    rabinKarp: {
+      trace: {
+        collision: t('features.algorithms.runtime.string.rabinKarp.trace.collision'),
+        reject: t('features.algorithms.runtime.string.rabinKarp.trace.reject'),
+        verifiedMatches: t('features.algorithms.runtime.string.rabinKarp.trace.verifiedMatches'),
+      },
+    },
+    palindromicTree: {
+      trace: {
+        roots: t('features.algorithms.runtime.string.palindromicTree.trace.roots'),
+      },
+    },
+  },
+} as const;

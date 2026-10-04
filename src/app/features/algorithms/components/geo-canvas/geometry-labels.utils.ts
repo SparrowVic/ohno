@@ -24,38 +24,6 @@ function lookup(
   return label;
 }
 
-const TRAIL_KEYS: Readonly<Record<string, string>> = {
-  root: GEO.trail.root,
-  L: GEO.trail.left,
-  R: GEO.trail.right,
-  merge: GEO.trail.merge,
-  strip: GEO.trail.strip,
-  done: GEO.trail.done,
-};
-
-export function trailText(step: string): TranslatableText {
-  return lookup(step, TRAIL_KEYS);
-}
-
-const REGION_KEYS: Readonly<Record<string, string>> = {
-  'global optimum': GEO.region.optimum,
-};
-
-const REGION_PATTERNS: readonly LabelPattern[] = [
-  { pattern: /^(\d+) points on the plane$/, key: GEO.region.points, params: (match) => ({ count: Number(match[1]) }) },
-  { pattern: /^x-sorted anchor: (P\d+) … (P\d+)$/, key: GEO.region.sorted, params: (match) => ({ first: match[1], last: match[2] }) },
-];
-
-const REGION_SLICE = /^(.+) • (\d+) pts$/;
-
-export function closestRegionText(label: string | null | undefined): TranslatableText {
-  const slice = label?.match(REGION_SLICE);
-  if (!slice) return lookup(label, REGION_KEYS, REGION_PATTERNS);
-  const path = slice[1]!.split(' / ').filter((part) => part !== 'root').join(' / ');
-  const count = Number(slice[2]);
-  return path ? i18nText(GEO.region.slice, { path, count }) : i18nText(GEO.region.whole, { count });
-}
-
 const DIVIDER_KEYS: Readonly<Record<string, string>> = {
   split: GEO.divider.split,
   'merge line': GEO.divider.mergeLine,
@@ -85,7 +53,8 @@ export function sweepEventText(label: string): TranslatableText {
   return lookup(label, {}, SWEEP_EVENT_PATTERNS);
 }
 
-export function triangleVerticesText(id: string): string {
+export function triangleVerticesText(id: TranslatableText): TranslatableText {
+  if (typeof id !== 'string') return id;
   const match = id.match(/^Δ(\d+)-(\d+)-(\d+)$/);
   return match ? `P${match[1]} · P${match[2]} · P${match[3]}` : id;
 }

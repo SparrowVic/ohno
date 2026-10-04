@@ -10,6 +10,10 @@ import {
   WeightedGraphData,
 } from '../../models/graph';
 import { SortStep } from '../../models/sort-step';
+import { graphLabel } from '../graph-text';
+import { RUNTIME_KEY } from '../../../../core/i18n/i18n-keys';
+
+const GRAPH_TEXT = RUNTIME_KEY.graph.common;
 
 const I18N = {
   descriptions: {
@@ -43,7 +47,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
   const distanceMap = new Map<string, number | null>(graph.nodes.map((node) => [node.id, null]));
   const previousMap = new Map<string, string | null>(graph.nodes.map((node) => [node.id, null]));
   const reached = new Set<string>();
-  const visitOrder: string[] = [];
+  const visitOrder: TranslatableText[] = [];
   const maxPasses = Math.max(0, graph.nodes.length - 1);
   let frontier = new Set<string>([graph.sourceId]);
   let currentPass = 0;
@@ -113,9 +117,9 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
           result: candidate === null ? '∞' : `${candidate}`,
           decision:
             fromDistance === null
-              ? 'source still unreachable'
+              ? i18nText(GRAPH_TEXT.sourceUnreachable)
               : toDistance === null
-                ? 'better than ∞'
+                ? i18nText(GRAPH_TEXT.betterThan, { value: '∞' })
                 : `${candidate} < ${toDistance}`,
         },
       });
@@ -140,7 +144,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
             candidateLabel: labelOf(labelMap, edge.to),
             expression: `∞ + ${edge.weight}`,
             result: '∞',
-            decision: 'keep unreachable state',
+            decision: i18nText(GRAPH_TEXT.keepUnreachable),
           },
         });
         continue;
@@ -173,7 +177,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
             candidateLabel: labelOf(labelMap, edge.to),
             expression: `${fromDistance} + ${edge.weight}`,
             result: `${candidate}`,
-            decision: toDistance === null ? 'first finite distance' : `better than ${toDistance}`,
+            decision: toDistance === null ? i18nText(GRAPH_TEXT.firstFiniteDistance) : i18nText(GRAPH_TEXT.betterThan, { value: toDistance }),
           },
         });
       } else {
@@ -196,13 +200,13 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
             candidateLabel: labelOf(labelMap, edge.to),
             expression: `${fromDistance} + ${edge.weight}`,
             result: `${candidate}`,
-            decision: `keep ${toDistance}`,
+            decision: i18nText(GRAPH_TEXT.keep, { value: toDistance }),
           },
         });
       }
     }
 
-    visitOrder.push(`Pass ${pass}`);
+    visitOrder.push(i18nText(GRAPH_TEXT.passLabel, { pass }));
 
     yield createStep({
       graph,
@@ -253,7 +257,7 @@ export function* bellmanFordGenerator(graph: WeightedGraphData): Generator<SortS
           candidateLabel: labelOf(labelMap, edge.to),
           expression: `${fromDistance} + ${edge.weight}`,
           result: `${candidate}`,
-          decision: `still better than ${toDistance ?? '∞'}`,
+          decision: i18nText(GRAPH_TEXT.stillBetterThan, { value: toDistance ?? '∞' }),
         },
       });
       break;
@@ -284,7 +288,7 @@ function createStep(args: {
   readonly previousMap: ReadonlyMap<string, string | null>;
   readonly reached: ReadonlySet<string>;
   readonly frontier: ReadonlySet<string>;
-  readonly visitOrder: readonly string[];
+  readonly visitOrder: readonly TranslatableText[];
   readonly currentPass: number;
   readonly maxPasses: number;
   readonly description: TranslatableText;
@@ -348,17 +352,17 @@ function createStep(args: {
       edges,
       sourceId: args.graph.sourceId,
       phaseLabel: phaseLabel(args.phase, args.currentPass, args.maxPasses, args.negativeCycleEdgeId !== null),
-      metricLabel: 'Distance',
-      secondaryLabel: 'Prev',
-      frontierLabel: 'Updated this pass',
-      frontierHeadLabel: 'Latest update',
-      completionLabel: 'Reached',
-      frontierStatusLabel: 'updated',
-      completionStatusLabel: 'reached',
+      metricLabel: graphLabel('distance'),
+      secondaryLabel: graphLabel('previous'),
+      frontierLabel: graphLabel('updatedThisPass'),
+      frontierHeadLabel: graphLabel('latestUpdate'),
+      completionLabel: graphLabel('reached'),
+      frontierStatusLabel: graphLabel('statusUpdated'),
+      completionStatusLabel: graphLabel('statusReached'),
       showEdgeWeights: true,
-      detailLabel: 'Path',
-      detailValue: `Pass ${Math.max(args.currentPass, 0)} of ${args.maxPasses}`,
-      visitOrderLabel: 'Pass log',
+      detailLabel: graphLabel('path'),
+      detailValue: i18nText(GRAPH_TEXT.passOf, { pass: Math.max(args.currentPass, 0), total: args.maxPasses }),
+      visitOrderLabel: graphLabel('passLog'),
       currentNodeId,
       activeEdgeId,
       queue,

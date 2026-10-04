@@ -265,7 +265,7 @@ export interface SuffixArrayLcpTraceState extends StringTraceBase {
 
 export interface PalindromicTreeNodeView {
   readonly id: string;
-  readonly palindrome: string;
+  readonly palindrome: TranslatableText;
   readonly length: number;
   readonly suffixLinkId: string | null;
   readonly occurrences: number;

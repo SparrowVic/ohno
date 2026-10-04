@@ -5,6 +5,10 @@ import { DpCellConfig, DpHeaderConfig, createDpStep } from './dp-step';
 import { DpComputation, DpInsight, DpTraceTag } from '../models/dp';
 import { SortStep } from '../models/sort-step';
 import { TreeDpScenario } from '../utils/scenarios/dp/dp-scenarios';
+import { dpLabel } from './dp-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.dp.dpOnTrees.trace;
 
 const I18N = {
   modeLabel: t('features.algorithms.runtime.dp.dpOnTrees.modeLabel'),
@@ -239,7 +243,7 @@ export function* dpOnTreesGenerator(scenario: TreeDpScenario): Generator<SortSte
       phase: 'relax',
       computation: {
         label: nodes[nodeIndex]!.label,
-        expression: parentTaken ? 'parent selected' : `${take[nodeIndex]!} vs ${skip[nodeIndex]!}`,
+        expression: parentTaken ? i18nText(TEXT.parentSelected) : `${take[nodeIndex]!} vs ${skip[nodeIndex]!}`,
         result: i18nText(takeNode ? I18N.results.take : I18N.results.skip),
         decision: independentSetLabel(scenario, chosen),
       },
@@ -275,10 +279,10 @@ function createStep(args: {
     metaLabel: `w${node.weight}`,
   }));
   const rowHeaders: DpHeaderConfig[] = [
-    { id: 'row-weight', label: 'weight', status: 'source', metaLabel: 'node' },
-    { id: 'row-take', label: 'take', status: 'accent', metaLabel: 'include' },
-    { id: 'row-skip', label: 'skip', status: 'accent', metaLabel: 'exclude' },
-    { id: 'row-best', label: 'best', status: 'target', metaLabel: 'max' },
+    { id: 'row-weight', label: dpLabel('weight'), status: 'source', metaLabel: dpLabel('node') },
+    { id: 'row-take', label: dpLabel('take'), status: 'accent', metaLabel: dpLabel('include') },
+    { id: 'row-skip', label: dpLabel('skip'), status: 'accent', metaLabel: dpLabel('exclude') },
+    { id: 'row-best', label: dpLabel('best'), status: 'target', metaLabel: dpLabel('max') },
   ];
 
   const cells: DpCellConfig[] = [];
@@ -291,10 +295,10 @@ function createStep(args: {
     cells.push({
       row: 0,
       col: index,
-      rowLabel: 'weight',
+      rowLabel: dpLabel('weight'),
       colLabel: node.label,
       valueLabel: String(node.weight),
-      metaLabel: args.children[index]!.length === 0 ? 'leaf' : `${args.children[index]!.length} kids`,
+      metaLabel: args.children[index]!.length === 0 ? dpLabel('leaf') : dpLabel('children', { count: args.children[index]!.length }),
       status: isChosen ? 'backtrack' : 'base',
       tags: [...(isChosen ? (['path'] as const) : []), ...(isActive ? (['active'] as const) : [])],
     });
@@ -302,10 +306,10 @@ function createStep(args: {
     cells.push({
       row: 1,
       col: index,
-      rowLabel: 'take',
+      rowLabel: dpLabel('take'),
       colLabel: node.label,
       valueLabel: String(args.take[index]!),
-      metaLabel: isChosen ? 'picked' : null,
+      metaLabel: isChosen ? dpLabel('picked') : null,
       status: isChosen
         ? 'backtrack'
         : isActive
@@ -326,10 +330,10 @@ function createStep(args: {
     cells.push({
       row: 2,
       col: index,
-      rowLabel: 'skip',
+      rowLabel: dpLabel('skip'),
       colLabel: node.label,
       valueLabel: String(args.skip[index]!),
-      metaLabel: isChosen ? 'blocked by parent?' : null,
+      metaLabel: isChosen ? dpLabel('blockedByParent') : null,
       status: isChosen ? 'backtrack' : isCandidate ? 'candidate' : args.skip[index]! > 0 ? 'chosen' : 'idle',
       tags: [
         'skip',
@@ -346,10 +350,10 @@ function createStep(args: {
     cells.push({
       row: 3,
       col: index,
-      rowLabel: 'best',
+      rowLabel: dpLabel('best'),
       colLabel: node.label,
       valueLabel: String(args.best[index]!),
-      metaLabel: args.take[index]! >= args.skip[index]! ? 'take' : 'skip',
+      metaLabel: args.take[index]! >= args.skip[index]! ? dpLabel('take') : dpLabel('skip'),
       status: isChosen ? 'backtrack' : isActive ? (args.activeStatus ?? 'active') : args.best[index]! > 0 ? 'improved' : 'idle',
       tags: bestTags,
     });

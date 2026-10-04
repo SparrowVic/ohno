@@ -4,6 +4,14 @@
   }
   <ohno-trace-facts [facts]="summaryFacts()" />
   <ohno-trace-facts [facts]="boardFacts()" />
+  @if (gridState.frontierOrder) {
+    <ohno-trace-chips
+      [title]="keys.frontierLabel"
+      [meta]="gridState.frontierOrder.length"
+      [chips]="queueChips()"
+      [emptyLabel]="commonKeys.emptyValueLabel"
+    />
+  }
   <ohno-trace-chips
     [title]="keys.visitOrderLabel"
     [meta]="gridState.visitOrder.length"

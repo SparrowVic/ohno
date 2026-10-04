@@ -41,21 +41,21 @@ export interface MatrixCell {
   readonly rowLabel: string;
   readonly colLabel: string;
   readonly valueLabel: string;
-  readonly metaLabel: string | null;
+  readonly metaLabel: TranslatableText | null;
   readonly status: MatrixCellStatus;
   readonly tags: readonly MatrixTraceTag[];
 }
 
 export interface MatrixComputation {
-  readonly label: string;
-  readonly expression: string;
-  readonly result: string | null;
-  readonly decision: string;
+  readonly label: TranslatableText;
+  readonly expression: TranslatableText;
+  readonly result: TranslatableText | null;
+  readonly decision: TranslatableText;
 }
 
 export interface MatrixTraceState {
   readonly mode: MatrixMode;
-  readonly modeLabel: string;
+  readonly modeLabel: TranslatableText;
   readonly phaseLabel: TranslatableText;
   readonly statusLabel: TranslatableText;
   readonly resultLabel: TranslatableText;
@@ -63,10 +63,10 @@ export interface MatrixTraceState {
   readonly activeRowLabel: string | null;
   readonly activeColLabel: string | null;
   readonly pivotLabel: string | null;
-  readonly focusItemsLabel: string;
-  readonly focusItems: readonly string[];
-  readonly secondaryItemsLabel: string;
-  readonly secondaryItems: readonly string[];
+  readonly focusItemsLabel: TranslatableText;
+  readonly focusItems: readonly TranslatableText[];
+  readonly secondaryItemsLabel: TranslatableText;
+  readonly secondaryItems: readonly TranslatableText[];
   readonly rowHeaders: readonly MatrixHeader[];
   readonly colHeaders: readonly MatrixHeader[];
   readonly cells: readonly MatrixCell[];

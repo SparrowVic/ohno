@@ -11,6 +11,10 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+import { graphLabel } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.dominatorTree;
 
 const I18N = {
   descriptions: {
@@ -70,7 +74,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
       candidateLabel: labelOf(labelById, graph.sourceId),
       expression: `${labelOf(labelById, graph.sourceId)} = {${labelOf(labelById, graph.sourceId)}}`,
       result: i18nText(I18N.results.othersAll),
-      decision: 'Iterative intersection will now remove impossible dominators.',
+      decision: i18nText(TEXT.decisions.iterate),
     },
   });
 
@@ -100,7 +104,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
           candidateLabel: labelOf(labelById, nodeId),
           expression: predecessorLabel(preds, labelById),
           result: setLabel(intersection, labelById),
-          decision: 'Start from the first predecessor and keep intersecting.',
+          decision: i18nText(TEXT.decisions.startPredecessor),
         },
       });
 
@@ -125,7 +129,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
             candidateLabel: labelOf(labelById, nodeId),
             expression: `${setLabel(intersection, labelById)} ∩ ${setLabel(predSet, labelById)}`,
             result: setLabel(nextIntersection, labelById),
-            decision: 'Only blocks common to all predecessor paths can dominate this node.',
+            decision: i18nText(TEXT.decisions.commonBlocks),
           },
         });
 
@@ -155,7 +159,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
             candidateLabel: labelOf(labelById, nodeId),
             expression: `${setLabel(intersection, labelById)} ∪ {${labelOf(labelById, nodeId)}}`,
             result: setLabel(nextSet, labelById),
-            decision: 'The set changed, so another global pass is still required.',
+            decision: i18nText(TEXT.decisions.setChanged),
           },
         });
       } else {
@@ -174,7 +178,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
             candidateLabel: labelOf(labelById, nodeId),
             expression: setLabel(nextSet, labelById),
             result: i18nText(I18N.results.unchanged),
-            decision: 'This block is already stable for the current predecessor information.',
+            decision: i18nText(TEXT.decisions.stable),
           },
         });
       }
@@ -204,7 +208,7 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
         candidateLabel: labelOf(labelById, nodeId),
         expression: setLabel(new Set(strictDominators), labelById),
         result: immediate ? labelOf(labelById, immediate) : i18nText(I18N.results.entry),
-        decision: 'The immediate dominator becomes the parent in the dominator tree.',
+        decision: i18nText(TEXT.decisions.immediateParent),
       },
     });
   }
@@ -219,10 +223,10 @@ export function* dominatorTreeGenerator(graph: WeightedGraphData): Generator<Sor
     activeCodeLine: 9,
     phase: 'graph-complete',
     computation: {
-      candidateLabel: 'Immediate dominators',
+      candidateLabel: graphLabel('immediateDominators'),
       expression: queueOrder.map((nodeId) => `${labelOf(labelById, nodeId)}←${labelOf(labelById, idomByNode.get(nodeId) ?? graph.sourceId)}`).join(' · '),
       result: i18nText(I18N.results.treeReady),
-      decision: 'Every reachable block now has exactly one parent in the dominator tree.',
+      decision: i18nText(TEXT.decisions.treeDone),
     },
   });
 }
@@ -291,17 +295,17 @@ function createStep(args: {
     edges,
     sourceId: args.graph.sourceId,
     phaseLabel: phaseLabel(args.phase, args.currentPass),
-    metricLabel: 'Dom#',
-    secondaryLabel: 'IDom / Set',
-    frontierLabel: 'Worklist',
-    frontierHeadLabel: 'Next block',
-    completionLabel: 'Fixed',
-    frontierStatusLabel: 'pending',
-    completionStatusLabel: 'fixed',
+    metricLabel: graphLabel('dominatorCount'),
+    secondaryLabel: graphLabel('idomSet'),
+    frontierLabel: graphLabel('worklist'),
+    frontierHeadLabel: graphLabel('nextBlock'),
+    completionLabel: graphLabel('fixed'),
+    frontierStatusLabel: graphLabel('statusPending'),
+    completionStatusLabel: graphLabel('statusFixed'),
     showEdgeWeights: false,
-    detailLabel: 'Dominator tree',
-    detailValue: `Pass ${args.currentPass}`,
-    visitOrderLabel: 'Immediate dominators',
+    detailLabel: graphLabel('dominatorTree'),
+    detailValue: i18nText(RUNTIME_KEY.graph.common.passLabel, { pass: args.currentPass }),
+    visitOrderLabel: graphLabel('immediateDominators'),
     currentNodeId,
     activeEdgeId,
     queue,

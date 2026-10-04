@@ -70,7 +70,7 @@ describe('knapsack-01', () => {
     );
     expect(
       steps.some((step) =>
-        step.dp?.cells.some((cell) => cell.metaLabel === 'too heavy' && cell.status === 'blocked'),
+        step.dp?.cells.some((cell) => isI18nText(cell.metaLabel) && cell.metaLabel.key === 'features.algorithms.runtime.dp.common.labels.tooHeavy' && cell.status === 'blocked'),
       ),
     ).toBe(true);
   });

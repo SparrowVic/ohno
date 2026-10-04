@@ -20,7 +20,6 @@ import {
   dpDisplayRows,
   dpFocusCell,
   dpHeaderTones,
-  dpLabelText,
   dpParseItem,
   dpPendingIds,
   dpPrimaryRackMeta,
@@ -68,14 +67,13 @@ function stateAt(list: readonly SortStep[], index: number): DpTraceState {
 }
 
 describe('dp display labels', () => {
-  it('maps generator words to display keys and keeps identifiers', () => {
-    expect(dpLabelText('0 items')).toEqual(i18nText(DP.labels.zeroItems));
-    expect(dpLabelText('amt')).toEqual(i18nText(DP.labels.amount));
-    expect(dpLabelText('3 assigned')).toEqual(i18nText(DP.labels.assigned, { count: 3 }));
-    expect(dpLabelText('skip')).toEqual(i18nText(I18N_KEY.features.algorithms.display.notes.skip));
-    expect(dpLabelText('Compass')).toBe('Compass');
-    expect(dpLabelText('w2 · v6')).toBe('w2 · v6');
-    expect(dpLabelText(null)).toBe('');
+  it('emits header words as keys from the knapsack generator', () => {
+    const state = stateAt(knapsackSteps(), 0);
+    expect(state.rowHeaders[0]!.label).toEqual(i18nText(DP.labels.zeroItems));
+    expect(state.rowHeaders[0]!.metaLabel).toEqual(i18nText(I18N_KEY.features.algorithms.display.racks.base));
+    expect(state.cells.find((entry) => entry.col === 3)?.colLabel).toEqual(
+      i18nText('features.algorithms.runtime.dp.common.labels.capacity', { cap: 3 }),
+    );
   });
 
   it('parses item strings into lead and value', () => {
@@ -97,10 +95,10 @@ describe('dp display labels', () => {
   it('shows identifier captions and drops status words', () => {
     expect(dpCellCaption('k3')).toBe('k3');
     expect(dpCellCaption('B2')).toBe('B2');
-    expect(dpCellCaption('last #4')).toEqual(i18nText(DP.captions.last, { id: 4 }));
-    expect(dpCellCaption('from C')).toEqual(i18nText(DP.captions.from, { city: 'C' }));
+    expect(dpCellCaption(i18nText(DP.captions.last, { id: 4 }))).toEqual(i18nText(DP.captions.last, { id: 4 }));
+    expect(dpCellCaption(i18nText(DP.captions.from, { city: 'C' }))).toEqual(i18nText(DP.captions.from, { city: 'C' }));
+    expect(dpCellCaption(i18nText(DP.labels.take))).toBeNull();
     expect(dpCellCaption('diag')).toBeNull();
-    expect(dpCellCaption('too heavy')).toBeNull();
     expect(dpCellCaption(null)).toBeNull();
   });
 });
@@ -246,7 +244,7 @@ describe('dp mapped and unmapped racks', () => {
       primaryItemsLabel: '',
       primaryItems: ['000=2', '001=5'],
       secondaryItemsLabel: '',
-      secondaryItems: ['bit 0'],
+      secondaryItems: [i18nText(DP.labels.bit, { n: 0 })],
       insights: [],
       rowHeaders: rows,
       colHeaders: cols,
@@ -269,9 +267,9 @@ describe('dp column axis', () => {
     const state = {
       mode: 'coin-change',
       colHeaders: [
-        { id: 'c0', label: '0', status: 'source', metaLabel: 'base' },
-        { id: 'c1', label: '1', status: 'idle', metaLabel: 'amt' },
-        { id: 'c2', label: '2', status: 'idle', metaLabel: 'amt' },
+        { id: 'c0', label: '0', status: 'source', metaLabel: i18nText(I18N_KEY.features.algorithms.display.racks.base) },
+        { id: 'c1', label: '1', status: 'idle', metaLabel: i18nText(DP.labels.amount) },
+        { id: 'c2', label: '2', status: 'idle', metaLabel: i18nText(DP.labels.amount) },
       ],
     } as unknown as DpTraceState;
     expect(dpColumnAxis(state)).toEqual({ caption: i18nText(DP.labels.amount), columnMeta: false });

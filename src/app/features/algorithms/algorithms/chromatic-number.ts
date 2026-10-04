@@ -12,6 +12,10 @@ import {
   WeightedGraphData,
 } from '../models/graph';
 import { SortStep } from '../models/sort-step';
+import { graphLabel, graphSecondary } from './graph-text';
+import { RUNTIME_KEY } from '../../../core/i18n/i18n-keys';
+
+const TEXT = RUNTIME_KEY.graph.chromaticNumber;
 
 const I18N = {
   descriptions: {
@@ -77,10 +81,10 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
     activeCodeLine: 2,
     phase: 'init',
     computation: {
-      candidateLabel: 'Lower bound',
+      candidateLabel: i18nText(TEXT.decisions.lowerBound),
       expression: `ω(G) = ${cliqueLowerBound}`,
       result: i18nText(I18N.results.startWith, { count: startLimit }),
-      decision: 'A clique gives the minimum number of colors worth trying first.',
+      decision: i18nText(TEXT.decisions.cliqueBound),
     },
   });
 
@@ -104,9 +108,9 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
       phase: 'pick-node',
       computation: {
         candidateLabel: `χ ≤ ${limit}`,
-        expression: `${order.length} node(s)`,
+        expression: i18nText(TEXT.decisions.nodeCount, { count: order.length }),
         result: i18nText(I18N.results.palette, { count: limit }),
-        decision: 'Backtracking will attempt colors in node order and undo assignments on conflicts.',
+        decision: i18nText(TEXT.decisions.backtrackPlan),
       },
     });
 
@@ -131,9 +135,9 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
       phase: 'graph-complete',
       computation: {
         candidateLabel: `χ ≤ ${limit}`,
-        expression: 'backtracking exhausted',
+        expression: i18nText(TEXT.decisions.exhausted),
         result: i18nText(I18N.results.fail),
-        decision: 'At least one more color is necessary.',
+        decision: i18nText(TEXT.decisions.needMore),
       },
     });
   }
@@ -155,10 +159,10 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
     activeCodeLine: 9,
     phase: 'graph-complete',
     computation: {
-      candidateLabel: 'Chromatic number',
+      candidateLabel: i18nText(TEXT.decisions.chromaticNumber),
       expression: `χ(G) = ${bestK ?? COLOR_TONES.length}`,
       result: colorSummary(order, colorByNode, labelById),
-      decision: 'This is the smallest palette that colors every adjacent pair differently.',
+      decision: i18nText(TEXT.decisions.smallestPalette),
     },
   });
 
@@ -192,9 +196,9 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
       phase: 'pick-node',
       computation: {
         candidateLabel: nodeLabel,
-        expression: `forbidden = {${[...forbidden].sort((a, b) => a - b).join(', ')}}`,
+        expression: i18nText(TEXT.decisions.forbidden, { colors: `{${[...forbidden].sort((a, b) => a - b).join(', ')}}` }),
         result: i18nText(I18N.results.candidates, { count: limit - forbidden.size }),
-        decision: 'Try palette slots from left to right and backtrack on dead ends.',
+        decision: i18nText(TEXT.decisions.tryPalette),
       },
     });
 
@@ -219,9 +223,9 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
         phase: 'inspect-edge',
         computation: {
           candidateLabel: nodeLabel,
-          expression: `try color ${color}`,
+          expression: i18nText(TEXT.decisions.tryColor, { color }),
           result: conflictNeighborId ? i18nText(I18N.results.conflict, { node: labelById.get(conflictNeighborId) ?? conflictNeighborId }) : i18nText(I18N.results.legal),
-          decision: conflictNeighborId ? 'reject this color and keep searching' : 'commit color and recurse',
+          decision: conflictNeighborId ? i18nText(TEXT.decisions.rejectColor) : i18nText(TEXT.decisions.commitColor),
         },
       });
 
@@ -250,7 +254,7 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
           candidateLabel: nodeLabel,
           expression: `${nodeLabel} = ${color}`,
           result: colorSummary(stack, colorByNode, labelById),
-          decision: 'The current partial coloring is still valid.',
+          decision: i18nText(TEXT.decisions.partialValid),
         },
       });
 
@@ -280,7 +284,7 @@ export function* chromaticNumberGenerator(graph: WeightedGraphData): Generator<S
           candidateLabel: nodeLabel,
           expression: `${nodeLabel} = ${color}`,
           result: i18nText(I18N.results.undo),
-          decision: 'This branch cannot finish a legal coloring.',
+          decision: i18nText(TEXT.decisions.branchDead),
         },
       });
     }
@@ -320,7 +324,7 @@ function createStep(args: {
       ...node,
       distance: color,
       previousId: null,
-      secondaryText: color !== null ? `c${color}` : `deg ${degree}`,
+      secondaryText: color !== null ? `c${color}` : graphSecondary('degree', { degree }),
       isSource: node.id === args.order[0],
       isCurrent: node.id === currentNodeId,
       isSettled: color !== null,
@@ -361,19 +365,19 @@ function createStep(args: {
     edges,
     sourceId: args.order[0] ?? args.graph.sourceId,
     phaseLabel: i18nText(phaseLabel(args.phase)),
-    metricLabel: 'Color',
-    secondaryLabel: 'State',
-    frontierLabel: 'Uncolored',
-    frontierHeadLabel: 'Next node',
-    completionLabel: 'Colored',
-    frontierStatusLabel: 'pending',
-    completionStatusLabel: 'colored',
+    metricLabel: graphLabel('color'),
+    secondaryLabel: graphLabel('state'),
+    frontierLabel: graphLabel('uncolored'),
+    frontierHeadLabel: graphLabel('nextNode'),
+    completionLabel: graphLabel('colored'),
+    frontierStatusLabel: graphLabel('statusPending'),
+    completionStatusLabel: graphLabel('statusColored'),
     showEdgeWeights: false,
-    detailLabel: 'Color search',
+    detailLabel: graphLabel('colorSearch'),
     detailValue: args.bestK
       ? `χ(G) = ${args.bestK}`
-      : `Trying χ ≤ ${args.limit} · bound ${args.cliqueLowerBound}`,
-    visitOrderLabel: 'Color stack',
+      : i18nText(TEXT.details.trying, { limit: args.limit, bound: args.cliqueLowerBound }),
+    visitOrderLabel: graphLabel('colorStack'),
     currentNodeId,
     activeEdgeId,
     queue,

@@ -190,9 +190,10 @@ export function gridFrontierRows(state: GridTraceState | null): GridRackRow[] {
   const frontier = state.cells.filter((cell) => cell.status === 'frontier');
   const active = gridActiveCell(state);
   if (active && active.status !== 'wall' && frontier.length < state.frontierCount) frontier.push(active);
+  const queueOrder = state.frontierOrder ?? null;
   const toneOf = (cell: GridTraceCell, index: number): RackRowTone => {
     if (cell.id === state.activeCellId) return 'now';
-    return index === 0 && state.mode === 'a-star' ? 'head' : 'default';
+    return index === 0 && (state.mode === 'a-star' || queueOrder !== null) ? 'head' : 'default';
   };
   if (state.mode === 'a-star') {
     const scored = frontier
@@ -212,8 +213,10 @@ export function gridFrontierRows(state: GridTraceState | null): GridRackRow[] {
       role: cell.id === state.sourceCellId ? 'source' : null,
     }));
   }
+  const rank = new Map((queueOrder ?? []).map((id, index) => [id, index] as const));
+  const position = (cell: GridTraceCell): number => rank.get(cell.id) ?? Number.POSITIVE_INFINITY;
   return frontier
-    .sort((left, right) => left.row - right.row || left.col - right.col)
+    .sort((left, right) => position(left) - position(right) || left.row - right.row || left.col - right.col)
     .map((cell, index) => ({
       id: cell.id,
       label: cellLabel(cell),

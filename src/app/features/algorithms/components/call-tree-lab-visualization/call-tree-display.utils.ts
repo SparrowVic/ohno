@@ -1,5 +1,5 @@
 import { I18N_KEY } from '../../../../core/i18n/i18n-keys';
-import { TranslatableText, i18nText } from '../../../../core/i18n/translatable-text';
+import { I18nTextParam, TranslatableText, isI18nText } from '../../../../core/i18n/translatable-text';
 import { RackRowTone } from '../../../../shared/instrument/rack/rack-row/rack-row';
 import {
   BoardCellState,
@@ -148,31 +148,21 @@ export function callTreeMetrics(leafCount: number, maxDepth: number, availableWi
   };
 }
 
-export function callTreeGlyph(mode: CallTreeLabMode, title: string): CallTreeGlyph {
-  if (mode === 'backtracking') {
-    const match = /^r\d+, c(\d+)$/.exec(title);
-    return { text: match?.[1] ?? '', dot: match !== null };
-  }
+export function callTreeGlyph(mode: CallTreeLabMode, title: TranslatableText): CallTreeGlyph {
+  if (!isI18nText(title)) return { text: '', dot: false };
+  if (mode === 'backtracking') return paramGlyph(title.key === TITLES.queen ? title.params?.['col'] : undefined);
   if (mode === 'minimax') {
-    if (title.startsWith('MAX')) return { text: '▲', dot: false };
-    if (title.startsWith('MIN')) return { text: '▼', dot: false };
+    if (title.key === TITLES.max) return { text: '▲', dot: false };
+    if (title.key === TITLES.min) return { text: '▼', dot: false };
     return { text: '', dot: false };
   }
-  const match = /#(\d+)$/.exec(title);
-  return { text: match?.[1] ?? '', dot: match !== null };
+  if (title.key === TITLES.arm) return paramGlyph(title.params?.['arm']);
+  if (title.key === TITLES.rollout) return paramGlyph(title.params?.['leaf']);
+  return { text: '', dot: false };
 }
 
-export function callTreeTitle(title: string): TranslatableText {
-  if (title === 'root' || /^row -?\d+$/.test(title)) return TITLES.root;
-  const queen = /^r(\d+), c(\d+)$/.exec(title);
-  if (queen) return i18nText(TITLES.queen, { row: queen[1] ?? '', col: queen[2] ?? '' });
-  const player = /^(MAX|MIN)\(d=(\d+)\)$/.exec(title);
-  if (player) return i18nText(player[1] === 'MAX' ? TITLES.max : TITLES.min, { depth: player[2] ?? '' });
-  const leaf = /^leaf=(-?\d+)$/.exec(title);
-  if (leaf) return i18nText(TITLES.leaf, { value: leaf[1] ?? '' });
-  const arm = /^(arm|leaf) #(\d+)$/.exec(title);
-  if (arm) return i18nText(arm[1] === 'arm' ? TITLES.arm : TITLES.rollout, arm[1] === 'arm' ? { arm: arm[2] ?? '' } : { leaf: arm[2] ?? '' });
-  return title;
+function paramGlyph(value: I18nTextParam): CallTreeGlyph {
+  return value === undefined || value === null ? { text: '', dot: false } : { text: String(value), dot: true };
 }
 
 export function callTreeNodeValue(node: CallTreeNode): string | null {
@@ -292,7 +282,7 @@ export function callTreePathRows(state: CallTreeLabTraceState | null): readonly 
       const node = byId.get(id);
       if (!node) return [];
       const tone: RackRowTone = result ? 'done' : depth === lastIndex ? 'now' : 'default';
-      return [{ id, depth, title: callTreeTitle(node.title), value: callTreeNodeValue(node), tone }];
+      return [{ id, depth, title: node.title, value: callTreeNodeValue(node), tone }];
     })
     .reverse();
 }
