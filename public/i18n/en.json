@@ -7123,12 +7123,10 @@
           "newMatrix": "New matrix",
           "newMatrixChain": "New matrix chain",
           "newMergeChain": "New merge chain",
-          "newNetwork": "New network",
           "newPalindromeCase": "New palindrome case",
           "newPalindromeField": "New palindrome field",
           "newPartitionCase": "New partition case",
           "newPointCloud": "New point cloud",
-          "newPresetCase": "New preset case",
           "newPricedNetwork": "New priced network",
           "newRegexPair": "New regex pair",
           "newRollingHashCase": "New rolling-hash case",
@@ -7151,7 +7149,23 @@
           "newWildcardPair": "New wildcard pair",
           "newWordPair": "New word pair",
           "newZSkyline": "New Z skyline",
-          "randomize": "Randomize"
+          "randomize": "Randomize",
+          "newGcdPair": "New GCD pair",
+          "newLp": "New LP",
+          "newCandidate": "New candidate",
+          "newComposite": "New composite",
+          "newDepth": "New depth",
+          "newFactorialRun": "New factorial run",
+          "newGameTree": "New game tree",
+          "newPair": "New pair",
+          "newPlayout": "New playout",
+          "newRange": "New range",
+          "newSequence": "New sequence",
+          "newSignal": "New signal",
+          "newSortedArray": "New sorted array",
+          "newStream": "New stream",
+          "newSystem": "New system",
+          "newWord": "New word"
         },
         "counterLabel": "Step {{current}} / {{total}}",
         "customizeValues": {
@@ -7249,7 +7263,12 @@
           "triangleMesh": "Triangle Mesh",
           "twoPassScc": "Two-Pass SCC",
           "twoSideCheck": "Two-Side Check",
-          "vectorMerge": "Vector Merge"
+          "vectorMerge": "Vector Merge",
+          "sieveGrid": "Sieve Grid",
+          "pointerLab": "Pointer Lab",
+          "matrixGrid": "Matrix Grid",
+          "callTreeLab": "Call Tree Lab",
+          "callStackLab": "Call Stack Lab"
         },
         "viewLabel": "View"
       },
@@ -8822,9 +8841,7 @@
           "trace": "Trace"
         },
         "legend": {
-          "activeDigit": "Active digit",
           "boundary": "Boundary",
-          "bucketLane": "Bucket lane",
           "comparing": "Comparing",
           "gatheredOutput": "Gathered output",
           "hintCode": "code",
@@ -8984,10 +9001,6 @@
     },
     "roadmap": {
       "chip": "Roadmap"
-    },
-    "vizOptionsMenu": {
-      "title": "View options",
-      "triggerLabel": "View options"
     }
   }
 }

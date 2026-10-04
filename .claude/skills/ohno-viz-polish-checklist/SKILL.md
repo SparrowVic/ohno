@@ -28,12 +28,12 @@ Go top-to-bottom. Each item is a specific change or a deliberate "we decided not
 ### 3. Text color stays neutral on stateful fills
 
 - Don't tint label text with the state color when the label sits ON a same-colored fill. Lime text on lime bar = low contrast.
-- Keep labels at `var(--text-primary)` (near-white). The bar's color carries the state.
+- Keep labels at `var(--ink)` (near-white). The bar's color carries the state.
 
 ### 4. Drop per-item shadows
 
 - Ellipse-under-bar drop shadows were a remnant of the "floating" aesthetic. Flat drops them.
-- Alternative: one **unified baseline shadow** for the whole row, not per-item. Usually `--elevation-1` or `--elevation-2` on the scene container.
+- Alternative: one **unified baseline shadow** for the whole row, not per-item. Usually the screen's own `--shadow-screen`; never a hand-rolled shadow.
 
 ### 5. Default state, not muted into disappearance
 
@@ -79,7 +79,7 @@ Go top-to-bottom. Each item is a specific change or a deliberate "we decided not
 ### 13. Keyboard + focus
 
 - Toolbar controls (play/pause, step, speed, randomize, preset) all tabbable, all show the global `:focus-visible` ring.
-- No `outline: none` without a replacement. If you added a custom treatment, it matches or references `--ring-focus`.
+- No `outline: none` without a replacement. If you added a custom treatment, it matches or references `--focus-ring`.
 
 ### 14. ARIA fallback
 

@@ -1,41 +1,39 @@
 <section class="info">
-  <div class="info__hero">
-    <span class="info__eyebrow">{{
-      I18N_KEY.features.algorithms.infoPanel.briefing | transloco
-    }}</span>
+  <header class="info__hero">
+    <ohno-engraving tone="cyan">{{ I18N_KEY.features.algorithms.infoPanel.briefing | transloco }}</ohno-engraving>
     <h2 class="info__title">
       {{ I18N_KEY.features.algorithms.infoPanel.algorithmProfile | transloco }}
     </h2>
     <p class="info__desc"><app-math-text [content]="algorithm().description" variant="copy" /></p>
-  </div>
+  </header>
 
-  <div class="info__tags">
-    @for (tag of tags(); track tag) {
-      <app-ui-tag [label]="tag" appearance="soft" size="md" />
-    }
-  </div>
+  @if (tags().length > 0) {
+    <ul class="info__tags">
+      @for (tag of tags(); track tag) {
+        <li class="info__tag"><app-math-text [content]="tag" variant="chip" /></li>
+      }
+    </ul>
+  }
 
-  <div class="info__grid">
+  <dl class="info__grid">
     @for (card of cards(); track card.labelKey) {
       <div class="info__card">
-        <div class="info__label">{{ card.labelKey | transloco }}</div>
-        <div class="info__value">
+        <dt class="info__label">{{ card.labelKey | transloco }}</dt>
+        <dd class="info__value">
           @if (card.valueKey; as valueKey) {
             <app-math-text [content]="valueKey | transloco" variant="metric" />
           } @else {
             <app-math-text [content]="card.value ?? ''" variant="metric" />
           }
-        </div>
+        </dd>
       </div>
     }
-  </div>
+  </dl>
 
   @if (tutorial(); as tutorial) {
     <div class="info__tutorial">
       <div class="info__tutorial-head">
-        <span class="info__eyebrow">{{
-          I18N_KEY.features.algorithms.infoPanel.tutorial | transloco
-        }}</span>
+        <ohno-engraving tone="lime">{{ I18N_KEY.features.algorithms.infoPanel.tutorial | transloco }}</ohno-engraving>
         <h3 class="info__tutorial-title">
           {{ I18N_KEY.features.algorithms.infoPanel.howItWorks | transloco }}
         </h3>
@@ -59,50 +57,36 @@
 
       <ol
         class="info__steps"
-        [attr.aria-label]="
-          I18N_KEY.features.algorithms.infoPanel.algorithmStepsAriaLabel | transloco
-        "
-        >
-          @for (step of tutorial.howItWorks; track $index) {
-            <li class="info__step">
-              <span class="info__step-num">{{ $index + 1 }}</span>
-              <span class="info__step-text"
-                ><app-math-text
-                  variant="copy"
-                  [content]="looksLikeI18nKey(step) ? (step | transloco) : step"
-              /></span>
-            </li>
-          }
-        </ol>
+        [attr.aria-label]="I18N_KEY.features.algorithms.infoPanel.algorithmStepsAriaLabel | transloco"
+      >
+        @for (step of tutorial.howItWorks; track $index) {
+          <li class="info__step">
+            <span class="info__step-num">{{ $index + 1 }}</span>
+            <span class="info__step-text"
+              ><app-math-text variant="copy" [content]="looksLikeI18nKey(step) ? (step | transloco) : step"
+            /></span>
+          </li>
+        }
+      </ol>
 
       <div class="info__tradeoffs">
-        <div class="info__tradeoff info__tradeoff--plus">
-          <span class="info__tradeoff-label">{{
-            I18N_KEY.features.algorithms.infoPanel.strengths | transloco
-          }}</span>
+        <div class="info__tradeoff" data-tone="lime">
+          <ohno-engraving tone="lime">{{ I18N_KEY.features.algorithms.infoPanel.strengths | transloco }}</ohno-engraving>
           <ul class="info__tradeoff-list">
             @for (item of tutorial.strengths; track $index) {
               <li>
-                <app-math-text
-                  variant="copy"
-                  [content]="looksLikeI18nKey(item) ? (item | transloco) : item"
-                />
+                <app-math-text variant="copy" [content]="looksLikeI18nKey(item) ? (item | transloco) : item" />
               </li>
             }
           </ul>
         </div>
 
-        <div class="info__tradeoff info__tradeoff--minus">
-          <span class="info__tradeoff-label">{{
-            I18N_KEY.features.algorithms.infoPanel.tradeOffs | transloco
-          }}</span>
+        <div class="info__tradeoff" data-tone="amber">
+          <ohno-engraving tone="amber">{{ I18N_KEY.features.algorithms.infoPanel.tradeOffs | transloco }}</ohno-engraving>
           <ul class="info__tradeoff-list">
             @for (item of tutorial.weaknesses; track $index) {
               <li>
-                <app-math-text
-                  variant="copy"
-                  [content]="looksLikeI18nKey(item) ? (item | transloco) : item"
-                />
+                <app-math-text variant="copy" [content]="looksLikeI18nKey(item) ? (item | transloco) : item" />
               </li>
             }
           </ul>

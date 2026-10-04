@@ -54,13 +54,6 @@ interface StateStyle {
   readonly stroke: string;
 }
 
-/** Single source of truth for each visual state. Each tile is a SOLID
- *  fill + hairline stroke — no backplate, no inner glow core, no gloss
- *  overlay. Text stays `--text-primary` always (dual-tone label on a
- *  same-colored fill was a low-contrast read); state is conveyed by
- *  the tile color itself. Colors alias onto the app's identity palette
- *  so the block field reads as part of the same UI (cyan = attending,
- *  pink = acting, lime = done). */
 const BLOCK_STATE_STYLES: Record<BlockState, StateStyle> = {
   default: {
     fill: 'rgb(var(--viz-state-default-rgb) / 0.85)',

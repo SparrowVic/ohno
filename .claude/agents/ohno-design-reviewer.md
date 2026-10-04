@@ -17,7 +17,7 @@ You audit against these — in this order of severity when ranking issues:
 1. **Hardcoded hex in component SCSS.** Every color must come from `src/styles/_instrument-tokens.scss` tokens via `var(--...)` or `rgb(var(--X-rgb) / α)`. Grep for `#[0-9a-fA-F]{3,8}` in changed SCSS (the token catalog and `src/styles/_base.scss` are the only files allowed to hold literals).
 1a. **Comma-form alpha `rgba(var(`** anywhere in `src/` — browsers drop the declaration silently. Grep for `rgba\(var\(`.
 1b. **Doto misuse.** `--font-dot` (or `Doto`) used for words/sentences, or at a size below 14px. Doto is for numbers, complexity notation and the one-word marquee only.
-1c. **Deprecated compatibility tokens in new or migrated code** — any name that lives only in `src/styles/_compat-tokens.scss` (`--surface-*`, `--text-primary/-secondary/…`, `--accent`, `--chrome-*`, `--viz-accent`…`--viz-ember`, `--elevation-*`, `--ring-focus`, `--panel-shell-*`, `--control-*`, `--font-sans`, `--radius-lg/-xl/-2xl/-3xl`, `--ease-spring`, `--duration-entrance`). Point at the Instrument token with the same role.
+1c. **Removed compatibility tokens** — the pre-redesign aliases no longer exist (`_compat-tokens.scss` is deleted), so any use resolves to nothing (`--surface-*`, `--text-primary/-secondary/…`, `--accent`, `--chrome-*`, `--viz-accent`…`--viz-ember`, `--elevation-*`, `--ring-focus`, `--panel-shell-*`, `--control-*`, `--font-sans`, `--radius-lg/-xl/-2xl/-3xl`, `--ease-spring`, `--duration-entrance`). Point at the Instrument token with the same role.
 2. **`@Input()` decorator used in new code.** Must be `input()` / `input.required()` / `input<T>(default)`.
 3. **Constructor-parameter injection.** Must be `inject(...)` in field initializers.
 4. **`*ngIf` / `*ngFor` / `*ngSwitch` in templates.** Must be `@if / @for / @switch`.
@@ -57,7 +57,7 @@ Scope reviewed:
 
 ### Blockers (must fix before shipping)
 
-1. [file.scss:L42] Hex literal `#ff88b8` — replace with `rgb(var(--chrome-accent-warm-rgb) / 0.9)`.
+1. [file.scss:L42] Hex literal `#ff88b8` — replace with `rgb(var(--pink-rgb) / 0.9)`.
 2. [file.ts:L120] `@Input() foo: string` — migrate to `readonly foo = input<string>('');`.
 
 ### Major (fix this pass)
@@ -94,7 +94,7 @@ If there are no issues at a severity: omit the section (don't write "none"). If 
    - `#[0-9a-fA-F]{3,8}\b` in `.scss` under the scope.
    - `rgba\(var\(` in `.scss`, `.ts` and `.html` under the scope.
    - `--font-dot|Doto` in `.scss` — then read the surrounding rule for the element and the font size.
-   - `--surface-|--text-primary|--text-secondary|--accent|--chrome-|--elevation-|--ring-focus|--control-|--panel-shell-|--font-sans` in changed `.scss` (compatibility aliases).
+   - `--surface-|--text-primary|--text-secondary|--accent|--chrome-|--elevation-|--ring-focus|--control-|--panel-shell-|--font-sans` in changed `.scss` / `.ts` (removed compatibility aliases).
    - `@Input\(` / `@Output\(` in `.ts`.
    - `\*ngIf\|\*ngFor\|\*ngSwitch` in `.html`.
    - `constructor\s*\(` followed by a parameter that isn't `inject()`.

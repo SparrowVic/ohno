@@ -36,19 +36,19 @@ Node `^20.19.0 || ^22.12.0`, npm `>=10`.
 - [src/app/features/algorithms/](src/app/features/algorithms/) — the heart:
   - `algorithms/` — pure algorithm generators (one file or folder per algorithm).
   - `models/` — `sort-step.ts` and per-family trace state types (graph, dp, scratchpad-lab, number-lab, …).
-  - `components/` — visualization components, per-family trace panels and scene primitives (`code-panel`, `visualization-canvas`, `info-panel`, `scratchpad-lab-visualization`, `bar-chart-visualization`, …).
+  - `components/` — visualization components, per-family trace panels and scene primitives (`code-panel`, `visualization-canvas`, `info-panel`, `scratchpad-lab-visualization`, `bar-chart-visualization`, `notebook-register-rack`, `geo-canvas`, …). Variant labels, randomize labels and legend labels in `algorithm-detail-config.ts` are `I18N_KEY` references (`features.algorithms.toolbar.variants|actions.*`, `workbench.legend.*`), never English strings.
   - `data/catalog/` — algorithm catalog metadata.
   - `registry/` — lookup service.
   - `workbench/` — the algorithm route (`app-workbench`): `PlaybackController` (per-workbench service over `VisualizationEngine`: history, cursor, step events, recent-store writes on pause/complete/leave), `workbench-topbar/`, `stage-head/`, `stage-screen/` (meters + canvas + op-line + aria-live), `legend-row/`, `transport-deck/` (+ `custom-values-form/`), `inspector/` (Kod / Info / Ślad tabs, code language menu, copy key), `trace-host/` (the family trace-panel switch), `log-printer/` (tape, export, filter), pure `utils/*.utils.ts` with Vitest specs (step events, tape rows, stage readouts, keyboard map, sentence markup, scenarios). `algorithm-detail/algorithm-detail-config/` keeps the per-algorithm view configs.
   - `algorithms-page/` (catalog: marquee, tools, starter path, groups, deferred grid), `module-card/` (card + 8 family previews), `algorithm-traits/` — UI shells.
-- [src/styles.scss](src/styles.scss) — the canonical token catalog. **Single source of truth** for color, spacing, radius, motion, elevation, typography, focus.
+- [src/styles.scss](src/styles.scss) — the global entry: loads `src/styles/_instrument-tokens.scss` (the token catalog, single source of truth for color, radius, motion, elevation, typography, focus), `_display.scss` (emits the global tone scope) and `_base.scss`.
 - [public/i18n/](public/i18n/) — `pl.json`, `en.json`.
 - [proj-info/](proj-info/) — brief, todos, navbar & shader-card explorations, logo archive, mockup HTMLs. Useful as design reference; not shipped.
 
 ## Hard rules (non-negotiable)
 
 1. **No comments in code.** Well-named identifiers do the explaining. If you feel a comment is needed, rename the symbol instead. The only exception: a WHY-comment for a non-obvious invariant/workaround/browser quirk.
-2. **No hex literals in component SCSS.** Always reference tokens from `src/styles.scss` via `var(--token)` or `rgb(var(--token-rgb) / α)`. If a shade you need is missing, add a token first.
+2. **No hex literals in component SCSS.** Always reference tokens from `src/styles/_instrument-tokens.scss` via `var(--token)` or `rgb(var(--token-rgb) / α)`. If a shade you need is missing, add a token first.
 3. **Standalone + OnPush, always.** Every `@Component` declares `standalone: true` (Angular 21 default) and `changeDetection: ChangeDetectionStrategy.OnPush`. No NgModules.
 4. **Signal inputs only.** Use `input()` / `input.required()` / `input<T>(default)`. Never `@Input()`. Outputs via `output<T>()`.
 5. **`inject()` only.** No constructor-parameter injection. Inside components use field initializers: `private readonly foo = inject(FooService);`.
@@ -66,9 +66,13 @@ The app is being rebuilt as **Instrument** — an analog test bench: graphite pl
 
 **Base rules:** [src/styles/_base.scss](src/styles/_base.scss) — reset, desk background with SVG noise (`app-root::before`), global `:focus-visible { box-shadow: var(--focus-ring) }` (orange), reduced-motion kill switch, keyframes. There is no brand rail, aurora, glass, film grain on content or grid canvas any more.
 
-**Compatibility aliases:** [src/styles/_compat-tokens.scss](src/styles/_compat-tokens.scss) maps every pre-redesign token name (`--surface-*`, `--text-*`, `--accent`, `--chrome-*`, `--elevation-*`, `--ring-focus`, …) onto the new palette so untouched screens keep rendering during the migration. **Never use them in new or migrated code**; they are deleted in Phase 5.
+**Display language:** [src/styles/_display.scss](src/styles/_display.scss) holds the mixins every family display shares (`layout`, `cell`, `chip`, `note`, `node`, `edge`, `svg-chip`, `tape`, `tape-cell`, `graticule`, `point`, `bracket`, `cursor-label`, …). Tones go through `data-tone` (`cyan` attending, `pink` acting, `lime` settled, `violet` source, `amber` hint, `red` conflict, `slate` idle, `signal`): `styles.scss` emits `display.tone-scope` once, which maps each named `[data-tone]` onto the non-inheriting `--tone-pick`/`--tone-pick-rgb`, and `@include display.tone-vars` on an element turns that into `--tone`/`--tone-rgb` (falling back to `--ink-2` / white). Never re-emit per-tone selector blocks in a component.
 
-**Primitives:** [src/app/shared/instrument/](src/app/shared/instrument/) — `ohno-plate`, `ohno-screen`, `ohno-engraving`, `ohno-led`, `ohno-kbd`, `ohno-readout`, `ohno-meter`, `ohno-key`, `ohno-latch`, `ohno-knob`, `ohno-window-stepper`, `ohno-slot`, `ohno-gauge`, `ohno-opline`, `ohno-rack`, `ohno-rack-row`, `ohno-tape`, `ohno-floating-plate`, `ohno-menu`, `ohno-search-field`, `ohno-lang-toggle`, `ohno-brand`. Reach for one before styling a `div`. They are all rendered on the dev-only specimen route `/dev/instrument` (`canMatch: isDevMode()`, absent from production builds) — extend that page whenever you add a primitive.
+The pre-redesign compatibility aliases (`--surface-*`, `--text-*`, `--accent*`, `--chrome-*`, `--viz-accent`/`--viz-warning`/…, `--elevation-*`, `--ring-focus`, …) are gone; only Instrument tokens exist.
+
+**Primitives:** [src/app/shared/instrument/](src/app/shared/instrument/) — `ohno-plate`, `ohno-screen`, `ohno-engraving`, `ohno-led`, `ohno-kbd`, `ohno-readout`, `ohno-meter`, `ohno-key`, `ohno-latch`, `ohno-knob`, `ohno-window-stepper`, `ohno-slot`, `ohno-gauge`, `ohno-opline`, `ohno-rack`, `ohno-rack-row`, `ohno-tape`, `ohno-floating-plate`, `ohno-menu`, `ohno-search-field`, `ohno-lang-toggle`, `ohno-brand`, and for the Ślad tab the trace primitives in `shared/instrument/trace/` — `ohno-trace-facts` (rack of label/value rows), `ohno-trace-chips` (mono chips with tones) and `ohno-trace-table` (screen table) — which every family trace panel is built from. Reach for one before styling a `div`. They are all rendered on the dev-only specimen route `/dev/instrument` (`canMatch: isDevMode()`, absent from production builds) — extend that page whenever you add a primitive.
+
+**Display readiness:** `data/catalog/display-readiness/display-readiness.ts` lists the visualization variants rebuilt in the Instrument dot language (`REBUILT_DISPLAY_VARIANTS`) and the module ids still waiting for a display (`PENDING_DISPLAY_IDS`, empty since Phase 4); `isDisplayReady(id)` greys pending modules out on the catalog and module cards, and the spec keeps both lists in step with each config's default variant. A new view joins the first list when its display is finished.
 
 **Catalog data derived at runtime:** module ids (`data/catalog/module-id`, `SRT-01`… from catalog order), preview families (`data/catalog/preview-family`), starter paths (`data/catalog/paths/paths.ts`), difficulty latches (`data/catalog/difficulty-filter`); module descriptions live in `public/i18n/*.json` under `features.algorithms.catalog.modules.<id>.description` (PL source of truth: `docs/superpowers/plans/module-descriptions.pl.json`).
 
@@ -113,7 +117,7 @@ const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
 ## Conventions by family
 
 - **Sorting family (bar-chart, block-swap, radix-*):** flat aesthetic. Solid fill, hairline stroke, semantic state colors, `tabular-nums` on any numeric label rendered outside SVG. See the "flat-redesign" polish list in project notes.
-- **Number-theory / pure-math (Euclidean GCD, Extended Euclidean, …):** editorial margin-note aesthetic via `scratchpad-lab-visualization`. Newsreader italic for narrative chrome (captions, goal, rule, instruction chips, annotation marks, signoff); KaTeX / mono for math bodies. Line types `goal | rule | equations | substitute | decision | result`, phaseLabel tones `setup | compute | substitute | decide | complete`, margin annotations split into `invariant` (permanent) and `transient` (computation hints).
+- **Number-theory / pure-math (Euclidean GCD, Extended Euclidean, …):** notebook display via `scratchpad-lab-visualization` (register rack, numbered derivation lines, phase dividers, margins rack); UI font for narrative chrome, KaTeX / mono for math bodies. Line types `goal | rule | equations | substitute | decision | result`, phaseLabel tones `setup | compute | substitute | decide | complete`, margin annotations split into `invariant` (permanent) and `transient` (computation hints).
 - **Graph / DP / geometry / grid:** each has a dedicated trace state type and trace panel. Keep per-family visual language consistent across algorithms in that family.
 
 ## Commands
@@ -133,7 +137,7 @@ CI: GitHub Actions, needs repo secret `FONTAWESOME_PACKAGE_TOKEN`.
 
 ## Branch & release flow
 
-- `feature/*` — in-progress work. Current branch at time of writing: `feat/other-algorithms`.
+- `feature/*` / `feat/*` — in-progress work.
 - `main` — integration. Pushing to main does **not** deploy.
 - `production` — Netlify deploys from here. Promote with `npm run deploy:production` (fast) or `npm run release:production` (verify-then-promote).
 - Never force-push to `main` or `production`.
@@ -158,8 +162,8 @@ Reminder text to use verbatim:
 
 **Emit the reminder when your task changed ANY of:**
 
-- any file under [src/app/features/algorithms/components/](src/app/features/algorithms/components/) — visualizations, code-panel, log-panel, legend-bar, visualization-toolbar, viz-options-menu, trace panels.
-- [src/styles.scss](src/styles.scss) — token additions, repoints, or structural changes.
+- any file under [src/app/features/algorithms/components/](src/app/features/algorithms/components/) — visualizations, code-panel, info-panel, trace panels, scene primitives.
+- [src/styles.scss](src/styles.scss) or anything under `src/styles/` — token additions, repoints, display mixins, or structural changes.
 - any `.scss` file anywhere in `src/app/` (component styles, chrome, shell, navbar, sidebar).
 - any `.html` template that added/moved interactive UI (buttons, inputs, controls, icon-buttons, menus).
 - any new Angular `@Component` that renders UI (not pure services / pipes / utilities).

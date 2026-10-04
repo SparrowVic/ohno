@@ -83,7 +83,7 @@ const BAR_STATE_STYLES: Record<BarState, StateStyle> = {
 
 Rules of thumb:
 - Stroke + fill share a hue; fill slightly lower alpha than stroke.
-- Text on top of a stateful fill stays `var(--text-primary)` — don't tint it with the state color (dual-tone = low contrast).
+- Text on top of a stateful fill stays `var(--ink)` — don't tint it with the state color (dual-tone = low contrast).
 - Stroke-width `0.5px` is the house hairline.
 
 ## Motion wiring

@@ -21,11 +21,7 @@ import { getAlgorithmFacetLabelKey } from '../../../core/i18n/catalog-labels';
 import { getDifficultyLabelKey } from '../../../core/i18n/difficulty-label';
 import { I18N_KEY, I18nKey } from '../../../core/i18n/i18n-keys';
 import { I18nTextParams, TranslatableText } from '../../../core/i18n/translatable-text';
-import {
-  getVisualizationActionLabelKey,
-  getVisualizationSizeUnitLabelKey,
-  getVisualizationVariantLabelKey,
-} from '../../../core/i18n/visualization-labels';
+import { getVisualizationSizeUnitLabelKey } from '../../../core/i18n/visualization-labels';
 import { CommandPaletteService } from '../../../core/layout/command-palette/command-palette.service';
 import { OhnoEngraving } from '../../../shared/instrument/engraving/engraving';
 import { OhnoKey } from '../../../shared/instrument/key/key';
@@ -185,7 +181,7 @@ export class Workbench {
   protected readonly views = computed(() =>
     (this.config()?.variantOptions ?? []).map((option) => ({
       ...option,
-      label: this.translateMaybe(getVisualizationVariantLabelKey(option.label), option.label),
+      label: this.translate(option.label),
     })),
   );
   protected readonly sizeOptions = computed(() => this.config()?.sizeOptions ?? []);
@@ -193,10 +189,9 @@ export class Workbench {
     const unit = this.config()?.sizeUnit ?? 'elements';
     return this.translateMaybe(getVisualizationSizeUnitLabelKey(unit), unit);
   });
-  protected readonly randomizeLabel = computed(() => {
-    const label = this.config()?.randomizeLabel ?? 'Randomize';
-    return this.translateMaybe(getVisualizationActionLabelKey(label), label);
-  });
+  protected readonly randomizeLabel = computed(() =>
+    this.translate(this.config()?.randomizeLabel ?? I18N_KEY.features.algorithms.toolbar.actions.randomize),
+  );
   protected readonly presetOptions = computed(() => presetOptionsOf(this.config()));
 
   private readonly taskList = computed<readonly Task<Record<string, unknown>>[]>(() => {

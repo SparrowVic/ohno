@@ -37,31 +37,26 @@ Same as Phase 3, plus:
 4. **Trace host with both `scratchpadLab` and `numberLab`** picks the panel by the active view (pinned by a spec on the pure selector).
 5. **Radix card flight under reduced motion** jumps instead of tweening.
 
-## Status / handoff — 2026-10-02
+## Status / handoff — 2026-10-04
 
-**Where the work stands.** `feat/redesign-lzb8il` is ahead of `main` by seven code commits and this note. Each commit passed the type check, the full Vitest suite and the production build locally. Nothing after `83ea1f0` is deployed: ohnolab.com runs `main` at `83ea1f0`, released 2026-10-01. To ship, open a PR into `main` (the ruleset needs `verify` and CodeQL `Analyze JavaScript and TypeScript`, linear history, a squash with an explicit title and body), then run the *Release Production* workflow with `source_ref: main`.
+**Done: Tasks 0–10.** Tasks 0–8 and 10 landed on `main` through PRs #42–#50. Task 9 (this sweep) passes the type check, the full Vitest suite (159 files, 1143 tests) and the production build.
 
-**Done:** Tasks 0, 1, 2 and 3. Task 4 has its shared half in place: per-mode string readouts, tape verbs and step classification. Its display components are not started.
+**What Task 9 changed.**
+- Deleted the dead UI: `viz-panel`, `viz-header`, `viz-preset-picker`, `visualization-palette` (`VIZ_COLOR`), `viz-options-menu`, `button`, `popover`, the whole `shared/controls` set (select, slider, number and text inputs, control chrome), `ui-tag`, `shared/styles/_eyebrow.scss` and the unused `DEFAULT_SORTING_LEGEND`.
+- `info-panel` (the Info tab) is rebuilt on Instrument tokens, `ohno-engraving` and mono tag chips.
+- Variant labels, randomize labels and the bar/block legends in `algorithm-detail-config.ts` are `I18N_KEY` references; the English lookup tables for variants, actions and legend labels are gone (the size-unit table stays). New keys: five variants (sieve grid, pointer lab, matrix grid, call tree, call stack) and sixteen randomize actions. Removed keys: `shared.vizOptionsMenu.*`, `toolbar.actions.newNetwork`/`newPresetCase`, `workbench.legend.activeDigit`/`bucketLane`.
+- `_compat-tokens.scss` is deleted; `src/` has no compat alias, no `rgba(var(` and no `backdrop-filter`. The invalid comma-form glows in `math-text` were no-ops and are removed.
+- Global tone scope: `styles.scss` emits `display.tone-scope` once (named `[data-tone]` → non-inheriting `--tone-pick`/`--tone-pick-rgb` registered with `@property`); `display.tone-vars` shrank to two declarations. Every family component is back under the 8 kB style budget (radix-matrix 11.34 → under, radix-strip 10.35 → under, dp, network, button gone); seeded before/after screenshots of all archetypes at 1440 and 360 are pixel-identical.
+- CLAUDE.md and the `ohno-*` skills and reviewer agent drop the deleted components and compat tokens and describe the trace primitives, the tone scope and the display-readiness list.
 
-**Open on Task 3 (radix):**
-- The `ohno-design-reviewer` audit has not run yet. Smoke screenshots of strip, matrix and bucket at 1440 and 360 are clean: no console errors, no page overflow.
-- The op-line prints the generator's `10^0` literally. Either the sentence markup turns `10^k` into math, or Task 10 gives the radix sentences keys with an `exponent` param.
-- Component style budget warnings: `radix-matrix` 11.2 kB and `radix-strip` 10.2 kB against the 8 kB warning budget, next to the older dp, scratchpad, call-tree, button and specimen warnings. Trim them or lift shared parts into `_display.scss` during Task 9.
-
-**Next, in order:**
-1. Task 4 displays: `string-visualization` (11 modes), `search-visualization`, `pointer-lab-visualization`. The STRING, SEARCH and POINTER legends move to keys; they still use `VIZ_COLOR`.
-2. Tasks 5, 6, 7 and 8, then the Task 9 sweep. Fifteen templates still use `viz-panel`, `viz-header` or `viz-preset-picker`. `VIZ_COLOR` remains in `algorithm-detail-config.ts` and those components. CLAUDE.md still names `feat/other-algorithms` as the current branch.
-3. Task 10 also carries the generator issues found in Tasks 2 and 3:
-   - Hungarian presets never reach the cover-and-adjust branch; one needs a cost matrix that requires covering lines.
-   - The regex default case should end in a match.
-   - `simplex-algorithm.ts` fills `pivotsPerIteration` only at the leaving step, so the reduced-cost, entering and ratio steps carry `pivotCol = null`.
-   - The simplex op-line renders entirely as italic math.
-   - DP, matrix and grid generators emit English plain strings (`step N`, `opt row N`, phase labels) that the displays map through lookup tables.
-   - The A* start cell has no `g`/`h` meta, sieve cells have no `markedBy`, and flood fill keeps no queue order.
-
-**Display proposals not yet ruled:** `_display.scss` variants for a soft settled cell, a dashed frontier cell and a dim settled cell, which dp, grid, matrix and sieve hand-roll today. A `history` input on `visualization-canvas` instead of injecting `PlaybackController` into the matrix-grid display and trace panel.
-
-**Repository housekeeping:** the superseded Dependabot npm PRs #27 and #29–#37 should close on the next Dependabot run. Actions PRs #39 and #40 stay open on purpose. Seven stale remote branches have to be deleted from the GitHub UI, because the session proxy refuses branch deletion: `codex/darken-shared-select-dropdown-surfaces`, `copilot/fix-merge-conflicts`, `copilot/resolve-merge-conflicts`, `feat/other-algorithms`, `feat/redesign`, `viz-panel-refactor`, `hide-initial-code-line-highlight`.
+**Remaining known issues.**
+- Budget warnings left: the initial bundle (≈697 kB against 500 kB) and the dev-only specimen stylesheet (9.18 kB against 8 kB; was 13.62 kB).
+- The `ohno-design-reviewer` audit has not run on Task 9 (Info tab restyle, tone scope).
+- The Polish wording of the new variant and randomize keys wants a read by the author.
+- Size units still resolve through the English `UNIT_KEY_SUFFIXES` table in `visualization-labels.ts`; the specimen page keeps a few hard-coded English sample labels (dev-only).
+- Unverified from the Task 2/3 generator list after #50: the regex default case ending in a match and flood-fill queue order.
+- Display proposals still unruled: `_display.scss` variants for soft settled / dashed frontier / dim settled cells; a `history` input on `visualization-canvas` instead of injecting `PlaybackController` into the matrix-grid display and trace panel.
+- Repository housekeeping from the previous note (stale remote branches, Dependabot PRs) still applies.
 
 ---
 
@@ -95,28 +90,28 @@ Rulings: the 26 table legends go through keys and follow image 09 (base slate, c
 
 `dp-visualization` (items rack + capacity readout, Doto cells, idle `·`, active cyan `?`, candidates pink with tags, result path lime), `matrix-visualization`, `matrix-grid-visualization` (divider rendered), `grid-visualization`, `sieve-grid-visualization` (primes rack); `MatrixGridTracePanel` filled; readouts: row/capacity/best (dp), pivot/row/col (matrix), frontier/visited (grid), prime/marked (sieve). Commit "Rebuild the table displays in the dot language".
 
-### Task 3: Buckets — DONE (design review pending)
+### Task 3: Buckets — DONE
 Rulings: radix steps bypass the sorting readout and show digit, bucket and in-buckets meters with a digits gauge; the legend reads input slate, current digit cyan, scatter pink, gathered output lime; Polish copy says "kubełek" everywhere; layout maths live in pure `radix-*-display.utils.ts` files with specs. Open items are listed in the status section above.
 
 `radix-bucket` (D3 kept, colours via `getComputedStyle` tokens, HUD removed — meters/op-line carry it, no backdrop-filter, flight gated), `radix-strip`, `radix-matrix` (tape cells); `VIZ_HEX` and `VIZ_BUCKET_COLORS` deleted; radix strings to i18n. Commit "Rebuild the bucket displays".
 
-### Task 4: Tape family (image 12)
+### Task 4: Tape family (image 12) — DONE
 `string-visualization` (11 modes on tape strips with sprocket dots, read-head bracket, LPS/Z rows amber, matches rack, "last fallback" note), `search-visualization` (lo/mid/hi cursors), `pointer-lab-visualization` (labelled cursors, window band, stats rack). Readouts: i/j/matches (string), lo/hi/probe (search), pointers (pointer-lab); gauge "Znaki tekstu". Commit "Rebuild the tape displays".
 
-### Task 5: Notebook (image 10)
+### Task 5: Notebook (image 10) — DONE
 `scratchpad-lab-visualization` (register rack left, derivation lines numbered `01…`, dividers per phase, current cyan, decision pink, result lime, margins rack right with LED bars violet/amber/cyan), `number-lab-visualization` (registers + formula + history tape). Readouts: registers; gauge "Fazy". Commit "Rebuild the notebook displays".
 
-### Task 6: XY plane (image 11)
+### Task 6: XY plane (image 11) — DONE
 `_geometry-viz.scss` → `_display.scss` graticule; 8 geometry components: cyan graticule with mono axis numbers, phosphor points with ids, hull/stack lime polyline, check triple cyan dashed, rejected pink ×, racks (stack + cross-product readout with verdict; events rail for sweep/voronoi/delaunay); `geometry-trace-panel` fully i18n. Gauge "Sprawdzone". Commit "Rebuild the plane displays".
 
-### Task 7: Stack and sets
+### Task 7: Stack and sets — DONE
 `call-stack-lab-visualization` (frames as inset cards, top cyan, returns rail), `call-tree-lab-visualization` (LED-ring tree + sidecar board as Doto cells). Commit "Rebuild the stack displays".
 
-### Task 8: Trace panels
+### Task 8: Trace panels — DONE
 `ohno-trace-facts` / `ohno-trace-chips` / `ohno-trace-table` primitives; all 27 panels rewritten on them; invalid `rgba(var(` gone; `SegmentedPanel`, `Table`, `TraceHint`, `UiTag`, `_eyebrow`, `_trace-chip` deleted when unused. Commit "Restyle the trace panels as racks".
 
-### Task 9: Sweep
+### Task 9: Sweep — DONE
 Delete `viz-panel`, `viz-header`, `viz-preset-picker`, `visualization-palette`; legend arrays and variant labels through keys; `rgba(var(` count in `src` → 0; `grep backdrop-filter` → 0; screenshots of all seven archetypes at 1440 / 360; CLAUDE.md + skills updated. Commit "Finish the family displays".
 
-### Task 10: Generator strings
+### Task 10: Generator strings — DONE
 Step descriptions, phase labels and node/edge captions that generators still emit as English template strings (graph, network, tree, DSU, radix HUD and the call-tree lab) move to `features.algorithms.runtime.<family>.*` keys with `i18nText(key, params)`; PL first, then EN; specs assert keys, not prose. Commit "Translate the generator strings".

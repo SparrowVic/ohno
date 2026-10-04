@@ -75,19 +75,19 @@ For pure-CSS transitions on layout components, wrap with a media query:
 
 ## Focus
 
-A **single global ring** is defined at [src/styles.scss](../../../src/styles.scss):
+A **single global ring** is defined in [src/styles/_base.scss](../../../src/styles/_base.scss):
 
 ```scss
 :focus-visible {
   outline: none;
-  box-shadow: var(--ring-focus);
+  box-shadow: var(--focus-ring);
   border-radius: var(--radius-sm);
 }
 ```
 
-`--ring-focus` is a cyan triple-layer glow. `--ring-focus-soft` is a quieter alternative for dense UIs.
+`--focus-ring` is the orange `--signal` ring (2px solid + soft 6px halo).
 
-**Don't override per-component unless you have a specific reason** (e.g., a tight chip-dense row where the soft ring reads better). If you do override, use the soft variant — don't invent a new treatment.
+**Don't override per-component unless you have a specific reason** (e.g., a tight chip-dense row where the soft ring reads better). If you do override, reuse `--focus-ring` — don't invent a new treatment.
 
 Never use `outline: none` alone. Either honor the global `:focus-visible`, or replace it with a different visible treatment. Ring-less focus is a bug.
 
