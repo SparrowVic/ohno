@@ -74,13 +74,13 @@ tbody tr {
   @include trace.tones;
 
   &[data-tone] td {
-    background: rgb(var(--trace-tone-rgb) / 0.09);
+    background: rgb(var(--tone-rgb) / 0.09);
     color: var(--ink);
   }
 
   &[data-tone] td:first-child {
-    box-shadow: inset 2px 0 0 var(--trace-tone);
-    color: var(--trace-tone);
+    box-shadow: inset 2px 0 0 var(--tone);
+    color: var(--tone);
   }
 }
 

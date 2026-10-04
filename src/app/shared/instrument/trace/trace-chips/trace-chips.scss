@@ -37,22 +37,22 @@
   white-space: nowrap;
 
   &[data-tone] {
-    color: var(--trace-tone);
-    background: rgb(var(--trace-tone-rgb) / 0.08);
-    box-shadow: inset 0 0 0 1px rgb(var(--trace-tone-rgb) / 0.35);
+    color: var(--tone);
+    background: rgb(var(--tone-rgb) / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(var(--tone-rgb) / 0.35);
   }
 }
 
 .ohno-trace-chips__chip--active {
-  background: rgb(var(--trace-tone-rgb) / 0.18);
+  background: rgb(var(--tone-rgb) / 0.18);
   box-shadow:
-    inset 0 0 0 1px rgb(var(--trace-tone-rgb) / 0.7),
-    0 0 10px rgb(var(--trace-tone-rgb) / 0.25);
-  color: var(--trace-tone);
+    inset 0 0 0 1px rgb(var(--tone-rgb) / 0.7),
+    0 0 10px rgb(var(--tone-rgb) / 0.25);
+  color: var(--tone);
 
   &:not([data-tone]) {
-    --trace-tone: var(--cyan);
-    --trace-tone-rgb: var(--cyan-rgb);
+    --tone: var(--cyan);
+    --tone-rgb: var(--cyan-rgb);
   }
 }
 
