@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import {
   faBackwardStep,
   faChevronLeft,
@@ -40,7 +41,7 @@ import { TraceChip, TraceColumn, TraceFact, TraceRow } from '../../shared/instru
 import { TapeRow } from '../../shared/instrument/tape/tape.types';
 import { OhnoWindowStepper } from '../../shared/instrument/window-stepper/window-stepper';
 import { Difficulty } from '../../features/algorithms/models/algorithm';
-import { LegendEntry, LegendHint, OhnoLegendRow } from '../../features/algorithms/workbench/legend-row/legend-row';
+import { LegendEntry, OhnoLegendRow } from '../../features/algorithms/workbench/legend-row/legend-row';
 import { OhnoStageHead } from '../../features/algorithms/workbench/stage-head/stage-head';
 import { OhnoStageScreen } from '../../features/algorithms/workbench/stage-screen/stage-screen';
 import { StageMeter } from '../../features/algorithms/workbench/utils/stage-readout.utils';
@@ -55,16 +56,21 @@ import { EMPTY_TRACES, WorkbenchTraces } from '../../features/algorithms/workben
 import { sentenceParts } from '../../features/algorithms/workbench/utils/sentence-markup.utils';
 import { TapeFilter } from '../../features/algorithms/workbench/utils/tape-rows.utils';
 import { deriveSortTrace } from '../../features/algorithms/utils/helpers/derive-sort-trace/derive-sort-trace';
+import { I18N_KEY } from '../../core/i18n/i18n-keys';
+import { i18nText } from '../../core/i18n/translatable-text';
+import { SpecimenDisplaySheet } from './specimen-display-sheet/specimen-display-sheet';
 
 // Dev-only specimen sheet: literal Polish labels are intentional, it never ships.
 @Component({
   selector: 'app-instrument-specimen',
-  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoTraceFacts, OhnoTraceChips, OhnoTraceTable, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck, OhnoInspector, OhnoLogPrinter],
+  imports: [OhnoPlate, OhnoScreen, OhnoEngraving, OhnoLed, OhnoKbd, OhnoReadout, OhnoMeter, OhnoKey, OhnoLatch, OhnoKnob, OhnoSlot, OhnoGauge, OhnoWindowStepper, OhnoOpLine, OhnoRack, OhnoRackRow, OhnoTape, OhnoTraceFacts, OhnoTraceChips, OhnoTraceTable, OhnoFloatingPlate, OhnoMenu, OhnoSearchField, OhnoLangToggle, OhnoModuleCard, OhnoWorkbenchTopbar, OhnoStageHead, OhnoStageScreen, OhnoLegendRow, OhnoTransportDeck, OhnoInspector, OhnoLogPrinter, SpecimenDisplaySheet, TranslocoPipe],
   templateUrl: './instrument-specimen.html',
   styleUrl: './instrument-specimen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstrumentSpecimen {
+  protected readonly I18N_KEY = I18N_KEY;
+  protected readonly LEGEND = I18N_KEY.features.algorithms.workbench.legend;
   protected readonly ledColors: readonly LedColor[] = [
     'signal', 'cyan', 'pink', 'lime', 'amber', 'red', 'violet', 'slate', 'easy',
   ];
@@ -112,7 +118,7 @@ export class InstrumentSpecimen {
     { id: 'phase', label: 'Faza', value: 'Porównanie', kind: 'mono', tone: 'cyan' },
     { id: 'sorted', label: 'Posortowane', value: 2, total: 16, tone: 'lime' },
     { id: 'boundary', label: 'Granica', value: 14 },
-    { id: 'pivot', label: 'Pivot', value: null, kind: 'mono' },
+    { id: 'pivot', label: i18nText(I18N_KEY.features.algorithms.display.meters.pivot), value: null, kind: 'mono' },
     { id: 'expression', label: 'Przejście', value: 'dp[i][w] = max(dp[i-1][w], v + dp[i-1][w-c])', kind: 'math', wide: true },
     { id: 'decision', label: 'Decyzja', value: '74 > 12, więc zamieniamy parę i przesuwamy granicę.', kind: 'text', wide: true },
   ];
@@ -129,7 +135,7 @@ export class InstrumentSpecimen {
   protected readonly traceColumns: readonly TraceColumn[] = [
     { id: 'index', header: 'Indeks', align: 'end', width: '64px' },
     { id: 'value', header: 'Wartość', align: 'end', width: '72px' },
-    { id: 'status', header: 'Status', kind: 'chips' },
+    { id: 'status', header: i18nText(I18N_KEY.features.algorithms.tracePanels.common.statusLabel), kind: 'chips' },
   ];
   protected readonly traceRows: readonly TraceRow[] = Array.from({ length: 12 }, (_, index) => ({
     id: index,
@@ -166,11 +172,6 @@ export class InstrumentSpecimen {
     { label: 'Zamiana', color: 'pink' },
     { label: 'Posortowane', color: 'lime' },
   ];
-  protected readonly stageHints: readonly LegendHint[] = [
-    { keys: ['[', ']'], label: 'tempo' },
-    { keys: ['C'], label: 'kod' },
-    { keys: ['L'], label: 'log' },
-  ];
 
   protected readonly deckPlaying = signal(false);
   protected readonly deckAction = computed<TransportAction>(() => (this.deckPlaying() ? 'pause' : this.step() >= 196 ? 'restart' : 'play'));
@@ -205,24 +206,6 @@ export class InstrumentSpecimen {
   };
   protected readonly logFilter = signal<TapeFilter>('all');
 
-  protected readonly displayCells = [
-    { value: '0', tone: 'idle', tag: null, mark: null },
-    { value: '6', tone: 'slate', tag: null, mark: null },
-    { value: '6', tone: 'pink', tag: 'take', mark: null },
-    { value: '9', tone: 'pink', tag: 'skip', mark: null },
-    { value: '13', tone: 'cyan', tag: null, mark: '?' },
-    { value: '10', tone: 'lime', tag: null, mark: null },
-    { value: '·', tone: 'dim', tag: null, mark: null },
-  ];
-  protected readonly displayTape = [
-    { char: 'A', index: 10, tone: 'lime' },
-    { char: 'B', index: 11, tone: 'lime' },
-    { char: 'C', index: 12, tone: 'cyan' },
-    { char: 'A', index: 13, tone: 'slate' },
-    { char: 'B', index: 14, tone: 'dim' },
-    { char: 'D', index: 15, tone: 'pink' },
-  ];
-  protected readonly planeTicks = [0, 20, 40, 60, 80, 100];
   protected readonly sampleModules = ['bubble-sort', 'counting-sort', 'heap-sort', 'knapsack-01', 'kmp-pattern-matching', 'euclidean-gcd', 'convex-hull', 'recursion-call-stack']
     .map((id) => ALGORITHM_CATALOG.find((item) => item.id === id)!)
     .map((item) => ({ item, moduleId: moduleId(item, ALGORITHM_CATALOG) }));

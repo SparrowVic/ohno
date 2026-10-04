@@ -68,9 +68,9 @@ $tones: 'cyan', 'pink', 'lime', 'violet', 'amber', 'red', 'signal', 'slate';
   }
 }
 
-@mixin tone-vars {
-  --tone-rgb: var(--tone-pick-rgb, var(--white-rgb));
-  --tone: var(--tone-pick, var(--ink-2));
+@mixin tone-vars($fallback: var(--ink-2), $fallback-rgb: var(--white-rgb)) {
+  --tone-rgb: var(--tone-pick-rgb, #{$fallback-rgb});
+  --tone: var(--tone-pick, #{$fallback});
 }
 
 @mixin cell($size: 46px) {

@@ -89,7 +89,7 @@ Easings `--ease-out-quart`, `--ease-out-expo`, `--ease-soft`. Durations `--durat
 
 ## Display tones
 
-Family displays colour an element through `data-tone` (`cyan`, `pink`, `lime`, `violet`, `amber`, `red`, `signal`, `slate`). `src/styles.scss` emits `display.tone-scope` once: each named `[data-tone]` sets the non-inheriting `--tone-pick` / `--tone-pick-rgb`. A component rule that reads the tone does `@include display.tone-vars;`, which resolves `--tone` / `--tone-rgb` from the pick and falls back to `--ink-2` / white for other values (`idle`, `dim`, …). Override a non-named value in the component (`&[data-tone='idle'] { --tone: var(--ink); }`); never re-emit the eight per-tone blocks.
+Family displays colour an element through `data-tone` (`cyan`, `pink`, `lime`, `violet`, `amber`, `red`, `signal`, `slate`). `src/styles.scss` emits `display.tone-scope` once: each named `[data-tone]` sets the non-inheriting `--tone-pick` / `--tone-pick-rgb`. A component rule that reads the tone does `@include display.tone-vars;`, which resolves `--tone` / `--tone-rgb` from the pick and falls back to `--ink-2` / white for other values (`idle`, `dim`, …); pass another neutral as `display.tone-vars(var(--ink), var(--ink-rgb))` when the element's resting colour differs (trace primitives, notebook registers). Override a non-named value in the component (`&[data-tone='idle'] { --tone: var(--ink); }`); never re-emit the eight per-tone blocks.
 
 ## Removed compatibility aliases
 

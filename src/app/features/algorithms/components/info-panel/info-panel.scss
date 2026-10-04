@@ -214,8 +214,13 @@
 }
 
 @container (max-width: 520px) {
-  .info__grid,
   .info__tradeoffs {
+    grid-template-columns: 1fr;
+  }
+}
+
+@container (max-width: 300px) {
+  .info__grid {
     grid-template-columns: 1fr;
   }
 }

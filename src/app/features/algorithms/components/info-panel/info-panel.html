@@ -40,6 +40,7 @@
         <span class="info__tutorial-badge"
           ><app-math-text
             variant="chip"
+            mode="text"
             [content]="
               looksLikeI18nKey(tutorial.pattern) ? (tutorial.pattern | transloco) : tutorial.pattern
             "
@@ -61,7 +62,7 @@
       >
         @for (step of tutorial.howItWorks; track $index) {
           <li class="info__step">
-            <span class="info__step-num">{{ $index + 1 }}</span>
+            <span class="info__step-num" aria-hidden="true">{{ $index + 1 }}</span>
             <span class="info__step-text"
               ><app-math-text variant="copy" [content]="looksLikeI18nKey(step) ? (step | transloco) : step"
             /></span>
